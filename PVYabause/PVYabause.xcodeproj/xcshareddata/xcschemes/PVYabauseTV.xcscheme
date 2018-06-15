@@ -51,16 +51,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
-            ReferencedContainer = "container:../Provenance.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		330010B720D4559D0077EE20 /* YabauseC.h in Headers */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		330010B920D455A30077EE20 /* YabauseC.h in Headers */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		330010BA20D456380077EE20 /* YabauseC.h in Headers */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		330010BB20D4564F0077EE20 /* YabauseC.h in Headers */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		330010BF20D45D040077EE20 /* scsp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 330010BE20D45D030077EE20 /* scsp2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		330010C020D45D240077EE20 /* scsp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 330010BE20D45D030077EE20 /* scsp2.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33456CFD20D16CFE0089EC04 /* YabauseC.m in Sources */ = {isa = PBXBuildFile; fileRef = 33456CFC20D16CFE0089EC04 /* YabauseC.m */; };
 		33456CFE20D16CFE0089EC04 /* YabauseC.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; };
 		335BC4E920D2D14D0095F719 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC4B520D2D1280095F719 /* netlink.c */; };
@@ -59,54 +65,53 @@
 		335BC51920D2D14D0095F719 /* titan.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC4E820D2D14C0095F719 /* titan.c */; };
 		335BC54E20D2D3F80095F719 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC54D20D2D3F80095F719 /* OpenGLES.framework */; };
 		335BC55020D2D4450095F719 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC54F20D2D4450095F719 /* GLKit.framework */; };
-		335BC55420D2D5BB0095F719 /* bios.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53320D2D20E0095F719 /* bios.h */; };
-		335BC55520D2D5BB0095F719 /* cd_drive.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52520D2D2060095F719 /* cd_drive.h */; };
-		335BC55620D2D5BB0095F719 /* cdbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52F20D2D20C0095F719 /* cdbase.h */; };
-		335BC55720D2D5BB0095F719 /* cheat.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53020D2D20D0095F719 /* cheat.h */; };
-		335BC55820D2D5BB0095F719 /* coffelf.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52420D2D2060095F719 /* coffelf.h */; };
-		335BC55920D2D5BB0095F719 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54220D2D2180095F719 /* core.h */; };
-		335BC55A20D2D5BB0095F719 /* cs0.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54C20D2D21E0095F719 /* cs0.h */; };
-		335BC55B20D2D5BB0095F719 /* cs1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54320D2D2190095F719 /* cs1.h */; };
-		335BC55C20D2D5BB0095F719 /* cs2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53A20D2D2130095F719 /* cs2.h */; };
-		335BC55D20D2D5BB0095F719 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54620D2D21B0095F719 /* debug.h */; };
-		335BC55E20D2D5BB0095F719 /* error.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52920D2D2090095F719 /* error.h */; };
-		335BC55F20D2D5BB0095F719 /* gameinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53520D2D20F0095F719 /* gameinfo.h */; };
-		335BC56020D2D5BB0095F719 /* japmodem.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52A20D2D2090095F719 /* japmodem.h */; };
-		335BC56120D2D5BB0095F719 /* m68kcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51A20D2D2000095F719 /* m68kcore.h */; };
-		335BC56220D2D5BB0095F719 /* m68kd.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52120D2D2040095F719 /* m68kd.h */; };
-		335BC56320D2D5BB0095F719 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52020D2D2030095F719 /* memory.h */; };
-		335BC56420D2D5BB0095F719 /* movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52B20D2D20A0095F719 /* movie.h */; };
-		335BC56520D2D5BB0095F719 /* mpeg_card.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53120D2D20D0095F719 /* mpeg_card.h */; };
-		335BC56620D2D5BB0095F719 /* netlink.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54720D2D21B0095F719 /* netlink.h */; };
-		335BC56720D2D5BB0095F719 /* osdcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54820D2D21C0095F719 /* osdcore.h */; };
-		335BC56820D2D5BB0095F719 /* peripheral.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52320D2D2050095F719 /* peripheral.h */; };
-		335BC56A20D2D5BB0095F719 /* profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52820D2D2080095F719 /* profile.h */; };
-		335BC56B20D2D5BB0095F719 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54B20D2D21D0095F719 /* scsp.h */; };
-		335BC56C20D2D5BB0095F719 /* scsp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53220D2D20E0095F719 /* scsp2.h */; };
-		335BC56D20D2D5BB0095F719 /* scspdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52620D2D2070095F719 /* scspdsp.h */; };
-		335BC56E20D2D5BB0095F719 /* sh2cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51B20D2D2000095F719 /* sh2cache.h */; };
-		335BC56F20D2D5BB0095F719 /* sh2core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52720D2D2080095F719 /* sh2core.h */; };
-		335BC57020D2D5BB0095F719 /* sh2d.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53420D2D20F0095F719 /* sh2d.h */; };
-		335BC57120D2D5BB0095F719 /* sh2iasm.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53920D2D2120095F719 /* sh2iasm.h */; };
-		335BC57220D2D5BB0095F719 /* sh2idle.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54120D2D2180095F719 /* sh2idle.h */; };
-		335BC57320D2D5BB0095F719 /* sh2int.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53E20D2D2150095F719 /* sh2int.h */; };
-		335BC57420D2D5BB0095F719 /* sh2trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53620D2D2110095F719 /* sh2trace.h */; };
-		335BC57520D2D5BB0095F719 /* sh7034.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52D20D2D20B0095F719 /* sh7034.h */; };
-		335BC57620D2D5BB0095F719 /* smpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53B20D2D2130095F719 /* smpc.h */; };
-		335BC57720D2D5BB0095F719 /* sock.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54420D2D21A0095F719 /* sock.h */; };
-		335BC57820D2D5BB0095F719 /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51F20D2D2030095F719 /* threads.h */; };
-		335BC57920D2D5BB0095F719 /* titan.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54020D2D2160095F719 /* titan.h */; };
-		335BC57A20D2D5BB0095F719 /* vdp1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54520D2D21A0095F719 /* vdp1.h */; };
-		335BC57B20D2D5BB0095F719 /* vdp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53C20D2D2140095F719 /* vdp2.h */; };
-		335BC57C20D2D5BB0095F719 /* vdp2debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52E20D2D20C0095F719 /* vdp2debug.h */; };
-		335BC57D20D2D5BB0095F719 /* vidogl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51D20D2D2010095F719 /* vidogl.h */; };
-		335BC57E20D2D5BB0095F719 /* vidshared.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53820D2D2120095F719 /* vidshared.h */; };
-		335BC57F20D2D5BB0095F719 /* vidsoft.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53720D2D2110095F719 /* vidsoft.h */; };
-		335BC58020D2D5BB0095F719 /* yab_tsunami.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52C20D2D20A0095F719 /* yab_tsunami.h */; };
-		335BC58120D2D5BB0095F719 /* yabause.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51C20D2D2010095F719 /* yabause.h */; };
-		335BC58220D2D5BC0095F719 /* ygl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53D20D2D2150095F719 /* ygl.h */; };
-		335BC58320D2D5BC0095F719 /* ygr.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52220D2D2040095F719 /* ygr.h */; };
-		335BC58420D2D5BC0095F719 /* yui.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53F20D2D2160095F719 /* yui.h */; };
+		335BC55420D2D5BB0095F719 /* bios.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53320D2D20E0095F719 /* bios.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55520D2D5BB0095F719 /* cd_drive.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52520D2D2060095F719 /* cd_drive.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55620D2D5BB0095F719 /* cdbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52F20D2D20C0095F719 /* cdbase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55720D2D5BB0095F719 /* cheat.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53020D2D20D0095F719 /* cheat.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55820D2D5BB0095F719 /* coffelf.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52420D2D2060095F719 /* coffelf.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55920D2D5BB0095F719 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54220D2D2180095F719 /* core.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55A20D2D5BB0095F719 /* cs0.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54C20D2D21E0095F719 /* cs0.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55B20D2D5BB0095F719 /* cs1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54320D2D2190095F719 /* cs1.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55C20D2D5BB0095F719 /* cs2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53A20D2D2130095F719 /* cs2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55D20D2D5BB0095F719 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54620D2D21B0095F719 /* debug.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55E20D2D5BB0095F719 /* error.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52920D2D2090095F719 /* error.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC55F20D2D5BB0095F719 /* gameinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53520D2D20F0095F719 /* gameinfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56020D2D5BB0095F719 /* japmodem.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52A20D2D2090095F719 /* japmodem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56120D2D5BB0095F719 /* m68kcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51A20D2D2000095F719 /* m68kcore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56220D2D5BB0095F719 /* m68kd.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52120D2D2040095F719 /* m68kd.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56320D2D5BB0095F719 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52020D2D2030095F719 /* memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56420D2D5BB0095F719 /* movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52B20D2D20A0095F719 /* movie.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56520D2D5BB0095F719 /* mpeg_card.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53120D2D20D0095F719 /* mpeg_card.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56620D2D5BB0095F719 /* netlink.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54720D2D21B0095F719 /* netlink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56720D2D5BB0095F719 /* osdcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54820D2D21C0095F719 /* osdcore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56820D2D5BB0095F719 /* peripheral.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52320D2D2050095F719 /* peripheral.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56A20D2D5BB0095F719 /* profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52820D2D2080095F719 /* profile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56B20D2D5BB0095F719 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54B20D2D21D0095F719 /* scsp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56D20D2D5BB0095F719 /* scspdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52620D2D2070095F719 /* scspdsp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56E20D2D5BB0095F719 /* sh2cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51B20D2D2000095F719 /* sh2cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC56F20D2D5BB0095F719 /* sh2core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52720D2D2080095F719 /* sh2core.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57020D2D5BB0095F719 /* sh2d.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53420D2D20F0095F719 /* sh2d.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57120D2D5BB0095F719 /* sh2iasm.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53920D2D2120095F719 /* sh2iasm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57220D2D5BB0095F719 /* sh2idle.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54120D2D2180095F719 /* sh2idle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57320D2D5BB0095F719 /* sh2int.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53E20D2D2150095F719 /* sh2int.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57420D2D5BB0095F719 /* sh2trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53620D2D2110095F719 /* sh2trace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57520D2D5BB0095F719 /* sh7034.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52D20D2D20B0095F719 /* sh7034.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57620D2D5BB0095F719 /* smpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53B20D2D2130095F719 /* smpc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57720D2D5BB0095F719 /* sock.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54420D2D21A0095F719 /* sock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57820D2D5BB0095F719 /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51F20D2D2030095F719 /* threads.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57920D2D5BB0095F719 /* titan.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54020D2D2160095F719 /* titan.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57A20D2D5BB0095F719 /* vdp1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54520D2D21A0095F719 /* vdp1.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57B20D2D5BB0095F719 /* vdp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53C20D2D2140095F719 /* vdp2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57C20D2D5BB0095F719 /* vdp2debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52E20D2D20C0095F719 /* vdp2debug.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57D20D2D5BB0095F719 /* vidogl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51D20D2D2010095F719 /* vidogl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57E20D2D5BB0095F719 /* vidshared.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53820D2D2120095F719 /* vidshared.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC57F20D2D5BB0095F719 /* vidsoft.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53720D2D2110095F719 /* vidsoft.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC58020D2D5BB0095F719 /* yab_tsunami.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52C20D2D20A0095F719 /* yab_tsunami.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC58120D2D5BB0095F719 /* yabause.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51C20D2D2010095F719 /* yabause.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC58220D2D5BC0095F719 /* ygl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53D20D2D2150095F719 /* ygl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC58320D2D5BC0095F719 /* ygr.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52220D2D2040095F719 /* ygr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC58420D2D5BC0095F719 /* yui.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53F20D2D2160095F719 /* yui.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		335BC58520D2D6570095F719 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB540152A3B2B0091DA28 /* CoreFoundation.framework */; };
 		335BC58720D2D7240095F719 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC58620D2D7240095F719 /* GameController.framework */; };
 		335BC58A20D2D7340095F719 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC58820D2D7340095F719 /* GameKit.framework */; };
@@ -114,59 +119,58 @@
 		335BC58C20D2DA2F0095F719 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3361329E20AA116600785BA8 /* SDL2.framework */; };
 		335BC58F20D2DA780095F719 /* persdljoy.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC58D20D2DA780095F719 /* persdljoy.c */; };
 		335BC59020D2DA780095F719 /* sndsdl.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC58E20D2DA780095F719 /* sndsdl.c */; };
-		335BC59320D2DAAB0095F719 /* persdljoy.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59120D2DAAB0095F719 /* persdljoy.h */; };
-		335BC59420D2DAAB0095F719 /* sndsdl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59220D2DAAB0095F719 /* sndsdl.h */; };
+		335BC59320D2DAAB0095F719 /* persdljoy.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59120D2DAAB0095F719 /* persdljoy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC59420D2DAAB0095F719 /* sndsdl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59220D2DAAB0095F719 /* sndsdl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		335BC59520D2E6800095F719 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3297181522671200307B0C /* Foundation.framework */; };
-		335BC5A420D2EC890095F719 /* persdljoy.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59120D2DAAB0095F719 /* persdljoy.h */; };
-		335BC5A520D2EC890095F719 /* sndsdl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59220D2DAAB0095F719 /* sndsdl.h */; };
-		335BC5A620D2EC890095F719 /* bios.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53320D2D20E0095F719 /* bios.h */; };
-		335BC5A720D2EC890095F719 /* cd_drive.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52520D2D2060095F719 /* cd_drive.h */; };
-		335BC5A820D2EC890095F719 /* cdbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52F20D2D20C0095F719 /* cdbase.h */; };
-		335BC5A920D2EC890095F719 /* cheat.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53020D2D20D0095F719 /* cheat.h */; };
-		335BC5AA20D2EC890095F719 /* coffelf.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52420D2D2060095F719 /* coffelf.h */; };
-		335BC5AB20D2EC890095F719 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54220D2D2180095F719 /* core.h */; };
-		335BC5AC20D2EC890095F719 /* cs0.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54C20D2D21E0095F719 /* cs0.h */; };
-		335BC5AD20D2EC890095F719 /* cs1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54320D2D2190095F719 /* cs1.h */; };
-		335BC5AE20D2EC890095F719 /* cs2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53A20D2D2130095F719 /* cs2.h */; };
-		335BC5AF20D2EC890095F719 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54620D2D21B0095F719 /* debug.h */; };
-		335BC5B020D2EC890095F719 /* error.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52920D2D2090095F719 /* error.h */; };
-		335BC5B120D2EC890095F719 /* gameinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53520D2D20F0095F719 /* gameinfo.h */; };
-		335BC5B220D2EC890095F719 /* japmodem.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52A20D2D2090095F719 /* japmodem.h */; };
-		335BC5B320D2EC890095F719 /* m68kcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51A20D2D2000095F719 /* m68kcore.h */; };
-		335BC5B420D2EC890095F719 /* m68kd.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52120D2D2040095F719 /* m68kd.h */; };
-		335BC5B520D2EC890095F719 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52020D2D2030095F719 /* memory.h */; };
-		335BC5B620D2EC890095F719 /* movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52B20D2D20A0095F719 /* movie.h */; };
-		335BC5B720D2EC890095F719 /* mpeg_card.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53120D2D20D0095F719 /* mpeg_card.h */; };
-		335BC5B820D2EC890095F719 /* netlink.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54720D2D21B0095F719 /* netlink.h */; };
-		335BC5B920D2EC890095F719 /* osdcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54820D2D21C0095F719 /* osdcore.h */; };
-		335BC5BA20D2EC890095F719 /* peripheral.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52320D2D2050095F719 /* peripheral.h */; };
-		335BC5BB20D2EC890095F719 /* profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52820D2D2080095F719 /* profile.h */; };
-		335BC5BC20D2EC890095F719 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54B20D2D21D0095F719 /* scsp.h */; };
-		335BC5BD20D2EC890095F719 /* scsp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53220D2D20E0095F719 /* scsp2.h */; };
-		335BC5BE20D2EC890095F719 /* scspdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52620D2D2070095F719 /* scspdsp.h */; };
-		335BC5BF20D2EC890095F719 /* sh2cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51B20D2D2000095F719 /* sh2cache.h */; };
-		335BC5C020D2EC890095F719 /* sh2core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52720D2D2080095F719 /* sh2core.h */; };
-		335BC5C120D2EC890095F719 /* sh2d.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53420D2D20F0095F719 /* sh2d.h */; };
-		335BC5C220D2EC890095F719 /* sh2iasm.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53920D2D2120095F719 /* sh2iasm.h */; };
-		335BC5C320D2EC890095F719 /* sh2idle.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54120D2D2180095F719 /* sh2idle.h */; };
-		335BC5C420D2EC890095F719 /* sh2int.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53E20D2D2150095F719 /* sh2int.h */; };
-		335BC5C520D2EC890095F719 /* sh2trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53620D2D2110095F719 /* sh2trace.h */; };
-		335BC5C620D2EC890095F719 /* sh7034.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52D20D2D20B0095F719 /* sh7034.h */; };
-		335BC5C720D2EC890095F719 /* smpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53B20D2D2130095F719 /* smpc.h */; };
-		335BC5C820D2EC890095F719 /* sock.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54420D2D21A0095F719 /* sock.h */; };
-		335BC5C920D2EC890095F719 /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51F20D2D2030095F719 /* threads.h */; };
-		335BC5CA20D2EC890095F719 /* titan.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54020D2D2160095F719 /* titan.h */; };
-		335BC5CB20D2EC890095F719 /* vdp1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54520D2D21A0095F719 /* vdp1.h */; };
-		335BC5CC20D2EC890095F719 /* vdp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53C20D2D2140095F719 /* vdp2.h */; };
-		335BC5CD20D2EC890095F719 /* vdp2debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52E20D2D20C0095F719 /* vdp2debug.h */; };
-		335BC5CE20D2EC890095F719 /* vidogl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51D20D2D2010095F719 /* vidogl.h */; };
-		335BC5CF20D2EC890095F719 /* vidshared.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53820D2D2120095F719 /* vidshared.h */; };
-		335BC5D020D2EC890095F719 /* vidsoft.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53720D2D2110095F719 /* vidsoft.h */; };
-		335BC5D120D2EC890095F719 /* yab_tsunami.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52C20D2D20A0095F719 /* yab_tsunami.h */; };
-		335BC5D220D2EC890095F719 /* yabause.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51C20D2D2010095F719 /* yabause.h */; };
-		335BC5D320D2EC890095F719 /* ygl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53D20D2D2150095F719 /* ygl.h */; };
-		335BC5D420D2EC890095F719 /* ygr.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52220D2D2040095F719 /* ygr.h */; };
-		335BC5D520D2EC890095F719 /* yui.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53F20D2D2160095F719 /* yui.h */; };
+		335BC5A420D2EC890095F719 /* persdljoy.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59120D2DAAB0095F719 /* persdljoy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5A520D2EC890095F719 /* sndsdl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59220D2DAAB0095F719 /* sndsdl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5A620D2EC890095F719 /* bios.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53320D2D20E0095F719 /* bios.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5A720D2EC890095F719 /* cd_drive.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52520D2D2060095F719 /* cd_drive.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5A820D2EC890095F719 /* cdbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52F20D2D20C0095F719 /* cdbase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5A920D2EC890095F719 /* cheat.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53020D2D20D0095F719 /* cheat.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5AA20D2EC890095F719 /* coffelf.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52420D2D2060095F719 /* coffelf.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5AB20D2EC890095F719 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54220D2D2180095F719 /* core.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5AC20D2EC890095F719 /* cs0.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54C20D2D21E0095F719 /* cs0.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5AD20D2EC890095F719 /* cs1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54320D2D2190095F719 /* cs1.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5AE20D2EC890095F719 /* cs2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53A20D2D2130095F719 /* cs2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5AF20D2EC890095F719 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54620D2D21B0095F719 /* debug.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B020D2EC890095F719 /* error.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52920D2D2090095F719 /* error.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B120D2EC890095F719 /* gameinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53520D2D20F0095F719 /* gameinfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B220D2EC890095F719 /* japmodem.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52A20D2D2090095F719 /* japmodem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B320D2EC890095F719 /* m68kcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51A20D2D2000095F719 /* m68kcore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B420D2EC890095F719 /* m68kd.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52120D2D2040095F719 /* m68kd.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B520D2EC890095F719 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52020D2D2030095F719 /* memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B620D2EC890095F719 /* movie.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52B20D2D20A0095F719 /* movie.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B720D2EC890095F719 /* mpeg_card.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53120D2D20D0095F719 /* mpeg_card.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B820D2EC890095F719 /* netlink.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54720D2D21B0095F719 /* netlink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5B920D2EC890095F719 /* osdcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54820D2D21C0095F719 /* osdcore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5BA20D2EC890095F719 /* peripheral.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52320D2D2050095F719 /* peripheral.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5BB20D2EC890095F719 /* profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52820D2D2080095F719 /* profile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5BC20D2EC890095F719 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54B20D2D21D0095F719 /* scsp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5BE20D2EC890095F719 /* scspdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52620D2D2070095F719 /* scspdsp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5BF20D2EC890095F719 /* sh2cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51B20D2D2000095F719 /* sh2cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C020D2EC890095F719 /* sh2core.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52720D2D2080095F719 /* sh2core.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C120D2EC890095F719 /* sh2d.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53420D2D20F0095F719 /* sh2d.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C220D2EC890095F719 /* sh2iasm.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53920D2D2120095F719 /* sh2iasm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C320D2EC890095F719 /* sh2idle.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54120D2D2180095F719 /* sh2idle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C420D2EC890095F719 /* sh2int.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53E20D2D2150095F719 /* sh2int.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C520D2EC890095F719 /* sh2trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53620D2D2110095F719 /* sh2trace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C620D2EC890095F719 /* sh7034.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52D20D2D20B0095F719 /* sh7034.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C720D2EC890095F719 /* smpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53B20D2D2130095F719 /* smpc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C820D2EC890095F719 /* sock.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54420D2D21A0095F719 /* sock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5C920D2EC890095F719 /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51F20D2D2030095F719 /* threads.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5CA20D2EC890095F719 /* titan.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54020D2D2160095F719 /* titan.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5CB20D2EC890095F719 /* vdp1.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC54520D2D21A0095F719 /* vdp1.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5CC20D2EC890095F719 /* vdp2.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53C20D2D2140095F719 /* vdp2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5CD20D2EC890095F719 /* vdp2debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52E20D2D20C0095F719 /* vdp2debug.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5CE20D2EC890095F719 /* vidogl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51D20D2D2010095F719 /* vidogl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5CF20D2EC890095F719 /* vidshared.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53820D2D2120095F719 /* vidshared.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5D020D2EC890095F719 /* vidsoft.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53720D2D2110095F719 /* vidsoft.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5D120D2EC890095F719 /* yab_tsunami.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52C20D2D20A0095F719 /* yab_tsunami.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5D220D2EC890095F719 /* yabause.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC51C20D2D2010095F719 /* yabause.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5D320D2EC890095F719 /* ygl.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53D20D2D2150095F719 /* ygl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5D420D2EC890095F719 /* ygr.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC52220D2D2040095F719 /* ygr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC5D520D2EC890095F719 /* yui.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC53F20D2D2160095F719 /* yui.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		335BC5D720D2EC890095F719 /* m68kc68k.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC59E20D2EB9F0095F719 /* m68kc68k.c */; };
 		335BC5D820D2EC890095F719 /* c68k.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC59820D2EB770095F719 /* c68k.c */; };
 		335BC5D920D2EC890095F719 /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC59A20D2EB780095F719 /* c68kexec.c */; settings = {COMPILER_FLAGS = "-O0"; }; };
@@ -230,10 +234,10 @@
 		335BC61420D2EC890095F719 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC54F20D2D4450095F719 /* GLKit.framework */; };
 		335BC61520D2EC890095F719 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC54D20D2D3F80095F719 /* OpenGLES.framework */; };
 		335BC61720D2EC890095F719 /* YabauseC.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; };
-		335BC61C20D2ECC10095F719 /* m68kc68k.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59920D2EB780095F719 /* m68kc68k.h */; };
-		335BC61E20D2ECDD0095F719 /* c68k.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC61D20D2ECDD0095F719 /* c68k.h */; };
-		337A05B420D409C4003B89CA /* scu.h in Headers */ = {isa = PBXBuildFile; fileRef = 337A05B220D409C3003B89CA /* scu.h */; };
-		337A05B520D409DA003B89CA /* scu.h in Headers */ = {isa = PBXBuildFile; fileRef = 337A05B220D409C3003B89CA /* scu.h */; };
+		335BC61C20D2ECC10095F719 /* m68kc68k.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC59920D2EB780095F719 /* m68kc68k.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		335BC61E20D2ECDD0095F719 /* c68k.h in Headers */ = {isa = PBXBuildFile; fileRef = 335BC61D20D2ECDD0095F719 /* c68k.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		337A05B420D409C4003B89CA /* scu.h in Headers */ = {isa = PBXBuildFile; fileRef = 337A05B220D409C3003B89CA /* scu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		337A05B520D409DA003B89CA /* scu.h in Headers */ = {isa = PBXBuildFile; fileRef = 337A05B220D409C3003B89CA /* scu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		337A05B620D40AE2003B89CA /* libYabauseC-c68k.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC61B20D2EC890095F719 /* libYabauseC-c68k.a */; };
 		337A05BB20D40B0C003B89CA /* libYabauseC-c68k.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC61B20D2EC890095F719 /* libYabauseC-c68k.a */; };
 		337DD40220A49BC00014EDF7 /* YabauseGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = EB851D0C152396CC00715BD2 /* YabauseGameCore.m */; };
@@ -321,6 +325,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		330010BE20D45D030077EE20 /* scsp2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = scsp2.h; path = emulator/yabause/yabause/src/scsp2.h; sourceTree = "<group>"; };
 		3329DA7A20A5EA3800B89B1A /* PVYabause tvOS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PVYabause tvOS-Info.plist"; sourceTree = "<group>"; };
 		3329DA7E20A5EAB600B89B1A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3329DA7F20A5EAB600B89B1A /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -402,7 +407,6 @@
 		335BC52F20D2D20C0095F719 /* cdbase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cdbase.h; path = emulator/yabause/yabause/src/cdbase.h; sourceTree = "<group>"; };
 		335BC53020D2D20D0095F719 /* cheat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cheat.h; path = emulator/yabause/yabause/src/cheat.h; sourceTree = "<group>"; };
 		335BC53120D2D20D0095F719 /* mpeg_card.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mpeg_card.h; path = emulator/yabause/yabause/src/mpeg_card.h; sourceTree = "<group>"; };
-		335BC53220D2D20E0095F719 /* scsp2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = scsp2.h; path = emulator/yabause/yabause/src/scsp2.h; sourceTree = "<group>"; };
 		335BC53320D2D20E0095F719 /* bios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bios.h; path = emulator/yabause/yabause/src/bios.h; sourceTree = "<group>"; };
 		335BC53420D2D20F0095F719 /* sh2d.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sh2d.h; path = emulator/yabause/yabause/src/sh2d.h; sourceTree = "<group>"; };
 		335BC53520D2D20F0095F719 /* gameinfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gameinfo.h; path = emulator/yabause/yabause/src/gameinfo.h; sourceTree = "<group>"; };
@@ -570,6 +574,7 @@
 		EB3297051522671200307B0C = {
 			isa = PBXGroup;
 			children = (
+				330010BE20D45D030077EE20 /* scsp2.h */,
 				337A05B220D409C3003B89CA /* scu.h */,
 				335BC61D20D2ECDD0095F719 /* c68k.h */,
 				335BC59E20D2EB9F0095F719 /* m68kc68k.c */,
@@ -606,7 +611,6 @@
 				335BC51E20D2D2020095F719 /* permacjoy.h */,
 				335BC52820D2D2080095F719 /* profile.h */,
 				335BC54B20D2D21D0095F719 /* scsp.h */,
-				335BC53220D2D20E0095F719 /* scsp2.h */,
 				335BC52620D2D2070095F719 /* scspdsp.h */,
 				335BC51B20D2D2000095F719 /* sh2cache.h */,
 				335BC52720D2D2080095F719 /* sh2core.h */,
@@ -776,7 +780,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				330010BA20D456380077EE20 /* YabauseC.h in Headers */,
 				337A05B420D409C4003B89CA /* scu.h in Headers */,
+				330010C020D45D240077EE20 /* scsp2.h in Headers */,
 				335BC59320D2DAAB0095F719 /* persdljoy.h in Headers */,
 				335BC59420D2DAAB0095F719 /* sndsdl.h in Headers */,
 				335BC55420D2D5BB0095F719 /* bios.h in Headers */,
@@ -802,7 +808,6 @@
 				335BC56820D2D5BB0095F719 /* peripheral.h in Headers */,
 				335BC56A20D2D5BB0095F719 /* profile.h in Headers */,
 				335BC56B20D2D5BB0095F719 /* scsp.h in Headers */,
-				335BC56C20D2D5BB0095F719 /* scsp2.h in Headers */,
 				335BC56D20D2D5BB0095F719 /* scspdsp.h in Headers */,
 				335BC56E20D2D5BB0095F719 /* sh2cache.h in Headers */,
 				335BC56F20D2D5BB0095F719 /* sh2core.h in Headers */,
@@ -834,6 +839,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				330010BB20D4564F0077EE20 /* YabauseC.h in Headers */,
 				337A05B520D409DA003B89CA /* scu.h in Headers */,
 				335BC61E20D2ECDD0095F719 /* c68k.h in Headers */,
 				335BC61C20D2ECC10095F719 /* m68kc68k.h in Headers */,
@@ -862,7 +868,6 @@
 				335BC5BA20D2EC890095F719 /* peripheral.h in Headers */,
 				335BC5BB20D2EC890095F719 /* profile.h in Headers */,
 				335BC5BC20D2EC890095F719 /* scsp.h in Headers */,
-				335BC5BD20D2EC890095F719 /* scsp2.h in Headers */,
 				335BC5BE20D2EC890095F719 /* scspdsp.h in Headers */,
 				335BC5BF20D2EC890095F719 /* sh2cache.h in Headers */,
 				335BC5C020D2EC890095F719 /* sh2core.h in Headers */,
@@ -882,6 +887,7 @@
 				335BC5CE20D2EC890095F719 /* vidogl.h in Headers */,
 				335BC5CF20D2EC890095F719 /* vidshared.h in Headers */,
 				335BC5D020D2EC890095F719 /* vidsoft.h in Headers */,
+				330010BF20D45D040077EE20 /* scsp2.h in Headers */,
 				335BC5D120D2EC890095F719 /* yab_tsunami.h in Headers */,
 				335BC5D220D2EC890095F719 /* yabause.h in Headers */,
 				335BC5D320D2EC890095F719 /* ygl.h in Headers */,
@@ -894,6 +900,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				330010B920D455A30077EE20 /* YabauseC.h in Headers */,
 				337DD40A20A49BC00014EDF7 /* PVYabause.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -903,6 +910,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B32775271E9C8444000FEC38 /* PVYabause.h in Headers */,
+				330010B720D4559D0077EE20 /* YabauseC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1274,7 +1282,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "${inherited}";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1305,7 +1313,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "${inherited}";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1341,7 +1349,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1375,7 +1383,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1438,7 +1446,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 9.1;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1495,7 +1503,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 9.1;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1545,7 +1553,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1601,7 +1609,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVYabause;

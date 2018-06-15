@@ -252,10 +252,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-               BuildableName = "Provenance.app"
-               BlueprintName = "ProvenanceTV"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "337DD3D320A49BC00014EDF7"
+               BuildableName = "PVYabause.framework"
+               BlueprintName = "PVYabause tvOS"
+               ReferencedContainer = "container:PVYabause/PVYabause.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -266,10 +266,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "337DD3D320A49BC00014EDF7"
-               BuildableName = "PVYabause.framework"
-               BlueprintName = "PVYabause tvOS"
-               ReferencedContainer = "container:PVYabause/PVYabause.xcodeproj">
+               BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
+               BuildableName = "Provenance.app"
+               BlueprintName = "ProvenanceTV"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

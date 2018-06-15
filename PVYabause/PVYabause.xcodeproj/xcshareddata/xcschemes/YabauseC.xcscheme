@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B32775221E9C8444000FEC38"
-               BuildableName = "PVYabause.framework"
-               BlueprintName = "PVYabause"
+               BlueprintIdentifier = "33456CF820D16CFE0089EC04"
+               BuildableName = "libYabauseC.a"
+               BlueprintName = "YabauseC"
                ReferencedContainer = "container:PVYabause.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,15 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B32775221E9C8444000FEC38"
-            BuildableName = "PVYabause.framework"
-            BlueprintName = "PVYabause"
-            ReferencedContainer = "container:PVYabause.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -54,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B32775221E9C8444000FEC38"
-            BuildableName = "PVYabause.framework"
-            BlueprintName = "PVYabause"
+            BlueprintIdentifier = "33456CF820D16CFE0089EC04"
+            BuildableName = "libYabauseC.a"
+            BlueprintName = "YabauseC"
             ReferencedContainer = "container:PVYabause.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -72,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B32775221E9C8444000FEC38"
-            BuildableName = "PVYabause.framework"
-            BlueprintName = "PVYabause"
+            BlueprintIdentifier = "33456CF820D16CFE0089EC04"
+            BuildableName = "libYabauseC.a"
+            BlueprintName = "YabauseC"
             ReferencedContainer = "container:PVYabause.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -876,6 +876,8 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		27FF3AC11B1CF78F002F941E /* libsndfile_FLAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_FLAC.a; path = libsndfile/libsndfile_FLAC.a; sourceTree = "<group>"; };
+		330010AE20D4431B0077EE20 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		330010B020D443290077EE20 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8240861A0FFDD64600F0FE7D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		824088340FFDDCF400F0FE7D /* MednafenGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MednafenGameCore.h; sourceTree = "<group>"; };
 		824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MednafenGameCore.mm; sourceTree = "<group>"; };
@@ -3632,6 +3634,8 @@
 		B340E5E51E0889FB00AD0E8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				330010B020D443290077EE20 /* PVYabause.framework */,
+				330010AE20D4431B0077EE20 /* PVYabause.framework */,
 				B340E5FC1E088AF700AD0E8B /* PVSupport.framework */,
 				B340E5FA1E088AF100AD0E8B /* PVSupport.framework */,
 				B340E5F41E088A4500AD0E8B /* Foundation.framework */,

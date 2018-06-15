@@ -146,8 +146,9 @@
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
+		330010B220D454F10077EE20 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; };
+		330010B320D454F10077EE20 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		337A46FE20A2024200616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A46FD20A2024200616097 /* PVYabause.framework */; };
-		337A470520A2068A00616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A46FD20A2024200616097 /* PVYabause.framework */; };
 		337A470A20A206B400616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; };
 		337A470B20A206B400616097 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
@@ -805,7 +806,6 @@
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
-		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
 		DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C6203C97E100F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
@@ -905,6 +905,7 @@
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				330010B320D454F10077EE20 /* PVYabause.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1046,6 +1047,7 @@
 		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
+		330010B420D455120077EE20 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A46FD20A2024200616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A470420A202C100616097 /* PVYabause.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVYabause.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-fycqgcqtrywlgvewxvxqqvljmodg/Build/Products/Release-iphoneos/PVYabause.framework"; sourceTree = "<group>"; };
 		337A470620A2069C00616097 /* PVYabause tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVYabause tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1560,7 +1562,6 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
-		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
 		DF0035C4203C97D800F63831 /* GLideN64.custom.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.custom.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.custom.ini"; sourceTree = "<group>"; };
 		DF0035C7203C97FA00F63831 /* GLideN64.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.ini"; sourceTree = "<group>"; };
@@ -1613,6 +1614,7 @@
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
+				330010B220D454F10077EE20 /* PVYabause.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
@@ -1651,7 +1653,6 @@
 				1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
 				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
-				337A470520A2068A00616097 /* PVYabause.framework in Frameworks */,
 				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
 				B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -1776,6 +1777,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				330010B420D455120077EE20 /* PVYabause.framework */,
 				337A470920A206B400616097 /* PVYabause.framework */,
 				337A470620A2069C00616097 /* PVYabause tvOS.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,

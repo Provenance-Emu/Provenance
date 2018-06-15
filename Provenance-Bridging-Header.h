@@ -14,8 +14,7 @@
 // Hack cause they can't make modules for some reason
 #import <ProSystem/ProSystemGameCore.h>
 #import <PicoDrive/PicodriveGameCore.h>
-#import <PVYabause/PVYabauseGameCore.h>
-#import "PVYabause/yabause/YabauseGameCore.h"
+#import <PVYabause/YabauseGameCore.h>
 
 
 // -----------------------------------------------------------------------------
