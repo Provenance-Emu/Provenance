@@ -24,11 +24,8 @@ class PVControllerSelectionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 #if TARGET_OS_TV
-        splitViewController?.title = "Controller Settings"
         tableView.backgroundColor = UIColor.clear
         tableView.backgroundView = nil
-#else
-        title = "Controller Settings"
 #endif
     }
 
@@ -76,13 +73,17 @@ class PVControllerSelectionViewController: UITableViewController {
 
 // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Controller Assignment"
+        return "Controller Assignments"
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return "Controllers must be paired with device."
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let player: Int = indexPath.row + 1
-        let actionSheet = UIAlertController(title: "Select a controller for Player \(player)", message: "or press a Button on your iCade controller", preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Select a controller for Player \(player)", message: "or press a button on your iCade controller.", preferredStyle: .actionSheet)
 
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = self.tableView

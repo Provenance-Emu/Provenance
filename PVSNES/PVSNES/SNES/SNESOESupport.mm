@@ -26,7 +26,7 @@
  */
 
 #include <Foundation/Foundation.h>
-#import <PVSupport/PVLogging.h>
+
 #include "memmap.h"
 #include "gfx.h"
 #include "display.h"
@@ -40,7 +40,7 @@
 
 const char *S9xBasename (const char *filename)
 {
-    //DLOG(@"basename %s",filename);
+    //DLog(@"basename %s",filename);
     return NULL;
 }
 
@@ -78,29 +78,29 @@ void _makepath(char *path, const char *drive, const char *dir, const char *fname
 
 void S9xExit ()
 {
-    DLOG(@"exit");
+    DLog(@"exit");
 }
 
 void S9xHandlePortCommand(s9xcommand_t cmd, int16 data1, int16 data2)
 {
     
-    DLOG(@"Port command");
+    DLog(@"Port command");
 }
 
 
 void S9xGenerateSound ()
 {
-    DLOG(@"Gen sound");
+    DLog(@"Gen sound");
 }
 
 
 void S9xSetPalette ()
 {
-    //DLOG(@"Set pallette");
+    //DLog(@"Set pallette");
 }
 const char * S9xGetSPC7110Directory(void)
 {
-    DLOG(@"7110 dir");
+    DLog(@"7110 dir");
     return NULL;
 }
 const char *S9xGetDirectory (enum s9x_getdirtype dirtype)
@@ -110,7 +110,7 @@ const char *S9xGetDirectory (enum s9x_getdirtype dirtype)
                                  stringByAppendingPathComponent:@"OpenEmu"]
                                 stringByAppendingPathComponent:@"BIOS"];
     
-    DLOG(@"Get dir");
+    DLog(@"Get dir");
 	switch (dirtype)
 	{
         case SRAM_DIR:			return [NSHomeDirectory() UTF8String];	break;
@@ -121,45 +121,45 @@ const char *S9xGetDirectory (enum s9x_getdirtype dirtype)
 
 const char *S9xChooseFilename (bool8 read_only)
 {
-    DLOG(@"Choose fname");
+    DLog(@"Choose fname");
     return NULL;
 }
 void S9xLoadSDD1Data ()
 {
-    DLOG(@"Load SDD1");
+    DLog(@"Load SDD1");
 }
 
 void S9xAutoSaveSRAM (void)
 {
-    DLOG(@"Auto save SRAM");
+    DLog(@"Auto save SRAM");
 }
 
 void S9xToggleSoundChannel (int channel)
 {
-    DLOG(@"Toggle channel");
+    DLog(@"Toggle channel");
 }
 
 extern "C" char *osd_GetPackDir()
 {
-    DLOG(@"Get pack dir");
+    DLog(@"Get pack dir");
     return NULL;
 }
 
 void S9xSyncSpeed ()
 {
     IPPU.RenderThisFrame = true;
-    ///DLOG(@"Sync");
+    ///DLog(@"Sync");
 }
 
 const char *S9xStringInput(const char *message)
 {
-    DLOG(@"String input");
+    DLog(@"String input");
     return NULL;
 }
 
 bool8 S9xInitUpdate (void)
 {
-    //DLOG(@"Init update");
+    //DLog(@"Init update");
     return true;
 }
 
@@ -171,24 +171,24 @@ unsigned char S9xContinueUpdate(int width, int height)
 
 const char *S9xGetFilename (const char *extension, enum s9x_getdirtype dirtype)
 {
-    DLOG(@"Get filename");
+    DLog(@"Get filename");
     return NULL;
 }
 
 void SetInfoDlgColor(unsigned char, unsigned char, unsigned char)
 {
-    DLOG(@"Set info dlg");
+    DLog(@"Set info dlg");
 }
 const char *S9xGetFilenameInc (const char *, enum s9x_getdirtype)
 {
-    DLOG(@"Get filenameinc");
+    DLog(@"Get filenameinc");
     return NULL;
 }
 
 
 bool8 S9xDoScreenshot(int width, int height)
 {
-    DLOG(@"Do screenshot");
+    DLog(@"Do screenshot");
     return false;
 }
 
@@ -207,35 +207,35 @@ void S9xCloseSnapshotFile (STREAM file)
 
 bool S9xPollButton(uint32 id, bool *pressed)
 {
-    DLOG(@"Poll button");
+    DLog(@"Poll button");
     return true;
 }
 bool S9xPollPointer(uint32 id, int16 *x, int16 *y)
 {
-    DLOG(@"Poll Pointer");
+    DLog(@"Poll Pointer");
     return true;
 }
 
 bool S9xPollAxis(uint32 id, int16 *value)
 {
-    DLOG(@"Poll axis");
+    DLog(@"Poll axis");
     return true;
 }
 
 void S9xMessage (int type, int number, const char *message)
 {
-    DLOG(@"%s", message);
+    DLog(@"%s", message);
 }
 
 const char *S9xChooseMovieFilename(bool8 read_only)
 {
-    DLOG(@"Movie filename");
+    DLog(@"Movie filename");
     return NULL;
 }
 
 void S9xExtraUsage()
 {
-    DLOG(@"Extra usage");
+    DLog(@"Extra usage");
 }
 
 void S9xParseArg(char**, int&, int)

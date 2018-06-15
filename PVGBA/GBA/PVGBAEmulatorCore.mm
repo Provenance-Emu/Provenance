@@ -114,7 +114,7 @@ static __weak PVGBAEmulatorCore *_current;
     gameID[3] = rom[0xaf];
     gameID[4] = 0;
 
-    DLOG(@"VBA: GameID in ROM is: %s\n", gameID);
+    DLog(@"VBA: GameID in ROM is: %s\n", gameID);
 
     // Load per-game settings from vba-over.ini
     [self loadOverrides:[NSString stringWithFormat:@"%s", gameID]];
@@ -246,45 +246,17 @@ static __weak PVGBAEmulatorCore *_current;
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName
 {
     @synchronized(self) {
-        BOOL success = vba.emuWriteState([fileName UTF8String]);
-		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
-
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotSaveState
-												userInfo:userInfo];
-
-			*error = newError;
-		}
-		return success;
+        return vba.emuWriteState([fileName UTF8String]);
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
 {
     @synchronized(self) {
-        BOOL success = vba.emuReadState([fileName UTF8String]);
-		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
-
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
-
-			*error = newError;
-		}
-		return success;
+        return vba.emuReadState([fileName UTF8String]);
     }
 }
 
@@ -559,13 +531,13 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     }
 
     if (matchFound)
-        DLOG(@"VBA: overrides found: %@", overridesFound);
+        DLog(@"VBA: overrides found: %@", overridesFound);
 }
 
 - (void)writeSaveFile
 {
     if (vba.emuWriteBattery([[_saveFile path] UTF8String]))
-        DLOG(@"VBA: Battery saved");
+        DLog(@"VBA: Battery saved");
 }
 
 /*
@@ -675,14 +647,14 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
             saveType = 5;
         }
 
-        if (saveType == 0 || saveType == 5) DLOG(@"saveType 0 NONE");
-        if (saveType == 3) DLOG(@"saveType 3 EEPROM_");
-        if (saveType == 1) DLOG(@"saveType 1 SRAM_");
-        if (saveType == 2) DLOG(@"saveType 2 FLASH size %d", flashSize);
-        if (_enableRTC) DLOG(@"rtcFound");
+        if (saveType == 0 || saveType == 5) DLog(@"saveType 0 NONE");
+        if (saveType == 3) DLog(@"saveType 3 EEPROM_");
+        if (saveType == 1) DLog(@"saveType 1 SRAM_");
+        if (saveType == 2) DLog(@"saveType 2 FLASH size %d", flashSize);
+        if (_enableRTC) DLog(@"rtcFound");
     }
 
-    DLOG(@"saveType: %d eepromInUse %d flashSize %d eepromSize %d", saveType, eepromInUse, flashSize, eepromSize);
+    DLog(@"saveType: %d eepromInUse %d flashSize %d eepromSize %d", saveType, eepromInUse, flashSize, eepromSize);
 
     // Step 3
     // Migrate save file if needed
@@ -757,7 +729,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     }
     else
     {
-        DLOG(@"VBA: Did not migrate save file because unnecessary or not detected.");
+        DLog(@"VBA: Did not migrate save file because unnecessary or not detected.");
     }
 
     // Step 4
@@ -773,20 +745,20 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
         if (error)
         {
-            DLOG(@"VBA: Error writing migrated save file: %@", error);
+            DLog(@"VBA: Error writing migrated save file: %@", error);
             CPUReset();
             _migratingSave = NO;
             return;
         }
 
-        DLOG(@"VBA: Writing new save file: %@", migratedSaveFile);
+        DLog(@"VBA: Writing new save file: %@", migratedSaveFile);
 
         // Reset because we ran the CPU
         CPUReset();
         _migratingSave = NO;
 
         if (vba.emuReadBattery([[migratedSaveFile path] UTF8String]))
-            DLOG(@"VBA: Battery loaded");
+            DLog(@"VBA: Battery loaded");
     }
     else
     {
@@ -927,7 +899,7 @@ SoundDriver *systemSoundInit()
 // VBA logging
 void systemMessage(int, const char * str, ...)
 {
-    DLOG(@"VBA message: %s", str);
+    DLog(@"VBA message: %s", str);
 }
 
 @end

@@ -157,7 +157,7 @@ struct RenderSettings {
         return;
     }
 
-    ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
+    ILOG("Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
 	[EAGLContext setCurrentContext:self.glContext];
 
@@ -444,7 +444,7 @@ struct RenderSettings {
 
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {

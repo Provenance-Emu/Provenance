@@ -1,9 +1,0 @@
-
-xcodeproj 'ContextFilter'
-workspace '../Demos'
-
-target :'ContextFilter' do
-  platform :osx, '10.7'
-  pod 'CocoaLumberjack', :path => '../../'
-end
-

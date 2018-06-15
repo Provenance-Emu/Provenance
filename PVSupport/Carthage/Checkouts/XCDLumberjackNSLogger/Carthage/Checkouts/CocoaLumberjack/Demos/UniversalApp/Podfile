@@ -1,9 +1,0 @@
-
-xcodeproj 'UniversalApp'
-workspace '../Demos'
-
-target :'UniversalApp' do
-  platform :ios, '5.0'
-  pod 'CocoaLumberjack', :path => '../../'
-end
-

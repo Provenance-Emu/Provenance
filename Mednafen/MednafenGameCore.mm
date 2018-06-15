@@ -96,28 +96,11 @@ static MDFNGI *game;
 static MDFN_Surface *backBufferSurf;
 static MDFN_Surface *frontBufferSurf;
 
-#pragma mark - Input maps
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
 int SNESMap[PVSNESButtonCount];
 int PCEMap[PVPCEButtonCount];
 int PCFXMap[PVPCFXButtonCount];
-
-// Map OE button order to Mednafen button order
-
-const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
-
-// u, d, l, r, a, b, start, select
-const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
-
-// Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
-const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
-const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
-const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
-const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
-
-// SMS, GG and MD unused as of now. Mednafen support is not maintained
-const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 
 namespace MDFN_IEN_VB
 {
@@ -125,8 +108,9 @@ namespace MDFN_IEN_VB
     extern void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);
     int mednafenCurrentDisplayMode = 1;
 }
+//typedef enum MednaSystem {lynx, neogeo, pce, pcfx, psx, saturn, vb, wswan };
 
-@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVSaturnSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -135,6 +119,9 @@ namespace MDFN_IEN_VB
     NSString *romName;
     double sampleRate;
     double masterClock;
+
+    BOOL isSS3DControlPadSupportedGame;
+
 
     NSString *mednafenCoreModule;
     NSTimeInterval mednafenCoreTiming;
@@ -215,54 +202,44 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
-	MDFNI_SetSettingB("psx.input.analog_mode_ct", true); // Enable Analog mode toggle
-		/*
-		 0x0001=SELECT
-		 0x0002=L3
-		 0x0004=R3
-		 0x0008=START
-		 0x0010=D-Pad UP
-		 0x0020=D-Pad Right
-		 0x0040=D-Pad Down
-		 0x0080=D-Pad Left
-		 0x0100=L2
-		 0x0200=R2
-		 0x0400=L1
-		 0x0800=R1
-		 0x1000=△
-		 0x2000=○
-		 0x4000=x
-		 0x8000=□
-		 */
-	// The buttons to press to toggle analog / digital mode (hold for couple seconds)
-	uint64 amct = ((1 << PSXMap[PVPSXButtonCircle]) |
-				   (1 << PSXMap[PVPSXButtonL1]) |
-                   (1 << PSXMap[PVPSXButtonL2]) |
-                   (1 << PSXMap[PVPSXButtonR1]) |
-				   (1 << PSXMap[PVPSXButtonR2]));
-	MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
-
 	// PCE Settings
 //	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
 //	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
 //												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
 //												 // Enable this option to reduce whining noise during ADPCM playback.
-//    MDFNI_SetSetting("pce.slstart", "4"); // PCE: First rendered scanline 4 default
-//    MDFNI_SetSetting("pce.slend", "235"); // PCE: Last rendered scanline 235 default, 239max
+//    MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
+//    MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 239max
 
 	// PCE_Fast settings
 
 	MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
 	MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
-//	MDFNI_SetSetting("pce_fast.slstart", "4"); // PCE: First rendered scanline
-//	MDFNI_SetSetting("pce_fast.slend", "235"); // PCE: Last rendered scanline
+//	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
+//	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
 
 	// PC-FX Settings
 	MDFNI_SetSetting("pcfx.cdspeed", "8"); // PCFX: Emulated CD-ROM speed. Setting the value higher than 2, the default, will decrease loading times in most games by some degree.
-//	MDFNI_SetSetting("pcfx.input.port1.multitap", "1"); // PCFX: EXPERIMENTAL emulation of the unreleased multitap. Enables ports 3 4 5.
+	MDFNI_SetSetting("pcfx.input.port1.multitap", "1"); // PCFX: EXPERIMENTAL emulation of the unreleased multitap. Enables ports 3 4 5.
 	MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
-	MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
-	MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
+	MDFNI_SetSetting("pcfx.slstart", "0"); // PCFX: First rendered scanline 4 default
+	MDFNI_SetSetting("pcfx.slend", "239"); // PCFX: Last rendered scanline 235 default, 239max
+
+	// FIXME:  "forget about multitap for now :)"
+    // Set multitap configuration if detected
+//    if (multiTapGames[[current ROMSerial]])
+//    {
+//        current->multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
+//
+//        if([multiTap5PlayerPort2 containsObject:[current ROMSerial]])
+//            MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+//        else
+//        {
+//            MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
+//            if(current->multiTapPlayerCount > 5)
+//                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+//        }
+//    }
+
 
 //	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
 //	MDFN_SaveSettings(cfgPath.UTF8String);
@@ -368,7 +345,7 @@ static void mednafen_init(MednafenGameCore* current)
 
 static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
-    
+
     static int16_t sound_buf[0x10000];
 	int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
     rects[0] = ~0;
@@ -387,7 +364,7 @@ static void emulation_run(BOOL skipFrame) {
     MDFNI_Emulate(&current->spec);
 
     current->mednafenCoreTiming = current->masterClock / current->spec.MasterCycles;
-    
+
     // Fix for game stutter. mednafenCoreTiming flutters on init before settling so
     // now we reset the game speed each frame to make sure current->gameInterval
     // is up to date while respecting the current game speed setting
@@ -421,10 +398,16 @@ static void emulation_run(BOOL skipFrame) {
 {
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
+
+    assert(_current);
+    mednafen_init(_current);
+
+    game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
+
     if([[self systemIdentifier] isEqualToString:@"com.provenance.lynx"])
     {
         self.systemType = MednaSystemLynx;
-        
+
         mednafenCoreModule = @"lynx";
         mednafenCoreAspect = OEIntSizeMake(80, 51);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
@@ -513,7 +496,7 @@ static void emulation_run(BOOL skipFrame) {
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pcfx"])
     {
         self.systemType = MednaSystemPCFX;
-        
+
         mednafenCoreModule = @"pcfx";
         mednafenCoreAspect = OEIntSizeMake(4, 3);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
@@ -547,20 +530,19 @@ static void emulation_run(BOOL skipFrame) {
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.saturn"])
+    {
+        self.systemType = MednaSystemSaturn;
+        
+        mednafenCoreModule = @"ss";
+        mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 44100;
+    }
     else
     {
         NSLog(@"MednafenGameCore loadFileAtPath: Incorrect systemIdentifier");
         assert(false);
     }
-
-    assert(_current);
-    mednafen_init(_current);
-
-    game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
-
-	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
-	// is this correct for EU, JP, US? Still testing.
-//	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 
     if(!game) {
         NSDictionary *userInfo = @{
@@ -600,8 +582,7 @@ static void emulation_run(BOOL skipFrame) {
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
-            // changing "dualshock" to "gampepad" ↓ to make games playable for now, until we can fix the analog input bugs
-            game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
         }
         
         // Multi-Disc check
@@ -615,24 +596,7 @@ static void emulation_run(BOOL skipFrame) {
         // PSX: Set multitap configuration if detected
 //        NSString *serial = [self romSerial];
 //        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
-//
-// FIXME:  "forget about multitap for now :)"
-		// Set multitap configuration if detected
-		//    if (multiTapGames[[current ROMSerial]])
-		//    {
-		//        current->multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
-		//
-		//        if([multiTap5PlayerPort2 containsObject:[current ROMSerial]])
-		//            MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-		//        else
-		//        {
-		//            MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
-		//            if(current->multiTapPlayerCount > 5)
-		//                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-		//        }
-		//    }
-
-
+//        
 //        if (multitapCount != nil)
 //        {
 //            multiTapPlayerCount = [multitapCount intValue];
@@ -679,6 +643,61 @@ static void emulation_run(BOOL skipFrame) {
             NSLog(@"Loaded m3u containing %lu cue sheets or ccd",numberOfMatches);
         }
     }
+    else if (self.systemType == MednaSystemSaturn) {
+
+//        NSString *hex = [self ROMHeader];
+//            NSUInteger len = hex.length;
+//
+//        // Ensure valid hex string
+//        if ((len % 2) != 0)
+//            return NO;
+//
+        // Convert header hex to ascii
+//        NSMutableString *ascii = [[NSMutableString alloc] init];
+//        for(int i=0; i< len; i+=2)
+//        {
+//            NSString *byte = [hex substringWithRange:NSMakeRange(i, 2)];
+//            unsigned char chr = strtol([byte UTF8String], nil, 16);
+//            [ascii appendFormat:@"%c", chr];
+//        }
+//
+//        // Extract serial from header
+//        NSString *serial = [ascii substringWithRange:NSMakeRange(32, 10)];
+//        serial = [serial stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+//        self.romSerial = serial;
+//
+//        // SS: Check if multiple discs required
+//        if (ssMultiDiscGames[[self ROMSerial]])
+//        {
+//            current->_isMultiDiscGame = YES;
+//            current->_multiDiscTotal = [[ssMultiDiscGames objectForKey:[current ROMSerial]] intValue];
+//        }
+//
+//        // SS: Set multitap configuration if detected
+//        if (ssMultiTapGames[[self ROMSerial]])
+//        {
+//            current->_multiTapPlayerCount = [[ssMultiTapGames objectForKey:[self ROMSerial]] intValue];
+//
+//            if(current->_multiTapPlayerCount < 8)
+//                // From the Sega Saturn 6 Player Multi-Player Adaptor manual:
+//                // 3-7 Player games
+//                MDFNI_SetSetting("ss.input.sport2.multitap", "1"); // Enable multitap on SS port 2
+//            else
+//            {
+//                // 8-12 Player games
+//                MDFNI_SetSetting("ss.input.sport1.multitap", "1"); // Enable multitap on SS port 1
+//                MDFNI_SetSetting("ss.input.sport2.multitap", "1"); // Enable multitap on SS port 2
+//            }
+//        }
+//
+//        // SS: Check if 3D Control Pad is supported
+//        // Some games e.g. 3D Lemmings (Europe) / (Japan) and Chaos Control (Japan) have compat issues,
+//        // even when in digital mode, so enable on a per-game basis.
+//        if ([ss3DControlPadGames containsObject:[current ROMSerial]])
+//        {
+//            current->_isSS3DControlPadSupportedGame = YES;
+//        }
+    }
     else
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
@@ -708,6 +727,7 @@ static void emulation_run(BOOL skipFrame) {
 		case MednaSystemSMS:
 		case MednaSystemNES:
 		case MednaSystemSNES:
+        case MednaSystemSaturn:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
@@ -740,6 +760,10 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemPSX:
             maxValue = PVPSXButtonCount;
             map = PSXMap;
+            break;
+        case MednaSystemSaturn:
+            maxValue = PVSaturnButtonCount;
+            map = SaturnMap;
             break;
         case MednaSystemNeoGeo:
             maxValue = PVNGPButtonCount;
@@ -774,13 +798,10 @@ static void emulation_run(BOOL skipFrame) {
             map = WSMap;
             break;
 		case MednaSystemGG:
-			return;
 			break;
 		case MednaSystemMD:
-			return;
 			break;
 		case MednaSystemSMS:
-			return;
 			break;
 	}
     
@@ -844,6 +865,14 @@ static void emulation_run(BOOL skipFrame) {
 
 - (void)resetEmulation
 {
+
+    if(self.systemType == MednaSystemSaturn) {
+        inputBuffer[12][0] = 1;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            inputBuffer[12][0] = 0;
+        });
+    }
+
     MDFNI_Reset();
 }
 
@@ -943,70 +972,18 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
 	if (game != nil ) {
-		BOOL success = MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
-		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
-
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotSaveState
-												userInfo:userInfo];
-
-			*error = newError;
-		}
-		return success;
+		return MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
 	} else {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state because no game is loaded.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
-
-		*error = newError;
-
 		return NO;
 	}
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
 	if (game != nil ) {
-    	BOOL success = MDFNI_LoadState(fileName.fileSystemRepresentation, "");
-		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
-
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
-
-			*error = newError;
-		}
-		return success;
+    	return MDFNI_LoadState(fileName.fileSystemRepresentation, "");
 	} else {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"No game loaded.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
-
-		*error = newError;
-
 		return NO;
 	}
 }
@@ -1066,6 +1043,27 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 }
 
 # pragma mark - Input -
+
+// Map OE button order to Mednafen button order
+
+const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
+
+// u, d, l, r, a, b, start, select
+const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
+
+// Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
+const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
+// start, A, B, C, Z, X, Y, dpad l, dpad d, dpad u, dpad r, left shoulder, right shoulder
+const int SaturnMap[]   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 3, 12, 11 };
+// dpad u, dpad d, dpad l, dpad r, B, Start, A, Z, Y, X, mode, C, analog right shoulder, analog left shoulder, analog u, analog l,
+const int Saturn3DMap[] = { 0, 1, 2, 3, 6, 4, 5, 10, 9, 8, 17, 7, 12, 11, 13, 14 };
+const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
+const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
+const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
+
+// SMS, GG and MD unused as of now. Mednafen support is not maintained
+const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
+
 
 #pragma mark Atari Lynx
 - (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
@@ -1268,6 +1266,48 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	}
 }
 
+#pragma MARK Saturn
+- (oneway void)didPushSaturnButton:(PVSaturnButton)button forPlayer:(NSUInteger)player
+{
+    if(isSS3DControlPadSupportedGame)
+    {
+        // Handle L and R when in digital mode
+        if (button == PVSaturnButtonAnalogL) [self didMoveSaturnJoystickDirection:PVSaturnButtonAnalogL withValue:1.0 forPlayer:player];
+        if (button == PVSaturnButtonAnalogR) [self didMoveSaturnJoystickDirection:PVSaturnButtonAnalogR withValue:1.0 forPlayer:player];
+        
+        if (button != PVSaturnButtonAnalogMode) // Check for mode toggle
+            inputBuffer[player-1][0] |= 1 << Saturn3DMap[button];
+        else
+            inputBuffer[player-1][0] ^= 1 << Saturn3DMap[button];
+    }
+    else
+        inputBuffer[player-1][0] |= 1 << SaturnMap[button];
+    
+}
+
+- (oneway void)didReleaseSaturnButton:(PVSaturnButton)button forPlayer:(NSUInteger)player
+{
+    if(isSS3DControlPadSupportedGame)
+    {
+        if (button == PVSaturnButtonAnalogL) [self didMoveSaturnJoystickDirection:PVSaturnButtonAnalogL withValue:0.0 forPlayer:player];
+        if (button == PVSaturnButtonAnalogR) [self didMoveSaturnJoystickDirection:PVSaturnButtonAnalogR withValue:0.0 forPlayer:player];
+        
+        if (button != PVSaturnButtonAnalogMode)
+            inputBuffer[player-1][0] &= ~(1 << Saturn3DMap[button]);
+    }
+    else
+        inputBuffer[player-1][0] &= ~(1 << SaturnMap[button]);
+}
+
+- (oneway void)didMoveSaturnJoystickDirection:(PVSaturnButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
+{
+    int analogNumber = Saturn3DMap[button] - 13;
+    
+    uint8_t *buf = (uint8_t *)inputBuffer[player-1];
+    MDFN_en16lsb(&buf[2 + analogNumber * 2], 32767 * value);
+    MDFN_en16lsb(&buf[2 + (analogNumber ^ 1) * 2], 0);
+}
+
 #pragma mark PSX
 - (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
 {
@@ -1373,6 +1413,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
         case MednaSystemPSX:
             return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            break;
+
+        case MednaSystemSaturn:
+            return [self SaturncontrollerValueForButtonID:buttonID forController:controller];
             break;
 
         case MednaSystemVirtualBoy:
@@ -2030,10 +2074,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[pad leftTrigger] isPressed];
             case PVPSXButtonR2:
                 return [[pad rightTrigger] isPressed];
-			case PVPSXButtonStart:
-				return self.isStartPressed;
-			case PVPSXButtonSelect:
-				return self.isSelectPressed;
+            case PVPSXButtonStart:
+                return self.isStartPressed;
+            case PVPSXButtonSelect:
+                return self.isSelectPressed;
             default:
                 break;
         }
@@ -2103,6 +2147,116 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
+- (NSInteger)SaturncontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *pad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case PVSaturnButtonUp:
+                return [[dpad up] isPressed];
+            case PVSaturnButtonDown:
+                return [[dpad down] isPressed];
+            case PVSaturnButtonLeft:
+                return [[dpad left] isPressed];
+            case PVSaturnButtonRight:
+                return [[dpad right] isPressed];
+            case PVSaturnButtonAnalogUp:
+                return [pad leftThumbstick].up.value;
+            case PVSaturnButtonAnalogDown:
+                return [pad leftThumbstick].down.value;
+            case PVSaturnButtonAnalogLeft:
+                return [pad leftThumbstick].left.value;
+            case PVSaturnButtonAnalogRight:
+                return [pad leftThumbstick].right.value;
+            case PVSaturnButtonX:
+                return [[pad buttonX] isPressed];
+            case PVSaturnButtonA:
+                return [[pad buttonA] isPressed];
+            case PVSaturnButtonB:
+                return [[pad buttonB] isPressed];
+            case PVSaturnButtonL:
+                return [[pad leftShoulder] isPressed];
+            case PVSaturnButtonY:
+                return [[pad buttonY] isPressed];
+            case PVSaturnButtonR:
+                return [[pad rightShoulder] isPressed];
+            case PVSaturnButtonZ:
+                return [[pad leftTrigger] isPressed];
+            case PVSaturnButtonC:
+                return [[pad rightTrigger] isPressed];
+            case PVSaturnButtonStart:
+                return self.isStartPressed;
+            case PVSaturnButtonAnalogMode:
+                return self.isSelectPressed;
+            default:
+                break;
+        }
+    }
+    else if ([controller gamepad])
+    {
+        GCGamepad *pad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case PVSaturnButtonUp:
+                return [[dpad up] isPressed];
+            case PVSaturnButtonDown:
+                return [[dpad down] isPressed];
+            case PVSaturnButtonLeft:
+                return [[dpad left] isPressed];
+            case PVSaturnButtonRight:
+                return [[dpad right] isPressed];
+            case PVSaturnButtonX:
+                return [[pad buttonX] isPressed];
+            case PVSaturnButtonA:
+                return [[pad buttonA] isPressed];
+            case PVSaturnButtonB:
+                return [[pad buttonB] isPressed];
+            case PVSaturnButtonL:
+                return [[pad leftShoulder] isPressed];
+            case PVSaturnButtonY:
+                return [[pad buttonY] isPressed];
+            case PVSaturnButtonR:
+                return [[pad rightShoulder] isPressed];
+            case PVSaturnButtonStart:
+                return self.isStartPressed;
+            case PVSaturnButtonAnalogMode:
+                return self.isSelectPressed;
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *pad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case PVSaturnButtonUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case PVSaturnButtonDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case PVSaturnButtonLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case PVSaturnButtonRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case PVSaturnButtonA:
+                return [[pad buttonA] isPressed];
+                break;
+            case PVSaturnButtonX:
+                return [[pad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+    return 0;
+}
 - (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
@@ -2134,9 +2288,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVVBButtonR:
                 return [[pad rightShoulder] isPressed];
             case PVVBButtonStart:
-                return [[pad rightTrigger] isPressed];
-            case PVVBButtonSelect:
                 return [[pad leftTrigger] isPressed];
+            case PVVBButtonSelect:
+                return [[pad rightTrigger] isPressed];
             default:
                 break;
         }
@@ -2163,9 +2317,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVVBButtonR:
                 return [[pad rightShoulder] isPressed];
             case PVVBButtonStart:
-                return [[pad buttonY] isPressed];
-            case PVVBButtonSelect:
                 return [[pad buttonX] isPressed];
+            case PVVBButtonSelect:
+                return [[pad buttonY] isPressed];
             default:
                 break;
         }
@@ -2235,7 +2389,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonB:
                 return [[pad buttonA] isPressed];
             case PVWSButtonStart:
-                return [[pad rightShoulder] isPressed];
+                return [[pad buttonB] isPressed];
             case PVWSButtonSound:
                 return [[pad leftShoulder] isPressed];
             default:
@@ -2260,7 +2414,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonB:
                 return [[pad buttonA] isPressed];
             case PVWSButtonStart:
-                return [[pad rightShoulder] isPressed];
+                return [[pad buttonB] isPressed];
             case PVWSButtonSound:
                 return [[pad leftShoulder] isPressed];
             default:
@@ -2378,6 +2532,23 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 //
 //}
 
+- (BOOL)supportsDiskSwapping {
+    switch (self.systemType) {
+        case MednaSystemSaturn:
+        case MednaSystemNeoGeo:
+        case MednaSystemLynx:
+        case MednaSystemPCE:
+        case MednaSystemPCFX:
+        case MednaSystemVirtualBoy:
+        case MednaSystemWonderSwan:
+            break;
+        //case MednaSystemSaturn:
+        case MednaSystemPSX:
+            NSNumber *discCount = [MednafenGameCore multiDiscPSXGames][self.romSerial];
+            return [discCount boolValue] > 1;
+        }
+    return NO;
+}
 @end
 
 // -- Sanity checks
@@ -2423,5 +2594,5 @@ static_assert(sizeof(void*) == SIZEOF_VOID_P, "unexpected size");
 static_assert(sizeof(double) == SIZEOF_DOUBLE, "unexpected size");
 
 // Make sure the "char" type is signed(pass -fsigned-char to gcc).  New code in Mednafen shouldn't be written with the
-// assumption that "char" is signed, but there likely is at least some code that does.
+// assumption that "char" is signed, but there likely is at least some code that d    s.
 static_assert((char)255 == -1, "char type is not signed 8-bit");

@@ -37,9 +37,7 @@ extension WebServerActivatorController where Self:PVSettingsViewController {
 		alert.view.addSubview(ipField)
 		alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
 			PVWebServer.shared.stopServers()
-			self.importLabel.text = "Web server: OFF"
 		}))
-
 		if #available(iOS 9.0, *) {
 			let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 				self.showServer()
@@ -98,7 +96,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
 				}
 			} else {
 				// Display error
-				let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
 				alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 				}))
 				present(alert, animated: true) {() -> Void in }

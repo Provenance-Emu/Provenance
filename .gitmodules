@@ -13,3 +13,9 @@
 [submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
 	path = PVMupen64Plus/Plugins/mupen64plus-video-rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
+[submodule "PVYabause/lodepng"]
+	path = PVYabause/lodepng
+	url = https://github.com/b23prodtm/lodepng.git
+[submodule "PVYabause/emulator/yabause"]
+	path = PVYabause/emulator/yabause
+	url = https://github.com/b23prodtm/yabause.git

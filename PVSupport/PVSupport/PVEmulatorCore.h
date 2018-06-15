@@ -50,6 +50,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 	
 	NSTimeInterval gameInterval;
 	NSTimeInterval _frameInterval;
+
+    BOOL isRunning;
     BOOL shouldStop;
 }
 
@@ -59,7 +61,6 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property(weak)     id<PVAudioDelegate>    audioDelegate;
 @property(weak)     id<PVRenderDelegate>   renderDelegate;
 
-@property (nonatomic, assign, readonly) BOOL isRunning;
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *saveStatesPath;
 @property (nonatomic, copy) NSString *batterySavesPath;
@@ -106,7 +107,7 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)stopEmulation;
 - (void)frameRefreshThread:(id)anArgument;
 - (void)executeFrame;
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error;
 - (void)updateControllers;
 
 - (const void *)videoBuffer;
@@ -130,7 +131,10 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
-- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
+- (void)loadSaveFile:(NSString *)path forType:(int)type;
+- (void)writeSaveFile:(NSString *)path forType:(int)type;
+
+- (BOOL)saveStateToFileAtPath:(NSString *)path;
+- (BOOL)loadStateFromFileAtPath:(NSString *)path;
 
 @end

@@ -28,9 +28,6 @@
 #include "MD5.hxx"
 #include "SoundSDL.hxx"
 #include "Paddles.hxx"
-#include "System.hxx"
-#include "M6532.hxx"
-
 
 struct					Stella
 {
@@ -256,21 +253,7 @@ bool stella_retro_load_game_special(unsigned game_type, const struct stella_retr
 
 void stella_retro_unload_game(void)
 {
-//	if (stella->GameConsole)
-//	{
-//		delete stella->GameConsole;
-//		stella->GameConsole = 0;
-//	}
-//	else if (cartridge)
-//	{
-//		delete cartridge;
-//		cartridge = 0;
-//	}
-//	if (stella->GameSettings)
-//	{
-//		delete stella->GameSettings;
-//		stella->GameSettings = 0;
-//	}
+
 }
 
 unsigned stella_retro_get_region(void)
@@ -286,20 +269,12 @@ unsigned stella_retro_api_version(void)
 
 void *stella_retro_get_memory_data(unsigned id)
 {
-	switch (id)
-	{
-		case RETRO_MEMORY_SYSTEM_RAM: return stella->GameConsole->system().m6532().getRAM();
-		default: return NULL;
-	}
+    return NULL;
 }
 
 size_t stella_retro_get_memory_size(unsigned id)
 {
-	switch (id)
-	{
-		case RETRO_MEMORY_SYSTEM_RAM: return 128;
-		default: return 0;
-	}
+    return 0;
 }
 
 void stella_retro_init(void)

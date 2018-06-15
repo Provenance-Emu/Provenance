@@ -126,7 +126,7 @@ __weak static ATR800GameCore * _currentCore;
     return self.BIOSPath;
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     // Set the default palette (NTSC)
     NSString *palettePath = [[[NSBundle bundleForClass:[self class]] resourcePath] stringByAppendingPathComponent:@"Default.act"];
@@ -353,22 +353,8 @@ __weak static ATR800GameCore * _currentCore;
 }
 
 #pragma mark - Save States
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
-    BOOL success = StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"ATR800 failed to create save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-	return success;
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+    return StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
@@ -377,22 +363,8 @@ __weak static ATR800GameCore * _currentCore;
     if(block) block(success==YES, nil);
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
-    BOOL success = StateSav_ReadAtariState([fileName UTF8String], "rb");
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-	return success;
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+    return StateSav_ReadAtariState([fileName UTF8String], "rb");
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block

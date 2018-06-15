@@ -8,7 +8,19 @@
 import Foundation
 
 import PVSupport
-
+import PVGenesis
+import PVSNES
+import PVGBA
+import PVGB
+import PVFCEU
+import PVStella
+import PVRSPCXD4
+import PVMednafen
+import PVPokeMini
+import PVMupen64Plus
+import PicoDrive
+import ProSystem
+import PVYabause
 //extension PVSystem {
 //    var responderClassType : AnyClass {
 //        guard let responderClassHandle = NSClassFromString(self.responderClass) else {
@@ -26,13 +38,45 @@ extension PVCore {
             return nil
         }
 
-        let emuCore = coreClass.init()
+        var core = coreClass.init()
+        switch system.enumValue {
+            case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
+                core = PVGenesisEmulatorCore()
+            case .SNES:
+                core = PVSNESEmulatorCore()
+            case .GBA:
+                core = PVGBAEmulatorCore()
+            case .GB, .GBC:
+                core = PVGBEmulatorCore()
+            case .NES, .FDS:
+                //core = PVNESEmulatorCore()
+                break
+            case .Atari2600:
+                core = PVStellaGameCore()
+            case .Atari5200:
+                //core = ATR800GameCore()
+                break
+            case .Atari7800:
+                core = PVProSystemGameCore()
+            case .Sega32X:
+                core = PicodriveGameCore()
+            case .PokemonMini:
+                core = PVPokeMiniEmulatorCore()
+            case .PSX, .Lynx, .PCE, .PCECD, .NGP, .NGPC, .PCFX, .SGFX, .VirtualBoy, .WonderSwan, .WonderSwanColor:
+                core = MednafenGameCore()
+            case .N64:
+                core = MupenGameCore()
+            case .Saturn:
+                core = PVYabauseGameCore()
+            default:
+                break
+        }
 
-        DLOG("Created core : <\(emuCore.debugDescription)>")
+        DLOG("Created core : <\(core.debugDescription)>")
 
-        emuCore.systemIdentifier = system.identifier
-		emuCore.coreIdentifier = self.identifier
-        return emuCore
+        core.systemIdentifier = system.identifier
+		core.coreIdentifier = self.identifier
+        return core
     }
 }
 
@@ -108,6 +152,12 @@ public final class PVCoreFactory: NSObject {
                 return PVPSXControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVPSXSystemResponderClient")
+            }
+        case .Saturn:
+            if let core = core as? PVSaturnSystemResponderClient {
+                return PVSaturnControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't impliment PVSaturnSystemResponderClient")
             }
         case .Lynx:
             if let core = core as? PVLynxSystemResponderClient {

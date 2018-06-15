@@ -80,7 +80,7 @@ public typealias PVGameImporterCompletionHandler = (_ encounteredConflicts: Bool
 public typealias PVGameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
 public typealias PVGameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
 
-public final class PVGameImporter {
+public class PVGameImporter {
 
     public var importStartedHandler: PVGameImporterImportStartedHandler?
     public var completionHandler: PVGameImporterCompletionHandler?
@@ -88,25 +88,23 @@ public final class PVGameImporter {
     public var finishedArtworkHandler: PVGameImporterFinishedGettingArtworkHandler?
     public private(set) var encounteredConflicts = false
 
-	static let shared: PVGameImporter = PVGameImporter()
+    let workQueue : OperationQueue = {
+      let q = OperationQueue()
+      q.name = "romImporterWorkQueue"
+      q.maxConcurrentOperationCount = 3
 
-	let workQueue : OperationQueue = {
-		let q = OperationQueue()
-		q.name = "romImporterWorkQueue"
-		q.maxConcurrentOperationCount = 3
+      return q
+    }()
 
-		return q
-	}()
+    public private(set) var serialImportQueue: OperationQueue = {
+      let queue = OperationQueue()
+      queue.name = "com.provenance-emu.provenance.serialImportQueue"
+      queue.maxConcurrentOperationCount = 1
+      return queue
+    }()
 
-	public private(set) var serialImportQueue: OperationQueue = {
-		let queue = OperationQueue()
-		queue.name = "com.provenance-emu.provenance.serialImportQueue"
-		queue.maxConcurrentOperationCount = 1
-		return queue
-	}()
-
-    public private(set) lazy var systemToPathMap = [String: URL]()
-    public private(set) lazy var romExtensionToSystemsMap = [String: [String]]()
+    public private(set) var systemToPathMap = [String: URL]()
+    public private(set) var romExtensionToSystemsMap = [String: [String]]()
 
     // MARK: - Paths
     let documentsPath: URL = PVEmulatorConfiguration.documentsPath
@@ -139,11 +137,10 @@ public final class PVGameImporter {
     }
 
     var notificationToken: NotificationToken?
-	public let initialized = DispatchGroup()
 
-    required public init() {
+    required public init(completionHandler: PVGameImporterCompletionHandler?) {
 
-		initialized.enter()
+        self.completionHandler = completionHandler
 
         let systems = PVSystem.all
 
@@ -153,11 +150,10 @@ public final class PVGameImporter {
             case .initial:
                 // Results are now populated and can be accessed without blocking the UI
                 self.systemToPathMap = self.updateSystemToPathMap()
-				self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
-				self.initialized.leave()
-			case .update:
+                self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
+            case .update:
                 self.systemToPathMap = self.updateSystemToPathMap()
-				self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
+                self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -187,19 +183,6 @@ public final class PVGameImporter {
     }
 
     func importFiles(atPaths paths: [URL]) -> [URL] {
-		// If directory, map out sub directories if folder
-		let paths : [URL] = paths.compactMap { (url) -> [URL]? in
-			if #available(iOS 9.0, *) {
-				if url.hasDirectoryPath {
-					return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-				} else {
-					return [url]
-				}
-			} else {
-				// Fallback on earlier versions
-				return [url]
-			}
-		}.joined().map { $0 }
 
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
 
@@ -619,23 +602,11 @@ public extension PVGameImporter {
         return filteredGames.isEmpty ? nil : Array(filteredGames)
     }
 
+
+
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: PVSystem? = nil) {
         let database = RomDatabase.sharedInstance
         database.refresh()
-
-		// If directory, map out sub directories if folder
-		let paths : [URL] = paths.compactMap { (url) -> [URL]? in
-			if #available(iOS 9.0, *) {
-				if url.hasDirectoryPath {
-					return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-				} else {
-					return [url]
-				}
-			} else {
-				// Fallback on earlier versions
-				return [url]
-			}
-		}.joined().map { $0 }
 
         paths.forEach { (path) in
 			// Needs to be in loop, can't double resolve a ref
@@ -669,35 +640,10 @@ public extension PVGameImporter {
 		} else {
 			isDirectory = (try? path.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
 		}
-		if path.lastPathComponent.hasPrefix(".") {
+		if path.lastPathComponent.hasPrefix(".") || isDirectory {
 			VLOG("Skipping file with . as first character or it's a directory")
 			return
 		}
-
-		// Handle folders, but only if no system ref was chosen (incase of CD folders)
-		if isDirectory {
-			if chosenSystemRef == nil {
-				do {
-					let subContents = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-					if subContents.isEmpty {
-						// delete empty folders
-						try FileManager.default.removeItem(at: path)
-						ILOG("Deleted empty import folder \(path.path)")
-					} else {
-						ILOG("Found non-empty folder in improts dir. Will iterate subcontents for import")
-						subContents.forEach { subFile in
-							self.workQueue.addOperation {
-								self._handlePath(path: subFile, userChosenSystem: nil)
-							}
-						}
-					}
-
-				} catch {
-					ELOG("\(error)")
-				}
-			}
-		}
-
 		autoreleasepool {
 			var systemsMaybe: [PVSystem]? = nil
 
@@ -810,7 +756,7 @@ public extension PVGameImporter {
 
     // MARK: - ROM Lookup
 
-	public func lookupInfo(for game: PVGame, overwrite: Bool = true) {
+    public func lookupInfo(for game: PVGame) {
         let database = RomDatabase.sharedInstance
         database.refresh()
         if game.md5Hash.isEmpty {
@@ -843,8 +789,8 @@ public extension PVGameImporter {
             ELOG("\(error.localizedDescription)")
         }
 
-		if resultsMaybe == nil || resultsMaybe!.isEmpty, PVEmulatorConfiguration.supportedROMFileExtensions.contains(game.file.url.pathExtension.lowercased()) {
-			let fileName: String = game.file.url.lastPathComponent
+        if resultsMaybe == nil || resultsMaybe!.isEmpty {
+            let fileName: String = URL(fileURLWithPath: game.romPath, isDirectory: true).lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
 
             let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: PVGameImporter.charset)
@@ -917,61 +863,62 @@ public extension PVGameImporter {
                      serial
                  */
 
-                if let title = chosenResult["gameTitle"] as? String, !title.isEmpty, overwrite || game.title.isEmpty {
+                if let title = chosenResult["gameTitle"] as? String, !title.isEmpty {
                     // Remove just (Disc 1) from the title. Discs with other numbers will retain their names
                     let revisedTitle = title.replacingOccurrences(of: "\\ \\(Disc 1\\)", with: "", options: .regularExpression)
+
                     game.title = revisedTitle
                 }
 
-                if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty, overwrite || game.originalArtworkURL.isEmpty {
+                if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty {
                     game.originalArtworkURL = boxImageURL
                 }
 
-                if let regionName = chosenResult["region"] as? String, !regionName.isEmpty, overwrite || game.regionName == nil {
+                if let regionName = chosenResult["region"] as? String, !regionName.isEmpty {
                     game.regionName = regionName
                 }
 
-				if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID == nil {
+				if let regionID = chosenResult["regionID"] as? Int {
 					game.regionID = regionID
 				}
 
-                if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
+                if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty {
                     game.gameDescription = gameDescription
                 }
 
-                if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {
+                if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty {
                     game.boxBackArtworkURL = boxBackURL
                 }
 
-                if let developer = chosenResult["developer"] as? String, !developer.isEmpty, overwrite || game.developer == nil {
+                if let developer = chosenResult["developer"] as? String, !developer.isEmpty {
                     game.developer = developer
                 }
 
-                if let publisher = chosenResult["publisher"] as? String, !publisher.isEmpty, overwrite || game.publisher == nil {
+                if let publisher = chosenResult["publisher"] as? String, !publisher.isEmpty {
                     game.publisher = publisher
                 }
 
-                if let genres = chosenResult["genres"] as? String, !genres.isEmpty, overwrite || game.genres == nil {
+                if let genres = chosenResult["genres"] as? String, !genres.isEmpty {
                     game.genres = genres
                 }
 
-                if let releaseDate = chosenResult["releaseDate"] as? String, !releaseDate.isEmpty, overwrite || game.publishDate == nil {
+                if let releaseDate = chosenResult["releaseDate"] as? String, !releaseDate.isEmpty {
                     game.publishDate = releaseDate
                 }
 
-                if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty, overwrite || game.referenceURL == nil {
+                if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty {
                     game.referenceURL = referenceURL
                 }
 
-                if let releaseID = chosenResult["releaseID"] as? NSNumber, !releaseID.stringValue.isEmpty, overwrite || game.releaseID == nil {
-                    game.releaseID = releaseID.stringValue
+                if let releaseID = chosenResult["releaseID"] as? String, !releaseID.isEmpty {
+                    game.releaseID = releaseID
                 }
 
-                if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty, overwrite || game.systemShortName == nil {
+                if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty {
                     game.systemShortName = systemShortName
                 }
 
-                if let romSerial = chosenResult["serial"] as? String, !romSerial.isEmpty, overwrite || game.romSerial == nil {
+                if let romSerial = chosenResult["serial"] as? String, !romSerial.isEmpty {
                     game.romSerial = romSerial
                 }
             }
@@ -988,6 +935,7 @@ public extension PVGameImporter {
         let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName', systemID as 'systemID' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
 
         let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
+
 
         let queryString: String
         if key == "romFileName", let systemID = systemID {
@@ -1152,7 +1100,7 @@ extension PVGameImporter {
                     self.importStartedHandler?(fullpath.path)
                 })
             }
-            lookupInfo(for: game, overwrite: true)
+            lookupInfo(for: game)
             modified = true
         }
 
@@ -1232,6 +1180,7 @@ extension PVGameImporter {
     func moveROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> URL? {
 
         let filePath = candidateFile.filePath
+        var newPath: URL? = nil
         var subfolderPathMaybe: URL? = nil
 
         var systemID: String? = nil
@@ -1323,7 +1272,7 @@ extension PVGameImporter {
 		// check by md5
 		let fileMD5 = candidateFile.md5?.uppercased()
 
-		if let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5 ?? ""), let gotit = searchResults?.first,
+		if let gotit = try! self.searchDatabase(usingKey: "romHashMD5", value: fileMD5 ?? "")?.first,
 			let sid : Int = gotit["systemID"] as? Int,
 			let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
 			let subfolderPath = self.path(forSystemID: system.identifier),

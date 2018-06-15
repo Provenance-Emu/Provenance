@@ -1,9 +1,0 @@
-
-xcodeproj 'TextXcodeColors'
-workspace '../../Demos'
-
-target :'TextXcodeColors' do
-  platform :ios, '5.0'
-  pod 'CocoaLumberjack', :path => '../../../'
-end
-

@@ -242,43 +242,15 @@
 
 #pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
-    BOOL success = prosystem_Save(fileName.fileSystemRepresentation, false);
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-	return success;
+- (void)saveStateToFileAtPath:(NSString *)fileName {
+    prosystem_Save(fileName.fileSystemRepresentation, false);
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError *__autoreleasing *)error  {
-    BOOL success = prosystem_Load(fileName.fileSystemRepresentation);
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-	return success;
+- (void)loadStateFromFileAtPath:(NSString *)fileName  {
+    prosystem_Load(fileName.fileSystemRepresentation);
 }
 
-- (NSData *)serializeStateWithError:(NSError *__autoreleasing *)outError {
+- (NSData *)serializeStateWithError:(NSError **)outError {
     size_t length = cartridge_type == CARTRIDGE_TYPE_SUPERCART_RAM ? 32837 : 16453;
     void *bytes = malloc(length);
 
@@ -295,7 +267,7 @@
     return nil;
 }
 
-- (BOOL)deserializeState:(NSData *)state withError:(NSError *__autoreleasing *)outError {
+- (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError {
     size_t serial_size = cartridge_type == CARTRIDGE_TYPE_SUPERCART_RAM ? 32837 : 16453;
     if(serial_size != [state length]) {
         if(outError) {

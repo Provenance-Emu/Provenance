@@ -7,7 +7,6 @@
 //
 
 #import "NSObject+PVAbstractAdditions.h"
-#import "PVLogging.h"
 
 @implementation NSObject (PVAbstractAdditions)
 
@@ -27,12 +26,12 @@
 
 + (void)doesNotImplementOptionalSelector:(SEL)aSel
 {
-    ELOG(@"*** +%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
+    DLog(@"*** +%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
 }
 
 - (void)doesNotImplementOptionalSelector:(SEL)aSel
 {
-    ELOG(@"*** -%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
+    DLog(@"*** -%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
 }
 
 

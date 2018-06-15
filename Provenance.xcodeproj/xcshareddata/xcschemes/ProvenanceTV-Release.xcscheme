@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "0940"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -256,6 +256,20 @@
                BuildableName = "Provenance.app"
                BlueprintName = "ProvenanceTV"
                ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "337DD3D320A49BC00014EDF7"
+               BuildableName = "PVYabause.framework"
+               BlueprintName = "PVYabause tvOS"
+               ReferencedContainer = "container:PVYabause/PVYabause.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

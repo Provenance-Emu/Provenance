@@ -10,7 +10,6 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
-#import "PVLogging.h"
 #import <AVFoundation/AVFoundation.h>
 
 /* Timing */
@@ -33,7 +32,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 @interface PVEmulatorCore()
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
-@property (nonatomic, assign, readwrite) BOOL isRunning;
 @end
 
 @implementation PVEmulatorCore
@@ -88,12 +86,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 {
 	if ([self class] != PVEmulatorCoreClass)
     {
-		if (!_isRunning)
+		if (!isRunning)
 		{
 #if !TARGET_OS_TV
 			[self setPreferredSampleRate:[self audioSampleRate]];
 #endif
-			self.isRunning  = YES;
+			isRunning  = YES;
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
             [NSThread detachNewThreadSelector:@selector(emulationLoopThread) toTarget:self withObject:nil];
@@ -118,23 +116,23 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 {
     if (flag)
 	{
-		self.isRunning = NO;
+		isRunning = NO;
 	}
     else
 	{
-		self.isRunning = YES;
+		isRunning = YES;
 	}
 }
 
 - (BOOL)isEmulationPaused
 {
-	return !_isRunning;
+    return !isRunning;
 }
 
 - (void)stopEmulation
 {
 	shouldStop = YES;
-	self.isRunning  = NO;
+    isRunning  = NO;
 
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
@@ -173,7 +171,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         [self updateControllers];
         
         @synchronized (self) {
-			if (_isRunning) {
+            if (isRunning) {
                 if (self.isSpeedModified)
                 {
                     [self executeFrame];
@@ -315,7 +313,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     return NO;
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     return [self loadFileAtPath:path];
 }
@@ -414,7 +412,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 		return [self channelCount];
 	}
 	
-	ELOG(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
+	DLog(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
 	[self doesNotImplementSelector:_cmd];
 	
 	return 0;
@@ -437,7 +435,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 		return [self audioSampleRate];
 	}
 	
-    ELOG(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
+    DLog(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
     [self doesNotImplementSelector:_cmd];
     return 0;
 }
@@ -458,20 +456,26 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 #pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+- (BOOL)saveStateToFileAtPath:(NSString *)path
 {
 	[self doesNotImplementSelector:_cmd];
 	return NO;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError**)error
+- (BOOL)loadStateFromFileAtPath:(NSString *)path
 {
 	[self doesNotImplementSelector:_cmd];
 	return NO;
 }
 
--(BOOL)supportsSaveStates {
-	return YES;
+- (void)loadSaveFile:(NSString *)path forType:(int)type
+{
+	[self doesNotImplementSelector:_cmd];
+}
+
+- (void)writeSaveFile:(NSString *)path forType:(int)type
+{
+	[self doesNotImplementSelector:_cmd];
 }
 
 @end

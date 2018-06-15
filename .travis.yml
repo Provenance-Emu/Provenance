@@ -5,11 +5,6 @@ xcode_scheme: Provenance-Release
 language: objective-c
 osx_image: xcode9.3
 
-cache:
-  directories:
-  - Carthage
-  - PVSupport/Carthage
-
 # branches:
 #   only:
 #     - develop
@@ -22,7 +17,7 @@ env:
     - WORKSPACE_NAME="Provenance.xcworkspace"
     - PROJECT_NAME="Provenance.xcodeproj"
     - SCHEME_IOS_APP="Provenance"
-    - SCHEME_TVOS_APP="Provenance-TV"
+    - SCHEME_TVOS_APP="ProvenanceTV"
     - IOS_PLATFORM="iOS Simulator"
     - TVOS_PLATFORM="tvOS Simulator"
     - IOS_SDK=iphonesimulator11.3
@@ -31,29 +26,18 @@ env:
     - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_APP" SDK="$IOS_SDK"
     - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
 before_install:
-  # - gem install xcpretty -N
-  - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
+  - gem install xcpretty -N
   - brew update
-  - brew outdated swiftlint || brew upgrade swiftlint
-  - brew outdated carthage || brew upgrade carthage
-before_script:
-  # bootstrap the dependencies for the project
-    - cd PVSupport
-    - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
-    - carthage bootstrap --verbose --no-use-binaries --platform tvOS --cache-builds
-    - cd ..
+  - brew install swiftlint || true
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
-  # Test code covered, add -enableCodeCoverage YES to xcodebuild
-  #- sleep 5
-  #- bash <(curl -s https://codecov.io/bash)
 after_failure:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 script:
   - set -o pipefail
+  - xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO | xcpretty -c
   - swiftlint
-  - xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`

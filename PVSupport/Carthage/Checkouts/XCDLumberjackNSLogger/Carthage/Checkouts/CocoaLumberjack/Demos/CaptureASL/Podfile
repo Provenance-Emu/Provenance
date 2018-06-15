@@ -1,9 +1,0 @@
-
-xcodeproj 'CaptureASL'
-workspace '../Demos'
-
-target :'CaptureASL' do
-  platform :ios, '5.0'
-  pod 'CocoaLumberjack', :path => '../../'
-end
-

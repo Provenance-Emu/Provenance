@@ -212,22 +212,12 @@ public struct SyncConfiguration {
      */
     public let isPartial: Bool
 
-    /**
-     The prefix that is prepended to the path in the HTTP request
-     that initiates a sync connection. The value specified must match with the server's expectation.
-     Changing the value of `urlPrefix` should be matched with a corresponding
-     change of the server's configuration.
-     If no value is specified here then the default `/realm-sync` path is used.
-     */
-    public let urlPrefix: String?
-
     internal init(config: RLMSyncConfiguration) {
         self.user = config.user
         self.realmURL = config.realmURL
         self.stopPolicy = config.stopPolicy
         self.enableSSLValidation = config.enableSSLValidation
         self.isPartial = config.isPartial
-        self.urlPrefix = config.urlPrefix
     }
 
     func asConfig() -> RLMSyncConfiguration {
@@ -235,7 +225,6 @@ public struct SyncConfiguration {
         config.stopPolicy = stopPolicy
         config.enableSSLValidation = enableSSLValidation
         config.isPartial = isPartial
-        config.urlPrefix = urlPrefix
         return config
     }
 
@@ -253,13 +242,12 @@ public struct SyncConfiguration {
 
      - warning: NEVER disable SSL validation for a system running in production.
      */
-    public init(user: SyncUser, realmURL: URL, enableSSLValidation: Bool = true, isPartial: Bool = false, urlPrefix: String? = nil) {
+    public init(user: SyncUser, realmURL: URL, enableSSLValidation: Bool = true, isPartial: Bool = false) {
         self.user = user
         self.realmURL = realmURL
         self.stopPolicy = .afterChangesUploaded
         self.enableSSLValidation = enableSSLValidation
         self.isPartial = isPartial
-        self.urlPrefix = urlPrefix
     }
 
     /**
@@ -285,7 +273,6 @@ public struct SyncConfiguration {
 
 /// A `SyncCredentials` represents data that uniquely identifies a Realm Object Server user.
 public struct SyncCredentials {
-    /// An account token serialized as a string
     public typealias Token = String
 
     internal var token: Token
@@ -640,7 +627,6 @@ extension Realm {
 
      -warning: Partial synchronization is a tech preview. Its APIs are subject to change.
      */
-    @available(*, deprecated, message: "Use Results.subscribe()")
     public func subscribe<T: Object>(to objects: T.Type, where: String,
                                      completion: @escaping (Results<T>?, Swift.Error?) -> Void) {
         rlmRealm.subscribe(toObjects: objects, where: `where`) { (results, error) in

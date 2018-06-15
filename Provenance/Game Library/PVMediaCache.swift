@@ -24,17 +24,7 @@ public enum MediaCacheError: Error {
 }
 
 public class PVMediaCache: NSObject {
-
-	static let memCache : NSCache<NSString, UIImage> = {
-		let cache = NSCache<NSString, UIImage>()
-		return cache
-	}()
-
-	private var operationQueue: OperationQueue = {
-		let queue = OperationQueue() // Was this meant to be a serial queue?
-		queue.qualityOfService = .userInitiated
-		return queue
-	}()
+    private var operationQueue: OperationQueue = OperationQueue() // Was this meant to be a serial queue?
 
 // MARK: - Object life cycle
     static var _sharedInstance: PVMediaCache = PVMediaCache()
@@ -121,8 +111,6 @@ public class PVMediaCache: NSObject {
         let keyHash: String = key.md5Hash()
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
-		memCache.removeObject(forKey: keyHash as NSString)
-
         if FileManager.default.fileExists(atPath: cachePath.path) {
             do {
                 try FileManager.default.removeItem(at: cachePath)
@@ -137,22 +125,18 @@ public class PVMediaCache: NSObject {
     public class func empty() throws {
         DLOG("Emptying Cache")
 
-		DispatchQueue.global(qos: .background).async {
-			let cachePath = self.cachePath.path
-			if FileManager.default.fileExists(atPath: cachePath) {
-				try? FileManager.default.removeItem(atPath: cachePath)
-			}
+        let cachePath = self.cachePath.path
+        if FileManager.default.fileExists(atPath: cachePath) {
+            try? FileManager.default.removeItem(atPath: cachePath)
+        }
 
-			memCache.removeAllObjects()
-			ILOG("Cache emptied")
-			NotificationCenter.default.post(name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
-		}
+        NotificationCenter.default.post(name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
     }
 
     @discardableResult
-	public func image(forKey key: String, completion: ((_ key: String, _ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
+    public func image(forKey key: String, completion: ((_ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
         if key.isEmpty {
-            completion?(key, nil)
+            completion?(nil)
             return nil
         }
 
@@ -163,18 +147,12 @@ public class PVMediaCache: NSObject {
             let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
 
             var image: UIImage? = nil
-			image = PVMediaCache.memCache.object(forKey: keyHash as NSString)
-
-			if image == nil, FileManager.default.fileExists(atPath: cachePath) {
+            if FileManager.default.fileExists(atPath: cachePath) {
                 image = UIImage(contentsOfFile: cachePath)
-
-				if let image = image {
-					PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString)
-				}
             }
 
             DispatchQueue.main.async(execute: {() -> Void in
-                completion?(key, image)
+                completion?(image)
             })
         })
 
