@@ -186,7 +186,6 @@
 		B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
 		B30670E720C2A03C002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E620C2A03B002ECE63 /* HockeySDK.framework */; };
 		B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E620C2A03B002ECE63 /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B30670EB20C2A047002ECE63 /* HockeySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E920C2A047002ECE63 /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3081C092080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B3081C0A2080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -604,9 +603,7 @@
 		B3995E54205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
 		B3995E55205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
 		B3A2876B20C77C9500B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; };
-		B3A2876C20C77C9500B4B2E3 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A2876D20C77C9500B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; };
-		B3A2876E20C77C9500B4B2E3 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A2876F20C77D0D00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; };
 		B3A2877020C77D0D00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; };
 		B3A2877320C787B100B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
@@ -735,15 +732,10 @@
 		B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3E708AF20B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AA20B7EB29005BAA5A /* CocoaLumberjackSwift.framework */; };
-		B3E708B020B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AA20B7EB29005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708B120B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AB20B7EB29005BAA5A /* XCDLumberjackNSLogger.framework */; };
-		B3E708B220B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AB20B7EB29005BAA5A /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708B320B7EB2B005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AC20B7EB2A005BAA5A /* NSLoggerSwift.framework */; };
-		B3E708B420B7EB2B005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AC20B7EB2A005BAA5A /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708B520B7EB2B005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */; };
-		B3E708B620B7EB2B005BAA5A /* NSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708B720B7EB2B005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */; };
-		B3E708B820B7EB2B005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708BE20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */; };
 		B3E708BF20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708C020B7EB45005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BA20B7EB43005BAA5A /* NSLogger.framework */; };
@@ -765,17 +757,11 @@
 		B3F3CF7D20C90E8200F313E5 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7C20C90E8200F313E5 /* SwiftyUserDefaults.framework */; };
 		B3F3CF7E20C90E8200F313E5 /* SwiftyUserDefaults.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7C20C90E8200F313E5 /* SwiftyUserDefaults.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8020C90E9000F313E5 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7F20C90E8F00F313E5 /* SwiftyUserDefaults.framework */; };
-		B3F3CF8120C90E9000F313E5 /* SwiftyUserDefaults.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7F20C90E8F00F313E5 /* SwiftyUserDefaults.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8720C90EC500F313E5 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8220C90EC200F313E5 /* ZIPFoundation.framework */; };
-		B3F3CF8820C90EC500F313E5 /* ZIPFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8220C90EC200F313E5 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8920C90EC500F313E5 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8320C90EC200F313E5 /* XLActionController.framework */; };
-		B3F3CF8A20C90EC500F313E5 /* XLActionController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8320C90EC200F313E5 /* XLActionController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8B20C90EC500F313E5 /* MarqueeLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8420C90EC300F313E5 /* MarqueeLabel.framework */; };
-		B3F3CF8C20C90EC500F313E5 /* MarqueeLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8420C90EC300F313E5 /* MarqueeLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8D20C90EC500F313E5 /* MarqueeLabelSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8520C90EC400F313E5 /* MarqueeLabelSwift.framework */; };
-		B3F3CF8E20C90EC500F313E5 /* MarqueeLabelSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8520C90EC400F313E5 /* MarqueeLabelSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8F20C90EC500F313E5 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8620C90EC400F313E5 /* SQLite.framework */; };
-		B3F3CF9020C90EC500F313E5 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8620C90EC400F313E5 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -907,35 +893,21 @@
 			files = (
 				B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
-				B3F3CF8A20C90EC500F313E5 /* XLActionController.framework in Embed Frameworks */,
-				B3E708B220B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
-				B3F3CF8E20C90EC500F313E5 /* MarqueeLabelSwift.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
-				B3E708B420B7EB2B005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */,
 				B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */,
 				1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */,
-				B3F3CF9020C90EC500F313E5 /* SQLite.framework in Embed Frameworks */,
-				B3E708B020B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */,
 				B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */,
-				B3E708B620B7EB2B005BAA5A /* NSLogger.framework in Embed Frameworks */,
 				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
-				B3A2876C20C77C9500B4B2E3 /* Realm.framework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */,
 				B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */,
-				B3E708B820B7EB2B005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
-				B3F3CF8C20C90EC500F313E5 /* MarqueeLabel.framework in Embed Frameworks */,
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
-				B3F3CF8820C90EC500F313E5 /* ZIPFoundation.framework in Embed Frameworks */,
-				B30670EB20C2A047002ECE63 /* HockeySDK.framework in Embed Frameworks */,
-				B3A2876E20C77C9500B4B2E3 /* RealmSwift.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
-				B3F3CF8120C90E9000F313E5 /* SwiftyUserDefaults.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3061,6 +3033,7 @@
 				E3D030EE1D980D9F00045BE6 /* Set Git SHA */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
+				1AC1D5D620D3E45B0096FEA6 /* Carthage Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3334,6 +3307,38 @@
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
+		1AC1D5D620D3E45B0096FEA6 /* Carthage Copy Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/XLActionController.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/XCDLumberjackNSLogger.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MarqueeLabelSwift.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/NSLoggerSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/NSLogger.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MarqueeLabel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework",
+			);
+			name = "Carthage Copy Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
 		B31D003620BE67E400850C70 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3416,7 +3421,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Carthage/xcode.sh tvOS";
+			shellScript = "./Carthage/xcode.sh tvOS\n";
 		};
 		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4263,7 +4268,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -4316,7 +4321,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -4373,7 +4378,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4413,7 +4418,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = Debug;
 		};
@@ -4435,7 +4440,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4474,7 +4479,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = Release;
 		};
@@ -4496,7 +4501,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = V78REPMQFZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4535,7 +4540,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = AdHoc;
 		};
@@ -4772,7 +4777,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -4851,7 +4856,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
@@ -4898,7 +4903,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4944,7 +4949,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4986,7 +4991,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5013,7 +5018,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = Debug;
 		};
@@ -5031,7 +5036,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5059,7 +5064,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = Release;
 		};
@@ -5077,7 +5082,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 63497P68S6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5105,7 +5110,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = AdHoc;
 		};
