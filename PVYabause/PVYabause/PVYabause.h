@@ -1,16 +1,20 @@
-//  Converted to Swift 4 by Swiftify v4.1.6710 - https://objectivec2swift.com/
 //
 //  PVYabause.h
-//  PVYabause
+//  PVYabause Framework
 //
 //  Created by Joseph Mattiello on 4/10/17.
 //
-//
-import PVYabause
-import UIKit
-import YabauseC
+
+#import <UIKit/Uikit.h>
+#import <Foundation/Foundation.h>
+
 //! Project version number for PVYabause.
-var PVYabauseVersionNumber: Double = 0.0
+FOUNDATION_EXPORT double PVYabause_FrameworkVersionNumber;
+
 //! Project version string for PVYabause.
-let PVYabauseVersionString = [UInt8](repeating: 0, count: )
+FOUNDATION_EXPORT const unsigned char PVYabause_FrameworkVersionString[];
+
 // In this header, you should import all the public headers of your framework using statements like #import <PVYabause/PublicHeader.h>
+
+#import <YabauseC/YabauseC.h>
+#import <PVYabause/YabauseGameCore.h>

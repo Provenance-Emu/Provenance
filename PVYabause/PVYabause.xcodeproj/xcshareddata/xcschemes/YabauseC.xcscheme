@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "33456CF820D16CFE0089EC04"
+               BlueprintIdentifier = "335BC5A020D2EC890095F719"
                BuildableName = "libYabauseC.a"
                BlueprintName = "YabauseC"
                ReferencedContainer = "container:PVYabause.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "33456CF820D16CFE0089EC04"
+            BlueprintIdentifier = "335BC5A020D2EC890095F719"
             BuildableName = "libYabauseC.a"
             BlueprintName = "YabauseC"
             ReferencedContainer = "container:PVYabause.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "33456CF820D16CFE0089EC04"
+            BlueprintIdentifier = "335BC5A020D2EC890095F719"
             BuildableName = "libYabauseC.a"
             BlueprintName = "YabauseC"
             ReferencedContainer = "container:PVYabause.xcodeproj">

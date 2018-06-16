@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "YabauseGameCore.h"
-#import "YabauseC/YabauseC.h"
+#import <PVYabause/YabauseGameCore.h>
+#import <YabauseC/YabauseC.h>
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
 #import <OpenGLES/gltypes.h>
