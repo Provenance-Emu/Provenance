@@ -1,5 +1,12 @@
 set -e
 
+if nc -zw1 google.com 443 > /dev/null; then
+  echo "Online"
+else
+  echo "Not Online"
+  exit 0;
+fi
+
 if which xcodebuild > /dev/null; then
     echo "Has XCode command line tools"
 else
