@@ -200,6 +200,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
+			<string>ccd</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -985,6 +986,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
+			<string>ccd</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
