@@ -29,7 +29,9 @@ def load_keys
   begin
     import("keys")
   rescue => exception
-    UI.error("fastlane/keys file not found. To use this Fastfile, copy fastlane/keys.template into fastlane/keys and fill in the values")
+    if UI.interactive?
+      shouldSetup = UI.confirm "Fastlane enviroment is not configured. Setup now?"
+    end
     raise exception
   end
 end
@@ -54,6 +56,18 @@ platform :ios do
   # after_all do
   #   push_git_tags
   # end
+  desc "Setup fastlane enviroment"
+  lane :setup_fastlane do
+    if UI.interactive?
+      apple_id = UI.input "Please enter your Apple Development ID (usually e-mail address): "
+      # password = UI.password "Please enter your iTunes Connect password (this is securely encrypted in your keychain. We will never access that information directly): "
+      dev_domain = UI.input "Please enter your developer domain as {com,org,net}.{NAME} (ie; com.provenance-emu will be replaced with com.johnnyappleseed if you're Johnny Appleseed on iTunes connect.): "
+      if UI.confirm("Do you belong to multiple development teams (usually no)")
+        team_id = UI.input "Please enter your iTunes Dev portal team number:"
+        itc_team_id = UI.input "Please enter your iTunes Connect team number: (You can leave blank if you don't intend to use iTunes Connect)"
+      end
+    end
+  end
 
   private_lane :verify_xcode_version do
     ensure_xcode_version(version: REQUIRED_XCODE_VERSION)
@@ -152,7 +166,8 @@ platform :ios do
 
     # Codesign
     # Types, appstore adhoc development enterprise
-    match(app_identifier: ["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.Spotlight"], type: "adhoc", platform: "ios")
+    dev_domain = ENV["DEV_DOMAIN"]
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.Spotlight"], type: "adhoc", platform: "ios")
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
     #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
@@ -172,7 +187,7 @@ platform :ios do
     # upload_to_testflight
 
     # Build tvOS app
-    # match(app_identifier: ["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.topshelf"], type: "adhoc", platform: "tvos")
+    # match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf"], type: "adhoc", platform: "tvos")
     # carthage(
     #   command: "bootstrap",
     #   platform: "tvOS",
@@ -253,16 +268,16 @@ platform :ios do
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
       targets: ["Provenance"],
       code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc com.provenance-emu.provenance-jm",
-      bundle_identifier: "com.provenance-emu.provenance-jm",
+      profile_name: "match AdHoc #{dev_domain}.provenance",
+      bundle_identifier: "#{dev_domain}.provenance",
       use_automatic_signing: automatic,
       team_id: team_id)
 
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
       targets: ["Spotlight"],
       code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc com.provenance-emu.provenance-jm.Spotlight",
-      bundle_identifier: "com.provenance-emu.provenance-jm.Spotlight",
+      profile_name: "match AdHoc #{dev_domain}.provenance.Spotlight",
+      bundle_identifier: "#{dev_domain}.provenance.Spotlight",
       use_automatic_signing: automatic,
       team_id: team_id)
 
@@ -270,7 +285,7 @@ platform :ios do
 
   private_lane :plist_set do |options|
     normal = options[:normal]
-    suffix = normal ? "" : "-jm"
+    suffix = normal ? "" : ".alpha"
     display_name = normal ? "Provenance" : 'Provenance α' # or Beta β
     # -- Update bundle names and ids
     # - iOS
@@ -278,24 +293,24 @@ platform :ios do
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'Provenance', # Scheme really means target
       display_name: display_name,
-      app_identifier: "com.provenance-emu.provenance#{suffix}",
+      app_identifier: "#{dev_domain}.provenance#{suffix}",
     )
     update_app_identifier(
       xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
       plist_path: "Provenance/Provenance-Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}" # The App Identifier
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}" # The App Identifier
     )
 
     # - Spotlight
     update_info_plist(
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'Spotlight',
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance${suffix}.Spotlight",
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance${suffix}.Spotlight",
     )
     update_app_identifier(
       xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
       plist_path: "Spotlight/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}.Spotlight" # The App Identifier
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.Spotlight" # The App Identifier
     )
 
     # - tvOS
@@ -304,33 +319,33 @@ platform :ios do
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'ProvenanceTV',
       display_name: display_name,
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}",
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}",
     )
     update_app_identifier(
       xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
       plist_path: "ProvenanceTV/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}" # The App Identifier
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}" # The App Identifier
     )
 
 
     # - Top Shelf
     update_info_plist(
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}.topshelf",
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.topshelf",
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'TopShelf',
     )
     update_app_identifier(
       xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
       plist_path: "TopShelf/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}.topshelf" # The App Identifier
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.topshelf" # The App Identifier
     )
   end
 
   private_lane :setup_certificates_private do |options|
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.Spotlight"], type: type, readonly: true, platform: "ios")
-    match(app_identifier: ["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.topshelf"], type: type, readonly: true, platform: "tvos")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.Spotlight"], type: type, readonly: true, platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.topshelf"], type: type, readonly: true, platform: "tvos")
   end
 
   desc "Create Certs for Match"
@@ -344,8 +359,8 @@ platform :ios do
   private_lane :create_certificates_private do |options|
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.Spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.topshelf"], type: type, readonly: false, platform: "tvos")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.Spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Update device list"
@@ -398,8 +413,8 @@ platform :ios do
           fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
         },
         provisioningProfiles: {
-          "com.provenance-emu.provenance-jm" => "match AdHoc com.provenance-emu.provenance-jm", # match AdHoc match AppStore match Development
-          "com.provenance-emu.provenance-jm.Spotlight" => "match AdHoc com.provenance-emu.provenance-jm.Spotlight"
+          "#{dev_domain}.provenance" => "match AdHoc #{dev_domain}.provenance", # match AdHoc match AppStore match Development
+          "#{dev_domain}.provenance.Spotlight" => "match AdHoc #{dev_domain}.provenance.Spotlight"
         },
         compileBitcode: false,
         uploadBitcode: false,
@@ -436,13 +451,13 @@ platform :ios do
           appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
         },
         provisioningProfiles: {
-          "com.provenance-emu.provenance-jm" => "match AppStore com.provenance-emu.provenance-jm", # match AdHoc match AppStore match Development
-          "com.provenance-emu.provenance-jm.Spotlight" => "match AppStore com.provenance-emu.provenance-jm.Spotlight"
+          "#{dev_domain}.provenance" => "match AppStore #{dev_domain}.provenance", # match AdHoc match AppStore match Development
+          "#{dev_domain}.provenance.Spotlight" => "match AppStore #{dev_domain}.provenance.Spotlight"
         }
       }
     )
 
-    pilot(app_identifier: "com.provenance-emu.provenance-jm")
+    pilot(app_identifier: "#{dev_domain}.provenance")
   end
 
   # private_lane :versionIcon do

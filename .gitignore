@@ -43,3 +43,4 @@ playground.xcworkspace
 *.ipa
 *.dSYM.zip
 *.dSYM
+/fastlane/keys
