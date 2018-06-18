@@ -321,40 +321,42 @@ static void mednafen_init(MednafenGameCore* current)
         SNESMap[PVSNESButtonStart]        = 3;
 
 		// PCE Map
-		PCEMap[PVPCEButtonUp]		= 4;
+        PCEMap[PVPCEButtonUp]       = 4;
         PCEMap[PVPCEButtonRight]    = 5;
-		PCEMap[PVPCEButtonDown] 	= 6;
-		PCEMap[PVPCEButtonLeft] 	= 7;
+        PCEMap[PVPCEButtonDown]     = 6;
+        PCEMap[PVPCEButtonLeft]     = 7;
 
-		PCEMap[PVPCEButtonButton1] 	= 0;
-		PCEMap[PVPCEButtonButton2] 	= 1;
-		PCEMap[PVPCEButtonButton3] 	= 8;
-		PCEMap[PVPCEButtonButton4] 	= 9;
-		PCEMap[PVPCEButtonButton5] 	= 10;
-		PCEMap[PVPCEButtonButton6] 	= 11;
+        PCEMap[PVPCEButtonButton1]  = 0;
+        PCEMap[PVPCEButtonButton2]  = 1;
+        PCEMap[PVPCEButtonButton3]  = 8;
+        PCEMap[PVPCEButtonButton4]  = 9;
+        PCEMap[PVPCEButtonButton5]  = 10;
+        PCEMap[PVPCEButtonButton6]  = 11;
 
         PCEMap[PVPCEButtonSelect]   = 2;
-		PCEMap[PVPCEButtonRun]		= 3;
+        PCEMap[PVPCEButtonRun]      = 3;
         PCEMap[PVPCEButtonMode]     = 12;
 
 		// PCFX Map
-        PCFXMap[PVPCEButtonUp]      = 8;
-        PCFXMap[PVPCEButtonRight]   = 9;
-        PCFXMap[PVPCEButtonDown]    = 10;
-        PCFXMap[PVPCEButtonLeft]    = 11;
+        PCFXMap[PVPCFXButtonUp]         = 8;
+        PCFXMap[PVPCFXButtonRight]      = 9;
+        PCFXMap[PVPCFXButtonDown]       = 10;
+        PCFXMap[PVPCFXButtonLeft]       = 11;
 
-        PCFXMap[PVPCEButtonButton1] = 0;
-        PCFXMap[PVPCEButtonButton2] = 1;
-        PCFXMap[PVPCEButtonButton3] = 2;
-        PCFXMap[PVPCEButtonButton4] = 3;
-        PCFXMap[PVPCEButtonButton5] = 4;
-        PCFXMap[PVPCEButtonButton6] = 5;
+        PCFXMap[PVPCFXButtonButton1]    = 0;
+        PCFXMap[PVPCFXButtonButton2]    = 1;
+        PCFXMap[PVPCFXButtonButton3]    = 2;
+        PCFXMap[PVPCFXButtonButton4]    = 3;
+        PCFXMap[PVPCFXButtonButton5]    = 4;
+        PCFXMap[PVPCFXButtonButton6]    = 5;
 
-        PCFXMap[PVPCEButtonSelect]  = 6;
-        PCFXMap[PVPCEButtonRun]     = 7;
-		PCFXMap[PVPCEButtonMode] 	= 12;
+        PCFXMap[PVPCFXButtonSelect]     = 6;
+        PCFXMap[PVPCFXButtonRun]        = 7;
+        PCFXMap[PVPCFXButtonMode]       = 12;
+        
     }
 
+    
     return self;
 }
 
