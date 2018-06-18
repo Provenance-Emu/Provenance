@@ -115,11 +115,17 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't impliment PVLynxSystemResponderClient")
             }
-        case .PCE, .PCECD, .PCFX, .SGFX:
+        case .PCE, .PCECD, .SGFX:
             if let core = core as? PVPCESystemResponderClient {
                 return PVPCEControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVPCESystemResponderClient")
+            }
+        case .PCFX:
+            if let core = core as? PVPCFXSystemResponderClient {
+                return PVPCFXControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't impliment PVPCFXSystemResponderClient")
             }
         case .NGP, .NGPC:
             if let core = core as? PVNeoGeoPocketSystemResponderClient {

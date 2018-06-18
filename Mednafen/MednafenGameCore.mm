@@ -2132,9 +2132,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[[pad rightThumbstick] left] isPressed];
             case PVVBButtonRightRight:
                 return [[[pad rightThumbstick] right] isPressed];
-            case PVVBButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVVBButtonA:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case PVVBButtonB:
                 return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVVBButtonL:
                 return [[pad leftShoulder] isPressed];
@@ -2161,9 +2161,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVVBButtonLeftRight:
                 return [[dpad right] isPressed];
-            case PVVBButtonB:
-                return [[pad buttonB] isPressed];
             case PVVBButtonA:
+                return [[pad buttonB] isPressed];
+            case PVVBButtonB:
                 return [[pad buttonA] isPressed];
             case PVVBButtonL:
                 return [[pad leftShoulder] isPressed];
