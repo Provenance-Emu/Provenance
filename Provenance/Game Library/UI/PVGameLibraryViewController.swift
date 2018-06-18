@@ -339,8 +339,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		} else {
 			collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-        
-        // Adjust collection view layout for iPhone X Safe areas
+		// Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
         #if os(iOS)
@@ -357,9 +356,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         } else {
             layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         }
- 
         #endif
-        
         // Force touch
         #if os(iOS)
         if #available(iOS 9.0, *) {
@@ -370,7 +367,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         loadGameFromShortcut()
         becomeFirstResponder()
     }
-    
     var systems: Results<PVSystem>?
 	var saveStates: Results<PVSaveState>?
     var favoriteGames: Results<PVGame>?

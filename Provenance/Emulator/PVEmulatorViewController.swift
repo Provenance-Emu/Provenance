@@ -593,7 +593,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             }))
         }
 
-		if let optionCore = core as? CoreOptional {
+//		if let optionCore = core as? CoreOptional {
+		if core is CoreOptional {
 			actionsheet.addAction(UIAlertAction(title: "Core Options", style: .default, handler: { (action) in
 				self.showCoreOptions()
 			}))
