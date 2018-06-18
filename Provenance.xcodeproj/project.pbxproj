@@ -786,6 +786,7 @@
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		C6625F3F20D77C3B0013F439 /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */; };
 		C6BC505620D72BE600A19886 /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
@@ -3823,6 +3824,7 @@
 				B394C98520609D0D0014A65D /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
 				1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */,
+				C6625F3F20D77C3B0013F439 /* PVPCFXControllerViewController.swift in Sources */,
 				B349AF061E9ABCF900ACD416 /* Lzma2Encoder.cpp in Sources */,
 				B394C98720609D0D0014A65D /* PVWonderSwanControllerViewController.swift in Sources */,
 				B349AE541E9ABCF900ACD416 /* AesOpt.c in Sources */,
