@@ -43,12 +43,25 @@ public final class PVCoreFactory: NSObject {
         }
 
         switch system.enumValue {
-        case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
+        case .Genesis, .GameGear, .SegaCD, .MasterSystem, .SG1000:
             if let core = core as? PVGenesisSystemResponderClient {
                 return PVGenesisControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVGenesisSystemResponderClient")
             }
+//        TO DO: strip out MS and SG1000 from Genesis, etc…
+//        case .MasterSystem:
+//            if let core = core as? PVMasterSystemSystemResponderClient {
+//                return PVMasterSystemControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+//            } else {
+//                fatalError("Core doesn't impliment PVMasterSystemSystemResponderClient")
+//            }
+//        case .SG1000:
+//            if let core = core as? PVSG1000SystemResponderClient {
+//                return PVSG1000ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+//            } else {
+//                fatalError("Core doesn't impliment PVSG1000SystemSystemResponderClient")
+//            }
         case .SNES:
             if let core = core as? PVSNESSystemResponderClient {
                 return PVSNESControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
