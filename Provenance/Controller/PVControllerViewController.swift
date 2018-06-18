@@ -461,7 +461,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
 
-            if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA") {
+            if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA" || system.shortName == "VB") {
                 rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
             }
 
@@ -557,7 +557,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             } else if zTriggerButton == nil && rightShoulderButton != nil {
                 leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
 
-                if system.shortName == "GBA" {
+                if system.shortName == "GBA" || system.shortName == "VB" {
                     leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
                 }
             }
