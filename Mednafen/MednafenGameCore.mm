@@ -2198,10 +2198,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad right] value] > 0.5;
                 break;
             case PVVBButtonA:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonB] isPressed];
                 break;
             case PVVBButtonB:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonA] isPressed];
                 break;
             default:
                 break;
