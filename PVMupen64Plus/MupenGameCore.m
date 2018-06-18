@@ -88,7 +88,7 @@ EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
 #if DEBUG
-    NSLog(@"Mupen (%d): %s", level, message);
+    DLOG(@"Mupen (%d): %s", level, message);
 #endif
 }
 
@@ -102,7 +102,7 @@ static void MupenFrameCallback(unsigned int FrameIndex) {
 
 static void MupenStateCallback(void *context, m64p_core_param paramType, int newValue)
 {
-    NSLog(@"Mupen: param %d -> %d", paramType, newValue);
+    ILOG(@"Mupen: param %d -> %d", paramType, newValue);
     [((__bridge MupenGameCore *)context) OE_didReceiveStateChangeForParamType:paramType value:newValue];
 }
 
@@ -169,9 +169,9 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         // Note: DL close doesn't really work as expected on iOS. The framework will still essentially be loaded
         // take care to reset static variables that are expected to have cleared memory between uses.
         if(dlclose(core_handle) != 0) {
-            NSLog(@"Failed to dlclose core framework.");
+            ELOG(@"Failed to dlclose core framework.");
         } else {
-            NSLog(@"dlclosed core framework.");
+            ILOG(@"dlclosed core framework.");
         }
         core_handle = NULL;
     }
@@ -375,7 +375,7 @@ static void MupenAudioSampleRateChanged(int SystemType)
     }
 
     [[current audioDelegate] audioSampleRateDidChange];
-    NSLog(@"Mupen rate changed %f -> %f\n", currentRate, current->sampleRate);
+    ILOG(@"Mupen rate changed %f -> %f\n", currentRate, current->sampleRate);
 }
 
 static void MupenAudioLenChanged()
@@ -706,7 +706,7 @@ static void ConfigureRICE() {
 																	  attributes:nil
 																		   error:&error];
 			if (!success) {
-				NSLog(@"Error creating hi res texture path: %@", error.localizedDescription);
+				ELOG(@"Error creating hi res texture path: %@", error.localizedDescription);
 			}
 		}
 	}
@@ -759,7 +759,7 @@ static void ConfigureRICE() {
     // Load ROM
     romData = [NSData dataWithContentsOfMappedFile:path];
 	if (romData == nil || romData.length == 0) {
-		NSLog(@"Error loading ROM at path: %@\n File does not exist.", path);
+		ELOG(@"Error loading ROM at path: %@\n File does not exist.", path);
 
 		NSDictionary *userInfo = @{
 								   NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -778,7 +778,7 @@ static void ConfigureRICE() {
 
     m64p_error openStatus = CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]);
     if ( openStatus != M64ERR_SUCCESS) {
-        NSLog(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
+        ELOG(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
    
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -799,7 +799,7 @@ static void ConfigureRICE() {
 
 //	m64p_error callbackStatus = CoreDoCommand(M64CMD_SET_FRAME_CALLBACK, 0, (void *)MupenFrameCallback);
 //	if ( callbackStatus != M64ERR_SUCCESS) {
-//		NSLog(@"Error setting video callback: %@\n Error code was: %i", path, openStatus);
+//		ELOG(@"Error setting video callback: %@\n Error code was: %i", path, openStatus);
 //
 //		NSDictionary *userInfo = @{
 //								   NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -826,13 +826,13 @@ static void ConfigureRICE() {
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
         m64p_error err = rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
         if (err != M64ERR_SUCCESS) {
-            NSLog(@"Error code %i loading plugin of type %i, name: %@", err, pluginType, pluginType);
+            ELOG(@"Error code %i loading plugin of type %i, name: %@", err, pluginType, pluginType);
             return NO;
         }
         
         err = CoreAttachPlugin(pluginType, rsp_handle);
         if (err != M64ERR_SUCCESS) {
-            NSLog(@"Error code %i attaching plugin of type %i, name: %@", err, pluginType, pluginType);
+            ELOG(@"Error code %i attaching plugin of type %i, name: %@", err, pluginType, pluginType);
             return NO;
         }
         
@@ -965,29 +965,29 @@ static void ConfigureRICE() {
     {
         [self.renderDelegate startRenderingOnAlternateThread];
         if(CoreDoCommand(M64CMD_EXECUTE, 0, NULL) != M64ERR_SUCCESS) {
-            NSLog(@"Core execture did not exit correctly");
+            ELOG(@"Core execture did not exit correctly");
         } else {
-            NSLog(@"Core finished executing main");
+            ILOG(@"Core finished executing main");
         }
         
         if(CoreDetachPlugin(M64PLUGIN_GFX) != M64ERR_SUCCESS) {
-            NSLog(@"Failed to detach GFX plugin");
+            ELOG(@"Failed to detach GFX plugin");
         } else {
-            NSLog(@"Detached GFX plugin");
+            ILOG(@"Detached GFX plugin");
         }
         
         if(CoreDetachPlugin(M64PLUGIN_RSP) != M64ERR_SUCCESS) {
-            NSLog(@"Failed to detach RSP plugin");
+            ELOG(@"Failed to detach RSP plugin");
         } else {
-            NSLog(@"Detached RSP plugin");
+            ILOG(@"Detached RSP plugin");
         }
         
         [self pluginsUnload];
         
         if(CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL) != M64ERR_SUCCESS) {
-            NSLog(@"Filed to close ROM");
+            ELOG(@"Failed to close ROM");
         } else {
-            NSLog(@"ROM closed");
+            ILOG(@"ROM closed");
         }
 
         // Unlock rendering thread
@@ -996,9 +996,9 @@ static void ConfigureRICE() {
         [super stopEmulation];
 
 		if(CoreShutdown() != M64ERR_SUCCESS) {
-			NSLog(@"Core shutdown failed");
+			ELOG(@"Core shutdown failed");
 		}else {
-			NSLog(@"Core shutdown successfully");
+			ILOG(@"Core shutdown successfully");
 		}
     }
 }
@@ -1021,15 +1021,16 @@ static void ConfigureRICE() {
         if (PluginShutdown != NULL) {
             m64p_error status = (*PluginShutdown)();
             if (status == M64ERR_SUCCESS) {
-                NSLog(@"Shutdown plugin");
+                ILOG(@"Shutdown plugin");
             } else {
-                NSLog(@"Shutdown plugin type %i failed: %i", i, status);
+
+				ELOG(@"Shutdown plugin type %i failed: %i", i, status);
             }
         }
         if(dlclose(plugins[i]) != 0) {
-            NSLog(@"Failed to dlclose plugin type %i", i);
+            ELOG(@"Failed to dlclose plugin type %i", i);
         } else {
-            NSLog(@"dlclosed plugin type %i", i);
+            ILOG(@"dlclosed plugin type %i", i);
         }
         plugins[i] = NULL;
     }
