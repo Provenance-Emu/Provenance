@@ -1847,7 +1847,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCExtendedGamepad *gamePad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
-				// D-PAD
+				// D-Pad
 			case PVPCEButtonUp:
                 return [[dpad up] isPressed]?:[[[gamePad leftThumbstick] up] value] > 0.1;
             case PVPCEButtonDown:
@@ -1857,7 +1857,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPCEButtonRight:
                 return [[dpad right] isPressed]?:[[[gamePad leftThumbstick] right] value] > 0.1;
 
-				// Standard buttons
+				// Standard Buttons
 			case PVPCEButtonButton1:
 				return [[gamePad buttonB] isPressed];
 			case PVPCEButtonButton2:
@@ -1868,17 +1868,17 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 			case PVPCEButtonRun:
 				return [[gamePad rightTrigger] isPressed];
 
-				// Extened buttons
+				// Extended Buttons
 			case PVPCEButtonButton3:
-                return [[gamePad leftShoulder] isPressed];
-            case PVPCEButtonButton4:
-                return [[gamePad rightShoulder] isPressed];
-            case PVPCEButtonButton5:
                 return [[gamePad buttonX] isPressed];
-            case PVPCEButtonButton6:
+            case PVPCEButtonButton4:
+                return [[gamePad leftShoulder] isPressed];
+            case PVPCEButtonButton5:
                 return [[gamePad buttonY] isPressed];
+            case PVPCEButtonButton6:
+                return [[gamePad rightShoulder] isPressed];
 
-				// Toggle the mode special buttons are pressed
+                // Toggle the Mode: Extended Buttons are pressed
             case PVPCEButtonMode:
                 return [[gamePad buttonX] isPressed] || [[gamePad leftShoulder] isPressed] || [[gamePad buttonY] isPressed] || [[gamePad rightShoulder] isPressed];
             default:
@@ -1890,6 +1890,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCGamepad *gamePad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
+                // D-Pad
             case PVPCEButtonUp:
                 return [[dpad up] isPressed];
             case PVPCEButtonDown:
@@ -1898,6 +1899,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVPCEButtonRight:
                 return [[dpad right] isPressed];
+                
 				// Standard Buttons
 			case PVPCEButtonButton1:
 				return [[gamePad buttonB] isPressed];
@@ -1914,12 +1916,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[gamePad buttonX] isPressed];
             case PVPCEButtonButton4:
                 return [[gamePad buttonY] isPressed];
-//            case PVPCEButtonButton5:
-//                return [[gamePad leftShoulder] isPressed];
-//            case PVPCEButtonButton6:
-//                return [[gamePad rightShoulder] isPressed];
 
-				// Toggle the mode special buttons are pressed
+                // Toggle the Mode: Extended Buttons are pressed
 			case PVPCEButtonMode:
 				return [[gamePad buttonX] isPressed] || [[gamePad buttonY] isPressed];
             default:
@@ -1944,10 +1942,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPCEButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case PVPCEButtonButton2:
+            case PVPCEButtonButton1:
                 return [[gamePad buttonA] isPressed];
                 break;
-            case PVPCEButtonButton1:
+            case PVPCEButtonButton2:
                 return [[gamePad buttonX] isPressed];
                 break;
             default:
