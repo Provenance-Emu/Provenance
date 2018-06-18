@@ -510,8 +510,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../Carthage/xcode.sh iOS";
+			shellPath = /bin/bash;
+			shellScript = "cd ..\nsource ~/.bash_profile && sh Carthage/xcode.sh iOS";
 		};
 		B3E708A920B7E918005BAA5A /* Carthage Build */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -524,8 +524,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../Carthage/xcode.sh tvOS";
+			shellPath = /bin/bash;
+			shellScript = "cd ..\nsource ~/.bash_profile && sh Carthage/xcode.sh iOS";
 		};
 /* End PBXShellScriptBuildPhase section */
 

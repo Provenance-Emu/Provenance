@@ -15,19 +15,45 @@ else
     exit 1
 fi
 
-if which fastlane >/dev/null; then
-  echo "Setting up Carthage for platform $1 using fastlane"
-  bundle exec fastlane carthage_bootstrap platform:"$1"
-elif which carthage >/dev/null; then
-    echo "Setting up Carthage for platform $1"
-    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
-    /usr/local/bin/carthage outdated --xcode-warnings
-    # if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ] || [ "${BUILD_STYLE}" == "App Store" ];
-    # then
-    #   /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
-    # fi
+function runCarthageAndCopyResolved {
+    echo "Running Carthage.."
+    if which fastlane > /dev/null; then
+      echo "Setting up Carthage for platform $1 using fastlane"
+      bundle exec fastlane carthage_bootstrap platform:"$1"
+    elif which carthage > /dev/null; then
+        echo "Setting up Carthage for platform $1"
+        /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
+        /usr/local/bin/carthage outdated --xcode-warnings
+        # if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ] || [ "${BUILD_STYLE}" == "App Store" ];
+        # then
+        #   /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
+        # fi
+    else
+        echo "error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
+        osascript -e 'tell app "System Events" to display dialog "Error. Carthage is not installed, download from \nhttps://github.com/Carthage/Carthage#installing-carthage" buttons {"OK"} with icon caution with title "Missing Carthage"'
+        exit 1
+    fi
+    # Copies the Cartfile.resolved file to /Carthage directory
+    cp "$SRCROOT"/Cartfile.resolved "$SRCROOT"/Carthage/.Cartfile.resolved
+    echo "Copied Cartfile.resolved to /Carthage directory."
+    echo "This will be used to check Carthage dependency updates in the future."
+}
+
+command -v carthage >/dev/null 2>&1 || {
+    echo "Carthage is required. Please install Carthage and try again. Aborting.";
+    exit 1;
+}
+
+# Checks if Carthage/Build directory doesn't exist and if not it'll run Carthage
+# After, it checks if the Cartfile.resolved file differs from the one in Carthage. If so, Carthage runs
+if [ ! -d "$SRCROOT/Carthage/Build" ]; then
+    echo "No Carthage/Build directory found."
+    runCarthageAndCopyResolved $1
+elif [ -f $SRCROOT/Carthage/.Cartfile.resolved ] && \
+        diff $SRCROOT/Carthage/.Cartfile.resolved \
+        $SRCROOT/Cartfile.resolved >/dev/null ; then
+    echo "Cartfile.resolved has not changed. Building project."
 else
-    echo "error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
-    osascript -e 'tell app "System Events" to display dialog "Error. Carthage is not installed, download from \nhttps://github.com/Carthage/Carthage#installing-carthage" buttons {"OK"} with icon caution with title "Missing Carthage"'
-    exit 1
+    echo "Cartfile.resolved not up to date or not found."
+    runCarthageAndCopyResolved $1
 fi

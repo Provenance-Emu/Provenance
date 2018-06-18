@@ -44,3 +44,5 @@ playground.xcworkspace
 *.dSYM.zip
 *.dSYM
 /fastlane/keys
+/PVSupport/Carthage/.Cartfile.resolved
+/Carthage/.Cartfile.resolved
