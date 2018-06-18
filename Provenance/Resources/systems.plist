@@ -1408,7 +1408,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>1</string>
+						<string>2</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
 					</dict>
@@ -1416,7 +1416,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>2</string>
+						<string>1</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
 					</dict>
