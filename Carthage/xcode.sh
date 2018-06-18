@@ -1,6 +1,6 @@
 set -e
 
-if nc -zw1 google.com 443 > /dev/null; then
+if nc -zw1 github.com 443 > /dev/null; then
   echo "Online"
 else
   echo "Not Online"
