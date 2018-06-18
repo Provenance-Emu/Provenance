@@ -276,6 +276,45 @@ public protocol CoreActions {
     func didRelease(_ button: PVGenesisButton, forPlayer player: Int)
 }
 
+// MARK: - Master System
+@objc public enum PVMasterSystemButton: Int {
+    case b = 0
+    case c
+    case start
+    case up
+    case down
+    case left
+    case right
+    case count
+}
+
+@objc public protocol PVMasterSystemSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushMasterSystemButton:forPlayer:)
+    func didPush(_ button: PVMasterSystemButton, forPlayer player: Int)
+    @objc(didReleaseMasterSystemButton:forPlayer:)
+    func didRelease(_ button: PVMasterSystemButton, forPlayer player: Int)
+}
+
+// MARK: - SG1000
+@objc public enum PVSG1000Button: Int {
+    case b = 0
+    case c
+    case start
+    case up
+    case down
+    case left
+    case right
+    case count
+}
+
+@objc public protocol PVSG1000SystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushSG1000Button:forPlayer:)
+    func didPush(_ button: PVSG1000Button, forPlayer player: Int)
+    @objc(didReleaseSG1000Button:forPlayer:)
+    func didRelease(_ button: PVSG1000Button, forPlayer player: Int)
+}
+
+
 // MARK: - Game Boy Advanced
 @objc public enum PVGBAButton: Int {
     case up

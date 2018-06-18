@@ -185,7 +185,6 @@
 		B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F89520B73BD000C5E502 /* PVSupport.framework */; };
 		B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
 		B30670E720C2A03C002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E620C2A03B002ECE63 /* HockeySDK.framework */; };
-		B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E620C2A03B002ECE63 /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3081C092080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B3081C0A2080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -607,9 +606,7 @@
 		B3A2876F20C77D0D00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; };
 		B3A2877020C77D0D00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; };
 		B3A2877320C787B100B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
-		B3A2877420C787B100B4B2E3 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A2877520C787B100B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; };
-		B3A2877620C787B100B4B2E3 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A2877720C787BF00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
 		B3A2877820C787BF00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
@@ -737,25 +734,16 @@
 		B3E708B520B7EB2B005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */; };
 		B3E708B720B7EB2B005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */; };
 		B3E708BE20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */; };
-		B3E708BF20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708C020B7EB45005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BA20B7EB43005BAA5A /* NSLogger.framework */; };
-		B3E708C120B7EB45005BAA5A /* NSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BA20B7EB43005BAA5A /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708C220B7EB45005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BB20B7EB44005BAA5A /* NSLoggerSwift.framework */; };
-		B3E708C320B7EB45005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BB20B7EB44005BAA5A /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708C420B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BC20B7EB44005BAA5A /* XCDLumberjackNSLogger.framework */; };
-		B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BC20B7EB44005BAA5A /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E708C620B7EB45005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */; };
-		B3E708C720B7EB45005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3F3CF7620C90E5800F313E5 /* MarqueeLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7320C90E5600F313E5 /* MarqueeLabel.framework */; };
-		B3F3CF7720C90E5800F313E5 /* MarqueeLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7320C90E5600F313E5 /* MarqueeLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF7820C90E5800F313E5 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7420C90E5700F313E5 /* ZIPFoundation.framework */; };
-		B3F3CF7920C90E5800F313E5 /* ZIPFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7420C90E5700F313E5 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF7A20C90E5900F313E5 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7520C90E5800F313E5 /* SQLite.framework */; };
-		B3F3CF7B20C90E5900F313E5 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7520C90E5800F313E5 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF7D20C90E8200F313E5 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7C20C90E8200F313E5 /* SwiftyUserDefaults.framework */; };
-		B3F3CF7E20C90E8200F313E5 /* SwiftyUserDefaults.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7C20C90E8200F313E5 /* SwiftyUserDefaults.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F3CF8020C90E9000F313E5 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7F20C90E8F00F313E5 /* SwiftyUserDefaults.framework */; };
 		B3F3CF8720C90EC500F313E5 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8220C90EC200F313E5 /* ZIPFoundation.framework */; };
 		B3F3CF8920C90EC500F313E5 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF8320C90EC200F313E5 /* XLActionController.framework */; };
@@ -798,6 +786,8 @@
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		C6625F3F20D77C3B0013F439 /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */; };
+		C6BC505620D72BE600A19886 /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
 		DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
@@ -856,31 +846,19 @@
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
-				B3E708C320B7EB45005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */,
 				B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */,
-				B3E708BF20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */,
 				B3C9D5DC1DEA8A200068D057 /* PVGBA.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
-				B3A2877420C787B100B4B2E3 /* Realm.framework in Embed Frameworks */,
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
-				B3F3CF7B20C90E5900F313E5 /* SQLite.framework in Embed Frameworks */,
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
-				B3E708C120B7EB45005BAA5A /* NSLogger.framework in Embed Frameworks */,
-				B3E708C720B7EB45005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
-				B3F3CF7720C90E5800F313E5 /* MarqueeLabel.framework in Embed Frameworks */,
-				B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
-				B3F3CF7920C90E5800F313E5 /* ZIPFoundation.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
-				B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */,
-				B3A2877620C787B100B4B2E3 /* RealmSwift.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B36CBFEC20397D9100728482 /* PVMednafen.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
-				B3F3CF7E20C90E8200F313E5 /* SwiftyUserDefaults.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1575,6 +1553,7 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVPCFXControllerViewController.swift; sourceTree = "<group>"; };
 		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
 		DF0035C4203C97D800F63831 /* GLideN64.custom.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.custom.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.custom.ini"; sourceTree = "<group>"; };
@@ -1939,6 +1918,7 @@
 				1A9FBE1E1ABD28A1004E778B /* Genesis */,
 				B39578C41E6D4D6700854D7A /* Neo Geo */,
 				B39578BF1E6D2D5700854D7A /* PCE */,
+				C6BC505420D72BC000A19886 /* PCFX */,
 				AA9B6EDB1D7097C400422E5F /* PSX */,
 				B3B3B89A1DECF9A700602746 /* N64 */,
 				1A74171A1ABF22FD00F3CD3C /* NES */,
@@ -2978,6 +2958,15 @@
 			path = TopShelf;
 			sourceTree = "<group>";
 		};
+		C6BC505420D72BC000A19886 /* PCFX */ = {
+			isa = PBXGroup;
+			children = (
+				C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */,
+			);
+			name = PCFX;
+			path = Controller;
+			sourceTree = "<group>";
+		};
 		DF0561C01FB104C300F499B9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -3059,6 +3048,7 @@
 				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
+				1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3306,6 +3296,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
+		};
+		1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/NSLoggerSwift.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/CocoaLumberjackSwift.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/RealmSwift.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/SQLite.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/NSLogger.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/CocoaLumberjack.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/MarqueeLabel.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/XCDLumberjackNSLogger.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/ZIPFoundation.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework",
+				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/SwiftyUserDefaults.framework",
+			);
+			name = "Carthage Copy Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 		1AC1D5D620D3E45B0096FEA6 /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3727,6 +3747,7 @@
 				B349AF091E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
 				B349AF1B1E9ABCF900ACD416 /* MyAesReg.cpp in Sources */,
 				B349AF5F1E9ABCFA00ACD416 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
+				C6BC505620D72BE600A19886 /* PVPCFXControllerViewController.swift in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
 				B349AE591E9ABCF900ACD416 /* Bcj2Enc.c in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
@@ -3803,6 +3824,7 @@
 				B394C98520609D0D0014A65D /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
 				1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */,
+				C6625F3F20D77C3B0013F439 /* PVPCFXControllerViewController.swift in Sources */,
 				B349AF061E9ABCF900ACD416 /* Lzma2Encoder.cpp in Sources */,
 				B394C98720609D0D0014A65D /* PVWonderSwanControllerViewController.swift in Sources */,
 				B349AE541E9ABCF900ACD416 /* AesOpt.c in Sources */,

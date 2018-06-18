@@ -29,9 +29,9 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
             }
             if title == "A" {
                 button.buttonTag = .a
-            } else if title == "B" || title == "1" {
+            } else if title == "B" || title == "2" || title == "L" {
                 button.buttonTag = .b
-            } else if title == "C" || title == "2" {
+            } else if title == "C" || title == "1" || title == "R" {
                 button.buttonTag = .c
             } else if title == "X" {
                 button.buttonTag = .x

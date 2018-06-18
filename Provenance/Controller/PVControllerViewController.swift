@@ -461,7 +461,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
 
-            if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA") {
+            if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA" || system.shortName == "VB") {
                 rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
             }
 
@@ -557,7 +557,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             } else if zTriggerButton == nil && rightShoulderButton != nil {
                 leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
 
-                if system.shortName == "GBA" {
+                if system.shortName == "GBA" || system.shortName == "VB" {
                     leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
                 }
             }
@@ -652,7 +652,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
-                if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" {
+                if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "PCFX" {
                     startFrame.origin.x -= (controlSize.width / 2)
                 }
             } else if (buttonGroup != nil) && (buttonGroup?.isHidden)! {

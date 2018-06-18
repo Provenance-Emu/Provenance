@@ -1,18 +1,19 @@
-//  Converted to Swift 4 by Swiftify v4.1.6640 - https://objectivec2swift.com/
 //
-//  PVPCEControllerViewController.swift
+//  PVPCFXControllerViewController.swift
 //  Provenance
 //
-//  Created by Joe Mattiello on 17/03/2018.
-//  Copyright (c) 2018 Joe Mattiello. All rights reserved.
+//  Created by Sev Gerk on 6/17/18.
+//  Copyright © 2018 Provenance. All rights reserved.
 //
+
+import Foundation
 
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag: PVPCEButton {
+    var buttonTag: PVPCFXButton {
         get {
-            return PVPCEButton(rawValue: tag)!
+            return PVPCFXButton(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -20,8 +21,8 @@ fileprivate extension JSButton {
     }
 }
 
-class PVPCEControllerViewController: PVControllerViewController<PVPCESystemResponderClient> {
-
+class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSystemResponderClient> {
+    
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -41,71 +42,71 @@ class PVPCEControllerViewController: PVControllerViewController<PVPCESystemRespo
                 button.buttonTag = .button6
             }
         }
-
+        
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .run
     }
-
+    
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)
         emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
-            case .upLeft:
-                emulatorCore.didPush(.up, forPlayer: 0)
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .up:
-                emulatorCore.didPush(.up, forPlayer: 0)
-            case .upRight:
-                emulatorCore.didPush(.up, forPlayer: 0)
-                emulatorCore.didPush(.right, forPlayer: 0)
-            case .left:
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .right:
-                emulatorCore.didPush(.right, forPlayer: 0)
-            case .downLeft:
-                emulatorCore.didPush(.down, forPlayer: 0)
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .down:
-                emulatorCore.didPush(.down, forPlayer: 0)
-            case .downRight:
-                emulatorCore.didPush(.down, forPlayer: 0)
-                emulatorCore.didPush(.right, forPlayer: 0)
-            default:
-                break
+        case .upLeft:
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .up:
+            emulatorCore.didPush(.up, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
+        case .left:
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .right:
+            emulatorCore.didPush(.right, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .down:
+            emulatorCore.didPush(.down, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
+        default:
+            break
         }
         vibrate()
     }
-
+    
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)
         emulatorCore.didRelease(.right, forPlayer: 0)
     }
-
+    
     override func buttonPressed(_ button: JSButton) {
         emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
-
+    
     override func buttonReleased(_ button: JSButton) {
         emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
-
+    
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(.mode, forPlayer: player)
     }
-
+    
     override func releaseStart(forPlayer player: Int) {
         emulatorCore.didRelease(.mode, forPlayer: player)
     }
-
+    
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(.select, forPlayer: player)
     }
-
+    
     override func releaseSelect(forPlayer player: Int) {
         emulatorCore.didRelease(.select, forPlayer: player)
     }
