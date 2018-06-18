@@ -26,7 +26,10 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
-//		_initHockeyApp()
+		#if targetEnvironment(simulator)
+		#else
+		_initHockeyApp()
+		#endif
 
 		do {
 			try RomDatabase.initDefaultDatabase()
