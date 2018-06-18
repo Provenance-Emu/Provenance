@@ -840,11 +840,6 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         #endif
         
         scrollCompletionBlock = { [weak self] (finished: Bool) -> () in
-            guard finished else {
-                // Do not continue into the next loop
-                return
-            }
-            
             guard (self != nil) else {
                 return
             }
@@ -853,15 +848,25 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             self!.labelReturnedToHome(true)
             
             // Check to ensure that:
-            // 1) We don't double fire if an animation already exists
-            // 2) The instance is still attached to a window - this completion block is called for
+            
+            // 1) The instance is still attached to a window - this completion block is called for
             //    many reasons, including if the animation is removed due to the view being removed
             //    from the UIWindow (typically when the view controller is no longer the "top" view)
             guard self!.window != nil else {
                 return
             }
-            
+            // 2) We don't double fire if an animation already exists
             guard self!.sublabel.layer.animation(forKey: "position") == nil else {
+                return
+            }
+            // 3) We don't not start automatically if the animation was unexpectedly interrupted
+            guard finished else {
+                // Do not continue into the next loop
+                return
+            }
+            // 4) A completion block still exists for the NEXT loop. A notable case here is if
+            // returnLabelToHome() was called during a subclass's labelReturnToHome() function
+            guard (self!.scrollCompletionBlock != nil) else {
                 return
             }
             
@@ -1250,6 +1255,7 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      
      - SeeAlso: restartLabel
      */
+    @available(*, deprecated : 3.1.6, message : "Use the shutdownLabel function instead")
     public func resetLabel() {
         returnLabelToHome()
         homeLabelFrame = CGRect.null

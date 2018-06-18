@@ -124,6 +124,66 @@ with expansion:
   1 == 1
 
 -------------------------------------------------------------------------------
+#961 -- Dynamically created sections should all be reported
+  Looped section 0
+-------------------------------------------------------------------------------
+MiscTests.cpp:<line number>
+...............................................................................
+
+MiscTests.cpp:<line number>:
+PASSED:
+with message:
+  Everything is OK
+
+-------------------------------------------------------------------------------
+#961 -- Dynamically created sections should all be reported
+  Looped section 1
+-------------------------------------------------------------------------------
+MiscTests.cpp:<line number>
+...............................................................................
+
+MiscTests.cpp:<line number>:
+PASSED:
+with message:
+  Everything is OK
+
+-------------------------------------------------------------------------------
+#961 -- Dynamically created sections should all be reported
+  Looped section 2
+-------------------------------------------------------------------------------
+MiscTests.cpp:<line number>
+...............................................................................
+
+MiscTests.cpp:<line number>:
+PASSED:
+with message:
+  Everything is OK
+
+-------------------------------------------------------------------------------
+#961 -- Dynamically created sections should all be reported
+  Looped section 3
+-------------------------------------------------------------------------------
+MiscTests.cpp:<line number>
+...............................................................................
+
+MiscTests.cpp:<line number>:
+PASSED:
+with message:
+  Everything is OK
+
+-------------------------------------------------------------------------------
+#961 -- Dynamically created sections should all be reported
+  Looped section 4
+-------------------------------------------------------------------------------
+MiscTests.cpp:<line number>
+...............................................................................
+
+MiscTests.cpp:<line number>:
+PASSED:
+with message:
+  Everything is OK
+
+-------------------------------------------------------------------------------
 'Not' checks that should fail
 -------------------------------------------------------------------------------
 ConditionTests.cpp:<line number>
@@ -142,6 +202,8 @@ with expansion:
 
 ConditionTests.cpp:<line number>: FAILED:
   CHECK_FALSE( true )
+with expansion:
+  !true
 
 ConditionTests.cpp:<line number>: FAILED:
   CHECK( !trueValue )
@@ -160,8 +222,6 @@ with expansion:
 
 ConditionTests.cpp:<line number>: FAILED:
   CHECK_FALSE( 1 == 1 )
-with expansion:
-  !(1 == 1)
 
 -------------------------------------------------------------------------------
 'Not' checks that should succeed
@@ -186,6 +246,8 @@ with expansion:
 ConditionTests.cpp:<line number>:
 PASSED:
   REQUIRE_FALSE( false )
+with expansion:
+  !false
 
 ConditionTests.cpp:<line number>:
 PASSED:
@@ -208,8 +270,6 @@ with expansion:
 ConditionTests.cpp:<line number>:
 PASSED:
   REQUIRE_FALSE( 1 == 2 )
-with expansion:
-  !(1 == 2)
 
 -------------------------------------------------------------------------------
 (unimplemented) static bools can be evaluated
@@ -399,6 +459,12 @@ with expansion:
 
 ApproxTests.cpp:<line number>:
 PASSED:
+  REQUIRE( 104.0 == Approx(100.0).margin(4) )
+with expansion:
+  104.0 == Approx( 100.0 )
+
+ApproxTests.cpp:<line number>:
+PASSED:
   REQUIRE( 104.0 != Approx(100.0).margin(3) )
 with expansion:
   104.0 != Approx( 100.0 )
@@ -491,6 +557,42 @@ PASSED:
 with expansion:
   "this string contains 'abc' as a substring" ( contains: "not there" or
   contains: "string" )
+
+-------------------------------------------------------------------------------
+Approx with exactly-representable margin
+-------------------------------------------------------------------------------
+ApproxTests.cpp:<line number>
+...............................................................................
+
+ApproxTests.cpp:<line number>:
+PASSED:
+  CHECK( 0.25f == Approx(0.0f).margin(0.25f) )
+with expansion:
+  0.25f == Approx( 0.0 )
+
+ApproxTests.cpp:<line number>:
+PASSED:
+  CHECK( 0.0f == Approx(0.25f).margin(0.25f) )
+with expansion:
+  0.0f == Approx( 0.25 )
+
+ApproxTests.cpp:<line number>:
+PASSED:
+  CHECK( 0.5f == Approx(0.25f).margin(0.25f) )
+with expansion:
+  0.5f == Approx( 0.25 )
+
+ApproxTests.cpp:<line number>:
+PASSED:
+  CHECK( 245.0f == Approx(245.25f).margin(0.25f) )
+with expansion:
+  245.0f == Approx( 245.25 )
+
+ApproxTests.cpp:<line number>:
+PASSED:
+  CHECK( 245.5f == Approx(245.25f).margin(0.25f) )
+with expansion:
+  245.5f == Approx( 245.25 )
 
 -------------------------------------------------------------------------------
 Approximate PI
@@ -6786,6 +6888,45 @@ PASSED:
 with expansion:
   Approx( 1.23 ) != 1.24
 
+ApproxTests.cpp:<line number>:
+PASSED:
+  REQUIRE( 0 == Approx(0) )
+with expansion:
+  0 == Approx( 0.0 )
+
+Write to std::cerr
+-------------------------------------------------------------------------------
+Standard error is reported and redirected
+  std::cerr
+-------------------------------------------------------------------------------
+MessageTests.cpp:<line number>
+...............................................................................
+
+
+No assertions in section 'std::cerr'
+
+Write to std::clog
+-------------------------------------------------------------------------------
+Standard error is reported and redirected
+  std::clog
+-------------------------------------------------------------------------------
+MessageTests.cpp:<line number>
+...............................................................................
+
+
+No assertions in section 'std::clog'
+
+Interleaved writes to error streams
+-------------------------------------------------------------------------------
+Standard error is reported and redirected
+  Interleaved writes to cerr and clog
+-------------------------------------------------------------------------------
+MessageTests.cpp:<line number>
+...............................................................................
+
+
+No assertions in section 'Interleaved writes to cerr and clog'
+
 Message from section one
 -------------------------------------------------------------------------------
 Standard output from all sections is reported
@@ -9483,6 +9624,6 @@ MiscTests.cpp:<line number>:
 PASSED:
 
 ===============================================================================
-test cases: 168 | 118 passed | 46 failed |  4 failed as expected
-assertions: 970 | 859 passed | 90 failed | 21 failed as expected
+test cases: 171 | 120 passed | 47 failed |  4 failed as expected
+assertions: 985 | 871 passed | 93 failed | 21 failed as expected
 

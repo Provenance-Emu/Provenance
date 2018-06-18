@@ -576,22 +576,38 @@ CGPoint MLOffsetCGPoint(CGPoint point, CGFloat offset);
     
     __weak __typeof__(self) weakSelf = self;
     self.scrollCompletionBlock = ^(BOOL finished) {
-        if (!finished || !weakSelf) {
+        if (!weakSelf) {
+            return;
+        }
+        
+        // Call returned home method
+        [weakSelf labelReturnedToHome:YES];
+        
+        // Check to ensure that:
+        // 1) The instance is still attached to a window - this completion block is called for
+        //    many reasons, including if the animation is removed due to the view being removed
+        //    from the UIWindow (typically when the view controller is no longer the "top" view)
+        if (!weakSelf.window) {
+            return;
+        }
+        // 2) We don't double fire if an animation already exists
+        if ([weakSelf.subLabel.layer animationForKey:@"position"]) {
+            return;
+        }
+        // 3) We don't not start automatically if the animation was unexpectedly interrupted
+        if (!finished) {
             // Do not continue into the next loop
             return;
         }
-        // Call returned home method
-        [weakSelf labelReturnedToHome:YES];
-        // Check to ensure that:
-        // 1) We don't double fire if an animation already exists
-        // 2) The instance is still attached to a window - this completion block is called for
-        //    many reasons, including if the animation is removed due to the view being removed
-        //    from the UIWindow (typically when the view controller is no longer the "top" view)
-        if (self.window && ![weakSelf.subLabel.layer animationForKey:@"position"]) {
-            // Begin again, if conditions met
-            if (weakSelf.labelShouldScroll && !weakSelf.tapToScroll && !weakSelf.holdScrolling) {
-                [weakSelf scrollAwayWithInterval:interval delayAmount:delayAmount shouldReturn:shouldReturn];
-            }
+        // 4) A completion block still exists for the NEXT loop. A notable case here is if
+        // returnLabelToHome was called during a subclass's labelReturnToHome function
+        if (!weakSelf.scrollCompletionBlock) {
+            return;
+        }
+        
+        // Begin again, if conditions met
+        if (weakSelf.labelShouldScroll && !weakSelf.tapToScroll && !weakSelf.holdScrolling) {
+            [weakSelf scrollAwayWithInterval:interval delayAmount:delayAmount shouldReturn:shouldReturn];
         }
     };
     

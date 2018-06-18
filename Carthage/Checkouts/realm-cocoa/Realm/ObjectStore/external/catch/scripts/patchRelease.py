@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 from  __future__ import  print_function
-from releaseCommon import Version
+import releaseCommon
 
-v = Version()
+v = releaseCommon.Version()
 v.incrementPatchNumber()
-v.updateVersionFile()
-v.updateReadmeFile()
+releaseCommon.performUpdates(v)
 
-print( "Updated Version.hpp and README to v{0}".format( v.getVersionString() ) )
+print( "Updated Version.hpp, README and Conan to v{0}".format( v.getVersionString() ) )
