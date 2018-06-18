@@ -22,7 +22,7 @@ fileprivate extension JSButton {
 }
 
 class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -42,11 +42,11 @@ class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSystemRes
                 button.buttonTag = .button6
             }
         }
-        
+
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .run
     }
-    
+
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
@@ -78,35 +78,35 @@ class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSystemRes
         }
         vibrate()
     }
-    
+
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)
         emulatorCore.didRelease(.right, forPlayer: 0)
     }
-    
+
     override func buttonPressed(_ button: JSButton) {
         emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
-    
+
     override func buttonReleased(_ button: JSButton) {
         emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
-    
+
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(.mode, forPlayer: player)
     }
-    
+
     override func releaseStart(forPlayer player: Int) {
         emulatorCore.didRelease(.mode, forPlayer: player)
     }
-    
+
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(.select, forPlayer: player)
     }
-    
+
     override func releaseSelect(forPlayer player: Int) {
         emulatorCore.didRelease(.select, forPlayer: player)
     }

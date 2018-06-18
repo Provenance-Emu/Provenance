@@ -314,7 +314,6 @@ public protocol CoreActions {
     func didRelease(_ button: PVSG1000Button, forPlayer player: Int)
 }
 
-
 // MARK: - Game Boy Advanced
 @objc public enum PVGBAButton: Int {
     case up
