@@ -27,17 +27,17 @@ class PVPCEControllerViewController: PVControllerViewController<PVPCESystemRespo
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "I" {
+            if title == "Ⅰ" {
                 button.buttonTag = .button1
-            } else if title == "II" {
+            } else if title == "Ⅱ" {
                 button.buttonTag = .button2
-            } else if title == "III" {
+            } else if title == "Ⅲ" {
                 button.buttonTag = .button3
-            } else if title == "IV" {
+            } else if title == "Ⅳ" {
                 button.buttonTag = .button4
-            } else if title == "V" {
+            } else if title == "Ⅴ" {
                 button.buttonTag = .button5
-            } else if title == "VI" {
+            } else if title == "Ⅵ" {
                 button.buttonTag = .button6
             }
         }
