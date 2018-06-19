@@ -39,4 +39,5 @@
 @interface PVGBEmulatorCore()
 -(NSInteger)currentDisplayMode;
 -(void)changeDisplayMode:(NSInteger)displayMode;
+@property (nonatomic, readonly) BOOL isGameboyColor;
 @end

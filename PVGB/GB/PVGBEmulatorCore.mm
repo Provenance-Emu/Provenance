@@ -137,12 +137,16 @@ public:
     }
 
     // Load built-in GBC palette for monochrome games if supported
-//	if (!gb.isCgb()) {
-//        [self loadPalette];
-//	} else {
+	if (gb.isCgb()) {
 		[self setPalette];
-//	}
+	} else {
+		[self loadPalette];
+	}
     return YES;
+}
+
+-(BOOL)isGameboyColor {
+	return gb.isCgb();
 }
 
 - (void)executeFrame

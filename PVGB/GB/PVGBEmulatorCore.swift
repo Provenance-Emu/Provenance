@@ -11,7 +11,11 @@ import PVSupport
 
 extension PVGBEmulatorCore: CoreActions {
 	public var coreActions : [CoreAction]? {
-		return [CoreAction(title: "Change Palette", options: nil)]
+		if !isGameboyColor {
+			return [CoreAction(title: "Change Palette", options: nil)]
+		} else {
+			return nil
+		}
 	}
 
 	public func selected(action : CoreAction) {
