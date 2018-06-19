@@ -964,6 +964,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			sortOptionsTableView.reloadData()
 			present(navController, animated: true, completion: nil)
 			return
+		} else {
+			sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
+			sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
+			sortOptionsTableView.reloadData()
+			present(sortOptionsTableViewController, animated: true, completion: nil)
 		}
 		#else
 		sortOptionsTableView.reloadData()
