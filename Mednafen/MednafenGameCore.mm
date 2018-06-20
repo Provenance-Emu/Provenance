@@ -2238,11 +2238,11 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonY2:
                 return [[dpad right] isPressed];
             case PVWSButtonA:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVWSButtonB:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVWSButtonStart:
-                return [[pad rightShoulder] isPressed];
+                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
             case PVWSButtonSound:
                 return [[pad leftShoulder] isPressed];
             default:
@@ -2263,9 +2263,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonX2:
                 return [[dpad right] isPressed];
             case PVWSButtonA:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVWSButtonB:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVWSButtonStart:
                 return [[pad rightShoulder] isPressed];
             case PVWSButtonSound:
