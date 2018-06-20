@@ -1098,9 +1098,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
             case PVLynxButtonRight:
                 return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
-            case PVLynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVLynxButtonA:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVLynxButtonOption1:
                 return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
@@ -1121,9 +1121,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVLynxButtonRight:
                 return [[dpad right] isPressed];
-            case PVLynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVLynxButtonA:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVLynxButtonOption1:
                 return [[pad leftShoulder] isPressed];
@@ -1150,10 +1150,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVLynxButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case PVLynxButtonA:
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed];
                 break;
-            case PVLynxButtonB:
+            case PVLynxButtonA:
                 return [[pad buttonX] isPressed];
                 break;
             default:
