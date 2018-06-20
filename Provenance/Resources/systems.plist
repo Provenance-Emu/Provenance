@@ -1991,7 +1991,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>L</string>
+						<string>1</string>
 						<key>PVControlFrame</key>
 						<string>{{10,70},{60,70}}</string>
 					</dict>
@@ -1999,7 +1999,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>R</string>
+						<string>2</string>
 						<key>PVControlFrame</key>
 						<string>{{80,70},{60,70}}</string>
 					</dict>
