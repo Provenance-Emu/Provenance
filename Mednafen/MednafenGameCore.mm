@@ -1099,13 +1099,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVLynxButtonRight:
                 return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
             case PVLynxButtonA:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[[pad rightThumbstick] right] isPressed]?:[[pad rightTrigger] isPressed];
             case PVLynxButtonB:
-                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[[pad rightThumbstick] left] isPressed]?:[[pad leftTrigger] isPressed];
             case PVLynxButtonOption1:
-                return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+                return [[pad leftShoulder] isPressed];
             case PVLynxButtonOption2:
-                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                return [[pad rightShoulder] isPressed];
             default:
                 break;
         }
