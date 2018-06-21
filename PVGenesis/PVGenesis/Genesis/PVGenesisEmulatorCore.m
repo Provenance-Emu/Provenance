@@ -496,7 +496,9 @@ static bool environment_callback(unsigned cmd, void *data)
                case PVGenesisButtonB: // Button1
                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
                case PVGenesisButtonC: // Button2
-                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad leftTrigger] isPressed];
+               case PVGenesisButtonStart: // MS Pause
+                   return [[pad leftShoulder] isPressed];
                default:
                    break;
            }
@@ -517,7 +519,9 @@ static bool environment_callback(unsigned cmd, void *data)
                case PVGenesisButtonB: // Button1
                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad rightShoulder] isPressed];
                case PVGenesisButtonC: // Button2
-                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad leftShoulder] isPressed];
+                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+               case PVGenesisButtonStart: // MS Pause
+                   return [[pad leftShoulder] isPressed];
                default:
                    break;
            }

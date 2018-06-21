@@ -43,6 +43,7 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
         }
 
         startButton?.buttonTag = .start
+        selectButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {

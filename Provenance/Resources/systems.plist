@@ -1428,6 +1428,14 @@
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
 			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Pause</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
 		</array>
 	</dict>
 	<dict>
