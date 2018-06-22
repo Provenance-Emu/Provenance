@@ -346,7 +346,7 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            if !(gamepad.rightShoulder.isPressed) {
+            if (!gamepad.rightShoulder.isPressed) {
                 // Default
                 xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
                 yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
