@@ -2031,13 +2031,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPSXButtonCircle:
                 return [[pad buttonB] isPressed] && !modifiersPressed;
             case PVPSXButtonL1:
-                return [[pad leftShoulder] isPressed];
+                return [[pad leftShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonL2:
                 return [[pad leftTrigger] isPressed] && !modifier1Pressed;
             case PVPSXButtonL3:
                 return modifiersPressed && [[dpad down] isPressed];
             case PVPSXButtonR1:
-                return [[pad rightShoulder] isPressed];
+                return [[pad rightShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonR2:
                 return [[pad rightTrigger] isPressed] && !modifier1Pressed;
             case PVPSXButtonR3:
