@@ -714,8 +714,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		let lastPlayed = game.lastPlayed ?? Date()
 		var shouldSave = PVSettingsModel.shared.autoSave
 		shouldSave = shouldSave && (lastPlayed.timeIntervalSinceNow * -1) > minimumPlayTimeToMakeAutosave
-		shouldSave = shouldSave && (game.lastAutosaveAge ?? 0) > minutes(1)
-		shouldSave = shouldSave && (game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? 0) > minutes(1)
+		shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
+		shouldSave = shouldSave && (game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
         if shouldSave {
             quitTitle = "Save & Quit"
         }
