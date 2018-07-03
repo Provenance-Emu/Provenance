@@ -22,3 +22,9 @@ extension PVFCEUEmulatorCore: DiscSwappable {
         internalSwapDisc(number)
     }
 }
+
+extension PVFCEUEmulatorCore : ArchiveSupport {
+	public var supportedArchiveFormats : ArchiveSupportOptions {
+		return [.gzip, .zip]
+	}
+}

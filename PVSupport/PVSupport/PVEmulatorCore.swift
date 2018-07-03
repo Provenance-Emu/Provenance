@@ -8,6 +8,16 @@
 
 import UIKit
 
+public protocol ArchiveSupport {
+	var supportedArchiveFormats : ArchiveSupportOptions { get }
+}
+
+//extension protocol ArchiveSupport where Self:PVEmulatorCore {
+//	open var supportedArchiveFormats : ArchiveSupportOptions {
+//		return []
+//	}
+//}
+
 // MARK: - Shared Protocolcs
 @objc public protocol DiscSwappable {
     var currentGameSupportsMultipleDiscs: Bool {get}
@@ -35,6 +45,20 @@ public struct CoreAction {
 		self.requiresReset = requiresReset
 		self.options = options
 	}
+}
+
+public struct ArchiveSupportOptions: OptionSet {
+	public init(rawValue : Int) {
+		self.rawValue = rawValue
+	}
+
+	public let rawValue: Int
+
+	public static let zip    = ArchiveSupportOptions(rawValue: 1 << 0)
+	public static let sevenZip  = ArchiveSupportOptions(rawValue: 1 << 1)
+	public static let gzip  = ArchiveSupportOptions(rawValue: 1 << 1)
+
+	public static let all: ArchiveSupportOptions = [.zip, .sevenZip]
 }
 
 public protocol CoreActions {
