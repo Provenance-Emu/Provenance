@@ -711,7 +711,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             self.enableContorllerInput(false)
         }))
         var quitTitle = "Quit"
-        if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1) > minimumPlayTimeToMakeAutosave && PVSettingsModel.shared.autoSave {
+		let lastPlayed = game.lastPlayed ?? Date()
+		var shouldSave = PVSettingsModel.shared.autoSave
+		shouldSave = shouldSave && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
+		shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
+		shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
+        if shouldSave {
             quitTitle = "Save & Quit"
         }
 
@@ -869,7 +874,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			ILOG("Last autosave is too new to make new one")
 			return
 		}
-
+		
+		if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
+			ILOG("Latest manual save state is too recent to make a new auto save")
+			return
+		}
+		
         let image = captureScreenshot()
         try createNewSaveState(auto: true, screenshot: image)
     }

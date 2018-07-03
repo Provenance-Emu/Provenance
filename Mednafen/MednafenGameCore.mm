@@ -234,12 +234,10 @@ static void mednafen_init(MednafenGameCore* current)
 		 0x4000=x
 		 0x8000=□
 		 */
-	// The buttons to press to toggle analog / digital mode (hold for couple seconds)
-	uint64 amct = ((1 << PSXMap[PVPSXButtonCircle]) |
-				   (1 << PSXMap[PVPSXButtonL1]) |
-                   (1 << PSXMap[PVPSXButtonL2]) |
-                   (1 << PSXMap[PVPSXButtonR1]) |
-				   (1 << PSXMap[PVPSXButtonR2]));
+	// Analog/Digital Toggle (hold for couple seconds)
+	uint64 amct =
+    ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonL2]) | (1 << PSXMap[PVPSXButtonR2]) | (1 << PSXMap[PVPSXButtonCircle])) ||
+    ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonCircle]));
 	MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
 
 	// PCE Settings
@@ -1098,14 +1096,14 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
             case PVLynxButtonRight:
                 return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
-            case PVLynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVLynxButtonA:
-                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[[pad rightThumbstick] right] isPressed]?:[[pad rightTrigger] isPressed];
+            case PVLynxButtonB:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[[pad rightThumbstick] left] isPressed]?:[[pad leftTrigger] isPressed];
             case PVLynxButtonOption1:
-                return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+                return [[pad leftShoulder] isPressed];
             case PVLynxButtonOption2:
-                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                return [[pad rightShoulder] isPressed];
             default:
                 break;
         }
@@ -1121,9 +1119,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVLynxButtonRight:
                 return [[dpad right] isPressed];
-            case PVLynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVLynxButtonA:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVLynxButtonOption1:
                 return [[pad leftShoulder] isPressed];
@@ -1150,10 +1148,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVLynxButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case PVLynxButtonA:
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed];
                 break;
-            case PVLynxButtonB:
+            case PVLynxButtonA:
                 return [[pad buttonX] isPressed];
                 break;
             default:
@@ -2004,15 +2002,18 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
+        bool modifier1Pressed = [[pad leftShoulder] isPressed] && [[pad rightShoulder] isPressed];
+        bool modifier2Pressed = [[pad leftTrigger] isPressed] && [[pad rightTrigger] isPressed];
+        bool modifiersPressed = modifier1Pressed && modifier2Pressed;
         switch (buttonID) {
             case PVPSXButtonUp:
                 return [[dpad up] isPressed];
             case PVPSXButtonDown:
-                return [[dpad down] isPressed];
+                return [[dpad down] isPressed] && !modifiersPressed;
             case PVPSXButtonLeft:
                 return [[dpad left] isPressed];
             case PVPSXButtonRight:
-                return [[dpad right] isPressed];
+                return [[dpad right] isPressed] && !modifiersPressed;
             case PVPSXButtonLeftAnalogUp:
                 return [pad leftThumbstick].up.value;
             case PVPSXButtonLeftAnalogDown:
@@ -2022,25 +2023,29 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPSXButtonLeftAnalogRight:
                 return [pad leftThumbstick].right.value;
             case PVPSXButtonSquare:
-                return [[pad buttonX] isPressed];
-            case PVPSXButtonCross:
-                return [[pad buttonA] isPressed];
-            case PVPSXButtonCircle:
-                return [[pad buttonB] isPressed];
-            case PVPSXButtonL1:
-                return [[pad leftShoulder] isPressed];
+                return [[pad buttonX] isPressed] && !modifiersPressed;
             case PVPSXButtonTriangle:
                 return [[pad buttonY] isPressed];
-            case PVPSXButtonR1:
-                return [[pad rightShoulder] isPressed];
+            case PVPSXButtonCross:
+                return [[pad buttonA] isPressed] && !modifiersPressed;
+            case PVPSXButtonCircle:
+                return [[pad buttonB] isPressed] && !modifiersPressed;
+            case PVPSXButtonL1:
+                return [[pad leftShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonL2:
-                return [[pad leftTrigger] isPressed];
+                return [[pad leftTrigger] isPressed] && !modifier1Pressed;
+            case PVPSXButtonL3:
+                return modifiersPressed && [[dpad down] isPressed];
+            case PVPSXButtonR1:
+                return [[pad rightShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonR2:
-                return [[pad rightTrigger] isPressed];
+                return [[pad rightTrigger] isPressed] && !modifier1Pressed;
+            case PVPSXButtonR3:
+                return modifiersPressed && [[pad buttonA] isPressed];
+            case PVPSXButtonSelect:
+                return self.isSelectPressed || (modifiersPressed && [[dpad right] isPressed]);
 			case PVPSXButtonStart:
-				return self.isStartPressed;
-			case PVPSXButtonSelect:
-				return self.isSelectPressed;
+				return self.isStartPressed || (modifiersPressed && [[pad buttonX] isPressed]);
             default:
                 break;
         }
@@ -2049,31 +2054,40 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     {
         GCGamepad *pad = [controller gamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
+        bool modifierPressed = [[pad leftShoulder] isPressed] && [[pad rightShoulder] isPressed];
         switch (buttonID) {
             case PVPSXButtonUp:
-                return [[dpad up] isPressed];
+                return [[dpad up] isPressed] && !modifierPressed;
             case PVPSXButtonDown:
-                return [[dpad down] isPressed];
+                return [[dpad down] isPressed] && !modifierPressed;
             case PVPSXButtonLeft:
                 return [[dpad left] isPressed];
             case PVPSXButtonRight:
-                return [[dpad right] isPressed];
+                return [[dpad right] isPressed] && !modifierPressed;
             case PVPSXButtonSquare:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonX] isPressed] && !modifierPressed;
+            case PVPSXButtonTriangle:
+                return [[pad buttonY] isPressed] && !modifierPressed;
             case PVPSXButtonCross:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed] && !modifierPressed;
             case PVPSXButtonCircle:
-                return [[pad buttonB] isPressed];
+                return [[pad buttonB] isPressed] && !modifierPressed;
             case PVPSXButtonL1:
                 return [[pad leftShoulder] isPressed];
-            case PVPSXButtonTriangle:
-                return [[pad buttonY] isPressed];
+            case PVPSXButtonL2:
+                return modifierPressed && [[dpad up] isPressed];
+            case PVPSXButtonL3:
+                return modifierPressed && [[dpad down] isPressed];
             case PVPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
-            case PVPSXButtonStart:
-                return self.isStartPressed;
+            case PVPSXButtonR2:
+                return modifierPressed && [[pad buttonY] isPressed];
+            case PVPSXButtonR3:
+                return modifierPressed && [[pad buttonA] isPressed];
             case PVPSXButtonSelect:
-                return self.isSelectPressed;
+                return self.isSelectPressed || (modifierPressed && [[dpad right] isPressed]);
+            case PVPSXButtonStart:
+                return self.isStartPressed || (modifierPressed && [[pad buttonX] isPressed]);
             default:
                 break;
         }
@@ -2238,11 +2252,11 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonY2:
                 return [[dpad right] isPressed];
             case PVWSButtonA:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVWSButtonB:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVWSButtonStart:
-                return [[pad rightShoulder] isPressed];
+                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
             case PVWSButtonSound:
                 return [[pad leftShoulder] isPressed];
             default:
@@ -2263,9 +2277,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonX2:
                 return [[dpad right] isPressed];
             case PVWSButtonA:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVWSButtonB:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVWSButtonStart:
                 return [[pad rightShoulder] isPressed];
             case PVWSButtonSound:

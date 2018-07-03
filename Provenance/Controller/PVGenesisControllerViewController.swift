@@ -29,9 +29,9 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
             }
             if title == "A" {
                 button.buttonTag = .a
-            } else if title == "B" || title == "2" || title == "L" {
+            } else if title == "B" || title == "1" {
                 button.buttonTag = .b
-            } else if title == "C" || title == "1" || title == "R" {
+            } else if title == "C" || title == "2" {
                 button.buttonTag = .c
             } else if title == "X" {
                 button.buttonTag = .x
@@ -43,6 +43,7 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
         }
 
         startButton?.buttonTag = .start
+        selectButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {

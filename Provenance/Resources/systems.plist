@@ -364,17 +364,17 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>A</string>
+						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>B</string>
+						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,50},{60,50}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -382,7 +382,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Option 1</string>
+				<string>O1</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -390,7 +390,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Option 2</string>
+				<string>O2</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -743,7 +743,7 @@
 						<key>PVControlTitle</key>
 						<string>Ⅱ</string>
 						<key>PVControlFrame</key>
-						<string>{{60,116},{60,60}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -751,7 +751,7 @@
 						<key>PVControlTitle</key>
 						<string>Ⅰ</string>
 						<key>PVControlFrame</key>
-						<string>{{116,60},{60,60}}</string>
+						<string>{{90,70},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -819,7 +819,7 @@
 						<key>PVControlTitle</key>
 						<string>Ⅱ</string>
 						<key>PVControlFrame</key>
-						<string>{{60,116},{60,60}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -827,7 +827,7 @@
 						<key>PVControlTitle</key>
 						<string>Ⅰ</string>
 						<key>PVControlFrame</key>
-						<string>{{116,60},{60,60}}</string>
+						<string>{{90,70},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -913,7 +913,7 @@
 						<key>PVControlTitle</key>
 						<string>Ⅱ</string>
 						<key>PVControlFrame</key>
-						<string>{{60,116},{60,60}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -921,7 +921,7 @@
 						<key>PVControlTitle</key>
 						<string>Ⅰ</string>
 						<key>PVControlFrame</key>
-						<string>{{116,60},{60,60}}</string>
+						<string>{{90,70},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -1346,7 +1346,7 @@
 						<key>PVControlTitle</key>
 						<string>1</string>
 						<key>PVControlFrame</key>
-						<string>{{116,60},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1354,7 +1354,7 @@
 						<key>PVControlTitle</key>
 						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{60,116},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -1410,7 +1410,7 @@
 						<key>PVControlTitle</key>
 						<string>1</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1418,7 +1418,7 @@
 						<key>PVControlTitle</key>
 						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,70},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -1430,7 +1430,7 @@
 			</dict>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVStartButton</string>
+				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
 				<string>Pause</string>
 				<key>PVControlSize</key>
@@ -1830,7 +1830,7 @@
 						<key>PVControlTitle</key>
 						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{20,70},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#cf001d</string>
 					</dict>
@@ -1840,7 +1840,7 @@
 						<key>PVControlTitle</key>
 						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,70},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#cf001d</string>
 					</dict>
@@ -1921,7 +1921,7 @@
 						<key>PVControlTitle</key>
 						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1929,7 +1929,7 @@
 						<key>PVControlTitle</key>
 						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,70},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -1991,17 +1991,17 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>L</string>
+						<string>1</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{20,70},{60,70}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>R</string>
+						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,70},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -2115,7 +2115,7 @@
 						<key>PVControlTitle</key>
 						<string>1</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{20,70},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -2125,7 +2125,7 @@
 						<key>PVControlTitle</key>
 						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,70},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -2300,16 +2300,6 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVLeftShoulderButton</string>
-				<key>PVControlTitle</key>
-				<string>Reset</string>
-				<key>PVControlSize</key>
-				<string>{60,42}</string>
-				<key>PVControlTint</key>
-				<string>#f96763</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
@@ -2331,7 +2321,7 @@
 						<key>PVControlTitle</key>
 						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{80,70},{60,70}}</string>
+						<string>{{90,70},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -2341,7 +2331,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>Reset</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2349,7 +2339,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Pause</string>
+				<string>Start</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>

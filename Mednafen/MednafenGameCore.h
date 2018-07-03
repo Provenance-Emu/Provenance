@@ -55,7 +55,7 @@ __attribute__((visibility("default")))
 
 @end
 
-// for Swiwt
+// for Swift
 @interface MednafenGameCore()
 @property (nonatomic, assign) MednaSystem systemType;
 @property (nonatomic, assign) NSUInteger maxDiscs;

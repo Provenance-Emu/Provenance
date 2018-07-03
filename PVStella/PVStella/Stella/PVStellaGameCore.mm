@@ -389,16 +389,16 @@ static void writeSaveFile(const char* path, int type)
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            /* TODO: To support paddles we would need to circumvent libRatre's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
+            /* TODO: To support paddles we would need to circumvent libRetro's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
             
-            // DPAD
+            // D-Pad
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
 
 			// #688, use second thumb to control second player input if no controller active
-			// some games used both joysticks for 1 player optinally
+			// some games used both joysticks for 1 player optionally
 			if(playerIndex == 0 && self.controller2 == nil) {
 				_pad[1][RETRO_DEVICE_ID_JOYPAD_UP]    = gamepad.rightThumbstick.up.isPressed;
 				_pad[1][RETRO_DEVICE_ID_JOYPAD_DOWN]  = gamepad.rightThumbstick.down.isPressed;
@@ -406,28 +406,19 @@ static void writeSaveFile(const char* path, int type)
 				_pad[1][RETRO_DEVICE_ID_JOYPAD_RIGHT] = gamepad.rightThumbstick.right.isPressed;
 			}
 
-                // Buttons
-            
-                // Fire 1
+            // Fire
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
-                // Fire 2
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonX.isPressed;
-                // Fire 3
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonB.isPressed;
+            // Trigger
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed || gamepad.rightTrigger.isPressed;
+            // Booster
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
             
-            // Triggers
+            // Reset
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
             
-                // Reset
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftTrigger.isPressed;
-            
-                // Select
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightTrigger.isPressed;
+            // Select
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
    
-                // Color
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_L3] = gamepad.rightShoulder.isPressed;
-            
-                // Black and White
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_R3] = gamepad.leftShoulder.isPressed;
             /*
              #define RETRO_DEVICE_ID_JOYPAD_B        0 == JoystickZeroFire1
              #define RETRO_DEVICE_ID_JOYPAD_Y        1 == Unmapped
@@ -450,26 +441,25 @@ static void writeSaveFile(const char* path, int type)
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-                // DPAD
+            // D-Pad
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
-
-                // Buttons
             
-                // Fire 1
+            // Fire
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
-                // Fire 2
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonX.isPressed;
-                // Fire 3
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonB.isPressed;
+            // Trigger
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed;
+            // Booster
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed;
             
-                // Reset
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed;
+            // Reset
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
             
-                // Select
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed;
+            // Select
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
+            
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
@@ -481,7 +471,9 @@ static void writeSaveFile(const char* path, int type)
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.value > 0.5;
 
+            // Fire
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
+            // Trigger
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
         }
 #endif

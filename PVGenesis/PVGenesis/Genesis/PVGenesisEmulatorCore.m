@@ -418,9 +418,9 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
-                case PVGenesisButtonB: // SG1000 ButtonL
+                case PVGenesisButtonB: // SG1000 ButtonL/1
                     return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
-                case PVGenesisButtonC: // SG1000 ButtonR
+                case PVGenesisButtonC: // SG1000 ButtonR/2
                     return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
                 default:
                     break;
@@ -438,9 +438,9 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[dpad left] isPressed];
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed];
-                case PVGenesisButtonB: // SG1000 ButtonL
+                case PVGenesisButtonB: // SG1000 ButtonL/1
                     return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad leftShoulder] isPressed];
-                case PVGenesisButtonC: // SG1000 ButtonR
+                case PVGenesisButtonC: // SG1000 ButtonR/2
                     return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad rightShoulder] isPressed];
                 default:
                     break;
@@ -465,10 +465,10 @@ static bool environment_callback(unsigned cmd, void *data)
                 case PVGenesisButtonRight:
                     return [[dpad right] value] > 0.5;
                     break;
-                case PVGenesisButtonB: // MS/SG1000 ButtonL
+                case PVGenesisButtonB: // SG1000 ButtonL/1
                     return [[pad buttonA] isPressed];
                     break;
-                case PVGenesisButtonC: // MS/SG1000 ButtonR
+                case PVGenesisButtonC: // SG1000 ButtonR/2
                     return [[pad buttonX] isPressed];
                     break;
                 default:
@@ -493,12 +493,12 @@ static bool environment_callback(unsigned cmd, void *data)
                    return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
                case PVGenesisButtonRight:
                    return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
-               case PVGenesisButtonB: // MS Button2
-                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
-               case PVGenesisButtonC: // MS Button1
-                   return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+               case PVGenesisButtonB: // Button1
+                   return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+               case PVGenesisButtonC: // Button2
+                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad leftTrigger] isPressed];
                case PVGenesisButtonStart: // MS Pause
-                   return [[pad rightTrigger] isPressed]?:[[pad rightShoulder] isPressed];
+                   return [[pad leftShoulder] isPressed];
                default:
                    break;
            }
@@ -516,12 +516,12 @@ static bool environment_callback(unsigned cmd, void *data)
                    return [[dpad left] isPressed];
                case PVGenesisButtonRight:
                    return [[dpad right] isPressed];
-               case PVGenesisButtonB: // MS Button2
+               case PVGenesisButtonB: // Button1
+                   return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad rightShoulder] isPressed];
+               case PVGenesisButtonC: // Button2
                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
-               case PVGenesisButtonC: // MS Button1
-                   return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
                case PVGenesisButtonStart: // MS Pause
-                   return [[pad rightShoulder] isPressed];
+                   return [[pad leftShoulder] isPressed];
                default:
                    break;
            }
@@ -545,10 +545,10 @@ static bool environment_callback(unsigned cmd, void *data)
                case PVGenesisButtonRight:
                    return [[dpad right] value] > 0.5;
                    break;
-               case PVGenesisButtonC: // MS Button1
+               case PVGenesisButtonB: // Button1
                    return [[pad buttonA] isPressed];
                    break;
-               case PVGenesisButtonB: // MS Button2
+               case PVGenesisButtonC: // Button2
                    return [[pad buttonX] isPressed];
                    break;
                default:
@@ -557,7 +557,87 @@ static bool environment_callback(unsigned cmd, void *data)
        }
            
 #endif
-       
+    
+        // Game Gear…
+    } else if ([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
+        
+        if ([controller extendedGamepad]) {
+            GCExtendedGamepad *pad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [pad dpad];
+            switch (buttonID) {
+                case PVGenesisButtonUp:
+                    return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                case PVGenesisButtonDown:
+                    return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                case PVGenesisButtonLeft:
+                    return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                case PVGenesisButtonRight:
+                    return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                case PVGenesisButtonB: // Button1
+                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                case PVGenesisButtonC: // Button2
+                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+                case PVGenesisButtonStart: // GG Start
+                    return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                default:
+                    break;
+            }
+            
+        } else if ([controller gamepad]) {
+            
+            GCGamepad *pad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [pad dpad];
+            switch (buttonID) {
+                case PVGenesisButtonUp:
+                    return [[dpad up] isPressed];
+                case PVGenesisButtonDown:
+                    return [[dpad down] isPressed];
+                case PVGenesisButtonLeft:
+                    return [[dpad left] isPressed];
+                case PVGenesisButtonRight:
+                    return [[dpad right] isPressed];
+                case PVGenesisButtonB: // Button1
+                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                case PVGenesisButtonC: // Button2
+                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+                case PVGenesisButtonStart: // GG Start
+                    return [[pad rightShoulder] isPressed];
+                default:
+                    break;
+            }
+        }
+        
+#if TARGET_OS_TV
+        
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *pad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [pad dpad];
+            switch (buttonID) {
+                case PVGenesisButtonUp:
+                    return [[dpad up] value] > 0.5;
+                    break;
+                case PVGenesisButtonDown:
+                    return [[dpad down] value] > 0.5;
+                    break;
+                case PVGenesisButtonLeft:
+                    return [[dpad left] value] > 0.5;
+                    break;
+                case PVGenesisButtonRight:
+                    return [[dpad right] value] > 0.5;
+                    break;
+                case PVGenesisButtonB: // Button1
+                    return [[pad buttonA] isPressed];
+                    break;
+                case PVGenesisButtonC: // Button2
+                    return [[pad buttonX] isPressed];
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+#endif
+        
     // Sega Genesis/Mega Drive, Sega/Mega CD, 32X…
     } else {
        

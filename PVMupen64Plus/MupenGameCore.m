@@ -292,53 +292,86 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
-			// Left Joystick -> Joystick
+			// Left Joystick → Joystick
             xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
             yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
 
-			// DPad -> DPad
+			// MFi-D-Pad → D-Pad
             padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
             padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
             padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
             padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
 
-			// A,Y -> A
-			// X,B -> B
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed;
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed || gamepad.buttonB.isPressed;
-
-			// Right Trigger -> Start
+			// MFi-R2 → Start
             padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
-
-			// L / R Shoulder -> L / R
-            padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
-            padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
-
-			// Left Trigger -> Z
-            padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
-
-			// Right Joystick -> C Buttons
-            float rightJoystickDeadZone = 0.45;
             
-            padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
-            padData[playerIndex][PVN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
+            // MFi-L2 → Z
+            padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
+            
+            // If MFi-L2 is not pressed… MFi-L1 → L
+            if (!gamepad.rightShoulder.isPressed) {
+                padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
+            }
+            
+            // If MFi-L1 is not pressed… MFi-R1 → R
+            if (!gamepad.leftShoulder.isPressed) {
+                padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
+            }
+            // If not C-Mode… MFi-X,A → A,B MFi-Y,B → C←,C↓
+            if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed)) {
+                padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
+                padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
+                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
+            }
+            
+            //C-Mode: MFi-X,Y,A,B -> C←,C↑,C↓,C→
+            if (gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) {
+                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
+                padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
+                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
+                padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
+            }
+   
+			// Right Joystick → C Buttons
+            float rightJoystickDeadZone = 0.45;
+            if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) && !(gamepad.buttonY.isPressed || gamepad.buttonB.isPressed)) {
+                padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
+                padData[playerIndex][PVN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
+                padData[playerIndex][PVN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
+                padData[playerIndex][PVN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
+            }
+            
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
-            
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
-            
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
+            if (!gamepad.rightShoulder.isPressed) {
+                // Default
+                xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
+                yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
+                
+                padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
+                padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+                
+                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
+                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
+            } else {
+                // Alt-Mode
+                padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
+                padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
+                padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
+                padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
+                
+                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
+                padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
+                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
+                padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
+            }
             
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftShoulder.isPressed;
             padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
+            
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
