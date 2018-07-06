@@ -162,6 +162,7 @@ platform :ios do
 
   desc "Push a new alpha build to Hockeyapp"
   lane :alpha do
+    load_keys
     pre_build
 
     # Codesign
@@ -263,6 +264,8 @@ platform :ios do
   end
 
   private_lane :codesign_toggle do |options|
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
     automatic = options[:automatic]
     team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
@@ -284,9 +287,12 @@ platform :ios do
   end
 
   private_lane :plist_set do |options|
+    load_keys
     normal = options[:normal]
     suffix = normal ? "" : ".alpha"
     display_name = normal ? "Provenance" : 'Provenance α' # or Beta β
+    dev_domain = ENV["DEV_DOMAIN"]
+
     # -- Update bundle names and ids
     # - iOS
     update_info_plist(
@@ -342,10 +348,13 @@ platform :ios do
   end
 
   private_lane :setup_certificates_private do |options|
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
+
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.Spotlight"], type: type, readonly: true, platform: "ios")
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.topshelf"], type: type, readonly: true, platform: "tvos")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.Spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.topshelf"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Create Certs for Match"
@@ -357,6 +366,9 @@ platform :ios do
   end
 
   private_lane :create_certificates_private do |options|
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
+
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
     match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.Spotlight"], type: type, readonly: false, platform: "ios")
@@ -381,6 +393,8 @@ platform :ios do
     ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
     build_time = Time.now.strftime('%F')
     output_directory = "build/" + build_time
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
 
     # Method used to export the archive.
     # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
@@ -432,6 +446,9 @@ platform :ios do
 
   desc "Submits a new Beta Build to Apple TestFlight"
   private_lane :build_appstore do
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
+
     build_app(
       workspace: "Provenance.xcworkspace",
       scheme: "Provenance",
