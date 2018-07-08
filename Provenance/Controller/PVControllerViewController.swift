@@ -478,6 +478,22 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                         buttonGroup?.frame.origin.y += 4
                     }
                 }
+                let shoulderYOffset = CGFloat(35)
+                if leftShoulderButton != nil {
+                    leftShoulderButton?.frame.origin.y += shoulderYOffset
+                }
+                if leftShoulderButton2 != nil {
+                    leftShoulderButton2?.frame.origin.y += shoulderYOffset
+                }
+                if rightShoulderButton != nil {
+                    rightShoulderButton?.frame.origin.y += shoulderYOffset
+                }
+                if rightShoulderButton2 != nil {
+                    rightShoulderButton2?.frame.origin.y += shoulderYOffset
+                }
+                if zTriggerButton != nil {
+                    zTriggerButton?.frame.origin.y += shoulderYOffset
+                }
             }
         }
         // TO DO: Shrink controls for landscaoe on old/smaller iPhones…
