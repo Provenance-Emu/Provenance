@@ -75,6 +75,21 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         updateWebDavTitleLabel()
     }
+    
+    override func viewDidLayoutSubviews() {
+        if PVSettingsModel.sharedInstance().autoLoadSaves == true {
+            disableAskToLoadSavesCell()
+            disableAutoLoadSaves()
+        } else {
+            enableAskToLoadSavesCell()
+        }
+        if PVSettingsModel.sharedInstance().autoSave == false {
+            disableTimedAutoSaveCell()
+            disableTimedAutoSaves()
+        } else {
+            enableTimedAutoSavesCell()
+        }
+    }
 
     override func viewDidLayoutSubviews() {
         if PVSettingsModel.sharedInstance().autoLoadSaves == true {
@@ -282,6 +297,36 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         PVSettingsModel.sharedInstance().askToAutoLoad = false
     }
 
+    func enableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 1.0
+    }
+    
+    func disableTimedAutoSaveCell() {
+        timedAutoSavesCell.alpha = 0.2
+    }
+    
+    func disableTimedAutoSaves() {
+        if timedAutoSavesValueLabel.text == "ON" {
+            TOGGLE_SETTING(\PVSettingsModel.timedAutoSaves, timedAutoSavesValueLabel)
+        }
+        PVSettingsModel.sharedInstance().timedAutoSaves = false
+    }
+    
+    func enableTimedAutoSavesCell() {
+        timedAutoSavesCell.alpha = 1.0
+    }
+    
+    func disableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 0.2
+    }
+    
+    func disableAutoLoadSaves() {
+        if askToLoadSavesValueLabel.text == "ON" {
+            TOGGLE_SETTING(\PVSettingsModel.askToAutoLoad, askToLoadSavesValueLabel)
+        }
+        PVSettingsModel.sharedInstance().askToAutoLoad = false
+    }
+    
     func enableAskToLoadSavesCell() {
         askToLoadSavesCell.alpha = 1.0
     }
