@@ -112,6 +112,10 @@ const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
 
 // Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
+// start, A, B, C, Z, X, Y, dpad l, dpad d, dpad u, dpad r, left shoulder, right shoulder
+const int SaturnMap[]   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 3, 12, 11 };
+// dpad u, dpad d, dpad l, dpad r, B, Start, A, Z, Y, X, mode, C, analog right shoulder, analog left shoulder, analog u, analog l,
+const int Saturn3DMap[] = { 0, 1, 2, 3, 6, 4, 5, 10, 9, 8, 17, 7, 12, 11, 13, 14 };
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
