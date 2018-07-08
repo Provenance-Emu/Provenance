@@ -551,8 +551,8 @@
 		B36D9DFE203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B375C68D2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B375C68E2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
-		B3768491206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */; };
-		B3768492206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */; };
+		B3768491206A08BE0007A99C /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B3768492206A08BE0007A99C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B3780B3F2057F1F60018211E /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96832055F3D900281880 /* PVCore.swift */; };
 		B3780B402057F1F70018211E /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96832055F3D900281880 /* PVCore.swift */; };
 		B380EBE620B39830002988F9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B380EBE520B39830002988F9 /* Utilities.swift */; };
@@ -1110,11 +1110,10 @@
 		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
-		330010B420D455120077EE20 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A46FD20A2024200616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A470420A202C100616097 /* PVYabause.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVYabause.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-fycqgcqtrywlgvewxvxqqvljmodg/Build/Products/Release-iphoneos/PVYabause.framework"; sourceTree = "<group>"; };
-		337A470620A2069C00616097 /* PVYabause tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVYabause tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A470920A206B400616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		33FA275E20F2A7A100E5E865 /* Provenance-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Prefix.pch"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
 		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
 		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
@@ -1938,6 +1937,7 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
+				33FA275E20F2A7A100E5E865 /* Provenance-Prefix.pch */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
@@ -2791,6 +2791,8 @@
 				B3C9D5DA1DEA8A200068D057 /* PVGBA.framework */,
 				B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */,
 				B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */,
+				337A46FD20A2024200616097 /* PVYabause.framework */,
+				337A470920A206B400616097 /* PVYabause.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -2845,7 +2847,6 @@
 		B376848F206A08A50007A99C /* Saturn */ = {
 			isa = PBXGroup;
 			children = (
-				B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */,
 			);
 			name = Saturn;
 			sourceTree = "<group>";
@@ -3625,7 +3626,7 @@
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
 				B3D8DD40206EAA9E008FAC42 /* Results.swift in Sources */,
 				B349AEE71E9ABCF900ACD416 /* StreamUtils.cpp in Sources */,
-				B3768491206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */,
+				B3768491206A08BE0007A99C /* (null) in Sources */,
 				B349AF011E9ABCF900ACD416 /* DeltaFilter.cpp in Sources */,
 				B349AEF91E9ABCF900ACD416 /* ByteSwap.cpp in Sources */,
 				B3D8DD1C206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
@@ -3998,7 +3999,7 @@
 				B3D8DD39206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
 				B380EBE720B39830002988F9 /* Utilities.swift in Sources */,
 				B349AE841E9ABCF900ACD416 /* Threads.c in Sources */,
-				B3768492206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */,
+				B3768492206A08BE0007A99C /* (null) in Sources */,
 				B3D8DD09206EAA9E008FAC42 /* Realm.swift in Sources */,
 				B349AE741E9ABCF900ACD416 /* LzmaEnc.c in Sources */,
 				B349AEC61E9ABCF900ACD416 /* CreateCoder.cpp in Sources */,
@@ -4327,6 +4328,7 @@
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 			};
 			name = Debug;
 		};
@@ -4372,6 +4374,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -4417,7 +4420,7 @@
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
@@ -4465,7 +4468,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
@@ -4875,6 +4878,7 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = AdHoc;
@@ -4919,7 +4923,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;

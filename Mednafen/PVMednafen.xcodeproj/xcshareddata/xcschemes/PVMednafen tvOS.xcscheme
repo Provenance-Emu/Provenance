@@ -28,20 +28,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "337DD3D320A49BC00014EDF7"
-               BuildableName = "PVYabause.framework"
-               BlueprintName = "PVYabause tvOS"
-               ReferencedContainer = "container:../PVYabause/PVYabause.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
                BuildableName = "PVMednafen.framework"
                BlueprintName = "PVMednafen tvOS"
