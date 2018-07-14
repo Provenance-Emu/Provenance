@@ -456,8 +456,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             }
         
         // Fix overlapping buttons on old/smaller iPhones
-        if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
-            if UIScreen.main.bounds.height <= 1136 || UIScreen.main.bounds.width <= 640 {
+        if super.view.bounds.size.width < super.view.bounds.size.height {
+            if UIScreen.main.bounds.height <= 568 || UIScreen.main.bounds.width <= 320 {
                 let scaleDPad = CGFloat(0.85)
                 let scaleButtons = CGFloat(0.75)
                 if dPad != nil {
