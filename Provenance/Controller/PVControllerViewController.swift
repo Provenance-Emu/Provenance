@@ -33,6 +33,8 @@ protocol StartSelectDelegate: class {
     func releaseStart(forPlayer player: Int)
     func pressSelect(forPlayer player: Int)
     func releaseSelect(forPlayer player: Int)
+    func pressAnalogMode(forPlayer player: Int)
+    func releaseAnalogMode(forPlayer player: Int)
 }
 
 protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
@@ -125,6 +127,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     }
 
+    func pressAnalogMode(forPlayer player: Int) {
+
+    }
+    
+    func releaseAnalogMode(forPlayer player: Int) {
+        
+    }
+    
     func buttonPressed(_ button: JSButton) {
         vibrate()
     }

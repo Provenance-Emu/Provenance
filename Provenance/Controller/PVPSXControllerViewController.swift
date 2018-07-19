@@ -111,4 +111,13 @@ class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemRespo
     override func releaseSelect(forPlayer player: Int) {
         emulatorCore.didRelease(.select, forPlayer: player)
     }
+    
+    override func pressAnalogMode(forPlayer player: Int) {
+        emulatorCore.didPush(.analogMode, forPlayer: player)
+        super.pressAnalogMode(forPlayer: player)
+    }
+    
+    override func releaseAnalogMode(forPlayer player: Int) {
+        emulatorCore.didRelease(.analogMode, forPlayer: player)
+    }
 }
