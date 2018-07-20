@@ -397,6 +397,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                     } else {
                         dPad?.frame = dPadFrame
                     }
+                    if dPad != nil {
+                        dPad?.transform = .identity
+                    }
                     dPad2?.isHidden = compactVertical
                 } else if (controlType == Keys.ButtonGroup) {
                     let xPadding: CGFloat = safeAreaInsets.right + 5
@@ -436,6 +439,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                         buttonGroup.alpha = alpha
                         view.addSubview(buttonGroup)
                     }
+                    if buttonGroup != nil {
+                        buttonGroup?.transform = .identity
+                    }
                 } else if (controlType == Keys.RightShoulderButton) {
                     layoutRightShoulderButtons(control: control)
                 } else if (controlType == Keys.ZTriggerButton) {
@@ -448,6 +454,54 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                     layoutStartButton(control: control)
                 }
             }
+        
+        // Fix overlapping buttons on old/smaller iPhones
+        if super.view.bounds.size.width < super.view.bounds.size.height {
+            if UIScreen.main.bounds.height <= 568 || UIScreen.main.bounds.width <= 320 {
+                let scaleDPad = CGFloat(0.85)
+                let scaleButtons = CGFloat(0.75)
+                if dPad != nil {
+                    dPad?.transform = CGAffineTransform(scaleX: scaleDPad, y: scaleDPad)
+                    dPad?.frame.origin.x -= 20
+                    dPad?.frame.origin.y -= 5
+                }
+                if buttonGroup != nil {
+                    buttonGroup?.transform = CGAffineTransform(scaleX: scaleButtons, y: scaleButtons)
+                    buttonGroup?.frame.origin.x += 30
+                    buttonGroup?.frame.origin.y += 15
+                    if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "PCFX" {
+                        buttonGroup?.frame.origin.x += 15
+                        buttonGroup?.frame.origin.y += 5
+                    } else if system.shortName == "N64" {
+                        buttonGroup?.frame.origin.x += 33
+                    } else {
+                        buttonGroup?.frame.origin.y += 4
+                    }
+                }
+                let shoulderYOffset = CGFloat(35)
+                if leftShoulderButton != nil {
+                    leftShoulderButton?.frame.origin.y += shoulderYOffset
+                }
+                if leftShoulderButton2 != nil {
+                    leftShoulderButton2?.frame.origin.y += shoulderYOffset
+                }
+                if rightShoulderButton != nil {
+                    rightShoulderButton?.frame.origin.y += shoulderYOffset
+                }
+                if rightShoulderButton2 != nil {
+                    rightShoulderButton2?.frame.origin.y += shoulderYOffset
+                }
+                if zTriggerButton != nil {
+                    zTriggerButton?.frame.origin.y += shoulderYOffset
+                }
+            }
+        }
+        // TO DO: Shrink controls for landscaoe on old/smaller iPhones…
+//        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape {
+//            if UIScreen.main.bounds.height <= 640 || UIScreen.main.bounds.width <= 1136 {
+        
+//            }
+//        }
         #endif
     }
 
@@ -621,6 +675,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			let y: CGFloat = (buttonGroup?.frame.maxY ?? 0) + spacing
             selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
+        
+        if selectFrame.maxY >= view.frame.size.height {
+            selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
+        }
 
         if let selectButton = self.selectButton {
             selectButton.frame = selectFrame
@@ -663,6 +721,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             if selectButton == nil {
                 startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
             }
+        }
+        
+        if startFrame.maxY >= view.frame.size.height {
+            startFrame.origin.y -= (startFrame.maxY - view.frame.size.height) + yPadding
         }
 
         if let startButton = self.startButton {
