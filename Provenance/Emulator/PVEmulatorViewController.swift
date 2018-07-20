@@ -874,13 +874,13 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			ILOG("Last autosave is too new to make new one")
 			return
 		}
-		
+
 		if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
 			ILOG("Latest manual save state is too recent to make a new auto save")
 			return
 		}
-		
-        let image = captureScreenshot()
+
+		let image = captureScreenshot()
         try createNewSaveState(auto: true, screenshot: image)
     }
 

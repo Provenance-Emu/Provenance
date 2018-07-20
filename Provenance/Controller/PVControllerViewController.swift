@@ -356,111 +356,110 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         }
     }
 
-    // MARK: - Controller Position And Size Editing
-    func setupTouchControls() {
-        #if os(iOS)
-            let alpha = self.alpha
+	// MARK: - Controller Position And Size Editing
+	func setupTouchControls() {
+		#if os(iOS)
+		let alpha = self.alpha
 
-            for control in controlLayout {
-				let controlType: String = control.PVControlType
-                let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
-                let compactVertical: Bool = traitCollection.verticalSizeClass == .compact
-                let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
+		for control in controlLayout {
+			let controlType: String = control.PVControlType
+			let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+			let compactVertical: Bool = traitCollection.verticalSizeClass == .compact
+			let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
 
-                if (controlType == Keys.DPad) {
-                    let xPadding: CGFloat = safeAreaInsets.left + 5
-                    let bottomPadding: CGFloat = 16
-                    let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
-                    var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
+			if (controlType == Keys.DPad) {
+				let xPadding: CGFloat = safeAreaInsets.left + 5
+				let bottomPadding: CGFloat = 16
+				let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
+				var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
 
-                    if dPad2 == nil && (control.PVControlTitle == "Y") {
-                        dPadFrame.origin.y = dPadOriginY - controlSize.height - bottomPadding
-                        let dPad2 = JSDPad(frame: dPadFrame)
-                        if let tintColor = control.PVControlTint {
-                            dPad2.tintColor = UIColor(hex: tintColor)
-                        }
-                        self.dPad2 = dPad2
-                        dPad2.delegate = self
-                        dPad2.alpha = alpha
-                        dPad2.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
-                        view.addSubview(dPad2)
-                    } else if dPad == nil {
-                        let dPad = JSDPad(frame: dPadFrame)
-                        if let tintColor = control.PVControlTint {
-                            dPad.tintColor = UIColor(hex: tintColor)
-                        }
-                        self.dPad = dPad
-                        dPad.delegate = self
-                        dPad.alpha = alpha
-                        dPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
-                        view.addSubview(dPad)
-                    } else {
-                        dPad?.frame = dPadFrame
-                    }
-                    if dPad != nil {
-                        dPad?.transform = .identity
-                    }
-                    dPad2?.isHidden = compactVertical
-                } else if (controlType == Keys.ButtonGroup) {
-                    let xPadding: CGFloat = safeAreaInsets.right + 5
-                    let bottomPadding: CGFloat = 16
-                    let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
-                    let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
+				if dPad2 == nil && (control.PVControlTitle == "Y") {
+					dPadFrame.origin.y = dPadOriginY - controlSize.height - bottomPadding
+					let dPad2 = JSDPad(frame: dPadFrame)
+					if let tintColor = control.PVControlTint {
+						dPad2.tintColor = UIColor(hex: tintColor)
+					}
+					self.dPad2 = dPad2
+					dPad2.delegate = self
+					dPad2.alpha = alpha
+					dPad2.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
+					view.addSubview(dPad2)
+				} else if dPad == nil {
+					let dPad = JSDPad(frame: dPadFrame)
+					if let tintColor = control.PVControlTint {
+						dPad.tintColor = UIColor(hex: tintColor)
+					}
+					self.dPad = dPad
+					dPad.delegate = self
+					dPad.alpha = alpha
+					dPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
+					view.addSubview(dPad)
+				} else {
+					dPad?.frame = dPadFrame
+				}
+				if dPad != nil {
+					dPad?.transform = .identity
+				}
+				dPad2?.isHidden = compactVertical
+			} else if (controlType == Keys.ButtonGroup) {
+				let xPadding: CGFloat = safeAreaInsets.right + 5
+				let bottomPadding: CGFloat = 16
+				let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
+				let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
 
-                    if let buttonGroup = self.buttonGroup {
-                        buttonGroup.frame = buttonsFrame
-                    } else {
-                        let buttonGroup = UIView(frame: buttonsFrame)
-                        self.buttonGroup = buttonGroup
-                        buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
+				if let buttonGroup = self.buttonGroup {
+					buttonGroup.frame = buttonsFrame
+				} else {
+					let buttonGroup = UIView(frame: buttonsFrame)
+					self.buttonGroup = buttonGroup
+					buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
 
-                        var buttons = [JSButton]()
+					var buttons = [JSButton]()
 
-                        let groupedButtons = control.PVGroupedButtons
-                        groupedButtons?.forEach { groupedButton in
-                            let buttonFrame: CGRect = CGRectFromString(groupedButton.PVControlFrame)
-                            let button = JSButton(frame: buttonFrame)
-                            button.titleLabel?.text = groupedButton.PVControlTitle
+					let groupedButtons = control.PVGroupedButtons
+					groupedButtons?.forEach { groupedButton in
+						let buttonFrame: CGRect = CGRectFromString(groupedButton.PVControlFrame)
+						let button = JSButton(frame: buttonFrame)
+						button.titleLabel?.text = groupedButton.PVControlTitle
 
-                            if let tintColor = groupedButton.PVControlTint {
-                                button.tintColor = UIColor(hex: tintColor)
-                            }
+						if let tintColor = groupedButton.PVControlTint {
+							button.tintColor = UIColor(hex: tintColor)
+						}
 
-                            button.backgroundImage = UIImage(named: "button")
-                            button.backgroundImagePressed = UIImage(named: "button-pressed")
-                            button.delegate = self
-                            buttonGroup.addSubview(button)
-                            buttons.append(button)
-                        }
+						button.backgroundImage = UIImage(named: "button")
+						button.backgroundImagePressed = UIImage(named: "button-pressed")
+						button.delegate = self
+						buttonGroup.addSubview(button)
+						buttons.append(button)
+					}
 
-                        let buttonOverlay = PVButtonGroupOverlayView(buttons: buttons)
-                        buttonOverlay.setSize(buttonGroup.bounds.size)
-                        buttonGroup.addSubview(buttonOverlay)
-                        buttonGroup.alpha = alpha
-                        view.addSubview(buttonGroup)
-                    }
-                    if buttonGroup != nil {
-                        buttonGroup?.transform = .identity
-                    }
-                } else if (controlType == Keys.RightShoulderButton) {
-                    layoutRightShoulderButtons(control: control)
-                } else if (controlType == Keys.ZTriggerButton) {
-                    layoutZTriggerButton(control: control)
-                } else if (controlType == Keys.LeftShoulderButton) {
-                    layoutLeftShoulderButtons(control: control)
-                } else if (controlType == Keys.SelectButton) {
-                    layoutSelectButton(control: control)
-                } else if (controlType == Keys.StartButton) {
-                    layoutStartButton(control: control)
-                }
-            }
-        
-        // Fix overlapping buttons on old/smaller iPhones
-        if super.view.bounds.size.width < super.view.bounds.size.height {
-            if UIScreen.main.bounds.height <= 568 || UIScreen.main.bounds.width <= 320 {
-                let scaleDPad = CGFloat(0.85)
-                let scaleButtons = CGFloat(0.75)
-                if dPad != nil {
+					let buttonOverlay = PVButtonGroupOverlayView(buttons: buttons)
+					buttonOverlay.setSize(buttonGroup.bounds.size)
+					buttonGroup.addSubview(buttonOverlay)
+					buttonGroup.alpha = alpha
+					view.addSubview(buttonGroup)
+				}
+				if buttonGroup != nil {
+					buttonGroup?.transform = .identity
+				}
+			} else if (controlType == Keys.RightShoulderButton) {
+				layoutRightShoulderButtons(control: control)
+			} else if (controlType == Keys.ZTriggerButton) {
+				layoutZTriggerButton(control: control)
+			} else if (controlType == Keys.LeftShoulderButton) {
+				layoutLeftShoulderButtons(control: control)
+			} else if (controlType == Keys.SelectButton) {
+				layoutSelectButton(control: control)
+			} else if (controlType == Keys.StartButton) {
+				layoutStartButton(control: control)
+			}
+		}
+		// Fix overlapping buttons on old/smaller iPhones
+		if super.view.bounds.size.width < super.view.bounds.size.height {
+			if UIScreen.main.bounds.height <= 568 || UIScreen.main.bounds.width <= 320 {
+				let scaleDPad = CGFloat(0.85)
+				let scaleButtons = CGFloat(0.75)
+				if dPad != nil {
                     dPad?.transform = CGAffineTransform(scaleX: scaleDPad, y: scaleDPad)
                     dPad?.frame.origin.x -= 20
                     dPad?.frame.origin.y -= 5
@@ -499,7 +498,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         // TO DO: Shrink controls for landscaoe on old/smaller iPhones…
 //        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape {
 //            if UIScreen.main.bounds.height <= 640 || UIScreen.main.bounds.width <= 1136 {
-        
 //            }
 //        }
         #endif
@@ -675,7 +673,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			let y: CGFloat = (buttonGroup?.frame.maxY ?? 0) + spacing
             selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
-        
+
         if selectFrame.maxY >= view.frame.size.height {
             selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
         }
@@ -722,8 +720,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
             }
         }
-        
-        if startFrame.maxY >= view.frame.size.height {
+
+		if startFrame.maxY >= view.frame.size.height {
             startFrame.origin.y -= (startFrame.maxY - view.frame.size.height) + yPadding
         }
 

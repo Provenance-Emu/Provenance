@@ -438,7 +438,7 @@ void verify_no_errors(Verifier&& verifier, std::vector<SchemaChange> const& chan
     }
 
     if (!verifier.errors.empty()) {
-        throw ErrorType(verifier.errors);
+         throw ErrorType(verifier.errors);
     }
 }
 } // anonymous namespace
