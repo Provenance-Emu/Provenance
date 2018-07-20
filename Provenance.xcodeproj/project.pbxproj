@@ -3391,7 +3391,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif ! which swiftlint > /dev/null; then\n    echo \"warning: SwiftLint is not installed. Vistit http://github.com/realm/SwiftLint to learn more.\"\nelse\n    swiftlint\nfi";
+			shellScript = "set -e\n\nif ! which swiftlint > /dev/null; then\n    echo \"warning: SwiftLint is not installed. Vistit http://github.com/realm/SwiftLint to learn more.\"\nelse\n    swiftlint\nfi\n";
 		};
 		B3A95F6C20BCF4B500635F3E /* Swift Lint */ = {
 			isa = PBXShellScriptBuildPhase;
