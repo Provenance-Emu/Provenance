@@ -710,19 +710,26 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             self.isShowingMenu = false
             self.enableContorllerInput(false)
         }))
-        var quitTitle = "Quit"
+
 		let lastPlayed = game.lastPlayed ?? Date()
 		var shouldSave = PVSettingsModel.shared.autoSave
 		shouldSave = shouldSave && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
 		shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
 		shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
-        if shouldSave {
-            quitTitle = "Save & Quit"
+
+		// Add Non-Saving quit first
+		let quitTitle = shouldSave ? "Quit (without save)" : "Quit"
+		actionsheet.addAction(UIAlertAction(title: quitTitle, style: shouldSave ? .default : .destructive, handler: {(_ action: UIAlertAction) -> Void in
+			self.quit(optionallySave: false)
+		}))
+
+		// If save and quit is an option, add it last with different style
+		if shouldSave {
+			actionsheet.addAction(UIAlertAction(title: "Save & Quit", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
+				self.quit(optionallySave: true)
+			}))
         }
 
-        actionsheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
-            self.quit()
-        }))
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
@@ -1070,14 +1077,15 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     typealias QuitCompletion = () -> Void
 
-    func quit(_ completion: QuitCompletion? = nil) {
-        if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
+	func quit(optionallySave canSave : Bool = true, completion: QuitCompletion? = nil) {
+        if canSave, PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
 			do {
 				try autoSaveState()
 			} catch {
 				ELOG("Auto-save failed \(error.localizedDescription)")
 			}
         }
+
         core.stopEmulation()
         //Leave emulation loop first
         fpsTimer?.invalidate()
