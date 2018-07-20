@@ -3023,6 +3023,7 @@
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
 				1AC1D5D620D3E45B0096FEA6 /* Carthage Copy Frameworks */,
+				B3A787C12101E02700D9D6A1 /* Reset Plist Fastlane */,
 			);
 			buildRules = (
 			);
@@ -3049,6 +3050,7 @@
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
 				1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */,
+				B3A787C22101E04F00D9D6A1 /* Plist reset fastlane */,
 			);
 			buildRules = (
 			);
@@ -3363,7 +3365,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Carthage/xcode.sh iOS";
+			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh iOS\n";
 		};
 		B38D938C20C7A06600ABCB16 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3377,7 +3379,35 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Carthage/xcode.sh iOS";
+			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh iOS\n#sh Scripts/fastlane.sh\n";
+		};
+		B3A787C12101E02700D9D6A1 /* Reset Plist Fastlane */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Reset Plist Fastlane";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#if which fastlane > /dev/null; then\n#    bundle exec fastlane plist_reset\n#fi\n";
+		};
+		B3A787C22101E04F00D9D6A1 /* Plist reset fastlane */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Plist reset fastlane";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#if which fastlane > /dev/null; then\n#    bundle exec fastlane plist_reset\n#fi\n";
 		};
 		B3A95F6B20BCF48E00635F3E /* Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3419,7 +3449,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Carthage/xcode.sh tvOS";
+			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh tvOS\n#sh Scripts/fastlane.sh\n";
 		};
 		B3E708A720B7E465005BAA5A /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3433,7 +3463,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Carthage/xcode.sh tvOS";
+			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh tvOS\n";
 		};
 		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
