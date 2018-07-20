@@ -44,7 +44,8 @@ before_script:
         # Output something every 10 minutes or Travis kills the job
     - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
       # This can take a while so using the above to not make travis abort
-    - carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION
+    - carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
+    - tail -100 /tmp/carthage.log
         # Killing background sleep loop
     - kill %1
 after_success:
