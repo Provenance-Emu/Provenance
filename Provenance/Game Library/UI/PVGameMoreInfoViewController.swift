@@ -244,6 +244,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet weak var artworkImageView: UIImageView!
 
     @IBOutlet weak var nameLabel: LongPressLabel!
+	@IBOutlet weak var filenameLabel: UILabel!
     @IBOutlet weak var systemLabel: UILabel!
     @IBOutlet weak var developerLabel: LongPressLabel!
     @IBOutlet weak var publishDateLabel: LongPressLabel!
@@ -344,6 +345,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #endif
 
         nameLabel.text = game?.title ?? ""
+		filenameLabel.text = game?.file.fileName ?? ""
         systemLabel.text = game?.system.name ?? ""
         developerLabel.text = game?.developer  ?? ""
         publishDateLabel.text = game?.publishDate  ?? ""

@@ -571,6 +571,9 @@
 		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
 		B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		B38973B420AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */; };
+		B38A2A442102326800374CDD /* PVEmulatorViewController~tvOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A432102326800374CDD /* PVEmulatorViewController~tvOS.swift */; };
+		B38A2A462102328600374CDD /* PVEmulatorViewController~iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController~iOS.swift */; };
+		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B394C97720609BEF0014A65D /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
@@ -1442,6 +1445,9 @@
 		B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+CollectionView.swift"; sourceTree = "<group>"; };
 		B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVGameLibraryCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
 		B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B38A2A432102326800374CDD /* PVEmulatorViewController~tvOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController~tvOS.swift"; sourceTree = "<group>"; };
+		B38A2A452102328600374CDD /* PVEmulatorViewController~iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController~iOS.swift"; sourceTree = "<group>"; };
+		B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmulatorActionCell.xib; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
@@ -1590,7 +1596,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3F3CF8920C90EC500F313E5 /* XLActionController.framework in Frameworks */,
 				B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
@@ -1637,6 +1642,7 @@
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
 				B3F3CF8020C90E9000F313E5 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3F3CF8B20C90EC500F313E5 /* MarqueeLabel.framework in Frameworks */,
+				B3F3CF8920C90EC500F313E5 /* XLActionController.framework in Frameworks */,
 				B3995E4C2058228E001D4985 /* PVFCEU.framework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 			);
@@ -1760,6 +1766,9 @@
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
 				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */,
+				B38A2A432102326800374CDD /* PVEmulatorViewController~tvOS.swift */,
+				B38A2A452102328600374CDD /* PVEmulatorViewController~iOS.swift */,
+				B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */,
 				B36D9DF420351C9600D583C4 /* PVEmulatorConfiguration.swift */,
 				B3995E51205840CE001D4985 /* PlistDataModels.swift */,
 				B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */,
@@ -3199,6 +3208,7 @@
 				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
 				B349AE371E9ABCF900ACD416 /* .gitignore in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
+				B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */,
 				B349AE391E9ABCF900ACD416 /* .travis.yml in Resources */,
 				1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */,
 				DF0035C8203C97FA00F63831 /* GLideN64.ini in Resources */,
@@ -3393,7 +3403,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#if which fastlane > /dev/null; then\n#    bundle exec fastlane plist_reset\n#fi\n";
+			shellScript = "if [ which fastlane > /dev/null ]; then\n    bundle exec fastlane plist_reset\nfi\n";
 		};
 		B3A787C22101E04F00D9D6A1 /* Plist reset fastlane */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3693,6 +3703,7 @@
 				B349AF031E9ABCF900ACD416 /* Lzma2Decoder.cpp in Sources */,
 				B349AF631E9ABCFA00ACD416 /* LzmaSDKObjCInFile.cpp in Sources */,
 				B349AEAD1E9ABCF900ACD416 /* ArchiveExports.cpp in Sources */,
+				B38A2A462102328600374CDD /* PVEmulatorViewController~iOS.swift in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.swift in Sources */,
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				B3FF4413205F94EF00E5A84B /* PV32XControllerViewController.swift in Sources */,
@@ -3855,6 +3866,7 @@
 				B349AF301E9ABCF900ACD416 /* MyWindows.cpp in Sources */,
 				B349AEBC1E9ABCF900ACD416 /* OutStreamWithCRC.cpp in Sources */,
 				B349AF201E9ABCF900ACD416 /* C_FileIO.cpp in Sources */,
+				B38A2A442102326800374CDD /* PVEmulatorViewController~tvOS.swift in Sources */,
 				B349AEC81E9ABCF900ACD416 /* CWrappers.cpp in Sources */,
 				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */,
 				B349AEAE1E9ABCF900ACD416 /* ArchiveExports.cpp in Sources */,
@@ -4329,7 +4341,7 @@
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4382,7 +4394,7 @@
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4838,7 +4850,7 @@
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
