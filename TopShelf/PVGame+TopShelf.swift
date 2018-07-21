@@ -18,7 +18,7 @@ extension PVGame {
 
         item.title = self.title
         item.imageURL = URL(string: self.customArtworkURL.isEmpty ? self.originalArtworkURL : self.customArtworkURL)
-        item.imageShape = imageType
+        item.imageShape = self.system.imageType
         item.displayURL = self.displayURL
         item.lastAccessedDate = self.lastPlayed
         return item
@@ -30,18 +30,5 @@ extension PVGame {
         components.path = PVGameControllerKey
         components.queryItems = [URLQueryItem(name: PVGameMD5Key, value: self.md5Hash)]
         return (components.url)!
-    }
-
-    var imageType: TVContentItemImageShape {
-        let system = self.system.enumValue
-
-        switch system {
-        case .NES, .Genesis, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .Lynx, .WonderSwan, .WonderSwanColor:
-            return .poster
-        case .GameGear, .GB, .GBC, .GBA, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .Unknown:
-            return .square
-        case .N64, .SNES:
-            return .HDTV
-        }
     }
 }

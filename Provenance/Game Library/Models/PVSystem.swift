@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import TVServices
 
 public enum ScreenType: String {
     case unknown = ""
@@ -116,5 +117,16 @@ public extension PVSystem {
 
     var hasAllRequiredBIOSes: Bool {
         return missingBIOSes != nil
+    }
+    
+    var imageType: TVContentItemImageShape {
+        switch self.enumValue {
+        case .NES, .Genesis, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .Lynx, .WonderSwan, .WonderSwanColor:
+            return .poster
+        case .GameGear, .GB, .GBC, .GBA, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .Unknown:
+            return .square
+        case .N64, .SNES:
+            return .HDTV
+        }
     }
 }
