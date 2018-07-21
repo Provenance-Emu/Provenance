@@ -36,6 +36,16 @@ Travis Test
 fastlane ios userbuild
 ```
 User Setup
+### ios updatePlistForBranch
+```
+fastlane ios updatePlistForBranch
+```
+Updates the bundle id and app name if a beta build
+### ios plist_reset
+```
+fastlane ios plist_reset
+```
+Resets the bundle id and app name after build
 ### ios beta
 ```
 fastlane ios beta
@@ -46,6 +56,11 @@ Push a new beta build to TestFlight
 fastlane ios alpha
 ```
 Push a new alpha build to Hockeyapp
+### ios add_badge
+```
+fastlane ios add_badge
+```
+Add proper badge to icon
 ### ios certificates
 ```
 fastlane ios certificates

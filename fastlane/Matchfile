@@ -3,7 +3,21 @@ git_branch("Provenance")
 
 type("adhoc") # The default type, can be: appstore, adhoc, enterprise or development
 
-app_identifier(["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.topshelf", "com.provenance-emu.provenance-jm.Spotlight"])
+# def load_keys
+#   begin
+#     import("keys")
+#   rescue => exception
+#     if UI.interactive?
+#       shouldSetup = UI.confirm "Fastlane enviroment is not configured. Setup now?"
+#     end
+#     raise exception
+#   end
+# end
+#
+# load_keys()
+dev_domain = ENV["DEV_DOMAIN"]
+
+app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf", "#{dev_domain}.provenance.Spotlight"])
 username("mail@joemattiello.com") # Your Apple Developer Portal username
 team_name("Joe Mattiello")
 

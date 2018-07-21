@@ -140,7 +140,7 @@ extension Thread {
 public typealias RomDB = RomDatabase
 public final class RomDatabase {
 
-	static var databaseInitilized = false
+	static public private(set) var databaseInitilized = false
 
 	public class func initDefaultDatabase() throws {
 		if !databaseInitilized {

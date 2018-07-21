@@ -44,10 +44,27 @@ command -v carthage >/dev/null 2>&1 || {
     exit 1;
 }
 
+function carthageBuildPathNotExist {
+  echo "checkCarthageBuildPath $1"
+  for i in $(echo $1 | tr "," "\n")
+  do
+    local path="$SRCROOT/Carthage/Build/$i"
+    echo "Testing for $path"
+    if [ ! -d $path ]; then
+      echo "Fail: No path found for $i"
+      return 0
+    else
+      echo "Success: Path found for $i"
+    fi
+  done
+  echo "Success: Build paths exist for all targets $1"
+  return 1
+}
+
 # Checks if Carthage/Build directory doesn't exist and if not it'll run Carthage
 # After, it checks if the Cartfile.resolved file differs from the one in Carthage. If so, Carthage runs
-if [ ! -d "$SRCROOT/Carthage/Build" ]; then
-    echo "No Carthage/Build directory found."
+if carthageBuildPathNotExist $1; then
+    echo "Carthage build required for $1"
     runCarthageAndCopyResolved $1
 elif [ -f $SRCROOT/Carthage/.Cartfile.resolved ] && \
         diff $SRCROOT/Carthage/.Cartfile.resolved \

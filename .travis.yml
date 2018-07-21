@@ -40,11 +40,11 @@ before_install:
   - brew outdated carthage || brew upgrade carthage
 before_script:
   # bootstrap the dependencies for the project
-    - carthage bootstrap --verbose --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./PVSupport" --configuration $CONFIGURATION
+    - carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./PVSupport" --configuration $CONFIGURATION
         # Output something every 10 minutes or Travis kills the job
     - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
       # This can take a while so using the above to not make travis abort
-    - carthage bootstrap --verbose --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION
+    - carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
         # Killing background sleep loop
     - kill %1
 after_success:
@@ -55,6 +55,7 @@ after_success:
   #- sleep 5
   #- bash <(curl -s https://codecov.io/bash)
 after_failure:
+  - tail -100 /tmp/carthage.log
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL

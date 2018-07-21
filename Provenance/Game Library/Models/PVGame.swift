@@ -41,6 +41,7 @@ protocol PVLibraryEntry where Self: Object {}
     dynamic var system: PVSystem!
 
     dynamic var md5Hash: String            = ""
+	dynamic var crc: String            = ""
 
 	// If the user has set 'always use' for a specfic core
 	// We don't use PVCore incase cores are removed / deleted

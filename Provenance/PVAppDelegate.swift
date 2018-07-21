@@ -34,12 +34,16 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 		do {
 			try RomDatabase.initDefaultDatabase()
 		} catch {
-			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription, preferredStyle: .alert)
+			let appName : String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
+			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
 			ELOG(error.localizedDescription)
-			alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { alert in
+			alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { alert in
 				fatalError(error.localizedDescription)
 			}))
-			window?.rootViewController?.present(alert, animated: true, completion: nil)
+
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+				self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+			}
 
 			return true
 		}
@@ -269,6 +273,10 @@ extension PVAppDelegate {
 		#if DEBUG
 		BITHockeyManager.shared().isMetricsManagerDisabled = true
 		#endif
+
+		let masterBranch = kGITBranch.lowercased() == "master"
+		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch
+		BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
 
 		BITHockeyManager.shared().logLevel = BITLogLevel.warning
 		BITHockeyManager.shared().start()

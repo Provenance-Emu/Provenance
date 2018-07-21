@@ -591,7 +591,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     func initRealmResultsStorage() {
-        systems = PVSystem.all.filter("games.@count > 0").sorted(byKeyPath: #keyPath(PVSystem.identifier))
+		guard RomDatabase.databaseInitilized else {
+			return
+		}
+
+		systems = PVSystem.all.filter("games.@count > 0").sorted(byKeyPath: #keyPath(PVSystem.identifier))
 		saveStates = PVSaveState.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
@@ -857,6 +861,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             (self.collectionView?.deselectItem(at: indexPath, animated: true))!
         })
 
+		guard RomDatabase.databaseInitilized else {
+			return
+		}
+
         if (self.mustRefreshDataSource) {
             fetchGames()
             collectionView?.reloadData()
@@ -881,6 +889,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             cell?.updateFocusIfNeeded()
 #endif
         }
+
+		guard RomDatabase.databaseInitilized else {
+			return
+		}
 
 		if (self.mustRefreshDataSource) {
 			fetchGames()
@@ -2180,13 +2192,15 @@ extension PVGameLibraryViewController: UISearchResultsUpdating {
 }
 
 class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
-    override init() {
-        super.init()
-        #if os(iOS)
-        if #available(iOS 9.0, *) {
-            self.sectionHeadersPinToVisibleBounds = true
-        }
-        #endif
+	override init() {
+		super.init()
+		#if os(iOS)
+		if #available(iOS 9.0, *) {
+			self.sectionHeadersPinToVisibleBounds = true
+		}
+		#elseif os(tvOS)
+		self.sectionHeadersPinToVisibleBounds = true
+		#endif
     }
 
     required init?(coder aDecoder: NSCoder) {

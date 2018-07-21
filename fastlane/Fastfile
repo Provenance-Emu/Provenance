@@ -128,6 +128,21 @@ platform :ios do
     UI.deprecated("The '--key' parameter is deprecated")
   end
 
+  desc "Updates the bundle id and app name if a beta build"
+  lane :updatePlistForBranch do
+    alpha = $git_branch != "master"
+    if alpha
+      puts "Setting plist values for Alpha build"
+    else
+      puts "Setting plist values for Normal build"
+    end
+    plist_set(normal: alpha)
+  end
+
+  desc "Resets the bundle id and app name after build"
+  lane :plist_reset do
+    plist_set(normal: true)
+  end
 
   private_lane :pre_build do
     #get_certificates           # invokes cert
@@ -136,7 +151,7 @@ platform :ios do
     # Git git commit count
     ENV["build_number"] = number_of_commits().to_s
 
-    plist_set(normal: false)
+    updatePlistForBranch
 
     # Clean the dir for git
     # ensure_git_status_clean
@@ -162,6 +177,7 @@ platform :ios do
 
   desc "Push a new alpha build to Hockeyapp"
   lane :alpha do
+    load_keys
     pre_build
 
     # Codesign
@@ -240,16 +256,22 @@ platform :ios do
 
   end
 
+  desc "Add proper badge to icon"
+  lane :add_badge do
+
+  end
+
   private_lane :badge_alpha do
-    # add_badge(alpha: true, dark: false)
+    add_badge(shield: "Version-#{version}-blue", alpha: true, dark: false)
   end
 
   private_lane :badge_beta do
-    # add_badge(alpha: true, dark: false)
+    version = "#{get_version_number}.#{get_build_number}"
+    add_badge(shield: "Beta", alpha: false, dark: false)
   end
 
   private_lane :reset_enviroment do
-    plist_set(normal: true)
+    plist_reset
     codesign_toggle(automatic: true)
     # Make sure our directory is clean, except for changes Fastlane has made
     # clean_build_artifacts
@@ -263,6 +285,8 @@ platform :ios do
   end
 
   private_lane :codesign_toggle do |options|
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
     automatic = options[:automatic]
     team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
@@ -284,33 +308,34 @@ platform :ios do
   end
 
   private_lane :plist_set do |options|
+    load_keys
     normal = options[:normal]
     suffix = normal ? "" : ".alpha"
-    display_name = normal ? "Provenance" : 'Provenance α' # or Beta β
+    display_name = normal ? "$(APP_DISPLAY_NAME)" : '$(APP_DISPLAY_NAME) α' # or Beta β
+    dev_domain = ENV["DEV_DOMAIN"]
+
     # -- Update bundle names and ids
     # - iOS
     update_info_plist(
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'Provenance', # Scheme really means target
       display_name: display_name,
-      app_identifier: "#{dev_domain}.provenance#{suffix}",
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "Provenance/Provenance-Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}" # The App Identifier
+      block: proc do |plist|
+        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
+        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}"
+      end
+      # app_identifier: "#{dev_domain}.provenance#{suffix}",
     )
 
     # - Spotlight
     update_info_plist(
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'Spotlight',
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance${suffix}.Spotlight",
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "Spotlight/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.Spotlight" # The App Identifier
+      block: proc do |plist|
+        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
+        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}.Spotlight"
+      end
+      # app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance${suffix}.Spotlight",
     )
 
     # - tvOS
@@ -319,33 +344,33 @@ platform :ios do
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'ProvenanceTV',
       display_name: display_name,
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}",
+      block: proc do |plist|
+        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
+        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}"
+      end
+      # app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}",
     )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "ProvenanceTV/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}" # The App Identifier
-    )
-
 
     # - Top Shelf
     update_info_plist(
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.topshelf",
       xcodeproj: 'Provenance.xcodeproj',
       scheme: 'TopShelf',
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "TopShelf/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.topshelf" # The App Identifier
+      block: proc do |plist|
+        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
+        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}.topshelf"
+      end
+      # app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.topshelf"
     )
   end
 
   private_lane :setup_certificates_private do |options|
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
+
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.Spotlight"], type: type, readonly: true, platform: "ios")
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.topshelf"], type: type, readonly: true, platform: "tvos")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.Spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.topshelf"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Create Certs for Match"
@@ -357,6 +382,9 @@ platform :ios do
   end
 
   private_lane :create_certificates_private do |options|
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
+
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
     match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.Spotlight"], type: type, readonly: false, platform: "ios")
@@ -381,6 +409,8 @@ platform :ios do
     ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
     build_time = Time.now.strftime('%F')
     output_directory = "build/" + build_time
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
 
     # Method used to export the archive.
     # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
@@ -432,6 +462,9 @@ platform :ios do
 
   desc "Submits a new Beta Build to Apple TestFlight"
   private_lane :build_appstore do
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
+
     build_app(
       workspace: "Provenance.xcworkspace",
       scheme: "Provenance",
