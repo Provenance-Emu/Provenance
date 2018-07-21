@@ -610,10 +610,10 @@ static void emulation_run(BOOL skipFrame) {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
             // centre the dualanalog sticks
             uint8 *buf = (uint8 *)inputBuffer[i];
-            MDFN_en16lsb(&buf[2], (uint16) 127 << 8);
-            MDFN_en16lsb(&buf[2]+2, (uint16) 127 << 8);
-            MDFN_en16lsb(&buf[2]+4, (uint16) 127 << 8);
-            MDFN_en16lsb(&buf[2]+6, (uint16) 127 << 8);
+            MDFN_en16lsb(&buf[3], (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
             // do we want to use gamepad when not using an mfi device?
             game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
         }
