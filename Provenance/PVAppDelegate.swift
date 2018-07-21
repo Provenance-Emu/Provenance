@@ -274,6 +274,10 @@ extension PVAppDelegate {
 		BITHockeyManager.shared().isMetricsManagerDisabled = true
 		#endif
 
+		let masterBranch = kGITBranch.lowercased() == "master"
+		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch
+		BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
+
 		BITHockeyManager.shared().logLevel = BITLogLevel.warning
 		BITHockeyManager.shared().start()
 		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
