@@ -354,7 +354,8 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
         var descriptionText = game?.gameDescription  ?? ""
         #if DEBUG
-            descriptionText = [game?.debugDescription ?? "", descriptionText].joined(separator: "\n")
+		// Add debuging info about the PVGame database entry to the bottom of the text field
+			descriptionText = [descriptionText, game?.debugDescription ?? ""].joined(separator: "\n")
         #endif
         descriptionTextView.text = descriptionText
 
@@ -1045,7 +1046,7 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         let image = UIImageView(frame: self.mediaFrame())
         image.clipsToBounds = true
         image.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .scaleAspectFit
         return image
     }()
 
@@ -1100,6 +1101,8 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         let frame = MediaZoom.currentFrame()
         self.frame = frame
         backgroundView.frame = frame
+		// Make the content modes match the animation starts at the right layout
+		imageView.contentMode = originalImageView.contentMode
         imageView.frame = mediaFrame()
         hideHandler = callback
         UIView.animate(
