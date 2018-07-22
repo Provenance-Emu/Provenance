@@ -825,6 +825,13 @@ static void emulation_run(BOOL skipFrame) {
 				if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
                     
+                    // TODO Can we do this better?
+                    // we don't want to read l3/r3 from the controller
+                    if (self.systemType == MednaSystemPSX && (map[i]==1 || map[i]==2))
+                    {
+                        continue;
+                    }
+                    
                     if(value > 0) {
                         inputBuffer[playerIndex][0] |= 1 << map[i];
                     } else {

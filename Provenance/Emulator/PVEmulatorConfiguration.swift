@@ -38,6 +38,8 @@ public struct SystemDictionaryKeys {
         static let GroupedButtons      = "PVGroupedButtons"
         static let LeftShoulderButton  = "PVLeftShoulderButton"
         static let RightShoulderButton = "PVRightShoulderButton"
+        static let LeftAnalogButton    = "PVLeftAnalogButton"
+        static let RightAnalogButton   = "PVRightAnalogButton"
         static let ZTriggerButton      = "PVZTriggerButton"
         static let SelectButton        = "PVSelectButton"
         static let StartButton         = "PVStartButton"

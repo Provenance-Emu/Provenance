@@ -20,6 +20,8 @@ protocol JSButtonDisplayer {
     var rightShoulderButton: JSButton? { get set }
     var leftShoulderButton2: JSButton? { get set }
     var rightShoulderButton2: JSButton? { get set }
+    var leftAnalogButton: JSButton? { get set }
+    var rightAnalogButton: JSButton? { get set }
     var zTriggerButton: JSButton? { get set }
     var startButton: JSButton? { get set }
     var selectButton: JSButton? { get set }
@@ -27,6 +29,7 @@ protocol JSButtonDisplayer {
 
 private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 96.0
+private let gripControl = false
 
 protocol StartSelectDelegate: class {
     func pressStart(forPlayer player: Int)
@@ -50,6 +53,8 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
     var rightShoulderButton: JSButton? {get}
     var leftShoulderButton2: JSButton? {get}
     var rightShoulderButton2: JSButton? {get}
+    var leftAnalogButton: JSButton? {get}
+    var rightAnalogButton: JSButton? {get}
     var zTriggerButton: JSButton? { get set }
     var startButton: JSButton? {get}
     var selectButton: JSButton? {get}
@@ -167,6 +172,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     var zTriggerButton: JSButton?
     var startButton: JSButton?
     var selectButton: JSButton?
+    var leftAnalogButton: JSButton?
+    var rightAnalogButton: JSButton?
 
     let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
 
@@ -206,6 +213,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
                 self.hideTouchControls(for: controller)
             })
+        }
+        else {
+            leftAnalogButton?.isHidden = true
+            rightAnalogButton?.isHidden = true
         }
     }
 
@@ -250,6 +261,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 zTriggerButton?.isHidden = false
                 startButton?.isHidden = false
                 selectButton?.isHidden = false
+                leftAnalogButton?.isHidden = true
+                rightAnalogButton?.isHidden = true
             }
         setupTouchControls()
         #endif
@@ -274,6 +287,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 zTriggerButton?.isHidden = false
                 startButton?.isHidden = false
                 selectButton?.isHidden = false
+                leftAnalogButton?.isHidden = true
+                rightAnalogButton?.isHidden = true
             }
         setupTouchControls()
         #endif
@@ -351,9 +366,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         if ((controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue)) && !PVSettingsModel.shared.startSelectAlwaysOn {
             startButton?.isHidden = true
             selectButton?.isHidden = true
+            leftAnalogButton?.isHidden = true
+            rightAnalogButton?.isHidden = true
         } else if PVSettingsModel.shared.startSelectAlwaysOn {
             startButton?.isHidden = false
             selectButton?.isHidden = false
+            leftAnalogButton?.isHidden = false
+            rightAnalogButton?.isHidden = false
         }
         setupTouchControls()
     }
@@ -462,6 +481,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				layoutSelectButton(control: control)
 			} else if (controlType == Keys.StartButton) {
 				layoutStartButton(control: control)
+			} else if (controlType == Keys.LeftAnalogButton) {
+				layoutLeftAnalogButton(control: control)
+			} else if (controlType == Keys.RightAnalogButton) {
+				layoutRightAnalogButton(control: control)
 			}
 		}
 		// Fix overlapping buttons on old/smaller iPhones
@@ -676,6 +699,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else if (dPad != nil) && (dPad?.isHidden)! {
                 selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                if gripControl {
+                    selectFrame.origin.y = (UIScreen.main.bounds.height / 2)
+                }
             }
 
         } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
@@ -723,6 +749,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 }
             } else if (buttonGroup != nil) && (buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                if gripControl {
+                    startFrame.origin.y = (UIScreen.main.bounds.height / 2)
+                }
             }
         } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
             startFrame = CGRect(x: (view.frame.size.width / 2) + (spacing / 2), y: (buttonGroup?.frame.maxY)! + spacing, width: controlSize.width, height: controlSize.height)
@@ -752,6 +781,72 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             startButton.alpha = alpha
             startButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(startButton)
+        }
+    }
+
+    func layoutLeftAnalogButton(control: ControlLayoutEntry) {
+        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let yPadding: CGFloat = safeAreaInsets.bottom + 50
+        let xPadding: CGFloat = (gripControl ? safeAreaInsets.right : safeAreaInsets.left) + 10
+        
+        let xcoord: CGFloat = (gripControl ? (view.frame.size.width - controlSize.width - xPadding) : xPadding)
+        var leftAnalogFrame = CGRect(x: xcoord, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+        
+        
+        
+        if gripControl {
+            leftAnalogFrame.origin.y = (UIScreen.main.bounds.height * 0.40)
+        }
+        
+        if let leftAnalogButton = self.leftAnalogButton {
+            leftAnalogButton.frame = leftAnalogFrame
+        } else {
+            let leftAnalogButton = JSButton(frame: leftAnalogFrame)
+            if let tintColor = control.PVControlTint {
+                leftAnalogButton.tintColor = UIColor(hex: tintColor)
+            }
+            self.leftAnalogButton = leftAnalogButton
+            leftAnalogButton.titleLabel?.text = control.PVControlTitle
+            leftAnalogButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
+            leftAnalogButton.backgroundImage = UIImage(named: "button-thin")
+            leftAnalogButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            leftAnalogButton.delegate = self
+            leftAnalogButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
+            leftAnalogButton.alpha = alpha
+            leftAnalogButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
+            view.addSubview(leftAnalogButton)
+        }
+    }
+
+    func layoutRightAnalogButton(control: ControlLayoutEntry) {
+        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let yPadding: CGFloat = safeAreaInsets.bottom + 50
+        let xPadding: CGFloat = (gripControl ? safeAreaInsets.left : safeAreaInsets.right) + 10
+
+        let xcoord: CGFloat = (gripControl ? xPadding: (view.frame.size.width - controlSize.width - xPadding))
+        var rightAnalogFrame = CGRect(x: xcoord, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+        
+        if gripControl {
+            rightAnalogFrame.origin.y = (UIScreen.main.bounds.height * 0.40)
+        }
+        
+        if let rightAnalogButton = self.rightAnalogButton {
+            rightAnalogButton.frame = rightAnalogFrame
+        } else {
+            let rightAnalogButton = JSButton(frame: rightAnalogFrame)
+            if let tintColor = control.PVControlTint {
+                rightAnalogButton.tintColor = UIColor(hex: tintColor)
+            }
+            self.rightAnalogButton = rightAnalogButton
+            rightAnalogButton.titleLabel?.text = control.PVControlTitle
+            rightAnalogButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
+            rightAnalogButton.backgroundImage = UIImage(named: "button-thin")
+            rightAnalogButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            rightAnalogButton.delegate = self
+            rightAnalogButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
+            rightAnalogButton.alpha = alpha
+            rightAnalogButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
+            view.addSubview(rightAnalogButton)
         }
     }
 
