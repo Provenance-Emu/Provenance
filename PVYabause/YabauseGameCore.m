@@ -213,7 +213,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 - (id)init
 {
-    DLog(@"Yabause init /debug");
+    CDLog(@"Yabause init /debug");
     self = [super init];
     if(self != nil)
     {
@@ -302,7 +302,7 @@ VideoInterface_struct *VIDCoreList[] = {
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
         
         if([filePath length] > 0) {
-            DLog(@"BRAM: %@", filePath);
+            CDLog(@"BRAM: %@", filePath);
             char *_bramFile;
             const char *tmp = [filePath UTF8String];
             
@@ -352,7 +352,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     filename = [path copy];
-    DLog(@"Saturn - %@", filename);
+    CDLog(@"Saturn - %@", filename);
     [self setupEmulation];
     //    [self executeFrame];
     return YES;
@@ -493,7 +493,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (void)executeFrame
 {
     if(firstRun) {
-        DLog(@"Yabause executeFrame firstRun, lazy init");
+        CDLog(@"Yabause executeFrame firstRun, lazy init");
         [self initYabauseWithCDCore:CDCORE_DUMMY];
         [self startYabauseEmulation];
         firstRun = NO;
@@ -537,7 +537,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 void YuiErrorMsg(const char *string)
 {
-    DLog(@"Yabause Error %@", [NSString stringWithUTF8String:string]);
+    CDLog(@"Yabause Error %@", [NSString stringWithUTF8String:string]);
 }
 
 void YuiSwapBuffers(void)
