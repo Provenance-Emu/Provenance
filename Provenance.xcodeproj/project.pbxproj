@@ -789,6 +789,8 @@
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
+		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
 		C6625F3F20D77C3B0013F439 /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */; };
 		C6BC505620D72BE600A19886 /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
@@ -1559,6 +1561,10 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
+		DF0035C4203C97D800F63831 /* GLideN64.custom.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.custom.ini; path = "PVMupen64Plus/mupen64plus-video-gliden64/ini/GLideN64.custom.ini"; sourceTree = "<group>"; };
+		DF0035C7203C97FA00F63831 /* GLideN64.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.ini; path = "PVMupen64Plus/mupen64plus-video-gliden64/ini/GLideN64.ini"; sourceTree = "<group>"; };
+		DFB601882038AD65001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6BC505520D72BE600A19886 /* PVPCFXControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVPCFXControllerViewController.swift; sourceTree = "<group>"; };
 		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
@@ -2962,6 +2968,7 @@
 				BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */,
 				BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */,
 				BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */,
+				DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */,
 				BE9FDCBE1C210B9F0046DF0E /* Info.plist */,
 			);
 			path = TopShelf;
@@ -4165,6 +4172,7 @@
 				B3BE968D2055F41A00281880 /* PVBIOS.swift in Sources */,
 				B3AE1F7220734DE800AD06D4 /* PVMediaCache.swift in Sources */,
 				B3780B3F2057F1F60018211E /* PVCore.swift in Sources */,
+				DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 				B328B3D220B44A1C00AE4E00 /* NSData+Hashing.m in Sources */,
 				B3DBF13E2094669A005935A8 /* UTI.swift in Sources */,
