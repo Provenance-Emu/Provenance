@@ -136,12 +136,21 @@ platform :ios do
     else
       puts "Setting plist values for Normal build"
     end
+    backup_file(path: "Provenance/Info.plist")
+    backup_file(path: "ProvenanceTV/Info.plist")
+    backup_file(path: "Spotlight/Info.plist")
+    backup_file(path: "TopShelf/Info.plist")
+
     plist_set(normal: alpha)
   end
 
   desc "Resets the bundle id and app name after build"
   lane :plist_reset do
-    plist_set(normal: true)
+    restore_file(path: "Provenance/Info.plist")
+    restore_file(path: "ProvenanceTV/Info.plist")
+    restore_file(path: "Spotlight/Info.plist")
+    restore_file(path: "TopShelf/Info.plist")
+    # plist_set(normal: true)
   end
 
   private_lane :pre_build do
