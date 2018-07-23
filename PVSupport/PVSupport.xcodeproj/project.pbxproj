@@ -434,7 +434,7 @@
 						LastSwiftMigration = 0920;
 					};
 					B3C96EBE1D62C5E7003F1E93 = {
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Manual;
 					};
 				};

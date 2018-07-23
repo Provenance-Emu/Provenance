@@ -3137,7 +3137,7 @@
 				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 					};
 					1AD481B31BA350A400FDA50A = {
 						CreatedOnToolsVersion = 7.1;
@@ -3151,6 +3151,7 @@
 					};
 					1AD9AA341ACC988F00EC87A0 = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 1000;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
 					B3A2876420C76F9C00B4B2E3 = {
@@ -3158,6 +3159,7 @@
 					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
 					BE9FDCB61C210B9E0046DF0E = {

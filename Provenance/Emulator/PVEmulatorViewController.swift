@@ -931,10 +931,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         fpsTimer?.invalidate()
         fpsTimer = nil
         gameAudio?.stop()
-#if os(iOS)
-        UIApplication.shared.setStatusBarHidden(false, with: .fade)
-#endif
-        dismiss(animated: true, completion: completion)
+
+		dismiss(animated: true, completion: completion)
         enableContorllerInput(false)
         updatePlayedDuration()
     }

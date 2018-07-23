@@ -8437,7 +8437,7 @@
 					};
 					B340E4611E08887600AD0E8B = {
 						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 					};
 					B340E46E1E08888700AD0E8B = {
 						CreatedOnToolsVersion = 8.1;
