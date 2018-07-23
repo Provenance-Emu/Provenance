@@ -595,7 +595,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			isShowingMenu = false
 		}
 		#elseif os(tvOS)
-		if presentedViewController is UIAlertViewController {
+		if presentedViewController is UIAlertController {
             dismiss(animated: true) {() -> Void in }
             isShowingMenu = false
         }

@@ -20,20 +20,6 @@
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-               BuildableName = "Provenance.app"
-               BlueprintName = "ProvenanceTV"
-               ReferencedContainer = "container:Provenance.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -46,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BE9FDCB61C210B9E0046DF0E"
-            BuildableName = "TopShelf.appex"
-            BlueprintName = "TopShelf"
+            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
+            BuildableName = "Provenance.app"
+            BlueprintName = "ProvenanceTV"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,16 +52,6 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
-            ReferencedContainer = "container:Provenance.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -86,16 +62,15 @@
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
+            BlueprintIdentifier = "BE9FDCB61C210B9E0046DF0E"
+            BuildableName = "TopShelf.appex"
+            BlueprintName = "TopShelf"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

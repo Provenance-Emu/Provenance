@@ -9,6 +9,7 @@
 import Foundation
 import Foundation
 import UIKit
+import PVSupport
 
 extension PVEmulatorViewController {
 	@objc func showMenu(_ sender: Any?) {
@@ -20,7 +21,7 @@ extension PVEmulatorViewController {
 			actionsheet.popoverPresentationController?.sourceView = menuButton
 			actionsheet.popoverPresentationController?.sourceRect = menuButton!.bounds
 		}
-		menuActionSheet = actionsheet
+
 		if PVControllerManager.shared.iCadeController != nil {
 			actionsheet.addAction(UIAlertAction(title: "Disconnect iCade", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 				NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
