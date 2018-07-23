@@ -26,7 +26,6 @@
  */
 
 #import <PVYabause/YabauseGameCore.h>
-#import <YabauseC/YabauseC.h>
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
 #import <OpenGLES/gltypes.h>

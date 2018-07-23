@@ -1297,7 +1297,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "emulator/yabause/yabause/src/**";
+				HEADER_SEARCH_PATHS = (
+					"emulator/yabause/yabause/src/**",
+					YabauseC,
+				);
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1359,7 +1362,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "emulator/yabause/yabause/src/**";
+				HEADER_SEARCH_PATHS = (
+					"emulator/yabause/yabause/src/**",
+					YabauseC,
+				);
 				LLVM_LTO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

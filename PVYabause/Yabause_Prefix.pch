@@ -8,6 +8,7 @@
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
+#import <YabauseC/YabauseC.h>
 #endif
 
 #define VERSION "0.9.10"
