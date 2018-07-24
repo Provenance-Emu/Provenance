@@ -16,3 +16,5 @@ report.xml
 /Provenance/Version.swift
 /PVLibrary/Carthage/.Cartfile.resolved
 /Carthage/.Cartfile.resolved
+.Cartfile.tvOS.resolved
+.Cartfile.iOS.resolved

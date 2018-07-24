@@ -592,6 +592,8 @@ platform :ios do
     platform = options.fetch(:platform, 'tvOS,iOS')
     project_directory = options.fetch(:project_directory, './')
 
+    puts "Running Carthage command '#{command}' for platform(s) '#{platform}' in directory '#{project_directory}'"
+
     carthage(
       command: command,
       platform: platform,
