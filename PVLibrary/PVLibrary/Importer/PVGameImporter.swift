@@ -111,7 +111,8 @@ public final class PVGameImporter {
     }()
 
 	lazy var sqldb: Connection = {
-		let sqlFile = Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite")!
+		let bundle = Bundle(identifier: "com.provenance-emu.PVLibrary")!
+		let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
 		let sqldb = try! Connection(sqlFile.path, readonly: true)
 		return sqldb
 	}()
