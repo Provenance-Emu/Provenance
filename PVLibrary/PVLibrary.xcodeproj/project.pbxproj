@@ -2003,10 +2003,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILD_DIR)/**",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2052,10 +2048,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILD_DIR)/**",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2100,10 +2092,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILD_DIR)/**",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
@@ -2151,10 +2139,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILD_DIR)/**",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
