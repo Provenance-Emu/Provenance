@@ -19,9 +19,7 @@
 		B3067F662106B8690091437F /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
 		B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F752106B9180091437F /* MobileCoreServices.framework */; };
-		B3274E562106B97B00857F52 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E552106B97B00857F52 /* UIKit.framework */; };
-		B3274E582106B9B100857F52 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E572106B9B100857F52 /* CoreSpotlight.framework */; };
-		B3274E5A2106B9B600857F52 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E592106B9B600857F52 /* libsqlite3.tbd */; };
+		B32155462107D2AC0085B18E /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155452107D2AC0085B18E /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
 		B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
@@ -51,8 +49,6 @@
 		B3274E952106C2F800857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
-		B3AF45E42107188D002211EE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF45E32107188D002211EE /* libz.tbd */; };
-		B3AF45E82107189E002211EE /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF45E72107189E002211EE /* libstdc++.tbd */; };
 		B3AF475621071CDB002211EE /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,7 +57,6 @@
 		B3AF475B21071CDB002211EE /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475C21071CDB002211EE /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475D21071CFB002211EE /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3AF475F21071DE0002211EE /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
 		B3AF476021071E28002211EE /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473421071CA6002211EE /* LzmaSDKObjC.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3AF476121071E28002211EE /* LzmaSDKObjCBufferProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473321071CA6002211EE /* LzmaSDKObjCBufferProcessor.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3AF476221071E28002211EE /* LzmaSDKObjCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473821071CA6002211EE /* LzmaSDKObjCError.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -352,7 +347,6 @@
 		B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4621077BEC00E7AF79 /* Realm.framework */; };
 		B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */; };
 		B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4A21077BFC00E7AF79 /* libc++.tbd */; };
-		B3C04B4D21077C3B00E7AF79 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4C21077C3B00E7AF79 /* PVSupport.framework */; };
 		B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4E21077CCF00E7AF79 /* Foundation.framework */; };
 		B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */; };
 		B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */; };
@@ -430,6 +424,7 @@
 		B3067F4F2106B5D00091437F /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B3067F752106B9180091437F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		B32155452107D2AC0085B18E /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E552106B97B00857F52 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3274E572106B9B100857F52 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		B3274E592106B9B600857F52 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
@@ -825,12 +820,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3AF45E82107189E002211EE /* libstdc++.tbd in Frameworks */,
-				B3AF45E42107188D002211EE /* libz.tbd in Frameworks */,
-				B3274E5A2106B9B600857F52 /* libsqlite3.tbd in Frameworks */,
-				B3AF475F21071DE0002211EE /* ZipArchive.framework in Frameworks */,
-				B3274E582106B9B100857F52 /* CoreSpotlight.framework in Frameworks */,
-				B3274E562106B97B00857F52 /* UIKit.framework in Frameworks */,
 				B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */,
@@ -844,10 +833,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32155462107D2AC0085B18E /* PVSupport.framework in Frameworks */,
 				B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */,
 				B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */,
 				B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */,
-				B3C04B4D21077C3B00E7AF79 /* PVSupport.framework in Frameworks */,
 				B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */,
 				B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */,
 				B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */,
@@ -880,6 +869,7 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B32155452107D2AC0085B18E /* PVSupport.framework */,
 				B3C04B8B2107972200E7AF79 /* Realm.framework */,
 				B3C04B892107972200E7AF79 /* RealmSwift.framework */,
 				B3C04B8A2107972200E7AF79 /* SQLite.framework */,
@@ -1666,6 +1656,8 @@
 			);
 			name = Carthage;
 			outputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
+				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -1677,9 +1669,11 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = Carthage;
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2145,7 +2139,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -2235,7 +2229,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";

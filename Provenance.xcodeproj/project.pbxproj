@@ -153,10 +153,10 @@
 		B3081C0A2080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
+		B32155442107D1D40085B18E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155432107D1D40085B18E /* PVLibrary.framework */; };
 		B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E812106BEA000857F52 /* PVLibrary.framework */; };
 		B3274E902106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
 		B3274E912106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
-		B3274E922106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
 		B3274E932106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
@@ -261,7 +261,6 @@
 		B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3BCDA1D205F59B400EFBEDA /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.swift */; };
-		B3C04B5721077DF300E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5621077DF300E7AF79 /* PVLibrary.framework */; };
 		B3C04B5921077E1000E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5821077E1000E7AF79 /* PVLibrary.framework */; };
 		B3C04B5A21077E1000E7AF79 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5821077E1000E7AF79 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B5B2107846E00E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5821077E1000E7AF79 /* PVLibrary.framework */; };
@@ -607,6 +606,9 @@
 		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B3081C072080693000C5E77B /* PViCadeMocuteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeMocuteController.m; sourceTree = "<group>"; };
 		B3081C082080693000C5E77B /* PViCadeMocuteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeMocuteController.h; sourceTree = "<group>"; };
+		B321553F2107CEE00085B18E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32155412107D0CE0085B18E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32155432107D1D40085B18E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E812106BEA000857F52 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CocoaLumberExtensions.swift; path = PVLibrary/PVLibrary/CocoaLumberExtensions.swift; sourceTree = SOURCE_ROOT; };
 		B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVWonderSwanControllerViewController.swift; sourceTree = "<group>"; };
@@ -867,7 +869,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C04B5721077DF300E7AF79 /* PVLibrary.framework in Frameworks */,
+				B32155442107D1D40085B18E /* PVLibrary.framework in Frameworks */,
 				B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */,
 				BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */,
 			);
@@ -950,6 +952,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B32155432107D1D40085B18E /* PVLibrary.framework */,
+				B32155412107D0CE0085B18E /* PVLibrary.framework */,
+				B321553F2107CEE00085B18E /* PVLibrary.framework */,
 				B3C04B5621077DF300E7AF79 /* PVLibrary.framework */,
 				B3274E812106BEA000857F52 /* PVLibrary.framework */,
 				B30670E220C29FDE002ECE63 /* HockeySDK.framework */,
@@ -1609,17 +1614,14 @@
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
 				B31D003620BE67E400850C70 /* Carthage */,
-				B3A95F6B20BCF48E00635F3E /* Swiftlint */,
 				B3FF744F202F7D67008C964A /* Create Version.h */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
-				E3D030EE1D980D9F00045BE6 /* Set Git SHA */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
 				1AC1D5D620D3E45B0096FEA6 /* Carthage Copy Frameworks */,
-				B3A787C12101E02700D9D6A1 /* Reset Plist Fastlane */,
 			);
 			buildRules = (
 			);
@@ -1636,17 +1638,14 @@
 			buildConfigurationList = 1AD481C81BA350A500FDA50A /* Build configuration list for PBXNativeTarget "ProvenanceTV" */;
 			buildPhases = (
 				B3E708A720B7E465005BAA5A /* Carthage */,
-				B3A95F6C20BCF4B500635F3E /* Swift Lint */,
 				B3F9CDA320315CA8007F808D /* Create Version.h */,
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1A44C0AE1D0A1E730018751A /* Set Build Number */,
-				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
 				1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */,
-				B3A787C22101E04F00D9D6A1 /* Plist reset fastlane */,
 			);
 			buildRules = (
 			);
@@ -1852,13 +1851,15 @@
 			files = (
 			);
 			inputPaths = (
+				./.version,
+				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 			);
 			name = "Set Build Number";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n";
+			shellScript = "function success_exit\n{\n    echo \"${PROGNAME}: ${1:-\"Completed\"}\" 1>&2\n    exit 0\n}\n\nvpath={SCRIPT_INPIT_FILE_0}\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\n\nif [ -f $vpath ] && [[ $(< $vpath) == \"$GIT_DATE\" ]]; then\nsuccess_exit \"$vpath matches $GIT_DATE\"\nfi\n\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n\n# Set Git SHA\nrevision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
 		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1866,13 +1867,15 @@
 			files = (
 			);
 			inputPaths = (
+				./.version,
+				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 			);
 			name = "Set Build Number";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
+			shellScript = "function success_exit\n{\n    echo \"${PROGNAME}: ${1:-\"Completed\"}\" 1>&2\n    exit 0\n}\n\nvpath={SCRIPT_INPIT_FILE_0}\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\n\nif [ -f $vpath ] && [[ $(< $vpath) == \"$GIT_DATE\" ]]; then\n    success_exit \"$vpath matches $GIT_DATE\"\nfi\n\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n\n# Set Git SHA\nrevision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
 		1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1924,6 +1927,20 @@
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/XLActionController.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/XCDLumberjackNSLogger.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/MarqueeLabelSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLoggerSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SQLite.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjackSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLogger.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Realm.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RealmSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/MarqueeLabel.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/ZIPFoundation.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/HockeySDK.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyUserDefaults.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1935,9 +1952,12 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
+				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			name = Carthage;
 			outputPaths = (
+				"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -1949,69 +1969,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = Carthage;
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh iOS\n#sh Scripts/fastlane.sh\n";
-		};
-		B3A787C12101E02700D9D6A1 /* Reset Plist Fastlane */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Reset Plist Fastlane";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ which fastlane > /dev/null ]; then\n    bundle exec fastlane plist_reset\nfi\n";
-		};
-		B3A787C22101E04F00D9D6A1 /* Plist reset fastlane */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Plist reset fastlane";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#if which fastlane > /dev/null; then\n#    bundle exec fastlane plist_reset\n#fi\n";
-		};
-		B3A95F6B20BCF48E00635F3E /* Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = Swiftlint;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif ! which swiftlint > /dev/null; then\n    echo \"warning: SwiftLint is not installed. Vistit http://github.com/realm/SwiftLint to learn more.\"\nelse\n    swiftlint\nfi\n";
-		};
-		B3A95F6C20BCF4B500635F3E /* Swift Lint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Swift Lint";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif ! which swiftlint > /dev/null; then\n    echo \"warning: SwiftLint is not installed. Vistit http://github.com/realm/SwiftLint to learn more.\"\nelse\n    swiftlint\nfi";
 		};
 		B3E4817320C7B98A0061CF96 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2019,9 +1985,12 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = Carthage;
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
+				"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2033,9 +2002,11 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = Carthage;
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2047,9 +2018,12 @@
 			files = (
 			);
 			inputPaths = (
+				./.version,
 			);
 			name = "Create Version.h";
 			outputPaths = (
+				"$(SRCROOT)/Version.swift",
+				"$(SRCROOT)/Version.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2061,41 +2035,16 @@
 			files = (
 			);
 			inputPaths = (
+				./.version,
 			);
 			name = "Create Version.h";
 			outputPaths = (
+				"$(SRCROOT)/Version.swift",
+				"$(SRCROOT)/Version.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
-		};
-		E32D548D1D99C82E00C41A52 /* Set Git SHA */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Set Git SHA";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "revision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
-		};
-		E3D030EE1D980D9F00045BE6 /* Set Git SHA */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Set Git SHA";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "revision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2336,7 +2285,6 @@
 			files = (
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */,
 				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */,
-				B3274E922106C22600857F52 /* CocoaLumberExtensions.swift in Sources */,
 				DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3066,6 +3014,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3114,6 +3063,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3160,6 +3110,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3201,7 +3152,9 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"\"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3247,7 +3200,9 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"\"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3293,7 +3248,9 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"\"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

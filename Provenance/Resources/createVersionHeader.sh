@@ -87,10 +87,17 @@ else
     error_exit "$LINENO: $GIT not found."
 fi
 
-if [ $GIT_COMMIT_COUNT = $PLIST_GIT_COMMIT_COUNT ]; then
+if [ $GIT_COMMIT_COUNT == $PLIST_GIT_COMMIT_COUNT ]; then
   success_exit "GIT commit count hasn't changed. No need to update files."
 fi
 
+vpath="$SRCROOT/.version"
+echo "Testing for $vpath"
+if [ -f $vpath ] && [[ $(< $vpath) == "$GIT_DATE" ]]; then
+  success_exit "$vpath matches $GIT_DATE"
+else
+  echo $GIT_DATE > $vpath
+fi
 
 echo "Creating Version.h in" ${PROJECT_DIR}
 

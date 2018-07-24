@@ -1010,6 +1010,13 @@
 			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
 			remoteInfo = glidenhq;
 		};
+		B3C04B9A2107BA6C00E7AF79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
+			remoteInfo = glidenhq;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -4880,6 +4887,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3C04B9B2107BA6C00E7AF79 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64PlusVideoGlideN64 tvOS";
 			productName = PVMupen64PlusVideoGlideN64;
@@ -5687,6 +5695,11 @@
 			isa = PBXTargetDependency;
 			target = B3800FF4208522DC00FA03B8 /* glidenhq */;
 			targetProxy = B34AB60B2106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+		B3C04B9B2107BA6C00E7AF79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3800FF4208522DC00FA03B8 /* glidenhq */;
+			targetProxy = B3C04B9A2107BA6C00E7AF79 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

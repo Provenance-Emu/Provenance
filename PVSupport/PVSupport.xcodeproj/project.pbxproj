@@ -417,7 +417,6 @@
 				B3C96EC71D62C5E7003F1E93 /* Frameworks */,
 				B3C96EC81D62C5E7003F1E93 /* Headers */,
 				B3C96ED21D62C5E7003F1E93 /* Resources */,
-				B328B41B20B67CDF00AE4E00 /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -485,41 +484,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B328B41B20B67CDF00AE4E00 /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../Carthage/Build/iOS/CocoaLumberjack.framework",
-				"$(SRCROOT)/../Carthage/Build/iOS/CocoaLumberjackSwift.framework",
-				"$(SRCROOT)/../Carthage/Build/iOS/NSLogger.framework",
-				"$(SRCROOT)/../Carthage/Build/iOS/NSLoggerSwift.framework",
-				"$(SRCROOT)/../Carthage/Build/iOS/XCDLumberjackNSLogger.framework",
-				"$(SRCROOT)/../Carthage/Build/iOS/SwiftyUserDefaults.framework",
-			);
-			name = Carthage;
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjackSwift.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLogger.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLoggerSwift.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/XCDLumberjackNSLogger.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyUserDefaults.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#/usr/local/bin/carthage copy-frameworks\n";
-		};
 		B3E708A820B7E8F9005BAA5A /* Carthage build */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = "Carthage build";
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -531,9 +506,11 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = "Carthage Build";
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;

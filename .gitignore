@@ -18,3 +18,4 @@ report.xml
 /Carthage/.Cartfile.resolved
 .Cartfile.tvOS.resolved
 .Cartfile.iOS.resolved
+/.version

@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 import RealmSwift
 import PVSupport
-import PVLibrary
 
 // MARK: - System Scanner
 public extension PVEmulatorConfiguration {
