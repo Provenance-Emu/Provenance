@@ -7,7 +7,6 @@
 //
 
 #import "PVGameControllerUtilities.h"
-
 #import <GameController/GameController.h>
 
 @implementation PVGameControllerUtilities

@@ -6,7 +6,7 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 public protocol ArchiveSupport {
 	var supportedArchiveFormats : ArchiveSupportOptions { get }

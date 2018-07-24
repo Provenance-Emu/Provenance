@@ -1,0 +1,7 @@
+github "bitstadium/HockeySDK-iOS" "5.1.2"
+github "bitstadium/HockeySDK-tvOS" "5.1.0"
+github "cbpowell/MarqueeLabel" "3.1.6"
+github "realm/realm-cocoa" "v3.7.4"
+github "stephencelis/SQLite.swift" "0.11.5"
+github "weichsel/ZIPFoundation" "0.9.6"
+github "xmartlabs/XLActionController" "4.0.1"

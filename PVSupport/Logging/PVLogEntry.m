@@ -9,6 +9,9 @@
 #import "PVLogEntry.h"
 #import "PVLogging.h"
 
+#import "DebugUtils.h"
+#import "PVLogging.h"
+
 NSUInteger __PVLogEntryIndexCounter = 0;
     // Time of initialization.
     // Used to calculate offsets

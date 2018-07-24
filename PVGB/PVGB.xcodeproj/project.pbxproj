@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB55B2106D58F00C45F09 /* PVSupport.framework */; };
 		B3547B4E205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B3547B4F205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B35E6C42207F09CC0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C41207F09CC0040709A /* CoreOptions.swift */; };
@@ -89,7 +90,6 @@
 		B3C9D49D1DEA6DE80068D057 /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0121ABE373800FF6AEF /* makesinckernel.cpp */; };
 		B3C9D49E1DEA6DE80068D057 /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0871ABE373800FF6AEF /* ppu.cpp */; };
 		B3C9D49F1DEA6DFC0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */; };
-		B3C9D4A01DEA6E060068D057 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EE31D6365F9003F1E93 /* PVSupport.framework */; };
 		B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; };
 		B3C9D4A41DEA6E270068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */; };
@@ -245,6 +245,7 @@
 		1AABE0C31ABE378D00FF6AEF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1AABE0C91ABE380200FF6AEF /* PVGB-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGB-Prefix.pch"; sourceTree = "<group>"; };
+		B34AB55B2106D58F00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4D205857E300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B35E6C41207F09CC0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3C96EE31D6365F9003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
@@ -265,9 +266,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
-				B3C9D4A01DEA6E060068D057 /* PVSupport.framework in Frameworks */,
 				B3C9D49F1DEA6DFC0068D057 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -567,6 +568,7 @@
 		1AABE0C71ABE37A400FF6AEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B34AB55B2106D58F00C45F09 /* PVSupport.framework */,
 				B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */,
 				B3C9D4A61DEA6E390068D057 /* Foundation.framework */,
 				B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */,
@@ -985,7 +987,7 @@
 				);
 				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1028,7 +1030,7 @@
 				);
 				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1070,7 +1072,7 @@
 				);
 				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

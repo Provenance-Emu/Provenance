@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import XLActionController
+import PVLibrary
+import PVSupport
 
 extension UIColor {
 
@@ -33,7 +35,7 @@ extension UIColor {
 	}
 }
 
-open class EmulatorActionCell: ActionCell {
+public final class EmulatorActionCell: ActionCell {
 
 	public override init(frame: CGRect) {
 		super.init(frame: frame)

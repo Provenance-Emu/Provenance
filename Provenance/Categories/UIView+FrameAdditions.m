@@ -46,12 +46,3 @@
 }
 
 @end
-
-// UIAppearance+Swift.m
-#if TARGET_OS_IOS
-@implementation UIView (UIViewAppearance_Swift)
-+ (instancetype)my_appearanceWhenContainedIn:(Class<UIAppearanceContainer>)containerClass {
-	return [self appearanceWhenContainedIn:containerClass, nil];
-}
-@end
-#endif

@@ -14,6 +14,34 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
+               BuildableName = "PVLibrary.framework"
+               BlueprintName = "PVLibrary"
+               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
                BuildableName = "Provenance.app"
                BlueprintName = "Provenance"

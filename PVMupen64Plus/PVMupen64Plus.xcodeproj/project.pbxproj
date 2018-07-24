@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3055BEE20730B60001212D2 /* PVSupport.framework */; };
+		B3274E8D2106C1A900857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E8C2106C1A900857F52 /* PVSupport.framework */; };
+		B3274E8E2106C1B800857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E8C2106C1A900857F52 /* PVSupport.framework */; };
 		B3303E381DED20CF00896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3303E391DED20D900896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3303E6C1DED23EE00896D96 /* example.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5B1DED23EE00896D96 /* example.c */; };
@@ -29,8 +32,6 @@
 		B3303E821DED272E00896D96 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B33115771C72F67800E9AD14 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103131C72AA3200DD066C /* libz.tbd */; };
 		B331158F1C7309C200E9AD14 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3335613207B3C8D0036A448 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335612207B3C8D0036A448 /* PVSupport.framework */; };
-		B334D0071DFBA640008E8B1F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B334D0061DFBA640008E8B1F /* PVSupport.framework */; };
 		B34601D62081333D008C049C /* gliden_osd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34601D320813330008C049C /* gliden_osd.cpp */; };
 		B34601D72081333E008C049C /* gliden_osd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34601D320813330008C049C /* gliden_osd.cpp */; };
 		B3547B462058531200CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
@@ -386,7 +387,8 @@
 		B3AE1F6F2073420500AD06D4 /* module.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AE1EEE20733D3500AD06D4 /* module.c */; };
 		B3AE1F702073420500AD06D4 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AE1EF620733D3500AD06D4 /* osal_dynamiclib_unix.c */; };
 		B3AE1F712073420500AD06D4 /* su.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AE1EED20733D3500AD06D4 /* su.c */; };
-		B3B3B8571DECE9D800602746 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8561DECE9D800602746 /* PVSupport.framework */; };
+		B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B30559E42072FEE9001212D2 /* mupen64plus.ini */; };
+		B3AF47E421072BCC002211EE /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B30559E42072FEE9001212D2 /* mupen64plus.ini */; };
 		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -916,6 +918,100 @@
 		DFB60623203A7429001E70F1 /* osal_files_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFB60621203A7428001E70F1 /* osal_files_ios.mm */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B34AB5F32106DFEA00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B37EFEEF1C72E63300857158;
+			remoteInfo = PVMupen64PlusVideoRice;
+		};
+		B34AB5F52106DFEA00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B3B85F1DECEA9100602746;
+			remoteInfo = PVMupen64PlusRspHLE;
+		};
+		B34AB5F72106DFEA00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B331158B1C7309C200E9AD14;
+			remoteInfo = PVRSPCXD4;
+		};
+		B34AB5F92106DFEA00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DFB6017F2038AD13001E70F1;
+			remoteInfo = PVMupen64PlusVideoGlideN64;
+		};
+		B34AB5FB2106DFEA00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3303E4B1DED23C600896D96;
+			remoteInfo = png;
+		};
+		B34AB5FD2106DFEA00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
+			remoteInfo = glidenhq;
+		};
+		B34AB5FF2106DFFE00C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
+			remoteInfo = glidenhq;
+		};
+		B34AB6012106E03500C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B3B90A1DED137100602746;
+			remoteInfo = "PVMupen64PlusVideoRice tvOS";
+		};
+		B34AB6032106E03500C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B3B9421DED13A200602746;
+			remoteInfo = "PVMupen64PlusRspHLE tvOS";
+		};
+		B34AB6052106E03500C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B3B9551DED144100602746;
+			remoteInfo = "PVRSPCXD4 tvOS";
+		};
+		B34AB6072106E03500C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DFB603AF2038B582001E70F1;
+			remoteInfo = "PVMupen64PlusVideoGlideN64 tvOS";
+		};
+		B34AB6092106E03500C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3303E4B1DED23C600896D96;
+			remoteInfo = png;
+		};
+		B34AB60B2106E03500C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
+			remoteInfo = glidenhq;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		B3303E4A1DED23C600896D96 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -1222,6 +1318,7 @@
 		B3055AD92072FEE9001212D2 /* eventloop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eventloop.h; sourceTree = "<group>"; };
 		B3055BEC20730B5B001212D2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3055BEE20730B60001212D2 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3274E8C2106C1A900857F52 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3303E4C1DED23C600896D96 /* libpng.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpng.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3303E551DED23EE00896D96 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = png/png.h; sourceTree = SOURCE_ROOT; };
 		B3303E561DED23EE00896D96 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = png/pngconf.h; sourceTree = SOURCE_ROOT; };
@@ -1962,7 +2059,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B334D0071DFBA640008E8B1F /* PVSupport.framework in Frameworks */,
+				B3274E8E2106C1B800857F52 /* PVSupport.framework in Frameworks */,
 				B3882C141DED279C007183B6 /* libpng.a in Frameworks */,
 				B3303E821DED272E00896D96 /* libz.tbd in Frameworks */,
 				B37EFF241C72E6E800857158 /* OpenGLES.framework in Frameworks */,
@@ -1973,9 +2070,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
 				B33115771C72F67800E9AD14 /* libz.tbd in Frameworks */,
-				B3B3B8571DECE9D800602746 /* PVSupport.framework in Frameworks */,
 				B37EFF991C72F48C00857158 /* OpenGLES.framework in Frameworks */,
 				B37EFF981C72F48700857158 /* Foundation.framework in Frameworks */,
 			);
@@ -2000,7 +2097,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3335613207B3C8D0036A448 /* PVSupport.framework in Frameworks */,
+				B3274E8D2106C1A900857F52 /* PVSupport.framework in Frameworks */,
 				B3B3B8FC1DED130B00602746 /* libz.tbd in Frameworks */,
 				B3B3B8FD1DED130B00602746 /* OpenGLES.framework in Frameworks */,
 				B3B3B8FE1DED130B00602746 /* Foundation.framework in Frameworks */,
@@ -3192,6 +3289,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3274E8C2106C1A900857F52 /* PVSupport.framework */,
 				B39F010920866B3E0076D183 /* libz.tbd */,
 				B380100F2085252F00FA03B8 /* OpenGLES.framework */,
 				B3335612207B3C8D0036A448 /* PVSupport.framework */,
@@ -4626,6 +4724,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				B34AB5FC2106DFEA00C45F09 /* PBXTargetDependency */,
+				B34AB5FE2106DFEA00C45F09 /* PBXTargetDependency */,
+				B34AB5F42106DFEA00C45F09 /* PBXTargetDependency */,
+				B34AB5F62106DFEA00C45F09 /* PBXTargetDependency */,
+				B34AB5F82106DFEA00C45F09 /* PBXTargetDependency */,
+				B34AB5FA2106DFEA00C45F09 /* PBXTargetDependency */,
 			);
 			name = PVMupen64Plus;
 			productName = PVMupen64PlusDynamic;
@@ -4679,6 +4783,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				B34AB60C2106E03500C45F09 /* PBXTargetDependency */,
+				B34AB60A2106E03500C45F09 /* PBXTargetDependency */,
+				B34AB6022106E03500C45F09 /* PBXTargetDependency */,
+				B34AB6042106E03500C45F09 /* PBXTargetDependency */,
+				B34AB6062106E03500C45F09 /* PBXTargetDependency */,
+				B34AB6082106E03500C45F09 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64Plus tvOS";
 			productName = PVMupen64PlusDynamic;
@@ -4751,6 +4861,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B34AB6002106DFFE00C45F09 /* PBXTargetDependency */,
 			);
 			name = PVMupen64PlusVideoGlideN64;
 			productName = PVMupen64PlusVideoGlideN64;
@@ -4862,6 +4973,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */,
 				B39E8CB62053B53100380DCD /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4877,6 +4989,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AF47E421072BCC002211EE /* mupen64plus.ini in Resources */,
 				B3547B462058531200CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5509,6 +5622,74 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B34AB5F42106DFEA00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice */;
+			targetProxy = B34AB5F32106DFEA00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5F62106DFEA00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE */;
+			targetProxy = B34AB5F52106DFEA00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5F82106DFEA00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B331158B1C7309C200E9AD14 /* PVRSPCXD4 */;
+			targetProxy = B34AB5F72106DFEA00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5FA2106DFEA00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */;
+			targetProxy = B34AB5F92106DFEA00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5FC2106DFEA00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3303E4B1DED23C600896D96 /* png */;
+			targetProxy = B34AB5FB2106DFEA00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5FE2106DFEA00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3800FF4208522DC00FA03B8 /* glidenhq */;
+			targetProxy = B34AB5FD2106DFEA00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB6002106DFFE00C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3800FF4208522DC00FA03B8 /* glidenhq */;
+			targetProxy = B34AB5FF2106DFFE00C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB6022106E03500C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B3B90A1DED137100602746 /* PVMupen64PlusVideoRice tvOS */;
+			targetProxy = B34AB6012106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB6042106E03500C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B3B9421DED13A200602746 /* PVMupen64PlusRspHLE tvOS */;
+			targetProxy = B34AB6032106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB6062106E03500C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B3B9551DED144100602746 /* PVRSPCXD4 tvOS */;
+			targetProxy = B34AB6052106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB6082106E03500C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DFB603AF2038B582001E70F1 /* PVMupen64PlusVideoGlideN64 tvOS */;
+			targetProxy = B34AB6072106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB60A2106E03500C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3303E4B1DED23C600896D96 /* png */;
+			targetProxy = B34AB6092106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB60C2106E03500C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3800FF4208522DC00FA03B8 /* glidenhq */;
+			targetProxy = B34AB60B2106E03500C45F09 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -5774,7 +5955,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/mupen64plus-core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5835,7 +6016,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/mupen64plus-core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5908,7 +6089,7 @@
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5984,7 +6165,7 @@
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6073,7 +6254,7 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6154,7 +6335,7 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6351,7 +6532,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6407,7 +6588,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7095,7 +7276,7 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7200,7 +7381,7 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

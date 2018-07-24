@@ -16,6 +16,8 @@ import QuartzCore
 import UIKit
 import RealmSwift
 import CoreSpotlight
+import PVLibrary
+import PVSupport
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -208,7 +210,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 		#endif
 
-        PVEmulatorConfiguration.updateSystems(fromPlists: [Bundle.main.url(forResource: "Systems", withExtension: "plist")!])
+		let bundle = Bundle(identifier: "com.provenance-emu.PVLibrary")!
+        PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
         PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 

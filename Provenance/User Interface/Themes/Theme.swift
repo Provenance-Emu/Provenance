@@ -152,7 +152,7 @@ struct LightTheme: iOSTheme {
 }
 
 //@available(iOS 9.0, *)
-public class Theme {
+public final class Theme {
 
 	public static var currentTheme: iOSTheme = LightTheme() {
 		didSet {
@@ -197,39 +197,25 @@ public class Theme {
         }
 
         // Settings
-		if #available(iOS 9.0, *) {
-			appearance(in: [SettingsTableView.self]) {
-				UITableViewCell.appearance {
-					$0.backgroundColor = theme.settingsCellBackground
-					$0.textLabel?.backgroundColor = theme.settingsCellBackground
-					$0.textLabel?.textColor = theme.settingsCellText
-					$0.detailTextLabel?.textColor = theme.settingsCellText
-				}
+		appearance(in: [SettingsTableView.self]) {
+			UITableViewCell.appearance {
+				$0.backgroundColor = theme.settingsCellBackground
+				$0.textLabel?.backgroundColor = theme.settingsCellBackground
+				$0.textLabel?.textColor = theme.settingsCellText
+				$0.detailTextLabel?.textColor = theme.settingsCellText
 			}
+		}
 
-			appearance(in: [UITableViewCell.self]) {
-				UILabel.appearance {
-					$0.textColor = theme.settingsCellText
-				}
+		appearance(in: [UITableViewCell.self]) {
+			UILabel.appearance {
+				$0.textColor = theme.settingsCellText
 			}
+		}
 
-			appearance(in: [UITableViewHeaderFooterView.self]) {
-				UILabel.appearance {
-					$0.textColor = theme.settingsHeaderText
-				}
+		appearance(in: [UITableViewHeaderFooterView.self]) {
+			UILabel.appearance {
+				$0.textColor = theme.settingsHeaderText
 			}
-		} else {
-			let a1 = UITableViewCell.my_appearanceWhenContained(in: SettingsTableView.self)
-			a1.backgroundColor = theme.settingsCellBackground
-			a1.textLabel?.backgroundColor = theme.settingsCellBackground
-			a1.textLabel?.textColor = theme.settingsCellText
-			a1.detailTextLabel?.textColor = theme.settingsCellText
-
-			let a2 = UILabel.my_appearanceWhenContained(in: UITableViewCell.self)
-			a2.textColor = theme.settingsCellText
-
-			let a3 = UILabel.my_appearanceWhenContained(in: UITableViewHeaderFooterView.self)
-			a3.textColor = theme.settingsHeaderText
 		}
 
         UITableViewHeaderFooterView.appearance {
@@ -252,31 +238,18 @@ public class Theme {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
         }
 
-        // Appearacne in is only in 9+
-        if #available(iOS 9.0, *) {
-            appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-                UILabel.appearance {
-                    $0.backgroundColor = theme.gameLibraryHeaderBackground
-                    $0.textColor = theme.gameLibraryHeaderText
-                }
-            }
+		appearance(in: [PVGameLibrarySectionHeaderView.self]) {
+			UILabel.appearance {
+				$0.backgroundColor = theme.gameLibraryHeaderBackground
+				$0.textColor = theme.gameLibraryHeaderText
+			}
+		}
 
-            // Game Library Main
-            appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
-                UILabel.appearance {
-                    $0.textColor = theme.gameLibraryText
-                }
-            }
-		} else {
-			let a1 = UILabel.my_appearanceWhenContained(in: PVGameLibrarySectionHeaderView.self)
-			a1.backgroundColor = theme.gameLibraryHeaderBackground
-			a1.textColor = theme.gameLibraryHeaderText
-
-			let a2 = UILabel.my_appearanceWhenContained(in: PVGameLibraryCollectionViewCell.self)
-			a2.textColor = theme.gameLibraryText
-
-			let a3 = UITextView.my_appearanceWhenContained(in: PVGameMoreInfoViewController.self)
-			a3.textColor = theme.settingsCellText
+		// Game Library Main
+		appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
+			UILabel.appearance {
+				$0.textColor = theme.gameLibraryText
+			}
 		}
 
 //        UICollectionView.appearance {

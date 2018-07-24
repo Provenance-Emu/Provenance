@@ -29,10 +29,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3E21D6A203211BE009939D3"
-               BuildableName = "Spotlight.appex"
-               BlueprintName = "Spotlight"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
+               BuildableName = "PVLibrary.framework"
+               BlueprintName = "PVLibrary"
+               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-               BuildableName = "Provenance.app"
-               BlueprintName = "Provenance"
+               BlueprintIdentifier = "B3E21D6A203211BE009939D3"
+               BuildableName = "Spotlight.appex"
+               BlueprintName = "Spotlight"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -61,10 +61,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
-            BlueprintName = "Provenance"
-            ReferencedContainer = "container:Provenance.xcodeproj">
+            BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+            BuildableName = "PVSupport.framework"
+            BlueprintName = "PVSupport"
+            ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -81,16 +81,15 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
-            BlueprintName = "Provenance"
-            ReferencedContainer = "container:Provenance.xcodeproj">
+            BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+            BuildableName = "PVSupport.framework"
+            BlueprintName = "PVSupport"
+            ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -101,16 +100,15 @@
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
-            BlueprintName = "Provenance"
-            ReferencedContainer = "container:Provenance.xcodeproj">
+            BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+            BuildableName = "PVSupport.framework"
+            BlueprintName = "PVSupport"
+            ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Travis">

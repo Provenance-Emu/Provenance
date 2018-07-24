@@ -11,6 +11,7 @@ import PVSupport
 import QuartzCore
 import UIKit
 import RealmSwift
+import PVLibrary
 
 #if os(iOS)
 import XLActionController
@@ -66,7 +67,7 @@ extension UIViewController {
 	}
 }
 
-class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
+final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
 
     var core: PVEmulatorCore
     var game: PVGame
@@ -149,6 +150,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
         updatePlayedDuration()
 		destroyAutosaveTimer()
+
+		if let menuGestureRecognizer = menuGestureRecognizer {
+			UIApplication.shared.keyWindow?.removeGestureRecognizer(menuGestureRecognizer)
+		}
     }
 
 	private func initNotifcationObservers() {
@@ -376,7 +381,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             menuGestureRecognizer?.allowedPressTypes = [.menu]
         }
         if let aRecognizer = menuGestureRecognizer {
-            view.addGestureRecognizer(aRecognizer)
+			UIApplication.shared.keyWindow.addGestureRecognizer(aRecognizer)
         }
 #else
         GCController.controllers().forEach { [unowned self] in
@@ -387,7 +392,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
     }
 
-    override open func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         //Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
@@ -407,12 +412,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		}
     }
 
-    override open func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 		destroyAutosaveTimer()
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
 

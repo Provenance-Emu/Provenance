@@ -17,7 +17,7 @@ import TVServices
  
  */
 
-public class ServiceProvider: NSObject, TVTopShelfProvider {
+public final class ServiceProvider: NSObject, TVTopShelfProvider {
     public override init() {
         super.init()
 

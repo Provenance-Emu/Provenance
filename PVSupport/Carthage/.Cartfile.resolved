@@ -1,0 +1,4 @@
+github "0xced/XCDLumberjackNSLogger" "1.1.1"
+github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
+github "fpillet/NSLogger" "v1.9.0"
+github "radex/SwiftyUserDefaults" "3.0.1"

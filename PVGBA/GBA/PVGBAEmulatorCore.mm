@@ -471,7 +471,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     _flashSize       = 0x10000;
 
     // Read in vba-over.ini and break it into an array of strings
-    NSString *iniPath = [[NSBundle mainBundle] pathForResource:@"vba-over" ofType:@"ini"];
+    NSString *iniPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"vba-over" ofType:@"ini"];
     NSString *iniString = [NSString stringWithContentsOfFile:iniPath encoding:NSUTF8StringEncoding error:NULL];
     NSArray *settings = [iniString componentsSeparatedByString:@"\n"];
 

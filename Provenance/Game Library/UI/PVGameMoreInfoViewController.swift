@@ -8,6 +8,9 @@
 
 import UIKit
 import RealmSwift
+import PVLibrary
+import PVSupport
+
 #if os(iOS)
 import SafariServices
 import AssetsLibrary
@@ -1040,7 +1043,7 @@ extension PVGameMoreInfoViewController {
 
 import UIKit
 
-public class MediaZoom: UIView, UIScrollViewDelegate {
+public final class MediaZoom: UIView, UIScrollViewDelegate {
 
     public lazy var imageView: UIImageView = {
         let image = UIImageView(frame: self.mediaFrame())

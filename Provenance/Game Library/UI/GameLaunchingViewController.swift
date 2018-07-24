@@ -8,6 +8,20 @@
 
 import UIKit
 import RealmSwift
+import PVLibrary
+import PVSupport
+
+public func PVMaxRecentsCount() -> Int {
+	#if os(tvOS)
+	return 12
+	#elseif os(iOS)
+	#if EXTENSION
+	return 9
+	#else
+	return UIApplication.shared.keyWindow?.traitCollection.userInterfaceIdiom == .phone ? 6 : 9
+	#endif
+	#endif
+}
 
 /*
  Protocol with default implimentation.

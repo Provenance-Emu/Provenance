@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import PVLibrary
 
 class PVCoresTableViewController: UITableViewController {
 
