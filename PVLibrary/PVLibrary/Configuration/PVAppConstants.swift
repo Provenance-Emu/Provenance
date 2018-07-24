@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import UIKit
 
 public let PVMaxRecentsShortcutCount: Int = 4
 public let PVAppGroupId                    = "group.provence-emu.provenance"
