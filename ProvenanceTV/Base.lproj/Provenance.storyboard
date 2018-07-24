@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="14269.12" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0zH-nB-KZk">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="14113" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0zH-nB-KZk">
     <device id="appleTV" orientation="landscape">
         <adaptation id="light"/>
     </device>
     <dependencies>
         <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,7 +15,7 @@
         <!--Game More Info View Controller-->
         <scene sceneID="i5m-9e-CDL">
             <objects>
-                <viewController storyboardIdentifier="gameMoreInfoVC" id="rRL-5Z-sl7" customClass="PVGameMoreInfoViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="gameMoreInfoVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="rRL-5Z-sl7" customClass="PVGameMoreInfoViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Xfw-bG-EL0"/>
                         <viewControllerLayoutGuide type="bottom" id="q5j-gb-wzs"/>
@@ -284,12 +286,12 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1244" y="-2708"/>
+            <point key="canvasLocation" x="7618" y="-3884"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="TS7-Pk-5Ou">
             <objects>
-                <tabBarController id="0zH-nB-KZk" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="rootTabBarVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0zH-nB-KZk" customClass="PVTVTabBarController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" id="n5P-zL-sta">
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="0.0"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -307,7 +309,7 @@
         <!--Navigation Controller-->
         <scene sceneID="MPv-df-kCi">
             <objects>
-                <navigationController storyboardIdentifier="PVSaveStatesViewControllerNav" id="ahK-Fu-xig" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="PVSaveStatesViewControllerNav" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ahK-Fu-xig" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NKL-PB-2EA">
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="145"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -323,7 +325,7 @@
         <!--Game Library View Controller-->
         <scene sceneID="Cw2-p7-hai">
             <objects>
-                <viewController id="In9-6L-5FX" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="mainGameLibrary" useStoryboardIdentifierAsRestorationIdentifier="YES" id="In9-6L-5FX" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Avm-Rx-1XD"/>
                         <viewControllerLayoutGuide type="bottom" id="X4Z-7U-xUA"/>
@@ -346,10 +348,17 @@
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem title="Conflicts" image="caution-icon" id="Dsv-oR-lbw">
+                                <color key="tintColor" red="0.97680455450000003" green="0.58163633125669378" blue="0.11401080792834913" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="conflictsButtonTapped:" destination="In9-6L-5FX" id="j6s-Er-sGM"/>
+                                </connections>
+                            </barButtonItem>
                         </leftBarButtonItems>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
                         <outlet property="getMoreRomsBarButtonItem" destination="qjY-qw-buq" id="ZuE-Gx-cbW"/>
                         <outlet property="sortOptionBarButtonItem" destination="d9C-DJ-Fuv" id="EF0-PD-HQW"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
@@ -384,11 +393,11 @@
                             <rect key="frame" x="0.0" y="160" width="28" height="66"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Pb0-Xg-I7c" id="hAZ-OV-5Zy">
-                                <rect key="frame" x="-45" y="0.0" width="45" height="66"/>
+                                <rect key="frame" x="-33" y="0.0" width="33" height="65"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="D2e-Wn-qWZ">
-                                        <rect key="frame" x="-52" y="0.0" width="72" height="66"/>
+                                        <rect key="frame" x="-40" y="0.0" width="60" height="65"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="38"/>
                                         <nil key="textColor"/>
@@ -404,12 +413,12 @@
                     </connections>
                 </tableView>
             </objects>
-            <point key="canvasLocation" x="5455" y="-2226"/>
+            <point key="canvasLocation" x="5308" y="-2978"/>
         </scene>
         <!--Settings-->
         <scene sceneID="FmV-8E-kTS">
             <objects>
-                <splitViewController id="0as-LN-cS4" customClass="PVTVSplitViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController storyboardIdentifier="settingsSplitVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0as-LN-cS4" customClass="PVTVSplitViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Settings" id="CO1-nQ-39N"/>
                     <connections>
                         <segue destination="ech-XT-alx" kind="relationship" relationship="masterViewController" id="Sfz-Qr-C2s"/>
@@ -418,7 +427,7 @@
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqU-Pg-HhI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5455" y="-1064"/>
+            <point key="canvasLocation" x="3841" y="-1746"/>
         </scene>
         <!--Save States View Controller-->
         <scene sceneID="7UN-gu-BcD">
@@ -492,7 +501,7 @@
         <!--View Controller-->
         <scene sceneID="C1c-YW-hQD">
             <objects>
-                <viewController id="ech-XT-alx" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="tvSettingsLeftVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ech-XT-alx" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gZO-nL-6n9"/>
                         <viewControllerLayoutGuide type="bottom" id="yT0-7R-uGL"/>
@@ -515,12 +524,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oje-Ak-cZ9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8029" y="-1909"/>
+            <point key="canvasLocation" x="7228" y="-1965"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Jwl-7z-mZH">
             <objects>
-                <navigationController id="riU-Xx-vww" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="settingsNavController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="riU-Xx-vww" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FiQ-0E-kzp">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="145"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -531,12 +540,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tre-gz-x6v" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5215.5" y="-504"/>
+            <point key="canvasLocation" x="4561" y="-181"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="YH6-Ht-HEo">
             <objects>
-                <tableViewController id="Byn-yn-0f6" customClass="PVTVSettingsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="tvSettingsTableVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Byn-yn-0f6" customClass="PVTVSettingsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="UtW-MP-SZ2">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1084,12 +1093,12 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N58-vR-pyo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6597.5" y="-504"/>
+            <point key="canvasLocation" x="6768" y="-632"/>
         </scene>
         <!--Controller Selection View Controller-->
         <scene sceneID="rf3-j3-Qnd">
             <objects>
-                <tableViewController id="fjc-Kp-2ru" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="controllerSelectionVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="fjc-Kp-2ru" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="0Cx-LN-DBW">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1133,7 +1142,7 @@
         <!--Appearance View Controller-->
         <scene sceneID="H1R-55-1vb">
             <objects>
-                <tableViewController id="Fqw-ef-HBA" customClass="PVAppearanceViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="appearanceSettingsVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fqw-ef-HBA" customClass="PVAppearanceViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="7" sectionFooterHeight="7" id="h2F-Su-JkG">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1177,7 +1186,7 @@
         <!--Licenses View Controller-->
         <scene sceneID="pZS-N1-R1w">
             <objects>
-                <viewController id="SMk-xH-ePE" customClass="PVLicensesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="licensesVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="SMk-xH-ePE" customClass="PVLicensesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ob3-po-ya2"/>
                         <viewControllerLayoutGuide type="bottom" id="zQW-IX-Sua"/>
@@ -1213,7 +1222,7 @@
         <!--Cores Table View Controller-->
         <scene sceneID="o5w-ra-VgU">
             <objects>
-                <tableViewController id="Ehn-W4-Sfs" customClass="PVCoresTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="coresTableVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ehn-W4-Sfs" customClass="PVCoresTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" sectionHeaderHeight="66" sectionFooterHeight="66" id="kB7-g7-2f9">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1256,7 +1265,7 @@
         <!--Vi Cade Controller View Controller-->
         <scene sceneID="tdE-E6-bVa">
             <objects>
-                <tableViewController id="zvw-rB-bmT" customClass="PViCadeControllerViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="icadeVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="zvw-rB-bmT" customClass="PViCadeControllerViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="Cmj-nd-Q5z">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1293,7 +1302,7 @@
         <!--Library-->
         <scene sceneID="7uv-N8-CjJ">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="7Iz-AI-QKl" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="mainNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7Iz-AI-QKl" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Library" id="MDp-Vh-3fS"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="fuf-Dv-b6x">
@@ -1307,10 +1316,11 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dPf-ca-ogX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3323" y="-2226"/>
+            <point key="canvasLocation" x="3045" y="-2978"/>
         </scene>
     </scenes>
     <resources>
+        <image name="caution-icon" width="42" height="36"/>
         <image name="pad-dark" width="800" height="456"/>
         <image name="sort" width="42" height="42"/>
     </resources>

@@ -204,7 +204,7 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
 }
 
 protocol GameLibraryCollectionViewDelegate : class {
-	func promptToDeleteGame(_ game : PVGame, completion: @escaping ((_ deleted: Bool) -> Swift.Void))
+	func promptToDeleteGame(_ game : PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
 
 @IBDesignable

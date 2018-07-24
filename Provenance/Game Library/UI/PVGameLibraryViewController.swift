@@ -108,6 +108,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 	@IBOutlet weak var getMoreRomsBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var sortOptionBarButtonItem: UIBarButtonItem!
+	@IBOutlet weak var conflictsBarButtonItem: UIBarButtonItem!
 
     var sectionTitles: [String] {
         var sectionsTitles = [String]()
@@ -134,7 +135,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var isInitialAppearance = false
     var mustRefreshDataSource = false
 
-    var needToShowConflictsAlert = false
+	var needToShowConflictsAlert = false {
+		didSet {
+			updateConflictsButton()
+		}
+	}
+
+	func updateConflictsButton() {
+		#if os(tvOS)
+		let enabled = !(self.gameImporter.conflictedFiles?.isEmpty ?? true)
+		var items = [sortOptionBarButtonItem!, getMoreRomsBarButtonItem!]
+		if enabled {
+			items.append(conflictsBarButtonItem!)
+		}
+		self.navigationItem.leftBarButtonItems = items
+		#endif
+	}
 
     @IBOutlet var sortOptionsTableView: UITableView!
 	lazy var sortOptionsTableViewController: UIViewController = {
@@ -853,6 +869,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 
         registerForChange()
+		updateConflictsButton()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -947,6 +964,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
 #endif
+
+	@IBAction func conflictsButtonTapped(_ sender : Any) {
+		displayConflictVC()
+	}
 
     @IBAction func sortButtonTapped(_ sender: Any) {
         #if os(iOS)
@@ -1133,9 +1154,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: {[unowned self] (_ action: UIAlertAction) -> Void in
                 self.needToShowConflictsAlert = false
-                let conflictViewController = PVConflictViewController(gameImporter: self.gameImporter!)
-                let navController = UINavigationController(rootViewController: conflictViewController)
-                self.present(navController, animated: true) {() -> Void in }
+				self.displayConflictVC()
             }))
 
             alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: {[unowned self] (_ action: UIAlertAction) -> Void in self.needToShowConflictsAlert = false }))
@@ -1144,6 +1163,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             ILOG("Encountered conflicts, should be showing message")
         }
     }
+
+	fileprivate func displayConflictVC() {
+		let conflictViewController = PVConflictViewController(gameImporter: self.gameImporter!)
+		let navController = UINavigationController(rootViewController: conflictViewController)
+		self.present(navController, animated: true) {() -> Void in }
+	}
 
     func setUpGameLibrary() {
         fetchGames()
@@ -1224,10 +1249,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	func setupGameImporter() {
 		gameImporter = PVGameImporter.shared
 		gameImporter.completionHandler = {[unowned self] (_ encounteredConflicts: Bool) -> Void in
+			self.updateConflictsButton()
 			if encounteredConflicts {
 				self.needToShowConflictsAlert = true
 				self.showConflictsAlert()
-
 			}
 		}
 
@@ -1307,6 +1332,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		let completionOperation = BlockOperation {
 			if let completionHandler = self.gameImporter.completionHandler {
 				DispatchQueue.main.async {
+					self.updateConflictsButton()
 					completionHandler(self.gameImporter.encounteredConflicts)
 				}
 			}
@@ -2289,6 +2315,55 @@ extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
 	}
 }
 
+#if os(tvOS)
+// Keyboard shortcuts
+extension PVGameLibraryViewController {
+	@objc
+	func showMoreInfoCommand() {
+		guard let selectedGame = selectedGame else {
+			return
+		}
+		moreInfo(for: selectedGame)
+	}
+
+	@objc
+	func toggleFavoriteCommand() {
+		guard let selectedGame = selectedGame else {
+			return
+		}
+		toggleFavorite(for: selectedGame)
+	}
+
+	@objc
+	func renameCommand() {
+		guard let selectedGame = selectedGame else {
+			return
+		}
+		renameGame(selectedGame)
+	}
+
+	@objc
+	func deleteCommand() {
+		guard let selectedGame = selectedGame else {
+			return
+		}
+		promptToDeleteGame(selectedGame)
+	}
+
+	var selectedGame : PVGame? {
+		guard let selectedCells = collectionView?.indexPathsForSelectedItems, selectedCells.count == 1, let selectedCell = selectedCells.first else {
+			return nil
+		}
+
+		guard let gameCell = collectionView?.cellForItem(at: selectedCell) as? PVGameLibraryCollectionViewCell else {
+			return nil
+		}
+
+		return gameCell.game
+	}
+}
+#endif
+
 #if os(iOS)
 extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 
@@ -2296,20 +2371,20 @@ extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 #endif
 
 extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
-	func promptToDeleteGame(_ game: PVGame, completion: @escaping ((Bool) -> Void)) {
+	func promptToDeleteGame(_ game: PVGame, completion: ((Bool) -> Void)? = nil) {
 		let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
 		alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
 			// Delete from Realm
 			do {
 				try self.delete(game: game)
-				completion(true)
+				completion?(true)
 			} catch {
-				completion(false)
+				completion?(false)
 				self.presentError(error.localizedDescription)
 			}
 		}))
 		alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-			completion(false)
+			completion?(false)
 		}))
 		self.present(alert, animated: true) {() -> Void in }
 	}

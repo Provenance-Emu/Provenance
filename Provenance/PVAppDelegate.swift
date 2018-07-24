@@ -456,3 +456,12 @@ public final class PVTTYFormatter : NSObject, DDLogFormatter {
 		return "🕐\(timeStampBuilder) \(emoji)\(level) \(logMessage.fileName):\(logMessage.line).\(logMessage.function ?? "") ↩\n\t☞ \(text)"
 	}
 }
+
+#if os(tvOS)
+class PVTVTabBarController : UITabBarController {
+	@objc
+	func searchAction() {
+		self.selectedIndex = 1
+	}
+}
+#endif
