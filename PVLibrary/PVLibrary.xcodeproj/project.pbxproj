@@ -356,7 +356,72 @@
 		B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4E21077CCF00E7AF79 /* Foundation.framework */; };
 		B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */; };
 		B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */; };
+		B3C04B642107867200E7AF79 /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B632107867200E7AF79 /* PVLibraryTests.swift */; };
+		B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
+		B3C04B6E21078CFD00E7AF79 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */; };
+		B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B7021078D9400E7AF79 /* PVSupport.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B7A21078E8300E7AF79 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */; };
+		B3C04B7B21078E8300E7AF79 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */; };
+		B3C04B7C21078E8300E7AF79 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */; };
+		B3C04B7D21078E8300E7AF79 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7721078E8200E7AF79 /* NSLogger.framework */; };
+		B3C04B7E21078E8300E7AF79 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */; };
+		B3C04B7F21078E8300E7AF79 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */; };
+		B3C04B8021078F9600E7AF79 /* CocoaLumberjack.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B8121078F9600E7AF79 /* CocoaLumberjackSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B8221078F9600E7AF79 /* NSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7721078E8200E7AF79 /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B8321078F9600E7AF79 /* NSLoggerSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B8421078F9600E7AF79 /* SwiftyUserDefaults.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B8521078F9600E7AF79 /* XCDLumberjackNSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B8621078F9600E7AF79 /* ZipArchive.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B872107972100E7AF79 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
+		B3C04B8C2107972300E7AF79 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B882107972100E7AF79 /* ZIPFoundation.framework */; };
+		B3C04B8D2107972300E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; };
+		B3C04B8E2107972300E7AF79 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8A2107972200E7AF79 /* SQLite.framework */; };
+		B3C04B8F2107972300E7AF79 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8B2107972200E7AF79 /* Realm.framework */; };
+		B3C04B902107972900E7AF79 /* Realm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B8B2107972200E7AF79 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B912107972900E7AF79 /* RealmSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B922107972900E7AF79 /* SQLite.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B8A2107972200E7AF79 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B932107973000E7AF79 /* ZIPFoundation.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B882107972100E7AF79 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
+		B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3C04B672107867200E7AF79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3579D0E2106B11D00DDEBD6;
+			remoteInfo = PVLibrary;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3C04B6C21078CD900E7AF79 /* Copy Framework */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3C04B902107972900E7AF79 /* Realm.framework in Copy Framework */,
+				B3C04B912107972900E7AF79 /* RealmSwift.framework in Copy Framework */,
+				B3C04B922107972900E7AF79 /* SQLite.framework in Copy Framework */,
+				B3C04B7021078D9400E7AF79 /* PVSupport.framework in Copy Framework */,
+				B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */,
+				B3C04B8021078F9600E7AF79 /* CocoaLumberjack.framework in Copy Framework */,
+				B3C04B8121078F9600E7AF79 /* CocoaLumberjackSwift.framework in Copy Framework */,
+				B3C04B8221078F9600E7AF79 /* NSLogger.framework in Copy Framework */,
+				B3C04B8321078F9600E7AF79 /* NSLoggerSwift.framework in Copy Framework */,
+				B3C04B8421078F9600E7AF79 /* SwiftyUserDefaults.framework in Copy Framework */,
+				B3C04B8521078F9600E7AF79 /* XCDLumberjackNSLogger.framework in Copy Framework */,
+				B3C04B932107973000E7AF79 /* ZIPFoundation.framework in Copy Framework */,
+				B3C04B8621078F9600E7AF79 /* ZipArchive.framework in Copy Framework */,
+			);
+			name = "Copy Framework";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -737,6 +802,22 @@
 		B3C04B4E21077CCF00E7AF79 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
+		B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibraryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C04B632107867200E7AF79 /* PVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibraryTests.swift; sourceTree = "<group>"; };
+		B3C04B652107867200E7AF79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C04B7221078E1200E7AF79 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
+		B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = ../PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
+		B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../PVSupport/Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B3C04B7721078E8200E7AF79 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = ../PVSupport/Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = ../PVSupport/Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = ../PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B3C04B882107972100E7AF79 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = Carthage/Build/iOS/ZIPFoundation.framework; sourceTree = "<group>"; };
+		B3C04B892107972200E7AF79 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B3C04B8A2107972200E7AF79 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
+		B3C04B8B2107972200E7AF79 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorConfiguration+Frameworks.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -773,12 +854,44 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C04B5E2107867200E7AF79 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C04B8C2107972300E7AF79 /* ZIPFoundation.framework in Frameworks */,
+				B3C04B8D2107972300E7AF79 /* RealmSwift.framework in Frameworks */,
+				B3C04B8E2107972300E7AF79 /* SQLite.framework in Frameworks */,
+				B3C04B8F2107972300E7AF79 /* Realm.framework in Frameworks */,
+				B3C04B872107972100E7AF79 /* ZipArchive.framework in Frameworks */,
+				B3C04B6E21078CFD00E7AF79 /* PVSupport.framework in Frameworks */,
+				B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */,
+				B3C04B7A21078E8300E7AF79 /* SwiftyUserDefaults.framework in Frameworks */,
+				B3C04B7B21078E8300E7AF79 /* XCDLumberjackNSLogger.framework in Frameworks */,
+				B3C04B7C21078E8300E7AF79 /* CocoaLumberjack.framework in Frameworks */,
+				B3C04B7D21078E8300E7AF79 /* NSLogger.framework in Frameworks */,
+				B3C04B7E21078E8300E7AF79 /* NSLoggerSwift.framework in Frameworks */,
+				B3C04B7F21078E8300E7AF79 /* CocoaLumberjackSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C04B8B2107972200E7AF79 /* Realm.framework */,
+				B3C04B892107972200E7AF79 /* RealmSwift.framework */,
+				B3C04B8A2107972200E7AF79 /* SQLite.framework */,
+				B3C04B882107972100E7AF79 /* ZIPFoundation.framework */,
+				B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */,
+				B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */,
+				B3C04B7721078E8200E7AF79 /* NSLogger.framework */,
+				B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */,
+				B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */,
+				B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */,
+				B3C04B7221078E1200E7AF79 /* ZipArchive.framework */,
+				B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */,
 				B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */,
 				B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */,
 				B3C04B4E21077CCF00E7AF79 /* Foundation.framework */,
@@ -807,6 +920,7 @@
 			isa = PBXGroup;
 			children = (
 				B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */,
+				B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */,
 				B3274E5E2106BA1200857F52 /* PVAppConstants.swift */,
 			);
 			path = Configuration;
@@ -816,6 +930,7 @@
 			isa = PBXGroup;
 			children = (
 				B3579D112106B11D00DDEBD6 /* PVLibrary */,
+				B3C04B622107867200E7AF79 /* PVLibraryTests */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
 			);
@@ -826,6 +941,7 @@
 			children = (
 				B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */,
 				B3C04B4421077B3100E7AF79 /* PVLibrary.framework */,
+				B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1360,6 +1476,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		B3C04B622107867200E7AF79 /* PVLibraryTests */ = {
+			isa = PBXGroup;
+			children = (
+				B3C04B632107867200E7AF79 /* PVLibraryTests.swift */,
+				B3C04B652107867200E7AF79 /* Info.plist */,
+			);
+			path = PVLibraryTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1446,18 +1571,41 @@
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B3C04B602107867200E7AF79 /* PVLibraryTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C04B692107867200E7AF79 /* Build configuration list for PBXNativeTarget "PVLibraryTests" */;
+			buildPhases = (
+				B3C04B5D2107867200E7AF79 /* Sources */,
+				B3C04B5E2107867200E7AF79 /* Frameworks */,
+				B3C04B5F2107867200E7AF79 /* Resources */,
+				B3C04B6C21078CD900E7AF79 /* Copy Framework */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3C04B682107867200E7AF79 /* PBXTargetDependency */,
+			);
+			name = PVLibraryTests;
+			productName = PVLibraryTests;
+			productReference = B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		B3579D062106B11D00DDEBD6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3579D0E2106B11D00DDEBD6 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
+					};
+					B3C04B602107867200E7AF79 = {
+						CreatedOnToolsVersion = 9.4.1;
 					};
 				};
 			};
@@ -1475,6 +1623,7 @@
 			targets = (
 				B3579D0E2106B11D00DDEBD6 /* PVLibrary */,
 				B3C04A8B21077B3100E7AF79 /* PVLibrary tvOS */,
+				B3C04B602107867200E7AF79 /* PVLibraryTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1495,6 +1644,13 @@
 			files = (
 				B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */,
 				B3C04B4021077B3100E7AF79 /* systems.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C04B5F2107867200E7AF79 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1614,6 +1770,7 @@
 				B3AF478421071E85002211EE /* LzmaEnc.c in Sources */,
 				B3AF478E21071E85002211EE /* XzDec.c in Sources */,
 				B3274E802106BDD300857F52 /* PVGameImporter.swift in Sources */,
+				B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B3AF47D321071FC0002211EE /* StringToInt.cpp in Sources */,
 				B3AF47B221071F43002211EE /* StreamUtils.cpp in Sources */,
 				B3AF47D521071FC0002211EE /* XzCrc64Reg.cpp in Sources */,
@@ -1770,6 +1927,7 @@
 				B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */,
 				B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */,
 				B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */,
+				B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */,
 				B3C04AEB21077B3100E7AF79 /* StreamUtils.cpp in Sources */,
 				B3C04AEC21077B3100E7AF79 /* XzCrc64Reg.cpp in Sources */,
@@ -1844,7 +2002,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C04B5D2107867200E7AF79 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C04B642107867200E7AF79 /* PVLibraryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3C04B682107867200E7AF79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary */;
+			targetProxy = B3C04B672107867200E7AF79 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B3579D152106B11D00DDEBD6 /* Debug */ = {
@@ -2151,6 +2325,59 @@
 			};
 			name = Release;
 		};
+		B3C04B6A2107867200E7AF79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+				);
+				INFOPLIST_FILE = PVLibraryTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibraryTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3C04B6B2107867200E7AF79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+				);
+				INFOPLIST_FILE = PVLibraryTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibraryTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2177,6 +2404,15 @@
 			buildConfigurations = (
 				B3C04B4221077B3100E7AF79 /* Debug */,
 				B3C04B4321077B3100E7AF79 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C04B692107867200E7AF79 /* Build configuration list for PBXNativeTarget "PVLibraryTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C04B6A2107867200E7AF79 /* Debug */,
+				B3C04B6B2107867200E7AF79 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

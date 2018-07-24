@@ -124,10 +124,30 @@ public final class PVGameImporter {
     fileprivate var notificationToken: NotificationToken?
 	public let initialized = DispatchGroup()
 
+	fileprivate func initSystemPlists() {
+
+		// Scane all subclasses of  PVEmulator core, and get their metadata
+		// like their subclass name and the bundle the belong to
+		let coreClasses = PVEmulatorConfiguration.coreClasses
+		#if swift(>=4.1)
+		let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
+			return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
+		}
+		#else
+		let corePlists = coreClasses.flatMap { (classInfo) -> URL? in
+		return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
+		}
+		#endif
+
+		let bundle = Bundle(identifier: "com.provenance-emu.PVLibrary")!
+		PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+		PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+	}
+
     fileprivate init() {
 
 		initialized.enter()
-
+		initSystemPlists()
         let systems = PVSystem.all
 
         // Observe Results Notifications
@@ -1062,7 +1082,27 @@ public extension PVGameImporter {
 		}
 	}
 
-    public func searchDatabase(usingKey key: String, value: String, systemID: String? = nil) throws -> [[String: NSObject]]? {
+	public enum DatabaseQueryError : Error {
+		case invalidSystemID
+	}
+
+	public func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier) throws -> [[String: NSObject]]? {
+		guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID.rawValue) else {
+			throw DatabaseQueryError.invalidSystemID
+		}
+
+		return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
+	}
+
+	public func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
+		guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID) else {
+			throw DatabaseQueryError.invalidSystemID
+		}
+
+		return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
+	}
+
+    public func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
         var results: [Any]? = nil
 
 		let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
@@ -1073,7 +1113,7 @@ public extension PVGameImporter {
 
         let queryString: String
         if let systemID = systemID {
-			let dbSystemID: String = String(PVEmulatorConfiguration.databaseID(forSystemID: systemID)!)
+			let dbSystemID: String = String(systemID)
             queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
         } else {
             queryString = String(format: exactQuery, key, value)
@@ -1086,7 +1126,11 @@ public extension PVGameImporter {
             throw error
         }
 
-        return results as? [[String: NSObject]]
+		if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
+			return validResult
+		} else {
+			return nil
+		}
     }
 
     static var charset: CharacterSet = {

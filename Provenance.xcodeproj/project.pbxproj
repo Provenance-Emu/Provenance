@@ -196,8 +196,6 @@
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B36D9DFE203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B375C68D2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
-		B375C68E2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
 		B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -644,7 +642,6 @@
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari7800ControllerViewController.swift; sourceTree = "<group>"; };
-		B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorConfiguration+Frameworks.swift"; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
@@ -913,7 +910,6 @@
 				B38A2A432102326800374CDD /* PVEmulatorViewController~tvOS.swift */,
 				B38A2A452102328600374CDD /* PVEmulatorViewController~iOS.swift */,
 				B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */,
-				B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */,
 				B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */,
 			);
 			path = Emulator;
@@ -1886,16 +1882,17 @@
 			inputPaths = (
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/NSLoggerSwift.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/CocoaLumberjackSwift.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/Realm.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/RealmSwift.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/SQLite.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/Realm.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/RealmSwift.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/SQLite.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/NSLogger.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/CocoaLumberjack.framework",
 				"$(SRCROOT)/Carthage/Build/tvOS/MarqueeLabel.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/XCDLumberjackNSLogger.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/ZIPFoundation.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/ZIPFoundation.framework",
 				"$(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/SwiftyUserDefaults.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/ZipArchive.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
@@ -2117,7 +2114,6 @@
 				B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
-				B375C68D2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
 				E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */,
 				C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */,
@@ -2314,7 +2310,6 @@
 				B394C97A20609D0D0014A65D /* PVAtari5200ControllerViewController.swift in Sources */,
 				B3F64ECD205CD1DD00C273C7 /* JSDPad.swift in Sources */,
 				B394C98120609D0D0014A65D /* PVPCEControllerViewController.swift in Sources */,
-				B375C68E2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

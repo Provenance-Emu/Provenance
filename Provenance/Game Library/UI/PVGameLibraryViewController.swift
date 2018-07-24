@@ -183,7 +183,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 		do {
 			try RomDatabase.initDefaultDatabase()
-			initSystemPlists()
 			UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
 		} catch {
 			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription, preferredStyle: .alert)
@@ -193,26 +192,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}))
 			self.present(alert, animated: true, completion: nil)
 		}
-    }
-
-    func initSystemPlists() {
-
-        // Scane all subclasses of  PVEmulator core, and get their metadata
-        // like their subclass name and the bundle the belong to
-        let coreClasses = PVEmulatorConfiguration.coreClasses
-		#if swift(>=4.1)
-		let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
-			return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-		}
-		#else
-        let corePlists = coreClasses.flatMap { (classInfo) -> URL? in
-            return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-        }
-		#endif
-
-		let bundle = Bundle(identifier: "com.provenance-emu.PVLibrary")!
-        PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
     #if os(iOS)
