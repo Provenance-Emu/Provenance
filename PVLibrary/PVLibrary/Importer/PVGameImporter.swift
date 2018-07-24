@@ -124,7 +124,7 @@ public final class PVGameImporter {
     fileprivate var notificationToken: NotificationToken?
 	public let initialized = DispatchGroup()
 
-    required public init() {
+    fileprivate init() {
 
 		initialized.enter()
 

@@ -529,6 +529,12 @@ platform :ios do
     carthage_private(
       command: "bootstrap",
       platform: platform,
+      project_directory: "PVLibrary"
+    )
+
+    carthage_private(
+      command: "bootstrap",
+      platform: platform,
       project_directory: "./"
     )
   end
@@ -547,6 +553,12 @@ platform :ios do
     carthage_private(
       command: "build",
       platform: platform,
+      project_directory: "PVLibrary"
+    )
+
+    carthage_private(
+      command: "build",
+      platform: platform,
       project_directory: "./"
     )
   end
@@ -560,6 +572,12 @@ platform :ios do
       command: "update",
       platform: platform,
       project_directory: "PVSupport"
+    )
+
+    carthage_private(
+      command: "update",
+      platform: platform,
+      project_directory: "PVLibrary"
     )
 
     carthage_private(

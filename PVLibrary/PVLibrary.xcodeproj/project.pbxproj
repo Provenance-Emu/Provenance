@@ -184,6 +184,178 @@
 		B3AF47D721071FCD002211EE /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; };
 		B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3AF47DF21072AD4002211EE /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
+		B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9021077B3100E7AF79 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E632106BAA200857F52 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9521077B3100E7AF79 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9621077B3100E7AF79 /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9721077B3100E7AF79 /* LzmaSDKObjCItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473E21071CA6002211EE /* LzmaSDKObjCItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9821077B3100E7AF79 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9921077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9A21077B3100E7AF79 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C04A9C21077B3100E7AF79 /* MethodProps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BA21071CA6002211EE /* MethodProps.cpp */; };
+		B3C04A9D21077B3100E7AF79 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; };
+		B3C04A9E21077B3100E7AF79 /* CreateCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46D121071CA6002211EE /* CreateCoder.cpp */; };
+		B3C04A9F21077B3100E7AF79 /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D312106B4D700DDEBD6 /* PVCore.swift */; };
+		B3C04AA021077B3100E7AF79 /* ByteSwap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466821071CA6002211EE /* ByteSwap.cpp */; };
+		B3C04AA121077B3100E7AF79 /* Sha256Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461B21071CA5002211EE /* Sha256Reg.cpp */; };
+		B3C04AA221077B3100E7AF79 /* InOutTempBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C221071CA6002211EE /* InOutTempBuffer.cpp */; };
+		B3C04AA321077B3100E7AF79 /* BcjCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466421071CA6002211EE /* BcjCoder.cpp */; };
+		B3C04AA421077B3100E7AF79 /* PpmdRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466B21071CA6002211EE /* PpmdRegister.cpp */; };
+		B3C04AA521077B3100E7AF79 /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473421071CA6002211EE /* LzmaSDKObjC.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D302106B4D700DDEBD6 /* PVFile.swift */; };
+		B3C04AA721077B3100E7AF79 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E662106BAF500857F52 /* UIImage+Scaling.m */; };
+		B3C04AA821077B3100E7AF79 /* OutBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AF21071CA6002211EE /* OutBuffer.cpp */; };
+		B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474021071CA6002211EE /* LzmaSDKObjCFileDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AAA21077B3100E7AF79 /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
+		B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465E21071CA5002211EE /* Lzma2Register.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
+		B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466021071CA5002211EE /* CopyCoder.cpp */; };
+		B3C04AAE21077B3100E7AF79 /* RandGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464A21071CA5002211EE /* RandGen.cpp */; };
+		B3C04AAF21077B3100E7AF79 /* Bcj2Coder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466A21071CA6002211EE /* Bcj2Coder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AB021077B3100E7AF79 /* MyAes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464B21071CA5002211EE /* MyAes.cpp */; };
+		B3C04AB121077B3100E7AF79 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D1F2106B4D600DDEBD6 /* RomDatabase.swift */; };
+		B3C04AB221077B3100E7AF79 /* XzCrc64Opt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472621071CA6002211EE /* XzCrc64Opt.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AB321077B3100E7AF79 /* Bcj2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46EA21071CA6002211EE /* Bcj2.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AB421077B3100E7AF79 /* LzmaHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468721071CA6002211EE /* LzmaHandler.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AB521077B3100E7AF79 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470321071CA6002211EE /* LzmaDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AB621077B3100E7AF79 /* FilterCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B221071CA6002211EE /* FilterCoder.cpp */; };
+		B3C04AB721077B3100E7AF79 /* Bcj2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465721071CA5002211EE /* Bcj2Register.cpp */; };
+		B3C04AB821077B3100E7AF79 /* 7zEncode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469B21071CA6002211EE /* 7zEncode.cpp */; };
+		B3C04AB921077B3100E7AF79 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
+		B3C04ABA21077B3100E7AF79 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F621071CA6002211EE /* Bra86.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ABB21077B3100E7AF79 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F421071CA6002211EE /* Bra.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ABC21077B3100E7AF79 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474921071CA6002211EE /* LzmaSDKObjCWriter.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ABD21077B3100E7AF79 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D272106B4D700DDEBD6 /* PVBIOS.swift */; };
+		B3C04ABE21077B3100E7AF79 /* 7zAes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464F21071CA5002211EE /* 7zAes.cpp */; };
+		B3C04ABF21077B3100E7AF79 /* LzmaSDKObjCMutableItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474A21071CA6002211EE /* LzmaSDKObjCMutableItem.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AC021077B3100E7AF79 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46EC21071CA6002211EE /* LzFind.c */; };
+		B3C04AC121077B3100E7AF79 /* LzmaDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466721071CA6002211EE /* LzmaDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AC221077B3100E7AF79 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
+		B3C04AC321077B3100E7AF79 /* LzmaSDKObjCOpenCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474C21071CA6002211EE /* LzmaSDKObjCOpenCallback.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AC421077B3100E7AF79 /* 7zAesRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464821071CA5002211EE /* 7zAesRegister.cpp */; };
+		B3C04AC521077B3100E7AF79 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
+		B3C04AC621077B3100E7AF79 /* StringConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463921071CA5002211EE /* StringConvert.cpp */; };
+		B3C04AC721077B3100E7AF79 /* BcjRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465B21071CA5002211EE /* BcjRegister.cpp */; };
+		B3C04AC821077B3100E7AF79 /* LockedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BB21071CA6002211EE /* LockedStream.cpp */; };
+		B3C04AC921077B3100E7AF79 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
+		B3C04ACA21077B3100E7AF79 /* StreamObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CC21071CA6002211EE /* StreamObjects.cpp */; };
+		B3C04ACB21077B3100E7AF79 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2C2106B4D700DDEBD6 /* PlistDataModels.swift */; };
+		B3C04ACC21077B3100E7AF79 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470F21071CA6002211EE /* BraIA64.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ACD21077B3100E7AF79 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
+		B3C04ACE21077B3100E7AF79 /* 7zDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A221071CA6002211EE /* 7zDecode.cpp */; };
+		B3C04ACF21077B3100E7AF79 /* XzIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FA21071CA6002211EE /* XzIn.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AD021077B3100E7AF79 /* 7zUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469C21071CA6002211EE /* 7zUpdate.cpp */; };
+		B3C04AD121077B3100E7AF79 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2A2106B4D700DDEBD6 /* PVGame+Spotlight.swift */; };
+		B3C04AD221077B3100E7AF79 /* 7zOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469A21071CA6002211EE /* 7zOut.cpp */; };
+		B3C04AD321077B3100E7AF79 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2E2106B4D700DDEBD6 /* PVGame+BoxArt.swift */; };
+		B3C04AD421077B3100E7AF79 /* 7zHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468F21071CA6002211EE /* 7zHeader.cpp */; };
+		B3C04AD521077B3100E7AF79 /* Xz.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472721071CA6002211EE /* Xz.c */; };
+		B3C04AD621077B3100E7AF79 /* MyString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462721071CA5002211EE /* MyString.cpp */; };
+		B3C04AD721077B3100E7AF79 /* ItemNameUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468021071CA6002211EE /* ItemNameUtils.cpp */; };
+		B3C04AD821077B3100E7AF79 /* Lzma2DecMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FC21071CA6002211EE /* Lzma2DecMt.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AD921077B3100E7AF79 /* LzmaSDKObjCFileEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475021071CA6002211EE /* LzmaSDKObjCFileEncoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ADA21077B3100E7AF79 /* LzmaSDKObjCExtractCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475421071CA6002211EE /* LzmaSDKObjCExtractCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ADB21077B3100E7AF79 /* DllExports2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467421071CA6002211EE /* DllExports2.cpp */; };
+		B3C04ADC21077B3100E7AF79 /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472821071CA6002211EE /* 7zCrcOpt.c */; };
+		B3C04ADD21077B3100E7AF79 /* 7zHandlerOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469621071CA6002211EE /* 7zHandlerOut.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04ADE21077B3100E7AF79 /* Bcj2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472421071CA6002211EE /* Bcj2Enc.c */; };
+		B3C04ADF21077B3100E7AF79 /* LzmaSDKObjCReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473F21071CA6002211EE /* LzmaSDKObjCReader.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AE021077B3100E7AF79 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2F2106B4D700DDEBD6 /* PVRecentGame.swift */; };
+		B3C04AE121077B3100E7AF79 /* Ppmd7Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E421071CA6002211EE /* Ppmd7Dec.c */; };
+		B3C04AE221077B3100E7AF79 /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D292106B4D700DDEBD6 /* PVSystem.swift */; };
+		B3C04AE321077B3100E7AF79 /* PpmdEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466F21071CA6002211EE /* PpmdEncoder.cpp */; };
+		B3C04AE421077B3100E7AF79 /* LzmaSDKObjCUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473521071CA6002211EE /* LzmaSDKObjCUpdateCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D282106B4D700DDEBD6 /* PVLibrary.swift */; };
+		B3C04AE621077B3100E7AF79 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */; };
+		B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E321071CA6002211EE /* LzmaEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E821071CA6002211EE /* XzDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */; };
+		B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461C21071CA5002211EE /* StringToInt.cpp */; };
+		B3C04AEB21077B3100E7AF79 /* StreamUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B721071CA6002211EE /* StreamUtils.cpp */; };
+		B3C04AEC21077B3100E7AF79 /* XzCrc64Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463221071CA5002211EE /* XzCrc64Reg.cpp */; };
+		B3C04AED21077B3100E7AF79 /* VirtThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AB21071CA6002211EE /* VirtThread.cpp */; };
+		B3C04AEE21077B3100E7AF79 /* CWrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C321071CA6002211EE /* CWrappers.cpp */; };
+		B3C04AEF21077B3100E7AF79 /* HandlerOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467B21071CA6002211EE /* HandlerOut.cpp */; };
+		B3C04AF021077B3100E7AF79 /* CrcReg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463821071CA5002211EE /* CrcReg.cpp */; };
+		B3C04AF121077B3100E7AF79 /* Ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F221071CA6002211EE /* Ppmd7.c */; };
+		B3C04AF221077B3100E7AF79 /* LzmaSDKObjCInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474D21071CA6002211EE /* LzmaSDKObjCInFile.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AF321077B3100E7AF79 /* Lzma2Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465621071CA5002211EE /* Lzma2Decoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AF421077B3100E7AF79 /* LzmaSDKObjCOutFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474E21071CA6002211EE /* LzmaSDKObjCOutFile.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AF521077B3100E7AF79 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2B2106B4D700DDEBD6 /* PVGame.swift */; };
+		B3C04AF621077B3100E7AF79 /* 7zIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469721071CA6002211EE /* 7zIn.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AF721077B3100E7AF79 /* 7zFolderInStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468B21071CA6002211EE /* 7zFolderInStream.cpp */; };
+		B3C04AF821077B3100E7AF79 /* CodecExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465221071CA5002211EE /* CodecExports.cpp */; };
+		B3C04AF921077B3100E7AF79 /* LzmaSDKObjCItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475521071CA6002211EE /* LzmaSDKObjCItem.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AFA21077B3100E7AF79 /* AesOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471E21071CA6002211EE /* AesOpt.c */; };
+		B3C04AFB21077B3100E7AF79 /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471121071CA6002211EE /* 7zStream.c */; };
+		B3C04AFC21077B3100E7AF79 /* LzmaEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466D21071CA6002211EE /* LzmaEncoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AFD21077B3100E7AF79 /* LzmaSDKObjCBaseCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474F21071CA6002211EE /* LzmaSDKObjCBaseCoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04AFE21077B3100E7AF79 /* 7zHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468C21071CA6002211EE /* 7zHandler.cpp */; };
+		B3C04AFF21077B3100E7AF79 /* Aes.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E521071CA6002211EE /* Aes.c */; };
+		B3C04B0021077B3100E7AF79 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E121071CA6002211EE /* Lzma2Dec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B0121077B3100E7AF79 /* 7zRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A421071CA6002211EE /* 7zRegister.cpp */; };
+		B3C04B0221077B3100E7AF79 /* Wildcard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462B21071CA5002211EE /* Wildcard.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B0321077B3100E7AF79 /* XzCrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470D21071CA6002211EE /* XzCrc64.c */; };
+		B3C04B0421077B3100E7AF79 /* PropVariantConv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DA21071CA6002211EE /* PropVariantConv.cpp */; };
+		B3C04B0521077B3100E7AF79 /* LimitedStreams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BF21071CA6002211EE /* LimitedStreams.cpp */; };
+		B3C04B0621077B3100E7AF79 /* ArchiveExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467321071CA6002211EE /* ArchiveExports.cpp */; };
+		B3C04B0721077B3100E7AF79 /* C_FileIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462821071CA5002211EE /* C_FileIO.cpp */; };
+		B3C04B0821077B3100E7AF79 /* IntToString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462A21071CA5002211EE /* IntToString.cpp */; };
+		B3C04B0921077B3100E7AF79 /* MyWindows.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463C21071CA5002211EE /* MyWindows.cpp */; };
+		B3C04B0A21077B3100E7AF79 /* LzmaSDKObjCExtern.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475121071CA6002211EE /* LzmaSDKObjCExtern.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B0B21077B3100E7AF79 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
+		B3C04B0C21077B3100E7AF79 /* Ppmd7Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470521071CA6002211EE /* Ppmd7Enc.c */; };
+		B3C04B0D21077B3100E7AF79 /* XzEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FB21071CA6002211EE /* XzEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B0E21077B3100E7AF79 /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471C21071CA6002211EE /* 7zCrc.c */; };
+		B3C04B0F21077B3100E7AF79 /* ProgressUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AA21071CA6002211EE /* ProgressUtils.cpp */; };
+		B3C04B1021077B3100E7AF79 /* PropId.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CF21071CA6002211EE /* PropId.cpp */; };
+		B3C04B1121077B3100E7AF79 /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; };
+		B3C04B1221077B3100E7AF79 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */; };
+		B3C04B1321077B3100E7AF79 /* OutStreamWithCRC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467D21071CA6002211EE /* OutStreamWithCRC.cpp */; };
+		B3C04B1421077B3100E7AF79 /* LzFindMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E621071CA6002211EE /* LzFindMt.c */; };
+		B3C04B1521077B3100E7AF79 /* LzmaSDKObjCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473821071CA6002211EE /* LzmaSDKObjCError.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B1621077B3100E7AF79 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D242106B4D600DDEBD6 /* Time Utilities.swift */; };
+		B3C04B1721077B3100E7AF79 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
+		B3C04B1821077B3100E7AF79 /* Lzma2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470421071CA6002211EE /* Lzma2Enc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B1921077B3100E7AF79 /* PpmdDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466621071CA6002211EE /* PpmdDecoder.cpp */; };
+		B3C04B1A21077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473321071CA6002211EE /* LzmaSDKObjCBufferProcessor.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B1B21077B3100E7AF79 /* BranchMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466521071CA6002211EE /* BranchMisc.cpp */; };
+		B3C04B1C21077B3100E7AF79 /* MtCoder.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E921071CA6002211EE /* MtCoder.c */; };
+		B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471621071CA6002211EE /* Sha256.c */; };
+		B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466221071CA5002211EE /* Lzma2Encoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B1F21077B3100E7AF79 /* LzmaRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466321071CA6002211EE /* LzmaRegister.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B2021077B3100E7AF79 /* DummyOutStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467921071CA6002211EE /* DummyOutStream.cpp */; };
+		B3C04B2121077B3100E7AF79 /* 7zExtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468A21071CA6002211EE /* 7zExtract.cpp */; };
+		B3C04B2221077B3100E7AF79 /* 7zProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469321071CA6002211EE /* 7zProperties.cpp */; };
+		B3C04B2321077B3100E7AF79 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470121071CA6002211EE /* Alloc.c */; };
+		B3C04B2421077B3100E7AF79 /* PVFiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E762106BC4E00857F52 /* PVFiled.swift */; };
+		B3C04B2521077B3100E7AF79 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472221071CA6002211EE /* CpuArch.c */; };
+		B3C04B2621077B3100E7AF79 /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471821071CA6002211EE /* Delta.c */; };
+		B3C04B2721077B3100E7AF79 /* LzmaSDKObjCCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473721071CA6002211EE /* LzmaSDKObjCCommon.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
+		B3C04B2821077B3100E7AF79 /* Threads.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472A21071CA6002211EE /* Threads.c */; };
+		B3C04B2921077B3100E7AF79 /* FileStreams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C621071CA6002211EE /* FileStreams.cpp */; };
+		B3C04B2A21077B3100E7AF79 /* 7zSpecStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A321071CA6002211EE /* 7zSpecStream.cpp */; };
+		B3C04B2B21077B3100E7AF79 /* MyAesReg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464C21071CA5002211EE /* MyAesReg.cpp */; };
+		B3C04B2C21077B3100E7AF79 /* CopyRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466121071CA5002211EE /* CopyRegister.cpp */; };
+		B3C04B2D21077B3100E7AF79 /* CoderMixer2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468221071CA6002211EE /* CoderMixer2.cpp */; };
+		B3C04B2E21077B3100E7AF79 /* BranchRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465F21071CA5002211EE /* BranchRegister.cpp */; };
+		B3C04B2F21077B3100E7AF79 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E782106BC8800857F52 /* PVObject.swift */; };
+		B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2D2106B4D700DDEBD6 /* PVSaveState.swift */; };
+		B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
+		B3C04B4021077B3100E7AF79 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
+		B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4621077BEC00E7AF79 /* Realm.framework */; };
+		B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */; };
+		B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4A21077BFC00E7AF79 /* libc++.tbd */; };
+		B3C04B4D21077C3B00E7AF79 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4C21077C3B00E7AF79 /* PVSupport.framework */; };
+		B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4E21077CCF00E7AF79 /* Foundation.framework */; };
+		B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */; };
+		B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -557,6 +729,14 @@
 		B3AF475E21071DE0002211EE /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
 		B3AF47DC21072AD3002211EE /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 		B3AF47DD21072AD3002211EE /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
+		B3C04B4421077B3100E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C04B4621077BEC00E7AF79 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
+		B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = ../Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B3C04B4A21077BFC00E7AF79 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		B3C04B4C21077C3B00E7AF79 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C04B4E21077CCF00E7AF79 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -579,12 +759,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C04B3121077B3100E7AF79 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */,
+				B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */,
+				B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */,
+				B3C04B4D21077C3B00E7AF79 /* PVSupport.framework in Frameworks */,
+				B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */,
+				B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */,
+				B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */,
+				B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */,
+				B3C04B4E21077CCF00E7AF79 /* Foundation.framework */,
+				B3C04B4C21077C3B00E7AF79 /* PVSupport.framework */,
+				B3C04B4A21077BFC00E7AF79 /* libc++.tbd */,
+				B3C04B4621077BEC00E7AF79 /* Realm.framework */,
+				B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */,
 				B3AF475E21071DE0002211EE /* ZipArchive.framework */,
 				B3AF45E72107189E002211EE /* libstdc++.tbd */,
 				B3AF45E521071894002211EE /* libc++.tbd */,
@@ -624,6 +825,7 @@
 			isa = PBXGroup;
 			children = (
 				B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */,
+				B3C04B4421077B3100E7AF79 /* PVLibrary.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1182,6 +1384,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C04A8C21077B3100E7AF79 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */,
+				B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */,
+				B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */,
+				B3C04A9021077B3100E7AF79 /* NSFileManager+Hashing.h in Headers */,
+				B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */,
+				B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */,
+				B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */,
+				B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */,
+				B3C04A9521077B3100E7AF79 /* LzmaSDKObjC.h in Headers */,
+				B3C04A9621077B3100E7AF79 /* LzmaSDKObjCExtern.h in Headers */,
+				B3C04A9721077B3100E7AF79 /* LzmaSDKObjCItem.h in Headers */,
+				B3C04A9821077B3100E7AF79 /* LzmaSDKObjCReader.h in Headers */,
+				B3C04A9921077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.h in Headers */,
+				B3C04A9A21077B3100E7AF79 /* OESQLiteDatabase.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -1189,6 +1412,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */;
 			buildPhases = (
+				B3C04B5521077DC800E7AF79 /* Carthage */,
 				B3579D0A2106B11D00DDEBD6 /* Headers */,
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
@@ -1201,6 +1425,25 @@
 			name = PVLibrary;
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3C04A8B21077B3100E7AF79 /* PVLibrary tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary tvOS" */;
+			buildPhases = (
+				B3C04B5421077DB200E7AF79 /* Carthage */,
+				B3C04A8C21077B3100E7AF79 /* Headers */,
+				B3C04A9B21077B3100E7AF79 /* Sources */,
+				B3C04B3121077B3100E7AF79 /* Frameworks */,
+				B3C04B3E21077B3100E7AF79 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PVLibrary tvOS";
+			productName = PVLibrary;
+			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1231,6 +1474,7 @@
 			projectRoot = "";
 			targets = (
 				B3579D0E2106B11D00DDEBD6 /* PVLibrary */,
+				B3C04A8B21077B3100E7AF79 /* PVLibrary tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1245,7 +1489,47 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C04B3E21077B3100E7AF79 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */,
+				B3C04B4021077B3100E7AF79 /* systems.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B3C04B5421077DB200E7AF79 /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Carthage;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh tvOS";
+		};
+		B3C04B5521077DC800E7AF79 /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Carthage;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh iOS\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B3579D0B2106B11D00DDEBD6 /* Sources */ = {
@@ -1401,6 +1685,162 @@
 				B3AF47B921071F76002211EE /* BranchRegister.cpp in Sources */,
 				B3274E792106BC8800857F52 /* PVObject.swift in Sources */,
 				B3274E712106BC1D00857F52 /* PVSaveState.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C04A9B21077B3100E7AF79 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C04A9C21077B3100E7AF79 /* MethodProps.cpp in Sources */,
+				B3C04A9D21077B3100E7AF79 /* OESQLiteDatabase.m in Sources */,
+				B3C04A9E21077B3100E7AF79 /* CreateCoder.cpp in Sources */,
+				B3C04A9F21077B3100E7AF79 /* PVCore.swift in Sources */,
+				B3C04AA021077B3100E7AF79 /* ByteSwap.cpp in Sources */,
+				B3C04AA121077B3100E7AF79 /* Sha256Reg.cpp in Sources */,
+				B3C04AA221077B3100E7AF79 /* InOutTempBuffer.cpp in Sources */,
+				B3C04AA321077B3100E7AF79 /* BcjCoder.cpp in Sources */,
+				B3C04AA421077B3100E7AF79 /* PpmdRegister.cpp in Sources */,
+				B3C04AA521077B3100E7AF79 /* LzmaSDKObjC.mm in Sources */,
+				B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */,
+				B3C04AA721077B3100E7AF79 /* UIImage+Scaling.m in Sources */,
+				B3C04AA821077B3100E7AF79 /* OutBuffer.cpp in Sources */,
+				B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
+				B3C04AAA21077B3100E7AF79 /* PVDirectoryWatcher.swift in Sources */,
+				B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */,
+				B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */,
+				B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */,
+				B3C04AAE21077B3100E7AF79 /* RandGen.cpp in Sources */,
+				B3C04AAF21077B3100E7AF79 /* Bcj2Coder.cpp in Sources */,
+				B3C04AB021077B3100E7AF79 /* MyAes.cpp in Sources */,
+				B3C04AB121077B3100E7AF79 /* RomDatabase.swift in Sources */,
+				B3C04AB221077B3100E7AF79 /* XzCrc64Opt.c in Sources */,
+				B3C04AB321077B3100E7AF79 /* Bcj2.c in Sources */,
+				B3C04AB421077B3100E7AF79 /* LzmaHandler.cpp in Sources */,
+				B3C04AB521077B3100E7AF79 /* LzmaDec.c in Sources */,
+				B3C04AB621077B3100E7AF79 /* FilterCoder.cpp in Sources */,
+				B3C04AB721077B3100E7AF79 /* Bcj2Register.cpp in Sources */,
+				B3C04AB821077B3100E7AF79 /* 7zEncode.cpp in Sources */,
+				B3C04AB921077B3100E7AF79 /* UTI.swift in Sources */,
+				B3C04ABA21077B3100E7AF79 /* Bra86.c in Sources */,
+				B3C04ABB21077B3100E7AF79 /* Bra.c in Sources */,
+				B3C04ABC21077B3100E7AF79 /* LzmaSDKObjCWriter.mm in Sources */,
+				B3C04ABD21077B3100E7AF79 /* PVBIOS.swift in Sources */,
+				B3C04ABE21077B3100E7AF79 /* 7zAes.cpp in Sources */,
+				B3C04ABF21077B3100E7AF79 /* LzmaSDKObjCMutableItem.mm in Sources */,
+				B3C04AC021077B3100E7AF79 /* LzFind.c in Sources */,
+				B3C04AC121077B3100E7AF79 /* LzmaDecoder.cpp in Sources */,
+				B3C04AC221077B3100E7AF79 /* ImportCandidateFile.swift in Sources */,
+				B3C04AC321077B3100E7AF79 /* LzmaSDKObjCOpenCallback.cpp in Sources */,
+				B3C04AC421077B3100E7AF79 /* 7zAesRegister.cpp in Sources */,
+				B3C04AC521077B3100E7AF79 /* PVMediaCache.swift in Sources */,
+				B3C04AC621077B3100E7AF79 /* StringConvert.cpp in Sources */,
+				B3C04AC721077B3100E7AF79 /* BcjRegister.cpp in Sources */,
+				B3C04AC821077B3100E7AF79 /* LockedStream.cpp in Sources */,
+				B3C04AC921077B3100E7AF79 /* NSString+Hashing.m in Sources */,
+				B3C04ACA21077B3100E7AF79 /* StreamObjects.cpp in Sources */,
+				B3C04ACB21077B3100E7AF79 /* PlistDataModels.swift in Sources */,
+				B3C04ACC21077B3100E7AF79 /* BraIA64.c in Sources */,
+				B3C04ACD21077B3100E7AF79 /* NSFileManager+Hashing.m in Sources */,
+				B3C04ACE21077B3100E7AF79 /* 7zDecode.cpp in Sources */,
+				B3C04ACF21077B3100E7AF79 /* XzIn.c in Sources */,
+				B3C04AD021077B3100E7AF79 /* 7zUpdate.cpp in Sources */,
+				B3C04AD121077B3100E7AF79 /* PVGame+Spotlight.swift in Sources */,
+				B3C04AD221077B3100E7AF79 /* 7zOut.cpp in Sources */,
+				B3C04AD321077B3100E7AF79 /* PVGame+BoxArt.swift in Sources */,
+				B3C04AD421077B3100E7AF79 /* 7zHeader.cpp in Sources */,
+				B3C04AD521077B3100E7AF79 /* Xz.c in Sources */,
+				B3C04AD621077B3100E7AF79 /* MyString.cpp in Sources */,
+				B3C04AD721077B3100E7AF79 /* ItemNameUtils.cpp in Sources */,
+				B3C04AD821077B3100E7AF79 /* Lzma2DecMt.c in Sources */,
+				B3C04AD921077B3100E7AF79 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
+				B3C04ADA21077B3100E7AF79 /* LzmaSDKObjCExtractCallback.mm in Sources */,
+				B3C04ADB21077B3100E7AF79 /* DllExports2.cpp in Sources */,
+				B3C04ADC21077B3100E7AF79 /* 7zCrcOpt.c in Sources */,
+				B3C04ADD21077B3100E7AF79 /* 7zHandlerOut.cpp in Sources */,
+				B3C04ADE21077B3100E7AF79 /* Bcj2Enc.c in Sources */,
+				B3C04ADF21077B3100E7AF79 /* LzmaSDKObjCReader.mm in Sources */,
+				B3C04AE021077B3100E7AF79 /* PVRecentGame.swift in Sources */,
+				B3C04AE121077B3100E7AF79 /* Ppmd7Dec.c in Sources */,
+				B3C04AE221077B3100E7AF79 /* PVSystem.swift in Sources */,
+				B3C04AE321077B3100E7AF79 /* PpmdEncoder.cpp in Sources */,
+				B3C04AE421077B3100E7AF79 /* LzmaSDKObjCUpdateCallback.mm in Sources */,
+				B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */,
+				B3C04AE621077B3100E7AF79 /* CocoaLumberExtensions.swift in Sources */,
+				B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */,
+				B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */,
+				B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */,
+				B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */,
+				B3C04AEB21077B3100E7AF79 /* StreamUtils.cpp in Sources */,
+				B3C04AEC21077B3100E7AF79 /* XzCrc64Reg.cpp in Sources */,
+				B3C04AED21077B3100E7AF79 /* VirtThread.cpp in Sources */,
+				B3C04AEE21077B3100E7AF79 /* CWrappers.cpp in Sources */,
+				B3C04AEF21077B3100E7AF79 /* HandlerOut.cpp in Sources */,
+				B3C04AF021077B3100E7AF79 /* CrcReg.cpp in Sources */,
+				B3C04AF121077B3100E7AF79 /* Ppmd7.c in Sources */,
+				B3C04AF221077B3100E7AF79 /* LzmaSDKObjCInFile.cpp in Sources */,
+				B3C04AF321077B3100E7AF79 /* Lzma2Decoder.cpp in Sources */,
+				B3C04AF421077B3100E7AF79 /* LzmaSDKObjCOutFile.cpp in Sources */,
+				B3C04AF521077B3100E7AF79 /* PVGame.swift in Sources */,
+				B3C04AF621077B3100E7AF79 /* 7zIn.cpp in Sources */,
+				B3C04AF721077B3100E7AF79 /* 7zFolderInStream.cpp in Sources */,
+				B3C04AF821077B3100E7AF79 /* CodecExports.cpp in Sources */,
+				B3C04AF921077B3100E7AF79 /* LzmaSDKObjCItem.mm in Sources */,
+				B3C04AFA21077B3100E7AF79 /* AesOpt.c in Sources */,
+				B3C04AFB21077B3100E7AF79 /* 7zStream.c in Sources */,
+				B3C04AFC21077B3100E7AF79 /* LzmaEncoder.cpp in Sources */,
+				B3C04AFD21077B3100E7AF79 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
+				B3C04AFE21077B3100E7AF79 /* 7zHandler.cpp in Sources */,
+				B3C04AFF21077B3100E7AF79 /* Aes.c in Sources */,
+				B3C04B0021077B3100E7AF79 /* Lzma2Dec.c in Sources */,
+				B3C04B0121077B3100E7AF79 /* 7zRegister.cpp in Sources */,
+				B3C04B0221077B3100E7AF79 /* Wildcard.cpp in Sources */,
+				B3C04B0321077B3100E7AF79 /* XzCrc64.c in Sources */,
+				B3C04B0421077B3100E7AF79 /* PropVariantConv.cpp in Sources */,
+				B3C04B0521077B3100E7AF79 /* LimitedStreams.cpp in Sources */,
+				B3C04B0621077B3100E7AF79 /* ArchiveExports.cpp in Sources */,
+				B3C04B0721077B3100E7AF79 /* C_FileIO.cpp in Sources */,
+				B3C04B0821077B3100E7AF79 /* IntToString.cpp in Sources */,
+				B3C04B0921077B3100E7AF79 /* MyWindows.cpp in Sources */,
+				B3C04B0A21077B3100E7AF79 /* LzmaSDKObjCExtern.mm in Sources */,
+				B3C04B0B21077B3100E7AF79 /* PVImageFile.swift in Sources */,
+				B3C04B0C21077B3100E7AF79 /* Ppmd7Enc.c in Sources */,
+				B3C04B0D21077B3100E7AF79 /* XzEnc.c in Sources */,
+				B3C04B0E21077B3100E7AF79 /* 7zCrc.c in Sources */,
+				B3C04B0F21077B3100E7AF79 /* ProgressUtils.cpp in Sources */,
+				B3C04B1021077B3100E7AF79 /* PropId.cpp in Sources */,
+				B3C04B1121077B3100E7AF79 /* PropVariant.cpp in Sources */,
+				B3C04B1221077B3100E7AF79 /* PVEmulatorConfiguration.swift in Sources */,
+				B3C04B1321077B3100E7AF79 /* OutStreamWithCRC.cpp in Sources */,
+				B3C04B1421077B3100E7AF79 /* LzFindMt.c in Sources */,
+				B3C04B1521077B3100E7AF79 /* LzmaSDKObjCError.mm in Sources */,
+				B3C04B1621077B3100E7AF79 /* Time Utilities.swift in Sources */,
+				B3C04B1721077B3100E7AF79 /* PVAppConstants.swift in Sources */,
+				B3C04B1821077B3100E7AF79 /* Lzma2Enc.c in Sources */,
+				B3C04B1921077B3100E7AF79 /* PpmdDecoder.cpp in Sources */,
+				B3C04B1A21077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
+				B3C04B1B21077B3100E7AF79 /* BranchMisc.cpp in Sources */,
+				B3C04B1C21077B3100E7AF79 /* MtCoder.c in Sources */,
+				B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */,
+				B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */,
+				B3C04B1F21077B3100E7AF79 /* LzmaRegister.cpp in Sources */,
+				B3C04B2021077B3100E7AF79 /* DummyOutStream.cpp in Sources */,
+				B3C04B2121077B3100E7AF79 /* 7zExtract.cpp in Sources */,
+				B3C04B2221077B3100E7AF79 /* 7zProperties.cpp in Sources */,
+				B3C04B2321077B3100E7AF79 /* Alloc.c in Sources */,
+				B3C04B2421077B3100E7AF79 /* PVFiled.swift in Sources */,
+				B3C04B2521077B3100E7AF79 /* CpuArch.c in Sources */,
+				B3C04B2621077B3100E7AF79 /* Delta.c in Sources */,
+				B3C04B2721077B3100E7AF79 /* LzmaSDKObjCCommon.cpp in Sources */,
+				B3C04B2821077B3100E7AF79 /* Threads.c in Sources */,
+				B3C04B2921077B3100E7AF79 /* FileStreams.cpp in Sources */,
+				B3C04B2A21077B3100E7AF79 /* 7zSpecStream.cpp in Sources */,
+				B3C04B2B21077B3100E7AF79 /* MyAesReg.cpp in Sources */,
+				B3C04B2C21077B3100E7AF79 /* CopyRegister.cpp in Sources */,
+				B3C04B2D21077B3100E7AF79 /* CoderMixer2.cpp in Sources */,
+				B3C04B2E21077B3100E7AF79 /* BranchRegister.cpp in Sources */,
+				B3C04B2F21077B3100E7AF79 /* PVObject.swift in Sources */,
+				B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1625,6 +2065,108 @@
 			};
 			name = Release;
 		};
+		B3C04B4221077B3100E7AF79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/..//Carthage/Build/tvOS",
+					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
+					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
+				);
+				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILD_DIR)/**",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
+				PRODUCT_NAME = PVLibrary;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		B3C04B4321077B3100E7AF79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/..//Carthage/Build/tvOS",
+					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
+					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
+				);
+				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILD_DIR)/**",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
+				PRODUCT_NAME = PVLibrary;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1642,6 +2184,15 @@
 			buildConfigurations = (
 				B3579D182106B11D00DDEBD6 /* Debug */,
 				B3579D192106B11D00DDEBD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C04B4221077B3100E7AF79 /* Debug */,
+				B3C04B4321077B3100E7AF79 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

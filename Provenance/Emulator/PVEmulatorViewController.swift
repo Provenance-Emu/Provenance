@@ -381,7 +381,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             menuGestureRecognizer?.allowedPressTypes = [.menu]
         }
         if let aRecognizer = menuGestureRecognizer {
-			UIApplication.shared.keyWindow.addGestureRecognizer(aRecognizer)
+			UIApplication.shared.keyWindow?.addGestureRecognizer(aRecognizer)
         }
 #else
         GCController.controllers().forEach { [unowned self] in
