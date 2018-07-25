@@ -149,8 +149,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#if os(tvOS)
 		let enabled = !(gameImporter.conflictedFiles?.isEmpty ?? true)
 		var items = [sortOptionBarButtonItem!, getMoreRomsBarButtonItem!]
-		if enabled {
-			items.append(conflictsBarButtonItem!)
+		if enabled, let conflictsBarButtonItem = conflictsBarButtonItem {
+			items.append(conflictsBarButtonItem)
 		}
 		self.navigationItem.leftBarButtonItems = items
 		#endif

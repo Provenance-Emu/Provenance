@@ -423,7 +423,7 @@
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Conflicts" image="caution-icon" id="Dsv-oR-lbw">
+                            <barButtonItem image="caution-icon" id="Dsv-oR-lbw">
                                 <color key="tintColor" red="0.97680455450000003" green="0.58163633125669378" blue="0.11401080792834913" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="conflictsButtonTapped:" destination="In9-6L-5FX" id="j6s-Er-sGM"/>
@@ -468,11 +468,11 @@
                             <rect key="frame" x="0.0" y="160" width="28" height="66"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Pb0-Xg-I7c" id="hAZ-OV-5Zy">
-                                <rect key="frame" x="-33" y="0.0" width="33" height="65"/>
+                                <rect key="frame" x="-45" y="0.0" width="45" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="D2e-Wn-qWZ">
-                                        <rect key="frame" x="-40" y="0.0" width="60" height="65"/>
+                                        <rect key="frame" x="-52" y="0.0" width="72" height="66"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="38"/>
                                         <nil key="textColor"/>
