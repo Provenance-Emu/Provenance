@@ -314,9 +314,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     #endif
     }
 
-    #if os(iOS)
     func layoutVolume() {
-        #if TARGET_OS_IOS
+        #if os(iOS)
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
 

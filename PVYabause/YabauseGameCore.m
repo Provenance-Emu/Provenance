@@ -25,7 +25,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <PVYabause/YabauseGameCore.h>
+#import "YabauseGameCore.h"
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
 #import <OpenGLES/gltypes.h>
@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <YabauseC/YabauseC.h>
 
 // ToDo: Fix
 #define SAMPLERATE 44100
@@ -536,7 +537,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 void YuiErrorMsg(const char *string)
 {
-    CDLog(@"Yabause Error %@", [NSString stringWithUTF8String:string]);
+    //CDLog(@"Yabause Error %@", [NSString stringWithUTF8String:string]);
 }
 
 void YuiSwapBuffers(void)

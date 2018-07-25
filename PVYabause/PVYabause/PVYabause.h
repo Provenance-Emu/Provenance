@@ -16,5 +16,4 @@ FOUNDATION_EXPORT const unsigned char PVYabause_FrameworkVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVYabause/PublicHeader.h>
 
-#import <YabauseC/YabauseC.h>
 #import <PVYabause/YabauseGameCore.h>
