@@ -142,8 +142,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	}
 
 	func updateConflictsButton() {
+		guard let gameImporter = gameImporter else {
+			return
+		}
+
 		#if os(tvOS)
-		let enabled = !(self.gameImporter.conflictedFiles?.isEmpty ?? true)
+		let enabled = !(gameImporter.conflictedFiles?.isEmpty ?? true)
 		var items = [sortOptionBarButtonItem!, getMoreRomsBarButtonItem!]
 		if enabled {
 			items.append(conflictsBarButtonItem!)
@@ -407,6 +411,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return (favoritesIsHidden ? 0 : 1) + (saveStatesIsHidden ? 0 : 1)
         }
     }
+
+	#if os(tvOS)
+	var focusedGame : PVGame?
+	#endif
 
 	#if os(iOS)
 	@objc
@@ -869,7 +877,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 
         registerForChange()
-		updateConflictsButton()
+
+		if isViewLoaded {
+			updateConflictsButton()
+		}
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -896,6 +907,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		if (self.mustRefreshDataSource) {
 			fetchGames()
 			collectionView?.reloadData()
+		}
+
+		if isViewLoaded {
+			updateConflictsButton()
 		}
     }
 
@@ -1280,6 +1295,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		gameImporter.initialized.notify(queue: DispatchQueue.global(qos: .background)) {
 			self.initialROMScan()
 		}
+
+		updateConflictsButton()
 	}
 
 	private func initialROMScan() {
@@ -1979,43 +1996,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
 #endif
-// MARK: - Keyboard actions
-    public override var keyCommands: [UIKeyCommand]? {
-        if #available(iOS 9.0, *) {
-            var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
-
-            for (i, title) in sectionTitles.enumerated() {
-                let input = "\(i)"
-                // Simulator Command + number has shorcuts already
-                #if TARGET_OS_SIMULATOR
-                    let flags: UIKeyModifierFlags = [.control, .command]
-                #else
-                    let flags: UIKeyModifierFlags = .command
-                #endif
-                let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
-                sectionCommands.append(command)
-            }
-            let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command, .alternate], action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find…")
-            sectionCommands.append(findCommand)
-            return sectionCommands
-        } else {
-            return nil
-        }
-    }
-
-    @objc func selectSearch(_ sender: UIKeyCommand) {
-        searchField?.becomeFirstResponder()
-    }
-
-    @objc func selectSection(_ sender: UIKeyCommand) {
-        if let input = sender.input, let section = Int(input) {
-            collectionView?.scrollToItem(at: IndexPath(item: 0, section: section), at: .top, animated: true)
-        }
-    }
-
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
 }
 
 // MARK: Database Migration
@@ -2315,54 +2295,140 @@ extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
 	}
 }
 
-#if os(tvOS)
 // Keyboard shortcuts
 extension PVGameLibraryViewController {
+	// MARK: - Keyboard actions
+	public override var keyCommands: [UIKeyCommand]? {
+		var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
+
+		for (i, title) in sectionTitles.enumerated() {
+			let input = "\(i)"
+			// Simulator Command + number has shorcuts already
+			#if TARGET_OS_SIMULATOR
+			let flags: UIKeyModifierFlags = [.control, .command]
+			#else
+			let flags: UIKeyModifierFlags = .command
+			#endif
+			let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
+			sectionCommands.append(command)
+		}
+
+		#if os(tvOS)
+		if focusedGame != nil {
+			let toggleFavoriteCommand = UIKeyCommand(input: "=", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.toggleFavoriteCommand), discoverabilityTitle: "Toggle Favorite")
+			sectionCommands.append(toggleFavoriteCommand)
+
+			let showMoreInfo = UIKeyCommand(input: "i", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.showMoreInfoCommand), discoverabilityTitle: "More info ...")
+			sectionCommands.append(showMoreInfo)
+
+			let renameCommand = UIKeyCommand(input: "r", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.renameCommand), discoverabilityTitle: "Rename ...")
+			sectionCommands.append(renameCommand)
+
+			let deleteCommand = UIKeyCommand(input: "x", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.deleteCommand), discoverabilityTitle: "Delete ...")
+			sectionCommands.append(deleteCommand)
+
+			let sortCommand = UIKeyCommand(input: "s", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+			sectionCommands.append(sortCommand)
+		}
+		#elseif os(iOS)
+		let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find …")
+		sectionCommands.append(findCommand)
+
+		let sortCommand = UIKeyCommand(input: "s", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+		sectionCommands.append(sortCommand)
+
+		let settingsCommand = UIKeyCommand(input: ",", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.settingsCommand), discoverabilityTitle: "Settings")
+		sectionCommands.append(settingsCommand)
+
+		#endif
+
+		return sectionCommands
+	}
+
+	@objc func selectSearch(_ sender: UIKeyCommand) {
+		searchField?.becomeFirstResponder()
+	}
+
+	@objc func selectSection(_ sender: UIKeyCommand) {
+		if let input = sender.input, let section = Int(input) {
+			collectionView?.scrollToItem(at: IndexPath(item: 0, section: section), at: .top, animated: true)
+		}
+	}
+
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
 	@objc
 	func showMoreInfoCommand() {
-		guard let selectedGame = selectedGame else {
+		guard let focusedGame = focusedGame else {
 			return
 		}
-		moreInfo(for: selectedGame)
+		moreInfo(for: focusedGame)
 	}
+
+	#if os(iOS)
+	@objc
+	func settingsCommand() {
+		performSegue(withIdentifier: "SettingsSegue", sender: self)
+	}
+	#endif
 
 	@objc
 	func toggleFavoriteCommand() {
-		guard let selectedGame = selectedGame else {
+		guard let focusedGame = focusedGame else {
 			return
 		}
-		toggleFavorite(for: selectedGame)
+		toggleFavorite(for: focusedGame)
 	}
 
 	@objc
 	func renameCommand() {
-		guard let selectedGame = selectedGame else {
+		guard let focusedGame = focusedGame else {
 			return
 		}
-		renameGame(selectedGame)
+		renameGame(focusedGame)
 	}
 
 	@objc
 	func deleteCommand() {
-		guard let selectedGame = selectedGame else {
+		guard let focusedGame = focusedGame else {
 			return
 		}
-		promptToDeleteGame(selectedGame)
+		promptToDeleteGame(focusedGame)
 	}
 
-	var selectedGame : PVGame? {
-		guard let selectedCells = collectionView?.indexPathsForSelectedItems, selectedCells.count == 1, let selectedCell = selectedCells.first else {
-			return nil
-		}
+	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 
-		guard let gameCell = collectionView?.cellForItem(at: selectedCell) as? PVGameLibraryCollectionViewCell else {
-			return nil
-		}
+		focusedGame = nil
 
-		return gameCell.game
+		if let focusedIndexPath = context.nextFocusedIndexPath {
+			let section = focusedIndexPath.section
+			let row = focusedIndexPath.row
+
+			if section == favoritesSection {
+				guard let favoriteGames = favoriteGames else {
+					return
+				}
+				if row < favoriteGames.count {
+					focusedGame = favoriteGames[row]
+				}
+			} else if section == recentGamesSection {
+				return
+			} else if section == saveStateSection {
+				return
+			} else {
+				let sI = section - systemsSectionOffset
+				if sI < 0 {
+					return
+				}
+
+				if let systems = systems, sI < systems.count, let query = systemSectionsTokens[systems[sI].identifier]?.query, row < query.count {
+					focusedGame = query[row]
+				}
+			}
+		}
 	}
 }
-#endif
 
 #if os(iOS)
 extension PVGameLibraryViewController: UIPopoverControllerDelegate {

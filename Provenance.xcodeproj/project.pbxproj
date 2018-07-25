@@ -2553,6 +2553,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2612,6 +2613,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2669,6 +2671,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
