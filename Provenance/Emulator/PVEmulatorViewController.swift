@@ -151,7 +151,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         updatePlayedDuration()
 		destroyAutosaveTimer()
 
-		if let menuGestureRecognizer = menuGestureRecognizer
+		if let menuGestureRecognizer = menuGestureRecognizer {
 			view.removeGestureRecognizer(menuGestureRecognizer)
 		}
     }
