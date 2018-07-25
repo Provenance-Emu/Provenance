@@ -305,6 +305,17 @@ extension PVEmulatorViewController {
 					self.enableContorllerInput(false)
 				}))
 			}
+			if (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
+				actionSheet.addAction(Action( "P1 AnalogMode", style: .default, handler: { action in
+					self.core.setPauseEmulation(false)
+					self.isShowingMenu = false
+					self.controllerViewController?.pressAnalogMode(forPlayer: 0)
+					DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: {() -> Void in
+						self.controllerViewController?.releaseAnalogMode(forPlayer: 0)
+					})
+					self.enableContorllerInput(false)
+				}))
+			}
 		}
 		if let player2 = controllerManager.player2 {
 			if (player2.extendedGamepad != nil || wantsStartSelectInMenu) {
@@ -323,6 +334,15 @@ extension PVEmulatorViewController {
 					self.controllerViewController?.pressSelect(forPlayer: 1)
 					DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {() -> Void in
 						self.controllerViewController?.releaseSelect(forPlayer: 1)
+					})
+					self.enableContorllerInput(false)
+				}))
+				actionSheet.addAction(Action( "P2 AnalogMode", style: .default, handler: { action in
+					self.core.setPauseEmulation(false)
+					self.isShowingMenu = false
+					self.controllerViewController?.pressAnalogMode(forPlayer: 1)
+					DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {() -> Void in
+						self.controllerViewController?.releaseAnalogMode(forPlayer: 1)
 					})
 					self.enableContorllerInput(false)
 				}))

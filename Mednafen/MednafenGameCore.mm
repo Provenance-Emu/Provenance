@@ -129,6 +129,7 @@ namespace MDFN_IEN_VB
 @interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
     uint32_t *inputBuffer[8];
+    int16 axis[8];
     int videoWidth, videoHeight;
     int videoOffsetX, videoOffsetY;
     int multiTapPlayerCount;
@@ -215,7 +216,7 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
-	MDFNI_SetSettingB("psx.input.analog_mode_ct", true); // Enable Analog mode toggle
+	MDFNI_SetSettingB("psx.input.analog_mode_ct", false); // Enable Analog mode toggle
 		/*
 		 0x0001=SELECT
 		 0x0002=L3
@@ -607,8 +608,14 @@ static void emulation_run(BOOL skipFrame) {
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
-            // changing "dualshock" to "gampepad" ↓ to make games playable for now, until we can fix the analog input bugs
-            game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            // centre the dualanalog sticks
+            uint8 *buf = (uint8 *)inputBuffer[i];
+            MDFN_en16lsb(&buf[3], (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
+            // do we want to use gamepad when not using an mfi device?
+            game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
         }
         
         // Multi-Disc check
@@ -817,6 +824,13 @@ static void emulation_run(BOOL skipFrame) {
 
 				if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
+                    
+                    // TODO Can we do this better?
+                    // we don't want to read l3/r3 from the controller
+                    if (self.systemType == MednaSystemPSX && (map[i]==1 || map[i]==2))
+                    {
+                        continue;
+                    }
                     
                     if(value > 0) {
                         inputBuffer[playerIndex][0] |= 1 << map[i];
@@ -1282,6 +1296,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         self.isStartPressed = true;
     } else if (button == PVPSXButtonSelect) {
         self.isSelectPressed = true;
+    } else if (button == PVPSXButtonAnalogMode) {
+        self.isAnalogModePressed = true;
     }
     inputBuffer[player][0] |= 1 << PSXMap[button];
 }
@@ -1292,22 +1308,37 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         self.isStartPressed = false;
     } else if (button == PVPSXButtonSelect) {
         self.isSelectPressed = false;
+    } else if (button == PVPSXButtonAnalogMode) {
+        self.isAnalogModePressed = false;
     }
     inputBuffer[player][0] &= ~(1 << PSXMap[button]);
 }
 
 - (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player
 {
+    // TODO
     // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
     // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.
     // Background: https://mednafen.github.io/documentation/psx.html#Section_analog_range
-    value *= 32767; // de-normalize
-    double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
-    
+    // double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
+
+    uint16 modifiedValue = value * 32767;
+
     int analogNumber = PSXMap[button] - 17;
-    uint8_t *buf = (uint8_t *)inputBuffer[player];
-    MDFN_en16lsb(&buf[3 + analogNumber * 2], scaledValue);
-    MDFN_en16lsb(&buf[3 + (analogNumber ^ 1) * 2], 0);
+    int address = analogNumber;
+
+    if (analogNumber % 2 != 0) {
+        axis[analogNumber] = -1 * modifiedValue;
+        address -= 1;
+    }
+    else {
+        axis[analogNumber] = modifiedValue;
+    }
+
+    uint16 actualValue = 32767 + axis[analogNumber] + axis[analogNumber ^ 1];
+
+    uint8 *buf = (uint8 *)inputBuffer[player];
+    MDFN_en16lsb(&buf[3]+address, (uint16) actualValue);
 }
 
 #pragma mark Virtual Boy
@@ -2046,6 +2077,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return self.isSelectPressed || (modifiersPressed && [[dpad right] isPressed]);
 			case PVPSXButtonStart:
 				return self.isStartPressed || (modifiersPressed && [[pad buttonX] isPressed]);
+            case PVPSXButtonAnalogMode:
+                return self.isAnalogModePressed;
             default:
                 break;
         }

@@ -293,6 +293,14 @@
 			</dict>
 			<dict>
 				<key>PVControlType</key>
+				<string>PVLeftAnalogButton</string>
+				<key>PVControlTitle</key>
+				<string>L3</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
 				<string>R1</string>
@@ -304,6 +312,14 @@
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
 				<string>R2</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVRightAnalogButton</string>
+				<key>PVControlTitle</key>
+				<string>R3</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>

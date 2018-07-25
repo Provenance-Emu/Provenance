@@ -70,6 +70,18 @@ extension PVEmulatorViewController {
 					self.enableContorllerInput(false)
 				}))
 			}
+            if (player1.extendedGamepad != nil || wantsStartSelectInMenu)
+            {
+                actionsheet.addAction(UIAlertAction(title: "P1 AnalogMode", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    self.core.setPauseEmulation(false)
+                    self.isShowingMenu = false
+                    self.controllerViewController?.pressAnalogMode(forPlayer: 0)
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: {() -> Void in
+                        self.controllerViewController?.releaseAnalogMode(forPlayer: 0)
+                    })
+                    self.enableContorllerInput(false)
+                }))
+            }
 		}
 		if let player2 = controllerManager.player2 {
 			if (player2.extendedGamepad != nil || wantsStartSelectInMenu) {
@@ -91,6 +103,15 @@ extension PVEmulatorViewController {
 					})
 					self.enableContorllerInput(false)
 				}))
+                actionsheet.addAction(UIAlertAction(title: "P2 AnalogMode", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    self.core.setPauseEmulation(false)
+                    self.isShowingMenu = false
+                    self.controllerViewController?.pressAnalogMode(forPlayer: 1)
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {() -> Void in
+                        self.controllerViewController?.releaseAnalogMode(forPlayer: 1)
+                    })
+                    self.enableContorllerInput(false)
+                }))
 			}
 		}
 		if let swappableCore = core as? DiscSwappable, swappableCore.currentGameSupportsMultipleDiscs {
