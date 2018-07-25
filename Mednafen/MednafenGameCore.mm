@@ -2078,7 +2078,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 			case PVPSXButtonStart:
 				return self.isStartPressed || (modifiersPressed && [[pad buttonX] isPressed]);
             case PVPSXButtonAnalogMode:
-                return self.isAnalogModePressed;
+                return self.isAnalogModePressed || (modifiersPressed && [[pad buttonX] isPressed] &&  [[pad buttonA] isPressed]);
             default:
                 break;
         }
