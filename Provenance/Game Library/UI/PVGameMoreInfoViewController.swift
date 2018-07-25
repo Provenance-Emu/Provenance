@@ -1209,11 +1209,11 @@ public final class MediaZoom: UIView, UIScrollViewDelegate {
         return imageView
     }
 
-    open func willHandleSingleTap() {
+    public func willHandleSingleTap() {
 
     }
 
-    open func showAnimationDidFinish() {
+    public func showAnimationDidFinish() {
 
     }
 
