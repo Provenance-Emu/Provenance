@@ -434,9 +434,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C9D4BD1DEA77DF0068D057 /* Build configuration list for PBXNativeTarget "PVGBA" */;
 			buildPhases = (
+				B3C9D4B51DEA77DF0068D057 /* Headers */,
 				B3C9D4B31DEA77DF0068D057 /* Sources */,
 				B3C9D4B41DEA77DF0068D057 /* Frameworks */,
-				B3C9D4B51DEA77DF0068D057 /* Headers */,
 				B3C9D4B61DEA77DF0068D057 /* Resources */,
 			);
 			buildRules = (
@@ -452,9 +452,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C9D4CB1DEA77E90068D057 /* Build configuration list for PBXNativeTarget "PVGBA tvOS" */;
 			buildPhases = (
+				B3C9D4C31DEA77E90068D057 /* Headers */,
 				B3C9D4C11DEA77E90068D057 /* Sources */,
 				B3C9D4C21DEA77E90068D057 /* Frameworks */,
-				B3C9D4C31DEA77E90068D057 /* Headers */,
 				B3C9D4C41DEA77E90068D057 /* Resources */,
 			);
 			buildRules = (

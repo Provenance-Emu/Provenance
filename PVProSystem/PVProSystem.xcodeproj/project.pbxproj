@@ -369,9 +369,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem" */;
 			buildPhases = (
+				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79B1D6B7558002EE3ED /* Sources */,
 				B36DE79C1D6B7558002EE3ED /* Frameworks */,
-				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79E1D6B7558002EE3ED /* Resources */,
 			);
 			buildRules = (
@@ -387,9 +387,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3FA5D8F1D6BAD4100060D71 /* Build configuration list for PBXNativeTarget "ProSystem tvOS" */;
 			buildPhases = (
+				B3FA5D891D6BAD4100060D71 /* Headers */,
 				B3FA5D6F1D6BAD4100060D71 /* Sources */,
 				B3FA5D851D6BAD4100060D71 /* Frameworks */,
-				B3FA5D891D6BAD4100060D71 /* Headers */,
 				B3FA5D8D1D6BAD4100060D71 /* Resources */,
 			);
 			buildRules = (

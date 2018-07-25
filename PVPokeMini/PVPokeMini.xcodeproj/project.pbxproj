@@ -399,9 +399,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3CB854E1E9BECBF009155A6 /* Build configuration list for PBXNativeTarget "PVPokeMini" */;
 			buildPhases = (
+				B3CB85461E9BECBF009155A6 /* Headers */,
 				B3CB85441E9BECBF009155A6 /* Sources */,
 				B3CB85451E9BECBF009155A6 /* Frameworks */,
-				B3CB85461E9BECBF009155A6 /* Headers */,
 				B3CB85471E9BECBF009155A6 /* Resources */,
 			);
 			buildRules = (
@@ -417,9 +417,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3CB855B1E9BECCF009155A6 /* Build configuration list for PBXNativeTarget "PVPokeMini tvOS" */;
 			buildPhases = (
+				B3CB85531E9BECCF009155A6 /* Headers */,
 				B3CB85511E9BECCF009155A6 /* Sources */,
 				B3CB85521E9BECCF009155A6 /* Frameworks */,
-				B3CB85531E9BECCF009155A6 /* Headers */,
 				B3CB85541E9BECCF009155A6 /* Resources */,
 			);
 			buildRules = (

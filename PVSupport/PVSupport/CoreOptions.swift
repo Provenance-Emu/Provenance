@@ -74,7 +74,7 @@ public struct CoreOptionMultiValue : Codable {
 	public let description : String?
 
 	public static func values(fromArray a : [[String]]) -> [CoreOptionMultiValue] {
-		return a.flatMap {
+		return a.compactMap {
 			if $0.count == 1 {
 				return CoreOptionMultiValue(title: $0[0], description: nil)
 			} else if $0.count >= 2 {

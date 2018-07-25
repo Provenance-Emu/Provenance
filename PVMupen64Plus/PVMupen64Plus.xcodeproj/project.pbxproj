@@ -4687,9 +4687,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B33115911C7309C200E9AD14 /* Build configuration list for PBXNativeTarget "PVRSPCXD4" */;
 			buildPhases = (
+				B33115891C7309C200E9AD14 /* Headers */,
 				B33115871C7309C200E9AD14 /* Sources */,
 				B33115881C7309C200E9AD14 /* Frameworks */,
-				B33115891C7309C200E9AD14 /* Headers */,
 				B331158A1C7309C200E9AD14 /* Resources */,
 			);
 			buildRules = (
@@ -4705,9 +4705,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoRice" */;
 			buildPhases = (
+				B37EFEED1C72E63300857158 /* Headers */,
 				B37EFEEB1C72E63300857158 /* Sources */,
 				B37EFEEC1C72E63300857158 /* Frameworks */,
-				B37EFEED1C72E63300857158 /* Headers */,
 				B37EFEEE1C72E63300857158 /* Resources */,
 			);
 			buildRules = (
@@ -4723,9 +4723,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B37EFF3D1C72F43400857158 /* Build configuration list for PBXNativeTarget "PVMupen64Plus" */;
 			buildPhases = (
+				B37EFF351C72F43300857158 /* Headers */,
 				B37EFF331C72F43300857158 /* Sources */,
 				B37EFF341C72F43300857158 /* Frameworks */,
-				B37EFF351C72F43300857158 /* Headers */,
 				B37EFF361C72F43300857158 /* Resources */,
 			);
 			buildRules = (
@@ -4764,9 +4764,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B3B8651DECEA9100602746 /* Build configuration list for PBXNativeTarget "PVMupen64PlusRspHLE" */;
 			buildPhases = (
+				B3B3B85D1DECEA9100602746 /* Headers */,
 				B3B3B85B1DECEA9100602746 /* Sources */,
 				B3B3B85C1DECEA9100602746 /* Frameworks */,
-				B3B3B85D1DECEA9100602746 /* Headers */,
 				B3B3B85E1DECEA9100602746 /* Resources */,
 			);
 			buildRules = (
@@ -4782,9 +4782,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B3B9051DED130B00602746 /* Build configuration list for PBXNativeTarget "PVMupen64Plus tvOS" */;
 			buildPhases = (
+				B3B3B8FF1DED130B00602746 /* Headers */,
 				B3B3B8A21DED130B00602746 /* Sources */,
 				B3B3B8FA1DED130B00602746 /* Frameworks */,
-				B3B3B8FF1DED130B00602746 /* Headers */,
 				B3B3B9041DED130B00602746 /* Resources */,
 			);
 			buildRules = (
@@ -4806,9 +4806,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B3B93D1DED137100602746 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoRice tvOS" */;
 			buildPhases = (
+				B3B3B93B1DED137100602746 /* Headers */,
 				B3B3B90B1DED137100602746 /* Sources */,
 				B3B3B9371DED137100602746 /* Frameworks */,
-				B3B3B93B1DED137100602746 /* Headers */,
 				B3B3B93C1DED137100602746 /* Resources */,
 			);
 			buildRules = (
@@ -4824,9 +4824,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B3B9501DED13A200602746 /* Build configuration list for PBXNativeTarget "PVMupen64PlusRspHLE tvOS" */;
 			buildPhases = (
+				B3B3B94D1DED13A200602746 /* Headers */,
 				B3B3B9431DED13A200602746 /* Sources */,
 				B3B3B94C1DED13A200602746 /* Frameworks */,
-				B3B3B94D1DED13A200602746 /* Headers */,
 				B3B3B94F1DED13A200602746 /* Resources */,
 			);
 			buildRules = (
@@ -4842,9 +4842,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B3B9701DED144100602746 /* Build configuration list for PBXNativeTarget "PVRSPCXD4 tvOS" */;
 			buildPhases = (
+				B3B3B9611DED144100602746 /* Headers */,
 				B3B3B9561DED144100602746 /* Sources */,
 				B3B3B9601DED144100602746 /* Frameworks */,
-				B3B3B9611DED144100602746 /* Headers */,
 				B3B3B96F1DED144100602746 /* Resources */,
 			);
 			buildRules = (
@@ -4860,9 +4860,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DFB601872038AD13001E70F1 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoGlideN64" */;
 			buildPhases = (
+				DFB6017D2038AD13001E70F1 /* Headers */,
 				DFB6017B2038AD12001E70F1 /* Sources */,
 				DFB6017C2038AD13001E70F1 /* Frameworks */,
-				DFB6017D2038AD13001E70F1 /* Headers */,
 				DFB6017E2038AD13001E70F1 /* Resources */,
 			);
 			buildRules = (
@@ -4879,9 +4879,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DFB603B52038B582001E70F1 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoGlideN64 tvOS" */;
 			buildPhases = (
+				DFB603B22038B582001E70F1 /* Headers */,
 				DFB603B02038B582001E70F1 /* Sources */,
 				DFB603B12038B582001E70F1 /* Frameworks */,
-				DFB603B22038B582001E70F1 /* Headers */,
 				DFB603B42038B582001E70F1 /* Resources */,
 			);
 			buildRules = (

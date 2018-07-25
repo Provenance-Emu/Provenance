@@ -8641,9 +8641,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen" */;
 			buildPhases = (
+				B340E45F1E08887600AD0E8B /* Headers */,
 				B340E45D1E08887600AD0E8B /* Sources */,
 				B340E45E1E08887600AD0E8B /* Frameworks */,
-				B340E45F1E08887600AD0E8B /* Headers */,
 				B340E4601E08887600AD0E8B /* Resources */,
 			);
 			buildRules = (
@@ -8686,9 +8686,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B340E4741E08888700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen tvOS" */;
 			buildPhases = (
+				B340E46C1E08888700AD0E8B /* Headers */,
 				B340E46A1E08888700AD0E8B /* Sources */,
 				B340E46B1E08888700AD0E8B /* Frameworks */,
-				B340E46C1E08888700AD0E8B /* Headers */,
 				B340E46D1E08888700AD0E8B /* Resources */,
 			);
 			buildRules = (
@@ -11885,6 +11885,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11895,7 +11900,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "$(SRCROOT)/PVMednafen/Info.plist";
+				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11904,6 +11909,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
 				PRODUCT_NAME = PVMednafen;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -11943,6 +11949,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					LSB_FIRST,
@@ -11951,7 +11962,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "$(SRCROOT)/PVMednafen/Info.plist";
+				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11959,6 +11970,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
 				PRODUCT_NAME = PVMednafen;
 				PROVISIONING_PROFILE_SPECIFIER = "";

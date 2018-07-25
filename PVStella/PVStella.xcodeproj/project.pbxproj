@@ -649,9 +649,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B38FB4C51C839BE500CD73BE /* Build configuration list for PBXNativeTarget "PVStella" */;
 			buildPhases = (
+				B38FB4BD1C839BE500CD73BE /* Headers */,
 				B38FB4BB1C839BE500CD73BE /* Sources */,
 				B38FB4BC1C839BE500CD73BE /* Frameworks */,
-				B38FB4BD1C839BE500CD73BE /* Headers */,
 				B38FB4BE1C839BE500CD73BE /* Resources */,
 			);
 			buildRules = (
@@ -667,9 +667,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "PVStella tvOS" */;
 			buildPhases = (
+				B3C96DFB1D62BE5A003F1E93 /* Headers */,
 				B3C96DF91D62BE5A003F1E93 /* Sources */,
 				B3C96DFA1D62BE5A003F1E93 /* Frameworks */,
-				B3C96DFB1D62BE5A003F1E93 /* Headers */,
 				B3C96DFC1D62BE5A003F1E93 /* Resources */,
 			);
 			buildRules = (
