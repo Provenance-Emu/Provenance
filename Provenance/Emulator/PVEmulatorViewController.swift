@@ -151,8 +151,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         updatePlayedDuration()
 		destroyAutosaveTimer()
 
-		if let menuGestureRecognizer = menuGestureRecognizer {
-			UIApplication.shared.keyWindow?.removeGestureRecognizer(menuGestureRecognizer)
+		if let menuGestureRecognizer = menuGestureRecognizer
+			view.removeGestureRecognizer(menuGestureRecognizer)
 		}
     }
 
@@ -381,7 +381,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             menuGestureRecognizer?.allowedPressTypes = [.menu]
         }
         if let aRecognizer = menuGestureRecognizer {
-			UIApplication.shared.keyWindow?.addGestureRecognizer(aRecognizer)
+			view.addGestureRecognizer(aRecognizer)
         }
 #else
         GCController.controllers().forEach { [unowned self] in
