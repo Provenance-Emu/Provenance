@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */; };
 		B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDEF8207FF0E300E661D1 /* libsnes.a */; };
+		B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
@@ -484,7 +485,6 @@
 		B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F21E088A4000AD0E8B /* UIKit.framework */; };
 		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
 		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
-		B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FC1E088AF700AD0E8B /* PVSupport.framework */; };
 		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B3547B61205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1277,6 +1277,7 @@
 		9453E37A1AC5E051004F42AD /* libFLAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFLAC.a; path = libsndfile/libFLAC.a; sourceTree = "<group>"; };
 		9453E37C1AC5E1E9004F42AD /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = libsndfile/libvorbis.a; sourceTree = "<group>"; };
 		9453E37E1AC5E305004F42AD /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = libsndfile/libvorbisenc.a; sourceTree = "<group>"; };
+		B314E30F21081E9200D0C27A /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B333502D207AFBA30036A448 /* libpsx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpsx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335062207AFD3D0036A448 /* libwonderswan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwonderswan.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335092207AFF2B0036A448 /* libvirtualboy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvirtualboy.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3808,6 +3809,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
 				B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */,
 				B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */,
 				B3335874207B43640036A448 /* libcdrom.a in Frameworks */,
@@ -3835,7 +3837,6 @@
 				B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */,
 				B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */,
-				B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */,
 				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
@@ -4013,6 +4014,7 @@
 		B340E5E51E0889FB00AD0E8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B314E30F21081E9200D0C27A /* PVSupport.framework */,
 				B340E5FC1E088AF700AD0E8B /* PVSupport.framework */,
 				B340E5FA1E088AF100AD0E8B /* PVSupport.framework */,
 				B340E5F41E088A4500AD0E8B /* Foundation.framework */,
@@ -10017,7 +10019,10 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen-1.21/src\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -10132,7 +10137,10 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen-1.21/src\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -11783,7 +11791,7 @@
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
@@ -11844,7 +11852,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
@@ -11904,9 +11912,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -11958,9 +11966,9 @@
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
