@@ -148,6 +148,8 @@
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		330010B220D454F10077EE20 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; };
 		330010B320D454F10077EE20 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33084F3E2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */; };
+		33084F3F2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */; };
 		337A46FE20A2024200616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A46FD20A2024200616097 /* PVYabause.framework */; };
 		337A470A20A206B400616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; };
 		337A470B20A206B400616097 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1110,6 +1112,7 @@
 		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
+		33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSaturnControllerViewController.swift; sourceTree = "<group>"; };
 		337A46FD20A2024200616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A470420A202C100616097 /* PVYabause.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVYabause.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-fycqgcqtrywlgvewxvxqqvljmodg/Build/Products/Release-iphoneos/PVYabause.framework"; sourceTree = "<group>"; };
 		337A470920A206B400616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2847,6 +2850,7 @@
 		B376848F206A08A50007A99C /* Saturn */ = {
 			isa = PBXGroup;
 			children = (
+				33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */,
 			);
 			name = Saturn;
 			sourceTree = "<group>";
@@ -3675,6 +3679,7 @@
 				B349AEA11E9ABCF900ACD416 /* 7zIn.cpp in Sources */,
 				B349AF6B1E9ABCFA00ACD416 /* LzmaSDKObjCOutFile.cpp in Sources */,
 				B349AE991E9ABCF900ACD416 /* 7zFolderInStream.cpp in Sources */,
+				33084F3E2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B349AE6F1E9ABCF900ACD416 /* Lzma86Enc.c in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
@@ -4010,6 +4015,7 @@
 				B349AEAA1E9ABCF900ACD416 /* 7zSpecStream.cpp in Sources */,
 				B349AF561E9ABCF900ACD416 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
 				B349AEE61E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
+				33084F3F2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
 				1AD481F51BA3549C00FDA50A /* UIImage+Scaling.m in Sources */,
 				B349AF401E9ABCF900ACD416 /* UTFConvert.cpp in Sources */,

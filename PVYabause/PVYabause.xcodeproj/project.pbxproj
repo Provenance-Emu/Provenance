@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3359A7632108712F006957B2 /* sh2_jit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3359A68A210870A3006957B2 /* sh2_jit.cpp */; };
-		3359A764210871B2006957B2 /* sndmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC55120D2D5830095F719 /* sndmac.c */; };
-		3359A765210871B2006957B2 /* permacjoy.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC55220D2D5830095F719 /* permacjoy.c */; };
-		3359A76621087282006957B2 /* permacjoy.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC4C820D2D1330095F719 /* permacjoy.c */; };
 		3359A767210874D5006957B2 /* yab_tsunami.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4A12108709F006957B2 /* yab_tsunami.c */; };
 		3359A768210874D5006957B2 /* Tsunami.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4A22108709F006957B2 /* Tsunami.c */; };
 		3359A76921087509006957B2 /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4E8210870A0006957B2 /* c68kexec.c */; };
@@ -2841,14 +2838,12 @@
 				335BC5DE20D2EC890095F719 /* cdbase.c in Sources */,
 				3359A7632108712F006957B2 /* sh2_jit.cpp in Sources */,
 				335BC5E020D2EC890095F719 /* cheat.c in Sources */,
-				3359A765210871B2006957B2 /* permacjoy.c in Sources */,
 				335BC5E120D2EC890095F719 /* vidsoft.c in Sources */,
 				335BC5E220D2EC890095F719 /* sh2cache.c in Sources */,
 				335BC5E320D2EC890095F719 /* smpc.c in Sources */,
 				335BC5E420D2EC890095F719 /* osdcore.c in Sources */,
 				335BC5E520D2EC890095F719 /* yglshaderes.c in Sources */,
 				335BC5E620D2EC890095F719 /* memory.c in Sources */,
-				3359A764210871B2006957B2 /* sndmac.c in Sources */,
 				335BC5E720D2EC890095F719 /* movie.c in Sources */,
 				335BC5E820D2EC890095F719 /* error.c in Sources */,
 				335BC5E920D2EC890095F719 /* scspdsp.c in Sources */,
@@ -2861,7 +2856,6 @@
 				335BC5F120D2EC890095F719 /* sh7034.c in Sources */,
 				335BC5F220D2EC890095F719 /* cd_drive.c in Sources */,
 				335BC5F320D2EC890095F719 /* vdp2.c in Sources */,
-				3359A76621087282006957B2 /* permacjoy.c in Sources */,
 				335BC5F420D2EC890095F719 /* cs1.c in Sources */,
 				335BC5F520D2EC890095F719 /* cs0.c in Sources */,
 				335BC5F620D2EC890095F719 /* sh2iasm.c in Sources */,
@@ -2975,6 +2969,10 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -3011,6 +3009,10 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
