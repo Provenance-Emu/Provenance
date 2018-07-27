@@ -67,7 +67,7 @@ extension PVCore {
             case .N64:
                 core = MupenGameCore()
             case .Saturn:
-                core = PVYabauseGameCore()
+                core = YabauseGameCore()
             default:
                 break
         }
