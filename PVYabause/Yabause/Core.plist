@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.core.ybause</string>
+	<string>com.provenance.core.yabause</string>
 	<key>PVPrincipleClass</key>
 	<string>YabauseGameCore</string>
 	<key>PVSupportedSystems</key>

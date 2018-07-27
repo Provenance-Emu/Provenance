@@ -37,7 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <YabauseC/YabauseC.h>
+#include "YabauseC/YabauseC.h"
 
 // ToDo: Fix
 #define SAMPLERATE 44100

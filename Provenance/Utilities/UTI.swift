@@ -27,7 +27,7 @@ public class UTI: RawRepresentable, Equatable {
 
 	/**
 	The TagClass enum represents the supported tag classes.
-	
+
 	- fileExtension: kUTTagClassFilenameExtension
 	- mimeType: kUTTagClassMIMEType
 	- pbType: kUTTagClassNSPboardType
@@ -70,16 +70,16 @@ public class UTI: RawRepresentable, Equatable {
 	// MARK: Initialization
 
 	/**
-	
+
 	This is the designated initializer of the UTI class.
-	
+
 	 - Parameters:
 			- rawValue: A string that is a Universal Type Identifier, i.e. "com.foobar.baz" or a constant like kUTTypeMP3.
 	 - Returns:
 			An UTI instance representing the specified rawValue.
 	 - Note:
 			You should rarely use this method. The preferred way to initialize a known UTI is to use its static variable (i.e. UTI.pdf). You should make an extension to make your own types available as static variables.
-	
+
 	*/
 
 	public required init(rawValue: UTI.RawValue) {
@@ -117,11 +117,11 @@ public class UTI: RawRepresentable, Equatable {
 	/**
 
 	Initialize an UTI with a file extension.
-	
+
 	- Parameters:
 		- withExtension: The file extension (e.g. "txt").
 		- conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
-	- Returns: 
+	- Returns:
 		An UTI corresponding to the specified values.
 	**/
 
@@ -133,7 +133,7 @@ public class UTI: RawRepresentable, Equatable {
 	/**
 
 	Initialize an UTI with a MIME type.
-	
+
 	- Parameters:
 		- mimeType: The MIME type (e.g. "text/plain").
 		- conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
@@ -151,7 +151,7 @@ public class UTI: RawRepresentable, Equatable {
 	/**
 
 	Initialize an UTI with a pasteboard type.
-	
+
 	- Parameters:
 		- pbType: The pasteboard type (e.g. NSPDFPboardType).
 		- conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
@@ -165,7 +165,7 @@ public class UTI: RawRepresentable, Equatable {
 
 	/**
 	Initialize an UTI with a OSType.
-	
+
 	- Parameters:
 		- osType: The OSType type as a string (e.g. "PDF ").
 		- conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
@@ -187,7 +187,7 @@ public class UTI: RawRepresentable, Equatable {
 	/**
 
 	Returns the tag with the specified class.
-	
+
 	- Parameters:
 		- tagClass: The tag class to return.
 	- Returns:
@@ -241,7 +241,7 @@ public class UTI: RawRepresentable, Equatable {
 	/**
 
 	Returns all tags of the specified tag class.
-	
+
 	- Parameters:
 		- tagClass: The class of the requested tags.
 	- Returns:
@@ -263,7 +263,7 @@ public class UTI: RawRepresentable, Equatable {
 
 	/**
 	Returns all UTIs that are associated with a specified tag.
-	
+
 	- Parameters:
 	  - tag: The class of the specified tag.
 	  - value: The value of the tag.
@@ -292,7 +292,7 @@ public class UTI: RawRepresentable, Equatable {
 	/**
 
 	Checks if the receiver conforms to a specified UTI.
-	
+
 	- Parameters:
 		- otherUTI: The UTI to which the receiver is compared.
 	- Returns:
@@ -434,9 +434,8 @@ public extension UTI {
 	static       let  ico                         =    UTI(rawValue:  kUTTypeICO                         as  String)
 	static       let  rawImage                    =    UTI(rawValue:  kUTTypeRawImage                    as  String)
 	static       let  scalableVectorGraphics      =    UTI(rawValue:  kUTTypeScalableVectorGraphics      as  String)
-	@available(tvOSApplicationExtension 9.1, *)
-	@available(OSX 10.12, iOS 9.1, watchOS 2.1, *)
-	static       let  livePhoto					  =    UTI(rawValue:  kUTTypeLivePhoto					 as  String)
+	@available(OSX 10.12, iOS 9.1, watchOS 2.1, tvOS 9.1, *)
+    static       let  livePhoto					  =    UTI(rawValue:  kUTTypeLivePhoto					 as  String)
 	@available(OSX 10.12, iOS 9.1, *)
     static       let  audiovisualContent          =    UTI(rawValue:  kUTTypeAudiovisualContent          as  String)
 	static       let  movie                       =    UTI(rawValue:  kUTTypeMovie                       as  String)

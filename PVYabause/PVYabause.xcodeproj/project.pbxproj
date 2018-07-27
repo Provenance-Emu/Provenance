@@ -10,7 +10,7 @@
 		3359A7632108712F006957B2 /* sh2_jit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3359A68A210870A3006957B2 /* sh2_jit.cpp */; };
 		3359A767210874D5006957B2 /* yab_tsunami.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4A12108709F006957B2 /* yab_tsunami.c */; };
 		3359A768210874D5006957B2 /* Tsunami.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4A22108709F006957B2 /* Tsunami.c */; };
-		3359A76921087509006957B2 /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4E8210870A0006957B2 /* c68kexec.c */; };
+		3359A76921087509006957B2 /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4E8210870A0006957B2 /* c68kexec.c */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		3359A76A21087509006957B2 /* c68k.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A4EE210870A0006957B2 /* c68k.c */; };
 		3359A76B21087515006957B2 /* titan.c in Sources */ = {isa = PBXBuildFile; fileRef = 3359A6CC210870A4006957B2 /* titan.c */; };
 		335BC5D720D2EC890095F719 /* m68kc68k.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BC59E20D2EB9F0095F719 /* m68kc68k.c */; };
@@ -70,7 +70,7 @@
 		335BC61320D2EC890095F719 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB540152A3B2B0091DA28 /* CoreFoundation.framework */; };
 		335BC61420D2EC890095F719 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC54F20D2D4450095F719 /* GLKit.framework */; };
 		335BC61520D2EC890095F719 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC54D20D2D3F80095F719 /* OpenGLES.framework */; };
-		335BC61720D2EC890095F719 /* YabauseC.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; };
+		335BC61720D2EC890095F719 /* YabauseC.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 33456CFB20D16CFE0089EC04 /* YabauseC.h */; };
 		336F378020E0D89E00FA7301 /* YabauseGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EB851D0B152396CC00715BD2 /* YabauseGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		336F378220E0D8B100FA7301 /* YabauseGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EB851D0B152396CC00715BD2 /* YabauseGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		337A05B620D40AE2003B89CA /* libYabauseC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 335BC61B20D2EC890095F719 /* libYabauseC.a */; };
@@ -80,6 +80,10 @@
 		337DD40720A49BC00014EDF7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755C1E9C8520000FEC38 /* Foundation.framework */; };
 		337DD40820A49BC00014EDF7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755A1E9C851C000FEC38 /* OpenGLES.framework */; };
 		337DD40A20A49BC00014EDF7 /* PVYabause.h in Headers */ = {isa = PBXBuildFile; fileRef = B32775251E9C8444000FEC38 /* PVYabause.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		33CA104C210CB80100AC0C7E /* Yabause.icns in Resources */ = {isa = PBXBuildFile; fileRef = EB78914E152A08600080990B /* Yabause.icns */; };
+		33CA104D210CB80100AC0C7E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA7D20A5EAB600B89B1A /* InfoPlist.strings */; };
+		33CA104E210CB80100AC0C7E /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA7F20A5EAB600B89B1A /* Core.plist */; };
+		33CA104F210CB80100AC0C7E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA8020A5EAB600B89B1A /* Info.plist */; };
 		33D07BA620D5570800EDDBE1 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D07BA420D5570700EDDBE1 /* scsp.c */; };
 		33D07BA820D57D3700EDDBE1 /* thr-dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D07BA720D57D3700EDDBE1 /* thr-dummy.c */; };
 		33D4B89A20A62E9100E11F8D /* Yabause.icns in Resources */ = {isa = PBXBuildFile; fileRef = EB78914E152A08600080990B /* Yabause.icns */; };
@@ -139,14 +143,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		335BC61620D2EC890095F719 /* CopyFiles */ = {
+		335BC61620D2EC890095F719 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				335BC61720D2EC890095F719 /* YabauseC.h in CopyFiles */,
+				335BC61720D2EC890095F719 /* YabauseC.h in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -2664,7 +2669,7 @@
 			buildPhases = (
 				335BC5D620D2EC890095F719 /* Sources */,
 				335BC60D20D2EC890095F719 /* Frameworks */,
-				335BC61620D2EC890095F719 /* CopyFiles */,
+				335BC61620D2EC890095F719 /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -2802,6 +2807,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33CA104C210CB80100AC0C7E /* Yabause.icns in Resources */,
+				33CA104D210CB80100AC0C7E /* InfoPlist.strings in Resources */,
+				33CA104E210CB80100AC0C7E /* Core.plist in Resources */,
+				33CA104F210CB80100AC0C7E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2963,6 +2972,7 @@
 				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_C68K=1",
 					"${inherited}",
@@ -2977,8 +2987,9 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include;
+				PUBLIC_HEADERS_FOLDER_PATH = YabauseC;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -3017,8 +3028,9 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include;
+				PUBLIC_HEADERS_FOLDER_PATH = YabauseC;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -3224,6 +3236,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -3251,7 +3264,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREFIX_HEADER = Yabause_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -3276,10 +3289,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"${SOURCE_ROOT}/emulator/yabause/yabause/src/**",
-					"${SOURCE_ROOT}/YabauseC",
-				);
+				HEADER_SEARCH_PATHS = "${SOURCE_ROOT}/emulator/yabause/yabause/src/**";
+				LIBRARY_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}";
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -3293,6 +3304,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -3319,7 +3331,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREFIX_HEADER = Yabause_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SWIFT_BRIDGE=1",
@@ -3343,10 +3355,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"${SOURCE_ROOT}/emulator/yabause/yabause/src/**",
-					"${SOURCE_ROOT}/YabauseC",
-				);
+				HEADER_SEARCH_PATHS = "${SOURCE_ROOT}/emulator/yabause/yabause/src/**";
+				LIBRARY_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}";
 				LLVM_LTO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
