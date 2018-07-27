@@ -5,9 +5,21 @@ SWIFT_VERSION=`swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d "()"
 echo "Swift version: $SWIFT_VERSION"
 
 echo "Uploading $PLATFORM ..."
-carthage update --platform $PLATFORM --cache-builds --no-use-binaries && rome upload --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+
+MISSING=`rome list --missing --platform $PLATFORM --cache-prefix $SWIFT_VERSION | awk '{print $1}'`
+echo "Missing $MISSING"
+echo $MISSING | awk '{print $1}' | carthage update --platform $PLATFORM --cache-builds --no-use-binaries && rome list --missing --platform $PLATFORM --cache-prefix $SWIFT_VERSION | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+
 cd PVSupport
-carthage update --platform $PLATFORM --cache-builds --no-use-binaries && carthage update && rome upload --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+
+MISSING=`rome list --missing --platform $PLATFORM --cache-prefix $SWIFT_VERSION | awk '{print $1}'`
+echo "Missing $MISSING"
+echo $MISSING | awk '{print $1}' | carthage update --platform $PLATFORM --cache-builds --no-use-binaries && rome list --missing --platform $PLATFORM --cache-prefix $SWIFT_VERSION | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+
 cd ../PVLibrary
-carthage update --platform $PLATFORM --cache-builds --no-use-binaries && carthage update && rome upload --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+
+MISSING=`rome list --missing --platform $PLATFORM --cache-prefix $SWIFT_VERSION | awk '{print $1}'`
+echo "Missing $MISSING"
+echo $MISSING | awk '{print $1}' | carthage update --platform $PLATFORM --cache-builds --no-use-binaries && rome list --missing --platform $PLATFORM --cache-prefix $SWIFT_VERSION | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+
 echo "Done."
