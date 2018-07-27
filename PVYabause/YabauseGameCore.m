@@ -1,7 +1,7 @@
 /*
  Copyright (c) 2009, OpenEmu Team
- 
- 
+
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  * Neither the name of the OpenEmu Team nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -89,7 +89,7 @@ static int SNDOEChangeVideoFormat(UNUSED int vertfreq)
 
 static void sdlConvert32uto16s(s32 *srcL, s32 *srcR, s16 *dst, u32 len) {
     u32 i;
-    
+
     for (i = 0; i < len; i++)
     {
         // Left Channel
@@ -101,7 +101,7 @@ static void sdlConvert32uto16s(s32 *srcL, s32 *srcR, s16 *dst, u32 len) {
             *dst = *srcL;
         srcL++;
         dst++;
-        
+
         // Right Channel
         if (*srcR > 0x7FFF)
             *dst = 0x7FFF;
@@ -118,7 +118,7 @@ static void SNDOEUpdateAudio(u32 *leftchanbuffer, u32 *rightchanbuffer, u32 num_
 {
     static unsigned char buffer[BUFFER_LEN];
     sdlConvert32uto16s((s32*)leftchanbuffer, (s32*)rightchanbuffer, (s16*)buffer, num_samples);
-    
+
     [ringBuffer write:buffer maxLength:num_samples << 2];
 }
 
@@ -202,7 +202,7 @@ VideoInterface_struct *VIDCoreList[] = {
 @interface YabauseGameCore ()
 {
     NSLock  *videoLock;
-    
+
     BOOL    paused;
     NSString *filename;
 }
@@ -213,11 +213,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 - (id)init
 {
-<<<<<<< Updated upstream
-    CDLog(@"Yabause init /debug");
-=======
     //CDLog(@"Yabause init /debug");
->>>>>>> Stashed changes
     self = [super init];
     if(self != nil)
     {
@@ -233,7 +229,7 @@ VideoInterface_struct *VIDCoreList[] = {
 {
     width = HIRES_WIDTH;
     height = HIRES_HEIGHT;
-    
+
     PerPortReset();
     c1 = PerPadAdd(&PORTDATA1);
     c2 = PerPadAdd(&PORTDATA2);
@@ -263,10 +259,10 @@ VideoInterface_struct *VIDCoreList[] = {
     {
         yinit.cdcoretype = CDCORE_ISO;
         yinit.cdpath = [filename UTF8String];
-        
+
         // Get a BIOS
         NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"Saturn EU.bin"];
-        
+
         // If a "Saturn EU.bin" BIOS exists, use it otherwise emulate BIOS
         if ([[NSFileManager defaultManager] fileExistsAtPath:bios])
             yinit.biospath = [bios UTF8String];
@@ -279,47 +275,43 @@ VideoInterface_struct *VIDCoreList[] = {
         yinit.cdcoretype = CDCORE_DUMMY;
         yinit.biospath = [filename UTF8String];
     }
-    
+
     yinit.percoretype = PERCORE_DEFAULT;
     yinit.sh2coretype = SH2CORE_INTERPRETER;
-    
+
     //#ifdef HAVE_LIBGL
     //    yinit.vidcoretype = VIDCORE_OGL;
     //#else
     yinit.vidcoretype = VIDCORE_SOFT;
     //#endif
-    
+
     yinit.sndcoretype = SNDCORE_OE;
     yinit.m68kcoretype = M68KCORE_C68K;
     yinit.carttype = CART_DRAM32MBIT; //4MB RAM Expansion Cart
     yinit.regionid = REGION_AUTODETECT;
-    
+
     // Take care of the Battery Save file to make Save State happy
     NSString *path = filename;
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-    
+
     NSString *batterySavesDirectory = [self batterySavesPath];
-    
+
     if([batterySavesDirectory length] != 0)
     {
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-        
+
         if([filePath length] > 0) {
-<<<<<<< Updated upstream
-            CDLog(@"BRAM: %@", filePath);
-=======
             //CDLog(@"BRAM: %@", filePath);
->>>>>>> Stashed changes
             char *_bramFile;
             const char *tmp = [filePath UTF8String];
-            
+
             _bramFile = (char *)malloc(strlen(tmp) + 1);
             strcpy(_bramFile, tmp);
             yinit.buppath = _bramFile;
         }
     }
-    
+
     yinit.mpegpath = NULL;
     yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
     yinit.frameskip = false;
@@ -360,11 +352,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     filename = [path copy];
-<<<<<<< Updated upstream
-    CDLog(@"Saturn - %@", filename);
-=======
     //CDLog(@"Saturn - %@", filename);
->>>>>>> Stashed changes
     [self setupEmulation];
     //    [self executeFrame];
     return YES;
@@ -376,7 +364,7 @@ VideoInterface_struct *VIDCoreList[] = {
     ScspMuteAudio(SCSP_MUTE_SYSTEM);
     int error = YabSaveState([fileName UTF8String]);
     ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
-    
+
     block(!error, nil);
 #endif
     return false;
@@ -388,7 +376,7 @@ VideoInterface_struct *VIDCoreList[] = {
     ScspMuteAudio(SCSP_MUTE_SYSTEM);
     int error = YabLoadState([fileName UTF8String]);
     ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
-    
+
     block(!error, nil);
 #endif
     return false;
@@ -505,11 +493,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (void)executeFrame
 {
     if(firstRun) {
-<<<<<<< Updated upstream
-        CDLog(@"Yabause executeFrame firstRun, lazy init");
-=======
         //CDLog(@"Yabause executeFrame firstRun, lazy init");
->>>>>>> Stashed changes
         [self initYabauseWithCDCore:CDCORE_DUMMY];
         [self startYabauseEmulation];
         firstRun = NO;
@@ -571,16 +555,15 @@ void updateCurrentResolution(void)
 {
     int current_width = HIRES_WIDTH;
     int current_height = HIRES_HEIGHT;
-    
+
     // Avoid calling GetGlSize if Dummy/id=0 is selected
     if (VIDCore && VIDCore->id)
     {
         VIDCore->GetGlSize(&current_width,&current_height);
     }
-    
+
     width = current_width;
     height = current_height;
 }
 
 @end
-
