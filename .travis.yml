@@ -29,6 +29,8 @@ env:
     - IOS_SDK=iphonesimulator11.3
     - TVOS_SDK=appletvsimulator11.3
     - CONFIGURATION="Debug"
+    - AWS_REGION="us-east-1"
+    - AWS_ENDPOINT="http://provenance.joemattiello.com:9000"
   matrix:
     - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_APP" SDK="$IOS_SDK"
     - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 4K" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
@@ -38,13 +40,14 @@ before_install:
   - brew update
   - brew outdated swiftlint || brew upgrade swiftlint
   - brew outdated carthage || brew upgrade carthage
+  - brew install blender/homebrew-tap/rome
 before_script:
   # bootstrap the dependencies for the project
-    - carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./PVSupport" --configuration $CONFIGURATION
         # Output something every 10 minutes or Travis kills the job
     - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
       # This can take a while so using the above to not make travis abort
-    - carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
+    - ./Scripts/rome-travis.sh > /tmp/carthage.log
+    #- carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
         # Killing background sleep loop
     - kill %1
 after_success:

@@ -1,0 +1,11 @@
+[Cache]
+  S3-Bucket = provenance-carthage
+  local = ~/Library/Caches/Rome/
+
+[RepositoryMap]
+  realm-cocoa = Realm, RealmSwift
+  SQLite = SQLite
+  ZipArchive = ZipArchive
+  ZIPFoundation = ZIPFoundation
+
+[IgnoreMap]
