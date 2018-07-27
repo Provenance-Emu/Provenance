@@ -1,5 +1,8 @@
 set -e
 
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 # carhage caching by Joe Mattiello
 #
 # Inspired from http://shashikantjagtap.net/cache-carthage-speed-ios-continuous-integration/
@@ -41,7 +44,7 @@ function runCarthageAndCopyResolved {
     echo "Running Carthage.."
     if which fastlane > /dev/null; then
       echo "Setting up Carthage for platform $1 using fastlane"
-      bundle exec fastlane carthage_bootstrap platform:"$1"
+      bundle exec fastlane carthage_bootstrap platform:"$1" directory:"$SRCROOT"
       /usr/local/bin/carthage outdated --xcode-warnings
     elif which carthage > /dev/null; then
         echo "Setting up Carthage for platform $1"

@@ -555,24 +555,15 @@ platform :ios do
   desc "Option: `platform` tvOS,iOS"
   lane :carthage_bootstrap do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
+    dirs = options.fetch(:directory, 'PVSupport,PVLibrary,./')
 
-    carthage_private(
-      command: "bootstrap",
-      platform: platform,
-      project_directory: "PVSupport"
-    )
-
-    carthage_private(
-      command: "bootstrap",
-      platform: platform,
-      project_directory: "PVLibrary"
-    )
-
-    carthage_private(
-      command: "bootstrap",
-      platform: platform,
-      project_directory: "./"
-    )
+    dirs.split(',').each do |dir|
+      carthage_private(
+        command: "bootstrap",
+        platform: platform,
+        project_directory: dir
+      )
+    end
   end
 
   desc "Lane to run build all carthage dependencies"

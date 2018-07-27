@@ -1665,7 +1665,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh tvOS\n";
+			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh tvOS\nsh Scripts/carthage.sh tvOS\n";
 		};
 		B3C04B5521077DC800E7AF79 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1681,7 +1681,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/carthage.sh iOS\n";
+			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh iOS\nsh Scripts/carthage.sh iOS\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
