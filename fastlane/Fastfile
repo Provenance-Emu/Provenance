@@ -132,9 +132,9 @@ platform :ios do
   lane :updatePlistForBranch do
     alpha = $git_branch != "master"
     if alpha
-      puts "Setting plist values for Alpha build"
+      UI.message "Setting plist values for Alpha build"
     else
-      puts "Setting plist values for Normal build"
+      UI.message "Setting plist values for Normal build"
     end
     backup_file(path: "Provenance/Info.plist")
     backup_file(path: "ProvenanceTV/Info.plist")
@@ -250,7 +250,7 @@ platform :ios do
     destination = "/usr/share/nginx/provenance.joemattiello.com/www/#{git_branch}/#{subfolder}/#{filename}"
     username = "provenance" #ENV["FASTLANE_USER"],
 
-    puts "SCP'ing from #{source} to #{host}:#{destination}"
+    UI.message "SCP'ing from #{source} to #{host}:#{destination}"
 
     scp(
       username: username,
@@ -412,6 +412,42 @@ platform :ios do
     clear_derived_data
   end
 
+  desc "Reset build enviroment"
+  desc "Use this lane if you're having build issues"
+  desc "Use `git stash` first to save any changes you may want to keep."
+  lane :reset_checkout do
+
+    UI.important "This lane is destructive and can delete unsaved changed."
+    if !UI.confirm("Are you sure?")
+      next
+    end
+
+    # clean xcode's build enviroment with xcodebuild
+    UI.message "Cleaning target Provenance."
+    xcclean(scheme: "Provenance")
+    UI.message "Cleaning target Provenance TV."
+    xcclean(scheme: "ProvenanceTV")
+
+    if UI.confirm("Clear XCode's derived data?")
+      clear_derived_data
+    end
+
+    UI.header("GIT Reset")
+    clean = UI.confirm("Run 'git clean' to avoid removing untracked files? \nRecomended unless you have new files to save. Alternatively, use `git stash`.")
+    disregard_gitignore = clean
+    if clean
+      disregard_gitignore = UI.confirm("Disregard .gitignore (Recomended)? If you want the equivalent of a fresh clone, and for all untracked and ignore files to also be removed.")
+    end
+
+    reset_git_repo(
+      force: true,
+      skip_clean: !clean,
+      disregard_gitignore: disregard_gitignore
+    )
+
+    UI.success("Project directory reset.")
+  end
+
   # Future Alpha builds
   private_lane :buid_ios_adhoc do |options|
     activeArchOnly = options[:activeArchOnly] || false
@@ -427,7 +463,7 @@ platform :ios do
     build_configuration = options.fetch(:build_configuration, 'Debug')
     scheme = options.fetch(:scheme, 'Provenance')
 
-    puts "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
+    UI.message "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
 
     build_app(
       workspace: "Provenance.xcworkspace",
@@ -592,7 +628,7 @@ platform :ios do
     platform = options.fetch(:platform, 'tvOS,iOS')
     project_directory = options.fetch(:project_directory, './')
 
-    puts "Running Carthage command '#{command}' for platform(s) '#{platform}' in directory '#{project_directory}'"
+    UI.message "Running Carthage command '#{command}' for platform(s) '#{platform}' in directory '#{project_directory}'"
 
     carthage(
       command: command,
@@ -656,7 +692,7 @@ private_lane :publish_hockey do |options|
 
     # Alert discord?
     hockLink = lane_context[SharedValues::HOCKEY_DOWNLOAD_LINK]
-    puts "Hockeyapp download link is at #{hockLink}."
+    UI.message "Hockeyapp download link is at #{hockLink}."
 end
 
   # error block is executed when a error occurs

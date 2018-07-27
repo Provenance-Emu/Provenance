@@ -81,6 +81,15 @@ Update device list
 fastlane ios derived_data
 ```
 Clear your DerivedData
+### ios reset_checkout
+```
+fastlane ios reset_checkout
+```
+Reset build enviroment
+
+Use this lane if you're having build issues
+
+Use `git stash` first to save any changes you may want to keep.
 ### ios carthage_bootstrap
 ```
 fastlane ios carthage_bootstrap
