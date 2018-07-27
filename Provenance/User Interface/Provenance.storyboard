@@ -446,7 +446,33 @@
                     <view key="view" contentMode="scaleToFill" id="ooJ-sW-pgf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ooQ-n9-WR1">
+                                <rect key="frame" x="112.66666666666669" y="404" width="150" height="58.333333333333314"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game library empty" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DrX-UD-xpk">
+                                        <rect key="frame" x="0.0" y="0.0" width="150" height="20.333333333333332"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="StB-ig-807">
+                                        <rect key="frame" x="29.333333333333329" y="28.333333333333314" width="91" height="30"/>
+                                        <state key="normal" title="Import ROMs">
+                                            <color key="titleColor" red="0.10980392160000001" green="0.51372549020000002" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="getMoreROMs:" destination="40z-oi-2L6" eventType="touchUpInside" id="sBL-gL-9fT"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="ooQ-n9-WR1" firstAttribute="centerX" secondItem="AH0-kg-WTv" secondAttribute="centerX" id="PXi-Ly-6iC"/>
+                            <constraint firstItem="ooQ-n9-WR1" firstAttribute="centerY" secondItem="AH0-kg-WTv" secondAttribute="centerY" id="x9M-lZ-qfE"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="AH0-kg-WTv"/>
                     </view>
                     <navigationItem key="navigationItem" id="LoK-Fl-znC">
@@ -485,6 +511,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="getMoreRomsBarButtonItem" destination="6tp-vr-cci" id="S4H-KA-RPh"/>
+                        <outlet property="libraryInfoContainerView" destination="ooQ-n9-WR1" id="evK-sO-hvR"/>
+                        <outlet property="libraryInfoLabel" destination="DrX-UD-xpk" id="KxD-Px-PED"/>
                         <outlet property="searchField" destination="FMl-Ia-DzO" id="Spf-xq-3GX"/>
                         <outlet property="sortOptionBarButtonItem" destination="TUE-QR-fbw" id="mnz-yR-SpN"/>
                         <outlet property="sortOptionsTableView" destination="yd6-6I-GtS" id="YlW-da-mCM"/>

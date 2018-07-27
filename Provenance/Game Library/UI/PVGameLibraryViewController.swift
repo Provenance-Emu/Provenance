@@ -110,6 +110,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	@IBOutlet weak var sortOptionBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var conflictsBarButtonItem: UIBarButtonItem!
 
+	#if os(iOS)
+	@IBOutlet weak var libraryInfoContainerView: UIStackView!
+	@IBOutlet weak var libraryInfoLabel: UILabel!
+	#endif
+
     var sectionTitles: [String] {
         var sectionsTitles = [String]()
         if !favoritesIsHidden {
@@ -365,6 +370,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             registerForPreviewing(with: self, sourceView: collectionView)
         }
         #endif
+
+		#if os(iOS)
+		view.bringSubview(toFront: libraryInfoContainerView)
+		#endif
 
         loadGameFromShortcut()
         becomeFirstResponder()
@@ -659,6 +668,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
+
+			#if os(iOS)
+			self.libraryInfoContainerView.isHidden = (self.systems != nil && !self.systems!.isEmpty)
+			#endif
         }
 
 		savesStatesToken?.invalidate()
@@ -1055,7 +1068,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		if let barButtonItem = sender as? UIBarButtonItem {
 			actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
 			actionSheet.popoverPresentationController?.sourceView = collectionView
+		} else if let button = sender as? UIButton {
+			actionSheet.popoverPresentationController?.sourceView = collectionView
+			actionSheet.popoverPresentationController?.sourceRect = view.convert(libraryInfoContainerView.convert(button.frame, to: view), to: collectionView)
 		}
+
+		actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
+
 		present(actionSheet, animated: true, completion: nil)
 		#else // tvOS
 		if status != .reachableViaWiFi {
