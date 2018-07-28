@@ -6,11 +6,7 @@ echo "Swift version: $SWIFT_VERSION"
 
 if which rome > /dev/null; then
   echo "Downloading $PLATFORM ..."
-  carthage update --no-build && rome download --platform $PLATFORM --cache-prefix $SWIFT_VERSION
-  # cd PVSupport
-  # carthage update --no-build && rome download --platform $PLATFORM --cache-prefix $SWIFT_VERSION
-  # cd ../PVLibrary
-  # carthage update --no-build && rome download --platform $PLATFORM --cache-prefix $SWIFT_VERSION
+  carthage update --no-build --platform $PLATFORM && rome download --platform $PLATFORM --cache-prefix $SWIFT_VERSION
   echo "Done."
 else
   echo "Rome not installed. Skipping cached frameworks."
