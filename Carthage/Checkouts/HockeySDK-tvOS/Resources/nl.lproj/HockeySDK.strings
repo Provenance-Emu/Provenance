@@ -1,0 +1,95 @@
+/*
+ Localization provided by Wordcrafts
+ The Mac OS X and iOS localization experts.
+ http://www.wordcrafts.de
+ */
+
+
+/* General */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Ja";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Nee";
+
+/* For dialogs ok buttons */
+"HockeyOK" = "OK";
+
+/* Replacement for app name, if it could not be detected */
+"HockeyAppNamePlaceholder" = "Deze app";
+
+/* Crash */
+
+
+/* Crash dialog */
+
+/* Title showing in the alert box when crash report data has been found */
+"CrashDataFoundTitle" = "%@ is onverwacht gestopt";
+
+/* Description explaining that crash data has been found and ask the user if the data might be uploaded to the developers server */
+"CrashDataFoundAnonymousDescription" = "Wilt u een anoniem rapport versturen zodat we het probleem kunnen oplossen?";
+
+/* Description explaining that crash data has been found and ask the user if the non anonymous data might be uplaoded to the developers server */
+"CrashDataFoundDescription" = "Wilt u een rapport versturen zodat we het probleem kunnen oplossen?";
+
+/* Alert box button if the users wants to send crash data always automatically */
+"CrashSendReportAlways" = "Verstuur altijd";
+
+/* Alert box button to send the crash report once */
+"CrashSendReport" = "Verstuur rapport";
+
+/* Alert box button to decline sending the report */
+"CrashDontSendReport" = "Verstuur niet";
+
+/* Text showing in a processing box that the crash data is being uploaded to the server */
+"CrashReportSending" = "Versturen…";
+
+
+/* Update */
+
+
+/* Update Alert view */
+
+/* Update available */
+"UpdateAvailable" = "Update beschikbaar";
+
+"UpdateAlertTextWithAppVersion" = "%@ is beschikbaar.";
+
+"UpdateAlertMandatoryTextWithAppVersion" = "%@ is beschikbaar en is een verplichte update!";
+
+"UpdateIgnore" = "Negeer";
+
+/* Update Details */
+
+"UpdateButtonCheck" = "CONTROLEER";
+
+"UpdateVersion" = "Versie";
+
+"UpdateNoUpdateAvailableTitle" = "Geen update beschikbaar";
+
+"UpdateNoUpdateAvailableMessage" = "%@ is al de nieuwste versie.";
+
+"UpdateError" = "Fout";
+
+/* Authenticator */
+
+/* View Controller Title*/
+"HockeyAuthenticatorViewControllerTitle" = "HockeyApp";
+
+/* BITAuthenticatorAuthTypeEmail and BITAuthenticatorAuthTypeEmailAndPassword */
+"HockeyAuthenticationViewControllerDataEmailAndPasswordDescription" = "Voer het e-mailadres en wachtwoord van uw HockeyApp-account in om toegang tot deze app te verlenen.";
+"HockeyAuthenticationViewControllerDataEmailDescription" = "Voer het e-mailadres van uw HockeyApp-account in om toegang tot deze app te verlenen.";
+"HockeyAuthenticationViewControllerEmailPlaceholder" = "mail@voorbeeld.com";
+"HockeyAuthenticationViewControllerPasswordPlaceholder" = "Verplicht";
+"HockeyAuthenticationViewControllerEmailDescription" = "E-mail";
+"HockeyAuthenticationViewControllerPasswordDescription" = "Wachtwoord";
+
+/* Error presented to the user if authentication failed because of networking issues */
+"HockeyAuthenticationViewControllerNetworkError" = "Identiteitscontrole mislukt omdat uw apparaat niet is verbonden met het internet. Probeer opnieuw.";
+
+"HockeyAuthenticationFailedAuthenticate" = "Identiteitscontrole mislukt. Probeer opnieuw of neem contact op met de ontwikkelaar van deze app.";
+"HockeyAuthenticationNotMember" = "U bent niet gemachtigd om deze app te gebruiken. Neem contact op met de ontwikkelaar van deze app.";
+"HockeyAuthenticationContactDeveloper" = "Fout bij identiteitscontrole. Neem contact op met de ontwikkelaar van deze app.";
+"HockeyAuthenticationWrongEmailPassword" = "U hebt een ongeldig e-mailadres of wachtwoord ingevoerd. Controleer uw gegevens en probeer opnieuw.";
+"HockeyAuthenticationAuthSecretMissing" = "Het 'Authorization secret' van HockeySDK is nog niet ingesteld. Neem contact op met de ontwikkelaar van deze app.";

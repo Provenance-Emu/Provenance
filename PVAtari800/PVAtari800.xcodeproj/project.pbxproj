@@ -65,6 +65,7 @@
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7861D6AB45B002EE3ED /* PVSupport.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
+		B38526A82108264D00434945 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A72108264D00434945 /* PVSupport.framework */; };
 		B3D73CF31E9EAF1C0023925B /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 0269540F143177DF003A07D4 /* rtime.c */; };
 		B3D73CF41E9EAF1C0023925B /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 02695425143179E9003A07D4 /* ide.c */; };
 		B3D73CF51E9EAF1C0023925B /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 94DEA00F171918A200073397 /* crc32.c */; };
@@ -120,7 +121,6 @@
 		B3D73D2D1E9EAF1C0023925B /* Real.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E468198C11A10075135C /* Real.act */; };
 		B3D73D2E1E9EAF1C0023925B /* gray.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E466198C11A10075135C /* gray.act */; };
 		B3D73D2F1E9EAF1C0023925B /* XFormer.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E469198C11A10075135C /* XFormer.act */; };
-		B3D73D391E9EAF820023925B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D73D381E9EAF820023925B /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -243,6 +243,7 @@
 		B36DE7841D6AB44D002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B36DE7861D6AB45B002EE3ED /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B36DE7991D6AD049002EE3ED /* libedit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libedit.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libedit.tbd; sourceTree = DEVELOPER_DIR; };
+		B38526A72108264D00434945 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D73D331E9EAF1C0023925B /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D73D381E9EAF820023925B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -263,7 +264,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D73D391E9EAF820023925B /* PVSupport.framework in Frameworks */,
+				B38526A82108264D00434945 /* PVSupport.framework in Frameworks */,
 				B3D73D211E9EAF1C0023925B /* libedit.tbd in Frameworks */,
 				B3D73D231E9EAF1C0023925B /* Foundation.framework in Frameworks */,
 				B3D73D241E9EAF1C0023925B /* libz.tbd in Frameworks */,
@@ -296,6 +297,7 @@
 		02695363143169EB003A07D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B38526A72108264D00434945 /* PVSupport.framework */,
 				B3D73D381E9EAF820023925B /* PVSupport.framework */,
 				B36DE7991D6AD049002EE3ED /* libedit.tbd */,
 				B36DE7861D6AB45B002EE3ED /* PVSupport.framework */,
@@ -503,9 +505,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B36DE74D1D6AB19C002EE3ED /* Build configuration list for PBXNativeTarget "PVAtari800" */;
 			buildPhases = (
+				B36DE7451D6AB19C002EE3ED /* Headers */,
 				B36DE7431D6AB19C002EE3ED /* Sources */,
 				B36DE7441D6AB19C002EE3ED /* Frameworks */,
-				B36DE7451D6AB19C002EE3ED /* Headers */,
 				B36DE7461D6AB19C002EE3ED /* Resources */,
 			);
 			buildRules = (
@@ -521,9 +523,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3D73D301E9EAF1C0023925B /* Build configuration list for PBXNativeTarget "PVAtari800 tvOS" */;
 			buildPhases = (
+				B3D73D251E9EAF1C0023925B /* Headers */,
 				B3D73CF21E9EAF1C0023925B /* Sources */,
 				B3D73D201E9EAF1C0023925B /* Frameworks */,
-				B3D73D251E9EAF1C0023925B /* Headers */,
 				B3D73D2A1E9EAF1C0023925B /* Resources */,
 			);
 			buildRules = (
@@ -835,7 +837,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVAtari800/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -874,7 +876,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVAtari800/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -928,7 +930,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -969,7 +971,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

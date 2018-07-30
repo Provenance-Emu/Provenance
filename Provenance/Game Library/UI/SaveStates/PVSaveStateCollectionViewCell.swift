@@ -7,6 +7,10 @@
 //
 
 import UIKit
+import PVLibrary
+import PVSupport
+
+private let LabelHeight: CGFloat = 20.0
 
 class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
@@ -27,6 +31,13 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var titleLabel: UILabel!
 	@IBOutlet weak var timeStampLabel: UILabel!
     @IBOutlet weak var coreLabel: UILabel!
+    @IBOutlet weak var labelContainer: UIView!
+
+#if os(tvOS)
+	override var canBecomeFocused: Bool {
+		return true
+	}
+#endif
 
 	weak var saveState: PVSaveState? {
 		didSet {
@@ -47,12 +58,26 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 				titleLabel.text = saveState.game.title
 				timeStampLabel.text = timeText
+//#if os(tvOS)
+//                coreLabel.text = coreOrSystem
+//#else
                 coreLabel.text = system?.shortName
+//#endif
 			}
 
 			setNeedsLayout()
 			layoutIfNeeded()
 		}
+	}
+
+	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
+		let size : CGSize
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+		} else {
+			size = CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
+		}
+		return size
 	}
 
 	override func prepareForReuse() {
@@ -61,8 +86,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		imageView.image = nil
 		titleLabel.text = nil
 #if os(tvOS)
-//		self.label.alpha = 0
-		self.titleLabel.transform = .identity
+        self.labelContainer.transform = .identity
 #endif
 	}
 
@@ -79,31 +103,16 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 #if os(tvOS)
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 		super.didUpdateFocus(in: context, with: coordinator)
-
+        self.imageView.layer.borderWidth = 0.0
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
-				let yTrasform = self.titleLabel.bounds.height * -0.25
-				var transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-				transform = transform.translatedBy(x: 0, y: yTrasform * 2.0)
-//				self.label.alpha = 1
-				self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform + 1)
-//				self.secondLabel.alpha = 1
-				self.timeStampLabel.transform = transform
-
+                let yOffset = self.imageView.frame.maxY - self.labelContainer.frame.minY + 48
+				let labelTransform = CGAffineTransform(scaleX: 1.2, y: 1.2).translatedBy(x: 0, y: yOffset)
+                self.labelContainer.transform = labelTransform
+                self.sizeToFit()
 				self.superview?.bringSubview(toFront: self)
-
-				let labelBGColor = UIColor.black.withAlphaComponent(0.8)
-				self.titleLabel.backgroundColor = labelBGColor
-				self.timeStampLabel.backgroundColor = labelBGColor
 			} else {
-//				self.label.alpha = 0
-				self.titleLabel.transform = .identity
-//				self.secondLabel.alpha = 0
-				self.timeStampLabel.transform = .identity
-
-				let labelBGColor = UIColor.clear
-				self.titleLabel.backgroundColor = labelBGColor
-				self.timeStampLabel.backgroundColor = labelBGColor
+                self.labelContainer.transform = .identity
 			}
 		}) {() -> Void in }
 	}

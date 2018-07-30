@@ -104,12 +104,12 @@ public enum SubtleVolumeError: Error {
     }
   }
 
-  open var delegate: SubtleVolumeDelegate?
+  open weak var delegate: SubtleVolumeDelegate?
 
   fileprivate let volume = MPVolumeView(frame: CGRect.zero)
   fileprivate let overlay = UIView()
   public fileprivate(set) var volumeLevel = Double(0)
-  open static let DefaultVolumeStep: Double = 0.05
+  public static let DefaultVolumeStep: Double = 0.05
 
   private var audioSessionOutputVolumeObserver: Any?
 

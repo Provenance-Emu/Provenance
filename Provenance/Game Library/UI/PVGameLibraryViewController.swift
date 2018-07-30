@@ -14,8 +14,10 @@ import SafariServices
 import GameController
 import QuartzCore
 import UIKit
-// import RealmSwift
+import RealmSwift
 import CoreSpotlight
+import PVLibrary
+import PVSupport
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -106,6 +108,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 	@IBOutlet weak var getMoreRomsBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var sortOptionBarButtonItem: UIBarButtonItem!
+	@IBOutlet weak var conflictsBarButtonItem: UIBarButtonItem!
+
+	#if os(iOS)
+	@IBOutlet weak var libraryInfoContainerView: UIStackView!
+	@IBOutlet weak var libraryInfoLabel: UILabel!
+	#endif
 
     var sectionTitles: [String] {
         var sectionsTitles = [String]()
@@ -132,9 +140,53 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var isInitialAppearance = false
     var mustRefreshDataSource = false
 
-    var needToShowConflictsAlert = false
+	var needToShowConflictsAlert = false {
+		didSet {
+			updateConflictsButton()
+		}
+	}
+
+	func updateConflictsButton() {
+		guard let gameImporter = gameImporter else {
+			return
+		}
+
+		#if os(tvOS)
+		let enabled = !(gameImporter.conflictedFiles?.isEmpty ?? true)
+		var items = [sortOptionBarButtonItem!, getMoreRomsBarButtonItem!]
+		if enabled, let conflictsBarButtonItem = conflictsBarButtonItem {
+			items.append(conflictsBarButtonItem)
+		}
+		self.navigationItem.leftBarButtonItems = items
+		#endif
+	}
 
     @IBOutlet var sortOptionsTableView: UITableView!
+	lazy var sortOptionsTableViewController: UIViewController = {
+		let optionsTableView = sortOptionsTableView
+		let avc = UIViewController()
+		avc.view = optionsTableView
+
+		#if os(iOS)
+		avc.modalPresentationStyle = .popover
+		//        avc.popoverPresentationController?.delegate = self
+		avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
+		avc.popoverPresentationController?.sourceView = collectionView
+		avc.preferredContentSize = CGSize(width: 300, height: 500)
+		avc.title = "Library Options"
+		#else
+		//		providesPresentationContextTransitionStyle = true
+		//		definesPresentationContext = true
+		if #available(tvOS 11.0, *) {
+			avc.modalPresentationStyle = .blurOverFullScreen
+		} else {
+			avc.modalPresentationStyle = .currentContext
+		}
+		avc.modalTransitionStyle = .coverVertical
+		#endif
+		return avc
+	}()
+
     var currentSort: SortOptions = .title {
         didSet {
 			if currentSort != oldValue {
@@ -156,7 +208,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 		do {
 			try RomDatabase.initDefaultDatabase()
-			initSystemPlists()
 			UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
 		} catch {
 			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription, preferredStyle: .alert)
@@ -166,25 +217,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}))
 			self.present(alert, animated: true, completion: nil)
 		}
-    }
-
-    func initSystemPlists() {
-
-        // Scane all subclasses of  PVEmulator core, and get their metadata
-        // like their subclass name and the bundle the belong to
-        let coreClasses = PVEmulatorConfiguration.coreClasses
-		#if swift(>=4.1)
-		let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
-			return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-		}
-		#else
-        let corePlists = coreClasses.flatMap { (classInfo) -> URL? in
-            return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-        }
-		#endif
-
-        PVEmulatorConfiguration.updateSystems(fromPlists: [Bundle.main.url(forResource: "Systems", withExtension: "plist")!])
-        PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
     #if os(iOS)
@@ -241,15 +273,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#if os(iOS)
 		if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
 
-			// Hide the pre iOS 11 search bar
+			// Hide the pre-iOS 11 search bar
 			searchField?.removeFromSuperview()
 			navigationItem.titleView = nil
 
 			// Navigation bar large titles
 			navigationController?.navigationBar.prefersLargeTitles = false
-			//navigationItem.title = "Library"
+			navigationItem.title = nil
 
-			// Create a search contorller
+			// Create a search controller
 			let searchController = UISearchController(searchResultsController: nil)
 			searchController.searchBar.placeholder = "Search"
 			searchController.searchResultsUpdater = self
@@ -265,7 +297,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#endif
 
         //load the config file
-        //title = "Library"
+        title = nil
 
         let layout = PVGameLibraryCollectionFlowLayout()
 		layout.scrollDirection = .vertical
@@ -285,6 +317,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#if os(tvOS)
 		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 		collectionView.remembersLastFocusedIndexPath = false
+		collectionView.clipsToBounds = false
 		#else
 		collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
 		searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
@@ -313,24 +346,24 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		} else {
 			collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-
-        // Adjust collection view layout for iPhone X Safe areas
+		// Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
-        if #available(tvOS 11.0, iOS 11.0, *) {
+        #if os(iOS)
+        if #available(iOS 11.0, *) {
             collectionView.translatesAutoresizingMaskIntoConstraints = false
             let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
                 collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
                 collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
                 collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-                collectionView.bottomAnchor.constraintEqualToSystemSpacingBelow(guide.bottomAnchor, multiplier: 1.0)
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
                 ])
             layout.sectionInsetReference = .fromSafeArea
         } else {
-            layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
+            layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         }
-
+        #endif
         // Force touch
         #if os(iOS)
         if #available(iOS 9.0, *) {
@@ -338,10 +371,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
         #endif
 
+		#if os(iOS)
+		view.bringSubview(toFront: libraryInfoContainerView)
+		#endif
+
         loadGameFromShortcut()
         becomeFirstResponder()
     }
-
     var systems: Results<PVSystem>?
 	var saveStates: Results<PVSaveState>?
     var favoriteGames: Results<PVGame>?
@@ -384,6 +420,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return (favoritesIsHidden ? 0 : 1) + (saveStatesIsHidden ? 0 : 1)
         }
     }
+
+	#if os(tvOS)
+	var focusedGame : PVGame?
+	#endif
 
 	#if os(iOS)
 	@objc
@@ -451,10 +491,16 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			self.sortOrder = sortOrder
 			self.gameLibraryGameController = gameLibraryViewController
 			self.storedQuery = generateQuery()
-			self.notificationToken = generateToken()
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+				self.notificationToken = self.generateToken()
+			}
 		}
 
-		var notificationToken : NotificationToken?
+		var notificationToken : NotificationToken? {
+			didSet {
+				oldValue?.invalidate()
+			}
+		}
 
 		private var storedQuery : Results<PVGame>?
 		var query : Results<PVGame> {
@@ -502,12 +548,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					//                    collectionView.insertSections(indexSet)
 					//                }
 					// Query results have changed, so apply them to the UICollectionView
-					guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
-						WLOG("Index of system changed.")
-						return
-					}
-					let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
-					self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+						guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
+							WLOG("Index of system changed.")
+							return
+						}
+						let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
+						self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+					})
 				case .update(_, let deletions, let insertions, let modifications):
 					if self.gameLibraryGameController.isInSearch {
 						return
@@ -551,11 +599,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func addSectionToken(forSystem system: PVSystem) {
 		let newSystemSection = SystemSection(system: system, gameLibraryViewController: self, sortOrder: currentSort)
+		if let existingToken = systemSectionsTokens[newSystemSection.id] {
+			existingToken.notificationToken?.invalidate()
+		}
 		systemSectionsTokens[newSystemSection.id] = newSystemSection
     }
 
     func initRealmResultsStorage() {
-        systems = PVSystem.all.filter("games.@count > 0").sorted(byKeyPath: #keyPath(PVSystem.identifier))
+		guard RomDatabase.databaseInitilized else {
+			return
+		}
+
+		systems = PVSystem.all.filter("games.@count > 0").sorted(byKeyPath: #keyPath(PVSystem.identifier))
 		saveStates = PVSaveState.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
@@ -569,7 +624,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     func registerForChange() {
+		systemsToken?.invalidate()
         systemsToken = systems!.observe { [unowned self] (changes: RealmCollectionChange) in
+//			guard self.presentedViewController == nil && self.isViewLoaded else {
+//				self.mustRefreshDataSource = true
+//				return
+//			}
+
             switch changes {
             case .initial(let result):
                 result.forEach { system in
@@ -578,7 +639,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 // Results are now populated and can be accessed without blocking the UI
                 self.setUpGameLibrary()
-            case .update(_, let deletions, let insertions, _):
+            case .update(let systems, let deletions, let insertions, _):
 				if self.isInSearch {
 					return
 				}
@@ -590,19 +651,36 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                     let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
                     collectionView.deleteSections(IndexSet(delectIndexes))
+
+					deletions.forEach {
+						guard let systems = self.systems else {
+							return
+						}
+						let identifier = systems[$0].identifier
+						self.systemSectionsTokens.removeValue(forKey: identifier)
+					}
                     // Not needed since we have watchers per section
                     // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
-
                 }, completion: { (success) in
-
+					systems.filter({self.systemSectionsTokens[$0.identifier] == nil}).forEach { self.addSectionToken(forSystem: $0) }
                 })
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
+
+			#if os(iOS)
+			self.libraryInfoContainerView.isHidden = (self.systems != nil && !self.systems!.isEmpty)
+			#endif
         }
 
+		savesStatesToken?.invalidate()
 		savesStatesToken = saveStates!.observe { [unowned self] (changes: RealmCollectionChange) in
+			guard self.presentedViewController == nil && self.isViewLoaded else {
+				self.mustRefreshDataSource = true
+				return
+			}
+
 			switch changes {
 			case .initial(let result):
 				if !result.isEmpty {
@@ -653,7 +731,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 		}
 
+		recentGamesToken?.invalidate()
         recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
+			guard self.presentedViewController == nil && self.isViewLoaded else {
+				self.mustRefreshDataSource = true
+				return
+			}
+
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -696,7 +780,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
 
+		favoritesToken?.invalidate()
         favoritesToken = favoriteGames!.observe { [unowned self] (changes: RealmCollectionChange) in
+			guard self.presentedViewController == nil && self.isViewLoaded else {
+				self.mustRefreshDataSource = true
+				return
+			}
+
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -776,9 +866,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func loadGameFromShortcut() {
         let appDelegate = UIApplication.shared.delegate as! PVAppDelegate
 
-        if let shortcutMD5 = appDelegate.shortcutItemMD5 {
-            loadGame(fromMD5: shortcutMD5)
-            appDelegate.shortcutItemMD5 = nil
+        if let shortcutItemGame = appDelegate.shortcutItemGame {
+			load(shortcutItemGame, sender: collectionView, core:nil)
+            appDelegate.shortcutItemGame = nil
         }
     }
 
@@ -790,12 +880,20 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             (self.collectionView?.deselectItem(at: indexPath, animated: true))!
         })
 
+		guard RomDatabase.databaseInitilized else {
+			return
+		}
+
         if (self.mustRefreshDataSource) {
             fetchGames()
             collectionView?.reloadData()
         }
 
         registerForChange()
+
+		if isViewLoaded {
+			updateConflictsButton()
+		}
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -814,6 +912,19 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             cell?.updateFocusIfNeeded()
 #endif
         }
+
+		guard RomDatabase.databaseInitilized else {
+			return
+		}
+
+		if (self.mustRefreshDataSource) {
+			fetchGames()
+			collectionView?.reloadData()
+		}
+
+		if isViewLoaded {
+			updateConflictsButton()
+		}
     }
 
 	var transitioningToSize: CGSize?
@@ -882,29 +993,36 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 #endif
 
+	@IBAction func conflictsButtonTapped(_ sender : Any) {
+		displayConflictVC()
+	}
+
     @IBAction func sortButtonTapped(_ sender: Any) {
-        let optionsTableView = sortOptionsTableView
-        let avc = UIViewController()
-        avc.view = optionsTableView
         #if os(iOS)
-        avc.modalPresentationStyle = .popover
-//        avc.popoverPresentationController?.delegate = self
-        avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
-		avc.popoverPresentationController?.sourceView = collectionView
-		avc.preferredContentSize = CGSize(width: 300, height: 500)
-		#else
-//		providesPresentationContextTransitionStyle = true
-//		definesPresentationContext = true
-		if #available(tvOS 11.0, *) {
-			avc.modalPresentationStyle = .blurOverFullScreen
+		// Add done button to iPhone
+		// iPad is a popover do no done button needed
+		if traitCollection.horizontalSizeClass == .compact {
+			let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
+			sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
+			sortOptionsTableView.reloadData()
+			present(navController, animated: true, completion: nil)
+			return
 		} else {
-			avc.modalPresentationStyle = .currentContext
+			sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
+			sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
+			sortOptionsTableView.reloadData()
+			present(sortOptionsTableViewController, animated: true, completion: nil)
 		}
-		avc.modalTransitionStyle = .coverVertical
-        #endif
+		#else
 		sortOptionsTableView.reloadData()
-        present(avc, animated: true, completion: nil)
+		present(sortOptionsTableViewController, animated: true, completion: nil)
+        #endif
     }
+
+	@objc func dismissVC() {
+		dismiss(animated: true, completion: nil)
+	}
+
     // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
         let reachability = Reachability.forLocalWiFi()
@@ -917,11 +1035,19 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 
 		actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { (alert) in
-			let extensions = [UTI.rom, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
+			let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
 
 			//        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
 			//        documentMenu.delegate = self
 			//        present(documentMenu, animated: true, completion: nil)
+			if #available(iOS 11.0, *) {
+				// iOS 8 need iCloud entitlements, check
+			} else {
+				if FileManager.default.ubiquityIdentityToken == nil {
+					self.presentMessage("Your version reqires iCloud entitlements to use this feature. Please rebuild with iCloud entitlements enabled.", title: "iCloud Error")
+					return
+				}
+			}
 
 			let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
 			if #available(iOS 11.0, *) {
@@ -942,7 +1068,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		if let barButtonItem = sender as? UIBarButtonItem {
 			actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
 			actionSheet.popoverPresentationController?.sourceView = collectionView
+		} else if let button = sender as? UIButton {
+			actionSheet.popoverPresentationController?.sourceView = collectionView
+			actionSheet.popoverPresentationController?.sourceRect = view.convert(libraryInfoContainerView.convert(button.frame, to: view), to: collectionView)
 		}
+
+		actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
+
 		present(actionSheet, animated: true, completion: nil)
 		#else // tvOS
 		if status != .reachableViaWiFi {
@@ -1056,9 +1188,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: {[unowned self] (_ action: UIAlertAction) -> Void in
                 self.needToShowConflictsAlert = false
-                let conflictViewController = PVConflictViewController(gameImporter: self.gameImporter!)
-                let navController = UINavigationController(rootViewController: conflictViewController)
-                self.present(navController, animated: true) {() -> Void in }
+				self.displayConflictVC()
             }))
 
             alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: {[unowned self] (_ action: UIAlertAction) -> Void in self.needToShowConflictsAlert = false }))
@@ -1067,6 +1197,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             ILOG("Encountered conflicts, should be showing message")
         }
     }
+
+	fileprivate func displayConflictVC() {
+		let conflictViewController = PVConflictViewController(gameImporter: self.gameImporter!)
+		let navController = UINavigationController(rootViewController: conflictViewController)
+		self.present(navController, animated: true) {() -> Void in }
+	}
 
     func setUpGameLibrary() {
         fetchGames()
@@ -1147,10 +1283,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	func setupGameImporter() {
 		gameImporter = PVGameImporter.shared
 		gameImporter.completionHandler = {[unowned self] (_ encounteredConflicts: Bool) -> Void in
+			self.updateConflictsButton()
 			if encounteredConflicts {
 				self.needToShowConflictsAlert = true
 				self.showConflictsAlert()
-
 			}
 		}
 
@@ -1178,6 +1314,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		gameImporter.initialized.notify(queue: DispatchQueue.global(qos: .background)) {
 			self.initialROMScan()
 		}
+
+		updateConflictsButton()
 	}
 
 	private func initialROMScan() {
@@ -1197,6 +1335,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		// Scan each Core direxctory and looks for ROMs in them
 		let allSystems = PVSystem.all
 
+		let importOperation = BlockOperation()
+
 		allSystems.forEach { system in
 			let systemDir = system.romsDirectory
 			//URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
@@ -1215,21 +1355,28 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 
 			let systemRef = ThreadSafeReference(to: system)
-
-			gameImporter.serialImportQueue.addOperation {
+			importOperation.addExecutionBlock {
 				let realm = try! Realm()
 				guard let system = realm.resolve(systemRef) else {
 					return // person was deleted
 				}
 
 				self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: system)
-				if let completionHandler = self.gameImporter.completionHandler {
-					DispatchQueue.main.async {
-						completionHandler(self.gameImporter.encounteredConflicts)
-					}
+			}
+		}
+
+		let completionOperation = BlockOperation {
+			if let completionHandler = self.gameImporter.completionHandler {
+				DispatchQueue.main.async {
+					self.updateConflictsButton()
+					completionHandler(self.gameImporter.encounteredConflicts)
 				}
 			}
 		}
+
+		completionOperation.addDependency(importOperation)
+		gameImporter.serialImportQueue.addOperation(importOperation)
+		gameImporter.serialImportQueue.addOperation(completionOperation)
 	}
 
     func fetchGames() {
@@ -1496,7 +1643,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.moreInfo(for: game)
             }))
 
-            actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            var favoriteTitle = "Favorite"
+            if game.isFavorite {
+                favoriteTitle = "Unfavorite"
+            }
+            actionSheet.addAction(UIAlertAction(title: favoriteTitle, style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.toggleFavorite(for: game)
             }))
 
@@ -1505,17 +1656,21 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }))
 #if os(iOS)
 
-    #if DEBUG
             actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 let md5URL = "provenance://open?md5=\(game.md5Hash)"
                 UIPasteboard.general.string = md5URL
+				let alert = UIAlertController(title: nil, message: "URL copied to clipboard", preferredStyle: .alert)
+				self.present(alert, animated: true)
+				DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+					alert.dismiss(animated: true, completion: nil)
+				})
             }))
-    #endif
-            actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+
+			actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.chooseCustomArtwork(for: game)
             }))
 
-            actionSheet.addAction(UIAlertAction(title: "Paste Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            actionSheet.addAction(UIAlertAction(title: "Paste Cover", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.pasteCustomArtwork(for: game)
             }))
 
@@ -1546,9 +1701,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}))
 			}
 
-			// conditinally show Restore Original Artwork
+			// conditionally show Restore Original Artwork
             if !game.originalArtworkURL.isEmpty, !game.customArtworkURL.isEmpty, game.originalArtworkURL != game.customArtworkURL {
-                actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                actionSheet.addAction(UIAlertAction(title: "Restore Cover", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 
                     try! RomDatabase.sharedInstance.writeTransaction {
@@ -1860,43 +2015,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
 #endif
-// MARK: - Keyboard actions
-    public override var keyCommands: [UIKeyCommand]? {
-        if #available(iOS 9.0, *) {
-            var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
-
-            for (i, title) in sectionTitles.enumerated() {
-                let input = "\(i)"
-                // Simulator Command + number has shorcuts already
-                #if TARGET_OS_SIMULATOR
-                    let flags: UIKeyModifierFlags = [.control, .command]
-                #else
-                    let flags: UIKeyModifierFlags = .command
-                #endif
-                let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
-                sectionCommands.append(command)
-            }
-            let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command, .alternate], action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find…")
-            sectionCommands.append(findCommand)
-            return sectionCommands
-        } else {
-            return nil
-        }
-    }
-
-    @objc func selectSearch(_ sender: UIKeyCommand) {
-        searchField?.becomeFirstResponder()
-    }
-
-    @objc func selectSection(_ sender: UIKeyCommand) {
-        if let input = sender.input, let section = Int(input) {
-            collectionView?.scrollToItem(at: IndexPath(item: 0, section: section), at: .top, animated: true)
-        }
-    }
-
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
 }
 
 // MARK: Database Migration
@@ -2081,13 +2199,15 @@ extension PVGameLibraryViewController: UISearchResultsUpdating {
 }
 
 class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
-    override init() {
-        super.init()
-        #if os(iOS)
-        if #available(iOS 9.0, *) {
-            self.sectionHeadersPinToVisibleBounds = true
-        }
-        #endif
+	override init() {
+		super.init()
+		#if os(iOS)
+		if #available(iOS 9.0, *) {
+			self.sectionHeadersPinToVisibleBounds = true
+		}
+		#elseif os(tvOS)
+		self.sectionHeadersPinToVisibleBounds = true
+		#endif
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -2194,6 +2314,141 @@ extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
 	}
 }
 
+// Keyboard shortcuts
+extension PVGameLibraryViewController {
+	// MARK: - Keyboard actions
+	public override var keyCommands: [UIKeyCommand]? {
+		var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
+
+		for (i, title) in sectionTitles.enumerated() {
+			let input = "\(i)"
+			// Simulator Command + number has shorcuts already
+			#if TARGET_OS_SIMULATOR
+			let flags: UIKeyModifierFlags = [.control, .command]
+			#else
+			let flags: UIKeyModifierFlags = .command
+			#endif
+			let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
+			sectionCommands.append(command)
+		}
+
+		#if os(tvOS)
+		if focusedGame != nil {
+			let toggleFavoriteCommand = UIKeyCommand(input: "=", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.toggleFavoriteCommand), discoverabilityTitle: "Toggle Favorite")
+			sectionCommands.append(toggleFavoriteCommand)
+
+			let showMoreInfo = UIKeyCommand(input: "i", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.showMoreInfoCommand), discoverabilityTitle: "More info ...")
+			sectionCommands.append(showMoreInfo)
+
+			let renameCommand = UIKeyCommand(input: "r", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.renameCommand), discoverabilityTitle: "Rename ...")
+			sectionCommands.append(renameCommand)
+
+			let deleteCommand = UIKeyCommand(input: "x", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.deleteCommand), discoverabilityTitle: "Delete ...")
+			sectionCommands.append(deleteCommand)
+
+			let sortCommand = UIKeyCommand(input: "s", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+			sectionCommands.append(sortCommand)
+		}
+		#elseif os(iOS)
+		let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find …")
+		sectionCommands.append(findCommand)
+
+		let sortCommand = UIKeyCommand(input: "s", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+		sectionCommands.append(sortCommand)
+
+		let settingsCommand = UIKeyCommand(input: ",", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.settingsCommand), discoverabilityTitle: "Settings")
+		sectionCommands.append(settingsCommand)
+
+		#endif
+
+		return sectionCommands
+	}
+
+	@objc func selectSearch(_ sender: UIKeyCommand) {
+		searchField?.becomeFirstResponder()
+	}
+
+	@objc func selectSection(_ sender: UIKeyCommand) {
+		if let input = sender.input, let section = Int(input) {
+			collectionView?.scrollToItem(at: IndexPath(item: 0, section: section), at: .top, animated: true)
+		}
+	}
+
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
+	@objc
+	func showMoreInfoCommand() {
+		guard let focusedGame = focusedGame else {
+			return
+		}
+		moreInfo(for: focusedGame)
+	}
+
+	#if os(iOS)
+	@objc
+	func settingsCommand() {
+		performSegue(withIdentifier: "SettingsSegue", sender: self)
+	}
+	#endif
+
+	@objc
+	func toggleFavoriteCommand() {
+		guard let focusedGame = focusedGame else {
+			return
+		}
+		toggleFavorite(for: focusedGame)
+	}
+
+	@objc
+	func renameCommand() {
+		guard let focusedGame = focusedGame else {
+			return
+		}
+		renameGame(focusedGame)
+	}
+
+	@objc
+	func deleteCommand() {
+		guard let focusedGame = focusedGame else {
+			return
+		}
+		promptToDeleteGame(focusedGame)
+	}
+
+	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+
+		focusedGame = nil
+
+		if let focusedIndexPath = context.nextFocusedIndexPath {
+			let section = focusedIndexPath.section
+			let row = focusedIndexPath.row
+
+			if section == favoritesSection {
+				guard let favoriteGames = favoriteGames else {
+					return
+				}
+				if row < favoriteGames.count {
+					focusedGame = favoriteGames[row]
+				}
+			} else if section == recentGamesSection {
+				return
+			} else if section == saveStateSection {
+				return
+			} else {
+				let sI = section - systemsSectionOffset
+				if sI < 0 {
+					return
+				}
+
+				if let systems = systems, sI < systems.count, let query = systemSectionsTokens[systems[sI].identifier]?.query, row < query.count {
+					focusedGame = query[row]
+				}
+			}
+		}
+	}
+}
+
 #if os(iOS)
 extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 
@@ -2201,20 +2456,20 @@ extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 #endif
 
 extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
-	func promptToDeleteGame(_ game: PVGame, completion: @escaping ((Bool) -> Void)) {
+	func promptToDeleteGame(_ game: PVGame, completion: ((Bool) -> Void)? = nil) {
 		let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
 		alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
 			// Delete from Realm
 			do {
 				try self.delete(game: game)
-				completion(true)
+				completion?(true)
 			} catch {
-				completion(false)
+				completion?(false)
 				self.presentError(error.localizedDescription)
 			}
 		}))
 		alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-			completion(false)
+			completion?(false)
 		}))
 		self.present(alert, animated: true) {() -> Void in }
 	}

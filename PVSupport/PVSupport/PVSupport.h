@@ -6,11 +6,10 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
-#include <libkern/OSAtomic.h>
-#include <string.h>
+#import <libkern/OSAtomic.h>
+#import <string.h>
 
 
 //! Project version number for PVSupport Framework.

@@ -1502,9 +1502,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive" */;
 			buildPhases = (
+				B37937A91D6BCF8100EBAE81 /* Headers */,
 				B37937A71D6BCF8100EBAE81 /* Sources */,
 				B37937A81D6BCF8100EBAE81 /* Frameworks */,
-				B37937A91D6BCF8100EBAE81 /* Headers */,
 				B37937AA1D6BCF8100EBAE81 /* Resources */,
 			);
 			buildRules = (
@@ -1520,9 +1520,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive tvOS" */;
 			buildPhases = (
+				B3A3E9CC1D6BFF6F00CCD7C8 /* Headers */,
 				B3A3E9861D6BFF6F00CCD7C8 /* Sources */,
 				B3A3E9C81D6BFF6F00CCD7C8 /* Frameworks */,
-				B3A3E9CC1D6BFF6F00CCD7C8 /* Headers */,
 				B3A3E9D01D6BFF6F00CCD7C8 /* Resources */,
 			);
 			buildRules = (
@@ -1885,7 +1885,7 @@
 				);
 				INFOPLIST_FILE = PicoDrive/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1950,7 +1950,7 @@
 				);
 				INFOPLIST_FILE = PicoDrive/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2048,7 +2048,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2113,7 +2113,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

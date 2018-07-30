@@ -8,7 +8,9 @@
 
 import MobileCoreServices
 import CoreSpotlight
-// import RealmSwift
+import RealmSwift
+import PVSupport
+import PVLibrary
 
 public enum SpotlightError: Error {
     case appGroupsNotSupported
@@ -16,7 +18,7 @@ public enum SpotlightError: Error {
     case notFound
 }
 
-public class IndexRequestHandler: CSIndexExtensionRequestHandler {
+public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
 
     public override init() {
         super.init()

@@ -9,44 +9,44 @@
 import UIKit
 
 //@IBDesignable
-open class PillPageControl: UIView {
+final class PillPageControl: UIView {
 
     // MARK: - PageControl
 	// TODO: Fixme when true, not refreshing on rotation
 	var hideOnSinglePage : Bool = true
 
-    @IBInspectable open var pageCount: Int = 0 {
+    @IBInspectable public var pageCount: Int = 0 {
         didSet {
             updateNumberOfPages(pageCount)
         }
     }
-    @IBInspectable open var progress: CGFloat = 0 {
+    @IBInspectable public var progress: CGFloat = 0 {
         didSet {
             layoutActivePageIndicator(progress)
         }
     }
-    open var currentPage: Int {
+    public var currentPage: Int {
         return Int(round(progress))
     }
 
     // MARK: - Appearance
 
-    @IBInspectable open var pillSize: CGSize = CGSize(width: 20, height: 2.5) {
+    @IBInspectable public var pillSize: CGSize = CGSize(width: 20, height: 2.5) {
         didSet {
 
         }
     }
-    @IBInspectable open var activeTint: UIColor = UIColor.white {
+    @IBInspectable public var activeTint: UIColor = UIColor.white {
         didSet {
             activeLayer.backgroundColor = activeTint.cgColor
         }
     }
-    @IBInspectable open var inactiveTint: UIColor = UIColor(white: 1, alpha: 0.3) {
+    @IBInspectable public var inactiveTint: UIColor = UIColor(white: 1, alpha: 0.3) {
         didSet {
             inactiveLayers.forEach { $0.backgroundColor = inactiveTint.cgColor }
         }
     }
-    @IBInspectable open var indicatorPadding: CGFloat = 7 {
+    @IBInspectable public var indicatorPadding: CGFloat = 7 {
         didSet {
             layoutInactivePageIndicators(inactiveLayers)
         }
@@ -108,11 +108,11 @@ open class PillPageControl: UIView {
         }
     }
 
-    override open var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         return sizeThatFits(CGSize.zero)
     }
 
-    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+    override public func sizeThatFits(_ size: CGSize) -> CGSize {
         return CGSize(width: CGFloat(inactiveLayers.count) * pillSize.width + CGFloat(inactiveLayers.count - 1) * indicatorPadding,
                       height: pillSize.height)
     }

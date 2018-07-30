@@ -7,7 +7,10 @@
 //
 
 import UIKit
-// import RealmSwift
+import RealmSwift
+import PVLibrary
+import PVSupport
+
 #if os(iOS)
 import SafariServices
 import AssetsLibrary
@@ -21,6 +24,16 @@ import AssetsLibrary
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
+#if os(iOS)
+extension UIImageView {
+	public override var ignoresInvertColors: Bool {
+		get {
+			return true
+		} set {
+		}
+	}
+}
+#endif
 
 // Special label that renders Countries as flag emojis when available
 class RegionLabel: LongPressLabel {
@@ -234,6 +247,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet weak var artworkImageView: UIImageView!
 
     @IBOutlet weak var nameLabel: LongPressLabel!
+	@IBOutlet weak var filenameLabel: UILabel!
     @IBOutlet weak var systemLabel: UILabel!
     @IBOutlet weak var developerLabel: LongPressLabel!
     @IBOutlet weak var publishDateLabel: LongPressLabel!
@@ -273,6 +287,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #if os(iOS)
 		// Ignore Smart Invert
 		artworkImageView.ignoresInvertColors = true
+
+		if #available(iOS 9.0, *) {
+
+		} else {
+			// Fix iOS 8 colors
+			descriptionTextView.textColor = Theme.currentTheme.settingsCellText
+		}
         #endif
     }
 
@@ -327,6 +348,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #endif
 
         nameLabel.text = game?.title ?? ""
+		filenameLabel.text = game?.file.fileName ?? ""
         systemLabel.text = game?.system.name ?? ""
         developerLabel.text = game?.developer  ?? ""
         publishDateLabel.text = game?.publishDate  ?? ""
@@ -335,7 +357,8 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
         var descriptionText = game?.gameDescription  ?? ""
         #if DEBUG
-            descriptionText = [game?.debugDescription ?? "", descriptionText].joined(separator: "\n")
+		// Add debuging info about the PVGame database entry to the bottom of the text field
+			descriptionText = [descriptionText, game?.debugDescription ?? ""].joined(separator: "\n")
         #endif
         descriptionTextView.text = descriptionText
 
@@ -1020,13 +1043,13 @@ extension PVGameMoreInfoViewController {
 
 import UIKit
 
-public class MediaZoom: UIView, UIScrollViewDelegate {
+public final class MediaZoom: UIView, UIScrollViewDelegate {
 
     public lazy var imageView: UIImageView = {
         let image = UIImageView(frame: self.mediaFrame())
         image.clipsToBounds = true
         image.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .scaleAspectFit
         return image
     }()
 
@@ -1081,6 +1104,8 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         let frame = MediaZoom.currentFrame()
         self.frame = frame
         backgroundView.frame = frame
+		// Make the content modes match the animation starts at the right layout
+		imageView.contentMode = originalImageView.contentMode
         imageView.frame = mediaFrame()
         hideHandler = callback
         UIView.animate(
@@ -1184,11 +1209,11 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         return imageView
     }
 
-    open func willHandleSingleTap() {
+    public func willHandleSingleTap() {
 
     }
 
-    open func showAnimationDidFinish() {
+    public func showAnimationDidFinish() {
 
     }
 

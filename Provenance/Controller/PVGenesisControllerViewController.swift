@@ -43,6 +43,7 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
         }
 
         startButton?.buttonTag = .start
+        selectButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
@@ -112,6 +113,6 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
 
     override func releaseSelect(forPlayer player: Int) {
         emulatorCore.didRelease(.mode, forPlayer: player)
-        releaseSelect(forPlayer: player)
+        super.releaseSelect(forPlayer: player)
     }
 }

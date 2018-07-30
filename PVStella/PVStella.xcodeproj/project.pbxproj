@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B34AB5862106DEB900C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5852106DEB900C45F09 /* PVSupport.framework */; };
 		B3547B662058591E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B652058591D00CFF7D8 /* Core.plist */; };
 		B3547B672058591E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B652058591D00CFF7D8 /* Core.plist */; };
 		B38FB4C31C839BE500CD73BE /* PVStella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* PVStella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -145,7 +146,6 @@
 		B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EDE1D62C6A8003F1E93 /* PVStella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* PVStella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3D2E3831D6E7E1B0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3821D6E7E1B0058544D /* PVSupport.framework */; };
 		B3D2E3841D6E7E260058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462F1D6A86EA0085BA9F /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
@@ -286,6 +286,9 @@
 		941DFB2615B6425200C6552F /* PVStellaGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVStellaGameCore.mm; sourceTree = "<group>"; };
 		94A9E281157D637B0083A7DC /* libretro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
 		B32F462F1D6A86EA0085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B34AB5612106D5DF00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34AB5852106DEB900C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34DEFCC20D4E71E008B475A /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B652058591D00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B38FB4C01C839BE500CD73BE /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38FB4C21C839BE500CD73BE /* PVStella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVStella.h; sourceTree = "<group>"; };
@@ -313,7 +316,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D2E3831D6E7E1B0058544D /* PVSupport.framework in Frameworks */,
+				B34AB5862106DEB900C45F09 /* PVSupport.framework in Frameworks */,
 				B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */,
 				B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */,
 				B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */,
@@ -352,6 +355,9 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B34AB5852106DEB900C45F09 /* PVSupport.framework */,
+				B34AB5612106D5DF00C45F09 /* PVSupport.framework */,
+				B34DEFCC20D4E71E008B475A /* PVSupport.framework */,
 				B3D2E3821D6E7E1B0058544D /* PVSupport.framework */,
 				B32F462F1D6A86EA0085BA9F /* PVSupport.framework */,
 				B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */,
@@ -643,9 +649,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B38FB4C51C839BE500CD73BE /* Build configuration list for PBXNativeTarget "PVStella" */;
 			buildPhases = (
+				B38FB4BD1C839BE500CD73BE /* Headers */,
 				B38FB4BB1C839BE500CD73BE /* Sources */,
 				B38FB4BC1C839BE500CD73BE /* Frameworks */,
-				B38FB4BD1C839BE500CD73BE /* Headers */,
 				B38FB4BE1C839BE500CD73BE /* Resources */,
 			);
 			buildRules = (
@@ -661,9 +667,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "PVStella tvOS" */;
 			buildPhases = (
+				B3C96DFB1D62BE5A003F1E93 /* Headers */,
 				B3C96DF91D62BE5A003F1E93 /* Sources */,
 				B3C96DFA1D62BE5A003F1E93 /* Frameworks */,
-				B3C96DFB1D62BE5A003F1E93 /* Headers */,
 				B3C96DFC1D62BE5A003F1E93 /* Resources */,
 			);
 			buildRules = (
@@ -989,7 +995,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = Stella/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1051,7 +1057,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = Stella/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1149,7 +1155,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1216,7 +1222,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

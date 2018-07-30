@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
 
 #pragma mark -

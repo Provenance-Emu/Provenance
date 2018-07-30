@@ -152,7 +152,7 @@ struct LightTheme: iOSTheme {
 }
 
 //@available(iOS 9.0, *)
-public class Theme {
+public final class Theme {
 
 	public static var currentTheme: iOSTheme = LightTheme() {
 		didSet {
@@ -197,26 +197,24 @@ public class Theme {
         }
 
         // Settings
-		if #available(iOS 9.0, *) {
-			appearance(in: [SettingsTableView.self]) {
-				UITableViewCell.appearance {
-					$0.backgroundColor = theme.settingsCellBackground
-					$0.textLabel?.backgroundColor = theme.settingsCellBackground
-					$0.textLabel?.textColor = theme.settingsCellText
-					$0.detailTextLabel?.textColor = theme.settingsCellText
-				}
+		appearance(in: [SettingsTableView.self]) {
+			UITableViewCell.appearance {
+				$0.backgroundColor = theme.settingsCellBackground
+				$0.textLabel?.backgroundColor = theme.settingsCellBackground
+				$0.textLabel?.textColor = theme.settingsCellText
+				$0.detailTextLabel?.textColor = theme.settingsCellText
 			}
+		}
 
-			appearance(in: [UITableViewCell.self]) {
-				UILabel.appearance {
-					$0.textColor = theme.settingsCellText
-				}
+		appearance(in: [UITableViewCell.self]) {
+			UILabel.appearance {
+				$0.textColor = theme.settingsCellText
 			}
+		}
 
-			appearance(in: [UITableViewHeaderFooterView.self]) {
-				UILabel.appearance {
-					$0.textColor = theme.settingsHeaderText
-				}
+		appearance(in: [UITableViewHeaderFooterView.self]) {
+			UILabel.appearance {
+				$0.textColor = theme.settingsHeaderText
 			}
 		}
 
@@ -240,22 +238,19 @@ public class Theme {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
         }
 
-        // Appearacne in is only in 9+
-        if #available(iOS 9.0, *) {
-            appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-                UILabel.appearance {
-                    $0.backgroundColor = theme.gameLibraryHeaderBackground
-                    $0.textColor = theme.gameLibraryHeaderText
-                }
-            }
+		appearance(in: [PVGameLibrarySectionHeaderView.self]) {
+			UILabel.appearance {
+				$0.backgroundColor = theme.gameLibraryHeaderBackground
+				$0.textColor = theme.gameLibraryHeaderText
+			}
+		}
 
-            // Game Library Main
-            appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
-                UILabel.appearance {
-                    $0.textColor = theme.gameLibraryText
-                }
-            }
-        }
+		// Game Library Main
+		appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
+			UILabel.appearance {
+				$0.textColor = theme.gameLibraryText
+			}
+		}
 
 //        UICollectionView.appearance {
 //            $0.backgroundColor = theme.gameLibraryBackground

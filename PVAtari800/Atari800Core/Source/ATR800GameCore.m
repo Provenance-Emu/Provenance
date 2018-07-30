@@ -660,31 +660,32 @@ __weak static ATR800GameCore * _currentCore;
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            // DPAD
+            // D-Pad
             controllerStates[playerIndex].up    = dpad.up.isPressed;
             controllerStates[playerIndex].down  = dpad.down.isPressed;
             controllerStates[playerIndex].left  = dpad.left.isPressed;
             controllerStates[playerIndex].right = dpad.right.isPressed;
 
-            // Buttons
             // Fire 1
-            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonX.isPressed;
+            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
 
             // Fire 2
-            INPUT_key_shift = gamepad.buttonB.isPressed || gamepad.buttonY.isPressed;
+            INPUT_key_shift = gamepad.buttonB.isPressed || gamepad.buttonX.isPressed || gamepad.rightTrigger.isPressed;
             
             // The following buttons are on a shared bus. Only one at a time.
             // If none, state is reset. Since only one button can be registered
             // at a time, there has to be an preference of order.
             
-            // Reset
-            if (gamepad.leftTrigger.isPressed) {
+            // Start
+            if (gamepad.rightShoulder.isPressed) {
                 INPUT_key_code = AKEY_5200_START;
             }
-            else if (gamepad.rightTrigger.isPressed) {
-                INPUT_key_code = AKEY_5200_PAUSE;
-            }
-            else if (gamepad.leftShoulder.isPressed || gamepad.rightShoulder.isPressed) {
+            // Pause - Opting out for system pause button…
+//            else if (gamepad.leftTrigger.isPressed) {
+//                INPUT_key_code = AKEY_5200_PAUSE;
+//            }
+            // Reset
+            else if (gamepad.leftShoulder.isPressed) {
                 INPUT_key_code = AKEY_5200_RESET;
             } else {
                 INPUT_key_code = AKEY_NONE;
@@ -693,31 +694,32 @@ __weak static ATR800GameCore * _currentCore;
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            // DPAD
+            // D-Pad
             controllerStates[playerIndex].up    = dpad.up.isPressed;
             controllerStates[playerIndex].down  = dpad.down.isPressed;
             controllerStates[playerIndex].left  = dpad.left.isPressed;
             controllerStates[playerIndex].right = dpad.right.isPressed;
             
-            // Buttons
             // Fire 1
-            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonX.isPressed;
+            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed;
             
             // Fire 2
-            INPUT_key_shift = gamepad.buttonB.isPressed;
+            INPUT_key_shift = gamepad.buttonB.isPressed || gamepad.buttonX.isPressed;
             
             // The following buttons are on a shared bus. Only one at a time.
             // If none, state is reset. Since only one button can be registered
             // at a time, there has to be an preference of order.
             
-            // Reset
-            if (gamepad.leftShoulder.isPressed) {
+            // Start
+            if (gamepad.rightShoulder.isPressed) {
                 INPUT_key_code = AKEY_5200_START;
             }
-            else if (gamepad.rightShoulder.isPressed) {
-                INPUT_key_code = AKEY_5200_PAUSE;
-            }
-            else if (gamepad.buttonY.isPressed) {
+            // Pause - Opting out for system pause button…
+//            else if (gamepad.rightShoulder.isPressed) {
+//                INPUT_key_code = AKEY_5200_PAUSE;
+//            }
+            // Reset
+            else if (gamepad.leftShoulder.isPressed) {
                 INPUT_key_code = AKEY_5200_RESET;
             } else {
                 INPUT_key_code = AKEY_NONE;

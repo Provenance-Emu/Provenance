@@ -27,6 +27,8 @@
 #include "api/m64p_vidext.h"
 #include "api/vidext.h"
 #import "../MupenGameCore.h"
+#import <PVSupport/PVLogging.h>
+#import <UIKit/UIKit.h>
 
 #include <dlfcn.h>
 

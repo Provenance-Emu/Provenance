@@ -33,3 +33,23 @@ extension MednafenGameCore: DiscSwappable {
         }
     }
 }
+
+extension MednafenGameCore: CoreActions {
+	public var coreActions : [CoreAction]? {
+		switch systemType {
+		case .virtualBoy:
+			return [CoreAction(title: "Change Palette", options: nil)]
+		default:
+			return nil
+		}
+	}
+
+	public func selected(action : CoreAction) {
+		switch action.title {
+		case "Change Palette":
+			self.changeDisplayMode()
+		default:
+			print("Unknown action: "+action.title)
+		}
+	}
+}

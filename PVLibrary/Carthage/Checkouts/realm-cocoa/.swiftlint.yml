@@ -1,0 +1,34 @@
+included:
+  - Realm/ObjectServerTests
+  - RealmSwift
+  - Realm/Swift
+identifier_name:
+  min_length: # not possible to disable this partial rule, so set it to zero
+    warning: 0
+    error: 0
+  excluded:
+    - _nilValue()
+    - _nsError
+    - _nsErrorDomain
+    - _observe(_:)
+    - _realmColumnNames()
+    - _realmObjectName()
+    - _rlmArray()
+    - id
+    - pk
+    - to
+disabled_rules:
+  - block_based_kvo
+  - file_length
+  - force_cast
+  - force_try
+  - function_body_length
+  - line_length
+  - nesting
+  - syntactic_sugar
+  - todo
+  - type_body_length
+  - vertical_whitespace
+  # swiftlint complains about superfluous disable commands when the violation
+  # occurs in an inactive #if and doesn't support conditionally disabling it
+  - cyclomatic_complexity

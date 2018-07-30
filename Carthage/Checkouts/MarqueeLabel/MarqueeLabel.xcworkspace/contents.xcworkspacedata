@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:/Users/cbpowell/Projects/MarqueeLabel/Sources">
+   </FileRef>
+   <FileRef
+      location = "group:Extras">
+   </FileRef>
+   <FileRef
+      location = "group:MarqueeLabel/MarqueeLabel.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:MarqueeLabelSwift/MarqueeLabelSwift.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:MarqueeLabelTV/MarqueeLabelTV.xcodeproj">
+   </FileRef>
+</Workspace>

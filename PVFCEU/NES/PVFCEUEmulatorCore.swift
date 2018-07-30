@@ -9,6 +9,16 @@
 import PVSupport
 import Foundation
 
+//extension PVFCEUEmulatorCore: PVNESSystemResponderClient {
+//	func didPush(_ button: PVNESButton, forPlayer player: Int) {
+//
+//	}
+//
+//	func didRelease(_ button: PVNESButton, forPlayer player: Int) {
+//
+//	}
+//}
+
 extension PVFCEUEmulatorCore: DiscSwappable {
     public var numberOfDiscs: UInt {
         return 2
@@ -21,4 +31,10 @@ extension PVFCEUEmulatorCore: DiscSwappable {
     public func swapDisc(number: UInt) {
         internalSwapDisc(number)
     }
+}
+
+extension PVFCEUEmulatorCore : ArchiveSupport {
+	public var supportedArchiveFormats : ArchiveSupportOptions {
+		return [.gzip, .zip]
+	}
 }

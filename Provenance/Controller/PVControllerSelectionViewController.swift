@@ -75,7 +75,7 @@ class PVControllerSelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Controller Assignments"
     }
-    
+
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         return "Controllers must be paired with device."
     }

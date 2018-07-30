@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B34AB5642106D5EB00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5632106D5EB00C45F09 /* PVSupport.framework */; };
+		B34AB5662106D5F700C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5652106D5F700C45F09 /* PVSupport.framework */; };
 		B3547B692058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
 		B3547B6A2058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
 		B3CB854D1E9BECBF009155A6 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,9 +87,6 @@
 		B3CB85A81E9BF153009155A6 /* MinxCPU_CF.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A45AA1B95605F00565444 /* MinxCPU_CF.c */; };
 		B3CB85A91E9BF153009155A6 /* PMCommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A45BC1B95605F00565444 /* PMCommon.c */; };
 		B3CB85AB1E9BF16B009155A6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85AA1E9BF16B009155A6 /* OpenGLES.framework */; };
-		B3CB85AD1E9BF16F009155A6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85AC1E9BF16F009155A6 /* UIKit.framework */; };
-		B3CB85AF1E9BF17F009155A6 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85AE1E9BF17F009155A6 /* PVSupport.framework */; };
-		B3CB85B11E9BF185009155A6 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85B01E9BF185009155A6 /* PVSupport.framework */; };
 		B3CB85B31E9BF189009155A6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85B21E9BF189009155A6 /* OpenGLES.framework */; };
 		B3CB85B51E9BF18D009155A6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85B41E9BF18D009155A6 /* UIKit.framework */; };
 		B3CB85B61E9BF19B009155A6 /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 081A45971B95604700565444 /* PVPokeMiniEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -173,6 +172,10 @@
 		081A46191B95660100565444 /* freebios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = freebios.c; path = "pokemini-code/freebios/freebios.c"; sourceTree = "<group>"; };
 		081A461A1B95660100565444 /* freebios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = freebios.h; path = "pokemini-code/freebios/freebios.h"; sourceTree = "<group>"; };
 		081A461D1B95669B00565444 /* NoUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NoUI.c; path = "pokemini-code/sourcex/NoUI.c"; sourceTree = "<group>"; };
+		B34AB55D2106D59F00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34AB55F2106D5AA00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34AB5632106D5EB00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34AB5652106D5F700C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B682058593700CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3CB85491E9BECBF009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPokeMini.h; sourceTree = "<group>"; };
@@ -193,9 +196,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34AB5642106D5EB00C45F09 /* PVSupport.framework in Frameworks */,
 				B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */,
-				B3CB85AF1E9BF17F009155A6 /* PVSupport.framework in Frameworks */,
-				B3CB85AD1E9BF16F009155A6 /* UIKit.framework in Frameworks */,
 				B3CB85AB1E9BF16B009155A6 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -204,10 +206,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34AB5662106D5F700C45F09 /* PVSupport.framework in Frameworks */,
 				B3CB85CC1E9C1BB9009155A6 /* AudioToolbox.framework in Frameworks */,
 				B3CB85B51E9BF18D009155A6 /* UIKit.framework in Frameworks */,
 				B3CB85B31E9BF189009155A6 /* OpenGLES.framework in Frameworks */,
-				B3CB85B11E9BF185009155A6 /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +312,10 @@
 		081A45F71B9563EF00565444 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B34AB5652106D5F700C45F09 /* PVSupport.framework */,
+				B34AB5632106D5EB00C45F09 /* PVSupport.framework */,
+				B34AB55F2106D5AA00C45F09 /* PVSupport.framework */,
+				B34AB55D2106D59F00C45F09 /* PVSupport.framework */,
 				B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */,
 				B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */,
 				B3CB85B41E9BF18D009155A6 /* UIKit.framework */,
@@ -393,9 +399,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3CB854E1E9BECBF009155A6 /* Build configuration list for PBXNativeTarget "PVPokeMini" */;
 			buildPhases = (
+				B3CB85461E9BECBF009155A6 /* Headers */,
 				B3CB85441E9BECBF009155A6 /* Sources */,
 				B3CB85451E9BECBF009155A6 /* Frameworks */,
-				B3CB85461E9BECBF009155A6 /* Headers */,
 				B3CB85471E9BECBF009155A6 /* Resources */,
 			);
 			buildRules = (
@@ -411,9 +417,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3CB855B1E9BECCF009155A6 /* Build configuration list for PBXNativeTarget "PVPokeMini tvOS" */;
 			buildPhases = (
+				B3CB85531E9BECCF009155A6 /* Headers */,
 				B3CB85511E9BECCF009155A6 /* Sources */,
 				B3CB85521E9BECCF009155A6 /* Frameworks */,
-				B3CB85531E9BECCF009155A6 /* Headers */,
 				B3CB85541E9BECCF009155A6 /* Resources */,
 			);
 			buildRules = (
@@ -700,7 +706,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVPokeMini/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -708,7 +714,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVPokeMini;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -743,14 +749,14 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVPokeMini/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVPokeMini;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -799,13 +805,13 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVPokeMini;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -840,13 +846,13 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVPokeMini;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
