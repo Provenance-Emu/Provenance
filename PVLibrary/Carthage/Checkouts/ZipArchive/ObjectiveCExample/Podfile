@@ -1,0 +1,26 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+# inhibit_all_warnings!
+use_frameworks!
+
+abstract_target 'core' do
+
+  pod 'SSZipArchive', :path => '..'
+
+  target 'ObjectiveCExample' do
+    platform :ios
+  end
+
+  target 'ObjectiveCExampleTests_iOS' do
+    platform :ios
+  end
+
+  target 'ObjectiveCExampleTests_macOS' do
+    platform :osx, '10.8'
+  end
+
+  target 'ObjectiveCExampleTests_tvOS' do
+    platform :tvos, '9.0'
+  end
+
+end

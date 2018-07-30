@@ -5,12 +5,34 @@
 //  Copyright (c) 2013 JamSoft. All rights reserved.
 //
 
-// import RealmSwift
+import RealmSwift
 import CoreGraphics
 import AVFoundation
+import UIKit
+import PVLibrary
+import PVSupport
 
 private let LabelHeight: CGFloat = 44.0
 
+public extension UIView {
+	@IBInspectable var borderColor : UIColor? {
+		get {
+			guard let bc = layer.borderColor else {
+				return nil
+			}
+			return UIColor(cgColor: bc)
+		}
+		set {
+			if let borderColor = newValue {
+				self.layer.borderWidth = 1.0
+				self.layer.borderColor = borderColor.cgColor
+			} else {
+				self.layer.borderWidth = 0.0
+				self.layer.borderColor = nil
+			}
+		}
+	}
+}
 enum BlendModes : String {
 	case normalBlendMode
 	//
@@ -174,11 +196,18 @@ extension UIImageView {
 	}
 }
 
-protocol GameLibraryCollectionViewDelegate : class {
-	func promptToDeleteGame(_ game : PVGame, completion: @escaping ((_ deleted: Bool) -> Swift.Void))
+func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
+    let result = NSMutableAttributedString()
+    result.append(left)
+    result.append(right)
+    return NSAttributedString(attributedString: result)
 }
 
-//@IBDesignable
+protocol GameLibraryCollectionViewDelegate : class {
+	func promptToDeleteGame(_ game : PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
+}
+
+@IBDesignable
 class CornerBadgeView : UIView {
 	enum FillCorner {
 		case topLeft
@@ -247,12 +276,12 @@ class CornerBadgeView : UIView {
 		var triangleBounds = createTriangle().bounds
 		switch fillCorner {
 		case .topRight:
-			triangleBounds = triangleBounds.offsetBy(dx: triangleBounds.size.width * 0.35, dy: triangleBounds.size.width * -0.15)
+			triangleBounds = triangleBounds.offsetBy(dx: triangleBounds.size.width * 0.4, dy: triangleBounds.size.height * -0.08)
 		default:
 			break
 		}
 
-		let attributes : [NSAttributedStringKey:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.7), .foregroundColor: textColor ]
+		let attributes : [NSAttributedStringKey:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.64), .foregroundColor: UIColor.init(white: 1.0, alpha: 0.6) ]
 		gString.draw(in: triangleBounds, withAttributes: attributes)
 	}
 
@@ -314,7 +343,7 @@ extension UIImage {
 
 	func imageWithBorder(width: CGFloat, color: UIColor) -> UIImage? {
 		let imageView = UIImageView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: size))
-		imageView.contentMode = .center
+//		imageView.contentMode = .center
 		imageView.image = self
 		//		imageView.layer.cornerRadius = square.width/2
 		imageView.layer.masksToBounds = true
@@ -369,8 +398,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			titleLabel.alpha = 0
 			titleLabel.textColor = UIColor.white
 			titleLabel.layer.masksToBounds = false
-//			titleLabel.shadowColor = UIColor.black.withAlphaComponent(0.8)
-//			titleLabel.shadowOffset = CGSize(width: -1, height: 1)
 			if #available(tvOS 10.0, *) {
 				titleLabel.adjustsFontForContentSizeCategory = true
 			}
@@ -429,13 +456,14 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	}
 	@IBOutlet weak var topRightBadgeTopConstraint: NSLayoutConstraint?
 	@IBOutlet weak var topRightBadgeTrailingConstraint: NSLayoutConstraint?
-	@IBOutlet weak var topRightBadgeWidthConstraint: NSLayoutConstraint?
+//    @IBOutlet weak var topRightBadgeWidthConstraint: NSLayoutConstraint?
 	@IBOutlet weak var discCountTrailingConstraint: NSLayoutConstraint?
+    @IBOutlet weak var discCountBottomConstraint: NSLayoutConstraint?
 	@IBOutlet weak var missingFileWidthContraint: NSLayoutConstraint?
 	@IBOutlet weak var missingFileHeightContraint: NSLayoutConstraint?
 	@IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint?
 	@IBOutlet weak var deleteActionView: UIView?
-	@IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
+//    @IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
 
 	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
 		let size : CGSize
@@ -507,7 +535,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             } else {
                 artworkText = game.title
             }
-			imageView.image = image(withText: artworkText) //?.withRenderingMode(.alwaysTemplate)
+			image = image(withText: artworkText) //?.withRenderingMode(.alwaysTemplate)
 			updateImageConstraints()
 			setNeedsLayout()
         } else {
@@ -529,17 +557,17 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 							artworkText = game.title
 						}
 						let artwork: UIImage? = image ?? self.image(withText: artworkText)
-						self.imageView.image = artwork //?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
+						self.image = artwork //?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
 						#if os(tvOS)
-						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
-						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
-						self.artworkContainerViewHeightConstraint?.constant = height
+//						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
+//						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
+//                        self.artworkContainerViewHeightConstraint?.constant = height
 						#else
 						if #available(iOS 9.0, tvOS 9.0, *) {
 						} else {
 							var imageHeight: CGFloat = self.frame.size.height
 							if PVSettingsModel.shared.showGameTitles {
-								imageHeight -= 44
+								imageHeight -= LabelHeight
 							}
 							self.imageView.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: imageHeight)
 						}
@@ -552,9 +580,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 
 		self.missingFileView?.isHidden = !game.file.missing
-
 		self.setupBadges()
-
+        if !PVSettingsModel.shared.showGameBadges {
+            self.setupDots()
+        }
         setNeedsLayout()
         if #available(iOS 9.0, tvOS 9.0, *) {
             setNeedsFocusUpdate()
@@ -566,20 +595,15 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			self.topRightCornerBadgeView?.isHidden = true
 			return
 		}
-
 		let hasPlayed = game.playCount > 0
 		let favorite = game.isFavorite
-		topRightCornerBadgeView.glyph = favorite ? "★" : ""
+		topRightCornerBadgeView.glyph = favorite ? "♥︎" : ""
 
 		if favorite {
-			#if os(iOS)
-			topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
-			#else
-			topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.65)
-			#endif
+			topRightCornerBadgeView.fillColor = UIColor(rgb: 0xf71a32).withAlphaComponent(0.85)
 		} else if !hasPlayed {
-			topRightCornerBadgeView.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
-		}
+            topRightCornerBadgeView.fillColor = UIColor(rgb: 0x17aaf7).withAlphaComponent(0.85)
+        }
 
 		topRightCornerBadgeView.isHidden = hasPlayed && !favorite
 	}
@@ -590,8 +614,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			return
 		}
 
-		let multieDisc = game.isCD && game.discCount > 1
-		discCountContainerView.isHidden = !multieDisc
+		let multiDisc = game.isCD && game.discCount > 1
+		discCountContainerView.isHidden = !multiDisc
 		discCountLabel.text = "\(game.discCount)"
 		discCountLabel.textColor = UIColor.white
 	}
@@ -600,6 +624,30 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		setupTopRightBadge()
 		setupDiscCountBadge()
 	}
+
+    private func setupDots() {
+        guard let game = game else {
+            return
+        }
+		let hasPlayed = game.playCount > 0
+		let favorite = game.isFavorite
+
+        var bullet = NSAttributedString(string: "")
+        let bulletFavoriteAttribute = [ NSAttributedStringKey.foregroundColor: UIColor(rgb: 0xf71a32).withAlphaComponent(0.85) ]
+        let bulletUnplayedAttribute = [ NSAttributedStringKey.foregroundColor: UIColor(rgb: 0x17aaf7).withAlphaComponent(0.85)]
+        let bulletFavorite = NSAttributedString(string: "♥︎ ", attributes: bulletFavoriteAttribute)
+        let bulletUnplayed = NSAttributedString(string: "● ", attributes: bulletUnplayedAttribute)
+        let attributedTitle = NSMutableAttributedString(string: game.title)
+
+        if favorite {
+            bullet = bulletFavorite
+        } else if !hasPlayed {
+            bullet = bulletUnplayed
+        }
+
+        self.titleLabel.attributedText = bullet + attributedTitle
+
+    }
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -714,13 +762,14 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	private func oldViewInit() {
 		var imageHeight: CGFloat = frame.size.height
 		if PVSettingsModel.shared.showGameTitles {
-			imageHeight -= 44
+			imageHeight -= LabelHeight
 		}
 
 		let imageView = UIImageView()
 		self.imageView = imageView
 
 		let newTitleLabel = UILabel()
+		newTitleLabel.textAlignment = .center
 		self.titleLabel = newTitleLabel
 
 		contentView.addSubview(titleLabel)
@@ -753,6 +802,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		} else {
 			// TODO: iOS 8 layout, or just hide them?
 			discCountContainerView?.isHidden = true
+
+			titleLabel.translatesAutoresizingMaskIntoConstraints = false
+			NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: imageView, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
+			NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
+			NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant:5.0).isActive = true
+			NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant:LabelHeight).isActive = true
 		}
 		imageView.frame = imageFrame
 		titleLabel.frame = titleFrame
@@ -774,6 +829,23 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		setupPanGesture()
 		#else
 
+		#endif
+
+		#if os(tvOS)
+		if #available(tvOS 11, *) {
+			topRightCornerBadgeView?.removeFromSuperview()
+			discCountContainerView?.removeFromSuperview()
+			imageView.overlayContentView.addSubview(topRightCornerBadgeView!)
+			imageView.overlayContentView.addSubview(discCountContainerView!)
+
+			discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
+			discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.overlayContentView.bottomAnchor).isActive = true
+			discCountContainerView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+
+			topRightCornerBadgeView?.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
+			topRightCornerBadgeView?.topAnchor.constraint(equalTo: imageView.overlayContentView.topAnchor).isActive = true
+			topRightCornerBadgeView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+		}
 		#endif
 //		contentView.layer.borderWidth = 1.0
 //		contentView.layer.borderColor = UIColor.white.cgColor
@@ -809,9 +881,23 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         return missingArtworkImage
     }
 
+	var image : UIImage? {
+		set {
+			imageView?.image = newValue
+			if newValue == nil {
+				imageView?.layer.shouldRasterize = false
+			} else {
+				imageView?.layer.shouldRasterize = true
+				imageView?.layer.rasterizationScale = UIScreen.main.scale
+			}
+		} get {
+			return imageView?.image
+		}
+	}
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        image = nil
 //		imageView.tintColor = nil
         titleLabel.text = nil
 		discCountLabel?.text = nil
@@ -833,28 +919,24 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
 #if os(tvOS)
-		if let game = game {
-			let height: CGFloat = self.contentView.bounds.width / game.boxartAspectRatio.rawValue
-			self.artworkContainerViewHeightConstraint?.constant = height
-		} else {
-			let height: CGFloat = self.contentView.bounds.height
-			self.artworkContainerViewHeightConstraint?.constant = height
-		}
-
-//        let titleTransform: CGAffineTransform = titleLabel.transform
-//        if isFocused {
-//            titleLabel.transform = .identity
+//        if let game = game {
+//            let height: CGFloat = self.contentView.bounds.width / game.boxartAspectRatio.rawValue
+//            self.artworkContainerViewHeightConstraint?.constant = height
+//        } else {
+//            let height: CGFloat = self.contentView.bounds.height
+//            self.artworkContainerViewHeightConstraint?.constant = height
 //        }
+        // Fixes the box art clipping…
+        self.sizeToFit()
+
         contentView.bringSubview(toFront: titleLabel!)
-        titleLabel.sizeToFit()
-//        titleLabel.transform = titleTransform
 #else
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			self.contentView.frame = self.bounds
 		} else {
 			var imageHeight: CGFloat = frame.size.height
 			if PVSettingsModel.shared.showGameTitles {
-				imageHeight -= 44
+				imageHeight -= LabelHeight
 			}
 			imageView.frame.size.height = imageHeight
 		}
@@ -866,7 +948,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		if !PVSettingsModel.shared.showGameTitles, let titleLabelHeightConstraint = titleLabelHeightConstraint {
 			titleLabelHeightConstraint.constant = contentView.bounds.height * titleLabelHeightConstraint.multiplier * -1
 		} else {
-			titleLabelHeightConstraint?.constant = 0.0
+//			titleLabelHeightConstraint?.constant = 0.0
 		}
 		#endif
 	}
@@ -875,14 +957,16 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		let imageContentFrame = imageView.contentClippingRect
 
 		let topConstant = imageContentFrame.origin.y
+        let bottomConstant = imageContentFrame.origin.y * -1.0
 		let trailingConstant = imageContentFrame.origin.x * -1.0
 //		print("system: \(game?.system.shortName ?? "nil") : trailingConstant:\(trailingConstant) topConstant:\(topConstant)")
 
-		topRightBadgeWidthConstraint?.constant = imageContentFrame.size.longestLength * 0.25
+//        topRightBadgeWidthConstraint?.constant = imageContentFrame.size.longestLength * 0.25
 		topRightBadgeTrailingConstraint?.constant = trailingConstant
 		topRightBadgeTopConstraint?.constant = topConstant
 
 		discCountTrailingConstraint?.constant = trailingConstant
+        discCountBottomConstraint?.constant = bottomConstant
 
 		missingFileWidthContraint?.constant = imageContentFrame.width
 		missingFileHeightContraint?.constant = imageContentFrame.height
@@ -910,29 +994,83 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		}
 	}
 
-//	override var preferredFocusedView: UIView? {
-//		return artworkContainerView ?? imageView
-//	}
+	override var preferredFocusedView: UIView? {
+		return artworkContainerView ?? imageView
+	}
 
 	#if os(tvOS)
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 		super.didUpdateFocus(in: context, with: coordinator)
 
+//		struct wrapper {
+//			static let s_atvMotionEffect :UIMotionEffectGroup = {
+//				let verticalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.y", type: .tiltAlongVerticalAxis)
+//				verticalMotionEffect.minimumRelativeValue = -10
+//				verticalMotionEffect.maximumRelativeValue = 10
+//
+//				let horizontalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.x", type: .tiltAlongHorizontalAxis)
+//				horizontalMotionEffect.minimumRelativeValue = -10
+//				horizontalMotionEffect.maximumRelativeValue = 10
+//
+//				let motionEffectGroup = UIMotionEffectGroup()
+//				motionEffectGroup.motionEffects = [horizontalMotionEffect, verticalMotionEffect]
+//				return motionEffectGroup
+//			}()
+//		}
+//
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-
 				self.superview?.bringSubview(toFront: self)
-				if PVSettingsModel.shared.showGameTitles {
-					let yTrasform : CGFloat = 55.0
-					self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform)
-					self.titleLabel.alpha = 1.0
+                if PVSettingsModel.shared.showGameBadges {
+
+					if #available(tvOS 11, *) {
+					} else {
+						// Hide for non os 11 since we don't have the auto contentLayerView
+                        self.setupDots()
+                        let xySlideOffset = CGFloat(6)
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xySlideOffset, y: -xySlideOffset) }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xySlideOffset, y: xySlideOffset)  }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 0.0 }
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 0.0 }
+
+						/* -- Or here's my scaling code for older tvOS's. Parallex will still be off though
+						let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
+
+						let topConstant = imageContentFrame.origin.y
+						let bottomConstant = imageContentFrame.origin.y * -1.0
+						let trailingConstant = imageContentFrame.origin.x * -1.0
+
+						let xTransform = imageContentFrame.width * 0.07
+						let yTransform = imageContentFrame.height * 0.07
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xTransform, y: yTransform * -1.0) }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xTransform, y: yTransform)  }
+						*/
+					}
+                }
+
+                if PVSettingsModel.shared.showGameTitles {
+					let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
+
+                    let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 48
+                    self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
+                    self.titleLabel.alpha = 1.0
 				}
-				self.artworkContainerView!.transform = transform
+//				self.artworkContainerView?.addMotionEffect(wrapper.s_atvMotionEffect)
 			} else {
-				self.artworkContainerView!.transform = .identity
+//				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
 				self.titleLabel.transform = .identity
 				self.titleLabel.alpha = 0.0
+                if PVSettingsModel.shared.showGameBadges {
+					if #available(tvOS 11, *) {
+					} else {
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 1.0 }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 1.0 }
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = .identity }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = .identity }
+					}
+                }
+
 			}
 		}) {() -> Void in }
 	}

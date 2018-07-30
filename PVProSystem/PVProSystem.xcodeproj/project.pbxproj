@@ -369,9 +369,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem" */;
 			buildPhases = (
+				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79B1D6B7558002EE3ED /* Sources */,
 				B36DE79C1D6B7558002EE3ED /* Frameworks */,
-				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79E1D6B7558002EE3ED /* Resources */,
 			);
 			buildRules = (
@@ -387,9 +387,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3FA5D8F1D6BAD4100060D71 /* Build configuration list for PBXNativeTarget "ProSystem tvOS" */;
 			buildPhases = (
+				B3FA5D891D6BAD4100060D71 /* Headers */,
 				B3FA5D6F1D6BAD4100060D71 /* Sources */,
 				B3FA5D851D6BAD4100060D71 /* Frameworks */,
-				B3FA5D891D6BAD4100060D71 /* Headers */,
 				B3FA5D8D1D6BAD4100060D71 /* Resources */,
 			);
 			buildRules = (
@@ -648,7 +648,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -656,7 +656,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emuProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -688,14 +688,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emuProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -748,7 +748,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -789,7 +789,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

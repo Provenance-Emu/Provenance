@@ -9,6 +9,8 @@
 
 import Foundation
 import GameController
+import PVLibrary
+import PVSupport
 
 extension Notification.Name {
     static let PVControllerManagerControllerReassigned = Notification.Name("PVControllerManagerControllerReassignedNotification")

@@ -1,0 +1,174 @@
+Overview
+============
+
+MarqueeLabel is a UILabel subclass adds a scrolling marquee effect when the text of the label outgrows the available width. The label scrolling direction and speed/rate can be specified as well. All standard UILabel properties (where it makes sense) are available in MarqueeLabel, with the intent of MarqueeLabel behaving just like a UILabel.
+
+MarqueeLabel is compatible with both iOS and tvOS, and currently works with Swift 3.0 and the iOS 10.0 SDK! (But if you're looking for Swift 2.x compatibility, [you can use release 2.8](https://github.com/cbpowell/MarqueeLabel/releases/tag/2.8.0))
+
+## Check it out!
+![GIF of MarqueeLabelDemo in action](https://raw.githubusercontent.com/cbpowell/MarqueeLabel/master/Metadata/MarqueeLabelDemo.gif)
+
+## How To Get Started
+
+1. Clone MarqueeLabel from GitHub, and check out the demo project.
+2. Read the [MarqueeLabel CocoaDocs documentation](http://cocoadocs.org/docsets/MarqueeLabel/).
+3. Take a look at the [special notes](https://github.com/cbpowell/MarqueeLabel/blob/master/README.mdown#special-notes) section to be aware of any gotchas.
+4. Drop in MarqueeLabel as a replacement to your lengthy UILabels!
+5. Help out with bug fixes and new features.
+
+### Installation
+#### [CocoaPods](http://cocoapods.org)
+
+MarqueeLabel has [subspecs](https://guides.cocoapods.org/syntax/podspec.html#subspec) for both Objective-C and Swift! Currently, Objective-C is the default subspec.
+
+That means to use MarqueeLabel in an Objective-C project, add the following to your project's Podfile:
+```ruby
+pod 'MarqueeLabel'
+```
+But if you're using Swift, add the following instead to specify the Swift subspec:
+```ruby
+pod 'MarqueeLabel/Swift'
+```
+
+#### Carthage
+
+Add the following to your project's Cartfile:
+```ruby
+github "cbpowell/MarqueeLabel"
+```
+
+#### Manual Installation
+
+1. Add MarqueeLabel.h and MarqueeLabel.m, or MarqueeLabel.swift, to your project.
+2. Add **QuartzCore.framework** to your project frameworks.
+3. Import MarqueeLabel and replace your UILabels with MarqueeLabels as needed.
+
+
+#### Using MarqueeLabel in your own Swift Framework?
+
+See the [Special Note below](https://github.com/cbpowell/MarqueeLabel/blob/master/README.mdown#swiftframeworkusage) on supporting Cocoapods and Carthage simultaneously in a Swift framework!
+
+## Usage
+
+MarqueeLabel automatically scrolls its text, at either a defined rate (points per second) or over a duration (seconds), whenever the length of the label's text exceeds the space available given the label's frame.
+
+There are several options for the Marquee type, and the default is `Continuous` (which looks just like what Apple typically uses). The animation curve of this scroll can be defined, and defaults to `UIViewAnimationOptionCurveLinear`.
+
+There are also several optional features to help with your integration of the scrolling nature of MarqueeLabel:
+- An optional edge fade at the left and right edges of the view, in order to fade the label text into the background rather than simply being clipped off
+- Leading and trailing buffers to offset the label text inside its frame, giving you better control over alignment
+- "Labelization" to make your MarqueeLabel _exactly_ like a UILabel.
+- Scroll animation "holding" and pausing
+
+See the included demo project for several use case examples!
+
+
+### Code
+These lines of code create a MarqueeLabel that will scroll across its content in 8.0 seconds, and adds 10.0 point long fade at the left and right boundaries.
+
+#### Objective-C
+Replace:
+
+	UILabel *lengthyLabel = [[UILabel alloc] initWithFrame:aFrame];
+
+With:
+
+	MarqueeLabel *lengthyLabel = [[MarqueeLabel alloc] initWithFrame:aFrame duration:8.0 andFadeLength:10.0f];
+
+#### Swift
+Replace:
+
+	var lengthyLabel = UILabel.init(frame:aFrame)
+
+With:
+
+	var lengthyLabel = MarqueeLabel.init(frame: aFrame, duration: 8.0, fadeLength: 10.0)
+
+### Storyboards
+If you're using Storyboards/Interface Builder you can create a MarqueeLabel instance by adding a normal UILabel view to your Storyboard, and then manually changing the view's class to `MarqueeLabel` in the "Custom Class" field of the Identity Inspector tab on the Utilities panel (the right-side panel).
+_Note:_ If you forget to change the Custom Class field to `MarqueeLabel` and then try to access/set MarqueeLabel-specific properties in your code, you will get crashes!
+
+You can then configure the normal UILabel properties, as well as most of the MarqueeLabel configuration properties, via the Attributes tab of the Utility panel!
+
+### Even More
+
+Check out the [MarqueeLabel documentation](http://cocoadocs.org/docsets/MarqueeLabel/) for more about all the features, including:
+- Bulk-manipulation class methods to conveniently restart, pause, and unpause all labels in a view controller
+- Scrolling direction: left->right, right->left, and continuous looping (both left and right)
+
+## Extras
+
+Also check out [the Extras folder](/Extras), a collection of subclasses, extensions, and modifications for MarqueeLabel to implement various functionality that has been requested or suggested, but not merged into the MarqueeLabel code. 
+
+
+## Special Notes<a id="specialnotes"></a>
+
+#### IBDesignables
+
+MarqueeLabel includes support for IBInspectable and IBDesignable, to allow configuration of the label inside Interface Builder/Storyboards. However, if you see these warnings when building:
+
+    IB Designables: Failed to update auto layout status: Failed to load designables from path (null)
+    IB Designables: Failed to render instance of MarqueeLabel: Failed to load designables from path (null)
+
+...then you are likely using MarqueeLabel as a static library, which does not support IBInspectable/IBDesignable. Some workarounds include:
+
+- Install MarqueeLabel as a dynamic framework using CocoaPods with use_frameworks! in your Podfile
+- Install MarqueeLabel with Carthage
+- Install MarqueeLabel by manually importing the source files into your project (may be only option if you're targeting iOS 7.0)
+
+#### Automatic Scrolling
+
+MarqueeLabel tries its best to automatically begin scrolling when appropriate, but sometimes the way your view/view controller appears onscreen can trip it up.
+
+To combat this, you can try:
+- Using the `restartLabel` instance method to manually start scrolling on a MarqueeLabel
+- Try using the bulk manipulation class methods - but note that these don't currently play well with UIViewController containment. You'll need to pass them the lowest UIViewController in your hierarchy.
+
+#### Use in UITableView and UICollectionView
+
+As noted above, MarqueeLabel can sometimes have trouble detecting when the scroll animation should start when used in UITableViews and UICollectionViews - although recent reviews have improved this.
+
+Usually you'll configure the MarqueeLabel instance when building the cell in `tableView:cellForRowAtIndexPath:` (or similar for UICollectionView), but at this point the cell is not onscreen so MarqueeLabel will not begin the scrolling animation. Even when the cell is eventually placed onscreen as the user scrolls, due to timing it's possible that the animation will not fire.
+
+To make sure the scrolling animation _does_ begin as the cell scrolls onscreen, you can use the the `restartLabel` method on your MarqueeLabels inside the `tableView:willDisplayCell:forRowAtIndexPath:` delegate method (or similar for UICollectionView).
+
+**That said** - the UITableView/UICollectionView best practice is to minimize things like excessive animation, subviews, and custom drawing in your cells, in order to get glassy smooth scrolling. In general I would recommend against allowing your labels to automatically animate during user scrolling of the UITableView/UICollectionView. I suggest [holding scrolling](http://cocoadocs.org/docsets/MarqueeLabel/3.0.3/Classes/MarqueeLabel.html#//api/name/holdScrolling) or [labelizing](http://cocoadocs.org/docsets/MarqueeLabel/3.0.3/Classes/MarqueeLabel.html#//api/name/labelize) the labels while the user scrolls. See the table view example in the demo!
+
+
+#### Important Animation Note<a id="importantanimationnote"></a>
+MarqueeLabel is based on Core Animation, which does cause some problems when views appear and disappear and the repeating animation is stopped by iOS and does not automatically restart.
+
+To address this, MarqueeLabel provides a few class methods that allow easy "restarting" of all MarqueeLabels associated with a UIViewController. Specifically, the class method `restartLabelsOfController:` should be called by your view controller (which passes in `self` for the `controller` parameter) when it is revealed or about to be revealed. Keep in mind that presenting a modal view controller can pause repeating UIView animations in the controller that is being covered! 
+
+`controllerLabelsShouldLabelize:` and `controllerLabelsShouldAnimate:` are for convenience, allowing labelizing and re-animating all labels of a UIViewController. Labelizing can be useful for performance, such as labelizing all MarqueeLabels when a UITableView/UIScrollView starts scrolling.
+
+#### Using MarqueeLabel as a dependency with Cocoapods and Carthage - Swift only!<a id="swiftframeworkusage"></a>
+
+If you're developing your own Swift framework that uses MarqueeLabel as a dependency, and want to support both Cocoapods _and_ Carthage, you may need to do a little extra work. Because of the current naming of MarqueeLabel frameworks (and Carthage building all targets in the project), the name of Swift dynamic framework to import varies between Cocoapods and Carthage.
+
+When building the Swift subspec with Cocoapods, MarqueeLabel is imported with `import MarqueeLabel`. However, because Carthage requires distinct names for each target, when building with Carthage the import statement for the Swift target is `import MarqueeLabelSwift`.
+
+A suggested workaround is to use a [conditional compilation block](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Statements.html#//apple_ref/doc/uid/TP40014097-CH33-ID538) (aka preprocessor macro) to switch between the two import statements based on whether or not the target is intended for use with Carthage. To specify the target, you can add an "Other Swift Flag" in the Swift Compiler - Custom Flags section of your Carthage target (i.e. the framework) build settings:
+
+<img src="https://raw.githubusercontent.com/cbpowell/MarqueeLabel/master/Metadata/carthage_config.png" width="600">
+
+And then include the following conditional compilation statement to use the appropriate framework name:
+```swift
+#if CARTHAGE_CONFIG
+    import MarqueeLabelSwift  //Carthage build name
+#else
+    import MarqueeLabel  // Cocoapods build name
+#endif
+```
+
+
+## Todo
+- Ideas?
+
+## About
+
+Charles Powell
+- [GitHub](http://github.com/cbpowell)
+- [Twitter](http://twitter.com/seventhcolumn)
+
+Give me a shout if you're using this in your project!

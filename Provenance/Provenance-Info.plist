@@ -15,15 +15,30 @@
 			<string>ROM</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>public.data</string>
-				<string>org.7-zip.7-zip-archive</string>
+				<string>com.provenance.rom</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
 			<key>CFBundleTypeName</key>
-			<string></string>
+			<string>Save State</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.provenance.savestate</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeIconFiles</key>
+			<array/>
+			<key>CFBundleTypeName</key>
+			<string>Artwork</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.image</string>
+				<string>public.png</string>
+				<string>public.jpeg</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
@@ -134,10 +149,12 @@
 			</array>
 			<key>UTTypeDescription</key>
 			<string>ROM file</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.provenanve.org/</string>
+			<string>http://www.provenance-emu.org/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -183,6 +200,26 @@
 				</array>
 			</dict>
 		</dict>
+		<dict>
+			<key>UTITagTypeSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>svs</string>
+				</array>
+			</dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Save State</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.savestate</string>
+		</dict>
+		<dict/>
 	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
@@ -236,13 +273,53 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>ROM</string>
+			<string>ROM file</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 		</dict>
-		<dict/>
+		<dict>
+			<key>UTITagTypeSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>jpg</string>
+					<string>png</string>
+				</array>
+			</dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.image</string>
+				<string>public.png</string>
+				<string>public.jpeg</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Artwork</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.artwork</string>
+		</dict>
+		<dict>
+			<key>UTITagTypeSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>svs</string>
+				</array>
+			</dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Save State</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.savestate</string>
+		</dict>
 	</array>
 </dict>
 </plist>

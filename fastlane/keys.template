@@ -1,0 +1,13 @@
+# Copy this file to `keys` with values filled or run the setup fastlane script 'fastlane setup'
+ENV["APPLE_ID"] = ""
+ENV["DEV_DOMAIN"] = "com.provenance-emu" #Replace with your own in same format
+
+## Optional
+
+# Fill these out if you belong to multiple teams
+# ENV["ITC_TEAM_ID"] = ""
+# ENV["DEV_TEM_ID"] = ""
+
+ENV["SIGH_USERNAME"] = ENV["APPLE_ID"]
+ENV["PILOT_APPLE_ID"] = ENV["APPLE_ID"]
+ENV["DELIVER_USERNAME"] = ENV["APPLE_ID"]

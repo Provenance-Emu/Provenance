@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B3547B542058587300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B532058587300CFF7D8 /* Core.plist */; };
 		B3547B552058587300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B532058587300CFF7D8 /* Core.plist */; };
+		B3AF47E121072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
+		B3AF47E221072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
 		B3C9D4BC1DEA77DF0068D057 /* PVGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4D21DEA78050068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4D11DEA78050068D057 /* OpenGLES.framework */; };
 		B3C9D4D41DEA780A0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4D31DEA780A0068D057 /* Foundation.framework */; };
@@ -181,6 +183,7 @@
 		B32F462B1D6A86AD0085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B32F462D1D6A86B30085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3547B532058587300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3AF47E021072B63002211EE /* vba-over.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "vba-over.ini"; sourceTree = "<group>"; };
 		B3C9D4B81DEA77DF0068D057 /* PVGBA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGBA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGBA.h; sourceTree = "<group>"; };
 		B3C9D4BB1DEA77DF0068D057 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -395,6 +398,7 @@
 		B3C9D4B91DEA77DF0068D057 /* PVGBA */ = {
 			isa = PBXGroup;
 			children = (
+				B3AF47E021072B63002211EE /* vba-over.ini */,
 				B3547B532058587300CFF7D8 /* Core.plist */,
 				B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */,
 				B3C9D4BB1DEA77DF0068D057 /* Info.plist */,
@@ -430,9 +434,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C9D4BD1DEA77DF0068D057 /* Build configuration list for PBXNativeTarget "PVGBA" */;
 			buildPhases = (
+				B3C9D4B51DEA77DF0068D057 /* Headers */,
 				B3C9D4B31DEA77DF0068D057 /* Sources */,
 				B3C9D4B41DEA77DF0068D057 /* Frameworks */,
-				B3C9D4B51DEA77DF0068D057 /* Headers */,
 				B3C9D4B61DEA77DF0068D057 /* Resources */,
 			);
 			buildRules = (
@@ -448,9 +452,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C9D4CB1DEA77E90068D057 /* Build configuration list for PBXNativeTarget "PVGBA tvOS" */;
 			buildPhases = (
+				B3C9D4C31DEA77E90068D057 /* Headers */,
 				B3C9D4C11DEA77E90068D057 /* Sources */,
 				B3C9D4C21DEA77E90068D057 /* Frameworks */,
-				B3C9D4C31DEA77E90068D057 /* Headers */,
 				B3C9D4C41DEA77E90068D057 /* Resources */,
 			);
 			buildRules = (
@@ -503,6 +507,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AF47E121072B63002211EE /* vba-over.ini in Resources */,
 				B3547B542058587300CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -511,6 +516,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AF47E221072B63002211EE /* vba-over.ini in Resources */,
 				B3547B552058587300CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -771,7 +777,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVGBA/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -817,7 +823,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVGBA/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -863,7 +869,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVGBA/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -926,7 +932,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -972,7 +978,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1018,7 +1024,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

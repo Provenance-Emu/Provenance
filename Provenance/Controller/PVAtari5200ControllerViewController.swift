@@ -33,9 +33,8 @@ class PVAtari5200ControllerViewController: PVControllerViewController<PV5200Syst
             }
         }
 
-        leftShoulderButton?.buttonTag = .reset
-        startButton?.buttonTag = .start
-        selectButton?.buttonTag = .pause
+        startButton?.buttonTag = .reset
+        selectButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {

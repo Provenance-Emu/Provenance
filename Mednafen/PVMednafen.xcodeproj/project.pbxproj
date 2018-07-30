@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */; };
 		B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDEF8207FF0E300E661D1 /* libsnes.a */; };
+		B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
@@ -484,7 +485,6 @@
 		B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F21E088A4000AD0E8B /* UIKit.framework */; };
 		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
 		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
-		B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FC1E088AF700AD0E8B /* PVSupport.framework */; };
 		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B3547B61205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -623,6 +623,387 @@
 		B3FBDFB0207FFC1E00E661D1 /* SPCReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE4C20736EE90097D86F /* SPCReader.cpp */; };
 		B3FBDFB3207FFC6100E661D1 /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB29020736EEB0097D86F /* snes.cpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B34AB5872106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B333502C207AFBA30036A448;
+			remoteInfo = psx;
+		};
+		B34AB5892106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335061207AFD3D0036A448;
+			remoteInfo = wonderswan;
+		};
+		B34AB58B2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335091207AFF2B0036A448;
+			remoteInfo = virtualboy;
+		};
+		B34AB58D2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33350A4207AFFE80036A448;
+			remoteInfo = nes;
+		};
+		B34AB58F2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B333518F207B00F70036A448;
+			remoteInfo = gb;
+		};
+		B34AB5912106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351A3207B01460036A448;
+			remoteInfo = gba;
+		};
+		B34AB5932106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351B0207B01570036A448;
+			remoteInfo = lynx;
+		};
+		B34AB5952106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351BD207B016F0036A448;
+			remoteInfo = neogeopocket;
+		};
+		B34AB5972106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351CA207B01860036A448;
+			remoteInfo = pce;
+		};
+		B34AB5992106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351D7207B01970036A448;
+			remoteInfo = pcefast;
+		};
+		B34AB59B2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351E4207B01C60036A448;
+			remoteInfo = segamastersystem;
+		};
+		B34AB59D2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351FB207B020C0036A448;
+			remoteInfo = pcfx;
+		};
+		B34AB59F2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335244207B02770036A448;
+			remoteInfo = megadrive;
+		};
+		B34AB5A12106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352A6207B06550036A448;
+			remoteInfo = hwaudio;
+		};
+		B34AB5A32106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352B3207B06610036A448;
+			remoteInfo = hwvideo;
+		};
+		B34AB5A52106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352C0207B06730036A448;
+			remoteInfo = hwcpu;
+		};
+		B34AB5A72106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352CD207B067F0036A448;
+			remoteInfo = hwmisc;
+		};
+		B34AB5A92106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B333546E207B1B500036A448;
+			remoteInfo = cdrom;
+		};
+		B34AB5AB2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335492207B1BF30036A448;
+			remoteInfo = sound;
+		};
+		B34AB5AD2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33354B3207B1C520036A448;
+			remoteInfo = video;
+		};
+		B34AB5AF2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33354CA207B1D850036A448;
+			remoteInfo = mednafen;
+		};
+		B34AB5B12106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355A1207B1E930036A448;
+			remoteInfo = mpcdec;
+		};
+		B34AB5B32106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355B7207B20420036A448;
+			remoteInfo = quicklz;
+		};
+		B34AB5B52106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355C6207B20BE0036A448;
+			remoteInfo = tremor;
+		};
+		B34AB5B72106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355E3207B278E0036A448;
+			remoteInfo = trio;
+		};
+		B34AB5B92106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3FBDEF7207FF0E300E661D1;
+			remoteInfo = snes;
+		};
+		B34AB5BB2106DF8400C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3FBDF9E207FF5D800E661D1;
+			remoteInfo = snes_faust;
+		};
+		B34AB5BD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B333502C207AFBA30036A448;
+			remoteInfo = psx;
+		};
+		B34AB5BF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335061207AFD3D0036A448;
+			remoteInfo = wonderswan;
+		};
+		B34AB5C12106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335091207AFF2B0036A448;
+			remoteInfo = virtualboy;
+		};
+		B34AB5C32106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33350A4207AFFE80036A448;
+			remoteInfo = nes;
+		};
+		B34AB5C52106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B333518F207B00F70036A448;
+			remoteInfo = gb;
+		};
+		B34AB5C72106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351A3207B01460036A448;
+			remoteInfo = gba;
+		};
+		B34AB5C92106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351B0207B01570036A448;
+			remoteInfo = lynx;
+		};
+		B34AB5CB2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351BD207B016F0036A448;
+			remoteInfo = neogeopocket;
+		};
+		B34AB5CD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351CA207B01860036A448;
+			remoteInfo = pce;
+		};
+		B34AB5CF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351D7207B01970036A448;
+			remoteInfo = pcefast;
+		};
+		B34AB5D12106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351E4207B01C60036A448;
+			remoteInfo = segamastersystem;
+		};
+		B34AB5D32106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33351FB207B020C0036A448;
+			remoteInfo = pcfx;
+		};
+		B34AB5D52106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335244207B02770036A448;
+			remoteInfo = megadrive;
+		};
+		B34AB5D72106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352A6207B06550036A448;
+			remoteInfo = hwaudio;
+		};
+		B34AB5D92106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352B3207B06610036A448;
+			remoteInfo = hwvideo;
+		};
+		B34AB5DB2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352C0207B06730036A448;
+			remoteInfo = hwcpu;
+		};
+		B34AB5DD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33352CD207B067F0036A448;
+			remoteInfo = hwmisc;
+		};
+		B34AB5DF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B333546E207B1B500036A448;
+			remoteInfo = cdrom;
+		};
+		B34AB5E12106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3335492207B1BF30036A448;
+			remoteInfo = sound;
+		};
+		B34AB5E32106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33354B3207B1C520036A448;
+			remoteInfo = video;
+		};
+		B34AB5E52106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33354CA207B1D850036A448;
+			remoteInfo = mednafen;
+		};
+		B34AB5E72106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355A1207B1E930036A448;
+			remoteInfo = mpcdec;
+		};
+		B34AB5E92106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355B7207B20420036A448;
+			remoteInfo = quicklz;
+		};
+		B34AB5EB2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355C6207B20BE0036A448;
+			remoteInfo = tremor;
+		};
+		B34AB5ED2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B33355E3207B278E0036A448;
+			remoteInfo = trio;
+		};
+		B34AB5EF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3FBDEF7207FF0E300E661D1;
+			remoteInfo = snes;
+		};
+		B34AB5F12106DFB100C45F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3FBDF9E207FF5D800E661D1;
+			remoteInfo = snes_faust;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B333502B207AFBA30036A448 /* CopyFiles */ = {
@@ -898,6 +1279,7 @@
 		9453E37A1AC5E051004F42AD /* libFLAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFLAC.a; path = libsndfile/libFLAC.a; sourceTree = "<group>"; };
 		9453E37C1AC5E1E9004F42AD /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = libsndfile/libvorbis.a; sourceTree = "<group>"; };
 		9453E37E1AC5E305004F42AD /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = libsndfile/libvorbisenc.a; sourceTree = "<group>"; };
+		B314E30F21081E9200D0C27A /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B333502D207AFBA30036A448 /* libpsx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpsx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335062207AFD3D0036A448 /* libwonderswan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwonderswan.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335092207AFF2B0036A448 /* libvirtualboy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvirtualboy.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3429,6 +3811,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
 				B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */,
 				B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */,
 				B3335874207B43640036A448 /* libcdrom.a in Frameworks */,
@@ -3456,7 +3839,6 @@
 				B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */,
 				B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */,
-				B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */,
 				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
@@ -8262,14 +8644,41 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen" */;
 			buildPhases = (
+				B340E45F1E08887600AD0E8B /* Headers */,
 				B340E45D1E08887600AD0E8B /* Sources */,
 				B340E45E1E08887600AD0E8B /* Frameworks */,
-				B340E45F1E08887600AD0E8B /* Headers */,
 				B340E4601E08887600AD0E8B /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B34AB5882106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB58A2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB58C2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB58E2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5902106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5922106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5942106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5962106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5982106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB59A2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB59C2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB59E2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5A02106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5A22106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5A42106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5A62106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5A82106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5AA2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5AC2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5AE2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5B02106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5B22106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5B42106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5B62106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5B82106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5BA2106DF8400C45F09 /* PBXTargetDependency */,
+				B34AB5BC2106DF8400C45F09 /* PBXTargetDependency */,
 			);
 			name = PVMednafen;
 			productName = PVMednafen;
@@ -8280,14 +8689,41 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B340E4741E08888700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen tvOS" */;
 			buildPhases = (
+				B340E46C1E08888700AD0E8B /* Headers */,
 				B340E46A1E08888700AD0E8B /* Sources */,
 				B340E46B1E08888700AD0E8B /* Frameworks */,
-				B340E46C1E08888700AD0E8B /* Headers */,
 				B340E46D1E08888700AD0E8B /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B34AB5BE2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5C02106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5C22106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5C42106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5C62106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5C82106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5CA2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5CC2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5CE2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5D02106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5D22106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5D42106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5D62106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5D82106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5DC2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5E02106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5E22106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5E42106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5E62106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5E82106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5EA2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5EC2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5EE2106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5F02106DFB100C45F09 /* PBXTargetDependency */,
+				B34AB5F22106DFB100C45F09 /* PBXTargetDependency */,
 			);
 			name = "PVMednafen tvOS";
 			productName = "PVMednafen tvOS";
@@ -8336,7 +8772,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B333502C207AFBA30036A448 = {
@@ -8441,7 +8877,7 @@
 					};
 					B340E4611E08887600AD0E8B = {
 						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 					};
 					B340E46E1E08888700AD0E8B = {
 						CreatedOnToolsVersion = 8.1;
@@ -9271,6 +9707,279 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B34AB5882106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B333502C207AFBA30036A448 /* psx */;
+			targetProxy = B34AB5872106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB58A2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335061207AFD3D0036A448 /* wonderswan */;
+			targetProxy = B34AB5892106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB58C2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335091207AFF2B0036A448 /* virtualboy */;
+			targetProxy = B34AB58B2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB58E2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33350A4207AFFE80036A448 /* nes */;
+			targetProxy = B34AB58D2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5902106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B333518F207B00F70036A448 /* gb */;
+			targetProxy = B34AB58F2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5922106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351A3207B01460036A448 /* gba */;
+			targetProxy = B34AB5912106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5942106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351B0207B01570036A448 /* lynx */;
+			targetProxy = B34AB5932106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5962106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351BD207B016F0036A448 /* neogeopocket */;
+			targetProxy = B34AB5952106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5982106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351CA207B01860036A448 /* pce */;
+			targetProxy = B34AB5972106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB59A2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351D7207B01970036A448 /* pcefast */;
+			targetProxy = B34AB5992106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB59C2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351E4207B01C60036A448 /* segamastersystem */;
+			targetProxy = B34AB59B2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB59E2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351FB207B020C0036A448 /* pcfx */;
+			targetProxy = B34AB59D2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5A02106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335244207B02770036A448 /* megadrive */;
+			targetProxy = B34AB59F2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5A22106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352A6207B06550036A448 /* hwaudio */;
+			targetProxy = B34AB5A12106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5A42106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352B3207B06610036A448 /* hwvideo */;
+			targetProxy = B34AB5A32106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5A62106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352C0207B06730036A448 /* hwcpu */;
+			targetProxy = B34AB5A52106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5A82106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352CD207B067F0036A448 /* hwmisc */;
+			targetProxy = B34AB5A72106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5AA2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B333546E207B1B500036A448 /* cdrom */;
+			targetProxy = B34AB5A92106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5AC2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335492207B1BF30036A448 /* sound */;
+			targetProxy = B34AB5AB2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5AE2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33354B3207B1C520036A448 /* video */;
+			targetProxy = B34AB5AD2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5B02106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33354CA207B1D850036A448 /* mednafen */;
+			targetProxy = B34AB5AF2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5B22106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355A1207B1E930036A448 /* mpcdec */;
+			targetProxy = B34AB5B12106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5B42106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355B7207B20420036A448 /* quicklz */;
+			targetProxy = B34AB5B32106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5B62106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355C6207B20BE0036A448 /* tremor */;
+			targetProxy = B34AB5B52106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5B82106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355E3207B278E0036A448 /* trio */;
+			targetProxy = B34AB5B72106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5BA2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3FBDEF7207FF0E300E661D1 /* snes */;
+			targetProxy = B34AB5B92106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5BC2106DF8400C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3FBDF9E207FF5D800E661D1 /* snes_faust */;
+			targetProxy = B34AB5BB2106DF8400C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5BE2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B333502C207AFBA30036A448 /* psx */;
+			targetProxy = B34AB5BD2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5C02106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335061207AFD3D0036A448 /* wonderswan */;
+			targetProxy = B34AB5BF2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5C22106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335091207AFF2B0036A448 /* virtualboy */;
+			targetProxy = B34AB5C12106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5C42106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33350A4207AFFE80036A448 /* nes */;
+			targetProxy = B34AB5C32106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5C62106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B333518F207B00F70036A448 /* gb */;
+			targetProxy = B34AB5C52106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5C82106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351A3207B01460036A448 /* gba */;
+			targetProxy = B34AB5C72106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5CA2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351B0207B01570036A448 /* lynx */;
+			targetProxy = B34AB5C92106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5CC2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351BD207B016F0036A448 /* neogeopocket */;
+			targetProxy = B34AB5CB2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5CE2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351CA207B01860036A448 /* pce */;
+			targetProxy = B34AB5CD2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5D02106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351D7207B01970036A448 /* pcefast */;
+			targetProxy = B34AB5CF2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5D22106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351E4207B01C60036A448 /* segamastersystem */;
+			targetProxy = B34AB5D12106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5D42106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33351FB207B020C0036A448 /* pcfx */;
+			targetProxy = B34AB5D32106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5D62106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335244207B02770036A448 /* megadrive */;
+			targetProxy = B34AB5D52106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5D82106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352A6207B06550036A448 /* hwaudio */;
+			targetProxy = B34AB5D72106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352B3207B06610036A448 /* hwvideo */;
+			targetProxy = B34AB5D92106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5DC2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352C0207B06730036A448 /* hwcpu */;
+			targetProxy = B34AB5DB2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33352CD207B067F0036A448 /* hwmisc */;
+			targetProxy = B34AB5DD2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5E02106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B333546E207B1B500036A448 /* cdrom */;
+			targetProxy = B34AB5DF2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5E22106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3335492207B1BF30036A448 /* sound */;
+			targetProxy = B34AB5E12106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5E42106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33354B3207B1C520036A448 /* video */;
+			targetProxy = B34AB5E32106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5E62106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33354CA207B1D850036A448 /* mednafen */;
+			targetProxy = B34AB5E52106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5E82106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355A1207B1E930036A448 /* mpcdec */;
+			targetProxy = B34AB5E72106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5EA2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355B7207B20420036A448 /* quicklz */;
+			targetProxy = B34AB5E92106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5EC2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355C6207B20BE0036A448 /* tremor */;
+			targetProxy = B34AB5EB2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5EE2106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B33355E3207B278E0036A448 /* trio */;
+			targetProxy = B34AB5ED2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5F02106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3FBDEF7207FF0E300E661D1 /* snes */;
+			targetProxy = B34AB5EF2106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B34AB5F22106DFB100C45F09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3FBDF9E207FF5D800E661D1 /* snes_faust */;
+			targetProxy = B34AB5F12106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -9310,9 +10019,13 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen-1.21/src\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -9424,9 +10137,13 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen-1.21/src\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -9553,7 +10270,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9587,7 +10303,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9616,7 +10331,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9650,7 +10364,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9679,7 +10392,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9712,7 +10424,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9740,7 +10451,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9773,7 +10483,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9801,7 +10510,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9835,7 +10543,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9865,7 +10572,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9899,7 +10605,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9929,7 +10634,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9962,7 +10666,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -9990,7 +10693,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10024,7 +10726,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10053,7 +10754,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10086,7 +10786,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10114,7 +10813,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10147,7 +10845,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10175,7 +10872,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10208,7 +10904,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10236,7 +10931,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10269,7 +10963,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10297,7 +10990,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10330,7 +11022,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10358,7 +11049,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10391,7 +11081,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10419,7 +11108,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10452,7 +11140,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10480,7 +11167,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10512,7 +11198,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10539,7 +11224,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10571,7 +11255,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10598,7 +11281,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10630,7 +11312,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10657,7 +11338,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10689,7 +11369,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10716,7 +11395,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10748,7 +11426,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10775,7 +11452,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10807,7 +11483,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10834,7 +11509,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10867,7 +11541,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10898,7 +11571,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10931,7 +11603,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -10959,7 +11630,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -10991,7 +11661,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -11022,7 +11691,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -11054,7 +11722,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -11082,8 +11749,6 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -11095,6 +11760,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11107,7 +11776,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11116,7 +11785,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -11125,7 +11794,7 @@
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
@@ -11146,8 +11815,6 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -11158,6 +11825,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					LSB_FIRST,
@@ -11168,7 +11839,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11176,7 +11847,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -11184,7 +11855,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
@@ -11217,6 +11888,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11227,7 +11903,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "$(SRCROOT)/PVMednafen/Info.plist";
+				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11236,7 +11912,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
 				PRODUCT_NAME = PVMednafen;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -11244,9 +11921,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -11275,6 +11952,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					LSB_FIRST,
@@ -11283,7 +11965,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "$(SRCROOT)/PVMednafen/Info.plist";
+				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11291,16 +11973,17 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
 				PRODUCT_NAME = PVMednafen;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -11319,7 +12002,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -11359,7 +12041,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -11394,7 +12075,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -11426,7 +12106,6 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;

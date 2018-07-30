@@ -7,9 +7,11 @@
 //
 
 import Foundation
+import PVLibrary
+import PVSupport
 
 // tvOS
-let TVOSCellWidth: CGFloat = 308.0
+let tvOSCellUnit: CGFloat = 256.0
 
 extension PVGameLibraryViewController {
 //	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
@@ -32,9 +34,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
 	var minimumInteritemSpacing : CGFloat {
 		#if os(tvOS)
-		return 50
+		return 24.0
 		#else
-		return 5.0
+		return 10.0
 		#endif
 	}
 
@@ -67,11 +69,11 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			// TODO: Multirow?
 			let numberOfRows = 1
 			width = viewWidth
-			height = (144.0 + PageIndicatorHeight) * CGFloat(numberOfRows)
+			height = (height + PageIndicatorHeight + 24) * CGFloat(numberOfRows)
 		} else if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows = 1
 			width = viewWidth
-			height = (height + PageIndicatorHeight + 12) * CGFloat(numberOfRows)
+			height = (height + PageIndicatorHeight + 24) * CGFloat(numberOfRows)
 		} else {
 			width *= collectionViewZoom
 			height *= collectionViewZoom
@@ -85,30 +87,31 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 	#if os(tvOS)
 	private func tvos_collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		if searchResults != nil {
-			return CGSize(width: TVOSCellWidth, height: TVOSCellWidth)
+			return CGSize(width: tvOSCellUnit, height: tvOSCellUnit)
 		}
 
 		let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
 		if indexPath.section == saveStateSection {
 			// TODO: Multirow?
 			let numberOfRows : CGFloat = 1.0
-			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right
-			let height = TVOSCellWidth * numberOfRows + PageIndicatorHeight
-			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
+			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 4
+			let height = tvOSCellUnit * numberOfRows + PageIndicatorHeight
+			return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
 		}
 
 		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows : CGFloat = 1.0
-			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right
-			let height :CGFloat = TVOSCellWidth * numberOfRows + PageIndicatorHeight
-			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height / PVGameBoxArtAspectRatio.tall.rawValue))
+			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 5
+			let height :CGFloat = tvOSCellUnit * numberOfRows + PageIndicatorHeight
+            return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
+//            return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height / PVGameBoxArtAspectRatio.tall.rawValue))
 		}
 
 		if let game = self.game(at: indexPath, location: .zero) {
-			let boxartSize = CGSize(width: TVOSCellWidth, height: TVOSCellWidth / game.boxartAspectRatio.rawValue)
+			let boxartSize = CGSize(width: tvOSCellUnit, height: tvOSCellUnit / game.boxartAspectRatio.rawValue)
 			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
 		} else {
-			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: TVOSCellWidth, height: TVOSCellWidth))
+			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: tvOSCellUnit, height: tvOSCellUnit))
 		}
 	}
 	#endif
@@ -133,7 +136,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
 		#if os(tvOS)
-		return UIEdgeInsets(top: 40, left: 0, bottom: 120, right: 0)
+		return UIEdgeInsets(top: 32, left: 0, bottom: 64, right: 0)
 		#else
 		if section == saveStateSection || section == recentGamesSection || section == favoritesSection {
 			return UIEdgeInsets.zero
@@ -248,7 +251,13 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 			let title = searchResults != nil ? "Search Results" : sectionTitles[indexPath.section]
 
 			headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
-			headerView?.titleLabel.text = title
+#if os(tvOS)
+            headerView?.titleLabel.text = title
+            headerView?.titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
+#else
+            headerView?.titleLabel.text = title.uppercased()
+            headerView?.titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
+#endif
 
 			if let headerView = headerView {
 				return headerView

@@ -1,45 +1,21 @@
-.DS_Store
-Thumbs.db
-.idea/
-
-*.pbxuser
-*.perspectivev3
-build
-.svn
+PVLibrary/Carthage/Build/
+/PVSupport/Carthage/Build
+/PVGenesis/PVGenesis.xcodeproj/xcuserdata
+/PVGBA/PVGBA.xcodeproj/xcuserdata
+/PVGB/PVGB.xcodeproj/xcuserdata
+/PVFCEU/PVFCEU.xcodeproj/xcuserdata
+/Provenance.xcworkspace/xcuserdata
+/Provenance.xcodeproj/xcuserdata
+/Provenance.xcodeproj/project.xcworkspace/xcuserdata
 xcuserdata
-*.mode1v3
+report.xml
+/Carthage/Build
+/build
+/fastlane/keys
 /Provenance/Version.h
 /Provenance/Version.swift
-
-#Carthage
-Carthage/Build
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-
-## Playgrounds
-timeline.xctimeline
-playground.xcworkspace
-
-# Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-# Package.resolved
-.build/
-
-## Obj-C/Swift specific
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
+/PVLibrary/Carthage/.Cartfile.resolved
+/Carthage/.Cartfile.resolved
+.Cartfile.tvOS.resolved
+.Cartfile.iOS.resolved
+/.version

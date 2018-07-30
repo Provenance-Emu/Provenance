@@ -8,6 +8,8 @@
 //
 
 import UIKit
+import PVLibrary
+import PVSupport
 
 class PVConflictViewController: UITableViewController {
     var gameImporter: PVGameImporter?

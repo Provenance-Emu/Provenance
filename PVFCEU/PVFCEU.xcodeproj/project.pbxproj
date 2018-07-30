@@ -7,18 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5592106D57B00C45F09 /* PVSupport.framework */; };
+		B34AB5822106DDCC00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5812106DDCC00C45F09 /* PVSupport.framework */; };
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
 		B3547B4C205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
 		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; settings = {COMPILER_FLAGS = "-Weverything"; }; };
 		B39E8CB420539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
 		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F44D1DE87823008450F5 /* PVSupport.framework */; };
 		B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
 		B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
-		B3A9F4511DE87837008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79B01ABF1D41002274A3 /* UIKit.framework */; };
-		B3A9F4531DE8783D008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4521DE8783D008450F5 /* UIKit.framework */; };
 		B3A9F4551DE87840008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4541DE87840008450F5 /* OpenGLES.framework */; };
-		B3A9F4571DE87846008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4561DE87846008450F5 /* PVSupport.framework */; };
 		B3A9F4591DE8784B008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4581DE8784B008450F5 /* Foundation.framework */; };
 		B3A9F45A1DE8785A008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F45E1DE87E09008450F5 /* addrlatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE3D1D6ECD7500742D04 /* addrlatch.cpp */; };
@@ -639,21 +637,19 @@
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1A3A79B01ABF1D41002274A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B34AB5592106D57B00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34AB5812106DDCC00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4A205857B900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFCEUEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4361DE877B4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A9F4381DE877B4008450F5 /* PVFCEU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFCEU.h; sourceTree = "<group>"; };
 		B3A9F4391DE877B4008450F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3A9F4441DE877E4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A9F44D1DE87823008450F5 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3A9F4521DE8783D008450F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F4541DE87840008450F5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
-		B3A9F4561DE87846008450F5 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3A9F4581DE8784B008450F5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F6321DE88425008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3A9F6341DE8842C008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		B3D2E37C1D6E7DEB0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
-		B3D2E37E1D6E7DF40058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		BED8BDEB1D6ECD7500742D04 /* __dummy_mapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = __dummy_mapper.cpp; sourceTree = "<group>"; };
 		BED8BDEC1D6ECD7500742D04 /* 01-222.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "01-222.cpp"; sourceTree = "<group>"; };
 		BED8BDED1D6ECD7500742D04 /* 3d-block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "3d-block.cpp"; sourceTree = "<group>"; };
@@ -857,11 +853,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
-				B3A9F4511DE87837008450F5 /* UIKit.framework in Frameworks */,
 				B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */,
 				B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */,
-				B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -869,11 +864,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34AB5822106DDCC00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6351DE8842C008450F5 /* libz.tbd in Frameworks */,
 				B3A9F4591DE8784B008450F5 /* Foundation.framework in Frameworks */,
-				B3A9F4571DE87846008450F5 /* PVSupport.framework in Frameworks */,
 				B3A9F4551DE87840008450F5 /* OpenGLES.framework in Frameworks */,
-				B3A9F4531DE8783D008450F5 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1291,15 +1285,13 @@
 		1A3A79B41ABF1DB2002274A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B34AB5812106DDCC00C45F09 /* PVSupport.framework */,
+				B34AB5592106D57B00C45F09 /* PVSupport.framework */,
 				B3A9F6341DE8842C008450F5 /* libz.tbd */,
 				B3A9F6321DE88425008450F5 /* libz.tbd */,
 				B3A9F4581DE8784B008450F5 /* Foundation.framework */,
-				B3A9F4561DE87846008450F5 /* PVSupport.framework */,
 				B3A9F4541DE87840008450F5 /* OpenGLES.framework */,
 				B3A9F4521DE8783D008450F5 /* UIKit.framework */,
-				B3A9F44D1DE87823008450F5 /* PVSupport.framework */,
-				B3D2E37E1D6E7DF40058544D /* PVSupport.framework */,
-				B3D2E37C1D6E7DEB0058544D /* PVSupport.framework */,
 				1A3A79AE1ABF1D41002274A3 /* Foundation.framework */,
 				1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */,
 				1A3A79B01ABF1D41002274A3 /* UIKit.framework */,
@@ -1389,9 +1381,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU" */;
 			buildPhases = (
+				B3A9F4331DE877B4008450F5 /* Headers */,
 				B3A9F4311DE877B4008450F5 /* Sources */,
 				B3A9F4321DE877B4008450F5 /* Frameworks */,
-				B3A9F4331DE877B4008450F5 /* Headers */,
 				B3A9F4341DE877B4008450F5 /* Resources */,
 			);
 			buildRules = (
@@ -1407,9 +1399,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU tvOS" */;
 			buildPhases = (
+				B3A9F4411DE877E4008450F5 /* Headers */,
 				B3A9F43F1DE877E4008450F5 /* Sources */,
 				B3A9F4401DE877E4008450F5 /* Frameworks */,
-				B3A9F4411DE877E4008450F5 /* Headers */,
 				B3A9F4421DE877E4008450F5 /* Resources */,
 			);
 			buildRules = (
@@ -1433,7 +1425,7 @@
 				TargetAttributes = {
 					B3A9F4351DE877B4008450F5 = {
 						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 					};
 					B3A9F4431DE877E4008450F5 = {
 						CreatedOnToolsVersion = 8.1;
@@ -2132,7 +2124,7 @@
 				);
 				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2155,7 +2147,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2190,7 +2182,7 @@
 				);
 				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2211,7 +2203,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2246,7 +2238,7 @@
 				);
 				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2266,8 +2258,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2324,9 +2317,9 @@
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = "-Wno-write-strings";
@@ -2380,9 +2373,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = "-Wno-write-strings";
@@ -2436,9 +2429,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = "-Wno-write-strings";

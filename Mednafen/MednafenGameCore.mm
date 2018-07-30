@@ -134,6 +134,7 @@ namespace MDFN_IEN_VB
 @interface MednafenGameCore () <PVPSXSystemResponderClient, PVSaturnSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
     uint32_t *inputBuffer[8];
+    int16 axis[8];
     int videoWidth, videoHeight;
     int videoOffsetX, videoOffsetY;
     int multiTapPlayerCount;
@@ -223,7 +224,7 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
-	MDFNI_SetSettingB("psx.input.analog_mode_ct", true); // Enable Analog mode toggle
+	MDFNI_SetSettingB("psx.input.analog_mode_ct", false); // Enable Analog mode toggle
 		/*
 		 0x0001=SELECT
 		 0x0002=L3
@@ -242,12 +243,10 @@ static void mednafen_init(MednafenGameCore* current)
 		 0x4000=x
 		 0x8000=□
 		 */
-	// The buttons to press to toggle analog / digital mode (hold for couple seconds)
-	uint64 amct = ((1 << PSXMap[PVPSXButtonCircle]) |
-				   (1 << PSXMap[PVPSXButtonL1]) |
-                   (1 << PSXMap[PVPSXButtonL2]) |
-                   (1 << PSXMap[PVPSXButtonR1]) |
-				   (1 << PSXMap[PVPSXButtonR2]));
+	// Analog/Digital Toggle (hold for couple seconds)
+	uint64 amct =
+    ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonL2]) | (1 << PSXMap[PVPSXButtonR2]) | (1 << PSXMap[PVPSXButtonCircle])) ||
+    ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonCircle]));
 	MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
 
 	// PCE Settings
@@ -286,24 +285,28 @@ static void mednafen_init(MednafenGameCore* current)
             inputBuffer[i] = (uint32_t *) calloc(9, sizeof(uint32_t));
         }
 
-		GBAMap[PVGBAButtonUp] 		= 6;
-		GBAMap[PVGBAButtonDown] 	= 7;
-		GBAMap[PVGBAButtonLeft] 	= 5;
 		GBAMap[PVGBAButtonRight] 	= 4;
+        GBAMap[PVGBAButtonLeft]     = 5;
+        GBAMap[PVGBAButtonUp]       = 6;
+        GBAMap[PVGBAButtonDown]     = 7;
+
+        GBAMap[PVGBAButtonA]        = 0;
 		GBAMap[PVGBAButtonB] 		= 1;
-		GBAMap[PVGBAButtonA]		= 0;
+
 		GBAMap[PVGBAButtonSelect]	= 2;
 		GBAMap[PVGBAButtonStart] 	= 3;
+
+        GBAMap[PVGBAButtonR]        = 8;
 		GBAMap[PVGBAButtonL] 		= 9;
-		GBAMap[PVGBAButtonR] 		= 8;
 
 		// Gameboy + Color Map
-		GBMap[PVGBButtonUp] 	= 6;
-		GBMap[PVGBButtonDown] 	= 7;
-		GBMap[PVGBButtonLeft] 	= 5;
 		GBMap[PVGBButtonRight] 	= 4;
+        GBMap[PVGBButtonLeft]   = 5;
+        GBMap[PVGBButtonUp]     = 6;
+        GBMap[PVGBButtonDown]   = 7;
+
+        GBMap[PVGBButtonA]      = 0;
 		GBMap[PVGBButtonB] 		= 1;
-		GBMap[PVGBButtonA]		= 0;
 		GBMap[PVGBButtonSelect]	= 2;
 		GBMap[PVGBButtonStart] 	= 3;
 
@@ -312,49 +315,54 @@ static void mednafen_init(MednafenGameCore* current)
         SNESMap[PVSNESButtonDown]         = 5;
         SNESMap[PVSNESButtonLeft]         = 6;
         SNESMap[PVSNESButtonRight]        = 7;
+
         SNESMap[PVSNESButtonA]            = 8;
         SNESMap[PVSNESButtonB]            = 0;
         SNESMap[PVSNESButtonX]            = 9;
         SNESMap[PVSNESButtonY]            = 1;
+
         SNESMap[PVSNESButtonTriggerLeft]  = 10;
         SNESMap[PVSNESButtonTriggerRight] = 11;
-        SNESMap[PVSNESButtonStart]        = 3;
+
         SNESMap[PVSNESButtonSelect]       = 2;
+        SNESMap[PVSNESButtonStart]        = 3;
 
 		// PCE Map
-		PCEMap[PVPCEButtonUp]		= 4;
-		PCEMap[PVPCEButtonDown] 	= 6;
-		PCEMap[PVPCEButtonLeft] 	= 7;
-		PCEMap[PVPCEButtonRight] 	= 5;
+        PCEMap[PVPCEButtonUp]       = 4;
+        PCEMap[PVPCEButtonRight]    = 5;
+        PCEMap[PVPCEButtonDown]     = 6;
+        PCEMap[PVPCEButtonLeft]     = 7;
 
-		PCEMap[PVPCEButtonButton1] 	= 0;
-		PCEMap[PVPCEButtonButton2] 	= 1;
-		PCEMap[PVPCEButtonButton3] 	= 8;
-		PCEMap[PVPCEButtonButton4] 	= 9;
-		PCEMap[PVPCEButtonButton5] 	= 10;
-		PCEMap[PVPCEButtonButton6] 	= 11;
+        PCEMap[PVPCEButtonButton1]  = 0;
+        PCEMap[PVPCEButtonButton2]  = 1;
+        PCEMap[PVPCEButtonButton3]  = 8;
+        PCEMap[PVPCEButtonButton4]  = 9;
+        PCEMap[PVPCEButtonButton5]  = 10;
+        PCEMap[PVPCEButtonButton6]  = 11;
 
-		PCEMap[PVPCEButtonRun]		= 3;
-		PCEMap[PVPCEButtonSelect] 	= 2;
+        PCEMap[PVPCEButtonSelect]   = 2;
+        PCEMap[PVPCEButtonRun]      = 3;
         PCEMap[PVPCEButtonMode]     = 12;
 
 		// PCFX Map
-        PCFXMap[PVPCEButtonUp]      = 4;
-        PCFXMap[PVPCEButtonDown]    = 6;
-        PCFXMap[PVPCEButtonLeft]    = 7;
-        PCFXMap[PVPCEButtonRight]   = 5;
+        PCFXMap[PVPCFXButtonUp]         = 8;
+        PCFXMap[PVPCFXButtonRight]      = 9;
+        PCFXMap[PVPCFXButtonDown]       = 10;
+        PCFXMap[PVPCFXButtonLeft]       = 11;
 
-        PCFXMap[PVPCEButtonButton1] = 0;
-        PCFXMap[PVPCEButtonButton2] = 1;
-        PCFXMap[PVPCEButtonButton3] = 8;
-        PCFXMap[PVPCEButtonButton4] = 9;
-        PCFXMap[PVPCEButtonButton5] = 10;
-        PCFXMap[PVPCEButtonButton6] = 11;
+        PCFXMap[PVPCFXButtonButton1]    = 0;
+        PCFXMap[PVPCFXButtonButton2]    = 1;
+        PCFXMap[PVPCFXButtonButton3]    = 2;
+        PCFXMap[PVPCFXButtonButton4]    = 3;
+        PCFXMap[PVPCFXButtonButton5]    = 4;
+        PCFXMap[PVPCFXButtonButton6]    = 5;
 
-        PCFXMap[PVPCEButtonRun]     = 3;
-        PCFXMap[PVPCEButtonSelect]  = 2;
-		PCFXMap[PVPCEButtonMode] 	= 12;
+        PCFXMap[PVPCFXButtonSelect]     = 6;
+        PCFXMap[PVPCFXButtonRun]        = 7;
+        PCFXMap[PVPCFXButtonMode]       = 12;
+
     }
+
 
     return self;
 }
@@ -622,8 +630,14 @@ static void emulation_run(BOOL skipFrame) {
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
-            // changing "dualshock" to "gampepad" ↓ to make games playable for now, until we can fix the analog input bugs
-            game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            // centre the dualanalog sticks
+            uint8 *buf = (uint8 *)inputBuffer[i];
+            MDFN_en16lsb(&buf[3], (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
+            MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
+            // do we want to use gamepad when not using an mfi device?
+            game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
         }
 
         // Multi-Disc check
@@ -889,6 +903,13 @@ static void emulation_run(BOOL skipFrame) {
 
 				if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
+
+                    // TODO Can we do this better?
+                    // we don't want to read l3/r3 from the controller
+                    if (self.systemType == MednaSystemPSX && (map[i]==1 || map[i]==2))
+                    {
+                        continue;
+                    }
 
                     if(value > 0) {
                         inputBuffer[playerIndex][0] |= 1 << map[i];
@@ -1176,14 +1197,14 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
             case PVLynxButtonRight:
                 return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
-            case PVLynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVLynxButtonA:
-                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[[pad rightThumbstick] right] isPressed]?:[[pad rightTrigger] isPressed];
+            case PVLynxButtonB:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[[pad rightThumbstick] left] isPressed]?:[[pad leftTrigger] isPressed];
             case PVLynxButtonOption1:
-                return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+                return [[pad leftShoulder] isPressed];
             case PVLynxButtonOption2:
-                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                return [[pad rightShoulder] isPressed];
             default:
                 break;
         }
@@ -1199,9 +1220,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVLynxButtonRight:
                 return [[dpad right] isPressed];
-            case PVLynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVLynxButtonA:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVLynxButtonOption1:
                 return [[pad leftShoulder] isPressed];
@@ -1228,10 +1249,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVLynxButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case PVLynxButtonA:
+            case PVLynxButtonB:
                 return [[pad buttonA] isPressed];
                 break;
-            case PVLynxButtonB:
+            case PVLynxButtonA:
                 return [[pad buttonX] isPressed];
                 break;
             default:
@@ -1404,6 +1425,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         self.isStartPressed = true;
     } else if (button == PVPSXButtonSelect) {
         self.isSelectPressed = true;
+    } else if (button == PVPSXButtonAnalogMode) {
+        self.isAnalogModePressed = true;
     }
     inputBuffer[player][0] |= 1 << PSXMap[button];
 }
@@ -1414,22 +1437,37 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         self.isStartPressed = false;
     } else if (button == PVPSXButtonSelect) {
         self.isSelectPressed = false;
+    } else if (button == PVPSXButtonAnalogMode) {
+        self.isAnalogModePressed = false;
     }
     inputBuffer[player][0] &= ~(1 << PSXMap[button]);
 }
 
 - (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player
 {
+    // TODO
     // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
     // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.
     // Background: https://mednafen.github.io/documentation/psx.html#Section_analog_range
-    value *= 32767; // de-normalize
-    double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
+    // double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
+
+    uint16 modifiedValue = value * 32767;
 
     int analogNumber = PSXMap[button] - 17;
-    uint8_t *buf = (uint8_t *)inputBuffer[player];
-    MDFN_en16lsb(&buf[3 + analogNumber * 2], scaledValue);
-    MDFN_en16lsb(&buf[3 + (analogNumber ^ 1) * 2], 0);
+    int address = analogNumber;
+
+    if (analogNumber % 2 != 0) {
+        axis[analogNumber] = -1 * modifiedValue;
+        address -= 1;
+    }
+    else {
+        axis[analogNumber] = modifiedValue;
+    }
+
+    uint16 actualValue = 32767 + axis[analogNumber] + axis[analogNumber ^ 1];
+
+    uint8 *buf = (uint8 *)inputBuffer[player];
+    MDFN_en16lsb(&buf[3]+address, (uint16) actualValue);
 }
 
 #pragma mark Virtual Boy
@@ -1971,7 +2009,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCExtendedGamepad *gamePad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
-				// D-PAD
+				// D-Pad
 			case PVPCEButtonUp:
                 return [[dpad up] isPressed]?:[[[gamePad leftThumbstick] up] value] > 0.1;
             case PVPCEButtonDown:
@@ -1981,7 +2019,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPCEButtonRight:
                 return [[dpad right] isPressed]?:[[[gamePad leftThumbstick] right] value] > 0.1;
 
-				// Standard buttons
+				// Standard Buttons
 			case PVPCEButtonButton1:
 				return [[gamePad buttonB] isPressed];
 			case PVPCEButtonButton2:
@@ -1992,17 +2030,17 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 			case PVPCEButtonRun:
 				return [[gamePad rightTrigger] isPressed];
 
-				// Extened buttons
+				// Extended Buttons
 			case PVPCEButtonButton3:
-                return [[gamePad leftShoulder] isPressed];
-            case PVPCEButtonButton4:
-                return [[gamePad rightShoulder] isPressed];
-            case PVPCEButtonButton5:
                 return [[gamePad buttonX] isPressed];
-            case PVPCEButtonButton6:
+            case PVPCEButtonButton4:
+                return [[gamePad leftShoulder] isPressed];
+            case PVPCEButtonButton5:
                 return [[gamePad buttonY] isPressed];
+            case PVPCEButtonButton6:
+                return [[gamePad rightShoulder] isPressed];
 
-				// Toggle the mode special buttons are pressed
+                // Toggle the Mode: Extended Buttons are pressed
             case PVPCEButtonMode:
                 return [[gamePad buttonX] isPressed] || [[gamePad leftShoulder] isPressed] || [[gamePad buttonY] isPressed] || [[gamePad rightShoulder] isPressed];
             default:
@@ -2014,6 +2052,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCGamepad *gamePad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
+                // D-Pad
             case PVPCEButtonUp:
                 return [[dpad up] isPressed];
             case PVPCEButtonDown:
@@ -2022,6 +2061,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVPCEButtonRight:
                 return [[dpad right] isPressed];
+
 				// Standard Buttons
 			case PVPCEButtonButton1:
 				return [[gamePad buttonB] isPressed];
@@ -2038,12 +2078,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[gamePad buttonX] isPressed];
             case PVPCEButtonButton4:
                 return [[gamePad buttonY] isPressed];
-//            case PVPCEButtonButton5:
-//                return [[gamePad leftShoulder] isPressed];
-//            case PVPCEButtonButton6:
-//                return [[gamePad rightShoulder] isPressed];
 
-				// Toggle the mode special buttons are pressed
+                // Toggle the Mode: Extended Buttons are pressed
 			case PVPCEButtonMode:
 				return [[gamePad buttonX] isPressed] || [[gamePad buttonY] isPressed];
             default:
@@ -2068,10 +2104,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPCEButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case PVPCEButtonButton2:
+            case PVPCEButtonButton1:
                 return [[gamePad buttonA] isPressed];
                 break;
-            case PVPCEButtonButton1:
+            case PVPCEButtonButton2:
                 return [[gamePad buttonX] isPressed];
                 break;
             default:
@@ -2130,15 +2166,18 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
+        bool modifier1Pressed = [[pad leftShoulder] isPressed] && [[pad rightShoulder] isPressed];
+        bool modifier2Pressed = [[pad leftTrigger] isPressed] && [[pad rightTrigger] isPressed];
+        bool modifiersPressed = modifier1Pressed && modifier2Pressed;
         switch (buttonID) {
             case PVPSXButtonUp:
                 return [[dpad up] isPressed];
             case PVPSXButtonDown:
-                return [[dpad down] isPressed];
+                return [[dpad down] isPressed] && !modifiersPressed;
             case PVPSXButtonLeft:
                 return [[dpad left] isPressed];
             case PVPSXButtonRight:
-                return [[dpad right] isPressed];
+                return [[dpad right] isPressed] && !modifiersPressed;
             case PVPSXButtonLeftAnalogUp:
                 return [pad leftThumbstick].up.value;
             case PVPSXButtonLeftAnalogDown:
@@ -2148,25 +2187,31 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPSXButtonLeftAnalogRight:
                 return [pad leftThumbstick].right.value;
             case PVPSXButtonSquare:
-                return [[pad buttonX] isPressed];
-            case PVPSXButtonCross:
-                return [[pad buttonA] isPressed];
-            case PVPSXButtonCircle:
-                return [[pad buttonB] isPressed];
-            case PVPSXButtonL1:
-                return [[pad leftShoulder] isPressed];
+                return [[pad buttonX] isPressed] && !modifiersPressed;
             case PVPSXButtonTriangle:
                 return [[pad buttonY] isPressed];
-            case PVPSXButtonR1:
-                return [[pad rightShoulder] isPressed];
+            case PVPSXButtonCross:
+                return [[pad buttonA] isPressed] && !modifiersPressed;
+            case PVPSXButtonCircle:
+                return [[pad buttonB] isPressed] && !modifiersPressed;
+            case PVPSXButtonL1:
+                return [[pad leftShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonL2:
-                return [[pad leftTrigger] isPressed];
+                return [[pad leftTrigger] isPressed] && !modifier1Pressed;
+            case PVPSXButtonL3:
+                return modifiersPressed && [[dpad down] isPressed];
+            case PVPSXButtonR1:
+                return [[pad rightShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonR2:
-                return [[pad rightTrigger] isPressed];
-            case PVPSXButtonStart:
-                return self.isStartPressed;
+                return [[pad rightTrigger] isPressed] && !modifier1Pressed;
+            case PVPSXButtonR3:
+                return modifiersPressed && [[pad buttonA] isPressed];
             case PVPSXButtonSelect:
-                return self.isSelectPressed;
+                return self.isSelectPressed || (modifiersPressed && [[dpad right] isPressed]);
+			case PVPSXButtonStart:
+				return self.isStartPressed || (modifiersPressed && [[pad buttonX] isPressed]);
+            case PVPSXButtonAnalogMode:
+                return self.isAnalogModePressed || (modifiersPressed && [[pad buttonX] isPressed] &&  [[pad buttonA] isPressed]);
             default:
                 break;
         }
@@ -2175,31 +2220,40 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     {
         GCGamepad *pad = [controller gamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
+        bool modifierPressed = [[pad leftShoulder] isPressed] && [[pad rightShoulder] isPressed];
         switch (buttonID) {
             case PVPSXButtonUp:
-                return [[dpad up] isPressed];
+                return [[dpad up] isPressed] && !modifierPressed;
             case PVPSXButtonDown:
-                return [[dpad down] isPressed];
+                return [[dpad down] isPressed] && !modifierPressed;
             case PVPSXButtonLeft:
                 return [[dpad left] isPressed];
             case PVPSXButtonRight:
-                return [[dpad right] isPressed];
+                return [[dpad right] isPressed] && !modifierPressed;
             case PVPSXButtonSquare:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonX] isPressed] && !modifierPressed;
+            case PVPSXButtonTriangle:
+                return [[pad buttonY] isPressed] && !modifierPressed;
             case PVPSXButtonCross:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed] && !modifierPressed;
             case PVPSXButtonCircle:
-                return [[pad buttonB] isPressed];
+                return [[pad buttonB] isPressed] && !modifierPressed;
             case PVPSXButtonL1:
                 return [[pad leftShoulder] isPressed];
-            case PVPSXButtonTriangle:
-                return [[pad buttonY] isPressed];
+            case PVPSXButtonL2:
+                return modifierPressed && [[dpad up] isPressed];
+            case PVPSXButtonL3:
+                return modifierPressed && [[dpad down] isPressed];
             case PVPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
-            case PVPSXButtonStart:
-                return self.isStartPressed;
+            case PVPSXButtonR2:
+                return modifierPressed && [[pad buttonY] isPressed];
+            case PVPSXButtonR3:
+                return modifierPressed && [[pad buttonA] isPressed];
             case PVPSXButtonSelect:
-                return self.isSelectPressed;
+                return self.isSelectPressed || (modifierPressed && [[dpad right] isPressed]);
+            case PVPSXButtonStart:
+                return self.isStartPressed || (modifierPressed && [[pad buttonX] isPressed]);
             default:
                 break;
         }
@@ -2368,9 +2422,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[[pad rightThumbstick] left] isPressed];
             case PVVBButtonRightRight:
                 return [[[pad rightThumbstick] right] isPressed];
-            case PVVBButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVVBButtonA:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case PVVBButtonB:
                 return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVVBButtonL:
                 return [[pad leftShoulder] isPressed];
@@ -2397,9 +2451,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[dpad left] isPressed];
             case PVVBButtonLeftRight:
                 return [[dpad right] isPressed];
-            case PVVBButtonB:
-                return [[pad buttonB] isPressed];
             case PVVBButtonA:
+                return [[pad buttonB] isPressed];
+            case PVVBButtonB:
                 return [[pad buttonA] isPressed];
             case PVVBButtonL:
                 return [[pad leftShoulder] isPressed];
@@ -2474,11 +2528,11 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonY2:
                 return [[dpad right] isPressed];
             case PVWSButtonA:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVWSButtonB:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVWSButtonStart:
-                return [[pad rightShoulder] isPressed];
+                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
             case PVWSButtonSound:
                 return [[pad leftShoulder] isPressed];
             default:
@@ -2499,9 +2553,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVWSButtonX2:
                 return [[dpad right] isPressed];
             case PVWSButtonA:
-                return [[pad buttonX] isPressed];
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
             case PVWSButtonB:
-                return [[pad buttonA] isPressed];
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
             case PVWSButtonStart:
                 return [[pad rightShoulder] isPressed];
             case PVWSButtonSound:

@@ -1,0 +1,4 @@
+#include "buildnumber.xcconfig"
+
+OTHER_CFLAGS[sdk=appletvos*] = $(HOCKEYSDK_WARNING_FLAGS) -fembed-bitcode
+OTHER_CFLAGS[sdk=appletvsimulator*] = $(HOCKEYSDK_WARNING_FLAGS) -fembed-bitcode-marker

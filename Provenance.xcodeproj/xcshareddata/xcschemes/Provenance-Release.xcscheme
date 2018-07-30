@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0940"
+   LastUpgradeVersion = "1000"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DFB6017F2038AD13001E70F1"
-               BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-               BlueprintName = "PVMupen64PlusVideoGlideN64"
-               ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+               BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
+               BuildableName = "PVLibrary.framework"
+               BlueprintName = "PVLibrary"
+               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

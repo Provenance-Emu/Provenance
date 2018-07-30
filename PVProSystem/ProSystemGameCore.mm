@@ -396,20 +396,22 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
             _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
             
                 // Button 1
-            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = gamepad.buttonA.isPressed;
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
                 // Button 2
             _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
            
                 // Reset
-            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.leftShoulder.isPressed);
+            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.rightShoulder.isPressed);
                 // Select
-            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.rightShoulder.isPressed);
-                // Pause
-            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
+            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.leftShoulder.isPressed);
+                // Pause - Opting out of system pause…
+//            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
+                                                                           
+                // TO DO: Move Difficulty options these to Menu
                 // Left Difficulty
-            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.leftTrigger.isPressed);
+//            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.leftTrigger.isPressed);
                 // Right Difficulty
-            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.rightTrigger.isPressed);
+//            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.rightTrigger.isPressed);
 
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
@@ -425,22 +427,23 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
             _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed);
             
                 // Button 1
-            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed);
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
                 // Button 2
-            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed);
+            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
             
                 // Reset
-            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.leftShoulder.isPressed);
+            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.rightShoulder.isPressed);
                 // Select
-            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.rightShoulder.isPressed);
-
+            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.leftShoulder.isPressed);
+                                                                           
                 // Pause
 //            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
-            
+                                                                           
+                // TO DO: Move Difficulty options these to Menu
                 // Left Difficulty
-            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.buttonX.isPressed);
+//            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.buttonX.isPressed);
                 // Right Difficulty
-            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.buttonY.isPressed);
+//            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.buttonY.isPressed);
             
         }
 #if TARGET_OS_TV

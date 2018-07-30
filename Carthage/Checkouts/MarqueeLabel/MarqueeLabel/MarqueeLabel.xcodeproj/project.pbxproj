@@ -1,0 +1,511 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EAE4AC071CA8B5A6006C1ECC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4AC051CA8B5A6006C1ECC /* AppDelegate.m */; };
+		EAE4AC081CA8B5A6006C1ECC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAE4AC061CA8B5A6006C1ECC /* Assets.xcassets */; };
+		EAE4AC0A1CA8B5D0006C1ECC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4AC091CA8B5D0006C1ECC /* main.m */; };
+		EAE4AC0E1CA8B5DD006C1ECC /* MarqueeLabel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EAE4AC0D1CA8B5DD006C1ECC /* MarqueeLabel.storyboard */; };
+		EAE4AC241CA8B756006C1ECC /* MarqueeLabelDemoPushController.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4AC1D1CA8B756006C1ECC /* MarqueeLabelDemoPushController.m */; };
+		EAE4AC251CA8B756006C1ECC /* MarqueeLabelDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4AC1F1CA8B756006C1ECC /* MarqueeLabelDemoViewController.m */; };
+		EAE4AC261CA8B756006C1ECC /* MarqueeLabelTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4AC211CA8B756006C1ECC /* MarqueeLabelTableViewController.m */; };
+		EAE4AC271CA8B756006C1ECC /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4AC231CA8B756006C1ECC /* ModalViewController.m */; };
+		EAE4AC2D1CA8B794006C1ECC /* MLHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = EAE4AC2C1CA8B794006C1ECC /* MLHeader.xib */; };
+		EAE4AC541CA8B83D006C1ECC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EAE4AC521CA8B83D006C1ECC /* LaunchScreen.storyboard */; };
+		EAE4AC741CA8DCBB006C1ECC /* MarqueeLabel_Umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = EAE4AC731CA8DCBB006C1ECC /* MarqueeLabel_Umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EAE4ACD31CAA24E2006C1ECC /* MarqueeLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = EAE4ACD11CAA24E2006C1ECC /* MarqueeLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EAE4ACD41CAA24E2006C1ECC /* MarqueeLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4ACD21CAA24E2006C1ECC /* MarqueeLabel.m */; };
+		EAE4ACD51CAA24E2006C1ECC /* MarqueeLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE4ACD21CAA24E2006C1ECC /* MarqueeLabel.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		EA167CDF1CA8B40C00DBF930 /* MarqueeLabelDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarqueeLabelDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EAE4AC041CA8B5A6006C1ECC /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = SOURCE_ROOT; };
+		EAE4AC051CA8B5A6006C1ECC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = SOURCE_ROOT; };
+		EAE4AC061CA8B5A6006C1ECC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		EAE4AC091CA8B5D0006C1ECC /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
+		EAE4AC0B1CA8B5D5006C1ECC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		EAE4AC0D1CA8B5DD006C1ECC /* MarqueeLabel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MarqueeLabel.storyboard; sourceTree = SOURCE_ROOT; };
+		EAE4AC1C1CA8B756006C1ECC /* MarqueeLabelDemoPushController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarqueeLabelDemoPushController.h; path = Support/MarqueeLabelDemoPushController.h; sourceTree = SOURCE_ROOT; };
+		EAE4AC1D1CA8B756006C1ECC /* MarqueeLabelDemoPushController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarqueeLabelDemoPushController.m; path = Support/MarqueeLabelDemoPushController.m; sourceTree = SOURCE_ROOT; };
+		EAE4AC1E1CA8B756006C1ECC /* MarqueeLabelDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarqueeLabelDemoViewController.h; path = Support/MarqueeLabelDemoViewController.h; sourceTree = SOURCE_ROOT; };
+		EAE4AC1F1CA8B756006C1ECC /* MarqueeLabelDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarqueeLabelDemoViewController.m; path = Support/MarqueeLabelDemoViewController.m; sourceTree = SOURCE_ROOT; };
+		EAE4AC201CA8B756006C1ECC /* MarqueeLabelTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarqueeLabelTableViewController.h; path = Support/MarqueeLabelTableViewController.h; sourceTree = SOURCE_ROOT; };
+		EAE4AC211CA8B756006C1ECC /* MarqueeLabelTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarqueeLabelTableViewController.m; path = Support/MarqueeLabelTableViewController.m; sourceTree = SOURCE_ROOT; };
+		EAE4AC221CA8B756006C1ECC /* ModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModalViewController.h; path = Support/ModalViewController.h; sourceTree = SOURCE_ROOT; };
+		EAE4AC231CA8B756006C1ECC /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ModalViewController.m; path = Support/ModalViewController.m; sourceTree = SOURCE_ROOT; };
+		EAE4AC2C1CA8B794006C1ECC /* MLHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MLHeader.xib; sourceTree = SOURCE_ROOT; };
+		EAE4AC531CA8B83D006C1ECC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = SOURCE_ROOT; };
+		EAE4AC711CA8DCBB006C1ECC /* MarqueeLabel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MarqueeLabel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EAE4AC731CA8DCBB006C1ECC /* MarqueeLabel_Umbrella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarqueeLabel_Umbrella.h; sourceTree = "<group>"; };
+		EAE4AC751CA8DCBB006C1ECC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EAE4AC791CA8DE27006C1ECC /* module.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.map; sourceTree = "<group>"; };
+		EAE4ACD11CAA24E2006C1ECC /* MarqueeLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarqueeLabel.h; path = ../../Sources/ObjC/MarqueeLabel.h; sourceTree = "<group>"; };
+		EAE4ACD21CAA24E2006C1ECC /* MarqueeLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MarqueeLabel.m; path = ../../Sources/ObjC/MarqueeLabel.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EA167CDC1CA8B40C00DBF930 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAE4AC6D1CA8DCBB006C1ECC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EA167CD61CA8B40C00DBF930 = {
+			isa = PBXGroup;
+			children = (
+				EA167CE11CA8B40C00DBF930 /* MarqueeLabel Demo */,
+				EAE4AC721CA8DCBB006C1ECC /* MarqueeLabel Framework */,
+				EA167CE01CA8B40C00DBF930 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EA167CE01CA8B40C00DBF930 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EA167CDF1CA8B40C00DBF930 /* MarqueeLabelDemo.app */,
+				EAE4AC711CA8DCBB006C1ECC /* MarqueeLabel.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EA167CE11CA8B40C00DBF930 /* MarqueeLabel Demo */ = {
+			isa = PBXGroup;
+			children = (
+				EAE4AC281CA8B75E006C1ECC /* Classes */,
+				EAE4AC0F1CA8B624006C1ECC /* Support */,
+				EAE4AC2E1CA8B79B006C1ECC /* Interface */,
+				EA167CE21CA8B40C00DBF930 /* Supporting Files */,
+			);
+			name = "MarqueeLabel Demo";
+			path = MarqueeLabel;
+			sourceTree = "<group>";
+		};
+		EA167CE21CA8B40C00DBF930 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EAE4AC061CA8B5A6006C1ECC /* Assets.xcassets */,
+				EAE4AC0B1CA8B5D5006C1ECC /* Info.plist */,
+				EAE4AC041CA8B5A6006C1ECC /* AppDelegate.h */,
+				EAE4AC051CA8B5A6006C1ECC /* AppDelegate.m */,
+				EAE4AC091CA8B5D0006C1ECC /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EAE4AC0F1CA8B624006C1ECC /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				EAE4AC1E1CA8B756006C1ECC /* MarqueeLabelDemoViewController.h */,
+				EAE4AC1F1CA8B756006C1ECC /* MarqueeLabelDemoViewController.m */,
+				EAE4AC1C1CA8B756006C1ECC /* MarqueeLabelDemoPushController.h */,
+				EAE4AC1D1CA8B756006C1ECC /* MarqueeLabelDemoPushController.m */,
+				EAE4AC201CA8B756006C1ECC /* MarqueeLabelTableViewController.h */,
+				EAE4AC211CA8B756006C1ECC /* MarqueeLabelTableViewController.m */,
+				EAE4AC221CA8B756006C1ECC /* ModalViewController.h */,
+				EAE4AC231CA8B756006C1ECC /* ModalViewController.m */,
+			);
+			name = Support;
+			sourceTree = "<group>";
+		};
+		EAE4AC281CA8B75E006C1ECC /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				EAE4ACD11CAA24E2006C1ECC /* MarqueeLabel.h */,
+				EAE4ACD21CAA24E2006C1ECC /* MarqueeLabel.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		EAE4AC2E1CA8B79B006C1ECC /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				EAE4AC521CA8B83D006C1ECC /* LaunchScreen.storyboard */,
+				EAE4AC0D1CA8B5DD006C1ECC /* MarqueeLabel.storyboard */,
+				EAE4AC2C1CA8B794006C1ECC /* MLHeader.xib */,
+			);
+			name = Interface;
+			sourceTree = "<group>";
+		};
+		EAE4AC721CA8DCBB006C1ECC /* MarqueeLabel Framework */ = {
+			isa = PBXGroup;
+			children = (
+				EAE4AC731CA8DCBB006C1ECC /* MarqueeLabel_Umbrella.h */,
+				EAE4AC751CA8DCBB006C1ECC /* Info.plist */,
+				EAE4AC791CA8DE27006C1ECC /* module.map */,
+			);
+			name = "MarqueeLabel Framework";
+			path = MarqueeLabel;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		EAE4AC6E1CA8DCBB006C1ECC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAE4ACD31CAA24E2006C1ECC /* MarqueeLabel.h in Headers */,
+				EAE4AC741CA8DCBB006C1ECC /* MarqueeLabel_Umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		EA167CDE1CA8B40C00DBF930 /* MarqueeLabelDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA167CF61CA8B40C00DBF930 /* Build configuration list for PBXNativeTarget "MarqueeLabelDemo" */;
+			buildPhases = (
+				EA167CDB1CA8B40C00DBF930 /* Sources */,
+				EA167CDC1CA8B40C00DBF930 /* Frameworks */,
+				EA167CDD1CA8B40C00DBF930 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MarqueeLabelDemo;
+			productName = MarqueeLabel;
+			productReference = EA167CDF1CA8B40C00DBF930 /* MarqueeLabelDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EAE4AC701CA8DCBB006C1ECC /* MarqueeLabel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EAE4AC761CA8DCBB006C1ECC /* Build configuration list for PBXNativeTarget "MarqueeLabel" */;
+			buildPhases = (
+				EAE4AC6C1CA8DCBB006C1ECC /* Sources */,
+				EAE4AC6D1CA8DCBB006C1ECC /* Frameworks */,
+				EAE4AC6E1CA8DCBB006C1ECC /* Headers */,
+				EAE4AC6F1CA8DCBB006C1ECC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MarqueeLabel;
+			productName = MarqueeLabel;
+			productReference = EAE4AC711CA8DCBB006C1ECC /* MarqueeLabel.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EA167CD71CA8B40C00DBF930 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0930;
+				ORGANIZATIONNAME = "Charles Powell";
+				TargetAttributes = {
+					EA167CDE1CA8B40C00DBF930 = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = K573DL86KG;
+					};
+					EAE4AC701CA8DCBB006C1ECC = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
+			};
+			buildConfigurationList = EA167CDA1CA8B40C00DBF930 /* Build configuration list for PBXProject "MarqueeLabel" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EA167CD61CA8B40C00DBF930;
+			productRefGroup = EA167CE01CA8B40C00DBF930 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EA167CDE1CA8B40C00DBF930 /* MarqueeLabelDemo */,
+				EAE4AC701CA8DCBB006C1ECC /* MarqueeLabel */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EA167CDD1CA8B40C00DBF930 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAE4AC081CA8B5A6006C1ECC /* Assets.xcassets in Resources */,
+				EAE4AC0E1CA8B5DD006C1ECC /* MarqueeLabel.storyboard in Resources */,
+				EAE4AC541CA8B83D006C1ECC /* LaunchScreen.storyboard in Resources */,
+				EAE4AC2D1CA8B794006C1ECC /* MLHeader.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAE4AC6F1CA8DCBB006C1ECC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EA167CDB1CA8B40C00DBF930 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAE4AC0A1CA8B5D0006C1ECC /* main.m in Sources */,
+				EAE4AC261CA8B756006C1ECC /* MarqueeLabelTableViewController.m in Sources */,
+				EAE4AC271CA8B756006C1ECC /* ModalViewController.m in Sources */,
+				EAE4ACD41CAA24E2006C1ECC /* MarqueeLabel.m in Sources */,
+				EAE4AC071CA8B5A6006C1ECC /* AppDelegate.m in Sources */,
+				EAE4AC251CA8B756006C1ECC /* MarqueeLabelDemoViewController.m in Sources */,
+				EAE4AC241CA8B756006C1ECC /* MarqueeLabelDemoPushController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAE4AC6C1CA8DCBB006C1ECC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAE4ACD51CAA24E2006C1ECC /* MarqueeLabel.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		EAE4AC521CA8B83D006C1ECC /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EAE4AC531CA8B83D006C1ECC /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EA167CF41CA8B40C00DBF930 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		EA167CF51CA8B40C00DBF930 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EA167CF71CA8B40C00DBF930 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = K573DL86KG;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.charlespowell.MarqueeLabelDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		EA167CF81CA8B40C00DBF930 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = K573DL86KG;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.charlespowell.MarqueeLabelDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		EAE4AC771CA8DCBB006C1ECC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = MarqueeLabel/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "$(PRODUCT_NAME)/module.map";
+				PRODUCT_BUNDLE_IDENTIFIER = com.charlespowell.MarqueeLabel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EAE4AC781CA8DCBB006C1ECC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = MarqueeLabel/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "$(PRODUCT_NAME)/module.map";
+				PRODUCT_BUNDLE_IDENTIFIER = com.charlespowell.MarqueeLabel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EA167CDA1CA8B40C00DBF930 /* Build configuration list for PBXProject "MarqueeLabel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA167CF41CA8B40C00DBF930 /* Debug */,
+				EA167CF51CA8B40C00DBF930 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EA167CF61CA8B40C00DBF930 /* Build configuration list for PBXNativeTarget "MarqueeLabelDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA167CF71CA8B40C00DBF930 /* Debug */,
+				EA167CF81CA8B40C00DBF930 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EAE4AC761CA8DCBB006C1ECC /* Build configuration list for PBXNativeTarget "MarqueeLabel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EAE4AC771CA8DCBB006C1ECC /* Debug */,
+				EAE4AC781CA8DCBB006C1ECC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EA167CD71CA8B40C00DBF930 /* Project object */;
+}

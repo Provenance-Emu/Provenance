@@ -51,8 +51,21 @@
 - (void)initFileLogger {
 
 	// File logger
+//	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES); // cache area (not backed up)
+//	NSString *logPath = [paths[0] stringByAppendingPathComponent:@"/Logs"];
+//
+//	[[NSFileManager defaultManager] createDirectoryAtPath:logPath
+//							  withIntermediateDirectories:TRUE
+//											   attributes:nil
+//													error:nil];
+//
+//
+//	DDLogFileManagerDefault *logFileManager = [[DDLogFileManagerDefault alloc] initWithLogsDirectory:logPath];
+//
+//	_fileLogger = [[DDFileLogger alloc] initWithLogFileManager:logFileManager];
 	_fileLogger = [[DDFileLogger alloc] init];
 	_fileLogger.rollingFrequency = 60 * 60 * 24; // 24 hour rolling
+	_fileLogger.doNotReuseLogFiles = YES;
 	_fileLogger.logFileManager.maximumNumberOfLogFiles = 5;
 
 	//        [_fileLogger setLogFormatter:kfFormatter];

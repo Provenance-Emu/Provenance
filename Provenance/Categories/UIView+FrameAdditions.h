@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
 
-
 @interface UIView (UIView_FrameAdditions)
 
 - (void)setOrigin:(CGPoint)origin;

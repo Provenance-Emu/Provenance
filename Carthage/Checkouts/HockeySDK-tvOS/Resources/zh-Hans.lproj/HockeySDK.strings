@@ -1,0 +1,103 @@
+/*
+ Localization provided by Wordcrafts
+ The Mac OS X and iOS localization experts.
+ http://www.wordcrafts.de
+ */
+
+
+/* General */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "是";
+
+/* For dialogs no buttons */
+"HockeyNo" = "无";
+
+/* For dialogs ok buttons */
+"HockeyOK" = "确定";
+
+/* Replacement for app name, if it could not be detected */
+"HockeyAppNamePlaceholder" = "这个 app";
+
+/* Crash */
+
+
+/* Crash dialog */
+
+/* Title showing in the alert box when crash report data has been found */
+"CrashDataFoundTitle" = "%@ 意外退出";
+
+/* Description explaining that crash data has been found and ask the user if the data might be uploaded to the developers server */
+"CrashDataFoundAnonymousDescription" = "你想要发送一个匿名报告来帮助我们解决这个问题吗？";
+
+/* Description explaining that crash data has been found and ask the user if the non anonymous data might be uplaoded to the developers server */
+"CrashDataFoundDescription" = "你想要发送一个报告来帮助我们解决这个问题吗？";
+
+/* Alert box button if the users wants to send crash data always automatically */
+"CrashSendReportAlways" = "总是发送";
+
+/* Alert box button to send the crash report once */
+"CrashSendReport" = "发送报告";
+
+/* Alert box button to decline sending the report */
+"CrashDontSendReport" = "不发送";
+
+/* Text showing in a processing box that the crash data is being uploaded to the server */
+"CrashReportSending" = "正在发送...";
+
+
+/* Update */
+
+
+/* Update Alert view */
+
+/* Update available */
+"UpdateAvailable" = "更新已推出";
+
+"UpdateAlertTextWithAppVersion" = "%@ 已可用。";
+
+"UpdateAlertMandatoryTextWithAppVersion" = "%@ 已可用，并且是一个强制更新。";
+
+"UpdateIgnore" = "忽略";
+
+/* Update Details */
+
+"UpdateButtonCheck" = "检查";
+
+"UpdateVersion" = "版本";
+
+"UpdateNoUpdateAvailableTitle" = "无可用更新";
+
+"UpdateNoUpdateAvailableMessage" = "%@是最新版本。";
+
+"UpdateError" = "错误";
+
+/* Update Expiry  */
+
+"UpdateExpired" = "%@ 已过期，所以无法使用。";
+
+/* Email Placeholder */
+"HockeyFeedbackUserDataEmailPlaceholder" = "email@example.com";
+
+
+/* Authenticator */
+
+/* View Controller Title*/
+"HockeyAuthenticatorViewControllerTitle" = "HockeyApp";
+
+/* BITAuthenticatorAuthTypeEmail and BITAuthenticatorAuthTypeEmailAndPassword */
+"HockeyAuthenticationViewControllerDataEmailAndPasswordDescription" = "请输入你的 HockeyApp 帐户的电子邮件和密码来授权访问这个 app。";
+"HockeyAuthenticationViewControllerDataEmailDescription" = "请输入你的 HockeyApp 帐户的电子邮件来授权访问这个 app。";
+"HockeyAuthenticationViewControllerEmailPlaceholder" = "email@example.com";
+"HockeyAuthenticationViewControllerPasswordPlaceholder" = "必填";
+"HockeyAuthenticationViewControllerEmailDescription" = "邮件";
+"HockeyAuthenticationViewControllerPasswordDescription" = "密码";
+
+/* Error presented to the user if authentication failed because of networking issues */
+"HockeyAuthenticationViewControllerNetworkError" = "你设备的 Internet 连接似乎已断开，导致授权失败。请再试一次。";
+
+"HockeyAuthenticationFailedAuthenticate" = "授权错误。请再试一次或联系这个 app 的开发人员。";
+"HockeyAuthenticationNotMember" = "你未获授权使用这个程序。请联系这个 app 的开发人员。";
+"HockeyAuthenticationContactDeveloper" = "授权错误。请联系这个 app 开发人员。";
+"HockeyAuthenticationWrongEmailPassword" = "你输入了一个无效的电子邮件或密码，请检查后再试一次。";
+"HockeyAuthenticationAuthSecretMissing" = "尚未设置 HockeySDK  authorization secret。请联系这个 app 的开发人员。";

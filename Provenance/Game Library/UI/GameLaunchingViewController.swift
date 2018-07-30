@@ -7,7 +7,21 @@
 //
 
 import UIKit
-// import RealmSwift
+import RealmSwift
+import PVLibrary
+import PVSupport
+
+public func PVMaxRecentsCount() -> Int {
+	#if os(tvOS)
+	return 12
+	#elseif os(iOS)
+	#if EXTENSION
+	return 9
+	#else
+	return UIApplication.shared.keyWindow?.traitCollection.userInterfaceIdiom == .phone ? 6 : 9
+	#endif
+	#endif
+}
 
 /*
  Protocol with default implimentation.
@@ -85,7 +99,7 @@ extension GameSharingViewController where Self : UIViewController {
 			return arr
 		})
 
-		let addImage : (String?, String) -> Void  = { (imageURL, suffix) in
+		let addImageFromCache : (String?, String) -> Void  = { (imageURL, suffix) in
 			guard let imageURL = imageURL, !imageURL.isEmpty, PVMediaCache.fileExists(forKey: imageURL) else {
 				return
 			}
@@ -110,10 +124,34 @@ extension GameSharingViewController where Self : UIViewController {
 			}
 		}
 
+		let addImageFromURL : (URL?, String) -> Void  = { (imageURL, suffix) in
+			guard let imageURL = imageURL, FileManager.default.fileExists(atPath: imageURL.path) else {
+				return
+			}
+
+			let originalExtension = imageURL.pathExtension
+
+			let destination = tempDirURL.appendingPathComponent(game.title + suffix + "." + originalExtension, isDirectory: false)
+			try? FileManager.default.removeItem(at: destination)
+			do {
+				try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: imageURL)
+				files.append(destination)
+				ILOG("Added \(suffix) image to zip")
+			} catch {
+				// Add anyway to catch the fact that fileExists doesnt' work for symlinks that already exist
+				ELOG("Failed to make symlink: " + error.localizedDescription)
+			}
+		}
+
 		ILOG("Adding \(files.count) save states and their images to zip")
-		addImage(game.originalArtworkURL, "")
-		addImage(game.originalArtworkURL, "-Custom")
-		addImage(game.boxBackArtworkURL, "-Back")
+		addImageFromCache(game.originalArtworkURL, "")
+		addImageFromCache(game.customArtworkURL, "-Custom")
+		addImageFromCache(game.boxBackArtworkURL, "-Back")
+
+		for screenShot in game.screenShots {
+			let dateString = PVEmulatorConfiguration.string(fromDate: screenShot.createdDate)
+			addImageFromURL(screenShot.url, "-Screenshot "+dateString)
+		}
 
 		// - Add main game file
 		files.append(game.file.url)
@@ -345,10 +383,11 @@ extension GameLaunchingViewController where Self : UIViewController {
         try biosCheck(system: system)
     }
 
-    private func displayAndLogError(withTitle title: String, message: String) {
+	private func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]? = nil) {
         ELOG(message)
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		customActions?.forEach { alertController.addAction($0)  }
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alertController, animated: true)
     }
@@ -483,7 +522,14 @@ extension GameLaunchingViewController where Self : UIViewController {
             let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
-            displayAndLogError(withTitle: "Missing BIOS files", message: message)
+			#if os(iOS)
+			let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { action in
+				UIApplication.shared.openURL(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!)
+			})
+			displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
+			#else
+			displayAndLogError(withTitle: "Missing BIOS files", message: message)
+			#endif
         } catch GameLaunchingError.systemNotFound {
             displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")
         } catch GameLaunchingError.generic(let message) {

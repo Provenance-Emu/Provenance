@@ -32,13 +32,16 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 	}
 
 	override var collectionViewContentSize : CGSize {
+		guard let collectionView = self.collectionView else {
+			return .zero
+		}
 		// Only support single section for now.
 		// Only support Horizontal scroll
-		let count = self.collectionView?.dataSource?.collectionView(self.collectionView!, numberOfItemsInSection: 0)
+		let count = collectionView.dataSource?.collectionView(collectionView, numberOfItemsInSection: 0) ?? 0
 		var contentSize = canvasSize
 		if self.scrollDirection == UICollectionViewScrollDirection.horizontal {
-			let page = ceilf(Float(count!) / Float(rowCount * columnCount))
-			contentSize.width = CGFloat(page) * canvasSize.width
+			let page = ceilf(Float(count) / Float(rowCount * columnCount))
+			contentSize.width = CGFloat(CGFloat(page) * canvasSize.width).rounded(.toNearestOrEven)
 		}
 		return contentSize
 	}
@@ -103,10 +106,10 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 
 		let itemHeight = min(self.itemSize.height, canvasSize.height)
 
-		cellFrame.origin.x = pageMarginX + CGFloat(column) * (self.itemSize.width + self.minimumLineSpacing) + xOffset
-		cellFrame.origin.y = pageMarginY + CGFloat(row) * (itemHeight + self.minimumInteritemSpacing)
-		cellFrame.size.width = self.itemSize.width
-		cellFrame.size.height = itemHeight
+		cellFrame.origin.x = (pageMarginX + CGFloat(column) * (self.itemSize.width + self.minimumLineSpacing) + xOffset).rounded(.toNearestOrEven)
+		cellFrame.origin.y = (pageMarginY + CGFloat(row) * (itemHeight + self.minimumInteritemSpacing)).rounded(.toNearestOrEven)
+		cellFrame.size.width = (self.itemSize.width).rounded(.toNearestOrEven)
+		cellFrame.size.height = (itemHeight).rounded(.toNearestOrEven)
 
 		if self.scrollDirection == UICollectionViewScrollDirection.horizontal {
 			cellFrame.origin.x += CGFloat(page) * canvasSize.width
@@ -124,25 +127,24 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 	}
 
 	override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-		let attr = super.layoutAttributesForItem(at: indexPath)?.copy() as! UICollectionViewLayoutAttributes?
-		attr!.frame = self.frameForItemAtIndexPath(indexPath)
+		guard let attr = super.layoutAttributesForItem(at: indexPath)?.copy() as? UICollectionViewLayoutAttributes else {
+			return nil
+		}
+		attr.frame = self.frameForItemAtIndexPath(indexPath)
 		return attr
 	}
 
 	override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-		let originAttrs = super.layoutAttributesForElements(in: rect)
-		var attrs: [UICollectionViewLayoutAttributes]? = Array<UICollectionViewLayoutAttributes>()
-
-		for attr in originAttrs! {
+		return super.layoutAttributesForElements(in: rect)?.compactMap({ (attr) -> UICollectionViewLayoutAttributes? in
 			let idxPath = attr.indexPath
 			let itemFrame = self.frameForItemAtIndexPath(idxPath)
 			if itemFrame.intersects(rect) {
 				let nAttr = self.layoutAttributesForItem(at: idxPath)
-				attrs?.append(nAttr!)
+				return nAttr
+			} else {
+				return nil
 			}
-		}
-
-		return attrs
+		})
 	}
 
 	override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {

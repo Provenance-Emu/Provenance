@@ -8,6 +8,8 @@
 //
 
 import Foundation
+import PVLibrary
+import PVSupport
 
 let kAutoSaveKey = "kAutoSaveKey"
 let kAutoLoadSavesKey = "kAutoLoadSavesKey"
@@ -34,7 +36,7 @@ let kAllRightShouldersKey = "kAllRightShouldersKey"
 let kVolumeHUDKey = "kVolumeHUDKey"
 let kGameLibraryScaleKey = "kkGameLibraryScaleKey"
 
-public class PVSettingsModel: NSObject {
+public final class PVSettingsModel: NSObject {
 
     @objc
     var autoSave: Bool {

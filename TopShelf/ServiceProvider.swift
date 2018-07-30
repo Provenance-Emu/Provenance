@@ -5,7 +5,8 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 import Foundation
-// import RealmSwift
+import RealmSwift
+import PVLibrary
 import TVServices
 
 /** Enabling Top Shelf
@@ -17,7 +18,7 @@ import TVServices
  
  */
 
-public class ServiceProvider: NSObject, TVTopShelfProvider {
+public final class ServiceProvider: NSObject, TVTopShelfProvider {
     public override init() {
         super.init()
 
@@ -38,33 +39,48 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
     public var topShelfItems: [TVContentItem] {
         var topShelfItems = [TVContentItem]()
         if RealmConfiguration.supportsAppGroups {
-			guard let identifier = TVContentIdentifier(identifier: "id", container: nil) else {
-				ELOG("Failed to init.")
-				return topShelfItems
-			}
-
-            guard let recentItems = TVContentItem(contentIdentifier: identifier) else {
-                ELOG("Couldnt get TVContentItem for idenitifer \(identifier)")
-                return topShelfItems
-            }
-
-            recentItems.title = "Recently Played"
-
+            let identifier = TVContentIdentifier(identifier: "id", container: nil)!
             let database = RomDatabase.sharedInstance
 
-            let recentGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-
-            var items = [TVContentItem]()
-            for game: PVRecentGame in recentGames {
-                if let contentItem = game.contentItem(with: identifier) {
-                    items.append(contentItem)
-                }
-            }
-
-            recentItems.topShelfItems = items
-            topShelfItems.append(recentItems)
+            topShelfItems.append(favoriteTopShelfItems(identifier: identifier, database: database)!)
+            topShelfItems.append(recentlyPlayedTopShelfItems(identifier: identifier, database: database)!)
+            topShelfItems.append(recentlyAddedTopShelfItems(identifier: identifier, database: database)!)
         }
 
         return topShelfItems
+    }
+    
+    private func recentlyAddedTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
+        guard let recentlyAddedItems = TVContentItem(contentIdentifier: identifier) else {
+            ELOG("Couldn't get recently added TVContentItem for identifier \(identifier)")
+            return nil
+        }
+        recentlyAddedItems.title = "Recently Added"
+        let recentlyAddedGames = database.all(PVGame.self, sortedByKeyPath:
+            #keyPath(PVGame.importDate), ascending: false)
+        recentlyAddedItems.topShelfItems = recentlyAddedGames.map({$0.contentItem(with: identifier)! })
+        return recentlyAddedItems
+    }
+    
+    private func recentlyPlayedTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
+        guard let recentlyPlayedItems = TVContentItem(contentIdentifier: identifier) else {
+            ELOG("Couldn't get recently played TVContentItem for identifier \(identifier)")
+            return nil
+        }
+        recentlyPlayedItems.title = "Recently Played"
+        let recentlyPlayedGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+        recentlyPlayedItems.topShelfItems = recentlyPlayedGames.map({$0.contentItem(with: identifier)! })
+        return recentlyPlayedItems
+    }
+    
+    private func favoriteTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
+        guard let favoriteItems = TVContentItem(contentIdentifier: identifier) else {
+            ELOG("Couldn't get favorite TVContentItem for identifier \(identifier)")
+            return nil
+        }
+        favoriteItems.title = "Favorites"
+        let favoriteGames = database.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+        favoriteItems.topShelfItems = favoriteGames.map({$0.contentItem(with: identifier)! })
+        return favoriteItems
     }
 }

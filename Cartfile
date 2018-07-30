@@ -1,0 +1,4 @@
+github "bitstadium/HockeySDK-iOS"
+github "bitstadium/HockeySDK-tvOS"
+github "cbpowell/MarqueeLabel"
+github "xmartlabs/XLActionController"

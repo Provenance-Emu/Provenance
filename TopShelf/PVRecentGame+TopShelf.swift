@@ -8,6 +8,7 @@
 //
 
 import TVServices
+import PVLibrary
 
 // Top shelf extensions
 extension PVRecentGame {
@@ -22,10 +23,8 @@ extension PVRecentGame {
         }
 
         item.title = game.title
-		let url = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
-
-        item.imageURL = url
-        item.imageShape = imageType
+        item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
+        item.imageShape = game.system.imageType
         item.displayURL = self.displayURL
         item.lastAccessedDate = lastPlayedDate
 

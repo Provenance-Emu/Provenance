@@ -34,3 +34,10 @@
 - (void)didReleaseGBButton:(PVGBButton)button forPlayer:(NSInteger)player;
 
 @end
+
+// for Swiwt extensions
+@interface PVGBEmulatorCore()
+-(NSInteger)currentDisplayMode;
+-(void)changeDisplayMode:(NSInteger)displayMode;
+@property (nonatomic, readonly) BOOL isGameboyColor;
+@end

@@ -1,6 +1,7 @@
 language: objective-c
 xcode_workspace: Provenance.xcworkspace # path to your xcodeproj folder
-xcode_scheme: Provenance-Release
+# xcode_scheme: Provenance-Release
+xcode_scheme: Provenance
 
 language: objective-c
 osx_image: xcode9.4
@@ -25,23 +26,30 @@ env:
     - SCHEME_TVOS_APP="ProvenanceTV"
     - IOS_PLATFORM="iOS Simulator"
     - TVOS_PLATFORM="tvOS Simulator"
-    - IOS_SDK=iphonesimulator11.4
-    - TVOS_SDK=appletvsimulator11.4
+    - IOS_SDK=iphonesimulator11.3
+    - TVOS_SDK=appletvsimulator11.3
+    - CONFIGURATION="Debug"
+    - AWS_REGION="us-east-1"
+    - AWS_ENDPOINT="http://provenance.joemattiello.com:9000"
   matrix:
-    - DESTINATION="platform=$IOS_PLATFORM,OS=11.4,name=iPhone X" SCHEME="$SCHEME_IOS_APP" SDK="$IOS_SDK"
-    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.4,name=Apple TV" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
+    - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_APP" SDK="$IOS_SDK"
+    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 4K" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
 before_install:
   # - gem install xcpretty -N
   - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
   - brew update
   - brew outdated swiftlint || brew upgrade swiftlint
   - brew outdated carthage || brew upgrade carthage
+  - brew install blender/homebrew-tap/rome
 before_script:
   # bootstrap the dependencies for the project
-    - cd PVSupport
-    - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
-    - carthage bootstrap --verbose --no-use-binaries --platform tvOS --cache-builds
-    - cd ..
+        # Output something every 10 minutes or Travis kills the job
+    - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
+      # This can take a while so using the above to not make travis abort
+    - ./Scripts/rome-travis.sh > /tmp/carthage.log
+    #- carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
+        # Killing background sleep loop
+    - kill %1
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
@@ -50,10 +58,11 @@ after_success:
   #- sleep 5
   #- bash <(curl -s https://codecov.io/bash)
 after_failure:
+  - tail -100 /tmp/carthage.log
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 script:
   - set -o pipefail
   - swiftlint
-  - xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`
+  - xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -configuration "$CONFIGURATION" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`

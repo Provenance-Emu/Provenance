@@ -1,0 +1,22 @@
+# Xcode
+MarqueeLabelDemo/build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+profile
+*.moved-aside
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+
+# Exclude OS X folder attributes
+.DS_Store
+
+# Excluse Carthage build artifacts
+Carthage

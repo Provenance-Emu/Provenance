@@ -1,0 +1,99 @@
+/*
+ Localization provided by Wordcrafts
+ The Mac OS X and iOS localization experts.
+ http://www.wordcrafts.de
+ */
+
+
+/* General */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Igen";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Nem";
+
+/* For dialogs ok buttons */
+"HockeyOK" = "OK";
+
+/* Replacement for app name, if it could not be detected */
+"HockeyAppNamePlaceholder" = "Az alkalmazás";
+
+/* Crash */
+
+
+/* Crash dialog */
+
+/* Title showing in the alert box when crash report data has been found */
+"CrashDataFoundTitle" = "%@ váratlanul kilépett";
+
+/* Description explaining that crash data has been found and ask the user if the data might be uploaded to the developers server */
+"CrashDataFoundAnonymousDescription" = "Szeretne hibajelentést küldeni, hogy javíthassuk a problémát? A küldés névtelenül történik.";
+
+/* Description explaining that crash data has been found and ask the user if the non anonymous data might be uplaoded to the developers server */
+"CrashDataFoundDescription" = "Szeretne hibajelentést küldeni, hogy javíthassuk a problémát?";
+
+/* Alert box button if the users wants to send crash data always automatically */
+"CrashSendReportAlways" = "Mindig küldjön";
+
+/* Alert box button to send the crash report once */
+"CrashSendReport" = "Jelentés küldése";
+
+/* Alert box button to decline sending the report */
+"CrashDontSendReport" = "Ne küldjön";
+
+/* Text showing in a processing box that the crash data is being uploaded to the server */
+"CrashReportSending" = "Küldés…";
+
+
+/* Update */
+
+
+/* Update Alert view */
+
+/* Update available */
+"UpdateAvailable" = "Frissítés elérhető";
+
+"UpdateAlertTextWithAppVersion" = "%@ elérhető.";
+
+"UpdateAlertMandatoryTextWithAppVersion" = "%@ elérhető, és szükséges frissíteni!";
+
+"UpdateIgnore" = "Most nem";
+
+/* Update Details */
+
+"UpdateButtonCheck" = "ELLENŐRZÉS";
+
+"UpdateVersion" = "verzió";
+
+"UpdateNoUpdateAvailableTitle" = "Nincs elérhető frissítés";
+
+"UpdateNoUpdateAvailableMessage" = "%@ már a legfrissebb verzió.";
+
+"UpdateError" = "Hiba";
+
+/* Update Expiry  */
+
+"UpdateExpired" = "%@ érvényessége lejárt, és már nem használható.";
+
+/* Authenticator */
+
+/* View Controller Title*/
+"HockeyAuthenticatorViewControllerTitle" = "HockeyApp";
+
+/* BITAuthenticatorAuthTypeEmail and BITAuthenticatorAuthTypeEmailAndPassword */
+"HockeyAuthenticationViewControllerDataEmailAndPasswordDescription" = "Kérjük, adja meg HockeyApp fiókjához tartozó e-mail címét és jelszavát az alkalmazáshoz történő hozzáférés engedélyezéséhez.";
+"HockeyAuthenticationViewControllerDataEmailDescription" = "Kérjük, adja meg HockeyApp fiókjához tartozó e-mail címét az alkalmazáshoz történő hozzáférés engedélyezéséhez.";
+"HockeyAuthenticationViewControllerEmailPlaceholder" = "email@example.com";
+"HockeyAuthenticationViewControllerPasswordPlaceholder" = "Szükséges mező";
+"HockeyAuthenticationViewControllerEmailDescription" = "E-mail";
+"HockeyAuthenticationViewControllerPasswordDescription" = "Jelszó";
+
+/* Error presented to the user if authentication failed because of networking issues */
+"HockeyAuthenticationViewControllerNetworkError" = "A hitelesítés sikertelen, mert készüléke nem csatlakozik az internethez. Kérjük, próbálja meg később újra.";
+
+"HockeyAuthenticationFailedAuthenticate" = "A hitelesítés sikertelen. Kérjük, próbálja meg később újra vagy lépjen kapcsolatba az alkalmazás fejlesztőjével.";
+"HockeyAuthenticationNotMember" = "Nem jogosult az alkalmazás használatára. Kérjük, lépjen kapcsolatba az alkalmazás fejlesztőjével.";
+"HockeyAuthenticationContactDeveloper" = "Hitelesítési hiba. Kérjük, lépjen kapcsolatba az alkalmazás fejlesztőjével.";
+"HockeyAuthenticationWrongEmailPassword" = "Érvénytelen e-mail címet vagy jelszót adott meg. Kérjük, ellenőrizze a bevitelt és adja meg az adatokat újra.";
+"HockeyAuthenticationAuthSecretMissing" = "A HockeySDK \"authorization secret\" még nincs beállítva. Kérjük, lépjen kapcsolatba az alkalmazás fejlesztőjével.";

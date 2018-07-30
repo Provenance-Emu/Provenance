@@ -16,11 +16,101 @@ or alternatively using `brew cask install fastlane`
 
 # Available Actions
 ## iOS
+### ios setup_fastlane
+```
+fastlane ios setup_fastlane
+```
+Setup fastlane enviroment
+### ios test
+```
+fastlane ios test
+```
+Build and run tests
+### ios travistest
+```
+fastlane ios travistest
+```
+Travis Test
+### ios userbuild
+```
+fastlane ios userbuild
+```
+User Setup
+### ios updatePlistForBranch
+```
+fastlane ios updatePlistForBranch
+```
+Updates the bundle id and app name if a beta build
+### ios plist_reset
+```
+fastlane ios plist_reset
+```
+Resets the bundle id and app name after build
 ### ios beta
 ```
 fastlane ios beta
 ```
 Push a new beta build to TestFlight
+### ios alpha
+```
+fastlane ios alpha
+```
+Push a new alpha build to Hockeyapp
+### ios add_badge
+```
+fastlane ios add_badge
+```
+Add proper badge to icon
+### ios certificates
+```
+fastlane ios certificates
+```
+Setup Certs for Match - New Devs
+### ios create_certificates
+```
+fastlane ios create_certificates
+```
+Create Certs for Match
+### ios update_devices
+```
+fastlane ios update_devices
+```
+Update device list
+### ios derived_data
+```
+fastlane ios derived_data
+```
+Clear your DerivedData
+### ios reset_checkout
+```
+fastlane ios reset_checkout
+```
+Reset build enviroment
+
+Use this lane if you're having build issues
+
+Use `git stash` first to save any changes you may want to keep.
+### ios carthage_bootstrap
+```
+fastlane ios carthage_bootstrap
+```
+Lane to run bootstrap carthage in new checkout
+
+Option: `platform` tvOS,iOS
+### ios carthage_build
+```
+fastlane ios carthage_build
+```
+Lane to run build all carthage dependencies
+
+Option: `platform` tvOS,iOS
+### ios carthage_update
+```
+fastlane ios carthage_update
+```
+Lane to update all carthage dependencies to latest versions
+
+Option: `platform` tvOS,iOS
 
 ----
 

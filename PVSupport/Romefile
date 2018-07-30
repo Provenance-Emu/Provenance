@@ -1,0 +1,11 @@
+[Cache]
+  S3-Bucket = provenance-carthage
+  local = ~/Library/Caches/Rome/
+
+[RepositoryMap]
+  CocoaLumberjack = CocoaLumberjack, CocoaLumberjackSwift
+  NSLogger = NSLogger, NSLoggerSwift
+  SwiftyUserDefaults = SwiftyUserDefaults
+  XCDLumberjackNSLogger = XCDLumberjackNSLogger
+
+[IgnoreMap]

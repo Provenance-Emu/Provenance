@@ -34,8 +34,6 @@ class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemRes
             }
         }
 
-        leftShoulderButton?.buttonTag = .option1
-        rightShoulderButton?.buttonTag = .option2
         selectButton?.buttonTag = .option2
         startButton?.buttonTag = .option1
     }

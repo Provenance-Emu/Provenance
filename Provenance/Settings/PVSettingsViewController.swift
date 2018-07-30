@@ -9,9 +9,11 @@
 
 import SafariServices
 import UIKit
+import PVLibrary
+import PVSupport
 
 // Subclass to help with themeing
-@objc public class SettingsTableView: UITableView {
+@objc public final class SettingsTableView: UITableView {
     public override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame: frame, style: style)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground

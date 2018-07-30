@@ -19,3 +19,6 @@
 [submodule "PVYabause/emulator/yabause"]
 	path = PVYabause/emulator/yabause
 	url = https://github.com/b23prodtm/yabause.git
+[submodule "PVLibrary/LzmaSDKObjC"]
+	path = PVLibrary/LzmaSDKObjC
+	url = https://github.com/OlehKulykov/LzmaSDKObjC.git

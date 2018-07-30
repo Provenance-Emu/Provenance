@@ -1,0 +1,99 @@
+/*
+ Localization provided by Wordcrafts
+ The Mac OS X and iOS localization experts.
+ http://www.wordcrafts.de
+ */
+
+
+/* General */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Yes";
+
+/* For dialogs no buttons */
+"HockeyNo" = "No";
+
+/* For dialogs ok buttons */
+"HockeyOK" = "OK";
+
+/* Replacement for app name, if it could not be detected */
+"HockeyAppNamePlaceholder" = "This app";
+
+/* Crash */
+
+
+/* Crash dialog */
+
+/* Title showing in the alert box when crash report data has been found */
+"CrashDataFoundTitle" = "%@ Unexpectedly Quit";
+
+/* Description explaining that crash data has been found and ask the user if the data might be uploaded to the developers server */
+"CrashDataFoundAnonymousDescription" = "Would you like to send an anonymous report so we can fix the problem?";
+
+/* Description explaining that crash data has been found and ask the user if the non anonymous data might be uplaoded to the developers server */
+"CrashDataFoundDescription" = "Would you like to send a report so we can fix the problem?";
+
+/* Alert box button if the users wants to send crash data always automatically */
+"CrashSendReportAlways" = "Always Send";
+
+/* Alert box button to send the crash report once */
+"CrashSendReport" = "Send Report";
+
+/* Alert box button to decline sending the report */
+"CrashDontSendReport" = "Don't Send";
+
+/* Text showing in a processing box that the crash data is being uploaded to the server */
+"CrashReportSending" = "Sending…";
+
+
+/* Update */
+
+
+/* Update Alert view */
+
+/* Update available */
+"UpdateAvailable" = "Update available";
+
+"UpdateAlertTextWithAppVersion" = "%@ is available.";
+
+"UpdateAlertMandatoryTextWithAppVersion" = "%@ is available and is a mandatory update!";
+
+"UpdateIgnore" = "Ignore";
+
+/* Update Details */
+
+"UpdateButtonCheck" = "CHECK";
+
+"UpdateVersion" = "Version";
+
+"UpdateNoUpdateAvailableTitle" = "No Update Available";
+
+"UpdateNoUpdateAvailableMessage" = "%@ is already the latest version.";
+
+"UpdateError" = "Error";
+
+/* Update Expiry  */
+
+"UpdateExpired" = "%@ is expired and can not be used any longer.";
+
+/* Authenticator */
+
+/* View Controller Title*/
+"HockeyAuthenticatorViewControllerTitle" = "HockeyApp";
+
+/* BITAuthenticatorAuthTypeEmail and BITAuthenticatorAuthTypeEmailAndPassword */
+"HockeyAuthenticationViewControllerDataEmailAndPasswordDescription" = "Please enter your HockeyApp account's email address and password to authorize access to this app.";
+"HockeyAuthenticationViewControllerDataEmailDescription" = "Please enter your HockeyApp account's email address to authorize access to this app.";
+"HockeyAuthenticationViewControllerEmailPlaceholder" = "email@example.com";
+"HockeyAuthenticationViewControllerPasswordPlaceholder" = "Required";
+"HockeyAuthenticationViewControllerEmailDescription" = "Email";
+"HockeyAuthenticationViewControllerPasswordDescription" = "Password";
+
+/* Error presented to the user if authentication failed because of networking issues */
+"HockeyAuthenticationViewControllerNetworkError" = "Failed to authorize because your device appears to be disconnected from the Internet. Please try again.";
+
+"HockeyAuthenticationFailedAuthenticate" = "Failed to authorize. Please try again or contact the developer of this app.";
+"HockeyAuthenticationNotMember" = "You are not authorized to use this app. Please contact the developer of this app.";
+"HockeyAuthenticationContactDeveloper" = "Authorization error. Please contact the developer of this app.";
+"HockeyAuthenticationWrongEmailPassword" = "You have entered an invalid email or password. Please check your input and try again.";
+"HockeyAuthenticationAuthSecretMissing" = "The HockeySDK authorization secret has not been set. Please contact the developer of this app.";
