@@ -127,12 +127,13 @@
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		330010B220D454F10077EE20 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; };
 		330010B320D454F10077EE20 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33084F3E2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */; };
 		33084F3F2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */; };
+		3321F662211B948600138C8E /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3321F661211B948600138C8E /* RealmSwift.framework */; };
+		3321F664211B948A00138C8E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3321F663211B948A00138C8E /* Realm.framework */; };
+		3321F666211B94AB00138C8E /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3321F665211B94AB00138C8E /* CocoaLumberjackSwift.framework */; };
 		337A46FE20A2024200616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A46FD20A2024200616097 /* PVYabause.framework */; };
 		337A470A20A206B400616097 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; };
 		337A470B20A206B400616097 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 337A470920A206B400616097 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
 		378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
@@ -507,7 +508,7 @@
 		1A3D409717B2DCE4004DFFFC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A3D409917B2DCE4004DFFFC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Info.plist"; sourceTree = "<group>"; };
+		1A3D409F17B2DCE4004DFFFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A3D40A117B2DCE4004DFFFC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A3D40A517B2DCE4004DFFFC /* Provenance-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Prefix.pch"; sourceTree = "<group>"; };
 		1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAppDelegate.swift; sourceTree = "<group>"; };
@@ -578,6 +579,9 @@
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		33084F3D2109C15F00686941 /* PVSaturnControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSaturnControllerViewController.swift; sourceTree = "<group>"; };
+		3321F661211B948600138C8E /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = PVLibrary/Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		3321F663211B948A00138C8E /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = PVLibrary/Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		3321F665211B94AB00138C8E /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		337A46FD20A2024200616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		337A470420A202C100616097 /* PVYabause.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVYabause.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-fycqgcqtrywlgvewxvxqqvljmodg/Build/Products/Release-iphoneos/PVYabause.framework"; sourceTree = "<group>"; };
 		337A470920A206B400616097 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -787,7 +791,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				337A46FE20A2024200616097 /* PVYabause.framework in Frameworks */,
-				B3D8DC6D206EA6E9008FAC42 /* Realm.framework in Frameworks */,
 				B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
@@ -887,6 +890,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3321F666211B94AB00138C8E /* CocoaLumberjackSwift.framework in Frameworks */,
+				3321F664211B948A00138C8E /* Realm.framework in Frameworks */,
+				3321F662211B948600138C8E /* RealmSwift.framework in Frameworks */,
 				B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */,
 				B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */,
 			);
@@ -980,6 +986,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3321F665211B94AB00138C8E /* CocoaLumberjackSwift.framework */,
+				3321F663211B948A00138C8E /* Realm.framework */,
+				3321F661211B948600138C8E /* RealmSwift.framework */,
 				B32155432107D1D40085B18E /* PVLibrary.framework */,
 				B32155412107D0CE0085B18E /* PVLibrary.framework */,
 				B321553F2107CEE00085B18E /* PVLibrary.framework */,
@@ -1019,7 +1028,7 @@
 		1A3D409E17B2DCE4004DFFFC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
+				1A3D409F17B2DCE4004DFFFC /* Info.plist */,
 				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 				1A3D40A517B2DCE4004DFFFC /* Provenance-Prefix.pch */,
 				1A0938B917CD45D400029021 /* README.mdown */,
@@ -2261,9 +2270,6 @@
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
 				B394C97C20609D0D0014A65D /* PVLynxControllerViewController.swift in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
-				B349AEAA1E9ABCF900ACD416 /* 7zSpecStream.cpp in Sources */,
-				B349AF561E9ABCF900ACD416 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
-				B349AEE61E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
 				33084F3F2109C16100686941 /* PVSaturnControllerViewController.swift in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
@@ -2498,7 +2504,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2515,7 +2521,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_FILE = Provenance/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
@@ -2548,7 +2554,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2565,7 +2571,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_FILE = Provenance/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
@@ -2602,7 +2608,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2662,7 +2668,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2721,7 +2727,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3003,7 +3009,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3020,7 +3026,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_FILE = Provenance/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -3079,12 +3085,14 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3127,13 +3135,15 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3174,13 +3184,15 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3217,7 +3229,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3264,7 +3276,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3312,7 +3324,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (

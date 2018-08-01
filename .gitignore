@@ -19,3 +19,4 @@ report.xml
 .Cartfile.tvOS.resolved
 .Cartfile.iOS.resolved
 /.version
+.DS_Store

@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3321F65D211B920700138C8E /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; };
+		3321F65E211B922100138C8E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8B2107972200E7AF79 /* Realm.framework */; };
+		3321F65F211B922E00138C8E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8B2107972200E7AF79 /* Realm.framework */; };
+		3321F660211B923100138C8E /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4C2106B5A80091437F /* PVSupport.framework */; };
-		B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4E2106B5D00091437F /* RealmSwift.framework */; };
-		B3067F512106B5D00091437F /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4F2106B5D00091437F /* Realm.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; };
 		B3067F632106B8650091437F /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -344,8 +346,6 @@
 		B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2D2106B4D700DDEBD6 /* PVSaveState.swift */; };
 		B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3C04B4021077B3100E7AF79 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
-		B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4621077BEC00E7AF79 /* Realm.framework */; };
-		B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */; };
 		B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4A21077BFC00E7AF79 /* libc++.tbd */; };
 		B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4E21077CCF00E7AF79 /* Foundation.framework */; };
 		B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */; };
@@ -820,12 +820,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3321F65E211B922100138C8E /* Realm.framework in Frameworks */,
+				3321F65D211B920700138C8E /* RealmSwift.framework in Frameworks */,
 				B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
-				B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */,
-				B3067F512106B5D00091437F /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -833,13 +833,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3321F65F211B922E00138C8E /* Realm.framework in Frameworks */,
+				3321F660211B923100138C8E /* RealmSwift.framework in Frameworks */,
 				B32155462107D2AC0085B18E /* PVSupport.framework in Frameworks */,
 				B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */,
 				B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */,
 				B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */,
 				B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */,
-				B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */,
-				B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2042,7 +2042,7 @@
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -2105,7 +2105,7 @@
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -2243,6 +2243,7 @@
 					"$(PROJECT_DIR)/..//Carthage/Build/tvOS",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
@@ -2290,6 +2291,7 @@
 					"$(PROJECT_DIR)/..//Carthage/Build/tvOS",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
@@ -2324,7 +2326,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -2351,7 +2353,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = 9SC9QXFQBZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",

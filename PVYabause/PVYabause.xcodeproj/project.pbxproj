@@ -83,13 +83,11 @@
 		33CA104C210CB80100AC0C7E /* Yabause.icns in Resources */ = {isa = PBXBuildFile; fileRef = EB78914E152A08600080990B /* Yabause.icns */; };
 		33CA104D210CB80100AC0C7E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA7D20A5EAB600B89B1A /* InfoPlist.strings */; };
 		33CA104E210CB80100AC0C7E /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA7F20A5EAB600B89B1A /* Core.plist */; };
-		33CA104F210CB80100AC0C7E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA8020A5EAB600B89B1A /* Info.plist */; };
 		33D07BA620D5570800EDDBE1 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D07BA420D5570700EDDBE1 /* scsp.c */; };
 		33D07BA820D57D3700EDDBE1 /* thr-dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D07BA720D57D3700EDDBE1 /* thr-dummy.c */; };
 		33D4B89A20A62E9100E11F8D /* Yabause.icns in Resources */ = {isa = PBXBuildFile; fileRef = EB78914E152A08600080990B /* Yabause.icns */; };
 		33D4B89B20A62E9100E11F8D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA7D20A5EAB600B89B1A /* InfoPlist.strings */; };
 		33D4B89C20A62E9100E11F8D /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA7F20A5EAB600B89B1A /* Core.plist */; };
-		33D4B89D20A62E9100E11F8D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3329DA8020A5EAB600B89B1A /* Info.plist */; };
 		B32775271E9C8444000FEC38 /* PVYabause.h in Headers */ = {isa = PBXBuildFile; fileRef = B32775251E9C8444000FEC38 /* PVYabause.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32775591E9C84DE000FEC38 /* YabauseGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = EB851D0C152396CC00715BD2 /* YabauseGameCore.m */; };
 		B327755B1E9C851C000FEC38 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755A1E9C851C000FEC38 /* OpenGLES.framework */; };
@@ -1018,7 +1016,6 @@
 		946C18BB1714A3CA00C64BF9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B32775231E9C8444000FEC38 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32775251E9C8444000FEC38 /* PVYabause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause.h; sourceTree = "<group>"; };
-		B32775261E9C8444000FEC38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B327755A1E9C851C000FEC38 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B327755C1E9C8520000FEC38 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B32775641E9C8546000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
@@ -2542,7 +2539,6 @@
 			isa = PBXGroup;
 			children = (
 				B32775251E9C8444000FEC38 /* PVYabause.h */,
-				B32775261E9C8444000FEC38 /* Info.plist */,
 			);
 			path = PVYabause;
 			sourceTree = "<group>";
@@ -2810,7 +2806,6 @@
 				33CA104C210CB80100AC0C7E /* Yabause.icns in Resources */,
 				33CA104D210CB80100AC0C7E /* InfoPlist.strings in Resources */,
 				33CA104E210CB80100AC0C7E /* Core.plist in Resources */,
-				33CA104F210CB80100AC0C7E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2821,7 +2816,6 @@
 				33D4B89A20A62E9100E11F8D /* Yabause.icns in Resources */,
 				33D4B89B20A62E9100E11F8D /* InfoPlist.strings in Resources */,
 				33D4B89C20A62E9100E11F8D /* Core.plist in Resources */,
-				33D4B89D20A62E9100E11F8D /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2961,6 +2955,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -2977,6 +2972,7 @@
 					"HAVE_C68K=1",
 					"${inherited}",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
@@ -3004,6 +3000,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -3018,8 +3015,9 @@
 					"HAVE_C68K=1",
 					"${inherited}",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
@@ -3069,7 +3067,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/PVYabause tvOS-Info.plist";
+				INFOPLIST_FILE = Yabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3118,7 +3116,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/PVYabause tvOS-Info.plist";
+				INFOPLIST_FILE = Yabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3167,7 +3165,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				INFOPLIST_FILE = PVYabause/Info.plist;
+				INFOPLIST_FILE = Yabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3214,7 +3212,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				INFOPLIST_FILE = PVYabause/Info.plist;
+				INFOPLIST_FILE = Yabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
