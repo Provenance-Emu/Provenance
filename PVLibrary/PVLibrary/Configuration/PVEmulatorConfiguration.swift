@@ -70,6 +70,7 @@ public enum SystemIdentifier: String {
     case SG1000       = "com.provenance.sg1000"
     case SGFX         = "com.provenance.sgfx"
     case SNES         = "com.provenance.snes"
+    case Saturn       = "com.provenance.saturn"
     case Sega32X      = "com.provenance.32X"
     case SegaCD       = "com.provenance.segacd"
     case VirtualBoy   = "com.provenance.vb"
