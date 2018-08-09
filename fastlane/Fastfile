@@ -5,16 +5,10 @@ add_extra_platforms(
 )
 default_platform(:ios)
 
-update_app_identifier(
-  xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-  plist_path: "Provenance/Info.plist", # Path to info plist file, relative to xcodeproj
-  app_identifier: "info.descom-online.Provenance" # The App Identifier
-)
-
 platform :ios do
   lane :beta do
     get_certificates(
-      development: true,
+      development: false,
       username: ENV["APPLE_ID"],
       team_id: ENV["DEV_TEAM_ID"]
     )           # invokes cert
@@ -28,7 +22,7 @@ end
 platform :tvos do
   lane :beta do
     get_certificates(
-      development: true,
+      development: false,
       username: ENV["APPLE_ID"],
       team_id: ENV["DEV_TEAM_ID"]
     )           # invokes cert
