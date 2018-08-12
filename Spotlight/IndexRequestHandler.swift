@@ -35,7 +35,6 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
 
             let allGames = database.all(PVGame.self)
             indexResults(allGames)
-
         } else {
             WLOG("App Groups not setup")
         }

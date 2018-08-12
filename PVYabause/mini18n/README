@@ -1,0 +1,93 @@
+mini18n - minimal translation library
+-------------------------------------
+
+1) About....................................................................ABOU
+2) Compilation..............................................................COMP
+2.1) Shadow build...........................................................SHAB
+2.2) In-source build........................................................INSB
+3) Authors..................................................................AUTH
+4) Contact..................................................................CNCT
+5) Disclaimer...............................................................DISC
+
+
+1 About (ABOU)__________________________________________________________________
+
+mini18n is a translation library under GNU GPL.
+
+
+2 Compilation (COMP)____________________________________________________________
+
+To compile mini18n, you'll need CMake (>= 2.8) and a C compiler.
+GCC, MinGW and Visual C++ are supported, but you may succeed with another
+compiler.
+mini18n doesn't have any other dependency.
+
+You can either do a in-source build or a out-of-source, aka shadow, build.
+The shadow build is the recommended way to build mini18n, but the in-source
+build is somewhat easier.
+
+
+2.1 Shadow build (SHAB)_________________________________________________________
+
+* create a new directory
+* on Linux and friends:
+  - cd to that newly create directory and run "cmake /path/to/mini18n"
+    then "make" and "make install"
+* on Windows:
+  - open the CMake program
+  - set the build directory to your newly created directory
+  - set the source directory to the mini18n source dir
+  - "configure" then "generate"
+  - close CMake and go to the build directory
+  - open the mini18n.sln file
+  - "build"
+
+
+2.2 In-source build (INSB)______________________________________________________
+
+* on Linux and friends:
+  - from the mini18n source dir, run "cmake ." then "make" and "make install"
+* on Windows:
+  - open the CMake program
+  - set both the build and source directories to the mini18n source dir
+  - "configure" then "generate"
+  - open the mini18n.sln file
+  - "build"
+
+
+3 Authors (AUTH)________________________________________________________________
+
+mini18n started as a sub-project of the Yabause emulator and is maintained by
+members of the Yabause team:
+
+* Guillaume, maintainer
+* CyberWarriorX, Windows port
+* BlueCrab, various fixes
+
+
+4 Contact (CNCT)________________________________________________________________
+
+E-mail: guillaume@yabause.org
+Web:    http://wiki.yabause.org/index.php5?title=Mini18n
+IRC:    irc://irc.freenode.net/yabause
+
+
+5 Disclaimer (DISC)_____________________________________________________________
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as 
+published by the Free Software Foundation; either version 2 of 
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be
+useful,but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the Free
+Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+Boston, MA 02110-1301  USA
+
+See the GNU General Public License details in COPYING.
+

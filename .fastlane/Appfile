@@ -1,0 +1,28 @@
+apple_id ENV["APPLE_ID"] # Your Apple email address
+
+# TODO as injected environment variables (continous integration paas)
+# itc_team_id ENV["ITC_TEAM_ID"] # iTunes Connect Team ID
+team_id ENV["DEV_TEAM_ID"] # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
+# Use different bundle identifiers per lane
+
+# for_lane 'alpha' do
+#   app_identifier "org.wikimedia.wikipedia.tfalpha"
+# end
+#
+app_identifier "info.descom-online.provenance" #app store connect bundle id (XC)
+
+for_lane 'beta' do
+  for_platform :ios do
+      app_identifier "info.descom-online.provenance"
+  end
+  for_platform :tvos do
+      app_identifier "info.descom-online.provenancetv"
+  end
+end
+#
+# for_lane 'store' do
+#   app_identifier "org.wikimedia.wikipedia"
+# end

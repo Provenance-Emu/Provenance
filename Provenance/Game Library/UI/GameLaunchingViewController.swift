@@ -25,9 +25,9 @@ public func PVMaxRecentsCount() -> Int {
 
 /*
  Protocol with default implimentation.
- 
+
  This allows any UIViewController class to just inherit GameLaunchingViewController, and then it can call load(PVGame)!
- 
+
  */
 
 public protocol GameLaunchingViewController: class {
@@ -781,8 +781,8 @@ extension GameLaunchingViewController where Self : UIViewController {
 
                 let database = RomDatabase.sharedInstance
 
-                let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
-                for game in favorites {
+            let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
+            for game in favorites {
                     let icon: UIApplicationShortcutIcon?
                     if #available(iOS 9.1, *) {
                         icon  = UIApplicationShortcutIcon(type: .favorite)
@@ -794,7 +794,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                     shortcuts.append(shortcut)
                 }
 
-                let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+            let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
 
                 for recentGame in sortedRecents {
                     if let game = recentGame.game {

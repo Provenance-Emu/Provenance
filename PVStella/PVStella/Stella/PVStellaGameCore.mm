@@ -1,6 +1,6 @@
 /*
  Copyright (c) 2013, OpenEmu Team
- 
+
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -76,7 +76,7 @@ static void audio_callback(int16_t left, int16_t right) {
 
 	[[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
     [[strongCurrent ringBufferAtIndex:0] write:&right maxLength:2];
-    
+
     strongCurrent = nil;
 }
 
@@ -84,9 +84,9 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames) {
     __strong PVStellaGameCore *strongCurrent = _current;
 
     [[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
-    
+
     strongCurrent = nil;
-    
+
     return frames;
 }
 
@@ -98,16 +98,16 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 
     strongCurrent->_videoWidth  = width;
     strongCurrent->_videoHeight = height;
-    
+
     dispatch_apply(height, memcpy_queue, ^(size_t y) {
         const stellabuffer_t *src = (stellabuffer_t*)data + y * (pitch >> STELLA_PITCH_SHIFT); //pitch is in bytes not pixels
-        
+
         //uint16_t *dst = current->videoBuffer + y * current->videoWidth;
         stellabuffer_t *dst = strongCurrent->_videoBuffer + y * strongCurrent->_videoWidth;
-        
+
         memcpy(dst, src, sizeof(stellabuffer_t)*width);
     });
-    
+
     strongCurrent = nil;
 }
 
@@ -118,10 +118,10 @@ static void input_poll_callback(void) {
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
 //    NSLog(@"polled input: port: %d device: %d id: %d", port, device, _id);
-    
+
     __strong PVStellaGameCore *strongCurrent = _current;
     int16_t value = 0;
-    
+
     if (port == 0 & device == RETRO_DEVICE_JOYPAD)
     {
         value = strongCurrent->_pad[0][_id];
@@ -133,19 +133,19 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
             value = strongCurrent->_pad[1][_id];
         }
     }
-    
+
     strongCurrent = nil;
-    
+
     return value;
 }
 
 static bool environment_callback(unsigned cmd, void *data) {
     __strong PVStellaGameCore *strongCurrent = _current;
-    
+
     switch(cmd) {
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent BIOSPath];
-            
+
             *(const char **)data = [appSupportPath UTF8String];
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
@@ -159,34 +159,34 @@ static bool environment_callback(unsigned cmd, void *data) {
             return false;
         }
     }
-    
+
     strongCurrent = nil;
-    
+
     return true;
 }
 
 
 static void loadSaveFile(const char* path, int type) {
     FILE *file;
-    
+
     file = fopen(path, "rb");
     if ( !file ) {
         return;
     }
-    
+
     size_t size = stella_retro_get_memory_size(type);
     void *data  = stella_retro_get_memory_data(type);
-    
+
     if (size == 0 || !data) {
         fclose(file);
         return;
     }
-    
+
     int rc = fread(data, sizeof(uint8_t), size, file);
     if ( rc != size ) {
         DLOG(@"Couldn't load save file.");
     }
-    
+
     DLOG(@"Loaded save file: %s", path);
     fclose(file);
 }
@@ -195,7 +195,7 @@ static void writeSaveFile(const char* path, int type)
 {
     size_t size = stella_retro_get_memory_size(type);
     void *data = stella_retro_get_memory_data(type);
-    
+
     if ( data && size > 0 )
     {
         FILE *file = fopen(path, "wb");
@@ -218,9 +218,9 @@ static void writeSaveFile(const char* path, int type)
             free(_videoBuffer);
         _videoBuffer = (stellabuffer_t*)malloc(160 * 256 * 4);
     }
-    
+
 	_current = self;
-    
+
 	return self;
 }
 
@@ -242,60 +242,60 @@ static void writeSaveFile(const char* path, int type)
 - (BOOL)loadFileAtPath: (NSString*) path
 {
 	memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
-    
+
     const void *data;
     size_t size;
     self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0]; //[path copy];
-    
+
     //load cart, read bytes, get length
     NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
     if(dataObj == nil) return false;
     size = [dataObj length];
     data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
-    
+
     //memory.copy(data, size);
     stella_retro_set_environment(environment_callback);
 	stella_retro_init();
-	
+
     stella_retro_set_audio_sample(audio_callback);
     stella_retro_set_audio_sample_batch(audio_batch_callback);
     stella_retro_set_video_refresh(video_callback);
     stella_retro_set_input_poll(input_poll_callback);
     stella_retro_set_input_state(input_state_callback);
-    
-    
+
+
     const char *fullPath = [path UTF8String];
-    
+
     struct retro_game_info info = {NULL};
     info.path = fullPath;
     info.data = data;
     info.size = size;
     info.meta = meta;
-    
+
     if (stella_retro_load_game(&info))
     {
         if ([self.batterySavesPath length])
         {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
-            
+
             NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
-            
+
             [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
         }
-        
+
         struct retro_system_av_info info;
         stella_retro_get_system_av_info(&info);
-        
+
         _frameInterval = info.timing.fps;
         _sampleRate = info.timing.sample_rate;
-        
+
         stella_retro_get_region();
         stella_retro_run();
-        
+
         return YES;
     }
-    
+
     return NO;
 }
 
@@ -303,19 +303,19 @@ static void writeSaveFile(const char* path, int type)
 {
     size_t size = stella_retro_get_memory_size(type);
     void *ramData = stella_retro_get_memory_data(type);
-    
+
     if (size == 0 || !ramData)
     {
         return NO;
     }
-    
+
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
         DLOG(@"Couldn't load save file.");
 		return NO;
     }
-    
+
     [data getBytes:ramData length:size];
 	return YES;
 }
@@ -376,7 +376,7 @@ static void writeSaveFile(const char* path, int type)
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
-        
+
         if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;
         }
@@ -384,13 +384,13 @@ static void writeSaveFile(const char* path, int type)
         {
             controller = self.controller2;
         }
-        
+
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             /* TODO: To support paddles we would need to circumvent libRetro's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
-            
+
             // D-Pad
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
@@ -412,13 +412,13 @@ static void writeSaveFile(const char* path, int type)
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed || gamepad.rightTrigger.isPressed;
             // Booster
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
-            
+
             // Reset
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
-            
+
             // Select
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
-   
+
             /*
              #define RETRO_DEVICE_ID_JOYPAD_B        0 == JoystickZeroFire1
              #define RETRO_DEVICE_ID_JOYPAD_Y        1 == Unmapped
@@ -440,32 +440,32 @@ static void writeSaveFile(const char* path, int type)
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             // D-Pad
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
-            
+
             // Fire
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
             // Trigger
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed;
             // Booster
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed;
-            
+
             // Reset
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
-            
+
             // Select
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
-            
+
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.value > 0.5;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.value > 0.5;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
@@ -503,7 +503,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (CGSize)bufferSize {
     return CGSizeMake(160, 256);
-    
+
 //    __strong PVStellaGameCore *strongCurrent = _current;
     //return CGSizeMake(strongCurrent->_videoWidth, strongCurrent->_videoHeight);
 }
@@ -530,9 +530,9 @@ static void writeSaveFile(const char* path, int type)
         NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
         [self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
     }
-    
+
     [super stopEmulation];
-    
+
     double delayInSeconds = 0.1;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){

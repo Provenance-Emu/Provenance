@@ -3,6 +3,11 @@
 //
 
 #import "kICadeControllerSetting.h"
+// Hack cause they can't make modules for some reason
+#ifndef SWIFT_BRIDGE
+#define SWIFT_BRIDGE 1
+#endif
+#import <PVYabause/YabauseGameCore.h>
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports

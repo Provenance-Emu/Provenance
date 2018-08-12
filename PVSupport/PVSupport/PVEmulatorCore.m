@@ -66,7 +66,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         [self setIsFrontBufferReady:NO];
         _gameSpeed = GameSpeedNormal;
 	}
-	
+
 	return self;
 }
 
@@ -78,7 +78,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	{
 		ringBuffers[i] = nil;
 	}
-	
+
     free(ringBuffers);
 }
 
@@ -138,7 +138,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
-    
+
 //    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
 //    [self.emulationLoopThreadLock unlock];
 }
@@ -161,7 +161,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 	NSTimeInterval sleepTime = 0;
     NSTimeInterval nextEmuTick = GetSecondsSince(origin);
-    
+
     [self.emulationLoopThreadLock lock];
 
     //Become a real-time thread:
@@ -171,7 +171,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     while (!shouldStop) {
 
         [self updateControllers];
-        
+
         @synchronized (self) {
 			if (_isRunning) {
                 if (self.isSpeedModified)
@@ -191,14 +191,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
-        
+
         if ([self isDoubleBuffered])
         {
             NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
             if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
                 [self swapBuffers];
                 [self.frontBufferLock unlock];
-                
+
                 [self.frontBufferCondition lock];
                 [self setIsFrontBufferReady:YES];
                 [self.frontBufferCondition signal];
@@ -206,13 +206,13 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
             } else {
                 [self swapBuffers];
                 ++framesTorn;
-                
+
                 [self setIsFrontBufferReady:YES];
             }
 
             sleepTime = nextEmuTick - GetSecondsSince(origin);
         }
-        
+
         if(sleepTime >= 0) {
             [NSThread sleepForTimeInterval:sleepTime];
         }
@@ -232,16 +232,16 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
             framesTorn = 0;
 			fpsCounter = PVTimestamp();
         }
-        
+
     }
-    
+
     [self.emulationLoopThreadLock unlock];
 }
 
 - (void)setGameSpeed:(GameSpeed)gameSpeed
 {
     _gameSpeed = gameSpeed;
-    
+
     switch (gameSpeed) {
         case GameSpeedSlow:
             self.framerateMultiplier = 0.2;
@@ -413,10 +413,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	{
 		return [self channelCount];
 	}
-	
+
 	ELOG(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
 	[self doesNotImplementSelector:_cmd];
-	
+
 	return 0;
 }
 
@@ -436,7 +436,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	{
 		return [self audioSampleRate];
 	}
-	
+
     ELOG(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
     [self doesNotImplementSelector:_cmd];
     return 0;
@@ -448,7 +448,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	{
         ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
 	}
-	
+
     return ringBuffers[index];
 }
 

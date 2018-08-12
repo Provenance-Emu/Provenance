@@ -1,0 +1,14 @@
+0.2 -> 0.2.1
+	* added SOVERSION and VERSION
+
+0.1 -> 0.2
+	* new API for loading multiple translations at
+	  the same time
+	* added man pages
+	* now using CMake as build system
+
+*scratch* -> 0.1
+	* translation function
+	* translation+conversion function using platform
+	  specific backends
+	* automatic detection of platform locale

@@ -423,7 +423,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 	#if os(tvOS)
 	var focusedGame : PVGame?
-	#endif
+    #else
+    var focusedGame = nil
+    #endif
 
 	#if os(iOS)
 	@objc
@@ -2379,7 +2381,7 @@ extension PVGameLibraryViewController {
 	}
 	@objc
 	func showMoreInfoCommand() {
-		guard let focusedGame = focusedGame else {
+        guard let focusedGame = focusedGame else {
 			return
 		}
 		moreInfo(for: focusedGame)
@@ -2394,31 +2396,31 @@ extension PVGameLibraryViewController {
 
 	@objc
 	func toggleFavoriteCommand() {
-		guard let focusedGame = focusedGame else {
-			return
-		}
-		toggleFavorite(for: focusedGame)
+        guard let focusedGame = focusedGame else {
+            return
+        }
+        toggleFavorite(for: focusedGame)
 	}
 
 	@objc
 	func renameCommand() {
-		guard let focusedGame = focusedGame else {
-			return
-		}
-		renameGame(focusedGame)
+        guard let focusedGame = focusedGame else {
+            return
+        }
+        renameGame(focusedGame)
 	}
 
 	@objc
 	func deleteCommand() {
-		guard let focusedGame = focusedGame else {
-			return
-		}
-		promptToDeleteGame(focusedGame)
+        guard let focusedGame = focusedGame else {
+            return
+        }
+        promptToDeleteGame(focusedGame)
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 
-		focusedGame = nil
+		    focusedGame = nil
 
 		if let focusedIndexPath = context.nextFocusedIndexPath {
 			let section = focusedIndexPath.section

@@ -1,0 +1,23 @@
+.TH mini18n 3 "August 30, 2011" "mini18n-0.2" "mini18n manual"
+.SH NAME
+mini18n \- translates strings
+.SH SYNOPSIS
+.B #include <mini18n.h>
+
+.BI "const char * mini18n(const char * source);"
+
+.BI "const char * mini18n_with_conversion(const char * source, unsigned int format);"
+
+.SH DESCRIPTION
+.BR mini18n()
+searches for \fIsource\fP in the currently loaded translation and returns the translated value if it's found.
+In this case, the returned string points to a mini18n internal buffer and thus should not be\fB free()\fP'd or modified in any way.
+If \fIsource\fP is not found or no translation is loaded, the \fIsource\fP string is returned.
+
+.BR mini18n_with_conversion()
+do the same as \fBmini18n()\fP but also converts the returned to the specified \fIformat\fP.
+Another difference is that the returned string is always converted to the \fIformat\fP.
+For now the only possible value of \fIformat\fP is \fBMINI18N_UTF16\fP and is only implemented for the Windows operating system.
+
+.SH RETURN VALUE
+The translated string if successul and the source string otherwise.

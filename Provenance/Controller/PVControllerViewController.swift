@@ -28,7 +28,6 @@ protocol JSButtonDisplayer {
     var selectButton: JSButton? { get set }
 }
 
-private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 96.0
 private let gripControl = false
 
@@ -162,7 +161,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     var system: PVSystem
     var controlLayout: [ControlLayoutEntry]
-
+    
+    typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
     var dPad: JSDPad?
     var dPad2: JSDPad?
     var buttonGroup: UIView?
@@ -340,16 +340,16 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     #endif
     }
 
-    #if os(iOS)
     func layoutVolume() {
+        #if os(iOS)
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
 
         volume.superview?.bringSubview(toFront: volume)
         volume.layer.cornerRadius = volumeHeight / 2
         volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        #endif
     }
-    #endif
 
     @objc
     func hideTouchControls(for controller: GCController) {

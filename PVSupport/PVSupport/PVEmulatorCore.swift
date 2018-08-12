@@ -456,6 +456,40 @@ public protocol CoreActions {
     func didMoveJoystick(_ button: PVPSXButton, withValue value: CGFloat, forPlayer player: Int)
 }
 
+// MARK: - Sega 32X
+@objc public enum PVSaturnButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case c
+    case x
+    case y
+    case z
+    case l
+    case r
+    case analogL
+    case analogR
+    case analogUp
+    case analogDown
+    case analogLeft
+    case analogRight
+    case start
+    case analogMode
+    case count
+}
+
+@objc public protocol PVSaturnSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didPushSaturnButton:forPlayer:)
+    func didPush(_ button: PVSaturnButton, forPlayer player: Int)
+    @objc(didReleaseSaturnButton:forPlayer:)
+    func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
+    @objc(didMoveSaturnJoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVSaturnButton, withValue value: CGFloat, forPlayer player: Int)
+}
+
 // MARK: - WonderSwan
 
 @objc public enum PVWSButton: Int {
