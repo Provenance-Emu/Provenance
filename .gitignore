@@ -20,3 +20,4 @@ report.xml
 .Cartfile.iOS.resolved
 /.version
 .DS_Store
+/DerivedData/
