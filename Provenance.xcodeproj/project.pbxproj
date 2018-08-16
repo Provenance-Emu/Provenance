@@ -1615,8 +1615,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
-				B31D003620BE67E400850C70 /* Carthage */,
 				B3FF744F202F7D67008C964A /* Create Version.h */,
+				B31D003620BE67E400850C70 /* Carthage */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
@@ -1663,6 +1663,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AD9AA3D1ACC988F00EC87A0 /* Build configuration list for PBXNativeTarget "Provenance Tests" */;
 			buildPhases = (
+				B300F064212512310010299E /* Create Version.h */,
 				1AD9AA311ACC988F00EC87A0 /* Sources */,
 				1AD9AA321ACC988F00EC87A0 /* Frameworks */,
 				1AD9AA331ACC988F00EC87A0 /* Resources */,
@@ -1948,6 +1949,20 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
 		};
+		B300F064212512310010299E /* Create Version.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Create Version.h";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+		};
 		B31D003620BE67E400850C70 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1955,11 +1970,10 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Cartfile.resolved",
-				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			name = Carthage;
 			outputPaths = (
-				"",
+				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;

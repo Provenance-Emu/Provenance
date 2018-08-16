@@ -1527,8 +1527,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */;
 			buildPhases = (
-				B3C04B5521077DC800E7AF79 /* Carthage */,
 				B3579D0A2106B11D00DDEBD6 /* Headers */,
+				B3C04B5521077DC800E7AF79 /* Carthage */,
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
@@ -1546,8 +1546,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary tvOS" */;
 			buildPhases = (
-				B3C04B5421077DB200E7AF79 /* Carthage */,
 				B3C04A8C21077B3100E7AF79 /* Headers */,
+				B3C04B5421077DB200E7AF79 /* Carthage */,
 				B3C04A9B21077B3100E7AF79 /* Sources */,
 				B3C04B3121077B3100E7AF79 /* Frameworks */,
 				B3C04B3E21077B3100E7AF79 /* Resources */,
