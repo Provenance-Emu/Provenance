@@ -1,0 +1,19 @@
+#  tvOSInput.xcfilelist
+#  PVLibrary
+#
+#  Created by Joseph Mattiello on 7/26/18.
+#  Copyright © 2018 Provenance. All rights reserved.
+
+# This file may be set as an input or output file list for a shell script build phase.
+# List file paths below; one per line. These paths will be considered inputs or outputs for the script phase.
+# Build settings will be expanded, e.g. $(SRCROOT)/fileName
+
+# PVLibrary
+$(SRCROOT)/Carthage/Checkouts/realm-cocoa/
+$(SRCROOT)/Carthage/Checkouts/SQLite.swift/
+$(SRCROOT)/Carthage/Checkouts/ZipArchive/
+$(SRCROOT)/Carthage/Checkouts/ZIPFoundation/
+
+# Carthage caches
+#$(SRCROOT)/Cartfile.resolved
+#$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved

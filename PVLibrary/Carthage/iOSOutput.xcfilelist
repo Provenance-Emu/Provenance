@@ -1,0 +1,19 @@
+#  iOSOutput.xcfilelist
+#  PVLibrary
+#
+#  Created by Joseph Mattiello on 7/26/18.
+#  Copyright © 2018 Provenance. All rights reserved.
+
+# This file may be set as an input or output file list for a shell script build phase.
+# List file paths below; one per line. These paths will be considered inputs or outputs for the script phase.
+# Build settings will be expanded, e.g. $(SRCROOT)/fileName
+
+# PVLibrary
+$(SRCROOT)/Carthage/Build/iOS/Realm.framework
+$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework
+$(SRCROOT)/Carthage/Build/iOS/SQLite.frameframework
+$(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework
+$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework
+
+# Carthage caches
+$(SRCROOT)/Carthage/.Cartfile.iOS.resolved

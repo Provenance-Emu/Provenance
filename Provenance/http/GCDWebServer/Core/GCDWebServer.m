@@ -41,6 +41,7 @@
 #import <dns_sd.h>
 
 #import "GCDWebServerPrivate.h"
+@import PVSupport;
 
 #if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 #define kDefaultPort 80

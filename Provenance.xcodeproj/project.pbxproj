@@ -167,6 +167,8 @@
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
+		B3524101210AD9C4006127B7 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35240FF210AD9C4006127B7 /* RealmSwift.framework */; };
+		B3524102210AD9C4006127B7 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3524100210AD9C4006127B7 /* Realm.framework */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; };
@@ -246,7 +248,6 @@
 		B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; };
 		B3AF47D921072408002211EE /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF47D821072408002211EE /* ZipArchive.framework */; };
 		B3AF47DA21072408002211EE /* ZipArchive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF47D821072408002211EE /* ZipArchive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3AF47E621072C34002211EE /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E812106BEA000857F52 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
 		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -441,7 +442,6 @@
 				B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */,
 				B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */,
-				B3AF47E621072C34002211EE /* PVLibrary.framework in Embed Frameworks */,
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
@@ -623,6 +623,8 @@
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B35240FF210AD9C4006127B7 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = PVLibrary/Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B3524100210AD9C4006127B7 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = PVLibrary/Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B35469311DECCD4A0018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari5200ControllerViewController.swift; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -863,6 +865,8 @@
 			files = (
 				B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */,
 				B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */,
+				B3524101210AD9C4006127B7 /* RealmSwift.framework in Frameworks */,
+				B3524102210AD9C4006127B7 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -954,6 +958,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3524100210AD9C4006127B7 /* Realm.framework */,
+				B35240FF210AD9C4006127B7 /* RealmSwift.framework */,
 				B32155432107D1D40085B18E /* PVLibrary.framework */,
 				B32155412107D0CE0085B18E /* PVLibrary.framework */,
 				B321553F2107CEE00085B18E /* PVLibrary.framework */,
@@ -1917,14 +1923,14 @@
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/XCDLumberjackNSLogger.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/MarqueeLabelSwift.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/NSLoggerSwift.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/SQLite.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/NSLogger.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/Realm.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/RealmSwift.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/MarqueeLabel.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/ZIPFoundation.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework",
 			);
@@ -2043,7 +2049,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+			shellScript = "./Provenance/Resources/createVersionHeader.sh\n";
 		};
 		B3FF744F202F7D67008C964A /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2051,16 +2057,16 @@
 			files = (
 			);
 			inputPaths = (
-				./.version,
 			);
 			name = "Create Version.h";
 			outputPaths = (
 				"$(SRCROOT)/Version.swift",
 				"$(SRCROOT)/Version.h",
+				"$(SRCROOT)/../.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+			shellScript = "./Provenance/Resources/createVersionHeader.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2585,10 +2591,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
 				PRODUCT_NAME = Provenance;
@@ -2645,10 +2648,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
 				PRODUCT_NAME = Provenance;
@@ -2703,10 +2703,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
 				PRODUCT_NAME = Provenance;
@@ -2759,11 +2756,7 @@
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -2819,11 +2812,7 @@
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -2876,11 +2865,7 @@
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -2935,6 +2920,7 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = AdHoc;
@@ -3034,17 +3020,14 @@
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Spotlight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.Spotlight";
@@ -3083,17 +3066,14 @@
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Spotlight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.Spotlight";
@@ -3130,17 +3110,14 @@
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Spotlight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.Spotlight";
@@ -3182,11 +3159,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = TopShelf/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3230,11 +3203,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = TopShelf/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3278,11 +3247,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = TopShelf/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf";
 				PRODUCT_NAME = "$(TARGET_NAME)";

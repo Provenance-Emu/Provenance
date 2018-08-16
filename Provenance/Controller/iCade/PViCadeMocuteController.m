@@ -10,6 +10,7 @@
 #import "PViCadeGamepad.h"
 #import "PViCadeGamepadButtonInput.h"
 #import "PViCadeGamepadDirectionPad.h"
+@import PVSupport;
 
 @implementation PViCadeMocuteController
 

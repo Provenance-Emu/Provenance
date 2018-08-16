@@ -7,8 +7,7 @@
 //
 
 #import "PVGLViewController.h"
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/DebugUtils.h>
+@import PVSupport;
 #import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
 

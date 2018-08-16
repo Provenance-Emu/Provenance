@@ -7,9 +7,10 @@
 //
 
 #import "PVGenesisEmulatorCore.h"
-#import <PVSupport/OERingBuffer.h>
-#import <PVSupport/DebugUtils.h>
-#import <PVSupport/PVLogging.h>
+@import PVSupport;
+//#import <PVSupport/OERingBuffer.h>
+//#import <PVSupport/DebugUtils.h>
+//#import <PVSupport/PVLogging.h>
 #import <PVGenesis/libretro.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>

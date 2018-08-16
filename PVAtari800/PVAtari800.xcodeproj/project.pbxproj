@@ -63,7 +63,7 @@
 		B36DE7811D6AB250002EE3ED /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0269544714317D34003A07D4 /* ATR800GameCore.m */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
-		B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7861D6AB45B002EE3ED /* PVSupport.framework */; };
+		B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7861D6AB45B002EE3ED /* PVSupport.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B38526A82108264D00434945 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A72108264D00434945 /* PVSupport.framework */; };
 		B3D73CF31E9EAF1C0023925B /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 0269540F143177DF003A07D4 /* rtime.c */; };

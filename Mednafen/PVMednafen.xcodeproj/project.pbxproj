@@ -3770,6 +3770,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */,
 				B3FBDFAE207FFB1F00E661D1 /* libsnes_faust.a in Frameworks */,
 				B3FBDF9A207FF51D00E661D1 /* libsnes.a in Frameworks */,
 				B33355F0207B28570036A448 /* libtrio.a in Frameworks */,
@@ -3797,7 +3798,6 @@
 				B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335075207AFD9C0036A448 /* libwonderswan.a in Frameworks */,
 				B333504F207AFBFC0036A448 /* libpsx.a in Frameworks */,
-				B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */,
 				B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */,

@@ -42,6 +42,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
+               BuildableName = "PVAtari800.framework"
+               BlueprintName = "PVAtari800"
+               ReferencedContainer = "container:PVAtari800/PVAtari800.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
                BuildableName = "PVFCEU.framework"
                BlueprintName = "PVFCEU"
@@ -186,20 +200,6 @@
                BuildableName = "PVStella.framework"
                BlueprintName = "PVStella"
                ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
-               BuildableName = "PVAtari800.framework"
-               BlueprintName = "PVAtari800"
-               ReferencedContainer = "container:PVAtari800/PVAtari800.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

@@ -1,0 +1,20 @@
+#  iOSOutput.xcfilelist
+#  PVSupport
+#
+#  Created by Joseph Mattiello on 7/26/18.
+#  Copyright © 2018 Provenance. All rights reserved.
+
+# This file may be set as an input or output file list for a shell script build phase.
+# List file paths below; one per line. These paths will be considered inputs or outputs for the script phase.
+# Build settings will be expanded, e.g. $(SRCROOT)/fileName
+
+# PVSupport
+$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
+$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
+$(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
+$(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
+$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework
+$(SRCROOT)/Carthage/Build/iOS/XCDLumberjackNSLogger.framework
+
+# Carthage caches
+$(SRCROOT)/Carthage/.Cartfile.iOS.resolved
