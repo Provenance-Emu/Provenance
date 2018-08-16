@@ -41,10 +41,6 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>Gamepad</string>
-		</dict>
-		<dict>
-			<key>ProfileName</key>
 			<string>MicroGamepad</string>
 		</dict>
 	</array>
