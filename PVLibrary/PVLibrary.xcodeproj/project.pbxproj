@@ -424,10 +424,6 @@
 		B3067F4F2106B5D00091437F /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B3067F752106B9180091437F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		B3075764210ACA120072B8B5 /* tvOSOutput.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; name = tvOSOutput.xcfilelist; path = Carthage/tvOSOutput.xcfilelist; sourceTree = SOURCE_ROOT; };
-		B3075765210ACA120072B8B5 /* iOSOutput.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; name = iOSOutput.xcfilelist; path = Carthage/iOSOutput.xcfilelist; sourceTree = SOURCE_ROOT; };
-		B307576A210ACE490072B8B5 /* tvOSInput.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; name = tvOSInput.xcfilelist; path = Carthage/tvOSInput.xcfilelist; sourceTree = SOURCE_ROOT; };
-		B307576B210ACE490072B8B5 /* iOSInput.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; name = iOSInput.xcfilelist; path = Carthage/iOSInput.xcfilelist; sourceTree = SOURCE_ROOT; };
 		B32155452107D2AC0085B18E /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E552106B97B00857F52 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3274E572106B9B100857F52 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
@@ -1531,8 +1527,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */;
 			buildPhases = (
-				B3579D0A2106B11D00DDEBD6 /* Headers */,
 				B3C04B5521077DC800E7AF79 /* Carthage */,
+				B3579D0A2106B11D00DDEBD6 /* Headers */,
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
@@ -1550,8 +1546,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary tvOS" */;
 			buildPhases = (
-				B3C04A8C21077B3100E7AF79 /* Headers */,
 				B3C04B5421077DB200E7AF79 /* Carthage */,
+				B3C04A8C21077B3100E7AF79 /* Headers */,
 				B3C04A9B21077B3100E7AF79 /* Sources */,
 				B3C04B3121077B3100E7AF79 /* Frameworks */,
 				B3C04B3E21077B3100E7AF79 /* Resources */,
@@ -2171,7 +2167,11 @@
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2212,7 +2212,11 @@
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2253,7 +2257,11 @@
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2296,7 +2304,11 @@
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2320,7 +2332,11 @@
 				);
 				INFOPLIST_FILE = PVLibraryTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibraryTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2343,7 +2359,11 @@
 				);
 				INFOPLIST_FILE = PVLibraryTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibraryTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
