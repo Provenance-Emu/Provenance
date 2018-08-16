@@ -165,7 +165,7 @@ public final class PVMediaCache: NSObject {
 
             let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
 
-            var image: UIImage? = nil
+            var image: UIImage?
 			image = PVMediaCache.memCache.object(forKey: keyHash as NSString)
 
 			if image == nil, FileManager.default.fileExists(atPath: cachePath) {

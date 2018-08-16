@@ -49,7 +49,7 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
 
         return topShelfItems
     }
-    
+
     private func recentlyAddedTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
         guard let recentlyAddedItems = TVContentItem(contentIdentifier: identifier) else {
             ELOG("Couldn't get recently added TVContentItem for identifier \(identifier)")
@@ -61,7 +61,7 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
         recentlyAddedItems.topShelfItems = recentlyAddedGames.map({$0.contentItem(with: identifier)! })
         return recentlyAddedItems
     }
-    
+
     private func recentlyPlayedTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
         guard let recentlyPlayedItems = TVContentItem(contentIdentifier: identifier) else {
             ELOG("Couldn't get recently played TVContentItem for identifier \(identifier)")
@@ -72,7 +72,7 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
         recentlyPlayedItems.topShelfItems = recentlyPlayedGames.map({$0.contentItem(with: identifier)! })
         return recentlyPlayedItems
     }
-    
+
     private func favoriteTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
         guard let favoriteItems = TVContentItem(contentIdentifier: identifier) else {
             ELOG("Couldn't get favorite TVContentItem for identifier \(identifier)")

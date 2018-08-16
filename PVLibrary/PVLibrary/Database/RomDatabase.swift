@@ -41,7 +41,7 @@ public final class RealmConfiguration {
 
     private static var realmConfig: Realm.Configuration = {
         #if os(tvOS)
-            var path: String? = nil
+            var path: String?
             if RealmConfiguration.supportsAppGroups {
                 path = RealmConfiguration.appGroupPath
             } else {

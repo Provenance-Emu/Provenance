@@ -84,7 +84,7 @@ class JSDPad: UIView {
     }
 
     func image(for direction: JSDPadDirection) -> UIImage? {
-        var image: UIImage? = nil
+        var image: UIImage?
         switch direction {
             case .up:
                 image = UIImage(named: "dPad-Up")

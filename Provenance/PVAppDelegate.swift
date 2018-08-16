@@ -280,7 +280,7 @@ extension PVAppDelegate {
 		#if os(iOS)
 		BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
 		#endif
-		
+
 		BITHockeyManager.shared().logLevel = BITLogLevel.warning
 		BITHockeyManager.shared().start()
 		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds

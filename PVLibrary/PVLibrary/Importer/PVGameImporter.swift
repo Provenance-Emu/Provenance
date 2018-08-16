@@ -787,7 +787,7 @@ public extension PVGameImporter {
 		}
 
 		autoreleasepool {
-			var systemsMaybe: [PVSystem]? = nil
+			var systemsMaybe: [PVSystem]?
 
 			if let chosenSystem = chosenSystem {
 				// First check if it's a chosen system that supports CDs and this is a non-cd extension
@@ -809,7 +809,7 @@ public extension PVGameImporter {
 				return
 			}
 
-			var maybeGame: PVGame? = nil
+			var maybeGame: PVGame?
 
 			if systems.count > 1 {
 
@@ -921,7 +921,7 @@ public extension PVGameImporter {
             return
         }
 
-        var resultsMaybe: [[String: Any]]? = nil
+        var resultsMaybe: [[String: Any]]?
         do {
             resultsMaybe = try self.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash.uppercased(), systemID: game.systemIdentifier)
         } catch {
@@ -1103,7 +1103,7 @@ public extension PVGameImporter {
 	}
 
     public func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        var results: [Any]? = nil
+        var results: [Any]?
 
 		let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
 
@@ -1157,7 +1157,7 @@ extension PVGameImporter {
             return nil
         }
 
-        var subfolderPathMaybe: URL? = nil
+        var subfolderPathMaybe: URL?
 
         var matchedSystemID: String?
 
@@ -1358,9 +1358,9 @@ extension PVGameImporter {
     public func moveROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> URL? {
 
         let filePath = candidateFile.filePath
-        var subfolderPathMaybe: URL? = nil
+        var subfolderPathMaybe: URL?
 
-        var systemID: String? = nil
+        var systemID: String?
         let fm = FileManager.default
 
         let extensionLowercased = filePath.pathExtension.lowercased()
@@ -1526,7 +1526,7 @@ extension PVGameImporter {
 
 	public func _moveRomFoundSubpath(subfolderPath : URL, filePath : URL) -> URL? {
 		let fm = FileManager.default
-		var newPath: URL? = nil
+		var newPath: URL?
 
 		// Try to create the directory where this ROM  goes,
 		// withIntermediateDirectories == true means it won't error if exists

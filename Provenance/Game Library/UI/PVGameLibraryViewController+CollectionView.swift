@@ -247,7 +247,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 
 	func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 		if (kind == UICollectionElementKindSectionHeader) {
-			var headerView: PVGameLibrarySectionHeaderView? = nil
+			var headerView: PVGameLibrarySectionHeaderView?
 			let title = searchResults != nil ? "Search Results" : sectionTitles[indexPath.section]
 
 			headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
@@ -296,7 +296,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 // MARK: - CollectionView helpers
 extension PVGameLibraryViewController {
 	func game(at indexPath: IndexPath, location: CGPoint) -> PVGame? {
-		var game: PVGame? = nil
+		var game: PVGame?
 		if let searchResults = searchResults {
 			game = Array(searchResults)[indexPath.item]
 		} else {

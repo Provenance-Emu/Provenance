@@ -48,7 +48,7 @@ class PVControllerSelectionViewController: UITableViewController {
         let labelText = "Player \(indexPath.row + 1)"
         cell.textLabel?.text = labelText
 
-        var controller: GCController? = nil
+        var controller: GCController?
         switch indexPath.row {
         case 0:
             controller = PVControllerManager.shared.player1

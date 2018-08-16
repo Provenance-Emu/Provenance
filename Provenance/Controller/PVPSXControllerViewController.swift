@@ -25,7 +25,7 @@ class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemRespo
     override func layoutViews() {
         leftAnalogButton?.buttonTag = .l3
         rightAnalogButton?.buttonTag = .r3
-        
+
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
@@ -114,12 +114,12 @@ class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemRespo
     override func releaseSelect(forPlayer player: Int) {
         emulatorCore.didRelease(.select, forPlayer: player)
     }
-    
+
     override func pressAnalogMode(forPlayer player: Int) {
         emulatorCore.didPush(.analogMode, forPlayer: player)
         super.pressAnalogMode(forPlayer: player)
     }
-    
+
     override func releaseAnalogMode(forPlayer player: Int) {
         emulatorCore.didRelease(.analogMode, forPlayer: player)
     }

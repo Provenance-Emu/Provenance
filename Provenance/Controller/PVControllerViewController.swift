@@ -136,11 +136,11 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     func pressAnalogMode(forPlayer player: Int) {
 
     }
-    
+
     func releaseAnalogMode(forPlayer player: Int) {
-        
+
     }
-    
+
     func buttonPressed(_ button: JSButton) {
         vibrate()
     }
@@ -214,8 +214,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
                 self.hideTouchControls(for: controller)
             })
-        }
-        else {
+        } else {
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
         }
@@ -789,16 +788,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 50
         let xPadding: CGFloat = (gripControl ? safeAreaInsets.right : safeAreaInsets.left) + 10
-        
+
         let xcoord: CGFloat = (gripControl ? (view.frame.size.width - controlSize.width - xPadding) : xPadding)
         var leftAnalogFrame = CGRect(x: xcoord, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-        
-        
-        
+
         if gripControl {
             leftAnalogFrame.origin.y = (UIScreen.main.bounds.height * 0.40)
         }
-        
+
         if let leftAnalogButton = self.leftAnalogButton {
             leftAnalogButton.frame = leftAnalogFrame
         } else {
@@ -826,11 +823,11 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
         let xcoord: CGFloat = (gripControl ? xPadding: (view.frame.size.width - controlSize.width - xPadding))
         var rightAnalogFrame = CGRect(x: xcoord, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-        
+
         if gripControl {
             rightAnalogFrame.origin.y = (UIScreen.main.bounds.height * 0.40)
         }
-        
+
         if let rightAnalogButton = self.rightAnalogButton {
             rightAnalogButton.frame = rightAnalogFrame
         } else {
