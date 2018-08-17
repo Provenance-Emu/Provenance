@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B34AB5862106DEB900C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5852106DEB900C45F09 /* PVSupport.framework */; };
 		B3547B662058591E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B652058591D00CFF7D8 /* Core.plist */; };
 		B3547B672058591E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B652058591D00CFF7D8 /* Core.plist */; };
+		B377E6802126A97200D88973 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377E67F2126A97200D88973 /* PVSupport.framework */; };
 		B38FB4C31C839BE500CD73BE /* PVStella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* PVStella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96E071D62C00C003F1E93 /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
 		B3C96E081D62C00C003F1E93 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
@@ -290,6 +290,7 @@
 		B34AB5852106DEB900C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34DEFCC20D4E71E008B475A /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B652058591D00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B377E67F2126A97200D88973 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38FB4C01C839BE500CD73BE /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38FB4C21C839BE500CD73BE /* PVStella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVStella.h; sourceTree = "<group>"; };
 		B38FB4C41C839BE500CD73BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -316,7 +317,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B34AB5862106DEB900C45F09 /* PVSupport.framework in Frameworks */,
+				B377E6802126A97200D88973 /* PVSupport.framework in Frameworks */,
 				B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */,
 				B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */,
 				B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */,
@@ -355,6 +356,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B377E67F2126A97200D88973 /* PVSupport.framework */,
 				B34AB5852106DEB900C45F09 /* PVSupport.framework */,
 				B34AB5612106D5DF00C45F09 /* PVSupport.framework */,
 				B34DEFCC20D4E71E008B475A /* PVSupport.framework */,
