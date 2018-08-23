@@ -825,7 +825,7 @@ static void emulation_run(BOOL skipFrame) {
             for (unsigned i=0; i<maxValue; i++) {
                 
 				if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
-                    uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex:analogMode];
+                    uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex withAnalogMode:analogMode];
                     
                     // TODO Can we do this better?
                     // we don't want to read l3/r3 from the controller
@@ -1365,7 +1365,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     inputBuffer[player][0] &= ~(1 << WSMap[button]);
 }
 
-- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player:(bool)analogMode {
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player withAnalogMode:(bool)analogMode {
     GCController *controller = nil;
     
     if (player == 0) {
@@ -1412,7 +1412,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             break;
 
         case MednaSystemPSX:
-            return [self PSXcontrollerValueForButtonID:buttonID forController:controller:analogMode];
+            return [self PSXcontrollerValueForButtonID:buttonID forController:controller withAnalogMode:analogMode];
             break;
 
         case MednaSystemVirtualBoy:
@@ -2030,41 +2030,24 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller:(bool)analogMode {
+- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller withAnalogMode:(bool)analogMode {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
+
         bool modifier1Pressed = [[pad leftShoulder] isPressed] && [[pad rightShoulder] isPressed];
         bool modifier2Pressed = [[pad leftTrigger] isPressed] && [[pad rightTrigger] isPressed];
         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
         switch (buttonID) {
             case PVPSXButtonUp:
-                if (analogMode) {
-                    return [[dpad up] isPressed];
-                }
-                else {
-                    return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
-                }
+                return [[dpad up] isPressed] || (!analogMode && [[[pad leftThumbstick] up] isPressed]);
             case PVPSXButtonDown:
-                if (analogMode) {
-                    return [[dpad down] isPressed] && !modifiersPressed;
-                }
-                else {
-                    return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed] && !modifiersPressed;
-                }
+                return [[dpad down] isPressed] || (!analogMode && [[[pad leftThumbstick] down] isPressed]);
             case PVPSXButtonLeft:
-                if (analogMode) {
-                    return [[dpad left] isPressed];
-                } else {
-                    return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
-                }
+                return [[dpad left] isPressed] || (!analogMode && [[[pad leftThumbstick] left] isPressed]);
             case PVPSXButtonRight:
-                if (analogMode) {
-                    return [[dpad right] isPressed] && !modifiersPressed;
-                } else {
-                    return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed] && !modifiersPressed;
-                }
+                return [[dpad right] isPressed] || (!analogMode && [[[pad leftThumbstick] right] isPressed]);
             case PVPSXButtonLeftAnalogUp:
                 return [pad leftThumbstick].up.value;
             case PVPSXButtonLeftAnalogDown:
