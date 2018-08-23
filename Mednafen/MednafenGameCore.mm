@@ -2035,19 +2035,18 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
-
         bool modifier1Pressed = [[pad leftShoulder] isPressed] && [[pad rightShoulder] isPressed];
         bool modifier2Pressed = [[pad leftTrigger] isPressed] && [[pad rightTrigger] isPressed];
         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
         switch (buttonID) {
             case PVPSXButtonUp:
-                return [[dpad up] isPressed] || (!analogMode && [[[pad leftThumbstick] up] isPressed]);
+                return ([[dpad up] isPressed] || (!analogMode && [[[pad leftThumbstick] up] isPressed])) && !modifiersPressed;
             case PVPSXButtonDown:
-                return [[dpad down] isPressed] || (!analogMode && [[[pad leftThumbstick] down] isPressed]);
+                return ([[dpad down] isPressed] || (!analogMode && [[[pad leftThumbstick] down] isPressed])) && !modifiersPressed;
             case PVPSXButtonLeft:
-                return [[dpad left] isPressed] || (!analogMode && [[[pad leftThumbstick] left] isPressed]);
+                return ([[dpad left] isPressed] || (!analogMode && [[[pad leftThumbstick] left] isPressed])) && !modifiersPressed;
             case PVPSXButtonRight:
-                return [[dpad right] isPressed] || (!analogMode && [[[pad leftThumbstick] right] isPressed]);
+                return ([[dpad right] isPressed] || (!analogMode && [[[pad leftThumbstick] right] isPressed])) && !modifiersPressed;
             case PVPSXButtonLeftAnalogUp:
                 return [pad leftThumbstick].up.value;
             case PVPSXButtonLeftAnalogDown:
