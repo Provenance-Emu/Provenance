@@ -2040,11 +2040,11 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
         switch (buttonID) {
             case PVPSXButtonUp:
-                return ([[dpad up] isPressed] || (!analogMode && [[[pad leftThumbstick] up] isPressed])) && !modifiersPressed;
+                return ([[dpad up] isPressed] || (!analogMode && [[[pad leftThumbstick] up] isPressed]));
             case PVPSXButtonDown:
                 return ([[dpad down] isPressed] || (!analogMode && [[[pad leftThumbstick] down] isPressed])) && !modifiersPressed;
             case PVPSXButtonLeft:
-                return ([[dpad left] isPressed] || (!analogMode && [[[pad leftThumbstick] left] isPressed])) && !modifiersPressed;
+                return ([[dpad left] isPressed] || (!analogMode && [[[pad leftThumbstick] left] isPressed]));
             case PVPSXButtonRight:
                 return ([[dpad right] isPressed] || (!analogMode && [[[pad leftThumbstick] right] isPressed])) && !modifiersPressed;
             case PVPSXButtonLeftAnalogUp:
