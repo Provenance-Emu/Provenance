@@ -1,3 +1,30 @@
+3.8.0 Release notes (2018-09-05)
+=============================================================
+
+### Enhancements
+
+* Remove some old and no longer applicable migration logic which created an
+  unencrypted file in the sync metadata directory containing a list of ROS URLs
+  connected to.
+* Add support for pinning SSL certificates used for https and realms
+  connections by setting `RLMSyncManager.sharedManager.pinnedCertificatePaths`
+  in obj-c and `SyncManager.shared.pinnedCertificatePaths` in Swift.
+
+### Bugfixes
+
+* Fix warnings when building Realm as a static framework with CocoaPods.
+
+3.7.6 Release notes (2018-08-08)
+=============================================================
+
+### Enhancements
+
+* Speed up the actual compaction when using compact-on-launch.
+* Reduce memory usage when locally merging changes from sync.
+* When first connecting to a server, wait to begin uploading changes until
+  after all changes have been downloaded to reduce the server-side load for
+  query-based sync.
+
 3.7.5 Release notes (2018-07-23)
 =============================================================
 

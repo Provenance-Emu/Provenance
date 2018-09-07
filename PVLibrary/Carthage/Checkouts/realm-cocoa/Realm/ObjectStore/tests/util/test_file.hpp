@@ -119,10 +119,8 @@ struct SyncTestFile : TestFile {
         schema_mode = realm::SchemaMode::Additive;
     }
 
-    SyncTestFile(SyncServer& server, 
-        std::string name="", 
-        realm::util::Optional<realm::Schema> realm_schema=none, 
-        bool is_partial=false);
+    SyncTestFile(SyncServer& server, std::string name="", bool is_partial=false,
+                 std::string user_name="test");
 };
 
 void wait_for_upload(realm::Realm& realm);

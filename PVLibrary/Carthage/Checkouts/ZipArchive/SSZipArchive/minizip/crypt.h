@@ -48,12 +48,14 @@ uint8_t update_keys(uint32_t *pkeys, const z_crc_t *pcrc_32_tab, int32_t c);
 /* Initialize the encryption keys and the random header according to the given password. */
 void init_keys(const char *passwd, uint32_t *pkeys, const z_crc_t *pcrc_32_tab);
 
+#ifndef NOCRYPT
 /* Generate cryptographically secure random numbers */
 int cryptrand(unsigned char *buf, unsigned int len);
 
 /* Create encryption header */
 int crypthead(const char *passwd, uint8_t *buf, int buf_size, uint32_t *pkeys,
     const z_crc_t *pcrc_32_tab, uint8_t verify1, uint8_t verify2);
+#endif
 
 /***************************************************************************/
 

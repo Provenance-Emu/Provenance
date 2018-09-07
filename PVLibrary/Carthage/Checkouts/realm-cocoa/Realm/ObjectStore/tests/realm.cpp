@@ -1565,6 +1565,26 @@ TEST_CASE("BindingContext is notified about delivery of change notifications") {
     }
 }
 
+TEST_CASE("Statistics on Realms") {
+    _impl::RealmCoordinator::assert_no_open_realms();
+
+    InMemoryTestFile config;
+    config.cache = false;
+    config.automatic_change_notifications = false;
+
+    auto r = Realm::get_shared_realm(config);
+    r->update_schema({
+        {"object", {
+            {"value", PropertyType::Int}
+        }},
+    });
+
+    SECTION("compute_size") {
+        auto s = r->compute_size();
+        REQUIRE(s > 0);
+    }
+}
+
 #if REALM_PLATFORM_APPLE
 TEST_CASE("BindingContext is notified in case of notifier errors") {
     _impl::RealmCoordinator::assert_no_open_realms();

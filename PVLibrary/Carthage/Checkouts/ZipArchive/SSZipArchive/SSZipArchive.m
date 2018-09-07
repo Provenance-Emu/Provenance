@@ -412,7 +412,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             } else {
                 [fileManager createDirectoryAtPath:fullPath.stringByDeletingLastPathComponent withIntermediateDirectories:YES attributes:directoryAttr error:&err];
             }
-            if (nil != err) {
+            if (err != nil) {
                 if ([err.domain isEqualToString:NSCocoaErrorDomain] &&
                     err.code == 640) {
                     unzippingError = err;
@@ -430,7 +430,9 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                 continue;
             }
             
-            if (!fileIsSymbolicLink) {
+            if (isDirectory && !fileIsSymbolicLink) {
+                // nothing to read/write for a directory
+            } else if (!fileIsSymbolicLink) {
                 // ensure we are not creating stale file entries
                 int readBytes = unzReadCurrentFile(zip, buffer, 4096);
                 if (readBytes >= 0) {
@@ -720,29 +722,31 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
         NSDirectoryEnumerator *dirEnumerator = [fileManager enumeratorAtPath:directoryPath];
         NSArray<NSString *> *allObjects = dirEnumerator.allObjects;
         NSUInteger total = allObjects.count, complete = 0;
-        NSString *fileName;
-        for (fileName in allObjects) {
-            BOOL isDir;
+        if (keepParentDirectory && !total) {
+            allObjects = @[@""];
+            total = 1;
+        }
+        for (__strong NSString *fileName in allObjects) {
             NSString *fullFilePath = [directoryPath stringByAppendingPathComponent:fileName];
-            [fileManager fileExistsAtPath:fullFilePath isDirectory:&isDir];
             
-            if (keepParentDirectory)
-            {
+            if (keepParentDirectory) {
                 fileName = [directoryPath.lastPathComponent stringByAppendingPathComponent:fileName];
             }
             
+            BOOL isDir;
+            [fileManager fileExistsAtPath:fullFilePath isDirectory:&isDir];
             if (!isDir) {
+                // file
                 success &= [zipArchive writeFileAtPath:fullFilePath withFileName:fileName compressionLevel:compressionLevel password:password AES:aes];
-            }
-            else
-            {
-                if ([[NSFileManager defaultManager] subpathsOfDirectoryAtPath:fullFilePath error:nil].count == 0)
-                {
+            } else {
+                // directory
+                if (![fileManager enumeratorAtPath:fullFilePath].nextObject) {
+                    // empty directory
                     success &= [zipArchive writeFolderAtPath:fullFilePath withFolderName:fileName withPassword:password];
                 }
             }
-            complete++;
             if (progressHandler) {
+                complete++;
                 progressHandler(complete, total);
             }
         }
@@ -866,7 +870,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     NSAssert((_zip != NULL), @"[SSZipArchive] Attempting to close an archive which was never opened");
     int error = zipClose(_zip, NULL);
     _zip = nil;
-    return error == UNZ_OK;
+    return error == ZIP_OK;
 }
 
 #pragma mark - Private

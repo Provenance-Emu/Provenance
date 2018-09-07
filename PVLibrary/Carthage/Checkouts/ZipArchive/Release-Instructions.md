@@ -6,9 +6,11 @@ The following steps should be taking by project maintainers if they create a new
 
     - Release names should be  more human readable: Version Major.Minor.Revision
 
-2. Update the podspec
+2. Update the podspec and test it
 
-3. Push the pod to the trunk 
+    - *pod lib lint SSZipArchive.podspec*
+
+3. Push the pod to the trunk
 
     - *pod trunk push SSZipArchive.podspec*
     

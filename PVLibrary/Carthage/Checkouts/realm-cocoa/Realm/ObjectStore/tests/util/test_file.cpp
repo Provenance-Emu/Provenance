@@ -89,18 +89,13 @@ InMemoryTestFile::InMemoryTestFile()
 }
 
 #if REALM_ENABLE_SYNC
-SyncTestFile::SyncTestFile(SyncServer& server, std::string name,
-                           realm::util::Optional<realm::Schema> realm_schema,
-                           bool is_partial)
+SyncTestFile::SyncTestFile(SyncServer& server, std::string name, bool is_partial, std::string user_name)
 {
     if (name.empty())
         name = path.substr(path.rfind('/') + 1);
     auto url = server.url_for_realm(name);
 
-    if (realm_schema)
-        schema = std::move(realm_schema);
-
-    sync_config = std::make_shared<SyncConfig>(SyncManager::shared().get_user({ "test", url }, "not_a_real_token"), url);
+    sync_config = std::make_shared<SyncConfig>(SyncManager::shared().get_user({user_name, url}, "not_a_real_token"), url);
     sync_config->user->set_is_admin(true);
     sync_config->stop_policy = SyncSessionStopPolicy::Immediately;
     sync_config->bind_session_handler = [=](auto&, auto& config, auto session) {
@@ -109,12 +104,13 @@ SyncTestFile::SyncTestFile(SyncServer& server, std::string name,
         // admin tokens by the sync service, so until that changes we need to
         // add a path for non-admin users
         if (config.user->is_admin())
-            token = "{\"identity\": \"test\", \"access\": [\"download\", \"upload\"]}";
+            token = util::format("{\"identity\": \"%1\", \"access\": [\"download\", \"upload\"]}", user_name);
         else {
-            auto path = "/" + name;
+            std::string suffix;
             if (config.is_partial)
-                path += "/__partial/" + config.user->identity() + "/" + SyncConfig::partial_sync_identifier(*config.user);
-            token = util::format("{\"identity\": \"test\", \"path\": \"%1\", \"access\": [\"download\", \"upload\"]}", path);
+                suffix = util::format("/__partial/%1/%2", config.user->identity(), SyncConfig::partial_sync_identifier(*config.user));
+            token = util::format("{\"identity\": \"%1\", \"path\": \"/%2%3\", \"access\": [\"download\", \"upload\"]}",
+                                 user_name, name, suffix);
         }
         encoded.resize(base64_encoded_size(token.size()));
         base64_encode(token.c_str(), token.size(), &encoded[0], encoded.size());
@@ -192,9 +188,10 @@ static void wait_for_session(Realm& realm, bool (SyncSession::*fn)(std::function
 {
     std::condition_variable cv;
     std::mutex wait_mutex;
-    std::atomic<bool> wait_flag(false);
+    bool wait_flag(false);
     auto& session = *SyncManager::shared().get_session(realm.config().path, *realm.config().sync_config);
     (session.*fn)([&](auto) {
+        std::unique_lock<std::mutex> lock(wait_mutex);
         wait_flag = true;
         cv.notify_one();
     });

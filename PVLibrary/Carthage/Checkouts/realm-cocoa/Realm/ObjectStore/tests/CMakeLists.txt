@@ -38,8 +38,9 @@ if(REALM_ENABLE_SYNC)
         sync/metadata.cpp
         sync/partial_sync.cpp
         sync/permission.cpp
-        sync/session/session.cpp
+        sync/session/connection_change_notifications.cpp
         sync/session/progress_notifications.cpp
+        sync/session/session.cpp
         sync/session/wait_for_completion.cpp
         sync/sync_manager.cpp
         sync/sync_test_utils.cpp

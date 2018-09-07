@@ -2560,7 +2560,8 @@ TEST_CASE("results: sort") {
     #define REQUIRE_ORDER(sort, ...) do { \
         std::vector<size_t> expected = {__VA_ARGS__}; \
         auto results = sort; \
-        for (size_t i = 0; i < 4; ++i) \
+        REQUIRE(results.size() == expected.size()); \
+        for (size_t i = 0; i < expected.size(); ++i) \
             REQUIRE(results.get(i).get_index() == expected[i]); \
     } while (0)
 
@@ -2763,5 +2764,72 @@ TEMPLATE_TEST_CASE("results: aggregate", ResultsFromTable, ResultsFromQuery, Res
             REQUIRE(results.sum(2)->get_double() == 0.0);
             REQUIRE_THROWS_AS(results.sum(3), Results::UnsupportedColumnTypeException);
         }
+    }
+}
+
+TEST_CASE("results: limit") {
+    InMemoryTestFile config;
+    config.cache = false;
+    config.schema = Schema{
+        {"object", {
+            {"value", PropertyType::Int},
+        }},
+    };
+
+    auto realm = Realm::get_shared_realm(config);
+    auto table = realm->read_group().get_table("class_object");
+    Results r(realm, *table);
+
+    realm->begin_transaction();
+    table->add_empty_row(8);
+    for (int i = 0; i < 8; ++i) {
+        table->set_int(0, i, (i + 2) % 4);
+    }
+    realm->commit_transaction();
+
+    SECTION("unsorted") {
+        REQUIRE(r.limit(0).size() == 0);
+        REQUIRE_ORDER(r.limit(1), 0);
+        REQUIRE_ORDER(r.limit(2), 0, 1);
+        REQUIRE_ORDER(r.limit(8), 0, 1, 2, 3, 4, 5, 6, 7);
+        REQUIRE_ORDER(r.limit(100), 0, 1, 2, 3, 4, 5, 6, 7);
+    }
+
+    SECTION("sorted") {
+        auto sorted = r.sort({{"value", true}});
+        REQUIRE(sorted.limit(0).size() == 0);
+        REQUIRE_ORDER(sorted.limit(1), 2);
+        REQUIRE_ORDER(sorted.limit(2), 2, 6);
+        REQUIRE_ORDER(sorted.limit(8), 2, 6, 3, 7, 0, 4, 1, 5);
+        REQUIRE_ORDER(sorted.limit(100), 2, 6, 3, 7, 0, 4, 1, 5);
+    }
+
+    SECTION("sort after limit") {
+        REQUIRE(r.limit(0).sort({{"value", true}}).size() == 0);
+        REQUIRE_ORDER(r.limit(1).sort({{"value", true}}), 0);
+        REQUIRE_ORDER(r.limit(3).sort({{"value", true}}), 2, 0, 1);
+        REQUIRE_ORDER(r.limit(8).sort({{"value", true}}), 2, 6, 3, 7, 0, 4, 1, 5);
+        REQUIRE_ORDER(r.limit(100).sort({{"value", true}}), 2, 6, 3, 7, 0, 4, 1, 5);
+    }
+
+    SECTION("distinct") {
+        auto sorted = r.distinct({"value"});
+        REQUIRE(sorted.limit(0).size() == 0);
+        REQUIRE_ORDER(sorted.limit(1), 0);
+        REQUIRE_ORDER(sorted.limit(2), 0, 1);
+        REQUIRE_ORDER(sorted.limit(8), 0, 1, 2, 3);
+
+        sorted = r.sort({{"value", true}}).distinct({"value"});
+        REQUIRE(sorted.limit(0).size() == 0);
+        REQUIRE_ORDER(sorted.limit(1), 2);
+        REQUIRE_ORDER(sorted.limit(2), 2, 3);
+        REQUIRE_ORDER(sorted.limit(8), 2, 3, 0, 1);
+    }
+
+    SECTION("does not support further filtering") {
+        auto limited = r.limit(0);
+        REQUIRE_THROWS_AS(limited.add_notification_callback([](CollectionChangeSet, std::exception_ptr) { }),
+                          Results::UnimplementedOperationException);
+        REQUIRE_THROWS_AS(limited.filter(table->where()), Results::UnimplementedOperationException);
     }
 }
