@@ -1,4 +1,4 @@
 github "ZipArchive/ZipArchive" "v2.1.4"
-github "realm/realm-cocoa" "v3.8.0"
+github "realm/realm-cocoa" "v3.9.0"
 github "stephencelis/SQLite.swift" "0.11.5"
 github "weichsel/ZIPFoundation" "0.9.6"
