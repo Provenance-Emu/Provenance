@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 export LC_ALL=en_US.UTF-8
@@ -31,6 +32,17 @@ else
   exit 0;
 fi
 
+PLATFORM=${1:-$iOS}
+SOURCEPATH=${2:-$SRCROOT}
+
+get_swift_version() {
+    "$1" --version 2>/dev/null | sed -ne 's/^Apple Swift version \([^\b ]*\).*/\1/p'
+}
+
+get_xcode_version() {
+    "$1" -version 2>/dev/null | sed -ne 's/^Xcode \([^\b ]*\).*/\1/p'
+}
+
 # Check for xcodebuild. Alert user if missing
 if which xcodebuild > /dev/null; then
     echo "Has XCode command line tools"
@@ -61,11 +73,19 @@ function runCarthageAndCopyResolved {
         osascript -e 'tell app "System Events" to display dialog "Error. Carthage is not installed, download from \nhttps://github.com/Carthage/Carthage#installing-carthage" buttons {"OK"} with icon caution with title "Missing Carthage"'
         exit 1
     fi
+
     # Copies the Cartfile.resolved file to /Carthage directory
-    local sourceCartfile="$SRCROOT/Cartfile.resolved"
-    local destCartfile="$SRCROOT/Carthage/.Cartfile.$1.resolved"
+    local sourceCartfile="$SOURCEPATH/Cartfile.resolved"
+    local destCartfile="$SOURCEPATH/Carthage/.Cartfile.$1.resolved"
+    echo "Copying $sourceCartfile to $destCartfile"
     cp "$sourceCartfile" "$destCartfile"
-    echo "Copied $sourceCartfile to $destCartfile"
+
+    # Store swift version used to build
+    local SWIFT_VERSION_PATH="$SOURCEPATH/Carthage/.swift-version"
+    local swiftVersion=$(get_swift_version "$(xcrun -f swift)")
+    echo "Storing current swift version $swiftVersion to $SWIFT_VERSION_PATH"
+    echo "$swiftVersion" > "$SWIFT_VERSION_PATH"
+
     echo "This will be used to check Carthage dependency updates in the future."
 }
 
@@ -95,7 +115,6 @@ function carthageBuildPathNotExist {
   return 1
 }
 
-
 # Function to iterate comma seperated list of targets and
 # check that a Carthage/.Cartfile.${Platform}.resolved exists.
 # and matches the current Carthage.resolved file
@@ -103,14 +122,33 @@ function carthageManifestUpToDate {
   echo "carthageManifestUpToDate $1"
   for i in $(echo $1 | tr "," "\n")
   do
-    local path="$SRCROOT/Carthage/.Cartfile.$1.resolved"
-    echo "Testing for $path"
-    if [ -f $path ] && \
-            diff $path \
-            $SRCROOT/Cartfile.resolved >/dev/null ; then
-        echo "$file matches $SRCROOT/Cartfile.resolved."
+    local CARTFILE_CACHED_PATH="$SOURCEPATH/Carthage/.Cartfile.$1.resolved"
+    local RESOLVED_MATCHED
+    [ -f $CARTFILE_CACHED_PATH ] && diff $CARTFILE_CACHED_PATH $SOURCEPATH/Cartfile.resolved >/dev/null && RESOLVED_MATCHED=true || RESOLVED_MATCHED=false
+
+    if [[ $RESOLVED_MATCHED == true ]]; then
+      echo "Carthage cache versions matched"
     else
-      echo "Fail: manifest mismatch found for $path AND $SRCROOT/Cartfile.resolved"
+      echo "Carthage cache versions mis-matched"
+    fi
+
+    local SWIFT_VERSION_PATH="$SOURCEPATH/Carthage/.swift-version"
+    local SWIFT_VERSION_BUILT=`cat $SWIFT_VERSION_PATH 2>/dev/null`
+    local SWIFT_VERSION_CURRENT=$(get_swift_version "$(xcrun -f swift)")
+    local SWIFT_MATCH
+    [ -f $SWIFT_VERSION_PATH ] && [ $SWIFT_VERSION_CURRENT == $SWIFT_VERSION_BUILT ] && SWIFT_MATCH=true || SWIFT_MATCH=false
+    if [[ $SWIFT_MATCH == true ]]; then
+      echo "Swift version matched: $SWIFT_VERSION_CURRENT"
+    else
+      echo "Swift version mis-matched: $SWIFT_VERSION_CURRENT != $SWIFT_VERSION_BUILT"
+    fi
+
+    echo "Cartfile.resolved match: $RESOLVED_MATCHED Swift version match: $SWIFT_MATCH. Current: $SWIFT_VERSION_CURRENT Cached: $SWIFT_VERSION_BUILT"
+    if [[ $RESOLVED_MATCHED == true && $SWIFT_MATCH == true
+     ]]; then
+        echo "$file matches $SOURCEPATH/Cartfile.resolved & $SWIFT_VERSION_PATH matches $SWIFT_VERSION_CURRENT"
+    else
+      echo "Fail: manifest mismatch found for $CARTFILE_CACHED_PATH AND $SOURCEPATH/Cartfile.resolved"
       return 1
     fi
   done
@@ -119,12 +157,12 @@ function carthageManifestUpToDate {
 }
 
 # The main execution starts here
-if carthageBuildPathNotExist $1; then
-    echo "Carthage build required for $1"
-    runCarthageAndCopyResolved $1
-elif carthageManifestUpToDate $1; then
+if carthageBuildPathNotExist $PLATFORM; then
+    echo "Carthage build required for $PLATFORM"
+    runCarthageAndCopyResolved $PLATFORM
+elif carthageManifestUpToDate $PLATFORM; then
     echo "Cartfile.resolved has not changed. Will move on to building project."
 else
     echo "Cartfile.resolved not up to date or not found."
-    runCarthageAndCopyResolved $1
+    runCarthageAndCopyResolved $PLATFORM
 fi

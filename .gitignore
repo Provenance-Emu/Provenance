@@ -19,3 +19,6 @@ report.xml
 .Cartfile.tvOS.resolved
 .Cartfile.iOS.resolved
 /.version
+/Carthage/.swift-version
+/PVSupport/Carthage/.swift-version
+/PVLibrary/Carthage/.swift-version
