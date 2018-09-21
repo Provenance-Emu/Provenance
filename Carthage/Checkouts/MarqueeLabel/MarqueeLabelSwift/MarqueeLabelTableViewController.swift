@@ -18,7 +18,7 @@ class MarqueeLabelTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         if let tabBar = tabBarController?.tabBar {
-            var tabBarInsets = UIEdgeInsetsMake(0.0, 0.0, tabBar.bounds.height, 0.0)
+            var tabBarInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: tabBar.bounds.height, right: 0.0)
             tableView.contentInset = tabBarInsets
             tabBarInsets.top = 84
             tableView.scrollIndicatorInsets = tabBarInsets

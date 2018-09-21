@@ -2034,7 +2034,7 @@
 			);
 			name = "Create Version.h";
 			outputPaths = (
-				"$(SRCROOT)/Version.swift",
+				"$(SRCROOT)/../Version.swift",
 				"$(SRCROOT)/Version.h",
 				"$(SRCROOT)/../.version",
 			);
