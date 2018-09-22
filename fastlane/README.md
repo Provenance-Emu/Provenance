@@ -90,6 +90,11 @@ Reset build enviroment
 Use this lane if you're having build issues
 
 Use `git stash` first to save any changes you may want to keep.
+### ios build_appstore
+```
+fastlane ios build_appstore
+```
+Exports a new Beta Build
 ### ios carthage_bootstrap
 ```
 fastlane ios carthage_bootstrap

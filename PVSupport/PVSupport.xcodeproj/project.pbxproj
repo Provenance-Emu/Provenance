@@ -6,6 +6,20 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3E0A58621565166004B4322 /* Carthage Bootstrap */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3E0A58A21565167004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */;
+			buildPhases = (
+				B3E0A58B2156516F004B4322 /* Carthage Bootstrap */,
+			);
+			dependencies = (
+			);
+			name = "Carthage Bootstrap";
+			productName = "Carthage Bootstrap";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,6 +99,23 @@
 		B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3E0A58C21565181004B4322 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3E0A58621565166004B4322;
+			remoteInfo = "Carthage Bootstrap";
+		};
+		B3E0A58E21565188004B4322 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3E0A58621565166004B4322;
+			remoteInfo = "Carthage Bootstrap";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0592894D1DC194FD0012644D /* RealTimeThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealTimeThread.h; sourceTree = "<group>"; };
@@ -393,7 +424,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport tvOS" */;
 			buildPhases = (
-				B3E708A920B7E918005BAA5A /* Carthage Build */,
 				B3C96E9B1D62C3A3003F1E93 /* Headers */,
 				B3C96E991D62C3A3003F1E93 /* Sources */,
 				B3C96E9A1D62C3A3003F1E93 /* Frameworks */,
@@ -402,6 +432,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3E0A58F21565188004B4322 /* PBXTargetDependency */,
 			);
 			name = "PVSupport tvOS";
 			productName = "PVSupportTV Framework";
@@ -412,7 +443,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport" */;
 			buildPhases = (
-				B3E708A820B7E8F9005BAA5A /* Carthage build */,
 				B3C96EC81D62C5E7003F1E93 /* Headers */,
 				B3C96EBF1D62C5E7003F1E93 /* Sources */,
 				B3C96EC71D62C5E7003F1E93 /* Frameworks */,
@@ -421,6 +451,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3E0A58D21565181004B4322 /* PBXTargetDependency */,
 			);
 			name = PVSupport;
 			productName = "PVSupportTV Framework";
@@ -434,6 +465,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PV;
+				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
@@ -445,6 +477,9 @@
 					B3C96EBE1D62C5E7003F1E93 = {
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Manual;
+					};
+					B3E0A58621565166004B4322 = {
+						CreatedOnToolsVersion = 10.0;
 					};
 				};
 			};
@@ -462,6 +497,7 @@
 			targets = (
 				B3C96EBE1D62C5E7003F1E93 /* PVSupport */,
 				B3C96E9D1D62C3A3003F1E93 /* PVSupport tvOS */,
+				B3E0A58621565166004B4322 /* Carthage Bootstrap */,
 			);
 		};
 /* End PBXProject section */
@@ -484,37 +520,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B3E708A820B7E8F9005BAA5A /* Carthage build */ = {
+		B3E0A58B2156516F004B4322 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
 			inputPaths = (
 				"$(SRCROOT)/Cartfile.resolved",
 			);
-			name = "Carthage build";
+			name = "Carthage Bootstrap";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh iOS\nsh Scripts/carthage.sh iOS\n";
-		};
-		B3E708A920B7E918005BAA5A /* Carthage Build */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Cartfile.resolved",
-			);
-			name = "Carthage Build";
-			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ..\nsource ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh tvOS\nsh Scripts/carthage.sh tvOS\n";
+			shellScript = "cd ..\n. Scripts/xcode.carthage.bootstrap.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -564,6 +589,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3E0A58D21565181004B4322 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3E0A58621565166004B4322 /* Carthage Bootstrap */;
+			targetProxy = B3E0A58C21565181004B4322 /* PBXContainerItemProxy */;
+		};
+		B3E0A58F21565188004B4322 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3E0A58621565166004B4322 /* Carthage Bootstrap */;
+			targetProxy = B3E0A58E21565188004B4322 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1ACEA66517F7467D0031B1C9 /* Debug */ = {
@@ -977,6 +1015,30 @@
 			};
 			name = AdHoc;
 		};
+		B3E0A58721565167004B4322 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3E0A58821565167004B4322 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3E0A58921565167004B4322 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = AdHoc;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1006,6 +1068,16 @@
 				B3C96ED51D62C5E7003F1E93 /* Debug */,
 				B3C96ED61D62C5E7003F1E93 /* Release */,
 				B3C96ED71D62C5E7003F1E93 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3E0A58A21565167004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3E0A58721565167004B4322 /* Debug */,
+				B3E0A58821565167004B4322 /* Release */,
+				B3E0A58921565167004B4322 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -1745,7 +1745,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3E21D73203211BE009939D3 /* Build configuration list for PBXNativeTarget "Spotlight" */;
 			buildPhases = (
-				B38D938C20C7A06600ABCB16 /* Carthage */,
 				B3E21D67203211BE009939D3 /* Sources */,
 				B3E21D68203211BE009939D3 /* Frameworks */,
 				B3E21D69203211BE009939D3 /* Resources */,
@@ -1764,7 +1763,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE9FDCC51C210B9F0046DF0E /* Build configuration list for PBXNativeTarget "TopShelf" */;
 			buildPhases = (
-				B3E4817320C7B98A0061CF96 /* Carthage */,
 				BE9FDCB31C210B9E0046DF0E /* Sources */,
 				BE9FDCB41C210B9E0046DF0E /* Frameworks */,
 				BE9FDCB51C210B9E0046DF0E /* Resources */,
@@ -2039,22 +2037,6 @@
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
-		B38D938C20C7A06600ABCB16 /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Cartfile.resolved",
-			);
-			name = Carthage;
-			outputPaths = (
-				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "if [ -f ~/.bash_profile ]; then\n    source ~/.bash_profile 2> /dev/null\nelif [ -f ~/.bashrc ]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. $(PROJECT_DIR)/Scripts/rome-download.sh iOS\n. $(PROJECT_DIR)/Scripts/carthage.sh iOS\n";
-		};
 		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2063,15 +2045,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
 			);
 			name = "Carthage Bootstrap";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
+				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "if [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nlocal PLATFORM=\"tvOS,iOS\"\nif [[ $EFFECTIVE_PLATFORM_NAME == \"iphoneos\" || $EFFECTIVE_PLATFORM_NAME == \"iphonesimulator\" ]]; then\n    PLATFORM=\"iOS\"\nelse\n    PLATFORM=\"tvOS\"\nfi\n\nlocal FASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\necho \"Setting up Carthage for platform $PLATFORM using fastlane\"\n$($FASTLANE_CMD carthage_bootstrap platform:\"PLATFORM\" directory:\"$SRCROOT\")\n";
+			shellScript = ". Scripts/xcode.carthage.bootstrap.sh\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2111,23 +2096,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "#is_adhoc() {\n# [ ${CONFIGURATION} == AdHoc ]\n#}\n\n#if [ ${CONFIGURATION} == AdHoc ] ; then\n#    echo \"Making archice\"\n#    # TODO: TEst if device or sim also, always sign for device\n#else\n#    echo \"Code singing not needed\"\n#    exit 0\n#fi\n\n\nif [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nFASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\n$($FASTLANE_CMD userbuild) && $($FASTLANE_CMD updatePlistForBranch)\n";
-		};
-		B3E4817320C7B98A0061CF96 /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Cartfile.resolved",
-			);
-			name = Carthage;
-			outputPaths = (
-				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
-				"",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "if [ -f ~/.bash_profile ]; then\nsource ~/.bash_profile 2> /dev/null\nelif [ -f ~/.bashrc ]; then\nsource ~/.bashrc 2> /dev/null\nfi\n\n. $(PROJECT_DIR)/Scripts/rome-download.sh tvOS\n. $(PROJECT_DIR)/Scripts/carthage.sh tvOS\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
