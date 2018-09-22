@@ -2149,10 +2149,8 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
-					"$(PROJECT_DIR)/..//Carthage/Build/iOS",
+					"\"$(PROJECT_DIR)/Carthage/Build/iOS\"",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/iOS\"",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
@@ -2194,10 +2192,8 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
-					"$(PROJECT_DIR)/..//Carthage/Build/iOS",
+					"\"$(PROJECT_DIR)/Carthage/Build/iOS\"",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/iOS\"",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",

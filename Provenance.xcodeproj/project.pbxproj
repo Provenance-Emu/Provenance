@@ -2051,7 +2051,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "if [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\nsh Scripts/rome-download.sh iOS\nsh Scripts/carthage.sh iOS\n";
+			shellScript = "if [ -f ~/.bash_profile ]; then\n    source ~/.bash_profile 2> /dev/null\nelif [ -f ~/.bashrc ]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/rome-download.sh iOS\n. Scripts/carthage.sh iOS\n";
 		};
 		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;

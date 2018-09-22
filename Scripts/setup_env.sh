@@ -37,10 +37,12 @@ brew_update() {
 
 bundle_installed() {
    [ -x "$(command -v bundle)"]
+   return
 }
 
 bundle_install() {
   if bundle_installed; then
+    echo "bundle installed. Running 'bundle install'"
     bundle install
   fi
 }
