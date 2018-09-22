@@ -50,14 +50,20 @@ fi
 
 function runCarthageAndCopyResolved {
     echo "Running Carthage.."
-    if which fastlane > /dev/null; then
+    
+    if fastlane_installed; then
+      local FASTLANE_CMD="fastlane"
+      if fastlane_installed && bundle_installed; then
+        FASTLANE_CMD="bundle exec fastlane"
+      fi
+
       echo "Setting up Carthage for platform $1 using fastlane"
-      bundle exec fastlane carthage_bootstrap platform:"$1" directory:"$SRCROOT"
-      /usr/local/bin/carthage outdated --xcode-warnings
-    elif which carthage > /dev/null; then
+      $($FASTLANE_CMD carthage_bootstrap platform:"$1" directory:"$SRCROOT")
+      carthage outdated --xcode-warnings
+    elif carthage_installed; then
         echo "Setting up Carthage for platform $1"
-        /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
-        /usr/local/bin/carthage outdated --xcode-warnings
+        carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
+        carthage outdated --xcode-warnings
         # Example how to enable different command for different build styles.
         # ie; carthage build, will force a rebuild. Might be preferred for safety for ad-hoc and app store builds
         # if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ] || [ "${BUILD_STYLE}" == "App Store" ];

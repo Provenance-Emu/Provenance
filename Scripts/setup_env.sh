@@ -36,7 +36,7 @@ brew_update() {
 }
 
 bundle_installed() {
-   [ -x "$(command -v bundle)"]
+   [ -x "$(command -v bundle)" ]
    return
 }
 
@@ -49,12 +49,23 @@ bundle_install() {
 
 fastlane_installed() {
   [ -x "$(command -v fastlane)" ]
+  return
 }
-
 
 fastlane_install() {
   if brew_installed && ! fastlane_installed ; then
     echo 'fastlane is not installed. Installing via homebrew' >&2
     brew cask install fastlane
+  fi
+}
+
+carthage_installed() {
+  [ -x "$(command -v carthage)" ]
+  return
+}
+
+carthage_install() {
+  if ! carthage_installed && brew_installed; then
+    brew install carthage
   fi
 }
