@@ -35,45 +35,9 @@ fi
 PLATFORM=${1:-$iOS}
 SOURCEPATH=${2:-$SRCROOT}
 
-get_swift_version() {
-    "$1" --version 2>/dev/null | sed -ne 's/^Apple Swift version \([^\b ]*\).*/\1/p'
-}
-
-get_xcode_version() {
-    "$1" -version 2>/dev/null | sed -ne 's/^Xcode \([^\b ]*\).*/\1/p'
-}
-
-rome_install() {
-  if ![-x "$(command -v rome)"]; then
-    brew install blender/homebrew-tap/rome
-  fi
-}
-
-brew_install() {
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-}
-
-brew_update() {
-  if [-x "$(command -v brew)"]; then
-    brew update
-    brew outdated swiftlint || brew upgrade swiftlint
-    brew outdated carthage || brew upgrade carthage
-    rome_install
-  fi
-}
-
-bundle_install() {
-  if [-x "$(command -v bundle)"]; then
-    bundle install
-  fi
-}
-
-fastlane_install() {
-  if [-x "$(command -v brew)"] && ! [ -x "$(command -v fastlane)" ]; then
-    echo 'fastlane is not installed. Installing via homebrew' >&2
-    brew cask install fastlane
-  fi
-}
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/setup_env.sh"
 
 # Check for xcodebuild. Alert user if missing
 if which xcodebuild > /dev/null; then

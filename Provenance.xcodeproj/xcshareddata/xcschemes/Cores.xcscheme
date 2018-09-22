@@ -239,8 +239,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A2876420C76F9C00B4B2E3"
-               BuildableName = "Cores iOS"
-               BlueprintName = "Cores iOS"
+               BuildableName = "Carthage Bootstrap"
+               BlueprintName = "Carthage Bootstrap"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -257,8 +257,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3A2876420C76F9C00B4B2E3"
-            BuildableName = "Cores iOS"
-            BlueprintName = "Cores iOS"
+            BuildableName = "Carthage Bootstrap"
+            BlueprintName = "Carthage Bootstrap"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -279,8 +279,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3A2876420C76F9C00B4B2E3"
-            BuildableName = "Cores iOS"
-            BlueprintName = "Cores iOS"
+            BuildableName = "Carthage Bootstrap"
+            BlueprintName = "Carthage Bootstrap"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -297,8 +297,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3A2876420C76F9C00B4B2E3"
-            BuildableName = "Cores iOS"
-            BlueprintName = "Cores iOS"
+            BuildableName = "Carthage Bootstrap"
+            BlueprintName = "Carthage Bootstrap"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

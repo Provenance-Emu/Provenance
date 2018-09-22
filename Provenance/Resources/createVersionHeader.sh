@@ -10,6 +10,12 @@ else
     echo "No $HOME/.profile exists. PATH may not find correct version of Git if installed outside of XCode; ie. MacPorts or other build systems."
 fi
 
+if [ -f "$HOME/.bash_profile" ] ; then
+    source "$HOME/.bash_profile"
+else
+    echo "No $HOME/.bash_profile exists. PATH may not find correct version of Git if installed outside of XCode; ie. MacPorts or other build systems."
+fi
+
 PLISTBUDDY=/usr/libexec/PlistBuddy
 NOW=`date`
 INFOPATH="${PROJECT_DIR}/${INFOPLIST_FILE}"

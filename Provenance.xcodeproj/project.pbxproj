@@ -7,15 +7,38 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		B3A2876420C76F9C00B4B2E3 /* Cores iOS */ = {
+		B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Cores iOS" */;
+			buildConfigurationList = B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */;
 			buildPhases = (
+				B3B29D3E2156125700903290 /* Carthage Bootstrap */,
 			);
 			dependencies = (
 			);
-			name = "Cores iOS";
+			name = "Carthage Bootstrap";
 			productName = Cores;
+		};
+		B3B29D3F2156177100903290 /* Create Version files */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3B29D402156177100903290 /* Build configuration list for PBXAggregateTarget "Create Version files" */;
+			buildPhases = (
+				B3B29D442156177500903290 /* Create Version.swift and Version.h */,
+			);
+			dependencies = (
+			);
+			name = "Create Version files";
+			productName = "Create Version files";
+		};
+		B3B29D4D21561F0600903290 /* Setup Code-Signing */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3B29D4E21561F0600903290 /* Build configuration list for PBXAggregateTarget "Setup Code-Signing" */;
+			buildPhases = (
+				B3E31E2A21562154005FF394 /* Fastlane setup code signing */,
+			);
+			dependencies = (
+			);
+			name = "Setup Code-Signing";
+			productName = "Setup Code-Signing";
 		};
 /* End PBXAggregateTarget section */
 
@@ -378,6 +401,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
+		};
+		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
+		};
+		B3B29D472156184400903290 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
+		};
+		B3B29D492156184A00903290 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
+		};
+		B3B29D4B2156185700903290 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
 		};
 		B3E21D70203211BE009939D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -930,21 +981,21 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B38526A92108267800434945 /* PVAtari800.framework */,
-				B3C04B5821077E1000E7AF79 /* PVLibrary.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
-				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
-				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
+				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
+				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
+				B366171E206EBF6900A4F306 /* Recovered References */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
 				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
+				B38526A92108267800434945 /* PVAtari800.framework */,
+				B3C04B5821077E1000E7AF79 /* PVLibrary.framework */,
 				B3AF47D821072408002211EE /* ZipArchive.framework */,
-				B366171E206EBF6900A4F306 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1627,7 +1678,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
-				B3FF744F202F7D67008C964A /* Create Version.h */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
@@ -1639,6 +1689,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B29D462156183D00903290 /* PBXTargetDependency */,
 				B3E21D71203211BE009939D3 /* PBXTargetDependency */,
 			);
 			name = Provenance;
@@ -1650,7 +1701,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AD481C81BA350A500FDA50A /* Build configuration list for PBXNativeTarget "ProvenanceTV" */;
 			buildPhases = (
-				B3F9CDA320315CA8007F808D /* Create Version.h */,
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
@@ -1662,6 +1712,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B29D4C2156185700903290 /* PBXTargetDependency */,
 				B3F9CDA62031FF4E007F808D /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
@@ -1700,6 +1751,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B29D482156184400903290 /* PBXTargetDependency */,
 			);
 			name = Spotlight;
 			productName = Spotlight;
@@ -1718,6 +1770,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B29D4A2156184A00903290 /* PBXTargetDependency */,
 			);
 			name = TopShelf;
 			productName = TopShelf;
@@ -1731,6 +1784,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PV;
+				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Provenance;
@@ -1757,6 +1811,12 @@
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
 					B3A2876420C76F9C00B4B2E3 = {
+						CreatedOnToolsVersion = 10.0;
+					};
+					B3B29D3F2156177100903290 = {
+						CreatedOnToolsVersion = 10.0;
+					};
+					B3B29D4D21561F0600903290 = {
 						CreatedOnToolsVersion = 10.0;
 					};
 					B3E21D6A203211BE009939D3 = {
@@ -1796,7 +1856,9 @@
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
-				B3A2876420C76F9C00B4B2E3 /* Cores iOS */,
+				B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap */,
+				B3B29D3F2156177100903290 /* Create Version files */,
+				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 			);
 		};
 /* End PBXProject section */
@@ -1989,7 +2051,64 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh iOS\nsh Scripts/carthage.sh iOS\n#sh Scripts/fastlane.sh\n";
+			shellScript = "if [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\nsh Scripts/rome-download.sh iOS\nsh Scripts/carthage.sh iOS\n";
+		};
+		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Carthage Bootstrap";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "if [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nif fastlane_installed && bundle_installed; then\n    bundle exec fastlane carthage_bootstrap\nelif fastlane_installed; then\n    fastlane carthage_bootstrap\nfi\n";
+		};
+		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				$SRCROOT/.version,
+			);
+			name = "Create Version.swift and Version.h";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${PROJECT_DIR}/Provenance/Version.h",
+				"${PROJECT_DIR}/Provenance/Version.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "./Provenance/Resources/createVersionHeader.sh\n";
+		};
+		B3E31E2A21562154005FF394 /* Fastlane setup code signing */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Fastlane setup code signing";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "#is_adhoc() {\n# [ ${CONFIGURATION} == AdHoc ]\n#}\n\n#if [ ${CONFIGURATION} == AdHoc ] ; then\n#    echo \"Making archice\"\n#    # TODO: TEst if device or sim also, always sign for device\n#else\n#    echo \"Code singing not needed\"\n#    exit 0\n#fi\n\n\nif [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nFASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\n$($FASTLANE_CMD userbuild) && $($FASTLANE_CMD updatePlistForBranch)\n";
 		};
 		B3E4817320C7B98A0061CF96 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2007,40 +2126,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh tvOS\nsh Scripts/carthage.sh tvOS\n#sh Scripts/fastlane.sh\n";
-		};
-		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				./.version,
-			);
-			name = "Create Version.h";
-			outputPaths = (
-				"$(SRCROOT)/Version.swift",
-				"$(SRCROOT)/Version.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "./Provenance/Resources/createVersionHeader.sh\n";
-		};
-		B3FF744F202F7D67008C964A /* Create Version.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Create Version.h";
-			outputPaths = (
-				"$(SRCROOT)/../Version.swift",
-				"$(SRCROOT)/../Version.h",
-				"$(SRCROOT)/../.version",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "./Provenance/Resources/createVersionHeader.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2292,6 +2377,26 @@
 			isa = PBXTargetDependency;
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
+		};
+		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B3B29D452156183D00903290 /* PBXContainerItemProxy */;
+		};
+		B3B29D482156184400903290 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B3B29D472156184400903290 /* PBXContainerItemProxy */;
+		};
+		B3B29D4A2156184A00903290 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B3B29D492156184A00903290 /* PBXContainerItemProxy */;
+		};
+		B3B29D4C2156185700903290 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B3B29D4B2156185700903290 /* PBXContainerItemProxy */;
 		};
 		B3E21D71203211BE009939D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2994,6 +3099,54 @@
 			};
 			name = AdHoc;
 		};
+		B3B29D412156177100903290 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3B29D422156177100903290 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3B29D432156177100903290 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = AdHoc;
+		};
+		B3B29D4F21561F0600903290 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3B29D5021561F0600903290 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3B29D5121561F0600903290 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = AdHoc;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3330,12 +3483,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Cores iOS" */ = {
+		B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A2876620C76F9C00B4B2E3 /* Debug */,
 				B3A2876720C76F9C00B4B2E3 /* Release */,
 				B3A2876820C76F9C00B4B2E3 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3B29D402156177100903290 /* Build configuration list for PBXAggregateTarget "Create Version files" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3B29D412156177100903290 /* Debug */,
+				B3B29D422156177100903290 /* Release */,
+				B3B29D432156177100903290 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3B29D4E21561F0600903290 /* Build configuration list for PBXAggregateTarget "Setup Code-Signing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3B29D4F21561F0600903290 /* Debug */,
+				B3B29D5021561F0600903290 /* Release */,
+				B3B29D5121561F0600903290 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
