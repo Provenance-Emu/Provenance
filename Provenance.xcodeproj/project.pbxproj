@@ -760,6 +760,7 @@
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87641D6A5A5300D216D4 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
+		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		B3E21D6B203211BE009939D3 /* Spotlight.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spotlight.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
 		B3E21D6F203211BE009939D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -986,6 +987,7 @@
 				B3E21D6C203211BE009939D3 /* Spotlight */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
+				B3E0A580215647BD004B4322 /* Scripts */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				B366171E206EBF6900A4F306 /* Recovered References */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
@@ -2051,7 +2053,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "if [ -f ~/.bash_profile ]; then\n    source ~/.bash_profile 2> /dev/null\nelif [ -f ~/.bashrc ]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/rome-download.sh iOS\n. Scripts/carthage.sh iOS\n";
+			shellScript = "if [ -f ~/.bash_profile ]; then\n    source ~/.bash_profile 2> /dev/null\nelif [ -f ~/.bashrc ]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. $(PROJECT_DIR)/Scripts/rome-download.sh iOS\n. $(PROJECT_DIR)/Scripts/carthage.sh iOS\n";
 		};
 		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2125,7 +2127,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "source ~/.bash_profile 2> /dev/null\nsh Scripts/rome-download.sh tvOS\nsh Scripts/carthage.sh tvOS\n#sh Scripts/fastlane.sh\n";
+			shellScript = "if [ -f ~/.bash_profile ]; then\nsource ~/.bash_profile 2> /dev/null\nelif [ -f ~/.bashrc ]; then\nsource ~/.bashrc 2> /dev/null\nfi\n\n. $(PROJECT_DIR)/Scripts/rome-download.sh tvOS\n. $(PROJECT_DIR)/Scripts/carthage.sh tvOS\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
