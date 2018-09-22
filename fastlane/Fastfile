@@ -505,8 +505,8 @@ platform :ios do
   end
 
 
-  desc "Submits a new Beta Build to Apple TestFlight"
-  private_lane :build_appstore do
+  desc "Exports a new Beta Build"
+  lane :build_appstore do
     load_keys
     dev_domain = ENV["DEV_DOMAIN"]
 
@@ -535,6 +535,11 @@ platform :ios do
       }
     )
 
+  end
+
+  private_lane :submit_appstore do
+    load_keys
+    dev_domain = ENV["DEV_DOMAIN"]
     pilot(app_identifier: "#{dev_domain}.provenance")
   end
 
