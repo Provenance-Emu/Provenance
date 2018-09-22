@@ -2071,7 +2071,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "if [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nif fastlane_installed && bundle_installed; then\n    bundle exec fastlane carthage_bootstrap\nelif fastlane_installed; then\n    fastlane carthage_bootstrap\nfi\n";
+			shellScript = "if [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nlocal PLATFORM=\"tvOS,iOS\"\nif [[ $EFFECTIVE_PLATFORM_NAME == \"iphoneos\" || $EFFECTIVE_PLATFORM_NAME == \"iphonesimulator\" ]]; then\n    PLATFORM=\"iOS\"\nelse\n    PLATFORM=\"tvOS\"\nfi\n\nlocal FASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\necho \"Setting up Carthage for platform $PLATFORM using fastlane\"\n$($FASTLANE_CMD carthage_bootstrap platform:\"PLATFORM\" directory:\"$SRCROOT\")\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
