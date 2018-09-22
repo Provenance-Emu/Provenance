@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 PLATFORM=${1:-iOS,tvOS}
 
 SWIFT_VERSION=`swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d "()" | tr " " "-"`

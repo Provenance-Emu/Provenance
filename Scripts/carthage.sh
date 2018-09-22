@@ -1,8 +1,9 @@
 #!/bin/bash
-set -e
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/setup_env.sh"
 
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
+lockfile_waithold "carthage"
 
 # carhage caching by Joe Mattiello
 #
@@ -25,40 +26,46 @@ export LANG=en_US.UTF-8
 
 # If  not online, we just quit successfully.
 # If the user hasn't bootstap'd carthage locally they will most likely get a build error next.
-if nc -zw1 github.com 443 > /dev/null; then
+if github_connection_test; then
   echo "Online"
 else
-  echo "Not Online"
-  exit 0;
+  success_exit "Not Online. Skipping Carthage script."
 fi
 
 PLATFORM=${1:-$iOS}
 SOURCEPATH=${2:-$SRCROOT}
 
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/setup_env.sh"
-
 # Check for xcodebuild. Alert user if missing
 if which xcodebuild > /dev/null; then
     echo "Has XCode command line tools"
 else
-    echo "error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode."
-    osascript -e 'tell app "System Events" to display dialog "Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode." buttons {"OK"} with icon caution with title "Missing XCode command line tools"'
-    exit 1
+  echo "No XCode command line tools found. Prompting to install"
+  ui_prompt "Apple's Xcode command line tools are not installed. This is necessary to build Provenance. Would you like to have them installed now?" "Missing Xcode CLI Tools" "Install"
+  
+  if [ "$?" = "0" ]; then
+    install_xcode_cli_tools
+    echo "XCode CLI tools Installed. Waiting for cleanup..."
+    sleep 5
+    echo "Continuing..."
+  else
+    error_exit "Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode."
+  fi
 fi
 
 function runCarthageAndCopyResolved {
-    echo "Running Carthage.."
+    echo "Running Carthage bootstrap process..."
     
     if fastlane_installed; then
+
       local FASTLANE_CMD="fastlane"
       if fastlane_installed && bundle_installed; then
         FASTLANE_CMD="bundle exec fastlane"
       fi
 
       echo "Setting up Carthage for platform $1 using fastlane"
+
       $($FASTLANE_CMD carthage_bootstrap platform:"$1" directory:"$SRCROOT")
+      # Prints warnings about outdated packages
       carthage outdated --xcode-warnings
     elif carthage_installed; then
         echo "Setting up Carthage for platform $1"
@@ -71,9 +78,7 @@ function runCarthageAndCopyResolved {
         #   /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
         # fi
     else
-        echo "error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
-        osascript -e 'tell app "System Events" to display dialog "Error. Carthage is not installed, download from \nhttps://github.com/Carthage/Carthage#installing-carthage" buttons {"OK"} with icon caution with title "Missing Carthage"'
-        exit 1
+      error_exit "Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
     fi
 
     # Copies the Cartfile.resolved file to /Carthage directory
@@ -92,11 +97,11 @@ function runCarthageAndCopyResolved {
 }
 
 # Carthage is required, check if installed and alert user how to install
-command -v carthage >/dev/null 2>&1 || {
-  echo "error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
-  osascript -e 'tell app "System Events" to display dialog "Error. Carthage is not installed, download from \nhttps://github.com/Carthage/Carthage#installing-carthage" buttons {"OK"} with icon caution with title "Missing Carthage"'
-  exit 1;
-}
+if ! carthage_installed; then
+  if ! carthage_install; then
+      error_exit "Please download and manually install from https://github.com/Carthage/Carthage#installing-carthage" "Carthage install failed."
+  fi
+fi
 
 # Function to iterate comma seperated list of targets and
 # check that a Carthage/Build/${Platform} exists.
@@ -158,17 +163,19 @@ function carthageManifestUpToDate {
   return 0
 }
 
-
-
 # The main execution starts here
 if carthageBuildPathNotExist $PLATFORM; then
-    bundle_install
-    brew_update
     echo "Carthage build required for $PLATFORM"
-    runCarthageAndCopyResolved $PLATFORM
+    echo "Making sure gem and brew are up to date"
+    bundle_install_cmd
+    brew_update
+    
+    runCarthageAndCopyResolved "$PLATFORM"
 elif carthageManifestUpToDate $PLATFORM; then
     echo "Cartfile.resolved has not changed. Will move on to building project."
 else
     echo "Cartfile.resolved not up to date or not found."
-    runCarthageAndCopyResolved $PLATFORM
+    runCarthageAndCopyResolved "$PLATFORM"
 fi
+
+lockfile_release "carthage"

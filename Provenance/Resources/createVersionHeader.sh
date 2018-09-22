@@ -1,4 +1,4 @@
-#/bin/sh -e
+#/bin/bash -e
 # Pull GIT version number to use for informational purposes
 
 # Scripts invoked by Xcode don’t read any of the usual shell configuration files
