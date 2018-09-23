@@ -2051,6 +2051,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Cartfile.resolved",
 				"$(SRCROOT)/Scripts/xcode.carthage.bootstrap.sh",
+				"$(SRCROOT)/Scripts/setup_env.sh",
 			);
 			name = "Carthage Bootstrap";
 			outputFileListPaths = (
@@ -2073,6 +2074,7 @@
 			inputPaths = (
 				$SRCROOT/.version,
 				$SRCROOT/Provenance/Resources/createVersionHeader.sh,
+				"$(SRCROOT)/Scripts/setup_env.sh",
 			);
 			name = "Create Version.swift and Version.h";
 			outputFileListPaths = (

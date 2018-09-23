@@ -41,6 +41,11 @@ function success_exit
     exit 0
 }
 
+function eval_command() {
+  echo "● : $@"
+  "$@";
+}
+
 # Ensure not root
 {
   if [ $(id -u) = 0 ]; then 
@@ -337,18 +342,19 @@ function lockfile_waithold()
   # declare -ir maxtime=7140  # 7140 s = 1 hour 59 min.
   declare -ir maxtime=600  # 600 s = 10 min.
 
-  # waiting up to ${maxtime}s for /tmp/global.lock ...
+  echo "🔑 : Waiting up to ${maxtime}s for $LOCK_FILE ..."
   while ! \
       (set -o noclobber ; \
       echo -e "DATE:$(date)\nUSER:$(whoami)\nPID:$$" > "$LOCK_FILE" \ 
       ) 2>/dev/null
   do
       if [ $(( $(date '+%s') - ${time_beg})) -gt ${maxtime} ] ; then
-          echo "waited too long for $LOCK_FILE" 1>&2
+          echo "🔑 : ! waited too long for $LOCK_FILE" 1>&2
           return 1
       fi
       sleep 1
   done
+  echo "🔑 : no longer waint for lock $LOCK_FILE"
 
   trap "lockfile_release $LOCK_NAME" EXIT
 
@@ -360,6 +366,7 @@ function lockfile_waithold()
   local LOCK_NAME=${1:-"provenance"}
   local LOCK_FILE="/tmp/$LOCK_NAME.lock"
 
+  echo "🔑 : Releasing lock $LOCK_FILE"
   if [ -f $LOCK_FILE ]; then
     rm -f "$LOCK_FILE"
   fi

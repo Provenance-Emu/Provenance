@@ -3,8 +3,6 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/setup_env.sh"
 
-lockfile_waithold "carthage"
-
 # carhage caching by Joe Mattiello
 #
 # Inspired from http://shashikantjagtap.net/cache-carthage-speed-ios-continuous-integration/
@@ -35,22 +33,38 @@ fi
 PLATFORM=${1:-$iOS}
 SOURCEPATH=${2:-$SRCROOT}
 
-# Check for xcodebuild. Alert user if missing
-if which xcodebuild > /dev/null; then
-    echo "Has XCode command line tools"
-else
-  echo "No XCode command line tools found. Prompting to install"
-  ui_prompt "Apple's Xcode command line tools are not installed. This is necessary to build Provenance. Would you like to have them installed now?" "Missing Xcode CLI Tools" "Install"
-  
-  if [ "$?" = "0" ]; then
-    install_xcode_cli_tools
-    echo "XCode CLI tools Installed. Waiting for cleanup..."
-    sleep 5
-    echo "Continuing..."
+# Depencey checking, lock to prevent multiple parralle installs
+{
+  lockfile_waithold
+
+  # Check for xcodebuild. Alert user if missing
+  if which xcodebuild > /dev/null; then
+      echo "Has XCode command line tools"
   else
-    error_exit "Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode."
+    echo "No XCode command line tools found. Prompting to install"
+    ui_prompt "Apple's Xcode command line tools are not installed. This is necessary to build Provenance. Would you like to have them installed now?" "Missing Xcode CLI Tools" "Install"
+    
+    if [ "$?" = "0" ]; then
+      install_xcode_cli_tools
+      echo "XCode CLI tools Installed. Waiting for cleanup..."
+      sleep 5
+      echo "Continuing..."
+    else
+      error_exit "Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode."
+    fi
   fi
-fi
+
+  # Carthage is required, check if installed and alert user how to install
+  if ! carthage_installed; then
+    carthage_install
+    if [ "$?" = "0" ]; then
+        error_exit "Please download and manually install from https://github.com/Carthage/Carthage#installing-carthage" "Carthage install failed."
+    fi
+  fi
+
+  # Release lock
+  lockfile_release
+}
 
 function runCarthageAndCopyResolved {
     echo "Running Carthage bootstrap process..."
@@ -64,9 +78,8 @@ function runCarthageAndCopyResolved {
 
       echo "Setting up Carthage for platform $1 using fastlane"
 
-      $($FASTLANE_CMD carthage_bootstrap platform:"$1" directory:"$SRCROOT")
-      # Prints warnings about outdated packages
-      carthage outdated --xcode-warnings
+      local FASTLANE_BOOTSTRAP_CMD=$($FASTLANE_CMD carthage_bootstrap platform:$1 directory:"$SRCROOT")
+      eval_cmd $FASTLANE_BOOTSTRAP_CMD
     elif carthage_installed; then
         echo "Setting up Carthage for platform $1"
         carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
@@ -80,6 +93,9 @@ function runCarthageAndCopyResolved {
     else
       error_exit "Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
     fi
+
+    # Prints warnings about outdated packages
+    carthage outdated --xcode-warnings
 
     # Copies the Cartfile.resolved file to /Carthage directory
     local sourceCartfile="$SOURCEPATH/Cartfile.resolved"
@@ -95,13 +111,6 @@ function runCarthageAndCopyResolved {
 
     echo "This will be used to check Carthage dependency updates in the future."
 }
-
-# Carthage is required, check if installed and alert user how to install
-if ! carthage_installed; then
-  if ! carthage_install; then
-      error_exit "Please download and manually install from https://github.com/Carthage/Carthage#installing-carthage" "Carthage install failed."
-  fi
-fi
 
 # Function to iterate comma seperated list of targets and
 # check that a Carthage/Build/${Platform} exists.
@@ -176,5 +185,3 @@ else
     echo "Cartfile.resolved not up to date or not found."
     runCarthageAndCopyResolved "$PLATFORM"
 fi
-
-lockfile_release "carthage"
