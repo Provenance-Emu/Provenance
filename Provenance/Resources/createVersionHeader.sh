@@ -46,14 +46,19 @@ INFOPATH="${PROJECT_DIR}/${INFOPLIST_FILE}"
 # else
 #     echo "$PLISTBUDDY not found."
 # fi
-if [ "command -v $PLISTBUDDY" ] ; then
-    if [ "command -v ${INFOPATH}" ] ; then
+
+plist_buddy_installed() {
+  [-x "$(command -v "$PLISTBUDDY")"]
+}
+
+if [[ plist_buddy_installed && "${INFOPATH}" == *".plist"*  ]]; then
+    if [ -f "${INFOPATH}" ]; then
         ## Read the app version (x.y.z) from the PList
         appversion=$($PLISTBUDDY -c "Print :CFBundleShortVersionString" "${INFOPATH}")
         echo "appversion=${appversion}"
 
         BUILT_INFO_PATH="${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
-        if [ "command -v ${BUILT_INFO_PATH}" ] ; then
+        if [ -f "${BUILT_INFO_PATH}" ]; then
           PLIST_GIT_COMMIT_COUNT=$($PLISTBUDDY -c "Print :CFBundleVersion" "${BUILT_INFO_PATH}")
           echo "Plist version is $PLIST_GIT_COMMIT_COUNT"
         else
@@ -93,16 +98,16 @@ else
     error_exit "$LINENO: $GIT not found."
 fi
 
-if [ $GIT_COMMIT_COUNT == $PLIST_GIT_COMMIT_COUNT ]; then
+if [ "$GIT_COMMIT_COUNT" == "$PLIST_GIT_COMMIT_COUNT" ]; then
   success_exit "GIT commit count hasn't changed. No need to update files."
 fi
 
 vpath="$SRCROOT/.version"
 echo "Testing for $vpath"
-if [ -f $vpath ] && [[ $(< $vpath) == "$GIT_DATE" ]]; then
+if [ -f $vpath ] && [[ "$(< $vpath)" == "$GIT_DATE" ]]; then
   success_exit "$vpath matches $GIT_DATE"
 else
-  echo $GIT_DATE > $vpath
+  echo "$GIT_DATE" > "$vpath"
 fi
 
 echo "Creating Version.h in" ${PROJECT_DIR}

@@ -13,7 +13,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export FASTLANE_SKIP_UPDATE_CHECK=true
 
-if ![[ "$PATH" = *".fastlane/bin"* ]]; then
+if [[ "$PATH" != *".fastlane/bin"* ]]; then
   echo "Adding hypothetical fastlane bin folder to PATH since many user forget to update PATH after install"
   export PATH="$HOME/.fastlane/bin:$PATH"
 fi

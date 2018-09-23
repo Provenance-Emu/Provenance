@@ -1928,15 +1928,16 @@
 			files = (
 			);
 			inputPaths = (
-				./.version,
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 			);
 			name = "Set Build Number";
 			outputPaths = (
+				"\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"",
+				"${SRC_ROOT}/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "function success_exit\n{\n    echo \"${PROGNAME}: ${1:-\"Completed\"}\" 1>&2\n    exit 0\n}\n\nvpath={SCRIPT_INPIT_FILE_0}\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\n\nif [ -f $vpath ] && [[ $(< $vpath) == \"$GIT_DATE\" ]]; then\nsuccess_exit \"$vpath matches $GIT_DATE\"\nfi\n\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n\n# Set Git SHA\nrevision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
+			shellPath = /bin/bash;
+			shellScript = ". Scripts/set_bundle_build_number.sh\n";
 		};
 		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1944,15 +1945,16 @@
 			files = (
 			);
 			inputPaths = (
-				./.version,
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 			);
 			name = "Set Build Number";
 			outputPaths = (
+				"${SRC_ROOT}/.version",
+				"\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "function success_exit\n{\n    echo \"${PROGNAME}: ${1:-\"Completed\"}\" 1>&2\n    exit 0\n}\n\nvpath={SCRIPT_INPIT_FILE_0}\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\n\nif [ -f $vpath ] && [[ $(< $vpath) == \"$GIT_DATE\" ]]; then\n    success_exit \"$vpath matches $GIT_DATE\"\nfi\n\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\nGIT_TAG=`git describe --tags --always --dirty`\nGIT_DATE=`git log -1 --format=\"%cd\" --date=\"local\"`\nGIT_BRANCH=`git branch | grep \\* | cut -d ' ' -f2-`\n/usr/libexec/PlistBuddy -c \"Set :GitBranch $GIT_BRANCH\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitDate $GIT_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Set :GitTag $GIT_TAG\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n\n# Set Git SHA\nrevision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
+			shellPath = /bin/bash;
+			shellScript = ". Scripts/set_bundle_build_number.sh\n";
 		};
 		1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
