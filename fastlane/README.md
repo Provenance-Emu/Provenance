@@ -46,21 +46,36 @@ Updates the bundle id and app name if a beta build
 fastlane ios plist_reset
 ```
 Resets the bundle id and app name after build
+### ios personal
+```
+fastlane ios personal
+```
+Create a build for users 
+### ios install
+```
+fastlane ios install
+```
+Install last build to device
 ### ios beta
 ```
 fastlane ios beta
 ```
-Push a new beta build to TestFlight
+Provenace Team: Push a new beta build to TestFlight
 ### ios alpha
 ```
 fastlane ios alpha
 ```
-Push a new alpha build to Hockeyapp
+Provenace Team: Push a new alpha build to Hockeyapp
 ### ios add_badge
 ```
 fastlane ios add_badge
 ```
 Add proper badge to icon
+### ios check_env
+```
+fastlane ios check_env
+```
+
 ### ios certificates
 ```
 fastlane ios certificates

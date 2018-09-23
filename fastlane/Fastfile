@@ -86,7 +86,7 @@ platform :ios do
 
   desc "User Setup"
   lane :userbuild do
-    UI.message "This lane will help you setup Provenance for signing and build. T"
+    UI.message "This lane will help you setup Provenance for signing and build."
     #UI.success "Successfully finished processing (usually green)"
     #UI.error "Wahaha, what's going on here! (usually red)"
     #UI.important "Make sure to use Windows (usually yellow)"
@@ -95,28 +95,59 @@ platform :ios do
 
     apple_id = UI.input("What's your Apple ID login? (usually an e-mail address)")
     apple_pass = UI.password("Your password please: ") # password inputs are hidden
+    dev_domain = UI.input("What's your developer domain (usually com.yourname)?\nThis will be used to generate unique App Bundle ids to your developer account.\neg; Official releases from the Provenance team use 'com.provenance'. You cannot use 'com.provenance' for your personal account, iOS Developer portal will not allow craeting signing certificates if an app already exists with that ID.")
 
-    # if UI.confirm("Are you '#{name}'?")
-    #   UI.success "Oh yeah"
-    # else
-    #   UI.error "Wups, invalid"
-    # end
+    if UI.confirm("Do you want to generate new app entries in your developer account??")
+      produce(
+        username: 'felix@krausefx.com',
+        app_identifier: 'com.krausefx.app',
+        app_name: 'MyApp',
+        language: 'English',
+        sku: '123',
+        team_name: 'SunApps GmbH', # only necessary when in multiple teams
 
+        # Optional
+        # App services can be enabled during app creation
+        enable_services: {
+          app_group: "on",               # Valid values: "on", "off"
+          apple_pay: "off",               # Valid values: "on", "off"
+          associated_domains: "off",      # Valid values: "on", "off"
+          data_protection: "complete",   # Valid values: "complete", "unlessopen", "untilfirstauth",
+          game_center: "off",             # Valid values: "on", "off"
+          health_kit: "off",              # Valid values: "on", "off"
+          home_kit: "off",                # Valid values: "on", "off"
+          hotspot: "off",                 # Valid values: "on", "off"
+          icloud: "cloudkit",            # Valid values: "legacy", "cloudkit"
+          in_app_purchase: "off",         # Valid values: "on", "off"
+          inter_app_audio: "off",         # Valid values: "on", "off"
+          passbook: "off",                # Valid values: "on", "off"
+          multipath: "off",               # Valid values: "on", "off"
+          network_extensions: "off",      # Valid values: "on", "off"
+          nfc_tag_reading: "off",         # Valid values: "on", "off"
+          personal_vpn: "off",            # Valid values: "on", "off"
+          push_notification: "off",       # Valid values: "on", "off"
+          siri_kit: "on",                # Valid values: "on", "off"
+          wallet: "off",                  # Valid values: "on", "off"
+          wireless_accessory: "off",      # Valid values: "on", "off"
+        }
+      )
+    end
 
+    UI.message "We will now try to create or update signing certificates for your developer account"
     ###### A "Dropdown" for the user
-    project = UI.select("Select your project: ", ["Test Project", "Test Workspace"])
+    # project = UI.select("Select your project: ", ["Test Project", "Test Workspace"])
 
-    UI.success("Okay #{name}, you selected '#{project}'")
+    # UI.success("Okay #{name}, you selected '#{project}'")
 
     ###### To run a command use
-    FastlaneCore::CommandExecutor.execute(command: "ls",
-                                        print_all: true,
-                                            error: proc do |error_output|
-                                              # handle error here
-                                            end)
+    # FastlaneCore::CommandExecutor.execute(command: "ls",
+    #                                     print_all: true,
+    #                                         error: proc do |error_output|
+    #                                           # handle error here
+    #                                         end)
 
     ###### or if you just want to receive a simple value use this only if the command doesn't take long
-    diff = Helper.backticks("git diff")
+    # diff = Helper.backticks("git diff")
 
     ###### fastlane "crash" because of a user error everything that is caused by the user and is not unexpected
     UI.user_error!("You don't have a project in the current directory")
@@ -177,14 +208,40 @@ platform :ios do
     carthage_update
   end
 
-  desc "Push a new beta build to TestFlight"
+  desc "Create a build for users "
+  lane :personal do
+    # match(type: "appstore") # more information: https://codesigning.guide
+    cert
+    sigh
+    gym # Build your app - more options available
+
+    UI.success "Successfully finished building Provenace"
+    if UI.confirm("Do you want to install to a connected device now?")
+    end
+    
+  end
+
+  desc "Install last build to device"
+  lane :install do |options|
+    if cached_build_available?
+      UI.important 'Skipping build because a cached build is available!'
+      next # skip doing the rest of this lane
+    end
+  end
+
+  private_lane :cached_build_available? do |options|
+    # ...
+    false
+  end
+
+  desc "Provenace Team: Push a new beta build to TestFlight"
   lane :beta do
     pre_build
     build_appstore
     reset_enviroment
   end
 
-  desc "Push a new alpha build to Hockeyapp"
+  desc "Provenace Team: Push a new alpha build to Hockeyapp"
   lane :alpha do
     load_keys
     pre_build
@@ -262,12 +319,10 @@ platform :ios do
         dst: destination
       }
     )
-
   end
 
   desc "Add proper badge to icon"
   lane :add_badge do
-
   end
 
   private_lane :badge_alpha do
@@ -284,6 +339,14 @@ platform :ios do
     codesign_toggle(automatic: true)
     # Make sure our directory is clean, except for changes Fastlane has made
     # clean_build_artifacts
+  end
+
+  lane :check_env do
+    desc "Environment Settings"
+    puts "APP_IDENTIFIER: #{ENV['APP_IDENTIFIER']}"
+    puts "APP_NAME: #{ENV['APP_NAME']}"
+    puts "APP_SKU: #{ENV['APP_SKU']}"
+    puts "LANG_CODE #{ENV['LANG_CODE']}"
   end
 
   desc "Setup Certs for Match - New Devs"
