@@ -4,10 +4,10 @@
 # In general, you can use the options available
 # fastlane gym --help
 
-#scheme("Provenance") # ie target
+scheme("Provenance") # ie target
 workspace("Provenance.xcworkspace")
 include_bitcode(false)
-#clean(false)
+clean(false)
 
 # sdk("iphoneos9.0")
 

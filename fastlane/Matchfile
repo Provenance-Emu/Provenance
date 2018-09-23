@@ -3,23 +3,28 @@ git_branch("Provenance")
 
 type("adhoc") # The default type, can be: appstore, adhoc, enterprise or development
 
-# def load_keys
-#   begin
-#     import("keys")
-#   rescue => exception
-#     if UI.interactive?
-#       shouldSetup = UI.confirm "Fastlane enviroment is not configured. Setup now?"
-#     end
-#     raise exception
-#   end
+# match :development do
+#     app_identifier "..."   # app id
+#     username "..."  # Your Apple Developer Portal username
 # end
-#
-# load_keys()
-dev_domain = ENV["DEV_DOMAIN"]
+  
+# match :adhoc do
+#     app_identifier "..."   # app id
+#     username "..."  # Your Apple Developer Portal username
+# end
+  
+  
+# match :appstore do
+#     app_identifier "..."   # app id
+#     username "..."  # Your Apple Developer Portal username
+# end
 
-app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf", "#{dev_domain}.provenance.Spotlight"])
+dev_domain = ENV["DEV_DOMAIN"] || "com.joemattiello"
+
+app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension", "#{dev_domain}.provenance.spotlight"])
 username("mail@joemattiello.com") # Your Apple Developer Portal username
 team_name("Joe Mattiello")
+team_id("9DSA2J9CHZ")
 
 # For all available options run `fastlane match --help`
 # Remove the # in the beginning of the line to enable the other options

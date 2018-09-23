@@ -25,9 +25,15 @@ REQUIRED_XCODE_VERSION = "9.3.1"
 
 default_platform(:ios)
 
+platform :ios do
+
+carthage_paths = ["PVSupport", "PVLibrary", "./"]
+dev_domain = ENV["DEV_DOMAIN"] || "com.joemattiello"
+
 def load_keys
   begin
-    import("keys")
+    import("./keys")
+    dev_domain = ENV["DEV_DOMAIN"]
   rescue => exception
     if UI.interactive?
       shouldSetup = UI.confirm "Fastlane enviroment is not configured. Setup now?"
@@ -48,10 +54,9 @@ def uploadToWordpress(file)
   end
 end
 
-platform :ios do
-  # before_all do
-  #   git_pull(only_tags: true)
-  # end
+  before_all do
+    git_pull(only_tags: true)
+  end
   #
   # after_all do
   #   push_git_tags
@@ -80,8 +85,12 @@ platform :ios do
 
   desc "Travis Test"
   lane :travistest do
-    setup_travis
-    beta
+    if is_ci?
+      setup_travis
+    else
+      load_keys
+    end
+    alpha
   end
 
   desc "User Setup"
@@ -167,7 +176,7 @@ platform :ios do
     else
       UI.message "Setting plist values for Normal build"
     end
-    backup_file(path: "Provenance/Info.plist")
+    backup_file(path: "Provenance/Provenance-Info.plist")
     backup_file(path: "ProvenanceTV/Info.plist")
     backup_file(path: "Spotlight/Info.plist")
     backup_file(path: "TopShelf/Info.plist")
@@ -177,7 +186,7 @@ platform :ios do
 
   desc "Resets the bundle id and app name after build"
   lane :plist_reset do
-    restore_file(path: "Provenance/Info.plist")
+    restore_file(path: "Provenance/Provenance-Info.plist")
     restore_file(path: "ProvenanceTV/Info.plist")
     restore_file(path: "Spotlight/Info.plist")
     restore_file(path: "TopShelf/Info.plist")
@@ -205,7 +214,7 @@ platform :ios do
     # temporarily disable automatic code signing
     codesign_toggle(automatic: false)
 
-    carthage_update
+    # carthage_bootstrap
   end
 
   desc "Create a build for users "
@@ -248,8 +257,9 @@ platform :ios do
 
     # Codesign
     # Types, appstore adhoc development enterprise
-    dev_domain = ENV["DEV_DOMAIN"]
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.Spotlight"], type: "adhoc", platform: "ios")
+
+    # update_devices
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios")
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
     #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
@@ -265,7 +275,14 @@ platform :ios do
     buid_ios_adhoc(ipa_name: ipa_name, activeArchOnly: true)
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
-    # uploadToWordpress("./build/#{ipa_name}")
+    # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
+    publish_hockey(release_type: "2")
+
+    # SCP to file server for storage
+    scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
+    scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+
+    uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
     # upload_to_testflight
 
     # Build tvOS app
@@ -287,7 +304,7 @@ platform :ios do
 
 
     # uploadToWordpress("./build/#{ipa_name}")
-    #user = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
+    # user = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
     # keychain_entry = CredentialsManager::AccountManager.new(user: user)
     # password = keychain_entry.password
 
@@ -326,12 +343,16 @@ platform :ios do
   end
 
   private_lane :badge_alpha do
+    version_number = get_version_number(target: "Provenance")
+    # build_number = get_build_number
+
+    version = "#{version_number}"
     add_badge(shield: "Version-#{version}-blue", alpha: true, dark: false)
   end
 
   private_lane :badge_beta do
-    version = "#{get_version_number}.#{get_build_number}"
-    add_badge(shield: "Beta", alpha: false, dark: false)
+    version_number = get_version_number(target: "Provenance")
+    add_badge(shield: "${version_number} Beta", alpha: false, dark: false)
   end
 
   private_lane :reset_enviroment do
@@ -354,11 +375,12 @@ platform :ios do
     setup_certificates_private(type: "development")
     setup_certificates_private(type: "adhoc")
     # setup_certificates_private(type: "appstore")
+    # update_devices
   end
 
   private_lane :codesign_toggle do |options|
     load_keys
-    dev_domain = ENV["DEV_DOMAIN"]
+
     automatic = options[:automatic]
     team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
@@ -372,8 +394,8 @@ platform :ios do
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
       targets: ["Spotlight"],
       code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc #{dev_domain}.provenance.Spotlight",
-      bundle_identifier: "#{dev_domain}.provenance.Spotlight",
+      profile_name: "match AdHoc #{dev_domain}.provenance.spotlight",
+      bundle_identifier: "#{dev_domain}.provenance.spotlight",
       use_automatic_signing: automatic,
       team_id: team_id)
 
@@ -381,72 +403,56 @@ platform :ios do
 
   private_lane :plist_set do |options|
     load_keys
-    normal = options[:normal]
+    normal = options.fetch(:normal, true)
     suffix = normal ? "" : ".alpha"
-    display_name = normal ? "$(APP_DISPLAY_NAME)" : '$(APP_DISPLAY_NAME) α' # or Beta β
-    dev_domain = ENV["DEV_DOMAIN"]
+    display_suffix = normal ? "" : " α" # or Beta β
+    display_name = "$(TARGET_NAME)#{display_suffix}" 
 
     # -- Update bundle names and ids
     # - iOS
     update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'Provenance', # Scheme really means target
+      plist_path: "Provenance/Provenance-Info.plist",
       display_name: display_name,
-      block: proc do |plist|
-        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
-        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}"
-      end
-      # app_identifier: "#{dev_domain}.provenance#{suffix}",
+      app_identifier: "#{dev_domain}.provenance#{suffix}"
     )
 
     # - Spotlight
     update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'Spotlight',
-      block: proc do |plist|
-        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
-        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}.Spotlight"
-      end
-      # app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance${suffix}.Spotlight",
+      plist_path: "Spotlight/Info.plist",
+      display_name: display_name,
+      app_identifier: "#{dev_domain}.provenance#{suffix}.spotlight"
     )
 
     # - tvOS
     # Use the same bundle ID as iOS so it's 'universal install'
     update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'ProvenanceTV',
+      plist_path: "ProvenanceTV/Info.plist",
       display_name: display_name,
-      block: proc do |plist|
-        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
-        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}"
-      end
-      # app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}",
+      app_identifier: "#{dev_domain}.provenance#{suffix}"
     )
 
     # - Top Shelf
     update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'TopShelf',
-      block: proc do |plist|
-        bunldeid = plist["PRODUCT_BUNDLE_IDENTIFIER"]
-        bunldeid[:PRODUCT_BUNDLE_IDENTIFIER] = "#{bunldeid})#{suffix}.topshelf"
-      end
-      # app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "#{dev_domain}.provenance#{suffix}.topshelf"
+      plist_path: "TopShelf/Info.plist",
+      display_name: display_name,
+      app_identifier: "#{dev_domain}.provenance#{suffix}.topshelf.extension"
     )
   end
 
   private_lane :setup_certificates_private do |options|
     load_keys
-    dev_domain = ENV["DEV_DOMAIN"]
 
     # types "appstore", "development", "adhoc", "enterprise"
-    type = options[:type]
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.Spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.topshelf"], type: type, readonly: false, platform: "tvos")
+    type = options.fetch(:type, type)
+
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Create Certs for Match"
   lane :create_certificates do
+    load_keys
+
     create_certificates_private(type: "development")
     create_certificates_private(type: "adhoc")
     create_certificates_private(type: "appstore")
@@ -455,18 +461,20 @@ platform :ios do
 
   private_lane :create_certificates_private do |options|
     load_keys
-    dev_domain = ENV["DEV_DOMAIN"]
 
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.Spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf"], type: type, readonly: false, platform: "tvos")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos")
   end
 
-  desc "Update device list"
+  desc "Update device UDID list in iTunes connect from fastlane/devices.text"
   lane :update_devices do
-    team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-    register_devices(devices_file: 'fastlane/devices.txt', team_id:team_id)
+    load_keys
+
+    team_id = ENV["DEV_TEAM_ID"] # || CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+    register_devices(devices_file: 'fastlane/devices.txt', team_id: team_id)
+    match(type: "development", force_for_new_devices: true)
     match(type: "adhoc", force_for_new_devices: true)
   end
 
@@ -518,7 +526,6 @@ platform :ios do
     build_time = Time.now.strftime('%F')
     output_directory = "build/" + build_time
     load_keys
-    dev_domain = ENV["DEV_DOMAIN"]
 
     # Method used to export the archive.
     # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
@@ -552,7 +559,7 @@ platform :ios do
         },
         provisioningProfiles: {
           "#{dev_domain}.provenance" => "match AdHoc #{dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{dev_domain}.provenance.Spotlight" => "match AdHoc #{dev_domain}.provenance.Spotlight"
+          "#{dev_domain}.provenance.Spotlight" => "match AdHoc #{dev_domain}.provenance.spotlight"
         },
         compileBitcode: false,
         uploadBitcode: false,
@@ -571,7 +578,6 @@ platform :ios do
   desc "Exports a new Beta Build"
   lane :build_appstore do
     load_keys
-    dev_domain = ENV["DEV_DOMAIN"]
 
     build_app(
       workspace: "Provenance.xcworkspace",
@@ -593,7 +599,7 @@ platform :ios do
         },
         provisioningProfiles: {
           "#{dev_domain}.provenance" => "match AppStore #{dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{dev_domain}.provenance.Spotlight" => "match AppStore #{dev_domain}.provenance.Spotlight"
+          "#{dev_domain}.provenance.Spotlight" => "match AppStore #{dev_domain}.provenance.spotlight"
         }
       }
     )
@@ -602,7 +608,6 @@ platform :ios do
 
   private_lane :submit_appstore do
     load_keys
-    dev_domain = ENV["DEV_DOMAIN"]
     pilot(app_identifier: "#{dev_domain}.provenance")
   end
 
@@ -639,23 +644,13 @@ platform :ios do
   lane :carthage_build do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    carthage_private(
+    carthage_paths.each do |dir| 
+      carthage_private(
       command: "build",
       platform: platform,
-      project_directory: "PVSupport"
+      project_directory: dir
     )
-
-    carthage_private(
-      command: "build",
-      platform: platform,
-      project_directory: "PVLibrary"
-    )
-
-    carthage_private(
-      command: "build",
-      platform: platform,
-      project_directory: "./"
-    )
+    end
   end
 
   desc "Lane to update all carthage dependencies to latest versions"
@@ -663,23 +658,13 @@ platform :ios do
   lane :carthage_update do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    carthage_private(
+    carthage_paths.each do |dir| 
+      carthage_private(
       command: "update",
       platform: platform,
-      project_directory: "PVSupport"
+      project_directory: dir
     )
-
-    carthage_private(
-      command: "update",
-      platform: platform,
-      project_directory: "PVLibrary"
-    )
-
-    carthage_private(
-      command: "update",
-      platform: platform,
-      project_directory: "./"
-    )
+    end
   end
 
   private_lane :carthage_private do |options|

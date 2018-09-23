@@ -90,7 +90,7 @@ Create Certs for Match
 ```
 fastlane ios update_devices
 ```
-Update device list
+Update device UDID list in iTunes connect from fastlane/devices.text
 ### ios derived_data
 ```
 fastlane ios derived_data
