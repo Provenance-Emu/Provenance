@@ -1,14 +1,22 @@
 # set -e
 # set -o pipefail
 
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc 2> /dev/null
+fi
+
 if [ -f ~/.bash_profile ]; then
     source ~/.bash_profile 2> /dev/null
-elif [ -f ~/.bashrc ]; then
-    source ~/.bashrc 2> /dev/null
 fi
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+export FASTLANE_SKIP_UPDATE_CHECK=true
+
+if ![[ "$PATH" = *".fastlane/bin"* ]]; then
+  echo "Adding hypothetical fastlane bin folder to PATH since many user forget to update PATH after install"
+  export PATH="$HOME/.fastlane/bin:$PATH"
+fi
 
 function error_exit
 {
@@ -274,6 +282,13 @@ fastlane_install() {
       gem install fastlane -NV
     fi
   fi
+
+  ui_prompt "It is recomended to configure your PATH and LOCAL shell enviroment variables according to 'fastlane's documentation to ensure proper behaviour. See https://docs.fastlane.tools/getting-started/ios/setup/#set-up-environment-variables" "Fastlane: Action Required" "Take me there..."
+  if [ "$?" != "0" ]; then
+     osascript -e 'open location "https://docs.fastlane.tools/getting-started/ios/setup/#set-up-environment-variables"'
+  fi
+
+  return 0
 }
 
 ruby_requires_root() {
