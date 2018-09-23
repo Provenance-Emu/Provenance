@@ -1,6 +1,8 @@
 #!/bin/bash
 
-. Scripts/setup_env.sh
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/setup_env.sh"
 
 # Stop multiple scripts from running at same time
 lockfile_waithold
@@ -34,16 +36,17 @@ elif fastlane_installed; then
     FASTLANE_CMD="fastlane"
 fi
 
-
-if $FASTLANE_CMD; then
+if [ "$FASTLANE_CMD" -ne "" ] && [ -x "$(command -v "$FASTLANE_CMD")" ]; then
     echo "Setting up Carthage for platform $PLATFORM using $FASTLANE_CMD"
-    $FASTLANE_CMD carthage_bootstrap platform:"$PLATFORM" directory:"$SRCROOT"
+    $($FASTLANE_CMD carthage_bootstrap platform:"$PLATFORM" directory:"$SRCROOT")
 else
+    echo "Failed to find a working fastlane command: '${FASTLANE_CMD}'"
+    echo "Falling back to cartage.sh script"
     if ! carthage_installed; then
         carthage_install
     fi
 
-    ./carthage.sh $PLATFORM
+    . "$DIR/carthage.sh" "$PLATFORM"
 fi
 
 # Release lock

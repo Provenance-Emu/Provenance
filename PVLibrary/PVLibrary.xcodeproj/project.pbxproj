@@ -1689,6 +1689,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Cartfile.resolved",
+				"$(SRCROOT)/../Scripts/xcode.carthage.bootstrap.sh",
 			);
 			name = "Carthage Bootstrap";
 			outputFileListPaths = (

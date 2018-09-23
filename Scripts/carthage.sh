@@ -151,8 +151,7 @@ function carthageManifestUpToDate {
     fi
 
     echo "Cartfile.resolved match: $RESOLVED_MATCHED Swift version match: $SWIFT_MATCH. Current: $SWIFT_VERSION_CURRENT Cached: $SWIFT_VERSION_BUILT"
-    if [[ $RESOLVED_MATCHED == true && $SWIFT_MATCH == true
-     ]]; then
+    if [[ $RESOLVED_MATCHED == true && $SWIFT_MATCH == true ]]; then
         echo "$file matches $SOURCEPATH/Cartfile.resolved & $SWIFT_VERSION_PATH matches $SWIFT_VERSION_CURRENT"
     else
       echo "Fail: manifest mismatch found for $CARTFILE_CACHED_PATH AND $SOURCEPATH/Cartfile.resolved"

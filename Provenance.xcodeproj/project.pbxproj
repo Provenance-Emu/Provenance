@@ -1929,6 +1929,7 @@
 			);
 			inputPaths = (
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
+				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set Build Number";
 			outputPaths = (
@@ -1946,6 +1947,7 @@
 			);
 			inputPaths = (
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
+				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set Build Number";
 			outputPaths = (
@@ -1954,7 +1956,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh\n";
+			shellScript = ". ${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\n";
 		};
 		1A88180A20D6BC3C00984B39 /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2048,6 +2050,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Cartfile.resolved",
+				"$(SRCROOT)/Scripts/xcode.carthage.bootstrap.sh",
 			);
 			name = "Carthage Bootstrap";
 			outputFileListPaths = (
@@ -2058,7 +2061,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/xcode.carthage.bootstrap.sh\n";
+			shellScript = ". ${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2069,6 +2072,7 @@
 			);
 			inputPaths = (
 				$SRCROOT/.version,
+				$SRCROOT/Provenance/Resources/createVersionHeader.sh,
 			);
 			name = "Create Version.swift and Version.h";
 			outputFileListPaths = (
@@ -2079,7 +2083,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "./Provenance/Resources/createVersionHeader.sh\n";
+			shellScript = ". ${SRCROOT}/Provenance/Resources/createVersionHeader.sh\n";
 		};
 		B3E31E2A21562154005FF394 /* Fastlane setup code signing */ = {
 			isa = PBXShellScriptBuildPhase;
