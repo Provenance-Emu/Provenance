@@ -73,6 +73,7 @@
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
 		B3274E952106C2F800857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B38D8FFD21577AFC00F7D25A /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
 		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
 		B3AF475621071CDB002211EE /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -392,8 +393,6 @@
 		B3C04B8321078F9600E7AF79 /* NSLoggerSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B8421078F9600E7AF79 /* SwiftyUserDefaults.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B8521078F9600E7AF79 /* XCDLumberjackNSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8621078F9600E7AF79 /* ZipArchive.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B872107972100E7AF79 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
 		B3C04B8C2107972300E7AF79 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B882107972100E7AF79 /* ZIPFoundation.framework */; };
 		B3C04B8D2107972300E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; };
 		B3C04B8E2107972300E7AF79 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8A2107972200E7AF79 /* SQLite.framework */; };
@@ -449,7 +448,6 @@
 				B3C04B8421078F9600E7AF79 /* SwiftyUserDefaults.framework in Copy Framework */,
 				B3C04B8521078F9600E7AF79 /* XCDLumberjackNSLogger.framework in Copy Framework */,
 				B3C04B932107973000E7AF79 /* ZIPFoundation.framework in Copy Framework */,
-				B3C04B8621078F9600E7AF79 /* ZipArchive.framework in Copy Framework */,
 			);
 			name = "Copy Framework";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -840,7 +838,6 @@
 		B3C04B632107867200E7AF79 /* PVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibraryTests.swift; sourceTree = "<group>"; };
 		B3C04B652107867200E7AF79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C04B7221078E1200E7AF79 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = ../PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../PVSupport/Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
 		B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
@@ -865,6 +862,7 @@
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
 				B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */,
 				B3067F512106B5D00091437F /* Realm.framework in Frameworks */,
+				B38D8FFD21577AFC00F7D25A /* ZipArchive.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,7 +888,6 @@
 				B3C04B8D2107972300E7AF79 /* RealmSwift.framework in Frameworks */,
 				B3C04B8E2107972300E7AF79 /* SQLite.framework in Frameworks */,
 				B3C04B8F2107972300E7AF79 /* Realm.framework in Frameworks */,
-				B3C04B872107972100E7AF79 /* ZipArchive.framework in Frameworks */,
 				B3C04B6E21078CFD00E7AF79 /* PVSupport.framework in Frameworks */,
 				B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */,
 				B3C04B7A21078E8300E7AF79 /* SwiftyUserDefaults.framework in Frameworks */,
@@ -919,7 +916,6 @@
 				B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */,
 				B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */,
 				B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */,
-				B3C04B7221078E1200E7AF79 /* ZipArchive.framework */,
 				B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */,
 				B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */,
 				B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */,
@@ -2218,6 +2214,7 @@
 					"$(inherited)",
 					"\"$(PROJECT_DIR)/Carthage/Build/iOS\"",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
@@ -2261,6 +2258,7 @@
 					"$(inherited)",
 					"\"$(PROJECT_DIR)/Carthage/Build/iOS\"",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
@@ -2322,6 +2320,7 @@
 					"$(PROJECT_DIR)/..//Carthage/Build/tvOS",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
@@ -2369,6 +2368,7 @@
 					"$(PROJECT_DIR)/..//Carthage/Build/tvOS",
 					"\"$(PROJECT_DIR)/../PVSupport/Carthage/Build/tvOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",

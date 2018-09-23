@@ -3,7 +3,6 @@
 //
 
 #import <PVLibrary/LzmaSDKObjCReader.h>
-#import <ZipArchive/SSZipArchive.h>
 #import "PVLogViewController.h"
 //#import "Provenance/Version.h"
 #import <Realm/Realm.h>

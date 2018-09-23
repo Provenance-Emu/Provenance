@@ -31,8 +31,12 @@ carthage_paths = ["PVSupport", "PVLibrary", "./"]
 dev_domain = ENV["DEV_DOMAIN"] || "com.joemattiello"
 
 def load_keys
+  if is_ci?
+    return
+  end
+
   begin
-    import("./keys")
+    import("keys")
     dev_domain = ENV["DEV_DOMAIN"]
   rescue => exception
     if UI.interactive?
