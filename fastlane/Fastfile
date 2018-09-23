@@ -283,10 +283,10 @@ end
     publish_hockey(release_type: "2")
 
     # SCP to file server for storage
-    scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
-    scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+    # scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
+    # scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
 
-    uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
+    # uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
     # upload_to_testflight
 
     # Build tvOS app
@@ -571,11 +571,11 @@ end
     )
 
     # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
-    publish_hockey(release_type: "2")
+    # publish_hockey(release_type: "2")
 
     # SCP to file server for storage
-    scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
-    scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+    # scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
+    # scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
   end
 
 
