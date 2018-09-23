@@ -171,20 +171,27 @@ is_interactive_shell() {
 
 ui_prompt() {
   local MESSAGE=${1:-"Would you like to continue?"}
-  local TITLE=${2:-""}
+  local TITLE=${2:-"Provenance"}
   local OKBUTTON_TITLE=${3:-"OK"}
+  local ICON="note"
 
-  osascript <<LimitString
-    tell application id "com.apple.systemevents"
-      set myMsg to "${MESSAGE}"
-      set theResp to display dialog myMsg buttons {"Cancel", "${OKBUTTON_TITLE}"} default button 2 with icon note with title $TITLE
-    end tell
+  if [[ "$MESSAGE" == *"rror"* ]]; then
+    ICON="stop"
+  elif [[ "$MESSAGE" == *"arning"* ]]; then
+    ICON="caution"
+  fi
+  
+  osascript <<END
+  tell application id "com.apple.systemevents"
+    set myMsg to "${MESSAGE}"
+    set theResp to display dialog myMsg buttons {"Cancel", "${OKBUTTON_TITLE}"} default button 2 with icon ${ICON} with title "${TITLE}"
+  end tell
 
-    # Following is not really necessary. Cancel returns 1 and OK 0 ...
-    if button returned of theResp is "Cancel" then
-      return 1
-    end if
-LimitString
+  # Following is not really necessary. Cancel returns 1 and OK 0 ...
+  if button returned of theResp is "Cancel" then
+    return 1
+  end if
+END
 
     # Check status of osascript
     if [ "$?" != "0" ]; then
@@ -207,7 +214,16 @@ brew_install() {
   else
     echo "Script not in interactive shell. Prompting for user input via Apple Script."
     
-    local MSG="Homebrew is not installed. Homebrew is a command line based software package manager as is required to install and run 'Carthage' and 'Fastlane', which are build tools required by this project.\nWould you like to install it now?"
+    read -r -d '' local MSG << EOM
+Warning Homebrew is not installed!
+
+Homebrew is a command line based software package manager and as is required to install and run 'Carthage' and 'Fastlane'.
+
+These tools are required to build Provenance from source.
+
+Would you like to install Homebrew now?
+EOM
+
     ui_prompt "$MSG" "Missing Homebrew" "Install"
 
     if [ "$?" = "0" ]; then
@@ -262,7 +278,20 @@ fastlane_install() {
   # Alternatively using Homebrew
   # brew cask install fastlane
   echo "fastlane is not installed. Will attempt to install."
-  ui_prompt "Fastlane is not installed. It's required to build and sign Provenance. Would you like to install it now? (You may be prompted for your password if you do not have Homeb rew installed and your active Ruby installation requires administrator access to install gems.)" "Missing Fastlane" "Install"
+  
+  local NEED_ROOT_MESSAGE=""
+  if ! brew_installed; then
+    NEED_ROOT_MESSAGE="No Homebrew install detected! 'fastlane' will be installed as a ruby gem. This will prompt for your login password to install."
+  fi
+  
+  read -r -d '' local MSG << EOM
+  Warning Fastlane is not installed. 
+  
+  Fastlane is an open source tool required to build and sign Provenance. 
+  ${NEED_ROOT_MESSAGE}
+  Would you like to install it?
+EOM
+  ui_prompt "$MSG" "Missing Fastlane" "Install"
   
   if [ "$?" != "0" ]; then
     echo "User denied us to install fastlane"
