@@ -17,7 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport"
+               BlueprintName = "PVSupport-iOS"
                ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,7 +31,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
                BuildableName = "PVLibrary.framework"
-               BlueprintName = "PVLibrary"
+               BlueprintName = "PVLibrary-iOS"
                ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -63,7 +63,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
             BuildableName = "PVSupport.framework"
-            BlueprintName = "PVSupport"
+            BlueprintName = "PVSupport-iOS"
             ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -86,7 +86,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
             BuildableName = "PVSupport.framework"
-            BlueprintName = "PVSupport"
+            BlueprintName = "PVSupport-iOS"
             ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -105,7 +105,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
             BuildableName = "PVSupport.framework"
-            BlueprintName = "PVSupport"
+            BlueprintName = "PVSupport-iOS"
             ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

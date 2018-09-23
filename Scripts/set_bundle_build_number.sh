@@ -22,13 +22,13 @@ GIT_BRANCH=`git branch | grep \* | cut -d ' ' -f2-`
 
 PLISTBUDDY="/usr/libexec/PlistBuddy"
 
-plist_buddy_installed() {
-  [-x "$(command -v "$PLISTBUDDY")"]
-}
+# plist_buddy_installed() {
+#   [-x "$(command -v "$PLISTBUDDY")"]
+# }
 
-if ! plist_buddy_installed; then
-    error_exit "System binary PlistBuddy is missing."
-fi
+# if ! plist_buddy_installed; then
+#     error_exit "System binary PlistBuddy is missing."
+# fi
 
 # Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm
 $PLISTBUDDY -c "Set :CFBundleVersion $buildNumber" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
@@ -42,7 +42,7 @@ revision=$(git rev-parse --short HEAD)
 
 #$PLISTBUDDY -c "Set :Revision $revision" "${PROJECT_DIR}/${INFOPLIST_FILE}"
 # Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm
-$PLISTBUDDY-c "Set :Revision $revision" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+$PLISTBUDDY -c "Set :Revision $revision" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
 
 echo "Updated app plist with git data."
 echo "TAG: ${GIT_TAG}, DATE: ${GIT_DATE}, BRANCH: ${GIT_BRANCH}, REVISION: $revision"

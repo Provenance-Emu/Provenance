@@ -7,15 +7,26 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		B3E0A581215650C6004B4322 /* Carthage Bootstrap */ = {
+		B38E25FA21573C0C00355F53 /* Carthage Bootstrap-tvOS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = B3E0A584215650C6004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */;
+			buildConfigurationList = B38E25FC21573C0C00355F53 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-tvOS" */;
+			buildPhases = (
+				B38E25FB21573C0C00355F53 /* Carthage Bootstrap */,
+			);
+			dependencies = (
+			);
+			name = "Carthage Bootstrap-tvOS";
+			productName = "Carthage Bootstrap";
+		};
+		B3E0A581215650C6004B4322 /* Carthage Bootstrap-iOS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3E0A584215650C6004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-iOS" */;
 			buildPhases = (
 				B3E0A585215650D5004B4322 /* Carthage Bootstrap */,
 			);
 			dependencies = (
 			);
-			name = "Carthage Bootstrap";
+			name = "Carthage Bootstrap-iOS";
 			productName = "Carthage Bootstrap";
 		};
 /* End PBXAggregateTarget section */
@@ -396,6 +407,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B38E25FF21573C2100355F53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B38E25FA21573C0C00355F53;
+			remoteInfo = "Carthage Bootstrap-tvOS";
+		};
 		B3C04B672107867200E7AF79 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
@@ -404,13 +422,6 @@
 			remoteInfo = PVLibrary;
 		};
 		B3E0A59021565203004B4322 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E0A581215650C6004B4322;
-			remoteInfo = "Carthage Bootstrap";
-		};
-		B3E0A59221565209004B4322 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
 			proxyType = 1;
@@ -1551,9 +1562,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3579D0E2106B11D00DDEBD6 /* PVLibrary */ = {
+		B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */;
+			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */;
 			buildPhases = (
 				B3579D0A2106B11D00DDEBD6 /* Headers */,
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
@@ -1565,14 +1576,14 @@
 			dependencies = (
 				B3E0A59121565203004B4322 /* PBXTargetDependency */,
 			);
-			name = PVLibrary;
+			name = "PVLibrary-iOS";
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C04A8B21077B3100E7AF79 /* PVLibrary tvOS */ = {
+		B3C04A8B21077B3100E7AF79 /* PVLibrary-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary tvOS" */;
+			buildConfigurationList = B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */;
 			buildPhases = (
 				B3C04A8C21077B3100E7AF79 /* Headers */,
 				B3C04A9B21077B3100E7AF79 /* Sources */,
@@ -1582,9 +1593,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3E0A59321565209004B4322 /* PBXTargetDependency */,
+				B38E260021573C2100355F53 /* PBXTargetDependency */,
 			);
-			name = "PVLibrary tvOS";
+			name = "PVLibrary-tvOS";
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1643,10 +1654,11 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3579D0E2106B11D00DDEBD6 /* PVLibrary */,
-				B3C04A8B21077B3100E7AF79 /* PVLibrary tvOS */,
+				B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */,
+				B3C04A8B21077B3100E7AF79 /* PVLibrary-tvOS */,
 				B3C04B602107867200E7AF79 /* PVLibraryTests */,
-				B3E0A581215650C6004B4322 /* Carthage Bootstrap */,
+				B3E0A581215650C6004B4322 /* Carthage Bootstrap-iOS */,
+				B38E25FA21573C0C00355F53 /* Carthage Bootstrap-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1680,6 +1692,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		B38E25FB21573C0C00355F53 /* Carthage Bootstrap */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
+				"$(SRCROOT)/../Scripts/xcode.carthage.bootstrap.sh",
+				"$(SRCROOT)/../Scripts/setup_env.sh",
+			);
+			name = "Carthage Bootstrap";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd ..\n. ./Scripts/xcode.carthage.bootstrap.sh tvOS \"${SRCROOT}\"\n";
+		};
 		B3E0A585215650D5004B4322 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1697,11 +1731,10 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
-				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ..\n. Scripts/xcode.carthage.bootstrap.sh\n";
+			shellScript = "cd ..\n. ./Scripts/xcode.carthage.bootstrap.sh iOS \"${SRCROOT}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2031,20 +2064,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B38E260021573C2100355F53 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B38E25FA21573C0C00355F53 /* Carthage Bootstrap-tvOS */;
+			targetProxy = B38E25FF21573C2100355F53 /* PBXContainerItemProxy */;
+		};
 		B3C04B682107867200E7AF79 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary */;
+			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */;
 			targetProxy = B3C04B672107867200E7AF79 /* PBXContainerItemProxy */;
 		};
 		B3E0A59121565203004B4322 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3E0A581215650C6004B4322 /* Carthage Bootstrap */;
+			target = B3E0A581215650C6004B4322 /* Carthage Bootstrap-iOS */;
 			targetProxy = B3E0A59021565203004B4322 /* PBXContainerItemProxy */;
-		};
-		B3E0A59321565209004B4322 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3E0A581215650C6004B4322 /* Carthage Bootstrap */;
-			targetProxy = B3E0A59221565209004B4322 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2192,7 +2225,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
@@ -2205,7 +2238,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
@@ -2235,7 +2268,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
@@ -2248,11 +2281,27 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B38E25FD21573C0C00355F53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B38E25FE21573C0C00355F53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -2280,7 +2329,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
 				);
@@ -2327,7 +2376,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
 				);
@@ -2430,7 +2479,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */ = {
+		B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3579D182106B11D00DDEBD6 /* Debug */,
@@ -2439,7 +2488,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary tvOS" */ = {
+		B38E25FC21573C0C00355F53 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B38E25FD21573C0C00355F53 /* Debug */,
+				B38E25FE21573C0C00355F53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C04B4221077B3100E7AF79 /* Debug */,
@@ -2457,7 +2515,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3E0A584215650C6004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */ = {
+		B3E0A584215650C6004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3E0A582215650C6004B4322 /* Debug */,

@@ -34,14 +34,12 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
     lockfile_release
 }
 
-echo "EFFECTIVE_PLATFORM_NAME = $EFFECTIVE_PLATFORM_NAME"
+PLATFORM=${1:-iOS,tvOS}
+SOURCEPATH=${2:-$SRCROOT}
 
-PLATFORM="tvOS,iOS"
-if [[ $EFFECTIVE_PLATFORM_NAME == "-iphoneos" || $EFFECTIVE_PLATFORM_NAME == "-iphonesimulator" ]]; then
-    PLATFORM="iOS"
-else
-    PLATFORM="tvOS"
-fi
+echo "Boot strapping Carthage for the following setup: "
+echo "PLATFORM: $PLATFORM"
+echo "PATH: $SOURCEPATH"
 
 if fastlane_installed && bundle_installed; then
     FASTLANE_CMD="bundle exec fastlane"
@@ -60,5 +58,5 @@ else
         carthage_install
     fi
 
-    . "$DIR/carthage.sh" "$PLATFORM"
+    . "$DIR/carthage.sh" $PLATFORM "$SOURCEPATH"
 fi

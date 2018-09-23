@@ -7,15 +7,26 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap */ = {
+		B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */;
+			buildConfigurationList = B38E25F621573BC400355F53 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-tvOS" */;
+			buildPhases = (
+				B38E25F521573BC400355F53 /* Carthage Bootstrap */,
+			);
+			dependencies = (
+			);
+			name = "Carthage Bootstrap-tvOS";
+			productName = Cores;
+		};
+		B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap-iOS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-iOS" */;
 			buildPhases = (
 				B3B29D3E2156125700903290 /* Carthage Bootstrap */,
 			);
 			dependencies = (
 			);
-			name = "Carthage Bootstrap";
+			name = "Carthage Bootstrap-iOS";
 			productName = Cores;
 		};
 		B3B29D3F2156177100903290 /* Create Version files */ = {
@@ -401,6 +412,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
+		};
+		B38D8FF721573FAA00F7D25A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B38E25F421573BC400355F53;
+			remoteInfo = "Carthage Bootstrap-tvOS";
+		};
+		B38D8FF921573FC600F7D25A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B38E25F421573BC400355F53;
+			remoteInfo = "Carthage Bootstrap-tvOS";
+		};
+		B38D8FFB21573FD100F7D25A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3A2876420C76F9C00B4B2E3;
+			remoteInfo = "Carthage Bootstrap-iOS";
 		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1693,6 +1725,7 @@
 			dependencies = (
 				B3B29D462156183D00903290 /* PBXTargetDependency */,
 				B3E21D71203211BE009939D3 /* PBXTargetDependency */,
+				B38D8FFC21573FD100F7D25A /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			productName = Provenance;
@@ -1716,6 +1749,7 @@
 			dependencies = (
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
 				B3F9CDA62031FF4E007F808D /* PBXTargetDependency */,
+				B38D8FFA21573FC600F7D25A /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			productName = ProvenanceTV;
@@ -1771,6 +1805,7 @@
 			);
 			dependencies = (
 				B3B29D4A2156184A00903290 /* PBXTargetDependency */,
+				B38D8FF821573FAA00F7D25A /* PBXTargetDependency */,
 			);
 			name = TopShelf;
 			productName = TopShelf;
@@ -1856,7 +1891,8 @@
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
-				B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap */,
+				B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap-iOS */,
+				B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */,
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 			);
@@ -2041,7 +2077,7 @@
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
-		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
+		B38E25F521573BC400355F53 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2058,11 +2094,32 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = ". ${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh tvOS \"${SRCROOT}\"\n";
+		};
+		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Cartfile.resolved",
+				"$(SRCROOT)/Scripts/xcode.carthage.bootstrap.sh",
+				"$(SRCROOT)/Scripts/setup_env.sh",
+			);
+			name = "Carthage Bootstrap";
+			outputFileListPaths = (
+			);
+			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". ${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh\n";
+			shellScript = ". ${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh iOS \"${SRCROOT}\"\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2356,6 +2413,21 @@
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
 		};
+		B38D8FF821573FAA00F7D25A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */;
+			targetProxy = B38D8FF721573FAA00F7D25A /* PBXContainerItemProxy */;
+		};
+		B38D8FFA21573FC600F7D25A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */;
+			targetProxy = B38D8FF921573FC600F7D25A /* PBXContainerItemProxy */;
+		};
+		B38D8FFC21573FD100F7D25A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap-iOS */;
+			targetProxy = B38D8FFB21573FD100F7D25A /* PBXContainerItemProxy */;
+		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3B29D3F2156177100903290 /* Create Version files */;
@@ -2534,7 +2606,7 @@
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
@@ -2584,7 +2656,7 @@
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
@@ -2644,7 +2716,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
@@ -2704,7 +2776,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
@@ -2762,7 +2834,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
@@ -3030,7 +3102,7 @@
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
@@ -3050,6 +3122,30 @@
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
+			};
+			name = AdHoc;
+		};
+		B38E25F721573BC400355F53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B38E25F821573BC400355F53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B38E25F921573BC400355F53 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = AdHoc;
 		};
@@ -3461,7 +3557,17 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap" */ = {
+		B38E25F621573BC400355F53 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B38E25F721573BC400355F53 /* Debug */,
+				B38E25F821573BC400355F53 /* Release */,
+				B38E25F921573BC400355F53 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A2876620C76F9C00B4B2E3 /* Debug */,

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport tvOS"
+               BlueprintName = "PVSupport-tvOS"
                ReferencedContainer = "container:../PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
                BuildableName = "PVLibrary.framework"
-               BlueprintName = "PVLibrary tvOS"
+               BlueprintName = "PVLibrary-tvOS"
                ReferencedContainer = "container:PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -48,7 +48,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
             BuildableName = "PVLibrary.framework"
-            BlueprintName = "PVLibrary tvOS"
+            BlueprintName = "PVLibrary-tvOS"
             ReferencedContainer = "container:PVLibrary.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -70,7 +70,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
             BuildableName = "PVLibrary.framework"
-            BlueprintName = "PVLibrary tvOS"
+            BlueprintName = "PVLibrary-tvOS"
             ReferencedContainer = "container:PVLibrary.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -88,7 +88,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
             BuildableName = "PVLibrary.framework"
-            BlueprintName = "PVLibrary tvOS"
+            BlueprintName = "PVLibrary-tvOS"
             ReferencedContainer = "container:PVLibrary.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -30,7 +30,7 @@ else
   success_exit "Not Online. Skipping Carthage script."
 fi
 
-PLATFORM=${1:-$iOS}
+PLATFORM=${1:-iOS,tvOS}
 SOURCEPATH=${2:-$SRCROOT}
 
 # Depencey checking, lock to prevent multiple parralle installs
