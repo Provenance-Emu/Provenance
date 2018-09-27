@@ -2039,7 +2039,7 @@
 				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/ZIPFoundation.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework",
-				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/ZIPFoundation.framework",
+				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/ZIPArchive.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
