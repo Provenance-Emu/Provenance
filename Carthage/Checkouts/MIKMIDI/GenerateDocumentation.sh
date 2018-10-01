@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+appledoc --project-name "MIKMIDI" --project-company "Mixed In Key" --company-id "com.mixedinkey" --output ./Documentation --keep-undocumented-objects --keep-undocumented-members --keep-intermediate-files --no-repeat-first-par --no-warn-invalid-crossref --docset-platform-family macosx --clean-output --ignore "*.m" --ignore "Source/MIKMIDIPort.h" --ignore "Source/MIKMIDIPort_SubclassMethods.h" --ignore "Source/MIKMIDIInputPort.h" --ignore "Source/MIKMIDIOutputPort.h" --index-desc "README.md" Source

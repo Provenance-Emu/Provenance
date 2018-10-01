@@ -52,28 +52,19 @@
 
 #import "BITCrashReportTextFormatter.h"
 
-/*
- * XXX: The ARM64 CPU type, and ARM_V7S and ARM_V8 Mach-O CPU subtypes are not
- * defined in the Mac OS X 10.8 headers.
+/**
+ * Before macOS Mojave, the new ARM64E architecture, used by iPhone XS and XR, is not yet in the headers.
  */
-#ifndef CPU_SUBTYPE_ARM_V7S
-# define CPU_SUBTYPE_ARM_V7S 11
-#endif
-
-#ifndef CPU_TYPE_ARM64
-#define CPU_TYPE_ARM64 (CPU_TYPE_ARM | CPU_ARCH_ABI64)
-#endif
-
-#ifndef CPU_SUBTYPE_ARM_V8
-# define CPU_SUBTYPE_ARM_V8 13
+#ifndef CPU_SUBTYPE_ARM64E
+# define CPU_SUBTYPE_ARM64E ((cpu_subtype_t) 2)
 #endif
 
 /**
  * Sort PLCrashReportBinaryImageInfo instances by their starting address.
  */
 static NSInteger bit_binaryImageSort(id binary1, id binary2, void *__unused context) {
-  uint64_t addr1 = [binary1 imageBaseAddress];
-  uint64_t addr2 = [binary2 imageBaseAddress];
+  uint64_t addr1 = [(BITPLCrashReportBinaryImageInfo *)binary1 imageBaseAddress];
+  uint64_t addr2 = [(BITPLCrashReportBinaryImageInfo *)binary2 imageBaseAddress];
   
   if (addr1 < addr2)
     return NSOrderedAscending;
@@ -277,8 +268,7 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
       if (codeType != nil)
         break;
     }
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    
     /* If we were unable to determine the code type, fall back on the legacy architecture value. */
     if (codeType == nil) {
       switch (report.systemInfo.architecture) {
@@ -305,7 +295,6 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
           break;
       }
     }
-#pragma GCC diagnostic pop
   }
   
   {
@@ -463,19 +452,21 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
     // search the registers value for the current arch
 #if TARGET_OS_SIMULATOR
     if (lp64) {
-      foundSelector = [[self class] selectorForRegisterWithName:@"rsi" ofThread:crashed_thread report:report];
-      if (foundSelector == NULL)
-        foundSelector = [[self class] selectorForRegisterWithName:@"rdx" ofThread:crashed_thread report:report];
+      foundSelector = [[self class] selectorForRegisterWithName:@"rsi" ofThread:crashed_thread report:report lp64:lp64];
+      if (foundSelector == NULL) {
+        foundSelector = [[self class] selectorForRegisterWithName:@"rdx" ofThread:crashed_thread report:report lp64:lp64];
+      }
     } else {
-      foundSelector = [[self class] selectorForRegisterWithName:@"ecx" ofThread:crashed_thread report:report];
+      foundSelector = [[self class] selectorForRegisterWithName:@"ecx" ofThread:crashed_thread report:report lp64:lp64];
     }
 #else
     if (lp64) {
-      foundSelector = [[self class] selectorForRegisterWithName:@"x1" ofThread:crashed_thread report:report];
+      foundSelector = [[self class] selectorForRegisterWithName:@"x1" ofThread:crashed_thread report:report lp64:lp64];
     } else {
-      foundSelector = [[self class] selectorForRegisterWithName:@"r1" ofThread:crashed_thread report:report];
-      if (foundSelector == NULL)
-        foundSelector = [[self class] selectorForRegisterWithName:@"r2" ofThread:crashed_thread report:report];
+      foundSelector = [[self class] selectorForRegisterWithName:@"r1" ofThread:crashed_thread report:report lp64:lp64];
+      if (foundSelector == NULL) {
+        foundSelector = [[self class] selectorForRegisterWithName:@"r2" ofThread:crashed_thread report:report lp64:lp64];
+      }
     }
 #endif
     
@@ -497,7 +488,7 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
      * post-processed report, Apple writes this out as full frame entries. We use the latter format. */
     for (NSUInteger frame_idx = 0; frame_idx < [exception.stackFrames count]; frame_idx++) {
       BITPLCrashReportStackFrameInfo *frameInfo = exception.stackFrames[frame_idx];
-      [text appendString: [[self class] bit_formatStackFrame: frameInfo frameIndex: frame_idx report: report lp64: lp64]];
+      [text appendString: [[self class] bit_formatStackFrame:frameInfo frameIndex:frame_idx report:report lp64:lp64]];
     }
     [text appendString: @"\n"];
   }
@@ -632,7 +623,7 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
  *
  *  @return The selector as a C string or NULL if no selector was found
  */
-+ (NSString *)selectorForRegisterWithName:(NSString *)regName ofThread:(BITPLCrashReportThreadInfo *)thread report:(BITPLCrashReport *)report {
++ (NSString *)selectorForRegisterWithName:(NSString *)regName ofThread:(BITPLCrashReportThreadInfo *)thread report:(BITPLCrashReport *)report lp64:(boolean_t)lp64 {
   // get the address for the register
   uint64_t regAddress = 0;
   
@@ -643,13 +634,20 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
     }
   }
   
-  if (regAddress == 0)
+  if (regAddress == 0) {
     return nil;
+  }
   
-  BITPLCrashReportBinaryImageInfo *imageForRegAddress = [report imageForAddress:regAddress];
+  // When on an ARM64 architecture, normalize the address to remove possible pointer signatures
+  uint64_t normalizedRegAddress = regAddress;
+  if (lp64) {
+    normalizedRegAddress = regAddress & 0x0000000fffffffff;
+  }
+  
+  BITPLCrashReportBinaryImageInfo *imageForRegAddress = [report imageForAddress:normalizedRegAddress];
   if (imageForRegAddress) {
     // get the SEL
-    const char *foundSelector = findSEL([imageForRegAddress.imageName UTF8String], imageForRegAddress.imageUUID, regAddress - (uint64_t)imageForRegAddress.imageBaseAddress);
+    const char *foundSelector = findSEL([imageForRegAddress.imageName UTF8String], imageForRegAddress.imageUUID, normalizedRegAddress - (uint64_t)imageForRegAddress.imageBaseAddress);
     
     if (foundSelector != NULL) {
       return [NSString stringWithUTF8String:foundSelector];
@@ -773,12 +771,16 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
     case CPU_TYPE_ARM64:
       /* Apple includes subtype for ARM64 binaries. */
       switch (subType) {
-        case CPU_SUBTYPE_ARM_ALL:
+        case CPU_SUBTYPE_ARM64_ALL:
           archName = @"arm64";
           break;
           
-        case CPU_SUBTYPE_ARM_V8:
+        case CPU_SUBTYPE_ARM64_V8:
           archName = @"arm64";
+          break;
+          
+        case CPU_SUBTYPE_ARM64E:
+          archName = @"arm64e";
           break;
           
         default:
@@ -830,11 +832,16 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
   NSString *imageName = @"\?\?\?";
   NSString *symbolString = nil;
   
-  BITPLCrashReportBinaryImageInfo *imageInfo = [report imageForAddress: frameInfo.instructionPointer];
+  // When on an ARM64 architecture, normalize the address to remove possible pointer signatures
+  uint64_t normalizedInstructionPointer = lp64 ? (frameInfo.instructionPointer & 0x0000000fffffffff) : frameInfo.instructionPointer;
+  uint64_t untouchedInstructionPointer = frameInfo.instructionPointer;
+  
+  BITPLCrashReportBinaryImageInfo *imageInfo = [report imageForAddress: normalizedInstructionPointer];
+  
   if (imageInfo != nil) {
     imageName = [imageInfo.imageName lastPathComponent];
     baseAddress = imageInfo.imageBaseAddress;
-    pcOffset = frameInfo.instructionPointer - imageInfo.imageBaseAddress;
+    pcOffset = normalizedInstructionPointer - imageInfo.imageBaseAddress;
   }
   
   /* Make sure UTF8/16 characters are handled correctly */
@@ -880,7 +887,7 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
     }
     
     
-    uint64_t symOffset = frameInfo.instructionPointer - frameInfo.symbolInfo.startAddress;
+    uint64_t symOffset = normalizedInstructionPointer - frameInfo.symbolInfo.startAddress;
     symbolString = [NSString stringWithFormat: @"%@ + %" PRId64, symbolName, symOffset];
   } else {
     symbolString = [NSString stringWithFormat: @"0x%" PRIx64 " + %" PRId64, baseAddress, pcOffset];
@@ -892,7 +899,7 @@ static NSString *const BITXamarinStackTraceDelimiter = @"Xamarin Exception Stack
   return [NSString stringWithFormat: @"%-4ld%-35S 0x%0*" PRIx64 " %@\n",
           (long) frameIndex,
           (const uint16_t *)[imageName cStringUsingEncoding: NSUTF16StringEncoding],
-          lp64 ? 16 : 8, frameInfo.instructionPointer,
+          lp64 ? 16 : 8, untouchedInstructionPointer,
           symbolString];
 }
 

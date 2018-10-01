@@ -1,4 +1,5 @@
-github "bitstadium/HockeySDK-iOS" "5.1.2"
+github "bitstadium/HockeySDK-iOS" "5.1.4"
 github "bitstadium/HockeySDK-tvOS" "5.1.0"
 github "cbpowell/MarqueeLabel" "3.2.0"
-github "xmartlabs/XLActionController" "4.0.1"
+github "mixedinkey-opensource/MIKMIDI" "1.6.2"
+github "xmartlabs/XLActionController" "4.1.0"

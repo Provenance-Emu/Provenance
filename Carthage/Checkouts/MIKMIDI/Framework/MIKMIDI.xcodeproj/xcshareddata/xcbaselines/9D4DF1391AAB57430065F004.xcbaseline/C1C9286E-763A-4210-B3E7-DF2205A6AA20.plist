@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>classNames</key>
+	<dict>
+		<key>MIKMIDIResponderChainTests</key>
+		<dict>
+			<key>testCachedResponderSearchPerformance</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.05</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
+			<key>testUncachedResponderSearchPerformance</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>1.09</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 9, 2017, 3:28:48 PM</string>
+					<key>maxPercentRelativeStandardDeviation</key>
+					<real>25</real>
+				</dict>
+			</dict>
+		</dict>
+		<key>MIKMIDISequenceTests</key>
+		<dict>
+			<key>testMIDIFileReadPerformance</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.253</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 9, 2017, 3:28:56 PM</string>
+					<key>maxPercentRelativeStandardDeviation</key>
+					<real>10</real>
+				</dict>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>

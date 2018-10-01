@@ -18,59 +18,63 @@ The following example shows how this could be implemented. We'll present a custo
 **Objective-C**
 
 ```objc
-@interface BITAppDelegate () <UIAlertViewDelegate>
-@end
-
 
 @implementation BITAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	[self.window makeKeyAndVisible];
+  [self.window makeKeyAndVisible];
 
-	[[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"<>"
-															delegate:nil];
+  [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"APP_IDENTIFIER" delegate:nil];
 	
-	// optionally enable logging to get more information about states.
-	[BITHockeyManager sharedHockeyManager].debugLogEnabled = YES;
+  // optionally enable logging to get more information about states.
+  [BITHockeyManager sharedHockeyManager].logLevel = BITLogLevelVerbose;
 
-	[[BITHockeyManager sharedHockeyManager].crashManager setAlertViewHandler:^(){
-	NSString *exceptionReason = [[BITHockeyManager sharedHockeyManager].crashManager lastSessionCrashDetails].exceptionReason;
-	UIAlertView *customAlertView = [[UIAlertView alloc] initWithTitle: @"Oh no! The App crashed"
-																message: nil
-																delegate: self
-													cancelButtonTitle: @"Don't send"
-													otherButtonTitles: @"Send", @"Always send", nil];
-	if (exceptionReason) {
-		customAlertView.message = @"We would like to send a crash report to the developers. Please enter a short description of what happened:";
-		customAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-	} else {
-		customAlertView.message = @"We would like to send a crash report to the developers";
-	}
-	
-	[customAlertView show];
-	}];
+  [[BITHockeyManager sharedHockeyManager].crashManager setAlertViewHandler:^() {
+    NSString *exceptionReason = [[BITHockeyManager sharedHockeyManager].crashManager lastSessionCrashDetails].exceptionReason;
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Oh no! The App crashed"
+                                                                             message:@"We would like to send a crash report to the developers."
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    if (exceptionReason) {
+      alertController.message = [NSString stringWithFormat:@"%@ Please enter a short description of what happened:", alertController.message];
+      [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = @"Description";
+        textField.keyboardType = UIKeyboardTypeDefault;
+      }];
+    }
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Don't send"
+                                                        style:UIAlertActionStyleCancel
+                                                      handler:^(UIAlertAction __unused *action) {
+                                                        [[BITHockeyManager sharedHockeyManager].crashManager
+                                                                     handleUserInput:BITCrashManagerUserInputDontSend
+                                                            withUserProvidedMetaData:nil];
+                                                      }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Send"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction __unused *action) {
+                                                        BITCrashMetaData *crashMetaData = [BITCrashMetaData new];
+                                                        if (exceptionReason) {
+                                                          crashMetaData.userProvidedDescription = alertController.textFields[0].text;
+                                                        }
+                                                        [[BITHockeyManager sharedHockeyManager].crashManager
+                                                                     handleUserInput:BITCrashManagerUserInputSend
+                                                            withUserProvidedMetaData:crashMetaData];
+c                                                      }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Always send"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction __unused *action) {
+                                                        BITCrashMetaData *crashMetaData = [BITCrashMetaData new];
+                                                        if (exceptionReason) {
+                                                          crashMetaData.userProvidedDescription = alertController.textFields[0].text;
+                                                        }
+                                                        [[BITHockeyManager sharedHockeyManager].crashManager
+                                                                     handleUserInput:BITCrashManagerUserInputAlwaysSend
+                                                            withUserProvidedMetaData:crashMetaData];
+                                                      }]];
 
-	[[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
+    [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
+  }];
 
-	return YES;
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-	BITCrashMetaData *crashMetaData = [BITCrashMetaData new];
-	if (alertView.alertViewStyle != UIAlertViewStyleDefault) {
-		crashMetaData.userDescription = [alertView textFieldAtIndex:0].text;
-	}
-	switch (buttonIndex) {
-		case 0:
-			[[BITHockeyManager sharedHockeyManager].crashManager handleUserInput:BITCrashManagerUserInputDontSend withUserProvidedMetaData:nil];
-			break;
-		case 1:
-			[[BITHockeyManager sharedHockeyManager].crashManager handleUserInput:BITCrashManagerUserInputSend withUserProvidedMetaData:crashMetaData];
-			break;
-		case 2:
-			[[BITHockeyManager sharedHockeyManager].crashManager handleUserInput:BITCrashManagerUserInputAlwaysSend withUserProvidedMetaData:crashMetaData];
-			break;
-	}
+  return YES;
 }
 
 @end
@@ -79,55 +83,48 @@ The following example shows how this could be implemented. We'll present a custo
 **Swift**
 
 ```swift
-import UIKit
-import HockeySDK
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
   var window: UIWindow?
-
+  
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     window?.makeKeyAndVisible()
-
+    
     BITHockeyManager.shared().configure(withIdentifier: "APP_IDENTIFIER")
+    
     // optionally enable logging to get more information about states.
     BITHockeyManager.shared().logLevel = BITLogLevel.verbose
-
+    
     BITHockeyManager.shared().crashManager.setAlertViewHandler {
       let exceptionReason = BITHockeyManager.shared().crashManager.lastSessionCrashDetails.exceptionReason
-      let customAlertView = UIAlertView.init(title: "Oh no! The App crashed",
-                                       message: "The App crashed",
-                                       delegate: self,
-                                       cancelButtonTitle: "Don't send",
-                                       otherButtonTitles: "Send", "Always send")
-      if (exceptionReason != nil) {
-        customAlertView.message = "We would like to send a crash report to the developers. Please enter a short description of what happened:"
-        customAlertView.alertViewStyle = UIAlertViewStyle.plainTextInput;
-      } else {
-        customAlertView.message = "We would like to send a crash report to the developers"
+      let alertController = UIAlertController(title: "Oh no! The App crashed", message: "We would like to send a crash report to the developers.", preferredStyle: .alert)
+      if exceptionReason != nil {
+        alertController.message = alertController.message! + " Please enter a short description of what happened:"
+        alertController.addTextField(configurationHandler: { (textField) in
+          textField.placeholder = "Description"
+          textField.keyboardType = .default
+        })
       }
-      customAlertView.show()
+      alertController.addAction(UIAlertAction(title: "Don't send", style: .cancel, handler: { (action) in
+        BITHockeyManager.shared().crashManager.handle(BITCrashManagerUserInput.dontSend, withUserProvidedMetaData: nil)
+      }))
+      alertController.addAction(UIAlertAction(title: "Send", style: .default, handler: { (action) in
+        let crashMetaData = BITCrashMetaData()
+        crashMetaData.userProvidedDescription = alertController.textFields?[0].text
+        BITHockeyManager.shared().crashManager.handle(BITCrashManagerUserInput.send, withUserProvidedMetaData: crashMetaData)
+      }))
+      alertController.addAction(UIAlertAction(title: "Always send", style: .default, handler: { (action) in
+        let crashMetaData = BITCrashMetaData()
+        crashMetaData.userProvidedDescription = alertController.textFields?[0].text
+        BITHockeyManager.shared().crashManager.handle(BITCrashManagerUserInput.alwaysSend, withUserProvidedMetaData: crashMetaData)
+      }))
+      self.window?.rootViewController?.present(alertController, animated: true)
     }
-
+    
     return true
   }
-
-  func alertView(_ alertView: UIAlertView, didDismissWithButtonIndex buttonIndex: Int) {
-    let crashMetaData = BITCrashMetaData();
-    if (alertView.alertViewStyle != UIAlertViewStyle.default) {
-      crashMetaData.userProvidedDescription = alertView.textField(at: 0)?.text
-    }
-    switch (buttonIndex) {
-    case 0:
-      BITHockeyManager.shared().crashManager.handle(BITCrashManagerUserInput.dontSend, withUserProvidedMetaData: nil)
-    case 1:
-      BITHockeyManager.shared().crashManager.handle(BITCrashManagerUserInput.send, withUserProvidedMetaData: crashMetaData)
-    case 2:
-      BITHockeyManager.shared().crashManager.handle(BITCrashManagerUserInput.alwaysSend, withUserProvidedMetaData: crashMetaData)
-    }
-  }
 }
+
 ```
-
-

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7525" systemVersion="14C1514" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7525"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="MIKMainWindowController">
+            <connections>
+                <outlet property="trackView" destination="TbG-Pk-GIu" id="ekS-jh-4Ae"/>
+                <outlet property="window" destination="iWA-aE-AFu" id="QGS-MU-5wj"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="MIDI Files Testbed" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="iWA-aE-AFu">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="335" y="390" width="480" height="360"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="bjF-sO-f3j">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6ro-dS-WBO">
+                        <rect key="frame" x="14" y="312" width="96" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="84" id="Ea9-9z-OBZ"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Load File" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wQF-OX-DAd">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="loadFile:" target="-2" id="phS-kC-Z2Q"/>
+                            <binding destination="-2" name="enabled" keyPath="recording" id="bsi-xy-lk8">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yxv-Ce-QrW">
+                        <rect key="frame" x="390" y="316" width="73" height="26"/>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="BX3-0d-ikz" id="e7m-FA-thV">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="xEd-Qa-ruC">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="BX3-0d-ikz"/>
+                                    <menuItem title="Item 2" id="e83-wh-W67"/>
+                                    <menuItem title="Item 3" id="Hkp-CH-m9f"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <binding destination="-2" name="selectedObject" keyPath="device" previousBinding="tvW-OW-gpK" id="L4r-mK-LrI"/>
+                            <binding destination="-2" name="content" keyPath="deviceManager.availableDevices" id="oVB-Nd-ar2"/>
+                            <binding destination="-2" name="contentValues" keyPath="deviceManager.availableDevices.name" previousBinding="oVB-Nd-ar2" id="tvW-OW-gpK"/>
+                        </connections>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eSe-hq-VkU">
+                        <rect key="frame" x="110" y="312" width="85" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="73" id="NUW-sl-GH6"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Record" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="es0-0d-PVt">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleRecording:" target="-2" id="dm9-DB-BTG"/>
+                            <binding destination="-2" name="enabled" keyPath="device" id="IgY-8d-nGD">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="title" keyPath="recordButtonLabel" id="fIL-Fd-0iK"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FGs-7w-fIc">
+                        <rect key="frame" x="195" y="312" width="67" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="55" id="m9G-AA-cV0"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Play" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VhN-XN-yhh">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="togglePlayback:" target="-2" id="DFY-86-tqL"/>
+                            <binding destination="-2" name="title" keyPath="playButtonLabel" id="Yyl-Xy-VbJ"/>
+                            <binding destination="-2" name="enabled2" keyPath="recording" previousBinding="szY-h5-pd3" id="4Z4-zy-opm">
+                                <dictionary key="options">
+                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="enabled" keyPath="sequence" id="szY-h5-pd3">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
+                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="66N-u6-qWG">
+                        <rect key="frame" x="20" y="20" width="440" height="279"/>
+                        <clipView key="contentView" id="TRb-H3-fEu">
+                            <rect key="frame" x="1" y="1" width="166" height="79"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <customView identifier="FlippedScrollContentContainer" translatesAutoresizingMaskIntoConstraints="NO" id="e8Y-Fj-noD" customClass="MIKFlippedScrollContentContainerView">
+                                    <rect key="frame" x="0.0" y="0.0" width="440" height="279"/>
+                                    <subviews>
+                                        <customView horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" placeholderIntrinsicWidth="440" placeholderIntrinsicHeight="279" translatesAutoresizingMaskIntoConstraints="NO" id="TbG-Pk-GIu" customClass="MIKMIDISequenceView">
+                                            <rect key="frame" x="0.0" y="0.0" width="440" height="279"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="-2" id="p48-K9-BsG"/>
+                                            </connections>
+                                        </customView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="TbG-Pk-GIu" secondAttribute="trailing" id="0c1-Bn-g98"/>
+                                        <constraint firstItem="TbG-Pk-GIu" firstAttribute="leading" secondItem="e8Y-Fj-noD" secondAttribute="leading" id="4UB-H6-yEn"/>
+                                        <constraint firstAttribute="bottom" secondItem="TbG-Pk-GIu" secondAttribute="bottom" id="KQW-V4-esc"/>
+                                        <constraint firstItem="TbG-Pk-GIu" firstAttribute="top" secondItem="e8Y-Fj-noD" secondAttribute="top" id="dmi-nl-BWQ"/>
+                                    </constraints>
+                                </customView>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="e8Y-Fj-noD" firstAttribute="top" secondItem="TRb-H3-fEu" secondAttribute="top" id="CZJ-B9-mZG"/>
+                                <constraint firstItem="e8Y-Fj-noD" firstAttribute="leading" secondItem="TRb-H3-fEu" secondAttribute="leading" id="t87-Yq-CmO"/>
+                            </constraints>
+                        </clipView>
+                        <constraints>
+                            <constraint firstItem="TbG-Pk-GIu" firstAttribute="height" secondItem="66N-u6-qWG" secondAttribute="height" priority="499" id="Rhe-zz-aQ4"/>
+                            <constraint firstItem="TbG-Pk-GIu" firstAttribute="width" secondItem="66N-u6-qWG" secondAttribute="width" priority="499" id="sMF-8v-snG"/>
+                        </constraints>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="QM4-rs-jPX">
+                            <rect key="frame" x="1" y="80" width="166" height="15"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="oAs-ip-mnU">
+                            <rect key="frame" x="167" y="1" width="15" height="79"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="eSe-hq-VkU" firstAttribute="baseline" secondItem="FGs-7w-fIc" secondAttribute="baseline" id="0r6-Fc-wlf"/>
+                    <constraint firstItem="eSe-hq-VkU" firstAttribute="baseline" secondItem="6ro-dS-WBO" secondAttribute="baseline" id="1W0-W0-uPG"/>
+                    <constraint firstItem="6ro-dS-WBO" firstAttribute="leading" secondItem="bjF-sO-f3j" secondAttribute="leading" constant="20" symbolic="YES" id="6xX-m0-HjF"/>
+                    <constraint firstItem="6ro-dS-WBO" firstAttribute="top" secondItem="bjF-sO-f3j" secondAttribute="top" constant="20" symbolic="YES" id="8F5-6k-xGC"/>
+                    <constraint firstItem="66N-u6-qWG" firstAttribute="top" secondItem="6ro-dS-WBO" secondAttribute="bottom" constant="20" id="Gie-yv-4ch"/>
+                    <constraint firstItem="66N-u6-qWG" firstAttribute="leading" secondItem="bjF-sO-f3j" secondAttribute="leading" constant="20" id="Gmk-15-BtN"/>
+                    <constraint firstItem="FGs-7w-fIc" firstAttribute="baseline" secondItem="Yxv-Ce-QrW" secondAttribute="baseline" id="YW7-Yn-AOk"/>
+                    <constraint firstItem="FGs-7w-fIc" firstAttribute="leading" secondItem="eSe-hq-VkU" secondAttribute="trailing" constant="12" symbolic="YES" id="Z30-Ap-cbi"/>
+                    <constraint firstAttribute="trailing" secondItem="Yxv-Ce-QrW" secondAttribute="trailing" constant="20" symbolic="YES" id="cMb-KV-09e"/>
+                    <constraint firstItem="eSe-hq-VkU" firstAttribute="leading" secondItem="6ro-dS-WBO" secondAttribute="trailing" constant="12" symbolic="YES" id="eea-wH-bX4"/>
+                    <constraint firstAttribute="bottom" secondItem="66N-u6-qWG" secondAttribute="bottom" constant="20" id="hbT-kV-NcJ"/>
+                    <constraint firstAttribute="trailing" secondItem="66N-u6-qWG" secondAttribute="trailing" constant="20" id="y1j-mW-Gt6"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="245" y="212"/>
+        </window>
+    </objects>
+</document>

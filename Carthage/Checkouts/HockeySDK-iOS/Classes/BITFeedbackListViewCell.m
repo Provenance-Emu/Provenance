@@ -148,7 +148,7 @@
   if (!self.message.attachments) return;
   if (self.message.attachments.count == 0) return;
   if (!note.object) return;
-  if (![note.object isKindOfClass:[BITFeedbackMessageAttachment class]]) return;
+  if (![(NSObject *)note.object isKindOfClass:[BITFeedbackMessageAttachment class]]) return;
   
   BITFeedbackMessageAttachment *attachment = (BITFeedbackMessageAttachment *)note.object;
   if (![self.message.attachments containsObject:attachment]) return;
@@ -197,28 +197,11 @@
 
 
 + (CGFloat) heightForTextInRowWithMessage:(BITFeedbackMessage *)message tableViewWidth:(CGFloat)width {
-  CGFloat calculatedHeight;
-  
-  if ([message.text respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
-    CGRect calculatedRect = [message.text boundingRectWithSize:CGSizeMake(width - (2 * FRAME_SIDE_BORDER), CGFLOAT_MAX)
-                                                       options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                                    attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:TEXT_FONTSIZE]}
-                                                       context:nil];
-    calculatedHeight = calculatedRect.size.height + FRAME_TOP_BORDER + LABEL_TEXT_Y + FRAME_BOTTOM_BORDER;
-    
-    // added to make space for the images.
-    
-    
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    calculatedHeight = [message.text sizeWithFont:[UIFont systemFontOfSize:TEXT_FONTSIZE]
-                                constrainedToSize:CGSizeMake(width - (2 * FRAME_SIDE_BORDER), CGFLOAT_MAX)
-                        ].height + FRAME_TOP_BORDER + LABEL_TEXT_Y + FRAME_BOTTOM_BORDER;
-    
-#pragma clang diagnostic pop
-  }
-  
+  CGRect calculatedRect = [message.text boundingRectWithSize:CGSizeMake(width - (2 * FRAME_SIDE_BORDER), CGFLOAT_MAX)
+                                                     options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                  attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:TEXT_FONTSIZE]}
+                                                     context:nil];
+  CGFloat calculatedHeight = calculatedRect.size.height + FRAME_TOP_BORDER + LABEL_TEXT_Y + FRAME_BOTTOM_BORDER;
   return ceil(calculatedHeight);
 }
 
@@ -341,7 +324,7 @@
 }
 
 - (void)imageButtonPressed:(id)sender {
-  id strongDelegate = self.delegate;
+  id<BITFeedbackListViewCellDelegate> strongDelegate = self.delegate;
   if ([strongDelegate respondsToSelector:@selector(listCell:didSelectAttachment:)]) {
     NSUInteger index = [self.attachmentViews indexOfObject:sender];
     if (index != NSNotFound && [self.message previewableAttachments].count > index) {

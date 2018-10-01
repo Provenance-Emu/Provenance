@@ -111,7 +111,7 @@
 }
 
 - (void)prepareWithActivityItems:(NSArray *)activityItems {
-  for (id item in activityItems) {
+  for (id<NSObject> item in activityItems) {
     if ([item isKindOfClass:[NSString class]] ||
         [item isKindOfClass:[UIImage class]] ||
         [item isKindOfClass:[NSData class]] ||

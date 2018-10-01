@@ -1,0 +1,3 @@
+MIDI To Audio is an Objective-C app for macOS that shows how MIKMIDI can be used to render MIDI to an audio file. It is not meant to be production ready, rather to show the basics required to do offline rendering using a (subclass of) `MIKMIDISynthesizer` and the `ExtAudioFile` API. While this example is a Mac app, the rendering code itself should work with minor changes on iOS as well.
+
+This code is provided as a useful example. As with the rest of MIKMIDI, it is released under an MIT license. You are welcome to use it in your own apps, both open and closed source. Be aware that `MIKMIDIOfflineSynthesizer` and `MIKMIDIToAudioExporter` are not considered part of the MIKMIDI library API, and as such we may make breaking changes in updates to this example.

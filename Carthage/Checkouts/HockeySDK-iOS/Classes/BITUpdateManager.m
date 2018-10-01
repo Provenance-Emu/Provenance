@@ -111,7 +111,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
   // was tapped, so we assume the user agreed
   if (self.didStartUpdateProcess) {
     self.didStartUpdateProcess = NO;    
-    id strongDelegate = self.delegate;
+    id<BITUpdateManagerDelegate> strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(updateManagerWillExitApp:)]) {
       [strongDelegate updateManagerWillExitApp:self];
     }
@@ -217,7 +217,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
   if (![self expiryDateReached]) return;
   
   BOOL shouldShowDefaultAlert = YES;
-  id strongDelegate = self.delegate;
+  id<BITUpdateManagerDelegate> strongDelegate = self.delegate;
   if ([strongDelegate respondsToSelector:@selector(shouldDisplayExpiryAlertForUpdateManager:)]) {
     shouldShowDefaultAlert = [strongDelegate shouldDisplayExpiryAlertForUpdateManager:self];
   }
@@ -353,7 +353,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
         [self saveAppCache];
       } else {
         [self.appVersions enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-          if (idx > 0 && [obj isKindOfClass:[BITAppVersionMetaInfo class]]) {
+          if (idx > 0 && [(NSObject *)obj isKindOfClass:[BITAppVersionMetaInfo class]]) {
             NSComparisonResult compareVersions = bit_versionCompare([(BITAppVersionMetaInfo *)obj version], self.currentAppVersion);
             BOOL uuidFound = [(BITAppVersionMetaInfo *)obj hasUUID:self.uuid];
 
@@ -449,7 +449,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:kBITUpdateDateOfLastCheck]) {
       // we did write something else in the past, so for compatibility reasons do this
       id tempLastCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kBITUpdateDateOfLastCheck];
-      if ([tempLastCheck isKindOfClass:[NSDate class]]) {
+      if ([(NSObject *)tempLastCheck isKindOfClass:[NSDate class]]) {
         _lastCheck = tempLastCheck;
       }
     }
@@ -523,7 +523,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
 - (void)showCheckForUpdateAlert {
   if (self.appEnvironment != BITEnvironmentOther) return;
   if ([self isUpdateManagerDisabled]) return;
-  id strongDelegate = self.delegate;
+  id<BITUpdateManagerDelegate> strongDelegate = self.delegate;
   if ([strongDelegate respondsToSelector:@selector(shouldDisplayUpdateAlertForUpdateManager:forShortVersion:forVersion:)] &&
       ![strongDelegate shouldDisplayUpdateAlertForUpdateManager:self forShortVersion:[self.newestAppVersion shortVersion] forVersion:[self.newestAppVersion version]]) {
     return;
@@ -837,7 +837,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
   NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", bit_URLEncodedString(hockeyAPIURL)];
 
   // Notify delegate of update intent before placing the call
-  id stronDelegate = self.delegate;
+  id<BITUpdateManagerDelegate> stronDelegate = self.delegate;
   if ([stronDelegate respondsToSelector:@selector(willStartDownloadAndUpdate:)]) {
     [stronDelegate willStartDownloadAndUpdate:self];
   }
@@ -860,7 +860,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
     if ([self isUpdateManagerDisabled]) return;
     
     BITHockeyLogDebug(@"INFO: Starting UpdateManager");
-    id strongDelegate = self.delegate;
+    id<BITUpdateManagerDelegate> strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(updateManagerShouldSendUsageData:)]) {
       self.sendUsageData = [strongDelegate updateManagerShouldSendUsageData:self];
     }
@@ -907,7 +907,7 @@ typedef NS_ENUM(NSInteger, BITUpdateAlertViewTag) {
       NSError *error = nil;
       NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:(NSData *)[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
       
-      self.companyName = (([[json valueForKey:@"company"] isKindOfClass:[NSString class]]) ? [json valueForKey:@"company"] : nil);
+      self.companyName = (([(NSObject *)[json valueForKey:@"company"] isKindOfClass:[NSString class]]) ? [json valueForKey:@"company"] : nil);
       
       if (self.appEnvironment == BITEnvironmentOther) {
         NSArray *feedArray = (NSArray *)[json valueForKey:@"versions"];

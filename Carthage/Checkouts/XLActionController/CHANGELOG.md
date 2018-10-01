@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+### [4.1.0](https://github.com/xmartlabs/XLActionController/releases/tag/4.1.0)
+
+* Swift 4.2 source compability.
+
 ### [4.0.1](https://github.com/xmartlabs/XLActionController/releases/tag/4.0.1)
 
 * Bug fixes and stability improvements.

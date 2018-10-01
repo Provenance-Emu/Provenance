@@ -51,7 +51,7 @@
  
  @see `[BITHockeyManager setDelegate:]`
  */
-@property (nonatomic, weak) id delegate;
+@property (nonatomic, weak) id<BITCrashManagerDelegate> delegate;
 
 /**
  * must be set

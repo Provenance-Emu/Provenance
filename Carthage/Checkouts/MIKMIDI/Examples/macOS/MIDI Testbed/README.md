@@ -1,0 +1,1 @@
+MIDI Testbed is an Objective-C app for OS X that demonstrates the use of MIKMIDI to connect to MIDI devices, as well as to send/receive data to/from them. The application is quite simple. All relevant code is in MIKAppDelegate.m.

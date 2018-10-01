@@ -478,7 +478,8 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     NSNotificationName name = UIApplicationDidBecomeActiveNotification;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
-    if (bit_isRunningInAppExtension() && &NSExtensionHostDidBecomeActiveNotification != NULL) {
+#pragma clang diagnostic ignored "-Wtautological-pointer-compare"
+    if (bit_isRunningInAppExtension() && &NSExtensionHostDidBecomeActiveNotification != nil) {
       name = NSExtensionHostDidBecomeActiveNotification;
     }
 #pragma clang diagnostic pop
@@ -515,7 +516,8 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     NSNotificationName name = UIApplicationDidEnterBackgroundNotification;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
-    if (bit_isRunningInAppExtension() && &NSExtensionHostDidEnterBackgroundNotification != NULL) {
+#pragma clang diagnostic ignored "-Wtautological-pointer-compare"
+    if (bit_isRunningInAppExtension() && &NSExtensionHostDidEnterBackgroundNotification != nil) {
       name = NSExtensionHostDidEnterBackgroundNotification;
     }
 #pragma clang diagnostic pop
@@ -532,7 +534,8 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     NSNotificationName name = UIApplicationWillEnterForegroundNotification;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
-    if (bit_isRunningInAppExtension() && &NSExtensionHostWillEnterForegroundNotification != NULL) {
+#pragma clang diagnostic ignored "-Wtautological-pointer-compare"
+    if (bit_isRunningInAppExtension() && &NSExtensionHostWillEnterForegroundNotification != nil) {
       name = NSExtensionHostWillEnterForegroundNotification;
     }
 #pragma clang diagnostic pop
@@ -607,11 +610,11 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     static dispatch_once_t predAppData;
     
     dispatch_once(&predAppData, ^{
-      id marketingVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+      id<NSObject> marketingVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
       if (marketingVersion && [marketingVersion isKindOfClass:[NSString class]])
         [[NSUserDefaults standardUserDefaults] setObject:marketingVersion forKey:kBITAppMarketingVersion];
       
-      id bundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+      id<NSObject> bundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
       if (bundleVersion && [bundleVersion isKindOfClass:[NSString class]])
         [[NSUserDefaults standardUserDefaults] setObject:bundleVersion forKey:kBITAppVersion];
       
@@ -682,7 +685,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
   if (userIdFromKeychain) {
     userID = userIdFromKeychain;
   }
-  id strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
+  id<BITHockeyManagerDelegate> strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
   if ([strongDelegate respondsToSelector:@selector(userIDForHockeyManager:componentManager:)]) {
     userID = [strongDelegate userIDForHockeyManager:[BITHockeyManager sharedHockeyManager] componentManager:self];
   }
@@ -697,7 +700,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
 - (NSString *)userNameForCrashReport {
   // first check the global keychain storage
   NSString *username = [self stringValueFromKeychainForKey:kBITHockeyMetaUserName] ?: @"";
-  id strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
+  id<BITHockeyManagerDelegate> strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
   if ([strongDelegate respondsToSelector:@selector(userNameForHockeyManager:componentManager:)]) {
     username = [strongDelegate userNameForHockeyManager:[BITHockeyManager sharedHockeyManager] componentManager:self] ?: @"";
   }
@@ -724,7 +727,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     useremail = self.installationIdentification;
   }
 #endif
-  id strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
+  id<BITHockeyManagerDelegate> strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
   if ([strongDelegate respondsToSelector:@selector(userEmailForHockeyManager:componentManager:)]) {
     useremail = [strongDelegate userEmailForHockeyManager:[BITHockeyManager sharedHockeyManager] componentManager:self] ?: @"";
   }
@@ -797,7 +800,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
   [self addStringValueToKeychain:[self userNameForCrashReport] forKey:[NSString stringWithFormat:@"%@.%@", filename, kBITCrashMetaUserName]];
   [self addStringValueToKeychain:[self userEmailForCrashReport] forKey:[NSString stringWithFormat:@"%@.%@", filename, kBITCrashMetaUserEmail]];
   [self addStringValueToKeychain:[self userIDForCrashReport] forKey:[NSString stringWithFormat:@"%@.%@", filename, kBITCrashMetaUserID]];
-  id strongDelegate = self.delegate;
+  id<BITCrashManagerDelegate> strongDelegate = self.delegate;
   if ([strongDelegate respondsToSelector:@selector(applicationLogForCrashManager:)]) {
     applicationLog = [strongDelegate applicationLogForCrashManager:self] ?: @"";
   }
@@ -835,7 +838,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
 }
 
 - (BOOL)handleUserInput:(BITCrashManagerUserInput)userInput withUserProvidedMetaData:(BITCrashMetaData *)userProvidedMetaData {
-  id strongDelegate = self.delegate;
+  id<BITCrashManagerDelegate> strongDelegate = self.delegate;
   switch (userInput) {
     case BITCrashManagerUserInputDontSend:
       if ([strongDelegate respondsToSelector:@selector(crashManagerWillCancelSendingCrashReport:)]) {
@@ -999,9 +1002,9 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     for (NSString *file in dirArray) {
       NSString *filePath = [self.crashesDir stringByAppendingPathComponent:file];
       
-      NSDictionary *fileAttributes = [self.fileManager attributesOfItemAtPath:filePath error:&error];
-      if ([[fileAttributes objectForKey:NSFileType] isEqualToString:NSFileTypeRegular] &&
-          [[fileAttributes objectForKey:NSFileSize] intValue] > 0 &&
+      NSDictionary<NSFileAttributeKey, id> *fileAttributes = [self.fileManager attributesOfItemAtPath:filePath error:&error];
+      if ([(NSString *)[fileAttributes objectForKey:NSFileType] isEqualToString:NSFileTypeRegular] &&
+          [(NSNumber *)[fileAttributes objectForKey:NSFileSize] intValue] > 0 &&
           ![file hasSuffix:@".DS_Store"] &&
           ![file hasSuffix:@".analyzer"] &&
           ![file hasSuffix:@".plist"] &&
@@ -1018,7 +1021,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     return YES;
   } else {
     if (self.didCrashInLastSession) {
-      id strongDelegate = self.delegate;
+      id<BITCrashManagerDelegate> strongDelegate = self.delegate;
       if ([strongDelegate respondsToSelector:@selector(crashManagerWillCancelSendingCrashReport:)]) {
         [strongDelegate crashManagerWillCancelSendingCrashReport:self];
       }
@@ -1090,7 +1093,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
 #if !defined (HOCKEYSDK_CONFIGURATION_ReleaseCrashOnlyExtensions)
       
     } else if (self.crashManagerStatus != BITCrashManagerStatusAutoSend && notApprovedReportFilename) {
-      id strongDelegate = self.delegate;
+      id<BITCrashManagerDelegate> strongDelegate = self.delegate;
       if ([strongDelegate respondsToSelector:@selector(crashManagerWillShowSubmitCrashReportAlert:)]) {
         [strongDelegate crashManagerWillShowSubmitCrashReportAlert:self];
       }
@@ -1263,7 +1266,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     
     if (!didAppSwitchToBackgroundSafely) {
       BOOL considerReport = YES;
-      id strongDelegate = self.delegate;
+      id<BITCrashManagerDelegate> strongDelegate = self.delegate;
       if ([strongDelegate respondsToSelector:@selector(considerAppNotTerminatedCleanlyReportForCrashManager:)]) {
         considerReport = [strongDelegate considerAppNotTerminatedCleanlyReportForCrashManager:self];
       }
@@ -1278,7 +1281,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
   }
   
 #if !defined (HOCKEYSDK_CONFIGURATION_ReleaseCrashOnlyExtensions)
-  if ([BITHockeyHelper applicationState] != BITApplicationStateActive) {
+  if ([BITHockeyHelper applicationState] == BITApplicationStateActive) {
     [self appEnteredForeground];
   }
 #else
@@ -1612,7 +1615,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
   
   dispatch_async(dispatch_get_main_queue(), ^{
     self.sendingInProgress = NO;
-    id strongDelegate = self.delegate;
+    id<BITCrashManagerDelegate> strongDelegate = self.delegate;
     if (nil == theError) {
       if (nil == responseData || [responseData length] == 0) {
         theError = [NSError errorWithDomain:kBITCrashErrorDomain
@@ -1695,7 +1698,7 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
     
     [uploadTask resume];
   }
-  id strongDelegate = self.delegate;
+  id<BITCrashManagerDelegate> strongDelegate = self.delegate;
   if ([strongDelegate respondsToSelector:@selector(crashManagerWillSendCrashReport:)]) {
     [strongDelegate crashManagerWillSendCrashReport:self];
   }

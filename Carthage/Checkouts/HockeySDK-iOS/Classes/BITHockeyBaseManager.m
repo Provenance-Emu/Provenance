@@ -194,7 +194,7 @@
 
 - (UIViewController *)visibleWindowRootViewController {
   UIViewController *parentViewController = nil;
-  id strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
+  id<BITHockeyManagerDelegate> strongDelegate = [BITHockeyManager sharedHockeyManager].delegate;
   if ([strongDelegate respondsToSelector:@selector(viewControllerForHockeyManager:componentManager:)]) {
     parentViewController = [strongDelegate viewControllerForHockeyManager:[BITHockeyManager sharedHockeyManager] componentManager:self];
   }

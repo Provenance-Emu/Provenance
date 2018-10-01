@@ -127,7 +127,7 @@ public struct ActionControllerSettings {
           * A mask of options indicating how you want to perform the animations. Its default value is `UIViewAnimationOptions.CurveEaseOut`.
           * @see: animateWithDuration:delay:usingSpringWithDamping:initialSpringVelocity:options:animations:completion:
           */
-        public var options = UIViewAnimationOptions.curveEaseOut
+        public var options = UIView.AnimationOptions.curveEaseOut
     }
     
     /** Struct that contains properties to configure the animation when dismissing the action controller */
@@ -156,7 +156,7 @@ public struct ActionControllerSettings {
          * A mask of options indicating how you want to perform the animations. Its default value is `UIViewAnimationOptions.CurveEaseIn`.
          * @see: animateWithDuration:delay:usingSpringWithDamping:initialSpringVelocity:options:animations:completion:
          */
-        public var options = UIViewAnimationOptions.curveEaseIn
+        public var options = UIView.AnimationOptions.curveEaseIn
         /**
          * A float value that makes the action controller's to be animated until the bottomof the screen plus this value.
          */

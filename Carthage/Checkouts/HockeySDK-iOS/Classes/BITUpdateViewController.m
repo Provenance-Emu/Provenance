@@ -54,7 +54,6 @@
 @property (nonatomic) BOOL showAllVersions;
 @property (nonatomic, strong) BITAppStoreHeader *appStoreHeader;
 @property (nonatomic, strong) BITStoreButton *appStoreButton;
-@property (nonatomic, strong) id popOverController;
 @property (nonatomic, strong) NSMutableArray *cells;
 @property (nonatomic) BITEnvironment appEnvironment;
 
@@ -254,7 +253,6 @@
     self.title = BITHockeyLocalizedString(@"UpdateScreenTitle");
     
     self.cells = [[NSMutableArray alloc] initWithCapacity:5];
-    self.popOverController = nil;
   }
   return self;
 }
@@ -336,8 +334,6 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
   self.updateManager.currentHockeyViewController = nil;
-  //if the popover is still visible, dismiss it
-  [self.popOverController dismissPopoverAnimated:YES];
   [super viewWillDisappear:animated];
 }
 
@@ -473,17 +469,6 @@
 
   }
 }
-
-
-#pragma mark - Rotation
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation) __unused interfaceOrientation duration:(NSTimeInterval) __unused duration {
-  // update all cells
-  [self.cells makeObjectsPerformSelector:@selector(addWebView)];
-}
-#pragma clang diagnostic pop
 
 #pragma mark - PSAppStoreHeaderDelegate
 

@@ -70,7 +70,7 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
    */
   BITFeedbackObservationNone = 0,
   /**
-   *  Triggers when the user takes a screenshot. This will grab the latest image from the camera roll. Requires iOS 7 or later!
+   *  Triggers when the user takes a screenshot. This will grab the latest image from the camera roll.
    */
   BITFeedbackObservationModeOnScreenshot = 1,
   /**

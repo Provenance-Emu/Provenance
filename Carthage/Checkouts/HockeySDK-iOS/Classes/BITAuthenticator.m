@@ -52,9 +52,6 @@ static NSString *const kBITAuthenticatorAuthTokenKey = @"BITAuthenticatorAuthTok
 static NSString *const kBITAuthenticatorAuthTokenTypeKey = @"BITAuthenticatorAuthTokenTypeKey";
 
 typedef unsigned int bit_uint32;
-static unsigned char kBITPNGHeader[8] = {137, 80, 78, 71, 13, 10, 26, 10};
-static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
-
 
 @interface BITAuthenticator()
 
@@ -158,7 +155,6 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
     return;
   }
   
-  [self processFullSizeImage];
   if (self.identified) {
     if (completion) { completion(YES, nil); }
     return;
@@ -202,7 +198,7 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
       viewController.tableViewTitle = BITHockeyLocalizedString(@"HockeyAuthenticationViewControllerDataEmailDescription");
       break;
   }
-  id strongDelegate = self.delegate;
+  id<BITAuthenticatorDelegate> strongDelegate = self.delegate;
   if ([strongDelegate respondsToSelector:@selector(authenticator:willShowAuthenticationController:)]) {
     [strongDelegate authenticator:self willShowAuthenticationController:viewController];
   }
@@ -370,7 +366,7 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
     }
     return NO;
   }
-  if (![jsonObject isKindOfClass:[NSDictionary class]]) {
+  if (![(NSObject *)jsonObject isKindOfClass:[NSDictionary class]]) {
     if (error) {
       *error = [NSError errorWithDomain:kBITAuthenticatorErrorDomain
                                    code:BITAuthenticatorAPIServerReturnedInvalidResponse
@@ -587,7 +583,7 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
                                                   options:0
                                                     error:&jsonParseError];
   //no json or unexpected json
-  if (nil == jsonObject || ![jsonObject isKindOfClass:[NSDictionary class]]) {
+  if (nil == jsonObject || ![(NSObject *)jsonObject isKindOfClass:[NSDictionary class]]) {
     if (error) {
       NSDictionary *userInfo = @{NSLocalizedDescriptionKey:BITHockeyLocalizedString(@"HockeyAuthenticationFailedAuthenticate")};
       if (jsonParseError) {
@@ -718,7 +714,7 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
   //there should actually only one
   static NSString *const UDIDQuerySpecifier = @"udid";
   for (NSString *queryComponents in [query componentsSeparatedByString:@"&"]) {
-    NSArray *parameterComponents = [queryComponents componentsSeparatedByString:@"="];
+    NSArray<NSString *> *parameterComponents = [queryComponents componentsSeparatedByString:@"="];
     if (2 == parameterComponents.count && [parameterComponents[0] isEqualToString:UDIDQuerySpecifier]) {
       udid = parameterComponents[1];
       break;
@@ -733,7 +729,7 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
   static NSString *const EmailQuerySpecifier = @"email";
   static NSString *const IUIDQuerySpecifier = @"iuid";
   for (NSString *queryComponents in [query componentsSeparatedByString:@"&"]) {
-    NSArray *parameterComponents = [queryComponents componentsSeparatedByString:@"="];
+    NSArray<NSString *> *parameterComponents = [queryComponents componentsSeparatedByString:@"="];
     if (email && 2 == parameterComponents.count && [parameterComponents[0] isEqualToString:EmailQuerySpecifier]) {
       *email = parameterComponents[1];
     } else if (iuid && 2 == parameterComponents.count && [parameterComponents[0] isEqualToString:IUIDQuerySpecifier]) {
@@ -764,93 +760,6 @@ static unsigned char kBITPNGEndChunk[4] = {0x49, 0x45, 0x4e, 0x44};
   //cleanup values stored from 3.5 Beta1..Beta3
   [self removeKeyFromKeychain:kBITAuthenticatorAuthTokenKey];
   [self removeKeyFromKeychain:kBITAuthenticatorAuthTokenTypeKey];
-}
-
-- (void)processFullSizeImage {
-#ifdef BIT_INTERNAL_DEBUG
-  NSString* path = [[NSBundle mainBundle] pathForResource:@"iTunesArtwork" ofType:@"png"];
-#else
-  NSString *path = [[[NSBundle mainBundle] bundlePath] stringByAppendingString:@"/../iTunesArtwork"];
-#endif
-  
-  struct stat fs;
-  int fd = open([path UTF8String], O_RDONLY, 0);
-  if (fstat(fd, &fs) < 0) {
-    // File not found
-    close(fd);
-    return;
-  }
-  
-  BITHockeyLogDebug(@"Processing full size image for possible authentication");
-  
-  unsigned char *buffer, *source;
-  source = (unsigned char *)malloc((unsigned long)fs.st_size);
-  if (read(fd, source, (unsigned long)fs.st_size) != fs.st_size) {
-    close(fd);
-    // Couldn't read file
-    free(source);
-    return;
-  }
-  
-  if ((fs.st_size < 20) || (memcmp(source, kBITPNGHeader, 8))) {
-    // Not a PNG
-    free(source);
-    return;
-  }
-  
-  buffer = source + 8;
-  
-  NSString *result = nil;
-  bit_uint32 length;
-  unsigned char *name;
-  unsigned char *data;
-  int chunk_index = 0;
-  long long bytes_left = fs.st_size - 8;
-  do {
-    memcpy(&length, buffer, 4);
-    length = ntohl(length);
-    
-    buffer += 4;
-    name = (unsigned char *)malloc(5);
-    name[4] = 0;
-    memcpy(name, buffer, 4);
-    
-    buffer += 4;
-    data = (unsigned char *)malloc(length + 1);
-    
-    if (bytes_left >= length) {
-      memcpy(data, buffer, length);
-      
-      buffer += length;
-      buffer += 4;
-      if (!strcmp((const char *)name, "tEXt")) {
-        data[length] = 0;
-        NSString *key = [NSString stringWithCString:(char *)data encoding:NSUTF8StringEncoding];
-        
-        if ([key isEqualToString:@"Data"]) {
-          result = [NSString stringWithCString:(char *)(data + key.length + 1) encoding:NSUTF8StringEncoding];
-        }
-      }
-      
-      if (!memcmp(name, kBITPNGEndChunk, 4)) {
-        chunk_index = 128;
-      }
-    }
-    
-    free(data);
-    free(name);
-    
-    bytes_left -= (length + 3 * 4);
-  } while ((chunk_index++ < 128) && (bytes_left > 8));
-  
-  free(source);
-  
-  if (result) {
-    BITHockeyLogDebug(@"Authenticating using full size image information: %@", result);
-    [self handleOpenURL:[NSURL URLWithString:result] sourceApplication:nil annotation:nil];
-  } else {
-    BITHockeyLogDebug(@"No authentication information found");
-  }
 }
 
 #pragma mark - NSNotification

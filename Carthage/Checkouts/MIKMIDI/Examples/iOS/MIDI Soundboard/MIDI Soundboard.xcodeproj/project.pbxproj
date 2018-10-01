@@ -1,0 +1,524 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9D6BF5AC175C3A0D00DF6B15 /* ORSSplitViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */; };
+		9D6BF5AF175C3C9900DF6B15 /* ORSSoundboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */; };
+		9D6BF5E2175EA60E00DF6B15 /* Black.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5E1175EA60E00DF6B15 /* Black.png */; };
+		9D6BF5E5175EA67B00DF6B15 /* ORSPianoButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5E4175EA67B00DF6B15 /* ORSPianoButton.m */; };
+		9D6BF5E7175EA6F300DF6B15 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */; };
+		9D6BF603175EAFE500DF6B15 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */; };
+		9D7B3BC81CFF7B5000822CE3 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D7B3BC51CFF7B4600822CE3 /* MIKMIDI.framework */; };
+		9D7B3BC91CFF7B5000822CE3 /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D7B3BC51CFF7B4600822CE3 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9D7B3BCE1CFF7E8D00822CE3 /* Grand Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 9D7B3BCD1CFF7E8D00822CE3 /* Grand Piano.sf2 */; };
+		9D8E68B3175C1A6A006546F6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B2175C1A6A006546F6 /* UIKit.framework */; };
+		9D8E68B5175C1A6A006546F6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B4175C1A6A006546F6 /* Foundation.framework */; };
+		9D8E68B7175C1A6A006546F6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B6175C1A6A006546F6 /* CoreGraphics.framework */; };
+		9D8E68DF175C1AAE006546F6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E68D9175C1AAE006546F6 /* main.m */; };
+		9D8E68E0175C1AAE006546F6 /* ORSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */; };
+		9D8E68EE175C1AB3006546F6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68E3175C1AB3006546F6 /* InfoPlist.strings */; };
+		9D8E68EF175C1AB3006546F6 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68E5175C1AB3006546F6 /* MainStoryboard_iPad.storyboard */; };
+		9D8E68F0175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68E7175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard */; };
+		9D8E68F1175C1AB3006546F6 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68EA175C1AB3006546F6 /* Default-568h@2x.png */; };
+		9D8E68F2175C1AB3006546F6 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68EB175C1AB3006546F6 /* Default.png */; };
+		9D8E68F3175C1AB3006546F6 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68EC175C1AB3006546F6 /* Default@2x.png */; };
+		9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */; };
+		9D8E693F175C1D2F006546F6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */; };
+		9D8E6948175EBBC4006546F6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E6947175EBBC4006546F6 /* QuartzCore.framework */; };
+		9DB1D24519256855004FD5AF /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB1D24319256840004FD5AF /* libxml2.2.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9D7B3BC21CFF7B4600822CE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D74EEA517A7129300BEE89F;
+			remoteInfo = MIKMIDI;
+		};
+		9D7B3BC41CFF7B4600822CE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DAF8B061A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
+		9D7B3BC61CFF7B4600822CE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D4DF13A1AAB57430065F004;
+			remoteInfo = "MIKMIDI Tests";
+		};
+		9D7B3BCA1CFF7B5000822CE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9DAF8B051A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9D7B3BCC1CFF7B5000822CE3 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9D7B3BC91CFF7B5000822CE3 /* MIKMIDI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9D6BF5AA175C3A0D00DF6B15 /* ORSSplitViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSSplitViewManager.h; sourceTree = "<group>"; };
+		9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSSplitViewManager.m; sourceTree = "<group>"; };
+		9D6BF5AD175C3C9900DF6B15 /* ORSSoundboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSSoundboardViewController.h; sourceTree = "<group>"; };
+		9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSSoundboardViewController.m; sourceTree = "<group>"; };
+		9D6BF5E1175EA60E00DF6B15 /* Black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Black.png; sourceTree = "<group>"; };
+		9D6BF5E3175EA67B00DF6B15 /* ORSPianoButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSPianoButton.h; sourceTree = "<group>"; };
+		9D6BF5E4175EA67B00DF6B15 /* ORSPianoButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSPianoButton.m; sourceTree = "<group>"; };
+		9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
+		9D7B3BCD1CFF7E8D00822CE3 /* Grand Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Grand Piano.sf2"; sourceTree = "<group>"; };
+		9D8E68AF175C1A6A006546F6 /* MIDI Soundboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Soundboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D8E68B2175C1A6A006546F6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		9D8E68B4175C1A6A006546F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		9D8E68B6175C1A6A006546F6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		9D8E68D9175C1AAE006546F6 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9D8E68DA175C1AAE006546F6 /* MIDI Soundboard-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIDI Soundboard-Prefix.pch"; sourceTree = "<group>"; };
+		9D8E68DB175C1AAE006546F6 /* ORSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSAppDelegate.h; sourceTree = "<group>"; };
+		9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSAppDelegate.m; sourceTree = "<group>"; };
+		9D8E68E4175C1AB3006546F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9D8E68E6175C1AB3006546F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		9D8E68E8175C1AB3006546F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		9D8E68EA175C1AB3006546F6 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		9D8E68EB175C1AB3006546F6 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		9D8E68EC175C1AB3006546F6 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		9D8E68ED175C1AB3006546F6 /* MIDI Soundboard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MIDI Soundboard-Info.plist"; sourceTree = "<group>"; };
+		9D8E6937175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSAvailableDevicesTableViewController.h; sourceTree = "<group>"; };
+		9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSAvailableDevicesTableViewController.m; sourceTree = "<group>"; };
+		9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
+		9D8E6947175EBBC4006546F6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		9DB1D24319256840004FD5AF /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9D8E68AC175C1A6A006546F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9DB1D24519256855004FD5AF /* libxml2.2.dylib in Frameworks */,
+				9D8E6948175EBBC4006546F6 /* QuartzCore.framework in Frameworks */,
+				9D6BF603175EAFE500DF6B15 /* AVFoundation.framework in Frameworks */,
+				9D6BF5E7175EA6F300DF6B15 /* AudioToolbox.framework in Frameworks */,
+				9D8E693F175C1D2F006546F6 /* CoreMIDI.framework in Frameworks */,
+				9D8E68B3175C1A6A006546F6 /* UIKit.framework in Frameworks */,
+				9D7B3BC81CFF7B5000822CE3 /* MIKMIDI.framework in Frameworks */,
+				9D8E68B5175C1A6A006546F6 /* Foundation.framework in Frameworks */,
+				9D8E68B7175C1A6A006546F6 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9D7B3BBD1CFF7B4600822CE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9D7B3BC31CFF7B4600822CE3 /* MIKMIDI.framework */,
+				9D7B3BC51CFF7B4600822CE3 /* MIKMIDI.framework */,
+				9D7B3BC71CFF7B4600822CE3 /* MIKMIDI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9D8E68A6175C1A6A006546F6 = {
+			isa = PBXGroup;
+			children = (
+				9D8E68D8175C1AAE006546F6 /* Sources */,
+				9D8E68E2175C1AB3006546F6 /* Resources */,
+				9D8E68B1175C1A6A006546F6 /* Frameworks */,
+				9D8E68B0175C1A6A006546F6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9D8E68B0175C1A6A006546F6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9D8E68AF175C1A6A006546F6 /* MIDI Soundboard.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9D8E68B1175C1A6A006546F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */,
+				9DB1D24319256840004FD5AF /* libxml2.2.dylib */,
+				9D8E6947175EBBC4006546F6 /* QuartzCore.framework */,
+				9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */,
+				9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */,
+				9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */,
+				9D8E68B2175C1A6A006546F6 /* UIKit.framework */,
+				9D8E68B4175C1A6A006546F6 /* Foundation.framework */,
+				9D8E68B6175C1A6A006546F6 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9D8E68D8175C1AAE006546F6 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9D8E68DB175C1AAE006546F6 /* ORSAppDelegate.h */,
+				9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */,
+				9D8E693A175C1CA7006546F6 /* Views */,
+				9D8E68F6175C1AD1006546F6 /* UI Controllers */,
+				9D8E68F7175C1AD6006546F6 /* Other Sources */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		9D8E68E2175C1AB3006546F6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9D8E68F5175C1ABA006546F6 /* Storyboards and XIBs */,
+				9D8E68E9175C1AB3006546F6 /* Images */,
+				9D7B3BCD1CFF7E8D00822CE3 /* Grand Piano.sf2 */,
+				9D8E68ED175C1AB3006546F6 /* MIDI Soundboard-Info.plist */,
+				9D8E68E3175C1AB3006546F6 /* InfoPlist.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		9D8E68E9175C1AB3006546F6 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BF5E1175EA60E00DF6B15 /* Black.png */,
+				9D8E68EA175C1AB3006546F6 /* Default-568h@2x.png */,
+				9D8E68EB175C1AB3006546F6 /* Default.png */,
+				9D8E68EC175C1AB3006546F6 /* Default@2x.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		9D8E68F5175C1ABA006546F6 /* Storyboards and XIBs */ = {
+			isa = PBXGroup;
+			children = (
+				9D8E68E5175C1AB3006546F6 /* MainStoryboard_iPad.storyboard */,
+				9D8E68E7175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard */,
+			);
+			name = "Storyboards and XIBs";
+			sourceTree = "<group>";
+		};
+		9D8E68F6175C1AD1006546F6 /* UI Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9D8E6937175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.h */,
+				9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */,
+				9D6BF5AD175C3C9900DF6B15 /* ORSSoundboardViewController.h */,
+				9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */,
+				9D6BF5AA175C3A0D00DF6B15 /* ORSSplitViewManager.h */,
+				9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */,
+			);
+			name = "UI Controllers";
+			sourceTree = "<group>";
+		};
+		9D8E68F7175C1AD6006546F6 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9D8E68D9175C1AAE006546F6 /* main.m */,
+				9D8E68DA175C1AAE006546F6 /* MIDI Soundboard-Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		9D8E693A175C1CA7006546F6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BF5E3175EA67B00DF6B15 /* ORSPianoButton.h */,
+				9D6BF5E4175EA67B00DF6B15 /* ORSPianoButton.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9D8E68AE175C1A6A006546F6 /* MIDI Soundboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D8E68D5175C1A6A006546F6 /* Build configuration list for PBXNativeTarget "MIDI Soundboard" */;
+			buildPhases = (
+				9D8E68AB175C1A6A006546F6 /* Sources */,
+				9D8E68AC175C1A6A006546F6 /* Frameworks */,
+				9D8E68AD175C1A6A006546F6 /* Resources */,
+				9D7B3BCC1CFF7B5000822CE3 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9D7B3BCB1CFF7B5000822CE3 /* PBXTargetDependency */,
+			);
+			name = "MIDI Soundboard";
+			productName = "MIDI Soundboard";
+			productReference = 9D8E68AF175C1A6A006546F6 /* MIDI Soundboard.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9D8E68A7175C1A6A006546F6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = MIK;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Mixed In Key";
+			};
+			buildConfigurationList = 9D8E68AA175C1A6A006546F6 /* Build configuration list for PBXProject "MIDI Soundboard" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9D8E68A6175C1A6A006546F6;
+			productRefGroup = 9D8E68B0175C1A6A006546F6 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9D7B3BBD1CFF7B4600822CE3 /* Products */;
+					ProjectRef = 9D7B3BBC1CFF7B4600822CE3 /* MIKMIDI.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				9D8E68AE175C1A6A006546F6 /* MIDI Soundboard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9D7B3BC31CFF7B4600822CE3 /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = 9D7B3BC21CFF7B4600822CE3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9D7B3BC51CFF7B4600822CE3 /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = 9D7B3BC41CFF7B4600822CE3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9D7B3BC71CFF7B4600822CE3 /* MIKMIDI Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "MIKMIDI Tests.xctest";
+			remoteRef = 9D7B3BC61CFF7B4600822CE3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9D8E68AD175C1A6A006546F6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D8E68EE175C1AB3006546F6 /* InfoPlist.strings in Resources */,
+				9D8E68EF175C1AB3006546F6 /* MainStoryboard_iPad.storyboard in Resources */,
+				9D8E68F0175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard in Resources */,
+				9D7B3BCE1CFF7E8D00822CE3 /* Grand Piano.sf2 in Resources */,
+				9D8E68F1175C1AB3006546F6 /* Default-568h@2x.png in Resources */,
+				9D8E68F2175C1AB3006546F6 /* Default.png in Resources */,
+				9D8E68F3175C1AB3006546F6 /* Default@2x.png in Resources */,
+				9D6BF5E2175EA60E00DF6B15 /* Black.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9D8E68AB175C1A6A006546F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D8E68DF175C1AAE006546F6 /* main.m in Sources */,
+				9D8E68E0175C1AAE006546F6 /* ORSAppDelegate.m in Sources */,
+				9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */,
+				9D6BF5AC175C3A0D00DF6B15 /* ORSSplitViewManager.m in Sources */,
+				9D6BF5AF175C3C9900DF6B15 /* ORSSoundboardViewController.m in Sources */,
+				9D6BF5E5175EA67B00DF6B15 /* ORSPianoButton.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9D7B3BCB1CFF7B5000822CE3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "MIKMIDI-iOS";
+			targetProxy = 9D7B3BCA1CFF7B5000822CE3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9D8E68E3175C1AB3006546F6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9D8E68E4175C1AB3006546F6 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		9D8E68E5175C1AB3006546F6 /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9D8E68E6175C1AB3006546F6 /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		9D8E68E7175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9D8E68E8175C1AB3006546F6 /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9D8E68D3175C1A6A006546F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9D8E68D4175C1A6A006546F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9D8E68D6175C1A6A006546F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Sources/MIDI Soundboard-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SDK_DIR)\"/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = "Resources/MIDI Soundboard-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.openreelsoftware.com.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		9D8E68D7175C1A6A006546F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Sources/MIDI Soundboard-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SDK_DIR)\"/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = "Resources/MIDI Soundboard-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.openreelsoftware.com.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9D8E68AA175C1A6A006546F6 /* Build configuration list for PBXProject "MIDI Soundboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D8E68D3175C1A6A006546F6 /* Debug */,
+				9D8E68D4175C1A6A006546F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D8E68D5175C1A6A006546F6 /* Build configuration list for PBXNativeTarget "MIDI Soundboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D8E68D6175C1A6A006546F6 /* Debug */,
+				9D8E68D7175C1A6A006546F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9D8E68A7175C1A6A006546F6 /* Project object */;
+}

@@ -50,7 +50,7 @@
  
  @see `[BITHockeyManager setDelegate:]`
  */
-@property (nonatomic, weak) id delegate;
+@property (nonatomic, weak) id<BITUpdateManagerDelegate> delegate;
 
 
 // is an update available?

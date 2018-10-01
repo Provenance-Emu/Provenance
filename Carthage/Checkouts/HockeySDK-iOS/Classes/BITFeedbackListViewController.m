@@ -364,34 +364,10 @@
   } else {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
   }
-  id strongDelegate = strongManager.delegate;
+  id<BITFeedbackManagerDelegate> strongDelegate = strongManager.delegate;
   if ([strongDelegate respondsToSelector:@selector(feedbackComposeViewController:didFinishWithResult:)]) {
     [strongDelegate feedbackComposeViewController:composeViewController didFinishWithResult:composeResult];
   }
-}
-
-
-#pragma mark - UIViewController Rotation
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-  self.numberOfSectionsBeforeRotation = [self numberOfSectionsInTableView:self.tableView];
-  self.numberOfMessagesBeforeRotation = [self.manager numberOfMessages];
-  [self.tableView reloadData];
-  [self.tableView beginUpdates];
-  [self.tableView endUpdates];
-  
-  self.numberOfSectionsBeforeRotation = -1;
-  self.numberOfMessagesBeforeRotation = -1;
-  [self.tableView reloadData];
-  
-  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-}
-#pragma clang diagnostic pop
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
-  return UIInterfaceOrientationMaskAll;
 }
 
 #pragma mark - Table view data source
@@ -672,45 +648,21 @@
   UIAlertController *linkAction = [UIAlertController alertControllerWithTitle:[url absoluteString]
                                                                       message:nil
                                                                preferredStyle:controllerStyle];
-  UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"HockeyFeedbackListLinkActionCancel")
-                                                         style:UIAlertActionStyleCancel
-                                                       handler:^(UIAlertAction __unused *action) {}];
-  [linkAction addAction:cancelAction];
-  UIAlertAction* openAction = [UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"HockeyFeedbackListLinkActionOpen")
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction __unused *action) {
-                                                       [[UIApplication sharedApplication] openURL:(NSURL*)[NSURL URLWithString:(NSString*)[url absoluteString]]];
-                                                     }];
-  [linkAction addAction:openAction];
-  UIAlertAction* copyAction = [UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"HockeyFeedbackListLinkActionCopy")
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction __unused *action) {
-                                                       UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-                                                       pasteboard.URL = [NSURL URLWithString:(NSString*)[url absoluteString]];
-                                                     }];
-  [linkAction addAction:copyAction];
+  [linkAction addAction:[UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"HockeyFeedbackListLinkActionCancel")
+                                                 style:UIAlertActionStyleCancel
+                                               handler:nil]];
+  [linkAction addAction:[UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"HockeyFeedbackListLinkActionOpen")
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction __unused *action) {
+                                                 [[UIApplication sharedApplication] openURL:url];
+                                               }]];
+  [linkAction addAction:[UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"HockeyFeedbackListLinkActionCopy")
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction __unused *action) {
+                                                 UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+                                                 pasteboard.URL = url;
+                                               }]];
   [self presentViewController:linkAction animated:YES completion:nil];
-}
-
-#pragma mark - UIActionSheetDelegate
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-  if (buttonIndex == actionSheet.cancelButtonIndex) {
-    return;
-  }
-  
-  if ([actionSheet tag] == 0) {
-    if (buttonIndex == [actionSheet destructiveButtonIndex]) {
-      [self deleteAllMessages];
-    }
-  } else {
-    if (buttonIndex == [actionSheet firstOtherButtonIndex]) {
-      [[UIApplication sharedApplication] openURL:(NSURL *)[NSURL URLWithString:actionSheet.title]];
-    } else {
-      UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-      pasteboard.URL = [NSURL URLWithString:actionSheet.title];
-    }
-  }
 }
 
 #pragma mark - ListViewCellDelegate
