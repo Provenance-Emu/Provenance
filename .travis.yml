@@ -41,11 +41,11 @@ before_install:
   - brew update
   - brew outdated swiftlint || brew upgrade swiftlint
   - brew outdated carthage || brew upgrade carthage
-  - brew install hudochenkov/sshpass/sshpass
+  # - brew install hudochenkov/sshpass/sshpass
   # - brew install blender/homebrew-tap/rome
   - bundle install
 before_script:
-  - set +x
+  # - set +x
   # - git remote set-url origin $REPO.git
   # - git config --global user.email "<org@email>"
   # - git config --global user.name "<org> (via TravisCI)"
