@@ -10215,7 +10215,6 @@
 					"-fwrapv",
 					"-fprefetch-loop-arrays",
 					"-fjump-tables",
-					"-fomit-frame-pointer",
 					"-ftree-vectorize",
 					"-DHAVE_MKDIR",
 					"-DMEDNAFEN_VERSION=\\\"1.21.1\\\"",
