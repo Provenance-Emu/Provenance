@@ -78,17 +78,17 @@ function runCarthageAndCopyResolved {
 
       echo "Setting up Carthage for platform $1 using fastlane"
 
-      local FASTLANE_BOOTSTRAP_CMD=$($FASTLANE_CMD carthage_bootstrap platform:$1 directory:"$SRCROOT")
+      local FASTLANE_BOOTSTRAP_CMD=$($FASTLANE_CMD carthage_bootstrap platform:$1 directory:"$SOURCEPATH")
       eval_cmd $FASTLANE_BOOTSTRAP_CMD
     elif carthage_installed; then
         echo "Setting up Carthage for platform $1"
-        carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
+        carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SOURCEPATH"
         carthage outdated --xcode-warnings
         # Example how to enable different command for different build styles.
         # ie; carthage build, will force a rebuild. Might be preferred for safety for ad-hoc and app store builds
         # if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ] || [ "${BUILD_STYLE}" == "App Store" ];
         # then
-        #   /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
+        #   /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SOURCEPATH"
         # fi
     else
       error_exit "Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
@@ -118,7 +118,7 @@ function carthageBuildPathNotExist {
   echo "carthageBuildPathNotExist $1"
   for i in $(echo $1 | tr "," "\n")
   do
-    local path="$SRCROOT/Carthage/Build/$i"
+    local path="$SOURCEPATH/Carthage/Build/$i"
     echo "Testing for $path"
     if [ ! -d $path ]; then
       echo "Fail: No path found for $i"

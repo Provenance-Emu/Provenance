@@ -549,6 +549,7 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
+				"$(SRCROOT)/SALCore/Carthage/.swift-version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -571,6 +572,7 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
+				"$(SRCROOT)/SALCore/Carthage/.swift-version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;

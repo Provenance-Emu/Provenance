@@ -49,7 +49,7 @@ fi
 
 if [ "$FASTLANE_CMD" != "" ]; then
     echo "Setting up Carthage for platform $PLATFORM using '$FASTLANE_CMD'"
-    BOOTSTRAP_CMD="$FASTLANE_CMD carthage_bootstrap platform:$PLATFORM directory:\"$SRCROOT\""
+    BOOTSTRAP_CMD="$FASTLANE_CMD carthage_bootstrap platform:$PLATFORM directory:\"$SOURCEPATH\""
     eval_command $BOOTSTRAP_CMD
 else
     echo "Failed to find a working fastlane command: '${FASTLANE_CMD}'"

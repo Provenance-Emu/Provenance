@@ -1,19 +1,22 @@
 #!/bin/bash
-set -e
+#set -e
 set -o pipefail
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/setup_env.sh"
 
-vpath="$SRCROOT/.version"
+ROOT=${1:-SRCROOT}
+
+vpath="$ROOT/.version"
 GIT_DATE=`git log -1 --format="%cd" --date="local"`
 
 if [[ -f "$vpath" ]] && [[ "$(< $vpath)" == "$GIT_DATE" ]]; then
     success_exit "$vpath matches $GIT_DATE"
 fi
 
-buildNumber="$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "${PROJECT_DIR}/${INFOPLIST_FILE}")"
+plistPath="${BUILT_PRODUCTS_DIR}/${INFOPLIST_FILE}"
+#buildNumber="$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" ${plistPath})"
 buildNumber=`git rev-list --count HEAD`
 
 GIT_TAG=`git describe --tags --always --dirty`
@@ -31,11 +34,11 @@ PLISTBUDDY="/usr/libexec/PlistBuddy"
 # fi
 
 # Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm
-$PLISTBUDDY -c "Set :CFBundleVersion $buildNumber" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+$PLISTBUDDY -c "Set :CFBundleVersion $buildNumber" "${plistPath}"
 
-$PLISTBUDDY -c "Set :GitBranch $GIT_BRANCH" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
-$PLISTBUDDY -c "Set :GitDate $GIT_DATE" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
-$PLISTBUDDY -c "Set :GitTag $GIT_TAG" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+$PLISTBUDDY -c "Set :GitBranch $GIT_BRANCH" "${plistPath}"
+$PLISTBUDDY -c "Set :GitDate $GIT_DATE" "${plistPath}"
+$PLISTBUDDY -c "Set :GitTag $GIT_TAG" "${plistPath}"
 
 # Set Git SHA
 revision=$(git rev-parse --short HEAD)
@@ -46,6 +49,9 @@ $PLISTBUDDY -c "Set :Revision $revision" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH
 
 echo "Updated app plist with git data."
 echo "TAG: ${GIT_TAG}, DATE: ${GIT_DATE}, BRANCH: ${GIT_BRANCH}, REVISION: $revision"
+echo "Plist path: ${}"
 
 # Store the date for next run
 echo "$GIT_DATE" > "$vpath"
+
+success_exit "Finished setting build number"
