@@ -174,6 +174,12 @@ static void mednafen_init(MednafenGameCore* current)
     MDFNI_SetSetting("psx.bios_jp", [[[biosPath stringByAppendingPathComponent:@"scph5500"] stringByAppendingPathExtension:@"bin"] UTF8String]); // JP SCPH-5500 BIOS
     MDFNI_SetSetting("psx.bios_na", [[[biosPath stringByAppendingPathComponent:@"scph5501"] stringByAppendingPathExtension:@"bin"] UTF8String]); // NA SCPH-5501 BIOS
     MDFNI_SetSetting("psx.bios_eu", [[[biosPath stringByAppendingPathComponent:@"scph5502"] stringByAppendingPathExtension:@"bin"] UTF8String]); // EU SCPH-5502 BIOS
+    
+    NSString *gbaBIOSPath = [[biosPath stringByAppendingPathComponent:@"GBA"] stringByAppendingPathExtension:@"BIOS"];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gbaBIOSPath]) {
+        MDFNI_SetSetting("gba.bios", [[[biosPath stringByAppendingPathComponent:@"GBA"] stringByAppendingPathExtension:@"BIOS"] UTF8String]); //
+    }
 
     MDFNI_SetSetting("filesys.path_sav", [batterySavesDirectory UTF8String]); // Memcards
 
