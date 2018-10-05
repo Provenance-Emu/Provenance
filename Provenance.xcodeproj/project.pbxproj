@@ -350,6 +350,7 @@
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
+		B3F43DD12168146000CDD40A /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -413,13 +414,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
-		};
-		B38D8FF721573FAA00F7D25A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B38E25F421573BC400355F53;
-			remoteInfo = "Carthage Bootstrap-tvOS";
 		};
 		B38D8FF921573FC600F7D25A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -904,6 +898,7 @@
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
 				B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */,
+				B3F43DD12168146000CDD40A /* HockeySDK.framework in Frameworks */,
 				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
@@ -1809,7 +1804,6 @@
 			);
 			dependencies = (
 				B3B29D4A2156184A00903290 /* PBXTargetDependency */,
-				B38D8FF821573FAA00F7D25A /* PBXTargetDependency */,
 			);
 			name = TopShelf;
 			productName = TopShelf;
@@ -2465,11 +2459,6 @@
 			isa = PBXTargetDependency;
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
-		};
-		B38D8FF821573FAA00F7D25A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */;
-			targetProxy = B38D8FF721573FAA00F7D25A /* PBXContainerItemProxy */;
 		};
 		B38D8FFA21573FC600F7D25A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

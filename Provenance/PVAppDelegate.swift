@@ -281,11 +281,13 @@ extension PVAppDelegate {
 		let masterBranch = kGITBranch.lowercased() == "master"
         let developBranch = kGITBranch.lowercased() == "develop"
         let masterOrDevelopBranch = masterBranch || developBranch
-       
+
+        #if os(iOS)
         BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
+        BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
+        #endif
         
 		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch
-		BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
         
         if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
             BITHockeyManager.shared().isUpdateManagerDisabled = true
