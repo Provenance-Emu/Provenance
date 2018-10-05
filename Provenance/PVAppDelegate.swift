@@ -27,6 +27,8 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
+        setDefaultsFromSettingsBundle();
+        
 		#if targetEnvironment(simulator)
 		#else
 		_initHockeyApp()
@@ -271,16 +273,24 @@ extension PVAppDelegate {
 		#else
 		BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
 		#endif
+        
 		#if DEBUG
 		BITHockeyManager.shared().isMetricsManagerDisabled = true
 		#endif
 
 		let masterBranch = kGITBranch.lowercased() == "master"
+        let developBranch = kGITBranch.lowercased() == "develop"
+        let masterOrDevelopBranch = masterBranch || developBranch
+       
+        BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
+        
 		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch
-		#if os(iOS)
 		BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
-		#endif
-
+        
+        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
+            BITHockeyManager.shared().isUpdateManagerDisabled = true
+        }
+		
 		BITHockeyManager.shared().logLevel = BITLogLevel.warning
 		BITHockeyManager.shared().start()
 		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
@@ -323,6 +333,29 @@ extension PVAppDelegate {
 		controller!.present(_logViewController!, animated: true, completion: nil)
 	}
 	#endif
+    
+    func setDefaultsFromSettingsBundle() {
+        //Read PreferenceSpecifiers from Root.plist in Settings.Bundle
+        if let settingsURL = Bundle.main.url(forResource: "Root", withExtension: "plist", subdirectory: "Settings.bundle"),
+            let settingsPlist = NSDictionary(contentsOf: settingsURL),
+            let preferences = settingsPlist["PreferenceSpecifiers"] as? [NSDictionary] {
+            
+            for prefSpecification in preferences {
+                
+                if let key = prefSpecification["Key"] as? String, let value = prefSpecification["DefaultValue"] {
+                    
+                    //If key doesn't exists in userDefaults then register it, else keep original value
+                    if UserDefaults.standard.value(forKey: key) == nil {
+                        
+                        UserDefaults.standard.set(value, forKey: key)
+                        ILOG("registerDefaultsFromSettingsBundle: Set following to UserDefaults - (key: \(key), value: \(value), type: \(type(of: value)))")
+                    }
+                }
+            }
+        } else {
+            ELOG("registerDefaultsFromSettingsBundle: Could not find Settings.bundle")
+        }
+    }
 }
 
 extension PVAppDelegate : BITHockeyManagerDelegate {

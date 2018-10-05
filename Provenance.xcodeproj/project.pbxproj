@@ -348,6 +348,8 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
+		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -802,6 +804,7 @@
 		B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogViewController.m; sourceTree = "<group>"; };
 		B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PVLogViewController.xib; sourceTree = "<group>"; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
+		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
 		B3F64ECE205CD1F100C273C7 /* JSButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSButton.swift; sourceTree = "<group>"; };
 		B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVButtonGroupOverlayView.swift; sourceTree = "<group>"; };
@@ -1142,6 +1145,7 @@
 			isa = PBXGroup;
 			children = (
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
+				B3F43DCE2168075200CDD40A /* Settings.bundle */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1908,6 +1912,7 @@
 				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
+				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
 				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
 				B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */,
@@ -1929,6 +1934,7 @@
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				1AD481C11BA350A400FDA50A /* Provenance.storyboard in Resources */,
+				B3F43DD02168075200CDD40A /* Settings.bundle in Resources */,
 				DFCD6EC0203762AF00719289 /* shaders in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
