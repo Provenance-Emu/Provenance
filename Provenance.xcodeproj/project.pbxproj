@@ -2207,7 +2207,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Spotlight\n";
+			shellScript = ". Scripts/set_bundle_build_number.sh TopShelf\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
