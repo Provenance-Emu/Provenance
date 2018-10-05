@@ -122,8 +122,26 @@ static __weak PVGBAEmulatorCore *_current;
     // Check if BIOS file even exists
     NSString *romFolder = [path stringByDeletingLastPathComponent];
     NSString *biosPath = [self.BIOSPath stringByAppendingPathComponent:@"GBA.BIOS"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:biosPath]) {
-        ILOG(@"No BIOS found at %@", biosPath);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:biosPath]) {
+        ILOG(@"BIOS found at %@. Will use.", biosPath);
+        _useBIOS = YES;
+    } else {
+        if (_useBIOS) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: @"vba-over.ini states this ROM requires BIOS but none found at: %@.\nPlease install this bios.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
+                                       };
+            
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                                userInfo:userInfo];
+            
+            *error = newError;
+            
+            return NO;
+        }
+        
         _useBIOS = NO;
     }
     
