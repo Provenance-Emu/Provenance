@@ -38,7 +38,7 @@ SOURCEPATH=${2:-$SRCROOT}
   lockfile_waithold
 
   # Check for xcodebuild. Alert user if missing
-  if which xcodebuild > /dev/null; then
+  if [ -x "$(command -v xcodebuild)" ]; then
       echo "Has XCode command line tools"
   else
     echo "No XCode command line tools found. Prompting to install"

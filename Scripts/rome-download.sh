@@ -10,7 +10,7 @@ lockfile_waithold "rome-download"
 SWIFT_VERSION=`swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d "()" | tr " " "-"`
 echo "Swift version: $SWIFT_VERSION"
 
-if which rome > /dev/null; then
+if [ -x "$(command -v rome)" ]; then
   echo "Downloading $PLATFORM ..."
   carthage update --no-build --platform $PLATFORM && rome download --platform $PLATFORM --cache-prefix $SWIFT_VERSION
   echo "Done."
