@@ -1588,6 +1588,21 @@
 		<string>com.provenance.gba</string>
 		<key>PVDatabaseID</key>
 		<string>20</string>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>Game Boy Advance BIOS</string>
+				<key>MD5</key>
+				<string>a860e8c0b6d573d191e4ec7db1b1e4f6</string>
+				<key>Name</key>
+				<string>GBA.BIOS</string>
+				<key>Size</key>
+				<integer>16384</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>gba</string>

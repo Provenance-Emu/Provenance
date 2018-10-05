@@ -119,13 +119,24 @@ static __weak PVGBAEmulatorCore *_current;
     // Load per-game settings from vba-over.ini
     [self loadOverrides:[NSString stringWithFormat:@"%s", gameID]];
 
+    // Check if BIOS file even exists
+    NSString *romFolder = [path stringByDeletingLastPathComponent];
+    NSString *biosPath = [self.BIOSPath stringByAppendingPathComponent:@"GBA.BIOS"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:biosPath]) {
+        ILOG(@"No BIOS found at %@", biosPath);
+        _useBIOS = NO;
+    }
+    
     // Apply settings
     rtcEnable(_enableRTC);
+    useBios = _useBIOS;
     mirroringEnable = _enableMirroring;
     doMirroring(mirroringEnable);
     cpuSaveType = _cpuSaveType;
-    if(_flashSize == 0x10000 || _flashSize == 0x20000)
+    
+    if(_flashSize == 0x10000 || _flashSize == 0x20000) {
         flashSetSize(_flashSize);
+    }
 
     soundInit();
     soundSetSampleRate(32768); // 44100 chirps
@@ -134,7 +145,7 @@ static __weak PVGBAEmulatorCore *_current;
 
     soundReset();
 
-    CPUInit(0, false);
+    CPUInit(_useBIOS ? biosPath.UTF8String : 0, _useBIOS);
     CPUReset();
 
     // Load battery save or migrate old one

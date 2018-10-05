@@ -214,6 +214,7 @@
 					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
+					<string>bios</string>
 				</array>
 			</dict>
 		</dict>
@@ -283,6 +284,7 @@
 					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
+					<string>bios</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>

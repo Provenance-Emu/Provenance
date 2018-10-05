@@ -6,9 +6,9 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/setup_env.sh"
 
-ROOT=${1:-SRCROOT}
+ROOT=${1:-$SRCROOT}
 
-vpath="$ROOT/.version"
+vpath="${ROOT}/.version"
 GIT_DATE=`git log -1 --format="%cd" --date="local"`
 
 if [[ -f "$vpath" ]] && [[ "$(< $vpath)" == "$GIT_DATE" ]]; then
@@ -25,6 +25,9 @@ GIT_BRANCH=`git branch | grep \* | cut -d ' ' -f2-`
 
 PLISTBUDDY="/usr/libexec/PlistBuddy"
 
+# plist_buddy_installed() {
+#   [-x "$(command -v "$PLISTBUDDY")"]
+# }
 # plist_buddy_installed() {
 #   [-x "$(command -v "$PLISTBUDDY")"]
 # }
@@ -45,13 +48,14 @@ revision=$(git rev-parse --short HEAD)
 
 #$PLISTBUDDY -c "Set :Revision $revision" "${PROJECT_DIR}/${INFOPLIST_FILE}"
 # Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm
-$PLISTBUDDY -c "Set :Revision $revision" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+$PLISTBUDDY -c "Set :Revision $revision" "${plistPath}"
 
 echo "Updated app plist with git data."
 echo "TAG: ${GIT_TAG}, DATE: ${GIT_DATE}, BRANCH: ${GIT_BRANCH}, REVISION: $revision"
-echo "Plist path: ${}"
+echo "Plist path: ${plistPath}"
 
 # Store the date for next run
-echo "$GIT_DATE" > "$vpath"
+echo "Storing $GIT_DATE to ${vpath}"
+echo "$GIT_DATE" > "${vpath}"
 
 success_exit "Finished setting build number"
