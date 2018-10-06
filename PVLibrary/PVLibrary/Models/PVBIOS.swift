@@ -34,6 +34,59 @@ public final class PVBIOS: Object, PVFiled {
     override public static func primaryKey() -> String? {
         return "expectedFilename"
     }
+    
+    public struct Status {
+      
+        public enum Mismatch {
+            case md5(expected: String, actual: String)
+            case filename(expected: String, actual: String)
+            case size(expected: Int, actual: Int)
+        }
+        
+        public enum State {
+            case missing
+            case mismatch([Mismatch])
+            case match
+        }
+        
+        let bios : PVBIOS
+        
+        let available : Bool
+        let required : Bool
+        let state : State
+        
+        init(withBios bios : PVBIOS) {
+            self.bios = bios
+            
+            available = !(bios.file?.missing ?? true)
+            if available {
+                let md5Match = bios.file?.md5 == bios.expectedMD5
+                let sizeMatch = bios.file?.size == UInt64(bios.expectedSize)
+                let filenameMatch = bios.file?.fileName == bios.expectedFilename
+                
+                var misses = [Mismatch]()
+                if !md5Match {
+                    misses.append(.md5(expected: bios.expectedMD5, actual: bios.file?.md5 ?? "0"))
+                }
+                if !sizeMatch {
+                    misses.append(.md5(expected: bios.expectedSize, actual: bios.file?.size ?? "0"))
+                }
+                if !md5Match {
+                    misses.append(.md5(expected: bios.expectedMD5, actual: bios.file?.md5 ?? "0"))
+                }
+            } else {
+                state = .missing
+            }
+        }
+    }
+    
+    var status : Status {
+        return Status(withBios: self)
+    }
+}
+
+public class BiosFile : PVFile {
+    
 }
 
 public extension PVBIOS {
