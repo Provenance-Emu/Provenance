@@ -244,7 +244,7 @@ brew_update() {
     brew update
     brew outdated swiftlint || brew upgrade swiftlint
     brew outdated carthage || brew upgrade carthage
-    rome_install
+    #rome_install
   else
     echo "Homebrew not installed. Skipping update."
   fi
