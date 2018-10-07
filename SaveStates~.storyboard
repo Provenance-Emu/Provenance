@@ -381,6 +381,22 @@
             </objects>
             <point key="canvasLocation" x="1244" y="-1380"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="MPv-df-kCi">
+            <objects>
+                <navigationController storyboardIdentifier="PVSaveStatesViewControllerNav" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ahK-Fu-xig" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NKL-PB-2EA">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="145"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="i2k-XG-ULw" kind="relationship" relationship="rootViewController" id="C3y-Se-fMX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QSH-qc-oXC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-473" y="2177"/>
+        </scene>
         <!--Game Library View Controller-->
         <scene sceneID="Cw2-p7-hai">
             <objects>
@@ -474,6 +490,75 @@
             </objects>
             <point key="canvasLocation" x="4561" y="-3999"/>
         </scene>
+        <!--Save States View Controller-->
+        <scene sceneID="7UN-gu-BcD">
+            <objects>
+                <collectionViewController storyboardIdentifier="PVSaveStatesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="i2k-XG-ULw" customClass="PVSaveStatesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="ct2-kB-n76">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="30" id="e9y-lL-Q4u">
+                            <size key="itemSize" width="380" height="380"/>
+                            <size key="headerReferenceSize" width="50" height="100"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="60" minY="0.0" maxX="60" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells/>
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateHeader" id="cAl-KV-5M4" customClass="PVSaveStateHeaderView" customModule="Provenance" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
+                            <subviews>
+                                <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ekz-Vf-1bD">
+                                    <rect key="frame" x="98" y="-14" width="1724" height="128"/>
+                                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="XhE-yU-eJ9">
+                                        <rect key="frame" x="0.0" y="0.0" width="1724" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save States" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ebA-9N-VrK">
+                                                <rect key="frame" x="8" y="14" width="1708" height="100"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                                <color key="shadowColor" white="0.0" alpha="0.52696917808219179" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="ebA-9N-VrK" secondAttribute="trailing" constant="8" id="GhI-pA-96Y"/>
+                                            <constraint firstAttribute="bottom" secondItem="ebA-9N-VrK" secondAttribute="bottom" constant="14" id="NNS-Ny-Q90"/>
+                                            <constraint firstItem="ebA-9N-VrK" firstAttribute="leading" secondItem="XhE-yU-eJ9" secondAttribute="leading" constant="8" id="lV1-Tn-q6C"/>
+                                            <constraint firstItem="ebA-9N-VrK" firstAttribute="top" secondItem="XhE-yU-eJ9" secondAttribute="top" constant="14" id="qwJ-Tm-ffc"/>
+                                        </constraints>
+                                    </view>
+                                    <blurEffect style="dark"/>
+                                </visualEffectView>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="ekz-Vf-1bD" secondAttribute="trailing" constant="98" id="5ts-w8-8qz"/>
+                                <constraint firstItem="ekz-Vf-1bD" firstAttribute="top" secondItem="cAl-KV-5M4" secondAttribute="top" constant="-14" id="Ccj-Zj-Uex"/>
+                                <constraint firstItem="ekz-Vf-1bD" firstAttribute="leading" secondItem="cAl-KV-5M4" secondAttribute="leading" constant="98" id="MVZ-Y1-mRY"/>
+                                <constraint firstAttribute="bottom" secondItem="ekz-Vf-1bD" secondAttribute="bottom" constant="-14" id="U2Y-rv-CEc"/>
+                            </constraints>
+                            <connections>
+                                <outlet property="label" destination="ebA-9N-VrK" id="lbb-9x-K03"/>
+                            </connections>
+                        </collectionReusableView>
+                        <connections>
+                            <outlet property="dataSource" destination="i2k-XG-ULw" id="pJR-LF-TOj"/>
+                            <outlet property="delegate" destination="i2k-XG-ULw" id="0Jw-Rw-ONY"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="Lrd-5a-Nlm">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="gMQ-Qk-3D3">
+                            <connections>
+                                <action selector="newSaveState:" destination="i2k-XG-ULw" id="ISA-DD-nQ6"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qZG-B7-KjD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1837" y="2177"/>
+        </scene>
         <!--Library-->
         <scene sceneID="7uv-N8-CjJ">
             <objects>
@@ -566,22 +651,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JgS-Ga-qZI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6408" y="36"/>
-        </scene>
-        <!--PVSaveStatesViewController-->
-        <scene sceneID="qke-IS-xQO">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="PVSaveStatesViewController" storyboardName="SaveStates" referencedIdentifier="PVSaveStatesViewController" id="7sP-ZA-gN2" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bHU-Ys-55q" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1837" y="2177"/>
-        </scene>
-        <!--PVSaveStatesViewControllerNav-->
-        <scene sceneID="poc-QP-QC5">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="PVSaveStatesViewControllerNav" storyboardName="SaveStates" referencedIdentifier="PVSaveStatesViewControllerNav" id="RrR-hd-qaC" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bBW-yz-UcH" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-473" y="2177"/>
         </scene>
     </scenes>
     <resources>

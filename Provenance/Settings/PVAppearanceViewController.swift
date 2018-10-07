@@ -60,7 +60,7 @@ class PVAppearanceViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Appearance"
+        return "Game Library Appearance"
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -77,7 +77,7 @@ class PVAppearanceViewController: UITableViewController {
         }
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-                cell?.textLabel?.text = "Show Game Titles"
+                cell?.textLabel?.text = "Show game Titles"
 #if os(tvOS)
                 cell?.detailTextLabel?.text = PVSettingsModel.shared.showGameTitles ? "On" : "Off"
 #else

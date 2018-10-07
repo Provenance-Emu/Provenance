@@ -1705,7 +1705,12 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
-				"$(SRCROOT)/SALCore/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/Build/tvOS/ZipArchive.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/SQLIte.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/ZIPFoundation.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -1728,7 +1733,12 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
-				"$(SRCROOT)/SALCore/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SQLIte.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;

@@ -83,7 +83,7 @@ public final class PVBIOS: Object, PVFiled {
         }
     }
     
-    var status : Status {
+    public var status : Status {
         return Status(withBios: self)
     }
 }

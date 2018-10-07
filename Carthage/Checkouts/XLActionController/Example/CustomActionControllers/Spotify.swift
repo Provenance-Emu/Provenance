@@ -126,7 +126,7 @@ open class SpotifyHeaderView: UICollectionReusableView {
         
         let views = [ "ico": imageView, "title": title, "artist": artist, "separator": separator ]
         let metrics = [ "icow": 54, "icoh": 54 ]
-        let options = NSLayoutFormatOptions()
+        let options = NSLayoutConstraint.FormatOptions()
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[ico(icow)]-10-[title]-15-|", options: options, metrics: metrics, views: views))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[separator]|", options: options, metrics: metrics, views: views))

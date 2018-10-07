@@ -75,11 +75,11 @@ open class TwitterActionControllerHeader: UICollectionReusableView {
         super.init(frame: frame)
         backgroundColor = .white
         addSubview(label)
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["label": label]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[label]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["label": label]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: ["label": label]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[label]|", options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: ["label": label]))
         addSubview(bottomLine)
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[line(1)]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["line": bottomLine]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[line]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["line": bottomLine]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[line(1)]|", options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: ["line": bottomLine]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[line]|", options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: ["line": bottomLine]))
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -127,7 +127,7 @@ open class TwitterActionController: ActionController<TwitterCell, ActionData, Tw
 
         collectionView.clipsToBounds = false
         collectionView.addSubview(hideBottomSpaceView)
-        collectionView.sendSubview(toBack: hideBottomSpaceView)
+        collectionView.sendSubviewToBack(hideBottomSpaceView)
     }
 
     @available(iOS 11, *)
@@ -148,7 +148,7 @@ open class TwitterActionController: ActionController<TwitterCell, ActionData, Tw
                 delay: 0,
                 usingSpringWithDamping: animationSettings.damping,
                 initialSpringVelocity: animationSettings.springVelocity,
-                options: UIViewAnimationOptions.curveEaseIn,
+                options: UIView.AnimationOptions.curveEaseIn,
                 animations: { [weak self] in
                     presentingView.transform = CGAffineTransform.identity
                     self?.performCustomDismissingAnimation(presentedView, presentingView: presentingView)
