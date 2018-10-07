@@ -51,6 +51,17 @@
 			name = "Setup Code-Signing";
 			productName = "Setup Code-Signing";
 		};
+		B3DA39A42161B82300FCFF40 /* Submodule Init */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3DA39A82161B82400FCFF40 /* Build configuration list for PBXAggregateTarget "Submodule Init" */;
+			buildPhases = (
+				B3DA39A92161B82900FCFF40 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Submodule Init";
+			productName = "Submodule Init";
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -1848,6 +1859,9 @@
 					B3B29D4D21561F0600903290 = {
 						CreatedOnToolsVersion = 10.0;
 					};
+					B3DA39A42161B82300FCFF40 = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1000;
@@ -1889,6 +1903,7 @@
 				B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */,
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
+				B3DA39A42161B82300FCFF40 /* Submodule Init */,
 			);
 		};
 /* End PBXProject section */
@@ -2141,6 +2156,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = ". ${SRCROOT}/Provenance/Resources/createVersionHeader.sh\n";
+		};
+		B3DA39A92161B82900FCFF40 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if ![-d PVMupen64Plus/Plugins/mupen64plus-core]; then\n    git submodule update --init\nfi\n";
 		};
 		B3E31E2A21562154005FF394 /* Fastlane setup code signing */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3219,6 +3251,30 @@
 			};
 			name = AdHoc;
 		};
+		B3DA39A52161B82400FCFF40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3DA39A62161B82400FCFF40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3DA39A72161B82400FCFF40 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = AdHoc;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3591,6 +3647,16 @@
 				B3B29D4F21561F0600903290 /* Debug */,
 				B3B29D5021561F0600903290 /* Release */,
 				B3B29D5121561F0600903290 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3DA39A82161B82400FCFF40 /* Build configuration list for PBXAggregateTarget "Submodule Init" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3DA39A52161B82400FCFF40 /* Debug */,
+				B3DA39A62161B82400FCFF40 /* Release */,
+				B3DA39A72161B82400FCFF40 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

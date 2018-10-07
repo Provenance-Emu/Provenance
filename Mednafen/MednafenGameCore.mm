@@ -1316,7 +1316,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 }
 
 #pragma mark PSX
-- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
+- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player
 {
     NSLog(@"push %i", button);
     if (button == PVPSXButtonStart) {
@@ -1329,7 +1329,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     inputBuffer[player][0] |= 1 << PSXMap[button];
 }
 
-- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
+- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player
 {
     NSLog(@"release %i", button);
     if (button == PVPSXButtonStart) {

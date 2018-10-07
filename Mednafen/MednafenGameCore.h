@@ -27,6 +27,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 @class OERingBuffer;
 
@@ -48,11 +49,15 @@ typedef NS_ENUM(NSInteger, MednaSystem) {
 };
 
 __attribute__((visibility("default")))
-@interface MednafenGameCore : PVEmulatorCore
+@interface MednafenGameCore : PVEmulatorCore <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 
 @property (nonatomic) BOOL isStartPressed;
 @property (nonatomic) BOOL isSelectPressed;
 @property (nonatomic) BOOL isAnalogModePressed;
+
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
+- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
 
 @end
 

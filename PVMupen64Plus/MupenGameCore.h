@@ -25,8 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
@@ -54,6 +53,11 @@ __attribute__((visibility("default")))
 
 - (void) videoInterrupt;
 - (void) swapBuffers;
+
+- (void)didPushN64Button:(PVN64Button)button forPlayer:(NSUInteger)player;
+- (void)didReleaseN64Button:(PVN64Button)button forPlayer:(NSUInteger)player;
+- (void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player;
+
 @end
 
 extern __weak MupenGameCore *_current;
