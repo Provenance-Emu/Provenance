@@ -175,6 +175,7 @@ function carthageManifestUpToDate {
 if carthageBuildPathNotExist $PLATFORM; then
     echo "Carthage build required for $PLATFORM"
     echo "Making sure gem and brew are up to date"
+   
     bundle_install_cmd
     brew_update
     
@@ -183,5 +184,9 @@ elif carthageManifestUpToDate $PLATFORM; then
     echo "Cartfile.resolved has not changed. Will move on to building project."
 else
     echo "Cartfile.resolved not up to date or not found."
+    
+    bundle_install_cmd
+    brew_update
+    
     runCarthageAndCopyResolved "$PLATFORM"
 fi

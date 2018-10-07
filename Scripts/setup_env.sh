@@ -68,6 +68,7 @@ rome_installed() {
 rome_install() {
   if rome_installed; then
     echo "Rome already installed"
+    brew outdated rome || brew upgrade rome
     return 0
   fi
 
@@ -243,7 +244,7 @@ brew_update() {
     brew update
     brew outdated swiftlint || brew upgrade swiftlint
     brew outdated carthage || brew upgrade carthage
-    # rome_install
+    rome_install
   else
     echo "Homebrew not installed. Skipping update."
   fi
