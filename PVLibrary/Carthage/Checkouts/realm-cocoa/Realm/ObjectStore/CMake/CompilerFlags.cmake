@@ -46,6 +46,7 @@ if(MSVC)
         /DWIN32_LEAN_AND_MEAN
         /D_CRT_SECURE_NO_WARNINGS
         /D_SCL_SECURE_NO_WARNINGS
+        /D_ENABLE_EXTENDED_ALIGNED_STORAGE #https://developercommunity.visualstudio.com/comments/279328/view.html
     )
     add_compile_options(
         /MP # Enable multi-processor compilation

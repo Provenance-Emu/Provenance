@@ -731,8 +731,6 @@ void Results::prepare_async(ForCallback force)
 
 NotificationToken Results::add_notification_callback(CollectionChangeCallback cb) &
 {
-    if (m_descriptor_ordering.will_apply_limit())
-        throw UnimplementedOperationException("Change notifications for Results with a limit are not yet implemented");
     prepare_async(ForCallback{true});
     return {m_notifier, m_notifier->add_callback(std::move(cb))};
 }

@@ -2767,9 +2767,10 @@ TEMPLATE_TEST_CASE("results: aggregate", ResultsFromTable, ResultsFromQuery, Res
     }
 }
 
-TEST_CASE("results: limit") {
+TEST_CASE("results: limit", "[limit]") {
     InMemoryTestFile config;
     config.cache = false;
+    config.automatic_change_notifications = false;
     config.schema = Schema{
         {"object", {
             {"value", PropertyType::Int},
@@ -2778,7 +2779,6 @@ TEST_CASE("results: limit") {
 
     auto realm = Realm::get_shared_realm(config);
     auto table = realm->read_group().get_table("class_object");
-    Results r(realm, *table);
 
     realm->begin_transaction();
     table->add_empty_row(8);
@@ -2786,6 +2786,7 @@ TEST_CASE("results: limit") {
         table->set_int(0, i, (i + 2) % 4);
     }
     realm->commit_transaction();
+    Results r(realm, *table);
 
     SECTION("unsorted") {
         REQUIRE(r.limit(0).size() == 0);
@@ -2826,10 +2827,67 @@ TEST_CASE("results: limit") {
         REQUIRE_ORDER(sorted.limit(8), 2, 3, 0, 1);
     }
 
+    SECTION("notifications on results using all descriptor types") {
+        r = r.distinct({"value"}).sort({{"value", false}}).limit(2);
+        int notification_calls = 0;
+        auto token = r.add_notification_callback([&](CollectionChangeSet c, std::exception_ptr err) {
+            REQUIRE_FALSE(err);
+            if (notification_calls == 0) {
+                REQUIRE(c.empty());
+                REQUIRE(r.size() == 2);
+                REQUIRE(r.get(0).get_int(0) == 3);
+                REQUIRE(r.get(1).get_int(0) == 2);
+            } else if (notification_calls == 1) {
+                REQUIRE(!c.empty());
+                REQUIRE_INDICES(c.insertions, 0);
+                REQUIRE_INDICES(c.deletions, 1);
+                REQUIRE(c.moves.size() == 0);
+                REQUIRE(c.modifications.count() == 0);
+                REQUIRE(r.size() == 2);
+                REQUIRE(r.get(0).get_int(0) == 5);
+                REQUIRE(r.get(1).get_int(0) == 3);
+            }
+            ++notification_calls;
+        });
+        advance_and_notify(*realm);
+        REQUIRE(notification_calls == 1);
+        realm->begin_transaction();
+        table->add_empty_row(1);
+        table->set_int(0, 8, 5);
+        realm->commit_transaction();
+        advance_and_notify(*realm);
+        REQUIRE(notification_calls == 2);
+    }
+
+    SECTION("notifications on only limited results") {
+        r = r.limit(2);
+        int notification_calls = 0;
+        auto token = r.add_notification_callback([&](CollectionChangeSet c, std::exception_ptr err) {
+            REQUIRE_FALSE(err);
+            if (notification_calls == 0) {
+                REQUIRE(c.empty());
+                REQUIRE(r.size() == 2);
+            } else if (notification_calls == 1) {
+                REQUIRE(!c.empty());
+                REQUIRE(c.insertions.count() == 0);
+                REQUIRE(c.deletions.count() == 0);
+                REQUIRE(c.modifications.count() == 1);
+                REQUIRE_INDICES(c.modifications, 1);
+                REQUIRE(r.size() == 2);
+            }
+            ++notification_calls;
+        });
+        advance_and_notify(*realm);
+        REQUIRE(notification_calls == 1);
+        realm->begin_transaction();
+        table->set_int(0, 1, 5);
+        realm->commit_transaction();
+        advance_and_notify(*realm);
+        REQUIRE(notification_calls == 2);
+    }
+
     SECTION("does not support further filtering") {
         auto limited = r.limit(0);
-        REQUIRE_THROWS_AS(limited.add_notification_callback([](CollectionChangeSet, std::exception_ptr) { }),
-                          Results::UnimplementedOperationException);
         REQUIRE_THROWS_AS(limited.filter(table->where()), Results::UnimplementedOperationException);
     }
 }

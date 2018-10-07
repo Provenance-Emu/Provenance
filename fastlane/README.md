@@ -110,6 +110,16 @@ Use `git stash` first to save any changes you may want to keep.
 fastlane ios build_appstore
 ```
 Exports a new Beta Build
+### ios carthage_bootstrap_ios
+```
+fastlane ios carthage_bootstrap_ios
+```
+Lane to run bootstrap carthage in new checkout for iOS only
+### ios carthage_bootstrap_tvos
+```
+fastlane ios carthage_bootstrap_tvos
+```
+Lane to run bootstrap carthage in new checkout for tvOS only
 ### ios carthage_bootstrap
 ```
 fastlane ios carthage_bootstrap
@@ -131,6 +141,16 @@ fastlane ios carthage_update
 Lane to update all carthage dependencies to latest versions
 
 Option: `platform` tvOS,iOS
+### ios carthage_update_ios
+```
+fastlane ios carthage_update_ios
+```
+Lane to update all carthage dependencies to latest versions for iOS only
+### ios carthage_update_tvos
+```
+fastlane ios carthage_update_tvos
+```
+Lane to update all carthage dependencies to latest versions for tvOS only
 
 ----
 
