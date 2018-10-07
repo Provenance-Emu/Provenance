@@ -39,8 +39,8 @@ public final class PVBIOS: Object, PVFiled {
       
         public enum Mismatch {
             case md5(expected: String, actual: String)
+            case size(expected: UInt, actual: UInt)
             case filename(expected: String, actual: String)
-            case size(expected: Int, actual: Int)
         }
         
         public enum State {
@@ -69,14 +69,17 @@ public final class PVBIOS: Object, PVFiled {
                     misses.append(.md5(expected: bios.expectedMD5, actual: bios.file?.md5 ?? "0"))
                 }
                 if !sizeMatch {
-                    misses.append(.md5(expected: bios.expectedSize, actual: bios.file?.size ?? "0"))
+                    misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.file?.size ?? 0)))
                 }
-                if !md5Match {
-                    misses.append(.md5(expected: bios.expectedMD5, actual: bios.file?.md5 ?? "0"))
+                if !filenameMatch {
+                    misses.append(.filename(expected: bios.expectedFilename, actual: bios.file?.fileName ?? "Nil"))
                 }
+                
+                state = misses.isEmpty ? .match : .mismatch(misses)
             } else {
                 state = .missing
             }
+            required = !bios.optional
         }
     }
     
