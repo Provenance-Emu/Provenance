@@ -206,23 +206,11 @@
 
 - (CGSize)sizeThatFits:(CGSize) __unused size {
   CGSize constr = (CGSize){.height = self.frame.size.height, .width = BIT_MAX_WIDTH};
-  CGSize newSize;
-  
-  if ([self.buttonData.label respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
-    CGRect calculatedRect = [self.buttonData.label boundingRectWithSize:constr
-                                                                options:NSStringDrawingUsesFontLeading
-                                                             attributes:@{NSFontAttributeName:(id)self.titleLabel.font}
-                                                                context:nil];
-    newSize = calculatedRect.size;
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    newSize = [self.buttonData.label sizeWithFont:self.titleLabel.font
-                                constrainedToSize:constr
-                                    lineBreakMode:NSLineBreakByTruncatingMiddle];
-#pragma clang diagnostic pop
-  }
-  
+  CGRect calculatedRect = [self.buttonData.label boundingRectWithSize:constr
+                                                              options:NSStringDrawingUsesFontLeading
+                                                           attributes:@{NSFontAttributeName:(id)self.titleLabel.font}
+                                                              context:nil];
+  CGSize newSize = calculatedRect.size;
   CGFloat newWidth = newSize.width + ((CGFloat)BIT_PADDING * 2);
   CGFloat newHeight = (CGFloat)BIT_MIN_HEIGHT > newSize.height ? (CGFloat)BIT_MIN_HEIGHT : newSize.height;
   

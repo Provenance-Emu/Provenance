@@ -130,8 +130,6 @@ static inline void BITCrashIterateExceptionHandlers_unlocked(const BITCrashUncau
   }
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 static void BITCrashUncaughtCXXTerminateHandler(void)
 {
   BITCrashUncaughtCXXExceptionInfo info = {
@@ -240,7 +238,6 @@ static void BITCrashUncaughtCXXTerminateHandler(void)
     }
   } OSSpinLockUnlock(&_BITCrashCXXExceptionHandlingLock);
 }
-#pragma clang diagnostic pop
 
 @end
 

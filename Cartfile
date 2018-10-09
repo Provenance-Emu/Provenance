@@ -1,4 +1,3 @@
 github "bitstadium/HockeySDK-iOS"
 github "bitstadium/HockeySDK-tvOS"
-github "cbpowell/MarqueeLabel"
-github "xmartlabs/XLActionController"
+github "xmartlabs/XLActionController" == 4.0.1

@@ -1,3 +1,14 @@
+## 5.1.4
+
+- [FIX] Fix a regression that was introduced in 5.1.3 that prevented integration because of a missing header file. [#532](https://github.com/bitstadium/HockeySDK-iOS/pull/532)
+
+## 5.1.3
+
+- [FIX] Support new arm64e architecture in crash reports. [#527](https://github.com/bitstadium/HockeySDK-iOS/pull/526)
+- [FIX] Fix bug in app termination heuristic. [#523](https://github.com/bitstadium/HockeySDK-iOS/pull/523)
+- [FIX] Fix Feedback UI on iPhone X. [#513](https://github.com/bitstadium/HockeySDK-iOS/pull/513)[#508](https://github.com/bitstadium/HockeySDK-iOS/pull/508)
+- [IMPROVEMENT] Make it possible to use own logging handler. [#516](https://github.com/bitstadium/HockeySDK-iOS/pull/516)
+
 ## 5.1.2
 
 - [IMPROVEMENT] This release uses Xcode 9.2 to compile the SDK. [#502](https://github.com/bitstadium/HockeySDK-iOS/pull/503)

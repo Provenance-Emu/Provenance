@@ -41,7 +41,7 @@
 /**
  Sets the optional `BITStoreUpdateManagerDelegate` delegate.
  */
-@property (nonatomic, weak) id delegate;
+@property (nonatomic, weak) id<BITStoreUpdateManagerDelegate> delegate;
 
 
 // is an update available?

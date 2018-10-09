@@ -33,7 +33,6 @@
 #define kBITLineBreakWordWrapTextWidthScalingFactor (M_PI / M_E)
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wcast-qual"
@@ -882,9 +881,9 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
             NSDictionary *attributes = (__bridge NSDictionary *)CTRunGetAttributes((__bridge CTRunRef) glyphRun);
             CGColorRef strokeColor = CGColorRefFromColor([attributes objectForKey:kBITBackgroundStrokeColorAttributeName]);
             CGColorRef fillColor = CGColorRefFromColor([attributes objectForKey:kBITBackgroundFillColorAttributeName]);
-            UIEdgeInsets fillPadding = [[attributes objectForKey:kBITBackgroundFillPaddingAttributeName] UIEdgeInsetsValue];
-            CGFloat cornerRadius = [[attributes objectForKey:kBITBackgroundCornerRadiusAttributeName] floatValue];
-            CGFloat lineWidth = [[attributes objectForKey:kBITBackgroundLineWidthAttributeName] floatValue];
+            UIEdgeInsets fillPadding = [(NSValue *)[attributes objectForKey:kBITBackgroundFillPaddingAttributeName] UIEdgeInsetsValue];
+            CGFloat cornerRadius = [(NSNumber *)[attributes objectForKey:kBITBackgroundCornerRadiusAttributeName] floatValue];
+            CGFloat lineWidth = [(NSNumber *)[attributes objectForKey:kBITBackgroundLineWidthAttributeName] floatValue];
 
             if (strokeColor || fillColor) {
                 CGRect runBounds = CGRectZero;
@@ -951,8 +950,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
         for (id glyphRun in (__bridge NSArray *)CTLineGetGlyphRuns((__bridge CTLineRef)line)) {
             NSDictionary *attributes = (__bridge NSDictionary *)CTRunGetAttributes((__bridge CTRunRef) glyphRun);
-            BOOL strikeOut = [[attributes objectForKey:kBITStrikeOutAttributeName] boolValue];
-            NSInteger superscriptStyle = [[attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
+            BOOL strikeOut = [(NSNumber *)[attributes objectForKey:kBITStrikeOutAttributeName] boolValue];
+            NSInteger superscriptStyle = [(NSNumber *)[attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 
             if (strikeOut) {
                 CGRect runBounds = CGRectZero;
@@ -1019,9 +1018,9 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 #pragma mark - BITAttributedLabel
 
 - (void)setText:(id)text {
-    NSParameterAssert(!text || [text isKindOfClass:[NSAttributedString class]] || [text isKindOfClass:[NSString class]]);
+    NSParameterAssert(!text || [(NSObject *)text isKindOfClass:[NSAttributedString class]] || [(NSObject *)text isKindOfClass:[NSString class]]);
 
-    if ([text isKindOfClass:[NSString class]]) {
+    if ([(NSObject *)text isKindOfClass:[NSString class]]) {
         [self setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
         return;
     }
@@ -1051,7 +1050,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
     [self.attributedText enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, self.attributedText.length) options:0 usingBlock:^(id value, NSRange range, __unused BOOL *stop) {
         if (value) {
-            NSURL *URL = [value isKindOfClass:[NSString class]] ? [NSURL URLWithString:value] : value;
+            NSURL *URL = [(NSObject *)value isKindOfClass:[NSString class]] ? [NSURL URLWithString:value] : value;
             [self addLinkToURL:URL withRange:range];
         }
     }];
@@ -1061,7 +1060,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString * (^)(NSMutableAttributedString *mutableAttributedString))block
 {
     NSMutableAttributedString *mutableAttributedString = nil;
-    if ([text isKindOfClass:[NSString class]]) {
+    if ([(NSObject *)text isKindOfClass:[NSString class]]) {
         mutableAttributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:NSAttributedStringAttributesFromLabel(self)];
     } else {
         mutableAttributedString = [[NSMutableAttributedString alloc] initWithAttributedString:text];
@@ -1299,7 +1298,7 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
                     continue;
                 }
 
-                NSString *sourceText = [self.text isKindOfClass:[NSString class]] ? self.text : [(NSAttributedString *)self.text string];
+                NSString *sourceText = [(NSObject *)self.text isKindOfClass:[NSString class]] ? self.text : [(NSAttributedString *)self.text string];
 
                 NSString *accessibilityLabel = [sourceText substringWithRange:link.result.range];
                 NSString *accessibilityValue = link.accessibilityValue;
@@ -1631,7 +1630,7 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
     [self commonInit];
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(enabledTextCheckingTypes))]) {
-        self.enabledTextCheckingTypes = [[coder decodeObjectForKey:NSStringFromSelector(@selector(enabledTextCheckingTypes))] unsignedLongLongValue];
+        self.enabledTextCheckingTypes = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(enabledTextCheckingTypes))] unsignedLongLongValue];
     }
 
     if ([NSMutableParagraphStyle class]) {
@@ -1658,11 +1657,11 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(shadowRadius))]) {
-        self.shadowRadius = [[coder decodeObjectForKey:NSStringFromSelector(@selector(shadowRadius))] floatValue];
+        self.shadowRadius = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(shadowRadius))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(highlightedShadowRadius))]) {
-        self.highlightedShadowRadius = [[coder decodeObjectForKey:NSStringFromSelector(@selector(highlightedShadowRadius))] floatValue];
+        self.highlightedShadowRadius = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(highlightedShadowRadius))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(highlightedShadowOffset))]) {
@@ -1674,27 +1673,27 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(kern))]) {
-        self.kern = [[coder decodeObjectForKey:NSStringFromSelector(@selector(kern))] floatValue];
+        self.kern = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(kern))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(firstLineIndent))]) {
-        self.firstLineIndent = [[coder decodeObjectForKey:NSStringFromSelector(@selector(firstLineIndent))] floatValue];
+        self.firstLineIndent = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(firstLineIndent))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(lineSpacing))]) {
-        self.lineSpacing = [[coder decodeObjectForKey:NSStringFromSelector(@selector(lineSpacing))] floatValue];
+        self.lineSpacing = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(lineSpacing))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(minimumLineHeight))]) {
-        self.minimumLineHeight = [[coder decodeObjectForKey:NSStringFromSelector(@selector(minimumLineHeight))] floatValue];
+        self.minimumLineHeight = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(minimumLineHeight))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(maximumLineHeight))]) {
-        self.maximumLineHeight = [[coder decodeObjectForKey:NSStringFromSelector(@selector(maximumLineHeight))] floatValue];
+        self.maximumLineHeight = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(maximumLineHeight))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(lineHeightMultiple))]) {
-        self.lineHeightMultiple = [[coder decodeObjectForKey:NSStringFromSelector(@selector(lineHeightMultiple))] floatValue];
+        self.lineHeightMultiple = [(NSNumber *)[coder decodeObjectForKey:NSStringFromSelector(@selector(lineHeightMultiple))] floatValue];
     }
 
     if ([coder containsValueForKey:NSStringFromSelector(@selector(textInsets))]) {
@@ -1803,7 +1802,7 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
 #pragma mark -
 
 static inline CGColorRef CGColorRefFromColor(id color) {
-    return [color isKindOfClass:[UIColor class]] ? [color CGColor] : (__bridge CGColorRef)color;
+    return [(NSObject *)color isKindOfClass:[UIColor class]] ? [(UIColor *)color CGColor] : (__bridge CGColorRef)color;
 }
 
 static inline CTFontRef CTFontRefFromUIFont(UIFont * font) {
@@ -1832,9 +1831,9 @@ static inline NSDictionary * convertNSAttributedStringAttributesToCTAttributes(N
         key = [NSToCTAttributeNamesMap objectForKey:key] ? : key;
         
         if (![NSMutableParagraphStyle class]) {
-            if ([value isKindOfClass:[UIFont class]]) {
+            if ([(NSObject *)value isKindOfClass:[UIFont class]]) {
                 value = (__bridge id)CTFontRefFromUIFont(value);
-            } else if ([value isKindOfClass:[UIColor class]]) {
+            } else if ([(NSObject *)value isKindOfClass:[UIColor class]]) {
                 value = (__bridge id)((UIColor *)value).CGColor;
             }
         }

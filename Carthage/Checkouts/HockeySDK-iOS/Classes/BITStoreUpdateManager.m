@@ -179,7 +179,7 @@
   
   NSString *lastStoreVersion = [self lastStoreVersion];
   
-  if ([[dictionary objectForKey:@"results"] isKindOfClass:[NSArray class]] &&
+  if ([(NSObject *)[dictionary objectForKey:@"results"] isKindOfClass:[NSArray class]] &&
       [(NSArray *)[dictionary objectForKey:@"results"] count] > 0 ) {
     self.lastCheckFailed = NO;
 
@@ -300,7 +300,7 @@
   }
   
   if ([self isUpdateAvailable]) {
-    id strongDelegate = self.delegate;
+    id<BITStoreUpdateManagerDelegate> strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(detectedUpdateFromStoreUpdateManager:newVersion:storeURL:)]) {
       [strongDelegate detectedUpdateFromStoreUpdateManager:self newVersion:self.latestStoreVersion storeURL:[NSURL URLWithString:self.appStoreURLString]];
     }

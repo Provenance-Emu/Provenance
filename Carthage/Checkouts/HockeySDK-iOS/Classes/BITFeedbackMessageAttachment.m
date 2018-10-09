@@ -178,24 +178,17 @@
     }
     
     CGFloat scale = [UIScreen mainScreen].scale;
-    
     if (scale != image.scale) {
-      
       CGSize scaledSize = CGSizeApplyAffineTransform(size, CGAffineTransformMakeScale(scale, scale));
-      UIImage *thumbnail = bit_imageToFitSize(image, scaledSize, YES) ;
-      
+      UIImage *thumbnail = bit_imageToFitSize(image, scaledSize, YES);
       UIImage *scaledThumbnail = [UIImage imageWithCGImage:(CGImageRef)thumbnail.CGImage scale:scale orientation:thumbnail.imageOrientation];
       if (thumbnail) {
         [self.thumbnailRepresentations setObject:scaledThumbnail forKey:cacheKey];
       }
-      
     } else {
       UIImage *thumbnail = bit_imageToFitSize(image, size, YES) ;
-      
       [self.thumbnailRepresentations setObject:thumbnail forKey:cacheKey];
-      
     }
-    
   }
   
   return self.thumbnailRepresentations[cacheKey];

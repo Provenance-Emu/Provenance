@@ -82,11 +82,6 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
     [self.editingControls setImage:bit_imageNamed(imageName, BITHOCKEYSDK_BUNDLE) forSegmentAtIndex:i++];
   }
   
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  [self.editingControls setSegmentedControlStyle:UISegmentedControlStyleBar];
-#pragma clang diagnostic pop
-  
   self.navigationItem.titleView = self.editingControls;
   
   self.objects = [NSMutableArray new];
@@ -349,50 +344,12 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
 }
 
 - (void)tapped:(UIGestureRecognizer *) __unused tapRecognizer {
-  
-  // TODO: remove pre-iOS 8 code.
-  
-  // This toggles the nav and status bar. Since iOS7 and pre-iOS7 behave weirdly different,
-  // this might look rather hacky, but hiding the navbar under iOS6 leads to some ugly
-  // animation effect which is avoided by simply hiding the navbar setting it's alpha to 0. // moritzh
-  
-  if (self.navigationController.navigationBar.alpha == 0 || self.navigationController.navigationBarHidden ){
-    
-    [UIView animateWithDuration:0.35 animations:^{
-      [self.navigationController setNavigationBarHidden:NO animated:NO];
-      
-      if ([self respondsToSelector:@selector(prefersStatusBarHidden)]) {
-        [self setNeedsStatusBarAppearanceUpdate];
-      } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
-#pragma clang diagnostic pop
-      }
-      
-    } completion:^(BOOL __unused finished) {
-      [self fitImageViewFrame];
-      
-    }];
-  } else {
-    [UIView animateWithDuration:0.35 animations:^{
-      [self.navigationController setNavigationBarHidden:YES animated:NO];
-      
-      if ([self respondsToSelector:@selector(prefersStatusBarHidden)]) {
-        [self setNeedsStatusBarAppearanceUpdate];
-      } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[UIApplication sharedApplication] setStatusBarHidden:YES];
-#pragma clang diagnostic pop
-      }
-      
-    } completion:^(BOOL __unused finished) {
-      [self fitImageViewFrame];
-      
-    }];
-  }
-  
+  [UIView animateWithDuration:0.35 animations:^{
+    [self.navigationController setNavigationBarHidden:!self.prefersStatusBarHidden animated:NO];
+    [self setNeedsStatusBarAppearanceUpdate];
+  } completion:^(BOOL __unused finished) {
+    [self fitImageViewFrame];
+  }];
 }
 
 #pragma mark - Helpers

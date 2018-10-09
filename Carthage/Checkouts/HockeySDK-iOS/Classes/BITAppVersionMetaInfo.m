@@ -45,7 +45,7 @@
     appVersionMetaInfo.version = [dict objectForKey:@"version"];
     appVersionMetaInfo.shortVersion = [dict objectForKey:@"shortversion"];
     appVersionMetaInfo.minOSVersion = [dict objectForKey:@"minimum_os_version"];
-    [appVersionMetaInfo setDateWithTimestamp:[[dict objectForKey:@"timestamp"] doubleValue]];
+    [appVersionMetaInfo setDateWithTimestamp:[(NSNumber *)[dict objectForKey:@"timestamp"] doubleValue]];
     appVersionMetaInfo.size = [dict objectForKey:@"appsize"];
     appVersionMetaInfo.notes = [dict objectForKey:@"notes"];
     appVersionMetaInfo.mandatory = [dict objectForKey:@"mandatory"];
@@ -62,7 +62,7 @@
 - (BOOL)isEqual:(id)other {
   if (other == self)
     return YES;
-  if (!other || ![other isKindOfClass:[self class]])
+  if (!other || ![(NSObject *)other isKindOfClass:[self class]])
     return NO;
   return [self isEqualToAppVersionMetaInfo:other];
 }
