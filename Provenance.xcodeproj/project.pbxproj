@@ -415,14 +415,14 @@
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
 		};
-		B38D8FF921573FC600F7D25A /* PBXContainerItemProxy */ = {
+		B358CA55216DA5B700EA88FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B38E25F421573BC400355F53;
 			remoteInfo = "Carthage Bootstrap-tvOS";
 		};
-		B38D8FFB21573FD100F7D25A /* PBXContainerItemProxy */ = {
+		B358CA57216DA5C500EA88FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
@@ -1722,7 +1722,6 @@
 			dependencies = (
 				B3B29D462156183D00903290 /* PBXTargetDependency */,
 				B3E21D71203211BE009939D3 /* PBXTargetDependency */,
-				B38D8FFC21573FD100F7D25A /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			productName = Provenance;
@@ -1746,7 +1745,6 @@
 			dependencies = (
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
 				B3F9CDA62031FF4E007F808D /* PBXTargetDependency */,
-				B38D8FFA21573FC600F7D25A /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			productName = ProvenanceTV;
@@ -1785,6 +1783,7 @@
 			);
 			dependencies = (
 				B3B29D482156184400903290 /* PBXTargetDependency */,
+				B358CA58216DA5C500EA88FA /* PBXTargetDependency */,
 			);
 			name = Spotlight;
 			productName = Spotlight;
@@ -1804,6 +1803,7 @@
 			);
 			dependencies = (
 				B3B29D4A2156184A00903290 /* PBXTargetDependency */,
+				B358CA56216DA5B700EA88FA /* PBXTargetDependency */,
 			);
 			name = TopShelf;
 			productName = TopShelf;
@@ -2007,7 +2007,6 @@
 				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/SQLite.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/NSLogger.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/CocoaLumberjack.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/MarqueeLabel.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/XCDLumberjackNSLogger.framework",
 				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/ZIPFoundation.framework",
 				"$(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework",
@@ -2016,6 +2015,18 @@
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLoggerSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjackSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Realm.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RealmSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SQLite.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLogger.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/XCDLumberjackNSLogger.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/ZIPFoundation.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/HockeySDK.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyUserDefaults.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/ZipArchive.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2460,15 +2471,15 @@
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
 		};
-		B38D8FFA21573FC600F7D25A /* PBXTargetDependency */ = {
+		B358CA56216DA5B700EA88FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */;
-			targetProxy = B38D8FF921573FC600F7D25A /* PBXContainerItemProxy */;
+			targetProxy = B358CA55216DA5B700EA88FA /* PBXContainerItemProxy */;
 		};
-		B38D8FFC21573FD100F7D25A /* PBXTargetDependency */ = {
+		B358CA58216DA5C500EA88FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap-iOS */;
-			targetProxy = B38D8FFB21573FD100F7D25A /* PBXContainerItemProxy */;
+			targetProxy = B358CA57216DA5C500EA88FA /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
