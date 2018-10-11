@@ -54,7 +54,7 @@ before_script:
   - chmod 600 ~/.ssh/id_rsa
   # - eval "$(ssh-agent -s)"
   # - sshpass -p $MATCH_SSH_KEY_PASSPHRASE ssh-add ~/.ssh/id_rsa
-  - ssh-add id_rsa
+  - ssh-add ~/.ssh/id_rsa
   #- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - echo -e "Host bitbucket.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   # bootstrap the dependencies for the project
