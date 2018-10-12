@@ -289,12 +289,12 @@ end
     # if is_ci?
     build_time = Time.now.strftime('%F')
 
-    begin
-      upload_to_testflight
-    rescue => ex
-      # don't fail the build
-      UI.important("Testflight Something went wrong: #{ex}")
-    end
+    # begin
+    #   upload_to_testflight
+    # rescue => ex
+    #   # don't fail the build
+    #   UI.important("Testflight Something went wrong: #{ex}")
+    # end
 
     begin
       scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
