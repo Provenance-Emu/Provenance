@@ -7,10 +7,16 @@ language: objective-c
 osx_image: xcode10
 
 cache:
+  bundler: true
   directories:
   - Carthage
   - PVSupport/Carthage
   - PVLibrary/Carthage
+  - /Users/travis/Library/Caches/Rome
+addons:
+  ssh_known_hosts:
+  - provenance.joemattiello.com
+  - bitbucket.org
 
 # branches:
 #   only:
@@ -27,9 +33,9 @@ env:
     - SCHEME_TVOS_APP="ProvenanceTV"
     - IOS_PLATFORM="iOS Simulator"
     - TVOS_PLATFORM="tvOS Simulator"
-    - IOS_SDK=iphonesimulator11.3
-    - TVOS_SDK=appletvsimulator11.3
-    - CONFIGURATION="Debug"
+    - IOS_SDK=iphonesimulator11.4
+    - TVOS_SDK=appletvsimulator11.4
+    - CONFIGURATION="Release"
     - AWS_REGION="us-east-1"
     - AWS_ENDPOINT="http://provenance.joemattiello.com:9000"
   # matrix:
@@ -55,8 +61,13 @@ before_script:
   # - eval "$(ssh-agent -s)"
   # - sshpass -p $MATCH_SSH_KEY_PASSPHRASE ssh-add ~/.ssh/id_rsa
   - ssh-add ~/.ssh/id_rsa
+  - echo -n $SCP_KEY_ENCODED > ~/.ssh/id_provenance_base64
+  - base64 -D ~/.ssh/id_provenance_base64 > ~/.ssh/id_provenance
+  - chmod 600 ~/.ssh/id_provenance
+  - ssh-add ~/.ssh/id_provenance
   #- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - echo -e "Host bitbucket.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host provenance.joemattiello.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   # bootstrap the dependencies for the project
         # Output something every 10 minutes or Travis kills the job
     # - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
