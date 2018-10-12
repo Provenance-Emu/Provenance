@@ -695,6 +695,14 @@ static const RegType DBG_Regs_VDP1_VDP2_SCSP[] =
 
  { 0, "------", "", 0xFFFF },
 
+ { (1 << 16) | VDP2::GSREG_RAMCTL, "RAMCTL", "RAM Control", 2 },
+ { (1 << 16) | VDP2::GSREG_CYCA0, "A0", "CYCA0", 4 },
+ { (1 << 16) | VDP2::GSREG_CYCA1, "A1", "CYCA1", 4 },
+ { (1 << 16) | VDP2::GSREG_CYCB0, "B0", "CYCB0", 4 },
+ { (1 << 16) | VDP2::GSREG_CYCB1, "B1", "CYCB1", 4 },
+
+ { 0, "------", "", 0xFFFF },
+
  { (2 << 16) | SS_SCSP::GSREG_MVOL, "MVOL", "Master Volume", 0x100 | 4 },
  { (2 << 16) | SS_SCSP::GSREG_DAC18B, "DAC18B", "18-bit DAC Enable", 0x100 | 1 },
  { (2 << 16) | SS_SCSP::GSREG_MEM4MB, "Mem4Mb", "4Mb Memory Enable", 0x100 | 1 },

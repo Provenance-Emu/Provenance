@@ -265,7 +265,7 @@ void Video_MakeSettings(std::vector <MDFNSetting> &settings)
 
  static const char *CSD_xscalefs = gettext_noop("Scaling factor for the X axis in fullscreen mode.");
  static const char *CSD_yscalefs = gettext_noop("Scaling factor for the Y axis in fullscreen mode.");
- static const char *CSDE_xyscalefs = gettext_noop("For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".");
+ static const char *CSDE_xyscalefs = gettext_noop("For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".");
 
  static const char *CSD_scanlines = gettext_noop("Enable scanlines with specified opacity.");
  static const char *CSDE_scanlines = gettext_noop("Opacity is specified in %; IE a value of \"100\" will give entirely black scanlines.\n\nNegative values are the same as positive values for non-interlaced video, but for interlaced video will cause the scanlines to be overlaid over the previous(if the video.deinterlacer setting is set to \"weave\", the default) field's lines.");
@@ -1215,7 +1215,7 @@ void Video_Sync(MDFNGI *gi)
   }
   else if(CurrentScaler->id == NTVB_2XSAI || CurrentScaler->id == NTVB_SUPER2XSAI || CurrentScaler->id == NTVB_SUPEREAGLE)
   {
-   Init_2xSaI(screen->format->BitsPerPixel, 555); // systemColorDepth, BitFormat
+   Init_2xSaI(32, 555); // systemColorDepth, BitFormat
   }
 #endif
  }

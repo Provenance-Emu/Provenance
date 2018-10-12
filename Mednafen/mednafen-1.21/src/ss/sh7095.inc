@@ -2744,7 +2744,7 @@ uint32 NO_INLINE SH7095::Exception(const unsigned exnum, const unsigned vecnum)
  if(DebugMode)
   DBG_AddBranchTrace(this - CPU, new_PC, exnum, vecnum);
 
- //SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Exception %u, vecnum=%u, saved PC=0x%08x --- New PC=0x%08x\n", cpu_name, exnum, vecnum, PC, new_PC);
+ //SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Exception %u, vecnum=%u, vbr=%08x, saved PC=0x%08x --- New PC=0x%08x, New R15=0x%08x\n", cpu_name, exnum, vecnum, VBR, PC, new_PC, R[15]);
 
  return new_PC;
 }

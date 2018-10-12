@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* scu_dsp_misc.cpp - SCU DSP Miscellaneous Instructions Emulation
-**  Copyright (C) 2015-2016 Mednafen Team
+**  Copyright (C) 2015-2018 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -43,17 +43,21 @@ static NO_INLINE NO_CLONE void MiscInstr(void)
    DSP.FlagEnd = true;
    SCU_SetInt(SCU_INT_DSP, true);
   }
-  DSP.NextInstr = DSP_DecodeInstruction(0);
-  DSP.State &= ~DSPS::STATE_MASK_EXECUTE;
-  DSP.CycleCounter -= DSP_EndCCSubVal;	// Break out of execution loop(also remember to handle this case for manual stepping via port writes).
+
+  if(DSP.PRAMDMABufCount)
+   DSP_FinishPRAMDMA();
+  else
+  {
+   DSP.State &= ~DSPS::STATE_MASK_EXECUTE;
+   DSP.CycleCounter -= DSP_EndCCSubVal;	// Break out of execution loop(also remember to handle this case for manual stepping via port writes).
+  }
  }
  else if(op == 0)	// BTM
  {
   if(DSP.LOP)
-  {
-   DSP.LOP--;
    DSP.PC = DSP.TOP;
-  }
+
+  DSP.LOP = (DSP.LOP - 1) & 0x0FFF;
  }
  else if(op == 1)	// LPS
  {

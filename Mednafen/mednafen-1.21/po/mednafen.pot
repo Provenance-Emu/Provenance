@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: mednafen 1.21.1\n"
+"Project-Id-Version: mednafen 1.21.3\n"
 "Report-Msgid-Bugs-To: http://forum.fobby.net/\n"
-"POT-Creation-Date: 2018-03-08 22:50-0800\n"
+"POT-Creation-Date: 2018-04-28 10:45-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -797,7 +797,7 @@ msgid "Disable speed throttling when sound is disabled."
 msgstr ""
 
 #: src/drivers/main.cpp:163
-msgid "Automatic load/save state on game load/save."
+msgid "Automatically load/save state on game load/close."
 msgstr ""
 
 #: src/drivers/main.cpp:163
@@ -950,110 +950,110 @@ msgstr ""
 msgid "Mednafen("
 msgstr ""
 
-#: src/drivers/main.cpp:515
+#: src/drivers/main.cpp:514
 msgid "How DARE you interrupt me!\n"
 msgstr ""
 
-#: src/drivers/main.cpp:519
+#: src/drivers/main.cpp:518
 msgid "MUST TERMINATE ALL HUMANS\n"
 msgstr ""
 
-#: src/drivers/main.cpp:523
+#: src/drivers/main.cpp:522
 msgid "Reach out and hang-up on someone.\n"
 msgstr ""
 
-#: src/drivers/main.cpp:527
+#: src/drivers/main.cpp:526
 msgid ""
 "Iyeeeeeeeee!!!  A segmentation fault has occurred.  Have a fluffy day.\n"
 msgstr ""
 
-#: src/drivers/main.cpp:531
+#: src/drivers/main.cpp:530
 msgid "The pipe has broken!  Better watch out for floods...\n"
 msgstr ""
 
-#: src/drivers/main.cpp:536
+#: src/drivers/main.cpp:535
 msgid "I told you to be nice to the driver.\n"
 msgstr ""
 
-#: src/drivers/main.cpp:540
+#: src/drivers/main.cpp:539
 msgid "Those darn floating points.  Ne'er know when they'll bite!\n"
 msgstr ""
 
-#: src/drivers/main.cpp:544
+#: src/drivers/main.cpp:543
 msgid "Don't throw your clock at the meowing cats!\n"
 msgstr ""
 
-#: src/drivers/main.cpp:548
+#: src/drivers/main.cpp:547
 msgid "Abort, Retry, Ignore, Fail?\n"
 msgstr ""
 
-#: src/drivers/main.cpp:552 src/drivers/main.cpp:556
+#: src/drivers/main.cpp:551 src/drivers/main.cpp:555
 msgid "Killing your processes is not nice.\n"
 msgstr ""
 
-#: src/drivers/main.cpp:566
+#: src/drivers/main.cpp:565
 msgid ""
 "\n"
 "Signal has been caught and dealt with: "
 msgstr ""
 
-#: src/drivers/main.cpp:858
+#: src/drivers/main.cpp:848
 msgid "Show help!"
 msgstr ""
 
-#: src/drivers/main.cpp:859
+#: src/drivers/main.cpp:849
 msgid ""
 "Enable remote mode with the specified stdout key(EXPERIMENTAL AND "
 "INCOMPLETE)."
 msgstr ""
 
-#: src/drivers/main.cpp:864
+#: src/drivers/main.cpp:854
 msgid "Start with specified disk/CD(numbered from 0) inserted."
 msgstr ""
 
-#: src/drivers/main.cpp:866
+#: src/drivers/main.cpp:856
 msgid "Force usage of specified emulation module."
 msgstr ""
 
-#: src/drivers/main.cpp:868
+#: src/drivers/main.cpp:858
 msgid "Record sound output to the specified filename in the MS WAV format."
 msgstr ""
 
-#: src/drivers/main.cpp:869
+#: src/drivers/main.cpp:859
 msgid ""
 "Record video and audio output to the specified filename in the QuickTime "
 "format."
 msgstr ""
 
-#: src/drivers/main.cpp:871
+#: src/drivers/main.cpp:861
 msgid "Dump settings definition data to specified file."
 msgstr ""
 
-#: src/drivers/main.cpp:872
+#: src/drivers/main.cpp:862
 msgid "Dump modules definition data to specified file."
 msgstr ""
 
-#: src/drivers/main.cpp:876
+#: src/drivers/main.cpp:866
 msgid "Connect to the remote server and start network play."
 msgstr ""
 
-#: src/drivers/main.cpp:891
+#: src/drivers/main.cpp:885
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]\n"
 msgstr ""
 
-#: src/drivers/main.cpp:894
+#: src/drivers/main.cpp:888
 msgid "No command-line arguments specified."
 msgstr ""
 
-#: src/drivers/main.cpp:897
+#: src/drivers/main.cpp:891
 #, c-format
 msgid ""
 "\tPlease refer to the documentation for option parameters and usage.\n"
 "\n"
 msgstr ""
 
-#: src/drivers/main.cpp:916
+#: src/drivers/main.cpp:910
 #, c-format
 msgid ""
 "Each setting(listed in the documentation) can also be passed as an argument "
@@ -1062,7 +1062,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/drivers/main.cpp:917
+#: src/drivers/main.cpp:911
 #, c-format
 msgid ""
 "For example:\n"
@@ -1071,7 +1071,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/drivers/main.cpp:918
+#: src/drivers/main.cpp:912
 #, c-format
 msgid ""
 "Settings specified in this manner are automatically saved to the "
@@ -1079,98 +1079,103 @@ msgid ""
 "do not need to be passed to future invocations of the Mednafen executable.\n"
 msgstr ""
 
-#: src/drivers/main.cpp:951
+#: src/drivers/main.cpp:945
 msgid "No game filename specified!"
 msgstr ""
 
-#: src/drivers/main.cpp:1042 src/drivers/input.cpp:1704
+#: src/drivers/main.cpp:1046 src/drivers/input.cpp:1704
 msgid "State rewinding functionality enabled."
 msgstr ""
 
-#: src/drivers/main.cpp:1614
+#: src/drivers/main.cpp:1616
 #, c-format
 msgid "Compiled with gcc %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1618 src/drivers/main.cpp:1664
+#: src/drivers/main.cpp:1620 src/drivers/main.cpp:1666
 #, c-format
 msgid "Running with %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1627
+#: src/drivers/main.cpp:1629
 #, c-format
 msgid "Compiled with GNU libstdc++ %lu\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1632 src/drivers/video.cpp:1167
+#: src/drivers/main.cpp:1634 src/drivers/video.cpp:1167
 msgid "Yes"
 msgstr ""
 
-#: src/drivers/main.cpp:1634 src/drivers/video.cpp:1167
+#: src/drivers/main.cpp:1636 src/drivers/video.cpp:1167
 msgid "No"
 msgstr ""
 
-#: src/drivers/main.cpp:1636
+#: src/drivers/main.cpp:1638
 #, c-format
 msgid "Using SJLJ Exceptions: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1648
+#: src/drivers/main.cpp:1650
 #, c-format
 msgid "Compiled against SDL %u.%u.%u(%s), running with SDL %u.%u.%u(%s)\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1652
+#: src/drivers/main.cpp:1654
 msgid ""
 "Running with a version of SDL older than the version compiled and linked "
 "against!"
 msgstr ""
 
-#: src/drivers/main.cpp:1672
+#: src/drivers/main.cpp:1674
 #, c-format
 msgid "Compiled against zlib %s, running with zlib %s(flags=0x%08lx)\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1679
+#: src/drivers/main.cpp:1681
 #, c-format
 msgid "Compiled against libiconv %u.%u, running with libiconv %u.%u\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1897 src/drivers/main.cpp:1900
+#: src/drivers/main.cpp:1899 src/drivers/main.cpp:1902
 #, c-format
 msgid "Error converting value of setting \"%s\" to UTF-8."
 msgstr ""
 
-#: src/drivers/main.cpp:2060
+#: src/drivers/main.cpp:2064
 #, c-format
 msgid "Starting Mednafen %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2063
+#: src/drivers/main.cpp:2067
 msgid "Build information:\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2073
+#: src/drivers/main.cpp:2077
 #, c-format
 msgid "Base directory: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2087
+#: src/drivers/main.cpp:2090
 #, c-format
 msgid "Could not create mutex: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2107
+#: src/drivers/main.cpp:2115
+#, c-format
+msgid "Error creating directories: %s\n"
+msgstr ""
+
+#: src/drivers/main.cpp:2121
 msgid "Opening lockfile...\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2122
+#: src/drivers/main.cpp:2136
 msgid ""
 "Error, but proceeding anyway per environment variable \"MEDNAFEN_ALLOWMULTI"
 "\".\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2126
+#: src/drivers/main.cpp:2140
 msgid ""
 "Multiple instances of Mednafen using the same base directory should not run "
 "simultaneously, otherwise settings file changes may be lost, along with "
@@ -1179,15 +1184,10 @@ msgid ""
 "to bypass this check."
 msgstr ""
 
-#: src/drivers/main.cpp:2132 src/drivers/main.cpp:2139 src/mednafen.cpp:726
+#: src/drivers/main.cpp:2146 src/drivers/main.cpp:2153 src/mednafen.cpp:726
 #: src/mednafen.cpp:735 src/cdrom/CDAccess_Image.cpp:362
 #, c-format
 msgid "Error: %s\n"
-msgstr ""
-
-#: src/drivers/main.cpp:2160
-#, c-format
-msgid "Error creating directories: %s\n"
 msgstr ""
 
 #: src/drivers/video.cpp:135
@@ -1440,7 +1440,7 @@ msgstr ""
 
 #: src/drivers/video.cpp:268
 msgid ""
-"For this settings to have any effect, the \"<system>.stretch\" setting must "
+"For this setting to have any effect, the \"<system>.stretch\" setting must "
 "be set to \"0\"."
 msgstr ""
 
@@ -3587,7 +3587,7 @@ msgstr ""
 msgid "State %d loaded."
 msgstr ""
 
-#: src/state.cpp:852
+#: src/state.cpp:854
 #, c-format
 msgid "State %d load error: %s"
 msgstr ""

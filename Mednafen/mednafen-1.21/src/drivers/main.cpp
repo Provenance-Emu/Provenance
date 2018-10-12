@@ -496,10 +496,9 @@ static void CreateDirs(void)
  }
 }
 
-#if defined(HAVE_SIGNAL) || defined(HAVE_SIGACTION)
-
-static const char *SiginfoString = NULL;
 static bool volatile SignalSafeExitWanted = false;
+#if defined(HAVE_SIGNAL) || defined(HAVE_SIGACTION)
+static const char *SiginfoString = NULL;
 typedef struct
 {
  int number;
@@ -630,6 +629,20 @@ static void CloseStuff(int signum)
 
 	_exit(1);
 }
+
+static void InstallSignalHandlers(void)
+{
+ SetSignals(CloseStuff);
+}
+
+static void RemoveSignalHandlers(void)
+{
+ SetSignals(SIG_IGN);
+}
+
+#else
+static void InstallSignalHandlers(void) { }
+static void RemoveSignalHandlers(void) { }
 #endif
 
 //
@@ -789,61 +802,38 @@ static void CDTest(const char* path)
 //
 //
 //
-static ARGPSTRUCT *MDFN_Internal_Args = NULL;
 
-static int HokeyPokeyFallDown(const char *name, const char *value)
+static int DoArgs_SetSetting(const char *name, const char *value)
 {
- if(!MDFNI_SetSetting(name, value))
-  return(0);
- return(1);
-}
-
-static void DeleteInternalArgs(void)
-{
- if(!MDFN_Internal_Args) return;
- ARGPSTRUCT *argptr = MDFN_Internal_Args;
-
- do
- {
-  free((void*)argptr->name);
-  argptr++;
- } while(argptr->name || argptr->var || argptr->subs);
- free(MDFN_Internal_Args);
- MDFN_Internal_Args = NULL;
-}
-
-static void MakeMednafenArgsStruct(void)
-{
- const std::vector<MDFNCS>* settings;
- std::vector<MDFNCS>::const_iterator sit;
-
- settings = MDFNI_GetSettings();
-
- MDFN_Internal_Args = (ARGPSTRUCT *)malloc(sizeof(ARGPSTRUCT) * (1 + settings->size()));
-
- unsigned int x = 0;
-
- for(sit = settings->begin(); sit != settings->end(); sit++)
- {
-  MDFN_Internal_Args[x].name = strdup(sit->name);
-  MDFN_Internal_Args[x].description = sit->desc->description ? _(sit->desc->description) : NULL;
-  MDFN_Internal_Args[x].var = NULL;
-  MDFN_Internal_Args[x].subs = (void *)HokeyPokeyFallDown;
-  MDFN_Internal_Args[x].substype = SUBSTYPE_FUNCTION;
-  x++;
- }
- MDFN_Internal_Args[x].name = NULL;
- MDFN_Internal_Args[x].var = NULL;
- MDFN_Internal_Args[x].subs = NULL;
+ return MDFNI_SetSetting(name, value);
 }
 
 static int netconnect = 0;
 static char* loadcd = NULL;	// Deprecated
 static int which_medium = -2;
 
-static char * force_module_arg = NULL;
-static int DoArgs(int argc, char *argv[], char **filename)
+static char* force_module_arg = NULL;
+static bool DoArgs(int argc, char *argv[], char **filename)
 {
+	const std::vector<MDFNCS>* const settings = MDFNI_GetSettings();
+	std::unique_ptr<ARGPSTRUCT[]> InternalArgs(new ARGPSTRUCT[1 + settings->size()]);
+
+	for(size_t x = 0; x < settings->size(); x++)
+	{
+	 const MDFNCS* sit = &(*settings)[x];
+
+	 InternalArgs[x].name = sit->name;
+	 InternalArgs[x].description = sit->desc->description ? _(sit->desc->description) : NULL;
+	 InternalArgs[x].var = NULL;
+	 InternalArgs[x].subs = (void *)DoArgs_SetSetting;
+	 InternalArgs[x].substype = SUBSTYPE_FUNCTION;
+	}
+	InternalArgs[settings->size()].name = NULL;
+	InternalArgs[settings->size()].var = NULL;
+	InternalArgs[settings->size()].subs = NULL;
+	//
+	//
+	//
 	int ShowCLHelp = 0;
 
 	char *dsfn = NULL;
@@ -871,18 +861,22 @@ static int DoArgs(int argc, char *argv[], char **filename)
 	 { "dump_settings_def", _("Dump settings definition data to specified file."), 0, &dsfn, SUBSTYPE_STRING_ALLOC },
 	 { "dump_modules_def", _("Dump modules definition data to specified file."), 0, &dmfn, SUBSTYPE_STRING_ALLOC },
 
-         { 0, NULL, (int *)MDFN_Internal_Args, 0, 0},
+         { 0, NULL, (int *)InternalArgs.get(), 0, 0},
 
 	 { "connect", _("Connect to the remote server and start network play."), &netconnect, 0, 0 },
 
-	 // Testing functionality for FileStream and GZFileStream largefile support(mostly intended for testing the Windows builds)
+	 // Largefile support test(with FileStream and GZFileStream).
 	 { "stream64test", NULL, 0, &stream64testpath, SUBSTYPE_STRING_ALLOC },
 
 	 { "cdtest", NULL, 0, &cdtestpath, SUBSTYPE_STRING_ALLOC },
 
+	 // Multithreaded exception handling test.
 	 { "mtetest", NULL, &mtetest, 0, 0 },
 
+	 // Save state save->load->save consistency test.
 	 { "stateslstest", NULL, &StateSLSTest, 0, 0 },
+
+	 // Save state rewind consistency test.
 	 { "staterctest", NULL, &StateRCTest, 0, 0 },
 
 	 { 0, 0, 0, 0 }
@@ -895,12 +889,12 @@ static int DoArgs(int argc, char *argv[], char **filename)
 	 fprintf(stderr, "\n");
 	 fprintf(stderr, usage_string, argv[0]);
 	 fprintf(stderr, _("\tPlease refer to the documentation for option parameters and usage.\n\n"));
-	 return(0);
+	 return false;
 	}
 	else
 	{
 	 if(!ParseArguments(argc - 1, &argv[1], MDFNArgs, filename))
-	  return(0);
+	  return false;
 
 	 if(dummy_remote)
 	 {
@@ -917,7 +911,7 @@ static int DoArgs(int argc, char *argv[], char **filename)
 	  printf(_("For example:\n\t%s -pce.stretch aspect -pce.shader autoipsharper \"Hyper Bonk Soldier.pce\"\n\n"), argv[0]);
 	  printf(_("Settings specified in this manner are automatically saved to the configuration file, hence they\ndo not need to be passed to future invocations of the Mednafen executable.\n"));
 	  printf("\n");
-	  return(0);
+	  return false;
 	 }
 
 	 if(mtetest)
@@ -944,15 +938,15 @@ static int DoArgs(int argc, char *argv[], char **filename)
 	  MDFNI_DumpModulesDef(dmfn);
 
 	 if(dsfn || dmfn)
-	  return(0);
+	  return false;
 
 	 if(*filename == NULL)
 	 {
 	  MDFN_Notify(MDFN_NOTICE_ERROR, _("No game filename specified!"));
-	  return(0);
+	  return false;
 	 }
 	}
-	return(1);
+	return true;
 }
 
 static volatile unsigned NeedVideoSync = 0;
@@ -1501,10 +1495,8 @@ void PumpWrap(void)
  SDL_Event gtevents_temp[gtevents_size];
  int numevents = 0;
 
- #if defined(HAVE_SIGNAL) || defined(HAVE_SIGACTION)
  if(SignalSafeExitWanted)
   NeedExitNow = true;
- #endif
 
  while(SDL_PollEvent(&event))
  {
@@ -2066,7 +2058,9 @@ int main(int argc, char *argv[])
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
 	#endif
-
+	//
+	//
+	//
 	MDFNI_printf(_("Starting Mednafen %s\n"), MEDNAFEN_VERSION);
 	MDFN_indent(1);
 
@@ -2085,8 +2079,7 @@ int main(int argc, char *argv[])
 	if(SDL_Init(SDL_INIT_VIDEO)) /* SDL_INIT_VIDEO Needed for (joystick config) event processing? */
 	{
 	 fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
-	 MDFNI_Kill();
-	 return(-1);
+	 return -1;
 	}
 	SDL_JoystickEventState(SDL_IGNORE);
 	SDL_DisableScreenSaver();
@@ -2095,12 +2088,11 @@ int main(int argc, char *argv[])
 	if(!(StdoutMutex = MDFND_CreateMutex()))
 	{
 	 MDFN_Notify(MDFN_NOTICE_ERROR, _("Could not create mutex: %s\n"), SDL_GetError());
-	 MDFNI_Kill();
-	 return(-1);
+	 return -1;
 	}
 
 	if(!MDFNI_InitializeModules())
-	 return(-1);
+	 return -1;
 
 	for(unsigned int x = 0; x < sizeof(DriverSettings) / sizeof(MDFNSetting); x++)
 	 NeoDriverSettings.push_back(DriverSettings[x]);
@@ -2110,7 +2102,19 @@ int main(int argc, char *argv[])
 	Input_MakeSettings(NeoDriverSettings);
 
         if(!MDFNI_Initialize(DrBaseDirectory.c_str(), NeoDriverSettings))
-         return(-1);
+         return -1;
+	//
+	//
+	//
+	try
+	{
+	 CreateDirs();
+	}
+	catch(std::exception &e)
+	{
+	 MDFN_Notify(MDFN_NOTICE_ERROR, _("Error creating directories: %s\n"), e.what());
+	 return -1;
+	}
 	//
 	//
 	//
@@ -2157,33 +2161,17 @@ int main(int argc, char *argv[])
 	if(!LoadSettings())
 	 return -1;
 
-        #if defined(HAVE_SIGNAL) || defined(HAVE_SIGACTION)
-        SetSignals(CloseStuff);
-        #endif
-
-	try
-	{
-	 CreateDirs();
-	}
-	catch(std::exception &e)
-	{
-	 MDFN_Notify(MDFN_NOTICE_ERROR, _("Error creating directories: %s\n"), e.what());
-	 MDFNI_Kill();
-	 return(-1);
-	}
-
-	MakeMednafenArgsStruct();
-
-	#if 0 //def WIN32
-	if(argc > 1 || !(needie = GetFileDialog()))
-	#endif
-	if(!DoArgs(argc,argv, &needie))
+	if(!DoArgs(argc, argv, &needie))
 	{
 	 SaveSettings();
 	 MDFNI_Kill();
-	 DeleteInternalArgs();
-	 return(-1);
+	 return -1;
 	}
+
+	InstallSignalHandlers();
+	//
+	//
+	//
 
 	/* Now the fun begins! */
 	/* Run the video and event pumping in the main thread, and create a 
@@ -2352,9 +2340,7 @@ for(int zgi = 1; zgi < argc; zgi++)// start game load test loop
 	MDFND_DestroyMutex(VTMutex);
         MDFND_DestroyMutex(EVMutex);
 
-	#if defined(HAVE_SIGNAL) || defined(HAVE_SIGACTION)
-	SetSignals(SIG_IGN);
-	#endif
+	RemoveSignalHandlers();
 
 	JoystickManager::Kill();
 
@@ -2370,9 +2356,7 @@ for(int zgi = 1; zgi < argc; zgi++)// start game load test loop
 
 	SDL_Quit();
 
-	DeleteInternalArgs();
-
-        return(ret);
+        return ret;
 }
 
 

@@ -144,6 +144,7 @@ static const struct
  { "T-18504G", CPUCACHE_EMUMODE_DATA_CB },	// Father Christmas (Japan)
  { "MK-81045", CPUCACHE_EMUMODE_DATA_CB },	// Golden Axe - The Duel (Europe) (and USA too?)
  { "GS-9041",	CPUCACHE_EMUMODE_DATA_CB },	// Golden Axe - The Duel (Japan)
+ { "GS-9173", CPUCACHE_EMUMODE_DATA_CB },	// House of the Dead (Japan)
  { "81600",	CPUCACHE_EMUMODE_DATA_CB },	// Sega Saturn Choice Cuts (USA)
  { "610680501",CPUCACHE_EMUMODE_DATA_CB },	// Segakore Sega Bible Mogitate SegaSaturn
  { "T-7001H",	CPUCACHE_EMUMODE_DATA_CB },	// Spot Goes to Hollywood (USA)
@@ -152,7 +153,13 @@ static const struct
  { "T-1206G",	CPUCACHE_EMUMODE_DATA_CB },	// Street Fighter Zero (Japan)
  { "T-1246G",	CPUCACHE_EMUMODE_DATA_CB },	// Street Fighter Zero 3 (Japan)
  { "T-1215H",	CPUCACHE_EMUMODE_DATA_CB },	// Super Puzzle Fighter II Turbo (USA)
+ { "GS-9113", CPUCACHE_EMUMODE_DATA_CB },	// Virtua Fighter Kids (Java Tea Original)
  { "T-15005G", CPUCACHE_EMUMODE_DATA_CB },	// Virtual Volleyball (Japan)
+ { "T-18601H", CPUCACHE_EMUMODE_DATA_CB },	// WipEout (USA)
+ { "T-18603G", CPUCACHE_EMUMODE_DATA_CB },	// WipEout (Japan)
+ { "T-11301H", CPUCACHE_EMUMODE_DATA_CB },	// WipEout (Europe)
+ { "GS-9061", CPUCACHE_EMUMODE_DATA_CB },	// (Hideo Nomo) World Series Baseball (Japan)
+ { "MK-81109", CPUCACHE_EMUMODE_DATA_CB },	// World Series Baseball (Europe/USA)
 
  //{ "MK-81019", CPUCACHE_EMUMODE_DATA },	// Astal (USA)
  //{ "GS-9019",  CPUCACHE_EMUMODE_DATA },	// Astal (Japan)

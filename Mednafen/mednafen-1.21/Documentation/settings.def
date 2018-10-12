@@ -403,7 +403,7 @@ MDFNST_FLOAT
 cdplay.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -430,7 +430,7 @@ MDFNST_FLOAT
 cdplay.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -1801,7 +1801,7 @@ MDFNST_FLOAT
 demo.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -1828,7 +1828,7 @@ MDFNST_FLOAT
 demo.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -2551,7 +2551,7 @@ MDFNST_FLOAT
 gb.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -2578,7 +2578,7 @@ MDFNST_FLOAT
 gb.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -3007,7 +3007,7 @@ MDFNST_FLOAT
 gba.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -3034,7 +3034,7 @@ MDFNST_FLOAT
 gba.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -3427,7 +3427,7 @@ MDFNST_FLOAT
 gg.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -3454,7 +3454,7 @@ MDFNST_FLOAT
 gg.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -3937,7 +3937,7 @@ MDFNST_FLOAT
 lynx.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -3964,7 +3964,7 @@ MDFNST_FLOAT
 lynx.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -7942,7 +7942,7 @@ MDFNST_FLOAT
 md.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -7969,7 +7969,7 @@ MDFNST_FLOAT
 md.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -10900,7 +10900,7 @@ MDFNST_FLOAT
 nes.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -10927,7 +10927,7 @@ MDFNST_FLOAT
 nes.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -11455,7 +11455,7 @@ MDFNST_FLOAT
 ngp.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -11482,7 +11482,7 @@ MDFNST_FLOAT
 ngp.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -14209,7 +14209,7 @@ MDFNST_FLOAT
 pce.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -14236,7 +14236,7 @@ MDFNST_FLOAT
 pce.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -15883,7 +15883,7 @@ MDFNST_FLOAT
 pce_fast.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -15910,7 +15910,7 @@ MDFNST_FLOAT
 pce_fast.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -18277,7 +18277,7 @@ MDFNST_FLOAT
 pcfx.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -18304,7 +18304,7 @@ MDFNST_FLOAT
 pcfx.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -18571,7 +18571,7 @@ MDFNST_FLOAT
 player.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -18598,7 +18598,7 @@ MDFNST_FLOAT
 player.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -29758,7 +29758,7 @@ MDFNST_FLOAT
 psx.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -29785,7 +29785,7 @@ MDFNST_FLOAT
 psx.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -30373,7 +30373,7 @@ MDFNST_FLOAT
 sms.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -30400,7 +30400,7 @@ MDFNST_FLOAT
 sms.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -32128,7 +32128,7 @@ MDFNST_FLOAT
 snes.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -32155,7 +32155,7 @@ MDFNST_FLOAT
 snes.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -33802,7 +33802,7 @@ MDFNST_FLOAT
 snes_faust.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -33829,7 +33829,7 @@ MDFNST_FLOAT
 snes_faust.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -34048,6 +34048,96 @@ MDFNST_BOOL
 
 
 0
+ss.dbg_exe_cdpath
+MDFNSF_CAT_PATH MDFNSF_SUPPRESS_DOC 
+CD image to use with homebrew executable loading.
+
+MDFNST_STRING
+
+
+
+0
+ss.dbg_mask
+MDFNSF_SUPPRESS_DOC 
+Debug printf mask.
+
+(nil)
+none
+
+
+24
+0
+
+
+none
+None
+
+all
+All
+
+warning
+Warnings
+
+m68k
+M68K
+
+sh2
+SH-2
+
+sh2_regw
+SH-2 (peripherals) register writes
+
+sh2_cache
+SH-2 cache
+
+scu
+SCU
+
+scu_regw
+SCU register writes
+
+scu_int
+SCU interrupt
+
+scu_dsp
+SCU DSP
+
+smpc
+SMPC
+
+smpc_regw
+SMPC register writes
+
+cdb
+CDB
+
+cdb_regw
+CDB register writes
+
+vdp1
+VDP1
+
+vdp1_regw
+VDP1 register writes
+
+vdp1_vramw
+VDP1 VRAM writes
+
+vdp1_fbw
+VDP1 FB writes
+
+vdp2
+VDP2
+
+vdp2_regw
+VDP2 register writes
+
+scsp
+SCSP
+
+scsp_regw
+SCSP register writes
+
 ss.debugger.disfontsize
 MDFNSF_COMMON_TEMPLATE 
 Disassembly font size.
@@ -71254,7 +71344,7 @@ MDFNST_FLOAT
 ss.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -71281,7 +71371,7 @@ MDFNST_FLOAT
 ss.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -71602,7 +71692,7 @@ MDFNST_FLOAT
 ssfplay.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -71629,7 +71719,7 @@ MDFNST_FLOAT
 ssfplay.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -72307,7 +72397,7 @@ MDFNST_FLOAT
 vb.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -72334,7 +72424,7 @@ MDFNST_FLOAT
 vb.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -73171,7 +73261,7 @@ MDFNST_FLOAT
 wswan.xscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the X axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01
@@ -73198,7 +73288,7 @@ MDFNST_FLOAT
 wswan.yscalefs
 MDFNSF_COMMON_TEMPLATE 
 Scaling factor for the Y axis in fullscreen mode.
-For this settings to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
+For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".
 MDFNST_FLOAT
 1.000000
 0.01

@@ -308,7 +308,7 @@ static NO_INLINE NO_CLONE void GeneralInstr(void)
    case 0x7: DSP.WAO = src_data; break;
    case 0x8:
    case 0x9: break;
-   case 0xA: DSP.LOP = src_data & 0x0FFF; break;
+   case 0xA: if(!looped || DSP.LOP == 0x0FFF) { DSP.LOP = src_data & 0x0FFF; } break;
    case 0xB: DSP.TOP = src_data & 0xFF; break;
 
    //

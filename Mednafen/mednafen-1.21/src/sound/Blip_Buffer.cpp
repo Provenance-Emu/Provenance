@@ -158,11 +158,11 @@ void Blip_Buffer::end_frame( blip_time_t t )
 	assert( samples_avail() <= (long) buffer_size_ ); // time outside buffer length
 }
 
-//void Blip_Buffer::remove_silence( long count )
-//{
-//	assert( count <= samples_avail() ); // tried to remove more samples than available
-//	offset_ -= (blip_resampled_time_t) count << BLIP_BUFFER_ACCURACY;
-//}
+void Blip_Buffer::remove_silence( long count )
+{
+	assert( count <= samples_avail() ); // tried to remove more samples than available
+	offset_ -= (blip_resampled_time_t) count << BLIP_BUFFER_ACCURACY;
+}
 
 long Blip_Buffer::count_samples( blip_time_t t ) const
 {

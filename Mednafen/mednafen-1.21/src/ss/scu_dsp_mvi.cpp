@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* scu_dsp_mvi.cpp - SCU DSP MVI Instructions Emulation
-**  Copyright (C) 2015-2016 Mednafen Team
+**  Copyright (C) 2015-2018 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -41,6 +41,13 @@ static NO_INLINE NO_CLONE void MVIInstr(void)
 
  if(DSP_TestCond<cond>())
  {
+  if(DSP.PRAMDMABufCount && (dest == 0x6 || dest == 0x7))
+  {
+   DSP.PC--;
+   //
+   DSP_FinishPRAMDMA();
+  }
+
   switch(dest)
   {
    default:
@@ -57,11 +64,20 @@ static NO_INLINE NO_CLONE void MVIInstr(void)
 
    case 0x4: DSP.RX = imm; break;
    case 0x5: DSP.P.T = (int32)imm; break;
+
    case 0x6: DSP.RAO = imm; break;
+
    case 0x7: DSP.WAO = imm; break;
  
-   case 0xA: DSP.LOP = imm & 0x0FFF; break;
-   case 0xC: DSP.TOP = DSP.PC - 1; DSP.PC = imm & 0xFF; break;
+   case 0xA: if(!looped || DSP.LOP == 0x0FFF) { DSP.LOP = imm & 0x0FFF; } break;
+
+   case 0xC:
+	DSP.TOP = DSP.PC - 1;
+	DSP.PC = imm & 0xFF;
+        //
+	if(DSP.PRAMDMABufCount)
+	 DSP_FinishPRAMDMA();
+	break;
   }
  }
 }

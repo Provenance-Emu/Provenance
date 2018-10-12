@@ -987,24 +987,50 @@ uint32 GetRegister(const unsigned id, char* const special, const uint32 special_
 	ret = VCounter;
 	break;
 
- case GSREG_DON:
+  case GSREG_DON:
 	ret = DisplayOn;
 	break;
 
- case GSREG_BM:
+  case GSREG_BM:
 	ret = BorderMode;
 	break;
 
- case GSREG_IM:
+  case GSREG_IM:
 	ret = InterlaceMode;
 	break;
 
- case GSREG_VRES:
+  case GSREG_VRES:
 	ret = VRes;
 	break;
 
- case GSREG_HRES:
+  case GSREG_HRES:
 	ret = HRes;
+	break;
+
+  case GSREG_RAMCTL:
+	ret = RAMCTL_Raw;
+	break;
+
+  case GSREG_CYCA0:
+  case GSREG_CYCA1:
+  case GSREG_CYCB0:
+  case GSREG_CYCB1:
+	{
+	 static const char* tab[0x10] =
+	 {
+	  "NBG0 PN", "NBG1 PN", "NBG2 PN", "NBG3 PN",
+	  "NBG0 CG", "NBG1 CG", "NBG2 CG", "NBG3 CG",
+	  "ILLEGAL", "ILLEGAL", "ILLEGAL", "ILLEGAL",
+	  "NBG0 VCS", "NBG1 VCS", "CPU", "NOP"
+	 };
+	 const size_t idx = (id - GSREG_CYCA0);
+	 ret = (RawRegs[(0x10 >> 1) + (idx << 1)] << 16) | RawRegs[(0x12 >> 1) + (idx << 1)];
+
+	 if(special)
+	  trio_snprintf(special, special_len, "0: %s, 1: %s, 2: %s, 3: %s, 4: %s, 5: %s, 6: %s, 7: %s",
+		tab[(ret >> 28) & 0xF], tab[(ret >> 24) & 0xF], tab[(ret >> 20) & 0xF], tab[(ret >> 16) & 0xF],
+		tab[(ret >> 12) & 0xF], tab[(ret >>  8) & 0xF], tab[(ret >>  4) & 0xF], tab[(ret >>  0) & 0xF]);
+	}
 	break;
  }
 

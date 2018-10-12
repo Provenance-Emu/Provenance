@@ -374,7 +374,7 @@ static MemoryPatch GetCheatFields(const MemoryPatch &pin)
 
  if(support_read_subst)
  {
-  CHEAT_printf(" S - Subsitute on reads.");
+  CHEAT_printf(" S - Substitute on reads.");
   CHEAT_printf(" C - Substitute on reads, with compare.");
  }
 

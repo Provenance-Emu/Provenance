@@ -1290,7 +1290,7 @@ bool MDFNI_InitializeModules(void)
 	// Static, clear it first
 	MDFNSystems.clear();
 
- static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102101, "Bad MEDNAFEN_VERSION_NUMERIC");
+ static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102103, "Bad MEDNAFEN_VERSION_NUMERIC");
 
  for(unsigned int i = 0; i < sizeof(InternalSystems) / sizeof(MDFNGI *); i++)
   AddSystem(InternalSystems[i]);

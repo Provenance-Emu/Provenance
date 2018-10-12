@@ -2,7 +2,7 @@
 
    This file is part of the LZO real-time data compression library.
 
-   Copyright (C) 1996-2017 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2015 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    The LZO library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@
 #ifndef __MINILZO_H_INCLUDED
 #define __MINILZO_H_INCLUDED 1
 
-#define MINILZO_VERSION         0x20a0  /* 2.10 */
+#define MINILZO_VERSION         0x2090
 
 #if defined(__LZOCONF_H_INCLUDED)
 #  error "you cannot use both LZO and miniLZO"

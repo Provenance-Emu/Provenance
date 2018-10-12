@@ -90,7 +90,15 @@ enum
  GSREG_BM,
  GSREG_IM,
  GSREG_VRES,
- GSREG_HRES
+ GSREG_HRES,
+
+ GSREG_RAMCTL,
+
+ GSREG_CYCA0,
+ GSREG_CYCA1 = GSREG_CYCA0 + 1,
+ GSREG_CYCB0 = GSREG_CYCA0 + 2,
+ GSREG_CYCB1 = GSREG_CYCA0 + 3
+
 };
 
 uint32 GetRegister(const unsigned id, char* const special, const uint32 special_len);

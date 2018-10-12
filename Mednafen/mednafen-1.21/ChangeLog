@@ -1,3 +1,44 @@
+-- 1.21.3: --
+
+April 29, 2018:
+	SNES: Fixed an off-by-1 bug in the PPU code that would cause writing past the end of the OAM tile list array.
+
+April 24, 2018:
+	SS: Added "House of the Dead (Japan)" to internal database of games to use the data cache read
+	bypass kludge with, to fix a game crash on the gun calibration screen.
+
+	SS: Added "Virtua Fighter Kids (Java Tea Original)" and "World Series Baseball" to internal database of games to use the data cache read
+	bypass kludge with, to fix gameplay glitches.
+
+April 22, 2018:
+	Removed some unnecessary memory allocations in the old settings to argument parsing glue code.
+
+	Fixed a crash bug with 2xSaI-family scalers during initialization(regression introduced in 1.21.0-UNSTABLE).
+
+	Create the Mednafen base directory(e.g. ~/.mednafen) before opening the lockfile to fix a startup error when the directory does not already exist(regression
+	introduced in 1.21.0-UNSTABLE).
+
+April 21, 2018:
+	SS: Added kludge to fix layer offset problem in "Alien Trilogy".
+
+	SS: Added "WipEout" to internal database of games to use the data cache read bypass kludge with, to fix a hang that occurred when trying to exit gameplay
+	back to the main menu.
+
+-- 1.21.2: --
+
+April 2, 2018:
+	Updated bundled copy of Tremor to address a security vulnerability.
+
+	SS: Improved emulation of SCU DSP DMA to program RAM, per tests on a SS(still nowhere near perfect, the way it's implemented on hardware is kind of
+	horrible, but it should work ok if games use it how it's meant to be used); fixes graphical glitches in "Shining Force III - Scenario 2", and perhaps
+	in the other "Shining Force III" games as well.
+
+	SS: Flush the prefetched SCU DSP instruction when PC is set via PPAF, instead of when END/ENDI executes or when execution is forcibly stopped, per tests on a SS.
+
+	SS: Disallow SCU DSP LOP from being written in a looped single instruction unless it's the final iteration, per tests on a SS.
+
+	SS: Allow SCU DSP LOP to underflow to 0xFFF with LPS and BTM, per tests on a SS.
+
 -- 1.21.1: --
 
 March 9, 2018:

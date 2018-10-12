@@ -106,7 +106,7 @@ alwaysinline void PPU::load_oam_tiles() {
     //ignore sprites that are offscreen, x==256 is a special case that loads all tiles in OBJ
     if(x != 256 && sx >= 256 && (sx + 7) < 512) continue;
 
-    if(regs.oam_tilecount++ > 34) break;
+    if(++regs.oam_tilecount > 34) break;
     unsigned n = regs.oam_tilecount - 1;
     oam_tilelist[n].x     = sx;
     oam_tilelist[n].y     = y;

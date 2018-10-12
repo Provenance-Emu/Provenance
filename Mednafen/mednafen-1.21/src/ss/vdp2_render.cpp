@@ -1705,6 +1705,7 @@ static void T_DrawNBG23(const unsigned n, uint64* bgbuf, const unsigned w, const
  // printf("(TA_bpp == %d && n == %d && VRAM_Mode == 0x%01x && (HRes & 0x6) == 0x%01x && MDFN_de64lsb(VCPRegs[0]) == 0x%016llxULL && MDFN_de64lsb(VCPRegs[1]) == 0x%016llxULL && MDFN_de64lsb(VCPRegs[2]) == 0x%016llxULL && MDFN_de64lsb(VCPRegs[3]) == 0x%016llxULL) || \n", TA_bpp, n, VRAM_Mode, HRes & 0x6, (unsigned long long)MDFN_de64lsb(VCPRegs[0]), (unsigned long long)MDFN_de64lsb(VCPRegs[1]), (unsigned long long)MDFN_de64lsb(VCPRegs[2]), (unsigned long long)MDFN_de64lsb(VCPRegs[3]));
  if(MDFN_UNLIKELY(
   /* Akumajou Dracula X */ (TA_bpp == 4 && n == 3 && VRAM_Mode == 0x2 && (HRes & 0x6) == 0x0 && MDFN_de64lsb(VCPRegs[0]) == 0x0f0f070406060505ULL && MDFN_de64lsb(VCPRegs[1]) == 0x0f0f0f0f0f0f0f0fULL && MDFN_de64lsb(VCPRegs[2]) == 0x0f0f03000f0f0201ULL && MDFN_de64lsb(VCPRegs[3]) == 0x0f0f0f0f0f0f0f0fULL) ||
+  /* Alien Trilogy      */ (TA_bpp == 4 && n == 3 && VRAM_Mode == 0x2 && (HRes & 0x6) == 0x0 && MDFN_de64lsb(VCPRegs[0]) == 0x07050f0f0f0f0606ULL && MDFN_de64lsb(VCPRegs[1]) == 0x0f0f0f0f0f0f0f0fULL && MDFN_de64lsb(VCPRegs[2]) == 0x0f0f0f0f0f0f0f0fULL && MDFN_de64lsb(VCPRegs[3]) == 0x0f0103020f0f0f0fULL) ||
   /* Daytona USA CCE    */ (TA_bpp == 4 && n == 2 && VRAM_Mode == 0x3 && (HRes & 0x6) == 0x0 && MDFN_de64lsb(VCPRegs[0]) == 0x0f0f0f0f00000404ULL && MDFN_de64lsb(VCPRegs[1]) == 0x0f0f0f060f0f0f0fULL && MDFN_de64lsb(VCPRegs[2]) == 0x0f0f0f0f0505070fULL && MDFN_de64lsb(VCPRegs[3]) == 0x0f0f03020f010f00ULL) ||
   0))
  {
