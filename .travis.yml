@@ -38,11 +38,11 @@ env:
 before_install:
   # - gem install xcpretty -N
   - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
-  - brew update
+  # - brew update
   - brew outdated swiftlint || brew upgrade swiftlint
   - brew outdated carthage || brew upgrade carthage
   # - brew install hudochenkov/sshpass/sshpass
-  # - brew install blender/homebrew-tap/rome
+  - brew install blender/homebrew-tap/rome || true
   - bundle install
 before_script:
   # - set +x
@@ -61,7 +61,7 @@ before_script:
         # Output something every 10 minutes or Travis kills the job
     # - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
       # This can take a while so using the above to not make travis abort
-    # - ./Scripts/rome-travis.sh > /tmp/carthage.log
+  - ./Scripts/rome-travis.sh > /tmp/carthage.log
     #- carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
         # Killing background sleep loop
     # - kill %1

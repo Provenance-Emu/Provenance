@@ -1,10 +1,15 @@
-[Cache]
-  S3-Bucket = provenance-carthage
-  local = ~/Library/Caches/Rome/
-
-[RepositoryMap]
-  HockeySDK-iOS = HockeySDK
-  HockeySDK-tvOS = HockeySDK
-  MarqueeLabel = MarqueeLabel, MarqueeLabelSwift
-  XLActionController = XLActionController
-[IgnoreMap]
+repositoryMap:
+- MarqueeLabel:
+  - name: MarqueeLabel
+  - name: MarqueeLabelSwift
+- HockeySDK-tvOS:
+  - name: HockeySDK
+    platforms: [tvOS] # optional, all platforms if empty
+- HockeySDK-iOS:
+  - name: HockeySDK
+    platforms: [iOS] # optional, all platforms if empty
+- XLActionController:
+  - name: XLActionController
+cache:
+  local: ~/Library/Caches/Rome/
+  s3Bucket: provenance-carthage
