@@ -10,6 +10,7 @@ repositoryMap:
     platforms: [iOS] # optional, all platforms if empty
 - XLActionController:
   - name: XLActionController
+    platforms: [iOS] # optional, all platforms if empty
 cache:
   local: ~/Library/Caches/Rome/
   s3Bucket: provenance-carthage
