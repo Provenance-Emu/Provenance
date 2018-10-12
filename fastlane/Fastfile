@@ -291,17 +291,19 @@ end
 
     begin
       upload_to_testflight
-    rescue
+    rescue => ex
       # don't fail the build
-      UI.error("Testflight Something went wrong: #{ex}")
+      UI.important("Testflight Something went wrong: #{ex}")
     end
 
     begin
       scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
       scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
-    rescue
+    rescue => ex
+        # re-raise the exception unless it's something we're OK with ignoring
+        # raise ex unless ex.message.include?('Error message of interest')
       # don't fail the build
-      UI.error("SCP Something went wrong: #{ex}")
+      UI.important("SCP Something went wrong: #{ex}")
     end
 
 
