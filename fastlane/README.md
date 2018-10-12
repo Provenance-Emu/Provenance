@@ -81,6 +81,11 @@ fastlane ios check_env
 fastlane ios certificates
 ```
 Setup Certs for Match - New Devs
+### ios rome_download
+```
+fastlane ios rome_download
+```
+Download cached Rome builds
 ### ios create_certificates
 ```
 fastlane ios create_certificates

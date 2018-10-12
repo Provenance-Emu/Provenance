@@ -218,6 +218,9 @@ end
     # temporarily disable automatic code signing
     codesign_toggle(automatic: false)
 
+    if is_ci?
+      rome_download
+    end
     # carthage_bootstrap
   end
 
@@ -283,11 +286,13 @@ end
     publish_hockey(release_type: "2")
 
     # SCP to file server for storage
-    # scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
-    # scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+    if is_ci?
+      scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
+      scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+      upload_to_testflight
+    end
 
     # uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
-    # upload_to_testflight
 
     # Build tvOS app
     # match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf"], type: "adhoc", platform: "tvos")
@@ -380,6 +385,26 @@ end
     setup_certificates_private(type: "adhoc")
     # setup_certificates_private(type: "appstore")
     # update_devices
+  end
+
+  desc "Download cached Rome builds"
+  lane :rome_download do
+    swift_version = sh("swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d \"()\" | tr \" \" \"-\"")
+    srcroot = Dir.pwd
+
+    ["PVLibrary", "PVSupport"].each do |dir| 
+      Dir.chdir("#{srcroot}/../#{dir}") do
+      puts Dir.pwd
+      rome(
+      # frameworks: ["MyFramework1", "MyFramework2"],   # Specify which frameworks to upload or download
+      command: "download",                              # One of: download, upload, list
+      #verbose: false,                                 # Print rome output inline
+      platform: "iOS",                                # Define which platform to build for (one of ‘all’, ‘Mac’, ‘iOS’, ‘watchOS’, ‘tvOS‘, or comma-separated values of the formers except for ‘all’)
+      cacheprefix: swift_version,
+      #romefile: "#{dir}/Romefile"
+      )
+      end
+    end
   end
 
   private_lane :codesign_toggle do |options|
