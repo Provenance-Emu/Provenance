@@ -21,7 +21,7 @@ public extension PVGame {
         switch self.system.enumValue {
         case .SNES, .N64:
             return .wide
-        case .NES, .Genesis, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .WonderSwan, .WonderSwanColor:
+        case .NES, .Genesis, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor:
             return .tall
         default:
             return .square

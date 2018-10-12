@@ -181,6 +181,8 @@
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
 		B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; };
 		B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
+		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F89520B73BD000C5E502 /* PVSupport.framework */; };
 		B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
 		B3081C092080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
@@ -197,7 +199,6 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B33468D220AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
@@ -274,6 +275,10 @@
 		B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4B2058228E001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
 		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A683B3206B003E0051AEE4 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */; };
+		B3A683B4206B003E0051AEE4 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A683B7206B05F10051AEE4 /* PVAtariJaguarControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A683B6206B05F00051AEE4 /* PVAtariJaguarControllerViewController.swift */; };
+		B3A683B8206B05F10051AEE4 /* PVAtariJaguarControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A683B6206B05F00051AEE4 /* PVAtariJaguarControllerViewController.swift */; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -303,6 +308,8 @@
 		B3C04B5A21077E1000E7AF79 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5821077E1000E7AF79 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B5B2107846E00E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5821077E1000E7AF79 /* PVLibrary.framework */; };
 		B3C04B5C2107846E00E7AF79 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5821077E1000E7AF79 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C899B2206B7C51005E7033 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C899B1206B7C51005E7033 /* PVVirtualJaguar.framework */; };
+		B3C899B3206B7C51005E7033 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C899B1206B7C51005E7033 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
@@ -332,7 +339,6 @@
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
-		B3D534EC20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
@@ -488,6 +494,7 @@
 				B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */,
 				B3C9D5DC1DEA8A200068D057 /* PVGBA.framework in Embed Frameworks */,
+				B3C899B3206B7C51005E7033 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3C04B5A21077E1000E7AF79 /* PVLibrary.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
@@ -515,6 +522,7 @@
 				1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */,
 				B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */,
+				B3A683B4206B003E0051AEE4 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3C04B5C2107846E00E7AF79 /* PVLibrary.framework in Embed Frameworks */,
@@ -743,6 +751,8 @@
 		B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVNeoGeoPocketControllerViewController.swift; sourceTree = "<group>"; };
 		B3995E4B2058228E001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A683B6206B05F00051AEE4 /* PVAtariJaguarControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtariJaguarControllerViewController.swift; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVSaveStateCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
@@ -761,6 +771,7 @@
 		B3C04B5621077DF300E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B5821077E1000E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C653071E6F73450096053B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMednafen.framework"; sourceTree = "<group>"; };
+		B3C899B1206B7C51005E7033 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -856,6 +867,7 @@
 				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
 				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
+				B3A683B3206B003E0051AEE4 /* PVVirtualJaguar.framework in Frameworks */,
 				B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */,
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
@@ -904,6 +916,7 @@
 				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
 				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
 				1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */,
+				B3C899B2206B7C51005E7033 /* PVVirtualJaguar.framework in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
 				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
 				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
@@ -1010,6 +1023,8 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3C899B1206B7C51005E7033 /* PVVirtualJaguar.framework */,
+				B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
@@ -1104,6 +1119,7 @@
 				B3DF87681D6A5A6200D216D4 /* Atari2600 */,
 				B35469351DECD8250018B6F3 /* Atari5200 */,
 				B36DE7CD1D6B80DA002EE3ED /* Atari7800 */,
+				B3A683B5206B05D30051AEE4 /* Atari Jaguar */,
 				B32893751E0B4E540090B97A /* Atari Lynx */,
 				1AABE0CD1ABE3E4000FF6AEF /* GB */,
 				1A9FBE201ABD28B6004E778B /* GBA */,
@@ -1535,6 +1551,14 @@
 				B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.swift */,
 			);
 			name = "Neo Geo";
+			sourceTree = "<group>";
+		};
+		B3A683B5206B05D30051AEE4 /* Atari Jaguar */ = {
+			isa = PBXGroup;
+			children = (
+				B3A683B6206B05F00051AEE4 /* PVAtariJaguarControllerViewController.swift */,
+			);
+			name = "Atari Jaguar";
 			sourceTree = "<group>";
 		};
 		B3B3B89A1DECF9A700602746 /* N64 */ = {
@@ -2301,8 +2325,7 @@
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
 				B3FF4420205F9C3F00E5A84B /* PVSNESControllerViewController.swift in Sources */,
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
-				B3D534EC20B001D700A83D4E /* PillPageControl.swift in Sources */,
-				B33468D220AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
+				B3A683B7206B05F10051AEE4 /* PVAtariJaguarControllerViewController.swift in Sources */,
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				B3FF4417205F9C3F00E5A84B /* PVLynxControllerViewController.swift in Sources */,
@@ -2319,11 +2342,13 @@
 				B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				B3FF4414205F9AAF00E5A84B /* PVAtari2600ControllerViewController.swift in Sources */,
+				B302F31521713B17000322B9 /* PillPageControl.swift in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */,
 				B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
+				B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */,
 				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
 				B3FF441A205F9C3F00E5A84B /* PVGenesisControllerViewController.swift in Sources */,
 			);
@@ -2368,6 +2393,7 @@
 				B394C97B20609D0D0014A65D /* PVAtari7800ControllerViewController.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
 				B394C97D20609D0D0014A65D /* PVGBControllerViewController.swift in Sources */,
+				B3A683B8206B05F10051AEE4 /* PVAtariJaguarControllerViewController.swift in Sources */,
 				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
 				1AD482001BA354B100FDA50A /* PViCadeInputAxis.m in Sources */,

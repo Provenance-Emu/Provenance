@@ -624,3 +624,46 @@ public protocol CoreActions {
     @objc(didReleaseNGPButton:forPlayer:)
     func didRelease(_ button: PVNGPButton, forPlayer player: Int)
 }
+
+// MARK: - Atari Jaguar
+@objc public enum PVJaguarButton : Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case c
+    case pause
+    case option
+    @objc(PVJaguarButton1)
+    case button1
+    @objc(PVJaguarButton2)
+    case button2
+    @objc(PVJaguarButton3)
+    case button3
+    @objc(PVJaguarButton4)
+    case button4
+    @objc(PVJaguarButton5)
+    case button5
+    @objc(PVJaguarButton6)
+    case button6
+    @objc(PVJaguarButton7)
+    case button7
+    @objc(PVJaguarButton8)
+    case button8
+    @objc(PVJaguarButton9)
+    case button9
+    @objc(PVJaguarButton0)
+    case button0
+    case asterisk
+    case pound
+    case count
+}
+
+@objc public protocol PVJaguarSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushJaguarButton:forPlayer:)
+    func didPush(_ button: PVJaguarButton, forPlayer player: Int)
+    @objc(didReleaseJaguarButton:forPlayer:)
+    func didRelease(_ button: PVJaguarButton, forPlayer player: Int)
+}
