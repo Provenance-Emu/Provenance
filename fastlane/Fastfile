@@ -286,11 +286,24 @@ end
     publish_hockey(release_type: "2")
 
     # SCP to file server for storage
-    if is_ci?
+    # if is_ci?
+    build_time = Time.now.strftime('%F')
+
+    begin
+      upload_to_testflight
+    rescue
+      # don't fail the build
+      UI.error("Testflight Something went wrong: #{ex}")
+    end
+
+    begin
       scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
       scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
-      upload_to_testflight
+    rescue
+      # don't fail the build
+      UI.error("SCP Something went wrong: #{ex}")
     end
+
 
     # uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
 
