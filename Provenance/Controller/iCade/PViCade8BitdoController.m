@@ -10,6 +10,7 @@
 #import "PViCadeGamepad.h"
 #import "PViCadeGamepadButtonInput.h"
 #import "PViCadeGamepadDirectionPad.h"
+@import PVSupport;
 
 @implementation PViCade8BitdoController
 
@@ -17,6 +18,7 @@
     if (self = [super init]) {
         __unsafe_unretained PViCadeController* weakSelf = self;
         self.reader.buttonDown = ^(iCadeState button) {
+			NSLog(@"Button Down %04lx", (long)button);
             switch (button) {
                 case iCadeButtonA:
                     [[weakSelf.iCadeGamepad buttonX] buttonPressed];
@@ -49,6 +51,7 @@
                     [[weakSelf.iCadeGamepad dpad] padChanged];
                     break;
                 default:
+					NSLog(@"Button Unknown %04lx", (long)button);
                     break;
             }
             if (weakSelf.controllerPressedAnyKey) {
@@ -57,6 +60,8 @@
         };
         
         self.reader.buttonUp = ^(iCadeState button) {
+			NSLog(@"Button Up %04lx", (long)button);
+
             switch (button) {
                 case iCadeButtonA:
                     [[weakSelf.iCadeGamepad buttonX] buttonReleased];
@@ -89,6 +94,7 @@
                     [[weakSelf.iCadeGamepad dpad] padChanged];
                     break;
                 default:
+					NSLog(@"Button Unknown %04lx", (long)button);
                     break;
             }
         };
@@ -108,6 +114,7 @@
     if (self = [super init]) {
         __unsafe_unretained PViCadeController* weakSelf = self;
         self.reader.buttonDown = ^(iCadeState button) {
+			NSLog(@"Button Dpwn %04lx", (long)button);
             switch (button) {
                 case iCadeButtonA:
                     [[weakSelf.iCadeGamepad buttonY] buttonPressed];
@@ -140,6 +147,7 @@
                     [[weakSelf.iCadeGamepad dpad] padChanged];
                     break;
                 default:
+					DLOG(@"Unknown button code: %@i", button);
                     break;
             }
             if (weakSelf.controllerPressedAnyKey) {
@@ -148,6 +156,7 @@
         };
         
         self.reader.buttonUp = ^(iCadeState button) {
+			NSLog(@"Button Up %04lx", (long)button);
             switch (button) {
                 case iCadeButtonA:
                     [[weakSelf.iCadeGamepad buttonY] buttonReleased];
@@ -180,6 +189,7 @@
                     [[weakSelf.iCadeGamepad dpad] padChanged];
                     break;
                 default:
+					DLOG(@"Unknown button code: %@i", button);
                     break;
             }
         };
