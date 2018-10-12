@@ -263,7 +263,7 @@ end
     # Types, appstore adhoc development enterprise
 
     # update_devices
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios", readonly: true)
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
     #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
@@ -449,8 +449,8 @@ end
     # types "appstore", "development", "adhoc", "enterprise"
     type = options.fetch(:type, type)
 
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos")
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios", readonly: true)
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos", readonly: true)
   end
 
   desc "Create Certs for Match"
