@@ -276,7 +276,7 @@ end
     build_number = ENV["build_number"]
     ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
     badge_alpha
-    buid_ios_adhoc(ipa_name: ipa_name, activeArchOnly: true)
+    buid_ios_adhoc(ipa_name: ipa_name, activeArchOnly: false)
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
     # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
