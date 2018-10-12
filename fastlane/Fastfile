@@ -330,6 +330,7 @@ end
     # end
 
     begin
+      UI.message "SCP'ing to #{build_time}"
       scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
       scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
     rescue => ex
@@ -373,12 +374,17 @@ end
     source = options[:source]
     subfolder = options[:subfolder]
 
+    unless File.exist?(source)
+      UI.user_error!("Couldn't find file '#{source}'")
+    end
+
     filename = File.basename(source)
+
 
     host = "provenance.joemattiello.com"
     port = "22"
 
-    destination = "/usr/share/nginx/provenance.joemattiello.com/www/#{git_branch}/#{subfolder}/#{filename}"
+    destination = "/usr/share/nginx/provenance.joemattiello.com/www/TravisBuilds/#{git_branch}/#{subfolder}/#{filename}"
     username = "provenance" #ENV["FASTLANE_USER"],
 
     UI.message "SCP'ing from #{source} to #{host}:#{destination}"
