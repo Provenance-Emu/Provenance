@@ -257,6 +257,39 @@ end
     reset_enviroment
   end
 
+
+  desc "Upload to S3"
+  private_lane :s3upload do |options|
+    build_number = ENV["build_number"]
+    build_time = Time.now.strftime('%F')
+    ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
+    dsym_name = "Provenance-#{git_branch}-#{build_number}.app.dSYM.zip"
+    
+    aws_s3(
+      # All of these are used to make Shenzhen's `ipa distribute:s3` command
+      access_key: ENV['S3_ACCESS_KEY'],               # Required from user (unless using aws_profile).
+      secret_access_key: ENV['S3_SECRET_ACCESS_KEY'], # Required from user (unless using aws_profile).
+      #aws_profile: ENV['AWS_PROFILE'],                 # Required from user (unless using access_key and secret_access_key)
+      bucket: "Provenance",                       # Required from user.
+      region: "us-east-1",                       # Required from user.
+      #acl: ENV['S3_ACL'],                             # Optional - defaults to 'public-read'
+      #server_side_encryption: ENV['S3_SERVER_SIDE_ENCRYPTION'] # Optional
+    
+      endpoint: 'http://provenance.joemattiello.com:9000', # Optional, for buckets that require a specific endpoint
+      ipa: ipa_name,                             # Required (if not uploading an APK).
+      dsym: dsym_name,                   # Optional is you use `ipa` to build.
+    
+      #apk: 'AppName.apk',                             # Required (if not uploading an IPA).
+    
+      app_directory: "iOS",                # Optional but nice if you want to put multiple apps in same bucket
+    
+      path: "#{CFBundleShortVersionString}/#{git_branch}/#{CFBundleVersion}/", # This is actually the default.
+      #upload_metadata: true,                          # Upload version.json, plist and HTML. Set to false to skip uploading of these files.
+      #version_file_name: 'app_version.json',          # Name of the file to upload to S3. Defaults to 'version.json'
+      #version_template_path: 'path/to/erb'            # Path to an ERB to configure the structure of the version JSON file
+    )
+  end
+
   desc "Provenace Team: Push a new alpha build to Hockeyapp"
   lane :alpha do
     load_keys
