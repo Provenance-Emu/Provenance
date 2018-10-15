@@ -260,17 +260,19 @@ end
 
   desc "Upload to S3"
   private_lane :s3upload do |options|
+
+    ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
+    dsym_name = options.fetch(:ipa_name, 'Provenance.app.dSYM.zip')
+
     build_number = ENV["build_number"]
     build_time = Time.now.strftime('%F')
-    ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
-    dsym_name = "Provenance-#{git_branch}-#{build_number}.app.dSYM.zip"
-    
+
     aws_s3(
       # All of these are used to make Shenzhen's `ipa distribute:s3` command
       access_key: ENV['S3_ACCESS_KEY'],               # Required from user (unless using aws_profile).
       secret_access_key: ENV['S3_SECRET_ACCESS_KEY'], # Required from user (unless using aws_profile).
       #aws_profile: ENV['AWS_PROFILE'],                 # Required from user (unless using access_key and secret_access_key)
-      bucket: "Provenance",                       # Required from user.
+      bucket: "provenance-builds",                       # Required from user.
       region: "us-east-1",                       # Required from user.
       #acl: ENV['S3_ACL'],                             # Optional - defaults to 'public-read'
       #server_side_encryption: ENV['S3_SERVER_SIDE_ENCRYPTION'] # Optional
@@ -310,7 +312,8 @@ end
 
         # Build iOS App
     build_number = ENV["build_number"]
-    ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
+    ipa_name  = "Provenance-#{git_branch}-#{build_number}.ipa"
+
     badge_alpha
     buid_ios_adhoc(
       ipa_name: ipa_name, 
@@ -320,10 +323,7 @@ end
       )
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
-    # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
-    publish_hockey(release_type: "2")
-
-    # SCP to file server for storage
+          # SCP to file server for storage
     # if is_ci?
     build_time = Time.now.strftime('%F')
 
@@ -334,6 +334,32 @@ end
     #   UI.important("Testflight Something went wrong: #{ex}")
     # end
 
+    dsym_name = File.basename(lane_context[SharedValues::DSYM_OUTPUT_PATH])
+
+    # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
+    begin
+      UI.message "Upload to hockey-app with id #{dev_domain}.provenance"
+      publish_hockey(release_type: "2")
+    rescue => ex
+      # re-raise the exception unless it's something we're OK with ignoring
+      # raise ex unless ex.message.include?('Error message of interest')
+      # don't fail the build
+      UI.important("Hockey App: Something went wrong: #{ex}")
+    end
+
+    # Upload to S3 bucket
+    begin
+      UI.message "Upload to S3 butcket IPA: #{ipa_name}, dSYM: #{dsym_name}"
+      
+      s3upload( ipa_name: ipa_name, dsym_name: dsym_name)
+    rescue => ex
+      # re-raise the exception unless it's something we're OK with ignoring
+      # raise ex unless ex.message.include?('Error message of interest')
+      # don't fail the build
+      UI.important("S3: Something went wrong: #{ex}")
+    end
+
+    # SCP to web-server
     begin
       UI.message "SCP'ing to #{build_time}"
       scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
