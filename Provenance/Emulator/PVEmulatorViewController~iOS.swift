@@ -46,7 +46,7 @@ public final class EmulatorActionCell: ActionCell {
 		super.init(coder: aDecoder)
 	}
 
-	open override func awakeFromNib() {
+	public override func awakeFromNib() {
 		super.awakeFromNib()
 		initialize()
 	}
