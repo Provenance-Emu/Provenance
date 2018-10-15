@@ -26,12 +26,11 @@
  */
 
 #import "YabauseGameCore.h"
-#import <PVSupport/OERingBuffer.h>
-#import <PVSupport/DebugUtils.h>
+
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #include <sched.h>
 #include <stdio.h>
@@ -224,7 +223,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 - (id)init
 {
-    DLog(@"Yabause init /debug");
+    DLOG(@"Yabause init /debug");
     self = [super init];
     if(self != nil)
     {
@@ -313,7 +312,7 @@ VideoInterface_struct *VIDCoreList[] = {
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
         
         if([filePath length] > 0) {
-            DLog(@"BRAM: %@", filePath);
+            DLOG(@"BRAM: %@", filePath);
             char *_bramFile;
             const char *tmp = [filePath UTF8String];
             
@@ -363,7 +362,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     filename = [path copy];
-	DLog(@"Saturn - %@", filename);
+	DLOG(@"Saturn - %@", filename);
     [self setupEmulation];
 //    [self executeFrame];
     return YES;
@@ -504,7 +503,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (void)executeFrame
 {
     if(firstRun) {
-        DLog(@"Yabause executeFrame firstRun, lazy init");
+        DLOG(@"Yabause executeFrame firstRun, lazy init");
         [self initYabauseWithCDCore:CDCORE_DUMMY];
         [self startYabauseEmulation];
         firstRun = NO;
@@ -548,7 +547,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 void YuiErrorMsg(const char *string)
 {
-    DLog(@"Yabause Error %@", [NSString stringWithUTF8String:string]);
+    DLOG(@"Yabause Error %@", [NSString stringWithUTF8String:string]);
 }
 
 void YuiSwapBuffers(void)
