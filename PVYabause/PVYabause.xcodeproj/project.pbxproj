@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		946C18DE1714A4AA00C64BF9 /* gen68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789355152A32B90080990B /* gen68k.c */; };
-		946CA3BD18495D3400CCA369 /* japmodem.c in Sources */ = {isa = PBXBuildFile; fileRef = 946CA3BB18495D3400CCA369 /* japmodem.c */; };
-		B32775271E9C8444000FEC38 /* PVYabause.h in Headers */ = {isa = PBXBuildFile; fileRef = B32775251E9C8444000FEC38 /* PVYabause.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B327752B1E9C84DE000FEC38 /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB1BA9B51587923900F8939D /* osdcore.c */; };
 		B327752C1E9C84DE000FEC38 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934C152A32B90080990B /* bios.c */; };
 		B327752D1E9C84DE000FEC38 /* c68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934F152A32B90080990B /* c68k.c */; };
@@ -50,71 +48,20 @@
 		B32775541E9C84DE000FEC38 /* vidshared.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CB152A32B90080990B /* vidshared.c */; };
 		B32775551E9C84DE000FEC38 /* vidsoft.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CD152A32B90080990B /* vidsoft.c */; };
 		B32775561E9C84DE000FEC38 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CF152A32B90080990B /* yabause.c */; };
-		B32775591E9C84DE000FEC38 /* YabauseGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = EB851D0C152396CC00715BD2 /* YabauseGameCore.m */; };
+		B32775591E9C84DE000FEC38 /* PVYabauseGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = EB851D0C152396CC00715BD2 /* PVYabauseGameCore.m */; };
 		B327755D1E9C8520000FEC38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755C1E9C8520000FEC38 /* Foundation.framework */; };
 		B327755F1E9C852D000FEC38 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755E1E9C852D000FEC38 /* CoreFoundation.framework */; };
 		B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775601E9C8539000FEC38 /* CoreAudio.framework */; };
 		B32775651E9C8546000FEC38 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775641E9C8546000FEC38 /* PVSupport.framework */; };
-		B32775691E9C887F000FEC38 /* cd-macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78935B152A32B90080990B /* cd-macosx.c */; };
 		B376848C206A06620007A99C /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; };
 		B376848E206A074C0007A99C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B376848D206A074B0007A99C /* Core.plist */; };
-		B392CED22174242400A66D3D /* YabauseGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EB851D0B152396CC00715BD2 /* YabauseGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B392CED22174242400A66D3D /* PVYabauseGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EB851D0B152396CC00715BD2 /* PVYabauseGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AC5627206A1E8A004401F8 /* yglshaderes.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5625206A1E8A004401F8 /* yglshaderes.c */; };
 		B3AC5628206A1E8A004401F8 /* ygles.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5626206A1E8A004401F8 /* ygles.c */; };
 		B3AC562B206A1F19004401F8 /* gameinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5629206A1F18004401F8 /* gameinfo.c */; };
 		B3AC562E206A28BF004401F8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AC562D206A28BF004401F8 /* GLKit.framework */; };
 		B3AC5630206A28C6004401F8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AC562F206A28C6004401F8 /* OpenGLES.framework */; };
 		B3AC5632206A2903004401F8 /* yglcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5631206A2902004401F8 /* yglcache.cpp */; };
-		EB1BA9B61587923900F8939D /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB1BA9B51587923900F8939D /* osdcore.c */; };
-		EB3297141522671200307B0C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3297131522671200307B0C /* Cocoa.framework */; };
-		EB32971E1522671200307B0C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB32971C1522671200307B0C /* InfoPlist.strings */; };
-		EB78914F152A08600080990B /* Yabause.icns in Resources */ = {isa = PBXBuildFile; fileRef = EB78914E152A08600080990B /* Yabause.icns */; };
-		EB851D11152397AB00715BD2 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB851D10152397AB00715BD2 /* OpenGL.framework */; };
-		EBDBB513152A39DC0091DA28 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934C152A32B90080990B /* bios.c */; };
-		EBDBB514152A39DC0091DA28 /* c68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934F152A32B90080990B /* c68k.c */; };
-		EBDBB516152A39DC0091DA28 /* gen68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789355152A32B90080990B /* gen68k.c */; };
-		EBDBB518152A39DC0091DA28 /* cdbase.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78935E152A32B90080990B /* cdbase.c */; };
-		EBDBB519152A39DC0091DA28 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789360152A32B90080990B /* cheat.c */; };
-		EBDBB51A152A39DC0091DA28 /* coffelf.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789362152A32B90080990B /* coffelf.c */; };
-		EBDBB51B152A39DC0091DA28 /* cs0.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789365152A32B90080990B /* cs0.c */; };
-		EBDBB51C152A39DC0091DA28 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789367152A32B90080990B /* cs1.c */; };
-		EBDBB51D152A39DC0091DA28 /* cs2.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789369152A32B90080990B /* cs2.c */; };
-		EBDBB51E152A39DC0091DA28 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78936B152A32B90080990B /* debug.c */; };
-		EBDBB51F152A39DC0091DA28 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78936D152A32B90080990B /* error.c */; };
-		EBDBB520152A39DC0091DA28 /* m68kc68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78936F152A32B90080990B /* m68kc68k.c */; };
-		EBDBB521152A39DC0091DA28 /* m68kcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789371152A32B90080990B /* m68kcore.c */; };
-		EBDBB522152A39DC0091DA28 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789373152A32B90080990B /* m68kd.c */; };
-		EBDBB523152A39DC0091DA28 /* macjoy.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789376152A32B90080990B /* macjoy.c */; };
-		EBDBB524152A39DC0091DA28 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789378152A32B90080990B /* memory.c */; };
-		EBDBB525152A39DC0091DA28 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78937A152A32B90080990B /* movie.c */; };
-		EBDBB526152A39DC0091DA28 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78937C152A32B90080990B /* netlink.c */; };
-		EBDBB527152A39DC0091DA28 /* peripheral.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78937E152A32B90080990B /* peripheral.c */; };
-		EBDBB528152A39DC0091DA28 /* permacjoy.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789382152A32B90080990B /* permacjoy.c */; };
-		EBDBB529152A39DC0091DA28 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789386152A32B90080990B /* profile.c */; };
-		EBDBB52A152A39DC0091DA28 /* scsp2.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789397152A32B90080990B /* scsp2.c */; };
-		EBDBB52B152A39DC0091DA28 /* scu.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789399152A32B90080990B /* scu.c */; };
-		EBDBB52C152A39DC0091DA28 /* sh2core.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893A6152A32B90080990B /* sh2core.c */; };
-		EBDBB52D152A39DC0091DA28 /* sh2d.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893A8152A32B90080990B /* sh2d.c */; };
-		EBDBB52E152A39DC0091DA28 /* sh2idle.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893AA152A32B90080990B /* sh2idle.c */; };
-		EBDBB52F152A39DC0091DA28 /* sh2int.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893AC152A32B90080990B /* sh2int.c */; };
-		EBDBB530152A39DC0091DA28 /* sh2trace.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893AE152A32B90080990B /* sh2trace.c */; };
-		EBDBB531152A39DC0091DA28 /* smpc.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893B0152A32B90080990B /* smpc.c */; };
-		EBDBB532152A39DC0091DA28 /* snddummy.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893B4152A32B90080990B /* snddummy.c */; };
-		EBDBB534152A39DC0091DA28 /* sndwav.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893B9152A32B90080990B /* sndwav.c */; };
-		EBDBB535152A39DC0091DA28 /* thr-dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893BA152A32B90080990B /* thr-dummy.c */; };
-		EBDBB536152A39DC0091DA28 /* titan.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893BF152A32B90080990B /* titan.c */; };
-		EBDBB537152A39DC0091DA28 /* vdp1.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893C3152A32B90080990B /* vdp1.c */; };
-		EBDBB538152A39DC0091DA28 /* vdp2.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893C5152A32B90080990B /* vdp2.c */; };
-		EBDBB539152A39DC0091DA28 /* vdp2debug.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893C7152A32B90080990B /* vdp2debug.c */; };
-		EBDBB53A152A39DC0091DA28 /* vidogl.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893C9152A32B90080990B /* vidogl.c */; };
-		EBDBB53B152A39DC0091DA28 /* vidshared.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CB152A32B90080990B /* vidshared.c */; };
-		EBDBB53C152A39DC0091DA28 /* vidsoft.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CD152A32B90080990B /* vidsoft.c */; };
-		EBDBB53D152A39DC0091DA28 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CF152A32B90080990B /* yabause.c */; };
-		EBDBB541152A3B2B0091DA28 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB540152A3B2B0091DA28 /* CoreFoundation.framework */; };
-		EBDBB543152A3B2F0091DA28 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB542152A3B2F0091DA28 /* IOKit.framework */; };
-		EBDBB545152A3B350091DA28 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB544152A3B350091DA28 /* GLUT.framework */; };
-		EBDBB548152A3B3F0091DA28 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB546152A3B3F0091DA28 /* AudioUnit.framework */; };
-		EBDBB549152A3B3F0091DA28 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB547152A3B3F0091DA28 /* CoreAudio.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,24 +72,16 @@
 			remoteGlobalIDString = 946C18D41714A48600C64BF9;
 			remoteInfo = gen68k;
 		};
-		EB30D2D917B7A96F00A8100A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EB3297071522671200307B0C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 946C18D41714A48600C64BF9;
-			remoteInfo = gen68k;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3D62E059186FF54200EA37B2 /* Yabause_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Yabause_Prefix.pch; sourceTree = "<group>"; };
+		3D62E059186FF54200EA37B2 /* PVYabause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause.h; sourceTree = "<group>"; };
 		946C18B01714A07B00C64BF9 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenEmuBase.framework; path = "../../OpenEmu/OpenEmu-SDK/build/Release/OpenEmuBase.framework"; sourceTree = "<group>"; };
 		946C18BB1714A3CA00C64BF9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		946C18D51714A48600C64BF9 /* gen68k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gen68k; sourceTree = BUILT_PRODUCTS_DIR; };
 		946CA3BB18495D3400CCA369 /* japmodem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = japmodem.c; sourceTree = "<group>"; };
 		946CA3BC18495D3400CCA369 /* japmodem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = japmodem.h; sourceTree = "<group>"; };
 		B32775231E9C8444000FEC38 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B32775251E9C8444000FEC38 /* PVYabause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause.h; sourceTree = "<group>"; };
 		B32775261E9C8444000FEC38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B327755A1E9C851C000FEC38 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B327755C1E9C8520000FEC38 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -151,8 +90,9 @@
 		B32775621E9C853D000FEC38 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
 		B32775641E9C8546000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B327756B1E9C8F0A000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
+		B374930A21743C8900C65DD1 /* PVYabause_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause_Prefix.pch; sourceTree = "<group>"; };
 		B376848D206A074B0007A99C /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
-		B392CECF217420FF00A66D3D /* YabauseGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = YabauseGameCore.swift; path = ../yabauseut/YabauseGameCore.swift; sourceTree = "<group>"; };
+		B392CECF217420FF00A66D3D /* YabauseGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YabauseGameCore.swift; sourceTree = "<group>"; };
 		B3AC5625206A1E8A004401F8 /* yglshaderes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yglshaderes.c; sourceTree = "<group>"; };
 		B3AC5626206A1E8A004401F8 /* ygles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ygles.c; sourceTree = "<group>"; };
 		B3AC5629206A1F18004401F8 /* gameinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gameinfo.c; sourceTree = "<group>"; };
@@ -161,14 +101,10 @@
 		B3AC562F206A28C6004401F8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3AC5631206A2902004401F8 /* yglcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yglcache.cpp; sourceTree = "<group>"; };
 		EB1BA9B51587923900F8939D /* osdcore.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osdcore.c; sourceTree = "<group>"; };
-		EB3297101522671200307B0C /* Yabause.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Yabause.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB3297131522671200307B0C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		EB3297161522671200307B0C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		EB3297171522671200307B0C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		EB3297181522671200307B0C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		EB32971D1522671200307B0C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		EB789149152A06D60080990B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
-		EB78914E152A08600080990B /* Yabause.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Yabause.icns; sourceTree = SOURCE_ROOT; };
 		EB78934C152A32B90080990B /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
 		EB78934D152A32B90080990B /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
 		EB78934F152A32B90080990B /* c68k.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = c68k.c; sourceTree = "<group>"; };
@@ -299,8 +235,8 @@
 		EB7893D0152A32B90080990B /* yabause.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yabause.h; sourceTree = "<group>"; };
 		EB7893D2152A32B90080990B /* ygl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ygl.h; sourceTree = "<group>"; };
 		EB7893D4152A32B90080990B /* yui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yui.h; sourceTree = "<group>"; };
-		EB851D0B152396CC00715BD2 /* YabauseGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YabauseGameCore.h; sourceTree = "<group>"; };
-		EB851D0C152396CC00715BD2 /* YabauseGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YabauseGameCore.m; sourceTree = "<group>"; };
+		EB851D0B152396CC00715BD2 /* PVYabauseGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVYabauseGameCore.h; sourceTree = "<group>"; };
+		EB851D0C152396CC00715BD2 /* PVYabauseGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVYabauseGameCore.m; sourceTree = "<group>"; };
 		EB851D10152397AB00715BD2 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		EBDBB540152A3B2B0091DA28 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		EBDBB542152A3B2F0091DA28 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -330,27 +266,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EB32970D1522671200307B0C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EB3297141522671200307B0C /* Cocoa.framework in Frameworks */,
-				EBDBB545152A3B350091DA28 /* GLUT.framework in Frameworks */,
-				EB851D11152397AB00715BD2 /* OpenGL.framework in Frameworks */,
-				EBDBB541152A3B2B0091DA28 /* CoreFoundation.framework in Frameworks */,
-				EBDBB543152A3B2F0091DA28 /* IOKit.framework in Frameworks */,
-				EBDBB548152A3B3F0091DA28 /* AudioUnit.framework in Frameworks */,
-				EBDBB549152A3B3F0091DA28 /* CoreAudio.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		B32775241E9C8444000FEC38 /* PVYabause */ = {
 			isa = PBXGroup;
 			children = (
-				B32775251E9C8444000FEC38 /* PVYabause.h */,
+				B374930A21743C8900C65DD1 /* PVYabause_Prefix.pch */,
+				3D62E059186FF54200EA37B2 /* PVYabause.h */,
+				B376848D206A074B0007A99C /* Core.plist */,
 				B32775261E9C8444000FEC38 /* Info.plist */,
 			);
 			path = PVYabause;
@@ -371,7 +295,6 @@
 		EB3297111522671200307B0C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EB3297101522671200307B0C /* Yabause.oecoreplugin */,
 				946C18D51714A48600C64BF9 /* gen68k */,
 				B32775231E9C8444000FEC38 /* PVYabause.framework */,
 			);
@@ -411,10 +334,6 @@
 		EB3297191522671200307B0C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B376848D206A074B0007A99C /* Core.plist */,
-				EB78914E152A08600080990B /* Yabause.icns */,
-				EB789149152A06D60080990B /* Info.plist */,
-				EB32971C1522671200307B0C /* InfoPlist.strings */,
 			);
 			name = Resources;
 			path = Yabause;
@@ -423,12 +342,11 @@
 		EB3297251522676200307B0C /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				EB851D0B152396CC00715BD2 /* YabauseGameCore.h */,
-				EB851D0C152396CC00715BD2 /* YabauseGameCore.m */,
-				3D62E059186FF54200EA37B2 /* Yabause_Prefix.pch */,
+				EB851D0B152396CC00715BD2 /* PVYabauseGameCore.h */,
+				EB851D0C152396CC00715BD2 /* PVYabauseGameCore.m */,
 				B392CECF217420FF00A66D3D /* YabauseGameCore.swift */,
 			);
-			name = Classes;
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		EB78934B152A32B90080990B /* src */ = {
@@ -543,7 +461,8 @@
 				EB7893D2152A32B90080990B /* ygl.h */,
 				EB7893D4152A32B90080990B /* yui.h */,
 			);
-			path = src;
+			name = src;
+			path = yabause/src;
 			sourceTree = "<group>";
 		};
 		EB78934E152A32B90080990B /* c68k */ = {
@@ -637,8 +556,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B392CED22174242400A66D3D /* YabauseGameCore.h in Headers */,
-				B32775271E9C8444000FEC38 /* PVYabause.h in Headers */,
+				B392CED22174242400A66D3D /* PVYabauseGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,24 +599,6 @@
 			productReference = B32775231E9C8444000FEC38 /* PVYabause.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EB32970F1522671200307B0C /* Yabause */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EB3297221522671200307B0C /* Build configuration list for PBXNativeTarget "Yabause" */;
-			buildPhases = (
-				EB32970E1522671200307B0C /* Resources */,
-				EB32970C1522671200307B0C /* Sources */,
-				EB32970D1522671200307B0C /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				EB30D2DA17B7A96F00A8100A /* PBXTargetDependency */,
-			);
-			name = Yabause;
-			productName = Yabause;
-			productReference = EB3297101522671200307B0C /* Yabause.oecoreplugin */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -727,7 +627,6 @@
 			projectRoot = "";
 			targets = (
 				946C18D41714A48600C64BF9 /* gen68k */,
-				EB32970F1522671200307B0C /* Yabause */,
 				B32775221E9C8444000FEC38 /* PVYabause */,
 			);
 		};
@@ -739,15 +638,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B376848E206A074C0007A99C /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EB32970E1522671200307B0C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EB32971E1522671200307B0C /* InfoPlist.strings in Resources */,
-				EB78914F152A08600080990B /* Yabause.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -828,57 +718,7 @@
 				B32775541E9C84DE000FEC38 /* vidshared.c in Sources */,
 				B32775551E9C84DE000FEC38 /* vidsoft.c in Sources */,
 				B32775561E9C84DE000FEC38 /* yabause.c in Sources */,
-				B32775591E9C84DE000FEC38 /* YabauseGameCore.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EB32970C1522671200307B0C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EB1BA9B61587923900F8939D /* osdcore.c in Sources */,
-				EBDBB513152A39DC0091DA28 /* bios.c in Sources */,
-				EBDBB514152A39DC0091DA28 /* c68k.c in Sources */,
-				EBDBB516152A39DC0091DA28 /* gen68k.c in Sources */,
-				EBDBB518152A39DC0091DA28 /* cdbase.c in Sources */,
-				EBDBB519152A39DC0091DA28 /* cheat.c in Sources */,
-				EBDBB51A152A39DC0091DA28 /* coffelf.c in Sources */,
-				EBDBB51B152A39DC0091DA28 /* cs0.c in Sources */,
-				EBDBB51C152A39DC0091DA28 /* cs1.c in Sources */,
-				EBDBB51D152A39DC0091DA28 /* cs2.c in Sources */,
-				EBDBB51E152A39DC0091DA28 /* debug.c in Sources */,
-				EBDBB51F152A39DC0091DA28 /* error.c in Sources */,
-				EBDBB520152A39DC0091DA28 /* m68kc68k.c in Sources */,
-				EBDBB521152A39DC0091DA28 /* m68kcore.c in Sources */,
-				EBDBB522152A39DC0091DA28 /* m68kd.c in Sources */,
-				EBDBB523152A39DC0091DA28 /* macjoy.c in Sources */,
-				EBDBB524152A39DC0091DA28 /* memory.c in Sources */,
-				EBDBB525152A39DC0091DA28 /* movie.c in Sources */,
-				EBDBB526152A39DC0091DA28 /* netlink.c in Sources */,
-				EBDBB527152A39DC0091DA28 /* peripheral.c in Sources */,
-				EBDBB528152A39DC0091DA28 /* permacjoy.c in Sources */,
-				EBDBB529152A39DC0091DA28 /* profile.c in Sources */,
-				EBDBB52A152A39DC0091DA28 /* scsp2.c in Sources */,
-				EBDBB52B152A39DC0091DA28 /* scu.c in Sources */,
-				EBDBB52C152A39DC0091DA28 /* sh2core.c in Sources */,
-				EBDBB52D152A39DC0091DA28 /* sh2d.c in Sources */,
-				EBDBB52E152A39DC0091DA28 /* sh2idle.c in Sources */,
-				EBDBB52F152A39DC0091DA28 /* sh2int.c in Sources */,
-				EBDBB530152A39DC0091DA28 /* sh2trace.c in Sources */,
-				EBDBB531152A39DC0091DA28 /* smpc.c in Sources */,
-				EBDBB532152A39DC0091DA28 /* snddummy.c in Sources */,
-				EBDBB534152A39DC0091DA28 /* sndwav.c in Sources */,
-				EBDBB535152A39DC0091DA28 /* thr-dummy.c in Sources */,
-				EBDBB536152A39DC0091DA28 /* titan.c in Sources */,
-				B32775691E9C887F000FEC38 /* cd-macosx.c in Sources */,
-				EBDBB537152A39DC0091DA28 /* vdp1.c in Sources */,
-				EBDBB538152A39DC0091DA28 /* vdp2.c in Sources */,
-				EBDBB539152A39DC0091DA28 /* vdp2debug.c in Sources */,
-				EBDBB53A152A39DC0091DA28 /* vidogl.c in Sources */,
-				EBDBB53B152A39DC0091DA28 /* vidshared.c in Sources */,
-				EBDBB53C152A39DC0091DA28 /* vidsoft.c in Sources */,
-				EBDBB53D152A39DC0091DA28 /* yabause.c in Sources */,
-				946CA3BD18495D3400CCA369 /* japmodem.c in Sources */,
+				B32775591E9C84DE000FEC38 /* PVYabauseGameCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,23 +730,7 @@
 			target = 946C18D41714A48600C64BF9 /* gen68k */;
 			targetProxy = B32775671E9C878E000FEC38 /* PBXContainerItemProxy */;
 		};
-		EB30D2DA17B7A96F00A8100A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 946C18D41714A48600C64BF9 /* gen68k */;
-			targetProxy = EB30D2D917B7A96F00A8100A /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		EB32971C1522671200307B0C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				EB32971D1522671200307B0C /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		946C18DC1714A48600C64BF9 /* Debug */ = {
@@ -1110,7 +934,7 @@
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREFIX_HEADER = Yabause_Prefix.pch;
+				GCC_PREFIX_HEADER = PVYabause/PVYabause_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",
 					CRAB_REWRITE,
@@ -1167,7 +991,7 @@
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREFIX_HEADER = Yabause_Prefix.pch;
+				GCC_PREFIX_HEADER = PVYabause/PVYabause_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",
 					CRAB_REWRITE,
@@ -1190,89 +1014,6 @@
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		EB3297231522671200307B0C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_OPENMP_SUPPORT = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/OpenEmu-dlmybedonvhbocfohcybqayygyps/Build/Products/Debug\"",
-					"\"$(SRCROOT)/../OpenEmu/build/Release\"",
-				);
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_SCSP2=1",
-					CRAB_REWRITE,
-					NO_CLI,
-					HAVE_SYS_TIME_H,
-					HAVE_GETTIMEOFDAY,
-					HAVE_STRCASECMP,
-					not_HAVE_LIBGLUT,
-					not_HAVE_LIBGL,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GENERATE_PKGINFO_FILE = YES;
-				HEADER_SEARCH_PATHS = "";
-				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				STRIP_STYLE = all;
-				WRAPPER_EXTENSION = oecoreplugin;
-			};
-			name = Debug;
-		};
-		EB3297241522671200307B0C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_OPENMP_SUPPORT = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/OpenEmu-dlmybedonvhbocfohcybqayygyps/Build/Products/Debug\"",
-					"\"$(SRCROOT)/../OpenEmu/build/Release\"",
-				);
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_SCSP2=1",
-					CRAB_REWRITE,
-					NO_CLI,
-					HAVE_SYS_TIME_H,
-					HAVE_GETTIMEOFDAY,
-					HAVE_STRCASECMP,
-					not_HAVE_LIBGLUT,
-					not_HAVE_LIBGL,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GENERATE_PKGINFO_FILE = YES;
-				HEADER_SEARCH_PATHS = "";
-				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				STRIP_STYLE = all;
-				WRAPPER_EXTENSION = oecoreplugin;
 			};
 			name = Release;
 		};
@@ -1302,15 +1043,6 @@
 			buildConfigurations = (
 				EB3297201522671200307B0C /* Debug */,
 				EB3297211522671200307B0C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EB3297221522671200307B0C /* Build configuration list for PBXNativeTarget "Yabause" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EB3297231522671200307B0C /* Debug */,
-				EB3297241522671200307B0C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -50,6 +50,6 @@
       location = "group:PVFCEU/PVFCEU.xcodeproj">
    </FileRef>
    <FileRef
-       location = "group:PVYabause/yabause/PVYabause.xcodeproj">
+      location = "group:PVYabause/PVYabause.xcodeproj">
    </FileRef>
 </Workspace>

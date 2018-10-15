@@ -1,5 +1,5 @@
 //
-//  YabauseGameCore.swift
+//  PVYabauseGameCore.swift
 //  PVYabause
 //
 //  Created by Joseph Mattiello on 10/14/18.
@@ -8,7 +8,7 @@
 import Foundation
 import PVSupport
 
-//extension YabauseGameCore: DiscSwappable {
+//extension PVYabauseGameCore: DiscSwappable {
 //	public var numberOfDiscs: UInt {
 //		return numberOfDiscs
 //	}

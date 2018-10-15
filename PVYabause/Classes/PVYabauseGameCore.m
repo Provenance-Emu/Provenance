@@ -25,7 +25,7 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "YabauseGameCore.h"
+#import "PVYabauseGameCore.h"
 
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES2/gl.h>
@@ -209,7 +209,7 @@ VideoInterface_struct *VIDCoreList[] = {
 #pragma mark -
 #pragma mark OE Core Implementation
 
-@interface YabauseGameCore ()
+@interface PVYabauseGameCore ()
 {
     NSLock  *videoLock;
     
@@ -219,7 +219,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 @end
 
-@implementation YabauseGameCore
+@implementation PVYabauseGameCore
 
 - (id)init
 {
@@ -265,21 +265,26 @@ VideoInterface_struct *VIDCoreList[] = {
 
 - (void)initYabauseWithCDCore:(int)cdcore
 {
-    if ([filename hasSuffix:@".cue"])
-    {
-        yinit.cdcoretype = CDCORE_ISO;
+	NSString *extension = filename.pathExtension;
+	NSArray <NSString*>* romExtensions = @[@"cue", @"ccd", @"mdf", @"iso"];
+    if ([romExtensions containsObject:extension]) {
+		yinit.cdcoretype = CDCORE_ISO;
         yinit.cdpath = [filename UTF8String];
         
         // Get a BIOS
-		NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"Saturn EU.bin"];
-        
+		NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"mpr-17933.bin"];
+
+		ILOG(@"Loading ROM. Will try to setup Saturn BIOS at path: %@", bios);
+
         // If a "Saturn EU.bin" BIOS exists, use it otherwise emulate BIOS
-        if ([[NSFileManager defaultManager] fileExistsAtPath:bios])
+		if ([[NSFileManager defaultManager] fileExistsAtPath:bios]) {
+			ILOG(@"BIOS found : %@", bios);
             yinit.biospath = [bios UTF8String];
-        else
-            yinit.biospath = NULL;
-    }
-    else
+		} else {
+			WLOG(@"No BIOS found");
+			yinit.biospath = NULL;
+		}
+    } else
     {
         // Assume we've a BIOS file and we want to run it
         yinit.cdcoretype = CDCORE_DUMMY;
@@ -496,7 +501,7 @@ VideoInterface_struct *VIDCoreList[] = {
 #ifdef HAVE_LIBGL
 -(BOOL)rendersToOpenGL
 {
-    return YES;
+    return NO;
 }
 #endif
 
@@ -516,6 +521,10 @@ VideoInterface_struct *VIDCoreList[] = {
         //[videoLock unlock];
     }
 }
+
+//- (BOOL)isDoubleBuffered {
+//	return YES;
+//}
 
 - (GLenum)pixelFormat
 {

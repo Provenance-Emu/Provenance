@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.ybause</string>
 	<key>PVPrincipleClass</key>
-	<string>YabauseGameCore</string>
+	<string>PVYabauseGameCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.saturn</string>
