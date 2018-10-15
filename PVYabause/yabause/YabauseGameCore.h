@@ -33,3 +33,9 @@ __attribute__((visibility("default")))
 @interface YabauseGameCore : PVEmulatorCore <PVSaturnSystemResponderClient>
 @end
 
+
+// for Swift
+@interface YabauseGameCore()
+@property (nonatomic, assign) NSUInteger maxDiscs;
+-(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
+@end

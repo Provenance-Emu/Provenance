@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -58,6 +58,7 @@
 		B32775691E9C887F000FEC38 /* cd-macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78935B152A32B90080990B /* cd-macosx.c */; };
 		B376848C206A06620007A99C /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; };
 		B376848E206A074C0007A99C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B376848D206A074B0007A99C /* Core.plist */; };
+		B392CED22174242400A66D3D /* YabauseGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EB851D0B152396CC00715BD2 /* YabauseGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AC5627206A1E8A004401F8 /* yglshaderes.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5625206A1E8A004401F8 /* yglshaderes.c */; };
 		B3AC5628206A1E8A004401F8 /* ygles.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5626206A1E8A004401F8 /* ygles.c */; };
 		B3AC562B206A1F19004401F8 /* gameinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5629206A1F18004401F8 /* gameinfo.c */; };
@@ -151,6 +152,7 @@
 		B32775641E9C8546000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B327756B1E9C8F0A000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B376848D206A074B0007A99C /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B392CECF217420FF00A66D3D /* YabauseGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = YabauseGameCore.swift; path = ../yabauseut/YabauseGameCore.swift; sourceTree = "<group>"; };
 		B3AC5625206A1E8A004401F8 /* yglshaderes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yglshaderes.c; sourceTree = "<group>"; };
 		B3AC5626206A1E8A004401F8 /* ygles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ygles.c; sourceTree = "<group>"; };
 		B3AC5629206A1F18004401F8 /* gameinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gameinfo.c; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 				EB851D0B152396CC00715BD2 /* YabauseGameCore.h */,
 				EB851D0C152396CC00715BD2 /* YabauseGameCore.m */,
 				3D62E059186FF54200EA37B2 /* Yabause_Prefix.pch */,
+				B392CECF217420FF00A66D3D /* YabauseGameCore.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -634,6 +637,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B392CED22174242400A66D3D /* YabauseGameCore.h in Headers */,
 				B32775271E9C8444000FEC38 /* PVYabause.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -662,9 +666,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B327752A1E9C8444000FEC38 /* Build configuration list for PBXNativeTarget "PVYabause" */;
 			buildPhases = (
+				B32775201E9C8444000FEC38 /* Headers */,
 				B327751E1E9C8444000FEC38 /* Sources */,
 				B327751F1E9C8444000FEC38 /* Frameworks */,
-				B32775201E9C8444000FEC38 /* Headers */,
 				B32775211E9C8444000FEC38 /* Resources */,
 			);
 			buildRules = (
@@ -705,12 +709,13 @@
 				TargetAttributes = {
 					B32775221E9C8444000FEC38 = {
 						CreatedOnToolsVersion = 8.3;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = EB32970A1522671200307B0C /* Build configuration list for PBXProject "PVYabause" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -952,6 +957,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -990,13 +996,19 @@
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVYabause";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1011,6 +1023,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -1048,12 +1061,17 @@
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVYabause";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
