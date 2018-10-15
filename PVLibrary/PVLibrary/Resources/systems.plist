@@ -1331,13 +1331,33 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>Saturn BIOS</string>
+				<string>Sega Saturn BIOS v1.00 (JAP/US)</string>
+				<key>MD5</key>
+				<string>af5828fdff51384f99b3c4926be27762</string>
+				<key>Name</key>
+				<string>saturn_bios.bin</string>
+				<key>Size</key>
+				<real>524288</real>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Sega Saturn BIOS (EU)</string>
 				<key>MD5</key>
 				<string>3240872c70984b6cbfda1586cab68dbe</string>
 				<key>Name</key>
-				<string>Saturn EU.bin</string>
+				<string>mpr-17933.bin</string>
 				<key>Size</key>
-				<integer>524288</integer>
+				<real>524288</real>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Sega Saturn BIOS v1.01 (JAP)</string>
+				<key>MD5</key>
+				<string>85ec9ca47d8f6807718151cbcca8b964</string>
+				<key>Name</key>
+				<string>sega_101.bin</string>
+				<key>Size</key>
+				<real>524288</real>
 			</dict>
 		</array>
 		<key>PVRequiresBIOS</key>
@@ -1367,7 +1387,9 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>iso</string>
+			<string>mdf</string>
 			<string>cue</string>
+			<string>ccd</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
