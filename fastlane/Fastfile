@@ -295,6 +295,10 @@ end
     load_keys
     pre_build
 
+    if is_ci?
+      increment_build_number
+    end
+
     # Codesign
     # Types, appstore adhoc development enterprise
 
@@ -312,7 +316,11 @@ end
     build_number = ENV["build_number"]
     ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
     badge_alpha
-    buid_ios_adhoc(ipa_name: ipa_name, activeArchOnly: false)
+    buid_ios_adhoc(
+      ipa_name: ipa_name, 
+      activeArchOnly: false, 
+      scheme: "Provenance-Release"
+      )
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
     # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
@@ -664,7 +672,7 @@ end
 
     build_app(
       workspace: "Provenance.xcworkspace",
-      scheme: "Provenance",
+      scheme: "Provenance-Release",
       export_method: "app-store", # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
       configuration: "Release",
       # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"

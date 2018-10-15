@@ -13,15 +13,17 @@ cache:
   - PVSupport/Carthage
   - PVLibrary/Carthage
   - /Users/travis/Library/Caches/Rome
+
 addons:
   ssh_known_hosts:
   - provenance.joemattiello.com
   - bitbucket.org
 
-# branches:
-#   only:
-#     - develop
-#     - master
+branches:
+  only:
+    - develop
+    - master
+
 env:
   #environment variables
   global:
@@ -29,7 +31,7 @@ env:
     - LC_ALL=en_US.UTF-8
     - WORKSPACE_NAME="Provenance.xcworkspace"
     - PROJECT_NAME="Provenance.xcodeproj"
-    - SCHEME_IOS_APP="Provenance"
+    - SCHEME_IOS_APP="Provenance-Release"
     - SCHEME_TVOS_APP="ProvenanceTV"
     - IOS_PLATFORM="iOS Simulator"
     - TVOS_PLATFORM="tvOS Simulator"
