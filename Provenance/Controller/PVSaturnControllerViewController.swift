@@ -108,6 +108,6 @@ class PVSaturnControllerViewController: PVControllerViewController<PVSaturnSyste
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        releaseSelect(forPlayer: player)
+        super.releaseSelect(forPlayer: player)
     }
 }
