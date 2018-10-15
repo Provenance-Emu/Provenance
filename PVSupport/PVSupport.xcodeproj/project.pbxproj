@@ -576,7 +576,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ..\n. ./Scripts/xcode.carthage.bootstrap.sh iOS \"${SRCROOT}\"\n";
+			shellScript = "cd ..\ngit submodule update --init --recursive\n. ./Scripts/xcode.carthage.bootstrap.sh iOS \"${SRCROOT}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
