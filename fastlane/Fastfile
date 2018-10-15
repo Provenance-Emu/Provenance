@@ -295,10 +295,6 @@ end
     load_keys
     pre_build
 
-    if is_ci?
-      increment_build_number
-    end
-
     # Codesign
     # Types, appstore adhoc development enterprise
 
