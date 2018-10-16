@@ -50,6 +50,9 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var volumeHUDSwitch: UISwitch!
     @IBOutlet weak var allRightShouldersSwitch: UISwitch!
     @IBOutlet weak var themeValueLabel: UILabel!
+	@IBOutlet weak var buildDateLabel: UILabel!
+	@IBOutlet weak var builderLabel: UILabel!
+	@IBOutlet weak var bundleIDLabel: UILabel!
 
     var gameImporter: PVGameImporter?
 
@@ -117,6 +120,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             revisionLabel.textColor = color ?? UIColor.clear
             revisionLabel.text = "(none)"
         }
+
+		buildDateLabel.text = gitdate
+		bundleIDLabel.text = Bundle.main.bundleIdentifier
+		builderLabel.text = builtByUser
     }
 
     override func didReceiveMemoryWarning() {

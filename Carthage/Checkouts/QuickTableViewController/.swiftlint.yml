@@ -1,0 +1,39 @@
+disabled_rules:
+  - cyclomatic_complexity
+  - force_cast
+  - function_body_length
+  - identifier_name
+  - vertical_whitespace
+opt_in_rules:
+  - closure_end_indentation
+  - closure_spacing
+  - conditional_returns_on_newline
+  - empty_count
+  - explicit_init
+  - explicit_top_level_acl
+  - fatal_error_message
+  - first_where
+  - implicit_return
+  - implicitly_unwrapped_optional
+  - let_var_whitespace
+  - multiline_parameters
+  - nimble_operator
+  - number_separator
+  - object_literal
+  - operator_usage_whitespace
+  - overridden_super_call
+  - private_outlet
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+included:
+  - "Example-iOS"
+  - "Example-iOSUITests"
+  - "QuickTableViewController-iOS"
+  - "QuickTableViewController-iOSTests"
+  - "Source"
+excluded:
+  - Carthage
+  - Pods
+line_length: 192

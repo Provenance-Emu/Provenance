@@ -8,161 +8,149 @@
 
 import UIKit
 import RealmSwift
+import PVLibrary
 
-private enum Rows {
-    case gameCount(Int)
-    case defaultCore(current: PVCore?, options: [PVCore])
-    case bios(PVBIOS.Status)
-    case settings
+import QuickTableViewController
+
+private struct SystemOverviewViewModel {
+	let title : String
+	let identifier : String
+	let gameCount : Int
+	let cores : [Core]
+	let preferredCore : Core?
+	let bioses : [BIOS]?
 }
 
-private struct SystemSectionViewModel {
-    let title : String
-    let rows : [Rows]
-    
-    init(withSystem system: PVSystem) {
-        title = system.name
-        var rows = [Rows]()
-        rows.append(.gameCount(system.games.count))
-        var defaultCore : PVCore?
-
-        if system.cores.count > 1, let userPreferredCoreID = system.userPreferredCoreID {
-            defaultCore = RomDatabase.sharedInstance.object(ofType: PVCore.self, wherePrimaryKeyEquals: userPreferredCoreID)
-        } else {
-            defaultCore = system.cores.first
-        }
-
-        rows.append(.defaultCore(current: defaultCore, options: Array(system.cores)))
-        
-        let bioses = system.bioses
-        if !bioses.isEmpty {
-            let statuses : [PVBIOS.Status] = Array(bioses).map {
-                return Rows.bios($0.status)
-            }
-            rows.append(statuses)
-        }
-        self.rows = rows
-    }
+extension SystemOverviewViewModel {
+	init(withSystem system : System) {
+		title = system.name
+		identifier = system.identifier
+		gameCount = system.gameStructs.count
+		cores = system.coreStructs
+		bioses = system.BIOSes
+		preferredCore = system.userPreferredCore
+	}
 }
 
-class SystemSettingsCell : UITableViewCell {
-    static let identifier : String = String(describing: self)
+public class SystemSettingsCell : UITableViewCell {
+    public static let identifier : String = String(describing: self)
+
+	public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		sytle()
+	}
+
+	public required init?(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)
+		sytle()
+	}
+
+	func sytle() {
+		let bg = UIView(frame: bounds)
+		bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		bg.backgroundColor = Theme.currentTheme.settingsCellBackground
+		self.backgroundView = bg
+
+		self.textLabel?.textColor = Theme.currentTheme.settingsCellText
+		self.detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
+	}
 }
 
-class SystemsSettingsTableViewController: UITableViewController {
+public class SystemSettingsHeaderCell : SystemSettingsCell {
+	override func sytle() {
+		super.sytle()
+		self.backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+		self.textLabel?.textColor = Theme.currentTheme.settingsHeaderText
+		self.detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
+		self.textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
+	}
+}
 
-    /*
- TODO:
- - realm alert on PVBios update
-     - realm alert on library update to update system games counts
- */
-    fileprivate var sections : [SystemSectionViewModel]!
-    var sectionsToken: NotificationToken?
+class SystemsSettingsTableViewController: QuickTableViewController {
+
+    var systemsToken: NotificationToken?
 
     func generateViewModels() {
         let realm  = try! Realm()
-        let systems = realm.objects(PVSystem.self).sorted(byKeyPath: "Name")
-        sections = systems.map {
-            return SystemSectionViewModel(withSystem: $0)
-        }
+        let systems = realm.objects(PVSystem.self).sorted(byKeyPath: "name")
+        let systemsModels = systems.map { SystemOverviewViewModel(withSystem: System(with: $0)) }
+
+		tableContents = systemsModels.map { systemModel in
+			var rows = [Row & RowStyle]()
+			rows.append(
+				NavigationRow<SystemSettingsCell>(title: "Games", subtitle: .rightAligned("\(systemModel.gameCount)"))
+			)
+
+			// CORES
+//			if systemModel.cores.count < 2 {
+			if !systemModel.cores.isEmpty {
+				let coreNames = systemModel.cores.map {$0.project.name}.joined(separator: ",")
+				rows.append(
+					NavigationRow<SystemSettingsCell>(title: "Cores", subtitle: .rightAligned(coreNames))
+				)
+			}
+//			} else {
+//				let preferredCore = systemModel.preferredCore
+//				rows.append(
+//					RadioSection(title: "Cores", options:
+//						systemModel.cores.map { core in
+//							let selected = preferredCore != nil && core == preferredCore!
+//							return OptionRow(title: core.project.name, isSelected: selected, action: didSelectCore(systemIdentifier: core.identifier))
+//						}
+//					)
+//			}
+
+			// BIOSES
+			if let bioses = systemModel.bioses, !bioses.isEmpty {
+				rows.append(NavigationRow<SystemSettingsHeaderCell>(title: "BIOSES", subtitle: .none))
+				bioses.forEach { bios in
+					let subtitle = "\(bios.expectedMD5) : \(bios.expectedSize) bytes"
+					let biosRow = NavigationRow<SystemSettingsCell>(title: bios.descriptionText,
+												subtitle: .belowTitle(subtitle),
+												icon: nil,
+												customization:
+						{ (cell, row) in
+							var backgroundColor : UIColor? = Theme.currentTheme.settingsCellBackground
+							let status = bios.status
+							if status.available {
+
+							} else {
+								backgroundColor = status.required ? UIColor(hex: "#700") : UIColor(hex: "#77404C")
+							}
+							cell.backgroundView = UIView()
+							cell.backgroundView?.backgroundColor = backgroundColor
+					},
+												action: nil)
+					rows.append(biosRow)
+				}
+			}
+			return Section(title: systemModel.title,
+						   rows: rows,
+						   footer: nil)
+		}
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+		self.tableView.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+		self.tableView.separatorStyle = .singleLine
+
         let realm  = try! Realm()
-        sectionsToken = realm.objects(PVSystem.self).observe { (systems) in
-            generateViewModels()
+        systemsToken = realm.objects(PVSystem.self).observe { (systems) in
+            self.generateViewModels()
             self.tableView.reloadData()
         }
-        
-        tableView.register(SystemSettingsCell.self, forCellReuseIdentifier: SystemSettingsCell.identifier)
     }
     
     deinit {
-        sectionsToken?.invalidate()
+        systemsToken?.invalidate()
     }
 
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return sections?.count ?? 0
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].rows.count
-    }
-    
-    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return sections.map { $0.title }
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let rowData = sections[indexPath.section].rows[indexPath.row]
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: SystemSettingsCell.identifier, for: indexPath)
-        
-        switch rowData {
-        case .bioses(let bioses):
-            let bios = bioses[
-            cell.textLabel?.text = stat
-        case .defaultCore(let current, let options)
-            break
-        case .gameCount(let count)
-            break
-        case .settings:
-            break
-        }
-        
-        // Configure the cell...
-
-        return cell
-    }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+//	private func didSelectCore(identifier: String) -> (Row) -> Void {
+//		return { [weak self] row in
+//			// ...
+//		}
+//	}
 
 }

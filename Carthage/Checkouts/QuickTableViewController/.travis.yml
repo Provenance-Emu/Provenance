@@ -1,0 +1,34 @@
+language: objective-c
+osx_image: xcode9.3beta
+matrix:
+  include:
+    - env: VERSION=latest
+cache:
+  - bundler
+  - cocoapods
+before_install:
+  - export LANG=en_US.UTF-8
+  - xcrun instruments -s devices
+  - open -b com.apple.iphonesimulator
+install:
+  - bundle install --without development --deployment --jobs=3 --retry=3
+  - bundle exec pod install
+before_script:
+  - if [ -n "$DANGER_GITHUB_API_TOKEN" ]; then bundle exec danger; fi
+script:
+  - set -o pipefail
+  - xcodebuild clean build -workspace QuickTableViewController.xcworkspace -scheme QuickTableViewController-iOS -sdk iphonesimulator SWIFT_VERSION=3.0 | bundle exec xcpretty -c
+  - bundle exec rake "test:ios[QuickTableViewController-iOS]"
+  - bundle exec rake "test:tvos[QuickTableViewController-tvOS]"
+  - bash <(curl -s https://codecov.io/bash) -cF ios -J "QuickTableViewController"
+  - bundle exec rake "test:ios[Example-iOS]"
+  - bundle exec rake "build:tvos[Example-tvOS]"
+  - make -B carthage
+  - make -B docs
+after_success:
+  - sh scripts/update-docs.sh
+notifications:
+  email: false
+  slack:
+    rooms:
+      secure: OBqhJVYItWtvqHFhgpGm0aJBzfiBQpCbP/Ak0/2OH9HZNA0jAWGEFcipdzpsHCSNpDHlsSC2lq8CD+Py1rgQDfG/pgoVSY9Da+OLwXHoSaEA61qQMkAmXFEv5KfMcCXG+L4L5vatIVo3BvKbTWifGfNY4ZgcqGRK6n+emiJLGhkdDvdj8TX+jJ3TbRE7uUCpwjh6tuj0icvz65ve7kRSBTKrMOynxZGpjZ+Ur0gUnilJIV8k8/jdTg0oxzk1BueYsOw3aV33R59Jn8Dwm4IhLFlzkdW8LxfXGbOSV9bvxYSV8ZzD+PecwpSc3j92eZZomLgLLCyOT/ato2X454asMhyE+drtu3dlY6NTiKXuVQYAZ0Zm1kreHwSdUyupO1L8LplHNzF2BIDWqOdr+EtsAsHbQpilA2O/KjDnLiD6EQsWbzi0/Y3Nqeo3adAd+q2LWJAHvdRPcrYJuuC2lE/KW+lnzL4NhCOht95vTnnbCzTsmnPBLzTIYen3DRcu4/jQ/jzhy/qCgdexUIwmam73iGPeH4CVdnyfTV0YIQuJOi2bbllSWm0qIxAJ7P9UGIKCI9nCE5TfmmUP60SW6hm7o4UE1xOfyLaPEf9v9/CZ92EHecStftBbK+wsTrJqy4NmZlRVSw9nsR26mqOm2R9wf5oWxKaMMQTD8dSQ0F293n8=

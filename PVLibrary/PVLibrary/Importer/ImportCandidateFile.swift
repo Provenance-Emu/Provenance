@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ImportCandidateFile {
+public struct ImportCandidateFile : Codable {
 	public let filePath: URL
 	public var md5: String? {
 		if let cached = cache.md5 {
@@ -28,7 +28,7 @@ public struct ImportCandidateFile {
 	// Store a cache in a nested class.
 	// The struct only contains a reference to the class, not the class itself,
 	// so the struct cannot prevent the class from mutating.
-	private final class Cache {
+	private final class Cache : Codable {
 		var md5: String?
 	}
 	private var cache = Cache()

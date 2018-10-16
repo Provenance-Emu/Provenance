@@ -9,64 +9,42 @@
 import UIKit
 import RealmSwift
 import PVLibrary
+import QuickTableViewController
 
-class PVCoresTableViewController: UITableViewController {
-
-    let cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
+class PVCoresTableViewController: QuickTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
+		let cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
+		tableContents = [
+			Section(title: "Cores", rows: cores.map { core in
+				let systemsText = core.supportedSystems.map({return $0.shortName}).joined(separator: ", ")
+				let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+				return NavigationRow<SystemSettingsCell>(title: core.projectName, subtitle: .belowTitle(detailLabelText), icon: nil, customization: { (cell, rowStyle) in
+					#if os(iOS)
+					if URL.init(string: core.projectURL) != nil {
+						cell.accessoryType = .disclosureIndicator
+					} else {
+						cell.accessoryType = .none
+					}
+					#else
+					cell.accessoryType = .none
+					#endif
+				}, action: { (row) in
+					#if os(iOS)
+					guard let url = URL.init(string: core.projectURL) else {
+						return
+					}
 
-// MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
+					let webVC = WebkitViewController(url: url)
+					webVC.title = core.projectName
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cores.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "coreCell")!
-
-        let core = cores[indexPath.row]
-        let systemsText = core.supportedSystems.map({return $0.shortName}).joined(separator: ", ")
-
-        cell.textLabel?.text = core.projectName
-        cell.detailTextLabel?.text = "\(core.projectVersion) : \(systemsText)"
-
-        #if os(iOS)
-        if URL.init(string: core.projectURL) != nil {
-            cell.accessoryType = .disclosureIndicator
-        } else {
-            cell.accessoryType = .none
-        }
-        #else
-            cell.accessoryType = .none
-        #endif
-
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        #if os(iOS)
-        let core = cores[indexPath.row]
-
-        guard let url = URL.init(string: core.projectURL) else {
-            return
-        }
-
-        let webVC = WebkitViewController(url: url)
-        webVC.title = core.projectName
-
-        navigationController?.pushViewController(webVC, animated: true)
-        #endif
+					self.navigationController?.pushViewController(webVC, animated: true)
+					#endif
+				})
+			})
+		]
     }
 }
 
