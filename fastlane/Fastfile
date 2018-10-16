@@ -315,7 +315,7 @@ end
     buid_ios_adhoc(
       ipa_name: ipa_name, 
       activeArchOnly: false, 
-      build_configuration: "AdHoc",
+      build_configuration: "Release",
       scheme: "Provenance-Release"
       )
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
