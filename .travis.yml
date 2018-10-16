@@ -1,7 +1,7 @@
 language: objective-c
 xcode_workspace: Provenance.xcworkspace # path to your xcodeproj folder
 # xcode_scheme: Provenance-Release
-xcode_scheme: Provenance
+xcode_scheme: Provenance-Release
 
 language: objective-c
 osx_image: xcode10
