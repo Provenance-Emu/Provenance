@@ -532,8 +532,8 @@ end
     # types "appstore", "development", "adhoc", "enterprise"
     type = options.fetch(:type, type)
 
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, platform: "ios", readonly: false)
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, platform: "tvos", readonly: false)
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, platform: "ios", readonly: true)
+    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, platform: "tvos", readonly: true)
   end
 
   desc "Create Certs for Match"
