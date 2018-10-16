@@ -1676,7 +1676,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 			if !game.saveStates.isEmpty {
 				actionSheet.addAction(UIAlertAction(title: "View Save States", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-					guard let saveStatesNavController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
+					guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
 						return
 					}
 

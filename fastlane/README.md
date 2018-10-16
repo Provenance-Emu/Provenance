@@ -36,6 +36,11 @@ Travis Test
 fastlane ios userbuild
 ```
 User Setup
+### ios getDevices
+```
+fastlane ios getDevices
+```
+Print devices
 ### ios updatePlistForBranch
 ```
 fastlane ios updatePlistForBranch

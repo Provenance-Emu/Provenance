@@ -549,7 +549,13 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
-				"$(SRCROOT)/SALCore/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjack.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjackSwift.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/NSLogger.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/NSLoggerSwift.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/SwiftyUserDefaults.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/XCDLumberjackNSLogger.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -572,7 +578,13 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
-				"$(SRCROOT)/SALCore/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/NSLogger.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/XCDLumberjackNSLogger.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;

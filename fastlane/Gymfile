@@ -4,7 +4,7 @@
 # In general, you can use the options available
 # fastlane gym --help
 
-scheme("Provenance") # ie target
+scheme("Provenance-Release") # ie target
 workspace("Provenance.xcworkspace")
 include_bitcode(false)
 clean(false)

@@ -50,6 +50,9 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var volumeHUDSwitch: UISwitch!
     @IBOutlet weak var allRightShouldersSwitch: UISwitch!
     @IBOutlet weak var themeValueLabel: UILabel!
+	@IBOutlet weak var buildDateLabel: UILabel!
+	@IBOutlet weak var builderLabel: UILabel!
+	@IBOutlet weak var bundleIDLabel: UILabel!
 
     var gameImporter: PVGameImporter?
 
@@ -117,6 +120,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             revisionLabel.textColor = color ?? UIColor.clear
             revisionLabel.text = "(none)"
         }
+
+		buildDateLabel.text = gitdate
+		bundleIDLabel.text = Bundle.main.bundleIdentifier
+		builderLabel.text = builtByUser
     }
 
     override func didReceiveMemoryWarning() {
@@ -295,14 +302,52 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         PVWebServer.shared.stopServers()
     }
 
+    private struct Selections {
+        #if os(iOS)
+        enum Sections : Int {
+            case app = 0
+            case saves
+            case audioVideo
+            case controller
+            case gameLibrary
+            case gameLibrary2
+            case buildInformation
+            case externalInformation
+            case debug
+        }
+        #elseif os(tvOS)
+        enum Sections : Int {
+            case saves = 0
+            case audioVideo
+            case controller
+            case gameLibrary
+            case gameLibrary2
+            case buildInformation
+            case externalInformation
+        }
+        #endif
+        static let launchWebServer = IndexPath(row: 0, section: Sections.gameLibrary.rawValue)
+        
+        static let refreshGameLibrary = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let emptyImageCache = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
+        static let manageConflicts = IndexPath(row: 2, section: Sections.gameLibrary2.rawValue)
+        static let appearance = IndexPath(row: 3, section: Sections.gameLibrary2.rawValue)
+
+        static let cores = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let licenses = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
+       
+        static let logs = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 3 && indexPath.row == 0 {
+        switch indexPath {
+        case Selections.launchWebServer:
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-
-			let status: NetworkStatus = reachability.currentReachabilityStatus()
-
-			if status != .reachableViaWiFi {
+            
+            let status: NetworkStatus = reachability.currentReachabilityStatus()
+            
+            if status != .reachableViaWiFi {
                 let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 }))
@@ -314,14 +359,14 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                     //show alert view
                     showServerActiveAlert()
                 } else {
-                        // Display error
+                    // Display error
                     let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     }))
                     present(alert, animated: true) {() -> Void in }
                 }
             }
-        } else if indexPath.section == 4 && indexPath.row == 0 {
+        case Selections.refreshGameLibrary:
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
             let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -329,7 +374,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             present(alert, animated: true) {() -> Void in }
-        } else if indexPath.section == 4 && indexPath.row == 1 {
+        case Selections.emptyImageCache:
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
             let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -337,30 +382,36 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             present(alert, animated: true) {() -> Void in }
-        } else if indexPath.section == 4 && indexPath.row == 2 {
+        case Selections.manageConflicts:
             if let gameImporter = gameImporter {
                 let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
                 navigationController?.pushViewController(conflictViewController, animated: true)
             } else {
                 ELOG("No game importer instance")
             }
-        } else if indexPath.section == 0 && indexPath.row == 8 {
-            if #available(iOS 9.0, *) {
-                let themeSelectorViewController = ThemeSelectorViewController()
-                navigationController?.pushViewController(themeSelectorViewController, animated: true)
-            } else {
-                let alert = UIAlertController(title: "Not Available", message: "Themes are only available in iOS 9 and above.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                present(alert, animated: true, completion: nil)
-            }
-		} else if indexPath.section == 6 && indexPath.row == 2 {
-			// Log Viewer
-			let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
-			logViewController.hideDoneButton()
-			navigationController?.pushViewController(logViewController, animated: true)
-			logViewController.hideDoneButton()
-		}
-
+//        case Selections.appearance:
+//            if #available(iOS 9.0, *) {
+//                let themeSelectorViewController = ThemeSelectorViewController()
+//                navigationController?.pushViewController(themeSelectorViewController, animated: true)
+//            } else {
+//                let alert = UIAlertController(title: "Not Available", message: "Themes are only available in iOS 9 and above.", preferredStyle: .alert)
+//                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+//                present(alert, animated: true, completion: nil)
+//            }
+        case Selections.cores:
+            break
+        case Selections.licenses:
+            break
+        case Selections.logs:
+            // Log Viewer
+            let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
+            logViewController.hideDoneButton()
+            navigationController?.pushViewController(logViewController, animated: true)
+            logViewController.hideDoneButton()
+        default:
+            break
+        }
+        
         self.tableView.deselectRow(at: indexPath, animated: true)
         navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVSettingsViewController.done(_:))), animated: false)
     }

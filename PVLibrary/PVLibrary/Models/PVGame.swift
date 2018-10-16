@@ -141,6 +141,16 @@ public extension PVGame {
 	}
 }
 
+public struct Game : Codable {
+	let title : String
+}
+
+public extension Game {
+	init(withGame game : PVGame) {
+		title = game.title
+	}
+}
+
 //public extension PVGame {
 //    // Support older code
 //    var md5Hash : String {

@@ -233,6 +233,7 @@
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B36D9DFE203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
+		B374932C2175667E00C65DD1 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B374932B2175667D00C65DD1 /* QuickTableViewController.framework */; };
 		B377E67D21252C3F00D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377E67C21252C3F00D88973 /* GameController.framework */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B38526AA2108267800434945 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A92108267800434945 /* PVAtari800.framework */; };
@@ -357,6 +358,10 @@
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD12168146000CDD40A /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
+		B3F43DD92169B94E00CDD40A /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DD82169B94E00CDD40A /* Settings.storyboard */; };
+		B3F43DDE2169D42500CDD40A /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */; };
+		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
+		B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -733,6 +738,7 @@
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari7800ControllerViewController.swift; sourceTree = "<group>"; };
+		B374932B2175667D00C65DD1 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
 		B377E67C21252C3F00D88973 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B38526A92108267800434945 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
@@ -756,7 +762,7 @@
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVSaveStateCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
-		B3AF47D821072408002211EE /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = PVLibrary/Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
+		B3AF47D821072408002211EE /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -810,6 +816,11 @@
 		B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PVLogViewController.xib; sourceTree = "<group>"; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
 		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		B3F43DD82169B94E00CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
+		B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SaveStates.storyboard; sourceTree = "<group>"; };
+		B3F43DDF2169D4F100CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Settings.storyboard; path = /Users/jmattiello/Workspace/Provenance/ProvenanceTV/Settings.storyboard; sourceTree = "<absolute>"; };
+		B3F43DE02169D52300CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = SaveStates.storyboard; path = /Users/jmattiello/Workspace/Provenance/ProvenanceTV/SaveStates.storyboard; sourceTree = "<absolute>"; };
+		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
 		B3F64ECE205CD1F100C273C7 /* JSButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSButton.swift; sourceTree = "<group>"; };
 		B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVButtonGroupOverlayView.swift; sourceTree = "<group>"; };
@@ -859,6 +870,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B374932C2175667E00C65DD1 /* QuickTableViewController.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
 				B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
@@ -986,6 +998,8 @@
 			children = (
 				B3B923A1202D2EAE00580FFC /* Themes */,
 				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
+				B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */,
+				B3F43DD82169B94E00CDD40A /* Settings.storyboard */,
 				7556CF7919DC15C1007F8F97 /* Default.xib */,
 				B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */,
 				B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */,
@@ -1002,6 +1016,7 @@
 				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */,
 				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
 				B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */,
+				B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1032,15 +1047,8 @@
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				B3E0A580215647BD004B4322 /* Scripts */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
-				B366171E206EBF6900A4F306 /* Recovered References */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
-				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
-				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
-				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
-				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
-				B38526A92108267800434945 /* PVAtari800.framework */,
-				B3C04B5821077E1000E7AF79 /* PVLibrary.framework */,
-				B3AF47D821072408002211EE /* ZipArchive.framework */,
+				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1059,6 +1067,16 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B374932B2175667D00C65DD1 /* QuickTableViewController.framework */,
+				B38526A92108267800434945 /* PVAtari800.framework */,
+				DFB603BA2038B6AF001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
+				B3995E4B2058228E001D4985 /* PVFCEU.framework */,
+				B36CBFEA20397D9100728482 /* PVMednafen.framework */,
+				B3C9D5DA1DEA8A200068D057 /* PVGBA.framework */,
+				B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */,
+				B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */,
+				B3C04B5821077E1000E7AF79 /* PVLibrary.framework */,
+				B3AF47D821072408002211EE /* ZipArchive.framework */,
 				B377E67C21252C3F00D88973 /* GameController.framework */,
 				B3524100210AD9C4006127B7 /* Realm.framework */,
 				B35240FF210AD9C4006127B7 /* RealmSwift.framework */,
@@ -1284,6 +1302,8 @@
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
 				1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
+				B3F43DE02169D52300CDD40A /* SaveStates.storyboard */,
+				B3F43DDF2169D4F100CDD40A /* Settings.storyboard */,
 				1AD481BF1BA350A400FDA50A /* Provenance.storyboard */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481C41BA350A400FDA50A /* Info.plist */,
@@ -1466,19 +1486,6 @@
 				B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift */,
 			);
 			name = Atari5200;
-			sourceTree = "<group>";
-		};
-		B366171E206EBF6900A4F306 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				DFB603BA2038B6AF001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
-				B3995E4B2058228E001D4985 /* PVFCEU.framework */,
-				B36CBFEA20397D9100728482 /* PVMednafen.framework */,
-				B3C9D5DA1DEA8A200068D057 /* PVGBA.framework */,
-				B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */,
-				B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		B3684578206EBF1A0078FEC2 /* Linked */ = {
@@ -1672,6 +1679,17 @@
 				B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */,
 			);
 			name = Cores;
+			sourceTree = "<group>";
+		};
+		B3F43DDA2169BC9C00CDD40A /* Bridging Headers */ = {
+			isa = PBXGroup;
+			children = (
+				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
+				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
+				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
+				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
+			);
+			name = "Bridging Headers";
 			sourceTree = "<group>";
 		};
 		BE9FDCBA1C210B9E0046DF0E /* TopShelf */ = {
@@ -1927,12 +1945,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
+				B3F43DD92169B94E00CDD40A /* Settings.storyboard in Resources */,
 				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
 				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
+				B3F43DDE2169D42500CDD40A /* SaveStates.storyboard in Resources */,
 				B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
@@ -2075,6 +2095,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework",
 				"$(SRCROOT)/PVLibrary/Carthage/Build/iOS/ZipArchive.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
@@ -2091,6 +2112,7 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/HockeySDK.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyUserDefaults.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/ZipArchive.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/QuickTableViewController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2127,6 +2149,11 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
+				"$(SRCROOT)/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/MarqueeLabel.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/MarqueeLabelSwift.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/XLActionController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2150,6 +2177,10 @@
 			outputPaths = (
 				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
 				"$(SRCROOT)/Carthage/.swift-version",
+				"$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MarqueeLabel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MarqueeLabelSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/XLActionController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2163,16 +2194,16 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				$SRCROOT/.version,
-				$SRCROOT/Provenance/Resources/createVersionHeader.sh,
+				"$(SRCROOT)/.version",
+				"$(SRCROOT)/Provenance/Resources/createVersionHeader.sh",
 				"$(SRCROOT)/Scripts/setup_env.sh",
 			);
 			name = "Create Version.swift and Version.h";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${PROJECT_DIR}/Provenance/Version.h",
-				"${PROJECT_DIR}/Provenance/Version.swift",
+				"${SRCROOT}/Provenance/Version.h",
+				"${SRCROOT}/Provenance/Version.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2274,6 +2305,7 @@
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */,
+				B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				B35E6C2D207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				1A2FB10F206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
@@ -2414,6 +2446,7 @@
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
 				B394C97C20609D0D0014A65D /* PVLynxControllerViewController.swift in Sources */,
+				B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,

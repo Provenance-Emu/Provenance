@@ -116,6 +116,29 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         }
         webDavAlwaysOnTitleLabel.attributedText = titleString
     }
+    
+    private struct Selections {
+        enum Sections : Int {
+            case saves = 0
+            case audioVideo
+            case controller
+            case gameLibrary
+            case gameLibrary2
+            case buildInformation
+            case externalInformation
+        }
+        static let launchWebServer = IndexPath(row: 0, section: Sections.gameLibrary.rawValue)
+        
+        static let refreshGameLibrary = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let emptyImageCache = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
+        static let manageConflicts = IndexPath(row: 2, section: Sections.gameLibrary2.rawValue)
+        static let appearance = IndexPath(row: 3, section: Sections.gameLibrary2.rawValue)
+        
+        static let cores = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let licenses = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
+        
+        static let logs = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+    }
 
 // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -124,7 +147,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         }
 
         switch indexPath.section {
-        case 0:
+        case Selections.Sections.saves.rawValue:
             // Settings
             switch indexPath.row {
             case 0:
@@ -166,7 +189,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        case 1:
+        case Selections.Sections.audioVideo.rawValue:
             // Audio/Video
             switch indexPath.row {
             case 0:
@@ -181,10 +204,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        case 2:
-            // Controller
-            break
-        case 3:
+        case Selections.Sections.gameLibrary.rawValue:
             // Game Library
             switch indexPath.row {
             case 0:
@@ -207,7 +227,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        case 4:
+        case Selections.Sections.gameLibrary2.rawValue:
             // Game Library
             switch indexPath.row {
             case 0:

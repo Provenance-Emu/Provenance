@@ -31,7 +31,7 @@ extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
 			//This will show the cell clearly and blur the rest of the screen for our peek.
 			previewingContext.sourceRect = cellAttributes.frame
 
-			let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+			let storyBoard = UIStoryboard(name: "SaveStates", bundle: nil)
 
 			if searchResults == nil, indexPath.section == saveStateSection {
 				let saveStateInfoVC = storyBoard.instantiateViewController(withIdentifier: "saveStateInfoVC") as! PVSaveStateInfoViewController

@@ -24,3 +24,4 @@ report.xml
 /PVLibrary/Carthage/.swift-version
 .version
 *.back
+/fastlane/devices.txt
