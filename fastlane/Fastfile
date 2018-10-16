@@ -315,6 +315,7 @@ end
     buid_ios_adhoc(
       ipa_name: ipa_name, 
       activeArchOnly: false, 
+      build_configuration: "AdHoc",
       scheme: "Provenance-Release"
       )
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
@@ -617,8 +618,8 @@ end
     # Method used to export the archive.
     # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
     export_method = options.fetch(:export_method, 'ad-hoc')
-    build_configuration = options.fetch(:build_configuration, 'Debug')
-    scheme = options.fetch(:scheme, 'Provenance')
+    build_configuration = options.fetch(:build_configuration, 'AdHoc')
+    scheme = options.fetch(:scheme, 'Provenance-Release')
 
     UI.message "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
 
