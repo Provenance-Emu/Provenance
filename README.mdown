@@ -40,6 +40,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - 2600
   - 5200
   - 7800
+  - Jaguar
   - Lynx
 - Bandai
   - WonderSwan / WonderSwan Color
@@ -69,6 +70,14 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Sony
   - PlayStation (PSX/PS1)
   
+## Under Development Systems:
+ - Nintendo
+  - DS
+ - Sega
+  - Dreamcast
+  - Saturn
+ - Sony
+  - PSP
 
 ## Features
 
