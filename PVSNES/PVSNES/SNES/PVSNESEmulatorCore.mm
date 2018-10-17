@@ -31,6 +31,7 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
 
+#include "snes9x.h"
 #include "memmap.h"
 #include "pixform.h"
 #include "gfx.h"
@@ -38,8 +39,6 @@
 #include "ppu.h"
 #include "apu.h"
 #include "controls.h"
-#include "snes9x.h"
-#include "movie.h"
 #include "snapshot.h"
 #include "screenshot.h"
 #include "cheats.h"
@@ -345,27 +344,36 @@ static void FinalizeSamplesAudioCallback(void *)
 
 #pragma mark - Cheats
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-{
-    Settings.ApplyCheats = true;
-    
-    NSArray *multipleCodes = [[NSArray alloc] init];
-    multipleCodes = [code componentsSeparatedByString:@"+"];
-    
-    for (NSString *singleCode in multipleCodes) {
-        // Sanitize for PAR codes that might contain colons
-        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":"
-                                                                   withString:@""] UTF8String];
-        uint32		address;
-        uint8		byte;
-        
-        // Both will determine if valid cheat code or not
-        S9xGameGenieToRaw(cheatCode, address, byte);
-        S9xProActionReplayToRaw(cheatCode, address, byte);
-        
-        S9xAddCheat(TRUE, FALSE, address, byte);
-    }
-}
+//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+//{
+//	if (enabled)
+//		cheatList[code] = @YES;
+//	else
+//		[cheatList removeObjectForKey:code];
+//
+//	S9xDeleteCheats();
+//
+//	NSArray *multipleCodes = [[NSArray alloc] init];
+//
+//	// Apply enabled cheats found in dictionary
+//	for (id key in cheatList)
+//	{
+//		if ([[cheatList valueForKey:key] isEqual:@YES])
+//		{
+//			// Handle multi-line cheats
+//			multipleCodes = [key componentsSeparatedByString:@"+"];
+//			for (NSString *singleCode in multipleCodes) {
+//				// Sanitize for PAR codes that might contain colons
+//				const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
+//
+//				S9xAddCheatGroup("Provenance", cheatCode);
+//				S9xEnableCheatGroup(Cheat.g.size () - 1);
+//			}
+//		}
+//	}
+//
+//	S9xCheatsEnable();
+//}
 
 #pragma mark - Input
 

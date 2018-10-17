@@ -22,8 +22,14 @@
 
   (c) Copyright 2006 - 2007  nitsuja
 
-  (c) Copyright 2009 - 2011  BearOso,
+  (c) Copyright 2009 - 2018  BearOso,
                              OV2
+
+  (c) Copyright 2017         qwertymodo
+
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   BS-X C emulator code
@@ -118,6 +124,9 @@
   Sound emulator code used in 1.52+
   (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
 
+  S-SMP emulator code used in 1.54+
+  (c) Copyright 2016         byuu
+
   SH assembler code partly based on x86 assembler code
   (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
 
@@ -131,7 +140,7 @@
   (c) Copyright 2006 - 2007  Shay Green
 
   GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
+  (c) Copyright 2004 - 2018  BearOso
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
@@ -139,11 +148,16 @@
                              Matthew Kendora,
                              Nach,
                              nitsuja
-  (c) Copyright 2009 - 2011  OV2
+  (c) Copyright 2009 - 2018  OV2
 
   Mac OS GUI code
   (c) Copyright 1998 - 2001  John Stiles
   (c) Copyright 2001 - 2011  zones
+
+  Libretro port
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   Specific ports contains the works of other authors. See headers in
@@ -187,6 +201,8 @@
 #include "display.h"
 #include "debug.h"
 #include "missing.h"
+
+#include "apu/bapu/snes/snes.hpp"
 
 extern SDMA	DMA[8];
 extern FILE	*apu_trace;
@@ -245,7 +261,7 @@ static const char	*HelpMessage[] =
 //	"ai                     - Shou APU vectors",
 //	"a                      - Show APU status",
 //	"x                      - Show Sound DSP status",
-//	"A                      - Toggle APU instruction tracing to aputrace.log",
+	"A                      - Toggle APU instruction tracing to trace.log",
 //	"B                      - Toggle sound DSP register tracing to aputrace.log",
 //	"C                      - Dump sound sample addresses",
 //	"ad [Address]           - Dump APU RAM from PC or [Address]",
@@ -327,7 +343,6 @@ static uint8 debug_sa1_op_print (char *, uint8, uint16);
 static void debug_line_print (const char *);
 static int debug_get_number (char *, uint16 *);
 static short debug_get_start_address (char *, uint8 *, uint32 *);
-static void debug_process_command (char *);
 static void debug_print_window (uint8 *);
 static const char * debug_clip_fn (int);
 static void debug_whats_used (void);
@@ -873,7 +888,7 @@ static uint8 debug_cpu_op_print (char *Line, uint8 Bank, uint16 Address)
 			break;
 	}
 
-	sprintf(Line, "%-44s A:%04X X:%04X Y:%04X D:%04X DB:%02X S:%04X P:%c%c%c%c%c%c%c%c%c HC:%04ld VC:%03ld FC:%02d %03x",
+	sprintf(Line, "%-44s A:%04X X:%04X Y:%04X D:%04X DB:%02X S:%04X P:%c%c%c%c%c%c%c%c%c HC:%04ld VC:%03ld FC:%02d %c%c%c %c %c%c HT:%d VT:%d C:%d",
 	        Line, Registers.A.W, Registers.X.W, Registers.Y.W,
 	        Registers.D.W, Registers.DB, Registers.S.W,
 	        CheckEmulation() ? 'E' : 'e',
@@ -888,7 +903,11 @@ static uint8 debug_cpu_op_print (char *Line, uint8 Bank, uint16 Address)
 	        (long) CPU.Cycles,
 	        (long) CPU.V_Counter,
 	        IPPU.FrameCount,
-	        (CPU.IRQExternal ? 0x100 : 0) | (PPU.HTimerEnabled ? 0x10 : 0) | (PPU.VTimerEnabled ? 0x01 : 0));
+	        CPU.IRQExternal ?  'E' : ' ', PPU.HTimerEnabled ? 'H' : ' ', PPU.VTimerEnabled ? 'V' : ' ',
+	        CPU.NMIPending ? 'N' : '.',
+	        CPU.IRQTransition ? 'T' : ' ',
+	        CPU.IRQLine ? 'L' : ' ',
+	        PPU.HTimerPosition, PPU.VTimerPosition, Timings.NextIRQTimer);
 
 	return (Size);
 }
@@ -1353,7 +1372,7 @@ static short debug_get_start_address (char *Line, uint8 *Bank, uint32 *Address)
 	return (1);
 }
 
-static void debug_process_command (char *Line)
+void S9xDebugProcessCommand(char *Line)
 {
 	uint8	Bank = Registers.PB;
 	uint32	Address = Registers.PCw;
@@ -1566,8 +1585,12 @@ static void debug_process_command (char *Line)
 		printf("HC event tracing %s.\n", Settings.TraceHCEvent ? "enabled" : "disabled");
 	}
 
+	// TODO: reactivate once APU debugger works again
 	if (*Line == 'A')
-		spc_core->debug_toggle_trace();
+	{
+		Settings.TraceSMP = !Settings.TraceSMP;
+		printf("SMP tracing %s\n", Settings.TraceSMP ? "enabled" : "disabled");
+	}
 
 /*
 	if (*Line == 'B')
@@ -1628,20 +1651,16 @@ static void debug_process_command (char *Line)
 		}
 
 		*Line = 0;
-	}
+	}*/
+
+
 
 	if (*Line == 'a')
 	{
-		printf("APU in-ports : %02X %02X %02X %02X\n", IAPU.RAM[0xF4], IAPU.RAM[0xF5], IAPU.RAM[0xF6], IAPU.RAM[0xF7]);
-		printf("APU out-ports: %02X %02X %02X %02X\n", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);
-		printf("ROM/RAM switch: %s\n", (IAPU.RAM[0xf1] & 0x80) ? "ROM" : "RAM");
-
-		for (int i = 0; i < 3; i++)
-			if (APU.TimerEnabled[i])
-				printf("Timer%d enabled, Value: 0x%03X, 4-bit: 0x%02X, Target: 0x%03X\n",
-				       i, APU.Timer[i], IAPU.RAM[0xfd + i], APU.TimerTarget[i]);
+		printf("S-CPU-side ports S-CPU writes these, S-SMP reads: %02X %02X %02X %02X\n", SNES::cpu.port_read(0), SNES::cpu.port_read(1), SNES::cpu.port_read(2), SNES::cpu.port_read(3));
+		printf("S-SMP-side ports S-SMP writes these, S-CPU reads: %02X %02X %02X %02X\n", SNES::smp.port_read(0), SNES::smp.port_read(1), SNES::smp.port_read(2), SNES::smp.port_read(3));
 	}
-
+/*
 	if (*Line == 'P')
 	{
 		Settings.TraceDSP = !Settings.TraceDSP;
@@ -2538,7 +2557,7 @@ void S9xDoDebug (void)
 	S9xTextMode();
 
 	strcpy(Line, "r");
-	debug_process_command(Line);
+	S9xDebugProcessCommand(Line);
 
 	while (CPU.Flags & DEBUG_MODE_FLAG)
 	{
@@ -2552,7 +2571,7 @@ void S9xDoDebug (void)
 		Line[strlen(Line) - 1] = 0;
 
 		Cycles = CPU.Cycles;
-		debug_process_command(Line);
+		S9xDebugProcessCommand(Line);
 		CPU.Cycles = Cycles;
 	}
 

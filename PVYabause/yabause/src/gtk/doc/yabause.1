@@ -1,0 +1,93 @@
+.TH YABAUSE 1 "November 22, 2014" "yabause-0.9.14"
+.SH NAME
+yabause \- Yet Another Buggy And Uncomplete Saturn Emulator
+.SH SYNOPSIS
+.B yabause
+[ \fB\-afh\fP ] [ \fB\-ns\fP ] [ \fB\-b <BIOS>\fP ] [ \fB\-c <CDROM>\fP ] [ \fB\-i <ISO>\fP ]
+[ \fB\-\-binary=<BINARY>[:<ADDRESS>]\fP ]
+.SH DESCRIPTION
+\fBYabause\fP is a Sega Saturn emulator. \fBYabause\fP needs either a bios file, a game or a binary to run.
+Games can be loaded from a real cd device or from dump files.
+.SH OPTIONS
+.TP
+.BI \-a
+.TP
+.BI \-\-autostart
+Automatically start emulation.
+.TP
+.BI \-\-autoframeskip=0|1
+Enable or disable auto frame skipping / limiting.
+.TP
+.BI \-\-autoload
+Automatically start emulation and load a save state.
+.TP
+.BI \-b
+.TP
+.BI \-\-bios
+Choose a bios file.
+.TP
+.BI \-\-binary
+Use a binary file. Content of the file will be loaded to 0x06004000 and execution will start from that address.
+You can provide an alternative address to load and run the binary with the \-\-binary=<BINARY>:<ADDRESS> syntax.
+When using this option, emulation is automatically started and you shouldn't use it in cunjunction with \-a.
+This option is intended for homebrew developers wanting to test their programs in \fBYabause\fP.
+.TP
+.BI \-c
+.TP
+.BI \-\-cdrom
+Choose the cdrom device.
+.TP
+.BI \-f
+.TP
+.BI \-\-fullscreen
+Start the emulator in fullscreen.
+.TP
+.BI \-h
+Display a short help text.
+.TP
+.BI \-i
+.TP
+.BI \-\-iso
+Choose a dump file. The dump can be either in iso or bin/cue file format.
+.TP
+.BI \-ns
+.TP
+.BI \-\-nosound
+Turns sound off. This option actually set the sound core to the dummy one.
+.SH FILES
+.TP
+\fB<BINARY>\fR
+An executable for the Saturn, usually with a BIN extension.
+.TP
+\fB<BIOS>\fR
+A Saturn ROM BIOS image.
+.TP
+\fB<CDROM>\fR
+A CDROM device file.
+.TP
+\fB<ISO>\fR
+A Saturn game dump.
+.SH AUTHORS
+Copyright (c) 2002-2010 Yabause Team
+
+Web:	http://yabause.org
+
+Please don't ask for roms, bios files or any other
+copyrighted stuff.
+.SH COPYRIGHT
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as 
+published by the Free Software Foundation; either version 2 of 
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be
+useful,but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the Free
+Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+Boston, MA 02110-1301  USA
+
+See the GNU General Public License details in COPYING.

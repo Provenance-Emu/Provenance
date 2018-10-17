@@ -22,8 +22,14 @@
 
   (c) Copyright 2006 - 2007  nitsuja
 
-  (c) Copyright 2009 - 2011  BearOso,
+  (c) Copyright 2009 - 2018  BearOso,
                              OV2
+
+  (c) Copyright 2017         qwertymodo
+
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   BS-X C emulator code
@@ -118,6 +124,9 @@
   Sound emulator code used in 1.52+
   (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
 
+  S-SMP emulator code used in 1.54+
+  (c) Copyright 2016         byuu
+
   SH assembler code partly based on x86 assembler code
   (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
 
@@ -131,7 +140,7 @@
   (c) Copyright 2006 - 2007  Shay Green
 
   GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
+  (c) Copyright 2004 - 2018  BearOso
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
@@ -139,11 +148,16 @@
                              Matthew Kendora,
                              Nach,
                              nitsuja
-  (c) Copyright 2009 - 2011  OV2
+  (c) Copyright 2009 - 2018  OV2
 
   Mac OS GUI code
   (c) Copyright 1998 - 2001  John Stiles
   (c) Copyright 2001 - 2011  zones
+
+  Libretro port
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   Specific ports contains the works of other authors. See headers in
@@ -180,7 +194,11 @@
 
 #include <string>
 #ifdef UNZIP_SUPPORT
-#include "unzip.h"
+#  ifdef SYSTEM_ZIP
+#    include <minizip/unzip.h>
+#  else
+#    include "unzip.h"
+#  endif
 #endif
 #include "snes9x.h"
 #include "stream.h"
@@ -283,7 +301,7 @@ size_t fStream::size (void)
 
 int fStream::revert (size_t from, size_t offset)
 {
-    return (REVERT_FSTREAM(fp, from, offset));
+    return (REVERT_FSTREAM(fp, offset, from));
 }
 
 void fStream::closeStream()
@@ -299,8 +317,12 @@ void fStream::closeStream()
 unzStream::unzStream (unzFile &v)
 {
 	file = v;
-	head = NULL;
-	numbytes = 0;
+    pos_in_buf = 0;
+    buf_pos_in_unzipped = unztell(file);
+    bytes_in_buf = 0;
+
+    // remember start pos for seeks
+    unzGetFilePos(file, &unz_file_start_pos);
 }
 
 unzStream::~unzStream (void)
@@ -308,21 +330,31 @@ unzStream::~unzStream (void)
 	return;
 }
 
+size_t unzStream::buffer_remaining()
+{
+    return bytes_in_buf - pos_in_buf;
+}
+
+void unzStream::fill_buffer()
+{
+    buf_pos_in_unzipped = unztell(file);
+    bytes_in_buf = unzReadCurrentFile(file, buffer, unz_BUFFSIZ);
+    pos_in_buf = 0;
+}
+
 int unzStream::get_char (void)
 {
 	unsigned char	c;
 
-	if (numbytes <= 0)
+	if (buffer_remaining() <= 0)
 	{
-		numbytes = unzReadCurrentFile(file, buffer, unz_BUFFSIZ);
-		if (numbytes <= 0)
+        fill_buffer();
+		if (bytes_in_buf <= 0)
 			return (EOF);
-		head = buffer;
 	}
 
-	c = *head;
-	head++;
-	numbytes--;
+	c = *(buffer + pos_in_buf);
+    pos_in_buf++;
 
 	return ((int) c);
 }
@@ -357,28 +389,25 @@ size_t unzStream::read (void *buf, size_t len)
 	if (len == 0)
 		return (len);
 
-	if (len <= numbytes)
-	{
-		memcpy(buf, head, len);
-		numbytes -= len;
-		head += len;
-		return (len);
-	}
+	size_t	to_read = len;
+    uint8 *read_to = (uint8 * )buf;
+    do
+    {
+        size_t in_buffer = buffer_remaining();
+        if (to_read <= in_buffer)
+        {
+            memcpy(read_to, buffer + pos_in_buf, to_read);
+            pos_in_buf += to_read;
+            to_read = 0;
+            break;
+        }
 
-	size_t	numread = 0;
-	if (numbytes > 0)
-	{
-		memcpy(buf, head, numbytes);
-		numread += numbytes;
-		head = NULL;
-		numbytes = 0;
-	}
+        memcpy(read_to, buffer + pos_in_buf, in_buffer);
+        to_read -= in_buffer;
+        fill_buffer();
+    } while (bytes_in_buf);
 
-	int	l = unzReadCurrentFile(file, (uint8 *)buf + numread, len - numread);
-	if (l > 0)
-		numread += l;
-
-	return (numread);
+	return (len - to_read);
 }
 
 // not supported
@@ -389,7 +418,7 @@ size_t unzStream::write (void *buf, size_t len)
 
 size_t unzStream::pos (void)
 {
-    return (unztell(file));
+    return buf_pos_in_unzipped + pos_in_buf;
 }
 
 size_t unzStream::size (void)
@@ -399,15 +428,32 @@ size_t unzStream::size (void)
     return info.uncompressed_size;
 }
 
-// not supported
 int unzStream::revert (size_t from, size_t offset)
 {
-    return -1;
+    size_t target_pos = from + offset;
+
+    // new pos inside buffered data
+    if (target_pos >= buf_pos_in_unzipped && target_pos < buf_pos_in_unzipped + bytes_in_buf)
+    {
+        pos_in_buf = target_pos - buf_pos_in_unzipped;
+    }
+    else // outside of buffer, reset file and read until pos
+    {
+        unzGoToFilePos(file, &unz_file_start_pos);
+        unzOpenCurrentFile(file); // necessary to reopen after seek
+        int times_to_read = target_pos / unz_BUFFSIZ + 1;
+        for( int i = 0; i < times_to_read; i++)
+        {
+            fill_buffer();
+        }
+        pos_in_buf = target_pos % unz_BUFFSIZ;
+    }
+    return 0;
 }
 
 void unzStream::closeStream()
 {
-    unzCloseCurrentFile(file);
+    unzClose(file);
     delete this;
 }
 

@@ -667,3 +667,28 @@ public protocol CoreActions {
     @objc(didReleaseJaguarButton:forPlayer:)
     func didRelease(_ button: PVJaguarButton, forPlayer player: Int)
 }
+
+// MARK: - Sega Saturn
+@objc public enum PVSaturnButton : Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case c
+    case x
+    case y
+    case z
+    case l
+    case r
+    case start
+    case count
+}
+
+@objc public protocol PVSaturnSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushSaturnButton:forPlayer:)
+    func didPush(_ button: PVSaturnButton, forPlayer player: Int)
+    @objc(didReleaseSaturnButton:forPlayer:)
+    func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
+}

@@ -1,0 +1,365 @@
+%1 Images (*.%2)|%1 Avbilder (*.%2)
+%1/%2 blocks free|%1/%2 block fria
+&About...|&Om...
+&Action Replay|&Action Replay
+&Backup Manager...|&Backup-hantering...
+&Browse|&Bläddra
+&Cancel|&Avbryt
+&Capture Screen|&Skärmdump
+&Cheat List|&Lista över fusk
+&Cheats|&Fusk
+&Cheats List...|&Fusklista...
+&Clear|&Rensa
+&Close|St&äng
+&Debug|%Felsök
+&Delete|Ta bo&rt
+&Emulation|&Emulering
+&File|&Fil
+&Frame Skip/Limiter|&Frameskip/-begränsning
+&Fullscreen|&Helskärm
+&Help|&Hjälp
+&Layer|&Lager
+&Load From File|Ladda från fil
+&Log|&Logg
+&Master SH2|&Master SH2
+&Memory Transfer|&Minnesöverföring
+&OK|&OK
+&Pause|&Paus
+&Quit|&Avsluta
+&Raw Memory Address|&Rå minnesadress
+&Reset|&Reset
+&Save To File|&Spara till fil
+&Settings...|&Inställningar...
+&Slave SH2|&Slav SH2
+&Tools|Verk&tyg
+&Transfer|Ö&verföring
+&View|&Visa
+16 Mbit Backup Ram|16 Mbit Backup Ram
+16 Mbit ROM|16 Mbit ROM
+16-bit|16-bit
+16-bit Relative value(s)|16-bit Relative value(s)
+32 Mbit Backup Ram|32 Mbit Backup Ram
+32 Mbit Dram|32 Mbit Dram
+32-bit|32-bit
+3D Control Pad|3D Control Pad
+4 Mbit Backup Ram|4 Mbit Backup Ram
+503/512 blocks free|503/512 block fria
+510/512 blocks free|510/512 block fria
+8 Mbit Backup Ram|8 Mbit Backup Ram
+8 Mbit Dram|8 Mbit Dram
+8-bit|8-bit
+8-bit Relative value(s)|8-bit Relative value(s)
+<font color="red"><b>WARNING:</b> Master Codes are <b>NOT</b> supported.</font>|<font color="red"><b>VARNING:</b> Master Codes stöds <b>INTE</b></font>
+About...|Om...
+Action Replay Code :|Action Replay-kod
+Add|Add
+Add Action Replay Code|Lägg till en Action Replay-kod
+Add Cheat|Lägg till fusk
+Add Codes...|Lägg till kod...
+Add Raw Memory Code|Lägg till råminneskod
+Address|Adress
+Address :|Adress :
+Advanced|Avancerat
+Always|Alltid
+Are you sure you want to delete '%1' ?|Är du säker på att du vill ta bort '%1' ?
+Are you sure you want to format '%1' ?|Är du säker på att du vill formatera '%1' ?
+Asia (NTSC)|Asien (NTSC)
+Asia (PAL)|Asien (PAL)
+Auto-detect|Auto-detect
+Autostart|Autostart
+Backtrace|Backtrace
+Backup Ram Manager|Backup Ram Manager
+Binary Files (*.bin)|Binary Files (*.bin)
+Bios|Bios
+Block Size :|Blockstorlek
+Browse|Bläddra
+Byte|Byte
+Byte Write|Byteskrivning
+CD Images (*.iso *.cue *.bin)|CD-avbild (*.iso *.cue *.bin)
+Cancel|Avbryt
+Cannot initialize|Kan inte initiera
+Cannot initialize Windows SPTI Driver|Kan inte initiera Windows SPTI-drivrutin
+Cart/Memory|Kassett/Minne
+Cartridge|Kassett
+Cd-Rom|CD-ROM
+Central/South America (NTSC)|Central-/Sydamerika (NTSC)
+Central/South America (PAL)|Central-/Sydamerika (PAL)
+Cheat &Search...|&Sök fusk...
+Cheat Search|Sök efter fusk
+Cheat Type|Typ av fusk
+Cheats|Fusk
+Cheats File|Fuskfil
+Choose a binary file|Choose a binary file
+Choose a cdrom drive/mount point|Välj en CD-läsare eller en monteringspunkt
+Choose a cheat file to open|Välj fuskfil att öppna
+Choose a cheat file to save to|Välj fuskfil att spara till
+Choose a file to save your state|Välj en fil att spara ditt läge till
+Choose a location for binary file|Choose a location for binary file
+Choose a location for your screenshot|Välj plats att spara skärmdump till
+Clear configuration|Rensa inställningar
+Close|Stäng
+Code|Kod
+Code Breakpoints|Code Breakpoints
+Comment :|Kommentar :
+Common Control Registers|Common Control Registers
+Compare Type|Jämför typ
+DSP Control Registers|DSP Control Registers
+DSP Registers|DSP Registers
+Data Size|Datastorlek
+Data Size :|Datastorlek :
+Data Type|Datatyp
+Debug CPU|Debug CPU
+Debug M68K|Debug M68K
+Debug Master SH2|Debug Master SH2
+Debug SCU DSP|Debug SCU DSP
+Debug Slave SH2|Debug Slave SH2
+Debug VDP1|Debug VDP1
+Debug VDP2Viewer|Debug VDP2Viewer
+Del|Del
+Delete|Ta bort
+Description|Beskrivning
+Description :|Beskrivning :
+Device List|Lista över enheter
+DirectX Input Interface|DirectX Input Interface
+DirectX Sound Interface|DirectX Sound Interface
+Disabled|Avaktiverad
+Disassembled Code|Disassembled Code
+Display Enabled|Display Enabled
+Display on Hover|Display on Hover
+Down|Ner
+Download|Nedladdning
+Draw End|Draw End
+Dummy CD Drive|Provisorisk CD-enhet
+Dummy Input Interface|Provisoriskt indatagränssnitt
+Dummy OSD Interface|Provisoriskt OSD-gränssnitt
+Dummy Sound Interface|Provisoriskt ljudgränssnitt
+Dummy Video Interface|Provisoriskt videogränssnitt
+Edit configuration|Ändra inställningar
+Emu-Compatibility|Emu-kompatibilitet
+Emulation|Emulering
+Enable|Aktivera
+Enable Frame Skip/Limiter|Aktivera frameskip/-begränsning
+Enabled|Aktiverad
+End Address:|Slutadress
+English|Engelska
+Enter New Value|Enter New Value
+Europe + others (PAL)|Europa + övriga (PAL)
+Exact|Exakt
+FPS|FPS
+File|Fil
+File Name :|Filnamn :
+File transfer|Filöverföring
+File:|Fil:
+Format|Formatera
+Frame Skip/Limiter|Frame Skip/Limiter
+French|Franska
+From|Från
+From File|Från fil
+From File...|Från fil...
+Fullscreen|Helskärm
+Fullscreen Resolution|Fullscreen Resolution
+General|Allmänt
+General Info|General Info
+German|Tyska
+Glut OSD Interface|Glut OSD-gränssnitt
+Goto Address|Goto Address
+Greater then|Större än
+Hard Reset|Hård omstart
+Height|Höjd
+Hex value(s)|Hex value(s)
+Hide Menubar|Hide Menubar
+Hide Toolbar|Hide Toolbar
+ISO-File Virtual Drive|ISO-fil virtuell enhet
+Information...|Information...
+Input|Kontroller
+Invalid Address|Ogiltig adress
+Invalid Value|Ogiltigt värde
+Italian|Italienska
+Japan (NTSC)|Japan (NTSC)
+Japanese|Japanska
+Japanese Modem|Japanese Modem
+Korea (NTSC)|Korea (NTSC)
+L&oad State|L&adda tillstånd
+Language :|Språk :
+Layer|Lager
+Left|Vänster
+Left trigger|Vänster avtryckare
+Less than|Mindre än
+Linux CD Drive|Linux CD-enhet
+Load|Ladda
+Load State|Ladda läge
+Load State As|Ladda läge som
+Load as executable|Ladda som exekverbar
+Local Coordinates|Local Coordinates
+Log|Logg
+Long|Long
+Long Write|Lång skrivning
+Loop Track Clear|Loop Track Clear
+Loop Track Start|Loop Track Start
+M68K|M68K
+M68K Registers|M68K Registers
+MSH2|MSH2
+Master SH2|Master SH2
+Memory|Minne
+Memory &Editor|Minnes&editor
+Memory Breakpoints|Memory Breakpoints
+Memory Dump|Minnesdump
+Memory Editor|Minnesredigerare
+Memory Search|Memory Search
+Memory Transfer|Minnesöverföring
+Memory dump|Minnesdump
+Mouse|Mus
+Mpeg ROM|MPEG ROM
+NBG0|NBG0
+NBG0/RBG1 Info|NBG0/RBG1 Info
+NBG1|NBG1
+NBG1 Info|NBG1 Info
+NBG2|NBG2
+NBG2 Info|NBG2 Info
+NBG3|NBG3
+NBG3 Info|NBG3 Info
+Netlink|Netlink
+Never|Aldrig
+None|Ingen
+Normal Sprite|Normal Sprite
+North America (NTSC)|Nordamerika (NTSC)
+OSD Core|OSD-kärna
+Ok|OK
+On fullscreen|Helskärm
+On message|On message
+Open &CD Rom...|Öppna &CD-ROM...
+Open &ISO...|Öppna &ISO...
+Open CD Rom|Öppna CD-ROM
+OpenGL Video Interface|OpenGL-videogränssnitt
+Options|Options
+Other Debug|Other Debug
+Pad|Kontroll
+Pad Configuration|Kontrollinställningar
+Pause|Paus
+Pro Action Replay|Pro Action Replay
+Qt Keyboard Input Interface|Qt tangentbordsindatagränssnitt
+Quit|Avsluta
+R&un|&Kör
+RBG0|RBG0
+RBG0 Info|RBG0 Info
+Read|Read
+Region|Region
+Registers|Registers
+Reset|Reset
+Resolution|Upplösning
+Right|Höger
+Right trigger|Höger avtryckare
+Run|Kör
+S&ave State|Sp&ara tillstånd
+SCSP|SCSP
+SCU-DSP|SCU-DSP
+SDL Joystick Interface|SDL joystick-gränssnitt
+SDL Sound Interface|SDL ljudgränssnitt
+SH2 Debugger Interpreter|SH2 felsökningstolk
+SH2 Dynamic Recompiler|SH2 dynamisk omkompilering
+SH2 Interpreter|SH2-tolkare
+SH2 Registers|SH2 Registers
+SSH2|SSH2
+Save|Spara
+Save As WAV|Save As WAV
+Save Bitmap|Save Bitmap
+Save Information|Spara information
+Save List|Spara lista
+Save MD0|Save MD0
+Save MD1|Save MD1
+Save MD2|Save MD2
+Save MD3|Save MD3
+Save Program|Save Program
+Save Selected|Save Selected
+Save Slot Registers|Save Slot Registers
+Save State|Spara läge
+Save State As|Spara läge som
+Save States|Spara lägen
+Sc&reenshot|Skä&rmbild
+Screen Enabled|Screen Enabled
+Screenshot|Skärmdump
+Search|Sök
+Search Criteria|Search Criteria
+Search Memory|Search Memory
+Search Value:|Sök värde:
+Search/Add Cheats|Sök/Lägg till fusk
+Select a file to load your state|Välj fil för att ladda ditt läge
+Select your iso/cue/bin file|Välj din iso/cue/bin-fil
+Set PC to Start Address|Sätt PC till startadress
+Settings|Inställningar
+Shortcuts|Shortcuts
+Show FPS|Visa FPS
+Show Log Window|Show Log Window
+Signed|Signerad
+Signed 16-bit value|Signed 16-bit value
+Signed 32-bit value|Signed 32-bit value
+Signed 8-bit value|Signed 8-bit value
+Slave SH2|Slav SH2
+Slot Info|Slot Info
+Slot Number:|Slot Number:
+Software OSD Interface|Mjukvaru OSD-gränssnitt
+Software Video Interface|Mjukvaruvideogränssnitt
+Sound|Ljud
+Sound Core|Ljudgränssnitt
+Spanish|Spanska
+Start|Start
+Start Address:|Startadress
+Start in Fullscreen|Start in Fullscreen
+Status|Status
+Step Into|Step Into
+Step Out|Step Out
+Step Over|Step Over
+Store|Lagra
+Synchronize Saturn internal clock with set time|Synchronize Saturn internal clock with set time
+System Clipping Coordinates|System Clipping Coordinates
+Text|Text
+Texture|Texture
+To|Till
+To File...|Till fil...
+Tools|Verktyg
+Track Inf Loop Results|Track Inf Loop Results
+Transfer|Överföring
+Translation|Översättning
+Type:|Type:
+Unable to add code|Kan inte lägga till kod
+Unable to change description|Kan inte ändra beskrivning
+Unable to open file for loading|Kan inte öppna fil för att ladda
+Unable to open file for saving|Kan inte öppna fil för att spara
+Unable to remove code|Kan inte ta bort kod
+Unknow (%1)|Okänt (%1)
+Unsigned|Osignerad
+Unsigned 16-bit value|Unsigned 16-bit value
+Unsigned 32-bit value|Unsigned 32-bit value
+Unsigned 8-bit value|Unsigned 8-bit value
+Up|Upp
+Upload|Uppladdning
+VDP1|VDP1
+VDP1 Command Info|VDP1 Command Info
+VDP1 Command List|VDP1 Command List
+VDP2|VDP2
+Value|Värde
+Value :|Värde :
+Value:|Value:
+Vdp1|Vdp1
+Vdp2|Vdp2
+Video|Video
+Video Core|Videogränssnitt
+Video Driver|Videodrivrutin
+Video Format|Videoformat
+View|Visa
+Viewer|Viewer
+Waiting Input...|Väntar på input...
+Width|Bredd
+Window Resolution|Window Resolution
+Windows SPTI Driver|Windows SPTI-drivrutin
+Word|Word
+Word Write|Ordskrivning
+Write|Write
+Yabause Cheat Files (*.yct);;All Files (*)|Yabause fuskfil (*.yct);;Alla filer (*)
+Yabause Qt GUI|Yabause Qt GUI
+Yabause Qt Gui<br />Based on Yabause %1<br /><a href="http://yabause.org">http://yabause.org</a><br />The Yabause Team<br /><a href="mailto:pasnox@gmail.com">Filipe AZEVEDO</a>|Yabause Qt-gränssnitt<br />Baserat op Yabause %1<br /><a href="http://yabause.org">http://yabause.org</a><br />Yabause-gruppen<br /><a href="mailto:pasnox@gmail.com">Filipe AZEVEDO</a>
+Yabause Save State (*.yss)|Yabause Sparat Läge (*.yss)
+Yabause is not initialized, can't manage backup ram.|Yabause är inte initierat, kan inte hantera backup-RAM.
+http://www.emu-compatibility.com/yabause/index.php?lang=uk|http://www.emu-compatibility.com/yabause/index.php?lang=uk
+http://www.monkeystudio.org|http://www.monkeystudio.org
+toolBar|Verktygsfält

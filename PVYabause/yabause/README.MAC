@@ -1,0 +1,99 @@
+        _   _          
+       / \_/ \            ___  _      ____ 
+       \     /___  ___   /   || | __ /    \ ____
+        \   //   ||   \ /    || | \ \\  \_//    \
+        /  //    ||   //  _  || |__\ \\  \    __/
+        \_//  _  ||   \\_/ \_||______/ \  \\  \__
+           \_/ \_||___/              \____/ \____\
+     Yet Another Buggy And Uncomplete Saturn Emulator
+
+           ____________________________________
+           Copyright (c) 2002-2014 Yabause team
+
+
+1) Introduction.............................................20
+2) Compiling instructions...................................26
+3) How to use Yabause.......................................46
+4) Known Issues.............................................86
+
+
+1 Introduction________________________________________________
+
+This file documents the mac version only, for general
+information check the README file.
+
+
+2 Compiling instructions______________________________________
+
+Yabause is written in C and Objective C using the Cocoa,
+IOKit, OpenGL, and CoreAudio frameworks. All of these
+frameworks should be installed by default on your Mac OS X
+system. The canonical version of the binary is built with
+Xcode 5, but the project files are set to an earlier format,
+so it might work with an earlier version of Xcode -- YMMV.
+
+Once you have Xcode installed, you should be ready to build
+Yabause.
+
+Uncompress the Yabause source archive, and open the
+Yabause.xcodeproj in the src/cocoa directory. From there it
+should be as easy as hitting the Build or Build and Run
+button in Xcode. This should generate a Yabause.app file
+that can be run just like any other application bundle on
+Mac OS X.
+
+
+3 How to use Yabause__________________________________________
+
+Before using Yabause, you need to configure a few things in
+the Preferences dialog (Yabause > Preferences).
+
+
+3.1 Configuration_____________________________________________
+
+First, set the BIOS path.
+Yabause can run some games without a BIOS, but many of them
+need it. If you want to use the emulated BIOS, select the
+checkbox for that.
+
+Next, set up the video and sound cores. For the video core,
+you have 2 options:
+1. Software Video Core - The most accurate video core in the
+   Yabause code, but also the slowest. Should perform just
+   fine on most supported machines (see the known issues).
+2. Disable Video - Does exactly what it sounds like.
+
+For the sound core, you only have two options:
+1. Core Audio Sound Core - The default sound core. Select
+   this one if you want sound.
+2. Disable Sound - Does exactly what it sounds like.
+
+Next, set up keys for input. Go to the Input tab, and
+configure each button (at least on Controller 1). For the
+moment, this is limited to keyboard input only.
+
+There are other options you can configure as well in here,
+including BRAM (for saving), a MPEG ROM (for games that use
+the VideoCD/MPEG card), and a cartridge for the cartridge
+port on the Saturn.
+
+Once eveything is set, you can start emulation with the
+"File > Run BIOS", "File > Run CDROM" or "File > Run Image"
+menu options. Don't use the Run BIOS entry if you're using
+BIOS emulation.
+
+
+4 Known Issues________________________________________________
+
+When running in GDB, you should not use fullscreen mode. If
+Yabause crashes while running under GDB in fullscreen mode,
+you will probably get stuck with no way to exit. This should
+only affect developers and shouldn't ever be an issue for
+normal users.
+
+The OpenGL video core is currently broken and disabled. If
+you are using a relatively new Mac, then this probably won't
+be a problem at all, as the software core should perform
+pretty well for most Macs made in the past 4 years, at least.
+In testing, it performed just fine on a Mid-2010 MacBook Pro
+running Yosemite.

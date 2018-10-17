@@ -1,0 +1,85 @@
+        _   _          
+       / \_/ \            ___  _      ____ 
+       \     /___  ___   /   || | __ /    \ ____
+        \   //   ||   \ /    || | \ \\  \_//    \
+        /  //    ||   //  _  || |__\ \\  \    __/
+        \_//  _  ||   \\_/ \_||______/ \  \\  \__
+           \_/ \_||___/              \____/ \____\
+     Yet Another Buggy And Uncomplete Saturn Emulator
+
+           ____________________________________
+           Copyright (c) 2002-2011 Yabause team
+
+
+1) Introduction.............................................20
+2) Compiling instructions...................................31
+2) How to use Yabause.......................................48
+4) Final Thoughts...........................................71
+
+
+1 Introduction________________________________________________
+
+This file documents the Dreamcast version only, for general
+information check the README file. Note, that if you are just
+a casual user, and not a developer, you probably won't have
+to worry about the Compiling instructions below. Pick up with
+the section "How to use Yabause" to learn how to make a CD
+image you can burn to use Yabause (or use a program like
+Selfboot).
+
+
+2 Compiling instructions______________________________________
+
+Yabause is written in C using KallistiOS. So, in order to
+compile it, you need a working sh-elf targetted C compiler, 
+such as gcc and a working KallistiOS environment:
+
+  * http://gamedev.allusion.net
+
+Once KallistiOS is set up, you should be ready to build 
+Yabause.
+
+Uncompress the Yabause source archive, move to the newly
+created directory, type "cd src", then "make -f Makefile.dc",
+it will generate one binary: "yabause.bin" in the "src"
+directory.
+
+
+3 How to use Yabause__________________________________________
+
+Before using Yabause, you need to build a CD with a few files
+in the correct places. In order to build a CD with the
+compiled binary, you must first scramble the binary. This can
+be done with the scramble utility which can be obtained from
+http://mc.pp.se/dc/files/scramble.c . This will have to be
+compiled with your native compiler. Once you run the scramble
+program on the yabause.bin file created in section 2 above,
+you will have a binary file suitable for booting on a real
+Dreamcast.
+
+Once you have your scrambled binary, you may choose to include
+a Sega Saturn BIOS image on your disc as well. As of 0.9.5,
+this is not a requirement for the Dreamcast port, but if you
+choose to use an actual BIOS image, it must be put on the
+root of the CD and named "saturn.bin".
+
+From this point, follow your favorite guide for how to build
+a selfbooting CD out of plain files. I use the one available
+at http://mc.pp.se/dc/cdr.html .
+
+
+4 Final Thoughts______________________________________________
+
+The Dreamcast port of Yabause is quite slow. I have done very
+little in the way of optimizing any of the core of Yabause
+toward the Dreamcast (there is quite a bit that could be done
+when time allows). Do not expect the Dreamcast port of
+Yabause to run your favorite Sega Saturn games at any sort of
+playable speed for now (or the near future). As Yabause
+matures, and I have more time to work on it, hopefully speed
+will improve. For now, think of it as a fancy tech demo.
+
+Note that in 0.9.5, a small bit of assembly has appeared in
+the Dreamcast port. Hopefully as time goes on more of the
+Dreamcast specific code will be rewritten in assembly for at
+least some small speed increase.

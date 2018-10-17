@@ -15,6 +15,7 @@
  * or in connection with the use or performance of this software.
  *****/
 
+
 #ifndef _SPC7110DEC_H_
 #define _SPC7110DEC_H_
 

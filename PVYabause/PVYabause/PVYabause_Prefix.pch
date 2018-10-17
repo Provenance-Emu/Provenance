@@ -1,0 +1,13 @@
+//
+//  Yabause_Prefix.pch
+//  Yabause
+//
+//  Created by Alexander Strange on 12/29/13.
+//
+//
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#endif
+
+#define VERSION "0.9.10"

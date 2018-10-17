@@ -1,0 +1,135 @@
+        _   _          
+       / \_/ \            ___  _      ____ 
+       \     /___  ___   /   || | __ /    \ ____
+        \   //   ||   \ /    || | \ \\  \_//    \
+        /  //    ||   //  _  || |__\ \\  \    __/
+        \_//  _  ||   \\_/ \_||______/ \  \\  \__
+           \_/ \_||___/              \____/ \____\
+     Yet Another Buggy And Uncomplete Saturn Emulator
+
+           ____________________________________
+           Copyright (c) 2002-2011 Yabause team
+
+
+1) Introduction.............................................19
+2) Compiling instructions...................................25
+3) How to use Yabause......................................102
+
+
+1 Introduction________________________________________________
+
+This file documents the gtk version only, for general
+information check the README file.
+
+
+2 Compiling instructions______________________________________
+
+The Gtk+ port of Yabause is written in C and depends on the
+Gtk+ library (thus the name). The recommended setup of the
+Gtk+ port is to link it against OpenGL and gtkglext libraries,
+but this is not mandatory; see "Full Software mode" for
+further instructions.
+
+Yabause currently provides two build system, a legacy build
+process using the autotools and a newer build process using
+CMake.
+
+
+2.1 Recommended setup_________________________________________
+
+You need a working C compiler, such as gcc and the above
+libraries runtime and development packages:
+
+  * http://www.gtk.org
+
+  * http://gtkglext.sourceforge.net
+
+  * OpenGL should be included with your compiler, if it isn't,
+    check on your distribution's website for links.
+
+  * http://www.cmake.org, you'll need a CMake version >= 2.8
+
+With those libraries, you'll get a working Yabause, but with
+some restrictions:
+
+  * No sound
+
+  * No translations
+
+  * Depending on your OS, keyboard input only
+
+You may want to install some optional dependencies for a
+better experience.
+
+
+2.2 Optional libraries________________________________________
+
+Yabause can use a number of optional libraries:
+
+  * SDL: provides sound and joystick support
+    http://www.libsdl.org/
+
+  * OpenAL: provides sound support
+
+  * mini18n: provides translation support
+
+
+2.3 Compiling_________________________________________________
+
+For the build process, we recommend using two directories: one
+for the Yabause sources (SOURCES) and one for the build (BUILD)
+
+Uncompress the Yabause source archive into the $SOURCES dir
+and create the $BUILD directory.
+
+Move to the build directory and type "cmake $SOURCES" then
+"make" it will generate one program: "yabause" in the "src/gtk"
+directory.
+
+You can even type "make install" to install that program on
+your system (in /usr/local/ by default), but we don't support
+desinstalling it.
+
+
+2.4 Full Software mode________________________________________
+
+The Gtk+ supports building without OpenGL support.
+
+cmake -DYAB_WANT_OPENGL=NO $SOURCES
+make
+
+
+3 How to use Yabause__________________________________________
+
+Before using Yabause, you need to configure a few things in
+the Preferences dialog (Yabause>Preferences).
+
+
+3.1 Configuration_____________________________________________
+
+First, set the BIOS path.
+Yabause can run some games without a BIOS, but most of them
+needs it. If you want to use the emulated BIOS, just let the
+BIOS entry blank.
+
+Next, set the cdrom device.
+It can be a cd device, an iso or a cue file. Set the cd type
+accordingly.
+
+The last thing you have to configure is the keys.
+
+Once eveything is set, you can start emulation with the
+"Yabause>run" entry.
+
+
+3.2 Command line arguments____________________________________
+
+-b (or --bios=)
+    Specify bios file.
+-c (or --cdrom=)
+    Specify cd device. You can know which file is used as cd
+    device by looking in /etc/fstab. It is commonly something
+    like /dev/hdc or /dev/hdd for IDE devices and /dev/scd0
+    for SCSI devices.
+-i (or --iso=)
+    Specify iso file.

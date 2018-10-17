@@ -22,8 +22,14 @@
 
   (c) Copyright 2006 - 2007  nitsuja
 
-  (c) Copyright 2009 - 2011  BearOso,
+  (c) Copyright 2009 - 2018  BearOso,
                              OV2
+
+  (c) Copyright 2017         qwertymodo
+
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   BS-X C emulator code
@@ -118,6 +124,9 @@
   Sound emulator code used in 1.52+
   (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
 
+  S-SMP emulator code used in 1.54+
+  (c) Copyright 2016         byuu
+
   SH assembler code partly based on x86 assembler code
   (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
 
@@ -131,7 +140,7 @@
   (c) Copyright 2006 - 2007  Shay Green
 
   GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
+  (c) Copyright 2004 - 2018  BearOso
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
@@ -139,11 +148,16 @@
                              Matthew Kendora,
                              Nach,
                              nitsuja
-  (c) Copyright 2009 - 2011  OV2
+  (c) Copyright 2009 - 2018  OV2
 
   Mac OS GUI code
   (c) Copyright 1998 - 2001  John Stiles
   (c) Copyright 2001 - 2011  zones
+
+  Libretro port
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   Specific ports contains the works of other authors. See headers in
@@ -882,9 +896,9 @@ static void DSP1_Project (int16 X, int16 Y, int16 Z, int16 *H, int16 *V, int16 *
 	Py = DSP1_ShiftR(Py, E  - refE);
 	Pz = DSP1_ShiftR(Pz, E3 - refE);
 
-	C11 =- (Px * DSP1.Nx >> 15);
-	C8  =- (Py * DSP1.Ny >> 15);
-	C9  =- (Pz * DSP1.Nz >> 15);
+	C11 = -(Px * DSP1.Nx >> 15);
+	C8  = -(Py * DSP1.Ny >> 15);
+	C9  = -(Pz * DSP1.Nz >> 15);
 	C12 = C11 + C8 + C9; // this cannot overflow!
 
 	aux4 = C12; // de-normalization with 32-bits arithmetic
@@ -1355,7 +1369,7 @@ void DSP1SetByte (uint8 byte, uint16 address)
 				case 0x17:
 				case 0x37:
 				case 0x3F:
-					DSP1.command = 0x1f;
+					DSP1.command = 0x1f; // Fall through
 				case 0x1f: DSP1.in_count = 1; break;
 				default:
 				#ifdef DEBUGGER
@@ -1886,7 +1900,7 @@ uint8 DSP1GetByte (uint16 address)
 			DSP1.waiting4command = TRUE;
 		}
 		else
-			t = 0xff;
+			t = 0x80;
 	}
 	else
 		t = 0x80;

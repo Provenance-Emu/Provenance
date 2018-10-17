@@ -1,0 +1,138 @@
+        _   _
+       / \_/ \            ___  _      ____ 
+       \     /___  ___   /   || | __ /    \ ____
+        \   //   ||   \ /    || | \ \\  \_//    \
+        /  //    ||   //  _  || |__\ \\  \    __/
+        \_//  _  ||   \\_/ \_||______/ \  \\  \__
+           \_/ \_||___/              \____/ \____\
+     Yet Another Buggy And Uncomplete Saturn Emulator
+
+        _________________________________________
+        Copyright (c) 2002-2011 Yabause team
+
+
+1) Compiling instructions...................................20
+2) How to use Yabause.......................................82
+3) Contact information.....................................105
+4) Disclaimer..............................................121
+
+
+1 Compiling instructions______________________________________
+
+Yabause is written in C using the OpenGL library, so you need a working C compiler(such as gcc) and
+these libraries, runtime and development packages:
+
+  * OpenGL should be included with your compiler, if it isn't,
+    check on your compiler's website for links.
+
+Yabause can also use the SDL library:
+
+  * http://www.libsdl.org/
+
+Yabause can also use the GLUT library:
+
+  * Check google, I haven't been able to find a good
+    source for it.
+
+Once these libraries installed, you should be ready to
+install Yabause.
+
+Building the Qt 4 port require the Qt 4.3.x libraries too, it's a crossplatform C++ library for various all days crossplatform work ( gui, threads ... ).
+I used the version 4.3.4 version for the developement and tests, so please don't report bugs if you are not using at least this version.
+
+  * http://www.trolltech.com/products/qt
+
+Compiling for Windows : using mingw/cygwin__________________________________
+
+All you have to do now is now is go into your mingw/cygwin
+shell environment, go into the directory where you extracted
+yabause, and type: "./configure --enable-newperinterface ---with-port=qt". Once that's done(and there
+was no errors), type: "make". It should now take some time to
+compile so go grab yourself a sandwich or beer - whatever suits
+your fancy and it should be done in a few minutes. Now all you
+have to do is type "./src/qt/release/yabause" in order to run it.
+
+Compiling for Mac OS X : using gcc__________________________________________
+
+Uncompress the Yabause source archive, move to the newly
+created directory, type "./configure --enable-newperinterface --disable-dependency-tracking --disable-shared --with-port=qt", then "make",
+it will generate a bundle: "Yabause.app" in the "src/qt"
+directory.
+You can then use Yabause by opening the bundle with:
+"open Yabause.app" or with the Mac OS X finder.
+
+Compiling for *Nix/Linux/BSD ? : using gcc__________________________________
+
+Uncompress the Yabause source archive, move to the newly
+created directory, type "./configure --enable-newperinterface ---with-port=qt", then "make",
+it will generate one program: "yabause" in the "src/qt"
+directory.
+
+
+You can also pass the --enable-debug option to the configure script, Yabause
+will then print debug messages in a special dock window.
+(Use the --help flag for a complete list of options.)
+
+You can even type "make install" to install that program on
+your system (in /usr/local/ by default), then uninstalling is
+done by typing "make uninstall".
+
+You can try to read other specific README files for more information.
+
+2 How to use Yabause__________________________________________
+
+Before using Yabause, you need to configure a few things in
+the Preferences dialog (File>Settings).
+
+
+2.1 Configuration_____________________________________________
+
+First, set the BIOS path.
+Yabause can run some games without a BIOS, but most of them
+needs it. If you want to use the emulated BIOS, just let the
+BIOS entry blank.
+
+Next, set the cdrom device.
+It can be a cd device, an iso or a cue file. Set the cd type
+accordingly.
+
+The last thing you have to configure is the keys.
+
+Once eveything is set, you can start emulation with the
+"Emulation>Run" entry.
+
+
+3 Contact information_________________________________________
+
+General inquiries should go to:
+E-mail:	guillaume.duhamel@gmail.com
+E-mail: cwx@cyberwarriorx.com
+
+Qt Port-related inquiries should go to:
+E-mail: pasnox@yabause.org
+
+Web:    http://yabause.org
+
+Please don't ask for roms, bios files or any other copyrighted
+stuff. Please use the forum when you have any questions if
+possible.
+
+
+4 Disclaimer__________________________________________________
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as 
+published by the Free Software Foundation; either version 2 of 
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be
+useful,but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the Free
+Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+Boston, MA 02110-1301  USA
+
+See the GNU General Public License details in COPYING.

@@ -194,6 +194,8 @@
 		B3274E902106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
 		B3274E912106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
 		B3274E932106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
+		B32D857E2174156A001CE0E5 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D857C2174156A001CE0E5 /* CocoaLumberjack.framework */; };
+		B32D857F2174156A001CE0E5 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D857D2174156A001CE0E5 /* CocoaLumberjackSwift.framework */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -234,6 +236,10 @@
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B36D9DFE203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B374932C2175667E00C65DD1 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B374932B2175667D00C65DD1 /* QuickTableViewController.framework */; };
+		B3768491206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */; };
+		B3768492206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */; };
+		B3768495206A0C7C0007A99C /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3768494206A0C7C0007A99C /* PVYabause.framework */; };
+		B3768496206A0C7C0007A99C /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3768494206A0C7C0007A99C /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377E67D21252C3F00D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377E67C21252C3F00D88973 /* GameController.framework */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B38526AA2108267800434945 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A92108267800434945 /* PVAtari800.framework */; };
@@ -539,6 +545,7 @@
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
+				B3768496206A0C7C0007A99C /* PVYabause.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -706,6 +713,8 @@
 		B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVWonderSwanControllerViewController.swift; sourceTree = "<group>"; };
 		B32893771E0B4EA30090B97A /* PVLynxControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLynxControllerViewController.swift; sourceTree = "<group>"; };
 		B328937C1E0B87960090B97A /* PVVBControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVVBControllerViewController.swift; sourceTree = "<group>"; };
+		B32D857C2174156A001CE0E5 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B32D857D2174156A001CE0E5 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -739,6 +748,8 @@
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari7800ControllerViewController.swift; sourceTree = "<group>"; };
 		B374932B2175667D00C65DD1 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
+		B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSaturnControllerViewController.swift; sourceTree = "<group>"; };
+		B3768494206A0C7C0007A99C /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B377E67C21252C3F00D88973 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B38526A92108267800434945 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
@@ -889,6 +900,7 @@
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
+				B3768495206A0C7C0007A99C /* PVYabause.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
@@ -973,6 +985,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32D857E2174156A001CE0E5 /* CocoaLumberjack.framework in Frameworks */,
+				B32D857F2174156A001CE0E5 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */,
 				B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */,
 				B3524101210AD9C4006127B7 /* RealmSwift.framework in Frameworks */,
@@ -1040,6 +1054,7 @@
 			children = (
 				B3C899B1206B7C51005E7033 /* PVVirtualJaguar.framework */,
 				B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */,
+				B3768494206A0C7C0007A99C /* PVYabause.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
@@ -1077,6 +1092,8 @@
 				B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */,
 				B3C04B5821077E1000E7AF79 /* PVLibrary.framework */,
 				B3AF47D821072408002211EE /* ZipArchive.framework */,
+				B32D857C2174156A001CE0E5 /* CocoaLumberjack.framework */,
+				B32D857D2174156A001CE0E5 /* CocoaLumberjackSwift.framework */,
 				B377E67C21252C3F00D88973 /* GameController.framework */,
 				B3524100210AD9C4006127B7 /* Realm.framework */,
 				B35240FF210AD9C4006127B7 /* RealmSwift.framework */,
@@ -1149,6 +1166,7 @@
 				B3B3B89A1DECF9A700602746 /* N64 */,
 				1A74171A1ABF22FD00F3CD3C /* NES */,
 				B3CB85C41E9BFB4B009155A6 /* PokeMini */,
+				B376848F206A08A50007A99C /* Saturn */,
 				1A9FBE1F1ABD28A9004E778B /* SNES */,
 				B32893701E0B24D80090B97A /* WonderSwan */,
 				B328937A1E0B87630090B97A /* VirtualBoy */,
@@ -1532,6 +1550,14 @@
 				B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift */,
 			);
 			name = Atari7800;
+			sourceTree = "<group>";
+		};
+		B376848F206A08A50007A99C /* Saturn */ = {
+			isa = PBXGroup;
+			children = (
+				B3768490206A08BE0007A99C /* PVSaturnControllerViewController.swift */,
+			);
+			name = Saturn;
 			sourceTree = "<group>";
 		};
 		B38D30FA202AC26500E9A068 /* GCDWebDAVServer */ = {
@@ -2334,6 +2360,7 @@
 				B3FF4416205F9C3F00E5A84B /* PVAtari7800ControllerViewController.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
+				B3768491206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				B3BCDA1D205F59B400EFBEDA /* PVN64ControllerViewController.swift in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
@@ -2462,6 +2489,7 @@
 				B394C98220609D0D0014A65D /* PVPSXControllerViewController.swift in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
+				B3768492206A08BE0007A99C /* PVSaturnControllerViewController.swift in Sources */,
 				B394C97C20609D0D0014A65D /* PVLynxControllerViewController.swift in Sources */,
 				B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
@@ -3374,6 +3402,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3427,6 +3456,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3478,6 +3508,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/PVLibrary/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

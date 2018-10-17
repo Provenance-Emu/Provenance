@@ -443,7 +443,7 @@ struct RenderSettings {
 
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {

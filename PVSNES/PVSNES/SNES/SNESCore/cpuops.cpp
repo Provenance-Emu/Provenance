@@ -22,8 +22,14 @@
 
   (c) Copyright 2006 - 2007  nitsuja
 
-  (c) Copyright 2009 - 2011  BearOso,
+  (c) Copyright 2009 - 2018  BearOso,
                              OV2
+
+  (c) Copyright 2017         qwertymodo
+
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   BS-X C emulator code
@@ -118,6 +124,9 @@
   Sound emulator code used in 1.52+
   (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
 
+  S-SMP emulator code used in 1.54+
+  (c) Copyright 2016         byuu
+
   SH assembler code partly based on x86 assembler code
   (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
 
@@ -131,7 +140,7 @@
   (c) Copyright 2006 - 2007  Shay Green
 
   GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
+  (c) Copyright 2004 - 2018  BearOso
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
@@ -139,11 +148,16 @@
                              Matthew Kendora,
                              Nach,
                              nitsuja
-  (c) Copyright 2009 - 2011  OV2
+  (c) Copyright 2009 - 2018  OV2
 
   Mac OS GUI code
   (c) Copyright 1998 - 2001  John Stiles
   (c) Copyright 2001 - 2011  zones
+
+  Libretro port
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   Specific ports contains the works of other authors. See headers in
@@ -191,7 +205,7 @@
 #ifdef SA1_OPCODES
 #define AddCycles(n)	{ SA1.Cycles += (n); }
 #else
-#define AddCycles(n)	{ CPU.PrevCycles = CPU.Cycles; CPU.Cycles += (n); S9xCheckInterrupts(); while (CPU.Cycles >= CPU.NextEvent) S9xDoHEventProcessing(); }
+#define AddCycles(n)	{ CPU.Cycles += (n); while (CPU.Cycles >= CPU.NextEvent) S9xDoHEventProcessing(); }
 #endif
 
 #include "cpuaddr.h"
@@ -1621,16 +1635,25 @@ static void OpF8 (void)
 // CLI
 static void Op58 (void)
 {
-	ClearIRQ();
 	AddCycles(ONE_CYCLE);
-	CHECK_FOR_IRQ();
+
+#ifndef SA1_OPCODES
+	Timings.IRQFlagChanging = IRQ_CLEAR_FLAG;
+#else
+	ClearIRQ();
+#endif
 }
 
 // SEI
 static void Op78 (void)
 {
-	SetIRQ();
 	AddCycles(ONE_CYCLE);
+
+#ifndef SA1_OPCODES
+	Timings.IRQFlagChanging = IRQ_SET_FLAG;
+#else
+	SetIRQ();
+#endif
 }
 
 // CLV
@@ -3465,8 +3488,9 @@ static void OpCB (void)
 	AddCycles(TWO_CYCLES);
 #else
 	CPU.WaitingForInterrupt = TRUE;
+
 	Registers.PCw--;
-	AddCycles(TWO_CYCLES);
+	AddCycles(ONE_CYCLE);
 #endif
 }
 

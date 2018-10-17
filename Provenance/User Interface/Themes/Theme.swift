@@ -265,9 +265,6 @@ public final class Theme {
             $0.keyboardAppearance = theme.keyboardAppearance
         }
 
-        // Status bar
-        UIApplication.shared.statusBarStyle = theme.statusBarStyle
-
         // Force touch sheet // _UIInterfaceActionSystemRepresentationView
         if let actionSystemView = NSClassFromString("_UIInterfaceActionRepresentationsSequenceView") as? (UIView.Type) {
             actionSystemView.appearance {

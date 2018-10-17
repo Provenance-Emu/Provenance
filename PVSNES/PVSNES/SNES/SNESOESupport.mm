@@ -27,6 +27,7 @@
 
 #include <Foundation/Foundation.h>
 #import <PVSupport/PVLogging.h>
+#include "snes9x.h"
 #include "memmap.h"
 #include "gfx.h"
 #include "display.h"
@@ -34,7 +35,6 @@
 #include "conffile.h"
 #include "apu.h"
 #include "controls.h"
-#include "snes9x.h"
 #include "movie.h"
 #include "screenshot.h"
 

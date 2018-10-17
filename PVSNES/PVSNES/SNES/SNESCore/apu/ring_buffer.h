@@ -69,13 +69,13 @@ public:
     }
 
     inline int
-    space_empty (void)
+    space_empty (void) const
     {
         return buffer_size - size;
     }
 
     inline int
-    space_filled (void)
+    space_filled (void) const
     {
         return size;
     }
@@ -96,7 +96,7 @@ public:
         buffer = new unsigned char[buffer_size];
         memset (buffer, 0, this->buffer_size);
 
-        size = 0;
+        this->size = 0;
         start = 0;
     }
 

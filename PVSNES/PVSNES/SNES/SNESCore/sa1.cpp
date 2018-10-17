@@ -22,8 +22,14 @@
 
   (c) Copyright 2006 - 2007  nitsuja
 
-  (c) Copyright 2009 - 2011  BearOso,
+  (c) Copyright 2009 - 2018  BearOso,
                              OV2
+
+  (c) Copyright 2017         qwertymodo
+
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   BS-X C emulator code
@@ -118,6 +124,9 @@
   Sound emulator code used in 1.52+
   (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
 
+  S-SMP emulator code used in 1.54+
+  (c) Copyright 2016         byuu
+
   SH assembler code partly based on x86 assembler code
   (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
 
@@ -131,7 +140,7 @@
   (c) Copyright 2006 - 2007  Shay Green
 
   GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
+  (c) Copyright 2004 - 2018  BearOso
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
@@ -139,11 +148,16 @@
                              Matthew Kendora,
                              Nach,
                              nitsuja
-  (c) Copyright 2009 - 2011  OV2
+  (c) Copyright 2009 - 2018  OV2
 
   Mac OS GUI code
   (c) Copyright 1998 - 2001  John Stiles
   (c) Copyright 2001 - 2011  zones
+
+  Libretro port
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   Specific ports contains the works of other authors. See headers in
@@ -301,7 +315,16 @@ static void S9xSetSA1MemMap (uint32 which1, uint8 map)
 
 	for (int c = 0; c < 0x100; c += 16)
 	{
-		uint8	*block = &Memory.ROM[(map & 7) * 0x100000 + (c << 12)];
+		uint8 *block;
+		if (Multi.cartType != 5)
+			block = &Memory.ROM[(map & 7) * 0x100000 + (c << 12)];
+		else
+		{
+			if ((map & 7) < 4)
+				block = Memory.ROM + Multi.cartOffsetA + ((map & 7) * 0x100000 + (c << 12));
+			else
+				block = Memory.ROM + Multi.cartOffsetB + (((map & 7) - 4) * 0x100000 + (c << 12));
+		}
 		for (int i = c; i < c + 16; i++)
 			Memory.Map[start  + i] = SA1.Map[start  + i] = block;
 	}
@@ -309,8 +332,26 @@ static void S9xSetSA1MemMap (uint32 which1, uint8 map)
 	for (int c = 0; c < 0x200; c += 16)
 	{
         // conversion to int is needed here - map is promoted but which1 is not
-        int32 offset = (((map & 0x80) ? map : which1) & 7) * 0x100000 + (c << 11) - 0x8000;
-		uint8	*block = &Memory.ROM[offset];
+		int32 offset;
+		uint8 *block;
+		if (Multi.cartType != 5)
+		{
+			offset = (((map & 0x80) ? map : which1) & 7) * 0x100000 + (c << 11) - 0x8000;
+			block = &Memory.ROM[offset];
+		}
+		else
+		{
+			if ((map & 7) < 4)
+			{
+				offset = (((map & 0x80) ? map : which1) & 7) * 0x100000 + (c << 11) - 0x8000;
+				block = Memory.ROM + Multi.cartOffsetA + offset;
+			}
+			else
+			{
+				offset = (((map & 0x80) ? (map - 4) : which1) & 7) * 0x100000 + (c << 11) - 0x8000;
+				block = Memory.ROM + Multi.cartOffsetB + offset;
+			}			
+		}
 		for (int i = c + 8; i < c + 16; i++)
 			Memory.Map[start2 + i] = SA1.Map[start2 + i] = block;
 	}
@@ -700,8 +741,10 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 						SA1.sum = 0;
 					else
 					{
-						int16	quotient  = (int16) SA1.op1 / (uint16) SA1.op2;
-						uint16	remainder = (int16) SA1.op1 % (uint16) SA1.op2;
+						int16 dividend = (int16) SA1.op1;
+						uint16 divisor = (uint16) SA1.op2;
+						uint16	remainder = (dividend >= 0) ? dividend % divisor : (dividend % divisor) + divisor;
+						uint16	quotient  = (dividend - remainder) / divisor;
 						SA1.sum = (remainder << 16) | quotient;
 					}
 
