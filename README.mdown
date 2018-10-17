@@ -72,12 +72,12 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   
 ## Under Development Systems:
  - Nintendo
-  - DS
+   - DS
  - Sega
-  - Dreamcast
-  - Saturn
+   - Dreamcast (reicast)
+   - Saturn (yabause)
  - Sony
-  - PSP
+   - PSP (ppsspp)
 
 ## Features
 
