@@ -1,0 +1,238 @@
+#-----------------------------------------
+# snes9x.conf : Snes9x Configuration file
+#-----------------------------------------
+
+[ROM]
+# Filename = 
+LoROM = FALSE
+HiROM = FALSE
+PAL = FALSE
+NTSC = FALSE
+# Header = TRUE/FALSE to ForceHeader or ForceNoHeader
+# Interleaved = TRUE/FALSE to ForceInterleaved or ForceNoInterleaved
+Interleaved2 = FALSE
+InterleaveGD24 = FALSE
+Cheat = FALSE
+Patch = TRUE
+
+[Sound]
+Sync = FALSE
+16BitSound = TRUE
+Stereo = TRUE
+ReverseStereo = FALSE
+Rate = 32000
+InputRate = 32000
+Mute = FALSE
+
+[Display]
+HiRes = TRUE
+Transparency = TRUE
+GraphicWindows = TRUE
+DisplayFrameRate = FALSE
+DisplayWatchedAddresses = FALSE
+DisplayInput = FALSE
+DisplayFrameCount = FALSE
+MessagesInImage = TRUE
+MessageDisplayTime = 120
+
+[Settings]
+BSXBootup = FALSE
+# FrameTime = 
+FrameSkip = Auto
+TurboMode = FALSE
+TurboFrameSkip = 15
+MovieTruncateAtEnd = FALSE
+MovieNotifyIgnored = FALSE
+WrongMovieStateProtection = TRUE
+StretchScreenshots = 1
+SnapshotScreenshots = TRUE
+DontSaveOopsSnapshot = FALSE
+AutoSaveDelay = 0
+
+[Controls]
+MouseMaster = TRUE
+SuperscopeMaster = TRUE
+JustifierMaster = TRUE
+MP5Master = TRUE
+AllowLeftRight = FALSE
+Port1 = pad1
+Port2 = none
+Mouse1Crosshair = 1 White/Black
+Mouse2Crosshair = 1 White/Black
+SuperscopeCrosshair = 2 White/Black
+Justifier1Crosshair = 4 Blue/Black
+Justifier2Crosshair = 4 MagicPink/Black
+
+[Hack]
+EnableGameSpecificHacks = TRUE
+AllowInvalidVRAMAccess = FALSE
+SpeedHacks = FALSE
+HDMATiming = 100
+
+[Netplay]
+Enable = FALSE
+Port = 6096
+Server = ""
+
+[DEBUG]
+Debugger = FALSE
+Trace = FALSE
+
+[Unix]
+# BaseDir = ~/.snes9x
+# SnapshotFilename = 
+# PlayMovieFilename = 
+# RecordMovieFilename = 
+EnableGamePad = TRUE
+PadDevice1 = (null)
+PadDevice2 = (null)
+PadDevice3 = (null)
+PadDevice4 = (null)
+PadDevice5 = (null)
+PadDevice6 = (null)
+PadDevice7 = (null)
+PadDevice8 = (null)
+ThreadSound = FALSE
+SoundBufferSize = 100
+SoundFragmentSize = 2048
+# SoundDevice = 
+ClearAllControls = FALSE
+
+[Unix/X11]
+SetKeyRepeat = TRUE
+VideoMode = 1
+
+[Unix/X11 Controls]
+J00:Axis1 = Joypad1 Axis Up/Down T=50%
+J00:Axis0 = Joypad1 Axis Left/Right T=50%
+J00:B1 = Joypad1 A
+J00:B2 = Joypad1 B
+J00:B0 = Joypad1 X
+J00:B3 = Joypad1 Y
+J00:B6 = Joypad1 L
+J00:B7 = Joypad1 R
+J00:B8 = Joypad1 Select
+J00:B11 = Joypad1 Start
+K00:u = Joypad1 Up
+K00:Up = Joypad1 Up
+K00:j = Joypad1 Down
+K00:n = Joypad1 Down
+K00:Down = Joypad1 Down
+K00:h = Joypad1 Left
+K00:Left = Joypad1 Left
+K00:k = Joypad1 Right
+K00:Right = Joypad1 Right
+K00:d = Joypad1 A
+K00:S+d = Joypad1 ToggleTurbo A
+K00:C+d = Joypad1 ToggleSticky A
+K00:c = Joypad1 B
+K00:S+c = Joypad1 ToggleTurbo B
+K00:C+c = Joypad1 ToggleSticky B
+K00:s = Joypad1 X
+K00:S+s = Joypad1 ToggleTurbo X
+K00:C+s = Joypad1 ToggleSticky X
+K00:x = Joypad1 Y
+K00:S+x = Joypad1 ToggleTurbo Y
+K00:C+x = Joypad1 ToggleSticky Y
+K00:a = Joypad1 L
+K00:v = Joypad1 L
+K00:S+a = Joypad1 ToggleTurbo L
+K00:S+v = Joypad1 ToggleTurbo L
+K00:C+a = Joypad1 ToggleSticky L
+K00:C+v = Joypad1 ToggleSticky L
+K00:z = Joypad1 R
+K00:S+z = Joypad1 ToggleTurbo R
+K00:C+z = Joypad1 ToggleSticky R
+K00:space = Joypad1 Select
+K00:Return = Joypad1 Start
+K00:KP_Up = Joypad2 Up
+K00:KP_Down = Joypad2 Down
+K00:KP_Left = Joypad2 Left
+K00:KP_Right = Joypad2 Right
+K00:Prior = Joypad2 A
+K00:Next = Joypad2 B
+K00:Home = Joypad2 X
+K00:End = Joypad2 Y
+K00:Insert = Joypad2 L
+K00:Delete = Joypad2 R
+K00:KP_Add = Joypad2 Select
+K00:KP_Enter = Joypad2 Start
+K00:Escape = ExitEmu
+K00:Pause = Pause
+K00:Scroll_Lock = Pause
+K00:CS+Escape = Reset
+K00:S+Escape = SoftReset
+K00:F12 = SaveFreezeFile
+K00:A+F3 = SaveFreezeFile
+K00:C+F3 = SaveFreezeFile
+K00:F11 = LoadFreezeFile
+K00:A+F2 = LoadFreezeFile
+K00:C+F2 = LoadFreezeFile
+K00:S+F1 = QuickSave000
+K00:S+F2 = QuickSave001
+K00:S+F3 = QuickSave002
+K00:S+F4 = QuickSave003
+K00:S+F5 = QuickSave004
+K00:S+F6 = QuickSave005
+K00:S+F7 = QuickSave006
+K00:S+F8 = QuickSave007
+K00:S+F9 = QuickSave008
+K00:F1 = QuickLoad000
+K00:F2 = QuickLoad001
+K00:F3 = QuickLoad002
+K00:F4 = QuickLoad003
+K00:F5 = QuickLoad004
+K00:F6 = QuickLoad005
+K00:F7 = QuickLoad006
+K00:F8 = QuickLoad007
+K00:F9 = QuickLoad008
+K00:F10 = LoadOopsFile
+K00:A+F1 = SaveSPC
+K00:C+F1 = SaveSPC
+K00:Print = Screenshot
+K00:S+1 = BeginRecordingMovie
+K00:S+2 = EndRecordingMovie
+K00:S+3 = LoadMovie
+K00:Tab = EmuTurbo
+K00:S+Tab = ToggleEmuTurbo
+K00:equal = IncFrameRate
+K00:minus = DecFrameRate
+K00:S+equal = IncFrameTime
+K00:S+minus = DecFrameTime
+K00:A+equal = IncEmuTurbo
+K00:A+minus = DecEmuTurbo
+K00:C+equal = IncTurboSpeed
+K00:C+minus = DecTurboSpeed
+K00:6 = SwapJoypads
+K00:A+F4 = SoundChannel0
+K00:C+F4 = SoundChannel0
+K00:A+F5 = SoundChannel1
+K00:C+F5 = SoundChannel1
+K00:A+F6 = SoundChannel2
+K00:C+F6 = SoundChannel2
+K00:A+F7 = SoundChannel3
+K00:C+F7 = SoundChannel3
+K00:A+F8 = SoundChannel4
+K00:C+F8 = SoundChannel4
+K00:A+F9 = SoundChannel5
+K00:C+F9 = SoundChannel5
+K00:A+F10 = SoundChannel6
+K00:C+F10 = SoundChannel6
+K00:A+F11 = SoundChannel7
+K00:C+F11 = SoundChannel7
+K00:A+F12 = SoundChannelsOn
+K00:C+F12 = SoundChannelsOn
+K00:1 = ToggleBG0
+K00:2 = ToggleBG1
+K00:3 = ToggleBG2
+K00:4 = ToggleBG3
+K00:5 = ToggleSprites
+K00:9 = ToggleTransparency
+K00:BackSpace = ClipWindows
+K00:A+Escape = Debugger
+M00:Pointer = Pointer Mouse1+Superscope+Justifier1
+M00:B0 = {Mouse1 L,Superscope Fire,Justifier1 Trigger}
+M00:B2 = {Mouse1 R,Superscope Cursor,Justifier1 Start}
+M00:B1 = {Justifier1 AimOffscreen Trigger,Superscope AimOffscreen}
+K00:grave = Superscope ToggleTurbo
+K00:slash = Superscope Pause

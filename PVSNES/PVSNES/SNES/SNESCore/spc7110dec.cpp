@@ -15,6 +15,7 @@
  * or in connection with the use or performance of this software.
  *****/
 
+
 #ifdef _SPC7110EMU_CPP_
 
 uint8 SPC7110Decomp::read() {
@@ -41,7 +42,7 @@ void SPC7110Decomp::write(uint8 data) {
 }
 
 uint8 SPC7110Decomp::dataread() {
-  unsigned size = memory_cartrom_size() - 0x100000;
+  unsigned size = memory_cartrom_size() > 0x500000 ? memory_cartrom_size() - 0x200000 : memory_cartrom_size() - 0x100000;
   while(decomp_offset >= size) decomp_offset -= size;
   return memory_cartrom_read(0x100000 + decomp_offset++);
 }

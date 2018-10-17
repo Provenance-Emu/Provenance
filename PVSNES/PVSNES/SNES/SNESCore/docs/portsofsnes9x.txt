@@ -1,0 +1,135 @@
+These are all the known ports of Snes9X to other consoles/handhelds/etc as of
+2011/08/28. They are all supported and welcomed on the official Snes9X site.
+
+**If you know of anyone who is currently working on a port of Snes9X, or if you
+have some interest in making a port, please have them go to the Snes9X forums
+(http://www.snes9x.com/phpbb2/) and have them register an account there. After
+that, speak to Ryan and/or Jerremy so you can be let into the devs area and the
+git so you can have access to the most current code, collaborate with the other
+developers, make the port officialized, etc.**
+
+Ports and how to get them running are as follows:
+
+*PSP Version of Snes9X*
+Name: Snes9X Euphoria
+Latest version: R5 Beta
+Homepage/forum: http://code.google.com/p/snes9x-euphoria/
+Maintainer: Open due to Zack discontinuing the port; he has made the source
+code available. If you are interested in taking over the project or starting a
+new port from scratch, let Ryan and/or Jerremy know ASAP.
+
+HOW TO GET IT RUNNING:
+*DISCLAIMER* You will have to do some Googling, including but not limited to:
+* Downgrading/upgrading your firmware
+* Checking if your PSP-2000 series can use Pandora's Battery
+* Checking if your PSP-3000 series can use DaveeFTW's and/or some1's Downgrader
+* Creating Pandora's Battery (as needed)
+* Finding the hacks, HENs, CFWs, etc and how to use/install them
+
+1. Make sure your PSP is hackable in some way. This means:
+* All PSP-1000 series and certain PSP-2000 series can use Pandora Battery; this
+would be considered fully hackable.
+* PSP-2000 series that can't use Pandora Battery, just about all PSP-3000
+series, and PSP Gos are hackable via other means (DaveeFTW's and/or some1's
+Downgrader, etc); this would be considered partially hackable. 
+
+2. Make sure your PSP has custom firmware or a HEN that's useable (you'll have
+to upgrade/downgrade the firmware as necessary). (Hint: I personally prefer
+5.50 GEN-D3 if your PSP can use Pandora Battery; latest version of 6.20 or
+6.35 PRO CFW if your PSP can't use Pandora Battery (if you can't downgrade past
+6.35, then you should be able to use 6.39 and/or 6.60 PRO).)
+
+3. When that’s done, be sure to put the Snes9X Euphoria folder in /PSP/GAME on
+your PSP’s memory stick (PSP-1000/2000/3000 series) or internal memory
+(PSP Go). Be sure to copy the ROMs into the roms folder, saves (*.srm, etc)
+into the saves folder, and cheats into the cheats folder.
+
+Note: as of right now, there is no one to maintain the PSP port; I am leaving
+these instructions up just in case someone wants to take it over, and you can
+use these tips to get other homebrews going.
+
+*Wii/Gamecube version of Snes9X*
+Name: Snes9X GX
+Latest Version: 4.2.8
+Homepage/forum: http://code.google.com/p/snes9x-gx
+Maintainer: Tantric
+
+HOW TO GET IT RUNNING:
+*DISCLAIMER* You will have to do some Googling, including but not limited to:
+* Finding and installing the latest versions of: Homebrew Channel, Snes9X GX
+Channel (optional), and/or IOS58 installer (also optional; this is to make the
+Snes9X GX channel work) 
+* Finding a modchip for your GameCube and installing it
+
+Wii: You will need the latest Homebrew Channel installed on your Wii. After
+that, copy and paste the apps folder onto the root of your SD card; same goes
+for the snes9xgx folder. After that, copy over any ROMs you have to the
+\snes9xgx\roms folder, save files (*.srm, etc) to the \snes9xgx\saves folder,
+and cheats to the \snes9xgx\cheats folder.
+
+In addition, there appears to be a channel for Snes9X GX; you will need the
+Homebrew Channel installed and you MUST be on System Menu 4.3 so you can be on
+IOS58 (or use the IOS58 installer). After that, you should be able to run the
+installer from the Homebrew Channel, and you'll be good to go! 
+
+Gamecube: You might need a modchip.
+
+*Android and iOS (Apple iPhone/iPod Touch) version of Snes9X*
+Name: Snes9X EX
+Latest Version: 1.4.2 (iOS); 1.4.7.1 (Android)
+Homepage/forum: http://www.explusalpha.com/home/snes9x-ex
+Maintainer: Rakashazi
+
+HOW TO GET IT RUNNING:
+*DISCLAIMER* You will have to do some Googling, including but not limited to:
+* iOS (iPhone/iPod Touch) ONLY!!!: Jailbreaking your firmware
+
+Android: Due to the Android Marketplace unfairly taking down Snes9X EX, you
+will have to visit Rakashazi's website and download the apk either using your
+PC (you'll have to connect the Android to your computer, mount the SD card,
+then copy the apk to it) or your Android, then run package installer
+(or easy installer is fine too) on your Android to install the app.
+
+iOS: You’ll have to jailbreak your firmware and install the Cydia app
+installer. Then you’ll have to install the BigBoss repository within Cydia and
+search for Snes9X EX; you may also want to search for the sshd and all needed 
+stuff for that, as it’s the only way you can put the ROMs, saves, etc onto your
+iPhone/iPod Touch. After that you should be able to download and run from there
+:)
+
+Hint: a more detailed description of copying your ROMs/saves/etc over to the
+iOS device can be found here:
+http://snes9x.com/phpbb2/viewtopic.php?t=5107
+
+*PS3 version of Snes9X*
+Name: Snes9X PS3
+Latest Version: 4.4.9
+Homepage/forum: https://code.google.com/p/snes9x-ps3/ (although for some
+reason, you may have to Google for the latest version)
+Maintainer: Squarepusher
+
+HOW TO GET IT RUNNING:
+*DISCLAIMER* You will have to do some Googling, including but not limited to:
+* Finding a HEN/Jailbreaker/CFW/etc onto your PS3 and installing it
+* (if necessary) Downgrading/Upgrading your PS3's firmware
+
+You’ll have to install a HEN/Jailbreaker/CFW/etc on your PS3 (you might have to
+upgrade or downgrade your PS3’s firmware as needed). After that, it should be
+as simple as copy the emulator, ROMs, saves, etc over to the PS3 and it should
+work :)
+
+*X-Box Version of Snes9X*
+Name: Snes9xbox
+Latest Version: V2 (V3 should be out soon)
+Homepage/forum: http://forums.xbox-scene.com/index.php?showforum=96
+
+HOW TO GET IT RUNNING:
+*DISCLAIMER* You will need to do some Googling, including but not limited to:
+* Finding a softmod (hack) or a modchip and installing/using it
+* Finding a replacement dashboard such as XBMC
+
+Really, it's not hard. Read the readme, and use a softmod or modchip and a
+replacement dashboard. After that's installed, it should be as simple as
+copying over the emulator, ROMs, saves, etc to the X-Box and it should work.
+
+Updated most recently by: 2011/11/2 adventure_of_link

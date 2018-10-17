@@ -22,8 +22,14 @@
 
   (c) Copyright 2006 - 2007  nitsuja
 
-  (c) Copyright 2009 - 2011  BearOso,
+  (c) Copyright 2009 - 2018  BearOso,
                              OV2
+
+  (c) Copyright 2017         qwertymodo
+
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   BS-X C emulator code
@@ -118,6 +124,9 @@
   Sound emulator code used in 1.52+
   (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
 
+  S-SMP emulator code used in 1.54+
+  (c) Copyright 2016         byuu
+
   SH assembler code partly based on x86 assembler code
   (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
 
@@ -131,7 +140,7 @@
   (c) Copyright 2006 - 2007  Shay Green
 
   GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
+  (c) Copyright 2004 - 2018  BearOso
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
@@ -139,11 +148,16 @@
                              Matthew Kendora,
                              Nach,
                              nitsuja
-  (c) Copyright 2009 - 2011  OV2
+  (c) Copyright 2009 - 2018  OV2
 
   Mac OS GUI code
   (c) Copyright 1998 - 2001  John Stiles
   (c) Copyright 2001 - 2011  zones
+
+  Libretro port
+  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
+                             Daniel De Matteis
+                             (Under no circumstances will commercial rights be given)
 
 
   Specific ports contains the works of other authors. See headers in
@@ -180,7 +194,7 @@
 #define _SNES9X_H_
 
 #ifndef VERSION
-#define VERSION	"1.53"
+#define VERSION	"1.56.2"
 #endif
 
 #include "port.h"
@@ -289,7 +303,7 @@ struct SCPUState
 	int32	PrevCycles;
 	int32	V_Counter;
 	uint8	*PCBase;
-	bool8	NMILine;
+	bool8	NMIPending;
 	bool8	IRQLine;
 	bool8	IRQTransition;
 	bool8	IRQLastState;
@@ -321,6 +335,13 @@ enum
 	HC_WRAM_REFRESH_EVENT = 6
 };
 
+enum
+{
+	IRQ_NONE = 0,
+	IRQ_SET_FLAG = 1,
+	IRQ_CLEAR_FLAG = 2
+};
+
 struct STimings
 {
 	int32	H_Max_Master;
@@ -332,13 +353,14 @@ struct STimings
 	int32	HDMAInit;
 	int32	HDMAStart;
 	int32	NMITriggerPos;
+	int32	NextIRQTimer;
 	int32	IRQTriggerCycles;
 	int32	WRAMRefreshPos;
 	int32	RenderPos;
 	bool8	InterlaceField;
 	int32	DMACPUSync;		// The cycles to synchronize DMA and CPU. Snes9x cannot emulate correctly.
 	int32	NMIDMADelay;	// The delay of NMI trigger after DMA transfers. Snes9x cannot emulate correctly.
-	int32	IRQPendCount;	// This value is just a hack.
+	int32	IRQFlagChanging;	// This value is just a hack.
 	int32	APUSpeedup;
 	bool8	APUAllowTimeOverflow;
 };
@@ -351,6 +373,7 @@ struct SSettings
 	bool8	TraceUnknownRegisters;
 	bool8	TraceDSP;
 	bool8	TraceHCEvent;
+	bool8	TraceSMP;
 
 	bool8	SuperFX;
 	uint8	DSP;
@@ -365,11 +388,13 @@ struct SSettings
 	bool8	BS;
 	bool8	BSXItself;
 	bool8	BSXBootup;
+	bool8	MSU1;
 	bool8	MouseMaster;
 	bool8	SuperScopeMaster;
 	bool8	JustifierMaster;
 	bool8	MultiPlayer5Master;
-
+	bool8	MacsRifleMaster;
+	
 	bool8	ForceLoROM;
 	bool8	ForceHiROM;
 	bool8	ForceHeader;
@@ -392,6 +417,8 @@ struct SSettings
 	bool8	Stereo;
 	bool8	ReverseStereo;
 	bool8	Mute;
+	bool8	DynamicRateControl;
+	int32	DynamicRateLimit; /* Multiplied by 1000 */
 
 	bool8	SupportHiRes;
 	bool8	Transparency;
@@ -405,6 +432,7 @@ struct SSettings
 	bool8	AutoDisplayMessages;
 	uint32	InitialInfoStringTimeout;
 	uint16	DisplayColor;
+	bool8	BilinearFilter;
 
 	bool8	Multi;
 	char	CartAName[PATH_MAX + 1];
@@ -425,6 +453,7 @@ struct SSettings
 	bool8	TurboMode;
 	uint32	HighSpeedSeek;
 	bool8	FrameAdvance;
+	bool8	Rewinding;
 
 	bool8	NetPlay;
 	bool8	NetPlayServer;
@@ -440,14 +469,17 @@ struct SSettings
 	bool8	TakeScreenshot;
 	int8	StretchScreenshots;
 	bool8	SnapshotScreenshots;
+        char    InitialSnapshotFilename[PATH_MAX + 1];
 
 	bool8	ApplyCheats;
 	bool8	NoPatch;
+	bool8	IgnorePatchChecksum;
 	int32	AutoSaveDelay;
 	bool8	DontSaveOopsSnapshot;
 	bool8	UpAndDown;
 
 	bool8	OpenGLEnable;
+	uint32	SuperFXClockMultiplier;
 };
 
 struct SSNESGameFixes

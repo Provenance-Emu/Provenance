@@ -11,7 +11,7 @@ extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, s
 class SPC_DSP {
 public:
 	typedef BOOST::uint8_t uint8_t;
-	
+
 // Setup
 
 	// Initializes DSP and has it use the 64K RAM provided
@@ -34,7 +34,7 @@ public:
 
 	// Emulates pressing reset switch on SNES
 	void soft_reset();
-	
+
 	// Reads/writes DSP registers. For accuracy, you must first call run()
 	// to catch the DSP up to present.
 	int  read ( int addr ) const;
@@ -43,7 +43,7 @@ public:
 	// Runs DSP for specified number of clocks (~1024000 per second). Every 32 clocks
 	// a pair of samples is be generated.
 	void run( int clock_count );
-	
+
 // Sound control
 
 	// Mutes voices corresponding to non-zero bits in mask (issues repeated KOFF events).
@@ -52,7 +52,7 @@ public:
 	void mute_voices( int mask );
 
 // State
-	
+
 	// Resets DSP and uses supplied values to initialize registers
 	enum { register_count = 128 };
 	void load( uint8_t const regs [register_count] );
@@ -69,8 +69,6 @@ public:
 
 	int     stereo_switch;
 	int     take_spc_snapshot;
-	int     rom_enabled;   // mirror
-	uint8_t *rom, *hi_ram; // mirror
 	void    (*spc_snapshot_callback) (void);
 
 	void    set_spc_snapshot_callback( void (*callback) (void) );
@@ -110,12 +108,12 @@ public:
 	void disable_surround( bool ) { } // not supported
 public:
 	BLARGG_DISABLE_NOTHROW
-	
+
 	typedef BOOST::int8_t   int8_t;
 	typedef BOOST::int16_t int16_t;
-	
+
 	enum { echo_hist_size = 8 };
-	
+
 	enum env_mode_t { env_release, env_attack, env_decay, env_sustain };
 	enum { brr_buf_size = 12 };
 	struct voice_t
@@ -136,15 +134,15 @@ public:
 	};
 private:
 	enum { brr_block_size = 9 };
-	
+
 	struct state_t
 	{
 		uint8_t regs [register_count];
-		
+
 		// Echo history keeps most recent 8 samples (twice the size to simplify wrap handling)
 		int echo_hist [echo_hist_size * 2] [2];
 		int (*echo_hist_pos) [2]; // &echo_hist [0 to 7]
-		
+
 		int every_other_sample; // toggles every sample
 		int kon;                // KON value when last checked
 		int noise;
@@ -153,22 +151,22 @@ private:
 		int echo_length;        // number of bytes that echo_offset will stop at
 		int phase;              // next clock cycle to run (0-31)
 		bool kon_check;         // set when a new KON occurs
-		
+
 		// Hidden registers also written to when main register is written to
 		int new_kon;
 		uint8_t endx_buf;
 		uint8_t envx_buf;
 		uint8_t outx_buf;
-		
+
 		// Temporary state between clocks
-		
+
 		// read once per sample
 		int t_pmon;
 		int t_non;
 		int t_eon;
 		int t_dir;
 		int t_koff;
-		
+
 		// read a few clocks ahead then used
 		int t_brr_next_addr;
 		int t_adsr0;
@@ -177,21 +175,21 @@ private:
 		int t_srcn;
 		int t_esa;
 		int t_echo_enabled;
-		
+
 		// internal state that is recalculated every sample
 		int t_dir_addr;
 		int t_pitch;
 		int t_output;
 		int t_looped;
 		int t_echo_ptr;
-		
+
 		// left/right sums
 		int t_main_out [2];
 		int t_echo_out [2];
 		int t_echo_in  [2];
-		
+
 		voice_t voices [voice_count];
-		
+
 		// non-emulation state
 		uint8_t* ram; // 64K shared RAM between DSP and SMP
 		int mute_mask;
@@ -201,11 +199,11 @@ private:
 		sample_t extra [extra_size];
 	};
 	state_t m;
-	
+
 	void init_counter();
 	void run_counters();
 	unsigned read_counter( int rate );
-	
+
 	int  interpolate( voice_t const* v );
 	void run_envelope( voice_t* const v );
 	void decode_brr( voice_t* v );
@@ -244,7 +242,7 @@ private:
 	void echo_28();
 	void echo_29();
 	void echo_30();
-	
+
 	void soft_reset_common();
 };
 
@@ -261,22 +259,22 @@ inline int SPC_DSP::read( int addr ) const
 inline void SPC_DSP::write( int addr, int data )
 {
 	assert( (unsigned) addr < register_count );
-	
+
 	m.regs [addr] = (uint8_t) data;
 	switch ( addr & 0x0F )
 	{
 	case v_envx:
 		m.envx_buf = (uint8_t) data;
 		break;
-		
+
 	case v_outx:
 		m.outx_buf = (uint8_t) data;
 		break;
-	
+
 	case 0x0C:
 		if ( addr == r_kon )
 			m.new_kon = (uint8_t) data;
-		
+
 		if ( addr == r_endx ) // always cleared, regardless of data written
 		{
 			m.endx_buf = 0;

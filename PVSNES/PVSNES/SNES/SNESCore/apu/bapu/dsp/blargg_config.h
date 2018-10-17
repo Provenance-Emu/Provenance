@@ -5,10 +5,12 @@
 #define BLARGG_CONFIG_H
 
 // Uncomment to disable debugging checks
-//#define NDEBUG 1
+#if !defined(DEBUGGER) && !defined(_DEBUG)
+#define NDEBUG 1
+#endif
 
 // Uncomment to enable platform-specific (and possibly non-portable) optimizations
-//#define BLARGG_NONPORTABLE 1
+#define BLARGG_NONPORTABLE 1
 
 // Uncomment if automatic byte-order determination doesn't work
 //#define BLARGG_BIG_ENDIAN 1

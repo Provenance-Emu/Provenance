@@ -62,24 +62,11 @@ static BOOST::uint8_t const initial_regs [SPC_DSP::register_count] =
 	out [0] = l;\
 	out [1] = r;\
 	out += 2;\
-	if ( out >= m.out_end )\
-	{\
-		check( out == m.out_end );\
-		check( m.out_end != &m.extra [extra_size] || \
-			(m.extra <= m.out_begin && m.extra < &m.extra [extra_size]) );\
-		out       = m.extra;\
-		m.out_end = &m.extra [extra_size];\
-	}\
 }\
 
 void SPC_DSP::set_output( sample_t* out, int size )
 {
 	require( (size & 1) == 0 ); // must be even
-	if ( !out )
-	{
-		out  = m.extra;
-		size = extra_size;
-	}
 	m.out_begin = out;
 	m.out       = out;
 	m.out_end   = out + size;
@@ -132,7 +119,7 @@ inline int SPC_DSP::interpolate( voice_t const* v )
 	int offset = v->interp_pos >> 4 & 0xFF;
 	short const* fwd = gauss + 255 - offset;
 	short const* rev = gauss       + offset; // mirror left half of gaussian
-	
+
 	int const* in = &v->buf [(v->interp_pos >> 12) + v->buf_pos];
 	int out;
 	out  = (fwd [  0] * in [0]) >> 11;
@@ -140,7 +127,7 @@ inline int SPC_DSP::interpolate( voice_t const* v )
 	out += (rev [256] * in [2]) >> 11;
 	out = (int16_t) out;
 	out += (rev [  0] * in [3]) >> 11;
-	
+
 	CLAMP16( out );
 	out &= ~1;
 	return out;
@@ -262,13 +249,13 @@ inline void SPC_DSP::run_envelope( voice_t* const v )
 				}
 			}
 		}
-		
+
 		// Sustain level
 		if ( (env >> 8) == (env_data >> 5) && v->env_mode == env_decay )
 			v->env_mode = env_sustain;
-		
+
 		v->hidden_env = env;
-		
+
 		// unsigned cast because linear decrease going negative also triggers this
 		if ( (unsigned) env > 0x7FF )
 		{
@@ -276,7 +263,7 @@ inline void SPC_DSP::run_envelope( voice_t* const v )
 			if ( v->env_mode == env_attack )
 				v->env_mode = env_decay;
 		}
-		
+
 		if ( !read_counter( rate ) )
 			v->env = env; // nothing else is controlled by the counter
 	}
@@ -289,27 +276,27 @@ inline void SPC_DSP::decode_brr( voice_t* v )
 {
 	// Arrange the four input nybbles in 0xABCD order for easy decoding
 	int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
-	
+
 	int const header = m.t_brr_header;
-	
+
 	// Write to next four samples in circular buffer
 	int* pos = &v->buf [v->buf_pos];
 	int* end;
 	if ( (v->buf_pos += 4) >= brr_buf_size )
 		v->buf_pos = 0;
-	
+
 	// Decode four samples
 	for ( end = pos + 4; pos < end; pos++, nybbles <<= 4 )
 	{
 		// Extract nybble and sign-extend
 		int s = (int16_t) nybbles >> 12;
-		
+
 		// Shift sample based on header
 		int const shift = header >> 4;
 		s = (s << shift) >> 1;
 		if ( shift >= 0xD ) // handle invalid range
 			s = (s >> 25) << 11; // same as: s = (s < 0 ? -0x800 : 0)
-		
+
 		// Apply IIR filter (8 is the most commonly used)
 		int const filter = header & 0x0C;
 		int const p1 = pos [brr_buf_size - 1];
@@ -334,7 +321,7 @@ inline void SPC_DSP::decode_brr( voice_t* v )
 			s += p1 >> 1;
 			s += (-p1) >> 5;
 		}
-		
+
 		// Adjust and write sample
 		CLAMP16( s );
 		s = (int16_t) (s * 2);
@@ -367,11 +354,11 @@ MISC_CLOCK( 30 )
 	if ( m.every_other_sample )
 	{
 		m.kon    = m.new_kon;
-		m.t_koff = REG(koff) | m.mute_mask; 
+		m.t_koff = REG(koff) | m.mute_mask;
 	}
-	
+
 	run_counters();
-	
+
 	// Noise
 	if ( !read_counter( REG(flg) & 0x1F ) )
 	{
@@ -397,9 +384,9 @@ inline VOICE_CLOCK( V2 )
 	if ( !v->kon_delay )
 		entry += 2;
 	m.t_brr_next_addr = GET_LE16A( entry );
-	
+
 	m.t_adsr0 = VREG(v->regs,adsr0);
-	
+
 	// Read pitch, spread over two clocks
 	m.t_pitch = VREG(v->regs,pitchl);
 }
@@ -413,12 +400,13 @@ inline VOICE_CLOCK( V3b )
 	m.t_brr_byte   = m.ram [(v->brr_addr + v->brr_offset) & 0xFFFF];
 	m.t_brr_header = m.ram [v->brr_addr]; // brr_addr doesn't need masking
 }
-VOICE_CLOCK( V3c )
+
+inline VOICE_CLOCK( V3c )
 {
 	// Pitch modulation using previous voice's output
 	if ( m.t_pmon & v->vbit )
 		m.t_pitch += ((m.t_output >> 5) * m.t_pitch) >> 10;
-	
+
 	if ( v->kon_delay )
 	{
 		// Get ready to start BRR decoding on next sample
@@ -437,46 +425,46 @@ VOICE_CLOCK( V3c )
 					spc_snapshot_callback();
 			}
 		}
-		
+
 		// Envelope is never run during KON
 		v->env        = 0;
 		v->hidden_env = 0;
-		
+
 		// Disable BRR decoding until last three samples
 		v->interp_pos = 0;
 		if ( --v->kon_delay & 3 )
 			v->interp_pos = 0x4000;
-		
+
 		// Pitch is never added during KON
 		m.t_pitch = 0;
 	}
-	
+
 	// Gaussian interpolation
 	{
 		int output = interpolate( v );
-		
+
 		// Noise
 		if ( m.t_non & v->vbit )
 			output = (int16_t) (m.noise * 2);
-		
+
 		// Apply envelope
 		m.t_output = (output * v->env) >> 11 & ~1;
 		v->t_envx_out = (uint8_t) (v->env >> 4);
 	}
-	
+
 	// Immediate silence due to end of sample or soft reset
 	if ( REG(flg) & 0x80 || (m.t_brr_header & 3) == 1 )
 	{
 		v->env_mode = env_release;
 		v->env      = 0;
 	}
-	
+
 	if ( m.every_other_sample )
 	{
 		// KOFF
 		if ( m.t_koff & v->vbit )
 			v->env_mode = env_release;
-		
+
 		// KON
 		if ( m.kon & v->vbit )
 		{
@@ -484,7 +472,7 @@ VOICE_CLOCK( V3c )
 			v->env_mode  = env_attack;
 		}
 	}
-	
+
 	// Run envelope for next sample
 	if ( !v->kon_delay )
 		run_envelope( v );
@@ -499,7 +487,7 @@ inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 	// Add to output total
 	m.t_main_out [ch] += amp;
 	CLAMP16( m.t_main_out [ch] );
-	
+
 	// Optionally add to echo total
 	if ( m.t_eon & v->vbit )
 	{
@@ -507,14 +495,15 @@ inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 		CLAMP16( m.t_echo_out [ch] );
 	}
 }
-VOICE_CLOCK( V4 )
+
+inline VOICE_CLOCK( V4 )
 {
 	// Decode BRR
 	m.t_looped = 0;
 	if ( v->interp_pos >= 0x4000 )
 	{
 		decode_brr( v );
-		
+
 		if ( (v->brr_offset += 2) >= brr_block_size )
 		{
 			// Start decoding next BRR block
@@ -528,14 +517,14 @@ VOICE_CLOCK( V4 )
 			v->brr_offset = 1;
 		}
 	}
-	
+
 	// Apply pitch
 	v->interp_pos = (v->interp_pos & 0x3FFF) + m.t_pitch;
-	
+
 	// Keep from getting too far ahead (when using pitch modulation)
 	if ( v->interp_pos > 0x7FFF )
 		v->interp_pos = 0x7FFF;
-	
+
 	// Output left
 	voice_output( v, 0 );
 }
@@ -543,10 +532,10 @@ inline VOICE_CLOCK( V5 )
 {
 	// Output right
 	voice_output( v, 1 );
-	
+
 	// ENDX, OUTX, and ENVX won't update if you wrote to them 1-2 clocks earlier
 	int endx_buf = REG(endx) | m.t_looped;
-	
+
 	// Clear bit in ENDX if KON just began
 	if ( v->kon_delay == 5 )
 		endx_buf &= ~v->vbit;
@@ -561,7 +550,7 @@ inline VOICE_CLOCK( V7 )
 {
 	// Update ENDX
 	REG(endx) = m.endx_buf;
-	
+
 	m.envx_buf = v->t_envx_out;
 }
 inline VOICE_CLOCK( V8 )
@@ -605,11 +594,7 @@ VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
 
 inline void SPC_DSP::echo_read( int ch )
 {
-	int s;
-	if ( m.t_echo_ptr >= 0xffc0 && rom_enabled )
-		s = GET_LE16SA( &hi_ram [m.t_echo_ptr + ch * 2 - 0xffc0] );
-	else
-		s = GET_LE16SA( ECHO_PTR( ch ) );
+	int s = GET_LE16SA( ECHO_PTR( ch ) );
 	// second copy simplifies wrap-around handling
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
@@ -619,14 +604,14 @@ ECHO_CLOCK( 22 )
 	// History
 	if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
 		m.echo_hist_pos = m.echo_hist;
-	
+
 	m.t_echo_ptr = (m.t_esa * 0x100 + m.echo_offset) & 0xFFFF;
 	echo_read( 0 );
-	
+
 	// FIR (using l and r temporaries below helps compiler optimize)
 	int l = CALC_FIR( 0, 0 );
 	int r = CALC_FIR( 0, 1 );
-	
+
 	m.t_echo_in [0] = l;
 	m.t_echo_in [1] = r;
 }
@@ -634,17 +619,17 @@ ECHO_CLOCK( 23 )
 {
 	int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
 	int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
-	
+
 	m.t_echo_in [0] += l;
 	m.t_echo_in [1] += r;
-	
+
 	echo_read( 1 );
 }
 ECHO_CLOCK( 24 )
 {
 	int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
 	int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
-	
+
 	m.t_echo_in [0] += l;
 	m.t_echo_in [1] += r;
 }
@@ -652,16 +637,16 @@ ECHO_CLOCK( 25 )
 {
 	int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
 	int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
-	
+
 	l = (int16_t) l;
 	r = (int16_t) r;
-	
+
 	l += (int16_t) CALC_FIR( 7, 0 );
 	r += (int16_t) CALC_FIR( 7, 1 );
-	
+
 	CLAMP16( l );
 	CLAMP16( r );
-	
+
 	m.t_echo_in [0] = l & ~1;
 	m.t_echo_in [1] = r & ~1;
 }
@@ -677,14 +662,14 @@ ECHO_CLOCK( 26 )
 	// Left output volumes
 	// (save sample for next clock so we can output both together)
 	m.t_main_out [0] = echo_output( 0 );
-	
+
 	// Echo feedback
 	int l = m.t_echo_out [0] + (int16_t) ((m.t_echo_in [0] * (int8_t) REG(efb)) >> 7);
 	int r = m.t_echo_out [1] + (int16_t) ((m.t_echo_in [1] * (int8_t) REG(efb)) >> 7);
-	
+
 	CLAMP16( l );
 	CLAMP16( r );
-	
+
 	m.t_echo_out [0] = l & ~1;
 	m.t_echo_out [1] = r & ~1;
 }
@@ -695,7 +680,7 @@ ECHO_CLOCK( 27 )
 	int r = echo_output( 1 );
 	m.t_main_out [0] = 0;
 	m.t_main_out [1] = 0;
-	
+
 	// TODO: global muting isn't this simple (turns DAC on and off
 	// or something, causing small ~37-sample pulse when first muted)
 	if ( REG(flg) & 0x40 )
@@ -703,7 +688,7 @@ ECHO_CLOCK( 27 )
 		l = 0;
 		r = 0;
 	}
-	
+
 	// Output sample to DAC
 	#ifdef SPC_DSP_OUT_HOOK
 		SPC_DSP_OUT_HOOK( l, r );
@@ -727,17 +712,17 @@ inline void SPC_DSP::echo_write( int ch )
 ECHO_CLOCK( 29 )
 {
 	m.t_esa = REG(esa);
-	
+
 	if ( !m.echo_offset )
 		m.echo_length = (REG(edl) & 0x0F) * 0x800;
-	
+
 	m.echo_offset += 4;
 	if ( m.echo_offset >= m.echo_length )
 		m.echo_offset = 0;
-	
+
 	// Write left echo
 	echo_write( 0 );
-	
+
 	m.t_echo_enabled = REG(flg);
 }
 ECHO_CLOCK( 30 )
@@ -800,17 +785,17 @@ PHASE(31)  V(V4,0)       V(V1,2)\
 void SPC_DSP::run( int clocks_remain )
 {
 	require( clocks_remain > 0 );
-	
+
 	int const phase = m.phase;
 	m.phase = (phase + clocks_remain) & 31;
 	switch ( phase )
 	{
 	loop:
-	
-		#define PHASE( n ) if ( n && !--clocks_remain ) break; case n:
+
+		#define PHASE( n ) if ( n && !--clocks_remain ) break; /* Fall through */ case n:
 		GEN_DSP_TIMING
 		#undef PHASE
-	
+
 		if ( --clocks_remain )
 			goto loop;
 	}
@@ -836,15 +821,15 @@ void SPC_DSP::init( void* ram_64k )
 	#ifndef NDEBUG
 		// be sure this sign-extends
 		assert( (int16_t) 0x8000 == -0x8000 );
-		
+
 		// be sure right shift preserves sign
 		assert( (-1 >> 1) == -1 );
-		
+
 		// check clamp macro
 		int i;
 		i = +0x8000; CLAMP16( i ); assert( i == +0x7FFF );
 		i = -0x8001; CLAMP16( i ); assert( i == -0x8000 );
-		
+
 		blargg_verify_byte_order();
 	#endif
 }
@@ -852,13 +837,13 @@ void SPC_DSP::init( void* ram_64k )
 void SPC_DSP::soft_reset_common()
 {
 	require( m.ram ); // init() must have been called already
-	
+
 	m.noise              = 0x4000;
 	m.echo_hist_pos      = m.echo_hist;
 	m.every_other_sample = 1;
 	m.echo_offset        = 0;
 	m.phase              = 0;
-	
+
 	init_counter();
 
 	for (int i = 0; i < voice_count; i++)
@@ -875,7 +860,7 @@ void SPC_DSP::load( uint8_t const regs [register_count] )
 {
 	memcpy( m.regs, regs, sizeof m.regs );
 	memset( &m.regs [register_count], 0, offsetof (state_t,ram) - register_count );
-	
+
 	// Internal state
 	for ( int i = voice_count; --i >= 0; )
 	{
@@ -887,7 +872,7 @@ void SPC_DSP::load( uint8_t const regs [register_count] )
 	m.new_kon = REG(kon);
 	m.t_dir   = REG(dir);
 	m.t_esa   = REG(esa);
-	
+
 	soft_reset_common();
 }
 
@@ -940,18 +925,18 @@ void SPC_State_Copier::extra()
 void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 {
 	SPC_State_Copier copier( io, copy );
-	
+
 	// DSP registers
 	copier.copy( m.regs, register_count );
-	
+
 	// Internal state
-	
+
 	// Voices
 	int i;
 	for ( i = 0; i < voice_count; i++ )
 	{
 		voice_t* v = &m.voices [i];
-		
+
 		// BRR buffer
 		int i;
 		for ( i = 0; i < brr_buf_size; i++ )
@@ -960,7 +945,7 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 			SPC_COPY(  int16_t, s );
 			v->buf [i] = v->buf [i + brr_buf_size] = s;
 		}
-		
+
 		SPC_COPY( uint16_t, v->interp_pos );
 		SPC_COPY( uint16_t, v->brr_addr );
 		SPC_COPY( uint16_t, v->env );
@@ -974,10 +959,10 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 			v->env_mode = (enum env_mode_t) m;
 		}
 		SPC_COPY(  uint8_t, v->t_envx_out );
-		
+
 		copier.extra();
 	}
-	
+
 	// Echo history
 	for ( i = 0; i < echo_hist_size; i++ )
 	{
@@ -991,28 +976,28 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 	}
 	m.echo_hist_pos = m.echo_hist;
 	memcpy( &m.echo_hist [echo_hist_size], m.echo_hist, echo_hist_size * sizeof m.echo_hist [0] );
-	
+
 	// Misc
 	SPC_COPY(  uint8_t, m.every_other_sample );
 	SPC_COPY(  uint8_t, m.kon );
-	
+
 	SPC_COPY( uint16_t, m.noise );
 	SPC_COPY( uint16_t, m.counter );
 	SPC_COPY( uint16_t, m.echo_offset );
 	SPC_COPY( uint16_t, m.echo_length );
 	SPC_COPY(  uint8_t, m.phase );
-	
+
 	SPC_COPY(  uint8_t, m.new_kon );
 	SPC_COPY(  uint8_t, m.endx_buf );
 	SPC_COPY(  uint8_t, m.envx_buf );
 	SPC_COPY(  uint8_t, m.outx_buf );
-	
+
 	SPC_COPY(  uint8_t, m.t_pmon );
 	SPC_COPY(  uint8_t, m.t_non );
 	SPC_COPY(  uint8_t, m.t_eon );
 	SPC_COPY(  uint8_t, m.t_dir );
 	SPC_COPY(  uint8_t, m.t_koff );
-	
+
 	SPC_COPY( uint16_t, m.t_brr_next_addr );
 	SPC_COPY(  uint8_t, m.t_adsr0 );
 	SPC_COPY(  uint8_t, m.t_brr_header );
@@ -1020,20 +1005,20 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 	SPC_COPY(  uint8_t, m.t_srcn );
 	SPC_COPY(  uint8_t, m.t_esa );
 	SPC_COPY(  uint8_t, m.t_echo_enabled );
-	
+
 	SPC_COPY(  int16_t, m.t_main_out [0] );
 	SPC_COPY(  int16_t, m.t_main_out [1] );
 	SPC_COPY(  int16_t, m.t_echo_out [0] );
 	SPC_COPY(  int16_t, m.t_echo_out [1] );
 	SPC_COPY(  int16_t, m.t_echo_in  [0] );
 	SPC_COPY(  int16_t, m.t_echo_in  [1] );
-	
+
 	SPC_COPY( uint16_t, m.t_dir_addr );
 	SPC_COPY( uint16_t, m.t_pitch );
 	SPC_COPY(  int16_t, m.t_output );
 	SPC_COPY( uint16_t, m.t_echo_ptr );
 	SPC_COPY(  uint8_t, m.t_looped );
-	
+
 	copier.extra();
 }
 #endif
