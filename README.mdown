@@ -101,7 +101,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
     - Copying _(from other mobile apps and AirDrop)_
     - Injecting _(with desktop apps)_
 - Game Library Searching
-- iOS 8+ (iPhone, iPad)
+- iOS 9+ (iPhone, iPad)
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
   - Taptic Engine Button Feedback (iPhone 7 and later)
   - Spotlight Searching ([Setup](https://github.com/Provenance-Emu/Provenance/wiki/Installing-Provenance#advanced-features-full))
