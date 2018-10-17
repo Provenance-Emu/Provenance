@@ -810,7 +810,6 @@
 					HAVE_STRCASECMP,
 					not_HAVE_LIBGLUT,
 					not_HAVE_LIBGL,
-					HAVE_LIBGL,
 					_OGLES3_,
 				);
 				GCC_UNROLL_LOOPS = YES;
@@ -876,7 +875,6 @@
 					HAVE_STRCASECMP,
 					not_HAVE_LIBGLUT,
 					not_HAVE_LIBGL,
-					HAVE_LIBGL,
 					_OGLES3_,
 				);
 				GCC_UNROLL_LOOPS = YES;
@@ -944,8 +942,6 @@
 					HAVE_SYS_TIME_H,
 					HAVE_GETTIMEOFDAY,
 					"$(GCC_PREPROCESSOR_DEFINITIONS_QUOTED_FOR_PROJECT_1)",
-					HAVE_LIBGL,
-					HAVE_LIBGLUT,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1001,8 +997,6 @@
 					HAVE_SYS_TIME_H,
 					HAVE_GETTIMEOFDAY,
 					"$(GCC_PREPROCESSOR_DEFINITIONS_QUOTED_FOR_PROJECT_1)",
-					HAVE_LIBGL,
-					HAVE_LIBGLUT,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

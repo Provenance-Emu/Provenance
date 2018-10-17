@@ -228,7 +228,7 @@ VideoInterface_struct *VIDCoreList[] = {
     if(self != nil)
     {
         filename = [[NSString alloc] init];
-        //videoLock = [[NSLock alloc] init];
+        videoLock = [[NSLock alloc] init];
         videoBuffer = (u32 *)calloc(sizeof(u32), HIRES_WIDTH * HIRES_HEIGHT);
         ringBuffer = [self ringBufferAtIndex:0];
     }
@@ -272,7 +272,7 @@ VideoInterface_struct *VIDCoreList[] = {
         yinit.cdpath = [filename UTF8String];
         
         // Get a BIOS
-		// sega_101.bin "mpr-17933.bin saturn_bios.bin
+		// sega_101.bin mpr-17933.bin saturn_bios.bin
 		NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"saturn_bios.bin"];
 
 		ILOG(@"Loading ROM. Will try to setup Saturn BIOS at path: %@", bios);
@@ -295,29 +295,17 @@ VideoInterface_struct *VIDCoreList[] = {
     yinit.percoretype = PERCORE_DEFAULT;
     yinit.sh2coretype = SH2CORE_INTERPRETER;
     
-//#ifdef HAVE_LIBGL
-//    yinit.vidcoretype = VIDCORE_OGL;
-//#else
+#ifdef HAVE_LIBGL
+    yinit.vidcoretype = VIDCORE_OGL;
+#else
     yinit.vidcoretype = VIDCORE_SOFT;
-//#endif
-    
-    yinit.sndcoretype = SNDCORE_DUMMY;
-    yinit.m68kcoretype = M68KCORE_C68K;
-    yinit.carttype = CART_DRAM32MBIT; //4MB RAM Expansion Cart
-    yinit.regionid = REGION_AUTODETECT;
-    
-//    yinit.mpegpath = NULL; // This is path for cd bios?
-//    yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
-//    yinit.frameskip = false;
-//    yinit.clocksync = 0;
-//    yinit.basetime = 0;
-////    yinit.usethreads = 0;
-//    yinit.usethreads      = 1;
-//    yinit.numthreads      = 2;
+#endif
 
 	yinit.sndcoretype = SNDCORE_OE;
+//	yinit.m68kcoretype = M68KCORE_MUSASHI;
 	yinit.m68kcoretype = M68KCORE_C68K;
-	yinit.carttype = 0;
+	yinit.carttype = CART_NONE; //4MB RAM Expansion Cart
+	yinit.carttype = CART_DRAM32MBIT; //4MB RAM Expansion Cart
 	yinit.regionid = REGION_AUTODETECT;
 	yinit.buppath = NULL;
 	yinit.mpegpath = NULL;
@@ -325,7 +313,12 @@ VideoInterface_struct *VIDCoreList[] = {
 	yinit.frameskip = true;
 	yinit.clocksync = 0;
 	yinit.basetime = 0;
+#if 1
 	yinit.usethreads = 0;
+#else
+	yinit.usethreads      = 1;
+	yinit.numthreads      = 2;
+#endif
 
 	// Take care of the Battery Save file to make Save State happy
 	NSString *path = filename;
@@ -386,28 +379,20 @@ VideoInterface_struct *VIDCoreList[] = {
     return YES;
 }
 
-// Save State is broken, fail more often than not
 - (BOOL)saveStateToFileAtPath:(NSString *)path {
-#if 0
-    ScspMuteAudio(SCSP_MUTE_SYSTEM);
-    int error = YabSaveState([fileName UTF8String]);
-    ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
+	ScspMuteAudio(SCSP_MUTE_SYSTEM);
+	int error = YabSaveState([path UTF8String]);
+	ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 
-    block(!error, nil);
-#endif
-    return false;
+	return error;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path
-{
-#if 0
-    ScspMuteAudio(SCSP_MUTE_SYSTEM);
-    int error = YabLoadState([fileName UTF8String]);
-    ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
+- (BOOL)loadStateFromFileAtPath:(NSString *)path {
+	ScspMuteAudio(SCSP_MUTE_SYSTEM);
+	int error = YabLoadState([path UTF8String]);
+	ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 
-    block(!error, nil);
-#endif
-    return false;
+	return error;
 }
 
 #pragma mark -
