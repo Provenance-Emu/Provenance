@@ -47,7 +47,7 @@
 #import <AudioUnit/AudioUnit.h>
 #include <pthread.h>
 
-#define SAMPLERATE      32000
+#define SAMPLERATE      32040
 #define SIZESOUNDBUFFER SAMPLERATE / 50 * 4
 
 static __weak PVSNESEmulatorCore *_current;
@@ -206,7 +206,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
     S9xSetSamplesAvailableCallback(FinalizeSamplesAudioCallback, NULL);
 
-    Settings.NoPatch = true;
+    Settings.NoPatch = false;
     Settings.BSXBootup = false;
 
     if(Memory.LoadROM([path UTF8String]))
