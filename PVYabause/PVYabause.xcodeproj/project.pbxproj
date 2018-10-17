@@ -656,7 +656,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd src/c68k\n\"$BUILD_DIR/$CONFIGURATION/gen68k\"";
+			shellScript = "cd src/c68k\n\"$BUILD_DIR/$CONFIGURATION/gen68k\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -817,6 +817,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/\"";
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -882,6 +883,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/\"";
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
