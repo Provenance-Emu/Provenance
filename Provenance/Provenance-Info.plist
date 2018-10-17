@@ -125,6 +125,13 @@
 	</array>
 	<key>Revision</key>
 	<string>78dc628</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>bluetooth-central</string>
+		<string>external-accessory</string>
+		<string>fetch</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
