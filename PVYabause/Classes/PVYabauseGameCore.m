@@ -272,7 +272,8 @@ VideoInterface_struct *VIDCoreList[] = {
         yinit.cdpath = [filename UTF8String];
         
         // Get a BIOS
-		NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"mpr-17933.bin"];
+		// sega_101.bin "mpr-17933.bin saturn_bios.bin
+		NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"saturn_bios.bin"];
 
 		ILOG(@"Loading ROM. Will try to setup Saturn BIOS at path: %@", bios);
 
@@ -300,41 +301,53 @@ VideoInterface_struct *VIDCoreList[] = {
     yinit.vidcoretype = VIDCORE_SOFT;
 //#endif
     
-    yinit.sndcoretype = SNDCORE_OE;
+    yinit.sndcoretype = SNDCORE_DUMMY;
     yinit.m68kcoretype = M68KCORE_C68K;
     yinit.carttype = CART_DRAM32MBIT; //4MB RAM Expansion Cart
     yinit.regionid = REGION_AUTODETECT;
     
-    // Take care of the Battery Save file to make Save State happy
-    NSString *path = filename;
-    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-    
-    NSString *batterySavesDirectory = [self batterySavesPath];
-    
-    if([batterySavesDirectory length] != 0)
-    {
-        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-        
-        if([filePath length] > 0) {
-            DLOG(@"BRAM: %@", filePath);
-            char *_bramFile;
-            const char *tmp = [filePath UTF8String];
-            
-            _bramFile = (char *)malloc(strlen(tmp) + 1);
-            strcpy(_bramFile, tmp);
-            yinit.buppath = _bramFile;
-        }
-    }
-    
-    yinit.mpegpath = NULL;
-    yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
-    yinit.frameskip = false;
-    yinit.clocksync = 0;
-    yinit.basetime = 0;
-//    yinit.usethreads = 0;
-    yinit.usethreads      = 1;
-    yinit.numthreads      = 2;
+//    yinit.mpegpath = NULL; // This is path for cd bios?
+//    yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
+//    yinit.frameskip = false;
+//    yinit.clocksync = 0;
+//    yinit.basetime = 0;
+////    yinit.usethreads = 0;
+//    yinit.usethreads      = 1;
+//    yinit.numthreads      = 2;
+
+	yinit.sndcoretype = SNDCORE_OE;
+	yinit.m68kcoretype = M68KCORE_C68K;
+	yinit.carttype = 0;
+	yinit.regionid = REGION_AUTODETECT;
+	yinit.buppath = NULL;
+	yinit.mpegpath = NULL;
+	yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
+	yinit.frameskip = true;
+	yinit.clocksync = 0;
+	yinit.basetime = 0;
+	yinit.usethreads = 0;
+
+	// Take care of the Battery Save file to make Save State happy
+	NSString *path = filename;
+	NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
+
+	NSString *batterySavesDirectory = [self batterySavesPath];
+
+	if([batterySavesDirectory length] != 0)
+	{
+		[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+		NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+
+		if([filePath length] > 0) {
+			DLOG(@"BRAM: %@", filePath);
+			char *_bramFile;
+			const char *tmp = [filePath UTF8String];
+
+			_bramFile = (char *)malloc(strlen(tmp) + 1);
+			strcpy(_bramFile, tmp);
+			yinit.buppath = _bramFile;
+		}
+	}
 }
 
 - (void)startYabauseEmulation
@@ -501,7 +514,7 @@ VideoInterface_struct *VIDCoreList[] = {
 #ifdef HAVE_LIBGL
 -(BOOL)rendersToOpenGL
 {
-    return NO;
+    return YES;
 }
 #endif
 
@@ -514,11 +527,11 @@ VideoInterface_struct *VIDCoreList[] = {
         firstRun = NO;
     }
     else {
-        //[videoLock lock];
+        [videoLock lock];
         ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
         YabauseExec();
         ScspMuteAudio(SCSP_MUTE_SYSTEM);
-        //[videoLock unlock];
+        [videoLock unlock];
     }
 }
 
