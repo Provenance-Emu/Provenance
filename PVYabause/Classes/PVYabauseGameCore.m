@@ -304,8 +304,11 @@ VideoInterface_struct *VIDCoreList[] = {
 	yinit.sndcoretype = SNDCORE_OE;
 //	yinit.m68kcoretype = M68KCORE_MUSASHI;
 	yinit.m68kcoretype = M68KCORE_C68K;
-	yinit.carttype = CART_NONE; //4MB RAM Expansion Cart
+#if 1
 	yinit.carttype = CART_DRAM32MBIT; //4MB RAM Expansion Cart
+#else
+	yinit.carttype = CART_NONE;
+#endif
 	yinit.regionid = REGION_AUTODETECT;
 	yinit.buppath = NULL;
 	yinit.mpegpath = NULL;
