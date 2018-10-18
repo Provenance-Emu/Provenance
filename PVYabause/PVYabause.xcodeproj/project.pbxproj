@@ -6,6 +6,21 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B346FC922179468200C49108 /* Run gen68k */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B346FC932179468200C49108 /* Build configuration list for PBXAggregateTarget "Run gen68k" */;
+			buildPhases = (
+				B346FC962179468800C49108 /* Run gen68k */,
+			);
+			dependencies = (
+				B346FC98217946A800C49108 /* PBXTargetDependency */,
+			);
+			name = "Run gen68k";
+			productName = "Run gen68k";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		946C18DE1714A4AA00C64BF9 /* gen68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789355152A32B90080990B /* gen68k.c */; };
 		B327752B1E9C84DE000FEC38 /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB1BA9B51587923900F8939D /* osdcore.c */; };
@@ -71,6 +86,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 946C18D41714A48600C64BF9;
 			remoteInfo = gen68k;
+		};
+		B346FC97217946A800C49108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EB3297071522671200307B0C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 946C18D41714A48600C64BF9;
+			remoteInfo = gen68k;
+		};
+		B346FC99217946C800C49108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EB3297071522671200307B0C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B346FC922179468200C49108;
+			remoteInfo = "Run gen68k";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -569,7 +598,6 @@
 			buildPhases = (
 				946C18D11714A48600C64BF9 /* Sources */,
 				946C18D21714A48600C64BF9 /* Frameworks */,
-				946C18DF1714A4C900C64BF9 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -593,6 +621,7 @@
 			);
 			dependencies = (
 				B32775681E9C878E000FEC38 /* PBXTargetDependency */,
+				B346FC9A217946C800C49108 /* PBXTargetDependency */,
 			);
 			name = PVYabause;
 			productName = PVYabause;
@@ -605,12 +634,16 @@
 		EB3297071522671200307B0C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
 					B32775221E9C8444000FEC38 = {
 						CreatedOnToolsVersion = 8.3;
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
+					};
+					B346FC922179468200C49108 = {
+						CreatedOnToolsVersion = 10.0;
 					};
 				};
 			};
@@ -628,6 +661,7 @@
 			targets = (
 				946C18D41714A48600C64BF9 /* gen68k */,
 				B32775221E9C8444000FEC38 /* PVYabause */,
+				B346FC922179468200C49108 /* Run gen68k */,
 			);
 		};
 /* End PBXProject section */
@@ -644,19 +678,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		946C18DF1714A4C900C64BF9 /* Run Script */ = {
+		B346FC962179468800C49108 /* Run gen68k */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
+			inputFileListPaths = (
 			);
-			name = "Run Script";
+			inputPaths = (
+				$BUILD_DIR/$CONFIGURATION/gen68k,
+			);
+			name = "Run gen68k";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd src/c68k\n\"$BUILD_DIR/$CONFIGURATION/gen68k\"\n";
+			shellScript = "#cd src/c68k\necho \"Running gen68k.\"\n\"$BUILD_DIR/$CONFIGURATION/gen68k\"\necho \"gen68k completed.\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -729,6 +768,16 @@
 			isa = PBXTargetDependency;
 			target = 946C18D41714A48600C64BF9 /* gen68k */;
 			targetProxy = B32775671E9C878E000FEC38 /* PBXContainerItemProxy */;
+		};
+		B346FC98217946A800C49108 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 946C18D41714A48600C64BF9 /* gen68k */;
+			targetProxy = B346FC97217946A800C49108 /* PBXContainerItemProxy */;
+		};
+		B346FC9A217946C800C49108 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B346FC922179468200C49108 /* Run gen68k */;
+			targetProxy = B346FC99217946C800C49108 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -903,6 +952,24 @@
 			};
 			name = Release;
 		};
+		B346FC942179468200C49108 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B346FC952179468200C49108 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		EB3297201522671200307B0C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1030,6 +1097,15 @@
 			buildConfigurations = (
 				B32775281E9C8444000FEC38 /* Debug */,
 				B32775291E9C8444000FEC38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B346FC932179468200C49108 /* Build configuration list for PBXAggregateTarget "Run gen68k" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B346FC942179468200C49108 /* Debug */,
+				B346FC952179468200C49108 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
