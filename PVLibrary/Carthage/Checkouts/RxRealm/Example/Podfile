@@ -1,0 +1,22 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+use_frameworks!
+
+def common
+  pod 'RxSwift', '~> 4.0'
+  pod 'RxCocoa', '~> 4.0'
+  pod 'RealmSwift', '~> 3.0'
+end
+
+target 'RxRealm_Example' do
+  platform :ios, '9.0'
+  common
+  pod 'RxRealm', :path => '../'
+end
+
+target 'RxRealm_Tests' do
+  platform :ios, '9.0'
+  common
+  pod 'RxBlocking', '~> 4.0'
+  pod 'RxRealm', :path => '../'
+end

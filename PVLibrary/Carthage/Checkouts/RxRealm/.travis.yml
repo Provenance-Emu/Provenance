@@ -1,0 +1,14 @@
+# references:
+# * http://www.objc.io/issue-6/travis-ci.html
+
+language: objective-c
+osx_image: xcode8.0
+xcode_sdk: iphonesimulator10.0
+
+before_install:
+ - gem install cocoapods --no-rdoc --no-ri --no-document --quiet
+ - pod repo update --silent
+ - pod install --project-directory=Example
+
+script:
+- xctool test -workspace Example/RxRealm.xcworkspace -scheme RxRealm-Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO

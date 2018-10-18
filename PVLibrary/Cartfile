@@ -2,3 +2,6 @@ github "ZipArchive/ZipArchive"
 github "realm/realm-cocoa"
 github "stephencelis/SQLite.swift"
 github "weichsel/ZIPFoundation"
+
+github "ReactiveX/RxSwift" ~> 4.0
+github "RxSwiftCommunity/RxRealm"
