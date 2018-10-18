@@ -125,6 +125,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Travis"
+      customArchiveName = "Provenance"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

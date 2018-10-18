@@ -138,6 +138,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "AdHoc"
+      customArchiveName = "Provenance"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

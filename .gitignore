@@ -26,3 +26,4 @@ report.xml
 *.back
 *.inc
 /fastlane/devices.txt
+/archive

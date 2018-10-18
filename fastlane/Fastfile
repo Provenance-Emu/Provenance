@@ -659,22 +659,22 @@ end
       export_method: export_method,
       configuration: build_configuration,
       # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
-      silent:true,
+      silent: true,
       clean: false,
       skip_profile_detection: true,
       #skip_build_archive: true,
       output_directory: build_configuration,
       output_name: ipa_name,
       include_bitcode: false,
-      include_symbols: true,
+      include_symbols: false,
       #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
       export_options: {
         method: export_method,
-        manifest: {
-          appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
-          displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
-          fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
-        },
+        # manifest: {
+        #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
+        #   displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
+        #   fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
+        # },
         provisioningProfiles: {
           "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
           "#{$dev_domain}.provenance.Spotlight" => "match AdHoc #{$dev_domain}.provenance.spotlight"
@@ -693,7 +693,7 @@ end
   end
 
 
-  desc "Exports a new Beta Build"
+  desc "Exports a new AppStore Build"
   lane :build_appstore do
     load_keys
 
@@ -708,13 +708,13 @@ end
       #output_directory: output_directory,
       #output_name: ipa_name,
       include_bitcode: false,
-      include_symbols: true,
+      include_symbols: false,
       #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
       export_options: {
         method: "app-store",
-        manifest: {
-          appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
-        },
+        # manifest: {
+        #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
+        # },
         provisioningProfiles: {
           "#{$dev_domain}.provenance" => "match AppStore #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
           "#{$dev_domain}.provenance.Spotlight" => "match AppStore #{$dev_domain}.provenance.spotlight"
