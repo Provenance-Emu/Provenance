@@ -19,6 +19,3 @@
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
-[submodule "yabause"]
-	path = yabause
-	url = git@github.com:b23prodtm/yabause.git
