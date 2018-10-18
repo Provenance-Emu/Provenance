@@ -26,6 +26,26 @@
 		B36510792177069A008FDB7B /* msu1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B36510772177069A008FDB7B /* msu1.cpp */; };
 		B365107B217706E4008FDB7B /* sha256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365107A217706E4008FDB7B /* sha256.cpp */; };
 		B365107C217706E4008FDB7B /* sha256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365107A217706E4008FDB7B /* sha256.cpp */; };
+		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
+		B365108021782E9E008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107F21782E9E008FDB7B /* libz.tbd */; };
+		B365109D217831FF008FDB7B /* lzma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651084217831E5008FDB7B /* lzma.cpp */; };
+		B365109E217831FF008FDB7B /* inbyte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651085217831E5008FDB7B /* inbyte.cpp */; };
+		B365109F217831FF008FDB7B /* s9x-jma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651088217831E5008FDB7B /* s9x-jma.cpp */; };
+		B36510A0217831FF008FDB7B /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365108A217831E5008FDB7B /* crc32.cpp */; };
+		B36510A1217831FF008FDB7B /* 7zlzma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365108B217831E5008FDB7B /* 7zlzma.cpp */; };
+		B36510A2217831FF008FDB7B /* iiostrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651095217831E5008FDB7B /* iiostrm.cpp */; };
+		B36510A3217831FF008FDB7B /* jma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651096217831E5008FDB7B /* jma.cpp */; };
+		B36510A4217831FF008FDB7B /* lzmadec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365109A217831E5008FDB7B /* lzmadec.cpp */; };
+		B36510A521783200008FDB7B /* lzma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651084217831E5008FDB7B /* lzma.cpp */; };
+		B36510A621783200008FDB7B /* inbyte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651085217831E5008FDB7B /* inbyte.cpp */; };
+		B36510A721783200008FDB7B /* s9x-jma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651088217831E5008FDB7B /* s9x-jma.cpp */; };
+		B36510A821783200008FDB7B /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365108A217831E5008FDB7B /* crc32.cpp */; };
+		B36510A921783200008FDB7B /* 7zlzma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365108B217831E5008FDB7B /* 7zlzma.cpp */; };
+		B36510AA21783200008FDB7B /* iiostrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651095217831E5008FDB7B /* iiostrm.cpp */; };
+		B36510AB21783200008FDB7B /* jma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651096217831E5008FDB7B /* jma.cpp */; };
+		B36510AC21783200008FDB7B /* lzmadec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B365109A217831E5008FDB7B /* lzmadec.cpp */; };
+		B36510AF21783224008FDB7B /* winout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651087217831E5008FDB7B /* winout.cpp */; };
+		B36510B021783225008FDB7B /* winout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3651087217831E5008FDB7B /* winout.cpp */; };
 		B3C9D5361DEA83DE0068D057 /* PVSNES.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D5341DEA83DE0068D057 /* PVSNES.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */; };
 		B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91117F75FA80031B1C9 /* CoreGraphics.framework */; };
@@ -296,6 +316,35 @@
 		B36510742177066B008FDB7B /* bml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bml.cpp; sourceTree = "<group>"; };
 		B36510772177069A008FDB7B /* msu1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = msu1.cpp; sourceTree = "<group>"; };
 		B365107A217706E4008FDB7B /* sha256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sha256.cpp; sourceTree = "<group>"; };
+		B365107D21782E95008FDB7B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B365107F21782E9E008FDB7B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B3651082217831E5008FDB7B /* ariprice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ariprice.h; sourceTree = "<group>"; };
+		B3651083217831E5008FDB7B /* lzma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lzma.h; sourceTree = "<group>"; };
+		B3651084217831E5008FDB7B /* lzma.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lzma.cpp; sourceTree = "<group>"; };
+		B3651085217831E5008FDB7B /* inbyte.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = inbyte.cpp; sourceTree = "<group>"; };
+		B3651086217831E5008FDB7B /* winout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = winout.h; sourceTree = "<group>"; };
+		B3651087217831E5008FDB7B /* winout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = winout.cpp; sourceTree = "<group>"; };
+		B3651088217831E5008FDB7B /* s9x-jma.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "s9x-jma.cpp"; sourceTree = "<group>"; };
+		B3651089217831E5008FDB7B /* inbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inbyte.h; sourceTree = "<group>"; };
+		B365108A217831E5008FDB7B /* crc32.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = crc32.cpp; sourceTree = "<group>"; };
+		B365108B217831E5008FDB7B /* 7zlzma.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = 7zlzma.cpp; sourceTree = "<group>"; };
+		B365108C217831E5008FDB7B /* aribitcd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aribitcd.h; sourceTree = "<group>"; };
+		B365108D217831E5008FDB7B /* lencoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lencoder.h; sourceTree = "<group>"; };
+		B365108E217831E5008FDB7B /* btreecd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = btreecd.h; sourceTree = "<group>"; };
+		B365108F217831E5008FDB7B /* 7z.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 7z.h; sourceTree = "<group>"; };
+		B3651090217831E5008FDB7B /* litcoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = litcoder.h; sourceTree = "<group>"; };
+		B3651091217831E5008FDB7B /* ariconst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ariconst.h; sourceTree = "<group>"; };
+		B3651092217831E5008FDB7B /* s9x-jma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "s9x-jma.h"; sourceTree = "<group>"; };
+		B3651093217831E5008FDB7B /* portable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = portable.h; sourceTree = "<group>"; };
+		B3651094217831E5008FDB7B /* rcdefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rcdefs.h; sourceTree = "<group>"; };
+		B3651095217831E5008FDB7B /* iiostrm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iiostrm.cpp; sourceTree = "<group>"; };
+		B3651096217831E5008FDB7B /* jma.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = jma.cpp; sourceTree = "<group>"; };
+		B3651097217831E5008FDB7B /* crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
+		B3651098217831E5008FDB7B /* lzmadec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lzmadec.h; sourceTree = "<group>"; };
+		B3651099217831E5008FDB7B /* rngcoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rngcoder.h; sourceTree = "<group>"; };
+		B365109A217831E5008FDB7B /* lzmadec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lzmadec.cpp; sourceTree = "<group>"; };
+		B365109B217831E5008FDB7B /* iiostrm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iiostrm.h; sourceTree = "<group>"; };
+		B365109C217831E5008FDB7B /* jma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jma.h; sourceTree = "<group>"; };
 		B3C9D5321DEA83DE0068D057 /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5341DEA83DE0068D057 /* PVSNES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVSNES.h; sourceTree = "<group>"; };
 		B3C9D5351DEA83DE0068D057 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -316,6 +365,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
 				B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D54D1DEA84320068D057 /* UIKit.framework in Frameworks */,
@@ -329,6 +379,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B365108021782E9E008FDB7B /* libz.tbd in Frameworks */,
 				B3C9D5591DEA849B0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D5571DEA84950068D057 /* UIKit.framework in Frameworks */,
 				B3C9D5551DEA848A0068D057 /* OpenGLES.framework in Frameworks */,
@@ -363,6 +414,8 @@
 		1ACEA8E617F75F350031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B365107D21782E95008FDB7B /* libz.tbd */,
+				B365107F21782E9E008FDB7B /* libz.tbd */,
 				B34AB5832106DEA000C45F09 /* PVSupport.framework */,
 				B34AB5672106D60400C45F09 /* PVSupport.framework */,
 				B3C9D5581DEA849B0068D057 /* Foundation.framework */,
@@ -413,8 +466,9 @@
 		1ACEA91A17F760390031B1C9 /* SNESCore */ = {
 			isa = PBXGroup;
 			children = (
-				1ACEA91B17F760390031B1C9 /* 65c816.h */,
 				1ACEA91C17F760390031B1C9 /* apu */,
+				B3651081217831E5008FDB7B /* jma */,
+				1ACEA91B17F760390031B1C9 /* 65c816.h */,
 				1ACEA93117F760390031B1C9 /* bsx.cpp */,
 				B36510742177066B008FDB7B /* bml.cpp */,
 				1ACEA93217F760390031B1C9 /* bsx.h */,
@@ -613,6 +667,40 @@
 			path = debugger;
 			sourceTree = "<group>";
 		};
+		B3651081217831E5008FDB7B /* jma */ = {
+			isa = PBXGroup;
+			children = (
+				B365108B217831E5008FDB7B /* 7zlzma.cpp */,
+				B365108A217831E5008FDB7B /* crc32.cpp */,
+				B3651095217831E5008FDB7B /* iiostrm.cpp */,
+				B3651085217831E5008FDB7B /* inbyte.cpp */,
+				B3651096217831E5008FDB7B /* jma.cpp */,
+				B3651084217831E5008FDB7B /* lzma.cpp */,
+				B365109A217831E5008FDB7B /* lzmadec.cpp */,
+				B3651088217831E5008FDB7B /* s9x-jma.cpp */,
+				B3651087217831E5008FDB7B /* winout.cpp */,
+				B365108F217831E5008FDB7B /* 7z.h */,
+				B365108C217831E5008FDB7B /* aribitcd.h */,
+				B3651091217831E5008FDB7B /* ariconst.h */,
+				B3651082217831E5008FDB7B /* ariprice.h */,
+				B365108E217831E5008FDB7B /* btreecd.h */,
+				B3651097217831E5008FDB7B /* crc32.h */,
+				B365109B217831E5008FDB7B /* iiostrm.h */,
+				B3651089217831E5008FDB7B /* inbyte.h */,
+				B365109C217831E5008FDB7B /* jma.h */,
+				B365108D217831E5008FDB7B /* lencoder.h */,
+				B3651090217831E5008FDB7B /* litcoder.h */,
+				B3651083217831E5008FDB7B /* lzma.h */,
+				B3651098217831E5008FDB7B /* lzmadec.h */,
+				B3651093217831E5008FDB7B /* portable.h */,
+				B3651094217831E5008FDB7B /* rcdefs.h */,
+				B3651099217831E5008FDB7B /* rngcoder.h */,
+				B3651092217831E5008FDB7B /* s9x-jma.h */,
+				B3651086217831E5008FDB7B /* winout.h */,
+			);
+			path = jma;
+			sourceTree = "<group>";
+		};
 		B3C9D5331DEA83DE0068D057 /* PVSNES */ = {
 			isa = PBXGroup;
 			children = (
@@ -760,6 +848,8 @@
 				B3C9D5701DEA86B80068D057 /* dsp.cpp in Sources */,
 				B3C9D5711DEA86B80068D057 /* gfx.cpp in Sources */,
 				B365105C2177034E008FDB7B /* sdsp.cpp in Sources */,
+				B365109F217831FF008FDB7B /* s9x-jma.cpp in Sources */,
+				B36510A1217831FF008FDB7B /* 7zlzma.cpp in Sources */,
 				B3C9D5721DEA86B80068D057 /* cpuops.cpp in Sources */,
 				B3650FF621770245008FDB7B /* SPC_DSP.cpp in Sources */,
 				B36510752177066C008FDB7B /* bml.cpp in Sources */,
@@ -773,7 +863,10 @@
 				B3C9D57A1DEA86B80068D057 /* fxemu.cpp in Sources */,
 				B3C9D57B1DEA86B80068D057 /* apu.cpp in Sources */,
 				B3C9D57C1DEA86B80068D057 /* debug.cpp in Sources */,
+				B36510A3217831FF008FDB7B /* jma.cpp in Sources */,
+				B365109E217831FF008FDB7B /* inbyte.cpp in Sources */,
 				B3C9D57E1DEA86B80068D057 /* clip.cpp in Sources */,
+				B36510AF21783224008FDB7B /* winout.cpp in Sources */,
 				B3C9D57F1DEA86B80068D057 /* stream.cpp in Sources */,
 				B36510782177069A008FDB7B /* msu1.cpp in Sources */,
 				B3C9D5801DEA86B80068D057 /* srtc.cpp in Sources */,
@@ -782,10 +875,13 @@
 				B3C9D5841DEA86B80068D057 /* cheats2.cpp in Sources */,
 				B3C9D5851DEA86B80068D057 /* cheats.cpp in Sources */,
 				B3C9D5861DEA86B80068D057 /* conffile.cpp in Sources */,
+				B365109D217831FF008FDB7B /* lzma.cpp in Sources */,
+				B36510A2217831FF008FDB7B /* iiostrm.cpp in Sources */,
 				B3C9D5871DEA86B80068D057 /* dma.cpp in Sources */,
 				B3C9D5881DEA86B80068D057 /* dsp3.cpp in Sources */,
 				B3C9D5891DEA86B80068D057 /* movie.cpp in Sources */,
 				B3C9D58A1DEA86B80068D057 /* snes9x.cpp in Sources */,
+				B36510A4217831FF008FDB7B /* lzmadec.cpp in Sources */,
 				B3C9D58B1DEA86B80068D057 /* dsp1.cpp in Sources */,
 				B3C9D58C1DEA86B80068D057 /* globals.cpp in Sources */,
 				B3C9D58D1DEA86B80068D057 /* c4emu.cpp in Sources */,
@@ -795,6 +891,7 @@
 				B3C9D5901DEA86B80068D057 /* logger.cpp in Sources */,
 				B3C9D5911DEA86B80068D057 /* fxdbg.cpp in Sources */,
 				B3C9D5921DEA86B80068D057 /* bsx.cpp in Sources */,
+				B36510A0217831FF008FDB7B /* crc32.cpp in Sources */,
 				B3C9D5931DEA86B80068D057 /* seta010.cpp in Sources */,
 				B3C9D5941DEA86B80068D057 /* SNESOESupport.mm in Sources */,
 				B3C9D5951DEA86B80068D057 /* PVSNESEmulatorCore.mm in Sources */,
@@ -822,6 +919,8 @@
 				B3C9D5A61DEA86B80068D057 /* dsp.cpp in Sources */,
 				B3C9D5A71DEA86B80068D057 /* gfx.cpp in Sources */,
 				B365105D2177034F008FDB7B /* sdsp.cpp in Sources */,
+				B36510A721783200008FDB7B /* s9x-jma.cpp in Sources */,
+				B36510A921783200008FDB7B /* 7zlzma.cpp in Sources */,
 				B3C9D5A81DEA86B80068D057 /* cpuops.cpp in Sources */,
 				B3650FF721770245008FDB7B /* SPC_DSP.cpp in Sources */,
 				B36510762177066C008FDB7B /* bml.cpp in Sources */,
@@ -835,7 +934,10 @@
 				B3C9D5B01DEA86B80068D057 /* fxemu.cpp in Sources */,
 				B3C9D5B11DEA86B80068D057 /* apu.cpp in Sources */,
 				B3C9D5B21DEA86B80068D057 /* debug.cpp in Sources */,
+				B36510AB21783200008FDB7B /* jma.cpp in Sources */,
+				B36510A621783200008FDB7B /* inbyte.cpp in Sources */,
 				B3C9D5B41DEA86B80068D057 /* clip.cpp in Sources */,
+				B36510B021783225008FDB7B /* winout.cpp in Sources */,
 				B3C9D5B51DEA86B80068D057 /* stream.cpp in Sources */,
 				B36510792177069A008FDB7B /* msu1.cpp in Sources */,
 				B3C9D5B61DEA86B80068D057 /* srtc.cpp in Sources */,
@@ -844,10 +946,13 @@
 				B3C9D5BA1DEA86B80068D057 /* cheats2.cpp in Sources */,
 				B3C9D5BB1DEA86B80068D057 /* cheats.cpp in Sources */,
 				B3C9D5BC1DEA86B80068D057 /* conffile.cpp in Sources */,
+				B36510A521783200008FDB7B /* lzma.cpp in Sources */,
+				B36510AA21783200008FDB7B /* iiostrm.cpp in Sources */,
 				B3C9D5BD1DEA86B80068D057 /* dma.cpp in Sources */,
 				B3C9D5BE1DEA86B80068D057 /* dsp3.cpp in Sources */,
 				B3C9D5BF1DEA86B80068D057 /* movie.cpp in Sources */,
 				B3C9D5C01DEA86B80068D057 /* snes9x.cpp in Sources */,
+				B36510AC21783200008FDB7B /* lzmadec.cpp in Sources */,
 				B3C9D5C11DEA86B80068D057 /* dsp1.cpp in Sources */,
 				B3C9D5C21DEA86B80068D057 /* globals.cpp in Sources */,
 				B3C9D5C31DEA86B80068D057 /* c4emu.cpp in Sources */,
@@ -857,6 +962,7 @@
 				B3C9D5C61DEA86B80068D057 /* logger.cpp in Sources */,
 				B3C9D5C71DEA86B80068D057 /* fxdbg.cpp in Sources */,
 				B3C9D5C81DEA86B80068D057 /* bsx.cpp in Sources */,
+				B36510A821783200008FDB7B /* crc32.cpp in Sources */,
 				B3C9D5C91DEA86B80068D057 /* seta010.cpp in Sources */,
 				B3C9D5CA1DEA86B80068D057 /* SNESOESupport.mm in Sources */,
 				B3C9D5CB1DEA86B80068D057 /* PVSNESEmulatorCore.mm in Sources */,

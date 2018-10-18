@@ -202,6 +202,8 @@
 #  endif
 #endif
 
+#include "port.h"
+
 #ifdef JMA_SUPPORT
 #include "jma/s9x-jma.h"
 #endif

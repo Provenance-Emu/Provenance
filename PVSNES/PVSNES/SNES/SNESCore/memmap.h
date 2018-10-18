@@ -198,6 +198,9 @@
 #define MEMMAP_SHIFT		(12)
 #define MEMMAP_MASK			(MEMMAP_BLOCK_SIZE - 1)
 
+#include "port.h"
+#include "snes9x.h"
+
 struct CMemory
 {
 	enum

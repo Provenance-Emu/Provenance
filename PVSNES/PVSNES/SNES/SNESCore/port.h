@@ -227,12 +227,27 @@
 #endif
 
 #ifdef __MACOSX__
-#undef GFX_MULTI_FORMAT
-#define PIXEL_FORMAT RGB555
-#endif
+	#define PIXEL_FORMAT RGB565
+	#undef GFX_MULTI_FORMAT
+	#undef USE_X86_ASM
+	#undef _MAX_PATH
 
-#ifndef PIXEL_FORMAT
-#define PIXEL_FORMAT RGB565
+	#define PTR_NOT_INT
+	//***from mac-global_prefix.h ***
+	//#undef	READ_WORD(s)
+	//#undef	READ_3WORD(s)
+	//#undef	READ_DWORD(s)
+	//#undef	WRITE_WORD(s, d)
+	//#undef	WRITE_3WORD(s, d)
+	//#undef	WRITE_DWORD(s, d)
+	#define ZLIB // - OE fix
+//	#define UNZIP_SUPPORT
+	#define	JMA_SUPPORT
+	//#define USE_OPENGL
+	#define RIGHTSHIFT_IS_SAR
+	#define SDD1_DECOMP
+	#define CORRECT_VRAM_READS
+	#define HAVE_STDINT_H
 #endif
 
 #ifndef snes9x_types_defined
