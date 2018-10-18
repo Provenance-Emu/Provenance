@@ -48,20 +48,25 @@ public class SystemSettingsCell : UITableViewCell {
 	func sytle() {
 		let bg = UIView(frame: bounds)
 		bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		#if os(iOS)
 		bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-		self.backgroundView = bg
-
 		self.textLabel?.textColor = Theme.currentTheme.settingsCellText
 		self.detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
+		#else
+		bg.backgroundColor = UIColor.init(white: 0.9, alpha: 0.9)
+		#endif
+		self.backgroundView = bg
 	}
 }
 
 public class SystemSettingsHeaderCell : SystemSettingsCell {
 	override func sytle() {
 		super.sytle()
+		#if os(iOS)
 		self.backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
 		self.textLabel?.textColor = Theme.currentTheme.settingsHeaderText
 		self.detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
+		#endif
 		self.textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
 	}
 }
@@ -110,7 +115,11 @@ class SystemsSettingsTableViewController: QuickTableViewController {
 												icon: nil,
 												customization:
 						{ (cell, row) in
+							#if os(iOS)
 							var backgroundColor : UIColor? = Theme.currentTheme.settingsCellBackground
+							#else
+							var backgroundColor : UIColor? = UIColor.init(white: 0.9, alpha: 0.9)
+							#endif
 							let status = bios.status
 							if status.available {
 
@@ -133,8 +142,10 @@ class SystemsSettingsTableViewController: QuickTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+		#if os(iOS)
 		self.tableView.backgroundColor = Theme.currentTheme.settingsHeaderBackground
 		self.tableView.separatorStyle = .singleLine
+		#endif
 
         let realm  = try! Realm()
         systemsToken = realm.objects(PVSystem.self).observe { (systems) in
