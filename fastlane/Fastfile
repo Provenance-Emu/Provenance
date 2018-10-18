@@ -304,8 +304,9 @@ end
     # Codesign
     # Types, appstore adhoc development enterprise
 
-    # update_devices
+    # update_devices // development, adhoc, appstore, enterprise
     match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios", readonly: true)
+    
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
     #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
@@ -646,7 +647,7 @@ end
     # Method used to export the archive.
     # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
     export_method = options.fetch(:export_method, 'ad-hoc')
-    build_configuration = options.fetch(:build_configuration, 'AdHoc')
+    build_configuration = options.fetch(:build_configuration, 'Release')
     scheme = options.fetch(:scheme, 'Provenance-Release')
 
     UI.message "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
@@ -666,6 +667,7 @@ end
       include_bitcode: false,
       include_symbols: false,
       #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+      export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: export_method,
         # manifest: {

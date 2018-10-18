@@ -114,7 +114,7 @@ Use `git stash` first to save any changes you may want to keep.
 ```
 fastlane ios build_appstore
 ```
-Exports a new Beta Build
+Exports a new AppStore Build
 ### ios carthage_bootstrap_ios
 ```
 fastlane ios carthage_bootstrap_ios
