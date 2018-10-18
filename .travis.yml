@@ -79,16 +79,16 @@ before_script:
         # Killing background sleep loop
     # - kill %1
 after_success:
-  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - ./Scripts/travis_upload.bash
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
-  - ./Scripts/travis_upload.bash
   # Test code covered, add -enableCodeCoverage YES to xcodebuild
   #- sleep 5
   #- bash <(curl -s https://codecov.io/bash)
 after_failure:
   - tail -100 /tmp/carthage.log
-  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 script:

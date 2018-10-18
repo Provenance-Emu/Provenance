@@ -1,0 +1,15 @@
+version: "Apple Swift version 2.1 (swiftlang-700.1.101.6 clang-700.1.76)"
+options: "9dd4786959e0dc5a36baed2f9564d878"
+build_time: [500350864, 868323000]
+inputs:
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcStreamer.swift": [500025254, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcCentralPublisherWatch.swift": [499935001, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcWatchConnectivity.swift": [500022810, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcMotion.swift": [500025120, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcController.swift": [500289427, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcElements.swift": [500289599, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcCentralPublisher.swift": [500063619, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcIcadePeripheral.swift": [499928833, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcManager.swift": [500289599, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcBrowser.swift": [500255726, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcPeripheral.swift": [500289599, 0]

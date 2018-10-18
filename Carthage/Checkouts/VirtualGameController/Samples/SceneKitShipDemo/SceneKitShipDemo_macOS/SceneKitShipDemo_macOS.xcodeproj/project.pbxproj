@@ -1,0 +1,326 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2056E1F41F8BC1030051FAED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2056E1F31F8BC1030051FAED /* AppDelegate.swift */; };
+		2056E1F61F8BC1030051FAED /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2056E1F51F8BC1030051FAED /* GameViewController.swift */; };
+		2056E1F81F8BC1030051FAED /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 2056E1F71F8BC1030051FAED /* art.scnassets */; };
+		2056E1FA1F8BC1030051FAED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2056E1F91F8BC1030051FAED /* Assets.xcassets */; };
+		2056E1FD1F8BC1030051FAED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2056E1FB1F8BC1030051FAED /* Main.storyboard */; };
+		2056E2061F8BC1560051FAED /* SharedCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2056E2051F8BC1560051FAED /* SharedCode.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2056E1F01F8BC1030051FAED /* SceneKitShipDemo_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SceneKitShipDemo_macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2056E1F31F8BC1030051FAED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2056E1F51F8BC1030051FAED /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		2056E1F71F8BC1030051FAED /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+		2056E1F91F8BC1030051FAED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2056E1FC1F8BC1030051FAED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		2056E1FE1F8BC1030051FAED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2056E1FF1F8BC1030051FAED /* SceneKitShipDemo_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SceneKitShipDemo_macOS.entitlements; sourceTree = "<group>"; };
+		2056E2051F8BC1560051FAED /* SharedCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SharedCode.swift; path = "../../../../Framework Projects/VirtualGameControllerTvOS/SharedCode.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2056E1ED1F8BC1030051FAED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2056E1E71F8BC1030051FAED = {
+			isa = PBXGroup;
+			children = (
+				2056E1F21F8BC1030051FAED /* SceneKitShipDemo_macOS */,
+				2056E1F11F8BC1030051FAED /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2056E1F11F8BC1030051FAED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2056E1F01F8BC1030051FAED /* SceneKitShipDemo_macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2056E1F21F8BC1030051FAED /* SceneKitShipDemo_macOS */ = {
+			isa = PBXGroup;
+			children = (
+				2056E1F31F8BC1030051FAED /* AppDelegate.swift */,
+				2056E1F51F8BC1030051FAED /* GameViewController.swift */,
+				2056E2051F8BC1560051FAED /* SharedCode.swift */,
+				2056E1F71F8BC1030051FAED /* art.scnassets */,
+				2056E1F91F8BC1030051FAED /* Assets.xcassets */,
+				2056E1FB1F8BC1030051FAED /* Main.storyboard */,
+				2056E1FE1F8BC1030051FAED /* Info.plist */,
+				2056E1FF1F8BC1030051FAED /* SceneKitShipDemo_macOS.entitlements */,
+			);
+			path = SceneKitShipDemo_macOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2056E1EF1F8BC1030051FAED /* SceneKitShipDemo_macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2056E2021F8BC1030051FAED /* Build configuration list for PBXNativeTarget "SceneKitShipDemo_macOS" */;
+			buildPhases = (
+				2056E1EC1F8BC1030051FAED /* Sources */,
+				2056E1ED1F8BC1030051FAED /* Frameworks */,
+				2056E1EE1F8BC1030051FAED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SceneKitShipDemo_macOS;
+			productName = SceneKitShipDemo_macOS;
+			productReference = 2056E1F01F8BC1030051FAED /* SceneKitShipDemo_macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2056E1E81F8BC1030051FAED /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0910;
+				LastUpgradeCheck = 0910;
+				ORGANIZATIONNAME = "Rob Reuss";
+				TargetAttributes = {
+					2056E1EF1F8BC1030051FAED = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 2056E1EB1F8BC1030051FAED /* Build configuration list for PBXProject "SceneKitShipDemo_macOS" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2056E1E71F8BC1030051FAED;
+			productRefGroup = 2056E1F11F8BC1030051FAED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2056E1EF1F8BC1030051FAED /* SceneKitShipDemo_macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2056E1EE1F8BC1030051FAED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2056E1FD1F8BC1030051FAED /* Main.storyboard in Resources */,
+				2056E1FA1F8BC1030051FAED /* Assets.xcassets in Resources */,
+				2056E1F81F8BC1030051FAED /* art.scnassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2056E1EC1F8BC1030051FAED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2056E2061F8BC1560051FAED /* SharedCode.swift in Sources */,
+				2056E1F61F8BC1030051FAED /* GameViewController.swift in Sources */,
+				2056E1F41F8BC1030051FAED /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		2056E1FB1F8BC1030051FAED /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2056E1FC1F8BC1030051FAED /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2056E2001F8BC1030051FAED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2056E2011F8BC1030051FAED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		2056E2031F8BC1030051FAED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SceneKitShipDemo_macOS/SceneKitShipDemo_macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CN7G7TCUME;
+				INFOPLIST_FILE = SceneKitShipDemo_macOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.simplyformed.SceneKitShipDemo-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		2056E2041F8BC1030051FAED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SceneKitShipDemo_macOS/SceneKitShipDemo_macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CN7G7TCUME;
+				INFOPLIST_FILE = SceneKitShipDemo_macOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.simplyformed.SceneKitShipDemo-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2056E1EB1F8BC1030051FAED /* Build configuration list for PBXProject "SceneKitShipDemo_macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2056E2001F8BC1030051FAED /* Debug */,
+				2056E2011F8BC1030051FAED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2056E2021F8BC1030051FAED /* Build configuration list for PBXNativeTarget "SceneKitShipDemo_macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2056E2031F8BC1030051FAED /* Debug */,
+				2056E2041F8BC1030051FAED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2056E1E81F8BC1030051FAED /* Project object */;
+}

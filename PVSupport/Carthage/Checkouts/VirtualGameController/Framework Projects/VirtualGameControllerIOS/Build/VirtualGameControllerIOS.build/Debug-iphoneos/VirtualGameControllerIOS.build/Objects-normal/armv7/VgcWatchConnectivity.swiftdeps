@@ -1,0 +1,361 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "VgcWatchConnectivity"
+provides-nominal:
+- "C21VirtualGameController20VgcWatchConnectivity"
+provides-member:
+- ["C21VirtualGameController20VgcWatchConnectivity", ""]
+provides-dynamic-lookup:
+- "elements"
+- "session"
+- "sendElementValueToBridge"
+- "httpSession"
+depends-top-level:
+- "NSURLSessionDelegate"
+- "WCSessionDelegate"
+- "NSURLSession"
+- "VgcWatchConnectivity"
+- "NSObject"
+- !private "StringLiteralType"
+- "WCSession"
+- "Elements"
+- !private "print"
+- !private "AnyObject"
+- !private "Void"
+- !private "Dictionary"
+- "Element"
+- !private "String"
+depends-member:
+- ["PSs9AnyObject", "Elements"]
+- ["PSs9AnyObject", "URLSession"]
+- ["PSs9AnyObject", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSs9AnyObject", "WCSession"]
+- !private ["PSs9AnyObject", "activateSession"]
+- !private ["PSs9AnyObject", "defaultSession"]
+- !private ["PSs9AnyObject", "delegate"]
+- ["PSs9AnyObject", "elements"]
+- ["PSs9AnyObject", "httpSession"]
+- ["PSs9AnyObject", "init"]
+- !private ["PSs9AnyObject", "print"]
+- !private ["PSs9AnyObject", "reachable"]
+- ["PSs9AnyObject", "sendElementValueToBridge"]
+- !private ["PSs9AnyObject", "sendMessage"]
+- ["PSs9AnyObject", "session"]
+- ["PSs9AnyObject", "sessionReachabilityDidChange"]
+- ["PSs9AnyObject", "sessionWatchStateDidChange"]
+- !private ["PSs9AnyObject", "type"]
+- !private ["PSs9AnyObject", "value"]
+- ["PSs9AnyObject", ""]
+- !private ["Sb", "_getBuiltinLogicValue"]
+- !private ["Sb", "deinit"]
+- !private ["PSs25BooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs11BooleanType", "_getBuiltinLogicValue"]
+- ["PSs11CVarArgType", "Elements"]
+- ["PSs11CVarArgType", "URLSession"]
+- ["PSs11CVarArgType", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSs11CVarArgType", "WCSession"]
+- !private ["PSs11CVarArgType", "activateSession"]
+- !private ["PSs11CVarArgType", "defaultSession"]
+- !private ["PSs11CVarArgType", "delegate"]
+- ["PSs11CVarArgType", "elements"]
+- ["PSs11CVarArgType", "httpSession"]
+- ["PSs11CVarArgType", "init"]
+- !private ["PSs11CVarArgType", "print"]
+- !private ["PSs11CVarArgType", "reachable"]
+- ["PSs11CVarArgType", "sendElementValueToBridge"]
+- !private ["PSs11CVarArgType", "sendMessage"]
+- ["PSs11CVarArgType", "session"]
+- ["PSs11CVarArgType", "sessionReachabilityDidChange"]
+- ["PSs11CVarArgType", "sessionWatchStateDidChange"]
+- !private ["PSs11CVarArgType", "type"]
+- !private ["PSs11CVarArgType", "value"]
+- ["PSs11CVarArgType", ""]
+- !private ["VSs9Character", "deinit"]
+- !private ["PSs14CollectionType", "Key"]
+- !private ["PSs14CollectionType", "Value"]
+- !private ["PSs10Comparable", "init"]
+- !private ["PSs28CustomDebugStringConvertible", "Key"]
+- !private ["PSs28CustomDebugStringConvertible", "Value"]
+- !private ["PSs28CustomDebugStringConvertible", "init"]
+- ["PSs23CustomStringConvertible", "Elements"]
+- !private ["PSs23CustomStringConvertible", "Key"]
+- ["PSs23CustomStringConvertible", "URLSession"]
+- ["PSs23CustomStringConvertible", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSs23CustomStringConvertible", "Value"]
+- !private ["PSs23CustomStringConvertible", "WCSession"]
+- !private ["PSs23CustomStringConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs23CustomStringConvertible", "activateSession"]
+- !private ["PSs23CustomStringConvertible", "defaultSession"]
+- !private ["PSs23CustomStringConvertible", "delegate"]
+- ["PSs23CustomStringConvertible", "elements"]
+- ["PSs23CustomStringConvertible", "httpSession"]
+- ["PSs23CustomStringConvertible", "init"]
+- !private ["PSs23CustomStringConvertible", "print"]
+- !private ["PSs23CustomStringConvertible", "reachable"]
+- ["PSs23CustomStringConvertible", "sendElementValueToBridge"]
+- !private ["PSs23CustomStringConvertible", "sendMessage"]
+- ["PSs23CustomStringConvertible", "session"]
+- ["PSs23CustomStringConvertible", "sessionReachabilityDidChange"]
+- ["PSs23CustomStringConvertible", "sessionWatchStateDidChange"]
+- !private ["PSs23CustomStringConvertible", "type"]
+- !private ["PSs23CustomStringConvertible", "value"]
+- ["PSs23CustomStringConvertible", ""]
+- !private ["VSs10Dictionary", "Key"]
+- !private ["VSs10Dictionary", "Value"]
+- !private ["PSs28DictionaryLiteralConvertible", "Key"]
+- !private ["PSs28DictionaryLiteralConvertible", "Value"]
+- !private ["Sd", "deinit"]
+- !private ["C21VirtualGameController7Element", "type"]
+- !private ["C21VirtualGameController7Element", "value"]
+- !private ["O21VirtualGameController11ElementType", "deinit"]
+- !private ["O21VirtualGameController11ElementType", "rawValue"]
+- ["C21VirtualGameController8Elements", "init"]
+- ["PSs9Equatable", "Elements"]
+- ["PSs9Equatable", "URLSession"]
+- ["PSs9Equatable", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSs9Equatable", "WCSession"]
+- !private ["PSs9Equatable", "_getBuiltinLogicValue"]
+- !private ["PSs9Equatable", "activateSession"]
+- !private ["PSs9Equatable", "defaultSession"]
+- !private ["PSs9Equatable", "delegate"]
+- ["PSs9Equatable", "elements"]
+- ["PSs9Equatable", "httpSession"]
+- ["PSs9Equatable", "init"]
+- !private ["PSs9Equatable", "print"]
+- !private ["PSs9Equatable", "rawValue"]
+- !private ["PSs9Equatable", "reachable"]
+- ["PSs9Equatable", "sendElementValueToBridge"]
+- !private ["PSs9Equatable", "sendMessage"]
+- ["PSs9Equatable", "session"]
+- ["PSs9Equatable", "sessionReachabilityDidChange"]
+- ["PSs9Equatable", "sessionWatchStateDidChange"]
+- !private ["PSs9Equatable", "type"]
+- !private ["PSs9Equatable", "value"]
+- ["PSs9Equatable", ""]
+- !private ["PSs41ExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["Sf", "deinit"]
+- ["PSs8Hashable", "Elements"]
+- ["PSs8Hashable", "URLSession"]
+- ["PSs8Hashable", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSs8Hashable", "WCSession"]
+- !private ["PSs8Hashable", "_getBuiltinLogicValue"]
+- !private ["PSs8Hashable", "activateSession"]
+- !private ["PSs8Hashable", "defaultSession"]
+- !private ["PSs8Hashable", "delegate"]
+- ["PSs8Hashable", "elements"]
+- ["PSs8Hashable", "httpSession"]
+- ["PSs8Hashable", "init"]
+- !private ["PSs8Hashable", "print"]
+- !private ["PSs8Hashable", "rawValue"]
+- !private ["PSs8Hashable", "reachable"]
+- ["PSs8Hashable", "sendElementValueToBridge"]
+- !private ["PSs8Hashable", "sendMessage"]
+- ["PSs8Hashable", "session"]
+- ["PSs8Hashable", "sessionReachabilityDidChange"]
+- ["PSs8Hashable", "sessionWatchStateDidChange"]
+- !private ["PSs8Hashable", "type"]
+- !private ["PSs8Hashable", "value"]
+- ["PSs8Hashable", ""]
+- !private ["PSs9Indexable", "Key"]
+- !private ["PSs9Indexable", "Value"]
+- !private ["Si", "deinit"]
+- !private ["VSs5Int16", "deinit"]
+- !private ["VSs5Int32", "deinit"]
+- !private ["VSs5Int64", "deinit"]
+- !private ["VSs4Int8", "deinit"]
+- !private ["PSs14MirrorPathType", "init"]
+- !private ["PSo8NSCoding", "init"]
+- !private ["PSo9NSCopying", "init"]
+- !private ["PSo16NSMutableCopying", "init"]
+- !private ["CSo8NSObject", "AnyObject"]
+- ["CSo8NSObject", "Element"]
+- ["CSo8NSObject", "Elements"]
+- ["CSo8NSObject", "NSURLSession"]
+- !private ["CSo8NSObject", "String"]
+- ["CSo8NSObject", "URLSession"]
+- ["CSo8NSObject", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["CSo8NSObject", "Void"]
+- ["CSo8NSObject", "WCSession"]
+- !private ["CSo8NSObject", "activateSession"]
+- !private ["CSo8NSObject", "defaultSession"]
+- !private ["CSo8NSObject", "delegate"]
+- ["CSo8NSObject", "elements"]
+- ["CSo8NSObject", "httpSession"]
+- ["CSo8NSObject", "init"]
+- !private ["CSo8NSObject", "print"]
+- !private ["CSo8NSObject", "reachable"]
+- ["CSo8NSObject", "sendElementValueToBridge"]
+- !private ["CSo8NSObject", "sendMessage"]
+- ["CSo8NSObject", "session"]
+- ["CSo8NSObject", "sessionReachabilityDidChange"]
+- ["CSo8NSObject", "sessionWatchStateDidChange"]
+- !private ["CSo8NSObject", "type"]
+- !private ["CSo8NSObject", "value"]
+- ["CSo8NSObject", ""]
+- ["PSo16NSObjectProtocol", "Elements"]
+- ["PSo16NSObjectProtocol", "URLSession"]
+- ["PSo16NSObjectProtocol", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSo16NSObjectProtocol", "WCSession"]
+- !private ["PSo16NSObjectProtocol", "activateSession"]
+- !private ["PSo16NSObjectProtocol", "defaultSession"]
+- !private ["PSo16NSObjectProtocol", "delegate"]
+- ["PSo16NSObjectProtocol", "elements"]
+- ["PSo16NSObjectProtocol", "httpSession"]
+- ["PSo16NSObjectProtocol", "init"]
+- !private ["PSo16NSObjectProtocol", "print"]
+- !private ["PSo16NSObjectProtocol", "reachable"]
+- ["PSo16NSObjectProtocol", "sendElementValueToBridge"]
+- !private ["PSo16NSObjectProtocol", "sendMessage"]
+- ["PSo16NSObjectProtocol", "session"]
+- ["PSo16NSObjectProtocol", "sessionReachabilityDidChange"]
+- ["PSo16NSObjectProtocol", "sessionWatchStateDidChange"]
+- !private ["PSo16NSObjectProtocol", "type"]
+- !private ["PSo16NSObjectProtocol", "value"]
+- ["PSo16NSObjectProtocol", ""]
+- !private ["PSo14NSSecureCoding", "init"]
+- !private ["CSo8NSString", "deinit"]
+- !private ["CSo8NSString", "init"]
+- ["PSo20NSURLSessionDelegate", "Elements"]
+- ["PSo20NSURLSessionDelegate", "URLSession"]
+- ["PSo20NSURLSessionDelegate", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSo20NSURLSessionDelegate", "WCSession"]
+- !private ["PSo20NSURLSessionDelegate", "print"]
+- ["PSo20NSURLSessionDelegate", "session"]
+- ["PSo20NSURLSessionDelegate", "sessionReachabilityDidChange"]
+- ["PSo20NSURLSessionDelegate", "sessionWatchStateDidChange"]
+- ["PSo20NSURLSessionDelegate", ""]
+- !private ["PSs16OutputStreamType", "init"]
+- !private ["PSs16RawRepresentable", "rawValue"]
+- !private ["PSs12SequenceType", "Key"]
+- !private ["PSs12SequenceType", "Value"]
+- !private ["PSs10Streamable", "init"]
+- !private ["SS", "init"]
+- !private ["PSs30StringInterpolationConvertible", "init"]
+- !private ["PSs24StringLiteralConvertible", "init"]
+- !private ["Su", "deinit"]
+- !private ["VSs6UInt16", "deinit"]
+- !private ["VSs6UInt32", "deinit"]
+- !private ["VSs6UInt64", "deinit"]
+- !private ["VSs5UInt8", "deinit"]
+- !private ["Sc", "deinit"]
+- !private ["PSs31UnicodeScalarLiteralConvertible", "init"]
+- !private ["C21VirtualGameController20VgcWatchConnectivity", "AnyObject"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "Element"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "Elements"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "NSURLSession"]
+- !private ["C21VirtualGameController20VgcWatchConnectivity", "String"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "URLSession"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["C21VirtualGameController20VgcWatchConnectivity", "Void"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "WCSession"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "deinit"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "elements"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "httpSession"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "init"]
+- !private ["C21VirtualGameController20VgcWatchConnectivity", "print"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "sendElementValueToBridge"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "session"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "sessionReachabilityDidChange"]
+- ["C21VirtualGameController20VgcWatchConnectivity", "sessionWatchStateDidChange"]
+- !private ["CSo9WCSession", "activateSession"]
+- !private ["CSo9WCSession", "defaultSession"]
+- !private ["CSo9WCSession", "delegate"]
+- !private ["CSo9WCSession", "reachable"]
+- !private ["CSo9WCSession", "sendMessage"]
+- ["PSo17WCSessionDelegate", "Elements"]
+- ["PSo17WCSessionDelegate", "URLSession"]
+- ["PSo17WCSessionDelegate", "URLSessionDidFinishEventsForBackgroundURLSession"]
+- !private ["PSo17WCSessionDelegate", "WCSession"]
+- !private ["PSo17WCSessionDelegate", "print"]
+- ["PSo17WCSessionDelegate", "session"]
+- ["PSo17WCSessionDelegate", "sessionReachabilityDidChange"]
+- ["PSo17WCSessionDelegate", "sessionWatchStateDidChange"]
+- ["PSo17WCSessionDelegate", ""]
+- !private ["PSs33_BuiltinBooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["PSs32_BuiltinStringLiteralConvertible", "init"]
+- !private ["PSs37_BuiltinUTF16StringLiteralConvertible", "init"]
+- !private ["PSs39_BuiltinUnicodeScalarLiteralConvertible", "init"]
+- !private ["PSs16_CocoaStringType", "init"]
+- !private ["PSs21_ObjectiveCBridgeable", "Key"]
+- !private ["PSs21_ObjectiveCBridgeable", "Value"]
+- !private ["PSs21_ObjectiveCBridgeable", "_getBuiltinLogicValue"]
+- !private ["PSs21_ObjectiveCBridgeable", "init"]
+- !private ["PSs12_Reflectable", "Key"]
+- !private ["PSs12_Reflectable", "Value"]
+- !private ["PSs12_Reflectable", "_getBuiltinLogicValue"]
+- !private ["PSs12_Reflectable", "init"]
+depends-nominal:
+- "PSs9AnyObject"
+- !private "Sb"
+- !private "PSs25BooleanLiteralConvertible"
+- !private "PSs11BooleanType"
+- "PSs11CVarArgType"
+- !private "VSs9Character"
+- !private "PSs14CollectionType"
+- !private "PSs10Comparable"
+- !private "PSs28CustomDebugStringConvertible"
+- "PSs23CustomStringConvertible"
+- !private "VSs10Dictionary"
+- !private "PSs28DictionaryLiteralConvertible"
+- !private "Sd"
+- !private "C21VirtualGameController7Element"
+- !private "O21VirtualGameController11ElementType"
+- "C21VirtualGameController8Elements"
+- "PSs9Equatable"
+- !private "PSs41ExtendedGraphemeClusterLiteralConvertible"
+- !private "Sf"
+- "PSs8Hashable"
+- !private "PSs9Indexable"
+- !private "Si"
+- !private "VSs5Int16"
+- !private "VSs5Int32"
+- !private "VSs5Int64"
+- !private "VSs4Int8"
+- !private "PSs14MirrorPathType"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo16NSMutableCopying"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- !private "PSo14NSSecureCoding"
+- !private "CSo8NSString"
+- "PSo20NSURLSessionDelegate"
+- !private "PSs16OutputStreamType"
+- !private "PSs16RawRepresentable"
+- !private "PSs12SequenceType"
+- !private "PSs10Streamable"
+- !private "SS"
+- !private "PSs30StringInterpolationConvertible"
+- !private "PSs24StringLiteralConvertible"
+- !private "Su"
+- !private "VSs6UInt16"
+- !private "VSs6UInt32"
+- !private "VSs6UInt64"
+- !private "VSs5UInt8"
+- !private "Sc"
+- !private "PSs31UnicodeScalarLiteralConvertible"
+- "C21VirtualGameController20VgcWatchConnectivity"
+- !private "CSo9WCSession"
+- "PSo17WCSessionDelegate"
+- !private "PSs33_BuiltinBooleanLiteralConvertible"
+- !private "PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible"
+- !private "PSs32_BuiltinStringLiteralConvertible"
+- !private "PSs37_BuiltinUTF16StringLiteralConvertible"
+- !private "PSs39_BuiltinUnicodeScalarLiteralConvertible"
+- !private "PSs16_CocoaStringType"
+- !private "PSs21_ObjectiveCBridgeable"
+- !private "PSs12_Reflectable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreImage.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreBluetooth.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/WatchConnectivity.swiftmodule"
+interface-hash: "830d1d49ddf22635a95f754216109c64"

@@ -1,0 +1,640 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "CentralPublisherWatch"
+provides-nominal:
+- "C21VirtualGameController21CentralPublisherWatch"
+provides-member:
+- ["C21VirtualGameController21CentralPublisherWatch", ""]
+provides-dynamic-lookup:
+- "session"
+- "scanForWatchController"
+- "watchController"
+- "sessionReachabilityDidChange"
+- "wcSession"
+depends-top-level:
+- !private "!="
+- "String"
+- "AnyObject"
+- !private "dispatch_get_main_queue"
+- !private "dispatch_async"
+- !private "BooleanLiteralType"
+- "CentralPublisherWatch"
+- "WCSessionDelegate"
+- !private "NSUUID"
+- "Void"
+- "VgcController"
+- !private "NSNotificationCenter"
+- "NSObject"
+- !private "StringLiteralType"
+- "WCSession"
+- !private "DeviceInfo"
+- !private "Int"
+- !private "=="
+- !private "print"
+- !private "+"
+depends-member:
+- !private ["PSs9AnyObject", "DeviceInfo"]
+- !private ["PSs9AnyObject", "Int"]
+- !private ["PSs9AnyObject", "NSNotificationCenter"]
+- !private ["PSs9AnyObject", "NSUUID"]
+- !private ["PSs9AnyObject", "UUIDString"]
+- !private ["PSs9AnyObject", "VgcController"]
+- !private ["PSs9AnyObject", "WCSession"]
+- !private ["PSs9AnyObject", "activateSession"]
+- !private ["PSs9AnyObject", "defaultCenter"]
+- !private ["PSs9AnyObject", "defaultSession"]
+- !private ["PSs9AnyObject", "delegate"]
+- !private ["PSs9AnyObject", "deviceInfo"]
+- !private ["PSs9AnyObject", "disconnect"]
+- !private ["PSs9AnyObject", "dispatch_async"]
+- !private ["PSs9AnyObject", "dispatch_get_main_queue"]
+- !private ["PSs9AnyObject", "elementFromIdentifier"]
+- !private ["PSs9AnyObject", "elements"]
+- ["PSs9AnyObject", "init"]
+- !private ["PSs9AnyObject", "isSupported"]
+- !private ["PSs9AnyObject", "paired"]
+- !private ["PSs9AnyObject", "postNotificationName"]
+- !private ["PSs9AnyObject", "print"]
+- !private ["PSs9AnyObject", "reachable"]
+- ["PSs9AnyObject", "scanForWatchController"]
+- ["PSs9AnyObject", "session"]
+- ["PSs9AnyObject", "sessionReachabilityDidChange"]
+- ["PSs9AnyObject", "sessionWatchStateDidChange"]
+- !private ["PSs9AnyObject", "updateGameControllerWithValue"]
+- !private ["PSs9AnyObject", "value"]
+- !private ["PSs9AnyObject", "watchAppInstalled"]
+- ["PSs9AnyObject", "watchController"]
+- ["PSs9AnyObject", "wcSession"]
+- ["PSs9AnyObject", ""]
+- !private ["PSs22BidirectionalIndexType", "IntegerLiteralType"]
+- !private ["PSs22BidirectionalIndexType", "init"]
+- !private ["PSs21BitwiseOperationsType", "IntegerLiteralType"]
+- !private ["PSs21BitwiseOperationsType", "init"]
+- !private ["Sb", "_getBuiltinLogicValue"]
+- !private ["Sb", "deinit"]
+- !private ["PSs25BooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs11BooleanType", "_getBuiltinLogicValue"]
+- !private ["PSs11CVarArgType", "DeviceInfo"]
+- !private ["PSs11CVarArgType", "Int"]
+- !private ["PSs11CVarArgType", "IntegerLiteralType"]
+- !private ["PSs11CVarArgType", "NSNotificationCenter"]
+- !private ["PSs11CVarArgType", "NSUUID"]
+- !private ["PSs11CVarArgType", "UUIDString"]
+- !private ["PSs11CVarArgType", "VgcController"]
+- !private ["PSs11CVarArgType", "WCSession"]
+- !private ["PSs11CVarArgType", "activateSession"]
+- !private ["PSs11CVarArgType", "defaultCenter"]
+- !private ["PSs11CVarArgType", "defaultSession"]
+- !private ["PSs11CVarArgType", "delegate"]
+- !private ["PSs11CVarArgType", "deviceInfo"]
+- !private ["PSs11CVarArgType", "disconnect"]
+- !private ["PSs11CVarArgType", "dispatch_async"]
+- !private ["PSs11CVarArgType", "dispatch_get_main_queue"]
+- !private ["PSs11CVarArgType", "elementFromIdentifier"]
+- !private ["PSs11CVarArgType", "elements"]
+- ["PSs11CVarArgType", "init"]
+- !private ["PSs11CVarArgType", "isSupported"]
+- !private ["PSs11CVarArgType", "paired"]
+- !private ["PSs11CVarArgType", "postNotificationName"]
+- !private ["PSs11CVarArgType", "print"]
+- !private ["PSs11CVarArgType", "reachable"]
+- ["PSs11CVarArgType", "scanForWatchController"]
+- ["PSs11CVarArgType", "session"]
+- ["PSs11CVarArgType", "sessionReachabilityDidChange"]
+- ["PSs11CVarArgType", "sessionWatchStateDidChange"]
+- !private ["PSs11CVarArgType", "updateGameControllerWithValue"]
+- !private ["PSs11CVarArgType", "value"]
+- !private ["PSs11CVarArgType", "watchAppInstalled"]
+- ["PSs11CVarArgType", "watchController"]
+- ["PSs11CVarArgType", "wcSession"]
+- ["PSs11CVarArgType", ""]
+- ["C21VirtualGameController21CentralPublisherWatch", "AnyObject"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "DeviceInfo"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "Int"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "NSNotificationCenter"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "NSUUID"]
+- ["C21VirtualGameController21CentralPublisherWatch", "String"]
+- ["C21VirtualGameController21CentralPublisherWatch", "VgcController"]
+- ["C21VirtualGameController21CentralPublisherWatch", "Void"]
+- ["C21VirtualGameController21CentralPublisherWatch", "WCSession"]
+- ["C21VirtualGameController21CentralPublisherWatch", "deinit"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "dispatch_async"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "dispatch_get_main_queue"]
+- ["C21VirtualGameController21CentralPublisherWatch", "init"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "print"]
+- ["C21VirtualGameController21CentralPublisherWatch", "scanForWatchController"]
+- ["C21VirtualGameController21CentralPublisherWatch", "session"]
+- ["C21VirtualGameController21CentralPublisherWatch", "sessionReachabilityDidChange"]
+- ["C21VirtualGameController21CentralPublisherWatch", "sessionWatchStateDidChange"]
+- ["C21VirtualGameController21CentralPublisherWatch", "watchController"]
+- ["C21VirtualGameController21CentralPublisherWatch", "wcSession"]
+- !private ["VSs9Character", "deinit"]
+- !private ["PSs14CollectionType", "Generator"]
+- !private ["PSs14CollectionType", "Index"]
+- !private ["PSs14CollectionType", "SubSequence"]
+- !private ["PSs14CollectionType", "_Element"]
+- !private ["PSs14CollectionType", "description"]
+- !private ["PSs14CollectionType", "keys"]
+- !private ["PSs14CollectionType", "subscript"]
+- !private ["PSs10Comparable", "Distance"]
+- !private ["PSs10Comparable", "IntegerLiteralType"]
+- !private ["PSs10Comparable", "_DisabledRangeIndex"]
+- !private ["PSs10Comparable", "init"]
+- !private ["O21VirtualGameController14ControllerType", "Watch"]
+- !private ["PSs28CustomDebugStringConvertible", "Generator"]
+- !private ["PSs28CustomDebugStringConvertible", "Index"]
+- !private ["PSs28CustomDebugStringConvertible", "SubSequence"]
+- !private ["PSs28CustomDebugStringConvertible", "_Element"]
+- !private ["PSs28CustomDebugStringConvertible", "description"]
+- !private ["PSs28CustomDebugStringConvertible", "init"]
+- !private ["PSs28CustomDebugStringConvertible", "keys"]
+- !private ["PSs28CustomDebugStringConvertible", "subscript"]
+- !private ["PSs23CustomStringConvertible", "DeviceInfo"]
+- !private ["PSs23CustomStringConvertible", "Generator"]
+- !private ["PSs23CustomStringConvertible", "Index"]
+- !private ["PSs23CustomStringConvertible", "Int"]
+- !private ["PSs23CustomStringConvertible", "IntegerLiteralType"]
+- !private ["PSs23CustomStringConvertible", "NSNotificationCenter"]
+- !private ["PSs23CustomStringConvertible", "NSUUID"]
+- !private ["PSs23CustomStringConvertible", "SubSequence"]
+- !private ["PSs23CustomStringConvertible", "UUIDString"]
+- !private ["PSs23CustomStringConvertible", "VgcController"]
+- !private ["PSs23CustomStringConvertible", "WCSession"]
+- !private ["PSs23CustomStringConvertible", "Watch"]
+- !private ["PSs23CustomStringConvertible", "_Element"]
+- !private ["PSs23CustomStringConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs23CustomStringConvertible", "activateSession"]
+- !private ["PSs23CustomStringConvertible", "defaultCenter"]
+- !private ["PSs23CustomStringConvertible", "defaultSession"]
+- !private ["PSs23CustomStringConvertible", "delegate"]
+- !private ["PSs23CustomStringConvertible", "description"]
+- !private ["PSs23CustomStringConvertible", "deviceInfo"]
+- !private ["PSs23CustomStringConvertible", "disconnect"]
+- !private ["PSs23CustomStringConvertible", "dispatch_async"]
+- !private ["PSs23CustomStringConvertible", "dispatch_get_main_queue"]
+- !private ["PSs23CustomStringConvertible", "elementFromIdentifier"]
+- !private ["PSs23CustomStringConvertible", "elements"]
+- ["PSs23CustomStringConvertible", "init"]
+- !private ["PSs23CustomStringConvertible", "isSupported"]
+- !private ["PSs23CustomStringConvertible", "keys"]
+- !private ["PSs23CustomStringConvertible", "paired"]
+- !private ["PSs23CustomStringConvertible", "postNotificationName"]
+- !private ["PSs23CustomStringConvertible", "print"]
+- !private ["PSs23CustomStringConvertible", "reachable"]
+- ["PSs23CustomStringConvertible", "scanForWatchController"]
+- ["PSs23CustomStringConvertible", "session"]
+- ["PSs23CustomStringConvertible", "sessionReachabilityDidChange"]
+- ["PSs23CustomStringConvertible", "sessionWatchStateDidChange"]
+- !private ["PSs23CustomStringConvertible", "subscript"]
+- !private ["PSs23CustomStringConvertible", "updateGameControllerWithValue"]
+- !private ["PSs23CustomStringConvertible", "value"]
+- !private ["PSs23CustomStringConvertible", "watchAppInstalled"]
+- ["PSs23CustomStringConvertible", "watchController"]
+- ["PSs23CustomStringConvertible", "wcSession"]
+- ["PSs23CustomStringConvertible", ""]
+- !private ["C21VirtualGameController10DeviceInfo", "deinit"]
+- !private ["C21VirtualGameController10DeviceInfo", "init"]
+- !private ["VSs10Dictionary", "Generator"]
+- !private ["VSs10Dictionary", "Index"]
+- !private ["VSs10Dictionary", "SubSequence"]
+- !private ["VSs10Dictionary", "_Element"]
+- !private ["VSs10Dictionary", "deinit"]
+- !private ["VSs10Dictionary", "description"]
+- !private ["VSs10Dictionary", "keys"]
+- !private ["VSs10Dictionary", "subscript"]
+- !private ["VSs15DictionaryIndex", "Distance"]
+- !private ["VSs15DictionaryIndex", "_DisabledRangeIndex"]
+- !private ["PSs28DictionaryLiteralConvertible", "Generator"]
+- !private ["PSs28DictionaryLiteralConvertible", "Index"]
+- !private ["PSs28DictionaryLiteralConvertible", "SubSequence"]
+- !private ["PSs28DictionaryLiteralConvertible", "_Element"]
+- !private ["PSs28DictionaryLiteralConvertible", "description"]
+- !private ["PSs28DictionaryLiteralConvertible", "keys"]
+- !private ["PSs28DictionaryLiteralConvertible", "subscript"]
+- !private ["Sd", "deinit"]
+- !private ["C21VirtualGameController7Element", "value"]
+- !private ["C21VirtualGameController8Elements", "elementFromIdentifier"]
+- !private ["PSs9Equatable", "DeviceInfo"]
+- !private ["PSs9Equatable", "Distance"]
+- !private ["PSs9Equatable", "Int"]
+- !private ["PSs9Equatable", "IntegerLiteralType"]
+- !private ["PSs9Equatable", "NSNotificationCenter"]
+- !private ["PSs9Equatable", "NSUUID"]
+- !private ["PSs9Equatable", "UUIDString"]
+- !private ["PSs9Equatable", "VgcController"]
+- !private ["PSs9Equatable", "WCSession"]
+- !private ["PSs9Equatable", "Watch"]
+- !private ["PSs9Equatable", "_DisabledRangeIndex"]
+- !private ["PSs9Equatable", "_getBuiltinLogicValue"]
+- !private ["PSs9Equatable", "activateSession"]
+- !private ["PSs9Equatable", "defaultCenter"]
+- !private ["PSs9Equatable", "defaultSession"]
+- !private ["PSs9Equatable", "delegate"]
+- !private ["PSs9Equatable", "deviceInfo"]
+- !private ["PSs9Equatable", "disconnect"]
+- !private ["PSs9Equatable", "dispatch_async"]
+- !private ["PSs9Equatable", "dispatch_get_main_queue"]
+- !private ["PSs9Equatable", "elementFromIdentifier"]
+- !private ["PSs9Equatable", "elements"]
+- ["PSs9Equatable", "init"]
+- !private ["PSs9Equatable", "isSupported"]
+- !private ["PSs9Equatable", "paired"]
+- !private ["PSs9Equatable", "postNotificationName"]
+- !private ["PSs9Equatable", "print"]
+- !private ["PSs9Equatable", "reachable"]
+- ["PSs9Equatable", "scanForWatchController"]
+- ["PSs9Equatable", "session"]
+- ["PSs9Equatable", "sessionReachabilityDidChange"]
+- ["PSs9Equatable", "sessionWatchStateDidChange"]
+- !private ["PSs9Equatable", "updateGameControllerWithValue"]
+- !private ["PSs9Equatable", "value"]
+- !private ["PSs9Equatable", "watchAppInstalled"]
+- ["PSs9Equatable", "watchController"]
+- ["PSs9Equatable", "wcSession"]
+- ["PSs9Equatable", ""]
+- !private ["PSs41ExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["Sf", "deinit"]
+- !private ["PSs16ForwardIndexType", "Distance"]
+- !private ["PSs16ForwardIndexType", "IntegerLiteralType"]
+- !private ["PSs16ForwardIndexType", "_DisabledRangeIndex"]
+- !private ["PSs16ForwardIndexType", "init"]
+- !private ["PSs13GeneratorType", "Element"]
+- !private ["PSs8Hashable", "DeviceInfo"]
+- !private ["PSs8Hashable", "Int"]
+- !private ["PSs8Hashable", "IntegerLiteralType"]
+- !private ["PSs8Hashable", "NSNotificationCenter"]
+- !private ["PSs8Hashable", "NSUUID"]
+- !private ["PSs8Hashable", "UUIDString"]
+- !private ["PSs8Hashable", "VgcController"]
+- !private ["PSs8Hashable", "WCSession"]
+- !private ["PSs8Hashable", "Watch"]
+- !private ["PSs8Hashable", "_getBuiltinLogicValue"]
+- !private ["PSs8Hashable", "activateSession"]
+- !private ["PSs8Hashable", "defaultCenter"]
+- !private ["PSs8Hashable", "defaultSession"]
+- !private ["PSs8Hashable", "delegate"]
+- !private ["PSs8Hashable", "deviceInfo"]
+- !private ["PSs8Hashable", "disconnect"]
+- !private ["PSs8Hashable", "dispatch_async"]
+- !private ["PSs8Hashable", "dispatch_get_main_queue"]
+- !private ["PSs8Hashable", "elementFromIdentifier"]
+- !private ["PSs8Hashable", "elements"]
+- ["PSs8Hashable", "init"]
+- !private ["PSs8Hashable", "isSupported"]
+- !private ["PSs8Hashable", "paired"]
+- !private ["PSs8Hashable", "postNotificationName"]
+- !private ["PSs8Hashable", "print"]
+- !private ["PSs8Hashable", "reachable"]
+- ["PSs8Hashable", "scanForWatchController"]
+- ["PSs8Hashable", "session"]
+- ["PSs8Hashable", "sessionReachabilityDidChange"]
+- ["PSs8Hashable", "sessionWatchStateDidChange"]
+- !private ["PSs8Hashable", "updateGameControllerWithValue"]
+- !private ["PSs8Hashable", "value"]
+- !private ["PSs8Hashable", "watchAppInstalled"]
+- ["PSs8Hashable", "watchController"]
+- ["PSs8Hashable", "wcSession"]
+- ["PSs8Hashable", ""]
+- !private ["SQ", "deinit"]
+- !private ["PSs9Indexable", "Generator"]
+- !private ["PSs9Indexable", "Index"]
+- !private ["PSs9Indexable", "SubSequence"]
+- !private ["PSs9Indexable", "_Element"]
+- !private ["PSs9Indexable", "description"]
+- !private ["PSs9Indexable", "keys"]
+- !private ["PSs9Indexable", "subscript"]
+- !private ["VSs17IndexingGenerator", "Element"]
+- !private ["Si", "IntegerLiteralType"]
+- !private ["Si", "deinit"]
+- !private ["Si", "init"]
+- !private ["VSs5Int16", "deinit"]
+- !private ["VSs5Int32", "deinit"]
+- !private ["VSs5Int64", "deinit"]
+- !private ["VSs4Int8", "deinit"]
+- !private ["PSs21IntegerArithmeticType", "IntegerLiteralType"]
+- !private ["PSs21IntegerArithmeticType", "init"]
+- !private ["PSs25IntegerLiteralConvertible", "IntegerLiteralType"]
+- !private ["PSs25IntegerLiteralConvertible", "init"]
+- !private ["PSs11IntegerType", "IntegerLiteralType"]
+- !private ["PSs11IntegerType", "init"]
+- !private ["PSs18LazyCollectionType", "Generator"]
+- !private ["VSs17LazyMapCollection", "Generator"]
+- !private ["VSs16LazyMapGenerator", "Element"]
+- !private ["PSs16LazySequenceType", "Generator"]
+- !private ["PSs14MirrorPathType", "IntegerLiteralType"]
+- !private ["PSs14MirrorPathType", "init"]
+- !private ["PSo8NSCoding", "UUIDString"]
+- !private ["PSo8NSCoding", "init"]
+- !private ["PSo9NSCopying", "UUIDString"]
+- !private ["PSo9NSCopying", "init"]
+- !private ["PSo16NSMutableCopying", "init"]
+- !private ["PSo20NSNetServiceDelegate", "deviceInfo"]
+- !private ["PSo20NSNetServiceDelegate", "disconnect"]
+- !private ["PSo20NSNetServiceDelegate", "elements"]
+- !private ["PSo20NSNetServiceDelegate", "init"]
+- !private ["PSo20NSNetServiceDelegate", "updateGameControllerWithValue"]
+- !private ["CSo20NSNotificationCenter", "defaultCenter"]
+- !private ["CSo20NSNotificationCenter", "postNotificationName"]
+- ["CSo8NSObject", "AnyObject"]
+- !private ["CSo8NSObject", "DeviceInfo"]
+- !private ["CSo8NSObject", "Int"]
+- !private ["CSo8NSObject", "NSNotificationCenter"]
+- !private ["CSo8NSObject", "NSUUID"]
+- ["CSo8NSObject", "String"]
+- !private ["CSo8NSObject", "UUIDString"]
+- ["CSo8NSObject", "VgcController"]
+- ["CSo8NSObject", "Void"]
+- ["CSo8NSObject", "WCSession"]
+- !private ["CSo8NSObject", "activateSession"]
+- !private ["CSo8NSObject", "defaultCenter"]
+- !private ["CSo8NSObject", "defaultSession"]
+- !private ["CSo8NSObject", "deinit"]
+- !private ["CSo8NSObject", "delegate"]
+- !private ["CSo8NSObject", "deviceInfo"]
+- !private ["CSo8NSObject", "disconnect"]
+- !private ["CSo8NSObject", "dispatch_async"]
+- !private ["CSo8NSObject", "dispatch_get_main_queue"]
+- !private ["CSo8NSObject", "elementFromIdentifier"]
+- !private ["CSo8NSObject", "elements"]
+- ["CSo8NSObject", "init"]
+- !private ["CSo8NSObject", "isSupported"]
+- !private ["CSo8NSObject", "paired"]
+- !private ["CSo8NSObject", "postNotificationName"]
+- !private ["CSo8NSObject", "print"]
+- !private ["CSo8NSObject", "reachable"]
+- ["CSo8NSObject", "scanForWatchController"]
+- ["CSo8NSObject", "session"]
+- ["CSo8NSObject", "sessionReachabilityDidChange"]
+- ["CSo8NSObject", "sessionWatchStateDidChange"]
+- !private ["CSo8NSObject", "updateGameControllerWithValue"]
+- !private ["CSo8NSObject", "value"]
+- !private ["CSo8NSObject", "watchAppInstalled"]
+- ["CSo8NSObject", "watchController"]
+- ["CSo8NSObject", "wcSession"]
+- ["CSo8NSObject", ""]
+- !private ["PSo16NSObjectProtocol", "DeviceInfo"]
+- !private ["PSo16NSObjectProtocol", "Int"]
+- !private ["PSo16NSObjectProtocol", "NSNotificationCenter"]
+- !private ["PSo16NSObjectProtocol", "NSUUID"]
+- !private ["PSo16NSObjectProtocol", "UUIDString"]
+- !private ["PSo16NSObjectProtocol", "VgcController"]
+- !private ["PSo16NSObjectProtocol", "WCSession"]
+- !private ["PSo16NSObjectProtocol", "activateSession"]
+- !private ["PSo16NSObjectProtocol", "defaultCenter"]
+- !private ["PSo16NSObjectProtocol", "defaultSession"]
+- !private ["PSo16NSObjectProtocol", "delegate"]
+- !private ["PSo16NSObjectProtocol", "deviceInfo"]
+- !private ["PSo16NSObjectProtocol", "disconnect"]
+- !private ["PSo16NSObjectProtocol", "dispatch_async"]
+- !private ["PSo16NSObjectProtocol", "dispatch_get_main_queue"]
+- !private ["PSo16NSObjectProtocol", "elementFromIdentifier"]
+- !private ["PSo16NSObjectProtocol", "elements"]
+- ["PSo16NSObjectProtocol", "init"]
+- !private ["PSo16NSObjectProtocol", "isSupported"]
+- !private ["PSo16NSObjectProtocol", "paired"]
+- !private ["PSo16NSObjectProtocol", "postNotificationName"]
+- !private ["PSo16NSObjectProtocol", "print"]
+- !private ["PSo16NSObjectProtocol", "reachable"]
+- ["PSo16NSObjectProtocol", "scanForWatchController"]
+- ["PSo16NSObjectProtocol", "session"]
+- ["PSo16NSObjectProtocol", "sessionReachabilityDidChange"]
+- ["PSo16NSObjectProtocol", "sessionWatchStateDidChange"]
+- !private ["PSo16NSObjectProtocol", "updateGameControllerWithValue"]
+- !private ["PSo16NSObjectProtocol", "value"]
+- !private ["PSo16NSObjectProtocol", "watchAppInstalled"]
+- ["PSo16NSObjectProtocol", "watchController"]
+- ["PSo16NSObjectProtocol", "wcSession"]
+- ["PSo16NSObjectProtocol", ""]
+- !private ["PSo14NSSecureCoding", "UUIDString"]
+- !private ["PSo14NSSecureCoding", "init"]
+- !private ["PSo16NSStreamDelegate", "deviceInfo"]
+- !private ["PSo16NSStreamDelegate", "disconnect"]
+- !private ["PSo16NSStreamDelegate", "elements"]
+- !private ["PSo16NSStreamDelegate", "init"]
+- !private ["PSo16NSStreamDelegate", "updateGameControllerWithValue"]
+- !private ["CSo8NSString", "deinit"]
+- !private ["CSo8NSString", "init"]
+- !private ["CSo6NSUUID", "UUIDString"]
+- !private ["CSo6NSUUID", "init"]
+- !private ["Sq", "deinit"]
+- !private ["PSs16OutputStreamType", "init"]
+- !private ["O21VirtualGameController11ProfileType", "Watch"]
+- !private ["PSs21RandomAccessIndexType", "IntegerLiteralType"]
+- !private ["PSs21RandomAccessIndexType", "init"]
+- !private ["PSs16RawRepresentable", "Watch"]
+- !private ["PSs12SequenceType", "Element"]
+- !private ["PSs12SequenceType", "Generator"]
+- !private ["PSs12SequenceType", "Index"]
+- !private ["PSs12SequenceType", "SubSequence"]
+- !private ["PSs12SequenceType", "_Element"]
+- !private ["PSs12SequenceType", "description"]
+- !private ["PSs12SequenceType", "keys"]
+- !private ["PSs12SequenceType", "subscript"]
+- !private ["PSs17SignedIntegerType", "IntegerLiteralType"]
+- !private ["PSs17SignedIntegerType", "init"]
+- !private ["PSs16SignedNumberType", "IntegerLiteralType"]
+- !private ["PSs16SignedNumberType", "init"]
+- !private ["VSs5Slice", "Generator"]
+- !private ["VSs5Slice", "Index"]
+- !private ["VSs5Slice", "SubSequence"]
+- !private ["VSs5Slice", "_Element"]
+- !private ["PSs10Streamable", "init"]
+- !private ["PSs10Strideable", "IntegerLiteralType"]
+- !private ["PSs10Strideable", "init"]
+- !private ["SS", "init"]
+- !private ["PSs30StringInterpolationConvertible", "init"]
+- !private ["PSs24StringLiteralConvertible", "init"]
+- !private ["Su", "deinit"]
+- !private ["VSs6UInt16", "deinit"]
+- !private ["VSs6UInt32", "deinit"]
+- !private ["VSs6UInt64", "deinit"]
+- !private ["VSs5UInt8", "deinit"]
+- !private ["Sc", "deinit"]
+- !private ["PSs31UnicodeScalarLiteralConvertible", "init"]
+- !private ["C21VirtualGameController13VgcController", "deinit"]
+- !private ["C21VirtualGameController13VgcController", "deviceInfo"]
+- !private ["C21VirtualGameController13VgcController", "disconnect"]
+- !private ["C21VirtualGameController13VgcController", "elements"]
+- !private ["C21VirtualGameController13VgcController", "init"]
+- !private ["C21VirtualGameController13VgcController", "updateGameControllerWithValue"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "deviceInfo"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "disconnect"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "elements"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "init"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "updateGameControllerWithValue"]
+- !private ["CSo9WCSession", "activateSession"]
+- !private ["CSo9WCSession", "defaultSession"]
+- !private ["CSo9WCSession", "deinit"]
+- !private ["CSo9WCSession", "delegate"]
+- !private ["CSo9WCSession", "isSupported"]
+- !private ["CSo9WCSession", "paired"]
+- !private ["CSo9WCSession", "reachable"]
+- !private ["CSo9WCSession", "watchAppInstalled"]
+- !private ["PSo17WCSessionDelegate", "DeviceInfo"]
+- !private ["PSo17WCSessionDelegate", "Int"]
+- !private ["PSo17WCSessionDelegate", "NSNotificationCenter"]
+- !private ["PSo17WCSessionDelegate", "NSUUID"]
+- !private ["PSo17WCSessionDelegate", "VgcController"]
+- !private ["PSo17WCSessionDelegate", "WCSession"]
+- !private ["PSo17WCSessionDelegate", "dispatch_async"]
+- !private ["PSo17WCSessionDelegate", "dispatch_get_main_queue"]
+- !private ["PSo17WCSessionDelegate", "print"]
+- !private ["PSo17WCSessionDelegate", "scanForWatchController"]
+- ["PSo17WCSessionDelegate", "session"]
+- ["PSo17WCSessionDelegate", "sessionReachabilityDidChange"]
+- ["PSo17WCSessionDelegate", "sessionWatchStateDidChange"]
+- !private ["PSo17WCSessionDelegate", "watchController"]
+- !private ["PSo17WCSessionDelegate", "wcSession"]
+- ["PSo17WCSessionDelegate", ""]
+- !private ["PSs33_BuiltinBooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["PSs33_BuiltinIntegerLiteralConvertible", "IntegerLiteralType"]
+- !private ["PSs33_BuiltinIntegerLiteralConvertible", "init"]
+- !private ["PSs32_BuiltinStringLiteralConvertible", "init"]
+- !private ["PSs37_BuiltinUTF16StringLiteralConvertible", "init"]
+- !private ["PSs39_BuiltinUnicodeScalarLiteralConvertible", "init"]
+- !private ["PSs16_CocoaStringType", "init"]
+- !private ["PSs14_Incrementable", "Distance"]
+- !private ["PSs14_Incrementable", "IntegerLiteralType"]
+- !private ["PSs14_Incrementable", "_DisabledRangeIndex"]
+- !private ["PSs14_Incrementable", "init"]
+- !private ["PSs22_IntegerArithmeticType", "IntegerLiteralType"]
+- !private ["PSs22_IntegerArithmeticType", "init"]
+- !private ["PSs12_IntegerType", "IntegerLiteralType"]
+- !private ["PSs12_IntegerType", "init"]
+- !private ["PSs21_ObjectiveCBridgeable", "Generator"]
+- !private ["PSs21_ObjectiveCBridgeable", "Index"]
+- !private ["PSs21_ObjectiveCBridgeable", "IntegerLiteralType"]
+- !private ["PSs21_ObjectiveCBridgeable", "SubSequence"]
+- !private ["PSs21_ObjectiveCBridgeable", "_Element"]
+- !private ["PSs21_ObjectiveCBridgeable", "_getBuiltinLogicValue"]
+- !private ["PSs21_ObjectiveCBridgeable", "description"]
+- !private ["PSs21_ObjectiveCBridgeable", "init"]
+- !private ["PSs21_ObjectiveCBridgeable", "keys"]
+- !private ["PSs21_ObjectiveCBridgeable", "subscript"]
+- !private ["VSs26_OptionalNilComparisonType", "deinit"]
+- !private ["PSs22_RandomAccessAmbiguity", "IntegerLiteralType"]
+- !private ["PSs22_RandomAccessAmbiguity", "init"]
+- !private ["PSs12_Reflectable", "Generator"]
+- !private ["PSs12_Reflectable", "Index"]
+- !private ["PSs12_Reflectable", "IntegerLiteralType"]
+- !private ["PSs12_Reflectable", "SubSequence"]
+- !private ["PSs12_Reflectable", "_Element"]
+- !private ["PSs12_Reflectable", "_getBuiltinLogicValue"]
+- !private ["PSs12_Reflectable", "description"]
+- !private ["PSs12_Reflectable", "init"]
+- !private ["PSs12_Reflectable", "keys"]
+- !private ["PSs12_Reflectable", "subscript"]
+- !private ["PSs18_SignedIntegerType", "IntegerLiteralType"]
+- !private ["PSs18_SignedIntegerType", "init"]
+- !private ["PSs11_Strideable", "IntegerLiteralType"]
+- !private ["PSs11_Strideable", "init"]
+depends-nominal:
+- "PSs9AnyObject"
+- !private "PSs22BidirectionalIndexType"
+- !private "PSs21BitwiseOperationsType"
+- !private "Sb"
+- !private "PSs25BooleanLiteralConvertible"
+- !private "PSs11BooleanType"
+- "PSs11CVarArgType"
+- "C21VirtualGameController21CentralPublisherWatch"
+- !private "VSs9Character"
+- !private "PSs14CollectionType"
+- !private "PSs10Comparable"
+- !private "O21VirtualGameController14ControllerType"
+- !private "PSs28CustomDebugStringConvertible"
+- "PSs23CustomStringConvertible"
+- !private "C21VirtualGameController10DeviceInfo"
+- !private "VSs10Dictionary"
+- !private "VSs15DictionaryIndex"
+- !private "PSs28DictionaryLiteralConvertible"
+- !private "Sd"
+- !private "C21VirtualGameController7Element"
+- !private "C21VirtualGameController8Elements"
+- "PSs9Equatable"
+- !private "PSs41ExtendedGraphemeClusterLiteralConvertible"
+- !private "Sf"
+- !private "PSs16ForwardIndexType"
+- !private "PSs13GeneratorType"
+- "PSs8Hashable"
+- !private "SQ"
+- !private "PSs9Indexable"
+- !private "VSs17IndexingGenerator"
+- !private "Si"
+- !private "VSs5Int16"
+- !private "VSs5Int32"
+- !private "VSs5Int64"
+- !private "VSs4Int8"
+- !private "PSs21IntegerArithmeticType"
+- !private "PSs25IntegerLiteralConvertible"
+- !private "PSs11IntegerType"
+- !private "PSs18LazyCollectionType"
+- !private "VSs17LazyMapCollection"
+- !private "VSs16LazyMapGenerator"
+- !private "PSs16LazySequenceType"
+- !private "PSs14MirrorPathType"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo16NSMutableCopying"
+- !private "PSo20NSNetServiceDelegate"
+- !private "CSo20NSNotificationCenter"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- !private "PSo14NSSecureCoding"
+- !private "PSo16NSStreamDelegate"
+- !private "CSo8NSString"
+- !private "CSo6NSUUID"
+- !private "Sq"
+- !private "PSs16OutputStreamType"
+- !private "O21VirtualGameController11ProfileType"
+- !private "PSs21RandomAccessIndexType"
+- !private "PSs16RawRepresentable"
+- !private "PSs12SequenceType"
+- !private "PSs17SignedIntegerType"
+- !private "PSs16SignedNumberType"
+- !private "VSs5Slice"
+- !private "PSs10Streamable"
+- !private "PSs10Strideable"
+- !private "SS"
+- !private "PSs30StringInterpolationConvertible"
+- !private "PSs24StringLiteralConvertible"
+- !private "Su"
+- !private "VSs6UInt16"
+- !private "VSs6UInt32"
+- !private "VSs6UInt64"
+- !private "VSs5UInt8"
+- !private "Sc"
+- !private "PSs31UnicodeScalarLiteralConvertible"
+- !private "C21VirtualGameController13VgcController"
+- !private "P21VirtualGameController19VgcStreamerDelegate"
+- !private "CSo9WCSession"
+- "PSo17WCSessionDelegate"
+- !private "PSs33_BuiltinBooleanLiteralConvertible"
+- !private "PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible"
+- !private "PSs33_BuiltinIntegerLiteralConvertible"
+- !private "PSs32_BuiltinStringLiteralConvertible"
+- !private "PSs37_BuiltinUTF16StringLiteralConvertible"
+- !private "PSs39_BuiltinUnicodeScalarLiteralConvertible"
+- !private "PSs16_CocoaStringType"
+- !private "PSs14_Incrementable"
+- !private "PSs22_IntegerArithmeticType"
+- !private "PSs12_IntegerType"
+- !private "PSs21_ObjectiveCBridgeable"
+- !private "VSs26_OptionalNilComparisonType"
+- !private "PSs22_RandomAccessAmbiguity"
+- !private "PSs12_Reflectable"
+- !private "PSs18_SignedIntegerType"
+- !private "PSs11_Strideable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreImage.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreBluetooth.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/WatchConnectivity.swiftmodule"
+interface-hash: "65c4ec35bc1413548b0ef24a7b6b98f4"

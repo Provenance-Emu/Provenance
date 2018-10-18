@@ -1,0 +1,523 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "VgcCentralPublisher"
+provides-nominal:
+- "C21VirtualGameController19VgcCentralPublisher"
+provides-member:
+- ["C21VirtualGameController19VgcCentralPublisher", ""]
+provides-dynamic-lookup:
+- "localService"
+- "netServiceDidStop"
+- "netServiceDidPublish"
+- "netService"
+- "netService"
+- "netService"
+- "netService"
+- "registeredName"
+- "netServiceDidResolveAddress"
+- "unpublishService"
+- "centralPublisherWatch"
+- "netServiceWillResolve"
+- "netServiceWillPublish"
+- "haveConnectionToPeripheral"
+- "publishService"
+depends-top-level:
+- !private "deviceIsTypeOfBridge"
+- "VgcCentralPublisher"
+- "NSNumber"
+- !private "+"
+- !private "print"
+- "NSObject"
+- "CentralPublisherWatch"
+- "NSData"
+- !private "StringLiteralType"
+- "NSStreamDelegate"
+- "Int"
+- "NSNetServiceDelegate"
+- "String"
+- "Bool"
+- "NSOutputStream"
+- "NSNetService"
+- "NSInputStream"
+- !private "VgcController"
+- !private "BooleanLiteralType"
+- !private "VgcManager"
+depends-member:
+- !private ["PSs9AnyObject", "CentralPublisherWatch"]
+- !private ["PSs9AnyObject", "NSNetService"]
+- !private ["PSs9AnyObject", "VgcController"]
+- !private ["PSs9AnyObject", "VgcManager"]
+- !private ["PSs9AnyObject", "bonjourTypeBridge"]
+- !private ["PSs9AnyObject", "bonjourTypeCentral"]
+- !private ["PSs9AnyObject", "centralPublisher"]
+- ["PSs9AnyObject", "centralPublisherWatch"]
+- !private ["PSs9AnyObject", "centralServiceName"]
+- !private ["PSs9AnyObject", "delegate"]
+- !private ["PSs9AnyObject", "deviceIsTypeOfBridge"]
+- !private ["PSs9AnyObject", "domain"]
+- ["PSs9AnyObject", "haveConnectionToPeripheral"]
+- !private ["PSs9AnyObject", "includesPeerToPeer"]
+- ["PSs9AnyObject", "init"]
+- ["PSs9AnyObject", "localService"]
+- !private ["PSs9AnyObject", "name"]
+- ["PSs9AnyObject", "netService"]
+- ["PSs9AnyObject", "netServiceDidPublish"]
+- ["PSs9AnyObject", "netServiceDidResolveAddress"]
+- ["PSs9AnyObject", "netServiceDidStop"]
+- ["PSs9AnyObject", "netServiceWillPublish"]
+- ["PSs9AnyObject", "netServiceWillResolve"]
+- !private ["PSs9AnyObject", "print"]
+- ["PSs9AnyObject", "publishService"]
+- !private ["PSs9AnyObject", "publishWithOptions"]
+- ["PSs9AnyObject", "registeredName"]
+- !private ["PSs9AnyObject", "scanForWatchController"]
+- !private ["PSs9AnyObject", "setupNetworkService"]
+- !private ["PSs9AnyObject", "stop"]
+- ["PSs9AnyObject", "stream"]
+- ["PSs9AnyObject", "streamOpenCount"]
+- !private ["PSs9AnyObject", "type"]
+- ["PSs9AnyObject", "unpublishService"]
+- ["PSs9AnyObject", ""]
+- !private ["PSs23ArrayLiteralConvertible", "ListenForConnections"]
+- !private ["Sb", "_getBuiltinLogicValue"]
+- !private ["Sb", "deinit"]
+- !private ["PSs25BooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs11BooleanType", "_getBuiltinLogicValue"]
+- !private ["PSs11CVarArgType", "CentralPublisherWatch"]
+- !private ["PSs11CVarArgType", "NSNetService"]
+- !private ["PSs11CVarArgType", "VgcController"]
+- !private ["PSs11CVarArgType", "VgcManager"]
+- !private ["PSs11CVarArgType", "bonjourTypeBridge"]
+- !private ["PSs11CVarArgType", "bonjourTypeCentral"]
+- !private ["PSs11CVarArgType", "centralPublisher"]
+- ["PSs11CVarArgType", "centralPublisherWatch"]
+- !private ["PSs11CVarArgType", "centralServiceName"]
+- !private ["PSs11CVarArgType", "delegate"]
+- !private ["PSs11CVarArgType", "deviceIsTypeOfBridge"]
+- !private ["PSs11CVarArgType", "domain"]
+- ["PSs11CVarArgType", "haveConnectionToPeripheral"]
+- !private ["PSs11CVarArgType", "includesPeerToPeer"]
+- ["PSs11CVarArgType", "init"]
+- ["PSs11CVarArgType", "localService"]
+- !private ["PSs11CVarArgType", "name"]
+- ["PSs11CVarArgType", "netService"]
+- ["PSs11CVarArgType", "netServiceDidPublish"]
+- ["PSs11CVarArgType", "netServiceDidResolveAddress"]
+- ["PSs11CVarArgType", "netServiceDidStop"]
+- ["PSs11CVarArgType", "netServiceWillPublish"]
+- ["PSs11CVarArgType", "netServiceWillResolve"]
+- !private ["PSs11CVarArgType", "print"]
+- ["PSs11CVarArgType", "publishService"]
+- !private ["PSs11CVarArgType", "publishWithOptions"]
+- ["PSs11CVarArgType", "registeredName"]
+- !private ["PSs11CVarArgType", "scanForWatchController"]
+- !private ["PSs11CVarArgType", "setupNetworkService"]
+- !private ["PSs11CVarArgType", "stop"]
+- ["PSs11CVarArgType", "stream"]
+- ["PSs11CVarArgType", "streamOpenCount"]
+- !private ["PSs11CVarArgType", "type"]
+- ["PSs11CVarArgType", "unpublishService"]
+- ["PSs11CVarArgType", ""]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "init"]
+- !private ["C21VirtualGameController21CentralPublisherWatch", "scanForWatchController"]
+- !private ["VSs9Character", "deinit"]
+- !private ["PSs10Comparable", "init"]
+- !private ["PSs28CustomDebugStringConvertible", "init"]
+- !private ["PSs23CustomStringConvertible", "CentralPublisherWatch"]
+- !private ["PSs23CustomStringConvertible", "NSNetService"]
+- !private ["PSs23CustomStringConvertible", "VgcController"]
+- !private ["PSs23CustomStringConvertible", "VgcManager"]
+- !private ["PSs23CustomStringConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs23CustomStringConvertible", "bonjourTypeBridge"]
+- !private ["PSs23CustomStringConvertible", "bonjourTypeCentral"]
+- !private ["PSs23CustomStringConvertible", "centralPublisher"]
+- ["PSs23CustomStringConvertible", "centralPublisherWatch"]
+- !private ["PSs23CustomStringConvertible", "centralServiceName"]
+- !private ["PSs23CustomStringConvertible", "delegate"]
+- !private ["PSs23CustomStringConvertible", "deviceIsTypeOfBridge"]
+- !private ["PSs23CustomStringConvertible", "domain"]
+- ["PSs23CustomStringConvertible", "haveConnectionToPeripheral"]
+- !private ["PSs23CustomStringConvertible", "includesPeerToPeer"]
+- ["PSs23CustomStringConvertible", "init"]
+- ["PSs23CustomStringConvertible", "localService"]
+- !private ["PSs23CustomStringConvertible", "name"]
+- ["PSs23CustomStringConvertible", "netService"]
+- ["PSs23CustomStringConvertible", "netServiceDidPublish"]
+- ["PSs23CustomStringConvertible", "netServiceDidResolveAddress"]
+- ["PSs23CustomStringConvertible", "netServiceDidStop"]
+- ["PSs23CustomStringConvertible", "netServiceWillPublish"]
+- ["PSs23CustomStringConvertible", "netServiceWillResolve"]
+- !private ["PSs23CustomStringConvertible", "print"]
+- ["PSs23CustomStringConvertible", "publishService"]
+- !private ["PSs23CustomStringConvertible", "publishWithOptions"]
+- ["PSs23CustomStringConvertible", "registeredName"]
+- !private ["PSs23CustomStringConvertible", "scanForWatchController"]
+- !private ["PSs23CustomStringConvertible", "setupNetworkService"]
+- !private ["PSs23CustomStringConvertible", "stop"]
+- ["PSs23CustomStringConvertible", "stream"]
+- ["PSs23CustomStringConvertible", "streamOpenCount"]
+- !private ["PSs23CustomStringConvertible", "type"]
+- ["PSs23CustomStringConvertible", "unpublishService"]
+- ["PSs23CustomStringConvertible", ""]
+- !private ["Sd", "deinit"]
+- !private ["PSs9Equatable", "CentralPublisherWatch"]
+- !private ["PSs9Equatable", "ListenForConnections"]
+- !private ["PSs9Equatable", "NSNetService"]
+- !private ["PSs9Equatable", "VgcController"]
+- !private ["PSs9Equatable", "VgcManager"]
+- !private ["PSs9Equatable", "_getBuiltinLogicValue"]
+- !private ["PSs9Equatable", "bonjourTypeBridge"]
+- !private ["PSs9Equatable", "bonjourTypeCentral"]
+- !private ["PSs9Equatable", "centralPublisher"]
+- ["PSs9Equatable", "centralPublisherWatch"]
+- !private ["PSs9Equatable", "centralServiceName"]
+- !private ["PSs9Equatable", "delegate"]
+- !private ["PSs9Equatable", "deviceIsTypeOfBridge"]
+- !private ["PSs9Equatable", "domain"]
+- ["PSs9Equatable", "haveConnectionToPeripheral"]
+- !private ["PSs9Equatable", "includesPeerToPeer"]
+- ["PSs9Equatable", "init"]
+- ["PSs9Equatable", "localService"]
+- !private ["PSs9Equatable", "name"]
+- ["PSs9Equatable", "netService"]
+- ["PSs9Equatable", "netServiceDidPublish"]
+- ["PSs9Equatable", "netServiceDidResolveAddress"]
+- ["PSs9Equatable", "netServiceDidStop"]
+- ["PSs9Equatable", "netServiceWillPublish"]
+- ["PSs9Equatable", "netServiceWillResolve"]
+- !private ["PSs9Equatable", "print"]
+- ["PSs9Equatable", "publishService"]
+- !private ["PSs9Equatable", "publishWithOptions"]
+- ["PSs9Equatable", "registeredName"]
+- !private ["PSs9Equatable", "scanForWatchController"]
+- !private ["PSs9Equatable", "setupNetworkService"]
+- !private ["PSs9Equatable", "stop"]
+- ["PSs9Equatable", "stream"]
+- ["PSs9Equatable", "streamOpenCount"]
+- !private ["PSs9Equatable", "type"]
+- ["PSs9Equatable", "unpublishService"]
+- ["PSs9Equatable", ""]
+- !private ["PSs41ExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["Sf", "deinit"]
+- !private ["PSs8Hashable", "CentralPublisherWatch"]
+- !private ["PSs8Hashable", "NSNetService"]
+- !private ["PSs8Hashable", "VgcController"]
+- !private ["PSs8Hashable", "VgcManager"]
+- !private ["PSs8Hashable", "_getBuiltinLogicValue"]
+- !private ["PSs8Hashable", "bonjourTypeBridge"]
+- !private ["PSs8Hashable", "bonjourTypeCentral"]
+- !private ["PSs8Hashable", "centralPublisher"]
+- ["PSs8Hashable", "centralPublisherWatch"]
+- !private ["PSs8Hashable", "centralServiceName"]
+- !private ["PSs8Hashable", "delegate"]
+- !private ["PSs8Hashable", "deviceIsTypeOfBridge"]
+- !private ["PSs8Hashable", "domain"]
+- ["PSs8Hashable", "haveConnectionToPeripheral"]
+- !private ["PSs8Hashable", "includesPeerToPeer"]
+- ["PSs8Hashable", "init"]
+- ["PSs8Hashable", "localService"]
+- !private ["PSs8Hashable", "name"]
+- ["PSs8Hashable", "netService"]
+- ["PSs8Hashable", "netServiceDidPublish"]
+- ["PSs8Hashable", "netServiceDidResolveAddress"]
+- ["PSs8Hashable", "netServiceDidStop"]
+- ["PSs8Hashable", "netServiceWillPublish"]
+- ["PSs8Hashable", "netServiceWillResolve"]
+- !private ["PSs8Hashable", "print"]
+- ["PSs8Hashable", "publishService"]
+- !private ["PSs8Hashable", "publishWithOptions"]
+- ["PSs8Hashable", "registeredName"]
+- !private ["PSs8Hashable", "scanForWatchController"]
+- !private ["PSs8Hashable", "setupNetworkService"]
+- !private ["PSs8Hashable", "stop"]
+- ["PSs8Hashable", "stream"]
+- ["PSs8Hashable", "streamOpenCount"]
+- !private ["PSs8Hashable", "type"]
+- ["PSs8Hashable", "unpublishService"]
+- ["PSs8Hashable", ""]
+- !private ["Si", "deinit"]
+- !private ["VSs5Int16", "deinit"]
+- !private ["VSs5Int32", "deinit"]
+- !private ["VSs5Int64", "deinit"]
+- !private ["VSs4Int8", "deinit"]
+- !private ["PSs14MirrorPathType", "init"]
+- !private ["PSo8NSCoding", "init"]
+- !private ["PSo9NSCopying", "init"]
+- !private ["PSo16NSMutableCopying", "init"]
+- !private ["CSo12NSNetService", "delegate"]
+- !private ["CSo12NSNetService", "domain"]
+- !private ["CSo12NSNetService", "includesPeerToPeer"]
+- !private ["CSo12NSNetService", "init"]
+- !private ["CSo12NSNetService", "name"]
+- !private ["CSo12NSNetService", "publishWithOptions"]
+- !private ["CSo12NSNetService", "stop"]
+- !private ["CSo12NSNetService", "type"]
+- !private ["PSo20NSNetServiceDelegate", "CentralPublisherWatch"]
+- !private ["PSo20NSNetServiceDelegate", "NSNetService"]
+- !private ["PSo20NSNetServiceDelegate", "VgcController"]
+- !private ["PSo20NSNetServiceDelegate", "VgcManager"]
+- !private ["PSo20NSNetServiceDelegate", "centralPublisher"]
+- !private ["PSo20NSNetServiceDelegate", "centralPublisherWatch"]
+- !private ["PSo20NSNetServiceDelegate", "deviceIsTypeOfBridge"]
+- !private ["PSo20NSNetServiceDelegate", "haveConnectionToPeripheral"]
+- !private ["PSo20NSNetServiceDelegate", "init"]
+- !private ["PSo20NSNetServiceDelegate", "localService"]
+- ["PSo20NSNetServiceDelegate", "netService"]
+- ["PSo20NSNetServiceDelegate", "netServiceDidPublish"]
+- ["PSo20NSNetServiceDelegate", "netServiceDidResolveAddress"]
+- ["PSo20NSNetServiceDelegate", "netServiceDidStop"]
+- ["PSo20NSNetServiceDelegate", "netServiceWillPublish"]
+- ["PSo20NSNetServiceDelegate", "netServiceWillResolve"]
+- !private ["PSo20NSNetServiceDelegate", "print"]
+- !private ["PSo20NSNetServiceDelegate", "publishService"]
+- !private ["PSo20NSNetServiceDelegate", "registeredName"]
+- !private ["PSo20NSNetServiceDelegate", "setupNetworkService"]
+- ["PSo20NSNetServiceDelegate", "stream"]
+- !private ["PSo20NSNetServiceDelegate", "unpublishService"]
+- ["PSo20NSNetServiceDelegate", ""]
+- !private ["VSC19NSNetServiceOptions", "ListenForConnections"]
+- ["CSo8NSObject", "Bool"]
+- ["CSo8NSObject", "CentralPublisherWatch"]
+- ["CSo8NSObject", "Int"]
+- ["CSo8NSObject", "NSData"]
+- ["CSo8NSObject", "NSInputStream"]
+- ["CSo8NSObject", "NSNetService"]
+- ["CSo8NSObject", "NSNumber"]
+- ["CSo8NSObject", "NSOutputStream"]
+- ["CSo8NSObject", "String"]
+- !private ["CSo8NSObject", "VgcController"]
+- !private ["CSo8NSObject", "VgcManager"]
+- !private ["CSo8NSObject", "bonjourTypeBridge"]
+- !private ["CSo8NSObject", "bonjourTypeCentral"]
+- !private ["CSo8NSObject", "centralPublisher"]
+- ["CSo8NSObject", "centralPublisherWatch"]
+- !private ["CSo8NSObject", "centralServiceName"]
+- !private ["CSo8NSObject", "delegate"]
+- !private ["CSo8NSObject", "deviceIsTypeOfBridge"]
+- !private ["CSo8NSObject", "domain"]
+- ["CSo8NSObject", "haveConnectionToPeripheral"]
+- !private ["CSo8NSObject", "includesPeerToPeer"]
+- ["CSo8NSObject", "init"]
+- ["CSo8NSObject", "localService"]
+- !private ["CSo8NSObject", "name"]
+- ["CSo8NSObject", "netService"]
+- ["CSo8NSObject", "netServiceDidPublish"]
+- ["CSo8NSObject", "netServiceDidResolveAddress"]
+- ["CSo8NSObject", "netServiceDidStop"]
+- ["CSo8NSObject", "netServiceWillPublish"]
+- ["CSo8NSObject", "netServiceWillResolve"]
+- !private ["CSo8NSObject", "print"]
+- ["CSo8NSObject", "publishService"]
+- !private ["CSo8NSObject", "publishWithOptions"]
+- ["CSo8NSObject", "registeredName"]
+- !private ["CSo8NSObject", "scanForWatchController"]
+- !private ["CSo8NSObject", "setupNetworkService"]
+- !private ["CSo8NSObject", "stop"]
+- ["CSo8NSObject", "stream"]
+- ["CSo8NSObject", "streamOpenCount"]
+- !private ["CSo8NSObject", "type"]
+- ["CSo8NSObject", "unpublishService"]
+- ["CSo8NSObject", ""]
+- !private ["PSo16NSObjectProtocol", "CentralPublisherWatch"]
+- !private ["PSo16NSObjectProtocol", "NSNetService"]
+- !private ["PSo16NSObjectProtocol", "VgcController"]
+- !private ["PSo16NSObjectProtocol", "VgcManager"]
+- !private ["PSo16NSObjectProtocol", "bonjourTypeBridge"]
+- !private ["PSo16NSObjectProtocol", "bonjourTypeCentral"]
+- !private ["PSo16NSObjectProtocol", "centralPublisher"]
+- ["PSo16NSObjectProtocol", "centralPublisherWatch"]
+- !private ["PSo16NSObjectProtocol", "centralServiceName"]
+- !private ["PSo16NSObjectProtocol", "delegate"]
+- !private ["PSo16NSObjectProtocol", "deviceIsTypeOfBridge"]
+- !private ["PSo16NSObjectProtocol", "domain"]
+- ["PSo16NSObjectProtocol", "haveConnectionToPeripheral"]
+- !private ["PSo16NSObjectProtocol", "includesPeerToPeer"]
+- ["PSo16NSObjectProtocol", "init"]
+- ["PSo16NSObjectProtocol", "localService"]
+- !private ["PSo16NSObjectProtocol", "name"]
+- ["PSo16NSObjectProtocol", "netService"]
+- ["PSo16NSObjectProtocol", "netServiceDidPublish"]
+- ["PSo16NSObjectProtocol", "netServiceDidResolveAddress"]
+- ["PSo16NSObjectProtocol", "netServiceDidStop"]
+- ["PSo16NSObjectProtocol", "netServiceWillPublish"]
+- ["PSo16NSObjectProtocol", "netServiceWillResolve"]
+- !private ["PSo16NSObjectProtocol", "print"]
+- ["PSo16NSObjectProtocol", "publishService"]
+- !private ["PSo16NSObjectProtocol", "publishWithOptions"]
+- ["PSo16NSObjectProtocol", "registeredName"]
+- !private ["PSo16NSObjectProtocol", "scanForWatchController"]
+- !private ["PSo16NSObjectProtocol", "setupNetworkService"]
+- !private ["PSo16NSObjectProtocol", "stop"]
+- ["PSo16NSObjectProtocol", "stream"]
+- ["PSo16NSObjectProtocol", "streamOpenCount"]
+- !private ["PSo16NSObjectProtocol", "type"]
+- ["PSo16NSObjectProtocol", "unpublishService"]
+- ["PSo16NSObjectProtocol", ""]
+- !private ["PSo14NSSecureCoding", "init"]
+- !private ["PSo16NSStreamDelegate", "CentralPublisherWatch"]
+- !private ["PSo16NSStreamDelegate", "NSNetService"]
+- !private ["PSo16NSStreamDelegate", "VgcController"]
+- !private ["PSo16NSStreamDelegate", "VgcManager"]
+- !private ["PSo16NSStreamDelegate", "centralPublisher"]
+- !private ["PSo16NSStreamDelegate", "centralPublisherWatch"]
+- !private ["PSo16NSStreamDelegate", "deviceIsTypeOfBridge"]
+- !private ["PSo16NSStreamDelegate", "haveConnectionToPeripheral"]
+- !private ["PSo16NSStreamDelegate", "init"]
+- !private ["PSo16NSStreamDelegate", "localService"]
+- ["PSo16NSStreamDelegate", "netService"]
+- ["PSo16NSStreamDelegate", "netServiceDidPublish"]
+- ["PSo16NSStreamDelegate", "netServiceDidResolveAddress"]
+- ["PSo16NSStreamDelegate", "netServiceDidStop"]
+- ["PSo16NSStreamDelegate", "netServiceWillPublish"]
+- ["PSo16NSStreamDelegate", "netServiceWillResolve"]
+- !private ["PSo16NSStreamDelegate", "print"]
+- !private ["PSo16NSStreamDelegate", "publishService"]
+- !private ["PSo16NSStreamDelegate", "registeredName"]
+- !private ["PSo16NSStreamDelegate", "setupNetworkService"]
+- ["PSo16NSStreamDelegate", "stream"]
+- !private ["PSo16NSStreamDelegate", "unpublishService"]
+- ["PSo16NSStreamDelegate", ""]
+- !private ["CSo8NSString", "deinit"]
+- !private ["CSo8NSString", "init"]
+- !private ["PSs13OptionSetType", "ListenForConnections"]
+- !private ["PSs16OutputStreamType", "init"]
+- !private ["PSs16RawRepresentable", "ListenForConnections"]
+- !private ["PSs14SetAlgebraType", "ListenForConnections"]
+- !private ["PSs10Streamable", "init"]
+- !private ["SS", "deinit"]
+- !private ["SS", "init"]
+- !private ["PSs30StringInterpolationConvertible", "init"]
+- !private ["PSs24StringLiteralConvertible", "init"]
+- !private ["Su", "deinit"]
+- !private ["VSs6UInt16", "deinit"]
+- !private ["VSs6UInt32", "deinit"]
+- !private ["VSs6UInt64", "deinit"]
+- !private ["VSs5UInt8", "deinit"]
+- !private ["Sc", "deinit"]
+- !private ["PSs31UnicodeScalarLiteralConvertible", "init"]
+- ["C21VirtualGameController19VgcCentralPublisher", "Bool"]
+- ["C21VirtualGameController19VgcCentralPublisher", "CentralPublisherWatch"]
+- ["C21VirtualGameController19VgcCentralPublisher", "Int"]
+- ["C21VirtualGameController19VgcCentralPublisher", "NSData"]
+- ["C21VirtualGameController19VgcCentralPublisher", "NSInputStream"]
+- ["C21VirtualGameController19VgcCentralPublisher", "NSNetService"]
+- ["C21VirtualGameController19VgcCentralPublisher", "NSNumber"]
+- ["C21VirtualGameController19VgcCentralPublisher", "NSOutputStream"]
+- ["C21VirtualGameController19VgcCentralPublisher", "String"]
+- !private ["C21VirtualGameController19VgcCentralPublisher", "VgcController"]
+- !private ["C21VirtualGameController19VgcCentralPublisher", "VgcManager"]
+- ["C21VirtualGameController19VgcCentralPublisher", "centralPublisherWatch"]
+- ["C21VirtualGameController19VgcCentralPublisher", "deinit"]
+- !private ["C21VirtualGameController19VgcCentralPublisher", "deviceIsTypeOfBridge"]
+- ["C21VirtualGameController19VgcCentralPublisher", "haveConnectionToPeripheral"]
+- ["C21VirtualGameController19VgcCentralPublisher", "init"]
+- ["C21VirtualGameController19VgcCentralPublisher", "localService"]
+- ["C21VirtualGameController19VgcCentralPublisher", "netService"]
+- ["C21VirtualGameController19VgcCentralPublisher", "netServiceDidPublish"]
+- ["C21VirtualGameController19VgcCentralPublisher", "netServiceDidResolveAddress"]
+- ["C21VirtualGameController19VgcCentralPublisher", "netServiceDidStop"]
+- ["C21VirtualGameController19VgcCentralPublisher", "netServiceWillPublish"]
+- ["C21VirtualGameController19VgcCentralPublisher", "netServiceWillResolve"]
+- !private ["C21VirtualGameController19VgcCentralPublisher", "print"]
+- ["C21VirtualGameController19VgcCentralPublisher", "publishService"]
+- ["C21VirtualGameController19VgcCentralPublisher", "registeredName"]
+- ["C21VirtualGameController19VgcCentralPublisher", "stream"]
+- ["C21VirtualGameController19VgcCentralPublisher", "streamOpenCount"]
+- ["C21VirtualGameController19VgcCentralPublisher", "unpublishService"]
+- !private ["C21VirtualGameController13VgcController", "centralPublisher"]
+- !private ["C21VirtualGameController13VgcController", "deinit"]
+- !private ["C21VirtualGameController13VgcController", "init"]
+- !private ["C21VirtualGameController13VgcController", "setupNetworkService"]
+- !private ["C21VirtualGameController10VgcManager", "bonjourTypeBridge"]
+- !private ["C21VirtualGameController10VgcManager", "bonjourTypeCentral"]
+- !private ["C21VirtualGameController10VgcManager", "centralServiceName"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "centralPublisher"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "init"]
+- !private ["P21VirtualGameController19VgcStreamerDelegate", "setupNetworkService"]
+- !private ["PSo17WCSessionDelegate", "init"]
+- !private ["PSo17WCSessionDelegate", "scanForWatchController"]
+- !private ["PSs33_BuiltinBooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible", "init"]
+- !private ["PSs32_BuiltinStringLiteralConvertible", "init"]
+- !private ["PSs37_BuiltinUTF16StringLiteralConvertible", "init"]
+- !private ["PSs39_BuiltinUnicodeScalarLiteralConvertible", "init"]
+- !private ["PSs16_CocoaStringType", "init"]
+- !private ["PSs21_ObjectiveCBridgeable", "_getBuiltinLogicValue"]
+- !private ["PSs21_ObjectiveCBridgeable", "init"]
+- !private ["PSs12_Reflectable", "_getBuiltinLogicValue"]
+- !private ["PSs12_Reflectable", "init"]
+depends-nominal:
+- "PSs9AnyObject"
+- !private "PSs23ArrayLiteralConvertible"
+- !private "Sb"
+- !private "PSs25BooleanLiteralConvertible"
+- !private "PSs11BooleanType"
+- "PSs11CVarArgType"
+- !private "C21VirtualGameController21CentralPublisherWatch"
+- !private "VSs9Character"
+- !private "PSs10Comparable"
+- !private "PSs28CustomDebugStringConvertible"
+- "PSs23CustomStringConvertible"
+- !private "Sd"
+- "PSs9Equatable"
+- !private "PSs41ExtendedGraphemeClusterLiteralConvertible"
+- !private "Sf"
+- "PSs8Hashable"
+- !private "Si"
+- !private "VSs5Int16"
+- !private "VSs5Int32"
+- !private "VSs5Int64"
+- !private "VSs4Int8"
+- !private "PSs14MirrorPathType"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo16NSMutableCopying"
+- !private "CSo12NSNetService"
+- "PSo20NSNetServiceDelegate"
+- !private "VSC19NSNetServiceOptions"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- !private "PSo14NSSecureCoding"
+- "PSo16NSStreamDelegate"
+- !private "CSo8NSString"
+- !private "PSs13OptionSetType"
+- !private "PSs16OutputStreamType"
+- !private "PSs16RawRepresentable"
+- !private "PSs14SetAlgebraType"
+- !private "PSs10Streamable"
+- !private "SS"
+- !private "PSs30StringInterpolationConvertible"
+- !private "PSs24StringLiteralConvertible"
+- !private "Su"
+- !private "VSs6UInt16"
+- !private "VSs6UInt32"
+- !private "VSs6UInt64"
+- !private "VSs5UInt8"
+- !private "Sc"
+- !private "PSs31UnicodeScalarLiteralConvertible"
+- "C21VirtualGameController19VgcCentralPublisher"
+- !private "C21VirtualGameController13VgcController"
+- !private "C21VirtualGameController10VgcManager"
+- !private "P21VirtualGameController19VgcStreamerDelegate"
+- !private "PSo17WCSessionDelegate"
+- !private "PSs33_BuiltinBooleanLiteralConvertible"
+- !private "PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible"
+- !private "PSs32_BuiltinStringLiteralConvertible"
+- !private "PSs37_BuiltinUTF16StringLiteralConvertible"
+- !private "PSs39_BuiltinUnicodeScalarLiteralConvertible"
+- !private "PSs16_CocoaStringType"
+- !private "PSs21_ObjectiveCBridgeable"
+- !private "PSs12_Reflectable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreImage.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreBluetooth.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/WatchConnectivity.swiftmodule"
+interface-hash: "6cdc566efa2c7b85dcfb68a1692c4b9b"

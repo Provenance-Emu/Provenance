@@ -1,0 +1,8 @@
+version: "Apple Swift version 2.1 (swiftlang-700.1.101.6 clang-700.1.76)"
+options: "32d419ecf1591716b048396185ea0cda"
+build_time: [500350389, 257282000]
+inputs:
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcManager.swift": [500289599, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcWatchConnectivity.swift": [500022810, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcMotion.swift": [500025120, 0]
+  "/Users/robreuss/Documents/Development/VirtualGameController/Source/Framework/VgcElements.swift": [500289599, 0]

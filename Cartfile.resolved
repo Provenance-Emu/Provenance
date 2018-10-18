@@ -1,4 +1,5 @@
 github "bcylin/QuickTableViewController" "v1.0.0"
 github "bitstadium/HockeySDK-iOS" "5.1.4"
 github "bitstadium/HockeySDK-tvOS" "5.1.0"
+github "pelauimagineering/VirtualGameController" "2e63e5c75baf44c846828d1a5f0d058c32b4e073"
 github "xmartlabs/XLActionController" "4.1.0"

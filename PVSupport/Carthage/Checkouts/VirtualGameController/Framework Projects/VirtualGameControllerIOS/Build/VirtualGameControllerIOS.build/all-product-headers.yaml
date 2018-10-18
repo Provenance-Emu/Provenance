@@ -1,0 +1,33 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Users/robreuss/Documents/Development/VirtualGameController/Framework Projects/VirtualGameControllerIOS/Build/Debug-iphoneos/VirtualGameController.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "VirtualGameController-Swift.h",
+          'external-contents': "/Users/robreuss/Documents/Development/VirtualGameController/Framework Projects/VirtualGameControllerIOS/Build/Debug-iphoneos/VirtualGameController.framework/Headers/VirtualGameController-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "VirtualGameControllerIOS.h",
+          'external-contents': "/Users/robreuss/Documents/Development/VirtualGameController/Framework Projects/VirtualGameControllerIOS/VirtualGameControllerIOS/VirtualGameControllerIOS.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/robreuss/Documents/Development/VirtualGameController/Framework Projects/VirtualGameControllerIOS/Build/Debug-iphoneos/VirtualGameController.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/robreuss/Documents/Development/VirtualGameController/Framework Projects/VirtualGameControllerIOS/Build/VirtualGameControllerIOS.build/Debug-iphoneos/VirtualGameControllerIOS.build/module.modulemap"
+        }
+      ]
+    }
+  ]
+}

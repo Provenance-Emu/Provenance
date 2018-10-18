@@ -1,0 +1,10 @@
+framework module VirtualGameControllerWatchOS {
+  umbrella header "VirtualGameControllerWatchOS.h"
+
+  export *
+  module * { export * }
+}
+
+module VirtualGameControllerWatchOS.Swift {
+    header "VirtualGameControllerWatchOS-Swift.h"
+}

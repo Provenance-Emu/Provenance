@@ -1,0 +1,462 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "IcadeControllerMode"
+- "VgcIcadePeripheral"
+- "standardDpad"
+- "set09E1E2ABXYButtons"
+- "set09E1E2ShouldersAndTriggers"
+- "set5678ShouldersAndTriggers"
+- "set5678ABXYButtons"
+provides-nominal:
+- "O21VirtualGameController19IcadeControllerMode"
+- "C21VirtualGameController18VgcIcadePeripheral"
+provides-member:
+- ["O21VirtualGameController19IcadeControllerMode", ""]
+- ["C21VirtualGameController18VgcIcadePeripheral", ""]
+provides-dynamic-lookup:
+- "peripheralManager"
+depends-top-level:
+- !private "UnicodeScalarType"
+- "set09E1E2ShouldersAndTriggers"
+- "set5678ShouldersAndTriggers"
+- "Elements"
+- "VgcManager"
+- "set09E1E2ABXYButtons"
+- "set5678ABXYButtons"
+- "Element"
+- "VgcIcadePeripheral"
+- "standardDpad"
+- "Int"
+- "IcadeControllerMode"
+- !private "!="
+- "String"
+- "NSObject"
+- !private "StringLiteralType"
+- !private "~="
+- "=="
+- "CustomStringConvertible"
+depends-member:
+- ["PSs9AnyObject", "VgcManager"]
+- !private ["PSs9AnyObject", "buttonA"]
+- !private ["PSs9AnyObject", "buttonB"]
+- !private ["PSs9AnyObject", "buttonX"]
+- !private ["PSs9AnyObject", "buttonY"]
+- !private ["PSs9AnyObject", "dpadXAxis"]
+- !private ["PSs9AnyObject", "dpadYAxis"]
+- ["PSs9AnyObject", "elementForCharacter"]
+- !private ["PSs9AnyObject", "iCadeControllerMode"]
+- ["PSs9AnyObject", "init"]
+- !private ["PSs9AnyObject", "leftShoulder"]
+- !private ["PSs9AnyObject", "leftTrigger"]
+- ["PSs9AnyObject", "peripheral"]
+- ["PSs9AnyObject", "peripheralManager"]
+- !private ["PSs9AnyObject", "rangeOfString"]
+- !private ["PSs9AnyObject", "rightShoulder"]
+- !private ["PSs9AnyObject", "rightTrigger"]
+- !private ["PSs9AnyObject", "set09E1E2ABXYButtons"]
+- !private ["PSs9AnyObject", "set09E1E2ShouldersAndTriggers"]
+- !private ["PSs9AnyObject", "set5678ABXYButtons"]
+- !private ["PSs9AnyObject", "set5678ShouldersAndTriggers"]
+- !private ["PSs9AnyObject", "standardDpad"]
+- !private ["PSs9AnyObject", "uppercaseString"]
+- ["PSs9AnyObject", ""]
+- !private ["Sa", "deinit"]
+- !private ["VSs10ArraySlice", "deinit"]
+- !private ["PSs22BidirectionalIndexType", "hashValue"]
+- !private ["PSs21BitwiseOperationsType", "hashValue"]
+- !private ["Sb", "_getBuiltinLogicValue"]
+- !private ["PSs25BooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs11BooleanType", "_getBuiltinLogicValue"]
+- ["PSs11CVarArgType", "VgcManager"]
+- !private ["PSs11CVarArgType", "buttonA"]
+- !private ["PSs11CVarArgType", "buttonB"]
+- !private ["PSs11CVarArgType", "buttonX"]
+- !private ["PSs11CVarArgType", "buttonY"]
+- !private ["PSs11CVarArgType", "dpadXAxis"]
+- !private ["PSs11CVarArgType", "dpadYAxis"]
+- ["PSs11CVarArgType", "elementForCharacter"]
+- !private ["PSs11CVarArgType", "hashValue"]
+- !private ["PSs11CVarArgType", "iCadeControllerMode"]
+- ["PSs11CVarArgType", "init"]
+- !private ["PSs11CVarArgType", "leftShoulder"]
+- !private ["PSs11CVarArgType", "leftTrigger"]
+- ["PSs11CVarArgType", "peripheral"]
+- ["PSs11CVarArgType", "peripheralManager"]
+- !private ["PSs11CVarArgType", "rangeOfString"]
+- !private ["PSs11CVarArgType", "rightShoulder"]
+- !private ["PSs11CVarArgType", "rightTrigger"]
+- !private ["PSs11CVarArgType", "set09E1E2ABXYButtons"]
+- !private ["PSs11CVarArgType", "set09E1E2ShouldersAndTriggers"]
+- !private ["PSs11CVarArgType", "set5678ABXYButtons"]
+- !private ["PSs11CVarArgType", "set5678ShouldersAndTriggers"]
+- !private ["PSs11CVarArgType", "standardDpad"]
+- !private ["PSs11CVarArgType", "uppercaseString"]
+- ["PSs11CVarArgType", ""]
+- !private ["PSs10Comparable", "hashValue"]
+- !private ["PSs10Comparable", "rangeOfString"]
+- !private ["PSs10Comparable", "uppercaseString"]
+- !private ["VSs15ContiguousArray", "deinit"]
+- !private ["PSs28CustomDebugStringConvertible", "rangeOfString"]
+- !private ["PSs28CustomDebugStringConvertible", "uppercaseString"]
+- ["PSs23CustomStringConvertible", "Disabled"]
+- ["PSs23CustomStringConvertible", "Eightbitty"]
+- ["PSs23CustomStringConvertible", "GameDock"]
+- ["PSs23CustomStringConvertible", "Gametel"]
+- ["PSs23CustomStringConvertible", "Nyko"]
+- ["PSs23CustomStringConvertible", "SnakebyteIdroidCon"]
+- ["PSs23CustomStringConvertible", "SteelSeriesFree"]
+- ["PSs23CustomStringConvertible", "VgcManager"]
+- !private ["PSs23CustomStringConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs23CustomStringConvertible", "buttonA"]
+- !private ["PSs23CustomStringConvertible", "buttonB"]
+- !private ["PSs23CustomStringConvertible", "buttonX"]
+- !private ["PSs23CustomStringConvertible", "buttonY"]
+- ["PSs23CustomStringConvertible", "description"]
+- !private ["PSs23CustomStringConvertible", "dpadXAxis"]
+- !private ["PSs23CustomStringConvertible", "dpadYAxis"]
+- ["PSs23CustomStringConvertible", "elementForCharacter"]
+- ["PSs23CustomStringConvertible", "hashValue"]
+- ["PSs23CustomStringConvertible", "iCade"]
+- !private ["PSs23CustomStringConvertible", "iCadeControllerMode"]
+- ["PSs23CustomStringConvertible", "iCadeJr"]
+- ["PSs23CustomStringConvertible", "iCadeMobile"]
+- ["PSs23CustomStringConvertible", "iControlPadEarly"]
+- ["PSs23CustomStringConvertible", "iControlPadLate"]
+- ["PSs23CustomStringConvertible", "iMpulse"]
+- ["PSs23CustomStringConvertible", "init"]
+- !private ["PSs23CustomStringConvertible", "leftShoulder"]
+- !private ["PSs23CustomStringConvertible", "leftTrigger"]
+- ["PSs23CustomStringConvertible", "peripheral"]
+- ["PSs23CustomStringConvertible", "peripheralManager"]
+- !private ["PSs23CustomStringConvertible", "rangeOfString"]
+- !private ["PSs23CustomStringConvertible", "rightShoulder"]
+- !private ["PSs23CustomStringConvertible", "rightTrigger"]
+- !private ["PSs23CustomStringConvertible", "set09E1E2ABXYButtons"]
+- !private ["PSs23CustomStringConvertible", "set09E1E2ShouldersAndTriggers"]
+- !private ["PSs23CustomStringConvertible", "set5678ABXYButtons"]
+- !private ["PSs23CustomStringConvertible", "set5678ShouldersAndTriggers"]
+- !private ["PSs23CustomStringConvertible", "standardDpad"]
+- !private ["PSs23CustomStringConvertible", "uppercaseString"]
+- ["PSs23CustomStringConvertible", ""]
+- !private ["VSs10Dictionary", "deinit"]
+- !private ["C21VirtualGameController8Elements", "buttonA"]
+- !private ["C21VirtualGameController8Elements", "buttonB"]
+- !private ["C21VirtualGameController8Elements", "buttonX"]
+- !private ["C21VirtualGameController8Elements", "buttonY"]
+- !private ["C21VirtualGameController8Elements", "dpadXAxis"]
+- !private ["C21VirtualGameController8Elements", "dpadYAxis"]
+- !private ["C21VirtualGameController8Elements", "leftShoulder"]
+- !private ["C21VirtualGameController8Elements", "leftTrigger"]
+- !private ["C21VirtualGameController8Elements", "rightShoulder"]
+- !private ["C21VirtualGameController8Elements", "rightTrigger"]
+- ["PSs9Equatable", "Disabled"]
+- ["PSs9Equatable", "Eightbitty"]
+- ["PSs9Equatable", "GameDock"]
+- ["PSs9Equatable", "Gametel"]
+- ["PSs9Equatable", "Nyko"]
+- ["PSs9Equatable", "SnakebyteIdroidCon"]
+- ["PSs9Equatable", "SteelSeriesFree"]
+- ["PSs9Equatable", "VgcManager"]
+- !private ["PSs9Equatable", "_getBuiltinLogicValue"]
+- !private ["PSs9Equatable", "buttonA"]
+- !private ["PSs9Equatable", "buttonB"]
+- !private ["PSs9Equatable", "buttonX"]
+- !private ["PSs9Equatable", "buttonY"]
+- ["PSs9Equatable", "description"]
+- !private ["PSs9Equatable", "dpadXAxis"]
+- !private ["PSs9Equatable", "dpadYAxis"]
+- ["PSs9Equatable", "elementForCharacter"]
+- ["PSs9Equatable", "hashValue"]
+- ["PSs9Equatable", "iCade"]
+- !private ["PSs9Equatable", "iCadeControllerMode"]
+- ["PSs9Equatable", "iCadeJr"]
+- ["PSs9Equatable", "iCadeMobile"]
+- ["PSs9Equatable", "iControlPadEarly"]
+- ["PSs9Equatable", "iControlPadLate"]
+- ["PSs9Equatable", "iMpulse"]
+- ["PSs9Equatable", "init"]
+- !private ["PSs9Equatable", "leftShoulder"]
+- !private ["PSs9Equatable", "leftTrigger"]
+- ["PSs9Equatable", "peripheral"]
+- ["PSs9Equatable", "peripheralManager"]
+- !private ["PSs9Equatable", "rangeOfString"]
+- !private ["PSs9Equatable", "rightShoulder"]
+- !private ["PSs9Equatable", "rightTrigger"]
+- !private ["PSs9Equatable", "set09E1E2ABXYButtons"]
+- !private ["PSs9Equatable", "set09E1E2ShouldersAndTriggers"]
+- !private ["PSs9Equatable", "set5678ABXYButtons"]
+- !private ["PSs9Equatable", "set5678ShouldersAndTriggers"]
+- !private ["PSs9Equatable", "standardDpad"]
+- !private ["PSs9Equatable", "uppercaseString"]
+- ["PSs9Equatable", ""]
+- !private ["PSs41ExtendedGraphemeClusterLiteralConvertible", "rangeOfString"]
+- !private ["PSs41ExtendedGraphemeClusterLiteralConvertible", "uppercaseString"]
+- !private ["PSs16ForwardIndexType", "hashValue"]
+- ["PSs8Hashable", "Disabled"]
+- ["PSs8Hashable", "Eightbitty"]
+- ["PSs8Hashable", "GameDock"]
+- ["PSs8Hashable", "Gametel"]
+- ["PSs8Hashable", "Nyko"]
+- ["PSs8Hashable", "SnakebyteIdroidCon"]
+- ["PSs8Hashable", "SteelSeriesFree"]
+- ["PSs8Hashable", "VgcManager"]
+- !private ["PSs8Hashable", "_getBuiltinLogicValue"]
+- !private ["PSs8Hashable", "buttonA"]
+- !private ["PSs8Hashable", "buttonB"]
+- !private ["PSs8Hashable", "buttonX"]
+- !private ["PSs8Hashable", "buttonY"]
+- ["PSs8Hashable", "description"]
+- !private ["PSs8Hashable", "dpadXAxis"]
+- !private ["PSs8Hashable", "dpadYAxis"]
+- ["PSs8Hashable", "elementForCharacter"]
+- ["PSs8Hashable", "hashValue"]
+- ["PSs8Hashable", "iCade"]
+- !private ["PSs8Hashable", "iCadeControllerMode"]
+- ["PSs8Hashable", "iCadeJr"]
+- ["PSs8Hashable", "iCadeMobile"]
+- ["PSs8Hashable", "iControlPadEarly"]
+- ["PSs8Hashable", "iControlPadLate"]
+- ["PSs8Hashable", "iMpulse"]
+- ["PSs8Hashable", "init"]
+- !private ["PSs8Hashable", "leftShoulder"]
+- !private ["PSs8Hashable", "leftTrigger"]
+- ["PSs8Hashable", "peripheral"]
+- ["PSs8Hashable", "peripheralManager"]
+- !private ["PSs8Hashable", "rangeOfString"]
+- !private ["PSs8Hashable", "rightShoulder"]
+- !private ["PSs8Hashable", "rightTrigger"]
+- !private ["PSs8Hashable", "set09E1E2ABXYButtons"]
+- !private ["PSs8Hashable", "set09E1E2ShouldersAndTriggers"]
+- !private ["PSs8Hashable", "set5678ABXYButtons"]
+- !private ["PSs8Hashable", "set5678ShouldersAndTriggers"]
+- !private ["PSs8Hashable", "standardDpad"]
+- !private ["PSs8Hashable", "uppercaseString"]
+- ["PSs8Hashable", ""]
+- ["O21VirtualGameController19IcadeControllerMode", "Disabled"]
+- ["O21VirtualGameController19IcadeControllerMode", "Eightbitty"]
+- ["O21VirtualGameController19IcadeControllerMode", "GameDock"]
+- ["O21VirtualGameController19IcadeControllerMode", "Gametel"]
+- ["O21VirtualGameController19IcadeControllerMode", "Nyko"]
+- ["O21VirtualGameController19IcadeControllerMode", "SnakebyteIdroidCon"]
+- ["O21VirtualGameController19IcadeControllerMode", "SteelSeriesFree"]
+- ["O21VirtualGameController19IcadeControllerMode", "String"]
+- ["O21VirtualGameController19IcadeControllerMode", "deinit"]
+- ["O21VirtualGameController19IcadeControllerMode", "description"]
+- ["O21VirtualGameController19IcadeControllerMode", "hashValue"]
+- ["O21VirtualGameController19IcadeControllerMode", "iCade"]
+- ["O21VirtualGameController19IcadeControllerMode", "iCadeJr"]
+- ["O21VirtualGameController19IcadeControllerMode", "iCadeMobile"]
+- ["O21VirtualGameController19IcadeControllerMode", "iControlPadEarly"]
+- ["O21VirtualGameController19IcadeControllerMode", "iControlPadLate"]
+- ["O21VirtualGameController19IcadeControllerMode", "iMpulse"]
+- !private ["Si", "hashValue"]
+- !private ["PSs21IntegerArithmeticType", "hashValue"]
+- !private ["PSs25IntegerLiteralConvertible", "hashValue"]
+- !private ["PSs11IntegerType", "hashValue"]
+- !private ["PSs14MirrorPathType", "hashValue"]
+- !private ["PSs14MirrorPathType", "rangeOfString"]
+- !private ["PSs14MirrorPathType", "uppercaseString"]
+- !private ["PSo8NSCoding", "rangeOfString"]
+- !private ["PSo8NSCoding", "uppercaseString"]
+- !private ["PSo9NSCopying", "rangeOfString"]
+- !private ["PSo9NSCopying", "uppercaseString"]
+- !private ["PSo16NSMutableCopying", "rangeOfString"]
+- !private ["PSo16NSMutableCopying", "uppercaseString"]
+- ["CSo8NSObject", "Element"]
+- ["CSo8NSObject", "Elements"]
+- ["CSo8NSObject", "Int"]
+- ["CSo8NSObject", "String"]
+- ["CSo8NSObject", "VgcManager"]
+- !private ["CSo8NSObject", "buttonA"]
+- !private ["CSo8NSObject", "buttonB"]
+- !private ["CSo8NSObject", "buttonX"]
+- !private ["CSo8NSObject", "buttonY"]
+- !private ["CSo8NSObject", "deinit"]
+- !private ["CSo8NSObject", "dpadXAxis"]
+- !private ["CSo8NSObject", "dpadYAxis"]
+- ["CSo8NSObject", "elementForCharacter"]
+- !private ["CSo8NSObject", "iCadeControllerMode"]
+- ["CSo8NSObject", "init"]
+- !private ["CSo8NSObject", "leftShoulder"]
+- !private ["CSo8NSObject", "leftTrigger"]
+- ["CSo8NSObject", "peripheral"]
+- ["CSo8NSObject", "peripheralManager"]
+- !private ["CSo8NSObject", "rangeOfString"]
+- !private ["CSo8NSObject", "rightShoulder"]
+- !private ["CSo8NSObject", "rightTrigger"]
+- !private ["CSo8NSObject", "set09E1E2ABXYButtons"]
+- !private ["CSo8NSObject", "set09E1E2ShouldersAndTriggers"]
+- !private ["CSo8NSObject", "set5678ABXYButtons"]
+- !private ["CSo8NSObject", "set5678ShouldersAndTriggers"]
+- !private ["CSo8NSObject", "standardDpad"]
+- !private ["CSo8NSObject", "uppercaseString"]
+- ["CSo8NSObject", ""]
+- ["PSo16NSObjectProtocol", "VgcManager"]
+- !private ["PSo16NSObjectProtocol", "buttonA"]
+- !private ["PSo16NSObjectProtocol", "buttonB"]
+- !private ["PSo16NSObjectProtocol", "buttonX"]
+- !private ["PSo16NSObjectProtocol", "buttonY"]
+- !private ["PSo16NSObjectProtocol", "dpadXAxis"]
+- !private ["PSo16NSObjectProtocol", "dpadYAxis"]
+- ["PSo16NSObjectProtocol", "elementForCharacter"]
+- !private ["PSo16NSObjectProtocol", "iCadeControllerMode"]
+- ["PSo16NSObjectProtocol", "init"]
+- !private ["PSo16NSObjectProtocol", "leftShoulder"]
+- !private ["PSo16NSObjectProtocol", "leftTrigger"]
+- ["PSo16NSObjectProtocol", "peripheral"]
+- ["PSo16NSObjectProtocol", "peripheralManager"]
+- !private ["PSo16NSObjectProtocol", "rangeOfString"]
+- !private ["PSo16NSObjectProtocol", "rightShoulder"]
+- !private ["PSo16NSObjectProtocol", "rightTrigger"]
+- !private ["PSo16NSObjectProtocol", "set09E1E2ABXYButtons"]
+- !private ["PSo16NSObjectProtocol", "set09E1E2ShouldersAndTriggers"]
+- !private ["PSo16NSObjectProtocol", "set5678ABXYButtons"]
+- !private ["PSo16NSObjectProtocol", "set5678ShouldersAndTriggers"]
+- !private ["PSo16NSObjectProtocol", "standardDpad"]
+- !private ["PSo16NSObjectProtocol", "uppercaseString"]
+- ["PSo16NSObjectProtocol", ""]
+- !private ["PSo14NSSecureCoding", "rangeOfString"]
+- !private ["PSo14NSSecureCoding", "uppercaseString"]
+- !private ["CSo8NSString", "deinit"]
+- !private ["CSo8NSString", "rangeOfString"]
+- !private ["CSo8NSString", "uppercaseString"]
+- !private ["Sq", "deinit"]
+- !private ["PSs16OutputStreamType", "rangeOfString"]
+- !private ["PSs16OutputStreamType", "uppercaseString"]
+- !private ["PSs21RandomAccessIndexType", "hashValue"]
+- !private ["VSs5Range", "deinit"]
+- !private ["PSs17SignedIntegerType", "hashValue"]
+- !private ["PSs16SignedNumberType", "hashValue"]
+- !private ["PSs10Streamable", "rangeOfString"]
+- !private ["PSs10Streamable", "uppercaseString"]
+- !private ["PSs10Strideable", "hashValue"]
+- !private ["SS", "deinit"]
+- !private ["SS", "rangeOfString"]
+- !private ["SS", "uppercaseString"]
+- !private ["PSs30StringInterpolationConvertible", "rangeOfString"]
+- !private ["PSs30StringInterpolationConvertible", "uppercaseString"]
+- !private ["PSs24StringLiteralConvertible", "rangeOfString"]
+- !private ["PSs24StringLiteralConvertible", "uppercaseString"]
+- !private ["PSs31UnicodeScalarLiteralConvertible", "rangeOfString"]
+- !private ["PSs31UnicodeScalarLiteralConvertible", "uppercaseString"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "Element"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "Elements"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "Int"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "String"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "VgcManager"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "deinit"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "elementForCharacter"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "init"]
+- ["C21VirtualGameController18VgcIcadePeripheral", "peripheralManager"]
+- !private ["C21VirtualGameController18VgcIcadePeripheral", "set09E1E2ABXYButtons"]
+- !private ["C21VirtualGameController18VgcIcadePeripheral", "set09E1E2ShouldersAndTriggers"]
+- !private ["C21VirtualGameController18VgcIcadePeripheral", "set5678ABXYButtons"]
+- !private ["C21VirtualGameController18VgcIcadePeripheral", "set5678ShouldersAndTriggers"]
+- !private ["C21VirtualGameController18VgcIcadePeripheral", "standardDpad"]
+- !private ["C21VirtualGameController10VgcManager", "iCadeControllerMode"]
+- ["C21VirtualGameController10VgcManager", "peripheral"]
+- !private ["PSs33_BuiltinBooleanLiteralConvertible", "_getBuiltinLogicValue"]
+- !private ["PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible", "rangeOfString"]
+- !private ["PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible", "uppercaseString"]
+- !private ["PSs33_BuiltinIntegerLiteralConvertible", "hashValue"]
+- !private ["PSs32_BuiltinStringLiteralConvertible", "rangeOfString"]
+- !private ["PSs32_BuiltinStringLiteralConvertible", "uppercaseString"]
+- !private ["PSs37_BuiltinUTF16StringLiteralConvertible", "rangeOfString"]
+- !private ["PSs37_BuiltinUTF16StringLiteralConvertible", "uppercaseString"]
+- !private ["PSs39_BuiltinUnicodeScalarLiteralConvertible", "rangeOfString"]
+- !private ["PSs39_BuiltinUnicodeScalarLiteralConvertible", "uppercaseString"]
+- !private ["PSs16_CocoaStringType", "rangeOfString"]
+- !private ["PSs16_CocoaStringType", "uppercaseString"]
+- !private ["PSs14_Incrementable", "hashValue"]
+- !private ["PSs22_IntegerArithmeticType", "hashValue"]
+- !private ["PSs12_IntegerType", "hashValue"]
+- !private ["VSC8_NSRange", "deinit"]
+- !private ["PSs21_ObjectiveCBridgeable", "_getBuiltinLogicValue"]
+- !private ["PSs21_ObjectiveCBridgeable", "hashValue"]
+- !private ["PSs21_ObjectiveCBridgeable", "rangeOfString"]
+- !private ["PSs21_ObjectiveCBridgeable", "uppercaseString"]
+- !private ["VSs26_OptionalNilComparisonType", "deinit"]
+- !private ["PSs22_RandomAccessAmbiguity", "hashValue"]
+- !private ["PSs12_Reflectable", "_getBuiltinLogicValue"]
+- !private ["PSs12_Reflectable", "hashValue"]
+- !private ["PSs12_Reflectable", "rangeOfString"]
+- !private ["PSs12_Reflectable", "uppercaseString"]
+- !private ["PSs18_SignedIntegerType", "hashValue"]
+- !private ["PSs11_Strideable", "hashValue"]
+depends-nominal:
+- "PSs9AnyObject"
+- !private "Sa"
+- !private "VSs10ArraySlice"
+- !private "PSs22BidirectionalIndexType"
+- !private "PSs21BitwiseOperationsType"
+- !private "Sb"
+- !private "PSs25BooleanLiteralConvertible"
+- !private "PSs11BooleanType"
+- "PSs11CVarArgType"
+- !private "PSs10Comparable"
+- !private "VSs15ContiguousArray"
+- !private "PSs28CustomDebugStringConvertible"
+- "PSs23CustomStringConvertible"
+- !private "VSs10Dictionary"
+- !private "C21VirtualGameController8Elements"
+- "PSs9Equatable"
+- !private "PSs41ExtendedGraphemeClusterLiteralConvertible"
+- !private "PSs16ForwardIndexType"
+- "PSs8Hashable"
+- "O21VirtualGameController19IcadeControllerMode"
+- !private "Si"
+- !private "PSs21IntegerArithmeticType"
+- !private "PSs25IntegerLiteralConvertible"
+- !private "PSs11IntegerType"
+- !private "PSs14MirrorPathType"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo16NSMutableCopying"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- !private "PSo14NSSecureCoding"
+- !private "CSo8NSString"
+- !private "Sq"
+- !private "PSs16OutputStreamType"
+- !private "PSs21RandomAccessIndexType"
+- !private "VSs5Range"
+- !private "PSs17SignedIntegerType"
+- !private "PSs16SignedNumberType"
+- !private "PSs10Streamable"
+- !private "PSs10Strideable"
+- !private "SS"
+- !private "PSs30StringInterpolationConvertible"
+- !private "PSs24StringLiteralConvertible"
+- !private "PSs31UnicodeScalarLiteralConvertible"
+- "C21VirtualGameController18VgcIcadePeripheral"
+- "C21VirtualGameController10VgcManager"
+- !private "PSs33_BuiltinBooleanLiteralConvertible"
+- !private "PSs49_BuiltinExtendedGraphemeClusterLiteralConvertible"
+- !private "PSs33_BuiltinIntegerLiteralConvertible"
+- !private "PSs32_BuiltinStringLiteralConvertible"
+- !private "PSs37_BuiltinUTF16StringLiteralConvertible"
+- !private "PSs39_BuiltinUnicodeScalarLiteralConvertible"
+- !private "PSs16_CocoaStringType"
+- !private "PSs14_Incrementable"
+- !private "PSs22_IntegerArithmeticType"
+- !private "PSs12_IntegerType"
+- !private "VSC8_NSRange"
+- !private "PSs21_ObjectiveCBridgeable"
+- !private "VSs26_OptionalNilComparisonType"
+- !private "PSs22_RandomAccessAmbiguity"
+- !private "PSs12_Reflectable"
+- !private "PSs18_SignedIntegerType"
+- !private "PSs11_Strideable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreImage.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/CoreBluetooth.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/armv7/WatchConnectivity.swiftmodule"
+interface-hash: "aa32def609e680be1c84f7f70d404ed7"

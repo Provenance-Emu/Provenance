@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:image.xcassets">
+   </FileRef>
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+   <FileRef
+      location = "group:LICENSE">
+   </FileRef>
+   <Group
+      location = "group:Source"
+      name = "Source">
+      <Group
+         location = "group:External"
+         name = "External">
+         <FileRef
+            location = "group:VgcCustomElements.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcCustomMappings.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcSharedViews.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcCentralViewController.swift">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:Framework"
+         name = "Framework">
+         <FileRef
+            location = "group:VgcPeripheralSetup.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcMotion.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcManager.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcCentralPublisher.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcController.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcElements.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcBrowser.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcIcadePeripheral.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcPeripheral.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcWatch.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcStreamer.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcWatchConnectivity.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VgcLogger.swift">
+         </FileRef>
+      </Group>
+   </Group>
+   <Group
+      location = "group:Framework Projects"
+      name = "Framework Projects">
+      <FileRef
+         location = "group:VirtualGameControllerIOS/VirtualGameControllerIOS.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:VirtualGameControllerTvOS/VirtualGameControllerTvOS.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:VirtualGameControllerOSX/VirtualGameControllerOSX.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:VirtualGameControllerWatchOS/VirtualGameControllerWatchOS.xcodeproj">
+      </FileRef>
+   </Group>
+   <Group
+      location = "container:"
+      name = "Sample Projects">
+      <Group
+         location = "group:Samples/SpriteKitExample"
+         name = "SpriteKitExample">
+         <FileRef
+            location = "group:SpriteKitExample.xcodeproj">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:Samples/SceneKitShipDemo"
+         name = "SceneKitShipDemo">
+         <FileRef
+            location = "group:SceneKitShipDemo_macOS/SceneKitShipDemo_macOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:SceneKitShipDemo_tvOS/SceneKitShipDemo_tvOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:SceneKitShipDemo_iOS/SceneKitShipDemo_iOS.xcodeproj">
+         </FileRef>
+      </Group>
+      <Group
+         location = "container:"
+         name = "Peripheral Samples">
+         <FileRef
+            location = "group:Samples/Peripheral_iOS/Peripheral_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Peripheral_OSX/Peripheral_OSX.xcodeproj">
+         </FileRef>
+      </Group>
+      <Group
+         location = "container:"
+         name = "Central_Samples">
+         <FileRef
+            location = "group:Samples/Central_iOS/Central_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Bridge_iOS/Bridge_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/ObjectiveC_iOS/ObjectiveC_iOS/ObjectiveC_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Central_OSX/Central_OSX.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Central_tvOS/Central_tvOS.xcodeproj">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:Samples/SceneKitVehicleDemo/SceneKitVehicle.xcodeproj">
+      </FileRef>
+   </Group>
+   <Group
+      location = "group:Tests"
+      name = "Tests">
+      <FileRef
+         location = "group:/Users/robreuss/Documents/Development/VirtualGameController/Tests/Performance_Peripheral/Test_Performance_Peripheral.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:/Users/robreuss/Documents/Development/VirtualGameController/Tests/Test_Performance_Central.xcodeproj">
+      </FileRef>
+   </Group>
+</Workspace>
