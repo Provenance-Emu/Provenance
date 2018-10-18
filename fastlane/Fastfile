@@ -27,8 +27,8 @@ default_platform(:ios)
 
 platform :ios do
 
-carthage_paths = ["PVSupport", "PVLibrary", "./"]
-dev_domain = ENV["DEV_DOMAIN"] || "com.joemattiello"
+$carthage_paths = ["PVSupport", "PVLibrary", "./"]
+$dev_domain = ENV["DEV_DOMAIN"] || "com.joemattiello"
 
 def load_keys
   if is_ci?
@@ -37,10 +37,11 @@ def load_keys
 
   begin
     import("keys")
-    dev_domain = ENV["DEV_DOMAIN"]
+    $dev_domain = ENV["DEV_DOMAIN"]
   rescue => exception
     if UI.interactive?
       shouldSetup = UI.confirm "Fastlane enviroment is not configured. Setup now?"
+      UI.message "This feature not yet implimented. Manually edit fastlane/keys using keys.template as an example."
     end
     raise exception
   end
@@ -52,9 +53,10 @@ def uploadToWordpress(file)
   File.open(file) do |ipa|
   req = Net::HTTP::Post::Multipart.new url.path,
     "file" => UploadIO.new(ipa, "application/octet-stream", filename)
-  res = Net::HTTP.start(url.host, url.port) do |http|
-    http.request(req)
+    res = Net::HTTP.start(url.host, url.port) do |http|
+      http.request(req)
     end
+    UI.message "Wordpress response code: #{res.code}"
   end
 end
 
@@ -65,6 +67,7 @@ end
   # after_all do
   #   push_git_tags
   # end
+  # TODO: Make keys file from this
   desc "Setup fastlane enviroment"
   lane :setup_fastlane do
     if UI.interactive?
@@ -97,6 +100,7 @@ end
     alpha
   end
 
+  # TODO: Make keys file from this
   desc "User Setup"
   lane :userbuild do
     UI.message "This lane will help you setup Provenance for signing and build."
@@ -112,7 +116,7 @@ end
 
     if UI.confirm("Do you want to generate new app entries in your developer account??")
       produce(
-        username: 'felix@krausefx.com',
+        username: apple_id,
         app_identifier: 'com.krausefx.app',
         app_name: 'MyApp',
         language: 'English',
@@ -301,7 +305,7 @@ end
     # Types, appstore adhoc development enterprise
 
     # update_devices
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios", readonly: true)
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
     #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
@@ -338,7 +342,7 @@ end
 
     # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
     begin
-      UI.message "Upload to hockey-app with id #{dev_domain}.provenance"
+      UI.message "Upload to hockey-app with id #{$dev_domain}.provenance"
       publish_hockey(release_type: "2")
     rescue => ex
       # re-raise the exception unless it's something we're OK with ignoring
@@ -375,7 +379,7 @@ end
     # uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
 
     # Build tvOS app
-    # match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf"], type: "adhoc", platform: "tvos")
+    # match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf"], type: "adhoc", platform: "tvos")
     # carthage(
     #   command: "bootstrap",
     #   platform: "tvOS",
@@ -446,7 +450,7 @@ end
 
   private_lane :badge_beta do
     version_number = get_version_number(target: "Provenance")
-    add_badge(shield: "${version_number} Beta", alpha: false, dark: false)
+    add_badge(shield: "#{version_number} Beta", alpha: false, dark: false)
   end
 
   private_lane :reset_enviroment do
@@ -484,7 +488,7 @@ end
       # frameworks: ["MyFramework1", "MyFramework2"],   # Specify which frameworks to upload or download
       command: "download",                              # One of: download, upload, list
       #verbose: false,                                 # Print rome output inline
-      platform: "iOS",                                # Define which platform to build for (one of ‘all’, ‘Mac’, ‘iOS’, ‘watchOS’, ‘tvOS‘, or comma-separated values of the formers except for ‘all’)
+      platform: "iOS",                                # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
       cacheprefix: swift_version,
       #romefile: "#{dir}/Romefile"
       )
@@ -500,16 +504,16 @@ end
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
       targets: ["Provenance"],
       code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc #{dev_domain}.provenance",
-      bundle_identifier: "#{dev_domain}.provenance",
+      profile_name: "match AdHoc #{$dev_domain}.provenance",
+      bundle_identifier: "#{$dev_domain}.provenance",
       use_automatic_signing: automatic,
       team_id: team_id)
 
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
       targets: ["Spotlight"],
       code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc #{dev_domain}.provenance.spotlight",
-      bundle_identifier: "#{dev_domain}.provenance.spotlight",
+      profile_name: "match AdHoc #{$dev_domain}.provenance.spotlight",
+      bundle_identifier: "#{$dev_domain}.provenance.spotlight",
       use_automatic_signing: automatic,
       team_id: team_id)
 
@@ -527,14 +531,14 @@ end
     update_info_plist(
       plist_path: "Provenance/Provenance-Info.plist",
       display_name: display_name,
-      app_identifier: "#{dev_domain}.provenance#{suffix}"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}"
     )
 
     # - Spotlight
     update_info_plist(
       plist_path: "Spotlight/Info.plist",
       display_name: display_name,
-      app_identifier: "#{dev_domain}.provenance#{suffix}.spotlight"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}.spotlight"
     )
 
     # - tvOS
@@ -542,14 +546,14 @@ end
     update_info_plist(
       plist_path: "ProvenanceTV/Info.plist",
       display_name: display_name,
-      app_identifier: "#{dev_domain}.provenance#{suffix}"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}"
     )
 
     # - Top Shelf
     update_info_plist(
       plist_path: "TopShelf/Info.plist",
       display_name: display_name,
-      app_identifier: "#{dev_domain}.provenance#{suffix}.topshelf.extension"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}.topshelf.extension"
     )
   end
 
@@ -559,8 +563,8 @@ end
     # types "appstore", "development", "adhoc", "enterprise"
     type = options.fetch(:type, type)
 
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, platform: "ios", readonly: true)
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, platform: "tvos", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: type, platform: "ios", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf.extension"], type: type, platform: "tvos", readonly: true)
   end
 
   desc "Create Certs for Match"
@@ -578,8 +582,8 @@ end
 
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos")
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Update device UDID list in iTunes connect from fastlane/devices.text"
@@ -672,8 +676,8 @@ end
           fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
         },
         provisioningProfiles: {
-          "#{dev_domain}.provenance" => "match AdHoc #{dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{dev_domain}.provenance.Spotlight" => "match AdHoc #{dev_domain}.provenance.spotlight"
+          "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
+          "#{$dev_domain}.provenance.Spotlight" => "match AdHoc #{$dev_domain}.provenance.spotlight"
         },
         compileBitcode: false,
         uploadBitcode: false,
@@ -712,8 +716,8 @@ end
           appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
         },
         provisioningProfiles: {
-          "#{dev_domain}.provenance" => "match AppStore #{dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{dev_domain}.provenance.Spotlight" => "match AppStore #{dev_domain}.provenance.spotlight"
+          "#{$dev_domain}.provenance" => "match AppStore #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
+          "#{$dev_domain}.provenance.Spotlight" => "match AppStore #{$dev_domain}.provenance.spotlight"
         }
       }
     )
@@ -722,7 +726,7 @@ end
 
   private_lane :submit_appstore do
     load_keys
-    pilot(app_identifier: "#{dev_domain}.provenance")
+    pilot(app_identifier: "#{$dev_domain}.provenance")
   end
 
   # private_lane :versionIcon do
@@ -772,7 +776,7 @@ end
   lane :carthage_build do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    carthage_paths.each do |dir| 
+    $carthage_paths.each do |dir| 
       carthage_private(
       command: "build",
       platform: platform,
@@ -786,7 +790,7 @@ end
   lane :carthage_update do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    carthage_paths.each do |dir| 
+    $carthage_paths.each do |dir| 
       carthage_private(
       command: "update",
       platform: platform,
