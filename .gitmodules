@@ -18,4 +18,4 @@
 	url = https://github.com/OlehKulykov/LzmaSDKObjC.git
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
-	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
+	url = git@github.com:Provenance-Emu/Core-VirtualJaguar.git
