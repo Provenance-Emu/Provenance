@@ -683,16 +683,8 @@ end
         uploadBitcode: false,
       }
     )
-
-    # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
-    # publish_hockey(release_type: "2")
-
-    # SCP to file server for storage
-    # scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
-    # scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
   end
-
-
+  
   desc "Exports a new AppStore Build"
   lane :build_appstore do
     load_keys
