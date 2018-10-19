@@ -2327,6 +2327,21 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>Jaguar BIOS</string>
+				<key>MD5</key>
+				<string>bcfe348c565d9dedb173822ee6850dea</string>
+				<key>Name</key>
+				<string>jagboot.rom</string>
+				<key>Size</key>
+				<integer>131072</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+		</array>
 		<key>PVManufacturer</key>
 		<string>Atari</string>
 		<key>PVSystemName</key>
