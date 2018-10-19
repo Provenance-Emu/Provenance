@@ -107,29 +107,70 @@ class SystemsSettingsTableViewController: QuickTableViewController {
 
 			// BIOSES
 			if let bioses = systemModel.bioses, !bioses.isEmpty {
-				rows.append(NavigationRow<SystemSettingsHeaderCell>(title: "BIOSES", subtitle: .none))
+				let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(title: "BIOSES",
+																		   subtitle: .none,
+																		   icon: nil,
+																		   customization:
+					{ (cell, rowStyle) in
+						#if os(iOS)
+						let bgView = UIView()
+						bgView.backgroundColor = Theme.currentTheme.settingsCellBackground!.withAlphaComponent(0.9)
+						cell.backgroundView = bgView
+						#endif
+				}, action: nil)
+
+				rows.append(biosesHeader)
 				bioses.forEach { bios in
-					let subtitle = "\(bios.expectedMD5) : \(bios.expectedSize) bytes"
+					let subtitle = "\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes"
+
 					let biosRow = NavigationRow<SystemSettingsCell>(title: bios.descriptionText,
-												subtitle: .belowTitle(subtitle),
-												icon: nil,
-												customization:
+																	subtitle: .belowTitle(subtitle),
+																	icon: nil,
+																	customization:
 						{ (cell, row) in
+
 							#if os(iOS)
 							var backgroundColor : UIColor? = Theme.currentTheme.settingsCellBackground
 							#else
 							var backgroundColor : UIColor? = UIColor.init(white: 0.9, alpha: 0.9)
 							#endif
-							let status = bios.status
-							if status.available {
 
-							} else {
-								backgroundColor = status.required ? UIColor(hex: "#700") : UIColor(hex: "#77404C")
+							var accessoryType : UITableViewCellAccessoryType = .none
+
+							switch bios.status.state {
+							case .match:
+								accessoryType = .checkmark
+							case .missing:
+								accessoryType = .none
+								backgroundColor = bios.status.required ? UIColor(hex: "#700") : UIColor(hex: "#77404C")
+							case .mismatch(let mismatches):
+								let subTitleText = mismatches.map { mismatch -> String in
+									switch mismatch {
+									case .filename(let expected, _):
+										return "Filename != \(expected)"
+									case .md5(let expected, _):
+										return "MD5 != \(expected)"
+									case .size(let expected, _):
+										return "SIZE != \(expected)"
+									}
+								}.joined(separator: ",")
+								cell.detailTextLabel?.text = subTitleText
+								backgroundColor = UIColor(hex: "#77404C")
 							}
+
+							cell.accessoryType = accessoryType
 							cell.backgroundView = UIView()
 							cell.backgroundView?.backgroundColor = backgroundColor
 					},
-												action: nil)
+																	action:
+						{ row in
+							UIPasteboard.general.string = bios.expectedMD5.uppercased()
+							let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard", preferredStyle: .alert)
+							self.present(alert, animated: true)
+							DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+								alert.dismiss(animated: true, completion: nil)
+							})
+					})
 					rows.append(biosRow)
 				}
 			}

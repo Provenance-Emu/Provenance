@@ -347,7 +347,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                         let to = system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false)
                         try FileManager.default.moveItem(at: from, to: to)
                         // Succesfully move the file, mark this BIOSEntry as true in the .all{} loop
-                        ILOG("Rename file \(filenameOfFoundFile) to \($0.expectedFilename) because it matched by MD5 \($0.expectedMD5)")
+                        ILOG("Rename file \(filenameOfFoundFile) to \($0.expectedFilename) because it matched by MD5 \($0.expectedMD5.uppercased())")
                         return true
                     } catch {
                         ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
