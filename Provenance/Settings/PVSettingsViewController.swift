@@ -40,6 +40,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var opacityValueLabel: UILabel!
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var revisionLabel: UILabel!
+	@IBOutlet weak var buildNumberLabel: UILabel!
     @IBOutlet weak var modeLabel: UILabel!
     @IBOutlet weak var iCadeControllerSetting: UILabel!
     @IBOutlet weak var volumeSlider: UISlider!
@@ -121,7 +122,17 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             revisionLabel.text = "(none)"
         }
 
-		buildDateLabel.text = gitdate
+		buildNumberLabel.text = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "nil"
+
+		let incomingDateFormatter = DateFormatter()
+		incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
+
+		let outputDateFormatter = DateFormatter()
+		outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
+
+		let buildDate = incomingDateFormatter.date(from: gitdate)!
+
+		buildDateLabel.text = outputDateFormatter.string(from: buildDate)
 		bundleIDLabel.text = Bundle.main.bundleIdentifier
 		builderLabel.text = builtByUser
     }
