@@ -393,7 +393,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
 {
-    GCController *controller = nil;
+    VgcController*controller = nil;
 
     if (player == 0)
     {

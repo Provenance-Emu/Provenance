@@ -807,7 +807,7 @@ static void emulation_run(BOOL skipFrame) {
     NSUInteger maxNumberPlayers = MIN([self maxNumberPlayers], 4);
 
     for (NSInteger playerIndex = 0; playerIndex < maxNumberPlayers; playerIndex++) {
-        GCController *controller = nil;
+        VgcController *controller = nil;
         
         if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;
@@ -1105,7 +1105,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     inputBuffer[player][0] &= ~(1 << LynxMap[button]);
 }
 
-- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
@@ -1372,7 +1372,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 }
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player withAnalogMode:(bool)analogMode {
-    GCController *controller = nil;
+    VgcController*controller = nil;
     
     if (player == 0) {
         controller = self.controller1;
@@ -1436,7 +1436,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (NSInteger)GBValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)GBValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *pad = [controller extendedGamepad];
 		GCControllerDirectionPad *dpad = [pad dpad];
@@ -1542,7 +1542,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	return 0;
 }
 
-- (NSInteger)GBAValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)GBAValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *pad = [controller extendedGamepad];
 		GCControllerDirectionPad *dpad = [pad dpad];
@@ -1630,7 +1630,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	return 0;
 }
 
-- (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *pad = [controller extendedGamepad];
 		GCControllerDirectionPad *dpad = [pad dpad];
@@ -1722,7 +1722,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	return 0;
 }
 
-- (NSInteger)NESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)NESValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *pad = [controller extendedGamepad];
 		GCControllerDirectionPad *dpad = [pad dpad];
@@ -1802,7 +1802,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	return 0;
 }
 
-- (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
@@ -1878,7 +1878,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (NSInteger)PCEValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)PCEValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *gamePad = [controller extendedGamepad];
@@ -1994,7 +1994,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (float)PSXAnalogControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (float)PSXAnalogControllerValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
@@ -2036,7 +2036,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller withAnalogMode:(bool)analogMode {
+- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller withAnalogMode:(bool)analogMode {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
@@ -2165,7 +2165,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
@@ -2264,7 +2264,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return 0;
 }
 
-- (NSInteger)WonderSwanControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+- (NSInteger)WonderSwanControllerValueForButtonID:(unsigned)buttonID forController:(VgcController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];

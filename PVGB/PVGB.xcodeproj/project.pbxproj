@@ -99,6 +99,7 @@
 		B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4AB1DEA73150068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4AC1DEA73AA0068D057 /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3CA442C2179C1B000CD7738 /* VirtualGameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA442B2179C1B000CD7738 /* VirtualGameController.framework */; };
 		B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
 		B3E4817820C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
 /* End PBXBuildFile section */
@@ -257,6 +258,7 @@
 		B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4A61DEA6E390068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3CA442B2179C1B000CD7738 /* VirtualGameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VirtualGameController.framework; path = ../PVSupport/Carthage/Build/iOS/VirtualGameController.framework; sourceTree = "<group>"; };
 		B3D2E3801D6E7E030058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGBEmulatorCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -266,6 +268,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CA442C2179C1B000CD7738 /* VirtualGameController.framework in Frameworks */,
 				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
@@ -568,6 +571,7 @@
 		1AABE0C71ABE37A400FF6AEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CA442B2179C1B000CD7738 /* VirtualGameController.framework */,
 				B34AB55B2106D58F00C45F09 /* PVSupport.framework */,
 				B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */,
 				B3C9D4A61DEA6E390068D057 /* Foundation.framework */,
@@ -981,6 +985,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1024,6 +1029,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1066,6 +1072,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

@@ -18,7 +18,7 @@ import UIKit
 #if !os(watchOS)
 
 open class VgcPeripheralSetup: NSObject, NSCoding {
-
+    
     open var profileType: ProfileType!
     open var motionActive = false
     open var enableMotionUserAcceleration = true

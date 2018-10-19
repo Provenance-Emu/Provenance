@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B34AB5642106D5EB00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5632106D5EB00C45F09 /* PVSupport.framework */; };
 		B34AB5662106D5F700C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5652106D5F700C45F09 /* PVSupport.framework */; };
 		B3547B692058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
 		B3547B6A2058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
+		B3CA44692179C7A500CD7738 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA44682179C7A500CD7738 /* PVSupport.framework */; };
+		B3CA446B2179C7AB00CD7738 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA446A2179C7AB00CD7738 /* Foundation.framework */; };
 		B3CB854D1E9BECBF009155A6 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85601E9BF153009155A6 /* PVPokeMiniEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081A45981B95604700565444 /* PVPokeMiniEmulatorCore.m */; };
 		B3CB85611E9BF153009155A6 /* MinxCPU_CE.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A45A91B95605F00565444 /* MinxCPU_CE.c */; };
@@ -177,6 +178,8 @@
 		B34AB5632106D5EB00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5652106D5F700C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B682058593700CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3CA44682179C7A500CD7738 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CA446A2179C7AB00CD7738 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85491E9BECBF009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPokeMini.h; sourceTree = "<group>"; };
 		B3CB854C1E9BECBF009155A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -196,7 +199,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B34AB5642106D5EB00C45F09 /* PVSupport.framework in Frameworks */,
+				B3CA446B2179C7AB00CD7738 /* Foundation.framework in Frameworks */,
+				B3CA44692179C7A500CD7738 /* PVSupport.framework in Frameworks */,
 				B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */,
 				B3CB85AB1E9BF16B009155A6 /* OpenGLES.framework in Frameworks */,
 			);
@@ -312,6 +316,8 @@
 		081A45F71B9563EF00565444 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CA446A2179C7AB00CD7738 /* Foundation.framework */,
+				B3CA44682179C7A500CD7738 /* PVSupport.framework */,
 				B34AB5652106D5F700C45F09 /* PVSupport.framework */,
 				B34AB5632106D5EB00C45F09 /* PVSupport.framework */,
 				B34AB55F2106D5AA00C45F09 /* PVSupport.framework */,
@@ -696,6 +702,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -744,6 +751,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "NO_ZIP=1";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;

@@ -594,8 +594,6 @@ extension GameLaunchingViewController where Self : UIViewController {
 			}
 		}
 
-		PVControllerManager.shared.iCadeController?.refreshListener()
-
 		do {
 			try RomDatabase.sharedInstance.writeTransaction {
 				game.playCount += 1

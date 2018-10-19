@@ -86,16 +86,12 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
     
     // This is a callback from the streamer
     func disconnect() {
-        
-        guard !VgcManager.useWebSocketServer else { return }
-
         vgcLogDebug("Browser received disconnect")
         closeStreams()
         browsing = false
         if connectedVgcService != nil { peripheral.lostConnectionToCentral(connectedVgcService) }
         connectedVgcService = nil
         browseForCentral()
-
     }
     
     func receivedNetServiceMessage(_ elementIdentifier: Int, elementValue: Data) {
@@ -115,7 +111,10 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
             let systemMessageType = SystemMessages(rawValue: Int(truncating: element.value as! NSNumber))
             
             vgcLogDebug("Central sent system message: \(systemMessageType!.description)")
-            
+            if connectedVgcService != nil {
+                vgcLogDebug("Central sent system message to \(connectedVgcService.fullName)")
+            }
+
             if systemMessageType == .connectionAcknowledgement {
                 
                 DispatchQueue.main.async {
@@ -209,28 +208,20 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
             return
         }
         
-        if VgcManager.useWebSocketServer {
-            
-            peripheral.webSocketPeripheralSmallData.sendElement(element: element)
-            
-        } else {
+        var outputStreamLarge: OutputStream!
+        var outputStreamSmall: OutputStream!
         
-            var outputStreamLarge: OutputStream!
-            var outputStreamSmall: OutputStream!
-            
-            if (VgcManager.appRole == .Peripheral || VgcManager.appRole == .MultiplayerPeer) {
-                outputStreamLarge = self.outputStream[.largeData]
-                outputStreamSmall = self.outputStream[.smallData]
-            } else if deviceIsTypeOfBridge() {
-                outputStreamLarge = peripheral.controller.toCentralOutputStream[.largeData]
-                outputStreamSmall = peripheral.controller.toCentralOutputStream[.smallData]
-            }
-            
-            if peripheral.haveOpenStreamsToCentral {
-                streamer[.largeData]!.writeElement(element, toStream:outputStreamLarge)
-                streamer[.smallData]!.writeElement(element, toStream:outputStreamSmall)
-            }
-            
+        if (VgcManager.appRole == .Peripheral || VgcManager.appRole == .MultiplayerPeer) {
+            outputStreamLarge = self.outputStream[.largeData]
+            outputStreamSmall = self.outputStream[.smallData]
+        } else if deviceIsTypeOfBridge() {
+            outputStreamLarge = peripheral.controller.toCentralOutputStream[.largeData]
+            outputStreamSmall = peripheral.controller.toCentralOutputStream[.smallData]
+        }
+        
+        if peripheral.haveOpenStreamsToCentral {
+            streamer[.largeData]!.writeElement(element, toStream:outputStreamLarge)
+            streamer[.smallData]!.writeElement(element, toStream:outputStreamSmall)
         }
     }
 
@@ -278,8 +269,6 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
     
     func browseForCentral() {
         
-        guard !VgcManager.useWebSocketServer else { return }
-        
         if browsing {
         
             vgcLogDebug("Not browsing for central because already browsing")
@@ -306,9 +295,6 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
     }
     
     func stopBrowsing() {
-        
-        guard !VgcManager.useWebSocketServer else { return }
-        
         vgcLogDebug("Stopping browse for Centrals")
         if centralBrowser != nil { centralBrowser.stop() } else {
             vgcLogError("stopBrowsing() called before browser started")
@@ -327,7 +313,7 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
         var success: Bool
         var inStream: InputStream?
         var outStream: OutputStream?
-        success = (vgcService.netService.getInputStream(&inStream, outputStream: &outStream))
+        success = vgcService.netService.getInputStream(&inStream, outputStream: &outStream)
         if ( !success ) {
             
             vgcLogDebug("Something went wrong connecting to service: \(vgcService.fullName)")
@@ -400,24 +386,26 @@ class VgcBrowser: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, Strea
     }
     
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        if (service.name == localService.name) {
+        
+        if (service.name == localService.name && TARGET_OS_SIMULATOR == 0) {
             vgcLogDebug("Ignoring service because it is our own: \(service.name)")
         } else {
             vgcLogDebug("Found service of type \(service.type) at \(service.name)")
             var vgcService: VgcService
             if service.type == VgcManager.bonjourTypeBridge {
-                vgcService = VgcService(name: service.name, type:.Bridge,netService: service, ID: "" )
+                vgcService = VgcService(name: service.name, type:.Bridge, netService: service)
             } else {
-                vgcService = VgcService(name: service.name, type:.Central, netService: service, ID: "")
+                vgcService = VgcService(name: service.name, type:.Central, netService: service)
             }
             
             serviceLookup[service] = vgcService
             
             NotificationCenter.default.post(name: Notification.Name(rawValue: VgcPeripheralFoundService), object: vgcService)
             
-            if deviceIsTypeOfBridge() && vgcService.type == .Central && connectedVgcService != vgcService { connectToService(vgcService) }
+            if vgcService.type == .Central && connectedVgcService != vgcService {
+                vgcLogDebug("Attempt to connect to service: \(service.name)")
+                connectToService(vgcService) }
         }
-        
     }
     
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {

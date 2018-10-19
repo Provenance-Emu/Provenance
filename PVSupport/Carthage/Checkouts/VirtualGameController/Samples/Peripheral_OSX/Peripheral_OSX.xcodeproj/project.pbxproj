@@ -1,0 +1,597 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		202BBFA11BE56BDB004D47EC /* VgcCustomElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BBF9E1BE56BDB004D47EC /* VgcCustomElements.swift */; };
+		202BBFA21BE56BDB004D47EC /* VgcCustomMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202BBF9F1BE56BDB004D47EC /* VgcCustomMappings.swift */; };
+		2084DCFE1BD370960041D380 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2084DCFD1BD370960041D380 /* AppDelegate.swift */; };
+		2084DD001BD370960041D380 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2084DCFF1BD370960041D380 /* ViewController.swift */; };
+		2084DD021BD370960041D380 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2084DD011BD370960041D380 /* Assets.xcassets */; };
+		2084DD051BD370960041D380 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2084DD031BD370960041D380 /* Main.storyboard */; };
+		20855D071C192EAB00F82CED /* VirtualGameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20855D041C192E9A00F82CED /* VirtualGameController.framework */; };
+		20855D081C192EAB00F82CED /* VirtualGameController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 20855D041C192E9A00F82CED /* VirtualGameController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2084DD0C1BD370960041D380 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2084DCF21BD370960041D380 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2084DCF91BD370960041D380;
+			remoteInfo = vgcPeripheral_OSX;
+		};
+		2084DD171BD370960041D380 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2084DCF21BD370960041D380 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2084DCF91BD370960041D380;
+			remoteInfo = vgcPeripheral_OSX;
+		};
+		20855D031C192E9A00F82CED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20855CFF1C192E9900F82CED /* VirtualGameControllerOSX.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 20A1217A1BDAED5B00E30083;
+			remoteInfo = VirtualGameController;
+		};
+		20855D051C192EA300F82CED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20855CFF1C192E9900F82CED /* VirtualGameControllerOSX.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 20A121791BDAED5B00E30083;
+			remoteInfo = VirtualGameController;
+		};
+		20855D091C192EAB00F82CED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20855CFF1C192E9900F82CED /* VirtualGameControllerOSX.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 20A121791BDAED5B00E30083;
+			remoteInfo = VirtualGameController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		20E676681BFFEC33005B5E7B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				20855D081C192EAB00F82CED /* VirtualGameController.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		202BBF9E1BE56BDB004D47EC /* VgcCustomElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = VgcCustomElements.swift; path = ../../../Source/External/VgcCustomElements.swift; sourceTree = "<group>"; };
+		202BBF9F1BE56BDB004D47EC /* VgcCustomMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VgcCustomMappings.swift; path = ../../../Source/External/VgcCustomMappings.swift; sourceTree = "<group>"; };
+		2084DCFA1BD370960041D380 /* Peripheral_OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Peripheral_OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2084DCFD1BD370960041D380 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2084DCFF1BD370960041D380 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		2084DD011BD370960041D380 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2084DD041BD370960041D380 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		2084DD061BD370960041D380 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2084DD0B1BD370960041D380 /* Peripheral_OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Peripheral_OSX.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2084DD161BD370960041D380 /* Peripheral_OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Peripheral_OSX.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		20855CFF1C192E9900F82CED /* VirtualGameControllerOSX.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VirtualGameControllerOSX.xcodeproj; path = "../../Framework Projects/VirtualGameControllerOSX/VirtualGameControllerOSX.xcodeproj"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2084DCF71BD370960041D380 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20855D071C192EAB00F82CED /* VirtualGameController.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2084DD081BD370960041D380 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2084DD131BD370960041D380 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2084DCF11BD370960041D380 = {
+			isa = PBXGroup;
+			children = (
+				20855CFF1C192E9900F82CED /* VirtualGameControllerOSX.xcodeproj */,
+				2084DCFC1BD370960041D380 /* vgcPeripheralOSX */,
+				2084DCFB1BD370960041D380 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2084DCFB1BD370960041D380 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2084DCFA1BD370960041D380 /* Peripheral_OSX.app */,
+				2084DD0B1BD370960041D380 /* Peripheral_OSX.xctest */,
+				2084DD161BD370960041D380 /* Peripheral_OSX.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2084DCFC1BD370960041D380 /* vgcPeripheralOSX */ = {
+			isa = PBXGroup;
+			children = (
+				202BBF9E1BE56BDB004D47EC /* VgcCustomElements.swift */,
+				202BBF9F1BE56BDB004D47EC /* VgcCustomMappings.swift */,
+				2084DCFD1BD370960041D380 /* AppDelegate.swift */,
+				2084DCFF1BD370960041D380 /* ViewController.swift */,
+				2084DD011BD370960041D380 /* Assets.xcassets */,
+				2084DD031BD370960041D380 /* Main.storyboard */,
+				2084DD061BD370960041D380 /* Info.plist */,
+			);
+			name = vgcPeripheralOSX;
+			path = vgcPeripheral_OSX;
+			sourceTree = "<group>";
+		};
+		20855D001C192E9900F82CED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				20855D041C192E9A00F82CED /* VirtualGameController.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2084DCF91BD370960041D380 /* Peripheral_OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2084DD1F1BD370960041D380 /* Build configuration list for PBXNativeTarget "Peripheral_OSX" */;
+			buildPhases = (
+				2084DCF61BD370960041D380 /* Sources */,
+				2084DCF71BD370960041D380 /* Frameworks */,
+				2084DCF81BD370960041D380 /* Resources */,
+				20E676681BFFEC33005B5E7B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				20855D061C192EA300F82CED /* PBXTargetDependency */,
+				20855D0A1C192EAB00F82CED /* PBXTargetDependency */,
+			);
+			name = Peripheral_OSX;
+			productName = vgcPeripheral_OSX;
+			productReference = 2084DCFA1BD370960041D380 /* Peripheral_OSX.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2084DD0A1BD370960041D380 /* Peripheral_OSXTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2084DD221BD370960041D380 /* Build configuration list for PBXNativeTarget "Peripheral_OSXTests" */;
+			buildPhases = (
+				2084DD071BD370960041D380 /* Sources */,
+				2084DD081BD370960041D380 /* Frameworks */,
+				2084DD091BD370960041D380 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2084DD0D1BD370960041D380 /* PBXTargetDependency */,
+			);
+			name = Peripheral_OSXTests;
+			productName = vgcPeripheral_OSXTests;
+			productReference = 2084DD0B1BD370960041D380 /* Peripheral_OSX.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		2084DD151BD370960041D380 /* Peripheral_OSXUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2084DD251BD370960041D380 /* Build configuration list for PBXNativeTarget "Peripheral_OSXUITests" */;
+			buildPhases = (
+				2084DD121BD370960041D380 /* Sources */,
+				2084DD131BD370960041D380 /* Frameworks */,
+				2084DD141BD370960041D380 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2084DD181BD370960041D380 /* PBXTargetDependency */,
+			);
+			name = Peripheral_OSXUITests;
+			productName = vgcPeripheral_OSXUITests;
+			productReference = 2084DD161BD370960041D380 /* Peripheral_OSX.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2084DCF21BD370960041D380 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = "Rob Reuss";
+				TargetAttributes = {
+					2084DCF91BD370960041D380 = {
+						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = CN7G7TCUME;
+						LastSwiftMigration = 0830;
+						ProvisioningStyle = Automatic;
+					};
+					2084DD0A1BD370960041D380 = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = 2084DCF91BD370960041D380;
+					};
+					2084DD151BD370960041D380 = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = 2084DCF91BD370960041D380;
+					};
+				};
+			};
+			buildConfigurationList = 2084DCF51BD370960041D380 /* Build configuration list for PBXProject "Peripheral_OSX" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2084DCF11BD370960041D380;
+			productRefGroup = 2084DCFB1BD370960041D380 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 20855D001C192E9900F82CED /* Products */;
+					ProjectRef = 20855CFF1C192E9900F82CED /* VirtualGameControllerOSX.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				2084DCF91BD370960041D380 /* Peripheral_OSX */,
+				2084DD0A1BD370960041D380 /* Peripheral_OSXTests */,
+				2084DD151BD370960041D380 /* Peripheral_OSXUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		20855D041C192E9A00F82CED /* VirtualGameController.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VirtualGameController.framework;
+			remoteRef = 20855D031C192E9A00F82CED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2084DCF81BD370960041D380 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2084DD021BD370960041D380 /* Assets.xcassets in Resources */,
+				2084DD051BD370960041D380 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2084DD091BD370960041D380 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2084DD141BD370960041D380 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2084DCF61BD370960041D380 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				202BBFA21BE56BDB004D47EC /* VgcCustomMappings.swift in Sources */,
+				2084DD001BD370960041D380 /* ViewController.swift in Sources */,
+				2084DCFE1BD370960041D380 /* AppDelegate.swift in Sources */,
+				202BBFA11BE56BDB004D47EC /* VgcCustomElements.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2084DD071BD370960041D380 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2084DD121BD370960041D380 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2084DD0D1BD370960041D380 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2084DCF91BD370960041D380 /* Peripheral_OSX */;
+			targetProxy = 2084DD0C1BD370960041D380 /* PBXContainerItemProxy */;
+		};
+		2084DD181BD370960041D380 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2084DCF91BD370960041D380 /* Peripheral_OSX */;
+			targetProxy = 2084DD171BD370960041D380 /* PBXContainerItemProxy */;
+		};
+		20855D061C192EA300F82CED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VirtualGameController;
+			targetProxy = 20855D051C192EA300F82CED /* PBXContainerItemProxy */;
+		};
+		20855D0A1C192EAB00F82CED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VirtualGameController;
+			targetProxy = 20855D091C192EAB00F82CED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		2084DD031BD370960041D380 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2084DD041BD370960041D380 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2084DD1D1BD370960041D380 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2084DD1E1BD370960041D380 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		2084DD201BD370960041D380 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CN7G7TCUME;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = vgcPeripheral_OSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.simplyformed.net.vgcPeripheral-OSX";
+				PRODUCT_NAME = Peripheral_OSX;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		2084DD211BD370960041D380 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CN7G7TCUME;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = vgcPeripheral_OSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.simplyformed.net.vgcPeripheral-OSX";
+				PRODUCT_NAME = Peripheral_OSX;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		2084DD231BD370960041D380 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = vgcPeripheral_OSXTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.simplyformed.net.vgcPeripheral-OSXTests";
+				PRODUCT_NAME = Peripheral_OSX;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Peripheral_OSX.app/Contents/MacOS/Peripheral_OSX";
+			};
+			name = Debug;
+		};
+		2084DD241BD370960041D380 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = vgcPeripheral_OSXTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.simplyformed.net.vgcPeripheral-OSXTests";
+				PRODUCT_NAME = Peripheral_OSX;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Peripheral_OSX.app/Contents/MacOS/Peripheral_OSX";
+			};
+			name = Release;
+		};
+		2084DD261BD370960041D380 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = vgcPeripheral_OSXUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.simplyformed.net.vgcPeripheral-OSXUITests";
+				PRODUCT_NAME = Peripheral_OSX;
+				TEST_TARGET_NAME = vgcPeripheral_OSX;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		2084DD271BD370960041D380 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = vgcPeripheral_OSXUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.simplyformed.net.vgcPeripheral-OSXUITests";
+				PRODUCT_NAME = Peripheral_OSX;
+				TEST_TARGET_NAME = vgcPeripheral_OSX;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2084DCF51BD370960041D380 /* Build configuration list for PBXProject "Peripheral_OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2084DD1D1BD370960041D380 /* Debug */,
+				2084DD1E1BD370960041D380 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2084DD1F1BD370960041D380 /* Build configuration list for PBXNativeTarget "Peripheral_OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2084DD201BD370960041D380 /* Debug */,
+				2084DD211BD370960041D380 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2084DD221BD370960041D380 /* Build configuration list for PBXNativeTarget "Peripheral_OSXTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2084DD231BD370960041D380 /* Debug */,
+				2084DD241BD370960041D380 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2084DD251BD370960041D380 /* Build configuration list for PBXNativeTarget "Peripheral_OSXUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2084DD261BD370960041D380 /* Debug */,
+				2084DD271BD370960041D380 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2084DCF21BD370960041D380 /* Project object */;
+}

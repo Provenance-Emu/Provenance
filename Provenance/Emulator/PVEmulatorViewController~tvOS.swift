@@ -22,16 +22,7 @@ extension PVEmulatorViewController {
 			actionsheet.popoverPresentationController?.sourceView = menuButton
 			actionsheet.popoverPresentationController?.sourceRect = menuButton!.bounds
 		}
-
-		if PVControllerManager.shared.iCadeController != nil {
-			actionsheet.addAction(UIAlertAction(title: "Disconnect iCade", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-				NotificationCenter.default.post(name: .VgcControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
-				self.core.setPauseEmulation(false)
-				self.isShowingMenu = false
-				self.enableContorllerInput(false)
-			}))
-		}
-
+		
 		//		if let optionCore = core as? CoreOptional {
 		if core is CoreOptional {
 			actionsheet.addAction(UIAlertAction(title: "Core Options", style: .default, handler: { (action) in
@@ -198,8 +189,5 @@ extension PVEmulatorViewController {
 		if #available(iOS 9.0, *) {
 			actionsheet.preferredAction = resumeAction
 		}
-		present(actionsheet, animated: true, completion: {() -> Void in
-			PVControllerManager.shared.iCadeController?.refreshListener()
-		})
 	}
 }

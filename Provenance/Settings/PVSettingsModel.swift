@@ -24,7 +24,6 @@ let kShowRecentSavesKey = "kShowRecentSavesKey"
 let kShowGameBadgesKey = "kShowGameBadgesKey"
 let kTimedAutoSaves = "kTimedAutoSavesKey"
 let kTimedAutoSaveInterval = "kTimedAutoSaveIntervalKey"
-let kICadeControllerSettingKey = "kiCadeControllerSettingKey"
 let kVolumeSettingKey = "kVolumeSettingKey"
 let kFPSCountKey = "kFPSCountKey"
 let kShowGameTitlesKey = "kShowGameTitlesKey"
@@ -168,14 +167,6 @@ public final class PVSettingsModel: NSObject {
     }
 
     @objc
-    var myiCadeControllerSetting: iCadeControllerSetting {
-        didSet {
-            UserDefaults.standard.set(myiCadeControllerSetting.rawValue, forKey: kICadeControllerSettingKey)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    @objc
     var controllerOpacity: CGFloat {
         didSet {
             UserDefaults.standard.set(Float(controllerOpacity), forKey: kControllerOpacityKey)
@@ -264,7 +255,6 @@ public final class PVSettingsModel: NSObject {
                                                   kShowRecentGamesKey: true,
 												  kShowRecentSavesKey: true,
 												  kShowGameBadgesKey: true,
-                                                  kICadeControllerSettingKey: iCadeControllerSetting.settingDisabled.rawValue,
                                                   kVolumeSettingKey: 1.0,
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
@@ -289,8 +279,6 @@ public final class PVSettingsModel: NSObject {
 		showRecentSaveStates = UserDefaults.standard.bool(forKey: kShowRecentSavesKey)
         showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
 		showGameBadges = UserDefaults.standard.bool(forKey: kShowGameBadgesKey)
-        let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
-        myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade))!
         volume = UserDefaults.standard.float(forKey: kVolumeSettingKey)
         showFPSCount = UserDefaults.standard.bool(forKey: kFPSCountKey)
         showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)

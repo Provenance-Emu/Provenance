@@ -12,7 +12,7 @@
    </FileRef>
    <Group
       location = "group:Source"
-      name = "Sources">
+      name = "Source">
       <Group
          location = "group:External"
          name = "External">
@@ -90,13 +90,69 @@
       </FileRef>
    </Group>
    <Group
+      location = "container:"
+      name = "Sample Projects">
+      <Group
+         location = "group:Samples/SpriteKitExample"
+         name = "SpriteKitExample">
+         <FileRef
+            location = "group:SpriteKitExample.xcodeproj">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:Samples/SceneKitShipDemo"
+         name = "SceneKitShipDemo">
+         <FileRef
+            location = "group:SceneKitShipDemo_macOS/SceneKitShipDemo_macOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:SceneKitShipDemo_tvOS/SceneKitShipDemo_tvOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:SceneKitShipDemo_iOS/SceneKitShipDemo_iOS.xcodeproj">
+         </FileRef>
+      </Group>
+      <Group
+         location = "container:"
+         name = "Peripheral Samples">
+         <FileRef
+            location = "group:Samples/Peripheral_iOS/Peripheral_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Peripheral_OSX/Peripheral_OSX.xcodeproj">
+         </FileRef>
+      </Group>
+      <Group
+         location = "container:"
+         name = "Central_Samples">
+         <FileRef
+            location = "group:Samples/Central_iOS/Central_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Bridge_iOS/Bridge_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/ObjectiveC_iOS/ObjectiveC_iOS/ObjectiveC_iOS.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Central_OSX/Central_OSX.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Samples/Central_tvOS/Central_tvOS.xcodeproj">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:Samples/SceneKitVehicleDemo/SceneKitVehicle.xcodeproj">
+      </FileRef>
+   </Group>
+   <Group
       location = "group:Tests"
       name = "Tests">
       <FileRef
-         location = "group:Performance_Peripheral/Test_Performance_Peripheral.xcodeproj">
+         location = "group:/Users/robreuss/Documents/Development/VirtualGameController/Tests/Performance_Peripheral/Test_Performance_Peripheral.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Test_Performance_Central.xcodeproj">
+         location = "group:/Users/robreuss/Documents/Development/VirtualGameController/Tests/Test_Performance_Central.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>

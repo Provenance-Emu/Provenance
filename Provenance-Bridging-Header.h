@@ -4,7 +4,6 @@
 
 #import <PVLibrary/LzmaSDKObjCReader.h>
 #import "PVLogViewController.h"
-//#import "Provenance/Version.h"
 #import <Realm/Realm.h>
 // Hack cause they can't make modules for some reason
 //#import <ProSystem/ProSystemGameCore.h>
@@ -24,13 +23,10 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
-//#import <PVSupport/DebugUtils.h>
 #import "PVAvailability.h"
 #import "PVGLViewController.h"
-#import "PViCade8BitdoController.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "UIView+FrameAdditions.h"
-#import "kICadeControllerSetting.h"
 #import "MBProgressHUD.h"
 #import "PVWebServer.h"
 #import "Reachability.h"

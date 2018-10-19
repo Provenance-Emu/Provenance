@@ -29,6 +29,8 @@ class VgcStreamer: NSObject, NetServiceDelegate, StreamDelegate {
     var totalMessageCount: Int = 0
     var startTime: Date = Date()
     var dataBuffer: NSMutableData = NSMutableData()
+    var expectedLength: Int = 0
+    var elementIdentifier: Int!
     var nsStringBuffer: NSString = ""
     var cycleCount: Int = 0
     var lastTimeStamp = 0.0
@@ -192,59 +194,34 @@ class VgcStreamer: NSObject, NetServiceDelegate, StreamDelegate {
 
     func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         
+         struct PerformanceVars {
+            static var messagesReceived: Float = 0
+            static var bytesReceived: Int = 0
+            static var lastPublicationOfPerformance = Date()
+            static var invalidMessages: Float = 0
+            static var totalTransitTimeMeasurements: Double = 0
+            static var totalTransitTime: Double = 0
+            static var averageTransitTime: Double = 0
+            static var totalSessionMessages: Float = 0
+            static var bufferLoad: Int = 0
+            static var bufferCycles: Int = 0
+            static var bufferReads: Int = 0
+            static var maxLoad: Int = 0
+        }
+        
         if dataBuffer.length == 0 {
             dataBuffer = NSMutableData()
         }
         
         switch (eventCode){
-            
-        case Stream.Event.hasBytesAvailable:
-            
-            //print("RECEIVED STREAM DATA")
-
-            let inputStream = aStream as! InputStream
-            
-            var buffer = Array<UInt8>(repeating: 0, count: VgcManager.netServiceBufferSize)
-            
-            while inputStream.hasBytesAvailable {
-                
-                let len = inputStream.read(&buffer, maxLength: buffer.count)
-                //if len > 500 { vgcLogError("Input buffer loaded: \(len)") }
-                dataBuffer.append(Data(bytes: &buffer, count: len))
-                
-            }
-            
-            while dataBuffer.length > 0 {
-                
-                //print("ENTERED DATA BUFFER PROCESS")
-
-                let (element, remainingData) = elements.processMessage(data: self.dataBuffer)
-
-                if let elementUnwrapped = element {
-                    delegate.receivedNetServiceMessage(elementUnwrapped.identifier, elementValue: elementUnwrapped.valueAsNSData)
-                } else {
-                    //vgcLogError("Got non-element from processMessage (remainder: \(remainingData))")
-                    return
-
-                }
-                
-                if let remainingDataUnwrapped = remainingData {
-                    //print("Got remainder")
-                    dataBuffer = NSMutableData(data: remainingDataUnwrapped)
-                } else {
-                    dataBuffer = NSMutableData()
-                }
-
-            }
-
-            
-
- /*
+ 
         case Stream.Event.hasBytesAvailable:
             
             vgcLogVerbose("Stream status: \(aStream.streamStatus.rawValue)")
-            
+
             var bufferLoops = 0
+            
+            let headerLength = VgcManager.netServiceHeaderLength
             
             let inputStream = aStream as! InputStream
 
@@ -257,30 +234,152 @@ class VgcStreamer: NSObject, NetServiceDelegate, StreamDelegate {
                 let len = inputStream.read(&buffer, maxLength: buffer.count)
                 
                 if len <= 0 { return }
+
+                PerformanceVars.bytesReceived += len
                 
                 //print("Buffer load: \(len)")
                 
-                if len > 500 { vgcLogError("Input buffer loaded: \(len)") }
-
-                dataBuffer.append(Data(bytes: &buffer, count: len))
-                
-                while dataBuffer.length > 0 {
-                   // print("Data buffer: \(dataBuffer.length)")
-                    let (element, remainingData) = elements.processMessage(data: self.dataBuffer)
-                    
-                    if let elementUnwrapped = element {
-                        delegate.receivedNetServiceMessage(elementUnwrapped.identifier, elementValue: elementUnwrapped.valueAsNSData)
-                    } else {
-                        vgcLogError("Got non-element from processMessage")
-                    }
-                    //print("Remaining data: \(remainingData?.count)")
-                    dataBuffer = NSMutableData(data: remainingData!)
+                //if len > 500 { vgcLogError("Input buffer loaded: \(len)") }
+                if VgcManager.performanceSamplingEnabled {
+                    PerformanceVars.bufferLoad += len
+                    PerformanceVars.bufferCycles += 1
+                    if len > PerformanceVars.maxLoad { PerformanceVars.maxLoad = len }
                 }
+                
+                dataBuffer.append(Data(bytes: &buffer, count: len))
                 
             }
             
-*/
+            PerformanceVars.bufferReads += 1
+            
+            //if VgcManager.netServiceLatencyLogging == true { vgcLogDebug("Buffer size is \(dataBuffer.length) (Cycle count: \(cycleCount)) ((Buffer loops: \(bufferLoops))") }
+        
+            while dataBuffer.length > 0 {
+                
+                // This shouldn't happen
+                if dataBuffer.length <= headerLength {
+                    dataBuffer = NSMutableData()
+                    vgcLogError("Streamer received data too short to have a header (\(dataBuffer.length) bytes)")
+                    PerformanceVars.invalidMessages += 1
+                    return
+                }
 
+                let headerIdentifier = dataBuffer.subdata(with: NSRange.init(location: 0, length: 4))
+                if headerIdentifier == headerIdentifierAsNSData as Data {
+                    
+                    var elementIdentifierUInt8: UInt8 = 0
+                    let elementIdentifierNSData = dataBuffer.subdata(with: NSRange.init(location: 4, length: 1))
+                    (elementIdentifierNSData as NSData).getBytes(&elementIdentifierUInt8, length: MemoryLayout<UInt8>.size)
+                    elementIdentifier = Int(elementIdentifierUInt8)
+                    
+                    var expectedLengthUInt32: UInt32 = 0
+                    let valueLengthNSData = dataBuffer.subdata(with: NSRange.init(location: 5, length: 4))
+                    (valueLengthNSData as NSData).getBytes(&expectedLengthUInt32, length: MemoryLayout<UInt32>.size)
+                    expectedLength = Int(expectedLengthUInt32)
+                    
+                    if VgcManager.netServiceLatencyLogging {
+                        
+                       var timestampDouble: Double = 0
+                        let timestampNSData = dataBuffer.subdata(with: NSRange.init(location: 9, length: 8))
+                        (timestampNSData as NSData).getBytes(&timestampDouble, length: MemoryLayout<Double>.size)
+                        
+                        let transitTime = round(1000 * (Date().timeIntervalSince1970 - timestampDouble))
+                        //if timestampDouble < lastTimeStamp { vgcLogDebug("Time problem") }
+                        //lastTimeStamp = timestampDouble
+                        PerformanceVars.totalTransitTime += transitTime
+                        PerformanceVars.totalTransitTimeMeasurements += 1
+                        
+                        // Log percentage-based threshold of transit time relative to average
+                        let averageTransitTime = PerformanceVars.totalTransitTime / PerformanceVars.totalTransitTimeMeasurements
+                        
+                        // Do a certain number of measurements before reporting and resetting
+                        if PerformanceVars.totalTransitTimeMeasurements > 2000 {
+                            print("Latency report: Avg: \(averageTransitTime) based on \(PerformanceVars.totalTransitTimeMeasurements) measures")
+                            PerformanceVars.totalTransitTimeMeasurements = 0
+                            PerformanceVars.totalTransitTime = 0
+                        }
+
+
+                    }
+                    
+                } else {
+                    
+                    // This shouldn't happen
+                    dataBuffer = NSMutableData()
+                    vgcLogError("Streamer expected header but found no header identifier (\(dataBuffer.length) bytes)")
+                    PerformanceVars.invalidMessages += 1
+                    return
+                }
+                
+                if expectedLength == 0 {
+                    dataBuffer = NSMutableData()
+                    vgcLogError("Streamer got expected length of zero")
+                    PerformanceVars.invalidMessages += 1
+                    return
+                }
+
+                var elementValueData = Data()
+
+                if dataBuffer.length < (expectedLength + headerLength) {
+                    vgcLogVerbose("Streamer fetching additional data")
+                    break
+                }
+
+                elementValueData = dataBuffer.subdata(with: NSRange.init(location: headerLength, length: expectedLength))
+                let dataRemainingAfterCurrentElement = dataBuffer.subdata(with: NSRange.init(location: headerLength + expectedLength, length: dataBuffer.length - expectedLength - headerLength))
+                dataBuffer = NSMutableData(data: dataRemainingAfterCurrentElement)
+                
+                if elementValueData.count == expectedLength {
+                    
+                    // Performance testing is about calculating elements received per second
+                    // By sending motion data, it can be  compared to expected rates.
+                    
+                    PerformanceVars.messagesReceived += 1
+                    
+                    if VgcManager.performanceSamplingEnabled && (VgcManager.appRole == .MultiplayerPeer || VgcManager.appRole == .Central) {
+                        
+                        if Float(PerformanceVars.lastPublicationOfPerformance.timeIntervalSinceNow) < -(VgcManager.performanceSamplingDisplayFrequency) {
+                            let messagesPerSecond: Float = PerformanceVars.messagesReceived / VgcManager.performanceSamplingDisplayFrequency
+                            let kbPerSecond: Float = (Float(PerformanceVars.bytesReceived) / VgcManager.performanceSamplingDisplayFrequency) / 1000
+                            //let invalidChecksumsPerSec: Float = (PerformanceVars.invalidChecksums / VgcManager.performanceSamplingDisplayFrequency)
+                            PerformanceVars.totalSessionMessages += PerformanceVars.messagesReceived
+                            if PerformanceVars.bufferCycles > 0 { // Avoid divide by zero crash
+                                vgcLogDebug("Central Performance: \(PerformanceVars.messagesReceived) msgs (\(PerformanceVars.totalSessionMessages) total), \(messagesPerSecond) msgs/sec, \(PerformanceVars.invalidMessages) bad msgs, \(kbPerSecond) KB/sec rcvd, Avg Buf Load \(PerformanceVars.bufferLoad / PerformanceVars.bufferCycles), Max Buf Load \(PerformanceVars.maxLoad), Cycles \(PerformanceVars.bufferCycles), Avg Cycles: \((PerformanceVars.bufferCycles) / (PerformanceVars.bufferReads))")
+                            }
+                            //
+                            PerformanceVars.messagesReceived = 0
+                            PerformanceVars.invalidMessages = 0
+                            PerformanceVars.lastPublicationOfPerformance = Date()
+                            PerformanceVars.bytesReceived = 0
+                            PerformanceVars.bufferLoad = 0
+                            PerformanceVars.bufferCycles = 0
+                            PerformanceVars.bufferReads = 0
+                            PerformanceVars.maxLoad = 0
+                        }
+                    }
+                    
+                    //if logging { vgcLogDebug("Got completed data transfer (\(elementValueData.length) of \(expectedLength))") }
+                
+                    let element = elements.elementFromIdentifier(elementIdentifier!)
+                    
+                    if element == nil {
+                        
+                        vgcLogError("Nil element.")
+                        
+                    } else {
+                        
+                        delegate.receivedNetServiceMessage(elementIdentifier!, elementValue: elementValueData)
+                        
+                    }
+
+                    elementIdentifier = nil
+                    expectedLength = 0
+                    
+                } else {
+                    vgcLogVerbose("Streamer fetching additional data")
+                }
+
+            }
 
             break
         case Stream.Event():

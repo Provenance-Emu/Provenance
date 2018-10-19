@@ -192,6 +192,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         }
     }
     #endif
+	var iCadeTextField: UITextField!
 
     required init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
         self.emulatorCore = responder
@@ -224,8 +225,21 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
+
+		#if !os(tvOS)
+		// Hidden text field to receive iCade controller input
+		iCadeTextField = UITextField(frame: CGRect(x:-1, y: -1, width: 1, height: 1))
+		iCadeTextField.addTarget(self, action: #selector(self.receivedIcadeInput(sender:)), for: .editingChanged)
+		//iCadeTextField.autocorrectionType = .No
+		self.view.addSubview(iCadeTextField)
+		#endif
+
+		// Used to determine if an external keyboard (an iCade controller) is paired
+		NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         #if os(iOS)
             if #available(iOS 10.0, *) {
                 feedbackGenerator = UISelectionFeedbackGenerator()
@@ -243,7 +257,88 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 
         #endif
+
+
+
+		#if !os(tvOS)
+		// To enable iCade, this must be after the notification observers are defined. The connect notification should be used
+		// to setup the controller for use.
+		//VgcManager.iCadeControllerMode = .ICadeMobile
+		if VgcManager.iCadeControllerMode != .Disabled { iCadeTextField.becomeFirstResponder() }
+		#endif
+
+		iCadeTextField.becomeFirstResponder()
     }
+
+func isExternalKeyboardFrame(keyboardFrame: CGRect) -> Bool {
+
+		let keyboard = self.view.convert(keyboardFrame, from: self.view.window)
+		let height = self.view.frame.size.height
+		return keyboard.origin.y + keyboard.size.height > height
+
+	}
+
+
+	func testForPairedExternalKeyboard(aNotification:NSNotification) {
+
+		vgcLogDebug("T[SAMPLE] esting for external keyboard (iCade controller)")
+
+		if let keyboardFrame = aNotification.userInfo?[NSNotification.Name("UIKeyboardFrameBeginUserInfoKey")] as? CGRect {
+
+			if isExternalKeyboardFrame(keyboardFrame: keyboardFrame) {
+
+				vgcLogDebug("[SAMPLE] External keyboard found, displaying iCade controller")
+
+				// Confirm we are in iCade controller mode
+				if VgcManager.iCadeControllerMode != .Disabled {
+
+					// Add an iCade controller to our set of controllers
+					#if !os(watchOS)
+					VgcController.enableIcadeController()
+					#endif
+				}
+
+			} else {
+
+				vgcLogDebug("[SAMPLE] No external keyboard (iCade controller), resigning to hide virtual keyboard")
+				iCadeTextField.resignFirstResponder()
+			}
+		} else {
+			// no UIKeyboardFrameBeginUserInfoKey entry in userInfo
+		}
+	}
+
+
+	@objc func keyboardWillShow(notification: NSNotification) {
+		testForPairedExternalKeyboard(aNotification: notification)
+	}
+	@objc func keyboardWillHide(notification: NSNotification) {
+
+		testForPairedExternalKeyboard(aNotification: notification)
+	}
+
+
+	// iCade controller-generated characters are received into the hidden iCadeTextField, which calls this function.
+	// In turn, the appropriate element can be obtained using elementForCharacter, and then the handlers called on the
+	// controller.  If this were a Peripheral-side implementation, then the element would be used to send the value to
+	// the Central.
+	@objc func receivedIcadeInput(sender: AnyObject) {
+
+		if VgcManager.iCadeControllerMode != .Disabled && VgcController.iCadeController != nil {
+
+
+			ILOG("Sending iCade character: \(iCadeTextField.text) using iCade mode: \(VgcManager.iCadeControllerMode.description)")
+			var element: Element?
+			var value: Int
+			(element, value) = VgcManager.iCadePeripheral.elementForCharacter( iCadeTextField.text!, controllerElements: VgcController.iCadeController.elements)
+			iCadeTextField.text = ""
+			if element == nil { return }
+			element?.value = value as AnyObject
+			VgcController.iCadeController.triggerElementHandlers(element!, value: Float(value) as AnyObject)
+
+		}
+	}
+
 
     // MARK: - GameController Notifications
     @objc func controllerDidConnect(_ note: Notification?) {

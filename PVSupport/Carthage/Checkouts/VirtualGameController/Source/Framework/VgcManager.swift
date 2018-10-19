@@ -157,15 +157,13 @@ let messageValueSeperator = ":"
 @objc open class VgcService: NSObject {
     
     open var name: String
-    open var ID: String!
     open var type: AppRole
     internal var netService: NetService
     
     @objc open var fullName: String { return "\(name) (\(type.description))" }
     
-    init(name: String, type: AppRole, netService: NetService, ID: String) {
+    init(name: String, type: AppRole, netService: NetService) {
         self.name = name
-        self.ID = ID
         self.type = type
         self.netService = netService
     }
@@ -211,7 +209,7 @@ let messageValueSeperator = ":"
     /// Used as a component of the bonjour names for the various app types.
     /// This should be set to something that uniquely identifies your app.
     ///
-    @objc open static var appIdentifier = "vgc"
+    @objc open static var appIdentifier = "pelau"
 
     @objc static var serviceDomain = "local"
     
@@ -222,11 +220,11 @@ let messageValueSeperator = ":"
                 var usi: String
                 let defaults = UserDefaults.standard
                 if let usi = defaults.string(forKey: "includeUniqueServiceIdentifier") {
-                    vgcLogDebug("Found existing Unique Service Identifier: \(usi)")
+                    vgcLogDebug("Found Unique Service Identifier")
                     return usi
                 } else {
                     usi = UUID().uuidString
-                    vgcLogDebug("Created new Unique Service Identifier: \(usi)")
+                    vgcLogDebug("Created new Unique Service Identifier")
                     defaults.set(usi, forKey: "includeUniqueServiceIdentifier")
                     return usi
                 }
@@ -239,7 +237,7 @@ let messageValueSeperator = ":"
                     return Host.current().localizedName!
                 #endif
             }
-            return ""
+//            return ""
         }
     }
 
@@ -287,27 +285,20 @@ let messageValueSeperator = ":"
     @objc open static var enableDupFiltering = false
     @objc open static var dupFilteringPrecision = 2
 
-    @objc open static var netServiceBufferSize = 4012
+    @objc open static var netServiceBufferSize = 4080
     @objc open static var maxDataBufferSizeMessages = 512 // Number of messages to hold in a FIFO buffer until stream returns
     
     @objc open static var netServiceLatencyLogging = false // DO NOT USE: Unreliable method.  Use "Test_Performance_Peripheral" and "Test_Performance_Central" projects instead
-    
-    
-    @objc open static var useWebSocketServer = true
-    @objc open static var roomID = "Default2"
-    @objc open static var roomName = "Default Room"
-    
-    // Future functionality for streaming controller inputs through WebSockets server
-    @objc open static var includeRoutingHeaders = false    // Includes unique identifying information for peripherals and centrals
     
     // The header length of messages
     @objc static var netServiceHeaderLength: Int {
         
         get {
-            var headerLength = 9 // Base size
-            if VgcManager.includeRoutingHeaders { headerLength += 3 } // WebSocket peripheral/controller identifiers
-            if VgcManager.netServiceLatencyLogging { headerLength += 8 } // 17 with latency header info
-            return headerLength
+            if VgcManager.netServiceLatencyLogging {
+                return 17
+            } else {
+                return 9
+            }
         }
         
     }
@@ -404,11 +395,11 @@ let messageValueSeperator = ":"
             return
         }
         if appRole == .MultiplayerPeer {
-            vgcLogDebug("MULTIPEER mode so setting service name to something random (guarenteed unique).")
+            vgcLogError("MULTIPEER mode so setting service name to something random (guarenteed unique).")
             useRandomServiceName = true // Must use unique name when operating in peer mode
-            vgcLogDebug("MULTIPEER mode so starting as .Central first.")
+            vgcLogError("MULTIPEER mode so starting as .Central first.")
             startAs(.Central, appIdentifier: appIdentifier, customElements: customElements, customMappings: customMappings)
-            vgcLogDebug("MULTIPEER mode so starting as .Peripheral second.")
+            vgcLogError("MULTIPEER mode so starting as .Peripheral second.")
             startAs(.Peripheral, appIdentifier: appIdentifier, customElements: customElements, customMappings: customMappings)
             self.appRole = .MultiplayerPeer
         } else {
@@ -459,7 +450,7 @@ let messageValueSeperator = ":"
                 VgcManager.peripheral.deviceInfo = DeviceInfo(deviceUID: "", vendorName: "", attachedToDevice: false, profileType: .ExtendedGamepad, controllerType: .Software, supportsMotion: true)
             
                 #if os(iOS)
-                    VgcManager.peripheral.watch = VgcWatch(delegate: VgcManager.peripheral)
+//                    VgcManager.peripheral.watch = VgcWatch(delegate: VgcManager.peripheral)
                 #endif
             
             case .Central:
@@ -522,11 +513,11 @@ public func deviceIsTypeOfBridge() -> Bool {
         if deviceUID == "" {
             let defaults = UserDefaults.standard
             if let existingDeviceUID = defaults.string(forKey: "deviceUID") {
-                vgcLogDebug("Found existing UID for peripheral: \(existingDeviceUID)")
+                vgcLogDebug("Found existing UID for device: \(existingDeviceUID)")
                 deviceUID = existingDeviceUID
             } else {
                 deviceUID = UUID().uuidString
-                vgcLogDebug("Created new UID for peripheral: \(deviceUID)")
+                vgcLogDebug("Created new UID for device: \(deviceUID)")
                 defaults.set(deviceUID, forKey: "deviceUID")
             }
         }

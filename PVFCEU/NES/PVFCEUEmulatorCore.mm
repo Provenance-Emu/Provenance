@@ -327,7 +327,7 @@ const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_S
 {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
     {
-        GCController *controller = nil;
+        VgcController*controller = nil;
         int playerShift = playerIndex != 0 ? 8: 0;
 
         if (self.controller1 && playerIndex == 0)

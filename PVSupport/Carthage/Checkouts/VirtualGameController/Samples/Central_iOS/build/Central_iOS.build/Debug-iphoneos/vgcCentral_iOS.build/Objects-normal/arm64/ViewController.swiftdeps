@@ -1,0 +1,154 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "ViewController"
+provides-nominal:
+- "C14vgcCentral_iOS14ViewController"
+provides-member:
+- ["C14vgcCentral_iOS14ViewController", ""]
+provides-dynamic-lookup:
+- "viewDidLoad"
+depends-top-level:
+- "VgcCentralViewController"
+- !private "VgcManager"
+- !private "CustomElements"
+- "ViewController"
+- !private "CustomMappings"
+depends-member:
+- !private ["PSs9AnyObject", "CustomElements"]
+- !private ["PSs9AnyObject", "CustomMappings"]
+- !private ["PSs9AnyObject", "VgcManager"]
+- ["PSs9AnyObject", "init"]
+- ["PSs9AnyObject", "viewDidLoad"]
+- ["PSs9AnyObject", ""]
+- !private ["PSs11CVarArgType", "CustomElements"]
+- !private ["PSs11CVarArgType", "CustomMappings"]
+- !private ["PSs11CVarArgType", "VgcManager"]
+- ["PSs11CVarArgType", "init"]
+- ["PSs11CVarArgType", "viewDidLoad"]
+- ["PSs11CVarArgType", ""]
+- !private ["PSs23CustomStringConvertible", "CustomElements"]
+- !private ["PSs23CustomStringConvertible", "CustomMappings"]
+- !private ["PSs23CustomStringConvertible", "VgcManager"]
+- ["PSs23CustomStringConvertible", "init"]
+- ["PSs23CustomStringConvertible", "viewDidLoad"]
+- ["PSs23CustomStringConvertible", ""]
+- !private ["PSs9Equatable", "CustomElements"]
+- !private ["PSs9Equatable", "CustomMappings"]
+- !private ["PSs9Equatable", "VgcManager"]
+- ["PSs9Equatable", "init"]
+- ["PSs9Equatable", "viewDidLoad"]
+- ["PSs9Equatable", ""]
+- !private ["PSs8Hashable", "CustomElements"]
+- !private ["PSs8Hashable", "CustomMappings"]
+- !private ["PSs8Hashable", "VgcManager"]
+- ["PSs8Hashable", "init"]
+- ["PSs8Hashable", "viewDidLoad"]
+- ["PSs8Hashable", ""]
+- !private ["PSo8NSCoding", "CustomElements"]
+- !private ["PSo8NSCoding", "CustomMappings"]
+- !private ["PSo8NSCoding", "VgcManager"]
+- ["PSo8NSCoding", "init"]
+- ["PSo8NSCoding", "viewDidLoad"]
+- ["PSo8NSCoding", ""]
+- !private ["PSo26NSExtensionRequestHandling", "CustomElements"]
+- !private ["PSo26NSExtensionRequestHandling", "CustomMappings"]
+- !private ["PSo26NSExtensionRequestHandling", "VgcManager"]
+- ["PSo26NSExtensionRequestHandling", "init"]
+- ["PSo26NSExtensionRequestHandling", "viewDidLoad"]
+- ["PSo26NSExtensionRequestHandling", ""]
+- !private ["CSo8NSObject", "CustomElements"]
+- !private ["CSo8NSObject", "CustomMappings"]
+- !private ["CSo8NSObject", "VgcManager"]
+- ["CSo8NSObject", "init"]
+- ["CSo8NSObject", "viewDidLoad"]
+- !private ["PSo16NSObjectProtocol", "CustomElements"]
+- !private ["PSo16NSObjectProtocol", "CustomMappings"]
+- !private ["PSo16NSObjectProtocol", "VgcManager"]
+- ["PSo16NSObjectProtocol", "init"]
+- ["PSo16NSObjectProtocol", "viewDidLoad"]
+- ["PSo16NSObjectProtocol", ""]
+- !private ["PSo21UIAppearanceContainer", "CustomElements"]
+- !private ["PSo21UIAppearanceContainer", "CustomMappings"]
+- !private ["PSo21UIAppearanceContainer", "VgcManager"]
+- ["PSo21UIAppearanceContainer", "init"]
+- ["PSo21UIAppearanceContainer", "viewDidLoad"]
+- ["PSo21UIAppearanceContainer", ""]
+- !private ["PSo18UIContentContainer", "CustomElements"]
+- !private ["PSo18UIContentContainer", "CustomMappings"]
+- !private ["PSo18UIContentContainer", "VgcManager"]
+- ["PSo18UIContentContainer", "init"]
+- ["PSo18UIContentContainer", "viewDidLoad"]
+- ["PSo18UIContentContainer", ""]
+- !private ["PSo18UIFocusEnvironment", "CustomElements"]
+- !private ["PSo18UIFocusEnvironment", "CustomMappings"]
+- !private ["PSo18UIFocusEnvironment", "VgcManager"]
+- ["PSo18UIFocusEnvironment", "init"]
+- ["PSo18UIFocusEnvironment", "viewDidLoad"]
+- ["PSo18UIFocusEnvironment", ""]
+- !private ["CSo11UIResponder", "CustomElements"]
+- !private ["CSo11UIResponder", "CustomMappings"]
+- !private ["CSo11UIResponder", "VgcManager"]
+- ["CSo11UIResponder", "init"]
+- ["CSo11UIResponder", "viewDidLoad"]
+- !private ["PSo16UIStateRestoring", "CustomElements"]
+- !private ["PSo16UIStateRestoring", "CustomMappings"]
+- !private ["PSo16UIStateRestoring", "VgcManager"]
+- ["PSo16UIStateRestoring", "init"]
+- ["PSo16UIStateRestoring", "viewDidLoad"]
+- ["PSo16UIStateRestoring", ""]
+- !private ["PSo18UITraitEnvironment", "CustomElements"]
+- !private ["PSo18UITraitEnvironment", "CustomMappings"]
+- !private ["PSo18UITraitEnvironment", "VgcManager"]
+- ["PSo18UITraitEnvironment", "init"]
+- ["PSo18UITraitEnvironment", "viewDidLoad"]
+- ["PSo18UITraitEnvironment", ""]
+- !private ["CSo16UIViewController", "CustomElements"]
+- !private ["CSo16UIViewController", "CustomMappings"]
+- !private ["CSo16UIViewController", "VgcManager"]
+- ["CSo16UIViewController", "init"]
+- ["CSo16UIViewController", "viewDidLoad"]
+- !private ["C14vgcCentral_iOS24VgcCentralViewController", "CustomElements"]
+- !private ["C14vgcCentral_iOS24VgcCentralViewController", "CustomMappings"]
+- !private ["C14vgcCentral_iOS24VgcCentralViewController", "VgcManager"]
+- ["C14vgcCentral_iOS24VgcCentralViewController", "init"]
+- ["C14vgcCentral_iOS24VgcCentralViewController", "viewDidLoad"]
+- ["C14vgcCentral_iOS24VgcCentralViewController", ""]
+- !private ["C14vgcCentral_iOS14ViewController", "CustomElements"]
+- !private ["C14vgcCentral_iOS14ViewController", "CustomMappings"]
+- !private ["C14vgcCentral_iOS14ViewController", "VgcManager"]
+- ["C14vgcCentral_iOS14ViewController", "deinit"]
+- ["C14vgcCentral_iOS14ViewController", "init"]
+- ["C14vgcCentral_iOS14ViewController", "viewDidLoad"]
+depends-nominal:
+- "PSs9AnyObject"
+- "PSs11CVarArgType"
+- "PSs23CustomStringConvertible"
+- "PSs9Equatable"
+- "PSs8Hashable"
+- "PSo8NSCoding"
+- "PSo26NSExtensionRequestHandling"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- "PSo21UIAppearanceContainer"
+- "PSo18UIContentContainer"
+- "PSo18UIFocusEnvironment"
+- "CSo11UIResponder"
+- "PSo16UIStateRestoring"
+- "PSo18UITraitEnvironment"
+- "CSo16UIViewController"
+- "C14vgcCentral_iOS24VgcCentralViewController"
+- "C14vgcCentral_iOS14ViewController"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/CoreImage.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/AVFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/CoreMedia.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/arm64/CoreAudio.swiftmodule"
+interface-hash: "a5b7ba5804bc9e7d1848fd05891fc770"

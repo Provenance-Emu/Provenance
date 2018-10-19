@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     // Time interval for sending one or more messages
     // (frequency of sending messages)
-    let frequencyOfMessageBursts: TimeInterval = 1/240
+    let frequencyOfMessageBursts: TimeInterval = 1/60
     
     // Number of messages to send at each interval
     let numberOfMessagesToSendEachTime = 1

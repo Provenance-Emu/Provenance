@@ -12,6 +12,8 @@ import QuartzCore
 import UIKit
 import RealmSwift
 import PVLibrary
+import GameController
+import VirtualGameController
 
 #if os(iOS)
 import XLActionController
@@ -161,8 +163,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
@@ -261,12 +263,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		initNotifcationObservers()
 		initCore()
 
+
+
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
@@ -369,6 +373,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio?.outputDeviceID = 0
         gameAudio?.start()
 
+		// This is a little convienance thing for the purpose of keeping the debug views refreshed when a change is
+		// made to the playerIndex
+//		NotificationCenter.default.addObserver(self, selector: #selector(self.gotPlayerIndex), name: NSNotification.Name(rawValue: VgcNewPlayerIndexNotification), object: nil)
+
         // stupid bug in tvOS 9.2
         // the controller paused handler (if implemented) seems to cause a 'back' navigation action
         // as well as calling the pause handler itself. Which breaks the menu functionality.
@@ -390,6 +398,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             }
         }
 #endif
+
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -915,9 +924,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 self.enableContorllerInput(false)
             }))
         }
-        present(actionSheet, animated: true, completion: {() -> Void in
-            PVControllerManager.shared.iCadeController?.refreshListener()
-        })
     }
 
     typealias QuitCompletion = () -> Void
@@ -968,20 +974,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func controllerDidConnect(_ note: Notification?) {
         let controller = note?.object as? VgcController
-        // 8Bitdo controllers don't have a pause button, so don't hide the menu
-        if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
-            menuButton?.isHidden = true
-                // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-#if os(iOS)
-
-    controller?.controllerPausedHandler = {[unowned self] controller in
-        self.controllerPauseButtonPressed(controller)
-    }
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
-#endif
-        }
     }
 
     @objc func controllerDidDisconnect(_ note: Notification?) {
@@ -1093,10 +1085,6 @@ extension PVEmulatorViewController {
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton?.bounds ?? .zero
-        }
-
-        self.present(actionSheet, animated: true) {
-            PVControllerManager.shared.iCadeController?.refreshListener()
         }
     }
 }

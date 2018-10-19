@@ -267,7 +267,7 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
 {
     for (NSInteger playerIndex = 0; playerIndex < 4; playerIndex++)
     {
-        GCController *controller = nil;
+        VgcController*controller = nil;
         
         if (self.controller1 && playerIndex == 0)
         {

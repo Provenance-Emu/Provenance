@@ -139,13 +139,8 @@ let headerIdentifierAsNSData = Data(bytes: &VgcManager.headerIdentifier, count: 
 ///
 open class Element: NSObject {
     
-    //@objc open var destinationCentralID: UInt16 = 0
-    //@objc open var destinationPeripheralID: UInt8 = 0
-    
     @objc open var type: ElementType
     @objc open var dataType: ElementDataType
-    
-    //@objc open var controllerDestination: Int16
     
     @objc open var name: String
     @objc open var value: AnyObject
@@ -224,24 +219,6 @@ open class Element: NSObject {
         let valueLengthAsNSData = Data(bytes: &valueLengthAsUInt32, count: MemoryLayout<UInt32>.size)
         
         let messageData = NSMutableData()
-        
-        // Extra headers, for WebSocket implementation
-        /*
-        if VgcManager.includeRoutingHeaders {
-            
-            var destinationPeripheralUInt8: UInt8 = UInt8(destinationPeripheralID)
-            let destinationPeripheralData = Data(bytes: &destinationPeripheralUInt8, count: MemoryLayout<UInt8>.size)
-            messageData.append(destinationPeripheralData)  // 1 byte:  Peripheral this element is destined for
-
-            var destinationCentralUInt16: UInt16 = UInt16(destinationCentralID)
-            let destinationCentralData = Data(bytes: &destinationCentralUInt16, count: MemoryLayout<UInt16>.size)
-            messageData.append(destinationCentralData)  // 2 bytes:  Central this element is destined for
-
-        }
-        */
-        
-        // Extra headers for WebSockets
-        
         
         // Message header
         messageData.append(headerIdentifierAsNSData)  // 4 bytes:   indicates the start of an individual message, random 32-bit int
@@ -497,12 +474,13 @@ open class Elements: NSObject {
         // Iterate the set to set the identifier and load up the hash
         // used by devs to access the elements
         
-        for customElement in Elements.customElements.customProfileElements {
-            let elementCopy = customElement.clone()
-            elementCopy.identifier = customElement.identifier
-            custom[elementCopy.identifier] = elementCopy
-            customProfileElements.append(elementCopy)
-            
+        if (Elements.customElements != nil) {
+            for customElement in Elements.customElements.customProfileElements {
+                let elementCopy = customElement.clone()
+                elementCopy.identifier = customElement.identifier
+                custom[elementCopy.identifier] = elementCopy
+                customProfileElements.append(elementCopy)
+            }
         }
         
         super.init()
@@ -548,7 +526,7 @@ open class Elements: NSObject {
         // Get the controller-specific set of custom elements so they contain the
         // current values for the elements
         let customElements = controller.elements.custom.values
-        //let customElements: [Element] = controller.custom.values
+//        let customElements: [Element] = controller.custom.values
         supplemental = supplemental + customElements
         
         supplemental.insert(systemMessage, at: 0)
@@ -630,151 +608,6 @@ open class Elements: NSObject {
         return element
         
     }
-    
-    func processMessage(data: NSMutableData) -> (element: Element?, remainingData: Data?) {
-        
-        struct PerformanceVars {
-            static var messagesReceived: Float = 0
-            static var bytesReceived: Int = 0
-            static var lastPublicationOfPerformance = Date()
-            static var invalidMessages: Float = 0
-            static var totalTransitTimeMeasurements: Double = 0
-            static var totalTransitTime: Double = 0
-            static var averageTransitTime: Double = 0
-            static var totalSessionMessages: Float = 0
-            static var bufferLoad: Int = 0
-            static var bufferCycles: Int = 0
-            static var bufferReads: Int = 0
-            static var maxLoad: Int = 0
-        }
-        
-        var expectedLength: Int = 0
-        var elementIdentifier: Int!
-        let headerLength = VgcManager.netServiceHeaderLength
-        
-        PerformanceVars.bytesReceived += data.length
-        
-        if VgcManager.performanceSamplingEnabled {
-            PerformanceVars.bufferLoad += data.length
-            PerformanceVars.bufferCycles += 1
-            if data.length > PerformanceVars.maxLoad { PerformanceVars.maxLoad = data.length }
-        }
-        
-        if data.length <= headerLength {
-            vgcLogError("Streamer received data too short to have a header (\(data.length) bytes)")
-            PerformanceVars.invalidMessages += 1
-            return (nil, data as Data)
-        }
-        
-        let headerIdentifier = data.subdata(with: NSRange.init(location: 0, length: 4))
-        if headerIdentifier == headerIdentifierAsNSData as Data {
-            
-            var elementIdentifierUInt8: UInt8 = 0
-            let elementIdentifierNSData = data.subdata(with: NSRange.init(location: 4, length: 1))
-            (elementIdentifierNSData as NSData).getBytes(&elementIdentifierUInt8, length: MemoryLayout<UInt8>.size)
-            elementIdentifier = Int(elementIdentifierUInt8)
-            
-            var expectedLengthUInt32: UInt32 = 0
-            let valueLengthNSData = data.subdata(with: NSRange.init(location: 5, length: 4))
-            (valueLengthNSData as NSData).getBytes(&expectedLengthUInt32, length: MemoryLayout<UInt32>.size)
-            expectedLength = Int(expectedLengthUInt32)
-            
-            if VgcManager.netServiceLatencyLogging {
-
-                var timestampDouble: Double = 0
-                let timestampNSData = data.subdata(with: NSRange.init(location: 9, length: 8))
-                (timestampNSData as NSData).getBytes(&timestampDouble, length: MemoryLayout<Double>.size)
-                //PerformanceVars.totalTransitTime += transitTime
-                PerformanceVars.totalTransitTimeMeasurements += 1
-                
-                // Log percentage-based threshold of transit time relative to average
-                let averageTransitTime = PerformanceVars.totalTransitTime / PerformanceVars.totalTransitTimeMeasurements
-                
-                // Do a certain number of measurements before reporting and resetting
-                if PerformanceVars.totalTransitTimeMeasurements > 2000 {
-                    print("Latency report: Avg: \(averageTransitTime) based on \(PerformanceVars.totalTransitTimeMeasurements) measures")
-                    PerformanceVars.totalTransitTimeMeasurements = 0
-                    PerformanceVars.totalTransitTime = 0
-                }
-
-            }
-            
-        } else {
-            
-            // This shouldn't happen
-            vgcLogError("Streamer expected header but found no header identifier (\(data.length) bytes)")
-            PerformanceVars.invalidMessages += 1
-            return (nil, data as Data)
-        }
-        
-        if expectedLength == 0 {
-            vgcLogError("Streamer got expected length of zero")
-            PerformanceVars.invalidMessages += 1
-            return (nil, nil)
-        }
-        
-        var elementValueData = Data()
-        
-        if data.length < (expectedLength + headerLength) {
-            //print("Streamer fetching additional data")
-            return (nil, data as Data)
-        }
-        
-        elementValueData = data.subdata(with: NSRange.init(location: headerLength, length: expectedLength))
-        let dataRemainingAfterCurrentElement = data.subdata(with: NSRange.init(location: headerLength + expectedLength, length: data.length - expectedLength - headerLength))
-        
-        //data = NSMutableData(data: dataRemainingAfterCurrentElement)
-        
-        if elementValueData.count == expectedLength {
-            
-            // Performance testing is about calculating elements received per second
-            // By sending motion data, it can be  compared to expected rates.
-            
-            PerformanceVars.messagesReceived += 1
-            
-            if VgcManager.performanceSamplingEnabled && (VgcManager.appRole == .MultiplayerPeer || VgcManager.appRole == .Central) {
-                
-                if Float(PerformanceVars.lastPublicationOfPerformance.timeIntervalSinceNow) < -(VgcManager.performanceSamplingDisplayFrequency) {
-                    let messagesPerSecond: Float = PerformanceVars.messagesReceived / VgcManager.performanceSamplingDisplayFrequency
-                    let kbPerSecond: Float = (Float(PerformanceVars.bytesReceived) / VgcManager.performanceSamplingDisplayFrequency) / 1000
-                    //let invalidChecksumsPerSec: Float = (PerformanceVars.invalidChecksums / VgcManager.performanceSamplingDisplayFrequency)
-                    PerformanceVars.totalSessionMessages += PerformanceVars.messagesReceived
-                    if PerformanceVars.bufferCycles > 0 { // Avoid divide by zero crash
-                        //vgcLogDebug("Central Performance: \(PerformanceVars.messagesReceived) msgs (\(PerformanceVars.totalSessionMessages) total), \(messagesPerSecond) msgs/sec, \(PerformanceVars.invalidMessages) bad msgs, \(kbPerSecond) KB/sec rcvd, Avg Buf Load \(PerformanceVars.bufferLoad / PerformanceVars.bufferCycles), Max Buf Load \(PerformanceVars.maxLoad), Cycles \(PerformanceVars.bufferCycles), Avg Cycles: \((PerformanceVars.bufferCycles) / (PerformanceVars.bufferReads))")
-                        vgcLogDebug("Central Performance: \(PerformanceVars.messagesReceived) msgs (\(PerformanceVars.totalSessionMessages) total), \(messagesPerSecond) msgs/sec, \(PerformanceVars.invalidMessages) bad msgs, \(kbPerSecond) KB/sec rcvd, Max Buf Load \(PerformanceVars.maxLoad), Bytes rcvd \(PerformanceVars.bytesReceived)")
-                    }
-                    //
-                    PerformanceVars.messagesReceived = 0
-                    PerformanceVars.invalidMessages = 0
-                    PerformanceVars.lastPublicationOfPerformance = Date()
-                    PerformanceVars.bytesReceived = 0
-                    PerformanceVars.bufferLoad = 0
-                    PerformanceVars.bufferCycles = 0
-                    PerformanceVars.bufferReads = 0
-                    PerformanceVars.maxLoad = 0
-                }
-            }
-          
-            //if logging { vgcLogDebug("Got completed data transfer (\(elementValueData.length) of \(expectedLength))") }
-            
-            let element = VgcManager.elements.elementFromIdentifier(elementIdentifier!)
-            
-            element?.valueAsNSData = elementValueData
-            
-            elementIdentifier = nil
-            expectedLength = 0
-            
-            //print("Data remaining after current element: \(dataRemainingAfterCurrentElement)")
-    
-            return (element: element, remainingData: dataRemainingAfterCurrentElement)
-        } else {
-            // We found no element, so return the whole set of data as a remainder
-            print("Returning all data as a remainder \(dataRemainingAfterCurrentElement.count)")
-            return (element: nil, remainingData: data as Data)
-        }
-
-    }
-    
 }
 
 // Convienance initializer, simplifies creation of custom elements

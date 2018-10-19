@@ -52,7 +52,6 @@
 		B327755D1E9C8520000FEC38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755C1E9C8520000FEC38 /* Foundation.framework */; };
 		B327755F1E9C852D000FEC38 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755E1E9C852D000FEC38 /* CoreFoundation.framework */; };
 		B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775601E9C8539000FEC38 /* CoreAudio.framework */; };
-		B32775651E9C8546000FEC38 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775641E9C8546000FEC38 /* PVSupport.framework */; };
 		B376848C206A06620007A99C /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; };
 		B376848E206A074C0007A99C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B376848D206A074B0007A99C /* Core.plist */; };
 		B392CED22174242400A66D3D /* PVYabauseGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EB851D0B152396CC00715BD2 /* PVYabauseGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,6 +61,7 @@
 		B3AC562E206A28BF004401F8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AC562D206A28BF004401F8 /* GLKit.framework */; };
 		B3AC5630206A28C6004401F8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AC562F206A28C6004401F8 /* OpenGLES.framework */; };
 		B3AC5632206A2903004401F8 /* yglcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5631206A2902004401F8 /* yglcache.cpp */; };
+		B3CA44302179C33E00CD7738 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA442F2179C33E00CD7738 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +100,7 @@
 		B3AC562D206A28BF004401F8 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3AC562F206A28C6004401F8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3AC5631206A2902004401F8 /* yglcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yglcache.cpp; sourceTree = "<group>"; };
+		B3CA442F2179C33E00CD7738 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB1BA9B51587923900F8939D /* osdcore.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osdcore.c; sourceTree = "<group>"; };
 		EB3297131522671200307B0C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		EB3297161522671200307B0C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -257,9 +258,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CA44302179C33E00CD7738 /* PVSupport.framework in Frameworks */,
 				B3AC5630206A28C6004401F8 /* OpenGLES.framework in Frameworks */,
 				B3AC562E206A28BF004401F8 /* GLKit.framework in Frameworks */,
-				B32775651E9C8546000FEC38 /* PVSupport.framework in Frameworks */,
 				B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */,
 				B327755F1E9C852D000FEC38 /* CoreFoundation.framework in Frameworks */,
 				B327755D1E9C8520000FEC38 /* Foundation.framework in Frameworks */,
@@ -304,6 +305,7 @@
 		EB3297121522671200307B0C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CA442F2179C33E00CD7738 /* PVSupport.framework */,
 				B3AC562F206A28C6004401F8 /* OpenGLES.framework */,
 				B3AC562D206A28BF004401F8 /* GLKit.framework */,
 				B327756B1E9C8F0A000FEC38 /* PVSupport.framework */,
@@ -800,6 +802,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_OPENMP_SUPPORT = NO;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",
@@ -865,6 +868,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_OPENMP_SUPPORT = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",

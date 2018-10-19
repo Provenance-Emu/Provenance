@@ -8,6 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
+#if !TARGET_OS_WATCH
+@protocol WCSessionDelegate <NSObject>
+@end
+@class WCSession;
+#endif
+typedef NS_ENUM(NSInteger, WCSessionActivationState) {
+	WCSessionActivationStateNotActivated  = 0,
+	WCSessionActivationStateInactive      = 1,
+	WCSessionActivationStateActivated     = 2,
+} __IOS_AVAILABLE(9.3) __WATCHOS_AVAILABLE(2.2);
+
+#import <VirtualGameController/VirtualGameController-Swift.h>
 
 #pragma mark -
 
@@ -87,10 +99,10 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
 
-@property (nonatomic, strong) GCController *controller1;
-@property (nonatomic, strong) GCController *controller2;
-@property (nonatomic, strong) GCController *controller3;
-@property (nonatomic, strong) GCController *controller4;
+@property (nonatomic, strong) VgcController *controller1;
+@property (nonatomic, strong) VgcController *controller2;
+@property (nonatomic, strong) VgcController *controller3;
+@property (nonatomic, strong) VgcController *controller4;
 
 @property (nonatomic, strong) NSLock  *emulationLoopThreadLock;
 @property (nonatomic, strong) NSCondition  *frontBufferCondition;

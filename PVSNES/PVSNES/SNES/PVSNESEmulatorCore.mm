@@ -906,12 +906,12 @@ static void FinalizeSamplesAudioCallback(void *)
 
 - (void)updateControllers
 {
-    GCController *controller = nil;
+    VgcController*controller = nil;
 
     for (NSInteger player = 1; player <= 2; player++)
     {
         NSUInteger playerMask = player << 16;
-        GCController *controller = (player == 1) ? self.controller1 : self.controller2;
+        VgcController*controller = (player == 1) ? self.controller1 : self.controller2;
 
         if ([controller extendedGamepad])
         {

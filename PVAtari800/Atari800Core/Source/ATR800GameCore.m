@@ -647,7 +647,7 @@ __weak static ATR800GameCore * _currentCore;
 
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
-        GCController *controller = nil;
+        VgcController*controller = nil;
         
         if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;

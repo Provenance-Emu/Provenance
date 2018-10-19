@@ -20,7 +20,6 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
     @IBOutlet weak var revisionLabel: UILabel!
     @IBOutlet weak var modeValueLabel: UILabel!
     @IBOutlet weak var showFPSCountValueLabel: UILabel!
-    @IBOutlet weak var iCadeControllerSetting: UILabel!
     @IBOutlet weak var crtFilterLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnValueLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnTitleLabel: UILabel!
@@ -73,7 +72,6 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         super.viewWillAppear(animated)
         splitViewController?.title = "Settings"
         let settings = PVSettingsModel.shared
-        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         updateWebDavTitleLabel()
     }
 

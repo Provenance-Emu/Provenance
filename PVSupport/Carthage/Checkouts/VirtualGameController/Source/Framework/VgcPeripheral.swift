@@ -31,13 +31,10 @@ public let VgcSystemMessageNotification:             String = "VgcSystemMessageN
 public let VgcPeripheralSetupNotification:           String = "VgcPeripheralSetupNotification"
 public let VgcNewPlayerIndexNotification:            String = "VgcNewPlayerIndexNotification"
 
-open class Peripheral: NSObject, VgcWatchDelegate {
+open class Peripheral: NSObject {
     
     fileprivate var vgcDeviceInfo: DeviceInfo!
     var browser: VgcBrowser!
-    var webSocketPeripheralSmallData: WebSocketPeripheral!
-    var webSocketPeripheralLargeData: WebSocketPeripheral!
-    var peripheralID: String!
     #if os(iOS)
     open var watch: VgcWatch!
     #endif
@@ -111,15 +108,7 @@ open class Peripheral: NSObject, VgcWatchDelegate {
             if VgcManager.appRole == .EnhancementBridge && VgcController.enhancedController != nil {
                 VgcController.enhancedController.peripheral.browser.sendElementStateOverNetService(element)
             } else {
-                if VgcManager.useWebSocketServer {
-                    if element.valueAsNSData.count < 1024 {
-                        webSocketPeripheralSmallData.sendElement(element: element)
-                    } else {
-                        webSocketPeripheralLargeData.sendElement(element: element)
-                    }
-                } else {
-                    browser.sendElementStateOverNetService(element)
-                }
+                browser.sendElementStateOverNetService(element)
             }
             
             //vgcLogDebug("Element to be mapped: \(element.name)")
@@ -187,16 +176,7 @@ open class Peripheral: NSObject, VgcWatchDelegate {
     /// by browsing the network.
     ///
     @objc open func connectToService(_ vgcService: VgcService) {
-        if VgcManager.useWebSocketServer {
-            
-            VgcManager.peripheral.webSocketPeripheralSmallData.connectToService(service: vgcService)
-            
-            VgcManager.peripheral.haveConnectionToCentral = true
-            NotificationCenter.default.post(name: Notification.Name(rawValue: VgcPeripheralDidConnectNotification), object: nil)
-            VgcManager.peripheral.gotConnectionToCentral()
-        } else {
-            browser.connectToService(vgcService)
-        }
+        browser.connectToService(vgcService)
     }
     
     @objc open func disconnectFromService() {
@@ -213,46 +193,28 @@ open class Peripheral: NSObject, VgcWatchDelegate {
     
     @objc open func browseForServices() {
         
-        if VgcManager.useWebSocketServer {
-            
-            if webSocketPeripheralSmallData == nil {
-                webSocketPeripheralSmallData = WebSocketPeripheral()
-            }
-            if webSocketPeripheralLargeData == nil {
-                webSocketPeripheralLargeData = WebSocketPeripheral()
-            }
-            
-            webSocketPeripheralSmallData.setup()
-            webSocketPeripheralLargeData.setup()
-            webSocketPeripheralSmallData.subscribeToServiceList()
-            
-        } else {
+        browser.reset()
         
-            browser.reset()
-            
-            vgcLogDebug("Browsing for services...")
-            
-            NotificationCenter.default.post(name: Notification.Name(rawValue: VgcPeripheralDidResetBrowser), object: nil)
-            
-            // If we're a bridge, this peripheral is a controller-specific instance.  If the controller is no
-            // longer in the array of controllers, it means it has disconnected and we don't want to advertise it
-            // any longer.
-            if deviceIsTypeOfBridge() {
-                let (existsAlready, _) = VgcController.controllerAlreadyExists(controller)
-                if existsAlready == false {
-                    vgcLogDebug("Refusing to announce Bridge-to-Central peripheral because it's controller no longer exists.  If the controller is MFi, it may have gone to sleep.")
-                    return
-                }
+        vgcLogDebug("Browsing for services...")
+        
+        NotificationCenter.default.post(name: Notification.Name(rawValue: VgcPeripheralDidResetBrowser), object: nil)
+        
+        // If we're a bridge, this peripheral is a controller-specific instance.  If the controller is no
+        // longer in the array of controllers, it means it has disconnected and we don't want to advertise it
+        // any longer.
+        if deviceIsTypeOfBridge() {
+            let (existsAlready, _) = VgcController.controllerAlreadyExists(controller)
+            if existsAlready == false {
+                vgcLogDebug("Refusing to announce Bridge-to-Central peripheral because it's controller no longer exists.  If the controller is MFi, it may have gone to sleep.")
+                return
             }
-            
-            browser.browseForCentral()
         }
+        
+        browser.browseForCentral()
         
     }
     
     @objc open func stopBrowsingForServices() {
-        
-        guard !VgcManager.useWebSocketServer else { return }
         
         if deviceIsTypeOfBridge() {
             vgcLogDebug("Refusing to stop browsing for service because I am a BRIDGE")
@@ -272,12 +234,8 @@ open class Peripheral: NSObject, VgcWatchDelegate {
     
     @objc open var availableServices: [VgcService] {
         get {
-            if VgcManager.useWebSocketServer {
-                return Array(webSocketPeripheralSmallData.availableServices)
-            } else {
-                let services = [VgcService](browser.serviceLookup.values)
-                return services
-            }
+            let services = [VgcService](browser.serviceLookup.values)
+            return services
         }
     }
     
@@ -297,7 +255,7 @@ open class Peripheral: NSObject, VgcWatchDelegate {
         
         vgcLogDebug("Got connection to Central (Already? \(haveConnectionToCentral))")
         
-        if (haveOpenStreamsToCentral == true && !VgcManager.useWebSocketServer ) { return }
+        if (haveOpenStreamsToCentral == true) { return }
         
         previousElements.reserveCapacity(VgcManager.elements.allElementsCollection().count)
         for element in VgcManager.elements.allElementsCollection() {
@@ -350,7 +308,7 @@ open class Peripheral: NSObject, VgcWatchDelegate {
             return
         }
         
-        if !VgcManager.useWebSocketServer { vgcLogDebug("Sending device info for controller \(deviceInfo.vendorName) to \(browser.connectedVgcService.fullName)") }
+        vgcLogDebug("Sending device info for controller \(deviceInfo.vendorName) to \(browser.connectedVgcService.fullName)")
         
         NSKeyedArchiver.setClassName("DeviceInfo", for: DeviceInfo.self)
         let element = VgcManager.elements.deviceInfoElement

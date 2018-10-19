@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3055BEE20730B60001212D2 /* PVSupport.framework */; };
-		B3274E8D2106C1A900857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E8C2106C1A900857F52 /* PVSupport.framework */; };
-		B3274E8E2106C1B800857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E8C2106C1A900857F52 /* PVSupport.framework */; };
 		B3303E381DED20CF00896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3303E391DED20D900896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3303E6C1DED23EE00896D96 /* example.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5B1DED23EE00896D96 /* example.c */; };
@@ -115,13 +113,11 @@
 		B380100A2085234000FA03B8 /* TxTexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F62038AE7B001E70F1 /* TxTexCache.cpp */; };
 		B380100B2085234000FA03B8 /* TxUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603112038AE7B001E70F1 /* TxUtil.cpp */; };
 		B380100C2085234000FA03B8 /* txWidestringWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603022038AE7B001E70F1 /* txWidestringWrapper.cpp */; };
-		B380100E2085252500FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B38010102085253000FA03B8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380100F2085252F00FA03B8 /* OpenGLES.framework */; };
 		B3801011208545D900FA03B8 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
 		B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
-		B3882C151DED27BC007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
 		B39F010A20866B3E0076D183 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B39F010920866B3E0076D183 /* libz.tbd */; };
 		B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
@@ -401,6 +397,43 @@
 		B3B3B9391DED137100602746 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
 		B3B3B94E1DED13A200602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B96A1DED144100602746 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3CA44332179C39D00CD7738 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E621DED23EE00896D96 /* pngrio.c */; };
+		B3CA44342179C39D00CD7738 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E681DED23EE00896D96 /* pngwio.c */; };
+		B3CA44352179C39D00CD7738 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5D1DED23EE00896D96 /* pngerror.c */; };
+		B3CA44362179C39D00CD7738 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E691DED23EE00896D96 /* pngwrite.c */; };
+		B3CA44372179C39D00CD7738 /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E651DED23EE00896D96 /* pngset.c */; };
+		B3CA44382179C39D00CD7738 /* example.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5B1DED23EE00896D96 /* example.c */; };
+		B3CA44392179C39D00CD7738 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5E1DED23EE00896D96 /* pngget.c */; };
+		B3CA443A2179C39D00CD7738 /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E631DED23EE00896D96 /* pngrtran.c */; };
+		B3CA443B2179C39D00CD7738 /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5F1DED23EE00896D96 /* pngmem.c */; };
+		B3CA443C2179C39D00CD7738 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E6B1DED23EE00896D96 /* pngwutil.c */; };
+		B3CA443D2179C39D00CD7738 /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E671DED23EE00896D96 /* pngtrans.c */; };
+		B3CA443E2179C39D00CD7738 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E601DED23EE00896D96 /* pngpread.c */; };
+		B3CA443F2179C39D00CD7738 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5C1DED23EE00896D96 /* png.c */; };
+		B3CA44402179C39D00CD7738 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E6A1DED23EE00896D96 /* pngwtran.c */; };
+		B3CA44412179C39D00CD7738 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E641DED23EE00896D96 /* pngrutil.c */; };
+		B3CA44422179C39D00CD7738 /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E611DED23EE00896D96 /* pngread.c */; };
+		B3CA44432179C39D00CD7738 /* pngtest.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E661DED23EE00896D96 /* pngtest.c */; };
+		B3CA444C2179C3AD00CD7738 /* TxQuantize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603032038AE7B001E70F1 /* TxQuantize.cpp */; };
+		B3CA444D2179C3AD00CD7738 /* TextureFilters_hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603002038AE7B001E70F1 /* TextureFilters_hq2x.cpp */; };
+		B3CA444E2179C3AD00CD7738 /* TxUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603112038AE7B001E70F1 /* TxUtil.cpp */; };
+		B3CA444F2179C3AD00CD7738 /* TxFilterExport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031F2038AE7B001E70F1 /* TxFilterExport.cpp */; };
+		B3CA44502179C3AD00CD7738 /* txWidestringWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603022038AE7B001E70F1 /* txWidestringWrapper.cpp */; };
+		B3CA44512179C3AD00CD7738 /* TextureFilters_hq4x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F32038AE7B001E70F1 /* TextureFilters_hq4x.cpp */; };
+		B3CA44522179C3AD00CD7738 /* TextureFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602EA2038AE7B001E70F1 /* TextureFilters.cpp */; };
+		B3CA44532179C3AD00CD7738 /* TextureFilters_2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031D2038AE7B001E70F1 /* TextureFilters_2xsai.cpp */; };
+		B3CA44542179C3AD00CD7738 /* TxReSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031C2038AE7B001E70F1 /* TxReSample.cpp */; };
+		B3CA44552179C3AD00CD7738 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
+		B3CA44562179C3AD00CD7738 /* TxHiResCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6030E2038AE7B001E70F1 /* TxHiResCache.cpp */; };
+		B3CA44572179C3AD00CD7738 /* TextureFilters_xbrz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F42038AE7B001E70F1 /* TextureFilters_xbrz.cpp */; };
+		B3CA44582179C3AD00CD7738 /* TxImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602E92038AE7B001E70F1 /* TxImage.cpp */; };
+		B3CA44592179C3AD00CD7738 /* TxCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603102038AE7B001E70F1 /* TxCache.cpp */; };
+		B3CA445A2179C3AD00CD7738 /* TxTexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F62038AE7B001E70F1 /* TxTexCache.cpp */; };
+		B3CA445B2179C3AD00CD7738 /* TxFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6030A2038AE7B001E70F1 /* TxFilter.cpp */; };
+		B3CA445D2179C3AD00CD7738 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
+		B3CA44632179C3E000CD7738 /* libglidenhq-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA44622179C3AD00CD7738 /* libglidenhq-tvOS.a */; };
+		B3CA44652179C3F700CD7738 /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA44492179C39D00CD7738 /* libpng-tvOS.a */; };
+		B3CA44672179C41100CD7738 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA44662179C41100CD7738 /* PVSupport.framework */; };
 		B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3CB4B22206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
@@ -1038,6 +1071,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3CA44452179C39D00CD7738 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3CA445E2179C3AD00CD7738 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -1603,6 +1654,9 @@
 		B3C103131C72AA3200DD066C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3C103151C72AA3800DD066C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C1031E1C72C9BA00DD066C /* SDL_opengles2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_opengles2.h; sourceTree = "<group>"; };
+		B3CA44492179C39D00CD7738 /* libpng-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpng-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CA44622179C3AD00CD7738 /* libglidenhq-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libglidenhq-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CA44662179C41100CD7738 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB4B20206E54D10074706B /* Log_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Log_ios.mm; sourceTree = "<group>"; };
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3EA4481206E309500E608F6 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
@@ -2066,7 +2120,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3274E8E2106C1B800857F52 /* PVSupport.framework in Frameworks */,
 				B3882C141DED279C007183B6 /* libpng.a in Frameworks */,
 				B3303E821DED272E00896D96 /* libz.tbd in Frameworks */,
 				B37EFF241C72E6E800857158 /* OpenGLES.framework in Frameworks */,
@@ -2104,7 +2157,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3274E8D2106C1A900857F52 /* PVSupport.framework in Frameworks */,
+				B3CA44672179C41100CD7738 /* PVSupport.framework in Frameworks */,
 				B3B3B8FC1DED130B00602746 /* libz.tbd in Frameworks */,
 				B3B3B8FD1DED130B00602746 /* OpenGLES.framework in Frameworks */,
 				B3B3B8FE1DED130B00602746 /* Foundation.framework in Frameworks */,
@@ -2115,7 +2168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3882C151DED27BC007183B6 /* libpng.a in Frameworks */,
+				B3CA44652179C3F700CD7738 /* libpng-tvOS.a in Frameworks */,
 				B3B3B9381DED137100602746 /* libz.dylib in Frameworks */,
 				B3B3B9391DED137100602746 /* OpenGLES.framework in Frameworks */,
 			);
@@ -2135,6 +2188,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3CA44442179C39D00CD7738 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3CA445C2179C3AD00CD7738 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3CA445D2179C3AD00CD7738 /* libpng.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DFB6017C2038AD13001E70F1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2149,9 +2217,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CA44632179C3E000CD7738 /* libglidenhq-tvOS.a in Frameworks */,
 				B39F010A20866B3E0076D183 /* libz.tbd in Frameworks */,
 				B38010102085253000FA03B8 /* OpenGLES.framework in Frameworks */,
-				B380100E2085252500FA03B8 /* libglidenhq.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2243,6 +2311,8 @@
 				DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
 				DFB603B82038B582001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
 				B3800FF5208522DC00FA03B8 /* libglidenhq.a */,
+				B3CA44492179C39D00CD7738 /* libpng-tvOS.a */,
+				B3CA44622179C3AD00CD7738 /* libglidenhq-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3296,6 +3366,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CA44662179C41100CD7738 /* PVSupport.framework */,
 				B3274E8C2106C1A900857F52 /* PVSupport.framework */,
 				B39F010920866B3E0076D183 /* libz.tbd */,
 				B380100F2085252F00FA03B8 /* OpenGLES.framework */,
@@ -4856,6 +4927,40 @@
 			productReference = B3B3B9731DED144100602746 /* PVRSPCXD4.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B3CA44312179C39D00CD7738 /* png-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3CA44462179C39D00CD7738 /* Build configuration list for PBXNativeTarget "png-tvOS" */;
+			buildPhases = (
+				B3CA44322179C39D00CD7738 /* Sources */,
+				B3CA44442179C39D00CD7738 /* Frameworks */,
+				B3CA44452179C39D00CD7738 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "png-tvOS";
+			productName = libpng;
+			productReference = B3CA44492179C39D00CD7738 /* libpng-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3CA444A2179C3AD00CD7738 /* glidenhq-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3CA445F2179C3AD00CD7738 /* Build configuration list for PBXNativeTarget "glidenhq-tvOS" */;
+			buildPhases = (
+				B3CA444B2179C3AD00CD7738 /* Sources */,
+				B3CA445C2179C3AD00CD7738 /* Frameworks */,
+				B3CA445E2179C3AD00CD7738 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "glidenhq-tvOS";
+			productName = glidenhq;
+			productReference = B3CA44622179C3AD00CD7738 /* libglidenhq-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DFB601872038AD13001E70F1 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoGlideN64" */;
@@ -4956,7 +5061,9 @@
 				DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */,
 				DFB603AF2038B582001E70F1 /* PVMupen64PlusVideoGlideN64 tvOS */,
 				B3303E4B1DED23C600896D96 /* png */,
+				B3CA44312179C39D00CD7738 /* png-tvOS */,
 				B3800FF4208522DC00FA03B8 /* glidenhq */,
+				B3CA444A2179C3AD00CD7738 /* glidenhq-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -5407,6 +5514,53 @@
 				B3AE1F6020733DB300AD06D4 /* module.c in Sources */,
 				B3AE1F6120733DB300AD06D4 /* osal_dynamiclib_unix.c in Sources */,
 				B3AE1F6220733DB300AD06D4 /* su.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3CA44322179C39D00CD7738 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3CA44332179C39D00CD7738 /* pngrio.c in Sources */,
+				B3CA44342179C39D00CD7738 /* pngwio.c in Sources */,
+				B3CA44352179C39D00CD7738 /* pngerror.c in Sources */,
+				B3CA44362179C39D00CD7738 /* pngwrite.c in Sources */,
+				B3CA44372179C39D00CD7738 /* pngset.c in Sources */,
+				B3CA44382179C39D00CD7738 /* example.c in Sources */,
+				B3CA44392179C39D00CD7738 /* pngget.c in Sources */,
+				B3CA443A2179C39D00CD7738 /* pngrtran.c in Sources */,
+				B3CA443B2179C39D00CD7738 /* pngmem.c in Sources */,
+				B3CA443C2179C39D00CD7738 /* pngwutil.c in Sources */,
+				B3CA443D2179C39D00CD7738 /* pngtrans.c in Sources */,
+				B3CA443E2179C39D00CD7738 /* pngpread.c in Sources */,
+				B3CA443F2179C39D00CD7738 /* png.c in Sources */,
+				B3CA44402179C39D00CD7738 /* pngwtran.c in Sources */,
+				B3CA44412179C39D00CD7738 /* pngrutil.c in Sources */,
+				B3CA44422179C39D00CD7738 /* pngread.c in Sources */,
+				B3CA44432179C39D00CD7738 /* pngtest.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3CA444B2179C3AD00CD7738 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3CA444C2179C3AD00CD7738 /* TxQuantize.cpp in Sources */,
+				B3CA444D2179C3AD00CD7738 /* TextureFilters_hq2x.cpp in Sources */,
+				B3CA444E2179C3AD00CD7738 /* TxUtil.cpp in Sources */,
+				B3CA444F2179C3AD00CD7738 /* TxFilterExport.cpp in Sources */,
+				B3CA44502179C3AD00CD7738 /* txWidestringWrapper.cpp in Sources */,
+				B3CA44512179C3AD00CD7738 /* TextureFilters_hq4x.cpp in Sources */,
+				B3CA44522179C3AD00CD7738 /* TextureFilters.cpp in Sources */,
+				B3CA44532179C3AD00CD7738 /* TextureFilters_2xsai.cpp in Sources */,
+				B3CA44542179C3AD00CD7738 /* TxReSample.cpp in Sources */,
+				B3CA44552179C3AD00CD7738 /* TxDbg_ios.mm in Sources */,
+				B3CA44562179C3AD00CD7738 /* TxHiResCache.cpp in Sources */,
+				B3CA44572179C3AD00CD7738 /* TextureFilters_xbrz.cpp in Sources */,
+				B3CA44582179C3AD00CD7738 /* TxImage.cpp in Sources */,
+				B3CA44592179C3AD00CD7738 /* TxCache.cpp in Sources */,
+				B3CA445A2179C3AD00CD7738 /* TxTexCache.cpp in Sources */,
+				B3CA445B2179C3AD00CD7738 /* TxFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5872,7 +6026,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
@@ -5924,7 +6078,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -6246,6 +6400,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = NO;
@@ -6331,6 +6486,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
@@ -6440,7 +6596,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -6495,7 +6651,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALIDATE_PRODUCT = YES;
@@ -7211,6 +7367,225 @@
 			};
 			name = Release;
 		};
+		B3CA44472179C39D00CD7738 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/png\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = (
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fvisibility=hidden",
+					"-DGCC",
+					"-pthread",
+					"-fPIC",
+					"-D__unix__",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility-inlines-hidden",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lpng16",
+					"-lz",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		B3CA44482179C39D00CD7738 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/png\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fvisibility=hidden",
+					"-DGCC",
+					"-pthread",
+					"-fPIC",
+					"-D__unix__",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility-inlines-hidden",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lpng16",
+					"-lz",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B3CA44602179C3AD00CD7738 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					TXFILTER_LIB,
+					OS_IOS,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/common\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/osal\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/windows\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/xxHash\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		B3CA44612179C3AD00CD7738 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TXFILTER_LIB,
+					OS_IOS,
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/common\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/osal\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/windows\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/xxHash\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		DFB601852038AD13001E70F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7738,6 +8113,24 @@
 			buildConfigurations = (
 				B3B3B9711DED144100602746 /* Debug */,
 				B3B3B9721DED144100602746 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3CA44462179C39D00CD7738 /* Build configuration list for PBXNativeTarget "png-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3CA44472179C39D00CD7738 /* Debug */,
+				B3CA44482179C39D00CD7738 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3CA445F2179C3AD00CD7738 /* Build configuration list for PBXNativeTarget "glidenhq-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3CA44602179C3AD00CD7738 /* Debug */,
+				B3CA44612179C3AD00CD7738 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

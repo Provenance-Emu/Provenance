@@ -349,7 +349,7 @@ bool systemReadJoypads()
 
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
     {
-        GCController *controller = nil;
+        VgcController*controller = nil;
         if (strongCurrent.controller1 && playerIndex == 0)
         {
             controller = strongCurrent.controller1;

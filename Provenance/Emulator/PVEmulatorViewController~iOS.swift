@@ -11,6 +11,8 @@ import UIKit
 import XLActionController
 import PVLibrary
 import PVSupport
+import GameController
+import VirtualGameController
 
 extension UIColor {
 
@@ -259,15 +261,6 @@ extension PVEmulatorViewController {
 			actionSheet.popoverPresentationController?.sourceRect = menuButton!.bounds
 		}
 
-		if PVControllerManager.shared.iCadeController != nil {
-			actionSheet.addAction(Action("Disconnect iCade", style: .default) { action in
-				NotificationCenter.default.post(name: .VgcControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
-				self.core.setPauseEmulation(false)
-				self.isShowingMenu = false
-				self.enableContorllerInput(false)
-			})
-		}
-
 		if core is CoreOptional {
 			actionSheet.addAction(Action( "Core Options", style: .default, handler: { (action) in
 				self.showCoreOptions()
@@ -429,10 +422,6 @@ extension PVEmulatorViewController {
 			self.isShowingMenu = false
 			self.enableContorllerInput(false)
 		}
-
-		present(actionSheet, animated: true, completion: {() -> Void in
-			PVControllerManager.shared.iCadeController?.refreshListener()
-		})
 	}
 //	override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
 //		super.dismiss(animated: flag, completion: completion)

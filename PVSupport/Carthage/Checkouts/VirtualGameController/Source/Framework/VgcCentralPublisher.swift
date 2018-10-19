@@ -106,8 +106,6 @@ internal class VgcCentralPublisher: NSObject, NetServiceDelegate, StreamDelegate
     var unusedOutputStream: OutputStream!
     var streamMatchingTimer: Timer!
     var pendingStreams = Set<VgcPendingStream>()
-    //var webSocketCentral: WebSocketCentral!
-    var webSocketCentrals = [WebSocketCentral]()
     
     override init() {
         
@@ -130,15 +128,9 @@ internal class VgcCentralPublisher: NSObject, NetServiceDelegate, StreamDelegate
     
     // So that peripherals will be able to see us over NetServices
     func publishService() {
-        if VgcManager.useWebSocketServer {
-            let webSocketCentral = WebSocketCentral()
-            webSocketCentrals.append(webSocketCentral)
-            webSocketCentral.publishCentral(ID: VgcManager.uniqueServiceIdentifierString)
-        }  else {
-            vgcLogDebug("Publishing NetService service to listen for Peripherals on \(self.localService.name)")
-            vgcLogDebug("Service bonjour domain is \(self.localService.domain), type is \(self.localService.type), name is \(self.localService.name)")
-            self.localService.publish(options: .listenForConnections)
-        }
+        vgcLogDebug("Publishing NetService service to listen for Peripherals on \(self.localService.name)")
+        vgcLogDebug("Service bonjour domain is \(self.localService.domain), type is \(self.localService.type), name is \(self.localService.name)")
+        self.localService.publish(options: .listenForConnections)
     }
     
     func unpublishService() {
@@ -148,7 +140,7 @@ internal class VgcCentralPublisher: NSObject, NetServiceDelegate, StreamDelegate
     
     func updateMatchingStreamTimer() {
         
-        if streamMatchingTimer != nil && pendingStreams.count == 0 && streamMatchingTimer.isValid {
+        if pendingStreams.count == 0 && streamMatchingTimer.isValid {
             vgcLogDebug("Invalidating matching stream timer")
             streamMatchingTimer.invalidate()
             streamMatchingTimer = nil
@@ -170,17 +162,17 @@ internal class VgcCentralPublisher: NSObject, NetServiceDelegate, StreamDelegate
             
             if self.pendingStreams.count > 0 { vgcLogDebug("Testing for matching streams among \(self.pendingStreams.count) pending streams") }
             
-            for comparisonStream in self.pendingStreams {
-                if pendingStream1 == nil {
-                    for testStream in self.pendingStreams {
-                        if pendingStream1 == nil && (testStream.deviceInfo != nil && comparisonStream.deviceInfo != nil) && (testStream.deviceInfo.deviceUID == comparisonStream.deviceInfo.deviceUID) && testStream != comparisonStream {
-                            vgcLogDebug("Found matching stream for deviceUID: \(comparisonStream.deviceInfo.deviceUID)")
-                            pendingStream1 = testStream
-                            pendingStream2 = comparisonStream
-                            continue
+                for comparisonStream in self.pendingStreams {
+                    if pendingStream1 == nil {
+                        for testStream in self.pendingStreams {
+                            if (testStream.deviceInfo != nil && comparisonStream.deviceInfo != nil) && (testStream.deviceInfo.deviceUID == comparisonStream.deviceInfo.deviceUID) && testStream != comparisonStream {
+                                vgcLogDebug("Found matching stream for deviceUID: \(comparisonStream.deviceInfo.deviceUID)")
+                                pendingStream1 = testStream
+                                pendingStream2 = comparisonStream
+                                continue
+                            }
                         }
                     }
-                }
                 
                 // Test primarily for the situation where we only get one of the two required
                 // stream sets, and therefore there are potential orphans

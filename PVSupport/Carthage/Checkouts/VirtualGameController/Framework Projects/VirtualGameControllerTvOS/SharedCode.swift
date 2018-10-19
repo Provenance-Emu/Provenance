@@ -8,7 +8,7 @@
 
 import Foundation
 import SceneKit
-import VirtualGameController
+//import VirtualGameController
 
 class SharedCode: NSObject, SCNSceneRendererDelegate {
     

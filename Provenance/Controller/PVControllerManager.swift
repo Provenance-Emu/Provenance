@@ -18,8 +18,6 @@ extension Notification.Name {
     static let PVControllerManagerControllerReassigned = Notification.Name("PVControllerManagerControllerReassignedNotification")
 }
 
-typealias iCadeListenCompletion = () -> Void
-
 #if (arch(i386) || arch(x86_64))
 let isSimulator = true
 #else
@@ -75,69 +73,11 @@ class PVControllerManager: NSObject {
         }
     }
 
-    var iCadeController: PViCadeController?
     var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
     }
 
     static let shared: PVControllerManager = PVControllerManager()
-
-	func listenForICadeControllers(window: UIWindow?, preferredPlayer : Int = -1, completion: iCadeListenCompletion? = nil ) {
-        iCadeController?.controllerPressedAnyKey = {[unowned self] (controller) -> Void in
-			var player = 0
-
-			var controllerReplacing : VgcController?
-			if preferredPlayer == -1 {
-				#if os(tvOS)
-				if self.player1 == nil || self.player1?.microGamepad != nil {
-					player = 1
-				} else if self.player2 == nil || self.player2?.microGamepad != nil {
-					player = 2
-				} else if self.player3 == nil || self.player3?.microGamepad != nil {
-					player = 3
-				} else if self.player4 == nil || self.player4?.microGamepad != nil {
-					player = 1
-				} else {
-					completion?()
-					return
-				}
-				#else
-				if self.player1 == nil {
-					player = 1
-				} else if self.player2 == nil {
-					player = 2
-				} else if self.player3 == nil {
-					player = 3
-				} else if self.player4 == nil {
-					player = 1
-				} else {
-					completion?()
-					return
-				}
-				#endif
-			} else {
-				player = preferredPlayer
-
-				controllerReplacing = self.allLiveControllers[preferredPlayer]
-			}
-
-            self.setController(self.iCadeController, toPlayer: player)
-            self.stopListeningForICadeControllers()
-            NotificationCenter.default.post(name: .VgcControllerDidConnect, object: PVControllerManager.shared.iCadeController)
-
-			if let controllerReplacing = controllerReplacing {
-				self.assign(controllerReplacing)
-			}
-
-            completion?()
-        }
-        iCadeController?.reader.listen(to: window)
-    }
-
-    func stopListeningForICadeControllers() {
-        iCadeController?.controllerPressedAnyKey = nil
-        iCadeController?.reader.listen(to: nil)
-    }
 
     override init() {
         super.init()
@@ -147,14 +87,22 @@ class PVControllerManager: NSObject {
             return
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
+		VgcController.enableIcadeController()
+		VgcController.startWirelessControllerDiscoveryWithCompletionHandler { () -> Void in
+
+			vgcLogDebug("SAMPLE: Discovery completion handler executed")
+			ILOG("Controller connected")
+		}
+
+		NotificationCenter.default.addObserver(self, selector: #selector(self.handleControllerDidConnect(_:)), name: NSNotification.Name(rawValue: VgcControllerDidConnectNotification), object: nil)
+				NotificationCenter.default.addObserver(self, selector: #selector(self.handleControllerDidDisconnect(_:)), name: NSNotification.Name(rawValue: VgcControllerDidDisconnectNotification), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)
         // automatically assign the first connected controller to player 1
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
-        setupICade()
-
     }
 
 	func isAssigned(_ controller : VgcController) -> Bool {
@@ -173,32 +121,13 @@ class PVControllerManager: NSObject {
 		}
 	}
 
-    func setupICade() {
-        if iCadeController == nil {
-            let settings = PVSettingsModel.shared
-            iCadeController = iCadeControllerSettingToPViCadeController(settings.myiCadeControllerSetting)
-            if iCadeController != nil {
-                listenForICadeControllers()
-            }
-        }
-    }
-
-    func resetICadeController() {
-        if iCadeController != nil {
-            stopListeningForICadeControllers()
-            iCadeController = nil
-        }
-
-        setupICade()
-    }
-
     @objc func handleControllerDidConnect(_ note: Notification?) {
         guard let controller = note?.object as? VgcController else {
             ELOG("Object wasn't a VgcController")
             return
         }
 
-        ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
+        ILOG("Controller connected: \(controller.vendorName)")
         assign(controller)
     }
 
@@ -208,7 +137,7 @@ class PVControllerManager: NSObject {
             return
         }
 
-        ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
+        ILOG("Controller disconnected: \(controller.vendorName)")
 
         if controller == player1 {
             player1 = nil
@@ -220,33 +149,11 @@ class PVControllerManager: NSObject {
             player4 = nil
         }
 
-        var assigned = false
-        if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
-            // For 8Bitdo, we set to listen again for controllers after disconnecting
-            // so we can detect when they connect again
-            if iCadeController != nil {
-                listenForICadeControllers()
-            }
-        } else {
-            // Reassign any controller which we are unassigned
-            // (we don't do this for 8Bitdo, instead we listen for them to connect)
-            assigned = assignControllers()
-        }
+        let assigned = assignControllers()
+
         if !assigned {
             NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)
         }
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if (keyPath == "kICadeControllerSettingKey") {
-            setupICade()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
-
-    func listenForICadeControllers() {
-        listenForICadeControllers(window: nil) {() -> Void in }
     }
 
 // MARK: - Controllers assignment
@@ -255,14 +162,7 @@ class PVControllerManager: NSObject {
 			setController(nil, toPlayer: currentIndex)
 		}
 
-#if TARGET_OS_TV
-        // check if controller is iCade, otherwise crash
-        if !((controller is PViCadeController) && controller?.microGamepad) {
-            controller?.microGamepad?.allowsRotation = true
-            controller?.microGamepad?.reportsAbsoluteDpadValues = true
-        }
-#endif
-        controller?.playerIndex = VgcControllerPlayerIndex(rawValue: player - 1)!
+		controller?.playerIndex = GCControllerPlayerIndex(rawValue: player - 1)!
         // TODO: keep an array of players/controllers we support more than 2 players
         if player == 1 {
             player1 = controller
@@ -286,11 +186,7 @@ class PVControllerManager: NSObject {
     @discardableResult
     func assignControllers() -> Bool {
         var controllers = VgcController.controllers()
-        if iCadeController != nil {
-            if let aController = iCadeController {
-                controllers.append(aController)
-            }
-        }
+
         var assigned = false
         controllers.forEach { controller in
             if !allLiveControllers.contains(where: { (number, existingController) -> Bool in
@@ -310,7 +206,7 @@ class PVControllerManager: NSObject {
 			return false
 		}
 
-		ILOG("Assign controller \(controller.vendorName ?? "nil")")
+		ILOG("Assign controller \(controller.vendorName)")
         // Assign the controller to the first player without a controller assigned, or
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
         for i in 1...4 {
@@ -328,7 +224,7 @@ class PVControllerManager: NSObject {
                 setController(controller, toPlayer: i)
                 // Move the previously assigned controller to another player
                 if let previouslyAssignedController = previouslyAssignedController {
-					ILOG("Controller #\(i) \(previouslyAssignedController.vendorName ?? "nil") being reassigned")
+					ILOG("Controller #\(i) \(previouslyAssignedController.vendorName) being reassigned")
                     assign(previouslyAssignedController)
                 }
                 NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)

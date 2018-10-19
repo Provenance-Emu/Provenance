@@ -36,7 +36,6 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
 
     weak open var peripheral: Peripheral!
     var streamer: [StreamDataType: VgcStreamer] = [:]
-    var webSocket: WebSocketCentral!
     
     // Each controller gets it's own copy of a set of elements appropriate to
     // it's profile, and these are used as a backing store for all element/control
@@ -231,7 +230,7 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
             vgcLogDebug("Received data before device is configured")
             return
         }
- 
+        
         // Element is non-nil on success
         if (element != nil) {
 
@@ -243,7 +242,7 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
             if (!deviceIsTypeOfBridge() || !VgcManager.bridgeRelayOnly) { updateGameControllerWithValue(element!) }
             
             // If we're a bridge, send along the value to the Central
-            if !VgcManager.useWebSocketServer && deviceIsTypeOfBridge() && element?.type != .playerIndex && peripheral != nil && peripheral.haveConnectionToCentral == true {
+            if deviceIsTypeOfBridge() && element?.type != .playerIndex && peripheral != nil && peripheral.haveConnectionToCentral == true {
                 
                 element?.valueAsNSData = elementValue
                 peripheral.browser.sendElementStateOverNetService(element)
@@ -281,45 +280,18 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
     }
     
     open func sendElementStateToPeripheral(_ element: Element) {
-
-        if VgcManager.useWebSocketServer {
-            
-            webSocket.sendElement(element: element)
-            
-            /*
-            let envelope = DataEnvelope(idList: [peripheral.deviceInfo.deviceUID], payload: element.valueAsNSData)
-            let encoder = JSONEncoder()
-            do {
-                let json = try encoder.encode(envelope)
-                let jsonString = String(data: json, encoding: .utf8)
-                webSocket.socket.write(string: jsonString!)
-            }
-            catch {
-                
-            }
-            */
-            
-            /*
-            if element.dataType == .Data {
-                peripheral.webSocketPeripheralLargeData.sendElement(element: element)
-            } else {
-                peripheral.webSocketPeripheralSmallData.sendElement(element: element)
-            }
-            */
-        } else {
         
-            if element.dataType == .Data {
-                if streamer[.largeData] != nil {
-                    streamer[.largeData]!.writeElement(element, toStream:toPeripheralOutputStream[.largeData]!)
-                } else {
-                    vgcLogDebug("nil stream LargeData error caught");
-                }
+        if element.dataType == .Data {
+            if streamer[.largeData] != nil {
+                streamer[.largeData]!.writeElement(element, toStream:toPeripheralOutputStream[.largeData]!)
             } else {
-                if streamer[.smallData] != nil {
-                    streamer[.smallData]!.writeElement(element, toStream:toPeripheralOutputStream[.smallData]!)
-                } else {
-                    vgcLogDebug("nil stream SmallData error caught");
-                }
+                vgcLogDebug("nil stream LargeData error caught");
+            }
+        } else {
+            if streamer[.smallData] != nil {
+                streamer[.smallData]!.writeElement(element, toStream:toPeripheralOutputStream[.smallData]!)
+            } else {
+                vgcLogDebug("nil stream SmallData error caught");
             }
         }
         
@@ -337,18 +309,16 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
 
     }
     
+    // Send a message to the Peripheral that we received an invalid message (based on checksum).
+    // This gives the Peripheral an opportunity to take some action, for example, slowing the flow
+    // of motion data.
     func sendConnectionAcknowledgement() {
         let element = elements.systemMessage
         element.value = SystemMessages.connectionAcknowledgement.rawValue as AnyObject
-        if VgcManager.useWebSocketServer {
-            sendElementStateToPeripheral(element)
-            //webSocket.socket.write(data: element.valueAsNSData)
-        } else {
-            if let inStream = streamer[.smallData] {
-                if let outStream = toPeripheralOutputStream[.smallData] {
-                    vgcLogDebug("Sending connection acknowledgement to \(deviceInfo.vendorName)")
-                    inStream.writeElement(element, toStream: outStream)
-                }
+        if let inStream = streamer[.smallData] {
+            if let outStream = toPeripheralOutputStream[.smallData] {
+                vgcLogDebug("Sending connection acknowledgement to \(deviceInfo.vendorName)")
+                inStream.writeElement(element, toStream: outStream)
             }
         }
     }
@@ -365,7 +335,7 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
         
         // We don't need to worry about NSNetService stuff if we're dealing with
         // a watch
-        if deviceInfo != nil && deviceInfo.controllerType != .Watch && !VgcManager.useWebSocketServer {
+        if deviceInfo != nil && deviceInfo.controllerType != .Watch {
             
             vgcLogDebug("Closing streams for controller \(deviceInfo.vendorName)")
             
@@ -1007,7 +977,7 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
             
             if deviceIsTypeOfBridge() { peripheral.browseForServices() }  // Now that we have a peripheral, let the Central know we can act as a peripheral (forwarding)
             
-            if !self.isLocalController && !isHardwareController { sendConnectionAcknowledgement() }
+            if !self.isLocalController { sendConnectionAcknowledgement() }
             
             DispatchQueue.main.async {
                 
@@ -1062,7 +1032,7 @@ open class VgcController: NSObject, StreamDelegate, VgcStreamerDelegate, NetServ
                 
                 if centralPublisher != nil && centralPublisher.haveConnectionToPeripheral && toPeripheralOutputStream[.smallData] != nil {
                     
-                    vgcLogDebug("Sending player index \(newValue.rawValue + 1) to controller \(deviceInfo.vendorName)")
+                    vgcLogDebug("Sending player index \(newValue.rawValue) to controller \(deviceInfo.vendorName)")
                     
                     let playerIndexElement = elements.playerIndex
                     playerIndexElement.value = playerIndex.rawValue as AnyObject
@@ -1849,8 +1819,8 @@ enum EncodingStructError: Error {
 }
 
 func encodeSnapshot<T>(_ value: T) -> Data {
-        var value = value
-    return withUnsafePointer(to: &value) { p in
+        var localValue = value
+    return withUnsafePointer(to: &localValue) { p in
         Data(bytes: p, count: MemoryLayout.size(ofValue: value))
     }
 }

@@ -12,6 +12,7 @@ import PVSupport
 import CocoaLumberjackSwift
 import HockeySDK
 import RealmSwift
+import VirtualGameController
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,7 +29,9 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
         setDefaultsFromSettingsBundle();
-        
+
+		startVGC()
+
 		#if targetEnvironment(simulator)
 		#else
 		_initHockeyApp()
@@ -525,3 +528,35 @@ class PVTVTabBarController : UITabBarController {
 	}
 }
 #endif
+
+extension PVAppDelegate {
+	func startVGC() {
+		// Publishes the central service simplest form
+		//VgcManager.startAs(.Central, appIdentifier: "vgc")
+
+		// Use a compiler flag to control the logging level, dropping it to just errors if this
+		// is a release build.
+		#if DEBUG
+		VgcManager.loggerLogLevel = .Debug // Robust logging
+		#else
+		VgcManager.loggerLogLevel = .Error // Minimal logging
+		#endif
+
+		VgcManager.loggerUseNSLog = true
+
+		// Network performance info
+		VgcManager.performanceSamplingDisplayFrequency = 10.0
+
+		// Include custom elements
+		VgcManager.startAs(.Central, appIdentifier: "Provenance")
+		//VgcManager.startAs(.central, appIdentifier: "Provenance", customElements: CustomElements(), customMappings: CustomMappings(), includesPeerToPeer: false)
+
+		VgcManager.iCadeControllerMode = .Eightbitty
+		// Enable running as a "Local" game controller as well, used in combination with running as a PERIPHERAL to
+		// have the controller both process it's own control activity in a game and forward that activity to another
+		// device
+		//VgcManager.startAs(.MultiplayerPeer, appIdentifier: "vgc", customElements: CustomElements(), customMappings: CustomMappings(), includesPeerToPeer: false, enableLocalController: false)
+		//NotificationCenter.default.addObserver(self, selector: #selector(ViewController.foundService(_:)), name: NSNotification.Name(rawValue: VgcPeripheralFoundService), object: nil)
+		//VgcManager.peripheral.browseForServices()
+	}
+}

@@ -240,7 +240,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
 {
-    GCController *controller = nil;
+    VgcController*controller = nil;
     
     if (player == 0)
     {
@@ -346,7 +346,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
-        GCController *controller = nil;
+        VgcController*controller = nil;
         
         if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;

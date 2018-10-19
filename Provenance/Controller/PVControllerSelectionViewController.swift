@@ -93,7 +93,7 @@ class PVControllerSelectionViewController: UITableViewController {
         }
 
         for controller: VgcController in VgcController.controllers() {
-            var title = controller.vendorName ?? ""
+            var title = controller.vendorName
 
             if controller == PVControllerManager.shared.player1 {
                 title.append(" (Player 1")
@@ -116,7 +116,6 @@ class PVControllerSelectionViewController: UITableViewController {
 					PVControllerManager.shared.setController(controller, toPlayer: 4)
                 }
                 self.tableView.reloadData()
-                PVControllerManager.shared.stopListeningForICadeControllers()
             }))
         }
 
@@ -131,16 +130,11 @@ class PVControllerSelectionViewController: UITableViewController {
 				PVControllerManager.shared.setController(nil, toPlayer: 4)
 			}
             self.tableView.reloadData()
-            PVControllerManager.shared.stopListeningForICadeControllers()
         }))
 
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         present(actionSheet, animated: true, completion: {[unowned self] () -> Void in
-			PVControllerManager.shared.listenForICadeControllers(window: actionSheet.view.window, preferredPlayer: indexPath.row + 1, completion: {() -> Void in
-                self.tableView.reloadData()
-                actionSheet.dismiss(animated: true) {() -> Void in }
-            })
         })
     }
 }

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */; };
 		B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDEF8207FF0E300E661D1 /* libsnes.a */; };
-		B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
@@ -480,11 +479,7 @@
 		B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E81E088A0100AD0E8B /* libz.tbd */; };
 		B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EA1E088A1100AD0E8B /* libiconv.tbd */; };
 		B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EC1E088A1E00AD0E8B /* libiconv.tbd */; };
-		B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EE1E088A3500AD0E8B /* UIKit.framework */; };
 		B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F01E088A3A00AD0E8B /* Foundation.framework */; };
-		B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F21E088A4000AD0E8B /* UIKit.framework */; };
-		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
-		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
 		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B3547B61205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -492,6 +487,9 @@
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
+		B3CA44222179B5AD00CD7738 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
+		B3CA44242179B5C600CD7738 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA44232179B5C600CD7738 /* PVSupport.framework */; };
+		B3CA44262179B5CE00CD7738 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA44252179B5CE00CD7738 /* Foundation.framework */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -3583,6 +3581,8 @@
 		B3AAB3C820736EEC0097D86F /* cart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cart.cpp; sourceTree = "<group>"; };
 		B3AAB3C920736EEC0097D86F /* Time.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Time.cpp; sourceTree = "<group>"; };
 		B3AAB3CA20736EEC0097D86F /* git.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = git.cpp; sourceTree = "<group>"; };
+		B3CA44232179B5C600CD7738 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CA44252179B5CE00CD7738 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3770,7 +3770,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */,
+				B3CA44222179B5AD00CD7738 /* PVSupport.framework in Frameworks */,
 				B3FBDFAE207FFB1F00E661D1 /* libsnes_faust.a in Frameworks */,
 				B3FBDF9A207FF51D00E661D1 /* libsnes.a in Frameworks */,
 				B33355F0207B28570036A448 /* libtrio.a in Frameworks */,
@@ -3798,7 +3798,6 @@
 				B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335075207AFD9C0036A448 /* libwonderswan.a in Frameworks */,
 				B333504F207AFBFC0036A448 /* libpsx.a in Frameworks */,
-				B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */,
 				B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */,
@@ -3809,7 +3808,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
+				B3CA44262179B5CE00CD7738 /* Foundation.framework in Frameworks */,
+				B3CA44242179B5C600CD7738 /* PVSupport.framework in Frameworks */,
 				B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */,
 				B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */,
 				B3335874207B43640036A448 /* libcdrom.a in Frameworks */,
@@ -3837,8 +3837,6 @@
 				B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */,
 				B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */,
-				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
-				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
 				B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */,
 			);
@@ -4014,6 +4012,8 @@
 		B340E5E51E0889FB00AD0E8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CA44252179B5CE00CD7738 /* Foundation.framework */,
+				B3CA44232179B5C600CD7738 /* PVSupport.framework */,
 				B314E30F21081E9200D0C27A /* PVSupport.framework */,
 				B340E5FC1E088AF700AD0E8B /* PVSupport.framework */,
 				B340E5FA1E088AF100AD0E8B /* PVSupport.framework */,

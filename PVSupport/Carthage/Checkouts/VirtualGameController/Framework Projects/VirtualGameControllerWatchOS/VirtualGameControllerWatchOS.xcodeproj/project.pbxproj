@@ -29,7 +29,7 @@
 		202BBFEA1BE57419004D47EC /* VgcElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VgcElements.swift; path = ../../../Source/Framework/VgcElements.swift; sourceTree = "<group>"; };
 		202BBFEB1BE57419004D47EC /* VgcManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = VgcManager.swift; path = ../../../Source/Framework/VgcManager.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		202BBFEC1BE57419004D47EC /* VgcMotion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VgcMotion.swift; path = ../../../Source/Framework/VgcMotion.swift; sourceTree = "<group>"; };
-		202BBFED1BE57419004D47EC /* VgcWatchConnectivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = VgcWatchConnectivity.swift; path = ../../../Source/Framework/VgcWatchConnectivity.swift; sourceTree = "<group>"; };
+		202BBFED1BE57419004D47EC /* VgcWatchConnectivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = VgcWatchConnectivity.swift; path = ../../../Source/Framework/VgcWatchConnectivity.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		207A78C01C276DA800529768 /* VgcLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VgcLogger.swift; path = ../../../Source/Framework/VgcLogger.swift; sourceTree = "<group>"; };
 		207D87621F7ADB3F00D232CB /* VgcCustomElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcCustomElements.swift; path = ../../../Source/External/VgcCustomElements.swift; sourceTree = "<group>"; };
 		207D87631F7ADB3F00D232CB /* VgcCustomMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcCustomMappings.swift; path = ../../../Source/External/VgcCustomMappings.swift; sourceTree = "<group>"; };
@@ -58,8 +58,7 @@
 		20A491171C3A1E4E00E66788 /* VgcPeripheralSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcPeripheralSetup.swift; path = ../../Source/Framework/VgcPeripheralSetup.swift; sourceTree = "<group>"; };
 		20A491181C3A1E4E00E66788 /* VgcStreamer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcStreamer.swift; path = ../../Source/Framework/VgcStreamer.swift; sourceTree = "<group>"; };
 		20A491191C3A1E4E00E66788 /* VgcWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcWatch.swift; path = ../../Source/Framework/VgcWatch.swift; sourceTree = "<group>"; };
-		20A4911A1C3A1E4E00E66788 /* VgcWatchConnectivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcWatchConnectivity.swift; path = ../../Source/Framework/VgcWatchConnectivity.swift; sourceTree = "<group>"; };
-		20B742B41F8DDE880091A5EA /* VirtualGameController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = VirtualGameController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		20A4911A1C3A1E4E00E66788 /* VgcWatchConnectivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VgcWatchConnectivity.swift; path = ../../Source/Framework/VgcWatchConnectivity.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +92,6 @@
 				20A4911A1C3A1E4E00E66788 /* VgcWatchConnectivity.swift */,
 				20A120BC1BDA97BF00E30083 /* VirtualGameControllerWatchOS */,
 				20A120BB1BDA97BF00E30083 /* Products */,
-				20B742B21F8DDE880091A5EA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -127,14 +125,6 @@
 				20A120BF1BDA97BF00E30083 /* Info.plist */,
 			);
 			path = VirtualGameControllerWatchOS;
-			sourceTree = "<group>";
-		};
-		20B742B21F8DDE880091A5EA /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				20B742B41F8DDE880091A5EA /* VirtualGameController.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,7 +171,7 @@
 				TargetAttributes = {
 					20A120B91BDA97BF00E30083 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = CN7G7TCUME;
+						DevelopmentTeam = 3NQBX2AGK5;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -352,7 +342,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = CN7G7TCUME;
+				DEVELOPMENT_TEAM = 3NQBX2AGK5;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -375,7 +365,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = CN7G7TCUME;
+				DEVELOPMENT_TEAM = 3NQBX2AGK5;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

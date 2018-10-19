@@ -1,4 +1,5 @@
 github "0xced/XCDLumberjackNSLogger" "1.1.1"
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
 github "fpillet/NSLogger" "v1.9.0"
+github "pelauimagineering/VirtualGameController" "2e63e5c75baf44c846828d1a5f0d058c32b4e073"
 github "radex/SwiftyUserDefaults" "3.0.1"

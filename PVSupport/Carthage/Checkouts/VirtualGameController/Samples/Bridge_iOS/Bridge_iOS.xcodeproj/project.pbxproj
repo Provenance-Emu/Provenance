@@ -1,0 +1,408 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		20F205471C252BEC005A45FF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20F205451C252BEC005A45FF /* Main.storyboard */; };
+		20F205491C252BEC005A45FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20F205481C252BEC005A45FF /* Assets.xcassets */; };
+		20F2054C1C252BEC005A45FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20F2054A1C252BEC005A45FF /* LaunchScreen.storyboard */; };
+		20F205551C252C10005A45FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F205531C252C10005A45FF /* AppDelegate.swift */; };
+		20F205561C252C10005A45FF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F205541C252C10005A45FF /* ViewController.swift */; };
+		20F2055D1C252C3F005A45FF /* VirtualGameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20F2055C1C252C34005A45FF /* VirtualGameController.framework */; };
+		20F2055E1C252C3F005A45FF /* VirtualGameController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 20F2055C1C252C34005A45FF /* VirtualGameController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		20F205661C252C5A005A45FF /* VgcCustomElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F205621C252C5A005A45FF /* VgcCustomElements.swift */; };
+		20F205671C252C5A005A45FF /* VgcCustomMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F205631C252C5A005A45FF /* VgcCustomMappings.swift */; };
+		20F205681C252C5A005A45FF /* VgcSharedViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F205641C252C5A005A45FF /* VgcSharedViews.swift */; };
+		20F205691C252C5A005A45FF /* VgcCentralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F205651C252C5A005A45FF /* VgcCentralViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		20F2055B1C252C34005A45FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20F205571C252C34005A45FF /* VirtualGameControllerIOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 202BBF611BE569BD004D47EC;
+			remoteInfo = VirtualGameControllerIOS;
+		};
+		20F2055F1C252C3F005A45FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20F205571C252C34005A45FF /* VirtualGameControllerIOS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 202BBF601BE569BC004D47EC;
+			remoteInfo = VirtualGameControllerIOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		20F205611C252C3F005A45FF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				20F2055E1C252C3F005A45FF /* VirtualGameController.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		20F2053E1C252BEC005A45FF /* Bridge_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bridge_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20F205461C252BEC005A45FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		20F205481C252BEC005A45FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		20F2054B1C252BEC005A45FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		20F2054D1C252BEC005A45FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20F205531C252C10005A45FF /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		20F205541C252C10005A45FF /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		20F205571C252C34005A45FF /* VirtualGameControllerIOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VirtualGameControllerIOS.xcodeproj; path = "../../../Framework Projects/VirtualGameControllerIOS/VirtualGameControllerIOS.xcodeproj"; sourceTree = "<group>"; };
+		20F205621C252C5A005A45FF /* VgcCustomElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VgcCustomElements.swift; path = ../../../Source/External/VgcCustomElements.swift; sourceTree = "<group>"; };
+		20F205631C252C5A005A45FF /* VgcCustomMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VgcCustomMappings.swift; path = ../../../Source/External/VgcCustomMappings.swift; sourceTree = "<group>"; };
+		20F205641C252C5A005A45FF /* VgcSharedViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = VgcSharedViews.swift; path = ../../../Source/External/VgcSharedViews.swift; sourceTree = "<group>"; };
+		20F205651C252C5A005A45FF /* VgcCentralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = VgcCentralViewController.swift; path = ../../../Source/External/VgcCentralViewController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		20F2053B1C252BEC005A45FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20F2055D1C252C3F005A45FF /* VirtualGameController.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		20F205351C252BEC005A45FF = {
+			isa = PBXGroup;
+			children = (
+				20F205401C252BEC005A45FF /* Bridge_iOS */,
+				20F2053F1C252BEC005A45FF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		20F2053F1C252BEC005A45FF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				20F2053E1C252BEC005A45FF /* Bridge_iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		20F205401C252BEC005A45FF /* Bridge_iOS */ = {
+			isa = PBXGroup;
+			children = (
+				20F205621C252C5A005A45FF /* VgcCustomElements.swift */,
+				20F205631C252C5A005A45FF /* VgcCustomMappings.swift */,
+				20F205641C252C5A005A45FF /* VgcSharedViews.swift */,
+				20F205651C252C5A005A45FF /* VgcCentralViewController.swift */,
+				20F205571C252C34005A45FF /* VirtualGameControllerIOS.xcodeproj */,
+				20F205531C252C10005A45FF /* AppDelegate.swift */,
+				20F205541C252C10005A45FF /* ViewController.swift */,
+				20F205451C252BEC005A45FF /* Main.storyboard */,
+				20F205481C252BEC005A45FF /* Assets.xcassets */,
+				20F2054A1C252BEC005A45FF /* LaunchScreen.storyboard */,
+				20F2054D1C252BEC005A45FF /* Info.plist */,
+			);
+			path = Bridge_iOS;
+			sourceTree = "<group>";
+		};
+		20F205581C252C34005A45FF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				20F2055C1C252C34005A45FF /* VirtualGameController.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20F2053D1C252BEC005A45FF /* Bridge_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20F205501C252BEC005A45FF /* Build configuration list for PBXNativeTarget "Bridge_iOS" */;
+			buildPhases = (
+				20F2053A1C252BEC005A45FF /* Sources */,
+				20F2053B1C252BEC005A45FF /* Frameworks */,
+				20F2053C1C252BEC005A45FF /* Resources */,
+				20F205611C252C3F005A45FF /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				20F205601C252C3F005A45FF /* PBXTargetDependency */,
+			);
+			name = Bridge_iOS;
+			productName = Bridge_iOS;
+			productReference = 20F2053E1C252BEC005A45FF /* Bridge_iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		20F205361C252BEC005A45FF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = "Rob Reuss";
+				TargetAttributes = {
+					20F2053D1C252BEC005A45FF = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = CN7G7TCUME;
+						LastSwiftMigration = 0830;
+					};
+				};
+			};
+			buildConfigurationList = 20F205391C252BEC005A45FF /* Build configuration list for PBXProject "Bridge_iOS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 20F205351C252BEC005A45FF;
+			productRefGroup = 20F2053F1C252BEC005A45FF /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 20F205581C252C34005A45FF /* Products */;
+					ProjectRef = 20F205571C252C34005A45FF /* VirtualGameControllerIOS.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				20F2053D1C252BEC005A45FF /* Bridge_iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		20F2055C1C252C34005A45FF /* VirtualGameController.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VirtualGameController.framework;
+			remoteRef = 20F2055B1C252C34005A45FF /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		20F2053C1C252BEC005A45FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20F2054C1C252BEC005A45FF /* LaunchScreen.storyboard in Resources */,
+				20F205491C252BEC005A45FF /* Assets.xcassets in Resources */,
+				20F205471C252BEC005A45FF /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		20F2053A1C252BEC005A45FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20F205671C252C5A005A45FF /* VgcCustomMappings.swift in Sources */,
+				20F205681C252C5A005A45FF /* VgcSharedViews.swift in Sources */,
+				20F205561C252C10005A45FF /* ViewController.swift in Sources */,
+				20F205551C252C10005A45FF /* AppDelegate.swift in Sources */,
+				20F205661C252C5A005A45FF /* VgcCustomElements.swift in Sources */,
+				20F205691C252C5A005A45FF /* VgcCentralViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		20F205601C252C3F005A45FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VirtualGameControllerIOS;
+			targetProxy = 20F2055F1C252C3F005A45FF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		20F205451C252BEC005A45FF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				20F205461C252BEC005A45FF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		20F2054A1C252BEC005A45FF /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				20F2054B1C252BEC005A45FF /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		20F2054E1C252BEC005A45FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		20F2054F1C252BEC005A45FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		20F205511C252BEC005A45FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = CN7G7TCUME;
+				INFOPLIST_FILE = Bridge_iOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.simplyformed.Bridge-iOS-unique";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		20F205521C252BEC005A45FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = CN7G7TCUME;
+				INFOPLIST_FILE = Bridge_iOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.simplyformed.Bridge-iOS-unique";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		20F205391C252BEC005A45FF /* Build configuration list for PBXProject "Bridge_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20F2054E1C252BEC005A45FF /* Debug */,
+				20F2054F1C252BEC005A45FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		20F205501C252BEC005A45FF /* Build configuration list for PBXNativeTarget "Bridge_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20F205511C252BEC005A45FF /* Debug */,
+				20F205521C252BEC005A45FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 20F205361C252BEC005A45FF /* Project object */;
+}

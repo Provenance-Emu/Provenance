@@ -370,7 +370,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 #pragma mark Input
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
-        GCController *controller = nil;
+        VgcController*controller = nil;
         
         if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;

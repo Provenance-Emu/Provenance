@@ -41,7 +41,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var revisionLabel: UILabel!
     @IBOutlet weak var modeLabel: UILabel!
-    @IBOutlet weak var iCadeControllerSetting: UILabel!
     @IBOutlet weak var volumeSlider: UISlider!
     @IBOutlet weak var volumeValueLabel: UILabel!
     @IBOutlet weak var fpsCountSwitch: UISwitch!
@@ -136,7 +135,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 		reachability.startNotifier()
 
         let settings = PVSettingsModel.shared
-        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
 
         if #available(iOS 9.0, *) {
             themeValueLabel.text = settings.theme.rawValue
