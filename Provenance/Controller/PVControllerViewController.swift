@@ -8,6 +8,8 @@
 
 import AudioToolbox
 import GameController
+import VirtualGameController
+
 import PVSupport
 import QuartzCore
 import UIKit
@@ -204,7 +206,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-        GCController.controllers().forEach {
+        VgcController.controllers().forEach {
             $0.controllerPausedHandler = nil
         }
     }
@@ -222,8 +224,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
         #if os(iOS)
             if #available(iOS 10.0, *) {
                 feedbackGenerator = UISelectionFeedbackGenerator()
@@ -351,7 +353,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     #endif
 
     @objc
-    func hideTouchControls(for controller: GCController) {
+    func hideTouchControls(for controller: VgcController) {
         dPad?.isHidden = true
         buttonGroup?.isHidden = true
         leftShoulderButton?.isHidden = true

@@ -26,3 +26,4 @@ report.xml
 *.back
 *.inc
 /fastlane/devices.txt
+/Carthage/Checkouts/VirtualGameController/Framework Projects/VirtualGameControllerIOS/Build/VirtualGameControllerIOS.build/Release-iphoneos/VirtualGameControllerIOS.build/dgph

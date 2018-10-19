@@ -146,7 +146,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         glViewController?.view?.removeFromSuperview()
         glViewController?.removeFromParentViewController()
 #if os(iOS)
-    GCController.controllers().forEach { $0.controllerPausedHandler = nil }
+    VgcController.controllers().forEach { $0.controllerPausedHandler = nil }
 #endif
         updatePlayedDuration()
 		destroyAutosaveTimer()
@@ -161,8 +161,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
@@ -265,8 +265,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .VgcControllerDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .VgcControllerDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
@@ -355,7 +355,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
 #if !targetEnvironment(simulator)
-        if GCController.controllers().count != 0 {
+        if VgcController.controllers().count != 0 {
             menuButton?.isHidden = true
         }
 #endif
@@ -384,7 +384,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 			view.addGestureRecognizer(aRecognizer)
         }
 #else
-        GCController.controllers().forEach { [unowned self] in
+        VgcController.controllers().forEach { [unowned self] in
             $0.controllerPausedHandler = { controller in
                 self.controllerPauseButtonPressed(controller)
             }
@@ -967,7 +967,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
     @objc func controllerDidConnect(_ note: Notification?) {
-        let controller = note?.object as? GCController
+        let controller = note?.object as? VgcController
         // 8Bitdo controllers don't have a pause button, so don't hide the menu
         if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true

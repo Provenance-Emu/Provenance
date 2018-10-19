@@ -261,7 +261,7 @@ extension PVEmulatorViewController {
 
 		if PVControllerManager.shared.iCadeController != nil {
 			actionSheet.addAction(Action("Disconnect iCade", style: .default) { action in
-				NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
+				NotificationCenter.default.post(name: .VgcControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
 				self.core.setPauseEmulation(false)
 				self.isShowingMenu = false
 				self.enableContorllerInput(false)

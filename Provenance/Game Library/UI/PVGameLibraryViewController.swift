@@ -12,6 +12,8 @@ import AssetsLibrary
 import SafariServices
 #endif
 import GameController
+import VirtualGameController
+
 import QuartzCore
 import UIKit
 import RealmSwift

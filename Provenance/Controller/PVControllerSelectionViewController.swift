@@ -8,6 +8,8 @@
 //
 
 import GameController
+import VirtualGameController
+
 import UIKit
 
 class PVControllerSelectionViewController: UITableViewController {
@@ -48,7 +50,7 @@ class PVControllerSelectionViewController: UITableViewController {
         let labelText = "Player \(indexPath.row + 1)"
         cell.textLabel?.text = labelText
 
-        var controller: GCController?
+        var controller: VgcController?
         switch indexPath.row {
         case 0:
             controller = PVControllerManager.shared.player1
@@ -90,7 +92,7 @@ class PVControllerSelectionViewController: UITableViewController {
             actionSheet.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
         }
 
-        for controller: GCController in GCController.controllers() {
+        for controller: VgcController in VgcController.controllers() {
             var title = controller.vendorName ?? ""
 
             if controller == PVControllerManager.shared.player1 {
