@@ -19,7 +19,7 @@ steps:
     scheme: '$(scheme)'
     configuration: '$(configuration)'
     xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: 'default' # Options: 8, 9, default, specifyPath
+    xcodeVersion: '10' # Options: 8, 9, default, specifyPath
 
 # App Center Distribute
 # Distribute app builds to testers and users via App Center
