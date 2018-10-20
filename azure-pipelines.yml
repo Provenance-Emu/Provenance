@@ -6,12 +6,35 @@
 pool:
   vmImage: 'macOS 10.13'
 
+variables:
+  scheme: 'Provenance-Release'
+  sdk: 'iphoneos'
+  configuration: 'Release'
+
 steps:
 - task: Xcode@5
   inputs:
     actions: 'build'
-    scheme: 'Provenance-Release'
-    sdk: 'iphoneos'
-    configuration: 'Release'
-    xcWorkspacePath: '**/*.xcodeproj/project.xcworkspace'
+    sdk: '$(sdk)'
+    scheme: '$(scheme)'
+    configuration: '$(configuration)'
+    xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: 'default' # Options: 8, 9, default, specifyPath
+
+# App Center Distribute
+# Distribute app builds to testers and users via App Center
+# - task: AppCenterDistribute@1
+#   inputs:
+#     serverEndpoint: 
+#     appSlug: 
+#     appFile: 
+    #symbolsOption: 'Apple' # Optional. Options: apple
+    #symbolsPath: # Optional
+    #symbolsPdbFiles: '**/*.pdb' # Optional
+    #symbolsDsymFiles: # Optional
+    #symbolsMappingTxtFile: # Optional
+    #symbolsIncludeParentDirectory: # Optional
+    #releaseNotesOption: 'input' # Options: input, file
+    #releaseNotesInput: # Required when releaseNotesOption == Input
+    #releaseNotesFile: # Required when releaseNotesOption == File
+    #distributionGroupId: # Optional
