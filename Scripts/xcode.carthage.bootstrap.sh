@@ -5,7 +5,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/setup_env.sh"
 
 # Check for and optionally install build tools
-{
+function prebuild() {
     # Stop multiple scripts from installing shit at the same time
     lockfile_waithold
 
@@ -33,6 +33,8 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
     # Release lock
     lockfile_release
 }
+
+prebuild
 
 PLATFORM=${1:-iOS,tvOS}
 SOURCEPATH=${2:-$SRCROOT}

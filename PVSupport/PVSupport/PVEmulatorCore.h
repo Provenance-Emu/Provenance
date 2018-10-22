@@ -99,11 +99,11 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, assign) GLESVersion glesVersion;
 
 - (BOOL)rendersToOpenGL;
-- (void)startEmulation;
+- (void)startEmulation NS_REQUIRES_SUPER;
 - (void)resetEmulation;
-- (void)setPauseEmulation:(BOOL)flag;
+- (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
 - (BOOL)isEmulationPaused;
-- (void)stopEmulation;
+- (void)stopEmulation NS_REQUIRES_SUPER;
 - (void)frameRefreshThread:(id)anArgument;
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;

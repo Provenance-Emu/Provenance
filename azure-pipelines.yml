@@ -1,0 +1,40 @@
+# Xcode
+# Build, test, and archive an Xcode workspace on macOS.
+# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
+
+pool:
+  vmImage: 'macOS 10.13'
+
+variables:
+  scheme: 'Provenance-Release'
+  sdk: 'iphoneos'
+  configuration: 'Release'
+
+steps:
+- task: Xcode@5
+  inputs:
+    actions: 'build'
+    sdk: '$(sdk)'
+    scheme: '$(scheme)'
+    configuration: '$(configuration)'
+    xcWorkspacePath: 'Provenance.xcworkspace'
+    xcodeVersion: '10' # Options: 8, 9, default, specifyPath
+
+# App Center Distribute
+# Distribute app builds to testers and users via App Center
+# - task: AppCenterDistribute@1
+#   inputs:
+#     serverEndpoint: 
+#     appSlug: 
+#     appFile: 
+    #symbolsOption: 'Apple' # Optional. Options: apple
+    #symbolsPath: # Optional
+    #symbolsPdbFiles: '**/*.pdb' # Optional
+    #symbolsDsymFiles: # Optional
+    #symbolsMappingTxtFile: # Optional
+    #symbolsIncludeParentDirectory: # Optional
+    #releaseNotesOption: 'input' # Options: input, file
+    #releaseNotesInput: # Required when releaseNotesOption == Input
+    #releaseNotesFile: # Required when releaseNotesOption == File
+    #distributionGroupId: # Optional

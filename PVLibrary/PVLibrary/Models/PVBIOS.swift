@@ -36,7 +36,7 @@ public final class PVBIOS: Object, PVFiled, BIOSProtocol {
         self.system = system
         self.descriptionText = descriptionText
         self.optional = optional
-        self.expectedMD5 = expectedMD5
+        self.expectedMD5 = expectedMD5.uppercased()
         self.expectedSize = expectedSize
         self.expectedFilename = expectedFilename
     }
@@ -193,13 +193,13 @@ extension BIOSStatus {
 
 		available = !(bios.file?.missing ?? true)
 		if available {
-			let md5Match = bios.file?.md5 == bios.expectedMD5
+			let md5Match = bios.file?.md5?.uppercased() == bios.expectedMD5.uppercased()
 			let sizeMatch = bios.file?.size == UInt64(bios.expectedSize)
 			let filenameMatch = bios.file?.fileName == bios.expectedFilename
 
 			var misses = [Mismatch]()
 			if !md5Match {
-				misses.append(.md5(expected: bios.expectedMD5, actual: bios.file?.md5 ?? "0"))
+				misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.file?.md5?.uppercased() ?? "0"))
 			}
 			if !sizeMatch {
 				misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.file?.size ?? 0)))

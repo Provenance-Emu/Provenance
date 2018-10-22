@@ -31,9 +31,10 @@ extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
 			//This will show the cell clearly and blur the rest of the screen for our peek.
 			previewingContext.sourceRect = cellAttributes.frame
 
-			let storyBoard = UIStoryboard(name: "SaveStates", bundle: nil)
 
 			if searchResults == nil, indexPath.section == saveStateSection {
+				let storyBoard = UIStoryboard(name: "SaveStates", bundle: nil)
+
 				let saveStateInfoVC = storyBoard.instantiateViewController(withIdentifier: "saveStateInfoVC") as! PVSaveStateInfoViewController
 				let saveStatesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: saveStateSection)) as! SaveStatesCollectionCell
 
@@ -46,6 +47,7 @@ extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
 					ELOG("No game at index : \(indexPath)")
 					return nil
 				}
+				let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
 
 				let moreInfoViewContrller = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
 				moreInfoViewContrller.game = game

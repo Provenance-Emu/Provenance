@@ -314,9 +314,12 @@ end
     #   build_configuration: "Release",
     #   code_signing_identity: "iPhone Development" # optionally specify the codesigning identity
     # )
+   
+      # Build iOS App
+    # build_number = ENV["build_number"]
+    build_number = number_of_commits(all: true)
+    #increment_build_number(build_number: number_of_commits)
 
-        # Build iOS App
-    build_number = ENV["build_number"]
     ipa_name  = "Provenance-#{git_branch}-#{build_number}.ipa"
 
     badge_alpha
@@ -456,7 +459,7 @@ end
     plist_reset
     codesign_toggle(automatic: true)
     # Make sure our directory is clean, except for changes Fastlane has made
-    # clean_build_artifacts
+    clean_build_artifacts
   end
 
   lane :check_env do
