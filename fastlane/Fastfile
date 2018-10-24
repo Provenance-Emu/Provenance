@@ -644,7 +644,6 @@ end
     activeArchOnly = options[:activeArchOnly] || false
     ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
     build_time = Time.now.strftime('%F')
-    output_directory = "build/" + build_time
     load_keys
 
     # Method used to export the archive.
@@ -652,6 +651,7 @@ end
     export_method = options.fetch(:export_method, 'ad-hoc')
     build_configuration = options.fetch(:build_configuration, 'Release')
     scheme = options.fetch(:scheme, 'Provenance-Release')
+    output_directory = "build/#{build_configuration}/#{build_time}"
 
     UI.message "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
 
@@ -665,22 +665,22 @@ end
       clean: false,
       skip_profile_detection: true,
       #skip_build_archive: true,
-      output_directory: build_configuration,
+      output_directory: output_directory,
       output_name: ipa_name,
       include_bitcode: false,
       include_symbols: false,
       #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
-      export_xcargs: "-allowProvisioningUpdates",
+      # export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: export_method,
-        # manifest: {
+        manifest: {
         #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
-        #   displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
-        #   fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
-        # },
+          displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
+          fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
+        },
         provisioningProfiles: {
           "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{$dev_domain}.provenance.Spotlight" => "match AdHoc #{$dev_domain}.provenance.spotlight"
+          "#{$dev_domain}.provenance.spotlight" => "match AdHoc #{$dev_domain}.provenance.spotlight"
         },
         compileBitcode: false,
         uploadBitcode: false,
@@ -709,11 +709,15 @@ end
         method: "app-store",
         # manifest: {
         #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
+          # displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
+          # fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
         # },
         provisioningProfiles: {
           "#{$dev_domain}.provenance" => "match AppStore #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{$dev_domain}.provenance.Spotlight" => "match AppStore #{$dev_domain}.provenance.spotlight"
-        }
+          "#{$dev_domain}.provenance.spotlight" => "match AppStore #{$dev_domain}.provenance.spotlight"
+        },
+        compileBitcode: false,
+        uploadBitcode: false,
       }
     )
 
