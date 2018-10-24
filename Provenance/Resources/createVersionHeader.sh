@@ -1,7 +1,7 @@
 #/bin/bash -e
 # Pull GIT version number to use for informational purposes
 
-# Scripts invoked by Xcode don’t read any of the usual shell configuration files
+# Scripts invoked by Xcode don't read any of the usual shell configuration files
 # doing it here manually. PATH=foo:$PATH also gets ignored by XCode. 'source' seems to work fine though
 
 if [ -f "$HOME/.profile" ] ; then

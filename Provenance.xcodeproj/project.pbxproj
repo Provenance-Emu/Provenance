@@ -2035,13 +2035,13 @@
 			files = (
 			);
 			inputPaths = (
-				"${PROJECT_DIR}/${INFOPLIST_FILE}",
-				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
+				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set Build Number";
 			outputPaths = (
-				"\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"",
-				"${SRCROOT}/Provenance/.version",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2053,13 +2053,13 @@
 			files = (
 			);
 			inputPaths = (
-				"${PROJECT_DIR}/${INFOPLIST_FILE}",
-				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
+				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set Build Number";
 			outputPaths = (
-				"${SRCROOT}/ProvenanceTV/.version",
-				"\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"",
+				"$(SRCROOT)/ProvenanceTV/.version",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2229,8 +2229,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${SRCROOT}/Provenance/Version.h",
-				"${SRCROOT}/Provenance/Version.swift",
+				"$(SRCROOT)/Provenance/Version.h",
+				"$(SRCROOT)/Provenance/Version.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2262,15 +2262,15 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PROJECT_DIR}/${INFOPLIST_FILE}",
-				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/${INFOPLIST_FILE}",
+				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"",
-				"${SRCROOT}/Spotlight/.version",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/Spotlight/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
