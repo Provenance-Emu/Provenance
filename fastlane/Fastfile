@@ -90,8 +90,8 @@ end
     scan
   end
 
-  desc "Travis Test"
-  lane :travistest do
+  desc "Travis building"
+  lane :travis do
     if is_ci?
       setup_travis
     else
