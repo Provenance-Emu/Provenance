@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
 pool:
-  vmImage: 'macOS 10.13'
+  vmImage: 'macOS-10.13'
 
 variables:
   scheme: 'Provenance-Release'
@@ -19,7 +19,35 @@ steps:
     scheme: '$(scheme)'
     configuration: '$(configuration)'
     xcWorkspacePath: 'Provenance.xcworkspace'
+    exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     xcodeVersion: '10' # Options: 8, 9, default, specifyPath
+    destinationPlatformOption: 'iOS'
+    packageApp: true
+    # Additional options https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/xcode?view=vsts
+
+# Install Apple Certificate
+# Install an Apple certificate required to build on a macOS agent
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-apple-certificate?view=vsts
+# - task: InstallAppleCertificate@2
+#   inputs:
+    # certSecureFile: 
+    #certPwd: # Optional
+    #keychain: 'temp' # Options: default, temp, custom
+    #keychainPassword: # Required when keychain == Custom || Keychain == Default
+    #customKeychainPath: # Required when keychain == Custom
+    #deleteCert: # Optional
+    #deleteCustomKeychain: # Optional
+    #signingIdentity: # Optional
+
+# Install Apple Provisioning Profile
+# Install an Apple provisioning profile required to build on a macOS agent
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-apple-provisioning-profile?view=vsts
+# - task: InstallAppleProvisioningProfile@1
+  # inputs:
+    #provisioningProfileLocation: 'secureFiles' # Options: secureFiles, sourceRepository
+    #provProfileSecureFile: # Required when provisioningProfileLocation == SecureFiles
+    #provProfileSourceRepository: # Required when provisioningProfileLocation == SourceRepository
+    #removeProfile: # Optional
 
 # App Center Distribute
 # Distribute app builds to testers and users via App Center
