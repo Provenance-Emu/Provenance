@@ -80,13 +80,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B32775671E9C878E000FEC38 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EB3297071522671200307B0C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 946C18D41714A48600C64BF9;
-			remoteInfo = gen68k;
-		};
 		B346FC97217946A800C49108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EB3297071522671200307B0C /* Project object */;
@@ -620,7 +613,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B32775681E9C878E000FEC38 /* PBXTargetDependency */,
 				B346FC9A217946C800C49108 /* PBXTargetDependency */,
 			);
 			name = PVYabause;
@@ -659,9 +651,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				946C18D41714A48600C64BF9 /* gen68k */,
 				B32775221E9C8444000FEC38 /* PVYabause */,
 				B346FC922179468200C49108 /* Run gen68k */,
+				946C18D41714A48600C64BF9 /* gen68k */,
 			);
 		};
 /* End PBXProject section */
@@ -764,11 +756,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B32775681E9C878E000FEC38 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 946C18D41714A48600C64BF9 /* gen68k */;
-			targetProxy = B32775671E9C878E000FEC38 /* PBXContainerItemProxy */;
-		};
 		B346FC98217946A800C49108 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 946C18D41714A48600C64BF9 /* gen68k */;
@@ -802,6 +789,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -818,7 +806,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = C68K_GEN;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
