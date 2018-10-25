@@ -503,22 +503,6 @@
             </objects>
             <point key="canvasLocation" x="3841" y="-1746"/>
         </scene>
-        <!--icadeVC-->
-        <scene sceneID="jnk-IN-WRm">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="icadeVC" storyboardName="Settings" referencedIdentifier="icadeVC" id="2P0-fv-dKv" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2jt-56-DcJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6581" y="1725"/>
-        </scene>
-        <!--settingsNavController-->
-        <scene sceneID="WW1-M1-gcf">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="settingsNavController" storyboardName="Settings" referencedIdentifier="settingsNavController" id="Vgt-fb-RMs" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="V78-lV-Cw9" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3564" y="-65"/>
-        </scene>
         <!--controllerSelectionVC-->
         <scene sceneID="lbj-K6-mWC">
             <objects>
@@ -526,62 +510,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UGn-KA-S0q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="10935" y="-2187"/>
-        </scene>
-        <!--coresTableVC-->
-        <scene sceneID="B9Z-tB-Wqw">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="coresTableVC" storyboardName="Settings" referencedIdentifier="coresTableVC" id="Y9T-5V-MlS" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="5WF-J4-5i0" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="9160" y="2503"/>
-        </scene>
-        <!--appearanceSettingsVC-->
-        <scene sceneID="Ed0-CV-ClJ">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="appearanceSettingsVC" storyboardName="Settings" referencedIdentifier="appearanceSettingsVC" id="fgW-GA-AjS" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="sCu-4a-kJl" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="10367" y="36"/>
-        </scene>
-        <!--tvSettingsLeftVC-->
-        <scene sceneID="rfB-WH-19K">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="tvSettingsLeftVC" storyboardName="Settings" referencedIdentifier="tvSettingsLeftVC" id="yXk-VT-PMb" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bLC-G7-fJ7" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6364" y="-1746"/>
-        </scene>
-        <!--licensesVC-->
-        <scene sceneID="sSR-pD-gMH">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="licensesVC" storyboardName="Settings" referencedIdentifier="licensesVC" id="RKJ-hd-r31" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="jWS-T1-slI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="10385" y="1247"/>
-        </scene>
-        <!--tvSettingsTableVC-->
-        <scene sceneID="27n-sY-464">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="tvSettingsTableVC" storyboardName="Settings" referencedIdentifier="tvSettingsTableVC" id="yiw-9R-Hvj" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JgS-Ga-qZI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6408" y="36"/>
-        </scene>
-        <!--PVSaveStatesViewController-->
-        <scene sceneID="qke-IS-xQO">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="PVSaveStatesViewController" storyboardName="SaveStates" referencedIdentifier="PVSaveStatesViewController" id="7sP-ZA-gN2" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bHU-Ys-55q" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1837" y="2177"/>
-        </scene>
-        <!--PVSaveStatesViewControllerNav-->
-        <scene sceneID="poc-QP-QC5">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="PVSaveStatesViewControllerNav" storyboardName="SaveStates" referencedIdentifier="PVSaveStatesViewControllerNav" id="RrR-hd-qaC" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bBW-yz-UcH" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-473" y="2177"/>
         </scene>
     </scenes>
     <resources>
