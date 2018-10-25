@@ -214,7 +214,6 @@ public final class PVGameImporter {
 
         // do CDs first to avoid the case where an item related to CDs is mistaken as another rom and moved
         // before processing its CD cue sheet or something
-		#if swift(>=4.1)
 		let updatedCandidateFiles = candidateFiles.compactMap { candidate -> ImportCandidateFile? in
 			if FileManager.default.fileExists(atPath: candidate.filePath.path) {
 				if isCDROM(candidate), let movedToPaths = moveCDROM(toAppropriateSubfolder: candidate) {
@@ -243,37 +242,9 @@ public final class PVGameImporter {
 				return nil
 			}
 		}
-		#else
-        let updatedCandidateFiles = candidateFiles.flatMap { candidate -> ImportCandidateFile? in
-            if FileManager.default.fileExists(atPath: candidate.filePath.path) {
-                if isCDROM(candidate), let movedToPaths = moveCDROM(toAppropriateSubfolder: candidate) {
 
-                    // Found a CD, can add moved files now to newPaths
-                    let pathsString = {return movedToPaths.map { $0.path }.joined(separator: ", ") }
-                    VLOG("Found a CD. Moved files to the following paths \(pathsString())")
-
-                    // Return nil since we don't need the ImportCandidateFile anymore
-                    // Files are already moved and imported to database (in theory),
-                    // or moved to conflicts dir and already set the conflists flag - jm
-                    return nil
-                } else if PVEmulatorConfiguration.artworkExtensions.contains(candidate.filePath.pathExtension.lowercased()), let game = PVGameImporter.importArtwork(fromPath: candidate.filePath) {
-                    // Is artwork, import that
-                    ILOG("Found artwork \(candidate.filePath.lastPathComponent) for game <\(game.title)>")
-                    return nil
-                } else {
-                    return candidate
-                }
-            } else {
-                if !["bin", "iso", "img", "sub"].contains(candidate.filePath.pathExtension) {
-                    WLOG("File should have existed at \(candidate.filePath) but it might have been moved")
-                }
-                return nil
-            }
-        }
-		#endif
         // Add new paths from remaining candidate files
         // CD files that matched a system will be remove already at this point
-		#if swift(>=4.1)
 		let newPaths = updatedCandidateFiles.compactMap { candidate -> URL? in
 			if FileManager.default.fileExists(atPath: candidate.filePath.path) {
 				if let newPath = moveROM(toAppropriateSubfolder: candidate) {
@@ -282,16 +253,7 @@ public final class PVGameImporter {
 			}
 			return nil
 		}
-		#else
-        let newPaths = updatedCandidateFiles.flatMap { candidate -> URL? in
-            if FileManager.default.fileExists(atPath: candidate.filePath.path) {
-                if let newPath = moveROM(toAppropriateSubfolder: candidate) {
-                    return newPath
-                }
-            }
-            return nil
-        }
-		#endif
+
         return newPaths
     }
 
