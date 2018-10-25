@@ -309,7 +309,6 @@
 		B333527D207B02CA0036A448 /* thumb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA7020736EE70097D86F /* thumb.cpp */; };
 		B333527E207B02EB0036A448 /* libgba.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351A4207B01460036A448 /* libgba.a */; };
 		B333527F207B02EB0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
-		B3335280207B02EB0036A448 /* libmegadrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335245207B02770036A448 /* libmegadrive.a */; };
 		B3335281207B02EB0036A448 /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
 		B3335282207B02EB0036A448 /* libpce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce.a */; };
 		B3335283207B02EB0036A448 /* libpcefast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast.a */; };
@@ -338,7 +337,6 @@
 		B33352E3207B072C0036A448 /* libhwcpu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352C1207B06730036A448 /* libhwcpu.a */; };
 		B33352E4207B072C0036A448 /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
 		B33352E5207B072C0036A448 /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo.a */; };
-		B33352E7207B079A0036A448 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		B33352E8207B07C20036A448 /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFA20736EE90097D86F /* z80_ops.cpp */; };
 		B33352E9207B07FD0036A448 /* z80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADF520736EE90097D86F /* z80.cpp */; };
 		B3335479207B1B780036A448 /* CDAccess_CCD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9520736EE80097D86F /* CDAccess_CCD.cpp */; };
@@ -457,7 +455,6 @@
 		B33355FF207B3BBA0036A448 /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo.a */; };
 		B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
 		B3335601207B3BBA0036A448 /* libmednafen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33354CB207B1D850036A448 /* libmednafen.a */; };
-		B3335602207B3BBA0036A448 /* libmegadrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335245207B02770036A448 /* libmegadrive.a */; };
 		B3335603207B3BBA0036A448 /* libmpcdec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355A2207B1E930036A448 /* libmpcdec.a */; };
 		B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
 		B3335605207B3BBA0036A448 /* libnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33350A5207AFFE80036A448 /* libnes.a */; };
@@ -490,7 +487,6 @@
 		B35D6687218185710005A992 /* v810_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFF20736EE90097D86F /* v810_cpu.cpp */; };
 		B35D6688218185710005A992 /* z80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADF520736EE90097D86F /* z80.cpp */; };
 		B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE0020736EE90097D86F /* v810_fp_ops.cpp */; };
-		B35D668A218185710005A992 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D6690218185710005A992 /* libhwcpu-tvOS.a */; };
 		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
@@ -714,13 +710,6 @@
 			remoteGlobalIDString = B33351FB207B020C0036A448;
 			remoteInfo = pcfx;
 		};
-		B34AB59F2106DF8400C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3335244207B02770036A448;
-			remoteInfo = megadrive;
-		};
 		B34AB5A12106DF8400C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -902,13 +891,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B33351FB207B020C0036A448;
 			remoteInfo = pcfx;
-		};
-		B34AB5D52106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3335244207B02770036A448;
-			remoteInfo = megadrive;
 		};
 		B34AB5D72106DFB100C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3480,17 +3462,6 @@
 		B3AAB34920736EEB0097D86F /* pcm.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = pcm.Po; sourceTree = "<group>"; };
 		B3AAB34A20736EEB0097D86F /* interrupt.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = interrupt.Po; sourceTree = "<group>"; };
 		B3AAB34B20736EEB0097D86F /* timer.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = timer.Po; sourceTree = "<group>"; };
-		B3AAB34D20736EEB0097D86F /* membnk.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = membnk.Po; sourceTree = "<group>"; };
-		B3AAB34E20736EEB0097D86F /* memvdp.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = memvdp.Po; sourceTree = "<group>"; };
-		B3AAB34F20736EEB0097D86F /* debug.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = debug.Po; sourceTree = "<group>"; };
-		B3AAB35020736EEB0097D86F /* genesis.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = genesis.Po; sourceTree = "<group>"; };
-		B3AAB35120736EEB0097D86F /* sound.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = sound.Po; sourceTree = "<group>"; };
-		B3AAB35220736EEB0097D86F /* system.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = system.Po; sourceTree = "<group>"; };
-		B3AAB35320736EEB0097D86F /* memz80.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = memz80.Po; sourceTree = "<group>"; };
-		B3AAB35420736EEB0097D86F /* header.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = header.Po; sourceTree = "<group>"; };
-		B3AAB35520736EEB0097D86F /* genio.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = genio.Po; sourceTree = "<group>"; };
-		B3AAB35620736EEB0097D86F /* vdp.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = vdp.Po; sourceTree = "<group>"; };
-		B3AAB35720736EEB0097D86F /* mem68k.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = mem68k.Po; sourceTree = "<group>"; };
 		B3AAB35820736EEB0097D86F /* vdp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vdp.h; sourceTree = "<group>"; };
 		B3AAB35920736EEB0097D86F /* SSFLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSFLoader.h; sourceTree = "<group>"; };
 		B3AAB35A20736EEB0097D86F /* netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = netplay.h; sourceTree = "<group>"; };
@@ -3802,7 +3773,6 @@
 				B33352E5207B072C0036A448 /* libhwvideo.a in Frameworks */,
 				B333527E207B02EB0036A448 /* libgba.a in Frameworks */,
 				B333527F207B02EB0036A448 /* liblynx.a in Frameworks */,
-				B3335280207B02EB0036A448 /* libmegadrive.a in Frameworks */,
 				B3335281207B02EB0036A448 /* libneogeopocket.a in Frameworks */,
 				B3335282207B02EB0036A448 /* libpce.a in Frameworks */,
 				B3335283207B02EB0036A448 /* libpcefast.a in Frameworks */,
@@ -3836,7 +3806,6 @@
 				B33355FF207B3BBA0036A448 /* libhwvideo.a in Frameworks */,
 				B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */,
 				B3335601207B3BBA0036A448 /* libmednafen.a in Frameworks */,
-				B3335602207B3BBA0036A448 /* libmegadrive.a in Frameworks */,
 				B3335603207B3BBA0036A448 /* libmpcdec.a in Frameworks */,
 				B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */,
 				B3335605207B3BBA0036A448 /* libnes.a in Frameworks */,
@@ -7940,7 +7909,6 @@
 				B3AAB35820736EEB0097D86F /* vdp.h */,
 				B3AAB30720736EEB0097D86F /* Makefile.am.inc */,
 				B3AAB2EE20736EEB0097D86F /* vdp_run.inc */,
-				B3AAB34C20736EEB0097D86F /* .deps */,
 				B3AAB31420736EEB0097D86F /* cart */,
 				B3AAB33B20736EEB0097D86F /* cd */,
 				B3AAB2F720736EEB0097D86F /* input */,
@@ -8051,24 +8019,6 @@
 				B3AAB34920736EEB0097D86F /* pcm.Po */,
 				B3AAB34A20736EEB0097D86F /* interrupt.Po */,
 				B3AAB34B20736EEB0097D86F /* timer.Po */,
-			);
-			path = .deps;
-			sourceTree = "<group>";
-		};
-		B3AAB34C20736EEB0097D86F /* .deps */ = {
-			isa = PBXGroup;
-			children = (
-				B3AAB34D20736EEB0097D86F /* membnk.Po */,
-				B3AAB34E20736EEB0097D86F /* memvdp.Po */,
-				B3AAB34F20736EEB0097D86F /* debug.Po */,
-				B3AAB35020736EEB0097D86F /* genesis.Po */,
-				B3AAB35120736EEB0097D86F /* sound.Po */,
-				B3AAB35220736EEB0097D86F /* system.Po */,
-				B3AAB35320736EEB0097D86F /* memz80.Po */,
-				B3AAB35420736EEB0097D86F /* header.Po */,
-				B3AAB35520736EEB0097D86F /* genio.Po */,
-				B3AAB35620736EEB0097D86F /* vdp.Po */,
-				B3AAB35720736EEB0097D86F /* mem68k.Po */,
 			);
 			path = .deps;
 			sourceTree = "<group>";
@@ -8684,7 +8634,6 @@
 				B34AB59A2106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB59C2106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB59E2106DF8400C45F09 /* PBXTargetDependency */,
-				B34AB5A02106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB5A22106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB5A42106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB5A62106DF8400C45F09 /* PBXTargetDependency */,
@@ -8730,7 +8679,6 @@
 				B34AB5D02106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5D22106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5D42106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5D62106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5D82106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */,
@@ -9414,7 +9362,6 @@
 				B33352E0207B06D70036A448 /* v810_cpu.cpp in Sources */,
 				B33352E9207B07FD0036A448 /* z80.cpp in Sources */,
 				B33352E1207B06D70036A448 /* v810_fp_ops.cpp in Sources */,
-				B33352E7207B079A0036A448 /* m68k.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9612,7 +9559,6 @@
 				B35D6687218185710005A992 /* v810_cpu.cpp in Sources */,
 				B35D6688218185710005A992 /* z80.cpp in Sources */,
 				B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */,
-				B35D668A218185710005A992 /* m68k.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9818,11 +9764,6 @@
 			target = B33351FB207B020C0036A448 /* pcfx */;
 			targetProxy = B34AB59D2106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
-		B34AB5A02106DF8400C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3335244207B02770036A448 /* megadrive */;
-			targetProxy = B34AB59F2106DF8400C45F09 /* PBXContainerItemProxy */;
-		};
 		B34AB5A22106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B33352A6207B06550036A448 /* hwaudio */;
@@ -9953,11 +9894,6 @@
 			target = B33351FB207B020C0036A448 /* pcfx */;
 			targetProxy = B34AB5D32106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
-		B34AB5D62106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3335244207B02770036A448 /* megadrive */;
-			targetProxy = B34AB5D52106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
 		B34AB5D82106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B33352A6207B06550036A448 /* hwaudio */;
@@ -10084,7 +10020,6 @@
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
 					WANT_LYNX_EMU,
-					WANT_MD_EMU,
 					WANT_NES_EMU,
 					WANT_NGP_EMU,
 					WANT_PCE_FAST_EMU,
@@ -10202,7 +10137,6 @@
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
 					WANT_LYNX_EMU,
-					WANT_MD_EMU,
 					WANT_NES_EMU,
 					WANT_NGP_EMU,
 					WANT_PCE_FAST_EMU,
