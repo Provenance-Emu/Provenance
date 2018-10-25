@@ -1,6 +1,3 @@
-# set -e
-# set -o pipefail
-
 if [ -f ~/.bashrc ]; then
     source ~/.bashrc 2> /dev/null
 fi
@@ -18,7 +15,7 @@ if [[ "$PATH" != *".fastlane/bin"* ]]; then
   export PATH="$HOME/.fastlane/bin:$PATH"
 fi
 
-function error_exit
+error_exit()
 {
     local MSG="${1:-"Unknown Error"}"
     echo "error: $MSG" 1>&2
@@ -35,13 +32,13 @@ EOT
     exit 1
 }
 
-function success_exit
+success_exit()
 {
     echo "${1:-"Completed"}" 1>&2
     exit 0
 }
 
-function eval_command() {
+eval_command() {
   echo "● : $@"
   "$@";
 }
@@ -94,7 +91,7 @@ brew_installed() {
 }
 
 {
-  function cleanup {
+  cleanup() {
     if [ -f /tmp/askpass.sh ]; then
       rm -f /tmp/askpass.sh
     fi
@@ -363,9 +360,9 @@ github_connection_test() {
   return
 }
 
-function lockfile_waithold()
+lockfile_waithold()
 {
-  local LOCK_NAME=${1:-"provenance"}
+  local LOCK_NAME=${1:-"xcode"}
   local LOCK_FILE="/tmp/$LOCK_NAME.lock"
 
   declare -ir time_beg=$(date '+%s')
@@ -391,7 +388,7 @@ function lockfile_waithold()
   return 0
  }
 
- function lockfile_release()
+lockfile_release()
  {
   local LOCK_NAME=${1:-"provenance"}
   local LOCK_FILE="/tmp/$LOCK_NAME.lock"
@@ -401,3 +398,4 @@ function lockfile_waithold()
     rm -f "$LOCK_FILE"
   fi
  }
+ 

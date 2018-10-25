@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e
 set -o pipefail
 
 DIR="${BASH_SOURCE%/*}"

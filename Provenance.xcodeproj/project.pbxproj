@@ -2033,6 +2033,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Set Build Number";
 			outputPaths = (
@@ -2041,7 +2042,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/set_bundle_build_number.sh\n";
 		};
 		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2051,11 +2052,12 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Set Build Number";
 			outputPaths = (
-				"$(SRCROOT)/ProvenanceTV/.version",
 				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/ProvenanceTV/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -2260,6 +2262,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/${INFOPLIST_FILE}",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
@@ -2282,12 +2285,13 @@
 			inputPaths = (
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"${SRCROOT}/TopShelf/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
