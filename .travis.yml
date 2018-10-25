@@ -80,7 +80,7 @@ before_script:
     # - kill %1
 after_success:
   - ./Scripts/rome-upload.sh iOS
-  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - wget https://raw.githubusercontent.com/JoeMatt/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
   - ./Scripts/travis-upload.bash
@@ -89,7 +89,7 @@ after_success:
   #- bash <(curl -s https://codecov.io/bash)
 after_failure:
   - tail -100 /tmp/carthage.log
-  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - wget https://raw.githubusercontent.com/JoeMatt/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 script:
