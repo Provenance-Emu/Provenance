@@ -832,6 +832,7 @@ end
       platform: platform,
       use_binaries: true,
       cache_builds: true,
+      use_ssh: true,
       project_directory: project_directory
     )
   end
