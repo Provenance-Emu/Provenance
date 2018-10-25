@@ -246,7 +246,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 	}
 
 	func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-		if (kind == UICollectionElementKindSectionHeader) {
+		if (kind == UICollectionView.elementKindSectionHeader) {
 			var headerView: PVGameLibrarySectionHeaderView?
 			let title = searchResults != nil ? "Search Results" : sectionTitles[indexPath.section]
 
@@ -264,7 +264,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 			} else {
 				fatalError("Couldn't create header view")
 			}
-		} else if kind == UICollectionElementKindSectionFooter {
+		} else if kind == UICollectionView.elementKindSectionFooter {
 			let footerView = self.collectionView!.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryFooterViewIdentifier, for: indexPath) as! PVGameLibrarySectionFooterView
 			return footerView
 		}

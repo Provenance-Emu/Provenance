@@ -175,7 +175,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		internalCollectionView.frame = self.bounds
 
 		#if os(iOS)
-		NotificationCenter.default.addObserver(self, selector: #selector(RealmCollectinViewCell.rotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(RealmCollectinViewCell.rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
 		#endif
 
 		if #available(iOS 9.0, tvOS 9.0, *) {

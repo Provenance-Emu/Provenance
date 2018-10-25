@@ -196,7 +196,7 @@ extension GameSharingViewController where Self : UIViewController {
 				}
 
 				// Executed after share is completed
-				shareVC.completionWithItemsHandler = {(activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, error: Error?) in
+				shareVC.completionWithItemsHandler = {(activityType: UIActivity.ActivityType?, completed: Bool, returnedItems: [Any]?, error: Error?) in
 					// Cleanup our temp folder
 					deleteTempDir()
 				}
@@ -791,7 +791,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                         icon = UIApplicationShortcutIcon(type: .play)
                     }
 
-                    let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
+                    let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
                     shortcuts.append(shortcut)
                 }
 
@@ -803,7 +803,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                         let icon: UIApplicationShortcutIcon?
                         icon = UIApplicationShortcutIcon(type: .play)
 
-                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
+                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
                         shortcuts.append(shortcut)
                     }
                 }

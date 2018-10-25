@@ -91,7 +91,7 @@ public final class PVMediaCache: NSObject {
         }
 
         if let newImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)),
-            let imageData = UIImagePNGRepresentation(newImage) {
+            let imageData = newImage.pngData() {
                 return try self.writeData(toDisk: imageData, withKey: key)
             } else {
                 throw MediaCacheError.failedToScaleImage

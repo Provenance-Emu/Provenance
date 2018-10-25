@@ -24,7 +24,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 	var _logViewController: PVLogViewController?
 	#endif
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
         setDefaultsFromSettingsBundle();
@@ -86,7 +86,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {
@@ -197,7 +197,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
 #endif
 
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
 
         // Spotlight search click-through
         #if os(iOS)

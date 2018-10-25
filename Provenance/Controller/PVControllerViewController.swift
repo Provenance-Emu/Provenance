@@ -238,7 +238,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             view.addSubview(volume)
         }
 
-        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #endif
     }
@@ -320,8 +320,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
     #endif
 
-    open override func didMove(toParentViewController parent: UIViewController?) {
-        super.didMove(toParentViewController: parent)
+    open override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
         if let s = view.superview {
             view.frame = s.bounds
         }
@@ -344,7 +344,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
 
-        volume.superview?.bringSubview(toFront: volume)
+        volume.superview?.bringSubviewToFront(volume)
         volume.layer.cornerRadius = volumeHeight / 2
         volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
     }
@@ -392,7 +392,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 		for control in controlLayout {
 			let controlType: String = control.PVControlType
-			let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+			let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
 			let compactVertical: Bool = traitCollection.verticalSizeClass == .compact
 			let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
 
@@ -447,7 +447,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 					let groupedButtons = control.PVGroupedButtons
 					groupedButtons?.forEach { groupedButton in
-						let buttonFrame: CGRect = CGRectFromString(groupedButton.PVControlFrame)
+						let buttonFrame: CGRect = NSCoder.cgRect(for: groupedButton.PVControlFrame)
 						let button = JSButton(frame: buttonFrame)
 						button.titleLabel?.text = groupedButton.PVControlTitle
 
@@ -538,7 +538,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     #if os(iOS)
     func layoutRightShoulderButtons(control: ControlLayoutEntry) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         var rightShoulderFrame: CGRect!
@@ -593,7 +593,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
 
     func layoutZTriggerButton(control: ControlLayoutEntry) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         var zTriggerFrame: CGRect!
@@ -626,7 +626,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
 
     func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.left + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         var leftShoulderFrame: CGRect!
@@ -688,7 +688,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
 
     func layoutSelectButton( control: ControlLayoutEntry ) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.left + 10
         let spacing: CGFloat = 20
@@ -735,7 +735,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
 
     func layoutStartButton(control: ControlLayoutEntry) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let spacing: CGFloat = 20
@@ -785,7 +785,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
 
     func layoutLeftAnalogButton(control: ControlLayoutEntry) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 50
         let xPadding: CGFloat = (gripControl ? safeAreaInsets.right : safeAreaInsets.left) + 10
 
@@ -817,7 +817,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     }
 
     func layoutRightAnalogButton(control: ControlLayoutEntry) {
-        let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
+        let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 50
         let xPadding: CGFloat = (gripControl ? safeAreaInsets.left : safeAreaInsets.right) + 10
 

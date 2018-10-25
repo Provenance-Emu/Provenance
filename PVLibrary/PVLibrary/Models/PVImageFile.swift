@@ -43,14 +43,14 @@ public final class PVImageFile: PVFile {
 
 	private(set) public var cgsize: CGSize {
 		get {
-			return CGSizeFromString(_cgsize)
+			return NSCoder.cgSize(for: _cgsize)
 		}
 		set {
 			width = Int(newValue.width)
 			height = Int(newValue.height)
 			layout = newValue.width > newValue.height ? "landscape" : "portrait"
 			ratio = Float(max(newValue.width, newValue.height) / min(newValue.width, newValue.height))
-			_cgsize = NSStringFromCGSize(newValue)
+			_cgsize = NSCoder.string(for: newValue)
 		}
 	}
 }

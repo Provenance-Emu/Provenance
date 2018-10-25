@@ -281,7 +281,7 @@ class CornerBadgeView : UIView {
 			break
 		}
 
-		let attributes : [NSAttributedStringKey:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.64), .foregroundColor: UIColor.init(white: 1.0, alpha: 0.6) ]
+		let attributes : [NSAttributedString.Key:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.64), .foregroundColor: UIColor.init(white: 1.0, alpha: 0.6) ]
 		gString.draw(in: triangleBounds, withAttributes: attributes)
 	}
 
@@ -633,8 +633,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		let favorite = game.isFavorite
 
         var bullet = NSAttributedString(string: "")
-        let bulletFavoriteAttribute = [ NSAttributedStringKey.foregroundColor: UIColor(rgb: 0xf71a32).withAlphaComponent(0.85) ]
-        let bulletUnplayedAttribute = [ NSAttributedStringKey.foregroundColor: UIColor(rgb: 0x17aaf7).withAlphaComponent(0.85)]
+        let bulletFavoriteAttribute = [ NSAttributedString.Key.foregroundColor: UIColor(rgb: 0xf71a32).withAlphaComponent(0.85) ]
+        let bulletUnplayedAttribute = [ NSAttributedString.Key.foregroundColor: UIColor(rgb: 0x17aaf7).withAlphaComponent(0.85)]
         let bulletFavorite = NSAttributedString(string: "♥︎ ", attributes: bulletFavoriteAttribute)
         let bulletUnplayed = NSAttributedString(string: "● ", attributes: bulletUnplayedAttribute)
         let attributedTitle = NSMutableAttributedString(string: game.title)
@@ -868,7 +868,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         paragraphStyle.alignment = .center
 
         #if os(iOS)
-        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: Theme.currentTheme.settingsCellText!])
+        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
         #else
         let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
         #endif

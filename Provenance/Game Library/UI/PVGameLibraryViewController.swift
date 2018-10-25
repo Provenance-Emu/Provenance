@@ -249,8 +249,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleCacheEmptied(_:)), name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArchiveInflationFailed(_:)), name: NSNotification.Name.PVArchiveInflationFailed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: .UITextFieldTextDidChange, object: searchField)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: UITextField.textDidChangeNotification, object: searchField)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
 		navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
@@ -311,8 +311,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.alwaysBounceVertical = true
         collectionView.delaysContentTouches = false
         collectionView.keyboardDismissMode = .interactive
-        collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
-        collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
+        collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
+        collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
 		#if os(tvOS)
 		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
@@ -372,7 +372,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         #endif
 
 		#if os(iOS)
-		view.bringSubview(toFront: libraryInfoContainerView)
+		view.bringSubviewToFront(libraryInfoContainerView)
 		#endif
 
         loadGameFromShortcut()
@@ -1840,7 +1840,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 group.enumerateAssets(at: IndexSet(integer: index), options: [], using: { (result, index, stop) in
                     if let rep: ALAssetRepresentation = result?.defaultRepresentation() {
                         imagePickerActionSheet.pv_addButton(withTitle: "Use Last Photo Taken", action: {() -> Void in
-                            let orientation : UIImageOrientation = UIImageOrientation(rawValue: rep.orientation().rawValue)!
+                            let orientation : UIImage.Orientation = UIImage.Orientation(rawValue: rep.orientation().rawValue)!
 
                             let lastPhoto = UIImage(cgImage: rep.fullScreenImage().takeUnretainedValue(), scale: CGFloat(rep.scale()), orientation: orientation)
 
@@ -1985,15 +1985,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 // MARK: - Image Picker Delegate
 #if os(iOS)
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+// Local variable inserted by Swift 4.2 migrator.
+let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
         guard let gameForCustomArt = self.gameForCustomArt else {
             ELOG("gameForCustomArt pointer was null.")
             return
         }
 
         dismiss(animated: true) {() -> Void in }
-        let image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = UIImagePNGRepresentation(scaledImage) {
+        let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
+        if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.pngData() {
 
             let hash = (imageData as NSData).md5Hash
 
@@ -2477,4 +2480,14 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
 		}))
 		self.present(alert, animated: true) {() -> Void in }
 	}
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
+	return input.rawValue
 }

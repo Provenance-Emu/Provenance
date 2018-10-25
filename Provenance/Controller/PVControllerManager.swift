@@ -18,7 +18,7 @@ extension Notification.Name {
 
 typealias iCadeListenCompletion = () -> Void
 
-#if (arch(i386) || arch(x86_64))
+#if targetEnvironment(simulator)
 let isSimulator = true
 #else
 let isSimulator = false

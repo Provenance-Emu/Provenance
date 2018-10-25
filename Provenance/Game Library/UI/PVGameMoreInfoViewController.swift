@@ -120,7 +120,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     #if os(iOS)
     // Delegate may specify a different spine location for after the interface orientation change. Only sent for transition style 'UIPageViewControllerTransitionStylePageCurl'.
     // Delegate may set new view controllers or update double-sided state within this method's implementation as well.
-    public func pageViewController(_ pageViewController: UIPageViewController, spineLocationFor orientation: UIInterfaceOrientation) -> UIPageViewControllerSpineLocation {
+    public func pageViewController(_ pageViewController: UIPageViewController, spineLocationFor orientation: UIInterfaceOrientation) -> UIPageViewController.SpineLocation {
         return .min
     }
 
@@ -159,7 +159,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
 //    public func presentationCount(for pageViewController: UIPageViewController) -> Int // The number of items reflected in the page indicator.
 //    public func presentationIndex(for pageViewController: UIPageViewController) -> Int // The selected item reflected in the page indicator.
 
-    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewControllerNavigationDirection) -> PVGameMoreInfoViewController? {
+    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewController.NavigationDirection) -> PVGameMoreInfoViewController? {
         guard let game = viewController.game, let currentIndex = games.index(of: game) else {
             ELOG("Game or current index was nil")
             return nil
@@ -429,7 +429,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 		paragraphStyle.alignment = .center
 
 		#if os(iOS)
-		let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: Theme.currentTheme.settingsCellText!])
+		let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
 		#else
 		let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
 		#endif
@@ -553,7 +553,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     private func flipImageView(withImage image: UIImage) {
-        let direction: UIViewAnimationOptions = showingFrontArt ? .transitionFlipFromLeft : .transitionFlipFromRight
+        let direction: UIView.AnimationOptions = showingFrontArt ? .transitionFlipFromLeft : .transitionFlipFromRight
         UIView.transition(with: artworkImageView, duration: 0.4, options: direction, animations: {
             self.artworkImageView.image = image
         }, completion: nil)
@@ -1079,7 +1079,7 @@ public final class MediaZoom: UIView, UIScrollViewDelegate {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(deviceOrientationDidChange(notification:)),
-            name: .UIDeviceOrientationDidChange,
+            name: UIDevice.orientationDidChangeNotification,
             object: nil
         )
         #endif

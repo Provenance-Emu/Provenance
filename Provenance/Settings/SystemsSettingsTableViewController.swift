@@ -35,7 +35,7 @@ extension SystemOverviewViewModel {
 public class SystemSettingsCell : UITableViewCell {
     public static let identifier : String = String(describing: self)
 
-	public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+	public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		sytle()
 	}
@@ -145,7 +145,7 @@ class SystemsSettingsTableViewController: QuickTableViewController {
 							var backgroundColor : UIColor? = UIColor.clear
 							#endif
 
-							var accessoryType : UITableViewCellAccessoryType = .none
+							var accessoryType : UITableViewCell.AccessoryType = .none
 
 							switch bios.status.state {
 							case .match:

@@ -70,7 +70,7 @@ public extension PVGame {
         //            contentSet.authorNames             = [data.authorName]
         // Could generate small thumbnail here
         if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
-            contentSet.thumbnailData = UIImagePNGRepresentation(s)
+            contentSet.thumbnailData = s.pngData()
         }
         return contentSet
     }

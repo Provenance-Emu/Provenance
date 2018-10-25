@@ -614,7 +614,7 @@ public extension PVGameImporter {
         }
 
         // Create new Data from scaled image
-        guard let coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage) else {
+        guard let coverArtScaledData = coverArtScaledImage.pngData() else {
             ELOG("Failed to create data respresentation of scaled image")
             return nil
         }

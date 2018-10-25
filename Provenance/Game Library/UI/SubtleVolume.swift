@@ -206,7 +206,7 @@ public enum SubtleVolumeError: Error {
 
     backgroundColor = .clear
 
-    volume.setVolumeThumbImage(UIImage(), for: UIControlState())
+    volume.setVolumeThumbImage(UIImage(), for: UIControl.State())
     volume.isUserInteractionEnabled = false
     volume.alpha = 0.0001
     volume.showsRouteButton = false

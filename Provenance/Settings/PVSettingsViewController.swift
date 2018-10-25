@@ -14,7 +14,7 @@ import PVSupport
 
 // Subclass to help with themeing
 @objc public final class SettingsTableView: UITableView {
-    public override init(frame: CGRect, style: UITableViewStyle) {
+    public override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
     }

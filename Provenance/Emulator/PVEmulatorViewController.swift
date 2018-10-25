@@ -139,12 +139,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio?.stop()
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
-        controllerViewController?.willMove(toParentViewController: nil)
+        controllerViewController?.willMove(toParent: nil)
         controllerViewController?.view?.removeFromSuperview()
-        controllerViewController?.removeFromParentViewController()
-        glViewController?.willMove(toParentViewController: nil)
+        controllerViewController?.removeFromParent()
+        glViewController?.willMove(toParent: nil)
         glViewController?.view?.removeFromSuperview()
-        glViewController?.removeFromParentViewController()
+        glViewController?.removeFromParent()
 #if os(iOS)
     GCController.controllers().forEach { $0.controllerPausedHandler = nil }
 #endif
@@ -157,14 +157,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
 	private func initNotifcationObservers() {
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
 	}
 
@@ -186,12 +186,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 	private func initMenuButton() {
 		//        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
 		if let aController = controllerViewController {
-			addChildViewController(aController)
+			addChild(aController)
 		}
 		if let aView = controllerViewController?.view {
 			view.addSubview(aView)
 		}
-		controllerViewController?.didMove(toParentViewController: self)
+		controllerViewController?.didMove(toParent: self)
 
 		let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
 		menuButton = UIButton(type: .custom)
@@ -261,14 +261,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		initNotifcationObservers()
 		initCore()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
 
         core.audioDelegate = self
@@ -339,12 +339,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             secondaryWindow?.isHidden = false
         } else {
             if let aController = glViewController {
-                addChildViewController(aController)
+                addChild(aController)
             }
             if let aView = glViewController?.view {
                 view.addSubview(aView)
             }
-            glViewController?.didMove(toParentViewController: self)
+            glViewController?.didMove(toParent: self)
         }
 		#if os(iOS)
 		initMenuButton()
@@ -481,13 +481,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
     }
 
-#if os(iOS) && !(arch(i386) || arch(x86_64))
+#if os(iOS) && !targetEnvironment(simulator)
     //Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+	override var prefersHomeIndicatorAutoHidden: Bool {
         let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
         return shouldHideHomeIndicator
     }
-
 #endif
 
 #if os(iOS)
@@ -533,7 +532,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         return true
     }
 
-    override func preferredScreenEdgesDeferringSystemGestures() -> UIRectEdge {
+    override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
         return .bottom
     }
 
@@ -746,7 +745,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 		var imageFile: PVImageFile?
 		if let screenshot = screenshot {
-			if let pngData = UIImagePNGRepresentation(screenshot) {
+			if let pngData = screenshot.pngData() {
 				let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
 				do {
 					try pngData.write(to: imageURL)
@@ -878,7 +877,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 				UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
 			})
 
-			if let pngData = UIImagePNGRepresentation(screenshot) {
+			if let pngData = screenshot.pngData() {
 
 				let dateString = PVEmulatorConfiguration.string(fromDate: Date())
 
@@ -1012,7 +1011,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 secondaryWindow?.screen = aScreen
             }
             glViewController?.view?.removeFromSuperview()
-            glViewController?.removeFromParentViewController()
+            glViewController?.removeFromParent()
             secondaryWindow?.rootViewController = glViewController
             glViewController?.view?.frame = secondaryWindow?.bounds ?? .zero
             if let aView = glViewController?.view {
@@ -1028,9 +1027,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         let screen = note?.object as? UIScreen
         if secondaryScreen == screen {
             glViewController?.view?.removeFromSuperview()
-            glViewController?.removeFromParentViewController()
+            glViewController?.removeFromParent()
             if let aController = glViewController {
-                addChildViewController(aController)
+                addChild(aController)
             }
             if let aView = glViewController?.view, let aView1 = controllerViewController?.view {
                 view.insertSubview(aView, belowSubview: aView1)
@@ -1128,7 +1127,7 @@ extension NSNumber {
     }
     // MARK: - Private
 
-    private convenience init(pressType: UIPressType) {
+    private convenience init(pressType: UIPress.PressType) {
         self.init(integerLiteral: pressType.rawValue)
     }
 }
@@ -1143,7 +1142,7 @@ extension NSNumber {
     }
     // MARK: - Private
 
-    private convenience init(touchType: UITouchType) {
+    private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
     }
 }
