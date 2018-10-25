@@ -706,7 +706,7 @@ size_t retro_get_memory_size(unsigned id)
 
 void retro_init(void)
 {
-	unsigned level;//, rgb565;
+	unsigned level, rgb565;
 #if defined(USE_NTSC)
    sms_ntsc = calloc(1, sizeof(sms_ntsc_t));
    md_ntsc  = calloc(1, sizeof(md_ntsc_t));
