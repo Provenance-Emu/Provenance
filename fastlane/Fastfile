@@ -673,6 +673,7 @@ end
       # export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: export_method,
+        iCloudContainerEnvironment: "Production",
         manifest: {
         #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
           displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
