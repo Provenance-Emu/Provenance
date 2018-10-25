@@ -453,7 +453,6 @@
 		B33355FA207B3BBA0036A448 /* libgb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335190207B00F70036A448 /* libgb.a */; };
 		B33355FB207B3BBA0036A448 /* libgba.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351A4207B01460036A448 /* libgba.a */; };
 		B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio.a */; };
-		B33355FD207B3BBA0036A448 /* libhwcpu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352C1207B06730036A448 /* libhwcpu.a */; };
 		B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
 		B33355FF207B3BBA0036A448 /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo.a */; };
 		B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
@@ -487,6 +486,12 @@
 		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
 		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B3547B61205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
+		B35D6686218185710005A992 /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFA20736EE90097D86F /* z80_ops.cpp */; };
+		B35D6687218185710005A992 /* v810_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFF20736EE90097D86F /* v810_cpu.cpp */; };
+		B35D6688218185710005A992 /* z80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADF520736EE90097D86F /* z80.cpp */; };
+		B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE0020736EE90097D86F /* v810_fp_ops.cpp */; };
+		B35D668A218185710005A992 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D6690218185710005A992 /* libhwcpu-tvOS.a */; };
 		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
@@ -919,13 +924,6 @@
 			remoteGlobalIDString = B33352B3207B06610036A448;
 			remoteInfo = hwvideo;
 		};
-		B34AB5DB2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33352C0207B06730036A448;
-			remoteInfo = hwcpu;
-		};
 		B34AB5DD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -1002,6 +1000,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3FBDF9E207FF5D800E661D1;
 			remoteInfo = snes_faust;
+		};
+		B35D6692218185FF0005A992 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B35D6684218185710005A992;
+			remoteInfo = "hwcpu-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1231,6 +1236,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B35D668C218185710005A992 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3FBDEF6207FF0E300E661D1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1318,6 +1332,7 @@
 		B340E5FA1E088AF100AD0E8B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B340E5FC1E088AF700AD0E8B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3547B5F205858EF00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B35D6690218185710005A992 /* libhwcpu-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCore.swift; sourceTree = "<group>"; };
 		B3AA9D6A20736B030097D86F /* README.PORTING */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.PORTING; sourceTree = "<group>"; };
 		B3AA9D6B20736B030097D86F /* acinclude.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
@@ -3809,6 +3824,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */,
 				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
 				B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */,
 				B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */,
@@ -3816,7 +3832,6 @@
 				B33355FA207B3BBA0036A448 /* libgb.a in Frameworks */,
 				B33355FB207B3BBA0036A448 /* libgba.a in Frameworks */,
 				B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */,
-				B33355FD207B3BBA0036A448 /* libhwcpu.a in Frameworks */,
 				B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */,
 				B33355FF207B3BBA0036A448 /* libhwvideo.a in Frameworks */,
 				B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */,
@@ -3841,6 +3856,13 @@
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
 				B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B35D668B218185710005A992 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3969,6 +3991,7 @@
 				B33355E4207B278E0036A448 /* libtrio.a */,
 				B3FBDEF8207FF0E300E661D1 /* libsnes.a */,
 				B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */,
+				B35D6690218185710005A992 /* libhwcpu-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8694,6 +8717,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B35D6693218185FF0005A992 /* PBXTargetDependency */,
 				B34AB5BE2106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5C02106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5C22106DFB100C45F09 /* PBXTargetDependency */,
@@ -8709,7 +8733,6 @@
 				B34AB5D62106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5D82106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5DC2106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5E02106DFB100C45F09 /* PBXTargetDependency */,
 				B34AB5E22106DFB100C45F09 /* PBXTargetDependency */,
@@ -8726,6 +8749,23 @@
 			productName = "PVMednafen tvOS";
 			productReference = B340E46F1E08888700AD0E8B /* PVMednafen.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		B35D6684218185710005A992 /* hwcpu-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B35D668D218185710005A992 /* Build configuration list for PBXNativeTarget "hwcpu-tvOS" */;
+			buildPhases = (
+				B35D6685218185710005A992 /* Sources */,
+				B35D668B218185710005A992 /* Frameworks */,
+				B35D668C218185710005A992 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "hwcpu-tvOS";
+			productName = hwcpu;
+			productReference = B35D6690218185710005A992 /* libhwcpu-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		B3FBDEF7207FF0E300E661D1 /* snes */ = {
 			isa = PBXNativeTarget;
@@ -8919,6 +8959,7 @@
 				B33352A6207B06550036A448 /* hwaudio */,
 				B33352B3207B06610036A448 /* hwvideo */,
 				B33352C0207B06730036A448 /* hwcpu */,
+				B35D6684218185710005A992 /* hwcpu-tvOS */,
 				B33352CD207B067F0036A448 /* hwmisc */,
 				B333546E207B1B500036A448 /* cdrom */,
 				B3335492207B1BF30036A448 /* sound */,
@@ -9563,6 +9604,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B35D6685218185710005A992 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B35D6686218185710005A992 /* z80_ops.cpp in Sources */,
+				B35D6687218185710005A992 /* v810_cpu.cpp in Sources */,
+				B35D6688218185710005A992 /* z80.cpp in Sources */,
+				B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */,
+				B35D668A218185710005A992 /* m68k.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3FBDEF4207FF0E300E661D1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9915,11 +9968,6 @@
 			target = B33352B3207B06610036A448 /* hwvideo */;
 			targetProxy = B34AB5D92106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
-		B34AB5DC2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33352C0207B06730036A448 /* hwcpu */;
-			targetProxy = B34AB5DB2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
 		B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B33352CD207B067F0036A448 /* hwmisc */;
@@ -9974,6 +10022,11 @@
 			isa = PBXTargetDependency;
 			target = B3FBDF9E207FF5D800E661D1 /* snes_faust */;
 			targetProxy = B34AB5F12106DFB100C45F09 /* PBXContainerItemProxy */;
+		};
+		B35D6693218185FF0005A992 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B35D6684218185710005A992 /* hwcpu-tvOS */;
+			targetProxy = B35D6692218185FF0005A992 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -11178,7 +11231,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -11204,7 +11257,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -11988,6 +12041,64 @@
 			};
 			name = Release;
 		};
+		B35D668E218185710005A992 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B35D668F218185710005A992 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		B3FBDEFE207FF0E300E661D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -12369,6 +12480,15 @@
 			buildConfigurations = (
 				B340E4751E08888700AD0E8B /* Debug */,
 				B340E4761E08888700AD0E8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B35D668D218185710005A992 /* Build configuration list for PBXNativeTarget "hwcpu-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B35D668E218185710005A992 /* Debug */,
+				B35D668F218185710005A992 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
