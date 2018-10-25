@@ -16,6 +16,11 @@ class PVCoresTableViewController: QuickTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		let cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
+
+		#if os(tvOS)
+		splitViewController?.title = "Cores"
+		#endif
+
 		tableContents = [
 			Section(title: "Cores", rows: cores.map { core in
 				let systemsText = core.supportedSystems.map({return $0.shortName}).joined(separator: ", ")

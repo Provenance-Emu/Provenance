@@ -53,7 +53,11 @@ public class SystemSettingsCell : UITableViewCell {
 		self.textLabel?.textColor = Theme.currentTheme.settingsCellText
 		self.detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
 		#else
-		bg.backgroundColor = UIColor.init(white: 0.9, alpha: 0.9)
+		bg.backgroundColor = UIColor.clear
+		if #available(tvOS 10.0, *) {
+			self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
+			self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
+		}
 		#endif
 		self.backgroundView = bg
 	}
@@ -66,6 +70,12 @@ public class SystemSettingsHeaderCell : SystemSettingsCell {
 		self.backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
 		self.textLabel?.textColor = Theme.currentTheme.settingsHeaderText
 		self.detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
+		#else
+		self.backgroundView?.backgroundColor = UIColor.clear
+		if #available(tvOS 10.0, *) {
+			self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
+			self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
+		}
 		#endif
 		self.textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
 	}
@@ -132,7 +142,7 @@ class SystemsSettingsTableViewController: QuickTableViewController {
 							#if os(iOS)
 							var backgroundColor : UIColor? = Theme.currentTheme.settingsCellBackground
 							#else
-							var backgroundColor : UIColor? = UIColor.init(white: 0.9, alpha: 0.9)
+							var backgroundColor : UIColor? = UIColor.clear
 							#endif
 
 							var accessoryType : UITableViewCellAccessoryType = .none
@@ -188,6 +198,9 @@ class SystemsSettingsTableViewController: QuickTableViewController {
 		#if os(iOS)
 		self.tableView.backgroundColor = Theme.currentTheme.settingsHeaderBackground
 		self.tableView.separatorStyle = .singleLine
+		#else
+		self.tableView.backgroundColor = UIColor.clear
+		self.splitViewController?.title = "Systems"
 		#endif
 
         let realm  = try! Realm()

@@ -25,6 +25,10 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
     @IBOutlet weak var webDavAlwaysOnValueLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnTitleLabel: UILabel!
     @IBOutlet weak var imageSmoothingLabel: UILabel!
+	@IBOutlet weak var bundleIDLabel: UILabel!
+	@IBOutlet weak var builderLabel: UILabel!
+	@IBOutlet weak var buildDateLabel: UILabel!
+	@IBOutlet weak var buildNumberLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,6 +71,20 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             revisionLabel.textColor = color
             revisionLabel.text = "(none)"
         }
+
+		buildNumberLabel.text = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "nil"
+
+		let incomingDateFormatter = DateFormatter()
+		incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
+
+		let outputDateFormatter = DateFormatter()
+		outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
+
+		let buildDate = incomingDateFormatter.date(from: gitdate)!
+
+		buildDateLabel.text = outputDateFormatter.string(from: buildDate)
+		bundleIDLabel.text = Bundle.main.bundleIdentifier
+		builderLabel.text = builtByUser
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -119,7 +137,8 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
     
     private struct Selections {
         enum Sections : Int {
-            case saves = 0
+			case app
+            case saves
             case audioVideo
             case controller
             case gameLibrary
@@ -146,8 +165,11 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             tableView.deselectRow(at: indexPath, animated: true)
         }
 
-        switch indexPath.section {
-        case Selections.Sections.saves.rawValue:
+		let section = Selections.Sections(rawValue: indexPath.section)!
+        switch section {
+		case .app, .controller, .buildInformation, .externalInformation:
+			break
+        case .saves:
             // Settings
             switch indexPath.row {
             case 0:
@@ -189,7 +211,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        case Selections.Sections.audioVideo.rawValue:
+        case .audioVideo:
             // Audio/Video
             switch indexPath.row {
             case 0:
@@ -204,7 +226,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        case Selections.Sections.gameLibrary.rawValue:
+        case .gameLibrary:
             // Game Library
             switch indexPath.row {
             case 0:
@@ -227,7 +249,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        case Selections.Sections.gameLibrary2.rawValue:
+        case .gameLibrary2:
             // Game Library
             switch indexPath.row {
             case 0:
@@ -252,8 +274,6 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             default:
                 break
             }
-        default:
-            break
         }
     }
 
