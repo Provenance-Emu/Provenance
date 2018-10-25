@@ -81,6 +81,7 @@ GEM
       aws-sdk (~> 2.3)
       mime-types (~> 3.1)
     fastlane-plugin-rome (0.3.3)
+    fastlane-plugin-versioning (0.3.4)
     ffi (1.9.25)
     gh (0.14.0)
       addressable
@@ -196,6 +197,7 @@ DEPENDENCIES
   fastlane
   fastlane-plugin-aws_s3
   fastlane-plugin-rome
+  fastlane-plugin-versioning
   net-scp
   net-ssh
   travis

@@ -26,11 +26,11 @@ Setup fastlane enviroment
 fastlane ios test
 ```
 Build and run tests
-### ios travistest
+### ios travis
 ```
-fastlane ios travistest
+fastlane ios travis
 ```
-Travis Test
+Travis building
 ### ios userbuild
 ```
 fastlane ios userbuild

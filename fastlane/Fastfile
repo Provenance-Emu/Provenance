@@ -322,6 +322,13 @@ end
 
     ipa_name  = "Provenance-#{git_branch}-#{build_number}.ipa"
 
+    if is_ci?
+      increment_build_number_in_plist(
+        build_number: ci_build_number,
+        target: 'Provenance'
+      )
+    end
+
     badge_alpha
     buid_ios_adhoc(
       ipa_name: ipa_name, 
