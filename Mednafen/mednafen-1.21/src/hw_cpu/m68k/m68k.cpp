@@ -2192,7 +2192,7 @@ INLINE bool M68K::CheckPrivilege(void)
 
 //
 //
-INLINE void M68K::InternalStep(void)
+void INLINE __attribute__((optnone)) M68K::InternalStep(void)
 {
  if(MDFN_UNLIKELY(XPending))
  {
