@@ -7,15 +7,15 @@ echo "Swift version: $SWIFT_VERSION"
 if [ -x "$(command -v rome)" ]; then
   echo "Downloading $PLATFORM ..."
   rome download --platform $PLATFORM --cache-prefix "$SWIFT_VERSION"
-  rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs carthage update --platform $PLATFORM --cache-builds --no-use-binaries # list what is missing and update/build if needed
+  rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs carthage update --platform $PLATFORM --cache-builds # list what is missing and update/build if needed
   rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" # upload what is missing
   cd PVSupport
   rome download --platform $PLATFORM --cache-prefix "$SWIFT_VERSION"
-  rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs carthage update --platform $PLATFORM --cache-builds --no-use-binaries # list what is missing and update/build if needed
+  rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs carthage update --platform $PLATFORM --cache-builds # list what is missing and update/build if needed
   rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" # upload what is missing
   cd ../PVLibrary
   rome download --platform $PLATFORM --cache-prefix "$SWIFT_VERSION"
-  rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs carthage update --platform $PLATFORM --cache-builds --no-use-binaries # list what is missing and update/build if needed
+  rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs carthage update --platform $PLATFORM --cache-builds # list what is missing and update/build if needed
   rome list --missing --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix "$SWIFT_VERSION" # upload what is missing
   echo "Done."
 else
