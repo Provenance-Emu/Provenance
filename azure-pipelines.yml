@@ -10,6 +10,7 @@ variables:
   scheme: 'Provenance-Release'
   sdk: 'iphoneos'
   configuration: 'Release'
+  target: 'Provenance'
 
 steps:
 - task: Xcode@5
@@ -18,11 +19,18 @@ steps:
     sdk: '$(sdk)'
     scheme: '$(scheme)'
     configuration: '$(configuration)'
-    xcWorkspacePath: 'Provenance.xcworkspace'
+    target:  '$(target)'
+    # xcWorkspacePath: 'Provenance.xcworkspace'
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     xcodeVersion: '10' # Options: 8, 9, default, specifyPath
     destinationPlatformOption: 'iOS'
+    destinationTypeOption: 'devices' # Optional. Options: simulators, devices
     packageApp: true
+    #signingOption: 'nosign' # Optional. Options: nosign, default, manual, auto
+    #signingIdentity: # Optional
+    #provisioningProfileUuid: # Optional
+    #provisioningProfileName: # Optional
+    #teamId: # Optional
     # Additional options https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/xcode?view=vsts
 
 # Install Apple Certificate
