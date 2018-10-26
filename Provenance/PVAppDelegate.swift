@@ -280,19 +280,21 @@ extension PVAppDelegate {
 
 		let masterBranch = kGITBranch.lowercased() == "master"
         let developBranch = kGITBranch.lowercased() == "develop"
+		let travisBuild = ["jmattiello","travis"].contains(builtByUser)
         let masterOrDevelopBranch = masterBranch || developBranch
+		let feedbackEnabled = masterOrDevelopBranch && travisBuild
 
         #if os(iOS)
         BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
         BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
         #endif
         
-		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch
+		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch && travisBuild
         
-        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
-            BITHockeyManager.shared().isUpdateManagerDisabled = true
-        }
-		
+//        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
+//            BITHockeyManager.shared().isUpdateManagerDisabled = true
+//        }
+
 		BITHockeyManager.shared().logLevel = BITLogLevel.warning
 		BITHockeyManager.shared().start()
 		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds

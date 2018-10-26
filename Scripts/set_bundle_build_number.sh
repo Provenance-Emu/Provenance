@@ -20,7 +20,8 @@ buildNumber=`git rev-list --count HEAD`
 
 GIT_TAG=`git describe --tags --always --dirty`
 GIT_DATE=`git log -1 --format="%cd" --date="local"`
-GIT_BRANCH=`git branch | grep \* | cut -d ' ' -f2-`
+#GIT_BRANCH=`git branch | grep \* | cut -d ' ' -f2-`
+GIT_BRANCH=`git name-rev --name-only HEAD`
 
 PLISTBUDDY="/usr/libexec/PlistBuddy"
 
