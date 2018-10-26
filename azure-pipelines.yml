@@ -20,7 +20,7 @@ steps:
     scheme: '$(scheme)'
     configuration: '$(configuration)'
     target:  '$(target)'
-    # xcWorkspacePath: 'Provenance.xcworkspace'
+    xcWorkspacePath: 'Provenance.xcworkspace'
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     xcodeVersion: '10' # Options: 8, 9, default, specifyPath
     destinationPlatformOption: 'iOS'
