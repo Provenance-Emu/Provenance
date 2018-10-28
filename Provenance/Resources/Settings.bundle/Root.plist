@@ -16,11 +16,11 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Enable HockeyApp update notifications</string>
+			<string>Disable HockeyApp update notifications</string>
 			<key>Key</key>
-			<string>hockeyAppEnabled</string>
+			<string>hockeyAppDisabled</string>
 			<key>DefaultValue</key>
-			<true/>
+			<false/>
 		</dict>
 	</array>
 </dict>
