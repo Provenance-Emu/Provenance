@@ -373,16 +373,16 @@ end
     end
 
     # SCP to web-server
-    begin
-      UI.message "SCP'ing to #{build_time}"
-      scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
-      scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
-    rescue => ex
-        # re-raise the exception unless it's something we're OK with ignoring
-        # raise ex unless ex.message.include?('Error message of interest')
-      # don't fail the build
-      UI.important("SCP Something went wrong: #{ex}")
-    end
+    # begin
+    #   UI.message "SCP'ing to #{build_time}"
+    #   scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
+    #   scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+    # rescue => ex
+    #     # re-raise the exception unless it's something we're OK with ignoring
+    #     # raise ex unless ex.message.include?('Error message of interest')
+    #   # don't fail the build
+    #   UI.important("SCP Something went wrong: #{ex}")
+    # end
 
 
     # uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
