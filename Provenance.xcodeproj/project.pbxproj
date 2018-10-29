@@ -2093,7 +2093,7 @@
 				"$(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework",
 				"$(SRCROOT)/PVSupport/Carthage/Build/tvOS/SwiftyUserDefaults.framework",
 				"$(SRCROOT)/PVLibrary/Carthage/Build/tvOS/ZipArchive.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework",
+				"$(SRCROOT)/Carthage/Build/tvOS/QuickTableViewController.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
