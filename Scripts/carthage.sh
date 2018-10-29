@@ -66,7 +66,7 @@ SOURCEPATH=${2:-$SRCROOT}
   lockfile_release
 }
 
-function runCarthageAndCopyResolved {
+runCarthageAndCopyResolved() {
     echo "Running Carthage bootstrap process..."
     
     if fastlane_installed; then
@@ -82,7 +82,7 @@ function runCarthageAndCopyResolved {
       eval_cmd $FASTLANE_BOOTSTRAP_CMD
     elif carthage_installed; then
         echo "Setting up Carthage for platform $1"
-        carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SOURCEPATH"
+        carthage bootstrap --cache-builds --platform $1 --project-directory "$SOURCEPATH"
         carthage outdated --xcode-warnings
         # Example how to enable different command for different build styles.
         # ie; carthage build, will force a rebuild. Might be preferred for safety for ad-hoc and app store builds
@@ -134,7 +134,7 @@ function carthageBuildPathNotExist {
 # Function to iterate comma seperated list of targets and
 # check that a Carthage/.Cartfile.${Platform}.resolved exists.
 # and matches the current Carthage.resolved file
-function carthageManifestUpToDate {
+carthageManifestUpToDate() {
   echo "carthageManifestUpToDate $1"
   for i in $(echo $1 | tr "," "\n")
   do

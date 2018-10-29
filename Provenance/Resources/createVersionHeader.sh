@@ -72,13 +72,13 @@ if [[ plist_buddy_installed && "${INFOPATH}" == *".plist"*  ]]; then
     fi
 fi
 
-function error_exit
+error_exit()
 {
     echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
     exit 1
 }
 
-function success_exit
+success_exit()
 {
     echo "${PROGNAME}: ${1:-"Completed"}" 1>&2
     exit 0
