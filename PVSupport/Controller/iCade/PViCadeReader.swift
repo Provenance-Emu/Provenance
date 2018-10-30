@@ -46,6 +46,11 @@ final public class PViCadeReader: NSObject, iCadeEventDelegate {
         return internalReader.state
     }
 
+	deinit {
+		internalReader.active = false
+		internalReader.delegate = nil
+	}
+
 // MARK: - iCadeEventDelegate
     public func buttonDown(button: Int) {
 		buttonDownHandler?(button)

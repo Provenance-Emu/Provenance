@@ -20,7 +20,6 @@ import GameController
 public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
     var handler: GCControllerButtonValueChangedHandler?
 
-
 	private var _value : Float = 0.0
 	public override var value : Float {
 		get {

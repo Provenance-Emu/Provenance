@@ -68,27 +68,46 @@ extension String {
 
 private let ON_STATES_EN :[Character] = "wdxayhujikol[1".map{$0}
 private let OFF_STATES_EN :[Character] = "eczqtrfnmpgv]2".map{$0}
-#if os(tvOS)
 private let ON_STATES_FR :[Character] = "zdxqyhujikol".map{$0}
 private let OFF_STATES_FR :[Character] = "ecwatrfn,pgv".map{$0}
 private let ON_STATES_DE :[Character] = "wdxazhujikol".map{$0}
 private let OFF_STATES_DE :[Character] = "ecyqtrfnmpgv".map{$0}
-#endif
 
 public final class iCadeReaderView : UIView {
 
-	private let _inputView : UIInputView = UIInputView(frame: CGRect.zero)
+	#if os(tvOS)
+	private let _inputView = UIInputView(frame: CGRect.zero)
+	#else
+	private let _inputView = UIView(frame: CGRect.zero)
+	#endif
 
 	public var state : iCadeControllerState = iCadeControllerState()
 	public weak var delegate : iCadeEventDelegate?
-	public var active : Bool = false
+	public var active : Bool = false {
+
+		willSet {
+			if active == newValue && newValue {
+				resignFirstResponder()
+			}
+		}
+
+		didSet {
+			if active {
+				if UIApplication.shared.applicationState == .active {
+					becomeFirstResponder()
+				}
+			} else {
+				resignFirstResponder()
+			}
+		}
+	}
 
 	public internal(set) var onStates : [Character]
 	public internal(set) var offStates : [Character]
 
 	public override init(frame: CGRect) {
-		#if os(tvOS)
-		let localeIdentifier = NSLocale.current.localeIdentifier
+
+		let localeIdentifier = NSLocale.current.identifier
 		if localeIdentifier.hasPrefix("de") {
 			onStates = ON_STATES_DE
 			offStates = OFF_STATES_DE
@@ -99,10 +118,6 @@ public final class iCadeReaderView : UIView {
 			onStates = ON_STATES_EN
 			offStates = OFF_STATES_EN
 		}
-		#else
-		onStates = ON_STATES_EN
-		offStates = OFF_STATES_EN
-		#endif
 
 		super.init(frame: frame)
 
@@ -135,30 +150,13 @@ public final class iCadeReaderView : UIView {
 		return true
 	}
 
-	func setActive(_ value: Bool) {
-		if active == value {
-			if value {
-				resignFirstResponder()
-			} else {
-				return
-			}
-		}
-		active = value
-		if active {
-			if UIApplication.shared.applicationState == .active {
-				becomeFirstResponder()
-			}
-		} else {
-			resignFirstResponder()
-		}
-	}
-
-	public override var inputView: UIInputView? {
+	public override var inputView: UIView? {
 		return _inputView
 	}
 
 	// MARK: - keys
 
+	#if os(tvOS)
 	public override var keyCommands: [UIKeyCommand]? {
 		let allStates = onStates + offStates
 		return allStates.map {
@@ -166,8 +164,24 @@ public final class iCadeReaderView : UIView {
 		}
 	}
 
-	var cycleResponder: Int = 0
 	@objc func keyPressed(_ keyCommand: UIKeyCommand?) {
+
+		print("Keypressed \(keyCommand?.input ?? "nil")")
+
+		guard
+			let keyCommand = keyCommand,
+			let input = keyCommand.input else {
+				print("No key input")
+			return
+		}
+
+		handleIcadeInput(input)
+	}
+	#endif
+
+	var cycleResponder: Int = 0
+	func handleIcadeInput(_ input : String) {
+		print("handleIcadeInput: \(input)")
 		defer {
 			cycleResponder += 1
 			if cycleResponder > 20 {
@@ -178,13 +192,7 @@ public final class iCadeReaderView : UIView {
 			}
 		}
 
-		guard
-			let keyCommand = keyCommand,
-			let ch = keyCommand.input?.first else {
-			return
-		}
-
-		print("Keypressed \(keyCommand.input ?? "nil")")
+		let ch = input.first!
 
 		var stateChanged = false
 		if onStates.contains(ch), let index = onStates.index(of: ch) {
@@ -192,14 +200,17 @@ public final class iCadeReaderView : UIView {
 			if !state.contains(button) {
 				state.formUnion(button)
 				stateChanged = true
+				print("New button down \(index)")
 				delegate?.buttonDown(button: (1 << index))
 			}
+		}
 
-		} else if offStates.contains(ch), let index = offStates.index(of: ch) {
+		if offStates.contains(ch), let index = offStates.index(of: ch) {
 			let button = iCadeControllerState(rawValue: 1 << index)
 			if state.contains(button) {
 				state.remove(button)
 				stateChanged = true
+				print("New button up \(index)")
 				delegate?.buttonUp(button: (1 << index))
 			}
 		}
@@ -210,7 +221,6 @@ public final class iCadeReaderView : UIView {
 	}
 }
 
-
 extension iCadeReaderView : UIKeyInput {
 	// MARK: -
 	// MARK: UIKeyInput Protocol Methods
@@ -220,6 +230,9 @@ extension iCadeReaderView : UIKeyInput {
 
 	public func insertText(_ text: String) {
 		// does not to work on tvOS, use keyCommands + keyPressed instead
+		#if os(iOS)
+		handleIcadeInput(text)
+		#endif
 	}
 
 	public func deleteBackward() {

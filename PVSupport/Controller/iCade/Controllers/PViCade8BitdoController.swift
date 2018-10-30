@@ -81,6 +81,7 @@ public final class PViCade8BitdoZeroController: PViCadeController {
 
 		reader.buttonDownHandler = { [weak self] button in
 			guard let self = self else {
+				print("nil self")
 				return
 			}
 
@@ -113,6 +114,7 @@ public final class PViCade8BitdoZeroController: PViCadeController {
 
 		reader.buttonUpHandler = { [weak self] button in
 			guard let self = self else {
+				print("nil self")
 				return
 			}
 
