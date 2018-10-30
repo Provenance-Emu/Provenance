@@ -559,7 +559,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ..\n. ./Scripts/xcode.carthage.bootstrap.sh tvOS \"${SRCROOT}\"\n";
+			shellScript = "cd ..\ngit submodule update --init --recursive\n. ./Scripts/xcode.carthage.bootstrap.sh tvOS \"${SRCROOT}\"\n";
 		};
 		B3E0A58B2156516F004B4322 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
