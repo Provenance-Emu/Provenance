@@ -75,12 +75,22 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
 		buildNumberLabel.text = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "nil"
 
 		let incomingDateFormatter = DateFormatter()
+		incomingDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
 		incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
 
 		let outputDateFormatter = DateFormatter()
 		outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
 
-		let buildDate = incomingDateFormatter.date(from: gitdate)!
+		if let processedDate = incomingDateFormatter.date(from: gitdate) {
+			buildDate = processedDate
+		} else {
+			// Try chaninging local - depends on which local was build with for git string
+			// more than the current local
+			incomingDateFormatter.locale = Locale.current
+			if let processedDate = incomingDateFormatter.date(from: gitdate) {
+				buildDate = processedDate
+			}
+		}
 
 		buildDateLabel.text = outputDateFormatter.string(from: buildDate)
 		bundleIDLabel.text = Bundle.main.bundleIdentifier

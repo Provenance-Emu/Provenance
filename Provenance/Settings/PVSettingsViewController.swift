@@ -130,7 +130,18 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 		let outputDateFormatter = DateFormatter()
 		outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
 
-		let buildDate = incomingDateFormatter.date(from: gitdate)!
+		var buildDate = Date(timeIntervalSince1970: 0)
+
+		if let processedDate = incomingDateFormatter.date(from: gitdate) {
+			buildDate = processedDate
+		} else {
+			// Try chaninging local - depends on which local was build with for git string
+			// more than the current local
+			incomingDateFormatter.locale = Locale.current
+			if let processedDate = incomingDateFormatter.date(from: gitdate) {
+				buildDate = processedDate
+			}
+		}
 
 		buildDateLabel.text = outputDateFormatter.string(from: buildDate)
 		bundleIDLabel.text = Bundle.main.bundleIdentifier
