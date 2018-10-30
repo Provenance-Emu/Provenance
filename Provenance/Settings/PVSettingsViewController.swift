@@ -25,7 +25,7 @@ import PVSupport
     }
 }
 
-class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate, WebServerActivatorController {
+final class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate, WebServerActivatorController {
     @IBOutlet weak var autoSaveSwitch: UISwitch!
     @IBOutlet weak var autoLoadSwitch: UISwitch!
     @IBOutlet weak var timedAutoSavesSwitch: UISwitch!
@@ -147,7 +147,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 		reachability.startNotifier()
 
         let settings = PVSettingsModel.shared
-        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
+        iCadeControllerSetting.text = settings.myiCadeControllerSetting.description ?? "nil"
 
         if #available(iOS 9.0, *) {
             themeValueLabel.text = settings.theme.rawValue

@@ -27,10 +27,8 @@
 //#import <PVSupport/DebugUtils.h>
 #import "PVAvailability.h"
 #import "PVGLViewController.h"
-#import "PViCade8BitdoController.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "UIView+FrameAdditions.h"
-#import "kICadeControllerSetting.h"
 #import "MBProgressHUD.h"
 #import "PVWebServer.h"
 #import "Reachability.h"

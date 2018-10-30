@@ -7,7 +7,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-class PVGameLibrarySectionFooterView: UICollectionReusableView {
+final class PVGameLibrarySectionFooterView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -24,7 +24,7 @@ class PVGameLibrarySectionFooterView: UICollectionReusableView {
     }
 }
 
-class PVGameLibrarySectionHeaderView: UICollectionReusableView {
+final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
 
     override init(frame: CGRect) {

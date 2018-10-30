@@ -264,7 +264,7 @@ public final class PVSettingsModel: NSObject {
                                                   kShowRecentGamesKey: true,
 												  kShowRecentSavesKey: true,
 												  kShowGameBadgesKey: true,
-                                                  kICadeControllerSettingKey: iCadeControllerSetting.settingDisabled.rawValue,
+                                                  kICadeControllerSettingKey: iCadeControllerSetting.disabled.rawValue,
                                                   kVolumeSettingKey: 1.0,
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,

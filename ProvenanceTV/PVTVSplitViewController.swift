@@ -9,7 +9,7 @@
 
 import UIKit
 
-class PVTVSplitViewController: UISplitViewController {
+final class PVTVSplitViewController: UISplitViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         preferredPrimaryColumnWidthFraction = 0.5

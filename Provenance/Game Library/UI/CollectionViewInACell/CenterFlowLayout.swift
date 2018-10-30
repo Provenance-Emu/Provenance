@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CenterViewFlowLayout: UICollectionViewFlowLayout {
+final class CenterViewFlowLayout: UICollectionViewFlowLayout {
 
 	var canvasSize : CGSize {
 		return self.collectionView?.frame.size ?? .zero

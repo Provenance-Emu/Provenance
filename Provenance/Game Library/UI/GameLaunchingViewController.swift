@@ -221,7 +221,7 @@ public enum GameLaunchingError: Error {
 }
 
 #if os(iOS)
-class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
+final class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
 	var didSetConstraints = false
 
 	var switchControl : UISwitch? {

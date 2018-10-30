@@ -208,7 +208,7 @@ protocol GameLibraryCollectionViewDelegate : class {
 }
 
 @IBDesignable
-class CornerBadgeView : UIView {
+final class CornerBadgeView : UIView {
 	enum FillCorner {
 		case topLeft
 		case topRight
@@ -358,7 +358,7 @@ extension UIImage {
 	}
 }
 
-class PVGameLibraryCollectionViewCell: UICollectionViewCell {
+final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 	weak var delegate : GameLibraryCollectionViewDelegate?
 

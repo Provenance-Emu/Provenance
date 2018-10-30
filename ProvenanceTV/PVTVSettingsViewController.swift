@@ -8,7 +8,7 @@
 import UIKit
 import PVLibrary
 
-class PVTVSettingsViewController: UITableViewController, WebServerActivatorController {
+final class PVTVSettingsViewController: UITableViewController, WebServerActivatorController {
     lazy var gameImporter: PVGameImporter = PVGameImporter.shared
     @IBOutlet weak var autoSaveValueLabel: UILabel!
     @IBOutlet weak var timedAutoSavesValueLabel: UILabel!

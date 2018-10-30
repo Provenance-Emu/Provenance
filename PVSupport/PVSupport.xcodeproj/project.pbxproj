@@ -76,6 +76,30 @@
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4301DE86E6D008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F42F1DE86E6D008450F5 /* UIKit.framework */; };
+		B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
+		B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
+		B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
+		B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
+		B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37892187F9A9009D9244 /* PViCadeReader.swift */; };
+		B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37892187F9A9009D9244 /* PViCadeReader.swift */; };
+		B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */; };
+		B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */; };
+		B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */; };
+		B3AB37DD21881869009D9244 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */; };
+		B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */; };
+		B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */; };
+		B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378E2187F9A9009D9244 /* PViCadeController.swift */; };
+		B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378E2187F9A9009D9244 /* PViCadeController.swift */; };
+		B3AB37E321881A82009D9244 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */; };
+		B3AB37E421881A83009D9244 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */; };
+		B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */; };
+		B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */; };
+		B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */; };
+		B3AB37EA21881B7A009D9244 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */; };
+		B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */; };
+		B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */; };
+		B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */; };
+		B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
@@ -176,6 +200,18 @@
 		B3A9F4271DE86777008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B3A9F4291DE86780008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F42F1DE86E6D008450F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadDirectionPad.swift; sourceTree = "<group>"; };
+		B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeControllerSetting.swift; sourceTree = "<group>"; };
+		B3AB37892187F9A9009D9244 /* PViCadeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeReader.swift; sourceTree = "<group>"; };
+		B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeInputAxis.swift; sourceTree = "<group>"; };
+		B3AB378B2187F9A9009D9244 /* iCadeState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeState.swift; sourceTree = "<group>"; };
+		B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCade8BitdoController.swift; sourceTree = "<group>"; };
+		B3AB378E2187F9A9009D9244 /* PViCadeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeController.swift; sourceTree = "<group>"; };
+		B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadButtonInput.swift; sourceTree = "<group>"; };
+		B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeSteelSeriesController.swift; sourceTree = "<group>"; };
+		B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepad.swift; sourceTree = "<group>"; };
+		B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeMocuteController.swift; sourceTree = "<group>"; };
+		B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeReaderView.swift; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
@@ -253,6 +289,8 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3AB37F721882119009D9244 /* CoreOptions */,
+				B3AB36DC2187F4C4009D9244 /* Controller */,
 				B302F89420B71C2300C5E502 /* Logging */,
 				1A4E718B1A6C693A005CA80F /* DebugUtils */,
 				1ACEA69017F748F80031B1C9 /* Audio */,
@@ -316,7 +354,6 @@
 			isa = PBXGroup;
 			children = (
 				B3C96EBB1D62C54D003F1E93 /* PVSupport.h */,
-				B35E6C36207EE15D0040709A /* CoreOptions.swift */,
 				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
 				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
 				B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */,
@@ -369,6 +406,49 @@
 				B302F89E20B73D6400C5E502 /* PVLogging.m */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		B3AB36DC2187F4C4009D9244 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB37462187F57A009D9244 /* iCade */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		B3AB37462187F57A009D9244 /* iCade */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB37D921881651009D9244 /* Controllers */,
+				B3AB378B2187F9A9009D9244 /* iCadeState.swift */,
+				B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */,
+				B3AB37892187F9A9009D9244 /* PViCadeReader.swift */,
+				B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */,
+				B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */,
+				B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */,
+				B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */,
+				B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */,
+			);
+			path = iCade;
+			sourceTree = "<group>";
+		};
+		B3AB37D921881651009D9244 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB378E2187F9A9009D9244 /* PViCadeController.swift */,
+				B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */,
+				B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */,
+				B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		B3AB37F721882119009D9244 /* CoreOptions */ = {
+			isa = PBXGroup;
+			children = (
+				B35E6C36207EE15D0040709A /* CoreOptions.swift */,
+			);
+			path = CoreOptions;
 			sourceTree = "<group>";
 		};
 		B3E7087820B7DF3E005BAA5A /* Carthage */ = {
@@ -598,17 +678,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5E1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
+				B3AB37E421881A83009D9244 /* PViCadeGamepad.swift in Sources */,
 				B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */,
+				B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */,
+				B3AB37DD21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
+				B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
+				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
+				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
+				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
+				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
+				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
 				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
 				B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */,
+				B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */,
+				B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */,
 				B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */,
 				B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */,
 				B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */,
@@ -620,17 +712,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				B34AB5782106DC5300C45F09 /* OERingBuffer.m in Sources */,
+				B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
+				B3AB37E321881A82009D9244 /* PViCadeGamepad.swift in Sources */,
 				B34AB5772106DC5300C45F09 /* OEGameAudio.m in Sources */,
+				B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */,
+				B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
+				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
+				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
+				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
+				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
+				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
+				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,
 				B34AB5722106DC3000C45F09 /* PVCocoaLumberJackLogging.m in Sources */,
 				B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */,
+				B3AB37EA21881B7A009D9244 /* PViCadeMocuteController.swift in Sources */,
+				B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */,
 				B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */,
 				B34AB5802106DC6100C45F09 /* PVGameControllerUtilities.m in Sources */,
 				B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */,

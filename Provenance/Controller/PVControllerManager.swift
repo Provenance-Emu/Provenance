@@ -24,7 +24,7 @@ let isSimulator = true
 let isSimulator = false
 #endif
 
-class PVControllerManager: NSObject {
+final class PVControllerManager: NSObject {
 
     var allLiveControllers: [Int: GCController] {
         var allLiveControllers = [Int:GCController]()
@@ -174,10 +174,12 @@ class PVControllerManager: NSObject {
     func setupICade() {
         if iCadeController == nil {
             let settings = PVSettingsModel.shared
-            iCadeController = iCadeControllerSettingToPViCadeController(settings.myiCadeControllerSetting)
+            iCadeController = settings.myiCadeControllerSetting.createController()
             if iCadeController != nil {
                 listenForICadeControllers()
-            }
+			} else {
+				ELOG("Failed to create iCade controller")
+			}
         }
     }
 

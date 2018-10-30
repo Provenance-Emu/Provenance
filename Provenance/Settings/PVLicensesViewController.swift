@@ -9,7 +9,7 @@
 
 import UIKit
 
-class PVLicensesViewController: UIViewController {
+final class PVLicensesViewController: UIViewController {
     #if os(tvOS)
     @IBOutlet weak var textView: UITextView!
     #endif

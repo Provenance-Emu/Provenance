@@ -10,7 +10,7 @@
 import GameController
 import UIKit
 
-class PVControllerSelectionViewController: UITableViewController {
+final class PVControllerSelectionViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerSelectionViewController.handleReassigned(_:)), name: NSNotification.Name.PVControllerManagerControllerReassigned, object: nil)

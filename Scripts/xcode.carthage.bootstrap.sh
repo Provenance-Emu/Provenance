@@ -56,6 +56,8 @@ function main() {
     cron_init
     colour_init
 
+     # Stop multiple scripts from installing shit at the same time
+    lockfile_waithold
     prebuild
 
     echo_info "Boot strapping Carthage for the following setup: "
@@ -84,11 +86,10 @@ function main() {
 
         . "$DIR/carthage.sh" $PLATFORM "$SOURCEPATH"
     fi
+
+    # Release lock
+    lockfile_release
 }
 
 # Run main
- # Stop multiple scripts from installing shit at the same time
-lockfile_waithold
 main "$@"
-# Release lock
-lockfile_release
