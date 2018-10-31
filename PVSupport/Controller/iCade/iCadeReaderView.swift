@@ -66,10 +66,16 @@ extension String {
 	}
 }
 
+// Mocute MTK
+//private let ON_STATES_EN :[Character] = ",`—-/.\\,;’=[".map{$0}
+//private let OFF_STATES_EN :[Character] = "".map{$0}
+
 private let ON_STATES_EN :[Character] = "wdxayhujikol[1".map{$0}
 private let OFF_STATES_EN :[Character] = "eczqtrfnmpgv]2".map{$0}
+
 private let ON_STATES_FR :[Character] = "zdxqyhujikol".map{$0}
 private let OFF_STATES_FR :[Character] = "ecwatrfn,pgv".map{$0}
+
 private let ON_STATES_DE :[Character] = "wdxazhujikol".map{$0}
 private let OFF_STATES_DE :[Character] = "ecyqtrfnmpgv".map{$0}
 
@@ -81,7 +87,8 @@ public final class iCadeReaderView : UIView {
 	private let _inputView = UIView(frame: CGRect.zero)
 	#endif
 
-	public var state : iCadeControllerState = iCadeControllerState()
+	public var states : [iCadeControllerState] = [iCadeControllerState.none, iCadeControllerState.none]
+
 	public weak var delegate : iCadeEventDelegate?
 	public var active : Bool = false {
 
@@ -181,7 +188,7 @@ public final class iCadeReaderView : UIView {
 
 	var cycleResponder: Int = 0
 	func handleIcadeInput(_ input : String) {
-		print("handleIcadeInput: \(input)")
+		VLOG("handleIcadeInput: \(input)")
 		defer {
 			cycleResponder += 1
 			if cycleResponder > 20 {
@@ -192,31 +199,39 @@ public final class iCadeReaderView : UIView {
 			}
 		}
 
-		let ch = input.first!
+        var stateChanged = false
 
-		var stateChanged = false
-		if onStates.contains(ch), let index = onStates.index(of: ch) {
-			let button = iCadeControllerState(rawValue: 1 << index)
-			if !state.contains(button) {
-				state.formUnion(button)
-				stateChanged = true
-				print("New button down \(index)")
-				delegate?.buttonDown(button: (1 << index))
-			}
-		}
+        let player = 1
+        let i = player - 1
 
-		if offStates.contains(ch), let index = offStates.index(of: ch) {
-			let button = iCadeControllerState(rawValue: 1 << index)
-			if state.contains(button) {
-				state.remove(button)
-				stateChanged = true
-				print("New button up \(index)")
-				delegate?.buttonUp(button: (1 << index))
-			}
-		}
+        input.forEach {
+            if let index = self.onStates.index(of: $0) {
+                let buttonOn = iCadeControllerState(rawValue: 1 << index)
+                if !states[i].contains(buttonOn) {
+                    print("new on: \(buttonOn)")
+                    states[i].insert(buttonOn)
+                    delegate?.buttonDown(button: buttonOn)
+                    stateChanged = true
+                } else {
+                    WLOG("State already contains \(buttonOn)")
+                }
+            } else if let index = self.offStates.index(of: $0) {
+                let buttonOff = iCadeControllerState(rawValue: 1 << index)
+                if states[i].contains(buttonOff) {
+                    print("new off: \(buttonOff)")
+                    states[i].remove(buttonOff)
+                    delegate?.buttonUp(button: buttonOff)
+                    stateChanged = true
+                } else {
+                    WLOG("State does not contain button on for incoming button off: \(buttonOff)")
+                }
+            } else {
+                VLOG("Unmapped key: \($0)")
+            }
+        }
 
 		if stateChanged {
-			delegate?.stateChanged(state: state)
+			delegate?.stateChanged(state: states[i])
 		}
 	}
 }
@@ -231,11 +246,13 @@ extension iCadeReaderView : UIKeyInput {
 	public func insertText(_ text: String) {
 		// does not to work on tvOS, use keyCommands + keyPressed instead
 		#if os(iOS)
+        VLOG("TextInput: \(text)")
 		handleIcadeInput(text)
 		#endif
 	}
 
 	public func deleteBackward() {
 		// This space intentionally left blank to complete protocol
+        VLOG("iCade backspace!")
 	}
 }

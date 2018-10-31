@@ -121,6 +121,8 @@
 		B3E7089420B7E117005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41520B67C9700AE4E00 /* NSLogger.framework */; };
 		B3E7089520B7E117005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41220B67C9600AE4E00 /* NSLoggerSwift.framework */; };
 		B3E7089620B7E117005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */; };
+		B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
+		B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
 		B3F3CF7020C90E0000F313E5 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF6F20C90E0000F313E5 /* SwiftyUserDefaults.framework */; };
 		B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 		B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
@@ -225,6 +227,7 @@
 		B3E6DAE720B7D26C00454DD4 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3E6DAE820B7D26C00454DD4 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = ../Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B3E6DAE920B7D26D00454DD4 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = ../Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaLumberExtensions.swift; sourceTree = "<group>"; };
 		B3F3CF6F20C90E0000F313E5 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3F3CF7120C90E1600F313E5 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3FA5D451D6B858E00060D71 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -396,6 +399,7 @@
 		B302F89420B71C2300C5E502 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */,
 				B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */,
 				B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */,
 				B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */,
@@ -695,6 +699,7 @@
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
+				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
 				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
@@ -729,6 +734,7 @@
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
+				B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,
 				B34AB5722106DC3000C45F09 /* PVCocoaLumberJackLogging.m in Sources */,

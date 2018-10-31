@@ -71,7 +71,6 @@
 		B3274E802106BDD300857F52 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */; };
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
-		B3274E952106C2F800857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B38D8FFD21577AFC00F7D25A /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
 		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
@@ -293,7 +292,6 @@
 		B3C04AE321077B3100E7AF79 /* PpmdEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466F21071CA6002211EE /* PpmdEncoder.cpp */; };
 		B3C04AE421077B3100E7AF79 /* LzmaSDKObjCUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473521071CA6002211EE /* LzmaSDKObjCUpdateCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D282106B4D700DDEBD6 /* PVLibrary.swift */; };
-		B3C04AE621077B3100E7AF79 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */; };
 		B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E321071CA6002211EE /* LzmaEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E821071CA6002211EE /* XzDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */; };
@@ -477,7 +475,6 @@
 		B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
 		B3274E832106BF2F00857F52 /* PVImageFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVImageFile.swift; sourceTree = "<group>"; };
 		B3274E852106BFD000857F52 /* ImportCandidateFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCandidateFile.swift; sourceTree = "<group>"; };
-		B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CocoaLumberExtensions.swift; sourceTree = "<group>"; };
 		B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3579D122106B11D00DDEBD6 /* PVLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVLibrary.h; sourceTree = "<group>"; };
 		B3579D132106B11D00DDEBD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -974,7 +971,6 @@
 		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				B3274E942106C2F800857F52 /* CocoaLumberExtensions.swift */,
 				B3274E5C2106BA1200857F52 /* Configuration */,
 				B3579D1D2106B4D600DDEBD6 /* Database */,
 				B3579D212106B4D600DDEBD6 /* Game Media */,
@@ -1825,7 +1821,6 @@
 				B3AF47C521071F76002211EE /* PpmdEncoder.cpp in Sources */,
 				B3AF476821071E28002211EE /* LzmaSDKObjCUpdateCallback.mm in Sources */,
 				B3274E6D2106BC1D00857F52 /* PVLibrary.swift in Sources */,
-				B3274E952106C2F800857F52 /* CocoaLumberExtensions.swift in Sources */,
 				B3AF478421071E85002211EE /* LzmaEnc.c in Sources */,
 				B3AF478E21071E85002211EE /* XzDec.c in Sources */,
 				B3274E802106BDD300857F52 /* PVGameImporter.swift in Sources */,
@@ -1982,7 +1977,6 @@
 				B3C04AE321077B3100E7AF79 /* PpmdEncoder.cpp in Sources */,
 				B3C04AE421077B3100E7AF79 /* LzmaSDKObjCUpdateCallback.mm in Sources */,
 				B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */,
-				B3C04AE621077B3100E7AF79 /* CocoaLumberExtensions.swift in Sources */,
 				B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */,
 				B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */,
 				B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */,

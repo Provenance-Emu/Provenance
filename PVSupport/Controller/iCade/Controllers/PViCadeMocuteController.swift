@@ -10,71 +10,30 @@
 import Foundation
 
 public final class PViCadeMocuteController: PViCadeController {
-    public override init() {
-		super.init()
 
-		reader.buttonDownHandler = {[weak self] button in
-			guard let self = self else {
-				return
-			}
-
-            switch button {
-                case iCadeControllerState.buttonA.rawValue:
-                    self.iCadeGamepad.buttonX.isPressed = true
-                case iCadeControllerState.buttonB.rawValue:
-                    self.iCadeGamepad.buttonA.isPressed = true
-                case iCadeControllerState.buttonC.rawValue:
-                    self.iCadeGamepad.buttonB.isPressed = true
-                case iCadeControllerState.buttonD.rawValue:
-                    self.iCadeGamepad.buttonY.isPressed = true
-                case iCadeControllerState.buttonE.rawValue:
-                    self.iCadeGamepad.leftShoulder.isPressed = true
-                case iCadeControllerState.buttonF.rawValue:
-                    self.iCadeGamepad.rightShoulder.isPressed = true
-                case iCadeControllerState.buttonG.rawValue:
-                    self.iCadeGamepad.leftTrigger.isPressed = true
-                case iCadeControllerState.buttonH.rawValue:
-                    self.iCadeGamepad.rightTrigger.isPressed = true
-                case iCadeControllerState.joystickDown.rawValue, iCadeControllerState.joystickLeft.rawValue, iCadeControllerState.joystickRight.rawValue, iCadeControllerState.joystickUp.rawValue:
-                    self.iCadeGamepad.dpad.padChanged()
-                default:
-                    print("Unknown iCade key %0x", button)
-            }
-
-			self.controllerPressedAnyKey?(self)
+    override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
+        switch button {
+        case iCadeControllerState.buttonA:
+            return self.iCadeGamepad.buttonX
+        case iCadeControllerState.buttonB:
+            return self.iCadeGamepad.buttonA
+        case iCadeControllerState.buttonC:
+            return self.iCadeGamepad.buttonB
+        case iCadeControllerState.buttonD:
+            return self.iCadeGamepad.buttonY
+        case iCadeControllerState.buttonE:
+            return self.iCadeGamepad.leftShoulder
+        case iCadeControllerState.buttonF:
+            return self.iCadeGamepad.rightShoulder
+        case iCadeControllerState.buttonG:
+            return self.iCadeGamepad.leftTrigger
+        case iCadeControllerState.buttonH:
+            return self.iCadeGamepad.rightTrigger
+        default:
+            return nil
         }
-
-		reader.buttonUpHandler = { [weak self] button in
-			guard let self = self else {
-				return
-			}
-			
-            switch button {
-                case iCadeControllerState.buttonA.rawValue:
-                    self.iCadeGamepad.buttonX.isPressed = false
-                case iCadeControllerState.buttonB.rawValue:
-                    self.iCadeGamepad.buttonA.isPressed = false
-                case iCadeControllerState.buttonC.rawValue:
-                    self.iCadeGamepad.buttonB.isPressed = false
-                case iCadeControllerState.buttonD.rawValue:
-                    self.iCadeGamepad.buttonY.isPressed = false
-                case iCadeControllerState.buttonE.rawValue:
-                    self.iCadeGamepad.leftShoulder.isPressed = false
-                case iCadeControllerState.buttonF.rawValue:
-                    self.iCadeGamepad.rightShoulder.isPressed = false
-                case iCadeControllerState.buttonG.rawValue:
-                    self.iCadeGamepad.leftTrigger.isPressed = false
-                case iCadeControllerState.buttonH.rawValue:
-                    self.iCadeGamepad.rightTrigger.isPressed = false
-                case iCadeControllerState.joystickDown.rawValue, iCadeControllerState.joystickLeft.rawValue, iCadeControllerState.joystickRight.rawValue, iCadeControllerState.joystickUp.rawValue:
-                    self.iCadeGamepad.dpad.padChanged()
-                default:
-                    break
-            }
-        }
-    
     }
-
+   
     public override var vendorName: String? {
         return "Mocute"
     }

@@ -20,19 +20,19 @@ public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
     let _left: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
     let _right: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
 
-    func padChanged() {
-        let state: iCadeControllerState = PViCadeReader.shared.state
-
-		_up.isPressed = state.contains(.joystickUp)
-		_down.isPressed = state.contains(.joystickDown)
-		_left.isPressed = state.contains(.joystickLeft)
-		_right.isPressed = state.contains(.joystickRight)
-
+    func padChanged(_ controllerIndex : Int = 0) {
+        let state: iCadeControllerState = PViCadeReader.shared.states[controllerIndex]
 
         let x: Float = state.contains(.joystickLeft) ? -1.0 : state.contains(.joystickRight) ? 1.0 : 0.0
         let y: Float = state.contains(.joystickDown) ? -1.0 : state.contains(.joystickUp) ? 1.0 : 0.0
+
         _xAxis.value = x
         _yAxis.value = y
+
+		_up.isPressed = y == 1
+		_down.isPressed = y == -1
+		_left.isPressed = x == -1
+		_right.isPressed = x == 1
 
 		handler?(self, x, y)
     }

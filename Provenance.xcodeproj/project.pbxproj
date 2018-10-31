@@ -178,9 +178,6 @@
 		B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32155442107D1D40085B18E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155432107D1D40085B18E /* PVLibrary.framework */; };
 		B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E812106BEA000857F52 /* PVLibrary.framework */; };
-		B3274E902106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
-		B3274E912106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
-		B3274E932106C22600857F52 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */; };
 		B32D857E2174156A001CE0E5 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D857C2174156A001CE0E5 /* CocoaLumberjack.framework */; };
 		B32D857F2174156A001CE0E5 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D857D2174156A001CE0E5 /* CocoaLumberjackSwift.framework */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
@@ -657,7 +654,6 @@
 		B32155412107D0CE0085B18E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32155432107D1D40085B18E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E812106BEA000857F52 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CocoaLumberExtensions.swift; path = PVLibrary/PVLibrary/CocoaLumberExtensions.swift; sourceTree = SOURCE_ROOT; };
 		B32D857C2174156A001CE0E5 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B32D857D2174156A001CE0E5 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
@@ -1453,7 +1449,6 @@
 		B3DBF13A2094669A005935A8 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				B3274E8F2106C22500857F52 /* CocoaLumberExtensions.swift */,
 				B3E6DADA20B7AD1500454DD4 /* PVLogViewController.h */,
 				B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */,
 				B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */,
@@ -2153,7 +2148,6 @@
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
 				B3AB373F2187F569009D9244 /* PV32XControllerViewController.swift in Sources */,
-				B3274E902106C22600857F52 /* CocoaLumberExtensions.swift in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
 				B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
@@ -2183,7 +2177,6 @@
 				B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
 				1AD481DC1BA3544500FDA50A /* GCDWebServerDataRequest.m in Sources */,
-				B3274E912106C22600857F52 /* CocoaLumberExtensions.swift in Sources */,
 				B38A2A442102326800374CDD /* PVEmulatorViewController~tvOS.swift in Sources */,
 				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
@@ -2254,7 +2247,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3274E932106C22600857F52 /* CocoaLumberExtensions.swift in Sources */,
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

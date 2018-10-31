@@ -24,75 +24,76 @@ public class PViCadeController: GCController {
         reader.stopListening()
     }
 
+    func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
+        switch button {
+        case iCadeControllerState.buttonA:
+            return self.iCadeGamepad.rightTrigger
+        case iCadeControllerState.buttonB:
+            return self.iCadeGamepad.leftShoulder
+        case iCadeControllerState.buttonC:
+            return self.iCadeGamepad.leftTrigger
+        case iCadeControllerState.buttonD:
+            return self.iCadeGamepad.rightShoulder
+        case iCadeControllerState.buttonE:
+            return self.iCadeGamepad.buttonY
+        case iCadeControllerState.buttonF:
+            return self.iCadeGamepad.buttonB
+        case iCadeControllerState.buttonG:
+            return self.iCadeGamepad.buttonX
+        case iCadeControllerState.buttonH:
+            return self.iCadeGamepad.buttonA
+        case iCadeControllerState.buttonH:
+            return self.iCadeGamepad.leftTrigger
+        case iCadeControllerState.buttonH:
+            return self.iCadeGamepad.rightTrigger
+        default:
+            return nil
+        }
+    }
+
     public override init() {
         super.init()
 
 		reader.buttonDownHandler = { [weak self] button in
 			guard let self = self else {
+                WLOG("Nil self")
 				return
 			}
 			
 			switch button {
-			case iCadeControllerState.buttonA.rawValue:
-				self.iCadeGamepad.rightTrigger.isPressed = true
-			case iCadeControllerState.buttonB.rawValue:
-				self.iCadeGamepad.leftShoulder.isPressed = true
-			case iCadeControllerState.buttonC.rawValue:
-				self.iCadeGamepad.leftTrigger.isPressed = true
-			case iCadeControllerState.buttonD.rawValue:
-				self.iCadeGamepad.rightShoulder.isPressed = true
-			case iCadeControllerState.buttonE.rawValue:
-				self.iCadeGamepad.buttonY.isPressed = true
-			case iCadeControllerState.buttonF.rawValue:
-				self.iCadeGamepad.buttonB.isPressed = true
-			case iCadeControllerState.buttonG.rawValue:
-				self.iCadeGamepad.buttonX.isPressed = true
-			case iCadeControllerState.buttonH.rawValue:
-				self.iCadeGamepad.buttonA.isPressed = true
-			case iCadeControllerState.buttonI.rawValue:
-				self.iCadeGamepad.leftTrigger.isPressed = true
-			case iCadeControllerState.buttonJ.rawValue:
-				self.iCadeGamepad.rightTrigger.isPressed = true
-			case iCadeControllerState.joystickDown.rawValue, iCadeControllerState.joystickLeft.rawValue, iCadeControllerState.joystickRight.rawValue, iCadeControllerState.joystickUp.rawValue:
+			case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+                DLOG("Pad Changed: \(button)")
 				self.iCadeGamepad.dpad.padChanged()
 			default:
-				break
-			}
+                if let button = self.button(forState: button) {
+                    DLOG("Pressed button: \(button)")
+                    button.isPressed = true
+                } else {
+                    DLOG("Unsupported button: \(button)")
+                }
+            }
 
 			self.controllerPressedAnyKey?(self)
 		}
 
 		reader.buttonUpHandler = { [weak self] button in
-			guard let self = self else {
-				return
-			}
+            guard let self = self else {
+                WLOG("Nil self")
+                return
+            }
 
-			switch button {
-			case iCadeControllerState.buttonA.rawValue:
-				self.iCadeGamepad.rightTrigger.isPressed = false
-			case iCadeControllerState.buttonB.rawValue:
-				self.iCadeGamepad.leftShoulder.isPressed = false
-			case iCadeControllerState.buttonC.rawValue:
-				self.iCadeGamepad.leftTrigger.isPressed = false
-			case iCadeControllerState.buttonD.rawValue:
-				self.iCadeGamepad.rightShoulder.isPressed = false
-			case iCadeControllerState.buttonE.rawValue:
-				self.iCadeGamepad.buttonY.isPressed = false
-			case iCadeControllerState.buttonF.rawValue:
-				self.iCadeGamepad.buttonB.isPressed = false
-			case iCadeControllerState.buttonG.rawValue:
-				self.iCadeGamepad.buttonX.isPressed = false
-			case iCadeControllerState.buttonH.rawValue:
-				self.iCadeGamepad.buttonA.isPressed = false
-			case iCadeControllerState.buttonI.rawValue:
-				self.iCadeGamepad.leftTrigger.isPressed = false
-			case iCadeControllerState.buttonJ.rawValue:
-				self.iCadeGamepad.rightTrigger.isPressed = false
-			case iCadeControllerState.joystickDown.rawValue, iCadeControllerState.joystickLeft.rawValue, iCadeControllerState.joystickRight.rawValue, iCadeControllerState.joystickUp.rawValue:
-				self.iCadeGamepad.dpad.padChanged()
-			default:
-				break
-			}
+            switch button {
+            case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+                DLOG("Pad Changed: \(button)")
+                self.iCadeGamepad.dpad.padChanged()
+            default:
+                if let button = self.button(forState: button) {
+                    DLOG("De-Pressed button: \(button)")
+                    button.isPressed = false
+                } else {
+                    DLOG("Unsupported button: \(button)")
+                }
+            }
 		}
     }
 
@@ -131,19 +132,5 @@ public class PViCadeController: GCController {
 		set {
 			_playerIndex = newValue
 		}
-	}
-}
-
-extension PViCadeController: iCadeEventDelegate {
-	public func stateChanged(state: iCadeControllerState) {
-		fatalError("Must Override")
-	}
-
-	public func buttonDown(button: Int) {
-		fatalError("Must Override")
-	}
-
-	public func buttonUp(button: Int) {
-		fatalError("Must Override")
 	}
 }

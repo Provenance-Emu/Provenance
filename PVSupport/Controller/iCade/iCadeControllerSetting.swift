@@ -12,8 +12,8 @@ public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable 
     case disabled
     case standard
     case eightBitdo
-    case steelSeries
     case eightBitdoZero
+    case steelSeries
     case mocute
 
 	public var description : String {
@@ -30,7 +30,7 @@ public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable 
 			return "SteelSeries Free Controller"
 		case .mocute:
 			return "Mocute Controller"
-		}
+        }
 	}
 
 	public func createController() -> PViCadeController? {
@@ -47,6 +47,6 @@ public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable 
 			return  PViCadeSteelSeriesController()
 		case .mocute:
 			return  PViCadeMocuteController()
-		}
+        }
 	}
 }

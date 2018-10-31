@@ -8,7 +8,7 @@
 
 import UIKit
 
-public typealias iCadeButtonEventHandler = (_ button: Int) -> Void
+public typealias iCadeButtonEventHandler = (_ button: iCadeControllerState) -> Void
 public typealias iCadeStateEventHandler = (_ state: iCadeControllerState) -> Void
 
 final public class PViCadeReader: NSObject, iCadeEventDelegate {
@@ -42,8 +42,8 @@ final public class PViCadeReader: NSObject, iCadeEventDelegate {
         internalReader.removeFromSuperview()
     }
 
-	public var state : iCadeControllerState {
-        return internalReader.state
+	public var states : [iCadeControllerState] {
+        return internalReader.states
     }
 
 	deinit {
@@ -52,15 +52,24 @@ final public class PViCadeReader: NSObject, iCadeEventDelegate {
 	}
 
 // MARK: - iCadeEventDelegate
-    public func buttonDown(button: Int) {
+    public func buttonDown(button: iCadeControllerState) {
+        #if DEBUG
+        if buttonDownHandler == nil { WLOG("No buttonDownHandler set") }
+        #endif
 		buttonDownHandler?(button)
     }
 
-    public func buttonUp(button: Int) {
+    public func buttonUp(button: iCadeControllerState) {
+        #if DEBUG
+        if buttonUpHandler == nil { WLOG("No button up handler set") }
+        #endif
 		buttonUpHandler?(button)
     }
 
 	public func stateChanged(state: iCadeControllerState) {
+        #if DEBUG
+        if stateChangedHandler == nil { WLOG("No stateChangedHandler set") }
+        #endif
 		stateChangedHandler?(state)
 	}
 }
