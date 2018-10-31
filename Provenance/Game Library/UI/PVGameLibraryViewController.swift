@@ -82,7 +82,7 @@ let USE_IOS_11_SEARCHBAR = true
 #endif
 
 #if os(iOS)
-class PVDocumentPickerViewController: UIDocumentPickerViewController {
+final class PVDocumentPickerViewController: UIDocumentPickerViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
@@ -90,7 +90,7 @@ class PVDocumentPickerViewController: UIDocumentPickerViewController {
 }
 #endif
 
-class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
+final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
 
 	lazy var collectionViewZoom : CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
@@ -471,7 +471,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	}
 	#endif
 
-	class SystemSection : Equatable {
+	final class SystemSection : Equatable {
 		let id : String
 		let system : PVSystem
 		let gameLibraryGameController : PVGameLibraryViewController
@@ -2201,7 +2201,7 @@ extension PVGameLibraryViewController: UISearchResultsUpdating {
     }
 }
 
-class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
+final class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
 	override init() {
 		super.init()
 		#if os(iOS)

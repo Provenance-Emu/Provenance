@@ -14,7 +14,7 @@ protocol JSButtonDelegate: class {
     func buttonReleased(_ button: JSButton)
 }
 
-class JSButton: UIView {
+final class JSButton: UIView {
     private(set) var titleLabel: UILabel!
     private var backgroundImageView: UIImageView! {
         didSet {

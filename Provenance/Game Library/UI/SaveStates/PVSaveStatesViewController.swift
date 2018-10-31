@@ -19,7 +19,7 @@ protocol PVSaveStatesViewControllerDelegate: class {
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
 }
 
-class PVSaveStatesViewController: UICollectionViewController {
+final class PVSaveStatesViewController: UICollectionViewController {
 
 	private var autoSaveStatesObserverToken: NotificationToken!
 	private var manualSaveStatesObserverToken: NotificationToken!

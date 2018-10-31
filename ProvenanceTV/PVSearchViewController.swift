@@ -11,7 +11,7 @@ import UIKit
 import RealmSwift
 import PVLibrary
 
-class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
+final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false
 
     var searchResults: Results<PVGame>?

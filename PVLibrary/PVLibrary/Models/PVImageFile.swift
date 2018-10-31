@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import PVSupport
 
 @objcMembers
 public final class PVImageFile: PVFile {

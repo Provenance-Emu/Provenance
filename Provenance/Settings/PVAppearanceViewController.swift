@@ -9,7 +9,7 @@
 
 import UIKit
 
-class PVAppearanceViewController: UITableViewController {
+final class PVAppearanceViewController: UITableViewController {
 
     #if os(iOS)
     var hideTitlesSwitch: UISwitch?

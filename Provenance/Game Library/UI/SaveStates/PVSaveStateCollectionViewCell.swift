@@ -12,7 +12,7 @@ import PVSupport
 
 private let LabelHeight: CGFloat = 20.0
 
-class PVSaveStateCollectionViewCell: UICollectionViewCell {
+final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 	private static let dateFormatter : DateFormatter = {
 		let df = DateFormatter()

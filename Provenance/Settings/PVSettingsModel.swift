@@ -264,7 +264,7 @@ public final class PVSettingsModel: NSObject {
                                                   kShowRecentGamesKey: true,
 												  kShowRecentSavesKey: true,
 												  kShowGameBadgesKey: true,
-                                                  kICadeControllerSettingKey: iCadeControllerSetting.settingDisabled.rawValue,
+                                                  kICadeControllerSettingKey: iCadeControllerSetting.disabled.rawValue,
                                                   kVolumeSettingKey: 1.0,
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
@@ -290,7 +290,7 @@ public final class PVSettingsModel: NSObject {
         showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
 		showGameBadges = UserDefaults.standard.bool(forKey: kShowGameBadgesKey)
         let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
-        myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade))!
+        myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade)) ?? iCadeControllerSetting.disabled
         volume = UserDefaults.standard.float(forKey: kVolumeSettingKey)
         showFPSCount = UserDefaults.standard.bool(forKey: kFPSCountKey)
         showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)

@@ -11,7 +11,7 @@ import UIKit
 import PVLibrary
 import PVSupport
 
-class PVConflictViewController: UITableViewController {
+final class PVConflictViewController: UITableViewController {
     var gameImporter: PVGameImporter?
     var conflictedFiles: [URL] = [URL]()
 

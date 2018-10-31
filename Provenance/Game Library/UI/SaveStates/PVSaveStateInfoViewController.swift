@@ -11,7 +11,7 @@ import RealmSwift
 import PVLibrary
 import PVSupport
 
-class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewController {
+final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewController {
 	var mustRefreshDataSource: Bool = false
 
 	@IBOutlet weak var imageView: UIImageView!

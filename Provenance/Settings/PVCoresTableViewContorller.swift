@@ -11,7 +11,7 @@ import RealmSwift
 import PVLibrary
 import QuickTableViewController
 
-class PVCoresTableViewController: QuickTableViewController {
+final class PVCoresTableViewController: QuickTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

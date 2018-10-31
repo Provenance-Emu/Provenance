@@ -36,7 +36,7 @@ extension UIImageView {
 #endif
 
 // Special label that renders Countries as flag emojis when available
-class RegionLabel: LongPressLabel {
+final class RegionLabel: LongPressLabel {
     override var text: String? {
         get {
             return super.text
@@ -72,7 +72,7 @@ class LongPressLabel: UILabel {
     #endif
 }
 
-class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
+final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 
     override func viewDidLoad() {
@@ -214,7 +214,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
 }
 
-class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
+final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
 
     @objc
     public var game: PVGame! {

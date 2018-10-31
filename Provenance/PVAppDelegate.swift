@@ -14,7 +14,7 @@ import HockeySDK
 import RealmSwift
 
 @UIApplicationMain
-class PVAppDelegate: UIResponder, UIApplicationDelegate {
+final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var shortcutItemGame: PVGame?

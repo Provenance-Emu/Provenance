@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PVButtonGroupOverlayView: UIView {
+final class PVButtonGroupOverlayView: UIView {
     var buttons = [JSButton]()
 
     init(buttons: [JSButton]) {

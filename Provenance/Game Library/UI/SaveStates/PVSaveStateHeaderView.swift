@@ -8,6 +8,6 @@
 
 import UIKit
 
-class PVSaveStateHeaderView: UICollectionReusableView {
+final class PVSaveStateHeaderView: UICollectionReusableView {
 	@IBOutlet weak var label: UILabel!
 }
