@@ -25,6 +25,8 @@
 #include "rend/TexCache.h"
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
+#include "hw/maple/maple_cfg.h"
+
 
 __weak PVReicastCore *_current = 0;
 
@@ -149,6 +151,10 @@ void os_SetWindowText(const char* t) {
 
 void os_CreateWindow() {
 
+}
+
+void os_SetupInput() {
+    mcfg_CreateDevicesFromConfig();
 }
 
 void UpdateInputState(u32 port) {
