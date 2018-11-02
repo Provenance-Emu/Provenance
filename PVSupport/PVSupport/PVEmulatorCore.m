@@ -28,23 +28,23 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 // calculate this on init
 static double timebase_ratio;
 
-
 NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
+@property (nonatomic, strong, readwrite, nonnull) NSLock  *emulationLoopThreadLock;
+@property (nonatomic, strong, readwrite, nonnull) NSCondition  *frontBufferCondition;
+@property (nonatomic, strong, readwrite, nonnull) NSLock  *frontBufferLock;
+
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
 @property (nonatomic, assign, readwrite) BOOL isRunning;
 @end
 
 @implementation PVEmulatorCore
 
-+ (void)initialize
-{
-    if (self == [PVEmulatorCore class])
-    {
++ (void)initialize {
+    if (self == [PVEmulatorCore class]) {
         PVEmulatorCoreClass = [PVEmulatorCore class];
     }
-
 
 	if (timebase_ratio == 0) {
 		mach_timebase_info_data_t s_timebase_info;
@@ -54,24 +54,21 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	}
 }
 
-- (id)init
-{
-	if ((self = [super init]))
-	{
-		NSUInteger count = [self audioBufferCount];
-        ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
-        self.emulationLoopThreadLock = [NSLock new];
-        self.frontBufferCondition = [NSCondition new];
-        self.frontBufferLock = [NSLock new];
-        [self setIsFrontBufferReady:NO];
-        _gameSpeed = GameSpeedNormal;
+- (instancetype)init {
+	if ((self = [super init])) {
+        NSUInteger count         = [self audioBufferCount];
+        ringBuffers              = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
+        _emulationLoopThreadLock = [NSLock new];
+        _frontBufferCondition    = [NSCondition new];
+        _frontBufferLock         = [NSLock new];
+        _isFrontBufferReady      = NO;
+        _gameSpeed               = GameSpeedNormal;
 	}
 	
 	return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [self stopEmulation];
 
 	for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
@@ -82,12 +79,23 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     free(ringBuffers);
 }
 
+- (NSError * _Nonnull)createError:(NSString * _Nonnull)message {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: message,
+                               NSLocalizedFailureReasonErrorKey: @"Core does not impliment this method.",
+                               NSLocalizedRecoverySuggestionErrorKey: @"Write this method."
+                               };
+
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                        userInfo:userInfo];
+    return newError;
+}
+
 #pragma mark - Execution
 
-- (void)startEmulation
-{
-	if ([self class] != PVEmulatorCoreClass)
-    {
+- (void)startEmulation {
+	if ([self class] != PVEmulatorCoreClass) {
 		if (!_isRunning)
 		{
 #if !TARGET_OS_TV
@@ -101,38 +109,30 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	}
 }
 
-- (void)resetEmulation
-{
+- (void)resetEmulation {
 	[self doesNotImplementSelector:_cmd];
 }
 
 // GameCores that render direct to OpenGL rather than a buffer should override this and return YES
 // If the GameCore subclass returns YES, the renderDelegate will set the appropriate GL Context
 // So the GameCore subclass can just draw to OpenGL
-- (BOOL)rendersToOpenGL
-{
+- (BOOL)rendersToOpenGL {
     return NO;
 }
 
-- (void)setPauseEmulation:(BOOL)flag
-{
-    if (flag)
-	{
+- (void)setPauseEmulation:(BOOL)flag {
+    if (flag) {
 		self.isRunning = NO;
-	}
-    else
-	{
+	} else {
 		self.isRunning = YES;
 	}
 }
 
-- (BOOL)isEmulationPaused
-{
+- (BOOL)isEmulationPaused {
 	return !_isRunning;
 }
 
-- (void)stopEmulation
-{
+- (void)stopEmulation {
 	shouldStop = YES;
 	self.isRunning  = NO;
 
@@ -143,8 +143,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 //    [self.emulationLoopThreadLock unlock];
 }
 
-- (void)updateControllers
-{
+- (void)updateControllers {
     //subclasses may implement for polling
 }
 
@@ -238,8 +237,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     [self.emulationLoopThreadLock unlock];
 }
 
-- (void)setGameSpeed:(GameSpeed)gameSpeed
-{
+- (void)setGameSpeed:(GameSpeed)gameSpeed {
     _gameSpeed = gameSpeed;
     
     switch (gameSpeed) {
@@ -255,15 +253,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     }
 }
 
-- (BOOL)isSpeedModified
-{
+- (BOOL)isSpeedModified {
 	return self.gameSpeed != GameSpeedNormal;
 }
 
-- (void)setFramerateMultiplier:(CGFloat)framerateMultiplier
-{
-    if ( _framerateMultiplier != framerateMultiplier )
-    {
+- (void)setFramerateMultiplier:(CGFloat)framerateMultiplier {
+    if ( _framerateMultiplier != framerateMultiplier ) {
         _framerateMultiplier = framerateMultiplier;
         NSLog(@"multiplier: %.1f", framerateMultiplier);
     }
@@ -304,13 +299,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 }
 #endif
 
-- (void)executeFrame
-{
+- (void)executeFrame {
 	[self doesNotImplementOptionalSelector:_cmd];
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path
-{
+- (BOOL)loadFileAtPath:(NSString *)path {
     [self doesNotImplementSelector:_cmd];
     return NO;
 }
@@ -322,8 +315,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 #pragma mark - Video
 
-- (const void *)videoBuffer
-{
+- (const void *)videoBuffer {
 	[self doesNotImplementSelector:_cmd];
 	return NULL;
 }
@@ -364,6 +356,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return 0;
 }
 
+- (GLenum)depthFormat {
+    // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
+    return 0;
+}
+
 - (NSTimeInterval)frameInterval
 {
 	return defaultFrameInterval;
@@ -397,20 +394,17 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return 1;
 }
 
-- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index
-{
-	[[self ringBufferAtIndex:index] read:buffer maxLength:frameCount * [self channelCountForBuffer:index] * sizeof(UInt16)];
+- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index {
+	[[self ringBufferAtIndex:index] read:buffer
+                               maxLength:frameCount * [self channelCountForBuffer:index] * sizeof(UInt16)];
 }
 
-- (NSUInteger)audioBitDepth
-{
+- (NSUInteger)audioBitDepth {
 	return 16;
 }
 
-- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer
-{
-	if (buffer == 0)
-	{
+- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer {
+	if (buffer == 0) {
 		return [self channelCount];
 	}
 	
@@ -420,8 +414,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return 0;
 }
 
-- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer
-{
+- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer {
 	// 4 frames is a complete guess
     double frameSampleCount = [self audioSampleRateForBuffer:buffer] / [self frameInterval];
     NSUInteger channelCount = [self channelCountForBuffer:buffer];
@@ -430,10 +423,8 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     return channelCount*bytesPerSample * frameSampleCount;
 }
 
-- (double)audioSampleRateForBuffer:(NSUInteger)buffer
-{
-	if(buffer == 0)
-	{
+- (double)audioSampleRateForBuffer:(NSUInteger)buffer {
+	if(buffer == 0) {
 		return [self audioSampleRate];
 	}
 	
@@ -442,10 +433,8 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     return 0;
 }
 
-- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index
-{
-	if (ringBuffers[index] == nil)
-	{
+- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index {
+	if (ringBuffers[index] == nil) {
         ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
 	}
 	
@@ -458,20 +447,49 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 #pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
-{
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
+    if (!self.supportsSaveStates) {
+        *error = [self createError:@"Core does not support save states"];
+        return NO;
+    }
+
+    NSString *message = [NSString stringWithFormat:@"Failed to save state at path: %@", path];
+    *error = [self createError:message];
+
 	[self doesNotImplementSelector:_cmd];
 	return NO;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError**)error
-{
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError**)error {
+    if (!self.supportsSaveStates) {
+        *error = [self createError:@"Core does not support save states"];
+        return NO;
+    }
+
 	[self doesNotImplementSelector:_cmd];
 	return NO;
+}
+
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+    NSError *error = [self createError:@"Failed to async save state."];
+
+    block(NO, error);
+    [self doesNotImplementSelector:_cmd];
+}
+
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+    NSError *error = [self createError:@"Failed to async load state."];
+
+    block(NO, error);
+    [self doesNotImplementSelector:_cmd];
 }
 
 -(BOOL)supportsSaveStates {
 	return YES;
+}
+
+-(BOOL)supportsAsyncSaveStates {
+    return NO;
 }
 
 @end

@@ -28,7 +28,6 @@
 #import "PVAvailability.h"
 #import "PVGLViewController.h"
 #import "UIActionSheet+BlockAdditions.h"
-#import "UIView+FrameAdditions.h"
 #import "MBProgressHUD.h"
 #import "PVWebServer.h"
 #import "Reachability.h"

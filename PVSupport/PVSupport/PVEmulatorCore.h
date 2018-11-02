@@ -69,6 +69,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, strong) NSString* romMD5;
 @property (nonatomic, strong) NSString* romSerial;
 @property (nonatomic, assign) BOOL supportsSaveStates;
+@property (nonatomic, assign) BOOL supportsAsyncSaveStates;
 
 @property (atomic, assign) BOOL shouldResyncTime;
 
@@ -87,16 +88,17 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
 
-@property (nonatomic, strong) GCController *controller1;
-@property (nonatomic, strong) GCController *controller2;
-@property (nonatomic, strong) GCController *controller3;
-@property (nonatomic, strong) GCController *controller4;
+@property (nonatomic, strong, nullable) GCController *controller1;
+@property (nonatomic, strong, nullable) GCController *controller2;
+@property (nonatomic, strong, nullable) GCController *controller3;
+@property (nonatomic, strong, nullable) GCController *controller4;
 
-@property (nonatomic, strong) NSLock  *emulationLoopThreadLock;
-@property (nonatomic, strong) NSCondition  *frontBufferCondition;
-@property (nonatomic, strong) NSLock  *frontBufferLock;
+@property (nonatomic, strong, readonly, nonnull) NSLock  *emulationLoopThreadLock;
+@property (nonatomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;
+@property (nonatomic, strong, readonly, nonnull) NSLock  *frontBufferLock;
 @property (nonatomic, assign) BOOL isFrontBufferReady;
 @property (nonatomic, assign) GLESVersion glesVersion;
+@property (nonatomic, readonly) GLenum depthFormat;
 
 - (BOOL)rendersToOpenGL;
 - (void)startEmulation NS_REQUIRES_SUPER;
@@ -104,12 +106,11 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
 - (BOOL)isEmulationPaused;
 - (void)stopEmulation NS_REQUIRES_SUPER;
-- (void)frameRefreshThread:(id)anArgument;
 - (void)executeFrame;
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
+- (BOOL)loadFileAtPath:(NSString * _Nonnull)path error:(NSError * __nullable * __nullable)error;
 - (void)updateControllers;
 
-- (const void *)videoBuffer;
+- (const void * _Nullable)videoBuffer;
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
 - (CGSize)bufferSize;
@@ -123,14 +124,14 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (double)audioSampleRate;
 - (NSUInteger)channelCount;
 - (NSUInteger)audioBufferCount;
-- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index;
+- (void)getAudioBuffer:(void * _Nonnull)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index;
 - (NSUInteger)audioBitDepth;
 - (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
 - (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
-- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
+- (OERingBuffer * _Nonnull)ringBufferAtIndex:(NSUInteger)index;
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
-- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
+- (BOOL)saveStateToFileAtPath:(NSString * _Nonnull)path error:(NSError * __nullable * __nullable)error;
+- (BOOL)loadStateFromFileAtPath:(NSString *_Nonnull)path error:(NSError * __nullable * __nullable)error;
 
 @end

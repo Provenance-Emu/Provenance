@@ -626,8 +626,10 @@
 		EB3297071522671200307B0C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B32775221E9C8444000FEC38 = {
 						CreatedOnToolsVersion = 8.3;

@@ -154,7 +154,7 @@ struct LightTheme: iOSTheme {
 //@available(iOS 9.0, *)
 public final class Theme {
 
-	public static var currentTheme: iOSTheme = LightTheme() {
+	public static var currentTheme: iOSTheme = DarkTheme() {
 		didSet {
 			setTheme(currentTheme)
 			UIApplication.shared.refreshAppearance(animated: true)

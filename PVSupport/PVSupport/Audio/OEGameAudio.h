@@ -41,7 +41,7 @@
     
     float       volume;
 }
-
+@property (readonly, nonatomic, assign) BOOL running;
 @property float volume;
 @property AudioDeviceID outputDeviceID;
 

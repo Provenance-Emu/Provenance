@@ -35,6 +35,7 @@ final class PVSettingsViewController: UITableViewController, SFSafariViewControl
     @IBOutlet weak var autoLockSwitch: UISwitch!
     @IBOutlet weak var vibrateSwitch: UISwitch!
     @IBOutlet weak var imageSmoothing: UISwitch!
+    @IBOutlet weak var nativeScaleSwitch: UISwitch!
     @IBOutlet weak var crtFilterSwitch: UISwitch!
     @IBOutlet weak var opacitySlider: UISlider!
     @IBOutlet weak var opacityValueLabel: UILabel!
@@ -87,6 +88,7 @@ final class PVSettingsViewController: UITableViewController, SFSafariViewControl
         vibrateSwitch.isOn = settings.buttonVibration
         imageSmoothing.isOn = settings.imageSmoothing
         crtFilterSwitch.isOn = settings.crtFilterEnabled
+        nativeScaleSwitch.isOn = settings.nativeScaleEnabled
         fpsCountSwitch.isOn = settings.showFPSCount
         tintSwitch.isOn = settings.buttonTints
         startSelectSwitch.isOn = settings.startSelectAlwaysOn
@@ -158,11 +160,11 @@ final class PVSettingsViewController: UITableViewController, SFSafariViewControl
 		reachability.startNotifier()
 
         let settings = PVSettingsModel.shared
-        iCadeControllerSetting.text = settings.myiCadeControllerSetting.description ?? "nil"
+        iCadeControllerSetting.text = settings.myiCadeControllerSetting.description
 
-        if #available(iOS 9.0, *) {
-            themeValueLabel.text = settings.theme.rawValue
-        }
+//        if #available(iOS 9.0, *) {
+//            themeValueLabel.text = settings.theme.rawValue
+//        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -249,6 +251,10 @@ final class PVSettingsViewController: UITableViewController, SFSafariViewControl
 
     @IBAction func toggleCRTFilter(_ sender: Any) {
         PVSettingsModel.shared.crtFilterEnabled = crtFilterSwitch.isOn
+    }
+
+    @IBAction func toggleNativeScale(_ sender: Any) {
+        PVSettingsModel.shared.nativeScaleEnabled = nativeScaleSwitch.isOn
     }
 
     @IBAction func volumeChanged(_ sender: Any) {
@@ -463,13 +469,13 @@ class ThemeSelectorViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            Theme.currentTheme = Theme.lightTheme
-            PVSettingsModel.shared.theme = .light
-        } else if indexPath.row == 1 {
-            Theme.currentTheme = Theme.darkTheme
-            PVSettingsModel.shared.theme = .dark
-        }
+//        if indexPath.row == 0 {
+//            Theme.currentTheme = Theme.lightTheme
+//            PVSettingsModel.shared.theme = .light
+//        } else if indexPath.row == 1 {
+//            Theme.currentTheme = Theme.darkTheme
+//            PVSettingsModel.shared.theme = .dark
+//        }
 
         tableView.reloadData()
     }

@@ -410,7 +410,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = Provenance;
+				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B36DE79F1D6B7558002EE3ED = {
 						CreatedOnToolsVersion = 7.3.1;

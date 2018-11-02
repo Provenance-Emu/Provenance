@@ -668,7 +668,7 @@
 			attributes = {
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1000;
-				ORGANIZATIONNAME = Provenance;
+				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3C9D4391DEA6AFB0068D057 = {
 						CreatedOnToolsVersion = 8.1;

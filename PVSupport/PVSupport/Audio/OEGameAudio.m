@@ -68,6 +68,7 @@ static void StretchSamples(int16_t *outBuf, const int16_t *inBuf,
         }
     }
 }
+# include <mach/mach_time.h>
 
 OSStatus RenderCallback(void                       *in,
                         AudioUnitRenderActionFlags *ioActionFlags,
@@ -83,6 +84,9 @@ OSStatus RenderCallback(void                       *in,
                         UInt32                      inNumberFrames,
                         AudioBufferList            *ioData)
 {
+//	Float64 timeAtBeginning = convertHostTimeToSeconds(inTimestamp->mHostTime);
+
+
     OEGameAudioContext *context = (OEGameAudioContext*)in;
     int availableBytes = 0;
     void *head = TPCircularBufferTail(context->buffer, &availableBytes);
@@ -112,6 +116,7 @@ OSStatus RenderCallback(void                       *in,
     OEGameAudioContext *_contexts;
     NSNumber           *_outputDeviceID; // nil if no output device has been set (use default)
 }
+@property (readwrite, nonatomic, assign) BOOL running;
 @end
 
 @implementation OEGameAudio
@@ -131,11 +136,18 @@ OSStatus RenderCallback(void                       *in,
         NSError *error;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
         if(error) {
-            NSLog(error);
+            ELOG(@"Audio Error: %@", error.description);
         } else {
-            //NSLog(@"Successfully set audio session to ambient");
+            ILOG(@"Successfully set audio session to ambient");
         }
-        
+
+		// You can adjust the latency of RemoteIO (and, in fact, any other audio framework) by setting the kAudioSessionProperty_PreferredHardwareIOBufferDuration property
+//		float aBufferLength = 0.005; // In seconds
+//		AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(aBufferLength), &aBufferLength);
+
+		_outputDeviceID = 0;
+		volume = 1;
+
         gameCore = core;
         [self createGraph];
     }
@@ -155,11 +167,13 @@ OSStatus RenderCallback(void                       *in,
 - (void)pauseAudio
 {
     [self stopAudio];
+	self.running = NO;
 }
 
 - (void)startAudio
 {
     [self createGraph];
+	self.running = YES;
 }
 
 - (void)stopAudio
@@ -168,6 +182,7 @@ OSStatus RenderCallback(void                       *in,
     AUGraphStop(mGraph);
     AUGraphClose(mGraph);
     AUGraphUninitialize(mGraph);
+	self.running = NO;
 }
 
 - (void)createGraph
@@ -223,7 +238,8 @@ OSStatus RenderCallback(void                       *in,
     _contexts = malloc(sizeof(OEGameAudioContext) * bufferCount);
     for (int i = 0; i < bufferCount; ++i)
     {
-        _contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), [gameCore channelCountForBuffer:i], [gameCore audioBitDepth]/8};
+		TPCircularBufferClear(&([gameCore ringBufferAtIndex:i]->buffer));
+		_contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), [gameCore channelCountForBuffer:i], [gameCore audioBitDepth]/8};
         
         //Create the converter node
         err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mConverterNode);

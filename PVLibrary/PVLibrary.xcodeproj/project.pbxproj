@@ -1617,6 +1617,7 @@
 		B3579D062106B11D00DDEBD6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 1000;

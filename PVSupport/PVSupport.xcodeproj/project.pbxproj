@@ -33,6 +33,7 @@
 
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
+		059289501DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
@@ -45,6 +46,22 @@
 		B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
 		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
 		B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
+		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
+		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
+		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3447E89218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
+		B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
+		B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
+		B3447E8D218B7E4B00557ACE /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
+		B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
+		B3447E8F218B7E4B00557ACE /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
+		B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
+		B3447E91218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
+		B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3447E93218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
+		B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
 		B34AB5692106D7B700C45F09 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E872106C14500857F52 /* CocoaLumberjack.framework */; };
 		B34AB56A2106D7B700C45F09 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E882106C14600857F52 /* CocoaLumberjackSwift.framework */; };
 		B34AB56B2106D7B700C45F09 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF7120C90E1600F313E5 /* SwiftyUserDefaults.framework */; };
@@ -70,6 +87,7 @@
 		B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3579D042106ADC500DDEBD6 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D032106ADC500DDEBD6 /* GameController.framework */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
+		B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
 		B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4291DE86780008450F5 /* GameController.framework */; };
@@ -193,6 +211,14 @@
 		B328B41320B67C9700AE4E00 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../Carthage/Build/tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../Carthage/Build/tvOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
 		B328B41520B67C9700AE4E00 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = ../Carthage/Build/tvOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3447E7F218B7E4B00557ACE /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CABitOperations.h; sourceTree = "<group>"; };
+		B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioTimeStamp.h; sourceTree = "<group>"; };
+		B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
+		B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAutoDisposer.h; sourceTree = "<group>"; };
+		B3447E83218B7E4B00557ACE /* CAAtomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAtomic.h; sourceTree = "<group>"; };
+		B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioTimeStamp.cpp; sourceTree = "<group>"; };
+		B3447E85218B7E4B00557ACE /* CARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARingBuffer.h; sourceTree = "<group>"; };
+		B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
 		B34AB56C2106D7B800C45F09 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
 		B34AB56D2106D7B800C45F09 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B34AB56E2106D7B800C45F09 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
@@ -292,6 +318,7 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3447F99218C1CBE00557ACE /* Settings */,
 				B3AB37F721882119009D9244 /* CoreOptions */,
 				B3AB36DC2187F4C4009D9244 /* Controller */,
 				B302F89420B71C2300C5E502 /* Logging */,
@@ -385,6 +412,7 @@
 		1ACEA69017F748F80031B1C9 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				B3447E7E218B7E2C00557ACE /* CARingBuffer */,
 				1ACEA69117F748F80031B1C9 /* OEGameAudio.h */,
 				1ACEA69217F748F80031B1C9 /* OEGameAudio.m */,
 				B3FA5D591D6B908300060D71 /* OERingBuffer.h */,
@@ -410,6 +438,28 @@
 				B302F89E20B73D6400C5E502 /* PVLogging.m */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		B3447E7E218B7E2C00557ACE /* CARingBuffer */ = {
+			isa = PBXGroup;
+			children = (
+				B3447E83218B7E4B00557ACE /* CAAtomic.h */,
+				B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */,
+				B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */,
+				B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */,
+				B3447E7F218B7E4B00557ACE /* CABitOperations.h */,
+				B3447E85218B7E4B00557ACE /* CARingBuffer.h */,
+				B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */,
+			);
+			path = CARingBuffer;
+			sourceTree = "<group>";
+		};
+		B3447F99218C1CBE00557ACE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		B3AB36DC2187F4C4009D9244 /* Controller */ = {
@@ -477,17 +527,22 @@
 			files = (
 				B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */,
 				B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */,
+				B3447E89218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */,
 				B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */,
+				B3447E93218B7E4B00557ACE /* CARingBuffer.h in Headers */,
 				B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B302F8A920B73D6500C5E502 /* PVProvenanceLogging.h in Headers */,
+				B3447E8D218B7E4B00557ACE /* CAAutoDisposer.h in Headers */,
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */,
+				B3447E8F218B7E4B00557ACE /* CAAtomic.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* (null) in Headers */,
 				B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B302F8A720B73D6500C5E502 /* PVLogEntry.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
 				B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */,
+				B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */,
 				B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,14 +553,19 @@
 			files = (
 				B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */,
 				B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */,
+				B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */,
 				B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */,
 				B302F8A820B73D6500C5E502 /* PVProvenanceLogging.h in Headers */,
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
+				B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */,
+				B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */,
+				B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */,
 				B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
+				B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
 				B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */,
 				B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */,
@@ -562,7 +622,7 @@
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = Provenance;
+				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -698,10 +758,13 @@
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
+				B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
+				B3447E91218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
+				B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
 				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
 				B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */,
 				B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */,
@@ -727,9 +790,11 @@
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
+				B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
+				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
@@ -744,6 +809,9 @@
 				B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */,
 				B34AB5802106DC6100C45F09 /* PVGameControllerUtilities.m in Sources */,
 				B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */,
+				B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
+				B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
+				059289501DC194FD0012644D /* RealTimeThread.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,6 +11,10 @@
 #import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
 
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
+
 struct PVVertex
 {
     GLfloat x, y, z;
@@ -147,7 +151,13 @@ struct RenderSettings {
 {
 	[super viewDidLoad];
 
-	[self setPreferredFramesPerSecond:60];
+    float preferredFPS = self.emulatorCore.frameInterval;
+    if (preferredFPS  < 10) {
+        WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
+        preferredFPS = 60;
+    }
+
+	[self setPreferredFramesPerSecond:preferredFPS];
 
     self.glContext = [self bestContext];
 
@@ -161,8 +171,37 @@ struct RenderSettings {
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
+    view.opaque = YES;
+    view.layer.opaque = YES;
+
     view.context = self.glContext;
-    
+
+    GLenum depthFormat = self.emulatorCore.depthFormat;
+    switch (depthFormat) {
+        case GL_DEPTH_COMPONENT16:
+            view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+            break;
+        case GL_DEPTH_COMPONENT24:
+            view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+            break;
+
+        default:
+            break;
+    }
+
+        // Set scaling factor for retina displays.
+    if (PVSettingsModel.sharedInstance.nativeScaleEnabled) {
+        CGFloat scale = [[UIScreen mainScreen] scale];
+        if (scale != 1.0f) {
+            view.layer.contentsScale = scale;
+            view.layer.rasterizationScale = scale;
+            view.contentScaleFactor = scale;
+        }
+
+            // Enable multisampling
+        view.drawableMultisample = GLKViewDrawableMultisample4X;
+    }
+
     [self setupVBOs];
 	[self setupTexture];
     defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
@@ -522,10 +561,10 @@ struct RenderSettings {
             {
                 fetchVideoBuffer();
                 renderBlock();
-                [self.emulatorCore.frontBufferCondition lock];
-                [self.emulatorCore setIsFrontBufferReady:NO];
-                [self.emulatorCore.frontBufferCondition signal];
-                [self.emulatorCore.frontBufferCondition unlock];
+                [_emulatorCore.frontBufferCondition lock];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferCondition signal];
+                [_emulatorCore.frontBufferCondition unlock];
             }
         }
     }
@@ -542,12 +581,12 @@ struct RenderSettings {
             {
                 [self.emulatorCore.frontBufferCondition lock];
                 while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
-                [self.emulatorCore setIsFrontBufferReady:NO];
-                [self.emulatorCore.frontBufferLock lock];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferLock lock];
                 fetchVideoBuffer();
                 renderBlock();
-                [self.emulatorCore.frontBufferLock unlock];
-                [self.emulatorCore.frontBufferCondition unlock];
+                [_emulatorCore.frontBufferLock unlock];
+                [_emulatorCore.frontBufferCondition unlock];
             }
             else
             {

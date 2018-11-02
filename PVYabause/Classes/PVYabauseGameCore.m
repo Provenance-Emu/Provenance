@@ -49,6 +49,8 @@
 #include "vidogl.h"
 #include "vidsoft.h"
 
+#define USE_THREADS 0
+
 // ToDo: Fix
 #define SAMPLERATE 44100
 #define SAMPLEFRAME SAMPLERATE / 60
@@ -316,11 +318,11 @@ VideoInterface_struct *VIDCoreList[] = {
 	yinit.frameskip = true;
 	yinit.clocksync = 0;
 	yinit.basetime = 0;
-#if 1
-	yinit.usethreads = 0;
+#if USE_THREADS
+    yinit.usethreads      = 1;
+    yinit.numthreads      = 2;
 #else
-	yinit.usethreads      = 1;
-	yinit.numthreads      = 2;
+    yinit.usethreads = 0;
 #endif
 
 	// Take care of the Battery Save file to make Save State happy

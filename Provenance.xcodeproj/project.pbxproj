@@ -90,10 +90,9 @@
 		1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */; };
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
-		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
+		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
-		1AB9600317C572B400D3E392 /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.swift */; };
 		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */; };
 		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
@@ -118,9 +117,8 @@
 		1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */; };
 		1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
-		1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.swift */; };
 		1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
-		1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
+		1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482161BA3592D00FDA50A /* libsqlite3.tbd */; };
@@ -185,9 +183,37 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B333502420785CFB0036A448 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B333502320785CFA0036A448 /* PVReicast.framework */; };
+		B333502520785CFB0036A448 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B333502320785CFA0036A448 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
+		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B3447F94218BEE8900557ACE /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F93218BEE8900557ACE /* PVReicast.framework */; };
+		B3447F95218BEE8900557ACE /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F93218BEE8900557ACE /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B349AE5B1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AE5C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AE661E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AE691E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AE6F1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AE8C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AE991E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AEA11E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AEA51E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AEC21E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AEC71E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AECC1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AECD1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AED51E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF2C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF3A1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF3C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF641E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF661E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF691E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF6B1E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF6C1E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B349AF701E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3524101210AD9C4006127B7 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35240FF210AD9C4006127B7 /* RealmSwift.framework */; };
@@ -452,6 +478,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3447F95218BEE8900557ACE /* PVReicast.framework in Embed Frameworks */,
 				B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
@@ -481,6 +508,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B333502520785CFB0036A448 /* PVReicast.framework in Embed Frameworks */,
 				B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
@@ -570,11 +598,9 @@
 		1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVTVSplitViewController.swift; sourceTree = "<group>"; };
 		1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIActionSheet+BlockAdditions.m"; sourceTree = "<group>"; };
-		1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FrameAdditions.h"; sourceTree = "<group>"; };
-		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
+		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+FrameAdditions.swift"; sourceTree = "<group>"; };
 		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsViewController.swift; sourceTree = "<group>"; };
 		1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Provenance.storyboard; sourceTree = "<group>"; };
-		1AB9600217C572B400D3E392 /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
 		1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVTVSettingsViewController.swift; sourceTree = "<group>"; };
 		1AD481B41BA350A400FDA50A /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD481C21BA350A400FDA50A /* TVAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TVAssets.xcassets; sourceTree = "<group>"; };
@@ -661,10 +687,14 @@
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = mupen64plusRice.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/mupen64plusRice.framework"; sourceTree = "<absolute>"; };
 		B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVMupen64PlusDynamic.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMupen64PlusDynamic.framework"; sourceTree = "<absolute>"; };
+		B333502320785CFA0036A448 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
+		B3447E74218B653100557ACE /* PVReicast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVReicast.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-fmnqyejnhdyaeteisvwsdqchzshl/Build/Products/Debug-iphoneos/PVReicast.framework"; sourceTree = "<group>"; };
+		B3447F93218BEE8900557ACE /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35240FF210AD9C4006127B7 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = PVLibrary/Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B3524100210AD9C4006127B7 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = PVLibrary/Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B35469311DECCD4A0018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -833,6 +863,7 @@
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
+				B333502420785CFB0036A448 /* PVReicast.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				B3AF47D921072408002211EE /* ZipArchive.framework in Frameworks */,
@@ -863,6 +894,7 @@
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
 				B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */,
+				B3447F94218BEE8900557ACE /* PVReicast.framework in Frameworks */,
 				B3F43DD12168146000CDD40A /* HockeySDK.framework in Frameworks */,
 				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
@@ -954,7 +986,6 @@
 			isa = PBXGroup;
 			children = (
 				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */,
-				1AB9600217C572B400D3E392 /* PVSettingsModel.swift */,
 				1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */,
 				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */,
 				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
@@ -981,6 +1012,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3447F93218BEE8900557ACE /* PVReicast.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
@@ -1008,6 +1040,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3447E74218B653100557ACE /* PVReicast.framework */,
+				B333502320785CFA0036A448 /* PVReicast.framework */,
 				B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */,
 				B3C899B1206B7C51005E7033 /* PVVirtualJaguar.framework */,
 				B3768494206A0C7C0007A99C /* PVYabause.framework */,
@@ -1168,8 +1202,7 @@
 				1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */,
 				1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */,
 				1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */,
-				1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */,
-				1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */,
+				1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */,
 				25A64E151CB1C41100EDD19D /* UIImage+Color.h */,
 				25A64E161CB1C41100EDD19D /* UIImage+Color.m */,
 				1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */,
@@ -1394,26 +1427,27 @@
 		B3AB371D2187F568009D9244 /* Systems */ = {
 			isa = PBXGroup;
 			children = (
-				B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */,
-				B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */,
-				B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */,
-				B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */,
-				B3AB37222187F568009D9244 /* PVAtariJaguarControllerViewController.swift */,
-				B3AB37232187F568009D9244 /* PVPSXControllerViewController.swift */,
-				B3AB37242187F568009D9244 /* PVGBAControllerViewController.swift */,
-				B3AB37252187F568009D9244 /* PVVBControllerViewController.swift */,
-				B3AB37262187F568009D9244 /* PVPCFXControllerViewController.swift */,
-				B3AB37272187F568009D9244 /* PVPCEControllerViewController.swift */,
-				B3AB37282187F568009D9244 /* PVLynxControllerViewController.swift */,
-				B3AB37292187F568009D9244 /* PVPokeMiniControllerViewController.swift */,
-				B3AB372A2187F568009D9244 /* PVAtari5200ControllerViewController.swift */,
 				B3AB372B2187F568009D9244 /* PV32XControllerViewController.swift */,
-				B3AB372C2187F568009D9244 /* PVSaturnControllerViewController.swift */,
-				B3AB372D2187F568009D9244 /* PVGenesisControllerViewController.swift */,
-				B3AB372E2187F568009D9244 /* PVNeoGeoPocketControllerViewController.swift */,
-				B3AB372F2187F568009D9244 /* PVN64ControllerViewController.swift */,
-				B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */,
+				B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */,
+				B3AB372A2187F568009D9244 /* PVAtari5200ControllerViewController.swift */,
 				B3AB37312187F568009D9244 /* PVAtari7800ControllerViewController.swift */,
+				B3AB37222187F568009D9244 /* PVAtariJaguarControllerViewController.swift */,
+				B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */,
+				B3AB37242187F568009D9244 /* PVGBAControllerViewController.swift */,
+				B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */,
+				B3AB372D2187F568009D9244 /* PVGenesisControllerViewController.swift */,
+				B3AB37282187F568009D9244 /* PVLynxControllerViewController.swift */,
+				B3AB372F2187F568009D9244 /* PVN64ControllerViewController.swift */,
+				B3AB372E2187F568009D9244 /* PVNeoGeoPocketControllerViewController.swift */,
+				B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */,
+				B3AB37272187F568009D9244 /* PVPCEControllerViewController.swift */,
+				B3AB37262187F568009D9244 /* PVPCFXControllerViewController.swift */,
+				B3AB37292187F568009D9244 /* PVPokeMiniControllerViewController.swift */,
+				B3AB37232187F568009D9244 /* PVPSXControllerViewController.swift */,
+				B3AB372C2187F568009D9244 /* PVSaturnControllerViewController.swift */,
+				B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */,
+				B3AB37252187F568009D9244 /* PVVBControllerViewController.swift */,
+				B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */,
 			);
 			path = Systems;
 			sourceTree = "<group>";
@@ -1637,7 +1671,7 @@
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 1000;
-				ORGANIZATIONNAME = Provenance;
+				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
 						LastSwiftMigration = 1000;
@@ -2088,6 +2122,7 @@
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
+				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
 				B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */,
@@ -2115,11 +2150,23 @@
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
-				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
+				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
+				B349AECD1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AEC71E9ABCF900ACD416 /* (null) in Sources */,
+				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */,
+				B349AE5B1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AF691E9ABCFA00ACD416 /* (null) in Sources */,
+				B349AE691E9ABCF900ACD416 /* (null) in Sources */,
+				B349AEA51E9ABCF900ACD416 /* (null) in Sources */,
+				B349AEA11E9ABCF900ACD416 /* (null) in Sources */,
+				B349AF6B1E9ABCFA00ACD416 /* (null) in Sources */,
+				B349AE991E9ABCF900ACD416 /* (null) in Sources */,
+				B349AE6F1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AED51E9ABCF900ACD416 /* (null) in Sources */,
 				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
@@ -2128,7 +2175,6 @@
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
-				1AB9600317C572B400D3E392 /* PVSettingsModel.swift in Sources */,
 				B38A2A462102328600374CDD /* PVEmulatorViewController~iOS.swift in Sources */,
 				B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
@@ -2173,6 +2219,8 @@
 				B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */,
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
+				B349AF641E9ABCFA00ACD416 /* (null) in Sources */,
+				B349AE8C1E9ABCF900ACD416 /* (null) in Sources */,
 				B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
@@ -2182,7 +2230,18 @@
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
-				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */,
+				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */,
+				B349AE661E9ABCF900ACD416 /* (null) in Sources */,
+				B349AF3C1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AE5C1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AF661E9ABCFA00ACD416 /* (null) in Sources */,
+				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */,
+				B349AECC1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AF6C1E9ABCFA00ACD416 /* (null) in Sources */,
+				B349AF701E9ABCFA00ACD416 /* (null) in Sources */,
+				B349AF3A1E9ABCF900ACD416 /* (null) in Sources */,
+				B349AEC21E9ABCF900ACD416 /* (null) in Sources */,
+				B349AF2C1E9ABCF900ACD416 /* (null) in Sources */,
 				B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
@@ -2212,7 +2271,6 @@
 				B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
 				B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */,
 				B394C97720609BEF0014A65D /* PVControllerViewController.swift in Sources */,
-				1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */,
 				1AD481DF1BA3544D00FDA50A /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				1AD481DB1BA3544100FDA50A /* GCDWebServerResponse.m in Sources */,
 				B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
@@ -2544,7 +2602,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = V78REPMQFZ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2603,7 +2661,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = V78REPMQFZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2944,7 +3002,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = V78REPMQFZ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2992,7 +3050,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = V78REPMQFZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
