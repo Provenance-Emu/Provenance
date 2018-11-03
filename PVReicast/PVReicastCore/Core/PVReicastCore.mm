@@ -45,6 +45,7 @@ void common_linux_setup();
 int dc_init(int argc,wchar* argv[]);
 void dc_run();
 void dc_term();
+void dc_stop();
 extern void MakeCurrentThreadRealTime();
 
 bool inside_loop     = true;
@@ -306,13 +307,17 @@ int reicast_main(int argc, wchar* argv[]) {
 
 - (void)setPauseEmulation:(BOOL)flag {
 	[super setPauseEmulation:flag];
+
 	if (flag)
 	{
+        dc_stop();
 		dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 		[self.frontBufferCondition lock];
 		[self.frontBufferCondition signal];
 		[self.frontBufferCondition unlock];
-	}
+    } else {
+        dc_run();
+    }
 }
 
 - (void)stopEmulation {
