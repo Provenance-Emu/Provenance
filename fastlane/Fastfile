@@ -20,7 +20,7 @@
 # Uncomment the line if you want fastlane to automatically update itself
 #update_fastlane
 
-REQUIRED_XCODE_VERSION = "9.3.1"
+REQUIRED_XCODE_VERSION = "10.0"
 # Can also use .xcode-version file
 
 default_platform(:ios)
@@ -28,7 +28,7 @@ default_platform(:ios)
 platform :ios do
 
 $carthage_paths = ["PVSupport", "PVLibrary", "./"]
-$dev_domain = ENV["DEV_DOMAIN"] || "com.joemattiello"
+$dev_domain = ENV["DEV_DOMAIN"] || "com.provenance-emu"
 
 def load_keys
   if is_ci?
@@ -305,7 +305,7 @@ end
     # Types, appstore adhoc development enterprise
 
     # update_devices // development, adhoc, appstore, enterprise
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: "adhoc", platform: "ios", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: "adhoc", platform: "ios", readonly: true)
     
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
@@ -521,8 +521,8 @@ end
     disable_automatic_code_signing(path: "Provenance.xcodeproj",
       targets: ["Spotlight"],
       code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc #{$dev_domain}.provenance.spotlight",
-      bundle_identifier: "#{$dev_domain}.provenance.spotlight",
+      profile_name: "match AdHoc #{$dev_domain}.provenance.extension.spotlight",
+      bundle_identifier: "#{$dev_domain}.provenance.extension.spotlight",
       use_automatic_signing: automatic,
       team_id: team_id)
 
@@ -547,7 +547,7 @@ end
     update_info_plist(
       plist_path: "Spotlight/Info.plist",
       display_name: display_name,
-      app_identifier: "#{$dev_domain}.provenance#{suffix}.spotlight"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}.extension.spotlight"
     )
 
     # - tvOS
@@ -562,7 +562,7 @@ end
     update_info_plist(
       plist_path: "TopShelf/Info.plist",
       display_name: display_name,
-      app_identifier: "#{$dev_domain}.provenance#{suffix}.topshelf.extension"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}.extension.topshelf"
     )
   end
 
@@ -572,8 +572,8 @@ end
     # types "appstore", "development", "adhoc", "enterprise"
     type = options.fetch(:type, type)
 
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: type, platform: "ios", readonly: true)
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf.extension"], type: type, platform: "tvos", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: type, platform: "ios", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.topshelf"], type: type, platform: "tvos", readonly: true)
   end
 
   desc "Create Certs for Match"
@@ -591,8 +591,8 @@ end
 
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf.extension"], type: type, readonly: false, platform: "tvos")
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: type, readonly: false, platform: "ios")
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.topshelf"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Update device UDID list in iTunes connect from fastlane/devices.text"
@@ -688,7 +688,7 @@ end
         },
         provisioningProfiles: {
           "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{$dev_domain}.provenance.spotlight" => "match AdHoc #{$dev_domain}.provenance.spotlight"
+          "#{$dev_domain}.provenance.extension.spotlight" => "match AdHoc #{$dev_domain}.provenance.extension.spotlight"
         },
         compileBitcode: false,
         uploadBitcode: false,
@@ -722,7 +722,7 @@ end
         # },
         provisioningProfiles: {
           "#{$dev_domain}.provenance" => "match AppStore #{$dev_domain}.provenance", # match AdHoc match AppStore match Development
-          "#{$dev_domain}.provenance.spotlight" => "match AppStore #{$dev_domain}.provenance.spotlight"
+          "#{$dev_domain}.provenance.extension.spotlight" => "match AppStore #{$dev_domain}.provenance.extension.spotlight"
         },
         compileBitcode: false,
         uploadBitcode: false,

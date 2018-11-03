@@ -22,6 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>GitBranch</key>
+	<string></string>
+	<key>GitDate</key>
+	<string></string>
+	<key>GitTag</key>
+	<string></string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
@@ -40,11 +46,5 @@
 	<array>
 		<string>arm64</string>
 	</array>
-	<key>GitBranch</key>
-	<string></string>
-	<key>GitDate</key>
-	<string></string>
-	<key>GitTag</key>
-	<string></string>
 </dict>
 </plist>
