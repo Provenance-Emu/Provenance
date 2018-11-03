@@ -25,24 +25,18 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
-@interface PVFCEUEmulatorCore : PVEmulatorCore
+@interface PVFCEUEmulatorCore : PVEmulatorCore {
+    uint32_t pad[2][PVNESButtonCount];
+}
 
-@end
-
-#import <PVSupport/PVSupport-Swift.h>
-@interface PVFCEUEmulatorCore() <PVNESSystemResponderClient>
-- (void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
-@end
-
-// For swift
-@interface PVFCEUEmulatorCore()
 - (void)internalSwapDisc:(NSUInteger)discNumber;
+
 @end
 
 #pragma clang diagnostic pop

@@ -100,38 +100,46 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, assign) GLESVersion glesVersion;
 @property (nonatomic, readonly) GLenum depthFormat;
 
-- (BOOL)rendersToOpenGL;
+@property (nonatomic, readonly) CGRect screenRect;
+@property (nonatomic, readonly) CGSize aspectSize;
+@property (nonatomic, readonly) CGSize bufferSize;
+@property (nonatomic, readonly) BOOL isDoubleBuffered;
+@property (nonatomic, readonly) BOOL rendersToOpenGL;
+@property (nonatomic, readonly) GLenum pixelFormat;
+@property (nonatomic, readonly) GLenum pixelType;
+@property (nonatomic, readonly) GLenum internalPixelFormat;
+@property (nonatomic, readonly) NSTimeInterval frameInterval;
+@property (nonatomic, readonly) double audioSampleRate;
+@property (nonatomic, readonly) NSUInteger channelCount;
+@property (nonatomic, readonly) NSUInteger audioBufferCount;
+@property (nonatomic, readonly) NSUInteger audioBitDepth;
+@property (nonatomic, readonly) BOOL isEmulationPaused;
+@property (nonatomic, readonly, nullable) const void * videoBuffer;
+
 - (void)startEmulation NS_REQUIRES_SUPER;
 - (void)resetEmulation;
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
-- (BOOL)isEmulationPaused;
 - (void)stopEmulation NS_REQUIRES_SUPER;
 - (void)executeFrame;
-- (BOOL)loadFileAtPath:(NSString * _Nonnull)path error:(NSError * __nullable * __nullable)error;
+- (BOOL)loadFileAtPath:(NSString * _Nonnull)path
+                 error:(NSError * __nullable * __nullable)error;
 - (void)updateControllers;
 
-- (const void * _Nullable)videoBuffer;
-- (CGRect)screenRect;
-- (CGSize)aspectSize;
-- (CGSize)bufferSize;
-- (BOOL)isDoubleBuffered;
 - (void)swapBuffers;
-- (GLenum)pixelFormat;
-- (GLenum)pixelType;
-- (GLenum)internalPixelFormat;
-- (NSTimeInterval)frameInterval;
 
-- (double)audioSampleRate;
-- (NSUInteger)channelCount;
-- (NSUInteger)audioBufferCount;
-- (void)getAudioBuffer:(void * _Nonnull)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index;
-- (NSUInteger)audioBitDepth;
+- (void)getAudioBuffer:(void * _Nonnull)buffer
+            frameCount:(NSUInteger)frameCount
+           bufferIndex:(NSUInteger)index;
+
 - (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
 - (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
 - (OERingBuffer * _Nonnull)ringBufferAtIndex:(NSUInteger)index;
 
-- (BOOL)saveStateToFileAtPath:(NSString * _Nonnull)path error:(NSError * __nullable * __nullable)error;
-- (BOOL)loadStateFromFileAtPath:(NSString *_Nonnull)path error:(NSError * __nullable * __nullable)error;
+- (BOOL)saveStateToFileAtPath:(NSString * _Nonnull)path
+                        error:(NSError * __nullable * __nullable)error;
+
+- (BOOL)loadStateFromFileAtPath:(NSString *_Nonnull)path
+                          error:(NSError * __nullable * __nullable)error;
 
 @end

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30614EC218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */; };
+		B30614ED218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */; };
+		B30614F7218D60CB0041AD4F /* PVFCEU+Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */; };
+		B30614F8218D60CB0041AD4F /* PVFCEU+Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */; };
+		B306150C218D6F330041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */; };
 		B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5592106D57B00C45F09 /* PVSupport.framework */; };
 		B34AB5822106DDCC00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5812106DDCC00C45F09 /* PVSupport.framework */; };
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
@@ -488,7 +493,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1A3A75031ABF123F002274A3 /* PVFCEU-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PVFCEU-Prefix.pch"; path = "NES/PVFCEU-Prefix.pch"; sourceTree = "<group>"; };
+		1A3A75031ABF123F002274A3 /* PVFCEU-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEU-Prefix.pch"; sourceTree = "<group>"; };
 		1A3A75061ABF16A3002274A3 /* asm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = asm.cpp; sourceTree = "<group>"; };
 		1A3A75071ABF16A3002274A3 /* asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asm.h; sourceTree = "<group>"; };
 		1A3A75081ABF16A3002274A3 /* auxlib.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = auxlib.lua; sourceTree = "<group>"; };
@@ -637,6 +642,9 @@
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1A3A79B01ABF1D41002274A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEUEmulatorCore+Controls.h"; sourceTree = "<group>"; };
+		B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVFCEUEmulatorCore+Controls.mm"; sourceTree = "<group>"; };
+		B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEU+Swift.h"; sourceTree = "<group>"; };
 		B34AB5592106D57B00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5812106DDCC00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4A205857B900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -896,22 +904,17 @@
 		1A3A74EA1ABF11AC002274A3 /* PVFCEU */ = {
 			isa = PBXGroup;
 			children = (
-				1A3A75021ABF1222002274A3 /* NES */,
-			);
-			name = PVFCEU;
-			sourceTree = SOURCE_ROOT;
-		};
-		1A3A75021ABF1222002274A3 /* NES */ = {
-			isa = PBXGroup;
-			children = (
 				1A3A75051ABF16A3002274A3 /* FCEU */,
 				1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */,
 				1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */,
+				B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */,
+				B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */,
+				B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */,
 				B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */,
 				1A3A75041ABF125C002274A3 /* Supporting Files */,
 			);
-			path = NES;
-			sourceTree = "<group>";
+			name = PVFCEU;
+			sourceTree = SOURCE_ROOT;
 		};
 		1A3A75041ABF125C002274A3 /* Supporting Files */ = {
 			isa = PBXGroup;
@@ -919,7 +922,6 @@
 				1A3A75031ABF123F002274A3 /* PVFCEU-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			path = ..;
 			sourceTree = "<group>";
 		};
 		1A3A75051ABF16A3002274A3 /* FCEU */ = {
@@ -1359,8 +1361,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4221DEA0CE70068D057 /* ppu.h in Headers */,
+				B30614EC218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h in Headers */,
 				B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */,
 				B3A9F6311DE883FC008450F5 /* PVFCEUEmulatorCore.h in Headers */,
+				B30614F7218D60CB0041AD4F /* PVFCEU+Swift.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1369,6 +1373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4201DEA0CE50068D057 /* ppu.h in Headers */,
+				B30614F8218D60CB0041AD4F /* PVFCEU+Swift.h in Headers */,
 				B3A9F45A1DE8785A008450F5 /* PVFCEU.h in Headers */,
 				B3A9F6301DE883F1008450F5 /* PVFCEUEmulatorCore.h in Headers */,
 			);
@@ -1377,9 +1382,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3A9F4351DE877B4008450F5 /* PVFCEU */ = {
+		B3A9F4351DE877B4008450F5 /* PVFCEU-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU" */;
+			buildConfigurationList = B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU-iOS" */;
 			buildPhases = (
 				B3A9F4331DE877B4008450F5 /* Headers */,
 				B3A9F4311DE877B4008450F5 /* Sources */,
@@ -1390,14 +1395,14 @@
 			);
 			dependencies = (
 			);
-			name = PVFCEU;
+			name = "PVFCEU-iOS";
 			productName = PVNES;
 			productReference = B3A9F4361DE877B4008450F5 /* PVFCEU.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3A9F4431DE877E4008450F5 /* PVFCEU tvOS */ = {
+		B3A9F4431DE877E4008450F5 /* PVFCEU-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU tvOS" */;
+			buildConfigurationList = B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU-tvOS" */;
 			buildPhases = (
 				B3A9F4411DE877E4008450F5 /* Headers */,
 				B3A9F43F1DE877E4008450F5 /* Sources */,
@@ -1408,7 +1413,7 @@
 			);
 			dependencies = (
 			);
-			name = "PVFCEU tvOS";
+			name = "PVFCEU-tvOS";
 			productName = "PVNES tvOS";
 			productReference = B3A9F4441DE877E4008450F5 /* PVFCEU.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1445,8 +1450,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3A9F4351DE877B4008450F5 /* PVFCEU */,
-				B3A9F4431DE877E4008450F5 /* PVFCEU tvOS */,
+				B3A9F4351DE877B4008450F5 /* PVFCEU-iOS */,
+				B3A9F4431DE877E4008450F5 /* PVFCEU-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1533,6 +1538,7 @@
 				B3A9F4941DE87E09008450F5 /* 186.cpp in Sources */,
 				B3A9F4951DE87E09008450F5 /* video.cpp in Sources */,
 				B3A9F4961DE87E09008450F5 /* scale3x.cpp in Sources */,
+				B30614ED218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */,
 				B3A9F4971DE87E09008450F5 /* super24.cpp in Sources */,
 				B3A9F4981DE87E09008450F5 /* hypershot.cpp in Sources */,
 				B3A9F4991DE87E09008450F5 /* cheat.cpp in Sources */,
@@ -1929,6 +1935,7 @@
 				B3A9F6191DE87E09008450F5 /* mahjong.cpp in Sources */,
 				B3A9F61A1DE87E09008450F5 /* 177.cpp in Sources */,
 				B3A9F61B1DE87E09008450F5 /* 46.cpp in Sources */,
+				B306150C218D6F330041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */,
 				B3A9F61D1DE87E09008450F5 /* fk23c.cpp in Sources */,
 				B3A9F61E1DE87E09008450F5 /* xstring.cpp in Sources */,
 				B3A9F61F1DE87E09008450F5 /* vrc7p.cpp in Sources */,
@@ -2070,7 +2077,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2086,9 +2093,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+					"$(PROJECT_DIR)/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/x64",
 				);
 				OTHER_CFLAGS = (
 					"-DHAVE_ASPRINTF",
@@ -2096,7 +2103,7 @@
 					"-DLSB_FIRST",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -2128,7 +2135,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2144,9 +2151,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+					"$(PROJECT_DIR)/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/x64",
 				);
 				OTHER_CFLAGS = (
 					"-DHAVE_ASPRINTF",
@@ -2154,7 +2161,7 @@
 					"-DLSB_FIRST",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -2183,7 +2190,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2198,9 +2205,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+					"$(PROJECT_DIR)/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/x64",
 				);
 				OTHER_CFLAGS = (
 					"-DHAVE_ASPRINTF",
@@ -2241,7 +2248,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2256,9 +2263,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
-					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+					"$(PROJECT_DIR)/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/FCEU/drivers/win/lua/x64",
 				);
 				OTHER_CFLAGS = (
 					"-DHAVE_ASPRINTF",
@@ -2291,7 +2298,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU" */ = {
+		B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A9F43C1DE877B4008450F5 /* Debug */,
@@ -2300,7 +2307,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU tvOS" */ = {
+		B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A9F44A1DE877E4008450F5 /* Debug */,

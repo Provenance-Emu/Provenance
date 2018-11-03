@@ -578,7 +578,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				emulatorViewController.glViewController?.view.isHidden = true
 				if #available(iOS 10.0, tvOS 10.0, *) {
 					_ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { (timer) in
-						if !emulatorViewController.core.isEmulationPaused() {
+						if !emulatorViewController.core.isEmulationPaused {
 							timer.invalidate()
 							self.openSaveState(saveState)
 							emulatorViewController.glViewController?.view.isHidden = false
