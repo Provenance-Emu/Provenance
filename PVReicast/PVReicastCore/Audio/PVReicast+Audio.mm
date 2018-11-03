@@ -398,6 +398,52 @@ coreaudio_push8(void* frame, u32 samples, bool wait) {
         return 1;
     }
 
+    static dispatch_queue_t serialQueue;
+    static dispatch_group_t group;
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+        serialQueue = dispatch_queue_create("com.provenance.reicase.audio", queueAttributes);
+
+        group = dispatch_group_create();
+    });
+
+//    BOOL fullBuffer = rb.availableBytes < samples / 4;
+    static u32 previousSampleCount = 0;
+    static const float samplePerSecond = 2.0 * (1.0 / 44100.0);
+    static const float bytesPerSample = 2.0;
+
+    int currentAvailable = rb.availableBytes;
+
     [rb write:(const unsigned char *)frame maxLength:samples * 4];
+
+    if (wait) {
+        while ( rb.availableBytes < (currentAvailable + (previousSampleCount * 4))) {
+
+        }
+    }
+
+//    if (fullBuffer && wait) {
+        dispatch_time_t maxWait = dispatch_time( DISPATCH_TIME_NOW, samples / samplePerSecond);
+//        dispatch_group_wait(group, maxWait);
+//        dispatch_group_enter(group);
+//        dispatch_async(serialQueue, ^{
+//            // Note, is the frame pointer too volitile if we return early?
+//            // should we do a max wait instead of 1 or 2 frames?
+            [rb write:(const unsigned char *)frame maxLength:samples * 4];
+//            dispatch_group_leave(group);
+//        });
+//    } else {
+//        [rb write:(const unsigned char *)frame maxLength:samples * 4];
+//    }
+
+//    if(wait) {
+//        float waitTime = samplePerSecond * samples;
+//        printf("wait %f", waitTime);
+//        [NSThread sleepForTimeInterval:waitTime];
+//    }
+    previousSampleCount = samples;
+
     return 1;
 }
