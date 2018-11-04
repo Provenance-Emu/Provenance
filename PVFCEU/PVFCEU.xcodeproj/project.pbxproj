@@ -658,6 +658,7 @@
 		B3A9F4581DE8784B008450F5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F6321DE88425008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3A9F6341DE8842C008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B3D5E2A8218EBEB70015C690 /* ops.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = ops.inc; sourceTree = "<group>"; };
 		BED8BDEB1D6ECD7500742D04 /* __dummy_mapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = __dummy_mapper.cpp; sourceTree = "<group>"; };
 		BED8BDEC1D6ECD7500742D04 /* 01-222.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "01-222.cpp"; sourceTree = "<group>"; };
 		BED8BDED1D6ECD7500742D04 /* 3d-block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "3d-block.cpp"; sourceTree = "<group>"; };
@@ -972,6 +973,7 @@
 				1A3A77B21ABF16A4002274A3 /* netplay.cpp */,
 				1A3A77B31ABF16A4002274A3 /* netplay.h */,
 				1A3A77B41ABF16A4002274A3 /* nsf.cpp */,
+				B3D5E2A8218EBEB70015C690 /* ops.inc */,
 				1A3A77B51ABF16A4002274A3 /* nsf.h */,
 				1A3A77B61ABF16A4002274A3 /* oldmovie.cpp */,
 				1A3A77B71ABF16A4002274A3 /* oldmovie.h */,
