@@ -496,10 +496,6 @@ end
     )
   end
 
-  desc "Add proper badge to icon"
-  lane :add_badge do
-  end
-
   private_lane :badge_alpha do
     version_number = get_version_number(target: "Provenance")
     # build_number = get_build_number
