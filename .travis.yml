@@ -11,6 +11,10 @@ cache:
   - PVLibrary/Carthage
   - /Users/travis/Library/Caches/Rome
 
+
+git:
+  depth: 3 # Speed up cloning, don't need many commits
+
 addons:
   ssh_known_hosts:
   - provenance.joemattiello.com

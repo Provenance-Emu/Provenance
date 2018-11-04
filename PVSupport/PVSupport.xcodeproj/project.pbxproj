@@ -155,23 +155,6 @@
 		B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		B38E260721573DD300355F53 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B38E260121573C2A00355F53;
-			remoteInfo = "Carthage Bootstrap-tvOS";
-		};
-		B3E0A58C21565181004B4322 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E0A58621565166004B4322;
-			remoteInfo = "Carthage Bootstrap";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		0592894D1DC194FD0012644D /* RealTimeThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealTimeThread.h; sourceTree = "<group>"; };
 		0592894E1DC194FD0012644D /* RealTimeThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RealTimeThread.m; sourceTree = "<group>"; };
@@ -587,7 +570,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B38E260821573DD300355F53 /* PBXTargetDependency */,
 			);
 			name = "PVSupport-tvOS";
 			productName = "PVSupportTV Framework";
@@ -606,7 +588,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3E0A58D21565181004B4322 /* PBXTargetDependency */,
 			);
 			name = "PVSupport-iOS";
 			productName = "PVSupportTV Framework";
@@ -816,19 +797,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B38E260821573DD300355F53 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B38E260121573C2A00355F53 /* Carthage Bootstrap-tvOS */;
-			targetProxy = B38E260721573DD300355F53 /* PBXContainerItemProxy */;
-		};
-		B3E0A58D21565181004B4322 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3E0A58621565166004B4322 /* Carthage Bootstrap-iOS */;
-			targetProxy = B3E0A58C21565181004B4322 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1ACEA66517F7467D0031B1C9 /* Debug */ = {

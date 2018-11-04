@@ -417,19 +417,12 @@
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
 		};
-		B358CA55216DA5B700EA88FA /* PBXContainerItemProxy */ = {
+		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B38E25F421573BC400355F53;
-			remoteInfo = "Carthage Bootstrap-tvOS";
-		};
-		B358CA57216DA5C500EA88FA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3A2876420C76F9C00B4B2E3;
-			remoteInfo = "Carthage Bootstrap-iOS";
+			remoteGlobalIDString = B3E21D6A203211BE009939D3;
+			remoteInfo = Spotlight;
 		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -458,13 +451,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
-		};
-		B3E21D70203211BE009939D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
 		};
 		B3F9CDA52031FF4E007F808D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1584,7 +1570,7 @@
 			);
 			dependencies = (
 				B3B29D462156183D00903290 /* PBXTargetDependency */,
-				B3E21D71203211BE009939D3 /* PBXTargetDependency */,
+				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			productName = Provenance;
@@ -1645,7 +1631,6 @@
 			);
 			dependencies = (
 				B3B29D482156184400903290 /* PBXTargetDependency */,
-				B358CA58216DA5C500EA88FA /* PBXTargetDependency */,
 			);
 			name = Spotlight;
 			productName = Spotlight;
@@ -1664,7 +1649,6 @@
 			);
 			dependencies = (
 				B3B29D4A2156184A00903290 /* PBXTargetDependency */,
-				B358CA56216DA5B700EA88FA /* PBXTargetDependency */,
 			);
 			name = TopShelf;
 			productName = TopShelf;
@@ -2342,15 +2326,10 @@
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
 		};
-		B358CA56216DA5B700EA88FA /* PBXTargetDependency */ = {
+		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B38E25F421573BC400355F53 /* Carthage Bootstrap-tvOS */;
-			targetProxy = B358CA55216DA5B700EA88FA /* PBXContainerItemProxy */;
-		};
-		B358CA58216DA5C500EA88FA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3A2876420C76F9C00B4B2E3 /* Carthage Bootstrap-iOS */;
-			targetProxy = B358CA57216DA5C500EA88FA /* PBXContainerItemProxy */;
+			target = B3E21D6A203211BE009939D3 /* Spotlight */;
+			targetProxy = B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2371,11 +2350,6 @@
 			isa = PBXTargetDependency;
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B3B29D4B2156185700903290 /* PBXContainerItemProxy */;
-		};
-		B3E21D71203211BE009939D3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B3E21D70203211BE009939D3 /* PBXContainerItemProxy */;
 		};
 		B3F9CDA62031FF4E007F808D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

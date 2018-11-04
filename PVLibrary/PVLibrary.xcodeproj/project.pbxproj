@@ -404,26 +404,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B38E25FF21573C2100355F53 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B38E25FA21573C0C00355F53;
-			remoteInfo = "Carthage Bootstrap-tvOS";
-		};
 		B3C04B672107867200E7AF79 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3579D0E2106B11D00DDEBD6;
 			remoteInfo = PVLibrary;
-		};
-		B3E0A59021565203004B4322 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E0A581215650C6004B4322;
-			remoteInfo = "Carthage Bootstrap";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1566,7 +1552,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3E0A59121565203004B4322 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-iOS";
 			productName = PVLibrary;
@@ -1585,7 +1570,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B38E260021573C2100355F53 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-tvOS";
 			productName = PVLibrary;
@@ -2067,20 +2051,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B38E260021573C2100355F53 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B38E25FA21573C0C00355F53 /* Carthage Bootstrap-tvOS */;
-			targetProxy = B38E25FF21573C2100355F53 /* PBXContainerItemProxy */;
-		};
 		B3C04B682107867200E7AF79 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */;
 			targetProxy = B3C04B672107867200E7AF79 /* PBXContainerItemProxy */;
-		};
-		B3E0A59121565203004B4322 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3E0A581215650C6004B4322 /* Carthage Bootstrap-iOS */;
-			targetProxy = B3E0A59021565203004B4322 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
