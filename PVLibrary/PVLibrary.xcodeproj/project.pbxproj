@@ -6,31 +6,6 @@
 	objectVersion = 50;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		B38E25FA21573C0C00355F53 /* Carthage Bootstrap-tvOS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = B38E25FC21573C0C00355F53 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-tvOS" */;
-			buildPhases = (
-				B38E25FB21573C0C00355F53 /* Carthage Bootstrap */,
-			);
-			dependencies = (
-			);
-			name = "Carthage Bootstrap-tvOS";
-			productName = "Carthage Bootstrap";
-		};
-		B3E0A581215650C6004B4322 /* Carthage Bootstrap-iOS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = B3E0A584215650C6004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-iOS" */;
-			buildPhases = (
-				B3E0A585215650D5004B4322 /* Carthage Bootstrap */,
-			);
-			dependencies = (
-			);
-			name = "Carthage Bootstrap-iOS";
-			productName = "Carthage Bootstrap";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4C2106B5A80091437F /* PVSupport.framework */; };
@@ -1614,9 +1589,6 @@
 					B3C04B602107867200E7AF79 = {
 						CreatedOnToolsVersion = 9.4.1;
 					};
-					B3E0A581215650C6004B4322 = {
-						CreatedOnToolsVersion = 10.0;
-					};
 				};
 			};
 			buildConfigurationList = B3579D092106B11D00DDEBD6 /* Build configuration list for PBXProject "PVLibrary" */;
@@ -1634,8 +1606,6 @@
 				B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */,
 				B3C04A8B21077B3100E7AF79 /* PVLibrary-tvOS */,
 				B3C04B602107867200E7AF79 /* PVLibraryTests */,
-				B3E0A581215650C6004B4322 /* Carthage Bootstrap-iOS */,
-				B38E25FA21573C0C00355F53 /* Carthage Bootstrap-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1667,65 +1637,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		B38E25FB21573C0C00355F53 /* Carthage Bootstrap */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Cartfile.resolved",
-				"$(SRCROOT)/../Scripts/xcode.carthage.bootstrap.sh",
-				"$(SRCROOT)/../Scripts/setup_env.sh",
-			);
-			name = "Carthage Bootstrap";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Carthage/.Cartfile.tvOS.resolved",
-				"$(SRCROOT)/Carthage/.swift-version",
-				"$(SRCROOT)/Carthage/Build/tvOS/ZipArchive.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/SQLIte.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/ZIPFoundation.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/Realm.framework",
-				"$(SRCROOT)/Carthage/Build/tvOS/RealmSwift.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "cd \"${SRCROOT}/../\"\n. ./Scripts/xcode.carthage.bootstrap.sh tvOS \"${SRCROOT}\"\n";
-		};
-		B3E0A585215650D5004B4322 /* Carthage Bootstrap */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Cartfile.resolved",
-				"$(SRCROOT)/../Scripts/xcode.carthage.bootstrap.sh",
-				"$(SRCROOT)/../Scripts/setup_env.sh",
-			);
-			name = "Carthage Bootstrap";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Carthage/.Cartfile.iOS.resolved",
-				"$(SRCROOT)/Carthage/.swift-version",
-				"$(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SQLIte.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "cd \"${SRCROOT}/../\"\n. ./Scripts/xcode.carthage.bootstrap.sh iOS \"${SRCROOT}\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B3579D0B2106B11D00DDEBD6 /* Sources */ = {
@@ -2264,22 +2175,6 @@
 			};
 			name = Release;
 		};
-		B38E25FD21573C0C00355F53 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		B38E25FE21573C0C00355F53 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		B3C04B4221077B3100E7AF79 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2416,22 +2311,6 @@
 			};
 			name = Release;
 		};
-		B3E0A582215650C6004B4322 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		B3E0A583215650C6004B4322 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2453,15 +2332,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B38E25FC21573C0C00355F53 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B38E25FD21573C0C00355F53 /* Debug */,
-				B38E25FE21573C0C00355F53 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2476,15 +2346,6 @@
 			buildConfigurations = (
 				B3C04B6A2107867200E7AF79 /* Debug */,
 				B3C04B6B2107867200E7AF79 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3E0A584215650C6004B4322 /* Build configuration list for PBXAggregateTarget "Carthage Bootstrap-iOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3E0A582215650C6004B4322 /* Debug */,
-				B3E0A583215650C6004B4322 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
