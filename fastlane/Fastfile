@@ -100,9 +100,67 @@ end
     alpha
   end
 
-  # TODO: Make keys file from this
-  desc "User Setup"
+  desc "User Builds"
   lane :userbuild do
+    UI.message "Pulling git updates."
+    git_pull
+
+    UI.message "Pulling git sub-module updates."
+    git_submodule_update(
+      init: true,
+      recursive: true
+    )
+    
+    UI.message "Switching to automatic code signing."
+    enable_automatic_code_signing(
+      use_automatic_signing: true,
+      targets: ["Provenance"],
+      targets: ["ProvenanceTV"],
+      targets: ["Spotlight"],
+      targets: ["TopShelf"],
+      # TODO, only do if set since it's optional
+      # team_id: ENV["DEV_TEAM_ID"]
+    )
+
+    which_app = UI.select("Select platform: ", ["iOS", "tvOS"])
+
+    UI.message "Getting 3rd party dependencies."
+
+    if which_app == "tvOS"
+      carthage_bootstrap_tvOS
+    else
+      carthage_bootstrap_ios
+    end
+    
+    # Git git commit count
+    commits = number_of_commits().to_s
+    UI.message "Setting build # to ${commits}."
+    ENV["build_number"] = commits
+    updatePlistForBranch
+
+    UI.message "Making developer build for platform #{which_app}."
+    if which_app == "tvOS"
+      build_developer(scheme: "ProvenanceTV-Release")
+    else
+      build_developer(scheme: "Provenance-Release")
+    end
+
+    # Installs the ipa on the device. If no id is given, the first found iOS device will be used. 
+    # Works via USB or Wi-Fi. This requires ios-deploy to be installed.
+    # Please have a look at ios-deploy. 
+    # To quickly install it, use npm -g i ios-deploy
+    # https://docs.fastlane.tools/actions/install_on_device/
+    # if UI.confirm("Install to device?")
+    #   install_on_device
+    # end
+        
+    UI.message "Resetting enviroment."
+    reset_enviroment
+  end
+
+  desc "User Setup"
+  desc "Work in progress"
+  private_lane :user_setup do
     UI.message "This lane will help you setup Provenance for signing and build."
     #UI.success "Successfully finished processing (usually green)"
     #UI.error "Wahaha, what's going on here! (usually red)"
@@ -114,27 +172,32 @@ end
     apple_pass = UI.password("Your password please: ") # password inputs are hidden
     dev_domain = UI.input("What's your developer domain (usually com.yourname)?\nThis will be used to generate unique App Bundle ids to your developer account.\neg; Official releases from the Provenance team use 'com.provenance'. You cannot use 'com.provenance' for your personal account, iOS Developer portal will not allow craeting signing certificates if an app already exists with that ID.")
 
+    app_id = "#{$dev_domain}.provenance"
+    spotlight_id = "#{$dev_domain}.provenance.extension.spotlight"
+    topshelf_id = "#{$dev_domain}.provenance.extension.topshelf"
+
     if UI.confirm("Do you want to generate new app entries in your developer account??")
       produce(
         username: apple_id,
-        app_identifier: 'com.krausefx.app',
-        app_name: 'MyApp',
+        app_identifier: app_id,
+        app_name: 'Provenance',
         language: 'English',
-        sku: '123',
-        team_name: 'SunApps GmbH', # only necessary when in multiple teams
+        # sku: '123',
+        # team_name: 'SunApps GmbH', # only necessary when in multiple teams
 
         # Optional
         # App services can be enabled during app creation
         enable_services: {
-          app_group: "on",               # Valid values: "on", "off"
+          # TODO: Setup app groups
+          #app_group: "on",               # Valid values: "on", "off"
           apple_pay: "off",               # Valid values: "on", "off"
           associated_domains: "off",      # Valid values: "on", "off"
-          data_protection: "complete",   # Valid values: "complete", "unlessopen", "untilfirstauth",
+          #data_protection: "complete",   # Valid values: "complete", "unlessopen", "untilfirstauth",
           game_center: "off",             # Valid values: "on", "off"
           health_kit: "off",              # Valid values: "on", "off"
           home_kit: "off",                # Valid values: "on", "off"
           hotspot: "off",                 # Valid values: "on", "off"
-          icloud: "cloudkit",            # Valid values: "legacy", "cloudkit"
+          #icloud: "cloudkit",            # Valid values: "legacy", "cloudkit"
           in_app_purchase: "off",         # Valid values: "on", "off"
           inter_app_audio: "off",         # Valid values: "on", "off"
           passbook: "off",                # Valid values: "on", "off"
@@ -143,11 +206,12 @@ end
           nfc_tag_reading: "off",         # Valid values: "on", "off"
           personal_vpn: "off",            # Valid values: "on", "off"
           push_notification: "off",       # Valid values: "on", "off"
-          siri_kit: "on",                # Valid values: "on", "off"
+          siri_kit: "off",                # Valid values: "on", "off"
           wallet: "off",                  # Valid values: "on", "off"
           wireless_accessory: "off",      # Valid values: "on", "off"
         }
       )
+
     end
 
     UI.message "We will now try to create or update signing certificates for your developer account"
@@ -696,6 +760,33 @@ end
     )
   end
   
+  desc "Exports a new Developer Build"
+  lane :build_developer do |options|
+    scheme = options.fetch(:scheme, 'Provenance-Release')
+    load_keys
+
+    build_app(
+      workspace: "Provenance.xcworkspace",
+      scheme: scheme,
+      export_method: "development", # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
+      configuration: "Release",
+      # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+      clean: false,
+      silent: true,
+      output_directory: "Builds",
+      #output_name: ipa_name,
+      include_bitcode: false,
+      include_symbols: true,
+      #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+      export_options: {
+        method: "development",
+        compileBitcode: false,
+        uploadBitcode: false,
+      }
+    )
+
+  end
+
   desc "Exports a new AppStore Build"
   lane :build_appstore do
     load_keys

@@ -35,7 +35,7 @@ Travis building
 ```
 fastlane ios userbuild
 ```
-User Setup
+User Builds
 ### ios updatePlistForBranch
 ```
 fastlane ios updatePlistForBranch
@@ -110,6 +110,11 @@ Reset build enviroment
 Use this lane if you're having build issues
 
 Use `git stash` first to save any changes you may want to keep.
+### ios build_developer
+```
+fastlane ios build_developer
+```
+Exports a new Developer Build
 ### ios build_appstore
 ```
 fastlane ios build_appstore
