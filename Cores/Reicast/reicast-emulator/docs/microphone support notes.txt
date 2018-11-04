@@ -1,0 +1,36 @@
+1/13/2014	hooby3dfx	initial plan
+1/16/2014	hooby3dfx	updated with progress, more details on how it works
+
+
+general info links from bluecrab: http://dreamcast-talk.com/forum/viewtopic.php?t=2921&f=5
+kallistios driver (could use for test app): http://cadcdev.sourceforge.net/docs/kos-2.0.0/sip_8h.html
+maplebus: https://web.archive.org/web/20101117090620/http://mc.pp.se/dc/maplebus.html
+
+plan:
+-figure out the mic commands that seaman is looking for and implement them [DONE (a couple commands not supported)]
+-create mic test app (consult bluecrab) [Otoire tunes should be great and the other real games that support mic - should compile list]
+-figure out how the game/dc requests the audio (or how the mic just streams)... [Done - at least in seaman DC tells mic to start recording then polls the mic pretty frequently for data]
+-for poc just create some kind of global way to pass the audio data from android mic interface directly to the maple_base instance [Done]
+-test [Created recording in Otoire, imported VMS into Demul and got the sound! Seaman needs more testing]
+-cleanup [Partially done, lots of logging left]
+-test more
+-integrate into settings ui
+
+
+16-bit PCM @ 11025 hz
+== 176.4 kbit/s
+== 22050 bytes/s
+
+maximum size of a Maple Bus packet is 256 words (1024 bytes)
+
+
+================
+Games that can use mic:
+-Seaman [tested, working!]
+-Alien Front Online
+-Planet Ring
+-Mr Driller [tested, working!] (lol @ telling mr driller to dig)
+-Otoire [tested, working!]
+-Propeller Arena
+-Visual Park
+-Kiteretsu Boys Gangagan

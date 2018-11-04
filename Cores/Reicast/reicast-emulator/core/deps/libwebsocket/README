@@ -1,0 +1,20 @@
+This is the libwebsockets C library for lightweight websocket clients and
+servers.  For support, visit
+
+ http://libwebsockets.org
+
+and consider joining the project mailing list at
+
+ http://ml.libwebsockets.org/mailman/listinfo/libwebsockets
+
+You can get the latest version of the library from git
+
+http://git.libwebsockets.org
+https://github.com/warmcat/libwebsockets
+
+for more information:
+
+README.build      - information on building the library
+README.coding     - information for writing code using the library
+README.test-apps  - information about the test apps built with the library
+

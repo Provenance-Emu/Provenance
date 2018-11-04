@@ -1,0 +1,110 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
+
+def getBuildId = { ->
+    def build_id = System.getenv("TRAVIS_JOB_ID") ?: "8"
+    return Integer.parseInt( build_id )
+}
+
+def getVersionHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags', '--always'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "27.0.3"
+
+    defaultConfig {
+        applicationId "com.reicast.emulator"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode getBuildId()
+        versionName getVersionName()
+        vectorDrawables.useSupportLibrary = true
+
+        ndk {
+            moduleName "dc"
+                abiFilters 'armeabi-v7a', 'x86'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../reicast-beta-cd.jks")
+            storePassword "notasecret"
+            keyAlias "reicast-upload-key"
+            keyPassword "notasecret"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+afterEvaluate {
+    android.applicationVariants.all {  v ->
+        if (v.buildType.name == "release") {
+            def hashtag = getVersionHash()
+            v.outputs[0].outputFileName = "reicast-android-" + hashtag + ".apk"
+        }
+    }
+}
+
+play {
+    track = 'beta'
+    serviceAccountEmail = 'reicast-beta-cd@api-7801059239587459896-777757.iam.gserviceaccount.com'
+    pk12File = file('../reicast-beta-cd.p12')
+}
+
+dependencies {
+    implementation 'com.android.support:support-v4:25.4.0'
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:design:25.4.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'org.bouncycastle:bcprov-jdk16:1.46'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.9'
+    implementation ('com.googlecode.json-simple:json-simple:1.1.1') {
+        exclude module: 'junit'
+    }
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
+

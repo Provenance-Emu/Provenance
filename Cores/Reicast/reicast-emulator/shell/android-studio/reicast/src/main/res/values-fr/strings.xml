@@ -1,0 +1,108 @@
+<!--
+File: strings.xml (French)
+Author: Jérôme P. (AndroidGX)
+Last Edit: 21 May 2014
+-->
+
+<resources>
+ 
+    <string name="menu_settings">Réglages</string>
+ 
+    <string name="system_path">Répertoire système (emplacement du répertoire \'data\' comprenant les fichiers \'dc_boot.bin\' et \'dc_flash.bin\')</string>
+    <string name="browser_path">Répertoire système par défaut</string>
+    <string name="games_path">Répertoire des jeux (emplacement de vos fichiers images au format gdi, chd ou cdi)</string>
+    <string name="game_path">Répertoire des jeux par défaut</string>
+    <string name="config_home">Veuillez configurer le répertoire racine</string>
+    <string name="config_game">Veuillez configurer le répertoire des jeux</string>
+    <string name="unsupported">Version de kernel non supporté!</string>
+     
+    <string name="boot_bios">Démarrer le bios Dreamcast</string>
+    <string name="missing_bios_title">Le BIOS Dreamcast est manquant</string>
+    <string name="missing_bios">Il manque le fichier BIOS. Le fichier BIOS de la Dreamcast est indispensable pour faire fonctionner cet émulateur. Celui-ci doit être placé comme ceci: %1$s/data/dc_boot.bin (ou configurer le répertoire bios)</string>
+    <string name="missing_flash_title">Le fichier Flash est manquant</string>
+    <string name="missing_flash">Il manque le fichier FLASH. Le fichier FLASH de la Dreamcast est indispensable pour faire fonctionner cet émulateur. Celui-ci doit être placé comme ceci: %1$s/data/dc_flash.bin (ou configurer le répertoire bios)</string>
+    <string name="require_bios">Vous devez fournir un fichier BIOS</string>
+    <string name="data_folder">Le répertoire actuel des données est vérifié.</string>
+     
+    <string name="folder_bios">Démarrer le bios</string>
+    <string name="folder_select">Séléctionner le dossier actuel</string>
+ 
+    <string name="optimization_opts">Options d\'optimisations et de débogage</string>
+    <string name="experimental_opts">Experimental (peut causer des crashs)</string>
+    <string name="select_details">Activer le détail des jeux</string>
+    <string name="select_dynarec">Dynarec</string>
+    <string name="select_unstable">Optimisations instables</string>
+    <string name="select_region">Région du bios</string>
+    <string name="select_broadcast">Diffusion</string>
+    <string name="select_limitfps">Limiter le nombre de FPS</string>
+    <string name="select_mipmaps">Rendu Mipmaps (correctif pour l\'ancien SGX540)</string>
+    <string name="select_stretch">Mode portrait (écran large)</string>
+    <string name="set_frameskip">Valeur de saut des images</string>
+    <string name="select_render">Rendu PVR (ne fonctionne pas pour le moment)</string>
+    <string name="select_fps">Montrer les FPS</string>
+    <string name="select_software">Forcer le rendu logiciel</string>
+    <string name="select_sound">Désactiver le son de l\'émulateur</string>
+    <string name="select_depth">Rendu de profondeur</string>
+
+    <string name="games_listing">Liste des jeux disponibles</string>
+
+    <string name="game_details">Infos du jeu - %1$s</string>
+    <string name="info_unavailable">Infos du jeu non disponible</string>
+    <string name="disk_loading">Chargement des infos du disque</string>
+ 
+    <string name="report_issue">Crash détécté précédemment</string>
+    <string name="bios_config">Crash dans la configuration!</string>
+ 
+    <string name="customize_touch_controls">Personnaliser les contrôles tactiles</string>
+    <string name="launch_editor">Lancer l\'éditeur</string>
+    <string name="touch_vibration">Vibration</string>
+    <string name="controller_a">Manette A</string>
+    <string name="controller_b">Manette B</string>
+    <string name="controller_c">Manette C</string>
+    <string name="controller_d">Manette D</string>
+    <string name="controller_not_connected">Manette non connectée %1$s</string>
+    <string name="controller_none_selected">Aucune manette selectionnée</string>
+    <string name="select">Choisir</string>
+    <string name="remove">Supprimer</string>
+    <string name="select_controller_title">Choisir manette</string>
+    <string name="select_controller_message">Pressez une touche de la manette %1$s pour attribuer le bouton</string>
+    <string name="controller_already_in_use">Cette manette est déjà utilisé !</string>
+    <string name="joystick_layout">Utiliser le joystick pour le pad directionnel</string>
+    <string name="modified_layout">Activer la fonction de disposition des touches</string>
+    <string name="controller_compat">Activer le mode de compatibilité</string>
+    <string name="controller_unavailable">Manette IME détéctée!\nVeuillez S\'il vous plait désactiver l\'interface native</string>
+
+    <string name="customize_physical_controls">Customiser les touches physiques</string>
+    <string name="map_keycode_title">Modifier la manette</string>
+    <string name="map_keycode_message">Pressez une nouvelle touche pour %1$s</string>
+
+    <string name="about_text">reicast est un émulateur dreamcast</string>
+    <string name="revision_text">Version: %1$s [%2$s]</string>
+ 
+    <string-array name="controllers">
+    	<item>Manette A</item>
+    	<item>Manette B</item>
+    	<item>Manette C</item>
+    	<item>Manette D</item>
+    </string-array>
+ 
+    <string name="browser">Navigation</string>
+    <string name="settings">Réglages</string>
+    <string name="paths">Répertoires</string>
+    <string name="input">Manettes</string>
+    <string name="about">A propos</string>
+    <string name="rateme">Evaluez-nous</string>
+    <string name="messages">Test Suite</string>
+    <string name="cloud">Cloud VMU</string>
+ 
+    <string name="cancel">Annuler</string>
+    <string name="dismiss">Abandonner</string>
+    <string name="manual">Manuel</string>
+    <string name="options">Options</string>
+
+    <string name="cloudInfos">Avec cet outil vous pouvez envoyer/télécharger vos VMUs sur/depuis Dropbox, de manière à les synchroniser avec tous vos dispositifs!</string>
+    <string name="uploadWarning">ATTENTION: Vous êtes sur le point d\'envoyer vos VMUs sur Dropbox, veuillez s\'il vous plait prendre en considération que ceci va ECRASER votre dernier envoi!!</string>
+    <string name="downloadWarning">ATTENTION: Vous êtes sur le point de télécharger vos VMUs depuis Dropbox, veuillez s\'il vous plait prendre en considération que ceci va ECRASER vos VMUs actuelles!! Par ailleurs une copie de sauvegarde va être créé dans le dossier VmuBackups!</string>
+    <string name="uploadVMU">Envoyer VMU</string>
+    <string name="downloadVMU">Télécharger VMU</string>
+</resources>

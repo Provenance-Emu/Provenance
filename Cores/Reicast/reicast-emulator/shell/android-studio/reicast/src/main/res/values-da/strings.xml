@@ -1,0 +1,95 @@
+<resources>
+
+     <string name="menu_settings">Indstillinger</string>
+    
+    <string name="system_path">System sti (placering af data folderen, som indeholder dc_boot.bin/dc_flash.bin)</string>
+    <string name="browser_path">Standard system sti</string>
+    <string name="games_path">Spil sti (placering af .gdi, .chd eller .cdi afbildninger)</string>
+    <string name="game_path">Standard spil sti</string>
+    <string name="config_home">Konfigurer venligst et hjemme katalog.</string>
+    <string name="config_game">Konfigurer venligst et spil katalog.</string>
+    <string name="unsupported">Ikke suporteret kerne version!</string>
+    
+    <string name="boot_bios">Start Dreamcast BIOS</string>
+    <string name="missing_bios_title">Manglende Dreamcast BIOS</string>
+    <string name="missing_bios">BIOS mangler. Dreamcast BIOS er nødvendig for at denne emulator kan virke. Kontroller at filen hedder "dc_boot.bin" og findes i %1$s/data/dc_boot.bin</string>
+    <string name="missing_flash_title">Manglende Dreamcast flash ROM</string>
+    <string name="missing_flash">Flash mangler. Dreamcast Flash er nødvendig for at denne emulator kan virke. Kontroller at filen hedder "dc_flash.bin og findes i %1$s/data/dc_flash.bin</string>
+    <string name="require_bios">Du er nødt til at levere en BIOS</string>
+    <string name="data_folder">Den aktuelle folder er formodet.</string>
+    
+    <string name="folder_bios">START BIOS</string>
+    <string name="folder_select">Vælg aktuelle folder</string>
+
+    <string name="optimization_opts">Optimerings- og fejlfindingsopsætninger</string>
+    <string name="experimental_opts">Eksperimentel (Kan medføre vidtspredt panik)</string>
+    <string name="select_details">Aktiver spil detaljer</string>
+    <string name="select_dynarec">Dynarec option</string>
+    <string name="select_unstable">Ustabile optimeringer</string>
+    <string name="select_region">DC region</string>
+    <string name="select_broadcast">Broadcast</string>
+    <string name="select_limitfps">Begræns FPS</string>
+    <string name="select_mipmaps">Brug Mipmaps (rettelse for SGX540)</string>
+    <string name="select_stretch">Bredskærmstilstand</string>
+    <string name="set_frameskip">Frameskip værdi</string>
+    <string name="select_render">PVR rendering (gør ikke noget i øjeblikket)</string>
+    <string name="select_fps">Vis FPS</string>
+    <string name="select_software">Tving software rendering</string>
+    <string name="select_sound">Deaktiver emulator lyd</string>
+    <string name="select_depth">Renderingsdybde</string>
+
+    <string name="games_listing">Dreamcast spil</string>
+    
+    <string name="game_details">Spil info - %1$s</string>
+    <string name="info_unavailable">Spil info ikke tilgængelig</string>
+    <string name="disk_loading">Henter disk info</string>
+
+    <string name="report_issue">Tidligere nedbrud detekteret</string>
+    <string name="bios_config">Konfiguration fejlede!</string>
+
+    <string name="customize_touch_controls">Tilpas touch knapper</string>
+    <string name="launch_editor">Opstarts editor</string>
+    <string name="touch_vibration">Touch vibration</string>
+    <string name="controller_a">Controller A</string>
+    <string name="controller_b">Controller B</string>
+    <string name="controller_c">Controller C</string>
+    <string name="controller_d">Controller D</string>
+    <string name="controller_not_connected">Controller ikke forbundet %1$s</string>
+    <string name="controller_none_selected">Ingen controller valgt</string>
+    <string name="select">Vælg</string>
+    <string name="remove">Fjern</string>
+    <string name="select_controller_title">Vælg controller</string>
+    <string name="select_controller_message">Tryk på en vilkårlig knap på controller %1$s for at knytte den til en port</string>
+    <string name="controller_already_in_use">Denne controller er allerede i brug!</string>
+    <string name="joystick_layout">Brug joystick som D-Pad Input</string>
+    <string name="modified_layout">Aktiver brugerdefineret layout</string>
+    <string name="controller_compat">Aktiver kompatibilitesmode</string>
+    <string name="controller_unavailable">Gamepad IME detekteret!\nDeaktiver native interface</string>
+
+    <string name="customize_physical_controls">Tilpas fysiske taster</string>
+    <string name="map_keycode_title">Tilpas controller</string>
+    <string name="map_keycode_message">Tryk på den nye controller taste for %1$s</string>
+
+    <string name="about_text">reicast er en Dreamcast emulator</string>
+    <string name="revision_text">Version: %1$s [%2$s]</string>
+    
+    <string-array name="controllers">
+        <item>Controller A</item>
+        <item>Controller B</item>
+        <item>Controller C</item>
+        <item>Controller D</item>
+    </string-array>
+    
+    <string name="browser">Browser</string>
+    <string name="settings">Indstillinger</string>
+    <string name="paths">Stier</string>
+    <string name="input">Taster</string>
+    <string name="about">Om</string>
+    <string name="rateme">Bedøm mig</string>
+    <string name="messages">Troubleshoot</string>
+
+    <string name="cancel">Afbryd</string>
+    <string name="dismiss">Afvis</string>
+    <string name="manual">Manuel</string>
+    <string name="options">Indstillinger</string>
+</resources>

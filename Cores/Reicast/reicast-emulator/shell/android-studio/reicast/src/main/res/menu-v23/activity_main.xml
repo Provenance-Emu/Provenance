@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item
+        android:id="@+id/browser_menu"
+        android:icon="@drawable/ic_subdirectory_arrow_right"
+        android:title="@string/browser" />
+    <item
+        android:id="@+id/settings_menu"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings" />
+    <item
+        android:id="@+id/input_menu"
+        android:icon="@drawable/ic_input"
+        android:title="@string/input" />
+    <item
+        android:id="@+id/pgconfig_menu"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/pgconfig" />
+    <item
+        android:id="@+id/cloud_menu"
+        android:icon="@drawable/ic_cloud_queue"
+        android:title="@string/cloud" />
+    <item
+        android:id="@+id/rateme_menu"
+        android:icon="@drawable/ic_rate_review"
+        android:title="@string/rateme" />
+    <item
+        android:id="@+id/message_menu"
+        android:icon="@drawable/ic_send"
+        android:title="@string/messages" />
+    <item
+        android:id="@+id/about_menu"
+        android:icon="@drawable/ic_info_outline"
+        android:title="@string/about" />
+    <item
+        android:id="@+id/version_spacer"
+        android:title=""/>
+
+</menu>

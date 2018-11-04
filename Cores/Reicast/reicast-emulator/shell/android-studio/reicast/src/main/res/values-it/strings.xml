@@ -1,0 +1,108 @@
+<!--
+	File: strings.xml (Italian)
+	Author: Luca D'Amico (Luca91)
+    Last Edit: 18 May 2014
+-->
+
+<resources>
+    
+    <string name="menu_settings">Configurazione</string>
+    
+    <string name="system_path">Percorso di Sistema (Percorso della cartella dati contenente dc_boot.bin/dc_flash.bin)</string>
+    <string name="browser_path">Percorso di Sistema di default</string>
+    <string name="games_path">Percorso Archivio (Percorso delle immagini *.gdi, *.chd e *.cdi)</string>
+    <string name="game_path">Percorso Archivio Giochi di default</string>
+    <string name="config_home">Si prega di selezioanre la cartella principale (home).</string>
+    <string name="config_game">Si prega di selezionare la cartella dei giochi.</string>
+    <string name="unsupported">Versione del kernel non supportata!</string>
+    
+    <string name="boot_bios">Avvia il BIOS del Dreamcast</string>
+    <string name="missing_bios_title">BIOS del Dreamcast mancante</string>
+    <string name="missing_bios">Il BIOS del Dreamcast è mancante. Una copia del BIOS del Dreamcast è richiesta per far funzionare l\'emulatore. Assicurati che il file del BIOS è chiamato &quot;dc_boot.bin&quot; e si trova in %1$s/data/dc_boot.bin</string>
+    <string name="missing_flash_title">Flash ROM del Dreamcast mancante</string>
+    <string name="missing_flash">La Flash del Dreamcast è mancante. Una copia della Flash del Dreamcast è richiesta per far funzionare l\'emulatore. Assicurati che il file della Flash è chiamato &quot;dc_flash.bin&quot; e si trova in %1$s/data/dc_flash.bin</string>
+    <string name="require_bios">E\' necessario fornire il BIOS del Dreamcast.</string>
+    <string name="data_folder">La cartella dati corrente è verificata.</string>
+    
+    <string name="folder_bios">Avvia il BIOS</string>
+    <string name="folder_select">Seleziona la cartella attuale</string>
+    
+    <string name="optimization_opts">Opzioni di Ottimizzazione e di Debugging </string>
+    <string name="experimental_opts">Opzioni Sperimentali (Possono causare problemi)</string>
+    <string name="select_details">Abilita i Dettagli del Gioco</string>
+    <string name="select_dynarec">Dynarec</string>
+    <string name="select_unstable">Ottimizzazioni Instabili</string>
+    <string name="select_region">Regione del DC</string>
+    <string name="select_broadcast">Segnale</string>
+    <string name="select_limitfps">Limita FPS</string>
+    <string name="select_mipmaps">Usa Mipmaps (fixes SGX540)</string>
+    <string name="select_stretch">Modalità Widescreen</string>
+    <string name="set_frameskip">Valore del Frameskip</string>
+    <string name="select_render">PVR Rendering (attualmente non fa nulla)</string>
+    <string name="select_fps">Mostra FPS sullo Schermo</string>
+    <string name="select_software">Forza il Rendering Software</string>
+    <string name="select_sound">Disabilita l\'Emulazione del Sonoro</string>
+    <string name="select_depth">Profondità di Rendering</string>
+
+    <string name="games_listing">Lista Giochi</string>
+    
+    <string name="game_details">Dettagli Gioco - %1$s</string>
+    <string name="info_unavailable">Informazioni sul gioco non disponibili</string>
+    <string name="disk_loading">Caricamento Informazioni del Disco</string>
+
+    <string name="report_issue">Rilevato Crash Precedente</string>
+    <string name="bios_config">Configurazione fallita!</string>
+    
+    <string name="customize_touch_controls">Personalizza Controlli Touch</string>
+    <string name="launch_editor">Avvia l\'Editor</string>
+    <string name="touch_vibration">Vibrazione</string>
+    <string name="controller_a">Controller A</string>
+    <string name="controller_b">Controller B</string>
+    <string name="controller_c">Controller C</string>
+    <string name="controller_d">Controller D</string>
+    <string name="controller_not_connected">Controller Non Connesso</string>
+    <string name="controller_none_selected">Nessun Controller Selezionato</string>
+    <string name="select">Seleziona</string>
+    <string name="remove">Rimuovi</string>
+    <string name="select_controller_title">Seleziona Controller</string>
+    <string name="select_controller_message">Premi un bottone sul controller %1$s per assegnarlo alla porta</string>
+    <string name="controller_already_in_use">Questo controller è già in uso!</string>
+    <string name="joystick_layout">Usa il Joystick per i comandi D-Pad</string>
+    <string name="modified_layout">Abilita la Disposizione Personalizzata dei Tasti</string>
+    <string name="controller_compat">Abilita Modalità di Compatibilità</string>
+    <string name="controller_unavailable">Rilevato Gamepad IME !\nPer favore disabilita l\'interfaccia nativa</string>
+
+    <string name="customize_physical_controls">Personalizza Controlli Fisici</string>
+    <string name="map_keycode_title">Modifica Controller</string>
+    <string name="map_keycode_message">Premi il nuovo tasto sul controller per %1$s</string>
+
+    <string name="about_text">reicast è un emulatore del Dreamcast multi-piattaforma.</string>
+    <string name="revision_text">Versione: %1$s [%2$s]</string>
+    
+    <string-array name="controllers">
+        <item>Controller A</item>
+        <item>Controller B</item>
+        <item>Controller C</item>
+        <item>Controller D</item>
+    </string-array>
+    
+    <string name="browser">Navigatore</string>
+    <string name="settings">Impostazioni</string>
+    <string name="paths">Percorsi</string>
+    <string name="input">Input</string>
+    <string name="about">Informazioni</string>
+    <string name="rateme">Votami</string>
+    <string name="messages">Test Suite</string>
+    <string name="cloud">Cloud VMU</string>
+
+    <string name="cancel">Cancella</string>
+    <string name="dismiss">Scartare</string>
+    <string name="manual">Manuale</string>
+    <string name="options">Opzioni</string>
+    
+    <string name="cloudInfos">Con questo strumento puoi caricare/scaricare le tue VMUs su/da Dropbox, per poterle sincronizzare con tutti i tuoi dispositivi!</string>
+    <string name="uploadWarning">ATTENZIONE: Stai per caricare le tue VMU su Dropbox, considera che questa operazione SOVRASCRIVERA\' il tuo scorso caricamento!!!</string>
+    <string name="downloadWarning">ATTENZIONE: stai per scaricare le tue VMU da Dropbox, considera che questa operazione SOVRASCRIVERA\' le tue VMU attuali !! Comunque una copia di esse sarà creata nella cartella VmuBackups !</string>
+    <string name="uploadVMU">Carica VMU</string>
+    <string name="downloadVMU">Scarica VMU</string>
+</resources>

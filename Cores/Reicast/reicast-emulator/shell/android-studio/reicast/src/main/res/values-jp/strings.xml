@@ -1,0 +1,86 @@
+<resources>
+    
+    <string name="menu_settings">設定</string>
+    
+    <string name="system_path">システムパス（dc_boot.bin／dc_flash.binの場所）</string>
+    <string name="browser_path">デフォルトのシステムパス</string>
+    <string name="games_path">ストレージパス（*.gdi、*.cdi、または*.cdhイメージの場所）</string>
+    <string name="game_path">デフォルトゲーム·ストレージ</string>
+    <string name="config_home">ホームディレクトリを設定してください。</string>
+    <string name="config_game">ゲームディレクトリを設定してください。</string>
+    <string name="unsupported">カーネルのバージョンはサポートされていません！</string>
+    
+    <string name="boot_bios">ドリームキャストBIOSをスタート</string>
+    <string name="missing_bios">ドリームキャストBIOSが不足している。ドリームキャストBIOSが動作するためreicastために必要です。ここでBIOSファイルを入れてください：%1$s/data/dc_boot.bin</string>
+    <string name="missing_flash">ドリームキャストFlashが不足している。ドリームキャストFlashが動作するためreicastために必要です。ここでFlashファイルを入れてください：%1$s/data/dc_flash.bin</string>
+    <string name="require_bios">BIOSファイルを提供する必要があります。</string>
+    <string name="data_folder">データフォルダが想定されます。</string>
+    
+    <string name="folder_bios">BIOSをスタートする</string>
+    <string name="folder_select">フォルダーを選択</string>
+    
+    <string name="optimization_opts">最適化とデバッグの設定</string>
+    <string name="experimental_opts">実験的</string>
+    <string name="select_dynarec">Dynarecの設定</string>
+    <string name="select_unstable">不安定な最適化</string>
+    <string name="select_region">DC地域</string>
+    <string name="select_broadcast">ブロードキャスト</string>
+    <string name="select_limitfps">FPSを制限</string>
+    <string name="select_mipmaps">ミップマップを使用（SGX540のフィックス）</string>
+    <string name="select_stretch">ワイドスクリーンモード</string>
+    <string name="set_frameskip">フレームスキップ</string>
+    <string name="select_render">PVRレンダリング（現在役に立たない）</string>
+    <string name="select_fps">FPSを表示</string>
+    <string name="select_software">ソフトウェアレンダリング</string>
+    <string name="select_sound">サウンドを無効に</string>
+    <string name="select_depth">レンダラの深度</string>
+
+    <string name="games_listing">ゲームリスト</string>
+    
+    <string name="report_issue">前回のクラッシュ検出された</string>
+    <string name="bios_config">設定が失敗しました！</string>
+    
+    <string name="customize_touch_controls">タッチコントロールを編集</string>
+    <string name="launch_editor">エディタをスタート</string>
+    <string name="touch_vibration">振動</string>
+    <string name="controller_a">コントローラA</string>
+    <string name="controller_b">コントローラB</string>
+    <string name="controller_c">コントローラC</string>
+    <string name="controller_d">コントローラD</string>
+    <string name="controller_not_connected">コントローラが接続されていません %1$s</string>
+    <string name="controller_none_selected">コントローラが選択されていない。</string>
+    <string name="select">選択する</string>
+    <string name="remove">削除する</string>
+    <string name="select_controller_title">コントローラを選択</string>
+    <string name="select_controller_message">ポートに%1$sコントローラを割り当てるには、いずれかのボタンを押してください。</string>
+    <string name="controller_already_in_use">このコントローラはすでに使用されています。</string>
+    <string name="joystick_layout">Dパッドとしてジョイスティックを使用</string>
+    <string name="modified_layout">カスタムキーレイアウトを有効に</string>
+    <string name="controller_compat">互換モードを有効に</string>
+
+    <string name="customize_physical_controls">物理コントロールを編集</string>
+    <string name="map_keycode_title">コントローラを編集する</string>
+    <string name="map_keycode_message">%1$sボタンを押してください</string>
+
+    <string name="about_text">reicastはマルチプラットフォームのドリームキャストエミュレータです。</string>
+    <string name="revision_text">バージョン：%1$s [%2$s]</string>
+    
+    <string-array name="controllers">
+        <item>コントローラA</item>
+        <item>コントローラB</item>
+        <item>コントローラC</item>
+        <item>コントローラD</item>
+    </string-array>
+    
+    <string name="browser">ブラウザー</string>
+    <string name="settings">設定</string>
+    <string name="paths">パス</string>
+    <string name="input">コントローラー</string>
+    <string name="about">reicastについて</string>
+    <string name="rateme">私を評価してください</string>
+    <string name="messages">テストスイート</string>
+    
+    <string name="cancel">キャンセル</string>
+    <string name="manual">マニュアル</string>
+    
+</resources>

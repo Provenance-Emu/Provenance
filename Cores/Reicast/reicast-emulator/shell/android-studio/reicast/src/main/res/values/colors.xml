@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorDarkPrimary">#0b2032</color>
+    <color name="colorDarkPrimaryDark">#041121</color>
+    <color name="colorDarkAccent">#FF4081</color>
+    <color name="colorDarkAccentDark">#e91e63</color>
+    <color name="colorDarkText">#e0e0e0</color>
+    <color name="colorDarkTint">#e0e0e0</color>
+
+    <color name="colorBluePrimary">#226696</color>
+    <color name="colorBluePrimaryDark">#164f6e</color>
+    <color name="colorBlueAccent">#ffca28</color>
+    <color name="colorBlueAccentDark">#ffb74d</color>
+    <color name="colorBlueText">#e0e0e0</color>
+    <color name="colorBlueTint">#072540</color>
+
+    <color name="colorDreamPrimary">#6e6b66</color>
+    <color name="colorDreamPrimaryDark">#534e4b</color>
+    <color name="colorDreamAccent">#5787c7</color>
+    <color name="colorDreamAccentLight">#42a5f5</color>
+    <color name="colorDreamText">#3d3533</color>
+    <color name="colorDreamTint">#534e4b</color>
+
+    <color name="colorLink">#42a5f5</color>
+</resources>

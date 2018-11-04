@@ -1,0 +1,2 @@
+$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
+$(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework

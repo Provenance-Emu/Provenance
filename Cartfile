@@ -1,4 +1,20 @@
+# App
 github "bitstadium/HockeySDK-iOS"
 github "bitstadium/HockeySDK-tvOS"
 github "xmartlabs/XLActionController"
 github "bcylin/QuickTableViewController"
+#github "RxSwiftCommunity/RxDataSources"
+
+# PVSupport
+github "CocoaLumberjack/CocoaLumberjack"
+github "0xced/XCDLumberjackNSLogger"
+github "radex/SwiftyUserDefaults"
+
+# PVLibrary
+github "ZipArchive/ZipArchive"
+github "Provenance-Emu/realm-cocoa" # use our fork to speed up build times
+github "stephencelis/SQLite.swift"
+github "weichsel/ZIPFoundation"
+
+github "ReactiveX/RxSwift"
+github "Provenance-Emu/RxRealm"

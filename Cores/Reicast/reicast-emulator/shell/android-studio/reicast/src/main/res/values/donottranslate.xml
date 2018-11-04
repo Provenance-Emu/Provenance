@@ -1,0 +1,92 @@
+<resources>
+
+    <string name="app_name" translatable="false">reicast</string>
+
+    <string name="app_site" translatable="false">reicast.com</string>
+
+    <string-array name="depth">
+        <item>16</item>
+        <item>24</item>
+        <item>32</item>        
+    </string-array>
+
+    <string-array name="flash">
+        <item>bin</item>
+    </string-array>
+
+    <string-array name="cable">
+        <item>Generic</item>
+        <item>VGA</item>
+        <item>Component</item>
+        <item>TV</item>
+    </string-array>
+    
+    <string-array name="themes_app">
+        <item>Dark</item>
+        <item>Blue</item>
+        <item>Dream</item>
+    </string-array>
+
+    <string-array name="themes_ext">
+        <item>png</item>
+        <item>jpg</item>
+        <item>jpeg</item>
+    </string-array>
+    
+    <string-array name="images">
+        <item>cdi</item>
+        <item>chd</item>
+        <item>gdi</item>
+    </string-array>
+
+   	<string-array name="region">
+        <item>NTSC-J</item>
+        <item>NTSC-U, PAL-M/N</item>
+        <item>PAL-E</item>
+        <item>reicast</item>
+    </string-array>
+ 
+    <string-array name="broadcast">
+        <item>NTSC-J</item>
+        <item>NTSC-U</item>
+        <item>PAL-M</item>
+        <item>PAL-N</item>
+        <item>PAL-E</item>
+    </string-array>
+
+    <string-array name="bios">
+        <item>NTSC-J</item>
+        <item>NTSC-U, PAL-M/N</item>
+        <item>PAL-E</item>
+        <item>reicast</item>
+        <item>Katana</item>
+    </string-array>
+
+    <string-array name="bioscode">
+        <item>J</item>
+        <item>E</item>
+        <item>U</item>
+        <item>R</item>
+        <item>K</item>
+    </string-array>
+
+    <string-array name="peripherals">
+        <item>None</item>
+        <item>VMU</item>
+        <item>Microphone</item>
+        <item>Purupuru</item>
+    </string-array>
+
+    <string-array name="resolution">
+        <item>Standard</item>
+        <item>CRT (640x480)</item>
+        <item>Widescreen</item>
+    </string-array>
+
+    <string-array name="right_stick">
+        <item>None</item>
+        <item>L / R</item>
+        <item>A / B</item>
+    </string-array>
+
+</resources>

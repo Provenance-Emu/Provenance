@@ -1,0 +1,4 @@
+extraction:
+  cpp:
+    index:
+      build_command: cd shell/linux && make

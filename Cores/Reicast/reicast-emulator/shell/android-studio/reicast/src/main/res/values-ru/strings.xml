@@ -1,0 +1,139 @@
+<resources>
+    
+    <string name="menu_settings">Настройки</string>
+
+    <string name="system_path">Системный путь (расположение папки data с файлами dc_boot.bin и dc_flash.bin)</string>
+    <string name="browser_path">Системный путь по умолчанию</string>
+    <string name="games_path">Папка хранения образов (.gdi, .chd, .cdi)</string>
+    <string name="button_theme">Тема оформления экранных кнопок</string>
+    <string name="bios_selection">Укажите папку с BIOS</string>
+    
+    <string name="game_path">Папка хранения образов по умолчанию</string>
+    <string name="config_home">Укажите домашнюю директорию</string>
+    <string name="config_data">Поместите BIOS в папку %1$s/data/</string>
+    <string name="config_game">Укажите папку хранения образов</string>
+    <string name="unsupported">Неподдерживаемая версия ядра!</string>
+    <string name="locate">Найти</string>
+    <string name="browse">Выбрать</string>
+    <string name="gdrive">Google Диск</string>
+    
+    <string name="boot_bios">Загрузить BIOS</string>
+    <string name="missing_bios_title">BIOS не найден</string>
+    <string name="missing_bios">Для работы эмулятора требуется дамп BIOS. Поместите файл dc_boot.bin в %1$s/data/</string>
+    <string name="missing_flash_title">Образ Flash не найден</string>
+    <string name="missing_flash">Для работы эмулятора требуется дамп Flash. Поместите файл dc_flash.bin в %1$s/data/</string>
+    <string name="require_bios">Укажите источник BIOS</string>
+    <string name="data_folder">The current data folder is assumed.</string>
+    
+    <string name="folder_bios">Загрузка BIOS</string>
+    <string name="folder_select">Выбрать текущую папку</string>
+
+    <string name="optimization_opts">Оптимизация и отладка</string>
+    <string name="experimental_opts">Тестовые настройки (могут вызвать ошибки)</string>
+    <string name="select_reios">Использовать reios BIOS</string>
+    <string name="select_bios">Регион BIOS (dc_flash[X].bin)</string>
+    <string name="select_details">Информация об игре</string>
+    <string name="select_dynarec">Динамическая рекомпиляция</string>
+    <string name="select_unstable">Нестабильные оптимизации</string>
+    <string name="select_cable">Тип кабеля</string>
+    <string name="select_region">Регион Dreamcast</string>
+    <string name="select_broadcast">Система ТВ</string>
+    <string name="select_limitfps">Ограничение FPS</string>
+    <string name="select_mipmaps">MIP-карты (откл. для SGX540)</string>
+    <string name="select_stretch">Широкоэкранный режим</string>
+    <string name="set_frameskip">Пропуск кадров</string>
+    <string name="select_syncrender">Синхронный рендеринг</string>
+    <string name="select_render">PVR рендеринг (временно не работает)</string>
+    <string name="select_fps">Счётчик FPS</string>
+    <string name="select_software">Программный рендеринг</string>
+    <string name="select_sound">Без эмуляции звука</string>
+    <string name="select_depth">Глубина рендеринга</string>
+    
+    <string name="games_listing">Список игр</string>
+    
+    <string name="game_details">Информация об игре - %1$s</string>
+    <string name="info_unavailable">Нет информации об игре</string>
+    <string name="disk_loading">Загрузка информации</string>
+    
+    <string name="report_issue">Сбой при предыдущем запуске</string>
+    <string name="bios_config">Ошибка конфигурации!</string>
+
+    <string name="customize_touch_controls">Настройка сенсорных кнопок</string>
+    <string name="launch_editor">Редактор</string>
+    <string name="touch_vibration">Вибрация при касании</string>
+    <string name="vibration_duration">Длительность вибрации</string>
+    <string name="controller_a">Контроллер A</string>
+    <string name="controller_b">Контроллер B</string>
+    <string name="controller_c">Контроллер C</string>
+    <string name="controller_d">Контроллер D</string>
+    <string name="controller_not_connected">Контроллер не подключен %1$s</string>
+    <string name="controller_none_selected">Контроллер не выбран</string>
+    <string name="select">Назначить</string>
+    <string name="remove">Удалить</string>
+    <string name="select_controller_title">Выбор контроллера</string>
+    <string name="select_controller_message">Нажмите любую кнопку на контроллере %1$s для подключения к порту</string>
+    <string name="controller_already_in_use">Контроллер уже используется!</string>
+    <string name="rstick_mode">R-стик: вкл. - L/R, выкл. - A/B</string>
+    <string name="joystick_layout">Дублировать D-Pad на L-стик</string>
+    <string name="modified_layout">Разрешить изменение раскладки</string>
+    <string name="controller_compat">Режим совместимости</string>
+    <string name="controller_unavailable">Обнаружен Gamepad IME!\nПожалуйста, отключите нативный интерфейс</string>
+
+    <string name="customize_physical_controls">Настройка аппаратных кнопок</string>
+    <string name="map_keycode_title">Настройка контроллера</string>
+    <string name="map_keycode_message">Нажмите кнопку контроллера для %1$s</string>
+
+    <string name="about_text">Reicast - мультиплатформенный эмулятор Dreamcast</string>
+    <string name="revision_text">Версия: %1$s [%2$s]</string>
+    <string name="git_broken">Не установлен Github API</string>
+    
+    <string-array name="controllers">
+    <item>Контроллер A</item>
+    <item>Контроллер B</item>
+    <item>Контроллер C</item>
+    <item>Контроллер D</item>
+    </string-array>
+    
+    <string name="drawer_open">Вход в меню</string>
+	<string name="drawer_shut">Выход из меню</string>	
+    <string name="browser">Список игр</string>
+    <string name="settings">Настройки</string>
+    <string name="paths">Пути</string>
+    <string name="input">Управление</string>
+    <string name="about">Об эмуляторе</string>
+    <string name="rateme">Оценить</string>
+    <string name="messages">Отправить логи</string>
+    <string name="cloud">Облако для VMU</string>
+    
+    <string name="cancel">Отмена</string>
+    <string name="dismiss">Отмена</string>
+    <string name="manual">Вручную</string>
+    <string name="options">Опции</string>
+    <string name="report">Сообщить</string>
+    
+    <string name="cloudInfos">Данная утилита позволяет загружать и скачивать файлы карт памяти (VMU) с Dropbox для синхронизации с другими устройствамию.</string>
+    <string name="uploadWarning">ВНИМАНИЕ: вы собираетесь загрузить VMU на Dropbox. Это действие ЗАМЕНИТ загруженные ранее файлы!!</string>
+    <string name="downloadWarning">ВНИМАНИЕ: вы собираетесь скачать VMU с Dropbox. Это действие ЗАМЕНИТ скачанные ранее файлы!! Копия файлов будет сохранена 
+        в папке VmuBackups</string>
+    <string name="uploadVMU">Загрузить VMU</string>
+    <string name="downloadVMU">Скачать VMU</string>
+
+    <!-- Onscreen Menu -->
+    <string name="popup_button_back">Назад</string>
+    <string name="popup_button_disk">След. диск</string>
+    <string name="popup_button_vmu_swap">Поменять VMU</string>
+    <string name="popup_button_options">Настройки</string>
+    <string name="popup_button_debugging">Отладка</string>
+    <string name="popup_button_screenshot">Скриншот</string>
+    <string name="popup_button_exit">Выход</string>
+    <string name="popup_button_clear_cache">Очистка кэша</string>
+    <string name="popup_button_profiler_one">Profiler 1</string>
+    <string name="popup_button_profiler_two">Profiler 2</string>
+    <string name="popup_button_print_stats">Печать статистики</string>
+    <string name="popup_button_widescreen">Широкоэкранный режим</string>
+    <string name="popup_button_frames_down">Пропуск кадров -</string>
+    <string name="popup_button_frames_up">Пропуск кадров +</string>
+    <string name="popup_button_frame_limit">Ограничение FPS</string>
+    <string name="popup_button_audio">Эмуляция звука</string>
+    <string name="popup_button_turbo">Турбо-режим</string>
+</resources>

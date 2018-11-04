@@ -11,6 +11,38 @@ repositoryMap:
 - XLActionController:
   - name: XLActionController
     platforms: [iOS] # optional, all platforms if empty
+- ZIPFoundation:
+  - name: ZIPFoundation
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- realm-cocoa:
+  - name: Realm
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+  - name: RealmSwift
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- SQLite:
+  - name: SQLite
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+  - name: SQLite.swift
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- ZipArchive:
+  - name: ZipArchive
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- SwiftyUserDefaults:
+  - name: SwiftyUserDefaults
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- CocoaLumberjack:
+  - name: CocoaLumberjack
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+  - name: CocoaLumberjackSwift
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- XCDLumberjackNSLogger:
+  - name: XCDLumberjackNSLogger
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+- NSLogger:
+  - name: NSLogger
+    platforms: [iOS,tvOS] # optional, all platforms if empty
+  - name: NSLoggerSwift
+    platforms: [iOS,tvOS] # optional, all platforms if empty
 cache:
   local: ~/Library/Caches/Rome/
   s3Bucket: provenance-carthage

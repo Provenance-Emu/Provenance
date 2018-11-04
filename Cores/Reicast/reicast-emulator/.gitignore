@@ -1,0 +1,58 @@
+.DS_Store
+*.class
+*.orig
+*build_obj
+Workdir/data
+Workdir/reicast*
+Workdir/vmu*
+Workdir/webui*
+Workdir/emu.cfg
+Workdir/lib*ant.properties
+
+# iOS General
+.DS_Store
+*/build/*
+**/build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+profile
+*.moved-aside
+DerivedData
+.idea/
+*.hmap
+emulator.xccheckout
+reicast.xccheckout
+reicast-ios.xccheckout
+
+# Linux General
+shell/linux/.map
+shell/linux/nosym-reicast.elf
+shell/linux/reicast.elf
+
+# Visual Studio
+generated
+.vs
+
+# Android General
+bin/
+gen/
+obj/
+build/*
+*.so
+local.properties
+ant.properties
+
+# Android Studio
+.gradle
+.idea
+*.iml
+.externalNativeBuild
+gradle.properties
+shell/android-studio/reicast/src/main/assets/build

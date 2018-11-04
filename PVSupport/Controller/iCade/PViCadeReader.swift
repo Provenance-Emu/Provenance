@@ -26,7 +26,7 @@ final public class PViCadeReader: NSObject, iCadeEventDelegate {
             internalReader.removeFromSuperview()
 			keyWindow?.addSubview(internalReader)
         } else {
-			keyWindow?.bringSubviewToFront(internalReader)
+            keyWindow?.bringSubviewToFront(internalReader)
         }
         internalReader.delegate = self
         internalReader.active = true

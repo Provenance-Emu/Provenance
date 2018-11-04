@@ -26,3 +26,5 @@ report.xml
 *.back
 /fastlane/devices.txt
 /archive
+.vscode
+*.zip

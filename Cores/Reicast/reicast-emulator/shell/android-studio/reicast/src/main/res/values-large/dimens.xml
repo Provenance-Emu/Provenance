@@ -1,0 +1,10 @@
+<resources>
+
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+
+    <dimen name="primary_text_material">16sp</dimen>
+    <dimen name="secondary_text_material">14sp</dimen>
+
+</resources>

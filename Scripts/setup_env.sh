@@ -241,7 +241,7 @@ brew_install() {
   echo "Attempting to install brew (Homebrew)"
 
   if is_interactive_shell; then
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /usr/bin/env ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   else
     echo "Script not in interactive shell. Prompting for user input via Apple Script."
     

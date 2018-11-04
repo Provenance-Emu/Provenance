@@ -1,0 +1,132 @@
+<resources>
+
+    <string name="menu_settings">Einstellungen</string>
+
+    <string name="system_path">System-Pfad (Speicherort des data Ordners welcher dc_boot.bin und dc_flash.bin enthält)</string>
+    <string name="browser_path">Standard-System-Pfad</string>
+    <string name="games_path">Spiele-Pfad (Speicherort von .gdi, .chd oder .cdi Abbildern)</string>
+    <string name="button_theme">Onscreen-Button-Theme</string>
+
+    <string name="game_path">Standard-Spiele-Pfad</string>
+    <string name="config_home">Bitte konfigurieren Sie ihr Home-Verzeichnis.</string>
+    <string name="config_data">Bitte kopieren Sie den BIOS in %1$s/data/</string>
+    <string name="config_game">Bitte konfigurieren Sie ein Spiele-Verzeichnis.</string>
+    <string name="unsupported">Kernel-Version wird nicht unterstützt!</string>
+    <string name="locate">Finden</string>
+    <string name="browse">Durchsuchen</string>
+    
+    <string name="boot_bios">Dreamcast-BIOS starten</string>
+    <string name="missing_bios_title">Fehlendes Dreamcast-BIOS.</string>
+    <string name="missing_bios">Für einen funktionsfähigen Emulator ist das Dreamcast-BIOS erforderlich. Legen Sie die BIOS-Datei unter %1$s/data/dc_boot.bin ab.</string>
+    <string name="missing_flash_title">Fehlender Dreamcast-Flash-ROM.</string>
+    <string name="missing_flash">Für einen funktionsfähigen Emulator ist der Dreamcast-Flash erforderlich. Legen Sie die Flash-Datei unter %1$s/data/dc_flash.bin ab.</string>
+    <string name="require_bios">Es muss ein BIOS bereitgestellt werden.</string>
+    <string name="data_folder">Das aktuelle Datenverzeichnis wird überprüft.</string>
+    
+    <string name="folder_bios">BIOS STARTEN</string>
+    <string name="folder_select">AKTUELLES VERZEICHNIS WÄHLEN</string>
+
+    <string name="optimization_opts">Optimierungen und Debugging-Optionen</string>
+    <string name="experimental_opts">Experimentell (Kann Fehler verursachen)</string>
+    <string name="select_reios">Verwende reios-BIOS</string>
+    <string name="select_bios">BIOS-Region (dc_flash[X].bin)</string>
+    <string name="select_details">Aktiviere Spiele-Details</string>
+    <string name="select_dynarec">Dynarec-Optionen</string>
+    <string name="select_unstable">Instabile Optimierungen</string>
+    <string name="select_cable">Kabeltyp</string>
+    <string name="select_broadcast">Broadcast</string>
+    <string name="select_region">DC-Region</string>
+    <string name="select_limitfps">FPS begrenzen</string>
+    <string name="select_mipmaps">Verwende Mipmaps (Fehlerbehebung für den SGX540)</string>
+    <string name="select_stretch">Breitbildmodus</string>
+    <string name="set_frameskip">Frameskip-Wert</string>
+    <string name="select_render">PVR-Rendering (Hat momentan keine Funktion)</string>
+    <string name="select_fps">On-Screen-FPS anzeigen</string>
+    <string name="select_software">Softwarerendering erzwingen</string>
+    <string name="select_sound">Emulator-Sound deaktivieren</string>
+    <string name="select_depth">Rendering-Tiefe</string>
+
+    <string name="games_listing">Verfügbare Dreamcast-Spiele</string>
+
+    <string name="game_details">Spielinfoformationen - %1$s</string>
+    <string name="info_unavailable">Spielinformationen nicht verfügbar</string>
+    <string name="disk_loading">Lade Datenträgerinformationen</string>
+
+    <string name="report_issue">Vorhergehender Absturz erkannt</string>
+    <string name="bios_config">Konfiguration fehlgeschlagen!</string>
+
+    <string name="customize_touch_controls">Touchsteuerung anpassen</string>
+    <string name="launch_editor">Editor starten</string>
+    <string name="touch_vibration">Touchvibration</string>
+    <string name="vibration_duration">Dauer des haptischen Feedbacks</string>
+    <string name="controller_a">Controller A</string>
+    <string name="controller_b">Controller B</string>
+    <string name="controller_c">Controller C</string>
+    <string name="controller_d">Controller D</string>
+    <string name="controller_not_connected">Controller nicht verbunden</string>
+    <string name="controller_none_selected">Kein Controller ausgewählt %1$s</string>
+    <string name="select">Auswählen</string>
+    <string name="remove">Entfernen</string>
+    <string name="select_controller_title">Controller auswählen</string>
+    <string name="select_controller_message">Drücken Sie eine beliebige Taste auf Controller %1$s für ein Hinzufügen zum Port</string>
+    <string name="controller_already_in_use">Dieser Controller ist bereits in Verwendung!</string>
+    <string name="rstick_mode">Rechter Stick: an - L/R, aus - A/B</string>
+    <string name="modified_layout">Benutzerdefiniertes Layout</string>
+    <string name="controller_compat">Kompatibilitätsmodus aktivieren</string>
+    <string name="controller_unavailable">Gamepad-IME erkannt!\nBitte deaktivieren Sie das native Interface.</string>
+
+    <string name="customize_physical_controls">Physische Controller anpassen</string>
+    <string name="map_keycode_title">Controller ändern</string>
+    <string name="map_keycode_message">Drücken Sie die neue Controller-Taste für %1$s</string>
+
+    <string name="about_text">reicast ist ein Dreamcast-Emulator</string>
+    <string name="revision_text">Version: %1$s [%2$s]</string>
+    
+    <string-array name="controllers">
+        <item>Controller A</item>
+        <item>Controller B</item>
+        <item>Controller C</item>
+        <item>Controller D</item>
+    </string-array>
+
+   	<string name="browser">Browser</string>
+    <string name="settings">Einstellungen</string>
+    <string name="paths">Pfade</string>
+    <string name="input">Eingabe</string>
+    <string name="about">Über</string>
+    <string name="rateme">Bewerten</string>
+    <string name="messages">Logdateien senden</string>
+    <string name="cloud">Cloud-VMU</string>
+
+    <string name="cancel">Abbrechen</string>
+    <string name="dismiss">Verwerfen</string>
+    <string name="manual">Manuell</string>
+    <string name="options">Optionen</string>
+
+    <string name="cloudInfos">Mit diesem Tool können Sie ihre VMUs mit Dropbox synchronisieren.</string>
+    <string name="uploadWarning">ACHTUNG: Sie sind im Begriff Ihre VMUs in Ihre Dropbox hochzuladen. Beachten Sie bitte, dass dies ihren letzten Upload ÜBERSCHREIBEN wird!</string>
+    <string name="downloadWarning">ACHTUNG: Sie sind im Begriff Ihre VMUs von Ihrer Dropbox herunterzuladen. Beachten Sie bitte, dass dies ihren letzten Download ÜBERSCHREIBEN wird! Eine Sicherungkopie wird im VmuBackups angelegt.</string>
+    <string name="uploadVMU">VMU hochladen</string>
+    <string name="downloadVMU">VMU herunterladen</string>
+
+    <!-- Onscreen Menu -->
+    <string name="popup_button_back">Zurück</string>
+    <string name="popup_button_disk">Disk wechseln</string>
+    <string name="popup_button_vmu_swap">VMU wechseln</string>
+    <string name="popup_button_options">Konfigurationsmenü</string>
+    <string name="popup_button_debugging">Debug-Menü</string>
+    <string name="popup_button_screenshot">Screenshot</string>
+    <string name="popup_button_exit">Emulator verlassen</string>
+    <string name="popup_button_clear_cache">Cache leeren</string>
+    <string name="popup_button_profiler_one">Profiler 1</string>
+    <string name="popup_button_profiler_two">Profiler 2</string>
+    <string name="popup_button_print_stats">Statistiken anzeigen</string>
+    <string name="popup_button_widescreen">Breitbild</string>
+    <string name="popup_button_frames_down">Frameskip -</string>
+    <string name="popup_button_frames_up">Frameskip +</string>
+    <string name="popup_button_frame_limit">Frameratebegrenzug</string>
+    <string name="popup_button_audio">Emulator-Sound</string>
+    <string name="popup_button_turbo">Turbo</string>
+    
+    <string name="git_broken">GitHub Native is nicht verfügbar!</string>
+</resources>

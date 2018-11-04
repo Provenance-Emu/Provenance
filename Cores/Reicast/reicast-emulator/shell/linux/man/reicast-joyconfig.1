@@ -1,0 +1,74 @@
+.\" reicast.1:
+
+.TH  "REICAST-JOYCONFIG" "1" "August 27, 2015" "REICAST-JOYCONFIG" "reicast-joyconfig"
+
+.SH NAME
+
+reicast-joyconfig \- An editor for Reicast controller mappings.
+
+.SH SYNOPSIS
+
+\fBreicast-joyconfig\fR [-h | [-d DEVICE_ID] [-f FILE]]
+
+.SH "DESCRIPTION"
+
+\fBreicast-joyconfig\fR assists you when creating custom mappings for the \fBreicast\fR Dreamcast emulator.
+
+.SH "EXAMPLE COMMANDLINE"
+
+.TP
+\fBNo command line options will give you a list of devices that you can choose from and then start the mapping assistant.\fR
+reicast-joyconfig
+
+.TP
+\fBCreate a mapping for /dev/input/event3.\fR
+reicast-joyconfig -d 3
+
+.TP
+\fBCreate a mapping for /dev/input/event3 and save the mapping file to ~/.config/reicast/mappings/my_mapping.cfg.\fR
+reicast-joyconfig -d 3 -f ~/.config/reicast/mappings/my_mapping.cfg
+
+.SH "GENERAL OPTIONS"
+
+.TP
+\fB-h\fR, \fB--help\fR
+Show a short help text.
+
+.TP
+\fB-d DEVICE_ID\fR, \fB--device-id DEVICE_ID\fR
+Create a mapping for a specific device. The device ID is the number X from /dev/input/eventX.
+
+\fB-f FILE\fR, \fB--file FILE\fR
+Save the created mapping to a file. By default, the mapping will be printed to the standard output.
+
+.SH "KNOWN ISSUES"
+
+If you're using a wireless controller, please make sure it is on before creating a mapping. Some controllers emit "Button Pressed/Released" signals when turning them on, which may lead to wrongly mapped keys.
+
+.SH "PYTHON VERSION"
+
+.TP
+\fBreicast-joyconfig\fR is written in Python and needs the evdev module to work:
+\fIhttps://pypi.python.org/pypi/evdev\fP
+
+.TP
+Distributions like Ubuntu have the evdev module as a package in their repositories - in these cases you should use your package manager instead of pip to install it.
+
+.TP
+Although \fBreicast-joyconfig\fR does support both Python 2.6 or higher and 3.0 or higher, you need to run \fBreicast-joyconfig\fR with the same Python version that you installed the evdev module for, i.e. if you installed the evdev module for Python 2, you also need to run \fBreicast-joyconfig\fR using Python 2 and vice-versa.
+
+.SH "AUTHOR"
+
+.TP
+\fBreicast\fR is developed by a number of people. A list of contributors can be obtained at:
+\fIhttps://github.com/reicast/reicast-emulator/graphs/contributors\fP
+
+.TP
+Head over to reicast's git repository if you want to contibute:
+\fIhttps://github.com/reicast/reicast-emulator\fP
+
+.TP
+This is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License (Version 2).
+
+.SH "SEE ALSO"
+\fBreicast\fR(1)

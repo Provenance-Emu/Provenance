@@ -1,0 +1,54 @@
+---
+format_version: '5'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+trigger_map:
+- push_branch: "*"
+  workflow: primary
+- pull_request_source_branch: "*"
+  workflow: primary
+workflows:
+  deploy:
+    steps:
+    - activate-ssh-key@3.1.1:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4.0.11: {}
+    - cache-pull@2.0.1: {}
+    - script@1.1.5:
+        title: Do anything with Script step
+    - certificate-and-profile-installer@1.9.3: {}
+    - recreate-user-schemes@1.0.2:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+    - xcode-archive@2.4.8:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+        - scheme: "$BITRISE_SCHEME"
+        - export_method: "$BITRISE_EXPORT_METHOD"
+    - deploy-to-bitrise-io@1.3.12: {}
+    - cache-push@2.0.5: {}
+  primary:
+    steps:
+    - activate-ssh-key@3.1.1:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4.0.11: {}
+    - cache-pull@2.0.1: {}
+    - script@1.1.5:
+        title: Do anything with Script step
+    - certificate-and-profile-installer@1.9.2: {}
+    - recreate-user-schemes@1.0.2:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+    - deploy-to-bitrise-io@1.3.10: {}
+    - cache-push@2.0.5: {}
+app:
+  envs:
+  - opts:
+      is_expand: false
+    BITRISE_PROJECT_PATH: shell/apple/emulator-ios/reicast-ios.xcodeproj
+  - opts:
+      is_expand: false
+    BITRISE_SCHEME: reicast-ios
+  - opts:
+      is_expand: false
+    BITRISE_EXPORT_METHOD: ad-hoc

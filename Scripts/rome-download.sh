@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 PLATFORM=${1:-iOS,tvOS}
 
 AWS_ACCESS_KEY_ID="M2B65BPG5JRKHIC8RAKX"
@@ -12,7 +13,7 @@ AWS_ENDPOINT="http://provenance.joemattiello.com:9000"
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/setup_env.sh"
+source "$DIR/setup_env.sh"
 
 lockfile_waithold "rome-download"
 

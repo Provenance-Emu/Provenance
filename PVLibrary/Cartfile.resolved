@@ -1,6 +1,0 @@
-github "ReactiveX/RxSwift" "4.4.0"
-github "RxSwiftCommunity/RxRealm" "0.7.6"
-github "ZipArchive/ZipArchive" "v2.1.4"
-github "realm/realm-cocoa" "v3.11.1"
-github "stephencelis/SQLite.swift" "0.11.5"
-github "weichsel/ZIPFoundation" "0.9.6"
