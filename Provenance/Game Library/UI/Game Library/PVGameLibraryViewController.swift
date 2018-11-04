@@ -552,19 +552,24 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     // Query results have changed, so apply them to the UICollectionView
 
                     self.gameLibraryGameController.semaphore.wait()
+                    defer {
+                        self.gameLibraryGameController.semaphore.signal()
+                    }
                     guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
                     let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
                     self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
-                    self.gameLibraryGameController.semaphore.signal()
                 case .update(_, let deletions, let insertions, let modifications):
                     if self.gameLibraryGameController.isInSearch {
                         return
                     }
 
                     self.gameLibraryGameController.semaphore.wait()
+                    defer {
+                        self.gameLibraryGameController.semaphore.signal()
+                    }
 
                     // Query results have changed, so apply them to the UICollectionView
                     guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
@@ -574,7 +579,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                     let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
                     self.gameLibraryGameController.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
-                    self.gameLibraryGameController.semaphore.signal()
                 case .error(let error):
                     // An error occurred while opening the Realm file on the background worker thread
                     fatalError("\(error)")
@@ -655,27 +659,28 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 guard let collectionView = self.collectionView else {return}
 
-                self.semaphore.wait()
                 collectionView.performBatchUpdates({
-                        let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
-                        collectionView.insertSections(IndexSet(insertIndexes))
+                    self.semaphore.wait()
 
-                        let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
-                        collectionView.deleteSections(IndexSet(delectIndexes))
+                    let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
+                    collectionView.insertSections(IndexSet(insertIndexes))
 
-                        deletions.forEach {
-                            guard let systems = self.systems else {
-                                return
-                            }
-                            let identifier = systems[$0].identifier
-                            self.systemSectionsTokens.removeValue(forKey: identifier)
+                    let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
+                    collectionView.deleteSections(IndexSet(delectIndexes))
+
+                    deletions.forEach {
+                        guard let systems = self.systems else {
+                            return
                         }
-                        // Not needed since we have watchers per section
-                        // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
+                        let identifier = systems[$0].identifier
+                        self.systemSectionsTokens.removeValue(forKey: identifier)
+                    }
+                    // Not needed since we have watchers per section
+                    // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
                 }, completion: { (success) in
                     systems.filter({self.systemSectionsTokens[$0.identifier] == nil}).forEach { self.addSectionToken(forSystem: $0) }
+                    self.semaphore.signal()
                 })
-                self.semaphore.signal()
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -708,7 +713,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     return
                 }
 
-                self.semaphore.wait()
+                self.semaphore.signal()
+                defer {
+                    self.semaphore.signal()
+                }
 
                 let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
                 let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
@@ -741,8 +749,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 }
 
                 self.saveStatesIsEmpty = needsDelete
-
-                self.semaphore.signal()
             case .error(let error):
             // An error occurred while opening the Realm file on the background worker thread
 				fatalError("\(error)")
@@ -768,7 +774,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 					return
 				}
 
-                self.semaphore.wait()
+                self.semaphore.signal()
+                defer {
+                    self.semaphore.signal()
+                }
 
                 let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
                 let needsDelete = (self.recentGames?.isEmpty ?? true) && !deletions.isEmpty
@@ -793,8 +802,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     }
                 	// Query results have changed, so apply them to the UICollectionView
                 self.recentGamesIsEmpty = needsDelete
-                self.semaphore.signal()
-                
+
             case .error(let error):
                 	// An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -821,28 +829,30 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 				if self.isInSearch {
 					return
 				}
-
-                self.semaphore.wait()
-
-                let needsInsert = self.favoritesIsHidden && !insertions.isEmpty
-				var needsDelete : Bool = false
-				if let favoriteGames = self.favoriteGames {
-					let totalDeletions = deletions.count - insertions.count
-					needsDelete = (favoriteGames.isEmpty && insertions.isEmpty) || (favoriteGames.count < totalDeletions)
-				}
-				let existingFavoritesSection = self.favoritesSection
-                self.favoritesIsHidden = needsDelete
-
-                    if needsInsert {
-                        self.collectionView?.insertSections([self.favoritesSection])
-                    }
-
-                    if needsDelete, existingFavoritesSection >= 0 {
-                        self.collectionView?.deleteSections([existingFavoritesSection])
-                    }
+                
                 self.semaphore.signal()
+                defer {
+                    self.semaphore.signal()
+                }
+                
+                let needsInsert = self.favoritesIsHidden && !insertions.isEmpty
+                var needsDelete : Bool = false
+                if let favoriteGames = self.favoriteGames {
+                    let totalDeletions = deletions.count - insertions.count
+                    needsDelete = (favoriteGames.isEmpty && insertions.isEmpty) || (favoriteGames.count < totalDeletions)
+                }
+                let existingFavoritesSection = self.favoritesSection
+                self.favoritesIsHidden = needsDelete
+                
+                if needsInsert {
+                    self.collectionView?.insertSections([self.favoritesSection])
+                }
+                
+                if needsDelete, existingFavoritesSection >= 0 {
+                    self.collectionView?.deleteSections([existingFavoritesSection])
+                }
             case .error(let error):
-					// An error occurred while opening the Realm file on the background worker thread
+                // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
         }
