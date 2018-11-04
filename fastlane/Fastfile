@@ -844,8 +844,7 @@ end
 
     carthage_private(
       command: "bootstrap",
-      platform: platform,
-      project_directory: dir
+      platform: platform
     )
   end
 
@@ -854,13 +853,10 @@ end
   lane :carthage_build do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    $carthage_paths.each do |dir|
-      carthage_private(
+    carthage_private(
       command: "build",
-      platform: platform,
-      project_directory: dir
+      platform: platform
     )
-    end
   end
 
   desc "Lane to update all carthage dependencies to latest versions"
@@ -868,13 +864,10 @@ end
   lane :carthage_update do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    $carthage_paths.each do |dir|
-      carthage_private(
+    carthage_private(
       command: "update",
-      platform: platform,
-      project_directory: dir
+      platform: platform
     )
-    end
   end
 
   desc "Lane to update all carthage dependencies to latest versions for iOS only"
