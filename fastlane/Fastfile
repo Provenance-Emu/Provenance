@@ -280,16 +280,17 @@ end
 
     git_submodule_update
 
-    # certificates # Download the certs?
-    setup_certificates_private
-
-    # temporarily disable automatic code signing
-    codesign_toggle(automatic: false)
-
     if is_ci?
+      # certificates # Download the certs?
+      setup_certificates_private
+
+      # temporarily disable automatic code signing
+      codesign_toggle(automatic: false)
+      
       rome_download
     end
-    # carthage_bootstrap
+
+    carthage_bootstrap
   end
 
   desc "Create a build for users "
@@ -554,18 +555,14 @@ end
     swift_version = sh("swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d \"()\" | tr \" \" \"-\"")
     srcroot = Dir.pwd
 
-    ["PVLibrary", "PVSupport"].each do |dir| 
-      Dir.chdir("#{srcroot}/../#{dir}") do
-      puts Dir.pwd
-      rome(
+    rome(
       # frameworks: ["MyFramework1", "MyFramework2"],   # Specify which frameworks to upload or download
       command: "download",                              # One of: download, upload, list
       #verbose: false,                                 # Print rome output inline
       platform: "iOS",                                # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
       cacheprefix: swift_version,
       #romefile: "#{dir}/Romefile"
-      )
-      end
+    )
     end
   end
 
@@ -732,7 +729,7 @@ end
       export_method: export_method,
       configuration: build_configuration,
       # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
-      silent: false,
+      silent: true,
       clean: false,
       skip_profile_detection: true,
       #skip_build_archive: true,
