@@ -270,7 +270,7 @@ end
     #get_provisioning_profile   # invokes sigh
 
     # Git git commit count
-    ENV["build_number"] = number_of_commits().to_s
+    ENV["build_number"] = number_of_commits.to_s
 
     updatePlistForBranch
 
@@ -290,7 +290,7 @@ end
       rome_download
     end
 
-    carthage_bootstrap
+    # carthage_bootstrap
   end
 
   desc "Create a build for users "
@@ -303,7 +303,6 @@ end
     UI.success "Successfully finished building Provenace"
     # if UI.confirm("Do you want to install to a connected device now?")
     # end
-
   end
 
   desc "Install last build to device"
@@ -394,7 +393,7 @@ end
     end
 
     badge_alpha
-    buid_ios_adhoc(
+    build_ios_adhoc(
       ipa_name: ipa_name,
       activeArchOnly: false,
       )
@@ -505,8 +504,12 @@ end
     version_number = get_version_number(target: "Provenance")
     # build_number = get_build_number
 
-    version = "#{version_number}"
-    add_badge(shield: "Version-#{version}-blue", alpha: true, dark: false)
+    version = version_number.to_s
+    add_badge(
+      shield: "Version-#{version}-blue", 
+      alpha: true, 
+      dark: false,
+      shield_no_resize: true)
   end
 
   private_lane :badge_beta do
@@ -694,7 +697,7 @@ end
   end
 
   # Future Alpha builds
-  private_lane :buid_ios_adhoc do |options|
+  private_lane :build_ios_adhoc do |options|
     activeArchOnly = options[:activeArchOnly] || false
     ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
     build_time = Time.now.strftime('%F')
