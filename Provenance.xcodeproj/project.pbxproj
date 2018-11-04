@@ -90,7 +90,6 @@
 		1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */; };
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
-		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
 		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */; };
@@ -118,7 +117,6 @@
 		1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
-		1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482161BA3592D00FDA50A /* libsqlite3.tbd */; };
@@ -189,27 +187,16 @@
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
 		B3447F94218BEE8900557ACE /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F93218BEE8900557ACE /* PVReicast.framework */; };
 		B3447F95218BEE8900557ACE /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F93218BEE8900557ACE /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B349AE5B1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE5C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE661E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AE691E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AE6F1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE8C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AE991E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AEA11E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AEA51E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AEC21E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AEC71E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AECC1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AECD1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AED51E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF2C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF3A1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF3C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF641E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF661E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AF691E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		B349AF6B1E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF6C1E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AF701E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B34E0739218C4B01007F6BD8 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3768494206A0C7C0007A99C /* PVYabause.framework */; };
@@ -2149,23 +2136,10 @@
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
-				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
-				B349AECD1E9ABCF900ACD416 /* (null) in Sources */,
-				B349AEC71E9ABCF900ACD416 /* (null) in Sources */,
-				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */,
-				B349AE5B1E9ABCF900ACD416 /* (null) in Sources */,
-				B349AF691E9ABCFA00ACD416 /* (null) in Sources */,
-				B349AE691E9ABCF900ACD416 /* (null) in Sources */,
-				B349AEA51E9ABCF900ACD416 /* (null) in Sources */,
-				B349AEA11E9ABCF900ACD416 /* (null) in Sources */,
-				B349AF6B1E9ABCFA00ACD416 /* (null) in Sources */,
-				B349AE991E9ABCF900ACD416 /* (null) in Sources */,
-				B349AE6F1E9ABCF900ACD416 /* (null) in Sources */,
-				B349AED51E9ABCF900ACD416 /* (null) in Sources */,
 				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
@@ -2229,12 +2203,10 @@
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
-				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */,
 				B349AE661E9ABCF900ACD416 /* (null) in Sources */,
 				B349AF3C1E9ABCF900ACD416 /* (null) in Sources */,
 				B349AE5C1E9ABCF900ACD416 /* (null) in Sources */,
 				B349AF661E9ABCFA00ACD416 /* (null) in Sources */,
-				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */,
 				B349AECC1E9ABCF900ACD416 /* (null) in Sources */,
 				B349AF6C1E9ABCFA00ACD416 /* (null) in Sources */,
 				B349AF701E9ABCFA00ACD416 /* (null) in Sources */,
