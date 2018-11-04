@@ -285,7 +285,7 @@ end
       setup_certificates_private
 
       # temporarily disable automatic code signing
-      codesign_toggle(automatic: false)
+      # codesign_toggle(automatic: false)
 
       rome_download
     end
@@ -515,7 +515,7 @@ end
 
   private_lane :reset_enviroment do
     plist_reset
-    codesign_toggle(automatic: true)
+    # codesign_toggle(automatic: true)
     # Make sure our directory is clean, except for changes Fastlane has made
     clean_build_artifacts
   end
