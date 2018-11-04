@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=reicast
-Comment=A Sega Dreamcast emulator
-Exec=nosym-reicast.elf
-Terminal=false
-Type=Application
-StartupNotify=true
-Icon=icon-32
-Categories=emulators;
