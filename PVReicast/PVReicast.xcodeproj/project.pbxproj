@@ -688,7 +688,6 @@
 		B339422B20783CBC008DBAB4 /* gzguts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gzguts.h; sourceTree = "<group>"; };
 		B339422C20783CBC008DBAB4 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		B339422D20783CBC008DBAB4 /* gzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
-		B339422E20783CBC008DBAB4 /* zlib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = zlib.xcodeproj; sourceTree = "<group>"; };
 		B339423120783CBC008DBAB4 /* inflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
 		B339423220783CBC008DBAB4 /* inftrees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
 		B339423320783CBC008DBAB4 /* uncompr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
@@ -2001,7 +2000,6 @@
 				B339422B20783CBC008DBAB4 /* gzguts.h */,
 				B339422C20783CBC008DBAB4 /* zlib.h */,
 				B339422D20783CBC008DBAB4 /* gzlib.c */,
-				B339422E20783CBC008DBAB4 /* zlib.xcodeproj */,
 				B339423120783CBC008DBAB4 /* inflate.h */,
 				B339423220783CBC008DBAB4 /* inftrees.c */,
 				B339423320783CBC008DBAB4 /* uncompr.c */,
@@ -2014,13 +2012,6 @@
 				B339423A20783CBC008DBAB4 /* zconf.h */,
 			);
 			path = zlib;
-			sourceTree = "<group>";
-		};
-		B339422F20783CBC008DBAB4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B339423B20783CBC008DBAB4 /* coreio */ = {
@@ -4028,10 +4019,6 @@
 				{
 					ProductGroup = B339434120783CBD008DBAB4 /* Products */;
 					ProjectRef = B339434020783CBD008DBAB4 /* reicast-osx.xcodeproj */;
-				},
-				{
-					ProductGroup = B339422F20783CBC008DBAB4 /* Products */;
-					ProjectRef = B339422E20783CBC008DBAB4 /* zlib.xcodeproj */;
 				},
 			);
 			projectRoot = "";

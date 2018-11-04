@@ -54,7 +54,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
 		1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
@@ -114,7 +113,6 @@
 		1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
 		1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F91B63D7CD0065FA39 /* GCDWebServerFileResponse.m */; };
 		1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */; };
-		1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
 		1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
@@ -170,6 +168,10 @@
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F89520B73BD000C5E502 /* PVSupport.framework */; };
 		B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
+		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
+		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
+		B31117B2218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
+		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32155442107D1D40085B18E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155432107D1D40085B18E /* PVLibrary.framework */; };
@@ -265,6 +267,8 @@
 		B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4B2058228E001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
 		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
+		B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		B3A683B3206B003E0051AEE4 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */; };
 		B3A683B4206B003E0051AEE4 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A683B2206B003E0051AEE4 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
@@ -373,8 +377,6 @@
 		B3F64ECD205CD1DD00C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
 		B3F64ED0205CD1F100C273C7 /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
-		B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
-		B3F64ED3205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */; };
 		B3F64ED6205CD21400C273C7 /* PVControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */; };
 		B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */; };
@@ -1651,7 +1653,7 @@
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
@@ -2087,6 +2089,7 @@
 				1A2FB109206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
+				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3AB37402187F569009D9244 /* PVSaturnControllerViewController.swift in Sources */,
 				B3AB37372187F569009D9244 /* PVPSXControllerViewController.swift in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */,
@@ -2103,6 +2106,7 @@
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				B3AB373B2187F569009D9244 /* PVPCEControllerViewController.swift in Sources */,
+				B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */,
 				B3AB373A2187F569009D9244 /* PVPCFXControllerViewController.swift in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
@@ -2114,7 +2118,6 @@
 				B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */,
 				B3AB373D2187F569009D9244 /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
-				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */,
 				B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				B3AB37392187F569009D9244 /* PVVBControllerViewController.swift in Sources */,
 				B3AB37352187F569009D9244 /* PVWonderSwanControllerViewController.swift in Sources */,
@@ -2140,7 +2143,6 @@
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
-				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
 				378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */,
@@ -2150,6 +2152,7 @@
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
 				B38A2A462102328600374CDD /* PVEmulatorViewController~iOS.swift in Sources */,
 				B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */,
+				B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
 				B35E6C21207ED7050040709A /* AppearanceScope.swift in Sources */,
 				B35E6C2B207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
@@ -2191,6 +2194,7 @@
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */,
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
+				B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
 				B349AF641E9ABCFA00ACD416 /* (null) in Sources */,
 				B349AE8C1E9ABCF900ACD416 /* (null) in Sources */,
@@ -2199,7 +2203,6 @@
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
 				1AD481DC1BA3544500FDA50A /* GCDWebServerDataRequest.m in Sources */,
 				B38A2A442102326800374CDD /* PVEmulatorViewController~tvOS.swift in Sources */,
-				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
@@ -2217,6 +2220,7 @@
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B3F64ED0205CD1F100C273C7 /* JSButton.swift in Sources */,
+				B31117B2218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
 				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */,
@@ -2227,6 +2231,7 @@
 				B3F64ED6205CD21400C273C7 /* PVControllerManager.swift in Sources */,
 				1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */,
 				B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */,
+				B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */,
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
@@ -2249,7 +2254,6 @@
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
-				B3F64ED3205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B35E6C24207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
@@ -2790,6 +2794,7 @@
 		B38E25F721573BC400355F53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2798,6 +2803,7 @@
 		B38E25F821573BC400355F53 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2806,6 +2812,7 @@
 		B3A2876620C76F9C00B4B2E3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2814,6 +2821,7 @@
 		B3A2876720C76F9C00B4B2E3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2822,6 +2830,7 @@
 		B3B29D412156177100903290 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2830,6 +2839,7 @@
 		B3B29D422156177100903290 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2838,6 +2848,7 @@
 		B3B29D4F21561F0600903290 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2846,6 +2857,7 @@
 		B3B29D5021561F0600903290 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

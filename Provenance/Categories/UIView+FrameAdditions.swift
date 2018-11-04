@@ -1,10 +1,11 @@
 import UIKit
 
-protocol HitAreaEnlarger : class {
+@objc
+public protocol HitAreaEnlarger : class {
 	var hitAreaInset : UIEdgeInsets {get set}
 }
 
-extension HitAreaEnlarger where Self:UIButton  {
+public extension HitAreaEnlarger where Self:UIButton  {
 	var touchAreaEdgeInsets: UIEdgeInsets {
 		get {
 			if let value = objc_getAssociatedObject(self, &hitAreaInset) as? NSValue {

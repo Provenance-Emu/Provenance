@@ -44,6 +44,10 @@
 		B3067F662106B8690091437F /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
 		B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F752106B9180091437F /* MobileCoreServices.framework */; };
+		B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32155462107D2AC0085B18E /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155452107D2AC0085B18E /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
@@ -74,12 +78,10 @@
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B38D8FFD21577AFC00F7D25A /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
 		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
-		B3AF475621071CDB002211EE /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475921071CDB002211EE /* LzmaSDKObjCItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473E21071CA6002211EE /* LzmaSDKObjCItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475A21071CDB002211EE /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3AF475B21071CDB002211EE /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475C21071CDB002211EE /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475D21071CFB002211EE /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF476021071E28002211EE /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473421071CA6002211EE /* LzmaSDKObjC.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -212,10 +214,8 @@
 		B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9521077B3100E7AF79 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9621077B3100E7AF79 /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9721077B3100E7AF79 /* LzmaSDKObjCItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473E21071CA6002211EE /* LzmaSDKObjCItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9821077B3100E7AF79 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9921077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9A21077B3100E7AF79 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9C21077B3100E7AF79 /* MethodProps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BA21071CA6002211EE /* MethodProps.cpp */; };
@@ -1506,11 +1506,11 @@
 				B3274E652106BAA200857F52 /* NSString+Hashing.h in Headers */,
 				B3AF475A21071CDB002211EE /* LzmaSDKObjCMutableItem.h in Headers */,
 				B3AF475D21071CFB002211EE /* LzmaSDKObjCTypes.h in Headers */,
+				B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */,
 				B3AF475C21071CDB002211EE /* LzmaSDKObjCWriter.h in Headers */,
-				B3AF475621071CDB002211EE /* LzmaSDKObjC.h in Headers */,
 				B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */,
+				B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */,
 				B3AF475921071CDB002211EE /* LzmaSDKObjCItem.h in Headers */,
-				B3AF475B21071CDB002211EE /* LzmaSDKObjCReader.h in Headers */,
 				B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */,
 				B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */,
 			);
@@ -1527,11 +1527,11 @@
 				B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */,
 				B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */,
 				B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */,
+				B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */,
 				B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */,
-				B3C04A9521077B3100E7AF79 /* LzmaSDKObjC.h in Headers */,
 				B3C04A9621077B3100E7AF79 /* LzmaSDKObjCExtern.h in Headers */,
+				B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */,
 				B3C04A9721077B3100E7AF79 /* LzmaSDKObjCItem.h in Headers */,
-				B3C04A9821077B3100E7AF79 /* LzmaSDKObjCReader.h in Headers */,
 				B3C04A9921077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.h in Headers */,
 				B3C04A9A21077B3100E7AF79 /* OESQLiteDatabase.h in Headers */,
 			);
