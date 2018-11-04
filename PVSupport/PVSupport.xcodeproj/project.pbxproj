@@ -91,6 +91,12 @@
 		B3B104E1218F6D0700210C39 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E6DAE820B7D26C00454DD4 /* NSLoggerSwift.framework */; };
 		B3B104E2218F6D0700210C39 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E6DAE620B7D26C00454DD4 /* XCDLumberjackNSLogger.framework */; };
 		B3B104E4218F6D0800210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104E3218F6D0800210C39 /* SwiftyUserDefaults.framework */; };
+		B3B104E6218F7CD100210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104E5218F7CD100210C39 /* SwiftyUserDefaults.framework */; };
+		B3B104E7218F7CF100210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41320B67C9700AE4E00 /* CocoaLumberjack.framework */; };
+		B3B104E8218F7CF100210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41120B67C9600AE4E00 /* CocoaLumberjackSwift.framework */; };
+		B3B104E9218F7CF100210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41520B67C9700AE4E00 /* NSLogger.framework */; };
+		B3B104EA218F7CF100210C39 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41220B67C9600AE4E00 /* NSLoggerSwift.framework */; };
+		B3B104EB218F7CF100210C39 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
@@ -107,14 +113,8 @@
 		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
 		B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
-		B3E7089220B7E117005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41320B67C9700AE4E00 /* CocoaLumberjack.framework */; };
-		B3E7089320B7E117005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41120B67C9600AE4E00 /* CocoaLumberjackSwift.framework */; };
-		B3E7089420B7E117005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41520B67C9700AE4E00 /* NSLogger.framework */; };
-		B3E7089520B7E117005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41220B67C9600AE4E00 /* NSLoggerSwift.framework */; };
-		B3E7089620B7E117005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */; };
 		B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
 		B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
-		B3F3CF7020C90E0000F313E5 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3CF6F20C90E0000F313E5 /* SwiftyUserDefaults.framework */; };
 		B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 		B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
 		B3FA5D491D6B859800060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FA5D481D6B859800060D71 /* Foundation.framework */; };
@@ -197,6 +197,7 @@
 		B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeMocuteController.swift; sourceTree = "<group>"; };
 		B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeReaderView.swift; sourceTree = "<group>"; };
 		B3B104E3218F6D0800210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = ../Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
+		B3B104E5218F7CD100210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = ../Carthage/Build/tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
@@ -231,16 +232,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3579D042106ADC500DDEBD6 /* GameController.framework in Frameworks */,
-				B3E7089220B7E117005BAA5A /* CocoaLumberjack.framework in Frameworks */,
-				B3E7089320B7E117005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3E7089420B7E117005BAA5A /* NSLogger.framework in Frameworks */,
-				B3E7089520B7E117005BAA5A /* NSLoggerSwift.framework in Frameworks */,
-				B3F3CF7020C90E0000F313E5 /* SwiftyUserDefaults.framework in Frameworks */,
-				B3E7089620B7E117005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
 				B3A9F4301DE86E6D008450F5 /* UIKit.framework in Frameworks */,
 				B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */,
 				B3FA5D4D1D6B859F00060D71 /* AudioToolbox.framework in Frameworks */,
 				B3FA5D491D6B859800060D71 /* Foundation.framework in Frameworks */,
+				B3B104E7218F7CF100210C39 /* CocoaLumberjack.framework in Frameworks */,
+				B3B104E8218F7CF100210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
+				B3B104E9218F7CF100210C39 /* NSLogger.framework in Frameworks */,
+				B3B104EA218F7CF100210C39 /* NSLoggerSwift.framework in Frameworks */,
+				B3B104EB218F7CF100210C39 /* XCDLumberjackNSLogger.framework in Frameworks */,
+				B3B104E6218F7CD100210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +302,7 @@
 			isa = PBXGroup;
 			children = (
 				B3B104E3218F6D0800210C39 /* SwiftyUserDefaults.framework */,
+				B3B104E5218F7CD100210C39 /* SwiftyUserDefaults.framework */,
 				B34AB56C2106D7B800C45F09 /* NSLogger.framework */,
 				B34AB56D2106D7B800C45F09 /* NSLoggerSwift.framework */,
 				B34AB56E2106D7B800C45F09 /* XCDLumberjackNSLogger.framework */,

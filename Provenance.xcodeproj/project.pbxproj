@@ -174,8 +174,6 @@
 		B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32155442107D1D40085B18E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155432107D1D40085B18E /* PVLibrary.framework */; };
 		B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3274E812106BEA000857F52 /* PVLibrary.framework */; };
-		B32D857E2174156A001CE0E5 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D857C2174156A001CE0E5 /* CocoaLumberjack.framework */; };
-		B32D857F2174156A001CE0E5 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D857D2174156A001CE0E5 /* CocoaLumberjackSwift.framework */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -203,8 +201,6 @@
 		B34E073A218C4B01007F6BD8 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3768494206A0C7C0007A99C /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
-		B3524101210AD9C4006127B7 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35240FF210AD9C4006127B7 /* RealmSwift.framework */; };
-		B3524102210AD9C4006127B7 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3524100210AD9C4006127B7 /* Realm.framework */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; };
@@ -367,6 +363,11 @@
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B3B104D9218F388E00210C39 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
+		B3B104EE218F7D6A00210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */; };
+		B3B104EF218F7D6A00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
+		B3B104F0218F7D6A00210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10463218F20FC00210C39 /* Realm.framework */; };
+		B3B104F1218F7D6A00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
+		B3B104F2218F7D7500210C39 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10470218F20FE00210C39 /* XCDLumberjackNSLogger.framework */; };
 		B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -1089,12 +1090,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B32D857E2174156A001CE0E5 /* CocoaLumberjack.framework in Frameworks */,
-				B32D857F2174156A001CE0E5 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3274E822106BEA000857F52 /* PVLibrary.framework in Frameworks */,
 				B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */,
-				B3524101210AD9C4006127B7 /* RealmSwift.framework in Frameworks */,
-				B3524102210AD9C4006127B7 /* Realm.framework in Frameworks */,
+				B3B104EE218F7D6A00210C39 /* CocoaLumberjack.framework in Frameworks */,
+				B3B104EF218F7D6A00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
+				B3B104F0218F7D6A00210C39 /* Realm.framework in Frameworks */,
+				B3B104F1218F7D6A00210C39 /* RealmSwift.framework in Frameworks */,
+				B3B104F2218F7D7500210C39 /* XCDLumberjackNSLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
