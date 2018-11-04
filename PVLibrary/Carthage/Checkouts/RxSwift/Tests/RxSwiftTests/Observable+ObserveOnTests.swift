@@ -87,8 +87,6 @@ extension ObservableObserveOnTest {
             })
         }
 
-
-
         XCTAssert(didExecute)
     }
 
@@ -107,15 +105,15 @@ extension ObservableObserveOnTest {
         }
 
         func testObserveOnDispatchQueue_DispatchQueueSchedulerIsSerial() {
-            var numberOfConcurrentEvents: AtomicInt = 0
-            var numberOfExecutions: AtomicInt = 0
+            var numberOfConcurrentEvents = AtomicInt(0)
+            var numberOfExecutions = AtomicInt(0)
             runDispatchQueueSchedulerTests { scheduler in
                 XCTAssert(Resources.numberOfSerialDispatchQueueObservables == 0)
                 let action = { (s: Void) -> Disposable in
-                    XCTAssert(AtomicIncrement(&numberOfConcurrentEvents) == 1)
+                    XCTAssertEqual(numberOfConcurrentEvents.increment(), 0)
                     self.sleep(0.1) // should be enough to block the queue, so if it's concurrent, it will fail
-                    XCTAssert(AtomicDecrement(&numberOfConcurrentEvents) == 0)
-                    let _ = AtomicIncrement(&numberOfExecutions)
+                    XCTAssertEqual(numberOfConcurrentEvents.decrement(), 1)
+                    numberOfExecutions.increment()
                     return Disposables.create()
                 }
                 _ = scheduler.schedule((), action: action)
@@ -123,8 +121,8 @@ extension ObservableObserveOnTest {
                 return Disposables.create()
             }
 
-            XCTAssert(Resources.numberOfSerialDispatchQueueObservables == 0)
-            XCTAssert(numberOfExecutions == 2)
+            XCTAssertEqual(Resources.numberOfSerialDispatchQueueObservables, 0)
+            XCTAssertEqual(numberOfExecutions.load(), 2)
         }
     #endif
 
@@ -319,6 +317,109 @@ extension ObservableObserveOnTest {
         }
     #endif
 }
+
+// Because of `self.wait(for: [blockingTheSerialScheduler], timeout: 1.0)`.
+// Testing this on Unix should be enough.
+#if !os(Linux)
+// Test event is cancelled properly.
+extension ObservableObserveOnTest {
+    func testDisposeWithEnqueuedElement() {
+        let emit = PublishSubject<Int>()
+        let blockingTheSerialScheduler = self.expectation(description: "blocking")
+        let unblock = self.expectation(description: "unblock")
+        let testDone = self.expectation(description: "test done")
+        let scheduler = SerialDispatchQueueScheduler(qos: .default)
+        var events: [Event<Int>] = []
+        let subscription = emit.observeOn(scheduler).subscribe { update in
+            switch update {
+            case .next(let value):
+                if value == 0 {
+                    blockingTheSerialScheduler.fulfill()
+                    self.wait(for: [unblock], timeout: 1.0)
+                }
+            default:
+                break
+            }
+            events.append(update)
+        }
+        emit.on(.next(0))
+        self.wait(for: [blockingTheSerialScheduler], timeout: 1.0)
+        emit.on(.next(1))
+        _ = scheduler.schedule(()) { _ in
+            testDone.fulfill()
+            return Disposables.create()
+        }
+        subscription.dispose()
+        unblock.fulfill()
+        self.wait(for: [testDone], timeout: 1.0)
+        XCTAssertEqual(events, [.next(0)])
+    }
+
+    func testDisposeWithEnqueuedError() {
+        let emit = PublishSubject<Int>()
+        let blockingTheSerialScheduler = self.expectation(description: "blocking")
+        let unblock = self.expectation(description: "unblock")
+        let testDone = self.expectation(description: "test done")
+        let scheduler = SerialDispatchQueueScheduler(qos: .default)
+        var events: [Event<Int>] = []
+        let subscription = emit.observeOn(scheduler).subscribe { update in
+            switch update {
+            case .next(let value):
+                if value == 0 {
+                    blockingTheSerialScheduler.fulfill()
+                    self.wait(for: [unblock], timeout: 1.0)
+                }
+            default:
+                break
+            }
+            events.append(update)
+        }
+        emit.on(.next(0))
+        self.wait(for: [blockingTheSerialScheduler], timeout: 1.0)
+        emit.on(.error(TestError.dummyError))
+        _ = scheduler.schedule(()) { _ in
+            testDone.fulfill()
+            return Disposables.create()
+        }
+        subscription.dispose()
+        unblock.fulfill()
+        self.wait(for: [testDone], timeout: 1.0)
+        XCTAssertEqual(events, [.next(0)])
+    }
+
+    func testDisposeWithEnqueuedCompleted() {
+        let emit = PublishSubject<Int>()
+        let blockingTheSerialScheduler = self.expectation(description: "blocking")
+        let unblock = self.expectation(description: "unblock")
+        let testDone = self.expectation(description: "test done")
+        let scheduler = SerialDispatchQueueScheduler(qos: .default)
+        var events: [Event<Int>] = []
+        let subscription = emit.observeOn(scheduler).subscribe { update in
+            switch update {
+            case .next(let value):
+                if value == 0 {
+                    blockingTheSerialScheduler.fulfill()
+                    self.wait(for: [unblock], timeout: 1.0)
+                }
+            default:
+                break
+            }
+            events.append(update)
+        }
+        emit.on(.next(0))
+        self.wait(for: [blockingTheSerialScheduler], timeout: 1.0)
+        emit.on(.completed)
+        _ = scheduler.schedule(()) { _ in
+            testDone.fulfill()
+            return Disposables.create()
+        }
+        subscription.dispose()
+        unblock.fulfill()
+        self.wait(for: [testDone], timeout: 1.0)
+        XCTAssertEqual(events, [.next(0)])
+    }
+}
+#endif
 
 // observeOn concurrent scheduler
 class ObservableObserveOnTestConcurrentSchedulerTest: ObservableObserveOnTestBase {

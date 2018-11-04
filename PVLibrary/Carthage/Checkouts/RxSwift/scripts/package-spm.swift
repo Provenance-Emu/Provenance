@@ -28,6 +28,7 @@ let allowedExtensions = [
     ".swift",
     ".h",
     ".m",
+    ".c",
 ]
 // Those tests are dependent on conditional compilation logic and it's hard to handle them automatically
 // They usually test some internal state, so it should be ok to exclude them for now.
@@ -45,7 +46,10 @@ let excludedTests: [String] = [
     "testShareReplayLatestWhileConnectedDisposableDoesntRetainAnything",
     "testSingle_DecrementCountsFirst",
     "testSinglePredicate_DecrementCountsFirst",
-    "testLockUnlockCountsResources"
+    "testLockUnlockCountsResources",
+    "testDisposeWithEnqueuedElement",
+    "testDisposeWithEnqueuedError",
+    "testDisposeWithEnqueuedCompleted",
 ]
 
 func excludeTest(_ name: String) -> Bool {
@@ -160,11 +164,7 @@ func buildAllTestsTarget(_ testsPath: String) throws {
         let matchIndexes = classMatches
             .map { $0.range.location }
 
-        #if swift(>=4.0)
-            let classNames = classMatches.map { (testContent as NSString).substring(with: $0.range(at: 1)) as NSString }
-        #else
-            let classNames = classMatches.map { (testContent as NSString).substring(with: $0.rangeAt(1)) as NSString }
-        #endif
+        let classNames = classMatches.map { (testContent as NSString).substring(with: $0.range(at: 1)) as NSString }
 
         let ranges = zip([0] + matchIndexes, matchIndexes + [testContent.count]).map { NSRange(location: $0, length: $1 - $0) }
         let classRanges = ranges[1 ..< ranges.count]
@@ -179,11 +179,7 @@ func buildAllTestsTarget(_ testsPath: String) throws {
 
             let methodMatches = testMethodsExpression.matches(in: classCode as String, options: [], range: NSRange(location: 0, length: classCode.length))
 
-            #if swift(>=4.0)
-                let methodNameRanges = methodMatches.map { $0.range(at: 1) }
-            #else
-                let methodNameRanges = methodMatches.map { $0.rangeAt(1) }
-            #endif
+            let methodNameRanges = methodMatches.map { $0.range(at: 1) }
 
             let testMethodNames = methodNameRanges
                 .map { classCode.substring(with: $0) }
@@ -272,7 +268,8 @@ func buildAllTestsTarget(_ testsPath: String) throws {
     try serializedMainContent.write(toFile: "\(testsPath)/main.swift", atomically: true, encoding: String.Encoding.utf8)
 }
 
-
+try packageRelativePath(["RxAtomic/RxAtomic.c"], targetDirName: "RxAtomic")
+try packageRelativePath(["RxAtomic/include"], targetDirName: "RxAtomic/include")
 try packageRelativePath(["RxSwift"], targetDirName: "RxSwift")
 //try packageRelativePath(["RxCocoa/Common", "RxCocoa/macOS", "RxCocoa/RxCocoa.h"], targetDirName: "RxCocoa")
 
