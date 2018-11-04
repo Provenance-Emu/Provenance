@@ -453,18 +453,6 @@ end
 
     # Build tvOS app
     # match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf-extension"], type: "adhoc", platform: "tvos")
-    # carthage(
-    #   command: "bootstrap",
-    #   platform: "tvOS",
-    #   project_directory: "PVSupport"
-    # )
-    # carthage(
-    #   command: "build",
-    #   use_binaries: false,
-    #   cache_builds: true,
-    #   platform: "tvOS",
-    #   project_directory: "PVSupport"
-    # )
     # ipa_name = "ProvenanceTV-#{git_branch}-#{build_number}.ipa"
     # build_app(workspace: "Provenance.xcworkspace", scheme: "ProvenanceTV-Release", output_name: ipa_name, include_bitcode: false)
 
@@ -853,15 +841,12 @@ end
   desc "Option: `platform` tvOS,iOS"
   lane :carthage_bootstrap do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
-    dirs = options.fetch(:directory, 'PVSupport,PVLibrary,./')
 
-    dirs.split(',').each do |dir|
-      carthage_private(
-        command: "bootstrap",
-        platform: platform,
-        project_directory: dir
-      )
-    end
+    carthage_private(
+      command: "bootstrap",
+      platform: platform,
+      project_directory: dir
+    )
   end
 
   desc "Lane to run build all carthage dependencies"
