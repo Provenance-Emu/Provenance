@@ -8,6 +8,7 @@
 //
 
 import UIKit
+import PVSupport
 
 final class PVLicensesViewController: UIViewController {
     #if os(tvOS)

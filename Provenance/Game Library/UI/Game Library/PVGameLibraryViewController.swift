@@ -639,18 +639,23 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 // Results are now populated and can be accessed without blocking the UI
                 self.setUpGameLibrary()
-            case .update(let systems, let deletions, let insertions, _):
+            case .update(let systems, let deletions, let insertions, let updates):
 				if self.isInSearch {
 					return
 				}
 
                 guard let collectionView = self.collectionView else {return}
                 collectionView.performBatchUpdates({
+                    let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
+                    collectionView.deleteSections(IndexSet(delectIndexes))
+
+//                    let reloadIndexes = updates.map { $0 + self.systemsSectionOffset }
+//                    collectionView.reloadSections(IndexSet(reloadIndexes))
+
                     let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
                     collectionView.insertSections(IndexSet(insertIndexes))
 
-                    let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
-                    collectionView.deleteSections(IndexSet(delectIndexes))
+
 
 					deletions.forEach {
 						guard let systems = self.systems else {
@@ -829,22 +834,25 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
         guard let collectionView = collectionView else { return }
         collectionView.performBatchUpdates({
-            if needsInsert {
-                ILOG("Inserting section \(section)")
-                collectionView.insertSections([section])
-            }
-
-            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
-            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
-            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
-            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
-
+            // 1. Delete
             if needsDelete {
                 ILOG("Deleting section \(section)")
                 collectionView.deleteSections([section])
             }
-        }, completion: { (completed) in
 
+            // 2. Update
+            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
+            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
+            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
+            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
+
+            // 3. Insert
+            if needsInsert {
+                ILOG("Inserting section \(section)")
+                collectionView.insertSections([section])
+            }
+        }, completion: { (completed) in
+            DLOG("Library collection view update completed")
         })
     }
 
@@ -2483,6 +2491,7 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
+#if os(iOS)
 fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
@@ -2491,3 +2500,4 @@ fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [U
 fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
 	return input.rawValue
 }
+#endif

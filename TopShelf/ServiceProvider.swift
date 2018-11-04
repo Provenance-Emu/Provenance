@@ -7,6 +7,7 @@
 import Foundation
 import RealmSwift
 import PVLibrary
+import PVSupport
 import TVServices
 
 /** Enabling Top Shelf
@@ -39,7 +40,7 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
     public var topShelfItems: [TVContentItem] {
         var topShelfItems = [TVContentItem]()
         if RealmConfiguration.supportsAppGroups {
-            let identifier = TVContentIdentifier(identifier: "id", container: nil)!
+            let identifier = TVContentIdentifier(identifier: "id", container: nil)
             let database = RomDatabase.sharedInstance
 
             topShelfItems.append(favoriteTopShelfItems(identifier: identifier, database: database)!)
@@ -51,10 +52,8 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
     }
 
     private func recentlyAddedTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
-        guard let recentlyAddedItems = TVContentItem(contentIdentifier: identifier) else {
-            ELOG("Couldn't get recently added TVContentItem for identifier \(identifier)")
-            return nil
-        }
+        let recentlyAddedItems = TVContentItem(contentIdentifier: identifier)
+
         recentlyAddedItems.title = "Recently Added"
         let recentlyAddedGames = database.all(PVGame.self, sortedByKeyPath:
             #keyPath(PVGame.importDate), ascending: false)
@@ -63,10 +62,8 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
     }
 
     private func recentlyPlayedTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
-        guard let recentlyPlayedItems = TVContentItem(contentIdentifier: identifier) else {
-            ELOG("Couldn't get recently played TVContentItem for identifier \(identifier)")
-            return nil
-        }
+        let recentlyPlayedItems = TVContentItem(contentIdentifier: identifier)
+        
         recentlyPlayedItems.title = "Recently Played"
         let recentlyPlayedGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         recentlyPlayedItems.topShelfItems = recentlyPlayedGames.map({$0.contentItem(with: identifier)! })
@@ -74,10 +71,8 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
     }
 
     private func favoriteTopShelfItems (identifier: TVContentIdentifier, database: RomDatabase) -> TVContentItem? {
-        guard let favoriteItems = TVContentItem(contentIdentifier: identifier) else {
-            ELOG("Couldn't get favorite TVContentItem for identifier \(identifier)")
-            return nil
-        }
+        let favoriteItems = TVContentItem(contentIdentifier: identifier)
+
         favoriteItems.title = "Favorites"
         let favoriteGames = database.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
         favoriteItems.topShelfItems = favoriteGames.map({$0.contentItem(with: identifier)! })

@@ -9,6 +9,7 @@
 
 import TVServices
 import PVLibrary
+import PVSupport
 
 // Top shelf extensions
 extension PVRecentGame {
@@ -17,10 +18,8 @@ extension PVRecentGame {
             return nil
         }
 
-        guard let identifier = TVContentIdentifier(identifier: game.md5Hash, container: containerIdentifier),
-        let item = TVContentItem(contentIdentifier: identifier) else {
-            return nil
-        }
+        let identifier = TVContentIdentifier(identifier: game.md5Hash, container: containerIdentifier)
+        let item = TVContentItem(contentIdentifier: identifier)
 
         item.title = game.title
         item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)

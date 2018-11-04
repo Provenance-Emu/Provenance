@@ -2,8 +2,6 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#import "kICadeControllerSetting.h"
-
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
 
@@ -21,7 +19,6 @@
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "UIActionSheet+BlockAdditions.h"
-#import "UIView+FrameAdditions.h"
 
 // End Swiftify generated imports
 // -----------------------------------------------------------------------------

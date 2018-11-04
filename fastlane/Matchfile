@@ -21,7 +21,7 @@ type("adhoc") # The default type, can be: appstore, adhoc, enterprise or develop
 
 dev_domain = ENV["DEV_DOMAIN"] || "com.provenance-emu"
 
-app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.extension.topshelf", "#{dev_domain}.provenance.extension.spotlight"])
+app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf-extension", "#{dev_domain}.provenance.extension.spotlight"])
 username("mail@joemattiello.com") # Your Apple Developer Portal username
 team_name("Joe Mattiello")
 team_id("9DSA2J9CHZ")

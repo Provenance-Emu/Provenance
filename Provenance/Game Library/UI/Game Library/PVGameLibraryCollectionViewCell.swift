@@ -870,7 +870,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #if os(iOS)
         let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
         #else
-        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
+        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
         #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
@@ -929,7 +929,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         // Fixes the box art clipping…
         self.sizeToFit()
 
-        contentView.bringSubview(toFront: titleLabel!)
+        contentView.bringSubviewToFront(titleLabel!)
 #else
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			self.contentView.frame = self.bounds
@@ -1021,7 +1021,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-				self.superview?.bringSubview(toFront: self)
+                self.superview?.bringSubviewToFront(self)
                 if PVSettingsModel.shared.showGameBadges {
 
 					if #available(tvOS 11, *) {

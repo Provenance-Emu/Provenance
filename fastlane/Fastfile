@@ -110,7 +110,7 @@ end
       init: true,
       recursive: true
     )
-    
+
     UI.message "Switching to automatic code signing."
     enable_automatic_code_signing(
       use_automatic_signing: true,
@@ -131,7 +131,7 @@ end
     else
       carthage_bootstrap_ios
     end
-    
+
     # Git git commit count
     commits = number_of_commits().to_s
     UI.message "Setting build # to ${commits}."
@@ -145,15 +145,15 @@ end
       build_developer(scheme: "Provenance-Release")
     end
 
-    # Installs the ipa on the device. If no id is given, the first found iOS device will be used. 
+    # Installs the ipa on the device. If no id is given, the first found iOS device will be used.
     # Works via USB or Wi-Fi. This requires ios-deploy to be installed.
-    # Please have a look at ios-deploy. 
+    # Please have a look at ios-deploy.
     # To quickly install it, use npm -g i ios-deploy
     # https://docs.fastlane.tools/actions/install_on_device/
     # if UI.confirm("Install to device?")
     #   install_on_device
     # end
-        
+
     UI.message "Resetting enviroment."
     reset_enviroment
   end
@@ -174,7 +174,7 @@ end
 
     app_id = "#{$dev_domain}.provenance"
     spotlight_id = "#{$dev_domain}.provenance.extension.spotlight"
-    topshelf_id = "#{$dev_domain}.provenance.extension.topshelf"
+    topshelf_id = "#{$dev_domain}.provenance.topshelf-extension"
 
     if UI.confirm("Do you want to generate new app entries in your developer account??")
       produce(
@@ -286,7 +286,7 @@ end
 
       # temporarily disable automatic code signing
       codesign_toggle(automatic: false)
-      
+
       rome_download
     end
 
@@ -301,9 +301,9 @@ end
     gym # Build your app - more options available
 
     UI.success "Successfully finished building Provenace"
-    if UI.confirm("Do you want to install to a connected device now?")
-    end
-    
+    # if UI.confirm("Do you want to install to a connected device now?")
+    # end
+
   end
 
   desc "Install last build to device"
@@ -326,7 +326,6 @@ end
     reset_enviroment
   end
 
-
   desc "Upload to S3"
   private_lane :s3upload do |options|
 
@@ -345,15 +344,15 @@ end
       region: "us-east-1",                       # Required from user.
       #acl: ENV['S3_ACL'],                             # Optional - defaults to 'public-read'
       #server_side_encryption: ENV['S3_SERVER_SIDE_ENCRYPTION'] # Optional
-    
+
       endpoint: 'http://provenance.joemattiello.com:9000', # Optional, for buckets that require a specific endpoint
       ipa: ipa_name,                             # Required (if not uploading an APK).
       dsym: dsym_name,                   # Optional is you use `ipa` to build.
-    
+
       #apk: 'AppName.apk',                             # Required (if not uploading an IPA).
-    
+
       app_directory: "iOS",                # Optional but nice if you want to put multiple apps in same bucket
-    
+
       path: "#{CFBundleShortVersionString}/#{git_branch}/#{CFBundleVersion}/", # This is actually the default.
       #upload_metadata: true,                          # Upload version.json, plist and HTML. Set to false to skip uploading of these files.
       #version_file_name: 'app_version.json',          # Name of the file to upload to S3. Defaults to 'version.json'
@@ -371,7 +370,7 @@ end
 
     # update_devices // development, adhoc, appstore, enterprise
     match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: "adhoc", platform: "ios", readonly: true)
-    
+
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
     #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
@@ -379,7 +378,7 @@ end
     #   build_configuration: "Release",
     #   code_signing_identity: "iPhone Development" # optionally specify the codesigning identity
     # )
-   
+
       # Build iOS App
     # build_number = ENV["build_number"]
     build_number = number_of_commits(all: true)
@@ -396,8 +395,8 @@ end
 
     badge_alpha
     buid_ios_adhoc(
-      ipa_name: ipa_name, 
-      activeArchOnly: false, 
+      ipa_name: ipa_name,
+      activeArchOnly: false,
       )
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
@@ -428,7 +427,7 @@ end
     # Upload to S3 bucket
     begin
       UI.message "Upload to S3 butcket IPA: #{ipa_name}, dSYM: #{dsym_name}"
-      
+
       s3upload( ipa_name: ipa_name, dsym_name: dsym_name)
     rescue => ex
       # re-raise the exception unless it's something we're OK with ignoring
@@ -453,7 +452,7 @@ end
     # uploadToWordpress(lane_context[SharedValues::IPA_OUTPUT_PATH])
 
     # Build tvOS app
-    # match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf"], type: "adhoc", platform: "tvos")
+    # match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf-extension"], type: "adhoc", platform: "tvos")
     # carthage(
     #   command: "bootstrap",
     #   platform: "tvOS",
@@ -563,7 +562,6 @@ end
       cacheprefix: swift_version,
       #romefile: "#{dir}/Romefile"
     )
-    end
   end
 
   private_lane :codesign_toggle do |options|
@@ -594,7 +592,7 @@ end
     normal = options.fetch(:normal, true)
     suffix = normal ? "" : ".alpha"
     display_suffix = normal ? "" : " α" # or Beta β
-    display_name = "$(TARGET_NAME)#{display_suffix}" 
+    display_name = "$(TARGET_NAME)#{display_suffix}"
 
     # -- Update bundle names and ids
     # - iOS
@@ -623,7 +621,7 @@ end
     update_info_plist(
       plist_path: "TopShelf/Info.plist",
       display_name: display_name,
-      app_identifier: "#{$dev_domain}.provenance#{suffix}.extension.topshelf"
+      app_identifier: "#{$dev_domain}.provenance#{suffix}.topshelf-extension"
     )
   end
 
@@ -634,7 +632,7 @@ end
     type = options.fetch(:type, type)
 
     match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: type, platform: "ios", readonly: true)
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.topshelf"], type: type, platform: "tvos", readonly: true)
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf-extension"], type: type, platform: "tvos", readonly: true)
   end
 
   desc "Create Certs for Match"
@@ -653,7 +651,7 @@ end
     # types "appstore", "development", "adhoc", "enterprise"
     type = options[:type]
     match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.topshelf"], type: type, readonly: false, platform: "tvos")
+    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf-extension"], type: type, readonly: false, platform: "tvos")
   end
 
   desc "Update device UDID list in iTunes connect from fastlane/devices.text"
@@ -756,7 +754,7 @@ end
       }
     )
   end
-  
+
   desc "Exports a new Developer Build"
   lane :build_developer do |options|
     scheme = options.fetch(:scheme, 'Provenance-Release')
@@ -871,7 +869,7 @@ end
   lane :carthage_build do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    $carthage_paths.each do |dir| 
+    $carthage_paths.each do |dir|
       carthage_private(
       command: "build",
       platform: platform,
@@ -885,7 +883,7 @@ end
   lane :carthage_update do |options|
     platform = options.fetch(:platform, 'tvOS,iOS')
 
-    $carthage_paths.each do |dir| 
+    $carthage_paths.each do |dir|
       carthage_private(
       command: "update",
       platform: platform,

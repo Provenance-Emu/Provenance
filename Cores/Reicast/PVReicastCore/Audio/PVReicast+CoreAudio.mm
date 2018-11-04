@@ -9,6 +9,8 @@
 #import "PVReicast+CoreAudio.h"
 #import "PVReicast+Audio.h"
 #import "PVReicast+AudioTypes.h"
+#import <AudioToolbox/AudioToolbox.h>
+#import <AVFoundation/AVFoundation.h>
 
 #pragma mark - Core Audio Setup -
 
@@ -18,17 +20,20 @@ InitAUPlayer(ReicastAUGraphPlayer *player) {
      (this part largely copied from CAPlayThrough) */
         //Get the size of the IO buffer(s)
     Float64 sampleRate;
+    Float32 bufferDuration;
+
+#if TARGET_OS_IOS
     UInt32 propSize = sizeof(Float64);
     AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate,
                             &propSize,
                             &sampleRate);
 
-    Float32 bufferDuration;
     propSize = sizeof(Float32);
     AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration,
                             &propSize,
                             &bufferDuration);
-
+#else
+#endif
     UInt32 bufferLengthInFrames = sampleRate * bufferDuration;
     UInt32 bufferSizeBytes = bufferLengthInFrames * sizeof(Float32);
 

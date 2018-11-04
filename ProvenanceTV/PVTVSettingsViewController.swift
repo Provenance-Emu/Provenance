@@ -7,6 +7,7 @@
 
 import UIKit
 import PVLibrary
+import PVSupport
 
 final class PVTVSettingsViewController: UITableViewController, WebServerActivatorController {
     lazy var gameImporter: PVGameImporter = PVGameImporter.shared
@@ -81,6 +82,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
 		let outputDateFormatter = DateFormatter()
 		outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
 
+        var buildDate = Date(timeIntervalSinceReferenceDate: 0)
 		if let processedDate = incomingDateFormatter.date(from: gitdate) {
 			buildDate = processedDate
 		} else {
@@ -101,7 +103,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         super.viewWillAppear(animated)
         splitViewController?.title = "Settings"
         let settings = PVSettingsModel.shared
-        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
+        iCadeControllerSetting.text = settings.myiCadeControllerSetting.description
         updateWebDavTitleLabel()
     }
 
@@ -127,10 +129,10 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         // Use 2 lines if on to make space for the sub title
         webDavAlwaysOnTitleLabel.numberOfLines = isAlwaysOn ? 2 : 1
             // The main title is always present
-        var firstLineAttributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
+        var firstLineAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 38)]
 
         if #available(tvOS 10.0, *), traitCollection.userInterfaceStyle == .dark {
-            firstLineAttributes[NSAttributedStringKey.foregroundColor] = UIColor.white
+            firstLineAttributes[NSAttributedString.Key.foregroundColor] = UIColor.white
         }
 
         let titleString = NSMutableAttributedString(string: "Web Server Always-On", attributes: firstLineAttributes)
@@ -138,7 +140,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         if isAlwaysOn {
             let subTitleText = "\nWebDav: \(PVWebServer.shared.webDavURLString)"
 
-            let subTitleAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 26), NSAttributedStringKey.foregroundColor: UIColor.gray]
+            let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
             let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
             titleString.append(subTitleAttrString)
         }

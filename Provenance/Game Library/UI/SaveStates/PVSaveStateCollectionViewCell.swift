@@ -110,7 +110,7 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 				let labelTransform = CGAffineTransform(scaleX: 1.2, y: 1.2).translatedBy(x: 0, y: yOffset)
                 self.labelContainer.transform = labelTransform
                 self.sizeToFit()
-				self.superview?.bringSubview(toFront: self)
+                self.superview?.bringSubviewToFront(self)
 			} else {
                 self.labelContainer.transform = .identity
 			}

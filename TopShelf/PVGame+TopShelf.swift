@@ -12,11 +12,9 @@ import PVLibrary
 extension PVGame {
     public func contentItem(with containerIdentifier: TVContentIdentifier) -> TVContentItem? {
 
-        guard let identifier = TVContentIdentifier(identifier: self.md5Hash, container: containerIdentifier),
-        let item = TVContentItem(contentIdentifier: identifier) else {
-            return nil
-        }
-
+        let identifier = TVContentIdentifier(identifier: self.md5Hash, container: containerIdentifier)
+        let item = TVContentItem(contentIdentifier: identifier)
+        
         item.title = self.title
         item.imageURL = URL(string: self.customArtworkURL.isEmpty ? self.originalArtworkURL : self.customArtworkURL)
         item.imageShape = self.system.imageType
