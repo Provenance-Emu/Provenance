@@ -51,7 +51,6 @@
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B38D8FFD21577AFC00F7D25A /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF475E21071DE0002211EE /* ZipArchive.framework */; };
 		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -181,6 +180,7 @@
 		B3AF47D721071FCD002211EE /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; };
 		B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3AF47DF21072AD4002211EE /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
+		B3B104DD218F6CDD00210C39 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104DC218F6CDD00210C39 /* ZipArchive.framework */; };
 		B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -784,6 +784,7 @@
 		B3AF475E21071DE0002211EE /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
 		B3AF47DC21072AD3002211EE /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 		B3AF47DD21072AD3002211EE /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
+		B3B104DC218F6CDD00210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = ../Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
 		B3C04B4421077B3100E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B4621077BEC00E7AF79 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
 		B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = ../Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
@@ -818,9 +819,9 @@
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
-				B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */,
 				B3067F512106B5D00091437F /* Realm.framework in Frameworks */,
-				B38D8FFD21577AFC00F7D25A /* ZipArchive.framework in Frameworks */,
+				B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */,
+				B3B104DD218F6CDD00210C39 /* ZipArchive.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,6 +864,7 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3B104DC218F6CDD00210C39 /* ZipArchive.framework */,
 				B32155452107D2AC0085B18E /* PVSupport.framework */,
 				B3C04B8B2107972200E7AF79 /* Realm.framework */,
 				B3C04B892107972200E7AF79 /* RealmSwift.framework */,
@@ -2116,7 +2118,7 @@
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
+					"\"$(PROJECT_DIR)/../Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2157,7 +2159,7 @@
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
+					"\"$(PROJECT_DIR)/../Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2198,7 +2200,7 @@
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
-					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
+					"\"$(PROJECT_DIR)/../Carthage/Build/tvOS\"",
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2241,7 +2243,7 @@
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
-					"\"$(SRCROOT)/Carthage/Build/tvOS\"",
+					"\"$(PROJECT_DIR)/../Carthage/Build/tvOS\"",
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
