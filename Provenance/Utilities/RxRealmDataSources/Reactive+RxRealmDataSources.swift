@@ -47,30 +47,41 @@ extension Reactive where Base: UITableView {
 
 extension Reactive where Base: UICollectionView {
 
-    public func realmChanges<E>(_ dataSource: RxCollectionViewRealmDataSource<E>)
-        -> RealmBindObserver<E, AnyRealmCollection<E>, RxCollectionViewRealmDataSource<E>> {
-
-            return RealmBindObserver(dataSource: dataSource) {ds, results, changes in
-                if ds.collectionView == nil {
-                    ds.collectionView = self.base
-                }
-                ds.collectionView?.dataSource = ds
-                ds.applyChanges(items: AnyRealmCollection<E>(results), changes: changes)
-            }
-    }
-
-    public func realmModelSelected<E>(_ modelType: E.Type) -> ControlEvent<E> where E: RealmSwift.Object {
-
-        let source: Observable<E> = self.itemSelected.flatMap { [weak view = self.base as UICollectionView] indexPath -> Observable<E> in
-            guard let view = view, let ds = view.dataSource as? RxCollectionViewRealmDataSource<E> else {
-                return Observable.empty()
-            }
-
-            return Observable.just(ds.model(at: indexPath))
-        }
-        
-        return ControlEvent(events: source)
-    }
+//    public func realmChanges<E>(_ dataSource: RxCollectionViewRealmDataSource)
+//        -> RealmBindObserver<E, AnyRealmCollection<E>, RxCollectionViewRealmDataSource> {
+//
+//            return RealmBindObserver(dataSource: dataSource) {ds, results, changes in
+//                if ds.collectionView == nil {
+//                    ds.collectionView = self.base
+//                }
+//                ds.collectionView?.dataSource = ds
+//                cha
+//                changes.forEach {
+//
+////                    ds.sections?[$0.].applyChanges(items: AnyRealmCollection<E>(results), changes: changes)
+//                }
+//            }
+//    }
+//
+//    @available(*, deprecated, renamed: "modelSelected")
+//    public func realmModelSelected<E>(_ modelType: E.Type) -> ControlEvent<E> where E: RealmSwift.Object {
+//        let source: Observable<E> = self.itemSelected.flatMap { [weak view = self.base as UICollectionView] indexPath -> Observable<E> in
+//            guard let view = view, let ds = view.dataSource as? RxCollectionViewRealmDataSource else {
+//                return Observable.empty()
+//            }
+//
+//            let section = ds.model(at: indexPath)
+//            modelSelected(section.E)
+//            //            do {
+//            return try Observable.just(ds.model(at: indexPath) as! E)
+//            //            } catch {
+//            //                return Observable.empty()
+//            //            }
+//        }
+//
+//        return ControlEvent(events: source)
+//        return modelSelected(modelType)
+//    }
 }
 
 

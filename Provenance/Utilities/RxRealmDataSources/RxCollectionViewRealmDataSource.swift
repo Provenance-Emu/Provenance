@@ -12,77 +12,33 @@ import RxSwift
 import RxCocoa
 import RxRealm
 
-#if os(iOS)
-    // MARK: - iOS / UIKit
+public class RxRealmDataSourceSection<E : Object> {
+    public let title : String?
+    public let cellIdentifier: String
+    public let cellFactory : CollectionCellFactory<E>
+    public private(set) var items: AnyRealmCollection<E>?
+    public weak var dataSource : RxCollectionViewRealmDataSource?
+    public let section : Int
+    public func model(at row: Int) throws -> E {
+        return items![row]
+    }
 
-    import UIKit
-
-    public typealias CollectionCellFactory<E: Object> = (RxCollectionViewRealmDataSource<E>, UICollectionView, IndexPath, E) -> UICollectionViewCell
-    public typealias CollectionCellConfig<E: Object, CellType: UICollectionViewCell> = (CellType, IndexPath, E) -> Void
-
-    open class RxCollectionViewRealmDataSource <E: Object>: NSObject, UICollectionViewDataSource {
-        private var items: AnyRealmCollection<E>?
-
-        // MARK: - Configuration
-
-        public var collectionView: UICollectionView?
-        public var animated = true
-
-        // MARK: - Init
-        public let cellIdentifier: String
-        public let cellFactory: CollectionCellFactory<E>
-
-        public init(cellIdentifier: String, cellFactory: @escaping CollectionCellFactory<E>) {
-            self.cellIdentifier = cellIdentifier
-            self.cellFactory = cellFactory
+    func applyChanges(items: AnyRealmCollection<E>, changes: RealmChangeset?) {
+        if self.items == nil {
+            self.items = items
         }
 
-        public init<CellType>(cellIdentifier: String, cellType: CellType.Type, cellConfig: @escaping CollectionCellConfig<E, CellType>) where CellType: UICollectionViewCell {
-            self.cellIdentifier = cellIdentifier
-            self.cellFactory = {ds, cv, ip, model in
-                let cell = cv.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: ip) as! CellType
-                cellConfig(cell, ip, model)
-                return cell
-            }
-        }
-
-        // MARK: - Data access
-        public func model(at indexPath: IndexPath) -> E {
-            return items![indexPath.row]
-        }
-
-        // MARK: - UICollectionViewDataSource protocol
-        public func numberOfSections(in collectionView: UICollectionView) -> Int {
-            return 1
-        }
-
-        public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return items?.count ?? 0
-        }
-
-        public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            return cellFactory(self, collectionView, indexPath, items![indexPath.row])
-        }
-
-        // MARK: - Applying changeset to the collection view
-        private let fromRow = {(row: Int) in return IndexPath(row: row, section: 0)}
-
-        func applyChanges(items: AnyRealmCollection<E>, changes: RealmChangeset?) {
-            if self.items == nil {
-                self.items = items
-            }
-
-        guard let collectionView = collectionView else {
+        guard let dataSource = dataSource, let collectionView = dataSource.collectionView else {
             fatalError("You have to bind a collection view to the data source.")
         }
 
-        guard animated else {
-            collectionView.reloadData()
+        guard dataSource.animated else {
+            collectionView.reloadSections(IndexSet(integer: section))
             return
         }
 
         guard let changes = changes else {
-            collectionView.reloadData()
+            collectionView.reloadSections([section])
             return
         }
 
@@ -92,13 +48,93 @@ import RxRealm
             return
         }
 
-        collectionView.performBatchUpdates({[unowned self] in
-            collectionView.deleteItems(at: changes.deleted.map(self.fromRow))
-            collectionView.reloadItems(at: changes.updated.map(self.fromRow))
-            collectionView.insertItems(at: changes.inserted.map(self.fromRow))
+        collectionView.performBatchUpdates({
+            let section = self.section
+            let fromRow = {(row: Int) in return IndexPath(row: row, section: section)}
+
+            collectionView.deleteItems(at: changes.deleted.map( fromRow ))
+            collectionView.reloadItems(at: changes.updated.map( fromRow ))
+            collectionView.insertItems(at: changes.inserted.map( fromRow ))
         }, completion: nil)
     }
+
+    public init(title : String? = nil, cellIdentifier :String, cellFactory :@escaping CollectionCellFactory<E>, items : AnyRealmCollection<E>? = nil, dataSource :RxCollectionViewRealmDataSource? = nil, section :Int) {
+        self.title = title
+        self.cellIdentifier = cellIdentifier
+        self.cellFactory = cellFactory
+        self.items = items
+        self.dataSource = dataSource
+        self.section = section
+    }
+
+    public convenience init<CellType: UICollectionViewCell>(title : String? = nil, cellIdentifier :String, cellConfig: @escaping CollectionCellConfig<E, CellType>, items : AnyRealmCollection<E>? = nil, dataSource :RxCollectionViewRealmDataSource? = nil, section :Int) {
+        let cellFactory :CollectionCellFactory<E> = {ds, cv, ip, model in
+            let cell = cv.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: ip) as! CellType
+            cellConfig(cell, ip, model)
+            return cell
+        }
+        self.init(title: title, cellIdentifier: cellIdentifier, cellFactory: cellFactory, dataSource: dataSource, section: section)
+    }
 }
+
+#if os(iOS)
+    // MARK: - iOS / UIKi
+
+    import UIKit
+
+    public typealias CollectionCellFactory<E: Object> = (RxCollectionViewRealmDataSource, UICollectionView, IndexPath, E) -> UICollectionViewCell
+    public typealias CollectionCellConfig<E: Object, CellType: UICollectionViewCell> = (CellType, IndexPath, E) -> Void
+
+    open class RxCollectionViewRealmDataSource : NSObject, UICollectionViewDataSource, SectionedViewDataSourceType {
+        var sections: [RxRealmDataSourceSection<Object>]?
+
+        var nonEmptySections : [RxRealmDataSourceSection<Object>]? {
+            return sections?.filter{$0.items?.isEmpty ?? false}
+        }
+
+        // MARK: - Configuration
+
+        public var collectionView: UICollectionView?
+        public var animated = true
+
+        // MARK: - Init
+
+        public init(sections: [RxRealmDataSourceSection<Object>]) {
+            self.sections = sections
+            super.init()
+            sections.forEach { $0.dataSource = self }
+        }
+
+        public init<E, CellType>(cellIdentifier: String, cellType: CellType.Type, cellConfig: @escaping CollectionCellConfig<E, CellType>) where E : Object, CellType: UICollectionViewCell {
+            super.init()
+            self.sections = [RxRealmDataSourceSection(title: nil, cellIdentifier: cellIdentifier, cellFactory: { (ds, cv, ip, model) -> UICollectionViewCell in
+                let cell = cv.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: ip) as! CellType
+                cellConfig(cell, ip, model as! E)
+                return cell
+            }, items: nil, dataSource: self, section: 0)]
+         }
+
+        // MARK: - Data access
+        public func model(at indexPath: IndexPath) throws -> Any {
+            let section = sections![indexPath.section]
+            return try section.model(at: indexPath.row)
+        }
+
+        // MARK: - UICollectionViewDataSource protocol
+
+        public func numberOfSections(in collectionView: UICollectionView) -> Int {
+            return nonEmptySections?.count ?? 0
+        }
+
+        public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            return nonEmptySections?[section].items?.count ?? 0
+        }
+
+        public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            let section = nonEmptySections![indexPath.row]
+            return section.cellFactory(self, collectionView, indexPath, section.items![indexPath.row])
+        }
+    }
 
 #elseif os(OSX)
 // MARK: - macOS / Cocoa
