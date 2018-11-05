@@ -66,11 +66,6 @@ Provenace Team: Push a new beta build to TestFlight
 fastlane ios alpha
 ```
 Provenace Team: Push a new alpha build to Hockeyapp
-### ios add_badge
-```
-fastlane ios add_badge
-```
-Add proper badge to icon
 ### ios check_env
 ```
 fastlane ios check_env
