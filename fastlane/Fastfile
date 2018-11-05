@@ -114,10 +114,7 @@ end
     UI.message "Switching to automatic code signing."
     enable_automatic_code_signing(
       use_automatic_signing: true,
-      targets: ["Provenance"],
-      targets: ["ProvenanceTV"],
-      targets: ["Spotlight"],
-      targets: ["TopShelf"],
+      targets: ["Provenance", "ProvenanceTV", "Spotlight", "TopShelf"],
       # TODO, only do if set since it's optional
       # team_id: ENV["DEV_TEAM_ID"]
     )
@@ -395,11 +392,10 @@ end
     badge_alpha
     build_ios_adhoc(
       ipa_name: ipa_name,
-      activeArchOnly: false,
+      activeArchOnly: true,
       )
-      # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
-          # SCP to file server for storage
+    # SCP to file server for storage
     # if is_ci?
     build_time = Time.now.strftime('%F')
 
@@ -498,11 +494,11 @@ end
 
   private_lane :badge_alpha do
     version_number = get_version_number(target: "Provenance")
-    # build_number = get_build_number
+    build_number = get_build_number
 
     version = version_number.to_s
     add_badge(
-      shield: "Version-#{version}-blue", 
+      shield: "#{version}-#{build_number}-blue", 
       alpha: true, 
       dark: false,
       shield_no_resize: true)
@@ -510,7 +506,13 @@ end
 
   private_lane :badge_beta do
     version_number = get_version_number(target: "Provenance")
-    add_badge(shield: "#{version_number} Beta", alpha: false, dark: false)
+    build_number = get_build_number(target: "Provenance")
+
+    add_badge(
+      shield: "#{version_number}-#{build_number}-blue", 
+      alpha: false, 
+      dark: false,
+      shield_no_resize: true)
   end
 
   private_lane :reset_enviroment do
@@ -539,15 +541,11 @@ end
   desc "Download cached Rome builds"
   lane :rome_download do
     swift_version = sh("swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d \"()\" | tr \" \" \"-\"")
-    srcroot = Dir.pwd
 
     rome(
-      # frameworks: ["MyFramework1", "MyFramework2"],   # Specify which frameworks to upload or download
-      command: "download",                              # One of: download, upload, list
-      #verbose: false,                                 # Print rome output inline
-      platform: "iOS",                                # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
+      command: "download",          # One of: download, upload, list
+      platform: "iOS",              # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
       cacheprefix: swift_version,
-      #romefile: "#{dir}/Romefile"
     )
   end
 
@@ -571,7 +569,6 @@ end
       bundle_identifier: "#{$dev_domain}.provenance.extension.spotlight",
       use_automatic_signing: automatic,
       team_id: team_id)
-
   end
 
   private_lane :plist_set do |options|
@@ -694,7 +691,7 @@ end
 
   # Future Alpha builds
   private_lane :build_ios_adhoc do |options|
-    activeArchOnly = options[:activeArchOnly] || false
+    activeArchOnly = options.fetch(:activeArchOnly, false)
     ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
     build_time = Time.now.strftime('%F')
     load_keys
@@ -722,7 +719,7 @@ end
       output_name: ipa_name,
       include_bitcode: false,
       include_symbols: false,
-      #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+      xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
       export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: export_method,
