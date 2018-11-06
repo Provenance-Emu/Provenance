@@ -130,7 +130,7 @@ end
     end
 
     # Git git commit count
-    commits = number_of_commits().to_s
+    commits = number_of_commits(all: true).to_s
     UI.message "Setting build # to ${commits}."
     ENV["build_number"] = commits
     updatePlistForBranch
@@ -267,7 +267,7 @@ end
     #get_provisioning_profile   # invokes sigh
 
     # Git git commit count
-    ENV["build_number"] = number_of_commits.to_s
+    ENV["build_number"] = number_of_commits(all: true).to_s
 
     updatePlistForBranch
 
@@ -494,9 +494,14 @@ end
 
   private_lane :badge_alpha do
     version_number = get_version_number(target: "Provenance")
-    build_number = get_build_number
+    build_number = ENV["build_number"] || number_of_commits(all: true)
+
+    if is_ci?
+      build_number = ci_build_number || build_number
+    end
 
     version = version_number.to_s
+
     add_badge(
       shield: "#{version}-#{build_number}-blue", 
       alpha: true, 
