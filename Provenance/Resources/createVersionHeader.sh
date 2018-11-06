@@ -106,11 +106,11 @@ if [ "$GIT_COMMIT_COUNT" == "$PLIST_GIT_COMMIT_COUNT" ]; then
 fi
 
 vpath="$SRCROOT/.version"
-echo "Testing for $vpath"
-if [ -f $VERSION_H_PATH] && [ -f $VERSION_SWIFT_PATH] && [ -f $vpath ] && [[ "$(< $vpath)" == "$GIT_DATE" ]]; then
-  success_exit "$vpath matches $GIT_DATE"
+echo "Testing for ${vpath}"
+if [[ -f $VERSION_H_PATH ]] && [[ -f $VERSION_SWIFT_PATH ]] && [[ -f $vpath ]] && [[ "$(< ${vpath})" == "${GIT_DATE}" ]]; then
+  success_exit "${vpath} matches ${GIT_DATE}"
 else
-  echo "$GIT_DATE" > "$vpath"
+  echo "$GIT_DATE" > "${vpath}"
 fi
 
 echo "Creating Version.h in" ${PROJECT_DIR}
