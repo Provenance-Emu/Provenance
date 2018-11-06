@@ -22,7 +22,7 @@ echo "Swift version: ${SWIFT_VERSION}"
 
 if [ -x "$(command -v rome)" ]; then
   echo "Downloading ${PLATFORM} ..."
-  carthage update --no-build --platform ${PLATFORM} && rome download --platform ${PLATFORM} --cache-prefix "${SWIFT_VERSION}"
+  rome download --platform ${PLATFORM} --cache-prefix "${SWIFT_VERSION}"
   echo "Done."
 else
   echo "Rome not installed. Skipping cached frameworks."
