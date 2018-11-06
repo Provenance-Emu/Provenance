@@ -155,7 +155,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 			return 1
 		} else {
 			let count = systemsSectionOffset + (systems?.count ?? 0)
-			ILOG("Sections : \(count)")
+			VLOG("Sections : \(count)")
 			return count
 		}
 	}

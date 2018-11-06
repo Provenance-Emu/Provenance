@@ -173,13 +173,15 @@ final class PVControllerManager: NSObject {
 
     func setupICade() {
         if iCadeController == nil {
-            let settings = PVSettingsModel.shared
-            iCadeController = settings.myiCadeControllerSetting.createController()
-            if iCadeController != nil {
-                listenForICadeControllers()
-			} else {
-				ELOG("Failed to create iCade controller")
-			}
+            let selectediCadeController = PVSettingsModel.shared.myiCadeControllerSetting
+            if selectediCadeController != .disabled {
+                iCadeController = selectediCadeController.createController()
+                if iCadeController != nil {
+                    listenForICadeControllers()
+                } else {
+                    ELOG("Failed to create iCade controller")
+                }
+            }
         }
     }
 

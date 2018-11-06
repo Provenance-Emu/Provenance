@@ -250,7 +250,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		queryUpdateToken = query.observe { [unowned self] (changes: RealmCollectionChange) in
 			switch changes {
 			case .initial(let result):
-				DLOG("Initial query result: \(result.count)")
+				VLOG("Initial query result: \(result.count)")
 				DispatchQueue.main.async {
 					self.refreshCollectionView()
 				}
