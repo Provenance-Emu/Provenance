@@ -729,7 +729,7 @@ end
       output_name: ipa_name,
       include_bitcode: false,
       include_symbols: false,
-      xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+      #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
       export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: export_method,
