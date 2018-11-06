@@ -623,7 +623,7 @@ end
     load_keys
 
     # types "appstore", "development", "adhoc", "enterprise"
-    type = options.fetch(:type, type)
+    type = options.fetch(:type, "development")
 
     match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: type, platform: "ios", readonly: true)
     match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf-extension"], type: type, platform: "tvos", readonly: true)
@@ -633,19 +633,36 @@ end
   lane :create_certificates do
     load_keys
 
-    create_certificates_private(type: "development")
-    create_certificates_private(type: "adhoc")
-    create_certificates_private(type: "appstore")
-    #create_certificates_private(type: "enterprise")
+    create_certificates_private(type: 'development')
+    create_certificates_private(type: 'adhoc')
+    create_certificates_private(type: 'appstore')
   end
 
   private_lane :create_certificates_private do |options|
     load_keys
 
     # types "appstore", "development", "adhoc", "enterprise"
-    type = options[:type]
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: type, readonly: false, platform: "ios")
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.topshelf-extension"], type: type, readonly: false, platform: "tvos")
+    type = options.fetch(:type, 'development')
+
+    match(
+      app_identifier: [
+        "#{$dev_domain}.provenance",
+        "#{$dev_domain}.provenance.extension.spotlight"
+      ],
+      type: type,
+      readonly: false,
+      platform: 'ios'
+    )
+
+    match(
+      app_identifier: [
+          "#{$dev_domain}.provenance",
+          "#{$dev_domain}.provenance.topshelf-extension"
+      ],
+      type: type,
+      readonly: false,
+      platform: 'tvos'
+    )
   end
 
   desc "Update device UDID list in iTunes connect from fastlane/devices.text"
