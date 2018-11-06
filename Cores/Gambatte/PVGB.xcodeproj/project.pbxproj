@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B324C63E21920E38009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63D21920E38009F4EDC /* PVSupport.framework */; };
 		B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB55B2106D58F00C45F09 /* PVSupport.framework */; };
 		B3547B4E205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B3547B4F205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
@@ -93,7 +94,6 @@
 		B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; };
 		B3C9D4A41DEA6E270068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */; };
-		B3C9D4A51DEA6E320068D057 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3801D6E7E030058544D /* PVSupport.framework */; };
 		B3C9D4A71DEA6E390068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4A61DEA6E390068D057 /* Foundation.framework */; };
 		B3C9D4A91DEA6E3E0068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */; };
 		B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -245,11 +245,10 @@
 		1AABE0C31ABE378D00FF6AEF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1AABE0C91ABE380200FF6AEF /* PVGB-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGB-Prefix.pch"; sourceTree = "<group>"; };
+		B324C63D21920E38009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB55B2106D58F00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4D205857E300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B35E6C41207F09CC0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
-		B3C96EE31D6365F9003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
-		B3C96EE51D6365FE003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "../PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
 		B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D43C1DEA6AFB0068D057 /* PVGB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGB.h; sourceTree = "<group>"; };
 		B3C9D43D1DEA6AFB0068D057 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -257,7 +256,6 @@
 		B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4A61DEA6E390068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		B3D2E3801D6E7E030058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGBEmulatorCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -277,9 +275,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C63E21920E38009F4EDC /* PVSupport.framework in Frameworks */,
 				B3C9D4A91DEA6E3E0068D057 /* UIKit.framework in Frameworks */,
 				B3C9D4A71DEA6E390068D057 /* Foundation.framework in Frameworks */,
-				B3C9D4A51DEA6E320068D057 /* PVSupport.framework in Frameworks */,
 				B3C9D4A41DEA6E270068D057 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -568,15 +566,13 @@
 		1AABE0C71ABE37A400FF6AEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B324C63D21920E38009F4EDC /* PVSupport.framework */,
+				B3C9D4A61DEA6E390068D057 /* Foundation.framework */,
+				1AABE0C31ABE378D00FF6AEF /* Foundation.framework */,
+				B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */,
+				1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */,
 				B34AB55B2106D58F00C45F09 /* PVSupport.framework */,
 				B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */,
-				B3C9D4A61DEA6E390068D057 /* Foundation.framework */,
-				B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */,
-				B3D2E3801D6E7E030058544D /* PVSupport.framework */,
-				B3C96EE51D6365FE003F1E93 /* PVSupportTV.framework */,
-				B3C96EE31D6365F9003F1E93 /* PVSupport.framework */,
-				1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */,
-				1AABE0C31ABE378D00FF6AEF /* Foundation.framework */,
 				1AABE0C11ABE378800FF6AEF /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -624,9 +620,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3C9D4391DEA6AFB0068D057 /* PVGB */ = {
+		B3C9D4391DEA6AFB0068D057 /* PVGB-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C9D43F1DEA6AFB0068D057 /* Build configuration list for PBXNativeTarget "PVGB" */;
+			buildConfigurationList = B3C9D43F1DEA6AFB0068D057 /* Build configuration list for PBXNativeTarget "PVGB-iOS" */;
 			buildPhases = (
 				B3C9D4371DEA6AFB0068D057 /* Headers */,
 				B3C9D4351DEA6AFB0068D057 /* Sources */,
@@ -637,14 +633,14 @@
 			);
 			dependencies = (
 			);
-			name = PVGB;
+			name = "PVGB-iOS";
 			productName = PVGB;
 			productReference = B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C9D4471DEA6B0D0068D057 /* PVGB tvOS */ = {
+		B3C9D4471DEA6B0D0068D057 /* PVGB-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C9D44D1DEA6B0D0068D057 /* Build configuration list for PBXNativeTarget "PVGB tvOS" */;
+			buildConfigurationList = B3C9D44D1DEA6B0D0068D057 /* Build configuration list for PBXNativeTarget "PVGB-tvOS" */;
 			buildPhases = (
 				B3C9D4451DEA6B0D0068D057 /* Headers */,
 				B3C9D4431DEA6B0D0068D057 /* Sources */,
@@ -655,7 +651,7 @@
 			);
 			dependencies = (
 			);
-			name = "PVGB tvOS";
+			name = "PVGB-tvOS";
 			productName = "PVGB tvOS";
 			productReference = B3C9D4481DEA6B0D0068D057 /* PVGB.framework */;
 			productType = "com.apple.product-type.framework";
@@ -692,8 +688,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C9D4391DEA6AFB0068D057 /* PVGB */,
-				B3C9D4471DEA6B0D0068D057 /* PVGB tvOS */,
+				B3C9D4391DEA6AFB0068D057 /* PVGB-iOS */,
+				B3C9D4471DEA6B0D0068D057 /* PVGB-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1001,7 +997,7 @@
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -1084,7 +1080,7 @@
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1127,7 +1123,7 @@
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -1233,7 +1229,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C9D43F1DEA6AFB0068D057 /* Build configuration list for PBXNativeTarget "PVGB" */ = {
+		B3C9D43F1DEA6AFB0068D057 /* Build configuration list for PBXNativeTarget "PVGB-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C9D4401DEA6AFB0068D057 /* Debug */,
@@ -1243,7 +1239,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C9D44D1DEA6B0D0068D057 /* Build configuration list for PBXNativeTarget "PVGB tvOS" */ = {
+		B3C9D44D1DEA6B0D0068D057 /* Build configuration list for PBXNativeTarget "PVGB-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C9D44E1DEA6B0D0068D057 /* Debug */,

@@ -9,7 +9,7 @@
 #import "PVCocoaLumberJackLogging.h"
 @import CocoaLumberjack;
 @import NSLogger;
-@import XCDLumberjackNSLogger;
+#import "XCDLumberjackNSLogger.h"
 
 //#import "DDFileLogger.h"
 //#import "DDTTYLogger.h"

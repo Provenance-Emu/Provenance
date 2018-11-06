@@ -2,4 +2,3 @@ $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/Realm.framework
 $(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework
-$(SRCROOT)/Carthage/Build/iOS/XCDLumberjackNSLogger.framework

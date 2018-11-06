@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3CB85551E9BECCF009155A6"
                BuildableName = "PVPokeMini.framework"
-               BlueprintName = "PVPokeMini tvOS"
+               BlueprintName = "PVPokeMini-tvOS"
                ReferencedContainer = "container:PVPokeMini.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3CB85551E9BECCF009155A6"
             BuildableName = "PVPokeMini.framework"
-            BlueprintName = "PVPokeMini tvOS"
+            BlueprintName = "PVPokeMini-tvOS"
             ReferencedContainer = "container:PVPokeMini.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3CB85551E9BECCF009155A6"
             BuildableName = "PVPokeMini.framework"
-            BlueprintName = "PVPokeMini tvOS"
+            BlueprintName = "PVPokeMini-tvOS"
             ReferencedContainer = "container:PVPokeMini.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -737,9 +737,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3C9D5311DEA83DE0068D057 /* PVSNES */ = {
+		B3C9D5311DEA83DE0068D057 /* PVSNES-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES" */;
+			buildConfigurationList = B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES-iOS" */;
 			buildPhases = (
 				B3C9D52F1DEA83DE0068D057 /* Headers */,
 				B3C9D52D1DEA83DE0068D057 /* Sources */,
@@ -750,14 +750,14 @@
 			);
 			dependencies = (
 			);
-			name = PVSNES;
+			name = "PVSNES-iOS";
 			productName = PVSNES;
 			productReference = B3C9D5321DEA83DE0068D057 /* PVSNES.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C9D53F1DEA83FD0068D057 /* PVSNES tvOS */ = {
+		B3C9D53F1DEA83FD0068D057 /* PVSNES-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C9D5451DEA83FE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES tvOS" */;
+			buildConfigurationList = B3C9D5451DEA83FE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES-tvOS" */;
 			buildPhases = (
 				B3C9D53D1DEA83FD0068D057 /* Headers */,
 				B3C9D53B1DEA83FD0068D057 /* Sources */,
@@ -768,7 +768,7 @@
 			);
 			dependencies = (
 			);
-			name = "PVSNES tvOS";
+			name = "PVSNES-tvOS";
 			productName = "PVSNES tvOS";
 			productReference = B3C9D5401DEA83FD0068D057 /* PVSNES.framework */;
 			productType = "com.apple.product-type.framework";
@@ -803,8 +803,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C9D5311DEA83DE0068D057 /* PVSNES */,
-				B3C9D53F1DEA83FD0068D057 /* PVSNES tvOS */,
+				B3C9D5311DEA83DE0068D057 /* PVSNES-iOS */,
+				B3C9D53F1DEA83FD0068D057 /* PVSNES-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1174,7 +1174,7 @@
 					"-D__LIBRETRO__",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVSNES;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1275,7 +1275,7 @@
 					"-D__LIBRETRO__",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVSNES;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1326,7 +1326,7 @@
 					"-D__LIBRETRO__",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVSNES;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1449,7 +1449,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES" */ = {
+		B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C9D5381DEA83DE0068D057 /* Debug */,
@@ -1459,7 +1459,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C9D5451DEA83FE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES tvOS" */ = {
+		B3C9D5451DEA83FE0068D057 /* Build configuration list for PBXNativeTarget "PVSNES-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C9D5461DEA83FE0068D057 /* Debug */,

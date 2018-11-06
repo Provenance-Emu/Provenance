@@ -641,7 +641,6 @@
 		1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFCEUEmulatorCore.mm; sourceTree = "<group>"; };
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		1A3A79B01ABF1D41002274A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEUEmulatorCore+Controls.h"; sourceTree = "<group>"; };
 		B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVFCEUEmulatorCore+Controls.mm"; sourceTree = "<group>"; };
 		B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEU+Swift.h"; sourceTree = "<group>"; };
@@ -653,7 +652,6 @@
 		B3A9F4381DE877B4008450F5 /* PVFCEU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFCEU.h; sourceTree = "<group>"; };
 		B3A9F4391DE877B4008450F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3A9F4441DE877E4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A9F4521DE8783D008450F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F4541DE87840008450F5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F4581DE8784B008450F5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F6321DE88425008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -1295,10 +1293,8 @@
 				B3A9F6321DE88425008450F5 /* libz.tbd */,
 				B3A9F4581DE8784B008450F5 /* Foundation.framework */,
 				B3A9F4541DE87840008450F5 /* OpenGLES.framework */,
-				B3A9F4521DE8783D008450F5 /* UIKit.framework */,
 				1A3A79AE1ABF1D41002274A3 /* Foundation.framework */,
 				1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */,
-				1A3A79B01ABF1D41002274A3 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

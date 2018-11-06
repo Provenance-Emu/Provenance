@@ -392,37 +392,6 @@
 		B3C76226207833DE009950E4 /* PVReicastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVReicastCore.mm */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		B33945C620783CC2008DBAB4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B339434520783CBD008DBAB4 /* reicast-ios.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 87078A8318A47FE90034C7A0;
-			remoteInfo = "reicast-ios";
-		};
-		B33945C820783CC2008DBAB4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B339434520783CBD008DBAB4 /* reicast-ios.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B30B79722074D1C1001290A1;
-			remoteInfo = "reicast-tvos";
-		};
-		B33945CC20783CC2008DBAB4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B339434020783CBD008DBAB4 /* reicast-osx.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84A388B31B1CDD3E000166C0;
-			remoteInfo = "reicast-osx";
-		};
-		B33945CE20783CC2008DBAB4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B339434020783CBD008DBAB4 /* reicast-osx.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84A388C31B1CDD3F000166C0;
-			remoteInfo = "reicast-osxTests";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -875,9 +844,7 @@
 		B339433D20783CBD008DBAB4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		B339433E20783CBD008DBAB4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B339433F20783CBD008DBAB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B339434020783CBD008DBAB4 /* reicast-osx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "reicast-osx.xcodeproj"; sourceTree = "<group>"; };
 		B339434420783CBD008DBAB4 /* reicast-ios-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "reicast-ios-Prefix.pch"; sourceTree = "<group>"; };
-		B339434520783CBD008DBAB4 /* reicast-ios.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "reicast-ios.xcodeproj"; sourceTree = "<group>"; };
 		B339434A20783CBD008DBAB4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B339434B20783CBD008DBAB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B339434C20783CBD008DBAB4 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
@@ -2421,7 +2388,6 @@
 			children = (
 				B339433420783CBD008DBAB4 /* emulator-osxTests */,
 				B339433720783CBD008DBAB4 /* emulator-osx */,
-				B339434020783CBD008DBAB4 /* reicast-osx.xcodeproj */,
 			);
 			path = "emulator-osx";
 			sourceTree = "<group>";
@@ -2449,34 +2415,15 @@
 			path = "emulator-osx";
 			sourceTree = "<group>";
 		};
-		B339434120783CBD008DBAB4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B33945CD20783CC2008DBAB4 /* reicast-osx.app */,
-				B33945CF20783CC2008DBAB4 /* reicast-osxTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B339434320783CBD008DBAB4 /* emulator-ios */ = {
 			isa = PBXGroup;
 			children = (
 				B339434420783CBD008DBAB4 /* reicast-ios-Prefix.pch */,
-				B339434520783CBD008DBAB4 /* reicast-ios.xcodeproj */,
 				B339434920783CBD008DBAB4 /* reicast-tvos */,
 				B339435320783CBD008DBAB4 /* reicast-ios */,
 				B339435520783CBD008DBAB4 /* emulator */,
 			);
 			path = "emulator-ios";
-			sourceTree = "<group>";
-		};
-		B339434620783CBD008DBAB4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B33945C720783CC2008DBAB4 /* reicast-ios.app */,
-				B33945C920783CC2008DBAB4 /* reicast-tvos.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B339434920783CBD008DBAB4 /* reicast-tvos */ = {
@@ -3848,18 +3795,18 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
+				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
 				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
-				B3B104B8218F281B00210C39 /* PVSupport.framework */,
 				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
 				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
 				B35E6BF3207CD2730040709A /* CoreAudioKit.framework */,
-				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
-				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
-				B339468A20783F48008DBAB4 /* libz.tbd */,
-				B339468820783F41008DBAB4 /* libpthread.tbd */,
-				B3C7622120783297009950E4 /* PVSupport.framework */,
 				B3C7621E2078325C009950E4 /* Foundation.framework */,
+				B339468820783F41008DBAB4 /* libpthread.tbd */,
+				B339468A20783F48008DBAB4 /* libz.tbd */,
 				B3C7621C20783243009950E4 /* OpenGLES.framework */,
+				B3B104B8218F281B00210C39 /* PVSupport.framework */,
+				B3C7622120783297009950E4 /* PVSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -4013,16 +3960,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B339434620783CBD008DBAB4 /* Products */;
-					ProjectRef = B339434520783CBD008DBAB4 /* reicast-ios.xcodeproj */;
-				},
-				{
-					ProductGroup = B339434120783CBD008DBAB4 /* Products */;
-					ProjectRef = B339434020783CBD008DBAB4 /* reicast-osx.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVReicast-iOS */,
@@ -4032,37 +3969,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		B33945C720783CC2008DBAB4 /* reicast-ios.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "reicast-ios.app";
-			remoteRef = B33945C620783CC2008DBAB4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B33945C920783CC2008DBAB4 /* reicast-tvos.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "reicast-tvos.app";
-			remoteRef = B33945C820783CC2008DBAB4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B33945CD20783CC2008DBAB4 /* reicast-osx.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "reicast-osx.app";
-			remoteRef = B33945CC20783CC2008DBAB4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B33945CF20783CC2008DBAB4 /* reicast-osxTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "reicast-osxTests.xctest";
-			remoteRef = B33945CE20783CC2008DBAB4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3447EDF218BEDD200557ACE /* Resources */ = {
@@ -4481,6 +4387,7 @@
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -4494,6 +4401,7 @@
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -4641,6 +4549,7 @@
 		B324C5042191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -4654,6 +4563,7 @@
 		B324C5052191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -4718,6 +4628,7 @@
 		B3447F8F218BEE3F00557ACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -4732,6 +4643,7 @@
 		B3447F90218BEE3F00557ACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;

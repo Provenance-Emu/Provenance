@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B3B90A1DED137100602746"
                BuildableName = "PVMupen64PlusVideoRice.framework"
-               BlueprintName = "PVMupen64PlusVideoRice tvOS"
+               BlueprintName = "PVMupen64PlusVideoRice-tvOS"
                ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3B3B90A1DED137100602746"
             BuildableName = "PVMupen64PlusVideoRice.framework"
-            BlueprintName = "PVMupen64PlusVideoRice tvOS"
+            BlueprintName = "PVMupen64PlusVideoRice-tvOS"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3B3B90A1DED137100602746"
             BuildableName = "PVMupen64PlusVideoRice.framework"
-            BlueprintName = "PVMupen64PlusVideoRice tvOS"
+            BlueprintName = "PVMupen64PlusVideoRice-tvOS"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

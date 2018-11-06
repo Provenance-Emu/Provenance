@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "DFB603AF2038B582001E70F1"
                BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-               BlueprintName = "PVMupen64PlusVideoGlideN64 tvOS"
+               BlueprintName = "PVMupen64PlusVideoGlideN64-tvOS"
                ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DFB603AF2038B582001E70F1"
             BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-            BlueprintName = "PVMupen64PlusVideoGlideN64 tvOS"
+            BlueprintName = "PVMupen64PlusVideoGlideN64-tvOS"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DFB603AF2038B582001E70F1"
             BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-            BlueprintName = "PVMupen64PlusVideoGlideN64 tvOS"
+            BlueprintName = "PVMupen64PlusVideoGlideN64-tvOS"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

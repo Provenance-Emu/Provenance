@@ -159,14 +159,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		82287C08101E9C2C0072172D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		82287C33101E9DB40072172D /* PicodriveGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PicodriveGameCore.h; sourceTree = "<group>"; };
 		82287C34101E9DB40072172D /* PicodriveGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PicodriveGameCore.m; sourceTree = "<group>"; };
-		825C7E44101FAB7F0072187B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		946B948E17829B4400A212AC /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		946B948F17829B4400A212AC /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 		946B949017829B4400A212AC /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -587,7 +582,6 @@
 		B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3D2E3891D6E7E5C0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3D2E39D1D6E8E960058544D /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,9 +626,6 @@
 		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				82287C08101E9C2C0072172D /* libz.dylib */,
-				1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */,
-				1058C7AEFEA557BF11CA2CBB /* Other Frameworks */,
 			);
 			name = "Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -655,25 +646,6 @@
 				82287C34101E9DB40072172D /* PicodriveGameCore.m */,
 			);
 			name = Classes;
-			sourceTree = "<group>";
-		};
-		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				825C7E44101FAB7F0072187B /* Carbon.framework */,
-				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
-			);
-			name = "Linked Frameworks";
-			sourceTree = "<group>";
-		};
-		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				089C167FFE841241C02AAC07 /* AppKit.framework */,
-				D2F7E65807B2D6F200F64583 /* CoreData.framework */,
-				089C1672FE841209C02AAC07 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -1498,9 +1470,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B37937AB1D6BCF8100EBAE81 /* PicoDrive */ = {
+		B37937AB1D6BCF8100EBAE81 /* PicoDrive-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive" */;
+			buildConfigurationList = B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive-iOS" */;
 			buildPhases = (
 				B37937A91D6BCF8100EBAE81 /* Headers */,
 				B37937A71D6BCF8100EBAE81 /* Sources */,
@@ -1511,14 +1483,14 @@
 			);
 			dependencies = (
 			);
-			name = PicoDrive;
+			name = "PicoDrive-iOS";
 			productName = PicoDrive;
 			productReference = B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive tvOS */ = {
+		B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive tvOS" */;
+			buildConfigurationList = B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive-tvOS" */;
 			buildPhases = (
 				B3A3E9CC1D6BFF6F00CCD7C8 /* Headers */,
 				B3A3E9861D6BFF6F00CCD7C8 /* Sources */,
@@ -1529,7 +1501,7 @@
 			);
 			dependencies = (
 			);
-			name = "PicoDrive tvOS";
+			name = "PicoDrive-tvOS";
 			productName = PicoDrive;
 			productReference = B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1565,8 +1537,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B37937AB1D6BCF8100EBAE81 /* PicoDrive */,
-				B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive tvOS */,
+				B37937AB1D6BCF8100EBAE81 /* PicoDrive-iOS */,
+				B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1943,7 +1915,7 @@
 					"-DHAVE_GLES",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2081,7 +2053,7 @@
 					"-DHAVE_GLES",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2145,7 +2117,7 @@
 					"-DHAVE_GLES",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2308,7 +2280,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive" */ = {
+		B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B37937B21D6BCF8100EBAE81 /* Debug */,
@@ -2318,7 +2290,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive tvOS" */ = {
+		B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A3E9D21D6BFF6F00CCD7C8 /* Debug */,

@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64221921519009F4EDC /* PVSupport.framework */; };
+		B324C6452192151F009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6442192151F009F4EDC /* PVSupport.framework */; };
+		B324C64721921561009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64621921561009F4EDC /* libz.tbd */; };
+		B324C64921921577009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64821921577009F4EDC /* libz.tbd */; };
 		B3547B5A205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
 		B3547B5B205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
 		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B36DE7A91D6B757F002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7A81D6B757F002EE3ED /* libz.tbd */; };
-		B36DE7AB1D6B7583002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AA1D6B7583002EE3ED /* Foundation.framework */; };
-		B36DE7AD1D6B758B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */; };
 		B36DE7AE1D6B759C002EE3ED /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
 		B36DE7AF1D6B75BF002EE3ED /* Archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598117A6189D0005D7EA /* Archive.cpp */; };
 		B36DE7B01D6B75BF002EE3ED /* Bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598317A6189D0005D7EA /* Bios.cpp */; };
@@ -57,19 +58,13 @@
 		B3FA5D821D6BAD4100060D71 /* Zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599717A6189D0005D7EA /* Zip.c */; };
 		B3FA5D831D6BAD4100060D71 /* Archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598117A6189D0005D7EA /* Archive.cpp */; };
 		B3FA5D841D6BAD4100060D71 /* Tia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59B117A6189D0005D7EA /* Tia.cpp */; };
-		B3FA5D861D6BAD4100060D71 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */; };
-		B3FA5D871D6BAD4100060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AA1D6B7583002EE3ED /* Foundation.framework */; };
-		B3FA5D881D6BAD4100060D71 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7A81D6B757F002EE3ED /* libz.tbd */; };
 		B3FA5D8B1D6BAD4100060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8C1D6BAD4100060D71 /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8E1D6BAD4100060D71 /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		941DFB2615B6425200C6552F /* ProSystemGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProSystemGameCore.mm; sourceTree = "<group>"; };
 		941F598117A6189D0005D7EA /* Archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Archive.cpp; sourceTree = "<group>"; };
@@ -129,16 +124,16 @@
 		941F59BC17A6189D0005D7EA /* Zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Zip.h; sourceTree = "<group>"; };
 		941F59BD17A6189D0005D7EA /* Zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Zlib.h; sourceTree = "<group>"; };
 		941F59FB17A77CC90005D7EA /* ProSystem.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProSystem.dat; sourceTree = SOURCE_ROOT; };
+		B324C64221921519009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C6442192151F009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C64621921561009F4EDC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B324C64821921577009F4EDC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3547B59205858B600CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Core.plist; path = ProSystem/Core.plist; sourceTree = "<group>"; };
 		B36DE7A01D6B7558002EE3ED /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7A21D6B7558002EE3ED /* ProSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProSystem.h; sourceTree = "<group>"; };
 		B36DE7A41D6B7558002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B36DE7A81D6B757F002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		B36DE7AA1D6B7583002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3FA5D921D6BAD4100060D71 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProSystemGameCore.h; sourceTree = "<group>"; };
-		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,9 +141,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36DE7AD1D6B758B002EE3ED /* PVSupport.framework in Frameworks */,
-				B36DE7AB1D6B7583002EE3ED /* Foundation.framework in Frameworks */,
-				B36DE7A91D6B757F002EE3ED /* libz.tbd in Frameworks */,
+				B324C64921921577009F4EDC /* libz.tbd in Frameworks */,
+				B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,9 +150,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3FA5D861D6BAD4100060D71 /* PVSupport.framework in Frameworks */,
-				B3FA5D871D6BAD4100060D71 /* Foundation.framework in Frameworks */,
-				B3FA5D881D6BAD4100060D71 /* libz.tbd in Frameworks */,
+				B324C64721921561009F4EDC /* libz.tbd in Frameworks */,
+				B324C6452192151F009F4EDC /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,21 +165,11 @@
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
-				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				B36DE7A11D6B7558002EE3ED /* ProSystem */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				B324C64121921519009F4EDC /* Frameworks */,
 			);
 			name = VisualBoyAdvance;
-			sourceTree = "<group>";
-		};
-		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				B36DE7A81D6B757F002EE3ED /* libz.tbd */,
-				1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */,
-				1058C7AEFEA557BF11CA2CBB /* Other Frameworks */,
-			);
-			name = "Frameworks and Libraries";
 			sourceTree = "<group>";
 		};
 		089C167CFE841241C02AAC07 /* Resources */ = {
@@ -206,26 +189,6 @@
 				941DFB2615B6425200C6552F /* ProSystemGameCore.mm */,
 			);
 			name = Classes;
-			sourceTree = "<group>";
-		};
-		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B36DE7AA1D6B7583002EE3ED /* Foundation.framework */,
-				B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */,
-				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
-			);
-			name = "Linked Frameworks";
-			sourceTree = "<group>";
-		};
-		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				089C167FFE841241C02AAC07 /* AppKit.framework */,
-				D2F7E65807B2D6F200F64583 /* CoreData.framework */,
-				089C1672FE841209C02AAC07 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -332,6 +295,17 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		B324C64121921519009F4EDC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B324C64621921561009F4EDC /* libz.tbd */,
+				B324C64821921577009F4EDC /* libz.tbd */,
+				B324C6442192151F009F4EDC /* PVSupport.framework */,
+				B324C64221921519009F4EDC /* PVSupport.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B36DE7A11D6B7558002EE3ED /* ProSystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,9 +339,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B36DE79F1D6B7558002EE3ED /* ProSystem */ = {
+		B36DE79F1D6B7558002EE3ED /* ProSystem-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem" */;
+			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem-iOS" */;
 			buildPhases = (
 				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79B1D6B7558002EE3ED /* Sources */,
@@ -378,14 +352,14 @@
 			);
 			dependencies = (
 			);
-			name = ProSystem;
+			name = "ProSystem-iOS";
 			productName = ProSystem;
 			productReference = B36DE7A01D6B7558002EE3ED /* ProSystem.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3FA5D6E1D6BAD4100060D71 /* ProSystem tvOS */ = {
+		B3FA5D6E1D6BAD4100060D71 /* ProSystem-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3FA5D8F1D6BAD4100060D71 /* Build configuration list for PBXNativeTarget "ProSystem tvOS" */;
+			buildConfigurationList = B3FA5D8F1D6BAD4100060D71 /* Build configuration list for PBXNativeTarget "ProSystem-tvOS" */;
 			buildPhases = (
 				B3FA5D891D6BAD4100060D71 /* Headers */,
 				B3FA5D6F1D6BAD4100060D71 /* Sources */,
@@ -396,7 +370,7 @@
 			);
 			dependencies = (
 			);
-			name = "ProSystem tvOS";
+			name = "ProSystem-tvOS";
 			productName = ProSystem;
 			productReference = B3FA5D921D6BAD4100060D71 /* ProSystem.framework */;
 			productType = "com.apple.product-type.framework";
@@ -429,8 +403,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B36DE79F1D6B7558002EE3ED /* ProSystem */,
-				B3FA5D6E1D6BAD4100060D71 /* ProSystem tvOS */,
+				B36DE79F1D6B7558002EE3ED /* ProSystem-iOS */,
+				B3FA5D6E1D6BAD4100060D71 /* ProSystem-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -700,7 +674,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -788,7 +762,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -827,7 +801,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -938,7 +912,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem" */ = {
+		B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B36DE7A61D6B7558002EE3ED /* Debug */,
@@ -948,7 +922,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3FA5D8F1D6BAD4100060D71 /* Build configuration list for PBXNativeTarget "ProSystem tvOS" */ = {
+		B3FA5D8F1D6BAD4100060D71 /* Build configuration list for PBXNativeTarget "ProSystem-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3FA5D901D6BAD4100060D71 /* Debug */,

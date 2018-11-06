@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D53F1DEA83FD0068D057"
                BuildableName = "PVSNES.framework"
-               BlueprintName = "PVSNES tvOS"
+               BlueprintName = "PVSNES-tvOS"
                ReferencedContainer = "container:PVSNES.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D53F1DEA83FD0068D057"
             BuildableName = "PVSNES.framework"
-            BlueprintName = "PVSNES tvOS"
+            BlueprintName = "PVSNES-tvOS"
             ReferencedContainer = "container:PVSNES.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D53F1DEA83FD0068D057"
             BuildableName = "PVSNES.framework"
-            BlueprintName = "PVSNES tvOS"
+            BlueprintName = "PVSNES-tvOS"
             ReferencedContainer = "container:PVSNES.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

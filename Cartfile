@@ -6,6 +6,7 @@ github "bcylin/QuickTableViewController" "v1.0.0"
 #github "RxSwiftCommunity/RxDataSources"
 
 # PVSupport
+github "fpillet/NSLogger" "v1.9.0"
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
 github "radex/SwiftyUserDefaults" "3.0.1"
 

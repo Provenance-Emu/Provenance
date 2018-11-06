@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B32775221E9C8444000FEC38"
                BuildableName = "PVYabause.framework"
-               BlueprintName = "PVYabause"
+               BlueprintName = "PVYabause-iOS"
                ReferencedContainer = "container:PVYabause.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B32775221E9C8444000FEC38"
             BuildableName = "PVYabause.framework"
-            BlueprintName = "PVYabause"
+            BlueprintName = "PVYabause-iOS"
             ReferencedContainer = "container:PVYabause.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B32775221E9C8444000FEC38"
             BuildableName = "PVYabause.framework"
-            BlueprintName = "PVYabause"
+            BlueprintName = "PVYabause-iOS"
             ReferencedContainer = "container:PVYabause.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

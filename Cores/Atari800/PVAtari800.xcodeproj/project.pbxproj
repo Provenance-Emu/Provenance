@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B35469341DECD70A0018B6F3 /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269544614317D34003A07D4 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3547B512058581E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B502058581E00CFF7D8 /* Core.plist */; };
 		B3547B522058581E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B502058581E00CFF7D8 /* Core.plist */; };
@@ -63,7 +64,6 @@
 		B36DE7811D6AB250002EE3ED /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0269544714317D34003A07D4 /* ATR800GameCore.m */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
-		B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7861D6AB45B002EE3ED /* PVSupport.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B38526A82108264D00434945 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A72108264D00434945 /* PVSupport.framework */; };
 		B3D73CF31E9EAF1C0023925B /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 0269540F143177DF003A07D4 /* rtime.c */; };
@@ -127,10 +127,6 @@
 		02252B371437A377001F3BF4 /* emuos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emuos.h; path = "atari800-src/emuos.h"; sourceTree = SOURCE_ROOT; };
 		02669C741435806A0002A11B /* sound_oss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sound_oss.c; path = "atari800-src/sound_oss.c"; sourceTree = SOURCE_ROOT; };
 		02669C751435806A0002A11B /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = "atari800-src/sound.h"; sourceTree = SOURCE_ROOT; };
-		02695364143169EB003A07D4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		02695367143169EB003A07D4 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		02695368143169EB003A07D4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		02695369143169EB003A07D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0269536C143169EB003A07D4 /* Atari800-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Atari800-Info.plist"; sourceTree = "<group>"; };
 		0269536E143169EB003A07D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		026953E214317379003A07D4 /* afile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = afile.c; path = "atari800-src/afile.c"; sourceTree = SOURCE_ROOT; };
@@ -143,7 +139,6 @@
 		026953EC14317649003A07D4 /* cartridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cartridge.h; path = "atari800-src/cartridge.h"; sourceTree = SOURCE_ROOT; };
 		026953ED14317649003A07D4 /* cassette.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cassette.c; path = "atari800-src/cassette.c"; sourceTree = SOURCE_ROOT; };
 		026953EE14317649003A07D4 /* cassette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cassette.h; path = "atari800-src/cassette.h"; sourceTree = SOURCE_ROOT; };
-		026953F214317667003A07D4 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		026953F414317689003A07D4 /* binload.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = binload.c; path = "atari800-src/binload.c"; sourceTree = SOURCE_ROOT; };
 		026953F514317689003A07D4 /* binload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = binload.h; path = "atari800-src/binload.h"; sourceTree = SOURCE_ROOT; };
 		026953F7143176AE003A07D4 /* gtia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gtia.c; path = "atari800-src/gtia.c"; sourceTree = SOURCE_ROOT; };
@@ -189,7 +184,6 @@
 		0269543514317AAF003A07D4 /* pbi_scsi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pbi_scsi.h; path = "atari800-src/pbi_scsi.h"; sourceTree = SOURCE_ROOT; };
 		0269543714317AC8003A07D4 /* monitor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = monitor.c; path = "atari800-src/monitor.c"; sourceTree = SOURCE_ROOT; };
 		0269543814317AC8003A07D4 /* monitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = monitor.h; path = "atari800-src/monitor.h"; sourceTree = SOURCE_ROOT; };
-		0269543A14317AEF003A07D4 /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		0269543C14317B11003A07D4 /* mzpokeysnd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mzpokeysnd.c; path = "atari800-src/mzpokeysnd.c"; sourceTree = SOURCE_ROOT; };
 		0269543D14317B11003A07D4 /* mzpokeysnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mzpokeysnd.h; path = "atari800-src/mzpokeysnd.h"; sourceTree = SOURCE_ROOT; };
 		0269543F14317B21003A07D4 /* compfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compfile.c; path = "atari800-src/compfile.c"; sourceTree = SOURCE_ROOT; };
@@ -234,18 +228,16 @@
 		94DEA00F171918A200073397 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = "atari800-src/crc32.c"; sourceTree = SOURCE_ROOT; };
 		94DEA010171918A200073397 /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crc32.h; path = "atari800-src/crc32.h"; sourceTree = SOURCE_ROOT; };
 		94DEA012171918D200073397 /* emuos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = emuos.c; path = "atari800-src/emuos.c"; sourceTree = SOURCE_ROOT; };
-		94DEA018171951AD00073397 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenEmuBase.framework; path = "../OpenEmu-SDK/build/Release/OpenEmuBase.framework"; sourceTree = "<group>"; };
+		B324C63F21920EB9009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B502058581E00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B36DE7481D6AB19C002EE3ED /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVAtari800.h; sourceTree = "<group>"; };
 		B36DE74C1D6AB19C002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B36DE7821D6AB43A002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B36DE7841D6AB44D002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B36DE7861D6AB45B002EE3ED /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B36DE7991D6AD049002EE3ED /* libedit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libedit.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libedit.tbd; sourceTree = DEVELOPER_DIR; };
 		B38526A72108264D00434945 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D73D331E9EAF1C0023925B /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3D73D381E9EAF820023925B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,8 +245,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */,
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
-				B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */,
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
 			);
@@ -297,29 +289,13 @@
 		02695363143169EB003A07D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B324C63F21920EB9009F4EDC /* PVSupport.framework */,
 				B38526A72108264D00434945 /* PVSupport.framework */,
-				B3D73D381E9EAF820023925B /* PVSupport.framework */,
 				B36DE7991D6AD049002EE3ED /* libedit.tbd */,
-				B36DE7861D6AB45B002EE3ED /* PVSupport.framework */,
 				B36DE7841D6AB44D002EE3ED /* Foundation.framework */,
 				B36DE7821D6AB43A002EE3ED /* libz.tbd */,
-				94DEA018171951AD00073397 /* OpenEmuBase.framework */,
-				0269543A14317AEF003A07D4 /* libreadline.dylib */,
-				026953F214317667003A07D4 /* libz.dylib */,
-				02695364143169EB003A07D4 /* Cocoa.framework */,
-				02695366143169EB003A07D4 /* Other Frameworks */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		02695366143169EB003A07D4 /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				02695367143169EB003A07D4 /* AppKit.framework */,
-				02695368143169EB003A07D4 /* CoreData.framework */,
-				02695369143169EB003A07D4 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		0269536A143169EB003A07D4 /* Core */ = {
@@ -501,9 +477,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B36DE7471D6AB19C002EE3ED /* PVAtari800 */ = {
+		B36DE7471D6AB19C002EE3ED /* PVAtari800-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36DE74D1D6AB19C002EE3ED /* Build configuration list for PBXNativeTarget "PVAtari800" */;
+			buildConfigurationList = B36DE74D1D6AB19C002EE3ED /* Build configuration list for PBXNativeTarget "PVAtari800-iOS" */;
 			buildPhases = (
 				B36DE7451D6AB19C002EE3ED /* Headers */,
 				B36DE7431D6AB19C002EE3ED /* Sources */,
@@ -514,14 +490,14 @@
 			);
 			dependencies = (
 			);
-			name = PVAtari800;
+			name = "PVAtari800-iOS";
 			productName = PVAtari800;
 			productReference = B36DE7481D6AB19C002EE3ED /* PVAtari800.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3D73CF11E9EAF1C0023925B /* PVAtari800 tvOS */ = {
+		B3D73CF11E9EAF1C0023925B /* PVAtari800-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3D73D301E9EAF1C0023925B /* Build configuration list for PBXNativeTarget "PVAtari800 tvOS" */;
+			buildConfigurationList = B3D73D301E9EAF1C0023925B /* Build configuration list for PBXNativeTarget "PVAtari800-tvOS" */;
 			buildPhases = (
 				B3D73D251E9EAF1C0023925B /* Headers */,
 				B3D73CF21E9EAF1C0023925B /* Sources */,
@@ -532,7 +508,7 @@
 			);
 			dependencies = (
 			);
-			name = "PVAtari800 tvOS";
+			name = "PVAtari800-tvOS";
 			productName = PVAtari800;
 			productReference = B3D73D331E9EAF1C0023925B /* PVAtari800.framework */;
 			productType = "com.apple.product-type.framework";
@@ -564,8 +540,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B36DE7471D6AB19C002EE3ED /* PVAtari800 */,
-				B3D73CF11E9EAF1C0023925B /* PVAtari800 tvOS */,
+				B36DE7471D6AB19C002EE3ED /* PVAtari800-iOS */,
+				B3D73CF11E9EAF1C0023925B /* PVAtari800-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -890,7 +866,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVAtari800;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -972,7 +948,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVAtari800;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1011,7 +987,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PVAtari800;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1116,7 +1092,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36DE74D1D6AB19C002EE3ED /* Build configuration list for PBXNativeTarget "PVAtari800" */ = {
+		B36DE74D1D6AB19C002EE3ED /* Build configuration list for PBXNativeTarget "PVAtari800-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B36DE74E1D6AB19C002EE3ED /* Debug */,
@@ -1126,7 +1102,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3D73D301E9EAF1C0023925B /* Build configuration list for PBXNativeTarget "PVAtari800 tvOS" */ = {
+		B3D73D301E9EAF1C0023925B /* Build configuration list for PBXNativeTarget "PVAtari800-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3D73D311E9EAF1C0023925B /* Debug */,

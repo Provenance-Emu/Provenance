@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B3B9551DED144100602746"
                BuildableName = "PVRSPCXD4.framework"
-               BlueprintName = "PVRSPCXD4 tvOS"
+               BlueprintName = "PVRSPCXD4-tvOS"
                ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3B3B9551DED144100602746"
             BuildableName = "PVRSPCXD4.framework"
-            BlueprintName = "PVRSPCXD4 tvOS"
+            BlueprintName = "PVRSPCXD4-tvOS"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3B3B9551DED144100602746"
             BuildableName = "PVRSPCXD4.framework"
-            BlueprintName = "PVRSPCXD4 tvOS"
+            BlueprintName = "PVRSPCXD4-tvOS"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

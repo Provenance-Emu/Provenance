@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D4391DEA6AFB0068D057"
                BuildableName = "PVGB.framework"
-               BlueprintName = "PVGB"
+               BlueprintName = "PVGB-iOS"
                ReferencedContainer = "container:PVGB.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D4391DEA6AFB0068D057"
             BuildableName = "PVGB.framework"
-            BlueprintName = "PVGB"
+            BlueprintName = "PVGB-iOS"
             ReferencedContainer = "container:PVGB.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D4391DEA6AFB0068D057"
             BuildableName = "PVGB.framework"
-            BlueprintName = "PVGB"
+            BlueprintName = "PVGB-iOS"
             ReferencedContainer = "container:PVGB.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

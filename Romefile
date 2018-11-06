@@ -1,4 +1,10 @@
 repositoryMap:
+- RxSwift:
+  - name: RxSwift
+  - name: RxCocoa
+  - name: RxAtomic
+  - name: RxBlocking
+  - name: RxTest
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
@@ -19,7 +25,7 @@ repositoryMap:
     platforms: [iOS,tvOS] # optional, all platforms if empty
   - name: RealmSwift
     platforms: [iOS,tvOS] # optional, all platforms if empty
-- SQLite:
+- SQLite.swift:
   - name: SQLite
     platforms: [iOS,tvOS] # optional, all platforms if empty
   - name: SQLite.swift
@@ -34,9 +40,6 @@ repositoryMap:
   - name: CocoaLumberjack
     platforms: [iOS,tvOS] # optional, all platforms if empty
   - name: CocoaLumberjackSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
-- XCDLumberjackNSLogger:
-  - name: XCDLumberjackNSLogger
     platforms: [iOS,tvOS] # optional, all platforms if empty
 - NSLogger:
   - name: NSLogger

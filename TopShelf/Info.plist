@@ -28,6 +28,8 @@
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
+	<key>Revision</key>
+	<string></string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>

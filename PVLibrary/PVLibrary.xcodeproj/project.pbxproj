@@ -745,7 +745,6 @@
 		B3AF6FC421916105000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = tvOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3AF6FC521916105000FA7F9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = tvOS/RxCocoa.framework; sourceTree = "<group>"; };
 		B3AF6FC621916105000FA7F9 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = tvOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
-		B3AF6FC721916105000FA7F9 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = tvOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
 		B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3AF6FC921916105000FA7F9 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = tvOS/ZipArchive.framework; sourceTree = "<group>"; };
 		B3AF6FCA21916106000FA7F9 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
@@ -763,7 +762,6 @@
 		B3AF6FFB21916978000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = iOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3AF6FFD21916978000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = iOS/RxTest.framework; sourceTree = "<group>"; };
-		B3AF6FFE21916978000FA7F9 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
 		B3AF6FFF21916978000FA7F9 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = iOS/XLActionController.framework; sourceTree = "<group>"; };
 		B3AF700021916978000FA7F9 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = iOS/ZIPFoundation.framework; sourceTree = "<group>"; };
 		B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
@@ -819,8 +817,6 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B324C2EC219192FF009F4EDC /* PVSupport.framework */,
-				B3AF701521916CF3000FA7F9 /* PVSupport.framework */,
 				B3AF6FB72191600A000FA7F9 /* iOS */,
 				B3AF6FB621916002000FA7F9 /* tvOS */,
 				B3AF6FA121915EE8000FA7F9 /* Carthage */,
@@ -1415,7 +1411,6 @@
 				B3AF6FFD21916978000FA7F9 /* RxTest.framework */,
 				B3AF6FF621916978000FA7F9 /* SQLite.framework */,
 				B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */,
-				B3AF6FFE21916978000FA7F9 /* XCDLumberjackNSLogger.framework */,
 				B3AF6FFF21916978000FA7F9 /* XLActionController.framework */,
 				B3AF700721916979000FA7F9 /* ZipArchive.framework */,
 				B3AF700021916978000FA7F9 /* ZIPFoundation.framework */,
@@ -1440,7 +1435,6 @@
 				B3AF6FC121916105000FA7F9 /* RxTest.framework */,
 				B3AF6FD021916106000FA7F9 /* SQLite.framework */,
 				B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */,
-				B3AF6FC721916105000FA7F9 /* XCDLumberjackNSLogger.framework */,
 				B3AF6FC921916105000FA7F9 /* ZipArchive.framework */,
 				B3AF6FCF21916106000FA7F9 /* ZIPFoundation.framework */,
 			);
@@ -1450,6 +1444,7 @@
 		B3AF6FB621916002000FA7F9 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				B324C2EC219192FF009F4EDC /* PVSupport.framework */,
 				B3AF6FBE219160C4000FA7F9 /* Foundation.framework */,
 				B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */,
 				B3AF6FBA219160B9000FA7F9 /* MobileCoreServices.framework */,
@@ -1460,6 +1455,7 @@
 		B3AF6FB72191600A000FA7F9 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				B3AF701521916CF3000FA7F9 /* PVSupport.framework */,
 				B3067F752106B9180091437F /* MobileCoreServices.framework */,
 				B3067F732106B9130091437F /* CoreGraphics.framework */,
 				B3067F4A2106B5A20091437F /* Foundation.framework */,

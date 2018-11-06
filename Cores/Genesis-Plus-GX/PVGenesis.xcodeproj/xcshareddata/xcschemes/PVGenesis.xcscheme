@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3E432031DE6917700D3C91E"
                BuildableName = "PVGenesis.framework"
-               BlueprintName = "PVGenesis"
+               BlueprintName = "PVGenesis-iOS"
                ReferencedContainer = "container:PVGenesis.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3E432031DE6917700D3C91E"
             BuildableName = "PVGenesis.framework"
-            BlueprintName = "PVGenesis"
+            BlueprintName = "PVGenesis-iOS"
             ReferencedContainer = "container:PVGenesis.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3E432031DE6917700D3C91E"
             BuildableName = "PVGenesis.framework"
-            BlueprintName = "PVGenesis"
+            BlueprintName = "PVGenesis-iOS"
             ReferencedContainer = "container:PVGenesis.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
                BuildableName = "PVMednafen.framework"
-               BlueprintName = "PVMednafen tvOS"
+               BlueprintName = "PVMednafen-tvOS"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
             BuildableName = "PVMednafen.framework"
-            BlueprintName = "PVMednafen tvOS"
+            BlueprintName = "PVMednafen-tvOS"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
             BuildableName = "PVMednafen.framework"
-            BlueprintName = "PVMednafen tvOS"
+            BlueprintName = "PVMednafen-tvOS"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
