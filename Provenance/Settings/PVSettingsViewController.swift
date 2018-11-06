@@ -354,17 +354,17 @@ final class PVSettingsViewController: UITableViewController, SFSafariViewControl
             case externalInformation
         }
         #endif
-        static let launchWebServer = IndexPath(row: 0, section: Sections.gameLibrary.rawValue)
-        
-        static let refreshGameLibrary = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
-        static let emptyImageCache = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
-        static let manageConflicts = IndexPath(row: 2, section: Sections.gameLibrary2.rawValue)
-        static let appearance = IndexPath(row: 3, section: Sections.gameLibrary2.rawValue)
+        static let launchWebServer    = IndexPath(row: 0, section: Sections.gameLibrary.rawValue)
 
-        static let cores = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
-        static let licenses = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
-       
-        static let logs = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let refreshGameLibrary = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let emptyImageCache    = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
+        static let manageConflicts    = IndexPath(row: 2, section: Sections.gameLibrary2.rawValue)
+        static let appearance         = IndexPath(row: 3, section: Sections.gameLibrary2.rawValue)
+
+        static let cores              = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+        static let licenses           = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
+
+        static let logs               = IndexPath(row: 0, section: Sections.debug.rawValue)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
