@@ -120,21 +120,9 @@
 		1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482161BA3592D00FDA50A /* libsqlite3.tbd */; };
 		1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482181BA3593900FDA50A /* libc++.tbd */; };
 		1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4821A1BA3594300FDA50A /* libstdc++.tbd */; };
-		1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4821C1BA3596200FDA50A /* CFNetwork.framework */; };
-		1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4821E1BA3596D00FDA50A /* MobileCoreServices.framework */; };
-		1AD482211BA3597500FDA50A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482201BA3597500FDA50A /* Security.framework */; };
-		1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482221BA3598100FDA50A /* SystemConfiguration.framework */; };
 		1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482241BA3598C00FDA50A /* libxml2.tbd */; };
-		1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482261BA3599400FDA50A /* CoreData.framework */; };
-		1AD482291BA359BA00FDA50A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482281BA359BA00FDA50A /* AudioToolbox.framework */; };
-		1AD4822B1BA359C800FDA50A /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4822A1BA359C800FDA50A /* GLKit.framework */; };
 		1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4822C1BA359D300FDA50A /* libz.tbd */; };
-		1AD4822F1BA359DA00FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4822E1BA359DA00FDA50A /* OpenGLES.framework */; };
-		1AD482311BA359FF00FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482301BA359FF00FDA50A /* UIKit.framework */; };
-		1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482321BA35A0500FDA50A /* Foundation.framework */; };
-		1AD482351BA35A0B00FDA50A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD482341BA35A0B00FDA50A /* CoreGraphics.framework */; };
 		1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
-		1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6C1BFD3896007D6C7C /* AVFoundation.framework */; };
 		1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
@@ -171,6 +159,25 @@
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
+		B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F421919394009F4EDC /* RealmSwift.framework */; };
+		B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F521919394009F4EDC /* RxRealm.framework */; };
+		B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
+		B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
+		B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FF2191958D009F4EDC /* CoreGraphics.framework */; };
+		B324C30321919596009F4EDC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30121919596009F4EDC /* UIKit.framework */; };
+		B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30221919596009F4EDC /* TVUIKit.framework */; };
+		B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C305219195A0009F4EDC /* OpenGLES.framework */; };
+		B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C307219195A8009F4EDC /* GLKit.framework */; };
+		B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C309219195AE009F4EDC /* AudioToolbox.framework */; };
+		B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30B219195BB009F4EDC /* SystemConfiguration.framework */; };
+		B324C30E219195C0009F4EDC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30D219195C0009F4EDC /* Security.framework */; };
+		B324C310219195C9009F4EDC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30F219195C9009F4EDC /* MobileCoreServices.framework */; };
+		B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C311219195CE009F4EDC /* CFNetwork.framework */; };
+		B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C313219195E0009F4EDC /* TVServices.framework */; };
+		B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; };
+		B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
+		B324C32121919AFD009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701E21916E3E000FA7F9 /* PVLibrary.framework */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -263,8 +270,6 @@
 		B3AB37432187F569009D9244 /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372F2187F568009D9244 /* PVN64ControllerViewController.swift */; };
 		B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */; };
 		B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37312187F568009D9244 /* PVAtari7800ControllerViewController.swift */; };
-		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
-		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
@@ -299,7 +304,6 @@
 		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
 		B3B1047F218F20FE00210C39 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046E218F20FE00210C39 /* RxBlocking.framework */; };
 		B3B10480218F20FE00210C39 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
-		B3B10481218F20FE00210C39 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10470218F20FE00210C39 /* XCDLumberjackNSLogger.framework */; };
 		B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
 		B3B10498218F212800210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10485218F212500210C39 /* SQLite.framework */; };
@@ -343,7 +347,6 @@
 		B3B104D4218F2EF400210C39 /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */; };
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
-		B3B104D9218F388E00210C39 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
 		B3B104EE218F7D6A00210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */; };
 		B3B104EF218F7D6A00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B104F0218F7D6A00210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10463218F20FC00210C39 /* Realm.framework */; };
@@ -426,7 +429,6 @@
 		B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
@@ -497,13 +499,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
 				B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3AF702021916E3E000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
 				B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */,
+				B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
@@ -686,6 +688,21 @@
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30670E220C29FDE002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
+		B324C2F421919394009F4EDC /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B324C2F521919394009F4EDC /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = Carthage/Build/tvOS/RxRealm.framework; sourceTree = "<group>"; };
+		B324C2FC21919568009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B324C2FF2191958D009F4EDC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B324C30121919596009F4EDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B324C30221919596009F4EDC /* TVUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVUIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/TVUIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B324C305219195A0009F4EDC /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		B324C307219195A8009F4EDC /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		B324C309219195AE009F4EDC /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B324C30B219195BB009F4EDC /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		B324C30D219195C0009F4EDC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		B324C30F219195C9009F4EDC /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
+		B324C311219195CE009F4EDC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
+		B324C313219195E0009F4EDC /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		B324C31D219197D7009F4EDC /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -871,25 +888,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3B10473218F20FE00210C39 /* NSLoggerSwift.framework in Frameworks */,
-				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
-				B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */,
-				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
-				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
-				B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */,
-				B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */,
-				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
-				B3B1047C218F20FE00210C39 /* ZIPFoundation.framework in Frameworks */,
-				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
-				B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */,
-				B3B1047F218F20FE00210C39 /* RxBlocking.framework in Frameworks */,
-				B3B10480218F20FE00210C39 /* ZipArchive.framework in Frameworks */,
-				B3B10481218F20FE00210C39 /* XCDLumberjackNSLogger.framework in Frameworks */,
-				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */,
 				B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */,
+				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
+				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
+				B3B10473218F20FE00210C39 /* NSLoggerSwift.framework in Frameworks */,
 				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
+				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
+				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
+				B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */,
+				B3B1047F218F20FE00210C39 /* RxBlocking.framework in Frameworks */,
+				B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */,
+				B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */,
+				B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */,
+				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
+				B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */,
+				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
+				B3B10480218F20FE00210C39 /* ZipArchive.framework in Frameworks */,
+				B3B1047C218F20FE00210C39 /* ZIPFoundation.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
 				B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */,
@@ -933,8 +949,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
+				B324C310219195C9009F4EDC /* MobileCoreServices.framework in Frameworks */,
+				B324C30E219195C0009F4EDC /* Security.framework in Frameworks */,
+				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
+				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
+				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
+				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
+				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
+				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
+				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
+				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
+				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
-				B3B104D9218F388E00210C39 /* HockeySDK.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
@@ -945,29 +972,10 @@
 				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
 				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
 				1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */,
-				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
-				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
-				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
-				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
-				B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
-				B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */,
-				1AD482351BA35A0B00FDA50A /* CoreGraphics.framework in Frameworks */,
-				B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */,
-				B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */,
-				1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */,
-				1AD482311BA359FF00FDA50A /* UIKit.framework in Frameworks */,
-				1AD4822F1BA359DA00FDA50A /* OpenGLES.framework in Frameworks */,
-				B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */,
-				1AD4822B1BA359C800FDA50A /* GLKit.framework in Frameworks */,
-				1AD482291BA359BA00FDA50A /* AudioToolbox.framework in Frameworks */,
-				B3AF701F21916E3E000FA7F9 /* PVLibrary.framework in Frameworks */,
-				B3B3B9761DED14A100602746 /* PVMupen64Plus.framework in Frameworks */,
-				1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */,
-				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
-				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
-				1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */,
-				1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */,
 				B3B1049C218F212800210C39 /* CocoaLumberjack.framework in Frameworks */,
+				B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */,
+				B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */,
+				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				B3B104A4218F212800210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */,
 				B3B104A9218F212800210C39 /* NSLoggerSwift.framework in Frameworks */,
@@ -977,11 +985,21 @@
 				B3B1049F218F212800210C39 /* RxBlocking.framework in Frameworks */,
 				B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */,
 				B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */,
+				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
 				B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3B104A6218F212800210C39 /* XCDLumberjackNSLogger.framework in Frameworks */,
 				B3B1049A218F212800210C39 /* ZipArchive.framework in Frameworks */,
 				B3B10499218F212800210C39 /* ZIPFoundation.framework in Frameworks */,
+				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
+				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
+				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
+				B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */,
+				B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */,
+				B3AF701F21916E3E000FA7F9 /* PVLibrary.framework in Frameworks */,
+				B3B3B9761DED14A100602746 /* PVMupen64Plus.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -999,6 +1017,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C32121919AFD009F4EDC /* PVLibrary.framework in Frameworks */,
 				B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */,
 				B3B104EE218F7D6A00210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B104EF218F7D6A00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
@@ -1012,9 +1031,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */,
 				B3AF705C21916F57000FA7F9 /* PVLibrary.framework in Frameworks */,
 				B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */,
-				BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1092,6 +1111,21 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B324C31D219197D7009F4EDC /* PicoDrive.framework */,
+				B324C2F421919394009F4EDC /* RealmSwift.framework */,
+				B324C2F521919394009F4EDC /* RxRealm.framework */,
+				B324C313219195E0009F4EDC /* TVServices.framework */,
+				B324C311219195CE009F4EDC /* CFNetwork.framework */,
+				B324C30F219195C9009F4EDC /* MobileCoreServices.framework */,
+				B324C30D219195C0009F4EDC /* Security.framework */,
+				B324C30B219195BB009F4EDC /* SystemConfiguration.framework */,
+				B324C309219195AE009F4EDC /* AudioToolbox.framework */,
+				B324C307219195A8009F4EDC /* GLKit.framework */,
+				B324C305219195A0009F4EDC /* OpenGLES.framework */,
+				B324C30221919596009F4EDC /* TVUIKit.framework */,
+				B324C30121919596009F4EDC /* UIKit.framework */,
+				B324C2FF2191958D009F4EDC /* CoreGraphics.framework */,
+				B324C2FC21919568009F4EDC /* AVFoundation.framework */,
 				B3AF70652191733D000FA7F9 /* GameController.framework */,
 				B3AF705B21916F57000FA7F9 /* PVLibrary.framework */,
 				B3AF705921916F2F000FA7F9 /* Foundation.framework */,
@@ -2022,7 +2056,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 			showEnvVarsInLog = 0;
 		};
 		B300F064212512310010299E /* Create Version.h */ = {

@@ -380,7 +380,7 @@ end
     build_number = number_of_commits(all: true)
     #increment_build_number(build_number: number_of_commits)
 
-    ipa_name  = "Provenance-#{git_branch}-#{build_number}.ipa"
+    ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
 
     if is_ci?
       increment_build_number_in_plist(
@@ -391,16 +391,15 @@ end
 
     badge_alpha
     build_ios_adhoc(
-      ipa_name: ipa_name,
-      activeArchOnly: true,
-      )
+      ipa_name: ipa_name
+    )
 
     # SCP to file server for storage
     # if is_ci?
     build_time = Time.now.strftime('%F')
 
     # begin
-    #   upload_to_testflight
+    #   upload_to_testflight(skip_submission: true)
     # rescue => ex
     #   # don't fail the build
     #   UI.important("Testflight Something went wrong: #{ex}")

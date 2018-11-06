@@ -283,7 +283,7 @@ extension PVAppDelegate {
         let developBranch = kGITBranch.lowercased() == "develop"
 		let travisBuild = ["jmattiello","travis"].contains(builtByUser)
         let masterOrDevelopBranch = masterBranch || developBranch
-		let feedbackEnabled = masterOrDevelopBranch && travisBuild
+//        let feedbackEnabled = masterOrDevelopBranch && travisBuild
 
         #if os(iOS)
         BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch

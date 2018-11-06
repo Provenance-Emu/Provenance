@@ -11,7 +11,7 @@
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
 #import "PVLogging.h"
-#import <AVFoundation/AVFoundation.h>
+@import AVFoundation;
 
 /* Timing */
 #include <mach/mach_time.h>

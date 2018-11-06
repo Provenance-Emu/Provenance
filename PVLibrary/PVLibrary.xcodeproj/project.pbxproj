@@ -20,6 +20,7 @@
 		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2EC219192FF009F4EDC /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
 		B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
@@ -377,6 +378,7 @@
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B3067F752106B9180091437F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B3274E5E2106BA1200857F52 /* PVAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
 		B3274E622106BAA200857F52 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
@@ -796,6 +798,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
 				B3AF6FBB219160B9000FA7F9 /* MobileCoreServices.framework in Frameworks */,
@@ -816,6 +819,7 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B324C2EC219192FF009F4EDC /* PVSupport.framework */,
 				B3AF701521916CF3000FA7F9 /* PVSupport.framework */,
 				B3AF6FB72191600A000FA7F9 /* iOS */,
 				B3AF6FB621916002000FA7F9 /* tvOS */,

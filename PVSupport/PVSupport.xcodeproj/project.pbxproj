@@ -20,6 +20,7 @@
 		B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
 		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
 		B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
+		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -143,6 +144,7 @@
 		B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVProvenanceLogging.m; sourceTree = "<group>"; };
 		B302F89E20B73D6400C5E502 /* PVLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogging.m; sourceTree = "<group>"; };
 		B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVCocoaLumberJackLogging.m; sourceTree = "<group>"; };
+		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3447E7F218B7E4B00557ACE /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CABitOperations.h; sourceTree = "<group>"; };
 		B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioTimeStamp.h; sourceTree = "<group>"; };
 		B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
 				B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */,
@@ -295,6 +298,7 @@
 		1ACEA64617F7467D0031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B324C3152191963B009F4EDC /* AVFoundation.framework */,
 				B3AF6FE0219161C4000FA7F9 /* tvOS */,
 				B3AF6FDB21916177000FA7F9 /* iOS */,
 				B3721CF721912FDE00433E4C /* Carthage-tvOS */,

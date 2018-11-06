@@ -170,6 +170,7 @@
 		B301797D207C908F0051B93D /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B301797E207C908F0051B93D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339414220783CBB008DBAB4 /* driver.cpp */; };
 		B301797F207C909E0051B93D /* libreicast-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libreicast-iOS.a */; };
+		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B333502720786BD90036A448 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438820783CC0008DBAB4 /* Shader.vsh */; };
 		B333502820786BEB0036A448 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438720783CC0008DBAB4 /* Shader.fsh */; };
@@ -197,7 +198,6 @@
 		B3447EC7218BEDD200557ACE /* PVReicastCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */; };
 		B3447EC8218BEDD200557ACE /* PVReicast+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */; };
 		B3447EC9218BEDD200557ACE /* PVReicastCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */; };
-		B3447ECB218BEDD200557ACE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -446,6 +446,7 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libreicast-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libreicast-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339412120783CBB008DBAB4 /* rec_x64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rec_x64.cpp; sourceTree = "<group>"; };
 		B339412320783CBB008DBAB4 /* x86_emitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = x86_emitter.h; sourceTree = "<group>"; };
 		B339412420783CBB008DBAB4 /* x86_matcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = x86_matcher.h; sourceTree = "<group>"; };
@@ -1450,9 +1451,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
 				B3B104AF218F26F400210C39 /* libreicast-tvOS.a in Frameworks */,
-				B3447ECB218BEDD200557ACE /* AVFoundation.framework in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
 				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
@@ -3847,6 +3848,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
 				B3B104B8218F281B00210C39 /* PVSupport.framework */,
 				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
 				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
