@@ -284,10 +284,9 @@ end
       # temporarily disable automatic code signing
       # codesign_toggle(automatic: false)
 
-      rome_download
+      # rome_download
+      carthage_bootstrap_ios
     end
-
-    # carthage_bootstrap
   end
 
   desc "Create a build for users "
@@ -553,7 +552,7 @@ end
 
     rome(
       command: "download",          # One of: download, upload, list
-      platform: "iOS",              # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
+      platform: "iOS,tvOS",              # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
       cacheprefix: swift_version,
     )
   end

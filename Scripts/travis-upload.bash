@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Development
 # openssl aes-256-cbc -k "$SECURITY_PASSWORD" -in scripts/certs/development-cert.cer.enc -d -a -out scripts/certs/development-cert.cer
 # openssl aes-256-cbc -k "$SECURITY_PASSWORD" -in scripts/certs/development-key.p12.enc -d -a -out scripts/certs/development-key.p12
@@ -25,11 +27,36 @@
 # Fix for OS X Sierra that hungs in the codesign step
 # security set-key-partition-list -S apple-tool:,apple: -s -k $SECURITY_PASSWORD ios-build.keychain > /dev/null
 
+if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+  echo "This is a pull request. No deployment will be done."
+  exit 0
+fi
+
 # Scp Uploader
+echo "Decoding key"
 echo "${SCP_KEY_ENCODED}" | base64 --decode >/tmp/sftp_rsa
 chmod 600 /tmp/sftp_rsa
-scp -i /tmp/sftp_rsa "@$OUTPUTDIR/$APP_NAME.ipa" $SCP_USER@$SCP_SERVER:$SCP_DIR/$TRAVIS_BRANCH/\`${TRAVIS_COMMIT:0:7}\`/$APP_NAME.ipa
+
+echo "Starting SSH Agent"
+eval "$(ssh-agent -s)" #start the ssh agent
+
+echo "Adding SSH Key"
+ssh-add /tmp/sftp_rsa
+
+DEST_DIR="${SCP_DIR}/${TRAVIS_BRANCH}/\`${TRAVIS_COMMIT:0:7}\`/${APP_NAME}.ipa"
+
+echo "Creating destination directory"
+ssh ${SCP_SERVER} 'mkdir -p "${DEST_DIR}"'
+
+SOURCE_FILE="@$OUTPUTDIR/$APP_NAME.ipa"
+echo "Copy ${SOURCE_FILE} to ${DEST_DIR}"
+scp -i /tmp/sftp_rsa  ${SCP_USER}@${SCP_SERVER}:"${DEST_DIR}"
+
+echo "Removing temporary SSH key"
 rm /tmp/sftp_rsa
+
+# curl --ftp-create-dirs -T filename --key /tmp/sftp_rsa sftp://${SFTP_USER}:${SFTP_PASSWORD}@example.com/directory/filename
+
 # HockeyApp Uploader
 # curl https://rink.hockeyapp.net/api/2/apps/$HOCKEY_APP_ID/app_versions \
 #   -F status="2" \
@@ -52,3 +79,4 @@ rm /tmp/sftp_rsa
 #  -F notify=off \
 #  -F instrumentation=off \
 #  -A "TestFairy iOS Command Line Uploader 2.1"
+echo "Done."

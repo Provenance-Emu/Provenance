@@ -8,6 +8,7 @@ cache:
   directories:
   - Carthage
   - /Users/travis/Library/Caches/Rome
+  - /Users/travis/Library/Developer/Xcode/DerivedData/
 
 git:
   depth: 3 # Speed up cloning, don't need many commits
@@ -31,10 +32,10 @@ env:
     - PROJECT_NAME="Provenance.xcodeproj"
     - SCHEME_IOS_APP="Provenance-Release"
     - SCHEME_TVOS_APP="ProvenanceTV-Release"
-    - IOS_PLATFORM="iOS Simulator"
-    - TVOS_PLATFORM="tvOS Simulator"
-    - IOS_SDK=iphonesimulator11.4
-    - TVOS_SDK=appletvsimulator11.4
+    # - IOS_PLATFORM="iOS Simulator"
+    # - TVOS_PLATFORM="tvOS Simulator"
+    # - IOS_SDK=iphonesimulator11.4
+    # - TVOS_SDK=appletvsimulator11.4
     - CONFIGURATION="Release"
     - AWS_REGION="us-east-1"
     - AWS_ENDPOINT="http://provenance.joemattiello.com:9000"
@@ -75,19 +76,19 @@ before_script:
     # - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
       # This can take a while so using the above to not make travis abort
   # - git lfs pull
-  - ./Scripts/rome-download.sh iOS
+  - ./Scripts/rome-download.sh
   # - ./Scripts/rome-travis.sh > /tmp/carthage.log
     #- carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
         # Killing background sleep loop
     # - kill %1
 after_success:
-  - ./Scripts/rome-upload.sh iOS
+  - ./Scripts/rome-upload.sh
   - wget https://raw.githubusercontent.com/JoeMatt/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
   - ./Scripts/travis-upload.bash
   # Test code covered, add -enableCodeCoverage YES to xcodebuild
-  #- sleep 5
+  - sleep 5
   #- bash <(curl -s https://codecov.io/bash)
 after_failure:
   - tail -100 /tmp/carthage.log
@@ -95,8 +96,7 @@ after_failure:
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 script:
-  - set -o pipefail
-  - bundle exec fastlane carthage_bootstrap_ios
+  # - set -o pipefail
   - bundle exec fastlane travis
   # - swiftlint
   # - travis_wait 60 xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -configuration "$CONFIGURATION" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`
