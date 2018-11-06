@@ -480,10 +480,6 @@
     RLMSyncCredentials *creds = [RLMSyncCredentials credentialsWithUsername:userName password:@"a" register:YES];
     [[self logInUserForCredentials:creds server:[RLMObjectServerTests authServerURL]] logOut];
 
-    // This token is sent by ROS upon user registration
-    NSString *registrationToken = [self emailForAddress:userName];
-    XCTAssertNotNil(registrationToken);
-
     XCTestExpectation *ex = [self expectationWithDescription:@"callback invoked"];
     [RLMSyncUser requestEmailConfirmationForAuthServer:[RLMObjectServerTests authServerURL]
                                              userEmail:userName completion:^(NSError *error) {
@@ -492,10 +488,8 @@
                                              }];
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 
-    // This token should have been created when requestEmailConfirmationForAuthServer was called
     NSString *token = [self emailForAddress:userName];
     XCTAssertNotNil(token);
-    XCTAssertNotEqual(token, registrationToken);
 
     // Use the token
     ex = [self expectationWithDescription:@"callback invoked"];

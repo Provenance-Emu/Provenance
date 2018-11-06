@@ -1,47 +1,15 @@
-x.y.z Release notes (yyyy-MM-dd)
-=============================================================
-### Enhancements
-* None.
-
-### Fixed
-* <How to hit and notice issue? what was the impact?> ([#????](https://github.com/realm/realm-js/issues/????), since v?.?.?)
-* None.
-
-<!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
-
-### Compatibility
-* File format: Generates Realms with format v9 (Reads and upgrades all previous formats)
-* Realm Object Server: 3.11.0 or later.
-* APIs are backwards compatible with all previous releases in the 3.x.y series.
-
-3.11.1 Release notes (2018-10-19)
-=============================================================
-
-### Fixed
-
-* Fix `SyncUser.requestEmailConfirmation` not triggering the email confirmation
-  flow on ROS. (PR [#5953](https://github.com/realm/realm-cocoa/pull/5953), since 3.5.0)
-* Add some missing validation in the getters and setters of properties on
-  managed Realm objects, which would sometimes result in an application
-  crashing with a segfault rather than the appropriate exception being thrown
-  when trying to write to an object which has been deleted.
-  (PR [#5952](https://github.com/realm/realm-cocoa/pull/5952), since 2.8.0)
-
-### Compatibility
-
-* File format: Generates Realms with format v9 (Reads and upgrades all previous formats)
-* Realm Object Server: 3.11.0 or later.
-
 3.11.0 Release notes (2018-10-04)
 =============================================================
 
 ### Enhancements
+
 * Reduce memory usage when integrating synchronized changes sent by ROS.
 * Devices will now report download progress for read-only Realms, allowing the
   server to compact Realms more aggressively and reducing the amount of
   server-side storage space required.
 
 ### Fixed
+
 * Fix a crash when adding an object with a non-`@objc` `String?` property which
   has not been explicitly ignored to a Realm on watchOS 5 (and possibly other
   platforms when building with Xcode 10).
@@ -50,7 +18,7 @@ x.y.z Release notes (yyyy-MM-dd)
   being thrown when integrating changes sent by the server.
 
 ### Compatibility
-* File format: Generates Realms with format v9 (Reads and upgrades all previous formats)
+
 * **NOTE!!!
   You will need to upgrade your Realm Object Server to at least version 3.11.0
   or use [Realm Cloud](https://cloud.realm.io).
@@ -59,6 +27,7 @@ x.y.z Release notes (yyyy-MM-dd)
   server protocol version = 24`.**
 
 ### Internal
+
 * Update to Sync 3.12.2.
 
 3.10.0 Release notes (2018-09-19)
@@ -196,7 +165,7 @@ details.
 ### Deprecations
 
 * `+[RLMSyncConfiguration initWithUser] has been deprecated in favor of `-[RLMSyncUser configurationWithURL:url].
-* `+[RLMSyncConfiguration automaticConfiguration] has been deprecated in favor of `-[RLMSyncUser configuration].
+* `+[RLMSyncConfiguration automaticConfiguration] has been deprecated in favor of `-[RLMSyncUser configuration]. 
 * `+[RLMSyncConfiguration automaticConfigurationForUser] has been deprecated in favor of `-[RLMSyncUser configuration].
 * `-[RLMSyncConfiguration isPartial] has been deprecated in favor of `-[RLMSyncConfiguration fullSynchronization]`.
 
@@ -2175,7 +2144,7 @@ Prebuilt frameworks are now built with Xcode 7.3.
   `RLMRealm`/`Realm` instances.
 * Fail with `RLMErrorFileNotFound` instead of the more generic `RLMErrorFileAccess`,
   if no file was found when a realm was opened as read-only or if the directory part
-  of the specified path was not found when a copy should be written.
+  of the specified path was not found when a copy should be written. 
 * Greatly improve performance when deleting objects with one or more indexed
   properties.
 * Indexing `BOOL`/`Bool` and `NSDate` properties are now supported.
@@ -2210,7 +2179,7 @@ Prebuilt frameworks are now built with Xcode 7.3.
 
 * Support for tvOS.
 * Support for building Realm Swift from source when using Carthage.
-* The block parameter of `-[RLMRealm transactionWithBlock:]`/`Realm.write(_:)` is
+* The block parameter of `-[RLMRealm transactionWithBlock:]`/`Realm.write(_:)` is 
   now marked as `__attribute__((noescape))`/`@noescape`.
 * Many forms of queries with key paths on both sides of the comparison operator
   are now supported.

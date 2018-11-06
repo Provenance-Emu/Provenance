@@ -1,5 +1,4 @@
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator appletvos appletvsimulator;
-TARGETED_DEVICE_FAMILY = 1,2,3;
+SUPPORTED_PLATFORMS = macosx iphonesimulator iphoneos appletvos appletvsimulator;
 
 COPY_PHASE_STRIP = NO;
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks;

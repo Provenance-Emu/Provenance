@@ -52,7 +52,7 @@
       <FileRef
          location = "group:Cores/Stella/PVStella.xcodeproj">
       </FileRef>
-        <FileRef
+      <FileRef
          location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
       </FileRef>
       <FileRef

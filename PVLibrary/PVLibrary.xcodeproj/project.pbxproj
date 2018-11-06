@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
-		B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4C2106B5A80091437F /* PVSupport.framework */; };
-		B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4E2106B5D00091437F /* RealmSwift.framework */; };
-		B3067F512106B5D00091437F /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4F2106B5D00091437F /* Realm.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; };
 		B3067F632106B8650091437F /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -23,7 +20,6 @@
 		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B32155462107D2AC0085B18E /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32155452107D2AC0085B18E /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
 		B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
@@ -180,8 +176,10 @@
 		B3AF47D721071FCD002211EE /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; };
 		B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3AF47DF21072AD4002211EE /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
-		B3B104DD218F6CDD00210C39 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104DC218F6CDD00210C39 /* ZipArchive.framework */; };
-		B3B104ED218F7D1E00210C39 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104EC218F7D1E00210C39 /* ZipArchive.framework */; };
+		B3AF6FBB219160B9000FA7F9 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBA219160B9000FA7F9 /* MobileCoreServices.framework */; };
+		B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */; };
+		B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBE219160C4000FA7F9 /* Foundation.framework */; };
+		B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701521916CF3000FA7F9 /* PVSupport.framework */; };
 		B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -344,37 +342,9 @@
 		B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2D2106B4D700DDEBD6 /* PVSaveState.swift */; };
 		B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3C04B4021077B3100E7AF79 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
-		B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4621077BEC00E7AF79 /* Realm.framework */; };
-		B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */; };
-		B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4A21077BFC00E7AF79 /* libc++.tbd */; };
-		B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B4E21077CCF00E7AF79 /* Foundation.framework */; };
-		B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */; };
-		B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */; };
 		B3C04B642107867200E7AF79 /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B632107867200E7AF79 /* PVLibraryTests.swift */; };
 		B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
-		B3C04B6E21078CFD00E7AF79 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */; };
 		B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B7021078D9400E7AF79 /* PVSupport.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B7A21078E8300E7AF79 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */; };
-		B3C04B7B21078E8300E7AF79 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */; };
-		B3C04B7C21078E8300E7AF79 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */; };
-		B3C04B7D21078E8300E7AF79 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7721078E8200E7AF79 /* NSLogger.framework */; };
-		B3C04B7E21078E8300E7AF79 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */; };
-		B3C04B7F21078E8300E7AF79 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */; };
-		B3C04B8021078F9600E7AF79 /* CocoaLumberjack.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8121078F9600E7AF79 /* CocoaLumberjackSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8221078F9600E7AF79 /* NSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7721078E8200E7AF79 /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8321078F9600E7AF79 /* NSLoggerSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8421078F9600E7AF79 /* SwiftyUserDefaults.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8521078F9600E7AF79 /* XCDLumberjackNSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B8C2107972300E7AF79 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B882107972100E7AF79 /* ZIPFoundation.framework */; };
-		B3C04B8D2107972300E7AF79 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; };
-		B3C04B8E2107972300E7AF79 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8A2107972200E7AF79 /* SQLite.framework */; };
-		B3C04B8F2107972300E7AF79 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C04B8B2107972200E7AF79 /* Realm.framework */; };
-		B3C04B902107972900E7AF79 /* Realm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B8B2107972200E7AF79 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B912107972900E7AF79 /* RealmSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B892107972200E7AF79 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B922107972900E7AF79 /* SQLite.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B8A2107972200E7AF79 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C04B932107973000E7AF79 /* ZIPFoundation.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3C04B882107972100E7AF79 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
 /* End PBXBuildFile section */
@@ -396,18 +366,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3C04B902107972900E7AF79 /* Realm.framework in Copy Framework */,
-				B3C04B912107972900E7AF79 /* RealmSwift.framework in Copy Framework */,
-				B3C04B922107972900E7AF79 /* SQLite.framework in Copy Framework */,
-				B3C04B7021078D9400E7AF79 /* PVSupport.framework in Copy Framework */,
 				B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */,
-				B3C04B8021078F9600E7AF79 /* CocoaLumberjack.framework in Copy Framework */,
-				B3C04B8121078F9600E7AF79 /* CocoaLumberjackSwift.framework in Copy Framework */,
-				B3C04B8221078F9600E7AF79 /* NSLogger.framework in Copy Framework */,
-				B3C04B8321078F9600E7AF79 /* NSLoggerSwift.framework in Copy Framework */,
-				B3C04B8421078F9600E7AF79 /* SwiftyUserDefaults.framework in Copy Framework */,
-				B3C04B8521078F9600E7AF79 /* XCDLumberjackNSLogger.framework in Copy Framework */,
-				B3C04B932107973000E7AF79 /* ZIPFoundation.framework in Copy Framework */,
 			);
 			name = "Copy Framework";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -416,15 +375,8 @@
 
 /* Begin PBXFileReference section */
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B3067F4C2106B5A80091437F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3067F4E2106B5D00091437F /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = ../Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
-		B3067F4F2106B5D00091437F /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B3067F752106B9180091437F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		B32155452107D2AC0085B18E /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3274E552106B97B00857F52 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		B3274E572106B9B100857F52 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
-		B3274E592106B9B600857F52 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B3274E5E2106BA1200857F52 /* PVAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
 		B3274E622106BAA200857F52 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
@@ -461,9 +413,6 @@
 		B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameImporter.swift; sourceTree = "<group>"; };
 		B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
-		B3AF45E32107188D002211EE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		B3AF45E521071894002211EE /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		B3AF45E72107189E002211EE /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		B3AF460B21071CA5002211EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B3AF460C21071CA5002211EE /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
 		B3AF460D21071CA5002211EE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -782,33 +731,52 @@
 		B3AF475321071CA6002211EE /* LzmaSDKObjCMutableItem+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LzmaSDKObjCMutableItem+Private.h"; sourceTree = "<group>"; };
 		B3AF475421071CA6002211EE /* LzmaSDKObjCExtractCallback.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LzmaSDKObjCExtractCallback.mm; sourceTree = "<group>"; };
 		B3AF475521071CA6002211EE /* LzmaSDKObjCItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LzmaSDKObjCItem.mm; sourceTree = "<group>"; };
-		B3AF475E21071DE0002211EE /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
 		B3AF47DC21072AD3002211EE /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 		B3AF47DD21072AD3002211EE /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
-		B3B104DC218F6CDD00210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = ../Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
-		B3B104EC218F7D1E00210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = ../Carthage/Build/tvOS/ZipArchive.framework; sourceTree = "<group>"; };
+		B3AF6FBA219160B9000FA7F9 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
+		B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3AF6FBE219160C4000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3AF6FC021916105000FA7F9 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = tvOS/Realm.framework; sourceTree = "<group>"; };
+		B3AF6FC121916105000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = tvOS/RxTest.framework; sourceTree = "<group>"; };
+		B3AF6FC221916105000FA7F9 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3AF6FC321916105000FA7F9 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = tvOS/RxAtomic.framework; sourceTree = "<group>"; };
+		B3AF6FC421916105000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = tvOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3AF6FC521916105000FA7F9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = tvOS/RxCocoa.framework; sourceTree = "<group>"; };
+		B3AF6FC621916105000FA7F9 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = tvOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B3AF6FC721916105000FA7F9 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = tvOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
+		B3AF6FC921916105000FA7F9 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = tvOS/ZipArchive.framework; sourceTree = "<group>"; };
+		B3AF6FCA21916106000FA7F9 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B3AF6FCB21916106000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = tvOS/RxBlocking.framework; sourceTree = "<group>"; };
+		B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = tvOS/QuickTableViewController.framework; sourceTree = "<group>"; };
+		B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = tvOS/HockeySDK.framework; sourceTree = "<group>"; };
+		B3AF6FCE21916106000FA7F9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = tvOS/RxSwift.framework; sourceTree = "<group>"; };
+		B3AF6FCF21916106000FA7F9 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = tvOS/ZIPFoundation.framework; sourceTree = "<group>"; };
+		B3AF6FD021916106000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = tvOS/SQLite.framework; sourceTree = "<group>"; };
+		B3AF6FF621916978000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = iOS/SQLite.framework; sourceTree = "<group>"; };
+		B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
+		B3AF6FF821916978000FA7F9 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3AF6FF921916978000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = iOS/HockeySDK.framework; sourceTree = "<group>"; };
+		B3AF6FFA21916978000FA7F9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		B3AF6FFB21916978000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = iOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
+		B3AF6FFD21916978000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = iOS/RxTest.framework; sourceTree = "<group>"; };
+		B3AF6FFE21916978000FA7F9 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B3AF6FFF21916978000FA7F9 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = iOS/XLActionController.framework; sourceTree = "<group>"; };
+		B3AF700021916978000FA7F9 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = iOS/ZIPFoundation.framework; sourceTree = "<group>"; };
+		B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B3AF700221916978000FA7F9 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = iOS/Realm.framework; sourceTree = "<group>"; };
+		B3AF700321916978000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = iOS/RxBlocking.framework; sourceTree = "<group>"; };
+		B3AF700421916979000FA7F9 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B3AF700521916979000FA7F9 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = iOS/RxAtomic.framework; sourceTree = "<group>"; };
+		B3AF700621916979000FA7F9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = iOS/RxSwift.framework; sourceTree = "<group>"; };
+		B3AF700721916979000FA7F9 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = iOS/ZipArchive.framework; sourceTree = "<group>"; };
+		B3AF700821916979000FA7F9 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B3AF701521916CF3000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B4421077B3100E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C04B4621077BEC00E7AF79 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
-		B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = ../Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
-		B3C04B4A21077BFC00E7AF79 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
-		B3C04B4C21077C3B00E7AF79 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C04B4E21077CCF00E7AF79 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.4.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibraryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B632107867200E7AF79 /* PVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibraryTests.swift; sourceTree = "<group>"; };
 		B3C04B652107867200E7AF79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = ../PVSupport/Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
-		B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../PVSupport/Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
-		B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
-		B3C04B7721078E8200E7AF79 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = ../PVSupport/Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = ../PVSupport/Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = ../PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
-		B3C04B882107972100E7AF79 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = Carthage/Build/iOS/ZIPFoundation.framework; sourceTree = "<group>"; };
-		B3C04B892107972200E7AF79 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
-		B3C04B8A2107972200E7AF79 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
-		B3C04B8B2107972200E7AF79 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorConfiguration+Frameworks.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -817,13 +785,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
-				B3067F4D2106B5A80091437F /* PVSupport.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
-				B3067F512106B5D00091437F /* Realm.framework in Frameworks */,
-				B3067F502106B5D00091437F /* RealmSwift.framework in Frameworks */,
-				B3B104DD218F6CDD00210C39 /* ZipArchive.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -831,14 +796,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B32155462107D2AC0085B18E /* PVSupport.framework in Frameworks */,
-				B3C04B5321077CD800E7AF79 /* MobileCoreServices.framework in Frameworks */,
-				B3C04B5121077CD300E7AF79 /* CoreGraphics.framework in Frameworks */,
-				B3C04B4F21077CCF00E7AF79 /* Foundation.framework in Frameworks */,
-				B3C04B4B21077BFC00E7AF79 /* libc++.tbd in Frameworks */,
-				B3B104ED218F7D1E00210C39 /* ZipArchive.framework in Frameworks */,
-				B3C04B4821077BEC00E7AF79 /* Realm.framework in Frameworks */,
-				B3C04B4921077BEC00E7AF79 /* RealmSwift.framework in Frameworks */,
+				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
+				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
+				B3AF6FBB219160B9000FA7F9 /* MobileCoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -846,18 +806,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C04B8C2107972300E7AF79 /* ZIPFoundation.framework in Frameworks */,
-				B3C04B8D2107972300E7AF79 /* RealmSwift.framework in Frameworks */,
-				B3C04B8E2107972300E7AF79 /* SQLite.framework in Frameworks */,
-				B3C04B8F2107972300E7AF79 /* Realm.framework in Frameworks */,
-				B3C04B6E21078CFD00E7AF79 /* PVSupport.framework in Frameworks */,
 				B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */,
-				B3C04B7A21078E8300E7AF79 /* SwiftyUserDefaults.framework in Frameworks */,
-				B3C04B7B21078E8300E7AF79 /* XCDLumberjackNSLogger.framework in Frameworks */,
-				B3C04B7C21078E8300E7AF79 /* CocoaLumberjack.framework in Frameworks */,
-				B3C04B7D21078E8300E7AF79 /* NSLogger.framework in Frameworks */,
-				B3C04B7E21078E8300E7AF79 /* NSLoggerSwift.framework in Frameworks */,
-				B3C04B7F21078E8300E7AF79 /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -867,40 +816,10 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3B104DC218F6CDD00210C39 /* ZipArchive.framework */,
-				B3B104EC218F7D1E00210C39 /* ZipArchive.framework */,
-				B32155452107D2AC0085B18E /* PVSupport.framework */,
-				B3C04B8B2107972200E7AF79 /* Realm.framework */,
-				B3C04B892107972200E7AF79 /* RealmSwift.framework */,
-				B3C04B8A2107972200E7AF79 /* SQLite.framework */,
-				B3C04B882107972100E7AF79 /* ZIPFoundation.framework */,
-				B3C04B7621078E8200E7AF79 /* CocoaLumberjack.framework */,
-				B3C04B7921078E8300E7AF79 /* CocoaLumberjackSwift.framework */,
-				B3C04B7721078E8200E7AF79 /* NSLogger.framework */,
-				B3C04B7821078E8300E7AF79 /* NSLoggerSwift.framework */,
-				B3C04B7421078E8200E7AF79 /* SwiftyUserDefaults.framework */,
-				B3C04B7521078E8200E7AF79 /* XCDLumberjackNSLogger.framework */,
-				B3C04B6D21078CFD00E7AF79 /* PVSupport.framework */,
-				B3C04B5221077CD800E7AF79 /* MobileCoreServices.framework */,
-				B3C04B5021077CD300E7AF79 /* CoreGraphics.framework */,
-				B3C04B4E21077CCF00E7AF79 /* Foundation.framework */,
-				B3C04B4C21077C3B00E7AF79 /* PVSupport.framework */,
-				B3C04B4A21077BFC00E7AF79 /* libc++.tbd */,
-				B3C04B4621077BEC00E7AF79 /* Realm.framework */,
-				B3C04B4721077BEC00E7AF79 /* RealmSwift.framework */,
-				B3AF475E21071DE0002211EE /* ZipArchive.framework */,
-				B3AF45E72107189E002211EE /* libstdc++.tbd */,
-				B3AF45E521071894002211EE /* libc++.tbd */,
-				B3AF45E32107188D002211EE /* libz.tbd */,
-				B3274E592106B9B600857F52 /* libsqlite3.tbd */,
-				B3274E572106B9B100857F52 /* CoreSpotlight.framework */,
-				B3274E552106B97B00857F52 /* UIKit.framework */,
-				B3067F752106B9180091437F /* MobileCoreServices.framework */,
-				B3067F732106B9130091437F /* CoreGraphics.framework */,
-				B3067F4F2106B5D00091437F /* Realm.framework */,
-				B3067F4E2106B5D00091437F /* RealmSwift.framework */,
-				B3067F4C2106B5A80091437F /* PVSupport.framework */,
-				B3067F4A2106B5A20091437F /* Foundation.framework */,
+				B3AF701521916CF3000FA7F9 /* PVSupport.framework */,
+				B3AF6FB72191600A000FA7F9 /* iOS */,
+				B3AF6FB621916002000FA7F9 /* tvOS */,
+				B3AF6FA121915EE8000FA7F9 /* Carthage */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1462,6 +1381,86 @@
 				B3AF47DD21072AD3002211EE /* systems.plist */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		B3AF6FA121915EE8000FA7F9 /* Carthage */ = {
+			isa = PBXGroup;
+			children = (
+				B3AF6FA321915F62000FA7F9 /* tvOS */,
+				B3AF6FA221915F5C000FA7F9 /* iOS */,
+			);
+			name = Carthage;
+			path = ../Carthage/Build;
+			sourceTree = SOURCE_ROOT;
+		};
+		B3AF6FA221915F5C000FA7F9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3AF700421916979000FA7F9 /* CocoaLumberjack.framework */,
+				B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */,
+				B3AF6FF921916978000FA7F9 /* HockeySDK.framework */,
+				B3AF6FFB21916978000FA7F9 /* NSLogger.framework */,
+				B3AF6FF821916978000FA7F9 /* NSLoggerSwift.framework */,
+				B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */,
+				B3AF700221916978000FA7F9 /* Realm.framework */,
+				B3AF700821916979000FA7F9 /* RealmSwift.framework */,
+				B3AF700521916979000FA7F9 /* RxAtomic.framework */,
+				B3AF700321916978000FA7F9 /* RxBlocking.framework */,
+				B3AF6FFA21916978000FA7F9 /* RxCocoa.framework */,
+				B3AF700621916979000FA7F9 /* RxSwift.framework */,
+				B3AF6FFD21916978000FA7F9 /* RxTest.framework */,
+				B3AF6FF621916978000FA7F9 /* SQLite.framework */,
+				B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */,
+				B3AF6FFE21916978000FA7F9 /* XCDLumberjackNSLogger.framework */,
+				B3AF6FFF21916978000FA7F9 /* XLActionController.framework */,
+				B3AF700721916979000FA7F9 /* ZipArchive.framework */,
+				B3AF700021916978000FA7F9 /* ZIPFoundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		B3AF6FA321915F62000FA7F9 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3AF6FCA21916106000FA7F9 /* CocoaLumberjack.framework */,
+				B3AF6FC621916105000FA7F9 /* CocoaLumberjackSwift.framework */,
+				B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */,
+				B3AF6FC421916105000FA7F9 /* NSLogger.framework */,
+				B3AF6FC221916105000FA7F9 /* NSLoggerSwift.framework */,
+				B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */,
+				B3AF6FC021916105000FA7F9 /* Realm.framework */,
+				B3AF6FC321916105000FA7F9 /* RxAtomic.framework */,
+				B3AF6FCB21916106000FA7F9 /* RxBlocking.framework */,
+				B3AF6FC521916105000FA7F9 /* RxCocoa.framework */,
+				B3AF6FCE21916106000FA7F9 /* RxSwift.framework */,
+				B3AF6FC121916105000FA7F9 /* RxTest.framework */,
+				B3AF6FD021916106000FA7F9 /* SQLite.framework */,
+				B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */,
+				B3AF6FC721916105000FA7F9 /* XCDLumberjackNSLogger.framework */,
+				B3AF6FC921916105000FA7F9 /* ZipArchive.framework */,
+				B3AF6FCF21916106000FA7F9 /* ZIPFoundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		B3AF6FB621916002000FA7F9 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3AF6FBE219160C4000FA7F9 /* Foundation.framework */,
+				B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */,
+				B3AF6FBA219160B9000FA7F9 /* MobileCoreServices.framework */,
+			);
+			path = tvOS;
+			sourceTree = "<group>";
+		};
+		B3AF6FB72191600A000FA7F9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3067F752106B9180091437F /* MobileCoreServices.framework */,
+				B3067F732106B9130091437F /* CoreGraphics.framework */,
+				B3067F4A2106B5A20091437F /* Foundation.framework */,
+			);
+			path = iOS;
 			sourceTree = "<group>";
 		};
 		B3C04B622107867200E7AF79 /* PVLibraryTests */ = {

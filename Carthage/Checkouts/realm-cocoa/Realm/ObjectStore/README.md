@@ -49,11 +49,6 @@ The object store code supports being built for all Apple platforms, Linux and An
     cmake -DREALM_PLATFORM=Android -DANDROID_NDK=/usr/local/Cellar/android-ndk-r10e/r10e/ .
     ```
 
-    If you want to use XCode as your editor, you can generate a XCode project with:
-    ```
-    cmake -G Xcode .
-    ```
-
 4. Build:
 
     ```

@@ -60,7 +60,7 @@ public:
     // the binding's native data types to the core data types. See CppContext
     // for a reference implementation of such a context.
     //
-    // The actual definitions of these templated functions is in object_accessor.hpp
+    // The actual definitions of these tempated functions is in object_accessor.hpp
 
     // property getter/setter
     template<typename ValueType, typename ContextType>
@@ -74,14 +74,12 @@ public:
     template<typename ValueType, typename ContextType>
     static Object create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
                          const ObjectSchema &object_schema, ValueType value,
-                         bool try_update = false, bool update_only_diff = false,
-                         size_t current_row = size_t(-1), Row* = nullptr);
+                         bool try_update = false, Row* = nullptr);
 
     template<typename ValueType, typename ContextType>
     static Object create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
                          StringData object_type, ValueType value,
-                         bool try_update = false, bool update_only_diff = false,
-                         size_t current_row = size_t(-1), Row* = nullptr);
+                         bool try_update = false, Row* = nullptr);
 
     template<typename ValueType, typename ContextType>
     static Object get_for_primary_key(ContextType& ctx,
@@ -96,8 +94,6 @@ public:
                                       ValueType primary_value);
 
 private:
-    friend class Results;
-
     std::shared_ptr<Realm> m_realm;
     const ObjectSchema *m_object_schema;
     Row m_row;
@@ -106,7 +102,7 @@ private:
 
     template<typename ValueType, typename ContextType>
     void set_property_value_impl(ContextType& ctx, const Property &property,
-                                 ValueType value, bool try_update, bool update_only_diff, bool is_default);
+                                 ValueType value, bool try_update, bool is_default=false);
     template<typename ValueType, typename ContextType>
     ValueType get_property_value_impl(ContextType& ctx, const Property &property);
 
@@ -145,13 +141,6 @@ struct ReadOnlyPropertyException : public std::logic_error {
     const std::string object_type;
     const std::string property_name;
 };
-
-struct ModifyPrimaryKeyException : public std::logic_error {
-    ModifyPrimaryKeyException(const std::string& object_type, const std::string& property_name);
-    const std::string object_type;
-    const std::string property_name;
-};
-
 } // namespace realm
 
 #endif // REALM_OS_OBJECT_HPP

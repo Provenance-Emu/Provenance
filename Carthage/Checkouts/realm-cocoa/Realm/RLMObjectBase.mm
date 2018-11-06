@@ -411,7 +411,7 @@ void RLMObjectBaseSetObjectForKeyedSubscript(RLMObjectBase *object, NSString *ke
         return;
     }
 
-    if (object->_realm || object.class == object->_objectSchema.accessorClass) {
+    if (object->_realm) {
         RLMDynamicValidatedSet(object, key, obj);
     }
     else {

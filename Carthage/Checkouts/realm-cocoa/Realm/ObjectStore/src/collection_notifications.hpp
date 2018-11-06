@@ -126,7 +126,6 @@ public:
 
 private:
     struct Base {
-        virtual ~Base() {}
         virtual void before(CollectionChangeSet const&)=0;
         virtual void after(CollectionChangeSet const&)=0;
         virtual void error(std::exception_ptr)=0;

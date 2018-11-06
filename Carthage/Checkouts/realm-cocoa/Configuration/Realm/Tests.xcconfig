@@ -1,5 +1,4 @@
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator appletvos appletvsimulator;
-TARGETED_DEVICE_FAMILY = 1,2,3;
+SUPPORTED_PLATFORMS = macosx iphonesimulator iphoneos appletvos appletvsimulator;
 SKIP_INSTALL = YES;
 
 INFOPLIST_FILE = Realm/Tests/RealmTests-Info.plist;

@@ -53,12 +53,12 @@ struct TestContext : CppContext {
     { }
 
     util::Optional<util::Any>
-    default_value_for_property(ObjectSchema const& object, Property const& prop)
+    default_value_for_property(ObjectSchema const& object, std::string const& prop)
     {
         auto obj_it = defaults.find(object.name);
         if (obj_it == defaults.end())
             return util::none;
-        auto prop_it = obj_it->second.find(prop.name);
+        auto prop_it = obj_it->second.find(prop);
         if (prop_it == obj_it->second.end())
             return util::none;
         return prop_it->second;
@@ -140,13 +140,6 @@ TEST_CASE("object") {
         }},
         {"nullable string pk", {
             {"pk", PropertyType::String|PropertyType::Nullable, Property::IsPrimary{true}},
-        }},
-        {"person", {
-            {"name", PropertyType::String, Property::IsPrimary{true}},
-            {"age", PropertyType::Int},
-            {"scores", PropertyType::Array|PropertyType::Int},
-            {"assistant", PropertyType::Object|PropertyType::Nullable, "person"},
-            {"team", PropertyType::Array|PropertyType::Object, "person"},
         }},
     };
     config.schema_version = 0;
@@ -297,21 +290,9 @@ TEST_CASE("object") {
     }
 
     TestContext d(r);
-    auto create = [&](util::Any&& value, bool update, bool update_only_diff = false) {
+    auto create = [&](util::Any&& value, bool update) {
         r->begin_transaction();
-        auto obj = Object::create(d, r, *r->schema().find("all types"), value, update, update_only_diff);
-        r->commit_transaction();
-        return obj;
-    };
-    auto create_sub = [&](util::Any&& value, bool update, bool update_only_diff = false) {
-        r->begin_transaction();
-        auto obj = Object::create(d, r, *r->schema().find("link target"), value, update, update_only_diff);
-        r->commit_transaction();
-        return obj;
-    };
-    auto create_company = [&](util::Any&& value, bool update, bool update_only_diff = false) {
-        r->begin_transaction();
-        auto obj = Object::create(d, r, *r->schema().find("person"), value, update, update_only_diff);
+        auto obj = Object::create(d, r, *r->schema().find("all types"), value, update);
         r->commit_transaction();
         return obj;
     };
@@ -485,9 +466,7 @@ TEST_CASE("object") {
     }
 
     SECTION("create with update") {
-        CollectionChangeSet change;
-        bool callback_called;
-        Object obj = create(AnyDict{
+        auto obj = create(AnyDict{
             {"pk", INT64_C(1)},
             {"bool", true},
             {"int", INT64_C(5)},
@@ -507,23 +486,11 @@ TEST_CASE("object") {
             {"date array", AnyVec{}},
             {"object array", AnyVec{AnyDict{{"value", INT64_C(20)}}}},
         }, false);
-
-        auto token = obj.add_notification_callback([&](CollectionChangeSet c, std::exception_ptr) {
-            change = c;
-            callback_called = true;
-        });
-        advance_and_notify(*r);
-
         create(AnyDict{
             {"pk", INT64_C(1)},
             {"int", INT64_C(6)},
             {"string", "a"s},
         }, true);
-
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(callback_called);
-        REQUIRE_INDICES(change.modifications, 0);
 
         auto row = obj.row();
         REQUIRE(row.get_int(0) == 1);
@@ -534,185 +501,6 @@ TEST_CASE("object") {
         REQUIRE(row.get_string(5) == "a");
         REQUIRE(row.get_binary(6) == BinaryData("olleh", 5));
         REQUIRE(row.get_timestamp(7) == Timestamp(10, 20));
-    }
-
-    SECTION("create with update - only with diffs") {
-        CollectionChangeSet change;
-        bool callback_called;
-        AnyDict adam {
-            {"name", "Adam"s},
-            {"age", INT64_C(32)},
-            {"scores", AnyVec{INT64_C(1), INT64_C(2)}},
-        };
-        AnyDict brian {
-            {"name", "Brian"s},
-            {"age", INT64_C(33)},
-        };
-        AnyDict charley {
-            {"name", "Charley"s},
-            {"age", INT64_C(34)},
-            {"team", AnyVec{adam, brian}}
-        };
-        AnyDict donald {
-            {"name", "Donald"s},
-            {"age", INT64_C(35)},
-        };
-        AnyDict eddie {
-            {"name", "Eddie"s},
-            {"age", INT64_C(36)},
-            {"assistant", donald},
-            {"team", AnyVec{donald, charley}}
-        };
-        Object obj = create_company(eddie, true);
-
-        auto table = r->read_group().get_table("class_person");
-        REQUIRE(table->size() == 5);
-        Results result(r, *table);
-        auto token = result.add_notification_callback([&](CollectionChangeSet c, std::exception_ptr) {
-            change = c;
-            callback_called = true;
-        });
-        advance_and_notify(*r);
-
-        // First update unconditionally
-        create_company(eddie, true, false);
-
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(callback_called);
-        REQUIRE_INDICES(change.modifications, 0, 1, 2, 3, 4);
-
-        // Now, only update where differences (there should not be any diffs - so no update)
-        create_company(eddie, true, true);
-
-        REQUIRE(table->size() == 5);
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(!callback_called);
-
-        // Now, only update sub-object)
-        donald["scores"] = AnyVec{INT64_C(3), INT64_C(4), INT64_C(5)};
-        // Insert the new donald
-        eddie["assistant"] = donald;
-        create_company(eddie, true, true);
-
-        REQUIRE(table->size() == 5);
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(callback_called);
-        REQUIRE_INDICES(change.modifications, 1);
-
-        // Shorten list
-        donald["scores"] = AnyVec{INT64_C(3), INT64_C(4)};
-        eddie["assistant"] = donald;
-        create_company(eddie, true, true);
-
-        REQUIRE(table->size() == 5);
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(callback_called);
-        REQUIRE_INDICES(change.modifications, 1);
-    }
-
-    SECTION("create with update - identical sub-object") {
-        bool callback_called;
-        bool sub_callback_called;
-        Object sub_obj = create_sub(AnyDict{{"value", INT64_C(10)}}, false);
-        Object obj = create(AnyDict{
-            {"pk", INT64_C(1)},
-            {"bool", true},
-            {"int", INT64_C(5)},
-            {"float", 2.2f},
-            {"double", 3.3},
-            {"string", "hello"s},
-            {"data", "olleh"s},
-            {"date", Timestamp(10, 20)},
-            {"object", sub_obj},
-        }, false);
-
-        auto token1 = obj.add_notification_callback([&](CollectionChangeSet, std::exception_ptr) {
-            callback_called = true;
-        });
-        auto token2 = sub_obj.add_notification_callback([&](CollectionChangeSet, std::exception_ptr) {
-            sub_callback_called = true;
-        });
-        advance_and_notify(*r);
-
-        auto table = r->read_group().get_table("class_link target");
-        REQUIRE(table->size() == 1);
-
-        create(AnyDict{
-            {"pk", INT64_C(1)},
-            {"bool", true},
-            {"int", INT64_C(5)},
-            {"float", 2.2f},
-            {"double", 3.3},
-            {"string", "hello"s},
-            {"data", "olleh"s},
-            {"date", Timestamp(10, 20)},
-            {"object", AnyDict{{"value", INT64_C(10)}}},
-        }, true, true);
-
-        REQUIRE(table->size() == 1);
-        callback_called = false;
-        sub_callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(!callback_called);
-        REQUIRE(!sub_callback_called);
-
-        // Now change sub object
-        create(AnyDict{
-            {"pk", INT64_C(1)},
-            {"bool", true},
-            {"int", INT64_C(5)},
-            {"float", 2.2f},
-            {"double", 3.3},
-            {"string", "hello"s},
-            {"data", "olleh"s},
-            {"date", Timestamp(10, 20)},
-            {"object", AnyDict{{"value", INT64_C(11)}}},
-        }, true, true);
-
-        callback_called = false;
-        sub_callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(!callback_called);
-        REQUIRE(sub_callback_called);
-    }
-
-    SECTION("create with update - identical array of sub-objects") {
-        bool callback_called;
-        auto dict = AnyDict{
-            {"pk", INT64_C(1)},
-            {"bool", true},
-            {"int", INT64_C(5)},
-            {"float", 2.2f},
-            {"double", 3.3},
-            {"string", "hello"s},
-            {"data", "olleh"s},
-            {"date", Timestamp(10, 20)},
-            {"object array", AnyVec{ AnyDict{{"value", INT64_C(20)}}, AnyDict{{"value", INT64_C(21)}} } },
-        };
-        Object obj = create(dict, false);
-
-        auto token1 = obj.add_notification_callback([&](CollectionChangeSet, std::exception_ptr) {
-            callback_called = true;
-        });
-        advance_and_notify(*r);
-
-        create(dict, true, true);
-
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(!callback_called);
-
-        // Now change list
-        dict["object array"] = AnyVec{AnyDict{{"value", INT64_C(23)}}};
-        create(dict, true, true);
-
-        callback_called = false;
-        advance_and_notify(*r);
-        REQUIRE(callback_called);
     }
 
     SECTION("set existing fields to null with update") {

@@ -7,14 +7,15 @@ github "bcylin/QuickTableViewController"
 
 # PVSupport
 github "CocoaLumberjack/CocoaLumberjack"
-github "0xced/XCDLumberjackNSLogger"
 github "radex/SwiftyUserDefaults"
 
 # PVLibrary
 github "ZipArchive/ZipArchive"
-github "Provenance-Emu/realm-cocoa" # use our fork to speed up build times
+github "Realm/realm-cocoa" "v3.11.0" # use our fork to speed up build times
+
 github "stephencelis/SQLite.swift"
 github "weichsel/ZIPFoundation"
 
-github "ReactiveX/RxSwift"
-github "Provenance-Emu/RxRealm"
+# Rx
+github "ReactiveX/RxSwift" ~> 4.4.0
+github "RxSwiftCommunity/RxRealm" "0.7.6"
