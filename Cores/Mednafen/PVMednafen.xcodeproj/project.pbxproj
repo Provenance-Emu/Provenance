@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */; };
 		B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -383,6 +382,100 @@
 		B324C4CE2191A1AC009F4EDC /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2AE20736EEB0097D86F /* gfx.cpp */; };
 		B324C4CF2191A1AC009F4EDC /* gbGlobals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2B020736EEB0097D86F /* gbGlobals.cpp */; };
 		B324C4D62191A1F7009F4EDC /* libgb-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */; };
+		B324C53E2191A8A5009F4EDC /* mpc_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAF020736EE80097D86F /* mpc_decoder.c */; };
+		B324C53F2191A8A5009F4EDC /* mpc_bits_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAF520736EE80097D86F /* mpc_bits_reader.c */; };
+		B324C5402191A8A5009F4EDC /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAFD20736EE80097D86F /* huffman.c */; };
+		B324C5412191A8A5009F4EDC /* synth_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB0920736EE80097D86F /* synth_filter.c */; };
+		B324C5422191A8A5009F4EDC /* mpc_demux.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB0520736EE80097D86F /* mpc_demux.c */; };
+		B324C5432191A8A5009F4EDC /* streaminfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAED20736EE80097D86F /* streaminfo.c */; };
+		B324C5442191A8A5009F4EDC /* requant.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAF420736EE80097D86F /* requant.c */; };
+		B324C5452191A8A5009F4EDC /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAFE20736EE80097D86F /* crc32.c */; };
+		B324C54D2191A8D3009F4EDC /* libmpcdec-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */; };
+		B324C5502191AAD1009F4EDC /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3B220736EEC0097D86F /* input.cpp */; };
+		B324C5512191AAD1009F4EDC /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3AF20736EEC0097D86F /* ppu.cpp */; };
+		B324C5522191AAD1009F4EDC /* apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3BC20736EEC0097D86F /* apu.cpp */; };
+		B324C5532191AAD1009F4EDC /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3BD20736EEC0097D86F /* cpu.cpp */; };
+		B324C5542191AAD1009F4EDC /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3BB20736EEC0097D86F /* snes.cpp */; };
+		B324C5552191AAD1009F4EDC /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3C820736EEC0097D86F /* cart.cpp */; };
+		B324C55D2191AAF7009F4EDC /* libsnes_faust-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C55C2191AAD1009F4EDC /* libsnes_faust-tvOS.a */; };
+		B324C5602191AAFE009F4EDC /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
+		B324C5612191AAFE009F4EDC /* trio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABCD20736EE80097D86F /* trio.c */; };
+		B324C5622191AAFE009F4EDC /* trionan.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD020736EE80097D86F /* trionan.c */; };
+		B324C56A2191AB2E009F4EDC /* libtrio-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5692191AAFE009F4EDC /* libtrio-tvOS.a */; };
+		B324C56D2191AB34009F4EDC /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAE420736EE80097D86F /* bitwise.c */; };
+		B324C56E2191AB34009F4EDC /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAACB20736EE80097D86F /* synthesis.c */; };
+		B324C56F2191AB34009F4EDC /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAE820736EE80097D86F /* vorbisfile.c */; };
+		B324C5702191AB34009F4EDC /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAE920736EE80097D86F /* window.c */; };
+		B324C5712191AB34009F4EDC /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAC920736EE80097D86F /* floor1.c */; };
+		B324C5722191AB34009F4EDC /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAAF20736EE70097D86F /* framing.c */; };
+		B324C5732191AB34009F4EDC /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAC720736EE80097D86F /* sharedbook.c */; };
+		B324C5742191AB34009F4EDC /* codebook.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAABC20736EE70097D86F /* codebook.c */; };
+		B324C5752191AB34009F4EDC /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAE520736EE80097D86F /* registry.c */; };
+		B324C5762191AB34009F4EDC /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAAC20736EE70097D86F /* block.c */; };
+		B324C5772191AB34009F4EDC /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAABE20736EE70097D86F /* floor0.c */; };
+		B324C5782191AB34009F4EDC /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAB320736EE70097D86F /* info.c */; };
+		B324C5792191AB34009F4EDC /* res012.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAC320736EE80097D86F /* res012.c */; };
+		B324C57A2191AB34009F4EDC /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAACF20736EE80097D86F /* mapping0.c */; };
+		B324C57B2191AB34009F4EDC /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAB720736EE70097D86F /* mdct.c */; };
+		B324C5852191AB4E009F4EDC /* quicklz.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2DD20736EEB0097D86F /* quicklz.c */; };
+		B324C58D2191AB86009F4EDC /* libtremor-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5822191AB34009F4EDC /* libtremor-tvOS.a */; };
+		B324C58E2191AB8D009F4EDC /* libquicklz-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C58C2191AB4E009F4EDC /* libquicklz-tvOS.a */; };
+		B324C5912191AB9D009F4EDC /* png.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6620736EE80097D86F /* png.cpp */; };
+		B324C5922191AB9D009F4EDC /* font-data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6920736EE80097D86F /* font-data.cpp */; };
+		B324C5932191AB9D009F4EDC /* Deinterlacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6020736EE80097D86F /* Deinterlacer.cpp */; };
+		B324C5942191AB9D009F4EDC /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB7320736EE80097D86F /* primitives.cpp */; };
+		B324C5952191AB9D009F4EDC /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6C20736EE80097D86F /* video.cpp */; };
+		B324C5962191AB9D009F4EDC /* resize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB5E20736EE80097D86F /* resize.cpp */; };
+		B324C5972191AB9D009F4EDC /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB7520736EE80097D86F /* surface.cpp */; };
+		B324C5982191AB9D009F4EDC /* text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6120736EE80097D86F /* text.cpp */; };
+		B324C5992191AB9D009F4EDC /* tblur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6A20736EE80097D86F /* tblur.cpp */; };
+		B324C5A32191ABAD009F4EDC /* Blip_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB39420736EEB0097D86F /* Blip_Buffer.cpp */; };
+		B324C5A42191ABAD009F4EDC /* OwlResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB39520736EEB0097D86F /* OwlResampler.cpp */; };
+		B324C5A52191ABAD009F4EDC /* okiadpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB38E20736EEB0097D86F /* okiadpcm.cpp */; };
+		B324C5A62191ABAD009F4EDC /* WAVRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB39820736EEB0097D86F /* WAVRecord.cpp */; };
+		B324C5A72191ABAD009F4EDC /* Fir_Resampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB39120736EEB0097D86F /* Fir_Resampler.cpp */; };
+		B324C5A82191ABAD009F4EDC /* Stereo_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB39620736EEB0097D86F /* Stereo_Buffer.cpp */; };
+		B324C5B22191ABB7009F4EDC /* cdromif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9920736EE80097D86F /* cdromif.cpp */; };
+		B324C5B32191ABB7009F4EDC /* CDAccess_Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9420736EE80097D86F /* CDAccess_Image.cpp */; };
+		B324C5B42191ABB7009F4EDC /* l-ec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9320736EE80097D86F /* l-ec.cpp */; };
+		B324C5B52191ABB7009F4EDC /* CDAFReader_Vorbis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB8920736EE80097D86F /* CDAFReader_Vorbis.cpp */; };
+		B324C5B62191ABB7009F4EDC /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9220736EE80097D86F /* crc32.cpp */; };
+		B324C5B72191ABB7009F4EDC /* galois.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9020736EE80097D86F /* galois.cpp */; };
+		B324C5B82191ABB7009F4EDC /* scsicd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9C20736EE80097D86F /* scsicd.cpp */; };
+		B324C5B92191ABB7009F4EDC /* CDAccess_CCD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9520736EE80097D86F /* CDAccess_CCD.cpp */; };
+		B324C5BA2191ABB7009F4EDC /* CDAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABB520736EE80097D86F /* CDAccess.cpp */; };
+		B324C5BB2191ABB7009F4EDC /* CDUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB8C20736EE80097D86F /* CDUtility.cpp */; };
+		B324C5BC2191ABB7009F4EDC /* CDAFReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB8B20736EE80097D86F /* CDAFReader.cpp */; };
+		B324C5BD2191ABB7009F4EDC /* lec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9620736EE80097D86F /* lec.cpp */; };
+		B324C5BE2191ABB7009F4EDC /* CDAFReader_MPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB8D20736EE80097D86F /* CDAFReader_MPC.cpp */; };
+		B324C5BF2191ABB7009F4EDC /* recover-raw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABB320736EE80097D86F /* recover-raw.cpp */; };
+		B324C5C72191AC05009F4EDC /* libvideo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5A02191AB9D009F4EDC /* libvideo-tvOS.a */; };
+		B324C5C82191AC0A009F4EDC /* libsound-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5AF2191ABAD009F4EDC /* libsound-tvOS.a */; };
+		B324C5C92191AC10009F4EDC /* libcdrom-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */; };
+		B324C5CC2191ACE1009F4EDC /* huc6273.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17220736EEA0097D86F /* huc6273.cpp */; };
+		B324C5CD2191ACE1009F4EDC /* pcfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17120736EEA0097D86F /* pcfx.cpp */; };
+		B324C5CE2191ACE1009F4EDC /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15520736EEA0097D86F /* timer.cpp */; };
+		B324C5CF2191ACE1009F4EDC /* king.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB16420736EEA0097D86F /* king.cpp */; };
+		B324C5D02191ACE1009F4EDC /* jrevdct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB16020736EEA0097D86F /* jrevdct.cpp */; };
+		B324C5D12191ACE1009F4EDC /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14320736EEA0097D86F /* input.cpp */; };
+		B324C5D22191ACE1009F4EDC /* fxscsi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15A20736EEA0097D86F /* fxscsi.cpp */; };
+		B324C5D32191ACE1009F4EDC /* rainbow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14420736EEA0097D86F /* rainbow.cpp */; };
+		B324C5D42191ACE1009F4EDC /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15320736EEA0097D86F /* interrupt.cpp */; };
+		B324C5D52191ACE1009F4EDC /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14B20736EEA0097D86F /* gamepad.cpp */; };
+		B324C5D62191ACE1009F4EDC /* soundbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB13C20736EEA0097D86F /* soundbox.cpp */; };
+		B324C5D72191ACE1009F4EDC /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14A20736EEA0097D86F /* mouse.cpp */; };
+		B324C5DF2191AD10009F4EDC /* libpcfx-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */; };
+		B324C5E22191AD13009F4EDC /* v30mz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5920736EE90097D86F /* v30mz.cpp */; };
+		B324C5E32191AD13009F4EDC /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8820736EE90097D86F /* gfx.cpp */; };
+		B324C5E42191AD13009F4EDC /* comm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6920736EE90097D86F /* comm.cpp */; };
+		B324C5E52191AD13009F4EDC /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5720736EE90097D86F /* memory.cpp */; };
+		B324C5E62191AD13009F4EDC /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6720736EE90097D86F /* sound.cpp */; };
+		B324C5E72191AD13009F4EDC /* eeprom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8720736EE90097D86F /* eeprom.cpp */; };
+		B324C5E82191AD13009F4EDC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8920736EE90097D86F /* main.cpp */; };
+		B324C5E92191AD13009F4EDC /* tcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5B20736EE90097D86F /* tcache.cpp */; };
+		B324C5EA2191AD13009F4EDC /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5C20736EE90097D86F /* interrupt.cpp */; };
+		B324C5EB2191AD13009F4EDC /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6420736EE90097D86F /* rtc.cpp */; };
+		B324C5F32191AD3B009F4EDC /* libwonderswan-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
 		B3335037207AFBDE0036A448 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0F520736EEA0097D86F /* cpu.cpp */; };
 		B3335038207AFBDE0036A448 /* dis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0EF20736EEA0097D86F /* dis.cpp */; };
@@ -822,20 +915,11 @@
 		B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio.a */; };
 		B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
 		B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
-		B3335603207B3BBA0036A448 /* libmpcdec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355A2207B1E930036A448 /* libmpcdec.a */; };
 		B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
 		B3335606207B3BBA0036A448 /* libpce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce.a */; };
 		B3335607207B3BBA0036A448 /* libpcefast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast.a */; };
-		B3335608207B3BBA0036A448 /* libpcfx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351FC207B020C0036A448 /* libpcfx.a */; };
-		B333560A207B3BBA0036A448 /* libquicklz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355B8207B20420036A448 /* libquicklz.a */; };
 		B333560B207B3BBA0036A448 /* libsegamastersystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351E5207B01C60036A448 /* libsegamastersystem.a */; };
-		B333560C207B3BBA0036A448 /* libsound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335493207B1BF30036A448 /* libsound.a */; };
-		B333560D207B3BBA0036A448 /* libtremor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355C7207B20BE0036A448 /* libtremor.a */; };
-		B333560E207B3BBA0036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
-		B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33354B4207B1C520036A448 /* libvideo.a */; };
 		B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335092207AFF2B0036A448 /* libvirtualboy.a */; };
-		B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335062207AFD3D0036A448 /* libwonderswan.a */; };
-		B3335874207B43640036A448 /* libcdrom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B333546F207B1B500036A448 /* libcdrom.a */; };
 		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
 		B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E81E088A0100AD0E8B /* libz.tbd */; };
@@ -1430,6 +1514,96 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B324C5472191A8A5009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5572191AAD1009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5642191AAFE009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C57D2191AB34009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5872191AB4E009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C59B2191AB9D009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5AA2191ABAD009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5C12191ABB7009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5D92191ACE1009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5ED2191AD13009F4EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B333502B207AFBA30036A448 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1719,6 +1893,16 @@
 		B324C4AA21919DC9009F4EDC /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C4C521919E72009F4EDC /* libgba.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgba.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgb-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmpcdec-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C55C2191AAD1009F4EDC /* libsnes_faust-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnes_faust-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5692191AAFE009F4EDC /* libtrio-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libtrio-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5822191AB34009F4EDC /* libtremor-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libtremor-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C58C2191AB4E009F4EDC /* libquicklz-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libquicklz-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5A02191AB9D009F4EDC /* libvideo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvideo-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5AF2191ABAD009F4EDC /* libsound-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsound-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcdrom-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcfx-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libwonderswan-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B333502D207AFBA30036A448 /* libpsx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpsx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335062207AFD3D0036A448 /* libwonderswan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwonderswan.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335092207AFF2B0036A448 /* libvirtualboy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvirtualboy.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4078,6 +4262,76 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B324C5462191A8A5009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5562191AAD1009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5632191AAFE009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C57C2191AB34009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5862191AB4E009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C59A2191AB9D009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5A92191ABAD009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5C02191ABB7009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5D82191ACE1009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5EC2191AD13009F4EDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B333502A207AFBA30036A448 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4295,6 +4549,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C5F32191AD3B009F4EDC /* libwonderswan-tvOS.a in Frameworks */,
+				B324C5DF2191AD10009F4EDC /* libpcfx-tvOS.a in Frameworks */,
+				B324C5C92191AC10009F4EDC /* libcdrom-tvOS.a in Frameworks */,
+				B324C5C82191AC0A009F4EDC /* libsound-tvOS.a in Frameworks */,
+				B324C5C72191AC05009F4EDC /* libvideo-tvOS.a in Frameworks */,
+				B324C58E2191AB8D009F4EDC /* libquicklz-tvOS.a in Frameworks */,
+				B324C58D2191AB86009F4EDC /* libtremor-tvOS.a in Frameworks */,
+				B324C56A2191AB2E009F4EDC /* libtrio-tvOS.a in Frameworks */,
+				B324C55D2191AAF7009F4EDC /* libsnes_faust-tvOS.a in Frameworks */,
+				B324C54D2191A8D3009F4EDC /* libmpcdec-tvOS.a in Frameworks */,
 				B324C4D62191A1F7009F4EDC /* libgb-tvOS.a in Frameworks */,
 				B324C4C621919EC0009F4EDC /* libgba.a in Frameworks */,
 				B324C4AB21919E04009F4EDC /* libsnes.a in Frameworks */,
@@ -4304,24 +4568,14 @@
 				B324C34321919C03009F4EDC /* libpsx.a in Frameworks */,
 				B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */,
 				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
-				B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */,
-				B3335874207B43640036A448 /* libcdrom.a in Frameworks */,
 				B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */,
 				B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */,
 				B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */,
-				B3335603207B3BBA0036A448 /* libmpcdec.a in Frameworks */,
 				B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */,
 				B3335606207B3BBA0036A448 /* libpce.a in Frameworks */,
 				B3335607207B3BBA0036A448 /* libpcefast.a in Frameworks */,
-				B3335608207B3BBA0036A448 /* libpcfx.a in Frameworks */,
-				B333560A207B3BBA0036A448 /* libquicklz.a in Frameworks */,
 				B333560B207B3BBA0036A448 /* libsegamastersystem.a in Frameworks */,
-				B333560C207B3BBA0036A448 /* libsound.a in Frameworks */,
-				B333560D207B3BBA0036A448 /* libtremor.a in Frameworks */,
-				B333560E207B3BBA0036A448 /* libtrio.a in Frameworks */,
-				B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */,
 				B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */,
-				B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */,
 				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
@@ -4470,6 +4724,16 @@
 				B324C4AA21919DC9009F4EDC /* libsnes.a */,
 				B324C4C521919E72009F4EDC /* libgba.a */,
 				B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */,
+				B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */,
+				B324C55C2191AAD1009F4EDC /* libsnes_faust-tvOS.a */,
+				B324C5692191AAFE009F4EDC /* libtrio-tvOS.a */,
+				B324C5822191AB34009F4EDC /* libtremor-tvOS.a */,
+				B324C58C2191AB4E009F4EDC /* libquicklz-tvOS.a */,
+				B324C5A02191AB9D009F4EDC /* libvideo-tvOS.a */,
+				B324C5AF2191ABAD009F4EDC /* libsound-tvOS.a */,
+				B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */,
+				B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */,
+				B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8830,6 +9094,176 @@
 			productReference = B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		B324C53C2191A8A5009F4EDC /* mpcdec-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5482191A8A5009F4EDC /* Build configuration list for PBXNativeTarget "mpcdec-tvOS" */;
+			buildPhases = (
+				B324C53D2191A8A5009F4EDC /* Sources */,
+				B324C5462191A8A5009F4EDC /* Frameworks */,
+				B324C5472191A8A5009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "mpcdec-tvOS";
+			productName = mpcdec;
+			productReference = B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C54E2191AAD1009F4EDC /* snes_faust-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5582191AAD1009F4EDC /* Build configuration list for PBXNativeTarget "snes_faust-tvOS" */;
+			buildPhases = (
+				B324C54F2191AAD1009F4EDC /* Sources */,
+				B324C5562191AAD1009F4EDC /* Frameworks */,
+				B324C5572191AAD1009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "snes_faust-tvOS";
+			productName = snes_faust;
+			productReference = B324C55C2191AAD1009F4EDC /* libsnes_faust-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C55E2191AAFE009F4EDC /* trio-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5652191AAFE009F4EDC /* Build configuration list for PBXNativeTarget "trio-tvOS" */;
+			buildPhases = (
+				B324C55F2191AAFE009F4EDC /* Sources */,
+				B324C5632191AAFE009F4EDC /* Frameworks */,
+				B324C5642191AAFE009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "trio-tvOS";
+			productName = trio;
+			productReference = B324C5692191AAFE009F4EDC /* libtrio-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C56B2191AB34009F4EDC /* tremor-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C57E2191AB34009F4EDC /* Build configuration list for PBXNativeTarget "tremor-tvOS" */;
+			buildPhases = (
+				B324C56C2191AB34009F4EDC /* Sources */,
+				B324C57C2191AB34009F4EDC /* Frameworks */,
+				B324C57D2191AB34009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "tremor-tvOS";
+			productName = tremor;
+			productReference = B324C5822191AB34009F4EDC /* libtremor-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C5832191AB4E009F4EDC /* quicklz-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5882191AB4E009F4EDC /* Build configuration list for PBXNativeTarget "quicklz-tvOS" */;
+			buildPhases = (
+				B324C5842191AB4E009F4EDC /* Sources */,
+				B324C5862191AB4E009F4EDC /* Frameworks */,
+				B324C5872191AB4E009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "quicklz-tvOS";
+			productName = quicklz;
+			productReference = B324C58C2191AB4E009F4EDC /* libquicklz-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C58F2191AB9D009F4EDC /* video-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C59C2191AB9D009F4EDC /* Build configuration list for PBXNativeTarget "video-tvOS" */;
+			buildPhases = (
+				B324C5902191AB9D009F4EDC /* Sources */,
+				B324C59A2191AB9D009F4EDC /* Frameworks */,
+				B324C59B2191AB9D009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "video-tvOS";
+			productName = video;
+			productReference = B324C5A02191AB9D009F4EDC /* libvideo-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C5A12191ABAD009F4EDC /* sound-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5AB2191ABAD009F4EDC /* Build configuration list for PBXNativeTarget "sound-tvOS" */;
+			buildPhases = (
+				B324C5A22191ABAD009F4EDC /* Sources */,
+				B324C5A92191ABAD009F4EDC /* Frameworks */,
+				B324C5AA2191ABAD009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "sound-tvOS";
+			productName = sound;
+			productReference = B324C5AF2191ABAD009F4EDC /* libsound-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C5B02191ABB7009F4EDC /* cdrom-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5C22191ABB7009F4EDC /* Build configuration list for PBXNativeTarget "cdrom-tvOS" */;
+			buildPhases = (
+				B324C5B12191ABB7009F4EDC /* Sources */,
+				B324C5C02191ABB7009F4EDC /* Frameworks */,
+				B324C5C12191ABB7009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cdrom-tvOS";
+			productName = cdrom;
+			productReference = B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C5CA2191ACE1009F4EDC /* pcfx-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5DA2191ACE1009F4EDC /* Build configuration list for PBXNativeTarget "pcfx-tvOS" */;
+			buildPhases = (
+				B324C5CB2191ACE1009F4EDC /* Sources */,
+				B324C5D82191ACE1009F4EDC /* Frameworks */,
+				B324C5D92191ACE1009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pcfx-tvOS";
+			productName = pcfx;
+			productReference = B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B324C5E02191AD13009F4EDC /* wonderswan-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B324C5EE2191AD13009F4EDC /* Build configuration list for PBXNativeTarget "wonderswan-tvOS" */;
+			buildPhases = (
+				B324C5E12191AD13009F4EDC /* Sources */,
+				B324C5EC2191AD13009F4EDC /* Frameworks */,
+				B324C5ED2191AD13009F4EDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "wonderswan-tvOS";
+			productName = wonderswan;
+			productReference = B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B333502C207AFBA30036A448 /* psx */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3335035207AFBA40036A448 /* Build configuration list for PBXNativeTarget "psx" */;
@@ -9539,6 +9973,7 @@
 				B333502C207AFBA30036A448 /* psx */,
 				B324C32221919BC6009F4EDC /* psx-tvOS */,
 				B3335061207AFD3D0036A448 /* wonderswan */,
+				B324C5E02191AD13009F4EDC /* wonderswan-tvOS */,
 				B3335091207AFF2B0036A448 /* virtualboy */,
 				B33350A4207AFFE80036A448 /* nes */,
 				B324C34E21919CD6009F4EDC /* nes-tvOS */,
@@ -9552,6 +9987,7 @@
 				B33351D7207B01970036A448 /* pcefast */,
 				B33351E4207B01C60036A448 /* segamastersystem */,
 				B33351FB207B020C0036A448 /* pcfx */,
+				B324C5CA2191ACE1009F4EDC /* pcfx-tvOS */,
 				B3335244207B02770036A448 /* megadrive */,
 				B324C3D521919D34009F4EDC /* megadrive-tvOS */,
 				B33352A6207B06550036A448 /* hwaudio */,
@@ -9561,17 +9997,25 @@
 				B35D6684218185710005A992 /* hwcpu-tvOS */,
 				B33352CD207B067F0036A448 /* hwmisc */,
 				B333546E207B1B500036A448 /* cdrom */,
+				B324C5B02191ABB7009F4EDC /* cdrom-tvOS */,
 				B3335492207B1BF30036A448 /* sound */,
+				B324C5A12191ABAD009F4EDC /* sound-tvOS */,
 				B33354B3207B1C520036A448 /* video */,
+				B324C58F2191AB9D009F4EDC /* video-tvOS */,
 				B33354CA207B1D850036A448 /* mednafen */,
 				B324C3FB21919D73009F4EDC /* mednafen-tvOS */,
 				B33355A1207B1E930036A448 /* mpcdec */,
+				B324C53C2191A8A5009F4EDC /* mpcdec-tvOS */,
 				B33355B7207B20420036A448 /* quicklz */,
+				B324C5832191AB4E009F4EDC /* quicklz-tvOS */,
 				B33355C6207B20BE0036A448 /* tremor */,
+				B324C56B2191AB34009F4EDC /* tremor-tvOS */,
 				B33355E3207B278E0036A448 /* trio */,
+				B324C55E2191AAFE009F4EDC /* trio-tvOS */,
 				B3FBDEF7207FF0E300E661D1 /* snes */,
 				B324C42C21919DC9009F4EDC /* snes-tvOS */,
 				B3FBDF9E207FF5D800E661D1 /* snes_faust */,
+				B324C54E2191AAD1009F4EDC /* snes_faust-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -10014,6 +10458,160 @@
 				B324C4CD2191A1AC009F4EDC /* z80.cpp in Sources */,
 				B324C4CE2191A1AC009F4EDC /* gfx.cpp in Sources */,
 				B324C4CF2191A1AC009F4EDC /* gbGlobals.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C53D2191A8A5009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C53E2191A8A5009F4EDC /* mpc_decoder.c in Sources */,
+				B324C53F2191A8A5009F4EDC /* mpc_bits_reader.c in Sources */,
+				B324C5402191A8A5009F4EDC /* huffman.c in Sources */,
+				B324C5412191A8A5009F4EDC /* synth_filter.c in Sources */,
+				B324C5422191A8A5009F4EDC /* mpc_demux.c in Sources */,
+				B324C5432191A8A5009F4EDC /* streaminfo.c in Sources */,
+				B324C5442191A8A5009F4EDC /* requant.c in Sources */,
+				B324C5452191A8A5009F4EDC /* crc32.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C54F2191AAD1009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5502191AAD1009F4EDC /* input.cpp in Sources */,
+				B324C5512191AAD1009F4EDC /* ppu.cpp in Sources */,
+				B324C5522191AAD1009F4EDC /* apu.cpp in Sources */,
+				B324C5532191AAD1009F4EDC /* cpu.cpp in Sources */,
+				B324C5542191AAD1009F4EDC /* snes.cpp in Sources */,
+				B324C5552191AAD1009F4EDC /* cart.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C55F2191AAFE009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5602191AAFE009F4EDC /* triostr.c in Sources */,
+				B324C5612191AAFE009F4EDC /* trio.c in Sources */,
+				B324C5622191AAFE009F4EDC /* trionan.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C56C2191AB34009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C56D2191AB34009F4EDC /* bitwise.c in Sources */,
+				B324C56E2191AB34009F4EDC /* synthesis.c in Sources */,
+				B324C56F2191AB34009F4EDC /* vorbisfile.c in Sources */,
+				B324C5702191AB34009F4EDC /* window.c in Sources */,
+				B324C5712191AB34009F4EDC /* floor1.c in Sources */,
+				B324C5722191AB34009F4EDC /* framing.c in Sources */,
+				B324C5732191AB34009F4EDC /* sharedbook.c in Sources */,
+				B324C5742191AB34009F4EDC /* codebook.c in Sources */,
+				B324C5752191AB34009F4EDC /* registry.c in Sources */,
+				B324C5762191AB34009F4EDC /* block.c in Sources */,
+				B324C5772191AB34009F4EDC /* floor0.c in Sources */,
+				B324C5782191AB34009F4EDC /* info.c in Sources */,
+				B324C5792191AB34009F4EDC /* res012.c in Sources */,
+				B324C57A2191AB34009F4EDC /* mapping0.c in Sources */,
+				B324C57B2191AB34009F4EDC /* mdct.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5842191AB4E009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5852191AB4E009F4EDC /* quicklz.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5902191AB9D009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5912191AB9D009F4EDC /* png.cpp in Sources */,
+				B324C5922191AB9D009F4EDC /* font-data.cpp in Sources */,
+				B324C5932191AB9D009F4EDC /* Deinterlacer.cpp in Sources */,
+				B324C5942191AB9D009F4EDC /* primitives.cpp in Sources */,
+				B324C5952191AB9D009F4EDC /* video.cpp in Sources */,
+				B324C5962191AB9D009F4EDC /* resize.cpp in Sources */,
+				B324C5972191AB9D009F4EDC /* surface.cpp in Sources */,
+				B324C5982191AB9D009F4EDC /* text.cpp in Sources */,
+				B324C5992191AB9D009F4EDC /* tblur.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5A22191ABAD009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5A32191ABAD009F4EDC /* Blip_Buffer.cpp in Sources */,
+				B324C5A42191ABAD009F4EDC /* OwlResampler.cpp in Sources */,
+				B324C5A52191ABAD009F4EDC /* okiadpcm.cpp in Sources */,
+				B324C5A62191ABAD009F4EDC /* WAVRecord.cpp in Sources */,
+				B324C5A72191ABAD009F4EDC /* Fir_Resampler.cpp in Sources */,
+				B324C5A82191ABAD009F4EDC /* Stereo_Buffer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5B12191ABB7009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5B22191ABB7009F4EDC /* cdromif.cpp in Sources */,
+				B324C5B32191ABB7009F4EDC /* CDAccess_Image.cpp in Sources */,
+				B324C5B42191ABB7009F4EDC /* l-ec.cpp in Sources */,
+				B324C5B52191ABB7009F4EDC /* CDAFReader_Vorbis.cpp in Sources */,
+				B324C5B62191ABB7009F4EDC /* crc32.cpp in Sources */,
+				B324C5B72191ABB7009F4EDC /* galois.cpp in Sources */,
+				B324C5B82191ABB7009F4EDC /* scsicd.cpp in Sources */,
+				B324C5B92191ABB7009F4EDC /* CDAccess_CCD.cpp in Sources */,
+				B324C5BA2191ABB7009F4EDC /* CDAccess.cpp in Sources */,
+				B324C5BB2191ABB7009F4EDC /* CDUtility.cpp in Sources */,
+				B324C5BC2191ABB7009F4EDC /* CDAFReader.cpp in Sources */,
+				B324C5BD2191ABB7009F4EDC /* lec.cpp in Sources */,
+				B324C5BE2191ABB7009F4EDC /* CDAFReader_MPC.cpp in Sources */,
+				B324C5BF2191ABB7009F4EDC /* recover-raw.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5CB2191ACE1009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5CC2191ACE1009F4EDC /* huc6273.cpp in Sources */,
+				B324C5CD2191ACE1009F4EDC /* pcfx.cpp in Sources */,
+				B324C5CE2191ACE1009F4EDC /* timer.cpp in Sources */,
+				B324C5CF2191ACE1009F4EDC /* king.cpp in Sources */,
+				B324C5D02191ACE1009F4EDC /* jrevdct.cpp in Sources */,
+				B324C5D12191ACE1009F4EDC /* input.cpp in Sources */,
+				B324C5D22191ACE1009F4EDC /* fxscsi.cpp in Sources */,
+				B324C5D32191ACE1009F4EDC /* rainbow.cpp in Sources */,
+				B324C5D42191ACE1009F4EDC /* interrupt.cpp in Sources */,
+				B324C5D52191ACE1009F4EDC /* gamepad.cpp in Sources */,
+				B324C5D62191ACE1009F4EDC /* soundbox.cpp in Sources */,
+				B324C5D72191ACE1009F4EDC /* mouse.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B324C5E12191AD13009F4EDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B324C5E22191AD13009F4EDC /* v30mz.cpp in Sources */,
+				B324C5E32191AD13009F4EDC /* gfx.cpp in Sources */,
+				B324C5E42191AD13009F4EDC /* comm.cpp in Sources */,
+				B324C5E52191AD13009F4EDC /* memory.cpp in Sources */,
+				B324C5E62191AD13009F4EDC /* sound.cpp in Sources */,
+				B324C5E72191AD13009F4EDC /* eeprom.cpp in Sources */,
+				B324C5E82191AD13009F4EDC /* main.cpp in Sources */,
+				B324C5E92191AD13009F4EDC /* tcache.cpp in Sources */,
+				B324C5EA2191AD13009F4EDC /* interrupt.cpp in Sources */,
+				B324C5EB2191AD13009F4EDC /* rtc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11983,7 +12581,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mednafen-1.21/src\"",
-					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+					"\"$(SRCROOT)/../Carthage/Build/iOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -12046,7 +12644,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mednafen-1.21/src\"",
-					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+					"\"$(SRCROOT)/../Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -12159,7 +12757,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12519,7 +13117,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12761,7 +13359,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12787,7 +13385,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12813,7 +13411,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12896,7 +13494,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12923,7 +13521,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12953,7 +13551,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12979,7 +13577,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13074,7 +13672,866 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5492191A8A5009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"MPC_FIXED_POINT=1",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C54A2191A8A5009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MPC_FIXED_POINT=1",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C54B2191A8A5009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MPC_FIXED_POINT=1",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5592191AAD1009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C55A2191AAD1009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C55B2191AAD1009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5662191AAFE009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C5672191AAFE009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C5682191AAFE009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C57F2191AB34009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C5802191AB34009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C5812191AB34009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5892191AB4E009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_STRICT_ALIASING = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C58A2191AB4E009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_STRICT_ALIASING = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C58B2191AB4E009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_STRICT_ALIASING = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C59D2191AB9D009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C59E2191AB9D009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C59F2191AB9D009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5AC2191ABAD009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C5AD2191ABAD009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C5AE2191ABAD009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5C32191ABB7009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C5C42191ABB7009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C5C52191ABB7009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5DB2191ACE1009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C5DC2191ACE1009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C5DD2191ACE1009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B324C5EF2191AD13009F4EDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B324C5F02191AD13009F4EDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B324C5F12191AD13009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13169,7 +14626,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -13196,7 +14653,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13768,7 +15225,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -13794,7 +15251,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14118,7 +15575,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14143,7 +15600,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14175,7 +15632,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14200,7 +15657,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14232,7 +15689,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14257,7 +15714,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14347,7 +15804,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14376,7 +15833,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14409,7 +15866,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14435,7 +15892,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14467,7 +15924,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14496,7 +15953,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14528,7 +15985,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14553,7 +16010,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14584,7 +16041,7 @@
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mednafen-1.21/src\"",
-					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+					"\"$(SRCROOT)/../Carthage/Build/iOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -14649,7 +16106,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mednafen-1.21/src\"",
-					"\"$(SRCROOT)/../PVSupport/Carthage/Build/iOS\"",
+					"\"$(SRCROOT)/../Carthage/Build/iOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -14713,7 +16170,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mednafen-1.21/src\"",
-					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+					"\"$(SRCROOT)/../Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -14776,7 +16233,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mednafen-1.21/src\"",
-					"\"$(SRCROOT)/../PVSupport/Carthage/Build/tvOS\"",
+					"\"$(SRCROOT)/../Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -14970,7 +16427,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14995,7 +16452,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15090,6 +16547,106 @@
 				B324C4D32191A1AC009F4EDC /* Debug */,
 				B324C4D42191A1AC009F4EDC /* Release */,
 				B324C4E12191A22A009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5482191A8A5009F4EDC /* Build configuration list for PBXNativeTarget "mpcdec-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5492191A8A5009F4EDC /* Debug */,
+				B324C54A2191A8A5009F4EDC /* Release */,
+				B324C54B2191A8A5009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5582191AAD1009F4EDC /* Build configuration list for PBXNativeTarget "snes_faust-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5592191AAD1009F4EDC /* Debug */,
+				B324C55A2191AAD1009F4EDC /* Release */,
+				B324C55B2191AAD1009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5652191AAFE009F4EDC /* Build configuration list for PBXNativeTarget "trio-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5662191AAFE009F4EDC /* Debug */,
+				B324C5672191AAFE009F4EDC /* Release */,
+				B324C5682191AAFE009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C57E2191AB34009F4EDC /* Build configuration list for PBXNativeTarget "tremor-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C57F2191AB34009F4EDC /* Debug */,
+				B324C5802191AB34009F4EDC /* Release */,
+				B324C5812191AB34009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5882191AB4E009F4EDC /* Build configuration list for PBXNativeTarget "quicklz-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5892191AB4E009F4EDC /* Debug */,
+				B324C58A2191AB4E009F4EDC /* Release */,
+				B324C58B2191AB4E009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C59C2191AB9D009F4EDC /* Build configuration list for PBXNativeTarget "video-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C59D2191AB9D009F4EDC /* Debug */,
+				B324C59E2191AB9D009F4EDC /* Release */,
+				B324C59F2191AB9D009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5AB2191ABAD009F4EDC /* Build configuration list for PBXNativeTarget "sound-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5AC2191ABAD009F4EDC /* Debug */,
+				B324C5AD2191ABAD009F4EDC /* Release */,
+				B324C5AE2191ABAD009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5C22191ABB7009F4EDC /* Build configuration list for PBXNativeTarget "cdrom-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5C32191ABB7009F4EDC /* Debug */,
+				B324C5C42191ABB7009F4EDC /* Release */,
+				B324C5C52191ABB7009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5DA2191ACE1009F4EDC /* Build configuration list for PBXNativeTarget "pcfx-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5DB2191ACE1009F4EDC /* Debug */,
+				B324C5DC2191ACE1009F4EDC /* Release */,
+				B324C5DD2191ACE1009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B324C5EE2191AD13009F4EDC /* Build configuration list for PBXNativeTarget "wonderswan-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B324C5EF2191AD13009F4EDC /* Debug */,
+				B324C5F02191AD13009F4EDC /* Release */,
+				B324C5F12191AD13009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
