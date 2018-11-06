@@ -35,9 +35,7 @@
 		B324C33A21919BC6009F4EDC /* multitap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0C920736EEA0097D86F /* multitap.cpp */; };
 		B324C33B21919BC6009F4EDC /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0C720736EEA0097D86F /* mouse.cpp */; };
 		B324C33C21919BC6009F4EDC /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
-		B324C34321919C03009F4EDC /* libpsx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34221919BC6009F4EDC /* libpsx.a */; };
 		B324C34621919C1C009F4EDC /* vdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB11A20736EEA0097D86F /* vdc.cpp */; };
-		B324C34D21919C5C009F4EDC /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34C21919C1C009F4EDC /* libhwvideo.a */; };
 		B324C35021919CD6009F4EDC /* 88.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADAE20736EE90097D86F /* 88.cpp */; };
 		B324C35121919CD6009F4EDC /* 67.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADB020736EE90097D86F /* 67.cpp */; };
 		B324C35221919CD6009F4EDC /* 248.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAD3720736EE80097D86F /* 248.cpp */; };
@@ -164,7 +162,6 @@
 		B324C3CB21919CD6009F4EDC /* 140.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAACFD20736EE80097D86F /* 140.cpp */; };
 		B324C3CC21919CD6009F4EDC /* shadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAACBF20736EE80097D86F /* shadow.cpp */; };
 		B324C3CD21919CD6009F4EDC /* fkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAACC520736EE80097D86F /* fkb.cpp */; };
-		B324C3D421919D17009F4EDC /* libnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3D321919CD6009F4EDC /* libnes.a */; };
 		B324C3D721919D34009F4EDC /* map_ssf2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB31720736EEB0097D86F /* map_ssf2.cpp */; };
 		B324C3D821919D34009F4EDC /* map_rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB31A20736EEB0097D86F /* map_rom.cpp */; };
 		B324C3D921919D34009F4EDC /* memvdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2F220736EEB0097D86F /* memvdp.cpp */; };
@@ -235,7 +232,6 @@
 		B324C42221919D73009F4EDC /* PSFLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE0C20736EE90097D86F /* PSFLoader.cpp */; };
 		B324C42321919D73009F4EDC /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE1720736EE90097D86F /* md5.cpp */; };
 		B324C42421919D73009F4EDC /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAA320736EE70097D86F /* demo.cpp */; };
-		B324C42B21919DBD009F4EDC /* libmednafen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C42A21919D73009F4EDC /* libmednafen.a */; };
 		B324C42E21919DC9009F4EDC /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAFE820736EEA0097D86F /* smp.cpp */; };
 		B324C42F21919DC9009F4EDC /* bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAF3F20736EE90097D86F /* bus.cpp */; };
 		B324C43021919DC9009F4EDC /* opcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAF6E20736EE90097D86F /* opcodes.cpp */; };
@@ -355,7 +351,6 @@
 		B324C4A221919DC9009F4EDC /* algorithms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAFCB20736EEA0097D86F /* algorithms.cpp */; };
 		B324C4A321919DC9009F4EDC /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAFA920736EEA0097D86F /* scheduler.cpp */; };
 		B324C4A421919DC9009F4EDC /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAF8220736EE90097D86F /* superfx.cpp */; };
-		B324C4AB21919E04009F4EDC /* libsnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4AA21919DC9009F4EDC /* libsnes.a */; };
 		B324C4AE21919E72009F4EDC /* sram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA9D20736EE70097D86F /* sram.cpp */; };
 		B324C4AF21919E72009F4EDC /* Mode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA7920736EE70097D86F /* Mode1.cpp */; };
 		B324C4B021919E72009F4EDC /* Mode0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA7720736EE70097D86F /* Mode0.cpp */; };
@@ -477,6 +472,98 @@
 		B324C5F32191AD3B009F4EDC /* libwonderswan-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */; };
 		B324C62521920724009F4EDC /* libgba-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4C521919E72009F4EDC /* libgba-tvOS.a */; };
 		B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
+		B32CF13921923EB40058E2E7 /* Sms_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2B520736EEB0097D86F /* Sms_Apu.cpp */; };
+		B32CF13A21923EB40058E2E7 /* Ym2612_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2BB20736EEB0097D86F /* Ym2612_Emu.cpp */; };
+		B32CF13B21923EB40058E2E7 /* Gb_Apu_State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2C220736EEB0097D86F /* Gb_Apu_State.cpp */; };
+		B32CF13C21923EB40058E2E7 /* pce_psg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2D620736EEB0097D86F /* pce_psg.cpp */; };
+		B32CF13D21923EB40058E2E7 /* Gb_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2C420736EEB0097D86F /* Gb_Oscs.cpp */; };
+		B32CF13E21923EB40058E2E7 /* Gb_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2C520736EEB0097D86F /* Gb_Apu.cpp */; };
+		B32CF13F21923EB40058E2E7 /* emu2413.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2D320736EEB0097D86F /* emu2413.cpp */; };
+		B32CF14721923F030058E2E7 /* libhwaudio-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF14621923EB50058E2E7 /* libhwaudio-tvOS.a */; };
+		B32CF14A21923F330058E2E7 /* vsu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24820736EEB0097D86F /* vsu.cpp */; };
+		B32CF14B21923F330058E2E7 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24020736EEB0097D86F /* input.cpp */; };
+		B32CF14C21923F330058E2E7 /* vip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB23F20736EEB0097D86F /* vip.cpp */; };
+		B32CF14D21923F330058E2E7 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24520736EEB0097D86F /* timer.cpp */; };
+		B32CF14E21923F330058E2E7 /* vb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24120736EEB0097D86F /* vb.cpp */; };
+		B32CF15821923F520058E2E7 /* T6W28_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05B20736EEA0097D86F /* T6W28_Apu.cpp */; };
+		B32CF15921923F520058E2E7 /* neopop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0AF20736EEA0097D86F /* neopop.cpp */; };
+		B32CF15A21923F520058E2E7 /* flash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05C20736EEA0097D86F /* flash.cpp */; };
+		B32CF15B21923F520058E2E7 /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0AD20736EEA0097D86F /* gfx.cpp */; };
+		B32CF15C21923F520058E2E7 /* TLCS900h_interpret.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08C20736EEA0097D86F /* TLCS900h_interpret.cpp */; };
+		B32CF15D21923F520058E2E7 /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04020736EEA0097D86F /* dma.cpp */; };
+		B32CF15E21923F520058E2E7 /* TLCS900h_disassemble_src.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB07320736EEA0097D86F /* TLCS900h_disassemble_src.cpp */; };
+		B32CF15F21923F520058E2E7 /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04320736EEA0097D86F /* interrupt.cpp */; };
+		B32CF16021923F520058E2E7 /* biosHLE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB03E20736EEA0097D86F /* biosHLE.cpp */; };
+		B32CF16121923F520058E2E7 /* gfx_scanline_colour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04F20736EEA0097D86F /* gfx_scanline_colour.cpp */; };
+		B32CF16221923F520058E2E7 /* Z80_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04620736EEA0097D86F /* Z80_interface.cpp */; };
+		B32CF16321923F520058E2E7 /* TLCS900h_disassemble_dst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09320736EEA0097D86F /* TLCS900h_disassemble_dst.cpp */; };
+		B32CF16421923F520058E2E7 /* TLCS900h_interpret_reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09620736EEA0097D86F /* TLCS900h_interpret_reg.cpp */; };
+		B32CF16521923F520058E2E7 /* TLCS900h_registers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0A920736EEA0097D86F /* TLCS900h_registers.cpp */; };
+		B32CF16621923F520058E2E7 /* TLCS900h_disassemble.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08D20736EEA0097D86F /* TLCS900h_disassemble.cpp */; };
+		B32CF16721923F520058E2E7 /* mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB07120736EEA0097D86F /* mem.cpp */; };
+		B32CF16821923F520058E2E7 /* TLCS900h_interpret_dst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09220736EEA0097D86F /* TLCS900h_interpret_dst.cpp */; };
+		B32CF16921923F520058E2E7 /* TLCS900h_interpret_single.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08520736EEA0097D86F /* TLCS900h_interpret_single.cpp */; };
+		B32CF16A21923F520058E2E7 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05520736EEA0097D86F /* sound.cpp */; };
+		B32CF16B21923F520058E2E7 /* TLCS900h_disassemble_extra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08220736EEA0097D86F /* TLCS900h_disassemble_extra.cpp */; };
+		B32CF16C21923F520058E2E7 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05420736EEA0097D86F /* rom.cpp */; };
+		B32CF16D21923F520058E2E7 /* TLCS900h_disassemble_reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08F20736EEA0097D86F /* TLCS900h_disassemble_reg.cpp */; };
+		B32CF16E21923F520058E2E7 /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05020736EEA0097D86F /* rtc.cpp */; };
+		B32CF16F21923F520058E2E7 /* TLCS900h_interpret_src.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08820736EEA0097D86F /* TLCS900h_interpret_src.cpp */; };
+		B32CF17021923F520058E2E7 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB03920736EEA0097D86F /* bios.cpp */; };
+		B32CF17121923F520058E2E7 /* gfx_scanline_mono.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04120736EEA0097D86F /* gfx_scanline_mono.cpp */; };
+		B32CF17B21923F740058E2E7 /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABF020736EE80097D86F /* system.cpp */; };
+		B32CF17C21923F740058E2E7 /* susie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABF620736EE80097D86F /* susie.cpp */; };
+		B32CF17D21923F740058E2E7 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEF20736EE80097D86F /* rom.cpp */; };
+		B32CF17E21923F740058E2E7 /* memmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEA20736EE80097D86F /* memmap.cpp */; };
+		B32CF17F21923F740058E2E7 /* ram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABE920736EE80097D86F /* ram.cpp */; };
+		B32CF18021923F740058E2E7 /* mikie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEB20736EE80097D86F /* mikie.cpp */; };
+		B32CF18121923F740058E2E7 /* c65c02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0020736EE80097D86F /* c65c02.cpp */; };
+		B32CF18221923F740058E2E7 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0120736EE80097D86F /* cart.cpp */; };
+		B32CF18C21923F790058E2E7 /* tsushin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB27720736EEB0097D86F /* tsushin.cpp */; };
+		B32CF18D21923F790058E2E7 /* mcgenjin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB27320736EEB0097D86F /* mcgenjin.cpp */; };
+		B32CF18E21923F790058E2E7 /* tsushinkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB25C20736EEB0097D86F /* tsushinkb.cpp */; };
+		B32CF18F21923F790058E2E7 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB25A20736EEB0097D86F /* gamepad.cpp */; };
+		B32CF19021923F790058E2E7 /* pcecd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB26920736EEB0097D86F /* pcecd.cpp */; };
+		B32CF19121923F790058E2E7 /* huc6280.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB25420736EEB0097D86F /* huc6280.cpp */; };
+		B32CF19221923F790058E2E7 /* vce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB26320736EEB0097D86F /* vce.cpp */; };
+		B32CF19321923F790058E2E7 /* huc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB28520736EEB0097D86F /* huc.cpp */; };
+		B32CF19421923F790058E2E7 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB25620736EEB0097D86F /* input.cpp */; };
+		B32CF19521923F790058E2E7 /* hes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB26E20736EEB0097D86F /* hes.cpp */; };
+		B32CF19621923F790058E2E7 /* dis6280.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB25720736EEB0097D86F /* dis6280.cpp */; };
+		B32CF19721923F790058E2E7 /* pce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB26C20736EEB0097D86F /* pce.cpp */; };
+		B32CF19821923F790058E2E7 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB25920736EEB0097D86F /* mouse.cpp */; };
+		B32CF1A221923F7F0058E2E7 /* pcecd_drive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21C20736EEB0097D86F /* pcecd_drive.cpp */; };
+		B32CF1A321923F7F0058E2E7 /* huc6280.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21E20736EEB0097D86F /* huc6280.cpp */; };
+		B32CF1A421923F7F0058E2E7 /* psg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB22C20736EEB0097D86F /* psg.cpp */; };
+		B32CF1A521923F7F0058E2E7 /* huc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB23920736EEB0097D86F /* huc.cpp */; };
+		B32CF1A621923F7F0058E2E7 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21F20736EEB0097D86F /* input.cpp */; };
+		B32CF1A721923F7F0058E2E7 /* pce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB22720736EEB0097D86F /* pce.cpp */; };
+		B32CF1A821923F7F0058E2E7 /* vdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21B20736EEB0097D86F /* vdc.cpp */; };
+		B32CF1A921923F7F0058E2E7 /* hes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB22820736EEB0097D86F /* hes.cpp */; };
+		B32CF1AA21923F7F0058E2E7 /* pcecd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB22320736EEB0097D86F /* pcecd.cpp */; };
+		B32CF1B421923F850058E2E7 /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE3620736EE90097D86F /* system.cpp */; };
+		B32CF1B521923F850058E2E7 /* pio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE4820736EE90097D86F /* pio.cpp */; };
+		B32CF1B621923F850058E2E7 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE3720736EE90097D86F /* sound.cpp */; };
+		B32CF1B721923F850058E2E7 /* tms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE3420736EE90097D86F /* tms.cpp */; };
+		B32CF1B821923F850058E2E7 /* memz80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE3920736EE90097D86F /* memz80.cpp */; };
+		B32CF1B921923F850058E2E7 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE4A20736EE90097D86F /* cart.cpp */; };
+		B32CF1BA21923F850058E2E7 /* vdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE2920736EE90097D86F /* vdp.cpp */; };
+		B32CF1BB21923F850058E2E7 /* sms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE4B20736EE90097D86F /* sms.cpp */; };
+		B32CF1BC21923F850058E2E7 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE2620736EE90097D86F /* render.cpp */; };
+		B32CF1BD21923F850058E2E7 /* romdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE3820736EE90097D86F /* romdb.cpp */; };
+		B32CF1C7219240270058E2E7 /* arcade_card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE1120736EE90097D86F /* arcade_card.cpp */; };
+		B32CF1CF219240770058E2E7 /* libhwmisc-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */; };
+		B32CF1D0219240770058E2E7 /* liblynx-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF18921923F740058E2E7 /* liblynx-tvOS.a */; };
+		B32CF1D1219240770058E2E7 /* libneogeopocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF17821923F520058E2E7 /* libneogeopocket-tvOS.a */; };
+		B32CF1D2219240770058E2E7 /* libpce-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF19F21923F790058E2E7 /* libpce-tvOS.a */; };
+		B32CF1D3219240770058E2E7 /* libpcefast-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */; };
+		B32CF1D4219240770058E2E7 /* libsegamastersystem-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1C421923F850058E2E7 /* libsegamastersystem-tvOS.a */; };
+		B32CF1D5219240770058E2E7 /* libvirtualboy-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF15521923F330058E2E7 /* libvirtualboy-tvOS.a */; };
+		B32CF1D6219241EE0058E2E7 /* libhwvideo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */; };
+		B32CF1D7219241EE0058E2E7 /* libmednafen-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C42A21919D73009F4EDC /* libmednafen-tvOS.a */; };
+		B32CF1D8219241EE0058E2E7 /* libnes-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3D321919CD6009F4EDC /* libnes-tvOS.a */; };
+		B32CF1D9219241EE0058E2E7 /* libpsx-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34221919BC6009F4EDC /* libpsx-tvOS.a */; };
+		B32CF1DA219241EE0058E2E7 /* libsnes-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4AA21919DC9009F4EDC /* libsnes-tvOS.a */; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
 		B3335037207AFBDE0036A448 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0F520736EEA0097D86F /* cpu.cpp */; };
 		B3335038207AFBDE0036A448 /* dis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0EF20736EEA0097D86F /* dis.cpp */; };
@@ -515,7 +602,7 @@
 		B3335074207AFD8B0036A448 /* v30mz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5920736EE90097D86F /* v30mz.cpp */; };
 		B3335075207AFD9C0036A448 /* libwonderswan-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335062207AFD3D0036A448 /* libwonderswan-iOS.a */; };
 		B333509B207AFF350036A448 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24020736EEB0097D86F /* input.cpp */; };
-		B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335092207AFF2B0036A448 /* libvirtualboy.a */; };
+		B333509C207AFF3F0036A448 /* libvirtualboy-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335092207AFF2B0036A448 /* libvirtualboy-iOS.a */; };
 		B333509D207AFF560036A448 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24520736EEB0097D86F /* timer.cpp */; };
 		B333509E207AFF560036A448 /* vb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24120736EEB0097D86F /* vb.cpp */; };
 		B333509F207AFF560036A448 /* vip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB23F20736EEB0097D86F /* vip.cpp */; };
@@ -773,12 +860,12 @@
 		B333527C207B02CA0036A448 /* sram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA9D20736EE70097D86F /* sram.cpp */; };
 		B333527D207B02CA0036A448 /* thumb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA7020736EE70097D86F /* thumb.cpp */; };
 		B333527E207B02EB0036A448 /* libgba-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351A4207B01460036A448 /* libgba-iOS.a */; };
-		B333527F207B02EB0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
-		B3335281207B02EB0036A448 /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
-		B3335282207B02EB0036A448 /* libpce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce.a */; };
-		B3335283207B02EB0036A448 /* libpcefast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast.a */; };
+		B333527F207B02EB0036A448 /* liblynx-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx-iOS.a */; };
+		B3335281207B02EB0036A448 /* libneogeopocket-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket-iOS.a */; };
+		B3335282207B02EB0036A448 /* libpce-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce-iOS.a */; };
+		B3335283207B02EB0036A448 /* libpcefast-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast-iOS.a */; };
 		B3335284207B02EB0036A448 /* libpcfx-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351FC207B020C0036A448 /* libpcfx-iOS.a */; };
-		B3335285207B02EB0036A448 /* libsegamastersystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351E5207B01C60036A448 /* libsegamastersystem.a */; };
+		B3335285207B02EB0036A448 /* libsegamastersystem-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351E5207B01C60036A448 /* libsegamastersystem-iOS.a */; };
 		B3335286207B02F70036A448 /* c65c02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0020736EE80097D86F /* c65c02.cpp */; };
 		B3335287207B02F70036A448 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0120736EE80097D86F /* cart.cpp */; };
 		B3335288207B02F70036A448 /* memmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEA20736EE80097D86F /* memmap.cpp */; };
@@ -798,9 +885,9 @@
 		B33352DF207B06B90036A448 /* arcade_card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE1120736EE90097D86F /* arcade_card.cpp */; };
 		B33352E0207B06D70036A448 /* v810_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFF20736EE90097D86F /* v810_cpu.cpp */; };
 		B33352E1207B06D70036A448 /* v810_fp_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE0020736EE90097D86F /* v810_fp_ops.cpp */; };
-		B33352E2207B072C0036A448 /* libhwaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio.a */; };
+		B33352E2207B072C0036A448 /* libhwaudio-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio-iOS.a */; };
 		B33352E3207B072C0036A448 /* libhwcpu-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352C1207B06730036A448 /* libhwcpu-iOS.a */; };
-		B33352E4207B072C0036A448 /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
+		B33352E4207B072C0036A448 /* libhwmisc-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc-iOS.a */; };
 		B33352E5207B072C0036A448 /* libhwvideo-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo-iOS.a */; };
 		B33352E8207B07C20036A448 /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFA20736EE90097D86F /* z80_ops.cpp */; };
 		B33352E9207B07FD0036A448 /* z80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADF520736EE90097D86F /* z80.cpp */; };
@@ -913,14 +1000,6 @@
 		B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 		B33355F7207B3BAD0036A448 /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B33355F8207B3BAD0036A448 /* thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3617852E44006C057B /* thread.cpp */; };
-		B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio.a */; };
-		B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
-		B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
-		B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
-		B3335606207B3BBA0036A448 /* libpce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce.a */; };
-		B3335607207B3BBA0036A448 /* libpcefast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast.a */; };
-		B333560B207B3BBA0036A448 /* libsegamastersystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351E5207B01C60036A448 /* libsegamastersystem.a */; };
-		B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335092207AFF2B0036A448 /* libvirtualboy.a */; };
 		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
 		B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E81E088A0100AD0E8B /* libz.tbd */; };
@@ -1604,6 +1683,78 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B32CF14121923EB40058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF15021923F330058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF17321923F520058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF18421923F740058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF19A21923F790058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1AC21923F7F0058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1BF21923F850058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1C9219240270058E2E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B333502B207AFBA30036A448 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1874,12 +2025,12 @@
 		94454E3717852E44006C057B /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
 		94454E3B17852E61006C057B /* stubs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stubs.mm; sourceTree = "<group>"; };
 		B314E30F21081E9200D0C27A /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C34221919BC6009F4EDC /* libpsx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpsx.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C34C21919C1C009F4EDC /* libhwvideo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhwvideo.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C3D321919CD6009F4EDC /* libnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C3FA21919D34009F4EDC /* libmegadrive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmegadrive.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C42A21919D73009F4EDC /* libmednafen.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmednafen.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C4AA21919DC9009F4EDC /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C34221919BC6009F4EDC /* libpsx-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpsx-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwvideo-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C3D321919CD6009F4EDC /* libnes-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libnes-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C3FA21919D34009F4EDC /* libmegadrive-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmegadrive-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C42A21919D73009F4EDC /* libmednafen-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmednafen-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C4AA21919DC9009F4EDC /* libsnes-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnes-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C4C521919E72009F4EDC /* libgba-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgba-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgb-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmpcdec-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1892,23 +2043,31 @@
 		B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcdrom-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcfx-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libwonderswan-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF14621923EB50058E2E7 /* libhwaudio-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwaudio-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF15521923F330058E2E7 /* libvirtualboy-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvirtualboy-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF17821923F520058E2E7 /* libneogeopocket-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libneogeopocket-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF18921923F740058E2E7 /* liblynx-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "liblynx-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF19F21923F790058E2E7 /* libpce-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpce-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcefast-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF1C421923F850058E2E7 /* libsegamastersystem-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsegamastersystem-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwmisc-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B333502D207AFBA30036A448 /* libpsx-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpsx-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335062207AFD3D0036A448 /* libwonderswan-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libwonderswan-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3335092207AFF2B0036A448 /* libvirtualboy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvirtualboy.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3335092207AFF2B0036A448 /* libvirtualboy-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvirtualboy-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33350A5207AFFE80036A448 /* libnes-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libnes-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335190207B00F70036A448 /* libgb-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgb-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33351A4207B01460036A448 /* libgba-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgba-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33351B1207B01570036A448 /* liblynx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblynx.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33351BE207B016F0036A448 /* libneogeopocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libneogeopocket.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33351CB207B01860036A448 /* libpce.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpce.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33351D8207B01970036A448 /* libpcefast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpcefast.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33351E5207B01C60036A448 /* libsegamastersystem.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsegamastersystem.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33351B1207B01570036A448 /* liblynx-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "liblynx-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33351BE207B016F0036A448 /* libneogeopocket-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libneogeopocket-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33351CB207B01860036A448 /* libpce-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpce-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33351D8207B01970036A448 /* libpcefast-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcefast-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33351E5207B01C60036A448 /* libsegamastersystem-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsegamastersystem-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33351FC207B020C0036A448 /* libpcfx-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcfx-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335245207B02770036A448 /* libmegadrive-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmegadrive-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33352A7207B06550036A448 /* libhwaudio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhwaudio.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33352A7207B06550036A448 /* libhwaudio-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwaudio-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33352B4207B06620036A448 /* libhwvideo-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwvideo-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33352C1207B06730036A448 /* libhwcpu-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B33352CE207B067F0036A448 /* libhwmisc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhwmisc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33352CE207B067F0036A448 /* libhwmisc-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwmisc-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B333546F207B1B500036A448 /* libcdrom-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcdrom-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3335493207B1BF30036A448 /* libsound-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsound-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33354B4207B1C520036A448 /* libvideo-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvideo-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4318,6 +4477,62 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B32CF14021923EB40058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF14F21923F330058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF17221923F520058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF18321923F740058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF19921923F790058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1AB21923F7F0058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1BE21923F850058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1C8219240270058E2E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B333502A207AFBA30036A448 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4497,6 +4712,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */,
+				B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */,
+				B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */,
 				B3FBDFAE207FFB1F00E661D1 /* libsnes_faust-iOS.a in Frameworks */,
 				B3FBDF9A207FF51D00E661D1 /* libsnes-iOS.a in Frameworks */,
 				B33355F0207B28570036A448 /* libtrio-iOS.a in Frameworks */,
@@ -4504,28 +4722,25 @@
 				B33355C2207B207F0036A448 /* libquicklz-iOS.a in Frameworks */,
 				B33355B3207B1EBC0036A448 /* libmpcdec-iOS.a in Frameworks */,
 				B333559C207B1DB10036A448 /* libmednafen-iOS.a in Frameworks */,
-				B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */,
 				B33354BD207B1C600036A448 /* libvideo-iOS.a in Frameworks */,
 				B33354A2207B1C0D0036A448 /* libsound-iOS.a in Frameworks */,
 				B3335488207B1B8E0036A448 /* libcdrom-iOS.a in Frameworks */,
-				B33352E2207B072C0036A448 /* libhwaudio.a in Frameworks */,
+				B33352E2207B072C0036A448 /* libhwaudio-iOS.a in Frameworks */,
 				B33352E3207B072C0036A448 /* libhwcpu-iOS.a in Frameworks */,
-				B33352E4207B072C0036A448 /* libhwmisc.a in Frameworks */,
+				B33352E4207B072C0036A448 /* libhwmisc-iOS.a in Frameworks */,
 				B33352E5207B072C0036A448 /* libhwvideo-iOS.a in Frameworks */,
 				B333527E207B02EB0036A448 /* libgba-iOS.a in Frameworks */,
-				B333527F207B02EB0036A448 /* liblynx.a in Frameworks */,
-				B3335281207B02EB0036A448 /* libneogeopocket.a in Frameworks */,
-				B3335282207B02EB0036A448 /* libpce.a in Frameworks */,
-				B3335283207B02EB0036A448 /* libpcefast.a in Frameworks */,
+				B333527F207B02EB0036A448 /* liblynx-iOS.a in Frameworks */,
+				B3335281207B02EB0036A448 /* libneogeopocket-iOS.a in Frameworks */,
+				B3335282207B02EB0036A448 /* libpce-iOS.a in Frameworks */,
+				B3335283207B02EB0036A448 /* libpcefast-iOS.a in Frameworks */,
 				B3335284207B02EB0036A448 /* libpcfx-iOS.a in Frameworks */,
-				B3335285207B02EB0036A448 /* libsegamastersystem.a in Frameworks */,
+				B3335285207B02EB0036A448 /* libsegamastersystem-iOS.a in Frameworks */,
 				B333519F207B01230036A448 /* libgb-iOS.a in Frameworks */,
 				B33350AE207B00080036A448 /* libnes-iOS.a in Frameworks */,
-				B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */,
+				B333509C207AFF3F0036A448 /* libvirtualboy-iOS.a in Frameworks */,
 				B3335075207AFD9C0036A448 /* libwonderswan-iOS.a in Frameworks */,
 				B333504F207AFBFC0036A448 /* libpsx-iOS.a in Frameworks */,
-				B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */,
-				B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */,
 				B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */,
 			);
@@ -4535,6 +4750,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32CF1D6219241EE0058E2E7 /* libhwvideo-tvOS.a in Frameworks */,
+				B32CF1D7219241EE0058E2E7 /* libmednafen-tvOS.a in Frameworks */,
+				B32CF1D8219241EE0058E2E7 /* libnes-tvOS.a in Frameworks */,
+				B32CF1D9219241EE0058E2E7 /* libpsx-tvOS.a in Frameworks */,
+				B32CF1DA219241EE0058E2E7 /* libsnes-tvOS.a in Frameworks */,
+				B32CF1CF219240770058E2E7 /* libhwmisc-tvOS.a in Frameworks */,
+				B32CF1D0219240770058E2E7 /* liblynx-tvOS.a in Frameworks */,
+				B32CF1D1219240770058E2E7 /* libneogeopocket-tvOS.a in Frameworks */,
+				B32CF1D2219240770058E2E7 /* libpce-tvOS.a in Frameworks */,
+				B32CF1D3219240770058E2E7 /* libpcefast-tvOS.a in Frameworks */,
+				B32CF1D4219240770058E2E7 /* libsegamastersystem-tvOS.a in Frameworks */,
+				B32CF1D5219240770058E2E7 /* libvirtualboy-tvOS.a in Frameworks */,
+				B32CF14721923F030058E2E7 /* libhwaudio-tvOS.a in Frameworks */,
 				B324C62521920724009F4EDC /* libgba-tvOS.a in Frameworks */,
 				B324C5F32191AD3B009F4EDC /* libwonderswan-tvOS.a in Frameworks */,
 				B324C5DF2191AD10009F4EDC /* libpcfx-tvOS.a in Frameworks */,
@@ -4547,21 +4775,8 @@
 				B324C55D2191AAF7009F4EDC /* libsnes_faust-tvOS.a in Frameworks */,
 				B324C54D2191A8D3009F4EDC /* libmpcdec-tvOS.a in Frameworks */,
 				B324C4D62191A1F7009F4EDC /* libgb-tvOS.a in Frameworks */,
-				B324C4AB21919E04009F4EDC /* libsnes.a in Frameworks */,
-				B324C42B21919DBD009F4EDC /* libmednafen.a in Frameworks */,
-				B324C3D421919D17009F4EDC /* libnes.a in Frameworks */,
-				B324C34D21919C5C009F4EDC /* libhwvideo.a in Frameworks */,
-				B324C34321919C03009F4EDC /* libpsx.a in Frameworks */,
 				B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */,
 				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
-				B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */,
-				B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */,
-				B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */,
-				B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */,
-				B3335606207B3BBA0036A448 /* libpce.a in Frameworks */,
-				B3335607207B3BBA0036A448 /* libpcefast.a in Frameworks */,
-				B333560B207B3BBA0036A448 /* libsegamastersystem.a in Frameworks */,
-				B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */,
 				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
@@ -4640,21 +4855,21 @@
 				B340E46F1E08888700AD0E8B /* PVMednafen.framework */,
 				B333502D207AFBA30036A448 /* libpsx-iOS.a */,
 				B3335062207AFD3D0036A448 /* libwonderswan-iOS.a */,
-				B3335092207AFF2B0036A448 /* libvirtualboy.a */,
+				B3335092207AFF2B0036A448 /* libvirtualboy-iOS.a */,
 				B33350A5207AFFE80036A448 /* libnes-iOS.a */,
 				B3335190207B00F70036A448 /* libgb-iOS.a */,
 				B33351A4207B01460036A448 /* libgba-iOS.a */,
-				B33351B1207B01570036A448 /* liblynx.a */,
-				B33351BE207B016F0036A448 /* libneogeopocket.a */,
-				B33351CB207B01860036A448 /* libpce.a */,
-				B33351D8207B01970036A448 /* libpcefast.a */,
-				B33351E5207B01C60036A448 /* libsegamastersystem.a */,
+				B33351B1207B01570036A448 /* liblynx-iOS.a */,
+				B33351BE207B016F0036A448 /* libneogeopocket-iOS.a */,
+				B33351CB207B01860036A448 /* libpce-iOS.a */,
+				B33351D8207B01970036A448 /* libpcefast-iOS.a */,
+				B33351E5207B01C60036A448 /* libsegamastersystem-iOS.a */,
 				B33351FC207B020C0036A448 /* libpcfx-iOS.a */,
 				B3335245207B02770036A448 /* libmegadrive-iOS.a */,
-				B33352A7207B06550036A448 /* libhwaudio.a */,
+				B33352A7207B06550036A448 /* libhwaudio-iOS.a */,
 				B33352B4207B06620036A448 /* libhwvideo-iOS.a */,
 				B33352C1207B06730036A448 /* libhwcpu-iOS.a */,
-				B33352CE207B067F0036A448 /* libhwmisc.a */,
+				B33352CE207B067F0036A448 /* libhwmisc-iOS.a */,
 				B333546F207B1B500036A448 /* libcdrom-iOS.a */,
 				B3335493207B1BF30036A448 /* libsound-iOS.a */,
 				B33354B4207B1C520036A448 /* libvideo-iOS.a */,
@@ -4666,12 +4881,12 @@
 				B3FBDEF8207FF0E300E661D1 /* libsnes-iOS.a */,
 				B3FBDF9F207FF5D800E661D1 /* libsnes_faust-iOS.a */,
 				B35D6690218185710005A992 /* libhwcpu-tvOS.a */,
-				B324C34221919BC6009F4EDC /* libpsx.a */,
-				B324C34C21919C1C009F4EDC /* libhwvideo.a */,
-				B324C3D321919CD6009F4EDC /* libnes.a */,
-				B324C3FA21919D34009F4EDC /* libmegadrive.a */,
-				B324C42A21919D73009F4EDC /* libmednafen.a */,
-				B324C4AA21919DC9009F4EDC /* libsnes.a */,
+				B324C34221919BC6009F4EDC /* libpsx-tvOS.a */,
+				B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */,
+				B324C3D321919CD6009F4EDC /* libnes-tvOS.a */,
+				B324C3FA21919D34009F4EDC /* libmegadrive-tvOS.a */,
+				B324C42A21919D73009F4EDC /* libmednafen-tvOS.a */,
+				B324C4AA21919DC9009F4EDC /* libsnes-tvOS.a */,
 				B324C4C521919E72009F4EDC /* libgba-tvOS.a */,
 				B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */,
 				B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */,
@@ -4684,6 +4899,14 @@
 				B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */,
 				B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */,
 				B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */,
+				B32CF14621923EB50058E2E7 /* libhwaudio-tvOS.a */,
+				B32CF15521923F330058E2E7 /* libvirtualboy-tvOS.a */,
+				B32CF17821923F520058E2E7 /* libneogeopocket-tvOS.a */,
+				B32CF18921923F740058E2E7 /* liblynx-tvOS.a */,
+				B32CF19F21923F790058E2E7 /* libpce-tvOS.a */,
+				B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */,
+				B32CF1C421923F850058E2E7 /* libsegamastersystem-tvOS.a */,
+				B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8920,7 +9143,7 @@
 			);
 			name = "psx-tvOS";
 			productName = psx;
-			productReference = B324C34221919BC6009F4EDC /* libpsx.a */;
+			productReference = B324C34221919BC6009F4EDC /* libpsx-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B324C34421919C1C009F4EDC /* hwvideo-tvOS */ = {
@@ -8937,7 +9160,7 @@
 			);
 			name = "hwvideo-tvOS";
 			productName = hwvideo;
-			productReference = B324C34C21919C1C009F4EDC /* libhwvideo.a */;
+			productReference = B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B324C34E21919CD6009F4EDC /* nes-tvOS */ = {
@@ -8954,7 +9177,7 @@
 			);
 			name = "nes-tvOS";
 			productName = nes;
-			productReference = B324C3D321919CD6009F4EDC /* libnes.a */;
+			productReference = B324C3D321919CD6009F4EDC /* libnes-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B324C3D521919D34009F4EDC /* megadrive-tvOS */ = {
@@ -8971,7 +9194,7 @@
 			);
 			name = "megadrive-tvOS";
 			productName = megadrive;
-			productReference = B324C3FA21919D34009F4EDC /* libmegadrive.a */;
+			productReference = B324C3FA21919D34009F4EDC /* libmegadrive-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B324C3FB21919D73009F4EDC /* mednafen-tvOS */ = {
@@ -8988,7 +9211,7 @@
 			);
 			name = "mednafen-tvOS";
 			productName = mednafen;
-			productReference = B324C42A21919D73009F4EDC /* libmednafen.a */;
+			productReference = B324C42A21919D73009F4EDC /* libmednafen-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B324C42C21919DC9009F4EDC /* snes-tvOS */ = {
@@ -9005,7 +9228,7 @@
 			);
 			name = "snes-tvOS";
 			productName = snes;
-			productReference = B324C4AA21919DC9009F4EDC /* libsnes.a */;
+			productReference = B324C4AA21919DC9009F4EDC /* libsnes-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B324C4AC21919E72009F4EDC /* gba-tvOS */ = {
@@ -9212,6 +9435,142 @@
 			productReference = B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		B32CF13721923EB40058E2E7 /* hwaudio-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF14221923EB40058E2E7 /* Build configuration list for PBXNativeTarget "hwaudio-tvOS" */;
+			buildPhases = (
+				B32CF13821923EB40058E2E7 /* Sources */,
+				B32CF14021923EB40058E2E7 /* Frameworks */,
+				B32CF14121923EB40058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "hwaudio-tvOS";
+			productName = hwaudio;
+			productReference = B32CF14621923EB50058E2E7 /* libhwaudio-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF14821923F330058E2E7 /* virtualboy-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF15121923F330058E2E7 /* Build configuration list for PBXNativeTarget "virtualboy-tvOS" */;
+			buildPhases = (
+				B32CF14921923F330058E2E7 /* Sources */,
+				B32CF14F21923F330058E2E7 /* Frameworks */,
+				B32CF15021923F330058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "virtualboy-tvOS";
+			productName = virtualboy;
+			productReference = B32CF15521923F330058E2E7 /* libvirtualboy-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF15621923F520058E2E7 /* neogeopocket-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF17421923F520058E2E7 /* Build configuration list for PBXNativeTarget "neogeopocket-tvOS" */;
+			buildPhases = (
+				B32CF15721923F520058E2E7 /* Sources */,
+				B32CF17221923F520058E2E7 /* Frameworks */,
+				B32CF17321923F520058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "neogeopocket-tvOS";
+			productName = neogeopocket;
+			productReference = B32CF17821923F520058E2E7 /* libneogeopocket-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF17921923F740058E2E7 /* lynx-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF18521923F740058E2E7 /* Build configuration list for PBXNativeTarget "lynx-tvOS" */;
+			buildPhases = (
+				B32CF17A21923F740058E2E7 /* Sources */,
+				B32CF18321923F740058E2E7 /* Frameworks */,
+				B32CF18421923F740058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "lynx-tvOS";
+			productName = lynx;
+			productReference = B32CF18921923F740058E2E7 /* liblynx-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF18A21923F790058E2E7 /* pce-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF19B21923F790058E2E7 /* Build configuration list for PBXNativeTarget "pce-tvOS" */;
+			buildPhases = (
+				B32CF18B21923F790058E2E7 /* Sources */,
+				B32CF19921923F790058E2E7 /* Frameworks */,
+				B32CF19A21923F790058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pce-tvOS";
+			productName = pce;
+			productReference = B32CF19F21923F790058E2E7 /* libpce-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF1A021923F7F0058E2E7 /* pcefast-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF1AD21923F7F0058E2E7 /* Build configuration list for PBXNativeTarget "pcefast-tvOS" */;
+			buildPhases = (
+				B32CF1A121923F7F0058E2E7 /* Sources */,
+				B32CF1AB21923F7F0058E2E7 /* Frameworks */,
+				B32CF1AC21923F7F0058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pcefast-tvOS";
+			productName = pcefast;
+			productReference = B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF1B221923F850058E2E7 /* segamastersystem-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF1C021923F850058E2E7 /* Build configuration list for PBXNativeTarget "segamastersystem-tvOS" */;
+			buildPhases = (
+				B32CF1B321923F850058E2E7 /* Sources */,
+				B32CF1BE21923F850058E2E7 /* Frameworks */,
+				B32CF1BF21923F850058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "segamastersystem-tvOS";
+			productName = segamastersystem;
+			productReference = B32CF1C421923F850058E2E7 /* libsegamastersystem-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B32CF1C5219240270058E2E7 /* hwmisc-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32CF1CA219240270058E2E7 /* Build configuration list for PBXNativeTarget "hwmisc-tvOS" */;
+			buildPhases = (
+				B32CF1C6219240270058E2E7 /* Sources */,
+				B32CF1C8219240270058E2E7 /* Frameworks */,
+				B32CF1C9219240270058E2E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "hwmisc-tvOS";
+			productName = hwmisc;
+			productReference = B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B333502C207AFBA30036A448 /* psx-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3335035207AFBA40036A448 /* Build configuration list for PBXNativeTarget "psx-iOS" */;
@@ -9246,9 +9605,9 @@
 			productReference = B3335062207AFD3D0036A448 /* libwonderswan-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3335091207AFF2B0036A448 /* virtualboy */ = {
+		B3335091207AFF2B0036A448 /* virtualboy-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3335098207AFF2C0036A448 /* Build configuration list for PBXNativeTarget "virtualboy" */;
+			buildConfigurationList = B3335098207AFF2C0036A448 /* Build configuration list for PBXNativeTarget "virtualboy-iOS" */;
 			buildPhases = (
 				B333508E207AFF2B0036A448 /* Sources */,
 				B333508F207AFF2B0036A448 /* Frameworks */,
@@ -9258,9 +9617,9 @@
 			);
 			dependencies = (
 			);
-			name = virtualboy;
+			name = "virtualboy-iOS";
 			productName = virtualboy;
-			productReference = B3335092207AFF2B0036A448 /* libvirtualboy.a */;
+			productReference = B3335092207AFF2B0036A448 /* libvirtualboy-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B33350A4207AFFE80036A448 /* nes-iOS */ = {
@@ -9314,9 +9673,9 @@
 			productReference = B33351A4207B01460036A448 /* libgba-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33351B0207B01570036A448 /* lynx */ = {
+		B33351B0207B01570036A448 /* lynx-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33351B7207B01570036A448 /* Build configuration list for PBXNativeTarget "lynx" */;
+			buildConfigurationList = B33351B7207B01570036A448 /* Build configuration list for PBXNativeTarget "lynx-iOS" */;
 			buildPhases = (
 				B33351AD207B01570036A448 /* Sources */,
 				B33351AE207B01570036A448 /* Frameworks */,
@@ -9326,14 +9685,14 @@
 			);
 			dependencies = (
 			);
-			name = lynx;
+			name = "lynx-iOS";
 			productName = lynx;
-			productReference = B33351B1207B01570036A448 /* liblynx.a */;
+			productReference = B33351B1207B01570036A448 /* liblynx-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33351BD207B016F0036A448 /* neogeopocket */ = {
+		B33351BD207B016F0036A448 /* neogeopocket-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33351C4207B016F0036A448 /* Build configuration list for PBXNativeTarget "neogeopocket" */;
+			buildConfigurationList = B33351C4207B016F0036A448 /* Build configuration list for PBXNativeTarget "neogeopocket-iOS" */;
 			buildPhases = (
 				B33351BA207B016F0036A448 /* Sources */,
 				B33351BB207B016F0036A448 /* Frameworks */,
@@ -9343,14 +9702,14 @@
 			);
 			dependencies = (
 			);
-			name = neogeopocket;
+			name = "neogeopocket-iOS";
 			productName = neogeopocket;
-			productReference = B33351BE207B016F0036A448 /* libneogeopocket.a */;
+			productReference = B33351BE207B016F0036A448 /* libneogeopocket-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33351CA207B01860036A448 /* pce */ = {
+		B33351CA207B01860036A448 /* pce-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33351D1207B01860036A448 /* Build configuration list for PBXNativeTarget "pce" */;
+			buildConfigurationList = B33351D1207B01860036A448 /* Build configuration list for PBXNativeTarget "pce-iOS" */;
 			buildPhases = (
 				B33351C7207B01860036A448 /* Sources */,
 				B33351C8207B01860036A448 /* Frameworks */,
@@ -9360,14 +9719,14 @@
 			);
 			dependencies = (
 			);
-			name = pce;
+			name = "pce-iOS";
 			productName = pce;
-			productReference = B33351CB207B01860036A448 /* libpce.a */;
+			productReference = B33351CB207B01860036A448 /* libpce-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33351D7207B01970036A448 /* pcefast */ = {
+		B33351D7207B01970036A448 /* pcefast-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33351DE207B01980036A448 /* Build configuration list for PBXNativeTarget "pcefast" */;
+			buildConfigurationList = B33351DE207B01980036A448 /* Build configuration list for PBXNativeTarget "pcefast-iOS" */;
 			buildPhases = (
 				B33351D4207B01970036A448 /* Sources */,
 				B33351D5207B01970036A448 /* Frameworks */,
@@ -9377,14 +9736,14 @@
 			);
 			dependencies = (
 			);
-			name = pcefast;
+			name = "pcefast-iOS";
 			productName = pcefast;
-			productReference = B33351D8207B01970036A448 /* libpcefast.a */;
+			productReference = B33351D8207B01970036A448 /* libpcefast-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33351E4207B01C60036A448 /* segamastersystem */ = {
+		B33351E4207B01C60036A448 /* segamastersystem-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33351EB207B01C60036A448 /* Build configuration list for PBXNativeTarget "segamastersystem" */;
+			buildConfigurationList = B33351EB207B01C60036A448 /* Build configuration list for PBXNativeTarget "segamastersystem-iOS" */;
 			buildPhases = (
 				B33351E1207B01C60036A448 /* Sources */,
 				B33351E2207B01C60036A448 /* Frameworks */,
@@ -9394,9 +9753,9 @@
 			);
 			dependencies = (
 			);
-			name = segamastersystem;
+			name = "segamastersystem-iOS";
 			productName = segamastersystem;
-			productReference = B33351E5207B01C60036A448 /* libsegamastersystem.a */;
+			productReference = B33351E5207B01C60036A448 /* libsegamastersystem-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B33351FB207B020C0036A448 /* pcfx-iOS */ = {
@@ -9433,9 +9792,9 @@
 			productReference = B3335245207B02770036A448 /* libmegadrive-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33352A6207B06550036A448 /* hwaudio */ = {
+		B33352A6207B06550036A448 /* hwaudio-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33352AD207B06550036A448 /* Build configuration list for PBXNativeTarget "hwaudio" */;
+			buildConfigurationList = B33352AD207B06550036A448 /* Build configuration list for PBXNativeTarget "hwaudio-iOS" */;
 			buildPhases = (
 				B33352A3207B06550036A448 /* Sources */,
 				B33352A4207B06550036A448 /* Frameworks */,
@@ -9445,9 +9804,9 @@
 			);
 			dependencies = (
 			);
-			name = hwaudio;
+			name = "hwaudio-iOS";
 			productName = hwaudio;
-			productReference = B33352A7207B06550036A448 /* libhwaudio.a */;
+			productReference = B33352A7207B06550036A448 /* libhwaudio-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B33352B3207B06610036A448 /* hwvideo-iOS */ = {
@@ -9484,9 +9843,9 @@
 			productReference = B33352C1207B06730036A448 /* libhwcpu-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B33352CD207B067F0036A448 /* hwmisc */ = {
+		B33352CD207B067F0036A448 /* hwmisc-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33352D4207B067F0036A448 /* Build configuration list for PBXNativeTarget "hwmisc" */;
+			buildConfigurationList = B33352D4207B067F0036A448 /* Build configuration list for PBXNativeTarget "hwmisc-iOS" */;
 			buildPhases = (
 				B33352CA207B067F0036A448 /* Sources */,
 				B33352CB207B067F0036A448 /* Frameworks */,
@@ -9496,9 +9855,9 @@
 			);
 			dependencies = (
 			);
-			name = hwmisc;
+			name = "hwmisc-iOS";
 			productName = hwmisc;
-			productReference = B33352CE207B067F0036A448 /* libhwmisc.a */;
+			productReference = B33352CE207B067F0036A448 /* libhwmisc-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B333546E207B1B500036A448 /* cdrom-iOS */ = {
@@ -9922,28 +10281,36 @@
 				B324C32221919BC6009F4EDC /* psx-tvOS */,
 				B3335061207AFD3D0036A448 /* wonderswan-iOS */,
 				B324C5E02191AD13009F4EDC /* wonderswan-tvOS */,
-				B3335091207AFF2B0036A448 /* virtualboy */,
+				B3335091207AFF2B0036A448 /* virtualboy-iOS */,
+				B32CF14821923F330058E2E7 /* virtualboy-tvOS */,
 				B33350A4207AFFE80036A448 /* nes-iOS */,
 				B324C34E21919CD6009F4EDC /* nes-tvOS */,
 				B333518F207B00F70036A448 /* gb-iOS */,
 				B324C4C82191A1AC009F4EDC /* gb-tvOS */,
 				B33351A3207B01460036A448 /* gba-iOS */,
 				B324C4AC21919E72009F4EDC /* gba-tvOS */,
-				B33351B0207B01570036A448 /* lynx */,
-				B33351BD207B016F0036A448 /* neogeopocket */,
-				B33351CA207B01860036A448 /* pce */,
-				B33351D7207B01970036A448 /* pcefast */,
-				B33351E4207B01C60036A448 /* segamastersystem */,
+				B33351B0207B01570036A448 /* lynx-iOS */,
+				B32CF17921923F740058E2E7 /* lynx-tvOS */,
+				B33351BD207B016F0036A448 /* neogeopocket-iOS */,
+				B32CF15621923F520058E2E7 /* neogeopocket-tvOS */,
+				B33351CA207B01860036A448 /* pce-iOS */,
+				B32CF18A21923F790058E2E7 /* pce-tvOS */,
+				B33351D7207B01970036A448 /* pcefast-iOS */,
+				B32CF1A021923F7F0058E2E7 /* pcefast-tvOS */,
+				B33351E4207B01C60036A448 /* segamastersystem-iOS */,
+				B32CF1B221923F850058E2E7 /* segamastersystem-tvOS */,
 				B33351FB207B020C0036A448 /* pcfx-iOS */,
 				B324C5CA2191ACE1009F4EDC /* pcfx-tvOS */,
 				B3335244207B02770036A448 /* megadrive-iOS */,
 				B324C3D521919D34009F4EDC /* megadrive-tvOS */,
-				B33352A6207B06550036A448 /* hwaudio */,
+				B33352A6207B06550036A448 /* hwaudio-iOS */,
+				B32CF13721923EB40058E2E7 /* hwaudio-tvOS */,
 				B33352B3207B06610036A448 /* hwvideo-iOS */,
 				B324C34421919C1C009F4EDC /* hwvideo-tvOS */,
 				B33352C0207B06730036A448 /* hwcpu-iOS */,
 				B35D6684218185710005A992 /* hwcpu-tvOS */,
-				B33352CD207B067F0036A448 /* hwmisc */,
+				B33352CD207B067F0036A448 /* hwmisc-iOS */,
+				B32CF1C5219240270058E2E7 /* hwmisc-tvOS */,
 				B333546E207B1B500036A448 /* cdrom-iOS */,
 				B324C5B02191ABB7009F4EDC /* cdrom-tvOS */,
 				B3335492207B1BF30036A448 /* sound-iOS */,
@@ -10560,6 +10927,141 @@
 				B324C5E92191AD13009F4EDC /* tcache.cpp in Sources */,
 				B324C5EA2191AD13009F4EDC /* interrupt.cpp in Sources */,
 				B324C5EB2191AD13009F4EDC /* rtc.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF13821923EB40058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF13921923EB40058E2E7 /* Sms_Apu.cpp in Sources */,
+				B32CF13A21923EB40058E2E7 /* Ym2612_Emu.cpp in Sources */,
+				B32CF13B21923EB40058E2E7 /* Gb_Apu_State.cpp in Sources */,
+				B32CF13C21923EB40058E2E7 /* pce_psg.cpp in Sources */,
+				B32CF13D21923EB40058E2E7 /* Gb_Oscs.cpp in Sources */,
+				B32CF13E21923EB40058E2E7 /* Gb_Apu.cpp in Sources */,
+				B32CF13F21923EB40058E2E7 /* emu2413.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF14921923F330058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF14A21923F330058E2E7 /* vsu.cpp in Sources */,
+				B32CF14B21923F330058E2E7 /* input.cpp in Sources */,
+				B32CF14C21923F330058E2E7 /* vip.cpp in Sources */,
+				B32CF14D21923F330058E2E7 /* timer.cpp in Sources */,
+				B32CF14E21923F330058E2E7 /* vb.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF15721923F520058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF15821923F520058E2E7 /* T6W28_Apu.cpp in Sources */,
+				B32CF15921923F520058E2E7 /* neopop.cpp in Sources */,
+				B32CF15A21923F520058E2E7 /* flash.cpp in Sources */,
+				B32CF15B21923F520058E2E7 /* gfx.cpp in Sources */,
+				B32CF15C21923F520058E2E7 /* TLCS900h_interpret.cpp in Sources */,
+				B32CF15D21923F520058E2E7 /* dma.cpp in Sources */,
+				B32CF15E21923F520058E2E7 /* TLCS900h_disassemble_src.cpp in Sources */,
+				B32CF15F21923F520058E2E7 /* interrupt.cpp in Sources */,
+				B32CF16021923F520058E2E7 /* biosHLE.cpp in Sources */,
+				B32CF16121923F520058E2E7 /* gfx_scanline_colour.cpp in Sources */,
+				B32CF16221923F520058E2E7 /* Z80_interface.cpp in Sources */,
+				B32CF16321923F520058E2E7 /* TLCS900h_disassemble_dst.cpp in Sources */,
+				B32CF16421923F520058E2E7 /* TLCS900h_interpret_reg.cpp in Sources */,
+				B32CF16521923F520058E2E7 /* TLCS900h_registers.cpp in Sources */,
+				B32CF16621923F520058E2E7 /* TLCS900h_disassemble.cpp in Sources */,
+				B32CF16721923F520058E2E7 /* mem.cpp in Sources */,
+				B32CF16821923F520058E2E7 /* TLCS900h_interpret_dst.cpp in Sources */,
+				B32CF16921923F520058E2E7 /* TLCS900h_interpret_single.cpp in Sources */,
+				B32CF16A21923F520058E2E7 /* sound.cpp in Sources */,
+				B32CF16B21923F520058E2E7 /* TLCS900h_disassemble_extra.cpp in Sources */,
+				B32CF16C21923F520058E2E7 /* rom.cpp in Sources */,
+				B32CF16D21923F520058E2E7 /* TLCS900h_disassemble_reg.cpp in Sources */,
+				B32CF16E21923F520058E2E7 /* rtc.cpp in Sources */,
+				B32CF16F21923F520058E2E7 /* TLCS900h_interpret_src.cpp in Sources */,
+				B32CF17021923F520058E2E7 /* bios.cpp in Sources */,
+				B32CF17121923F520058E2E7 /* gfx_scanline_mono.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF17A21923F740058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF17B21923F740058E2E7 /* system.cpp in Sources */,
+				B32CF17C21923F740058E2E7 /* susie.cpp in Sources */,
+				B32CF17D21923F740058E2E7 /* rom.cpp in Sources */,
+				B32CF17E21923F740058E2E7 /* memmap.cpp in Sources */,
+				B32CF17F21923F740058E2E7 /* ram.cpp in Sources */,
+				B32CF18021923F740058E2E7 /* mikie.cpp in Sources */,
+				B32CF18121923F740058E2E7 /* c65c02.cpp in Sources */,
+				B32CF18221923F740058E2E7 /* cart.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF18B21923F790058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF18C21923F790058E2E7 /* tsushin.cpp in Sources */,
+				B32CF18D21923F790058E2E7 /* mcgenjin.cpp in Sources */,
+				B32CF18E21923F790058E2E7 /* tsushinkb.cpp in Sources */,
+				B32CF18F21923F790058E2E7 /* gamepad.cpp in Sources */,
+				B32CF19021923F790058E2E7 /* pcecd.cpp in Sources */,
+				B32CF19121923F790058E2E7 /* huc6280.cpp in Sources */,
+				B32CF19221923F790058E2E7 /* vce.cpp in Sources */,
+				B32CF19321923F790058E2E7 /* huc.cpp in Sources */,
+				B32CF19421923F790058E2E7 /* input.cpp in Sources */,
+				B32CF19521923F790058E2E7 /* hes.cpp in Sources */,
+				B32CF19621923F790058E2E7 /* dis6280.cpp in Sources */,
+				B32CF19721923F790058E2E7 /* pce.cpp in Sources */,
+				B32CF19821923F790058E2E7 /* mouse.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1A121923F7F0058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF1A221923F7F0058E2E7 /* pcecd_drive.cpp in Sources */,
+				B32CF1A321923F7F0058E2E7 /* huc6280.cpp in Sources */,
+				B32CF1A421923F7F0058E2E7 /* psg.cpp in Sources */,
+				B32CF1A521923F7F0058E2E7 /* huc.cpp in Sources */,
+				B32CF1A621923F7F0058E2E7 /* input.cpp in Sources */,
+				B32CF1A721923F7F0058E2E7 /* pce.cpp in Sources */,
+				B32CF1A821923F7F0058E2E7 /* vdc.cpp in Sources */,
+				B32CF1A921923F7F0058E2E7 /* hes.cpp in Sources */,
+				B32CF1AA21923F7F0058E2E7 /* pcecd.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1B321923F850058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF1B421923F850058E2E7 /* system.cpp in Sources */,
+				B32CF1B521923F850058E2E7 /* pio.cpp in Sources */,
+				B32CF1B621923F850058E2E7 /* sound.cpp in Sources */,
+				B32CF1B721923F850058E2E7 /* tms.cpp in Sources */,
+				B32CF1B821923F850058E2E7 /* memz80.cpp in Sources */,
+				B32CF1B921923F850058E2E7 /* cart.cpp in Sources */,
+				B32CF1BA21923F850058E2E7 /* vdp.cpp in Sources */,
+				B32CF1BB21923F850058E2E7 /* sms.cpp in Sources */,
+				B32CF1BC21923F850058E2E7 /* render.cpp in Sources */,
+				B32CF1BD21923F850058E2E7 /* romdb.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32CF1C6219240270058E2E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32CF1C7219240270058E2E7 /* arcade_card.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11336,7 +11838,7 @@
 		};
 		B34AB58C2106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3335091207AFF2B0036A448 /* virtualboy */;
+			target = B3335091207AFF2B0036A448 /* virtualboy-iOS */;
 			targetProxy = B34AB58B2106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB58E2106DF8400C45F09 /* PBXTargetDependency */ = {
@@ -11356,27 +11858,27 @@
 		};
 		B34AB5942106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351B0207B01570036A448 /* lynx */;
+			target = B33351B0207B01570036A448 /* lynx-iOS */;
 			targetProxy = B34AB5932106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5962106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351BD207B016F0036A448 /* neogeopocket */;
+			target = B33351BD207B016F0036A448 /* neogeopocket-iOS */;
 			targetProxy = B34AB5952106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5982106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351CA207B01860036A448 /* pce */;
+			target = B33351CA207B01860036A448 /* pce-iOS */;
 			targetProxy = B34AB5972106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB59A2106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351D7207B01970036A448 /* pcefast */;
+			target = B33351D7207B01970036A448 /* pcefast-iOS */;
 			targetProxy = B34AB5992106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB59C2106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351E4207B01C60036A448 /* segamastersystem */;
+			target = B33351E4207B01C60036A448 /* segamastersystem-iOS */;
 			targetProxy = B34AB59B2106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB59E2106DF8400C45F09 /* PBXTargetDependency */ = {
@@ -11386,7 +11888,7 @@
 		};
 		B34AB5A22106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33352A6207B06550036A448 /* hwaudio */;
+			target = B33352A6207B06550036A448 /* hwaudio-iOS */;
 			targetProxy = B34AB5A12106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5A42106DF8400C45F09 /* PBXTargetDependency */ = {
@@ -11401,7 +11903,7 @@
 		};
 		B34AB5A82106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33352CD207B067F0036A448 /* hwmisc */;
+			target = B33352CD207B067F0036A448 /* hwmisc-iOS */;
 			targetProxy = B34AB5A72106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5AA2106DF8400C45F09 /* PBXTargetDependency */ = {
@@ -11466,7 +11968,7 @@
 		};
 		B34AB5C22106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3335091207AFF2B0036A448 /* virtualboy */;
+			target = B3335091207AFF2B0036A448 /* virtualboy-iOS */;
 			targetProxy = B34AB5C12106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5C42106DFB100C45F09 /* PBXTargetDependency */ = {
@@ -11486,27 +11988,27 @@
 		};
 		B34AB5CA2106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351B0207B01570036A448 /* lynx */;
+			target = B33351B0207B01570036A448 /* lynx-iOS */;
 			targetProxy = B34AB5C92106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5CC2106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351BD207B016F0036A448 /* neogeopocket */;
+			target = B33351BD207B016F0036A448 /* neogeopocket-iOS */;
 			targetProxy = B34AB5CB2106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5CE2106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351CA207B01860036A448 /* pce */;
+			target = B33351CA207B01860036A448 /* pce-iOS */;
 			targetProxy = B34AB5CD2106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5D02106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351D7207B01970036A448 /* pcefast */;
+			target = B33351D7207B01970036A448 /* pcefast-iOS */;
 			targetProxy = B34AB5CF2106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5D22106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33351E4207B01C60036A448 /* segamastersystem */;
+			target = B33351E4207B01C60036A448 /* segamastersystem-iOS */;
 			targetProxy = B34AB5D12106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5D42106DFB100C45F09 /* PBXTargetDependency */ = {
@@ -11516,7 +12018,7 @@
 		};
 		B34AB5D82106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33352A6207B06550036A448 /* hwaudio */;
+			target = B33352A6207B06550036A448 /* hwaudio-iOS */;
 			targetProxy = B34AB5D72106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */ = {
@@ -11526,7 +12028,7 @@
 		};
 		B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33352CD207B067F0036A448 /* hwmisc */;
+			target = B33352CD207B067F0036A448 /* hwmisc-iOS */;
 			targetProxy = B34AB5DD2106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B34AB5E02106DFB100C45F09 /* PBXTargetDependency */ = {
@@ -11887,7 +12389,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = psx;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -11914,7 +12416,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = psx;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -11947,7 +12449,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = hwvideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -11973,7 +12475,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = hwvideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12006,7 +12508,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = nes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12032,7 +12534,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = nes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12065,7 +12567,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = megadrive;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12091,7 +12593,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = megadrive;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12124,7 +12626,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = mednafen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12150,7 +12652,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = mednafen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12191,7 +12693,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = snes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12225,7 +12727,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = snes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12674,7 +13176,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = psx;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12732,7 +13234,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12783,7 +13285,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = nes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -12929,7 +13431,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12957,7 +13459,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12984,7 +13486,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13011,7 +13513,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13038,7 +13540,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13116,7 +13618,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = megadrive;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -13146,7 +13648,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13197,7 +13699,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = hwvideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -13281,7 +13783,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -13409,7 +13911,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = mednafen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -13591,7 +14093,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = snes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
@@ -14509,6 +15011,697 @@
 			};
 			name = Archive;
 		};
+		B32CF14321923EB40058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF14421923EB40058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF14521923EB40058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF15221923F330058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF15321923F330058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF15421923F330058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF17521923F520058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_STRICT_ALIASING = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF17621923F520058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_STRICT_ALIASING = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF17721923F520058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_STRICT_ALIASING = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF18621923F740058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF18721923F740058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF18821923F740058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF19C21923F790058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF19D21923F790058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF19E21923F790058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF1AE21923F7F0058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF1AF21923F7F0058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF1B021923F7F0058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF1C121923F850058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF1C221923F850058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF1C321923F850058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B32CF1CB219240270058E2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32CF1CC219240270058E2E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B32CF1CD219240270058E2E7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
 		B3335033207AFBA40036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -14658,7 +15851,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14684,7 +15877,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14900,7 +16093,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14926,7 +16119,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14960,7 +16153,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14987,7 +16180,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15020,7 +16213,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -15046,7 +16239,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15079,7 +16272,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -15105,7 +16298,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15138,7 +16331,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -15164,7 +16357,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15315,7 +16508,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -15341,7 +16534,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15490,7 +16683,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -15515,7 +16708,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16623,6 +17816,86 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B32CF14221923EB40058E2E7 /* Build configuration list for PBXNativeTarget "hwaudio-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF14321923EB40058E2E7 /* Debug */,
+				B32CF14421923EB40058E2E7 /* Release */,
+				B32CF14521923EB40058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF15121923F330058E2E7 /* Build configuration list for PBXNativeTarget "virtualboy-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF15221923F330058E2E7 /* Debug */,
+				B32CF15321923F330058E2E7 /* Release */,
+				B32CF15421923F330058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF17421923F520058E2E7 /* Build configuration list for PBXNativeTarget "neogeopocket-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF17521923F520058E2E7 /* Debug */,
+				B32CF17621923F520058E2E7 /* Release */,
+				B32CF17721923F520058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF18521923F740058E2E7 /* Build configuration list for PBXNativeTarget "lynx-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF18621923F740058E2E7 /* Debug */,
+				B32CF18721923F740058E2E7 /* Release */,
+				B32CF18821923F740058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF19B21923F790058E2E7 /* Build configuration list for PBXNativeTarget "pce-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF19C21923F790058E2E7 /* Debug */,
+				B32CF19D21923F790058E2E7 /* Release */,
+				B32CF19E21923F790058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF1AD21923F7F0058E2E7 /* Build configuration list for PBXNativeTarget "pcefast-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF1AE21923F7F0058E2E7 /* Debug */,
+				B32CF1AF21923F7F0058E2E7 /* Release */,
+				B32CF1B021923F7F0058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF1C021923F850058E2E7 /* Build configuration list for PBXNativeTarget "segamastersystem-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF1C121923F850058E2E7 /* Debug */,
+				B32CF1C221923F850058E2E7 /* Release */,
+				B32CF1C321923F850058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32CF1CA219240270058E2E7 /* Build configuration list for PBXNativeTarget "hwmisc-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32CF1CB219240270058E2E7 /* Debug */,
+				B32CF1CC219240270058E2E7 /* Release */,
+				B32CF1CD219240270058E2E7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B3335035207AFBA40036A448 /* Build configuration list for PBXNativeTarget "psx-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -16643,7 +17916,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3335098207AFF2C0036A448 /* Build configuration list for PBXNativeTarget "virtualboy" */ = {
+		B3335098207AFF2C0036A448 /* Build configuration list for PBXNativeTarget "virtualboy-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3335099207AFF2C0036A448 /* Debug */,
@@ -16683,7 +17956,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33351B7207B01570036A448 /* Build configuration list for PBXNativeTarget "lynx" */ = {
+		B33351B7207B01570036A448 /* Build configuration list for PBXNativeTarget "lynx-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33351B8207B01570036A448 /* Debug */,
@@ -16693,7 +17966,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33351C4207B016F0036A448 /* Build configuration list for PBXNativeTarget "neogeopocket" */ = {
+		B33351C4207B016F0036A448 /* Build configuration list for PBXNativeTarget "neogeopocket-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33351C5207B016F0036A448 /* Debug */,
@@ -16703,7 +17976,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33351D1207B01860036A448 /* Build configuration list for PBXNativeTarget "pce" */ = {
+		B33351D1207B01860036A448 /* Build configuration list for PBXNativeTarget "pce-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33351D2207B01860036A448 /* Debug */,
@@ -16713,7 +17986,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33351DE207B01980036A448 /* Build configuration list for PBXNativeTarget "pcefast" */ = {
+		B33351DE207B01980036A448 /* Build configuration list for PBXNativeTarget "pcefast-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33351DF207B01980036A448 /* Debug */,
@@ -16723,7 +17996,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33351EB207B01C60036A448 /* Build configuration list for PBXNativeTarget "segamastersystem" */ = {
+		B33351EB207B01C60036A448 /* Build configuration list for PBXNativeTarget "segamastersystem-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33351EC207B01C60036A448 /* Debug */,
@@ -16753,7 +18026,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33352AD207B06550036A448 /* Build configuration list for PBXNativeTarget "hwaudio" */ = {
+		B33352AD207B06550036A448 /* Build configuration list for PBXNativeTarget "hwaudio-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33352AE207B06550036A448 /* Debug */,
@@ -16783,7 +18056,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33352D4207B067F0036A448 /* Build configuration list for PBXNativeTarget "hwmisc" */ = {
+		B33352D4207B067F0036A448 /* Build configuration list for PBXNativeTarget "hwmisc-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33352D5207B067F0036A448 /* Debug */,
