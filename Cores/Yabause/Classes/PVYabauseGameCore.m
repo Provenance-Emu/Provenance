@@ -382,20 +382,39 @@ VideoInterface_struct *VIDCoreList[] = {
     return YES;
 }
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path {
-	ScspMuteAudio(SCSP_MUTE_SYSTEM);
-	int error = YabSaveState([path UTF8String]);
-	ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
+- (BOOL)saveStateToFileAtPath: (NSString *) path error:(NSError**)error {
+    int saveError = 0;
+    @synchronized(self) {
+        ScspMuteAudio(SCSP_MUTE_SYSTEM);
+        saveError = YabSaveState([path UTF8String]);
+        ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
+    }
 
-	return error;
+//    NSDictionary *userInfo = @{
+//                               NSLocalizedDescriptionKey: @"Failed to save state.",
+//                               NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
+//                               NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
+//                               };
+//
+//    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+//                                            code:PVEmulatorCoreErrorCodeCouldNotSaveState
+//                                        userInfo:userInfo];
+//
+//    *error = newError;
+
+	return saveError;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path {
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError**)error {
 	ScspMuteAudio(SCSP_MUTE_SYSTEM);
-	int error = YabLoadState([path UTF8String]);
+	int loadError = YabLoadState([path UTF8String]);
 	ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 
-	return error;
+	return loadError;
+}
+
+- (BOOL)supportsSaveStates {
+    return YES;
 }
 
 #pragma mark -
