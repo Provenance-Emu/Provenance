@@ -23,6 +23,8 @@
 
 /* Begin PBXBuildFile section */
 		946C18DE1714A4AA00C64BF9 /* gen68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789355152A32B90080990B /* gen68k.c */; };
+		B316B4F021927BD600693472 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4EF21927BD600693472 /* PVSupport.framework */; };
+		B316B4F221927BDE00693472 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4F121927BDE00693472 /* PVSupport.framework */; };
 		B327752B1E9C84DE000FEC38 /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB1BA9B51587923900F8939D /* osdcore.c */; };
 		B327752C1E9C84DE000FEC38 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934C152A32B90080990B /* bios.c */; };
 		B327752D1E9C84DE000FEC38 /* c68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934F152A32B90080990B /* c68k.c */; };
@@ -160,6 +162,8 @@
 		946C18D51714A48600C64BF9 /* gen68k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gen68k; sourceTree = BUILT_PRODUCTS_DIR; };
 		946CA3BB18495D3400CCA369 /* japmodem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = japmodem.c; sourceTree = "<group>"; };
 		946CA3BC18495D3400CCA369 /* japmodem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = japmodem.h; sourceTree = "<group>"; };
+		B316B4EF21927BD600693472 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B316B4F121927BDE00693472 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32775231E9C8444000FEC38 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32775261E9C8444000FEC38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B327755C1E9C8520000FEC38 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -323,6 +327,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4F021927BD600693472 /* PVSupport.framework in Frameworks */,
 				B3AC5630206A28C6004401F8 /* OpenGLES.framework in Frameworks */,
 				B3AC562E206A28BF004401F8 /* GLKit.framework in Frameworks */,
 				B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */,
@@ -335,6 +340,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4F221927BDE00693472 /* PVSupport.framework in Frameworks */,
 				B38DD454218D5B0E00BF6C66 /* OpenGLES.framework in Frameworks */,
 				B38DD455218D5B0E00BF6C66 /* GLKit.framework in Frameworks */,
 				B38DD457218D5B0E00BF6C66 /* CoreAudio.framework in Frameworks */,
@@ -382,6 +388,8 @@
 		EB3297121522671200307B0C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B316B4F121927BDE00693472 /* PVSupport.framework */,
+				B316B4EF21927BD600693472 /* PVSupport.framework */,
 				B3AC562F206A28C6004401F8 /* OpenGLES.framework */,
 				B3AC562D206A28BF004401F8 /* GLKit.framework */,
 				B32775601E9C8539000FEC38 /* CoreAudio.framework */,
