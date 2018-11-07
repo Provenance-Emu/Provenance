@@ -864,6 +864,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
         guard let collectionView = collectionView else { return }
+        #if false
         collectionView.performBatchUpdates({
             // 1. Delete
             if needsDelete {
@@ -885,6 +886,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }, completion: { (completed) in
             DLOG("Library collection view update completed")
         })
+        #else
+        collectionView.reloadSections([section])
+        #endif
     }
 
     func unregisterForChange() {
