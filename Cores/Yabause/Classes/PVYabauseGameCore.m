@@ -266,7 +266,7 @@ VideoInterface_struct *VIDCoreList[] = {
 - (void)initYabauseWithCDCore:(int)cdcore
 {
 	NSString *extension = filename.pathExtension;
-	NSArray <NSString*>* romExtensions = @[@"cue", @"ccd", @"mdf", @"iso"];
+	NSArray <NSString*>* romExtensions = @[@"cue", @"ccd", @"mds", @"iso"];
     if ([romExtensions containsObject:extension]) {
 		yinit.cdcoretype = CDCORE_ISO;
         yinit.cdpath = [filename UTF8String];

@@ -1387,7 +1387,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>iso</string>
-			<string>mdf</string>
+			<string>mds</string>
 			<string>cue</string>
 			<string>ccd</string>
 		</array>
