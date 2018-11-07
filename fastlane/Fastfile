@@ -395,6 +395,7 @@ end
 
     badge_alpha
     build_ios_adhoc(
+      scheme: "Provenance-Travis",
       ipa_name: ipa_name
     )
 
