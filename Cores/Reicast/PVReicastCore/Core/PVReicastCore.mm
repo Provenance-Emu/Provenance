@@ -240,16 +240,21 @@ LIST_OF_VARIABLES
         BOOL success = gles_init();
         assert(success);
         [NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
-        
+
+        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
+
         while (!has_init) {}
         while ( !shouldStop )
         {
             [self.frontBufferCondition lock];
-            while (self.isFrontBufferReady) [self.frontBufferCondition wait];
+            while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
-            
-            while ( !rend_single_frame() ) {}
+
+            CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+            CFTimeInterval deltaTime = now - lastTime;
+            while ( !shouldStop && !rend_single_frame() ) {}
             [self swapBuffers];
+            lastTime = now;
         }
     }
 }
@@ -322,6 +327,7 @@ int reicast_main(int argc, wchar* argv[]) {
 	dc_run();
 
     has_init = false;
+//    _current->shouldStop = true;
 
     dc_term();
 
@@ -348,6 +354,7 @@ int reicast_main(int argc, wchar* argv[]) {
 
 	// TODO: Call reicast stop command here
 	dc_term();
+    self->shouldStop = YES;
 	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 	[self.frontBufferCondition lock];

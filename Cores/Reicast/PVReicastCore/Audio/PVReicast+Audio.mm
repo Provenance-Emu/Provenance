@@ -400,13 +400,14 @@ coreaudio_push8(void* frame, u32 samples, bool wait) {
 
     static dispatch_queue_t serialQueue;
     static dispatch_group_t group;
-
+    static CFAbsoluteTime lastTime;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         serialQueue = dispatch_queue_create("com.provenance.reicase.audio", queueAttributes);
 
         group = dispatch_group_create();
+        lastTime = CFAbsoluteTimeGetCurrent();
     });
 
 //    BOOL fullBuffer = rb.availableBytes < samples / 4;
@@ -423,6 +424,24 @@ coreaudio_push8(void* frame, u32 samples, bool wait) {
 
         }
     }
+
+    CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+    CFTimeInterval deltaTime = now - lastTime;
+#if DEBUG
+    printf("TimeDelta: %i", deltaTime);
+#endif
+    /* TODO: Look into what the options here are
+ var timestamp = AudioTimeStamp()
+
+ timestamp.mSampleTime = numberOfSamplesRecorded
+ timestamp.mFlags = .sampleHostTimeValid
+
+     static var sampleTimeValid: AudioTimeStampFlags
+     static var hostTimeValid: AudioTimeStampFlags
+     static var rateScalarValid: AudioTimeStampFlags
+     static var wordClockTimeValid: AudioTimeStampFlags
+     static var smpteTimeValid: AudioTimeStampFlags
+ */
 
 //    if (fullBuffer && wait) {
         dispatch_time_t maxWait = dispatch_time( DISPATCH_TIME_NOW, samples / samplePerSecond);
