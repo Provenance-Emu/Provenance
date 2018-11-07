@@ -102,6 +102,7 @@ volatile bool has_init = false;
 	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
 	const char *dataPath;
 
+    [self copyCFGIfMissing];
 	[self copyShadersIfMissing];
     [self initControllBuffers];
 
@@ -186,6 +187,28 @@ LIST_OF_VARIABLES
 			ILOG(@"Copied %@ from %@ to %@", shader, source, destinationPath);
 		}
 	}
+}
+
+- (void)copyCFGIfMissing {
+
+    NSString *cfg = @"emu.cfg";
+
+//    Whcih one is it again?
+    NSString *destinationFolder = self.BIOSPath;
+//    NSString *destinationFolder = self.diskPath;
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *destinationPath = [destinationFolder stringByAppendingPathComponent:cfg];
+
+    if( ![fm fileExistsAtPath:destinationPath] ) {
+            NSString *source = [[NSBundle bundleForClass:[self class]] pathForResource:@"emu" ofType:@"cfg"];
+            [fm copyItemAtPath:source
+                        toPath:destinationPath
+                         error:nil];
+            ILOG(@"Copied %@ from %@ to %@", cfg, source, destinationPath);
+    } else {
+        ILOG(@"emu.cfg already exists at path (%@). Skipping installing default version.", destinationFolder);
+    }
 }
 
 #pragma mark - Running

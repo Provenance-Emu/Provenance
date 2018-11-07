@@ -162,6 +162,8 @@
 		B316B4E0219269C600693472 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4DE219269C600693472 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B316B4E2219269D800693472 /* PVYabause-tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4E1219269D800693472 /* PVYabause-tvOS.framework */; };
 		B316B4E3219269D800693472 /* PVYabause-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4E1219269D800693472 /* PVYabause-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; };
+		B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F421919394009F4EDC /* RealmSwift.framework */; };
 		B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F521919394009F4EDC /* RxRealm.framework */; };
 		B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
@@ -546,6 +548,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
+				B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */,
 				B324C6202192057E009F4EDC /* PVFCEU.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
 				B3AF701121916C30000FA7F9 /* PVSupport.framework in Embed Frameworks */,
@@ -891,6 +894,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
 				B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
