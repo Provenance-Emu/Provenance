@@ -485,9 +485,10 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     var token: NotificationToken?
     var game: PVGame? {
         didSet {
+            self.token?.invalidate()
+            self.token = nil
+            
             DispatchQueue.main.async { [unowned self] in
-                self.token?.invalidate()
-
                 if let game = self.game {
                     self.token = game.observe { [weak self] change in
                         switch change {
