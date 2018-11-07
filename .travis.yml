@@ -8,7 +8,7 @@ cache:
   directories:
   - Carthage
   - /Users/travis/Library/Caches/Rome
-  - /Users/travis/Library/Developer/Xcode/DerivedData/
+  # - /Users/travis/Library/Developer/Xcode/DerivedData/
 
 git:
   depth: 3 # Speed up cloning, don't need many commits
