@@ -1474,11 +1474,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 // if let game = realm.resolve(gameRef) { }
 
                 // Have to do the import here so the images are ready
-                if let game = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first {
-                    let spotlightItem = CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
-                    CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
-                        if let error = error {
-                            ELOG("indexing error: \(error)")
+                if let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+                    let spotlightUniqueIdentifier = game.spotlightUniqueIdentifier
+                    let spotlightContentSet = game.spotlightContentSet
+
+                    DispatchQueue.global(qos: .background).async {
+                        let spotlightItem = CSSearchableItem(uniqueIdentifier: spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: spotlightContentSet)
+                        CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
+                            if let error = error {
+                                ELOG("indexing error: \(error)")
+                            }
                         }
                     }
                 }
