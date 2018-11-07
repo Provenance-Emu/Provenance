@@ -735,10 +735,10 @@ end
       scheme: scheme,
       export_method: export_method,
       configuration: build_configuration,
-      # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+      codesigning_identity: "iPhone Distribution", #"iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
       silent: true,
       clean: false,
-      skip_profile_detection: true,
+      skip_profile_detection: false,
       #skip_build_archive: true,
       output_directory: output_directory,
       output_name: ipa_name,
