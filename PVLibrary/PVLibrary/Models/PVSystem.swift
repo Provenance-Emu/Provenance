@@ -270,6 +270,14 @@ public extension PVSystem {
         return !missing.isEmpty ? Array(missing) : nil
     }
 
+    public var lastPlayed: Date? {
+        return games.sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: true).first?.lastPlayed
+    }
+
+    public var lastImportDate: Date? {
+        return games.sorted(byKeyPath: #keyPath(PVGame.importDate), ascending: true).first?.importDate
+    }
+
     public var hasAllRequiredBIOSes: Bool {
         return missingBIOSes != nil
     }
