@@ -1475,10 +1475,18 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 // Have to do the import here so the images are ready
                 if let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
-                    let spotlightUniqueIdentifier = game.spotlightUniqueIdentifier
-                    let spotlightContentSet = game.spotlightContentSet
+
+                    let gameRef = ThreadSafeReference(to: game)
 
                     DispatchQueue.global(qos: .background).async {
+                        let realm = try! Realm()
+                        guard let game = realm.resolve(gameRef) else {
+                            return // game was deleted
+                        }
+
+                        let spotlightUniqueIdentifier = game.spotlightUniqueIdentifier
+                        let spotlightContentSet = game.spotlightContentSet
+
                         let spotlightItem = CSSearchableItem(uniqueIdentifier: spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: spotlightContentSet)
                         CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
                             if let error = error {
