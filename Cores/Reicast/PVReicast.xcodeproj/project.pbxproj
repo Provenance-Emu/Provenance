@@ -170,6 +170,8 @@
 		B301797D207C908F0051B93D /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B301797E207C908F0051B93D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339414220783CBB008DBAB4 /* driver.cpp */; };
 		B301797F207C909E0051B93D /* libreicast-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libreicast-iOS.a */; };
+		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
+		B316B4E821926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B333502720786BD90036A448 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438820783CC0008DBAB4 /* Shader.vsh */; };
@@ -415,6 +417,7 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libreicast-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libreicast-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339412120783CBB008DBAB4 /* rec_x64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rec_x64.cpp; sourceTree = "<group>"; };
 		B339412320783CBB008DBAB4 /* x86_emitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = x86_emitter.h; sourceTree = "<group>"; };
@@ -3785,6 +3788,7 @@
 		B3C7621220783162009950E4 /* PVReicast */ = {
 			isa = PBXGroup;
 			children = (
+				B316B4E621926FE500693472 /* emu.cfg */,
 				B3C7622720783510009950E4 /* Core.plist */,
 				B3C7621320783162009950E4 /* PVReicast.h */,
 				B3C7621420783162009950E4 /* Info.plist */,
@@ -3975,6 +3979,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4E821926FE500693472 /* emu.cfg in Resources */,
 				B3447EE0218BEDD200557ACE /* Shader.fsh in Resources */,
 				B3447EE1218BEDD200557ACE /* Shader.vsh in Resources */,
 				B3447EE2218BEDD200557ACE /* Core.plist in Resources */,
@@ -3985,6 +3990,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4E721926FE500693472 /* emu.cfg in Resources */,
 				B333502820786BEB0036A448 /* Shader.fsh in Resources */,
 				B333502720786BD90036A448 /* Shader.vsh in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
