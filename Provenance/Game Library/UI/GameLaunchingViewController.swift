@@ -175,8 +175,12 @@ extension GameSharingViewController where Self : UIViewController {
 		DispatchQueue.global(qos: .background).async {
 			let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
 
-			DispatchQueue.main.async {
-				hud.hide(true, afterDelay: 0.1)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
+
+                hud.hide(true, afterDelay: 0.1)
 				guard success else {
 					deleteTempDir()
 					ELOG("Failed to zip of game files")
@@ -586,7 +590,11 @@ extension GameLaunchingViewController where Self : UIViewController {
 					})
 				} else {
 					// Fallback on earlier versions
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
+
 						self.openSaveState(saveState)
 						emulatorViewController.glViewController?.view.isHidden = false
 					})
@@ -682,10 +690,13 @@ extension GameLaunchingViewController where Self : UIViewController {
             #endif
 
 				// Present the alert
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
-					self.present(alert, animated: true) {() -> Void in }
-				})
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
 
+                    self.present(alert, animated: true)
+				}
 			} else {
 				// Asking is turned off, either load the save state or don't based on the 'autoLoadSaves' setting
 				completion(shouldAutoLoadSaveState ? latestSaveState : nil)

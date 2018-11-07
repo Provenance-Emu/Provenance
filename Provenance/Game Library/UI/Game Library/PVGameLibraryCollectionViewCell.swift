@@ -487,8 +487,12 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         didSet {
             self.token?.invalidate()
             self.token = nil
-            
-            DispatchQueue.main.async { [unowned self] in
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
+
                 if let game = self.game {
                     self.token = game.observe { [weak self] change in
                         switch change {
@@ -550,8 +554,12 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 						// We must have recyclied already
 						return
 					}
-					DispatchQueue.main.async {
-						var artworkText: String
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
+
+                        var artworkText: String
 						if PVSettingsModel.shared.showGameTitles {
 							artworkText = placeholderImageText
 						} else {

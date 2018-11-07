@@ -539,7 +539,11 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
                                 // Save to cache for later
                                 _ = try? PVMediaCache.writeData(toDisk: data, withKey: imageKey)
 
-                                DispatchQueue.main.async {
+                                DispatchQueue.main.async { [weak self] in
+                                    guard let self = self else {
+                                        return
+                                    }
+
                                     if let newImage = UIImage(data: data) {
                                         self.flipImageView(withImage: newImage)
                                     }
@@ -687,7 +691,10 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             switch change {
             case .change(let properties):
                 if !properties.isEmpty, self.isViewLoaded {
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
                         self.updateContent()
                     }
                 }

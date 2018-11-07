@@ -251,8 +251,12 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 			switch changes {
 			case .initial(let result):
 				VLOG("Initial query result: \(result.count)")
-				DispatchQueue.main.async {
-					self.refreshCollectionView()
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+
+                    self.refreshCollectionView()
 				}
 			case .update(_, let deletions, let insertions, let modifications):
 				// Query results have changed, so apply them to the UICollectionView
@@ -272,8 +276,12 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	}
 
 	func handleUpdate( deletions: [Int], insertions: [Int], modifications: [Int]) {
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-			ILOG("Update for collection view cell for class \(self.cellId)")
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            ILOG("Update for collection view cell for class \(self.cellId)")
 			self.refreshCollectionView()
 		}
 		//		internalCollectionView.performBatchUpdates({
