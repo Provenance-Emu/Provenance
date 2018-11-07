@@ -130,7 +130,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
 
         if let systems = systems {
-            sectionsTitles.append(contentsOf: systems.map {$0.name})
+            sectionsTitles.append(contentsOf: systems.map { "\($0.manufacturer) : \($0.shortName)" })
         }
         return sectionsTitles
     }
@@ -190,6 +190,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     var currentSort: SortOptions = .title {
         didSet {
 			if currentSort != oldValue {
+                systems = systemsByCurrentSort()
 				systemSectionsTokens.forEach {
 					$1.sortOrder = currentSort
 				}
@@ -621,10 +622,30 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			return
 		}
 
-		systems = PVSystem.all.filter("games.@count > 0").sorted(byKeyPath: #keyPath(PVSystem.identifier))
+        systems = PVSystem.all.filter("games.@count > 0")
+        systems = systemsByCurrentSort()
 		saveStates = PVSaveState.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+    }
+
+    func systemsByCurrentSort() -> Results<PVSystem>? {
+        guard let systems = systems else {
+            return nil
+        }
+
+        let nameSort : [SortDescriptor] = [SortDescriptor(keyPath: #keyPath(PVSystem.manufacturer), ascending: true), SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)]
+
+//        switch currentSort {
+//        case .title:
+            return systems.sorted(by: nameSort)
+//        case .lastPlayed:
+//            let lastPlayedSort : [SortDescriptor] = [SortDescriptor(keyPath: "games.last.lastPlayed", ascending: true)] + nameSort
+//            return systems.sorted(by: lastPlayedSort)
+//        case .importDate:
+//            let lastImportSort : [SortDescriptor] = [SortDescriptor(keyPath: "games.last.importDate", ascending: true)] + nameSort
+//            return systems.sorted(by: lastImportSort)
+//        }
     }
 
     func deinitRealmResultsStorage() {
