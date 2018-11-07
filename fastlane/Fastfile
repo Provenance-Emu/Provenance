@@ -364,7 +364,12 @@ end
     # Types, appstore adhoc development enterprise
 
     # update_devices // development, adhoc, appstore, enterprise
-    match(app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], type: "adhoc", platform: "ios", readonly: true)
+    match(
+      app_identifier: ["#{$dev_domain}.provenance", "#{$dev_domain}.provenance.extension.spotlight"], 
+      type: "adhoc", 
+      platform: "ios", 
+      readonly: true
+    )
 
     # update_project_provisioning(
     #   xcodeproj: "Project.xcodeproj",
@@ -738,14 +743,14 @@ end
       codesigning_identity: "iPhone Distribution", #"iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
       silent: true,
       clean: false,
-      skip_profile_detection: false,
+      skip_profile_detection: true,
       #skip_build_archive: true,
       output_directory: output_directory,
       output_name: ipa_name,
       include_bitcode: false,
       include_symbols: false,
       #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
-      export_xcargs: "-allowProvisioningUpdates",
+      #export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: export_method,
         iCloudContainerEnvironment: "Production",
