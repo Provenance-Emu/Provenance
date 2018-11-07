@@ -54,7 +54,11 @@
 @import OpenGLES.ES3;
 @import GLKit;
 
+#if TARGET_OS_TV
+#define RESIZE_TO_FULLSCREEN TRUE
+#else
 #define RESIZE_TO_FULLSCREEN [PVSettingsModel.sharedInstance nativeScaleEnabled]
+#endif
 
 #import <dlfcn.h>
 
@@ -128,11 +132,12 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         if(RESIZE_TO_FULLSCREEN) {
             CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-            int widthScale = floor(size.height / 640);
-            int heightScale = floor(size.height / 480);
-            int scale = MAX(MIN(widthScale, heightScale), 1);
-            _videoWidth =  scale * 640;
-            _videoHeight = scale * 480;
+            float widthScale = floor(size.height / 640.0);
+            float heightScale = floor(size.height / 480.0);
+            float scale = MAX(MIN(widthScale, heightScale), 1);
+            _videoWidth =  scale * 640.0;
+            _videoHeight = scale * 480.0;
+            DLOG(@"Upscaling on: scale rounded to (%f)",scale);
         } else {
             _videoWidth  = 640;
             _videoHeight = 480;
@@ -176,6 +181,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
             ILOG(@"dlclosed core framework.");
         }
         core_handle = NULL;
+
+//        [_callbackHandlers removeAllObjects];
     }
 }
 
@@ -494,7 +501,7 @@ static void ConfigureCore(NSString *romFolder) {
 	ConfigOpenSection("Core", &config);
 
 	// set SRAM path
-	ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [current.batterySavesPath fileSystemRepresentation]);
+	ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, current.batterySavesPath.fileSystemRepresentation);
 	// set data path
 	ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, romFolder.fileSystemRepresentation);
 
@@ -519,11 +526,11 @@ static void ConfigureVideoGeneral() {
     int screenHeight = 480;
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-        int widthScale = floor(size.height / 640);
-        int heightScale = floor(size.height / 480);
-        int scale = MAX(MIN(widthScale, heightScale), 1);
-        screenWidth =  scale * 640;
-        screenHeight = scale * 480;
+        float widthScale = floor(size.height / 640.0);
+        float heightScale = floor(size.height / 480.0);
+        float scale = MAX(MIN(widthScale, heightScale), 1);
+        screenWidth =  scale * 640.0;
+        screenHeight = scale * 480.0;
     }
 
 	// Screen width
@@ -531,6 +538,9 @@ static void ConfigureVideoGeneral() {
 
 	// Screen height
 	ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
+
+
+    DLOG(@"Setting size to (%i,%i)", screenWidth, screenHeight);
 
 	ConfigSaveSection("Video-General");
 	/** End General Video Config **/
@@ -560,27 +570,33 @@ static void ConfigureGLideN64(NSString *romFolder) {
 
 	// HiRez & texture options
 	//  txHiresEnable, "Use high-resolution texture packs if available."
-	int txHiresEnable = 1;
+    int txHiresEnable = 1; //RESIZE_TO_FULLSCREEN ? 1 : 0;
 	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
 
-	ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder fileSystemRepresentation]);
-	ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING, [romFolder fileSystemRepresentation]);
-	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING, [romFolder fileSystemRepresentation]);
+    // Path to folder with hi-res texture packs.
+	ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/"].fileSystemRepresentation);
+    // Path to folder where plugin saves texture cache files.
+	ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/cache/"].fileSystemRepresentation);
+    // Path to folder where plugin saves dumped textures.
+	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/texture_dump/"].fileSystemRepresentation);
 
     if(RESIZE_TO_FULLSCREEN) {
-        // "txFilterMode", "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
+        // "txFilterMode",
+        // "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
         int txFilterMode = 6;
         ConfigSetParameter(gliden64, "txFilterMode", M64TYPE_INT, &txFilterMode);
 
-        // "txEnhancementMode", config.textureFilter.txEnhancementMode, "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
-        int txEnhancementMode = 8;
+        // "txEnhancementMode", config.textureFilter.txEnhancementMode,
+        // "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
+        int txEnhancementMode = 11;
         ConfigSetParameter(gliden64, "txEnhancementMode", M64TYPE_INT, &txEnhancementMode);
 
         // "txCacheCompression", config.textureFilter.txCacheCompression, "Zip textures cache."
-        int txCacheCompression = 1;
+        int txCacheCompression = 0;
         ConfigSetParameter(gliden64, "txCacheCompression", M64TYPE_BOOL, &txCacheCompression);
 
-        // "txSaveCache", config.textureFilter.txSaveCache, "Save texture cache to hard disk."
+        // "txSaveCache", config.textureFilter.txSaveCache,
+        // "Save texture cache to hard disk."
         int txSaveCache = 1;
         ConfigSetParameter(gliden64, "txSaveCache", M64TYPE_BOOL, &txSaveCache);
 
@@ -590,7 +606,14 @@ static void ConfigureGLideN64(NSString *romFolder) {
         ConfigSetParameter(gliden64, "MultiSampling", M64TYPE_INT, &MultiSampling);
     }
 
-	/*
+
+        //#Gamma correction settings
+//    res = ConfigSetDefaultBool(g_configVideoGliden64, "ForceGammaCorrection", config.gammaCorrection.force, "Force gamma correction.");
+//    assert(res == M64ERR_SUCCESS);
+//    res = ConfigSetDefaultFloat(g_configVideoGliden64, "GammaCorrectionLevel", config.gammaCorrection.level, "Gamma correction level.");
+//    assert(res == M64ERR_SUCCESS);
+
+    /*
 	 "txDeposterize", config.textureFilter.txDeposterize, "Deposterize texture before enhancement."
 	 "txFilterIgnoreBG", config.textureFilter.txFilterIgnoreBG, "Don't filter background textures."
 	 "txCacheSize", config.textureFilter.txCacheSize/ gc_uMegabyte, "Size of filtered textures cache in megabytes."
@@ -665,11 +688,11 @@ static void ConfigureRICE() {
 
 	// Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
 	// 16 bit breaks some games like GoldenEye
-	int textureQuality = 1;
+	int textureQuality = 0;
 	ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
 
 	// Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
-	int multiSampling = 0;
+    int multiSampling = RESIZE_TO_FULLSCREEN ? 4 : 0;
 	ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
 
 	// Color bit depth for rendering window (0=32 bits, 1=16 bits)
@@ -961,11 +984,11 @@ static void ConfigureRICE() {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         if(keyWindow != nil) {
             CGSize fullScreenSize = keyWindow.bounds.size;
-            int widthScale = floor(fullScreenSize.height / 640);
-            int heightScale = floor(fullScreenSize.height / 480);
-            int scale = MAX(MIN(widthScale, heightScale), 1);
-            float widthScaled =  scale * 640;
-            float heightScaled = scale * 480;
+            float widthScale = floor(fullScreenSize.height / 640.0);
+            float heightScale = floor(fullScreenSize.height / 480.0);
+            float scale = MAX(MIN(widthScale, heightScale), 1);
+            float widthScaled =  scale * 640.0;
+            float heightScaled = scale * 480.0;
 
             [self tryToResizeVideoTo:CGSizeMake(widthScaled, heightScaled)];
         }
@@ -1278,9 +1301,10 @@ static void ConfigureRICE() {
     return CGSizeMake(_videoWidth, _videoHeight);
 }
 
-- (void) tryToResizeVideoTo:(CGSize)size
-{
-    VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_FULLSCREEN, 1);
+- (void) tryToResizeVideoTo:(CGSize)size {
+    DLOG(@"Calling set video mode size to (%f,%f)", screenWidth, screenHeight);
+
+    VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_FULLSCREEN, 0);
 	if (ptr_PV_ForceUpdateWindowSize != nil) {
 		ptr_PV_ForceUpdateWindowSize(size.width, size.height);
 	}
