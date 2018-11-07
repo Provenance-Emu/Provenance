@@ -89,7 +89,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         if typeIdentifier == (kUTTypeImage as String) {
             let md5 = itemIdentifier.components(separatedBy: ".").last ?? ""
 
-            if let game = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first, let artworkURL = game.pathOfCachedImage {
+            if let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5), let artworkURL = game.pathOfCachedImage {
                 return artworkURL
             } else {
                 throw SpotlightError.notFound
