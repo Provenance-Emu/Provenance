@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B316B4E9219275A800693472 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
+		B316B4EA219275A800693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
+		B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
+		B316B4EC219275A900693472 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
+		B316B4ED219275A900693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
+		B316B4EE219275A900693472 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B324C4C72191A09C009F4EDC /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
 		B324C62921920BAB009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B324C62A21920BAD009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
@@ -5084,8 +5090,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4E9219275A800693472 /* GLideN64.custom.ini in Resources */,
+				B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */,
 				B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */,
 				B39E8CB62053B53100380DCD /* Core.plist in Resources */,
+				B316B4EA219275A800693472 /* GLideN64.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5100,8 +5109,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B316B4EC219275A900693472 /* GLideN64.custom.ini in Resources */,
+				B316B4EE219275A900693472 /* RiceVideoLinux.ini in Resources */,
 				B3AF47E421072BCC002211EE /* mupen64plus.ini in Resources */,
 				B3547B462058531200CFF7D8 /* Core.plist in Resources */,
+				B316B4ED219275A900693472 /* GLideN64.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
