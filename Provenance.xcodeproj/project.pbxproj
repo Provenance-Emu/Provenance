@@ -1671,7 +1671,7 @@
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
-				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
+				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
 				6W8N7WB7Z36QWEFVAW5LHTNV /* Carthage */,
@@ -1694,7 +1694,7 @@
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
-				1A44C0AE1D0A1E730018751A /* Set Build Number */,
+				1A44C0AE1D0A1E730018751A /* Script: Set Build Number */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
 				0CO5J70NW5JDTTZ5BCHAVYZE /* Carthage */,
@@ -1947,7 +1947,7 @@
 			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 			showEnvVarsInLog = 0;
 		};
-		1A44C0AD1D0A1DE80018751A /* Set Build Number */ = {
+		1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1959,7 +1959,7 @@
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
-			name = "Set Build Number";
+			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -1968,9 +1968,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh\n";
+			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
 		};
-		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
+		1A44C0AE1D0A1E730018751A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1981,7 +1981,7 @@
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
-			name = "Set Build Number";
+			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -1990,7 +1990,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". ${PROJECT_DIR}/Scripts/set_bundle_build_number.sh ProvenanceTV\n";
+			shellScript = ". \"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\" ProvenanceTV\n";
 		};
 		6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2074,7 +2074,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". ${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh tvOS \"${SRCROOT}\"\n";
+			shellScript = ". \"${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh\" tvOS \"${SRCROOT}\"\n";
 		};
 		B3B29D3E2156125700903290 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2098,7 +2098,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". ${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh iOS \"${SRCROOT}\"\n";
+			shellScript = ". \"${SRCROOT}/Scripts/xcode.carthage.bootstrap.sh\" iOS \"${SRCROOT}\"\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2121,7 +2121,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". ${SRCROOT}/Provenance/Resources/createVersionHeader.sh\n";
+			shellScript = ". \"${SRCROOT}/Provenance/Resources/createVersionHeader.sh\"\n";
 		};
 		B3E31E2A21562154005FF394 /* Fastlane setup code signing */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2139,7 +2139,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "#is_adhoc() {\n# [ ${CONFIGURATION} == AdHoc ]\n#}\n\n#if [ ${CONFIGURATION} == AdHoc ] ; then\n#    echo \"Making archice\"\n#    # TODO: TEst if device or sim also, always sign for device\n#else\n#    echo \"Code singing not needed\"\n#    exit 0\n#fi\n\n\nif [-f ~/.bash_profile]; then\n    source ~/.bash_profile 2> /dev/null\nelif [-f ~/.bashrc]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\n. Scripts/setup_env.sh\nbrew_install\nfastlane_install\n\nFASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\n$($FASTLANE_CMD userbuild) && $($FASTLANE_CMD updatePlistForBranch)\n";
+			shellScript = "#is_adhoc() {\n# [ ${CONFIGURATION} == AdHoc ]\n#}\n\n#if [ ${CONFIGURATION} == AdHoc ] ; then\n#    echo \"Making archice\"\n#    # TODO: TEst if device or sim also, always sign for device\n#else\n#    echo \"Code singing not needed\"\n#    exit 0\n#fi\n\n\nif [[ -f ~/.bash_profile ]]; then\n    source ~/.bash_profile 2> /dev/null\nelif [[ -f ~/.bashrc ]]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\nsource \"${SRCROOT}/Scripts/setup_env.sh\"\nbrew_install\nfastlane_install\n\nFASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\n$($FASTLANE_CMD userbuild) && $($FASTLANE_CMD updatePlistForBranch)\n";
 		};
 		B3F43DCC216802FD00CDD40A /* Set bundle version */ = {
 			isa = PBXShellScriptBuildPhase;
