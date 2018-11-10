@@ -123,5 +123,5 @@ end
 
 private_lane :submit_appstore do
   load_keys
-  pilot(app_identifier: "#{dev_domain}.provenance")
+  pilot(app_identifier: "#{$dev_domain}.provenance")
 end

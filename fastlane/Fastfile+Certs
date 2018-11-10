@@ -21,7 +21,7 @@ private_lane :certificates_update_private do |options|
   )
 end
 
-private_lane :certificates_dowload_private do |options|
+private_lane :certificates_download_private do |options|
   type = options.fetch(:type)
 
   match_private(
@@ -53,8 +53,8 @@ private_lane :match_private do |options|
 
   match(
     app_identifier: [
-      "#{dev_domain}.provenance",
-      "#{dev_domain}.provenance.extension.spotlight"
+      "#{$dev_domain}.provenance",
+      "#{$dev_domain}.provenance.extension.spotlight"
     ],
     type: type,
     readonly: readonly,
@@ -64,8 +64,8 @@ private_lane :match_private do |options|
 
   match(
     app_identifier: [
-      "#{dev_domain}.provenance",
-      "#{dev_domain}.provenance.topshelf-extension"
+      "#{$dev_domain}.provenance",
+      "#{$dev_domain}.provenance.topshelf-extension"
     ],
     type: type,
     readonly: readonly,

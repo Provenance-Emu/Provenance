@@ -1,39 +1,38 @@
-desc "Exports a new Developer Build"
+desc 'Exports a new Developer Build'
 lane :build_developer do |options|
   scheme = options.fetch(:scheme, 'Provenance-Release')
   load_keys
 
   build_app(
-    workspace: "Provenance.xcworkspace",
+    workspace: 'Provenance.xcworkspace',
     scheme: scheme,
-    export_method: "development", # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
-    configuration: "Release",
-    # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+    export_method: 'development',
+    configuration: 'Release',
+    codesigning_identity: 'iPhone Developer',
     clean: false,
     silent: true,
-    output_directory: "Builds",
+    output_directory: 'Builds',
     #output_name: ipa_name,
     include_bitcode: false,
     include_symbols: true,
     #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
     export_options: {
-      method: "development",
+      method: 'development',
       compileBitcode: false,
-      uploadBitcode: false,
+      uploadBitcode: false
     }
   )
-
 end
 
-desc "Exports a new AppStore Build"
+desc 'Exports a new AppStore Build'
 lane :build_appstore do
   load_keys
 
   build_app(
-    workspace: "Provenance.xcworkspace",
-    scheme: "Provenance-Release",
-    export_method: "app-store", # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
-    configuration: "Release",
+    workspace: 'Provenance.xcworkspace',
+    scheme: 'Provenance-Release',
+    export_method: 'app-store', # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
+    configuration: 'Release',
     # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
     clean: false,
     silent: true,
@@ -43,34 +42,30 @@ lane :build_appstore do
     include_symbols: false,
     #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
     export_options: {
-      method: "app-store",
+      method: 'app-store',
       # manifest: {
       #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
         # displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
         # fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
       # },
       provisioningProfiles: {
-        "#{dev_domain}.provenance" => "match AppStore #{dev_domain}.provenance", # match AdHoc match AppStore match Development
-        "#{dev_domain}.provenance.extension.spotlight" => "match AppStore #{dev_domain}.provenance.extension.spotlight"
+        "#{$dev_domain}.provenance" => "match AppStore #{$dev_domain}.provenance",
+        "#{$dev_domain}.provenance.extension.spotlight" => "match AppStore #{$dev_domain}.provenance.extension.spotlight"
       },
       compileBitcode: false,
       uploadBitcode: false,
     }
   )
-
 end
 
-desc "Provenace Team: Push a new beta build to TestFlight"
+desc 'Provenace Team: Push a new beta build to TestFlight'
 lane :build_beta do
-  pre_build
   build_appstore
-  reset_enviroment
 end
 
-desc "Provenace Team: Push a new alpha build to Hockeyapp"
-lane :build_alpha do
+desc 'Provenace Team: Push a new alpha build to Hockeyapp'
+lane :build_alpha do |options|
   load_keys
-  pre_build
 
   platform = options.fetch(:platform, 'iOS')
   type = options.fetch(:type, 'adhoc')
@@ -78,10 +73,15 @@ lane :build_alpha do
   is_tvOS = platform == 'tvOS'
   is_ios = platform == 'iOS'
 
-  ios_ids = ["#{dev_domain}.provenance",
-    "#{dev_domain}.provenance.extension.spotlight"]
-  tvos_ids = ["#{dev_domain}.provenance",
-    "#{dev_domain}.provenance.topshelf-extension"]
+  ios_ids = [
+    "#{$dev_domain}.provenance",
+    "#{$dev_domain}.provenance.extension.spotlight"
+  ]
+
+  tvos_ids = [
+    "#{$dev_domain}.provenance",
+    "#{$dev_domain}.provenance.topshelf-extension"
+  ]
 
   ios_platform = 'ios'
   tvos_platform = 'tvos'
@@ -110,7 +110,7 @@ lane :build_alpha do
     # Build iOS App
   # build_number = ENV["build_number"]
   build_number = number_of_commits(all: true)
-  #increment_build_number(build_number: number_of_commits)
+  # increment_build_number(build_number: number_of_commits)
 
   ipa_name = "Provenance-#{platform}-#{git_branch}-#{build_number}.ipa"
 
@@ -120,8 +120,8 @@ lane :build_alpha do
   #     target: 'Provenance'
   #   )
   # end
-  scheme = is_tvOS ? 'ProvenanceTV' : 'Provenance'
 
+  scheme = is_tvOS ? 'ProvenanceTV' : 'Provenance'
   scheme += is_ci ? '-Travis' : '-Release'
 
   badge_alpha
@@ -129,13 +129,11 @@ lane :build_alpha do
     scheme: scheme,
     ipa_name: ipa_name
   )
-
-  reset_enviroment
 end
 
  # Future Alpha builds
  private_lane :build_ios_adhoc do |options|
-  activeArchOnly = options.fetch(:activeArchOnly, false)
+  # activeArchOnly = options.fetch(:activeArchOnly, false)
   ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
   build_time = Time.now.strftime('%F')
   load_keys
@@ -149,16 +147,21 @@ end
 
   UI.message "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
 
+   # 57x57
+  displayImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png'
+  # 512x512
+  fullSizeImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png'
+  appURL = "https://www.provenance-emu.com/builds/#{ipa_name}"
+
   build_app(
-    workspace: "Provenance.xcworkspace",
+    workspace: 'Provenance.xcworkspace',
     scheme: scheme,
     export_method: export_method,
     configuration: build_configuration,
-    codesigning_identity: "iPhone Distribution", #"iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+    codesigning_identity: 'iPhone Distribution',
     silent: true,
     clean: false,
     skip_profile_detection: true,
-    #skip_build_archive: true,
     output_directory: output_directory,
     output_name: ipa_name,
     include_bitcode: false,
@@ -169,13 +172,13 @@ end
       method: export_method,
       iCloudContainerEnvironment: "Production",
       manifest: {
-        appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
-        displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
-        fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
+        appURL: appURL,
+        displayImageURL: displayImageURL,
+        fullSizeImageURL: fullSizeImageURL
       },
       provisioningProfiles: {
-        "#{dev_domain}.provenance" => "match AdHoc #{dev_domain}.provenance", # match AdHoc match AppStore match Development
-        "#{dev_domain}.provenance.extension.spotlight" => "match AdHoc #{dev_domain}.provenance.extension.spotlight"
+        "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance",
+        "#{$dev_domain}.provenance.extension.spotlight" => "match AdHoc #{$dev_domain}.provenance.extension.spotlight"
       },
       compileBitcode: false,
       uploadBitcode: false,
@@ -185,7 +188,7 @@ end
 
 private_lane :post_build do
   if is_ci?
-    #publish_wordpress
+    # ci_upload
   else
     copy_to_device
   end
@@ -202,7 +205,7 @@ private_lane :pre_build do
   git_submodule_update
 
   if is_ci?
-    setup_certificates_private
+    certificates_download
   else
     pre_build_user
   end
@@ -220,38 +223,41 @@ private_lane :pre_build_user do
   sigh
   UI.message 'Setting developer certificates in project'
   update_project_provisioning(
-    xcodeproj: "Provenance.xcodeproj",
+    xcodeproj: 'Provenance.xcodeproj',
     #profile: "./watch_app_store.mobileprovision", # optional if you use sigh
     #target_filter: ".*WatchKit Extension.*", # matches name or type of a target
-    build_configuration: "Release",
-    code_signing_identity: "iPhone Development" # optionally specify the codesigning identity
+    build_configuration: 'Release',
+    code_signing_identity: 'iPhone Development' # optionally specify the codesigning identity
   )
 end
 
-desc "User Builds"
+desc 'User Builds'
 lane :userbuild do
-  UI.message "Pulling git updates."
+  UI.message 'Pulling git updates.'
   git_pull
 
-  UI.message "Pulling git sub-module updates."
+  UI.message 'Pulling git sub-module updates.'
   git_submodule_update(
     init: true,
     recursive: true
   )
 
-  UI.message "Switching to automatic code signing."
+  team_id = ENV['DEV_TEAM_ID']
+
+  UI.message 'Switching to automatic code signing.'
+
   enable_automatic_code_signing(
     use_automatic_signing: true,
-    targets: ["Provenance", "ProvenanceTV", "Spotlight", "TopShelf"],
+    targets: ['Provenance', 'ProvenanceTV', 'Spotlight', 'TopShelf'],
     # TODO, only do if set since it's optional
-    # team_id: ENV["DEV_TEAM_ID"]
+    team_id: team_id
   )
 
-  which_app = UI.select("Select platform: ", ["iOS", "tvOS"])
+  which_app = UI.select('Select platform: ', ['iOS', 'tvOS'])
 
-  UI.message "Getting 3rd party dependencies."
+  UI.message 'Getting 3rd party dependencies.'
 
-  if which_app == "tvOS"
+  if which_app == 'tvOS'
     carthage_bootstrap_tvOS
   else
     carthage_bootstrap_ios
@@ -259,8 +265,8 @@ lane :userbuild do
 
   # Git git commit count
   commits = number_of_commits(all: true).to_s
-  UI.message "Setting build # to ${commits}."
-  ENV["build_number"] = commits
+  UI.message 'Setting build # to ${commits}.'
+  ENV['build_number'] = commits
   updatePlistForBranch
 
   UI.message "Making developer build for platform #{which_app}."
@@ -279,7 +285,7 @@ lane :userbuild do
   #   install_on_device
   # end
 
-  UI.message "Resetting enviroment."
+  UI.message 'Resetting enviroment.'
   reset_enviroment
 end
 
@@ -301,6 +307,4 @@ private_lane :set_icloud_container do |options|
       icloud_container_identifiers: icloud_container_identifiers
     )
   end
-  
-
 end

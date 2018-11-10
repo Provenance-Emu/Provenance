@@ -14,14 +14,12 @@
 # clipboard clipboard(value: lane_context[SharedValues::HOCKEY_DOWNLOAD_LINK] || "")
 # twitter https://github.com/rb-de0/fastlane-plugin-twitter
 
-REQUIRED_XCODE_VERSION = '10.0'
+REQUIRED_XCODE_VERSION = '10.0'.freeze
 
 default_platform(:ios)
+$dev_domain = ENV['DEV_DOMAIN'] || 'com.provenance-emu'
 
 platform :ios do
-
-  dev_domain = ENV['DEV_DOMAIN'] || 'com.provenance-emu'
-
   import('Fastfile+Build')
   import('Fastfile+Carthage')
   import('Fastfile+Rome')
@@ -46,30 +44,28 @@ platform :ios do
   end
 
   # error block is executed when a error occurs
-  error do |lane, exception|
-    if is_ci?
-      slack(
-        # message with short human friendly message
-        message: exception.to_s,
-        success: false,
-        # Output containing extended log output
-        payload: { "Output" => exception.error_info.to_s }
-      )
-    end
-  end
+  # error do |lane, exception|
+  #   if is_ci?
+  #     slack(
+  #       # message with short human friendly message
+  #       message: exception.to_s,
+  #       success: false,
+  #       # Output containing extended log output
+  #       payload: { "Output" => exception.error_info.to_s }
+  #     )
+  #   end
+  # end
 end
 
 import('Fastfile+Enviroment')
 
 def load_keys
-  if is_ci?
-    return
-  end
+  return if is_ci?
 
   begin
-    import("keys")
-    dev_domain = ENV["DEV_DOMAIN"]
-  rescue => exception
+    import('keys')
+    $dev_domain = ENV['DEV_DOMAIN']
+  rescue StandardError => exception
     if UI.interactive?
       shouldSetup = UI.confirm 'Fastlane enviroment is not configured. Setup now?'
       if shouldSetup

@@ -87,16 +87,16 @@ private_lane :codesign_toggle do |options|
   disable_automatic_code_signing(path: "Provenance.xcodeproj",
     targets: ["Provenance"],
     code_sign_identity: "iPhone Distribution",
-    profile_name: "match AdHoc #{dev_domain}.provenance",
-    bundle_identifier: "#{dev_domain}.provenance",
+    profile_name: "match AdHoc #{$dev_domain}.provenance",
+    bundle_identifier: "#{$dev_domain}.provenance",
     use_automatic_signing: automatic,
     team_id: team_id)
 
   disable_automatic_code_signing(path: "Provenance.xcodeproj",
     targets: ["Spotlight"],
     code_sign_identity: "iPhone Distribution",
-    profile_name: "match AdHoc #{dev_domain}.provenance.extension.spotlight",
-    bundle_identifier: "#{dev_domain}.provenance.extension.spotlight",
+    profile_name: "match AdHoc #{$dev_domain}.provenance.extension.spotlight",
+    bundle_identifier: "#{$dev_domain}.provenance.extension.spotlight",
     use_automatic_signing: automatic,
     team_id: team_id)
 end
@@ -113,14 +113,14 @@ private_lane :plist_set do |options|
   update_info_plist(
     plist_path: "Provenance/Provenance-Info.plist",
     display_name: display_name,
-    app_identifier: "#{dev_domain}.provenance#{suffix}"
+    app_identifier: "#{$dev_domain}.provenance#{suffix}"
   )
 
   # - Spotlight
   update_info_plist(
     plist_path: "Spotlight/Info.plist",
     display_name: display_name,
-    app_identifier: "#{dev_domain}.provenance#{suffix}.extension.spotlight"
+    app_identifier: "#{$dev_domain}.provenance#{suffix}.extension.spotlight"
   )
 
   # - tvOS
@@ -128,13 +128,13 @@ private_lane :plist_set do |options|
   update_info_plist(
     plist_path: "ProvenanceTV/Info.plist",
     display_name: display_name,
-    app_identifier: "#{dev_domain}.provenance#{suffix}"
+    app_identifier: "#{$dev_domain}.provenance#{suffix}"
   )
 
   # - Top Shelf
   update_info_plist(
     plist_path: "TopShelf/Info.plist",
     display_name: display_name,
-    app_identifier: "#{dev_domain}.provenance#{suffix}.topshelf-extension"
+    app_identifier: "#{$dev_domain}.provenance#{suffix}.topshelf-extension"
   )
 end
