@@ -1,0 +1,87 @@
+desc 'Lane to run bootstrap carthage in new checkout for iOS only'
+lane :carthage_bootstrap_ios do |_options|
+  carthage_bootstrap(
+    platform: 'iOS'
+  )
+end
+
+desc 'Lane to run bootstrap carthage in new checkout for tvOS only'
+lane :carthage_bootstrap_tvos do |_options|
+  carthage_bootstrap(
+    platform: 'tvOS'
+  )
+end
+
+desc 'Lane to run bootstrap carthage in new checkout'
+desc 'Option: `platform` tvOS,iOS'
+lane :carthage_bootstrap do |options|
+  platform = options.fetch(:platform, 'tvOS,iOS')
+
+  carthage_private(
+    command: 'bootstrap',
+    platform: platform
+  )
+end
+
+desc 'Lane to run build all carthage dependencies'
+desc 'Option: `platform` tvOS,iOS'
+lane :carthage_build do |options|
+  platform = options.fetch(:platform, 'tvOS,iOS')
+
+  carthage_private(
+    command: 'build',
+    platform: platform
+  )
+end
+
+desc 'Lane to run build all carthage dependencies - iOS'
+lane :carthage_build_ios do
+    carthage_private(command: 'build', platform: 'iOS')
+end
+
+desc 'Lane to run build all carthage dependencies - tvOS'
+lane :carthage_build_tvos do
+    carthage_private(command: 'build', platform: 'iOS')
+end
+
+desc 'Lane to update all carthage dependencies to latest versions'
+desc 'Option: `platform` tvOS,iOS'
+lane :carthage_update do |options|
+  platform = options.fetch(:platform, 'tvOS,iOS')
+
+  carthage_private(
+    command: 'update',
+    platform: platform
+  )
+end
+
+desc 'Lane to update all carthage dependencies to latest versions for iOS only'
+lane :carthage_update_ios do |_options|
+  carthage_update(
+    platform: 'iOS'
+  )
+end
+
+desc 'Lane to update all carthage dependencies to latest versions for tvOS only'
+lane :carthage_update_tvos do |_options|
+  carthage_update(
+    platform: 'tvOS'
+  )
+end
+
+private_lane :carthage_private do |options|
+  command = options.fetch(:command, 'bootstrap')
+  platform = options.fetch(:platform, 'tvOS,iOS')
+  project_directory = options.fetch(:project_directory, './')
+
+  UI.message "Running Carthage '#{command}' for platform(s) ('#{platform}'( in directory ('#{project_directory}')"
+
+  carthage(
+    command: command,
+    platform: platform,
+    use_binaries: true,
+    cache_builds: true,
+    use_ssh: true,
+    project_directory: project_directory
+  )
+end

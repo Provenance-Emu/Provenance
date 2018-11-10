@@ -15,96 +15,39 @@ Install _fastlane_ using
 or alternatively using `brew cask install fastlane`
 
 # Available Actions
-## iOS
-### ios setup_fastlane
+### derived_data
 ```
-fastlane ios setup_fastlane
-```
-Setup fastlane enviroment
-### ios test
-```
-fastlane ios test
-```
-Build and run tests
-### ios travis
-```
-fastlane ios travis
-```
-Travis building
-### ios userbuild
-```
-fastlane ios userbuild
-```
-User Builds
-### ios updatePlistForBranch
-```
-fastlane ios updatePlistForBranch
-```
-Updates the bundle id and app name if a beta build
-### ios plist_reset
-```
-fastlane ios plist_reset
-```
-Resets the bundle id and app name after build
-### ios personal
-```
-fastlane ios personal
-```
-Create a build for users 
-### ios install
-```
-fastlane ios install
-```
-Install last build to device
-### ios beta
-```
-fastlane ios beta
-```
-Provenace Team: Push a new beta build to TestFlight
-### ios alpha
-```
-fastlane ios alpha
-```
-Provenace Team: Push a new alpha build to Hockeyapp
-### ios check_env
-```
-fastlane ios check_env
-```
-
-### ios certificates
-```
-fastlane ios certificates
-```
-Setup Certs for Match - New Devs
-### ios rome_download
-```
-fastlane ios rome_download
-```
-Download cached Rome builds
-### ios create_certificates
-```
-fastlane ios create_certificates
-```
-Create Certs for Match
-### ios update_devices
-```
-fastlane ios update_devices
-```
-Update device UDID list in iTunes connect from fastlane/devices.text
-### ios derived_data
-```
-fastlane ios derived_data
+fastlane derived_data
 ```
 Clear your DerivedData
-### ios reset_checkout
+### reset_checkout
 ```
-fastlane ios reset_checkout
+fastlane reset_checkout
 ```
 Reset build enviroment
 
 Use this lane if you're having build issues
 
 Use `git stash` first to save any changes you may want to keep.
+### check_env
+```
+fastlane check_env
+```
+Print Environment Settings
+### updatePlistForBranch
+```
+fastlane updatePlistForBranch
+```
+Updates the bundle id and app name if a beta build
+### plist_reset
+```
+fastlane plist_reset
+```
+Resets the bundle id and app name after build
+
+----
+
+## iOS
 ### ios build_developer
 ```
 fastlane ios build_developer
@@ -115,6 +58,21 @@ Exports a new Developer Build
 fastlane ios build_appstore
 ```
 Exports a new AppStore Build
+### ios build_beta
+```
+fastlane ios build_beta
+```
+Provenace Team: Push a new beta build to TestFlight
+### ios build_alpha
+```
+fastlane ios build_alpha
+```
+Provenace Team: Push a new alpha build to Hockeyapp
+### ios userbuild
+```
+fastlane ios userbuild
+```
+User Builds
 ### ios carthage_bootstrap_ios
 ```
 fastlane ios carthage_bootstrap_ios
@@ -139,6 +97,16 @@ fastlane ios carthage_build
 Lane to run build all carthage dependencies
 
 Option: `platform` tvOS,iOS
+### ios carthage_build_ios
+```
+fastlane ios carthage_build_ios
+```
+Lane to run build all carthage dependencies - iOS
+### ios carthage_build_tvos
+```
+fastlane ios carthage_build_tvos
+```
+Lane to run build all carthage dependencies - tvOS
 ### ios carthage_update
 ```
 fastlane ios carthage_update
@@ -156,6 +124,56 @@ Lane to update all carthage dependencies to latest versions for iOS only
 fastlane ios carthage_update_tvos
 ```
 Lane to update all carthage dependencies to latest versions for tvOS only
+### ios rome_download
+```
+fastlane ios rome_download
+```
+Download cached Rome builds
+### ios rome_upload
+```
+fastlane ios rome_upload
+```
+Upload cached Rome builds
+### ios certificates_download
+```
+fastlane ios certificates_download
+```
+Download Certs for Match
+### ios certificates_update
+```
+fastlane ios certificates_update
+```
+Create Certs for Match
+### ios update_devices
+```
+fastlane ios update_devices
+```
+Update device UDID list in iTunes connect from fastlane/devices.text
+### ios default_changelog
+```
+fastlane ios default_changelog
+```
+
+### ios travis
+```
+fastlane ios travis
+```
+Travis building iOS & tvOS
+### ios travis_ios
+```
+fastlane ios travis_ios
+```
+Travis building iOS
+### ios travis_tvos
+```
+fastlane ios travis_tvos
+```
+Travis building tvOS
+### ios test
+```
+fastlane ios test
+```
+Build and run tests
 
 ----
 

@@ -1,0 +1,75 @@
+desc 'Download Certs for Match'
+lane :certificates_download do
+  certificates_download_private(type: 'development')
+  certificates_download_private(type: 'adhoc')
+  #certificates_download_private(type: 'appstore')
+end
+
+desc 'Create Certs for Match'
+lane :certificates_update do
+  certificates_update_private(type: 'development')
+  certificates_update_private(type: 'adhoc')
+  #certificates_update_private(type: 'appstore')
+end
+
+private_lane :certificates_update_private do |options|
+  type = options.fetch(:type)
+
+  match_private(
+    type: type,
+    readonly: false
+  )
+end
+
+private_lane :certificates_dowload_private do |options|
+  type = options.fetch(:type)
+
+  match_private(
+    type: type,
+    readonly: false
+  )
+end
+
+desc 'Update device UDID list in iTunes connect from fastlane/devices.text'
+lane :update_devices do
+  load_keys
+
+  team_id = ENV['DEV_TEAM_ID'] || CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+  register_devices(
+    devices_file: 'fastlane/devices.txt',
+    team_id: team_id
+  )
+  match(type: 'development', force_for_new_devices: true)
+  match(type: 'adhoc', force_for_new_devices: true)
+end
+
+private_lane :match_private do |options|
+  load_keys
+
+  # types "appstore", "development", "adhoc", "enterprise"
+  type = options.fetch(:type, 'development')
+  force_for_new_devices = options.fetch(:force_for_new_devices, false)
+  readonly = options.fetch(:force_for_new_devices, true)
+
+  match(
+    app_identifier: [
+      "#{dev_domain}.provenance",
+      "#{dev_domain}.provenance.extension.spotlight"
+    ],
+    type: type,
+    readonly: readonly,
+    platform: 'ios',
+    force_for_new_devices: force_for_new_devices
+  )
+
+  match(
+    app_identifier: [
+      "#{dev_domain}.provenance",
+      "#{dev_domain}.provenance.topshelf-extension"
+    ],
+    type: type,
+    readonly: readonly,
+    platform: 'tvos',
+    force_for_new_devices: force_for_new_devices
+  )
+end

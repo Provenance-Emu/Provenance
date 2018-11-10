@@ -1,0 +1,25 @@
+desc "Download cached Rome builds"
+lane :rome_download do
+  rome_cmd(command: 'download')
+end
+
+desc "Upload cached Rome builds"
+lane :rome_upload do
+  rome_cmd(command: 'upload')
+end
+
+private_lane :rome_cmd do |options|
+  command = options.fetch(:platform, 'download')
+  platform = options.fetch(:platform, 'iOS,tvOS')
+
+  swift_version = sh("swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d \"()\" | tr \" \" \"-\"")
+
+  UI.message "Running Rome '#{command}' for platform(s) ('#{platform}'"
+  UI.message "Detected Swift version: #{swift_version}"
+
+  rome(
+    command: command,     # One of: download, upload, list
+    platform: platform,   # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
+    cacheprefix: swift_version
+  )
+end
