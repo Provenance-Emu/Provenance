@@ -540,9 +540,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
                                 _ = try? PVMediaCache.writeData(toDisk: data, withKey: imageKey)
 
                                 DispatchQueue.main.async { [weak self] in
-                                    guard let self = self else {
-                                        return
-                                    }
+                                    guard let `self` = self else { return }
 
                                     if let newImage = UIImage(data: data) {
                                         self.flipImageView(withImage: newImage)
@@ -687,14 +685,14 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     var token: NotificationToken?
     func registerForChange() {
 		token?.invalidate()
-        token = game?.observe({ (change) in
+        token = game?.observe({ [weak self] (change) in
+            guard let `self` = self else { return }
+
             switch change {
             case .change(let properties):
                 if !properties.isEmpty, self.isViewLoaded {
                     DispatchQueue.main.async { [weak self] in
-                        guard let self = self else {
-                            return
-                        }
+                        guard let `self` = self else { return }
                         self.updateContent()
                     }
                 }

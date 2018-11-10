@@ -489,9 +489,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             self.token = nil
 
             DispatchQueue.main.async { [weak self] in
-                guard let self = self else {
-                    return
-                }
+                guard let `self` = self else { return }
 
                 if let game = self.game {
                     self.token = game.observe { [weak self] change in
@@ -555,9 +553,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 						return
 					}
                     DispatchQueue.main.async { [weak self] in
-                        guard let self = self else {
-                            return
-                        }
+                        guard let `self` = self else { return }
 
                         var artworkText: String
 						if PVSettingsModel.shared.showGameTitles {

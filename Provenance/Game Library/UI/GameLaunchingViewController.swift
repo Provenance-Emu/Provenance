@@ -176,9 +176,7 @@ extension GameSharingViewController where Self : UIViewController {
 			let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
 
             DispatchQueue.main.async { [weak self] in
-                guard let self = self else {
-                    return
-                }
+                guard let `self` = self else { return }
 
                 hud.hide(true, afterDelay: 0.1)
 				guard success else {
@@ -591,9 +589,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				} else {
 					// Fallback on earlier versions
 					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                        guard let self = self else {
-                            return
-                        }
+                        guard let `self` = self else { return }
 
 						self.openSaveState(saveState)
 						emulatorViewController.glViewController?.view.isHidden = false
@@ -691,9 +687,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
 				// Present the alert
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
+                    guard let `self` = self else { return }
 
                     self.present(alert, animated: true)
 				}

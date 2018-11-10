@@ -247,15 +247,13 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	// ----
 	private func setupToken() {
-		queryUpdateToken = query.observe { [unowned self] (changes: RealmCollectionChange) in
+		queryUpdateToken = query.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let `self` = self else { return }
 			switch changes {
 			case .initial(let result):
 				VLOG("Initial query result: \(result.count)")
                 DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
-
+                 guard let `self` = self else { return }
                     self.refreshCollectionView()
 				}
 			case .update(_, let deletions, let insertions, let modifications):
@@ -277,9 +275,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	func handleUpdate( deletions: [Int], insertions: [Int], modifications: [Int]) {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            guard let self = self else {
-                return
-            }
+            guard let `self` = self else { return }
 
             ILOG("Update for collection view cell for class \(self.cellId)")
 			self.refreshCollectionView()
