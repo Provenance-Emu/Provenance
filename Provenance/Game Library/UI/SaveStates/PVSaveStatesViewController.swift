@@ -105,7 +105,8 @@ final class PVSaveStatesViewController: UICollectionViewController {
 //            .bind(to: collectionView.rx.items(dataSource: dataSource))
 //            .disposed(by: disposeBag)
 //
-    autoSaveStatesObserverToken = autoSaves.observe { [unowned self] (changes: RealmCollectionChange) in
+    autoSaveStatesObserverToken = autoSaves.observe { [weak self] (changes: RealmCollectionChange) in
+        guard let `self` = self else { return }
             switch changes {
             case .initial:
                 self.collectionView?.reloadData()
@@ -126,7 +127,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
             }
         }
 
-        manualSaveStatesObserverToken = manualSaves.observe { [unowned self] (changes: RealmCollectionChange) in
+        manualSaveStatesObserverToken = manualSaves.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let `self` = self else { return }
+
             switch changes {
             case .initial:
                 self.collectionView?.reloadData()
