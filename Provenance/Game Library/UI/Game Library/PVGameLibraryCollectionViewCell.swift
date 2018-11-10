@@ -902,13 +902,13 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        image = nil
+//        image = nil
 //		imageView.tintColor = nil
-        titleLabel.text = nil
-		discCountLabel?.text = nil
-		discCountContainerView?.isHidden = true
-		topRightCornerBadgeView?.isHidden = true
-		missingFileView?.isHidden = true
+//        titleLabel.text = nil
+//        discCountLabel?.text = nil
+//        discCountContainerView?.isHidden = true
+//        topRightCornerBadgeView?.isHidden = true
+//        missingFileView?.isHidden = true
         token?.invalidate()
 
 		// Clear image loading from the queue is not needed

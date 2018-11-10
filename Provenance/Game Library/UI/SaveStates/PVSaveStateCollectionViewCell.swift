@@ -82,12 +82,9 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 	override func prepareForReuse() {
 		super.prepareForReuse()
-
-		imageView.image = nil
-		titleLabel.text = nil
-#if os(tvOS)
-        self.labelContainer.transform = .identity
-#endif
+//#if os(tvOS)
+//        self.labelContainer.transform = .identity
+//#endif
 	}
 
 	override func layoutSubviews() {

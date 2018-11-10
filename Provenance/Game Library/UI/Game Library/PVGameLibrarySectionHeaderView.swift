@@ -88,6 +88,5 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 #endif
     override func prepareForReuse() {
         super.prepareForReuse()
-        titleLabel.text = nil
     }
 }
