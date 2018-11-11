@@ -223,7 +223,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		fpsLabel?.translatesAutoresizingMaskIntoConstraints = false
 		fpsLabel?.textAlignment = .right
 		#if os(tvOS)
-		fpsLabel?.font = UIFont.systemFont(ofSize: 100, weight: .bold)
+		fpsLabel?.font = UIFont.systemFont(ofSize: 40, weight: .bold)
 		#else
 		if #available(iOS 8.2, *) {
 			fpsLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
