@@ -577,17 +577,19 @@ static void emulation_run(BOOL skipFrame) {
 //	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 
     if(!game) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"Mednafen failed to load game.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednafen ROM format."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
+        if (error) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: @"Mednafen failed to load game.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednafen ROM format."
+                                       };
+
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                                userInfo:userInfo];
+
+            *error = newError;
+        }
         return NO;
     }
     
@@ -674,19 +676,21 @@ static void emulation_run(BOOL skipFrame) {
                 m3uPath = [m3uPath substringFromIndex:rangeOfDocuments.location + 11];
             }
 
-            NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
+            if (error) {
+                NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
 
-            NSDictionary *userInfo = @{
-                                       NSLocalizedDescriptionKey: @"Failed to load game.",
-                                       NSLocalizedFailureReasonErrorKey: @"Missing required m3u file.",
-                                       NSLocalizedRecoverySuggestionErrorKey: message
-                                       };
-            
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeMissingM3U
-                                                userInfo:userInfo];
-            
-            *error = newError;
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey: @"Failed to load game.",
+                                           NSLocalizedFailureReasonErrorKey: @"Missing required m3u file.",
+                                           NSLocalizedRecoverySuggestionErrorKey: message
+                                           };
+
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeMissingM3U
+                                                    userInfo:userInfo];
+
+                *error = newError;
+            }
             return NO;
         }
         
@@ -975,33 +979,36 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
 	if (game != nil ) {
 		BOOL success = MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
-		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
+        if (!success) {
+            if (error) {
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey: @"Failed to save state.",
+                                           NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+                                           NSLocalizedRecoverySuggestionErrorKey: @""
+                                           };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotSaveState
-												userInfo:userInfo];
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                                    userInfo:userInfo];
 
-			*error = newError;
+                *error = newError;
+            }
 		}
 		return success;
 	} else {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state because no game is loaded.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
+        if (error) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to save state.",
+                                       NSLocalizedFailureReasonErrorKey: @"Core failed to create save state because no game is loaded.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @""
+                                       };
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                                userInfo:userInfo];
 
-		*error = newError;
-
+            *error = newError;
+        }
 		return NO;
 	}
 }
@@ -1009,33 +1016,36 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
 	if (game != nil ) {
     	BOOL success = MDFNI_LoadState(fileName.fileSystemRepresentation, "");
-		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
+        if (!success) {
+            if (error) {
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey: @"Failed to save state.",
+                                           NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+                                           NSLocalizedRecoverySuggestionErrorKey: @""
+                                           };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                    userInfo:userInfo];
 
-			*error = newError;
+                *error = newError;
+            }
 		}
 		return success;
 	} else {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"No game loaded.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
+        if (error) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to save state.",
+                                       NSLocalizedFailureReasonErrorKey: @"No game loaded.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @""
+                                       };
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                userInfo:userInfo];
 
-		*error = newError;
-
+            *error = newError;
+        }
 		return NO;
 	}
 }

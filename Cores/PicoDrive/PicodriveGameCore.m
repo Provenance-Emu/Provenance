@@ -520,19 +520,20 @@ static void writeSaveFile(const char* path, int type)
         
         return YES;
     }
-    
-    NSDictionary *userInfo = @{
-                               NSLocalizedDescriptionKey: @"Failed to load game.",
-                               NSLocalizedFailureReasonErrorKey: @"PicoDrive failed to load ROM.",
-                               NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
-                               };
-    
-    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                        userInfo:userInfo];
-    
-    *error = newError;
-    
+
+    if (error) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"PicoDrive failed to load ROM.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+    }
     return NO;
     
 }
@@ -715,14 +716,16 @@ static void writeSaveFile(const char* path, int type)
     NSMutableData *stateData = [NSMutableData dataWithLength:serial_size];
 
     if(!retro_serialize([stateData mutableBytes], serial_size)) {
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:@{
-            NSLocalizedDescriptionKey : @"Save state data could not be written",
-            NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
-        }];
+        if (error) {
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                                userInfo:@{
+                                                           NSLocalizedDescriptionKey : @"Save state data could not be written",
+                                                           NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
+                                                           }];
 
-		*error = newError;
+            *error = newError;
+        }
 //        block(NO, error);
         return NO;
     }
@@ -738,42 +741,46 @@ static void writeSaveFile(const char* path, int type)
     NSData *data = [NSData dataWithContentsOfFile:fileName options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:error];
     if(data == nil)  {
 //        block(NO, error);
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state. No Data at path.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
+        if (error) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to save state.",
+                                       NSLocalizedFailureReasonErrorKey: @"Core failed to load save state. No Data at path.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @""
+                                       };
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                userInfo:userInfo];
 
-		*error = newError;
-
+            *error = newError;
+        }
         return NO;
     }
 
     int serial_size = 678514;
     if(serial_size != [data length]) {
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-											 code:PVEmulatorCoreErrorCodeStateHasWrongSize
-										 userInfo:@{
-            NSLocalizedDescriptionKey : @"Save state has wrong file size.",
-            NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
-        }];
+        if (error) {
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                 code:PVEmulatorCoreErrorCodeStateHasWrongSize
+                                             userInfo:@{
+                NSLocalizedDescriptionKey : @"Save state has wrong file size.",
+                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
+            }];
 
-		*error = newError;
+            *error = newError;
+        }
 //        block(NO, error);
         return NO;
     }
 
     if(!retro_unserialize([data bytes], serial_size)) {
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
-            NSLocalizedDescriptionKey : @"The save state data could not be read",
-            NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
-        }];
-		*error = newError;
-//        block(NO, error);
+        if (error) {
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
+                                                                                                                                            NSLocalizedDescriptionKey : @"The save state data could not be read",
+                                                                                                                                            NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
+                                                                                                                                            }];
+            *error = newError;
+        }
         return NO;
     }
     

@@ -121,18 +121,19 @@ public:
     sampleRate = outSampleRate; // 47994.326636
 
     if (gb.load([path UTF8String]) != 0) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"Gambatte failed to load ROM.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format Gambatte supports."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
-        
+        if (error) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: @"Gambatte failed to load ROM.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format Gambatte supports."
+                                       };
+
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                                userInfo:userInfo];
+
+            *error = newError;
+        }
         return NO;
     }
 
@@ -245,17 +246,19 @@ public:
     @synchronized(self) {
         BOOL success = gb.saveState(0, 0, [fileName UTF8String]);
 		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
+            if (error) {
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey: @"Failed to save state.",
+                                           NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+                                           NSLocalizedRecoverySuggestionErrorKey: @""
+                                           };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotSaveState
-												userInfo:userInfo];
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                                    userInfo:userInfo];
 
-			*error = newError;
+                *error = newError;
+            }
 		}
 		return success;
     }
@@ -266,17 +269,19 @@ public:
     @synchronized(self) {
         BOOL success = gb.loadState([fileName UTF8String]);
 		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
+            if (error) {
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey: @"Failed to save state.",
+                                           NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+                                           NSLocalizedRecoverySuggestionErrorKey: @""
+                                           };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                    userInfo:userInfo];
 
-			*error = newError;
+                *error = newError;
+            }
 		}
 		return success;
     }
@@ -396,8 +401,9 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
 
 - (void)changeDisplayMode:(GBPalette)displayMode
 {
-    if (gb.isCgb())
+    if (gb.isCgb()) {
         return;
+    }
 
     unsigned short *gbc_bios_palette = NULL;
 	self->displayMode = displayMode;
@@ -480,13 +486,11 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
             if (gbc_bios_palette == 0)
             {
                 gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
-                displayMode = GBPalettePeaSoupGreen;
             }
 			break;
 		}
         case GBPaletteGrayscale:
             gbc_bios_palette = const_cast<unsigned short *>(findGbcDirPal("GBC - Grayscale"));
-            displayMode = GBPalettePeaSoupGreen;
 			break;
         default:
             return;
