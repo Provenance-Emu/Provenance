@@ -294,7 +294,7 @@ public final class PVGameImporter {
 		serialImportQueue.addOperation(completionOperation)
     }
 
-    public func resolveConflicts(withSolutions solutions: [URL: PVSystem]) {
+    public func resolveConflicts(withSolutions solutions: [URL: System]) {
 
 		let importOperation = BlockOperation()
 
@@ -366,12 +366,7 @@ public final class PVGameImporter {
                 }
             }
 
-            let systemRef = ThreadSafeReference(to: system)
 			importOperation.addExecutionBlock {
-				let realm = try! Realm()
-				guard let system = realm.resolve(systemRef) else {
-					return // person was deleted
-				}
 				self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
 			}
         } // End forEach
@@ -649,7 +644,7 @@ public extension PVGameImporter {
 		}
     }
 
-    public func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: PVSystem? = nil) {
+    public func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
         let database = RomDatabase.sharedInstance
         database.refresh()
 
@@ -669,36 +664,20 @@ public extension PVGameImporter {
 
 		let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         sortedPaths.forEach { (path) in
-			// Needs to be in loop, can't double resolve a ref
-			let systemRef : ThreadSafeReference<PVSystem>?
-			if let chosenSystem = chosenSystem {
-				systemRef = ThreadSafeReference(to: chosenSystem)
-			} else {
-				systemRef = nil
-			}
-
 			workQueue.addOperation {
-				self._handlePath(path: path, userChosenSystem: systemRef)
+				self._handlePath(path: path, userChosenSystem: chosenSystem)
 			}
         } // for each
     }
 
-	public func _handlePath(path : URL, userChosenSystem chosenSystemRef: ThreadSafeReference<PVSystem>? ) {
+	public func _handlePath(path : URL, userChosenSystem chosenSystem: System? ) {
 
 		let database = RomDatabase.sharedInstance
 		let urlPath = path
 		let filename = urlPath.lastPathComponent
 		let fileExtensionLower = urlPath.pathExtension.lowercased()
 
-		let chosenSystem : PVSystem?
-		if let chosenSystemRef = chosenSystemRef {
-			let realm = try! Realm()
-			chosenSystem = realm.resolve(chosenSystemRef)
-		} else {
-			chosenSystem = nil
-		}
-
-		let isDirectory: Bool
+        let isDirectory: Bool
 		if #available(iOS 9.0, *) {
 			isDirectory = path.hasDirectoryPath
 		} else {
@@ -716,7 +695,7 @@ public extension PVGameImporter {
 
 			if let existingGame = database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
 				database.all(PVGame.self, filter: NSPredicate(format: "ANY relatedFiles.partialPath = %@", argumentArray: [partialPath])).first, // Check if it's an associated file of another game
-				chosenSystem.enumValue == existingGame.system.enumValue { // Check it's a same system too
+				chosenSystem.identifier == existingGame.system.identifier { // Check it's a same system too
 				// Matched a known game
 				finishUpdateOrImport(ofGame: existingGame)
 				return
@@ -725,7 +704,7 @@ public extension PVGameImporter {
 
 		// Handle folders, but only if no system ref was chosen (incase of CD folders)
 		if isDirectory {
-			if chosenSystemRef == nil {
+			if chosenSystem == nil {
 				do {
 					let subContents = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
 					if subContents.isEmpty {
@@ -753,14 +732,17 @@ public extension PVGameImporter {
 
 			if let chosenSystem = chosenSystem {
 				// First check if it's a chosen system that supports CDs and this is a non-cd extension
-				if chosenSystem.usesCDs && !chosenSystem.supportedExtensions.contains(fileExtensionLower) {
+				if chosenSystem.usesCDs && !chosenSystem.extensions.contains(fileExtensionLower) {
 					// We're on a file that is from a CD based system but this file isn't an importable file type so skip it.
 					// This prevents us from importing .bin's for example when the .cue is already imported
 					DLOG("Skipping file <\(filename)> with extension <\(fileExtensionLower)> because not a CD for <\(chosenSystem.shortName)>")
 					return
 				}
 
-				systemsMaybe = [chosenSystem]
+                let realm = try! Realm()
+                if let s = realm.object(ofType: PVSystem.self, forPrimaryKey: chosenSystem.identifier) {
+                    systemsMaybe = [s]
+                }
 			} else {
 				systemsMaybe = PVEmulatorConfiguration.systems(forFileExtension: fileExtensionLower)
 			}

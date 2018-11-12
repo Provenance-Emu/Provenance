@@ -51,7 +51,7 @@ public struct Core : Codable {
 		let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
 			$0.identifier == self.identifier
 		}) }.map {
-			System(with: $0)
+			System($0)
 		}
 		return systems.map {$0}
 	}

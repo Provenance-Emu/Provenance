@@ -49,11 +49,17 @@ public protocol SystemProtocol {
 	var options : SystemOptions {get}
 
 	var BIOSes : [BIOS]? {get}
-	var extensions : [String] {get}
+	var extensions : Set<String> {get}
 
 	var gameStructs : [Game] {get}
 	var coreStructs : [Core] {get}
 	var userPreferredCore : Core? {get}
+
+    var usesCDs: Bool {get}
+    var portableSystem: Bool  {get}
+
+    var supportsRumble: Bool  {get}
+    var screenType: ScreenType  {get}
 }
 
 @objcMembers
@@ -94,8 +100,8 @@ public final class PVSystem: Object, SystemProtocol {
 		}
 	}
 
-	public var extensions: [String] {
-		return supportedExtensions.map { return $0 }
+	public var extensions: Set<String> {
+		return Set(supportedExtensions.map { return $0 })
 	}
 
     // Reverse Links
@@ -208,15 +214,21 @@ public struct System : Codable, SystemProtocol {
 
 	public let BIOSes : [BIOS]?
 
-	public let extensions : [String]
+	public let extensions : Set<String>
 
 	public let gameStructs : [Game]
 	public let coreStructs: [Core]
 	public let userPreferredCore : Core?
+
+    public let usesCDs: Bool
+    public let portableSystem: Bool
+
+    public let supportsRumble: Bool
+    public let screenType: ScreenType
 }
 
 public extension System {
-	public init(with system : SystemProtocol) {
+	public init(_ system : SystemProtocol) {
 		name = system.name
 		identifier = system.identifier
 		shortName = system.shortName
@@ -235,6 +247,12 @@ public extension System {
 		gameStructs = system.gameStructs
 		coreStructs = system.coreStructs
 		userPreferredCore = system.userPreferredCore
+
+        usesCDs = system.usesCDs
+        portableSystem = system.portableSystem
+
+        supportsRumble = system.supportsRumble
+        screenType = system.screenType
 	}
 }
 

@@ -152,7 +152,7 @@ final class PVConflictViewController: UITableViewController {
 		PVSystem.all.filter({ $0.supportedExtensions.contains(path.pathExtension) }).forEach { system in
 			let name: String = system.name
 			alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
-				self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+				self.gameImporter?.resolveConflicts(withSolutions: [path: System(system)])
 				// This update crashes since we remove for me on aTV.
 				//                [self.tableView beginUpdates];
 				//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];

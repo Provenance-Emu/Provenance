@@ -88,7 +88,7 @@ class SystemsSettingsTableViewController: QuickTableViewController {
     func generateViewModels() {
         let realm  = try! Realm()
         let systems = realm.objects(PVSystem.self).sorted(byKeyPath: "name")
-        let systemsModels = systems.map { SystemOverviewViewModel(withSystem: System(with: $0)) }
+        let systemsModels = systems.map { SystemOverviewViewModel(withSystem: System($0)) }
 
 		tableContents = systemsModels.map { systemModel in
 			var rows = [Row & RowStyle]()

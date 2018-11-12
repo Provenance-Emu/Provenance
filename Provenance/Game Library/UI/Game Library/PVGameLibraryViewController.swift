@@ -1397,7 +1397,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 	private func importerScanSystemsDirs() {
 		// Scan each Core direxctory and looks for ROMs in them
-		let allSystems = PVSystem.all
+        let allSystems = PVSystem.all.map { System($0) }
 
 		let importOperation = BlockOperation()
 
@@ -1418,14 +1418,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 					return
 			}
 
-			let systemRef = ThreadSafeReference(to: system)
-			importOperation.addExecutionBlock {
-				let realm = try! Realm()
-				guard let system = realm.resolve(systemRef) else {
-					return // person was deleted
-				}
+            let acceptedExtensions = system.extensions
+            let filtered = contents.filter {
+                acceptedExtensions.contains($0.pathExtension)
+            }
 
-				self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: system)
+			importOperation.addExecutionBlock {
+				self.gameImporter.getRomInfoForFiles(atPaths: filtered, userChosenSystem: system)
 			}
 		}
 

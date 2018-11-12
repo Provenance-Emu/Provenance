@@ -121,13 +121,13 @@ public enum SystemIdentifier: String {
 }
 
 // MARK: - PVSystem convenience extension
-public extension PVSystem {
+public extension SystemProtocol {
     public var biosDirectory: URL {
-        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: enumValue)
+        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: identifier)
     }
 
     public var romsDirectory: URL {
-        return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: enumValue)
+        return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: identifier)
     }
 }
 
