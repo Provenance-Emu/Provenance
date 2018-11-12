@@ -85,22 +85,22 @@ open class EmulatorActionController: DynamicsActionController<EmulatorActionCell
 	public override init(nibName nibNameOrNil: String? = nil, bundle nibBundleOrNil: Bundle? = nil) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
-		settings.animation.present.options = [.curveEaseIn, .allowUserInteraction]
+		settings.animation.present.options = [.allowUserInteraction]
 		settings.animation.present.duration = 0.5
 
 //		settings.animation.dismiss.options = [.curveEaseIn, .transitionCurlUp]
 		settings.animation.dismiss.duration = 0.5
 
 		settings.animation.scale = nil // Don't shrink the game view
-		settings.animation.present.springVelocity = 1.0
-		settings.animation.present.damping = 5.0
+		settings.animation.present.springVelocity = 0.0
+		settings.animation.present.damping = 1.0
 
-		settings.behavior.bounces = true
+		settings.behavior.bounces = false
 		settings.behavior.useDynamics = true
 		// I wrote a custom version of this to make sure we call our cancel callback
 		settings.behavior.hideOnTap = false
-		settings.behavior.hideOnScrollDown = false
-		settings.behavior.scrollEnabled = false
+		settings.behavior.hideOnScrollDown = true
+		settings.behavior.scrollEnabled = true
 
 		settings.cancelView.showCancel = true
 		settings.cancelView.hideCollectionViewBehindCancelView = true
@@ -425,9 +425,11 @@ extension PVEmulatorViewController {
 		}
 
 		actionSheet.cancelBlock = {
-			self.core.setPauseEmulation(false)
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.core.setPauseEmulation(false)
+                self.isShowingMenu = false
+                self.enableContorllerInput(false)
+            }
 		}
 
 		present(actionSheet, animated: true, completion: {() -> Void in

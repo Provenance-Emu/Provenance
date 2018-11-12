@@ -90,7 +90,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
 
-    var isShowingMenu: Bool = false
+    var isShowingMenu: Bool = false {
+        willSet {
+            if newValue == true {
+                glViewController?.isPaused = true
+            }
+        }
+        didSet {
+            if isShowingMenu == false {
+                glViewController?.isPaused = false
+            }
+        }
+    }
 
     let minimumPlayTimeToMakeAutosave : Double = 60
 
@@ -241,7 +252,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 		if #available(iOS 10.0, tvOS 10.0, *) {
 			// Block-based NSTimer method is only available on iOS 10 and later
-			fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {(_ timer: Timer) -> Void in
+			fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {[weak self] (_ timer: Timer) -> Void in
+                guard let `self` = self else {return}
+                
 				if self.core.renderFPS == self.core.emulationFPS {
 					self.fpsLabel?.text = String(format: "%2.02f", self.core.renderFPS)
 				} else {
