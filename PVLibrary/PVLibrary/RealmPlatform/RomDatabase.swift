@@ -47,15 +47,28 @@ public final class RealmConfiguration {
     }
 
     private static var realmConfig: Realm.Configuration = {
-        var path: URL?
-        if RealmConfiguration.supportsAppGroups {
+        let realmFilename = "default.realm"
+        let nonGroupPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
+
+        var realmURL: URL = nonGroupPath
+        if RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath {
             ILOG("AppGroups: Supported")
-            path = RealmConfiguration.appGroupPath
+            realmURL = appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
+
+            let fm = FileManager.default
+            if fm.fileExists(atPath: nonGroupPath.path) {
+                do {
+                    ILOG("Found realm database at non-group path location. Will attempt to move to group path location")
+                    try fm.removeItem(at: realmURL)
+                    try fm.moveItem(at: nonGroupPath, to: realmURL)
+                    ILOG("Moved old database to group path location.")
+                } catch {
+                    ELOG("Failed to move old database to new group path: \(error.localizedDescription)")
+                }
+            }
         } else {
             ILOG("AppGroups: Not Supported")
-            path = PVEmulatorConfiguration.documentsPath
         }
-        let realmURL = path!.appendingPathComponent("default.realm")
 
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
             if oldSchemaVersion < 2 {
@@ -109,7 +122,7 @@ public final class RealmConfiguration {
         #else
             let deleteIfMigrationNeeded = false
         #endif
-        let config = Realm.Configuration(fileURL: realmURL, inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: 3, migrationBlock: migrationBlock, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
+        let config = Realm.Configuration(fileURL: realmURL, inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: 4, migrationBlock: migrationBlock, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
         return config
     }()
 }
