@@ -282,28 +282,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		initNotifcationObservers()
 		initCore()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
-
-        core.audioDelegate = self
-        core.saveStatesPath = self.saveStatePath
-        core.batterySavesPath = batterySavesPath
-        core.biosPath = BIOSPath
-        core.controller1 = PVControllerManager.shared.player1
-        core.controller2 = PVControllerManager.shared.player2
-        core.controller3 = PVControllerManager.shared.player3
-        core.controller4 = PVControllerManager.shared.player4
-
-        let md5Hash: String = game.md5Hash
-        core.romMD5 = md5Hash
-        core.romSerial = game.romSerial
         glViewController = PVGLViewController(emulatorCore: core)
 
             // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
