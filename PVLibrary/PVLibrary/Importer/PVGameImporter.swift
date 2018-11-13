@@ -85,7 +85,7 @@ public final class PVGameImporter {
 
     // MARK: - Paths
     public let documentsPath: URL = PVEmulatorConfiguration.documentsPath
-    public let romsImportPath: URL = PVEmulatorConfiguration.romsImportPath
+    public let romsImportPath: URL = PVEmulatorConfiguration.Paths.romsImportPath
     public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
@@ -259,8 +259,8 @@ public final class PVGameImporter {
 
 	@discardableResult
 	private func deleteIfJunk(_ filePath : URL) -> Bool {
-		if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
-			ILOG("\(filePath.lastPathComponent) doesn't matching any known possible extensions and is in \(PVEmulatorConfiguration.romsImportPath.lastPathComponent) directory. Deleting.")
+		if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
+			ILOG("\(filePath.lastPathComponent) doesn't matching any known possible extensions and is in \(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent) directory. Deleting.")
 			do {
 				try FileManager.default.removeItem(at: filePath)
 				ILOG("Deleted \(filePath.path).")

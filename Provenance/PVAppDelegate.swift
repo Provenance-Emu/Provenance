@@ -92,7 +92,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         if url.isFileURL {
             let filename = url.lastPathComponent
-            let destinationPath = PVEmulatorConfiguration.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+            let destinationPath = PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
 
             do {
 				defer {

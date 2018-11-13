@@ -1194,7 +1194,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
 
         do {
-            try FileManager.default.createDirectory(at: PVEmulatorConfiguration.romsImportPath, withIntermediateDirectories: true, attributes: nil)} catch {
+            try FileManager.default.createDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, withIntermediateDirectories: true, attributes: nil)} catch {
                 ELOG("Unable to create roms directory because \(error.localizedDescription)")
                 // dunno what else can be done if this fails
                 return
@@ -1225,7 +1225,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let exists: Bool = FileManager.default.fileExists(atPath: path.path, isDirectory: &isDir)
 
             if exists && !isDir.boolValue && !path.path.lowercased().contains("realm") {
-                let toPath = PVEmulatorConfiguration.romsImportPath.appendingPathComponent(path.lastPathComponent)
+                let toPath = PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent(path.lastPathComponent)
 
                 do {
                     try FileManager.default.moveItem(at: path, to: toPath)
@@ -1240,7 +1240,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
 
         do {
-            let paths = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
+            let paths = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
             gameImporter?.startImport(forPaths: paths)
         } catch {
             ELOG("Couldn't get rom paths")
@@ -1284,7 +1284,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			#endif
 		}
 
-		watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
+		watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.Paths.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
 
 			DispatchQueue.main.async {
 				guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
@@ -1326,7 +1326,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			if let paths = paths {
 				self.filePathsToImport.append(contentsOf: paths)
 				do {
-					let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+					let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
 					let archives = contents.filter {
 						let exts = PVEmulatorConfiguration.archiveExtensions
 						let ext = $0.pathExtension.lowercased()
@@ -1384,12 +1384,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 	private func initialROMScan() {
 		do {
-			let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
+			let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
 			if !existingFiles.isEmpty {
 				self.gameImporter.startImport(forPaths: existingFiles)
 			}
 		} catch {
-			ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
+			ELOG("No existing ROM path at \(PVEmulatorConfiguration.Paths.romsImportPath.path)")
 		}
 
 		self.importerScanSystemsDirs()
@@ -2195,7 +2195,7 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 
 		let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
 
-		let importPath = PVEmulatorConfiguration.romsImportPath
+		let importPath = PVEmulatorConfiguration.Paths.romsImportPath
 
 		sortedUrls.forEach { (url) in
 			defer {

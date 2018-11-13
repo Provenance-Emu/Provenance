@@ -232,27 +232,54 @@ public final class PVEmulatorConfiguration: NSObject {
 
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
+    
+    static public var containerUrl: URL? {
+        return FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
+    }
+    
+    static public var documentsiCloudOrLocalPath : URL {
+        return containerUrl ?? documentsPath
+    }
 
-    @objc
-    static public let romsImportPath: URL = {
-        return documentsPath.appendingPathComponent("Imports", isDirectory: true)
-    }()
-
-    static public let batterySavesPath: URL = {
-        return documentsPath.appendingPathComponent("Battery States", isDirectory: true)
-    }()
-
-    static public let saveSavesPath: URL = {
-        return documentsPath.appendingPathComponent("Save States", isDirectory: true)
-    }()
-
-	static public let screenShotsPath: URL = {
-		return documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
-	}()
-
-    static public let biosesPath: URL = {
-        return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
-    }()
+    public struct Paths {
+        public struct Legacy {            
+            static public let batterySavesPath: URL = {
+                return documentsPath.appendingPathComponent("Battery States", isDirectory: true)
+            }()
+            
+            static public let saveSavesPath: URL = {
+                return documentsPath.appendingPathComponent("Save States", isDirectory: true)
+            }()
+            
+            static public let screenShotsPath: URL = {
+                return documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
+            }()
+            
+            static public let biosesPath: URL = {
+                return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
+            }()
+        }
+        
+        static public let romsImportPath: URL = {
+            return documentsPath.appendingPathComponent("Imports", isDirectory: true)
+        }()
+        
+        static public let batterySavesPath: URL = {
+            return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
+        }()
+        
+        static public let saveSavesPath: URL = {
+            return documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
+        }()
+        
+        static public let screenShotsPath: URL = {
+            return documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
+        }()
+        
+        static public let biosesPath: URL = {
+            return documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
+        }()
+    }
 
     static public let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]
     static public let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
@@ -393,7 +420,7 @@ public extension PVEmulatorConfiguration {
 
     @objc
     class func biosPath(forSystemIdentifier systemID: String) -> URL {
-        return biosesPath.appendingPathComponent(systemID, isDirectory: true)
+        return Paths.biosesPath.appendingPathComponent(systemID, isDirectory: true)
     }
 
     class func biosPath(forGame game: PVGame) -> URL {
@@ -466,10 +493,10 @@ public extension PVEmulatorConfiguration {
 
     class func batterySavesPath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let batterySavesDirectory = self.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
+        let batterySavesDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
 
         do {
-            try FileManager.default.createDirectory(at: batterySavesPath, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: Paths.batterySavesPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating save state directory: \(batterySavesDirectory.path) : \(error.localizedDescription)")
         }
@@ -483,7 +510,7 @@ public extension PVEmulatorConfiguration {
 
     class func saveStatePath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let saveSavesPath = self.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
+        let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
@@ -495,7 +522,7 @@ public extension PVEmulatorConfiguration {
     }
 
 	class func screenshotsPath(forGame game: PVGame) -> URL {
-		let screenshotsPath = self.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
+		let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
 
 		do {
 			try FileManager.default.createDirectory(at: screenshotsPath, withIntermediateDirectories: true, attributes: nil)
@@ -600,5 +627,73 @@ public extension PVEmulatorConfiguration {
 
     class func romDirectory(forSystemIdentifier system: String) -> URL {
         return documentsPath.appendingPathComponent(system, isDirectory: true)
+    }
+}
+
+// MARK: Move legacy files
+public extension PVEmulatorConfiguration {
+    class func moveLegacyPaths() {
+        if documentsPath != documentsiCloudOrLocalPath {
+            let fm = FileManager.default
+            
+            // TODO: Update PVGames and PVSaves for new paths for screenshots and saves
+            
+            ILOG("Looking up legecy saves")
+            if let saves = try? fm.contentsOfDirectory(at: Paths.Legacy.saveSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !saves.isEmpty {
+                ILOG("Found (\(saves.count)) saves in old path")
+
+                saves.forEach {
+                    let newPath = Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent)
+                    do {
+                        try fm.moveItem(at: $0, to: newPath)
+                    } catch {
+                        ELOG("\(error)")
+                    }
+                }
+                // TODO: Remove old directory?
+            }
+
+            ILOG("Looking up legecy bios")
+            if let bioses = try? fm.contentsOfDirectory(at: Paths.Legacy.biosesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !bioses.isEmpty {
+                ILOG("Found (\(bioses.count)) BIOSes in old path")
+
+                bioses.forEach {
+                    let newPath = Paths.biosesPath.appendingPathComponent($0.lastPathComponent)
+                    do {
+                        try fm.moveItem(at: $0, to: newPath)
+                    } catch {
+                        ELOG("\(error)")
+                    }
+                }
+            }
+            
+            ILOG("Looking up legecy screenshots")
+            if let screenshots = try? fm.contentsOfDirectory(at: Paths.Legacy.screenShotsPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !screenshots.isEmpty {
+                ILOG("Found (\(screenshots.count)) Screenshots in old path")
+                
+                screenshots.forEach {
+                    let newPath = Paths.screenShotsPath.appendingPathComponent($0.lastPathComponent)
+                    do {
+                        try fm.moveItem(at: $0, to: newPath)
+                    } catch {
+                        ELOG("\(error)")
+                    }
+                }
+            }
+            
+            ILOG("Looking up legecy battery saves")
+            if let batterySaves = try? fm.contentsOfDirectory(at: Paths.Legacy.batterySavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
+                ILOG("Found (\(batterySaves.count)) Battery Saves in old path")
+                
+                batterySaves.forEach {
+                    let newPath = Paths.batterySavesPath.appendingPathComponent($0.lastPathComponent)
+                    do {
+                        try fm.moveItem(at: $0, to: newPath)
+                    } catch {
+                        ELOG("\(error)")
+                    }
+                }
+            }
+        }
     }
 }
