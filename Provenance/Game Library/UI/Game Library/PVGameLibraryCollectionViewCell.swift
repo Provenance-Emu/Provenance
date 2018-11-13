@@ -584,7 +584,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             }
         }
 
-		self.missingFileView?.isHidden = !game.file.missing
+		self.missingFileView?.isHidden = game.file.online
 		self.setupBadges()
         if !PVSettingsModel.shared.showGameBadges {
             self.setupDots()

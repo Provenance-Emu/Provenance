@@ -13,15 +13,15 @@ import RealmSwift
 
     dynamic public var game: PVGame!
     dynamic public var lastPlayedDate: Date = Date()
-	dynamic public var core: PVCore?
+    dynamic public var core: PVCore?
 
     override public static func indexedProperties() -> [String] {
         return ["lastPlayedDate"]
     }
 
-	public convenience init(withGame game: PVGame, core: PVCore? = nil) {
+    public convenience init(withGame game: PVGame, core: PVCore? = nil) {
         self.init()
         self.game = game
-		self.core = core
+        self.core = core
     }
 }

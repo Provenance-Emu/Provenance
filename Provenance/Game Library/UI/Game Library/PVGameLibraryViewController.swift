@@ -1397,7 +1397,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 	private func importerScanSystemsDirs() {
 		// Scan each Core direxctory and looks for ROMs in them
-        let allSystems = PVSystem.all.map { System($0) }
+        let allSystems = PVSystem.all.map { $0.asDomain() }
 
 		let importOperation = BlockOperation()
 

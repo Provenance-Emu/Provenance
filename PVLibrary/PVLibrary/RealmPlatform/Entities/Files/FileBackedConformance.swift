@@ -1,5 +1,5 @@
 //
-//  PVFiled.swift
+//  FileBacked.swift
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 7/23/18.
@@ -9,13 +9,9 @@
 import Foundation
 import RealmSwift
 
-public protocol PVFiled {
-	var file: PVFile? { get }
-}
-
-public extension PVFiled where Self : Object {
-	var missing: Bool {
-		return file == nil || file!.missing
+public extension FileBacked where Self : Object {
+	var online: Bool {
+		return file != nil || file!.online
 	}
 
 	var md5: String? {

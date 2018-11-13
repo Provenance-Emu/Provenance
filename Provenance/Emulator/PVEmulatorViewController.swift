@@ -792,6 +792,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 					try realm.write {
 						let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
 						realm.add(saveState)
+
+                        LibrarySerializer.serialize(saveState, completion: { result in
+                            switch result {
+                            case .success(let  url):
+                                ILOG("Serialzed save state metadata to (\(url.path))")
+                            case .error(let error):
+                                ELOG("Failed to serialize save metadata. \(error)")
+                            }
+                        })
 					}
 				} catch let error {
 					presentError("Unable to write save state to realm: \(error.localizedDescription)")

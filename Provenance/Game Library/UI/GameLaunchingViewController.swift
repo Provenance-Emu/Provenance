@@ -77,13 +77,13 @@ extension GameSharingViewController where Self : UIViewController {
 		// - Add save states and images
 		// - Use symlinks to images so we can modify the filenames
 		var files = game.saveStates.reduce([URL](), { (arr, save) -> [URL] in
-			guard !save.file.missing else {
+			guard save.file.online else {
 				WLOG("Save file is missing. Can't add to zip")
 				return arr
 			}
 			var arr = arr
 			arr.append(save.file.url)
-			if let image = save.image, !image.missing {
+			if let image = save.image, image.online {
 					// Construct destination url "{SAVEFILE}.{EXT}"
 				let destination = tempDirURL.appendingPathComponent(save.file.fileNameWithoutExtension + "." + image.url.pathExtension, isDirectory: false)
 				if FileManager.default.fileExists(atPath: destination.path) {
@@ -455,7 +455,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         }
 
 		// Check if file exists
-		if game.file.missing {
+		if !game.file.online {
 			displayAndLogError(withTitle: "Cannot open game", message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
 			return
 		}

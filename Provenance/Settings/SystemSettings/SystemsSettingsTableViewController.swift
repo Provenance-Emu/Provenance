@@ -12,83 +12,14 @@ import PVLibrary
 
 import QuickTableViewController
 
-private struct SystemOverviewViewModel {
-	let title : String
-	let identifier : String
-	let gameCount : Int
-	let cores : [Core]
-	let preferredCore : Core?
-	let bioses : [BIOS]?
-}
-
-extension SystemOverviewViewModel {
-	init(withSystem system : System) {
-		title = system.name
-		identifier = system.identifier
-		gameCount = system.gameStructs.count
-		cores = system.coreStructs
-		bioses = system.BIOSes
-		preferredCore = system.userPreferredCore
-	}
-}
-
-public class SystemSettingsCell : UITableViewCell {
-    public static let identifier : String = String(describing: self)
-
-	public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-		super.init(style: style, reuseIdentifier: reuseIdentifier)
-		sytle()
-	}
-
-	public required init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
-		sytle()
-	}
-
-	func sytle() {
-		let bg = UIView(frame: bounds)
-		bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		#if os(iOS)
-		bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-		self.textLabel?.textColor = Theme.currentTheme.settingsCellText
-		self.detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
-		#else
-		bg.backgroundColor = UIColor.clear
-		if #available(tvOS 10.0, *) {
-			self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-			self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-		}
-		#endif
-		self.backgroundView = bg
-	}
-}
-
-public class SystemSettingsHeaderCell : SystemSettingsCell {
-	override func sytle() {
-		super.sytle()
-		#if os(iOS)
-		self.backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
-		self.textLabel?.textColor = Theme.currentTheme.settingsHeaderText
-		self.detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
-		#else
-		self.backgroundView?.backgroundColor = UIColor.clear
-		if #available(tvOS 10.0, *) {
-			self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-			self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-		}
-		#endif
-		self.textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
-	}
-}
-
-class SystemsSettingsTableViewController: QuickTableViewController {
+final class SystemsSettingsTableViewController: QuickTableViewController {
 
     var systemsToken: NotificationToken?
 
     func generateViewModels() {
         let realm  = try! Realm()
         let systems = realm.objects(PVSystem.self).sorted(byKeyPath: "name")
-        let systemsModels = systems.map { SystemOverviewViewModel(withSystem: System($0)) }
+        let systemsModels = systems.map { SystemOverviewViewModel(withSystem: $0) }
 
 		tableContents = systemsModels.map { systemModel in
 			var rows = [Row & RowStyle]()
@@ -147,12 +78,14 @@ class SystemsSettingsTableViewController: QuickTableViewController {
 
 							var accessoryType : UITableViewCell.AccessoryType = .none
 
-							switch bios.status.state {
+                            let biosStatus = (bios as! BIOSStatusProvider).status
+
+							switch biosStatus.state {
 							case .match:
 								accessoryType = .checkmark
 							case .missing:
 								accessoryType = .none
-								backgroundColor = bios.status.required ? UIColor(hex: "#700") : UIColor(hex: "#77404C")
+								backgroundColor = biosStatus.required ? UIColor(hex: "#700") : UIColor(hex: "#77404C")
 							case .mismatch(let mismatches):
 								let subTitleText = mismatches.map { mismatch -> String in
 									switch mismatch {

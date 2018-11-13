@@ -1,83 +1,48 @@
 //
-//  PVBIOS.swift
-//  Provenance
+//  BIOS.swift
+//  PVLibrary
 //
-//  Created by Joseph Mattiello on 3/11/18.
-//  Copyright © 2018 James Addyman. All rights reserved.
+//  Created by Joseph Mattiello on 10/19/18.
+//  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
 import Foundation
-import RealmSwift
 
-public protocol BIOSProtocol {
-	var expectedMD5 : String {get}
-	var expectedFilename : String {get}
-	var expectedSize : Int {get}
+public typealias BIOSExpectationsInfoProvider = ExpectedMD5Provider & ExpectedFilenameProvider & ExpectedSizeProvider & ExpectedExistantInfoProvider
 
-	var optional : Bool {get}
+public protocol BIOSInfoProvider : BIOSExpectationsInfoProvider {
 	var descriptionText : String {get}
+	var regions : RegionOptions  {get}
+	var version : String { get }
+}
+
+public protocol BIOSStatusProvider : BIOSInfoProvider {
 	var status : BIOSStatus {get}
 }
 
-@objcMembers
-public final class PVBIOS: Object, PVFiled, BIOSProtocol {
-    dynamic public var system: PVSystem!
-    dynamic public var descriptionText: String = ""
-    dynamic public var optional: Bool = false
+public typealias BIOSFileProvider = BIOSStatusProvider & BIOSInfoProvider & LocalFileBacked
 
-    dynamic public var expectedMD5: String = ""
-    dynamic public var expectedSize: Int = 0
-    dynamic public var expectedFilename: String = ""
+public struct BIOS : BIOSFileProvider, Codable {
 
-    dynamic public var file: PVFile?
-
-    public convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
-        self.init()
-        self.system = system
-        self.descriptionText = descriptionText
-        self.optional = optional
-        self.expectedMD5 = expectedMD5.uppercased()
-        self.expectedSize = expectedSize
-        self.expectedFilename = expectedFilename
-    }
-
-    override public static func primaryKey() -> String? {
-        return "expectedFilename"
-    }
-}
-
-public struct BIOS : Codable, BIOSProtocol {
 	public let descriptionText: String
-	public let optional : Bool
+	public let regions: RegionOptions
+	public let version : String
 
 	public let expectedMD5 : String
 	public let expectedSize : Int
 	public let expectedFilename : String
 
+	public let optional : Bool
+
 	public let status : BIOSStatus
+
+	public let file : LocalFile?
 }
 
-public extension BIOS {
-	public init(with bios : PVBIOS) {
-		descriptionText = bios.descriptionText
-		optional = bios.optional
-		expectedMD5 = bios.expectedMD5
-		expectedSize = bios.expectedSize
-		expectedFilename = bios.expectedFilename
-		status = bios.status
-	}
-}
-
-public extension PVBIOS {
-	var expectedPath: URL {
-		return system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
-	}
-}
-
-public extension PVBIOS {
-	public var status : BIOSStatus {
-		return BIOSStatus(withBios: self)
-	}
+extension BIOS : Equatable {
+    public static func == (lhs: BIOS, rhs: BIOS) -> Bool {
+        return lhs.expectedMD5 == rhs.expectedMD5
+    }
 }
 
 public struct BIOSStatus : Codable {
@@ -181,6 +146,29 @@ public struct BIOSStatus : Codable {
 				try container.encode(2, forKey: .rawValue)
 			}
 		}
+
+		public init(expectations : BIOSExpectationsInfoProvider, file: FileInfoProvider) {
+			if file.online {
+				let md5Match = file.md5?.uppercased() == expectations.expectedMD5.uppercased()
+				let sizeMatch = file.size == UInt64(expectations.expectedSize)
+				let filenameMatch = file.fileName == expectations.expectedFilename
+
+				var misses = [Mismatch]()
+				if !md5Match {
+					misses.append(.md5(expected: expectations.expectedMD5.uppercased(), actual: file.md5?.uppercased() ?? "0"))
+				}
+				if !sizeMatch {
+					misses.append(.size(expected: UInt(expectations.expectedSize), actual: UInt(file.size)))
+				}
+				if !filenameMatch {
+					misses.append(.filename(expected: expectations.expectedFilename, actual: file.fileName))
+				}
+
+				self = misses.isEmpty ? .match : .mismatch(misses)
+			} else {
+				self = .missing
+			}
+		}
 	}
 
 	public let available : Bool
@@ -188,10 +176,9 @@ public struct BIOSStatus : Codable {
 	public let state : State
 }
 
-extension BIOSStatus {
-	init(withBios bios : PVBIOS) {
-
-		available = !(bios.file?.missing ?? true)
+public extension BIOSStatus {
+	public init<T:BIOSFileProvider>(withBios bios : T) {
+		available = !(bios.file?.online ?? false)
 		if available {
 			let md5Match = bios.file?.md5?.uppercased() == bios.expectedMD5.uppercased()
 			let sizeMatch = bios.file?.size == UInt64(bios.expectedSize)
@@ -215,8 +202,3 @@ extension BIOSStatus {
 		required = !bios.optional
 	}
 }
-
-public class BiosFile : PVFile {
-    
-}
-

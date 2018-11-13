@@ -28,19 +28,19 @@ public extension PVGame {
 
         // Determine if any of these have a value, and if so, seperate them by a space
         let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
-                                           developer,
-                                           publishDate != nil ? "(\(publishDate!)" : nil,
-                                           regionName != nil ? "(\(regionName!))" : nil]
+                                          developer,
+                                          publishDate != nil ? "(\(publishDate!)" : nil,
+                                          regionName != nil ? "(\(regionName!))" : nil]
 
-		#if swift(>=4.1)
-		let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
-			return maybeString
-			}.joined(separator: " ")
-		#else
-        let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
+        #if swift(>=4.1)
+        let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
             return maybeString
             }.joined(separator: " ")
-		#endif
+        #else
+        let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
+        return maybeString
+        }.joined(separator: " ")
+        #endif
         if !secondLine.isEmpty {
             description += "\n\(secondLine)"
         }
@@ -69,9 +69,9 @@ public extension PVGame {
 
         //            contentSet.authorNames             = [data.authorName]
         // Could generate small thumbnail here
-//        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
-//            contentSet.thumbnailData = s.pngData()
-//        }
+        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
+            contentSet.thumbnailData = s.pngData()
+        }
         return contentSet
     }
 
@@ -100,7 +100,7 @@ public extension PVGame {
             activity.isEligibleForHandoff = false
 
             #if os(iOS)
-                activity.contentAttributeSet  = spotlightContentSet
+            activity.contentAttributeSet  = spotlightContentSet
             #endif
             activity.requiredUserInfoKeys = ["md5"]
             //            activity.expirationDate       =
