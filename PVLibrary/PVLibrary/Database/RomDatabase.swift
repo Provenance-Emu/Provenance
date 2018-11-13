@@ -25,12 +25,19 @@ public final class RealmConfiguration {
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
     }
 
-    class public var appGroupPath: String? {
+    class public var appGroupPath: URL? {
         guard let appGroupContainer = RealmConfiguration.appGroupContainer else {
+            ILOG("appGroupContainer is Nil")
             return nil
         }
+        
+        ILOG("appGroupContainer => (\(appGroupContainer.absoluteString))")
 
-        let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/").path
+        #if os(tvOS)
+        let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/")
+        #else
+        let appGroupPath = appGroupContainer
+        #endif
         return appGroupPath
     }
 
@@ -40,19 +47,15 @@ public final class RealmConfiguration {
     }
 
     private static var realmConfig: Realm.Configuration = {
-        #if os(tvOS)
-            var path: String?
-            if RealmConfiguration.supportsAppGroups {
-                path = RealmConfiguration.appGroupPath
-            } else {
-                let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-                path = paths.first
-            }
-        #else
-            let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-            let path: String? = paths.first
-        #endif
-        let realmURL = URL(fileURLWithPath: path!).appendingPathComponent("default.realm")
+        var path: URL?
+        if RealmConfiguration.supportsAppGroups {
+            ILOG("AppGroups: Supported")
+            path = RealmConfiguration.appGroupPath
+        } else {
+            ILOG("AppGroups: Not Supported")
+            path = PVEmulatorConfiguration.documentsPath
+        }
+        let realmURL = path!.appendingPathComponent("default.realm")
 
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
             if oldSchemaVersion < 2 {
