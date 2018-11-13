@@ -534,7 +534,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		}
 
 		private func generateToken() -> NotificationToken {
-			let newToken = query.observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
+			let newToken = query.observe {[weak self] (changes: RealmCollectionChange<Results<PVGame>>) in
+                guard let `self` = self else {return}
+
 				switch changes {
 				case .initial:
 					if self.gameLibraryGameController.isInSearch {

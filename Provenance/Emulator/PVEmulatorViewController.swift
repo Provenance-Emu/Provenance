@@ -73,12 +73,12 @@ extension UIViewController {
 
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
 
-    var core: PVEmulatorCore
-    var game: PVGame
+    let core: PVEmulatorCore
+    let game: PVGame
 
-    var batterySavesPath = ""
-    var saveStatePath = ""
-    var BIOSPath = ""
+    let batterySavesPath : String
+    let saveStatePath : String
+    let BIOSPath : String
     var menuButton: MenuButton?
 
 	private(set) var glViewController: PVGLViewController?
@@ -110,6 +110,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.game = game
 
         controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+
+        batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
+        saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
+        BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
 
         super.init(nibName: nil, bundle: nil)
 
@@ -758,7 +762,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
-		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
+        let saveURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs")
+		let saveFile = PVFile(withURL: saveURL)
 
 		var imageFile: PVImageFile?
 		if let screenshot = screenshot {
@@ -966,8 +971,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         enableContorllerInput(false)
         updatePlayedDuration()
     }
+}
+
+// MARK: - PVAudioDelegate
+extension PVEmulatorViewController {
+    func audioSampleRateDidChange() {
+        gameAudio?.stop()
+        gameAudio?.start()
+    }
+}
 
 // MARK: - Controllers
+extension PVEmulatorViewController {
     //#if os(tvOS)
     // Ensure that override of menu gesture is caught and handled properly for tvOS
     @available(iOS 9.0, *)
@@ -996,26 +1011,26 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         // 8Bitdo controllers don't have a pause button, so don't hide the menu
         if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true
-                // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-#if os(iOS)
+            // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
+            #if os(iOS)
 
-    controller?.controllerPausedHandler = {[unowned self] controller in
-        self.controllerPauseButtonPressed(controller)
-    }
+            controller?.controllerPausedHandler = {[unowned self] controller in
+                self.controllerPauseButtonPressed(controller)
+            }
             if #available(iOS 11.0, *) {
                 setNeedsUpdateOfHomeIndicatorAutoHidden()
             }
-#endif
+            #endif
         }
     }
 
     @objc func controllerDidDisconnect(_ note: Notification?) {
         menuButton?.isHidden = false
-#if os(iOS)
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
-#endif
+        #endif
     }
 
     @objc func handleControllerManagerControllerReassigned(_ notification: Notification?) {
@@ -1025,7 +1040,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.controller4 = PVControllerManager.shared.player4
     }
 
-// MARK: - UIScreenNotifications
+    // MARK: - UIScreenNotifications
     @objc func screenDidConnect(_ note: Notification?) {
         ILOG("Screen did connect: \(note?.object ?? "")")
         if secondaryScreen == nil {
@@ -1066,11 +1081,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
     }
 
-// MARK: - PVAudioDelegate
-    func audioSampleRateDidChange() {
-        gameAudio?.stop()
-        gameAudio?.start()
-    }
 }
 
 extension PVEmulatorViewController {
@@ -1126,6 +1136,13 @@ extension PVEmulatorViewController {
     }
 }
 
+extension PVEmulatorViewController {
+    func showCoreOptions() {
+        let nav = UINavigationController(rootViewController: CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type))
+        present(nav, animated: true, completion: nil)
+    }
+}
+
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
 @available(iOS 9.0, *)
 extension NSNumber {
@@ -1171,77 +1188,4 @@ extension NSNumber {
     private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
     }
-}
-
-extension PVEmulatorViewController {
-	func showCoreOptions() {
-		let nav = UINavigationController(rootViewController: CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type))
-		present(nav, animated: true, completion: nil)
-	}
-}
-
-class CoreOptionsViewController : UITableViewController {
-	let core : CoreOptional.Type
-	init(withCore core : CoreOptional.Type) {
-		self.core = core
-		super.init(style: .grouped)
-	}
-
-	struct TableGroup {
-		let title : String
-		let options : [CoreOption]
-	}
-
-	lazy var groups : [TableGroup] = {
-		var rootOptions = [CoreOption]()
-
-		var groups = core.options.compactMap({ (option) -> TableGroup? in
-			switch option {
-			case .group(let display, let subOptions):
-				return TableGroup(title: display.title, options: subOptions)
-			default:
-				rootOptions.append(option)
-				return nil
-			}
-		})
-
-		if !rootOptions.isEmpty {
-			groups.insert(TableGroup(title: "", options: rootOptions), at: 0)
-		}
-
-		return groups
-	}()
-
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-	}
-
-	override func numberOfSections(in tableView: UITableView) -> Int {
-		return groups.count
-	}
-
-	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return groups[section].options.count
-	}
-
-	override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-		return groups.map { return $0.title }
-	}
-
-	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell : UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-
-		let group = groups[indexPath.section]
-		let option = group.options[indexPath.row]
-
-		cell.textLabel?.text = option.key
-
-		return cell
-	}
-
 }

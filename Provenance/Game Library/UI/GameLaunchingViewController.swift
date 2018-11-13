@@ -551,12 +551,6 @@ extension GameLaunchingViewController where Self : UIViewController {
 
 		let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
 
-		// Configure emulator VC
-		// NOTE: These technically could be derived in PVEmulatorViewController directly
-		emulatorViewController.batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
-		emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
-		emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
-
 		// Check if Save State exists
 		if saveState == nil {
 			checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
