@@ -14,6 +14,7 @@ import PVSupport
 public enum RelativeRoot: Int {
     case documents
     case caches
+    case iCloud
 
     #if os(tvOS)
     public static let platformDefault = RelativeRoot.caches
@@ -21,8 +22,9 @@ public enum RelativeRoot: Int {
     public static let platformDefault = RelativeRoot.documents
     #endif
 
-    static let documentsDirectory = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!)
-    static let cachesDirectory = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!)
+    static let documentsDirectory = PVEmulatorConfiguration.documentsPath
+    static let cachesDirectory = PVEmulatorConfiguration.cachesPath
+    static let iCloudDocumentsDirectory = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
 
     var directoryURL: URL {
         switch self {
@@ -30,6 +32,8 @@ public enum RelativeRoot: Int {
             return RelativeRoot.documentsDirectory
         case .caches:
             return RelativeRoot.cachesDirectory
+        case .iCloud:
+            return RelativeRoot.iCloudDocumentsDirectory ?? RelativeRoot.documentsDirectory
         }
     }
 
@@ -40,6 +44,8 @@ public enum RelativeRoot: Int {
             searchString = "Documents/"
         case .caches:
             searchString = "Caches/"
+        case .iCloud:
+            searchString = (FileManager.default.url(forUbiquityContainerIdentifier: nil)?.lastPathComponent ?? "") + "Documents/"
         }
 
         let path = url.path

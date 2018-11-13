@@ -225,17 +225,30 @@ public final class PVEmulatorConfiguration: NSObject {
     // MARK: - Filesystem Helpers
     static public let documentsPath: URL = {
         #if os(tvOS)
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        return cachesPath
         #else
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         #endif
 
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
+
+    static public let cachesPath: URL = {
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+    }()
     
-    static public var containerUrl: URL? {
-        return FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
-    }
+    static public var containerUrl: URL? = {
+        let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
+        if let containerUrl = containerUrl {
+            do {
+                try FileManager.default.createDirectory(at: containerUrl, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                ELOG("Failed creating dir on iCloud: \(error)")
+            }
+        }
+        return containerUrl
+    }()
     
     static public var documentsiCloudOrLocalPath : URL {
         return containerUrl ?? documentsPath

@@ -176,7 +176,7 @@ extension UIImageView {
 	// What is the bounds of the image when it's scaled to fit
 	var contentClippingRect: CGRect {
 		guard let image = image else {
-			VLOG("No image")
+//            VLOG("No image")
 			return bounds
 		}
 		guard contentMode == .scaleAspectFit else {

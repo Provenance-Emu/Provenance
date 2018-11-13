@@ -751,11 +751,10 @@ static bool environment_callback(unsigned cmd, void *data)
         NSError *error = nil;
         NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
         free(serial_data);
-        [saveStateData writeToFile:path
-                           options:NSDataWritingAtomic
-                             error:&error];
-        if (error)
-        {
+        BOOL success = [saveStateData writeToFile:path
+                                          options:NSDataWritingAtomic
+                                            error:&error];
+        if (!success) {
             ELOG(@"Error saving state: %@", [error localizedDescription]);
             return NO;
         }

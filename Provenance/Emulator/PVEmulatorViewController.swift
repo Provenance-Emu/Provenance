@@ -76,9 +76,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     let core: PVEmulatorCore
     let game: PVGame
 
-    let batterySavesPath : String
-    let saveStatePath : String
-    let BIOSPath : String
+    let batterySavesPath : URL
+    let saveStatePath : URL
+    let BIOSPath : URL
     var menuButton: MenuButton?
 
 	private(set) var glViewController: PVGLViewController?
@@ -111,9 +111,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
 
-        batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
-        saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
-        BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
+        batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
+        saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game)
+        BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -189,9 +189,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 	private func initCore() {
 		core.audioDelegate = self
-		core.saveStatesPath = self.saveStatePath
-		core.batterySavesPath = batterySavesPath
-		core.biosPath = BIOSPath
+		core.saveStatesPath = self.saveStatePath.path
+		core.batterySavesPath = batterySavesPath.path
+		core.biosPath = BIOSPath.path
 		core.controller1 = PVControllerManager.shared.player1
 		core.controller2 = PVControllerManager.shared.player2
 		core.controller3 = PVControllerManager.shared.player3
@@ -645,15 +645,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 	func convertOldSaveStatesToNewIfNeeded() {
 		let fileManager = FileManager.default
-		let infoURL =  URL(fileURLWithPath: saveStatePath).appendingPathComponent("info.plist")
-		let autoSaveURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("auto.svs")
-		let saveStateURLs = [
-			URL(fileURLWithPath: saveStatePath).appendingPathComponent("0.svs"),
-			URL(fileURLWithPath: saveStatePath).appendingPathComponent("1.svs"),
-			URL(fileURLWithPath: saveStatePath).appendingPathComponent("2.svs"),
-			URL(fileURLWithPath: saveStatePath).appendingPathComponent("3.svs"),
-			URL(fileURLWithPath: saveStatePath).appendingPathComponent("4.svs")
-		]
+        let infoURL = saveStatePath.appendingPathComponent("info.plist", isDirectory: false)
+		let autoSaveURL = saveStatePath.appendingPathComponent("auto.svs", isDirectory: false)
+        let saveStateURLs = (0...4).map { saveStatePath.appendingPathComponent("\($0).svs", isDirectory: false) }
 
 		if fileManager.fileExists(atPath: infoURL.path) {
 			do {
@@ -675,7 +669,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 					return
 				}
 
-				let newURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate)")
+				let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
 				try fileManager.moveItem(at: autoSaveURL, to: newURL)
 				let saveFile = PVFile(withURL: newURL)
 				let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: true)
@@ -695,7 +689,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 						return
 					}
 
-					let newURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate)")
+					let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
 					try fileManager.moveItem(at: url, to: newURL)
 					let saveFile = PVFile(withURL: newURL)
 					let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: false)
@@ -740,13 +734,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
-        let saveURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs")
-		let saveFile = PVFile(withURL: saveURL)
+        let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
+
+        let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
+        let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
 
 		var imageFile: PVImageFile?
 		if let screenshot = screenshot {
 			if let pngData = screenshot.pngData() {
-				let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
+				let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).png")
 				do {
 					try pngData.write(to: imageURL)
 //					try RomDatabase.sharedInstance.writeTransaction {
@@ -757,53 +753,60 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
 				}
 
-				imageFile = PVImageFile(withURL: imageURL)
+				imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
 			}
 		}
 
 		do {
-			try self.core.saveStateToFile(atPath: saveFile.url.path)
-
-			DLOG("Succeeded saving state, auto: \(auto)")
-			if let realm = try? Realm() {
-				guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-					presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
-					return
-				}
-
-				do {
-					try realm.write {
-						let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-						realm.add(saveState)
-
-                        LibrarySerializer.serialize(saveState, completion: { result in
-                            switch result {
-                            case .success(let  url):
-                                ILOG("Serialzed save state metadata to (\(url.path))")
-                            case .error(let error):
-                                ELOG("Failed to serialize save metadata. \(error)")
-                            }
-                        })
-					}
-				} catch let error {
-					presentError("Unable to write save state to realm: \(error.localizedDescription)")
-				}
-
-				// Delete the oldest auto-saves over 5 count
-				try? realm.write {
-					let autoSaves = game.autoSaves
-					if autoSaves.count > 5 {
-						autoSaves.suffix(from: 5).forEach {
-							DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
-							realm.delete($0)
-						}
-					}
-				}
-			}
+			try self.core.saveStateToFile(atPath: saveURL.path)
 		} catch {
 			throw error
 //			throw SaveStateError.failedToSave(isAutosave: auto)
 		}
+
+        DLOG("Succeeded saving state, auto: \(auto)")
+        if let realm = try? Realm() {
+            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
+                presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
+                return
+            }
+
+            do {
+                var saveState : PVSaveState!
+
+                try realm.write {
+                    saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
+                    realm.add(saveState)
+                }
+
+                LibrarySerializer.serialize(saveState, completion: { result in
+                    switch result {
+                    case .success(let  url):
+                        ILOG("Serialzed save state metadata to (\(url.path))")
+                    case .error(let error):
+                        ELOG("Failed to serialize save metadata. \(error)")
+                    }
+                })
+            } catch let error {
+                presentError("Unable to write save state to realm: \(error.localizedDescription)")
+                throw error
+            }
+
+            do {
+                // Delete the oldest auto-saves over 5 count
+                try realm.write {
+                    let autoSaves = game.autoSaves
+                    if autoSaves.count > 5 {
+                        autoSaves.suffix(from: 5).forEach {
+                            DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
+                            realm.delete($0)
+                        }
+                    }
+                }
+            } catch let error {
+                presentError("Unable to delete old auto-save from database: \(error.localizedDescription)")
+            }
+        }
 	}
 
 	func loadSaveState(_ state: PVSaveState) {
@@ -895,7 +898,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 				do {
 					try pngData.write(to: imageURL)
 					try RomDatabase.sharedInstance.writeTransaction {
-						let newFile = PVImageFile(withURL: imageURL)
+						let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
 						game.screenShots.append(newFile)
 					}
 				} catch let error {
