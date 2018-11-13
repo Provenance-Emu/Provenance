@@ -700,7 +700,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     }
                     // Not needed since we have watchers per section
                     // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
+                    self.semaphore.signal()
                 }, completion: { (success) in
+                    self.semaphore.wait()
                     systems.filter({self.systemSectionsTokens[$0.identifier] == nil}).forEach { self.addSectionToken(forSystem: $0) }
                     self.semaphore.signal()
                 })

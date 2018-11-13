@@ -36,6 +36,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
 		do {
 			try RomDatabase.initDefaultDatabase()
+            self.importNewSaves()
 		} catch {
 			let appName : String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
 			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
@@ -248,6 +249,38 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension PVAppDelegate {
+
+    func importNewSaves() {
+        let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
+        let fm = FileManager.default
+        guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
+            ELOG("Failed to read saves path: \(savesDirectory.path)")
+            return
+        }
+
+        let saveFiles = subDirs.flatMap {
+            return try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+        }.joined()
+        let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
+        let jsonDecorder = JSONDecoder.init()
+        let realm = try! Realm()
+        jsonFiles.forEach { json in
+
+            if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
+                DLOG("Read JSON data at (\(json.absoluteString)")
+                // TODO: Add UUID primary key to Saves
+                if let existing = realm.objects(PVSaveState.self).first(where: { (save) -> Bool in
+                    return save.file.fileName == save.file.fileName
+                }) {
+                    ILOG("Save state already exists for ID: \(save.uid)")
+                } else {
+                    let newSave = save.asRealm()
+                    realm.add(newSave)
+                    ILOG("Added new save \(newSave.debugDescription)")
+                }
+            }
+        }
+    }
 
 	func _initLogging() {
 		// Initialize logging
