@@ -75,7 +75,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>831</string>
+	<string>832</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -143,6 +143,7 @@
 		<string>bluetooth-central</string>
 		<string>external-accessory</string>
 		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
