@@ -18,7 +18,7 @@ lane :travis_ios do
 	ci_prebuild
   build_alpha(
     platform: 'iOS',
-    type: 'adhoc'
+    type: 'development'
 	)
 	ci_upload
 end
