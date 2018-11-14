@@ -237,8 +237,9 @@ public final class PVEmulatorConfiguration: NSObject {
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
-    
-    static public var containerUrl: URL? = {
+
+    /// This should be called on a background thread
+    static public var containerUrl: URL? {
         let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
         if let containerUrl = containerUrl {
             do {
@@ -248,8 +249,9 @@ public final class PVEmulatorConfiguration: NSObject {
             }
         }
         return containerUrl
-    }()
-    
+    }
+
+    /// This should be called on a background thread
     static public var documentsiCloudOrLocalPath : URL {
         return containerUrl ?? documentsPath
     }
@@ -273,25 +275,29 @@ public final class PVEmulatorConfiguration: NSObject {
             }()
         }
         
-        static public let romsImportPath: URL = {
+        static public var romsImportPath: URL {
             return documentsPath.appendingPathComponent("Imports", isDirectory: true)
-        }()
-        
-        static public let batterySavesPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var batterySavesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
-        }()
-        
-        static public let saveSavesPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var saveSavesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
-        }()
-        
-        static public let screenShotsPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var screenShotsPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
-        }()
-        
-        static public let biosesPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var biosesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
-        }()
+        }
     }
 
     static public let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]

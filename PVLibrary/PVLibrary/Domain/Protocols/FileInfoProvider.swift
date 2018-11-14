@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import PVSupport
 
 public enum FileSystemType {
 	case local
 	case remote
+    case iCloud
 }
 
 public struct FileInfo : Codable, FileInfoProvider {
