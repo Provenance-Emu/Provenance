@@ -162,7 +162,7 @@ pull:
 ## -- Source Code Tasks --
 
 ## Pull upstream and update 3rd party frameworks
-update: pull submodules install_ruby_gems update_carthage_dependencies
+update: pull submodules install_ruby_gems install_carthage_dependencies
 
 submodules:
 	$(info Updating submodules ...)
@@ -201,7 +201,7 @@ package:
 	carthage archive PMS-UI PMSInterface
 
 ## Build for iOS
-ios: | update install_carthage_dependencies developer
+ios: | update developer
 
 ## Build for tvOS
 tvos: | update install_carthage_dependencies_tvos developer_tvos
