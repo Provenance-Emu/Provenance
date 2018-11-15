@@ -28,3 +28,4 @@ report.xml
 /archive
 .vscode
 *.zip
+/fastlane/test_output
