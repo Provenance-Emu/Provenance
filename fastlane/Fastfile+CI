@@ -18,14 +18,14 @@ lane :travis_ios do
 	ci_prebuild
   build_alpha(
     platform: 'iOS',
-    type: 'development'
+    type: 'adhoc'
 	)
 	ci_upload
 end
 
 desc 'Travis building tvOS'
 lane :travis_tvos do
-	ci_prebuild
+	ci_prebuild(platform: 'tvOS')
   build_alpha(
     platform: 'tvOS',
     type: 'adhoc'
@@ -34,6 +34,8 @@ lane :travis_tvos do
 end
 
 private_lane :ci_prebuild do
+  platform = options.fetch(:platform, 'iOS')
+
 	load_keys
 
 	if is_ci?
@@ -43,7 +45,11 @@ private_lane :ci_prebuild do
 
 	git_submodule_update
   rome_download
-  carthage_bootstrap_ios
+  if platform == 'iOS'
+    carthage_bootstrap_ios
+  else
+    carthage_bootstrap_tvos
+  end
 end
 
 private_lane :ci_upload do
