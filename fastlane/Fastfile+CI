@@ -33,7 +33,7 @@ lane :travis_tvos do
 	ci_upload
 end
 
-private_lane :ci_prebuild do
+private_lane :ci_prebuild do |options|
   platform = options.fetch(:platform, 'iOS')
 
 	load_keys
