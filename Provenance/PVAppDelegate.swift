@@ -12,6 +12,9 @@ import PVSupport
 import CocoaLumberjackSwift
 import HockeySDK
 import RealmSwift
+import Crashlytics
+import Answers
+import Fabric
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,13 +30,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
-        setDefaultsFromSettingsBundle();
+        setDefaultsFromSettingsBundle()
 
         iCloudSync.initICloudDocuments()
 
 		#if targetEnvironment(simulator)
 		#else
 		_initHockeyApp()
+        _initCrashlytics()
 		#endif
 
 		do {
@@ -278,14 +282,14 @@ extension PVAppDelegate {
 		#else
 		BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
 		#endif
-        
+
 		#if DEBUG
 		BITHockeyManager.shared().isMetricsManagerDisabled = true
 		#endif
 
 		let masterBranch = kGITBranch.lowercased() == "master"
         let developBranch = kGITBranch.lowercased() == "develop"
-		let travisBuild = ["jmattiello","travis"].contains(builtByUser)
+		let travisBuild = ["jmattiello", "travis"].contains(builtByUser)
         let masterOrDevelopBranch = masterBranch || developBranch
 //        let feedbackEnabled = masterOrDevelopBranch && travisBuild
 
@@ -293,9 +297,9 @@ extension PVAppDelegate {
         BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
         BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
         #endif
-        
+
 		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch && travisBuild
-        
+
 //        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
 //            BITHockeyManager.shared().isUpdateManagerDisabled = true
 //        }
@@ -305,19 +309,23 @@ extension PVAppDelegate {
 		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
 	}
 
+    func _initCrashlytics() {
+        Fabric.with([Answers.self, Crashlytics.self])
+    }
+
     func setDefaultsFromSettingsBundle() {
         //Read PreferenceSpecifiers from Root.plist in Settings.Bundle
         if let settingsURL = Bundle.main.url(forResource: "Root", withExtension: "plist", subdirectory: "Settings.bundle"),
             let settingsPlist = NSDictionary(contentsOf: settingsURL),
             let preferences = settingsPlist["PreferenceSpecifiers"] as? [NSDictionary] {
-            
+
             for prefSpecification in preferences {
-                
+
                 if let key = prefSpecification["Key"] as? String, let value = prefSpecification["DefaultValue"] {
-                    
+
                     //If key doesn't exists in userDefaults then register it, else keep original value
                     if UserDefaults.standard.value(forKey: key) == nil {
-                        
+
                         UserDefaults.standard.set(value, forKey: key)
                         ILOG("registerDefaultsFromSettingsBundle: Set following to UserDefaults - (key: \(key), value: \(value), type: \(type(of: value)))")
                     }

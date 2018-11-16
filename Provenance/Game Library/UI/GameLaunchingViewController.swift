@@ -11,6 +11,7 @@ import RealmSwift
 import PVLibrary
 import PVSupport
 import ZipArchive
+import Answers
 
 public func PVMaxRecentsCount() -> Int {
 	#if os(tvOS)
@@ -516,7 +517,13 @@ extension GameLaunchingViewController where Self : UIViewController {
 				presentCoreSelection(forGame: game, sender: sender)
 			} else {
 				presentEMU(withCore: selectedCore ?? cores.first!, forGame: game, fromSaveState: saveState)
-			}
+//                let contentId : String = "\(system.shortName):\(game.title)"
+//                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
+//                Answers.logContentView(withName: "Play ROM",
+//                                       contentType: "Gameplay",
+//                                       contentId: contentId,
+//                                       customAttributes: customAttributes)
+            }
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
