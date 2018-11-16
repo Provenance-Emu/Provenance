@@ -12,6 +12,7 @@ import QuartzCore
 import UIKit
 import RealmSwift
 import PVLibrary
+import PVSupport
 
 #if os(iOS)
 import XLActionController
@@ -247,7 +248,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 			// Block-based NSTimer method is only available on iOS 10 and later
 			fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {[weak self] (_ timer: Timer) -> Void in
                 guard let `self` = self else {return}
-                
+
 				if abs(self.core.renderFPS - self.core.emulationFPS) < 1 {
                     self.fpsLabel.text = String(format: "%2.02f", self.core.renderFPS)
 				} else {
@@ -592,7 +593,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func updateFPSLabel() {
 #if DEBUG
-        print("FPS: \(glViewController?.framesPerSecond ?? 0)")
+        print("FPS: \(glViewController.framesPerSecond ?? 0)")
 #endif
         fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }

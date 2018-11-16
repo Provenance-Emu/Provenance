@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVSupport
 
 class CoreOptionsViewController : UITableViewController {
     let core : CoreOptional.Type
