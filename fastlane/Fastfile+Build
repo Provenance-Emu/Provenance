@@ -141,7 +141,7 @@ end
   # Method used to export the archive.
   # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
   export_method = options.fetch(:export_method, 'ad-hoc')
-  build_configuration = options.fetch(:build_configuration, 'Release')
+  build_configuration = options.fetch(:build_configuration, 'Archive')
   scheme = options.fetch(:scheme, 'Provenance-Release')
   output_directory = "build/#{build_configuration}/#{build_time}"
 

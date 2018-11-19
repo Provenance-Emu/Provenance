@@ -2281,23 +2281,6 @@ extension PVGameLibraryViewController: UISearchResultsUpdating {
     }
 }
 
-final class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
-	override init() {
-		super.init()
-		#if os(iOS)
-		if #available(iOS 9.0, *) {
-			self.sectionHeadersPinToVisibleBounds = true
-		}
-		#elseif os(tvOS)
-		self.sectionHeadersPinToVisibleBounds = true
-		#endif
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
 extension PVGameLibraryViewController: UITableViewDataSource {
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		switch section {

@@ -11,6 +11,7 @@ import RealmSwift
 import PVLibrary
 import PVSupport
 import ZipArchive
+import Answers
 
 public func PVMaxRecentsCount() -> Int {
 	#if os(tvOS)
@@ -516,7 +517,13 @@ extension GameLaunchingViewController where Self : UIViewController {
 				presentCoreSelection(forGame: game, sender: sender)
 			} else {
 				presentEMU(withCore: selectedCore ?? cores.first!, forGame: game, fromSaveState: saveState)
-			}
+//                let contentId : String = "\(system.shortName):\(game.title)"
+//                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
+//                Answers.logContentView(withName: "Play ROM",
+//                                       contentType: "Gameplay",
+//                                       contentId: contentId,
+//                                       customAttributes: customAttributes)
+            }
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
@@ -565,19 +572,19 @@ extension GameLaunchingViewController where Self : UIViewController {
 	private func presentEMUVC(_ emulatorViewController : PVEmulatorViewController, withGame game: PVGame, loadingSaveState saveState: PVSaveState? = nil) {
 		// Present the emulator VC
 		emulatorViewController.modalTransitionStyle = .crossDissolve
-		emulatorViewController.glViewController?.view.isHidden = saveState != nil
+		emulatorViewController.glViewController.view.isHidden = saveState != nil
 
 		self.present(emulatorViewController, animated: true) {() -> Void in
 			// Open the save state after a bootup delay if the user selected one
 			// Use a timer loop on ios 10+ to check if the emulator has started running
 			if let saveState = saveState {
-				emulatorViewController.glViewController?.view.isHidden = true
+				emulatorViewController.glViewController.view.isHidden = true
 				if #available(iOS 10.0, tvOS 10.0, *) {
 					_ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { (timer) in
 						if !emulatorViewController.core.isEmulationPaused {
 							timer.invalidate()
 							self.openSaveState(saveState)
-							emulatorViewController.glViewController?.view.isHidden = false
+							emulatorViewController.glViewController.view.isHidden = false
 						}
 					})
 				} else {
@@ -586,7 +593,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                         guard let `self` = self else { return }
 
 						self.openSaveState(saveState)
-						emulatorViewController.glViewController?.view.isHidden = false
+						emulatorViewController.glViewController.view.isHidden = false
 					})
 				}
 			}

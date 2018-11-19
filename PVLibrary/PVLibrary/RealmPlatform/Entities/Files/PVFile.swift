@@ -24,7 +24,7 @@ public enum RelativeRoot: Int {
 
     static let documentsDirectory = PVEmulatorConfiguration.documentsPath
     static let cachesDirectory = PVEmulatorConfiguration.cachesPath
-    static let iCloudDocumentsDirectory = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
+    static let iCloudDocumentsDirectory = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.documentsContainerIdentifier)?.appendingPathComponent("Documents")
 
     var directoryURL: URL {
         switch self {
@@ -45,7 +45,7 @@ public enum RelativeRoot: Int {
         case .caches:
             searchString = "Caches/"
         case .iCloud:
-            searchString = (FileManager.default.url(forUbiquityContainerIdentifier: nil)?.lastPathComponent ?? "") + "Documents/"
+            searchString = (FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.documentsContainerIdentifier)?.lastPathComponent ?? "") + "Documents/"
         }
 
         let path = url.path

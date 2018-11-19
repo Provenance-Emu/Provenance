@@ -200,10 +200,10 @@ package:
 	carthage build --no-skip-current
 	carthage archive PMS-UI PMSInterface
 
-## Build for iOS
+## Update & build for iOS
 ios: | update developer
 
-## Build for tvOS
+## Update & for tvOS
 tvos: | update install_carthage_dependencies_tvos developer_tvos
 
 ## Open the workspace

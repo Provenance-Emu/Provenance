@@ -12,6 +12,7 @@ import QuartzCore
 import UIKit
 import RealmSwift
 import PVLibrary
+import PVSupport
 
 #if os(iOS)
 import XLActionController
@@ -76,16 +77,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     let core: PVEmulatorCore
     let game: PVGame
 
-    let batterySavesPath : URL
-    let saveStatePath : URL
-    let BIOSPath : URL
+    var batterySavesPath : URL { return PVEmulatorConfiguration.batterySavesPath(forGame: game) }
+    var saveStatePath : URL { return PVEmulatorConfiguration.saveStatePath(forGame: game) }
+    var BIOSPath : URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
-	private(set) var glViewController: PVGLViewController?
-    var gameAudio: OEGameAudio!
-    let controllerViewController: (UIViewController & StartSelectDelegate)?
+    lazy private(set) var glViewController: PVGLViewController = PVGLViewController(emulatorCore: core)
+    lazy private(set) var controllerViewController: (UIViewController & StartSelectDelegate)? = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+
+    lazy private(set) var gameAudio: OEGameAudio = OEGameAudio(core: core)
+
     var fpsTimer: Timer?
-    var fpsLabel: UILabel?
+    let fpsLabel: UILabel = UILabel()
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
@@ -93,12 +96,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var isShowingMenu: Bool = false {
         willSet {
             if newValue == true {
-                glViewController?.isPaused = true
+                glViewController.isPaused = true
             }
         }
         didSet {
             if isShowingMenu == false {
-                glViewController?.isPaused = false
+                glViewController.isPaused = false
             }
         }
     }
@@ -108,12 +111,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
-
-        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
-
-        batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
-        saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game)
-        BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -155,15 +152,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         core.stopEmulation()
         //Leave emulation loop first
-        gameAudio?.stop()
+        gameAudio.stop()
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
         controllerViewController?.willMove(toParent: nil)
         controllerViewController?.view?.removeFromSuperview()
         controllerViewController?.removeFromParent()
-        glViewController?.willMove(toParent: nil)
-        glViewController?.view?.removeFromSuperview()
-        glViewController?.removeFromParent()
+        glViewController.willMove(toParent: nil)
+        glViewController.view?.removeFromSuperview()
+        glViewController.removeFromParent()
 #if os(iOS)
     GCController.controllers().forEach { $0.controllerPausedHandler = nil }
 #endif
@@ -232,41 +229,33 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 	}
 
 	private func initFPSLabel() {
-		fpsLabel = UILabel()
-		fpsLabel?.textColor = UIColor.yellow
-		fpsLabel?.text = "\(glViewController?.framesPerSecond ?? 0)"
-		fpsLabel?.translatesAutoresizingMaskIntoConstraints = false
-		fpsLabel?.textAlignment = .right
+        fpsLabel.textColor = UIColor.yellow
+        fpsLabel.text = "\(glViewController.framesPerSecond)"
+        fpsLabel.translatesAutoresizingMaskIntoConstraints = false
+        fpsLabel.textAlignment = .right
 		#if os(tvOS)
-		fpsLabel?.font = UIFont.systemFont(ofSize: 40, weight: .bold)
+		fpsLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
 		#else
 		if #available(iOS 8.2, *) {
-			fpsLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+            fpsLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
 		}
 		#endif
-		if let aLabel = fpsLabel {
-			glViewController?.view.addSubview(aLabel)
-		}
-		if let aLabel = fpsLabel {
-			view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .top, relatedBy: .equal, toItem: glViewController?.view, attribute: .top, multiplier: 1.0, constant: 30))
-		}
-		if let aLabel = fpsLabel {
-			view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .right, relatedBy: .equal, toItem: glViewController?.view, attribute: .right, multiplier: 1.0, constant: -40))
-		}
+        glViewController.view.addSubview(fpsLabel)
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
 
 		if #available(iOS 10.0, tvOS 10.0, *) {
 			// Block-based NSTimer method is only available on iOS 10 and later
 			fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {[weak self] (_ timer: Timer) -> Void in
                 guard let `self` = self else {return}
-                
-				if self.core.renderFPS == self.core.emulationFPS {
-					self.fpsLabel?.text = String(format: "%2.02f", self.core.renderFPS)
+
+				if abs(self.core.renderFPS - self.core.emulationFPS) < 1 {
+                    self.fpsLabel.text = String(format: "%2.02f", self.core.renderFPS)
 				} else {
-					self.fpsLabel?.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
+                    self.fpsLabel.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
 				}
 			})
 		} else {
-
 			// Use traditional scheduledTimerWithTimeInterval method on older version of iOS
 			fpsTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateFPSLabel), userInfo: nil, repeats: true)
 			fpsTimer?.fire()
@@ -281,8 +270,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 		initNotifcationObservers()
 		initCore()
-
-        glViewController = PVGLViewController(emulatorCore: core)
 
             // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
             // to provide the correct data for creating views.
@@ -331,19 +318,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 secondaryWindow?.screen = aScreen
             }
             secondaryWindow?.rootViewController = glViewController
-            glViewController?.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = glViewController?.view {
+            glViewController.view?.frame = secondaryWindow?.bounds ?? .zero
+            if let aView = glViewController.view {
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
         } else {
-            if let aController = glViewController {
-                addChild(aController)
-            }
-            if let aView = glViewController?.view {
+            addChild(glViewController)
+            if let aView = glViewController.view {
                 view.addSubview(aView)
             }
-            glViewController?.didMove(toParent: self)
+            glViewController.didMove(toParent: self)
         }
 		#if os(iOS)
 		initMenuButton()
@@ -363,10 +348,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         core.startEmulation()
 
-        gameAudio = OEGameAudio(core: core)
-        gameAudio?.volume = PVSettingsModel.sharedInstance().volume
-        gameAudio?.outputDeviceID = 0
-        gameAudio?.start()
+        gameAudio.volume = PVSettingsModel.sharedInstance().volume
+        gameAudio.outputDeviceID = 0
+        gameAudio.start()
 
         // stupid bug in tvOS 9.2
         // the controller paused handler (if implemented) seems to cause a 'back' navigation action
@@ -556,7 +540,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 				ELOG("Auto-save failed \(error.localizedDescription)")
 			}
 		}
-        gameAudio?.pause()
+        gameAudio.pause()
         showMenu(self)
     }
 
@@ -565,7 +549,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             core.setPauseEmulation(false)
         }
         core.setPauseEmulation(true)
-        gameAudio?.start()
+        gameAudio.start()
     }
 
     func enableContorllerInput(_ enabled: Bool) {
@@ -609,9 +593,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func updateFPSLabel() {
 #if DEBUG
-        print("FPS: \(glViewController?.framesPerSecond ?? 0)")
+        print("FPS: \(glViewController.framesPerSecond ?? 0)")
 #endif
-        fpsLabel?.text = String(format: "%2.02f", core.emulationFPS)
+        fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
 
     @objc func showSaveStateMenu() {
@@ -728,6 +712,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         try createNewSaveState(auto: true, screenshot: image)
     }
 
+//    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
 	func createNewSaveState(auto: Bool, screenshot: UIImage?) throws {
 		guard core.supportsSaveStates else {
 			WLOG("Core \(core.description) doesn't support save states.")
@@ -870,16 +855,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 	}
 
 	func captureScreenshot() -> UIImage? {
-		fpsLabel?.alpha = 0.0
-		let width: CGFloat? = self.glViewController?.view.frame.size.width
-		let height: CGFloat? = self.glViewController?.view.frame.size.height
+        fpsLabel.alpha = 0.0
+        let width: CGFloat? = self.glViewController.view.frame.size.width
+        let height: CGFloat? = self.glViewController.view.frame.size.height
 		let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
 		UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
 		let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-		self.glViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        self.glViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
 		let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
 		UIGraphicsEndImageContext()
-		fpsLabel?.alpha = 1.0
+        fpsLabel.alpha = 1.0
 		return image
 	}
 #if os(iOS)
@@ -946,7 +931,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         //Leave emulation loop first
         fpsTimer?.invalidate()
         fpsTimer = nil
-        gameAudio?.stop()
+        gameAudio.stop()
 
 		dismiss(animated: true, completion: completion)
         enableContorllerInput(false)
@@ -957,8 +942,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 // MARK: - PVAudioDelegate
 extension PVEmulatorViewController {
     func audioSampleRateDidChange() {
-        gameAudio?.stop()
-        gameAudio?.start()
+        gameAudio.stop()
+        gameAudio.start()
     }
 }
 
@@ -1032,15 +1017,15 @@ extension PVEmulatorViewController {
             if let aScreen = secondaryScreen {
                 secondaryWindow?.screen = aScreen
             }
-            glViewController?.view?.removeFromSuperview()
-            glViewController?.removeFromParent()
+            glViewController.view?.removeFromSuperview()
+            glViewController.removeFromParent()
             secondaryWindow?.rootViewController = glViewController
-            glViewController?.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = glViewController?.view {
+            glViewController.view?.frame = secondaryWindow?.bounds ?? .zero
+            if let aView = glViewController.view {
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
-            glViewController?.view?.setNeedsLayout()
+            glViewController.view?.setNeedsLayout()
         }
     }
 
@@ -1048,20 +1033,19 @@ extension PVEmulatorViewController {
         ILOG("Screen did disconnect: \(note?.object ?? "")")
         let screen = note?.object as? UIScreen
         if secondaryScreen == screen {
-            glViewController?.view?.removeFromSuperview()
-            glViewController?.removeFromParent()
-            if let aController = glViewController {
-                addChild(aController)
-            }
-            if let aView = glViewController?.view, let aView1 = controllerViewController?.view {
+            glViewController.view?.removeFromSuperview()
+            glViewController.removeFromParent()
+            addChild(glViewController)
+
+            if let aView = glViewController.view, let aView1 = controllerViewController?.view {
                 view.insertSubview(aView, belowSubview: aView1)
             }
-            glViewController?.view?.setNeedsLayout()
+
+            glViewController.view?.setNeedsLayout()
             secondaryWindow = nil
             secondaryScreen = nil
         }
     }
-
 }
 
 extension PVEmulatorViewController {

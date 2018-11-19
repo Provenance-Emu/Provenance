@@ -228,17 +228,17 @@ public final class PVEmulatorConfiguration: NSObject {
         return cachesPath
         #else
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        #endif
-
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        #endif
     }()
 
     static public let cachesPath: URL = {
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
-    
-    static public var containerUrl: URL? = {
+
+    /// This should be called on a background thread
+    static public var containerUrl: URL? {
         let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
         if let containerUrl = containerUrl {
             do {
@@ -248,50 +248,55 @@ public final class PVEmulatorConfiguration: NSObject {
             }
         }
         return containerUrl
-    }()
-    
+    }
+
+    /// This should be called on a background thread
     static public var documentsiCloudOrLocalPath : URL {
         return containerUrl ?? documentsPath
     }
 
     public struct Paths {
-        public struct Legacy {            
+        public struct Legacy {
             static public let batterySavesPath: URL = {
                 return documentsPath.appendingPathComponent("Battery States", isDirectory: true)
             }()
-            
+
             static public let saveSavesPath: URL = {
                 return documentsPath.appendingPathComponent("Save States", isDirectory: true)
             }()
-            
+
             static public let screenShotsPath: URL = {
                 return documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
             }()
-            
+
             static public let biosesPath: URL = {
                 return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
             }()
         }
-        
-        static public let romsImportPath: URL = {
+
+        static public var romsImportPath: URL {
             return documentsPath.appendingPathComponent("Imports", isDirectory: true)
-        }()
-        
-        static public let batterySavesPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var batterySavesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
-        }()
-        
-        static public let saveSavesPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var saveSavesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
-        }()
-        
-        static public let screenShotsPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var screenShotsPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
-        }()
-        
-        static public let biosesPath: URL = {
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
+        static public var biosesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
-        }()
+        }
     }
 
     static public let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]
@@ -648,9 +653,9 @@ public extension PVEmulatorConfiguration {
     class func moveLegacyPaths() {
         if documentsPath != documentsiCloudOrLocalPath {
             let fm = FileManager.default
-            
+
             // TODO: Update PVGames and PVSaves for new paths for screenshots and saves
-            
+
             ILOG("Looking up legecy saves")
             if let saves = try? fm.contentsOfDirectory(at: Paths.Legacy.saveSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !saves.isEmpty {
                 ILOG("Found (\(saves.count)) saves in old path")
@@ -679,11 +684,11 @@ public extension PVEmulatorConfiguration {
                     }
                 }
             }
-            
+
             ILOG("Looking up legecy screenshots")
             if let screenshots = try? fm.contentsOfDirectory(at: Paths.Legacy.screenShotsPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !screenshots.isEmpty {
                 ILOG("Found (\(screenshots.count)) Screenshots in old path")
-                
+
                 screenshots.forEach {
                     let newPath = Paths.screenShotsPath.appendingPathComponent($0.lastPathComponent)
                     do {
@@ -693,11 +698,11 @@ public extension PVEmulatorConfiguration {
                     }
                 }
             }
-            
+
             ILOG("Looking up legecy battery saves")
             if let batterySaves = try? fm.contentsOfDirectory(at: Paths.Legacy.batterySavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
                 ILOG("Found (\(batterySaves.count)) Battery Saves in old path")
-                
+
                 batterySaves.forEach {
                     let newPath = Paths.batterySavesPath.appendingPathComponent($0.lastPathComponent)
                     do {

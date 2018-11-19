@@ -84,6 +84,8 @@
 		B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
+		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
+		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -466,6 +468,7 @@
 		B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameImporter.swift; sourceTree = "<group>"; };
 		B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
+		B383F3BB219BB29600DB6926 /* iCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSync.swift; sourceTree = "<group>"; };
 		B3AF460B21071CA5002211EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B3AF460C21071CA5002211EE /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
 		B3AF460D21071CA5002211EE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1066,6 +1069,7 @@
 				B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */,
 				B3274E852106BFD000857F52 /* ImportCandidateFile.swift */,
 				B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */,
+				B383F3BB219BB29600DB6926 /* iCloudSync.swift */,
 			);
 			path = Importer;
 			sourceTree = "<group>";
@@ -1936,6 +1940,7 @@
 				B3AF478921071E85002211EE /* Sha256.c in Sources */,
 				B3AF47BF21071F76002211EE /* Lzma2Encoder.cpp in Sources */,
 				B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */,
+				B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */,
 				B3AF47C321071F76002211EE /* LzmaRegister.cpp in Sources */,
 				B3AF47A021071EE9002211EE /* DummyOutStream.cpp in Sources */,
 				B3AF479321071EC1002211EE /* 7zExtract.cpp in Sources */,
@@ -2109,6 +2114,7 @@
 				B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */,
 				B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */,
 				B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */,
+				B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */,
 				B3C04B1F21077B3100E7AF79 /* LzmaRegister.cpp in Sources */,
 				B3C04B2021077B3100E7AF79 /* DummyOutStream.cpp in Sources */,
 				B3C04B2121077B3100E7AF79 /* 7zExtract.cpp in Sources */,

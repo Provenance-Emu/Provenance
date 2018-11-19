@@ -5,10 +5,10 @@ disabled_rules:
   - colon
   - force_cast
   - type_name
-  - variable_name_min_length
   - discarded_notification_center_observer
   - force_try
-  - variable_name
+  #- identifier_name_min_length
+  - identifier_name
   - control_statement
   - line_length
   - type_body_length
@@ -73,13 +73,13 @@ type_body_length:
   - 300 # warning
   - 400 # error
 # parameterized rules are first parameterized as a warning level, then error level.
-variable_name_max_length:
-  - 40 # warning
-  - 60 # error
-# parameterized rules are first parameterized as a warning level, then error level.
-variable_name_min_length:
-  - 3 # warning
-  - 2 # error
+# identifier_name_max_length:
+#   - 40 # warning
+#   - 60 # error
+# # parameterized rules are first parameterized as a warning level, then error level.
+# identifier_name_min_length:
+#   - 3 # warning
+#   - 2 # error
 function_body_length:
   - 150 # warning
   - 180 # error

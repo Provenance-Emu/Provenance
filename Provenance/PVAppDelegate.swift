@@ -12,6 +12,9 @@ import PVSupport
 import CocoaLumberjackSwift
 import HockeySDK
 import RealmSwift
+import Crashlytics
+import Answers
+import Fabric
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,16 +30,21 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
-        setDefaultsFromSettingsBundle();
-        
+        setDefaultsFromSettingsBundle()
+
+        iCloudSync.initICloudDocuments()
+
 		#if targetEnvironment(simulator)
 		#else
 		_initHockeyApp()
+        _initCrashlytics()
 		#endif
 
 		do {
 			try RomDatabase.initDefaultDatabase()
-            self.importNewSaves()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                iCloudSync.importNewSaves()
+            }
 		} catch {
 			let appName : String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
 			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
@@ -249,39 +257,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension PVAppDelegate {
-
-    func importNewSaves() {
-        let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
-        let fm = FileManager.default
-        guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
-            ELOG("Failed to read saves path: \(savesDirectory.path)")
-            return
-        }
-
-        let saveFiles = subDirs.flatMap {
-            return try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-        }.joined()
-        let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
-        let jsonDecorder = JSONDecoder.init()
-        let realm = try! Realm()
-        jsonFiles.forEach { json in
-
-            if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
-                DLOG("Read JSON data at (\(json.absoluteString)")
-                // TODO: Add UUID primary key to Saves
-                if let existing = realm.objects(PVSaveState.self).first(where: { (save) -> Bool in
-                    return save.file.fileName == save.file.fileName
-                }) {
-                    ILOG("Save state already exists for ID: \(save.uid)")
-                } else {
-                    let newSave = save.asRealm()
-                    realm.add(newSave)
-                    ILOG("Added new save \(newSave.debugDescription)")
-                }
-            }
-        }
-    }
-
 	func _initLogging() {
 		// Initialize logging
 		PVLogging.sharedInstance()
@@ -294,7 +269,7 @@ extension PVAppDelegate {
 		#if os(iOS)
 		// Debug view logger
 		DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
-		_addLogViewerGesture()
+        self.window?.addLogViewerGesture()
 		#endif
 
 		DDTTYLogger.sharedInstance.colorsEnabled = true
@@ -307,14 +282,14 @@ extension PVAppDelegate {
 		#else
 		BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
 		#endif
-        
+
 		#if DEBUG
 		BITHockeyManager.shared().isMetricsManagerDisabled = true
 		#endif
 
 		let masterBranch = kGITBranch.lowercased() == "master"
         let developBranch = kGITBranch.lowercased() == "develop"
-		let travisBuild = ["jmattiello","travis"].contains(builtByUser)
+		let travisBuild = ["jmattiello", "travis"].contains(builtByUser)
         let masterOrDevelopBranch = masterBranch || developBranch
 //        let feedbackEnabled = masterOrDevelopBranch && travisBuild
 
@@ -322,9 +297,9 @@ extension PVAppDelegate {
         BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
         BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
         #endif
-        
+
 		BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch && travisBuild
-        
+
 //        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
 //            BITHockeyManager.shared().isUpdateManagerDisabled = true
 //        }
@@ -334,57 +309,23 @@ extension PVAppDelegate {
 		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
 	}
 
-	#if os(iOS)
-	func _addLogViewerGesture() {
-		guard let window = window else {
-			ELOG("No window")
-			return
-		}
+    func _initCrashlytics() {
+        Fabric.with([Answers.self, Crashlytics.self])
+    }
 
-		let secretTap = UITapGestureRecognizer(target: self, action: #selector(PVAppDelegate._displayLogViewer))
-		secretTap.numberOfTapsRequired = 3
-		#if targetEnvironment(simulator)
-		secretTap.numberOfTouchesRequired = 2
-		#else
-		secretTap.numberOfTouchesRequired = 3
-		#endif
-		window.addGestureRecognizer(secretTap)
-	}
-
-	@objc func _displayLogViewer() {
-		guard let window = window else {
-			ELOG("No window")
-			return
-		}
-
-		if _logViewController == nil, let logClass = NSClassFromString("PVLogViewController") {
-			let bundle = Bundle(for: logClass)
-			_logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: bundle)
-
-		}
-		// Window incase the mainNav never displays
-		var  controller: UIViewController? = window.rootViewController
-
-		if let presentedViewController = controller?.presentedViewController {
-			controller = presentedViewController
-		}
-		controller!.present(_logViewController!, animated: true, completion: nil)
-	}
-	#endif
-    
     func setDefaultsFromSettingsBundle() {
         //Read PreferenceSpecifiers from Root.plist in Settings.Bundle
         if let settingsURL = Bundle.main.url(forResource: "Root", withExtension: "plist", subdirectory: "Settings.bundle"),
             let settingsPlist = NSDictionary(contentsOf: settingsURL),
             let preferences = settingsPlist["PreferenceSpecifiers"] as? [NSDictionary] {
-            
+
             for prefSpecification in preferences {
-                
+
                 if let key = prefSpecification["Key"] as? String, let value = prefSpecification["DefaultValue"] {
-                    
+
                     //If key doesn't exists in userDefaults then register it, else keep original value
                     if UserDefaults.standard.value(forKey: key) == nil {
-                        
+
                         UserDefaults.standard.set(value, forKey: key)
                         ILOG("registerDefaultsFromSettingsBundle: Set following to UserDefaults - (key: \(key), value: \(value), type: \(type(of: value)))")
                     }
@@ -422,109 +363,6 @@ extension PVAppDelegate : BITHockeyManagerDelegate {
 		} else {
 			return description
 		}
-	}
-}
-
-public final class PVTTYFormatter : NSObject, DDLogFormatter {
-	public struct LogOptions : OptionSet {
-		public init(rawValue : Int) {
-			self.rawValue = rawValue
-		}
-		public let rawValue : Int
-
-		public static let printLevel = LogOptions(rawValue: 1 << 0)
-		public static let useEmojis  = LogOptions(rawValue: 1 << 1)
-	}
-
-	public struct EmojiTheme {
-		let verbose : String
-		let info : String
-		let debug : String
-		let warning : String
-		let error : String
-
-		internal func emoji(for level: DDLogLevel) -> String {
-			switch level {
-			case .verbose:
-				return verbose
-			case .debug:
-				return debug
-			case .info:
-				return info
-			case .warning:
-				return warning
-			case .error:
-				return error
-			default:
-				//case .off, .all:
-				return ""
-			}
-		}
-	}
-
-	private func secondsToHoursMinutesSeconds (_ timeInterval: Double) -> (Int, Int, Double) {
-		let seconds : Double = timeInterval.remainder(dividingBy: 3600)
-		let minutes : Double = (timeInterval.remainder(dividingBy: 3600)) / 60
-		let hours : Double = timeInterval / 3600
-		return (Int(hours), Int(minutes), seconds)
-	}
-
-	public struct Themes {
-		static let HeartTheme = EmojiTheme(verbose: "💜", info: "💙:", debug: "💚", warning:  "💛", error: "❤️")
-		static let RecycleTheme = EmojiTheme(verbose: "♳", info: "♴:", debug: "♵", warning:  "♶", error: "♷")
-		static let BookTheme = EmojiTheme(verbose: "📓", info: "📘:", debug: "📗", warning:  "📙", error: "📕")
-		static let DiamondTheme = EmojiTheme(verbose: "🔀", info: "🔹:", debug: "🔸", warning:  "⚠️", error: "❗")
-	}
-
-	static let startTime = Date()
-
-	public var theme : EmojiTheme = PVTTYFormatter.Themes.DiamondTheme
-	public var options : LogOptions = [.printLevel, .useEmojis]
-
-	public func format(message logMessage: DDLogMessage) -> String? {
-		let emoji = options.contains(.useEmojis) ? theme.emoji(for: logMessage.level) + " " : ""
-		let level : String
-
-		switch logMessage.level {
-		case .verbose:
-			level = "VERBOSE "
-		case .debug:
-			level = "DEBUG "
-		case .info:
-			level = "INFO "
-		case .warning:
-			level = "WARNING "
-		case .error:
-			level = "ERROR "
-		default:
-			//        case .off, .all:
-			level = ""
-		}
-
-		let timeInterval = PVTTYFormatter.startTime.timeIntervalSinceNow * -1
-		let (hours, minutes, seconds) = secondsToHoursMinutesSeconds( timeInterval)
-
-		var timeStampBuilder = ""
-		if hours > 0 {
-			timeStampBuilder += "\(hours):"
-		}
-
-		if minutes > 0 {
-			timeStampBuilder += "\(minutes):"
-		}
-
-		if seconds > 0 {
-			timeStampBuilder += String(format: "%02.1fs", arguments: [seconds])
-		}
-
-		if timeStampBuilder.count < 8 && timeStampBuilder.count > 1 {
-			timeStampBuilder = timeStampBuilder.padding(toLength: 8, withPad: " ", startingAt: 0)
-		}
-
-		//        let queue = logMessage.queueLabel != "com.apple.main-thread" ? "(\(logMessage.queueLabel))" : ""
-		let text = logMessage.message
-
-		return "🕐\(timeStampBuilder) \(emoji)\(level) \(logMessage.fileName):\(logMessage.line).\(logMessage.function ?? "") ↩\n\t☞ \(text)"
 	}
 }
 

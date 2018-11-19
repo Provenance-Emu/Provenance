@@ -13,6 +13,14 @@ import CoreSpotlight
 import SQLite
 import PVSupport
 
+struct Constants {
+    struct iCloud {
+        static let documentsContainerIdentifier = "iCloud.com.provenance-emu.provenance"
+        // Dynamic version based off of bundle Identifier
+        //        static let documentsContainerIdentifier = "iCloud." + (Bundle.main.bundleIdentifier ?? "")
+    }
+}
+
 public func + <K, V>(lhs: [K : V], rhs: [K : V]) -> [K : V] {
 	var combined = lhs
 

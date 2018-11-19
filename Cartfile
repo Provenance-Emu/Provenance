@@ -5,6 +5,17 @@ github "xmartlabs/XLActionController" "4.1.0"
 github "bcylin/QuickTableViewController" "v1.0.0"
 #github "RxSwiftCommunity/RxDataSources"
 
+# Crashlytics - Static Libs
+# iOS
+# binary "https://building42.github.io/Specs/Carthage/iOS/Answers.json"
+binary "https://building42.github.io/Specs/Carthage/iOS/Crashlytics.json"
+binary "https://building42.github.io/Specs/Carthage/iOS/Fabric.json"
+
+# tvOS
+# binary "https://building42.github.io/Specs/Carthage/tvOS/Answers.json"
+binary "https://building42.github.io/Specs/Carthage/tvOS/Crashlytics.json"
+binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
+
 # PVSupport
 github "fpillet/NSLogger" "v1.9.0"
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
