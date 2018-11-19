@@ -12,7 +12,8 @@ private_lane :badge_alpha do
     shield: "#{version}-#{build_number}-blue",
     alpha: true,
     dark: false,
-    shield_no_resize: true
+    shield_no_resize: true,
+    glob: 'Provenance/Resources/**/*.appiconset/*.{png,PNG}'
   )
 end
 
@@ -29,6 +30,7 @@ private_lane :badge_beta do
     shield: "#{version_number}-#{build_number}-blue",
     alpha: false,
     dark: false,
-    shield_no_resize: true
+    shield_no_resize: true,
+    glob: 'Provenance/Resources/**/*.appiconset/*.{png,PNG}'
   )
 end
