@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.PHONY: help ios update ios
+.PHONY: help ios update tvos
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
