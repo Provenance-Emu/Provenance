@@ -20,6 +20,7 @@ binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
 github "fpillet/NSLogger" "v1.9.0"
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
 github "radex/SwiftyUserDefaults" "3.0.1"
+github "ashleymills/Reachability.swift"
 
 # PVLibrary
 github "ZipArchive/ZipArchive" "v2.1.4"

@@ -95,7 +95,6 @@
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
 		1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
 		1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
 		1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
@@ -140,7 +139,6 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
-		378F4A151B63F2240065FA39 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
@@ -269,6 +267,8 @@
 		B369B0DB219EA29A0064EDCA /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0D9219EA29A0064EDCA /* Crashlytics.framework */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
+		B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0E621A458940064EDCA /* Reachability.framework */; };
+		B369B0E921A4589E0064EDCA /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0E821A4589E0064EDCA /* Reachability.framework */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -709,8 +709,6 @@
 		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
-		378F4A131B63F2240065FA39 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		378F4A141B63F2240065FA39 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
@@ -779,6 +777,9 @@
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
 		B369B0D8219EA29A0064EDCA /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/tvOS/Fabric.framework; sourceTree = "<group>"; };
 		B369B0D9219EA29A0064EDCA /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/tvOS/Crashlytics.framework; sourceTree = "<group>"; };
+		B369B0E621A458940064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
+		B369B0E821A4589E0064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
+		B369B0EA21A458F60064EDCA /* xcfilelists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = xcfilelists; path = Carthage/xcfilelists; sourceTree = "<group>"; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B374932B2175667D00C65DD1 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
@@ -926,6 +927,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B369B0E921A4589E0064EDCA /* Reachability.framework in Frameworks */,
 				B3589E37219E954D001C5E12 /* Crashlytics.framework in Frameworks */,
 				B3589E38219E954D001C5E12 /* Fabric.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
@@ -1000,6 +1002,7 @@
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
+				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C310219195C9009F4EDC /* MobileCoreServices.framework in Frameworks */,
 				B324C30E219195C0009F4EDC /* Security.framework in Frameworks */,
@@ -1139,6 +1142,7 @@
 				B3E21D6C203211BE009939D3 /* Spotlight */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
+				B369B0EA21A458F60064EDCA /* xcfilelists */,
 				B3E0A580215647BD004B4322 /* Scripts */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
@@ -1161,6 +1165,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B369B0E621A458940064EDCA /* Reachability.framework */,
+				B369B0E821A4589E0064EDCA /* Reachability.framework */,
 				B369B0D9219EA29A0064EDCA /* Crashlytics.framework */,
 				B369B0D8219EA29A0064EDCA /* Fabric.framework */,
 				B3589E33219E954C001C5E12 /* Answers.framework */,
@@ -1181,7 +1187,6 @@
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				378F49DB1B63D7CD0065FA39 /* http */,
-				378F4A121B63F2240065FA39 /* Reachability */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
@@ -1503,15 +1508,6 @@
 				378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */,
 			);
 			path = GCDWebUploader;
-			sourceTree = "<group>";
-		};
-		378F4A121B63F2240065FA39 /* Reachability */ = {
-			isa = PBXGroup;
-			children = (
-				378F4A131B63F2240065FA39 /* Reachability.h */,
-				378F4A141B63F2240065FA39 /* Reachability.m */,
-			);
-			path = Reachability;
 			sourceTree = "<group>";
 		};
 		B32746BF219BD6C700B78124 /* Reusable Views */ = {
@@ -2030,7 +2026,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 			showEnvVarsInLog = 0;
 		};
 		1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */ = {
@@ -2117,7 +2113,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 			showEnvVarsInLog = 0;
 		};
 		B300F064212512310010299E /* Create Version.h */ = {
@@ -2413,7 +2409,6 @@
 				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
 				B3AB373F2187F569009D9244 /* PV32XControllerViewController.swift in Sources */,
 				B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */,
-				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
 				B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
 				B302F31521713B17000322B9 /* PillPageControl.swift in Sources */,
@@ -2535,7 +2530,6 @@
 				B3B104CB218F2EF400210C39 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
-				1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */,
 				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
 				B3B104C1218F2EF400210C39 /* PVAtari2600ControllerViewController.swift in Sources */,

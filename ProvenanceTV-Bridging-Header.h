@@ -18,7 +18,6 @@
 #import "MBProgressHUD.h"
 #import "PVGLViewController.h"
 #import "PVWebServer.h"
-#import "Reachability.h"
 #import "UIActionSheet+BlockAdditions.h"
 
 // End Swiftify generated imports

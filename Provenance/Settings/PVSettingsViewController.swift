@@ -13,6 +13,7 @@ import SafariServices
 import UIKit
 import PVLibrary
 import PVSupport
+import Reachability
 import QuickTableViewController
 
 // Subclass to help with themeing
@@ -96,12 +97,27 @@ import RealmSwift
 final class PVSettingsViewController : QuickTableViewController {
 
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
-    let reachability : Reachability = Reachability.forLocalWiFi()
+    let reachability : Reachability = Reachability()!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         generateTableViewViewModels()
         tableView.reloadData()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        reachability.stopNotifier()
     }
 
     func generateTableViewViewModels() {
@@ -334,14 +350,7 @@ final class PVSettingsViewController : QuickTableViewController {
     }
 
     func launchWebServerAction() {
-        let status: NetworkStatus = reachability.currentReachabilityStatus()
-
-        if status != .reachableViaWiFi {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            }))
-            present(alert, animated: true) {() -> Void in }
-        } else {
+        if reachability.connection == .wifi {
             // connected via wifi, let's continue
             // start web transfer service
             if PVWebServer.shared.startServers() {
@@ -354,6 +363,13 @@ final class PVSettingsViewController : QuickTableViewController {
                 }))
                 present(alert, animated: true) {() -> Void in }
             }
+        } else {
+            let alert = UIAlertController(title: "Unable to start web server!",
+                                          message: "Your device needs to be connected to a WiFi network to continue!",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) {() -> Void in }
         }
     }
 

@@ -4,6 +4,7 @@ $(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework
+$(SRCROOT)/Carthage/Build/iOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/iOS/Realm.framework
 $(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/RxAtomic.framework

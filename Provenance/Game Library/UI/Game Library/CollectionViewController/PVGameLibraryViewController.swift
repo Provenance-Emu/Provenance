@@ -18,6 +18,9 @@ import RealmSwift
 import CoreSpotlight
 import PVLibrary
 import PVSupport
+import Reachability
+import RxSwift
+import RxCocoa
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -94,6 +97,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 	lazy var collectionViewZoom : CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
+    let disposeBag = DisposeBag()
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
 	var filePathsToImport = [URL]()
@@ -1084,11 +1088,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		dismiss(animated: true, completion: nil)
 	}
 
+    lazy var reachability = Reachability()!
+
     // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
-        let reachability = Reachability.forLocalWiFi()
-        reachability.startNotifier()
-        let status: NetworkStatus = reachability.currentReachabilityStatus()
+        do {
+            try reachability.startNotifier()
+        } catch {
+            ELOG("Unable to start notifier")
+        }
 
 		#if os(iOS)
 		// connected via wifi, let's continue
@@ -1118,13 +1126,25 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			self.present(documentPicker, animated: true, completion: nil)
 		}))
 
-		if status == .reachableViaWiFi {
-			actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
-				self.startWebServer()
-			}))
-		}
+        let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
+            self.startWebServer()
+        })
+
+        actionSheet.addAction(webServerAction)
 
 		actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                webServerAction.isEnabled = true
+            } else {
+                webServerAction.isEnabled = false
+            }
+        }
+
+        reachability.whenUnreachable = { _ in
+            webServerAction.isEnabled = false
+        }
 
 		if let barButtonItem = sender as? UIBarButtonItem {
 			actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
@@ -1137,8 +1157,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
 
 		present(actionSheet, animated: true, completion: nil)
+
+        actionSheet.rx.deallocating.asObservable().bind { [weak self] in
+            self?.reachability.stopNotifier()
+            }.disposed(by: disposeBag)
 		#else // tvOS
-		if status != .reachableViaWiFi {
+        defer {
+            reachability.stopNotifier()
+        }
+		if reachability.connection != .wifi {
 			let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a network to continue!", preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 			}))

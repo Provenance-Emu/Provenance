@@ -30,7 +30,6 @@
 #import "UIActionSheet+BlockAdditions.h"
 #import "MBProgressHUD.h"
 #import "PVWebServer.h"
-#import "Reachability.h"
 #import "UIDevice+Hardware.h"
 
 // End Swiftify generated imports

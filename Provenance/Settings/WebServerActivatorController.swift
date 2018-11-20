@@ -9,6 +9,7 @@
 import UIKit
 import PVLibrary
 import PVSupport
+import Reachability
 
 protocol WebServerActivatorController : class {
 	func showServerActiveAlert()
@@ -86,41 +87,46 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
 	func showServerActiveAlert() {
 		// Start Webserver
 		// Check to see if we are connected to WiFi. Cannot continue otherwise.
-		let reachability = Reachability.forLocalWiFi()
-		reachability.startNotifier()
-		let status: NetworkStatus = reachability.currentReachabilityStatus()
-		if status != .reachableViaWiFi {
-			let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-			}))
-			present(alert, animated: true) {() -> Void in }
-		} else {
-			// connected via wifi, let's continue
-			// start web transfer service
-			if PVWebServer.shared.startServers() {
+		let reachability = Reachability()!
 
-				let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-					PVWebServer.shared.stopServers()
-				}))
-				#if os(iOS)
-				if #available(iOS 9.0, *) {
-					let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-						self.showServer()
-					})
-					alert.addAction(viewAction)
-				}
-				#endif
-				present(alert, animated: true) {() -> Void in
-					alert.message = self.webServerAlertMessage
-				}
-			} else {
-				// Display error
+        do {
+            try reachability.startNotifier()
+        } catch {
+            ELOG("Failed to start reachability: \(error.localizedDescription)")
+        }
+
+		if reachability.connection == .wifi {
+            // connected via wifi, let's continue
+            // start web transfer service
+            if PVWebServer.shared.startServers() {
+
+                let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    PVWebServer.shared.stopServers()
+                }))
+                #if os(iOS)
+                if #available(iOS 9.0, *) {
+                    let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                        self.showServer()
+                    })
+                    alert.addAction(viewAction)
+                }
+                #endif
+                present(alert, animated: true) {() -> Void in
+                    alert.message = self.webServerAlertMessage
+                }
+            } else {
+                // Display error
                 let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-				}))
-				present(alert, animated: true) {() -> Void in }
-			}
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                }))
+                present(alert, animated: true) {() -> Void in }
+            }
+		} else {
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) {() -> Void in }
 		}
 	}
 }
