@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+
+#if TARGET_OS_IOS
 #import <MessageUI/MessageUI.h>
+#endif
 
 @import PVSupport;
 @import CocoaLumberjack;
@@ -28,7 +31,7 @@
 @interface PVUIForLumberJack : UIForLumberjack
 @end
 
-@interface PVLogViewController : UIViewController <PVLoggingEventProtocol, MFMailComposeViewControllerDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface PVLogViewController : UIViewController <PVLoggingEventProtocol, UITableViewDelegate, UITableViewDataSource>
 {
     @private
         // An operation to allow a canelable
@@ -38,7 +41,9 @@
     NSBlockOperation *_systemLogOperation;
 }
 @property (strong, nonatomic) IBOutlet UITextView *textView;
+#if TARGET_OS_IOS
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
+#endif
 @property (strong, nonatomic) IBOutlet UIView *contentView;
 
 @property (strong, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
@@ -57,3 +62,8 @@
 - (void)updateHistory:(PVLogging *)sender;
 
 @end
+
+#if TARGET_OS_IOS
+@interface PVLogViewController() : MFMailComposeViewControllerDelegate
+@end
+#endif

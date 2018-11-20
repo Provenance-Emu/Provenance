@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import QuickTableViewController
 
 public enum Themes: String {
     case light = "Light"
@@ -204,9 +205,25 @@ public final class Theme {
 				$0.textLabel?.textColor = theme.settingsCellText
 				$0.detailTextLabel?.textColor = theme.settingsCellText
 			}
+
+            SwitchCell.appearance {
+                $0.backgroundColor = theme.settingsCellBackground
+                $0.textLabel?.backgroundColor = theme.settingsCellBackground
+                $0.textLabel?.textColor = theme.settingsCellText
+                $0.detailTextLabel?.textColor = theme.settingsCellText
+//                $0.switchControl.onTintColor = theme.switchON
+//                $0.switchControl.thumbTintColor = theme.switchThumb
+            }
+
+            TapActionCell.appearance {
+                $0.backgroundColor = theme.settingsCellBackground
+                $0.textLabel?.backgroundColor = theme.settingsCellBackground
+                $0.textLabel?.textColor = theme.settingsCellText
+                $0.detailTextLabel?.textColor = theme.settingsCellText
+            }
 		}
 
-		appearance(in: [UITableViewCell.self]) {
+		appearance(in: [UITableViewCell.self, SwitchCell.self]) {
 			UILabel.appearance {
 				$0.textColor = theme.settingsCellText
 			}
@@ -224,6 +241,8 @@ public final class Theme {
 
         let selectedView = UIView()
         selectedView.backgroundColor = theme.defaultTintColor
+
+        SwitchCell.appearance().selectedBackgroundView = selectedView
         UITableViewCell.appearance().selectedBackgroundView = selectedView
 
         // Search bar

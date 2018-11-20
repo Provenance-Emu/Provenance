@@ -146,7 +146,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         }
         webDavAlwaysOnTitleLabel.attributedText = titleString
     }
-    
+
     private struct Selections {
         enum Sections : Int {
 			case app
@@ -159,16 +159,16 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
             case externalInformation
         }
         static let launchWebServer = IndexPath(row: 0, section: Sections.gameLibrary.rawValue)
-        
+
         static let refreshGameLibrary = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
         static let emptyImageCache = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
         static let manageConflicts = IndexPath(row: 2, section: Sections.gameLibrary2.rawValue)
         static let appearance = IndexPath(row: 3, section: Sections.gameLibrary2.rawValue)
-        
+
         static let cores = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
         static let licenses = IndexPath(row: 1, section: Sections.gameLibrary2.rawValue)
-        
-        static let logs = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
+
+        static let h = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
     }
 
 // MARK: - UITableViewDelegate

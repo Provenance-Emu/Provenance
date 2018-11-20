@@ -91,7 +91,6 @@
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
 		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
-		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */; };
 		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
@@ -268,6 +267,8 @@
 		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B369B0DA219EA29A0064EDCA /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0D8219EA29A0064EDCA /* Fabric.framework */; };
 		B369B0DB219EA29A0064EDCA /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0D9219EA29A0064EDCA /* Crashlytics.framework */; };
+		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
+		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -2444,6 +2445,7 @@
 				B3B104C2218F2EF400210C39 /* PVAtari5200ControllerViewController.swift in Sources */,
 				B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
+				B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */,
 				B354E7C3219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B349AF641E9ABCFA00ACD416 /* (null) in Sources */,
 				B349AE8C1E9ABCF900ACD416 /* (null) in Sources */,
@@ -2451,6 +2453,7 @@
 				B3B104CF218F2EF400210C39 /* PVPokeMiniControllerViewController.swift in Sources */,
 				B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */,
+				B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */,
 				B3B104C9218F2EF400210C39 /* PVLynxControllerViewController.swift in Sources */,
 				B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
@@ -2479,7 +2482,6 @@
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
-				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */,

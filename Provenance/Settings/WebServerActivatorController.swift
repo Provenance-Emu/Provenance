@@ -15,7 +15,9 @@ protocol WebServerActivatorController : class {
 }
 
 #if os(iOS)
-extension WebServerActivatorController where Self:PVSettingsViewController {
+import SafariServices
+
+extension WebServerActivatorController where Self:UIViewController & SFSafariViewControllerDelegate {
 	// Show "Web Server Active" alert view
 	func showServerActiveAlert() {
 		let message = """
@@ -48,6 +50,14 @@ extension WebServerActivatorController where Self:PVSettingsViewController {
 		}
 		present(alert, animated: true) {() -> Void in }
 	}
+
+    @available(iOS 9.0, *)
+    func showServer() {
+        let ipURL: String = PVWebServer.shared.urlString
+        let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
+        safariVC.delegate = self
+        present(safariVC, animated: true) {() -> Void in }
+    }
 }
 #endif
 

@@ -51,7 +51,9 @@
         tableView.dataSource      = self;
         tableView.backgroundColor = [UIColor blackColor];
         tableView.opaque          = YES;
+#if TARGET_OS_IOS
         tableView.separatorStyle  = UITableViewCellSeparatorStyleNone;
+#endif
         tableView.indicatorStyle  = UIScrollViewIndicatorStyleWhite;
         [tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"LogCell"];
 
@@ -196,7 +198,9 @@
 }
 
 - (void)viewDidLoad {
+#if TARGET_OS_IOS
     _textView.editable = NO;
+#endif
     _textView.userInteractionEnabled = YES;
     _textView.scrollEnabled = YES;
 
@@ -233,7 +237,9 @@
 
     // override the showAnimated - place holder of text
 - (IBAction)actionButtonPressed:(id)sender {
+#if TARGET_OS_IOS
 	[self createAndShareZip];
+#endif
 }
 
 - (void)updateText:(NSString *)newText {
@@ -243,9 +249,11 @@
 }
 
 - (void)hideDoneButton {
+#if TARGET_OS_IOS
 	NSMutableArray *items = [self.toolbar.items mutableCopy];
 	[items removeObject:self.doneButton];
 	[self.toolbar setItems:items];
+#endif
 }
 
 
@@ -256,6 +264,7 @@
         _systemLogOperation = nil;
     }
 
+#if TARGET_OS_IOS
     NSMutableArray *items = [self.toolbar.items mutableCopy];
     if (self.segmentedControl.selectedSegmentIndex == 2 && ![items containsObject:self.logListButton]) {
         self.logListButton.enabled = YES;
@@ -265,6 +274,7 @@
         [items removeObject:self.logListButton];
         [self.toolbar setItems:items];
     }
+#endif
 
     switch(self.segmentedControl.selectedSegmentIndex){
 
@@ -315,9 +325,11 @@
     }
 }
 
+#if TARGET_OS_IOS
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
 	return UIInterfaceOrientationMaskAll;
 }
+#endif
 
 /**
  *  GEts log files and zips them together
@@ -361,7 +373,9 @@
 	logsTableViewController.tableView.dataSource = self;
 	logsTableViewController.tableView.delegate = self;
 
+#if TARGET_OS_IOS
 	logsTableViewController.modalPresentationStyle = UIModalPresentationPopover;
+#endif
 	logsTableViewController.popoverPresentationController.barButtonItem = self.logListButton;
 
 	[self presentViewController:logsTableViewController
@@ -370,6 +384,7 @@
 }
 #define ADD_FLOG_ATTACHMENTS_TO_SUPPORT_EMAILS 1
 
+#if TARGET_OS_IOS
 - (void)createAndShareZip {
 	//add attachments
 	NSArray *logFilePaths = [[PVLogging sharedInstance] logFilePaths];
@@ -421,7 +436,7 @@
 						 completion:nil];
 	}
 }
-
+#endif
 - (NSString *) tmpFileWithName:(nonnull NSString*)name
                      extension:(nonnull NSString*)extension {
 
@@ -528,6 +543,7 @@
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate
+#if TARGET_OS_IOS
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
     if (error) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error sending e-mail"
@@ -547,7 +563,8 @@
     [controller dismissViewControllerAnimated:YES
                                    completion:nil];
 }
-
+#endif
+    
 #pragma mark - BootupHistory Protocol
 - (void)updateHistory:(PVLogging *)sender {
     if (self.segmentedControl.selectedSegmentIndex == 0){
@@ -628,8 +645,9 @@
         [sharedInstance.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"LogCell"];
         sharedInstance.tableView.backgroundColor = [UIColor blackColor];
         sharedInstance.tableView.alpha = 0.8f;
+#if TARGET_OS_IOS
         sharedInstance.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        
+#endif
         sharedInstance.dateFormatter = [[NSDateFormatter alloc] init];
         [sharedInstance.dateFormatter setDateFormat:@"HH:mm:ss:SSS"];
     });

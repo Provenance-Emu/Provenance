@@ -1014,13 +1014,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "SettingsSegue") {
-            #if os(iOS)
-            if let settingsVC = (segue.destination as! UINavigationController).topViewController as? PVSettingsViewController {
-                settingsVC.gameImporter = gameImporter
-            }
-            #endif
-            // Refresh table view data source when back from settings
-            mustRefreshDataSource = true
         } else if segue.identifier == "gameMoreInfoSegue" {
             let game = sender as! PVGame
             let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
