@@ -13,7 +13,6 @@ import CocoaLumberjackSwift
 import HockeySDK
 import RealmSwift
 import Crashlytics
-import Answers
 import Fabric
 
 @UIApplicationMain
