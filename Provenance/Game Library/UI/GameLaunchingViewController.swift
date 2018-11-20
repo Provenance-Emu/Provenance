@@ -11,7 +11,7 @@ import RealmSwift
 import PVLibrary
 import PVSupport
 import ZipArchive
-import Answers
+import Crashlytics
 
 public func PVMaxRecentsCount() -> Int {
 	#if os(tvOS)
