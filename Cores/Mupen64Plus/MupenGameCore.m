@@ -27,15 +27,9 @@
 // We need to mess with core internals
 #define M64P_CORE_PROTOTYPES 1
 
-// Change to 1 to use the CXD4 plugin for the Reality Coprocessor
-// Some games will run much slower or not at all. Others may run better if you have faster hardware.
-#define USE_RSP_CXD4 0
+//#import "MupenGameCore.h"
+#import <PVMupen64Plus/PVMupen64Plus-Swift.h>
 
-#define FORCE_RICE_VIDEO 0
-
-// Experimental, set to 1 for fullscreen fill
-
-#import "MupenGameCore.h"
 #import "api/config.h"
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"
@@ -565,7 +559,7 @@ static void ConfigureGLideN64(NSString *romFolder) {
     ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
 
 	// Per-pixel lighting
-	int enableHWLighting = 0;
+    int enableHWLighting = MupenGameCore.perPixelLighting ? 1 : 0;
 	ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
 
 	// HiRez & texture options
@@ -904,24 +898,24 @@ static void ConfigureRICE() {
 
 	EAGLContext* context = [self bestContext];
 
-#if FORCE_RICE_VIDEO
-	success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
-	ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
-#else
-	if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
-		ILOG(@"No 64bit or GLES3. Using RICE GFX plugin.");
-		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
-		ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
-	} else {
-		ILOG(@"64bit and GLES3. Using GLiden64 GFX plugin.");
-		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
+    if(MupenGameCore.useRice) {
+        success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+        ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
+    } else {
+        if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
+            ILOG(@"No 64bit or GLES3. Using RICE GFX plugin.");
+            success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+            ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
+        } else {
+            ILOG(@"64bit and GLES3. Using GLiden64 GFX plugin.");
+            success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
 
-		ptr_SetOSDCallback = dlsym(RTLD_DEFAULT, "SetOSDCallback");
-		ptr_SetOSDCallback(PV_DrawOSD);
+            ptr_SetOSDCallback = dlsym(RTLD_DEFAULT, "SetOSDCallback");
+            ptr_SetOSDCallback(PV_DrawOSD);
 
-	}
-#endif
-	
+        }
+    }
+
     if (!success) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -950,20 +944,22 @@ static void ConfigureRICE() {
     input.initiateControllers = MupenInitiateControllers;
     plugin_start(M64PLUGIN_INPUT);
     
-#if USE_RSP_CXD4
-    // Load RSP
-    // Configure if using rsp-cxd4 plugin
-    m64p_handle configRSP;
-    ConfigOpenSection("rsp-cxd4", &configRSP);
-    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
-    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
-	/** End Core Config **/
-	ConfigSaveSection("rsp-cxd4");
 
-    success = LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
-#else
-    success = LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
-#endif
+    if(MupenGameCore.useCXD4) {
+            // Load RSP
+            // Configure if using rsp-cxd4 plugin
+        m64p_handle configRSP;
+        ConfigOpenSection("rsp-cxd4", &configRSP);
+        int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
+        ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
+        /** End Core Config **/
+        ConfigSaveSection("rsp-cxd4");
+
+        success = LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
+    } else {
+        success = LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
+    }
+
     if (!success) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",

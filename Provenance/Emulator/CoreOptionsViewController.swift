@@ -8,12 +8,14 @@
 
 import Foundation
 import PVSupport
+import QuickTableViewController
 
-class CoreOptionsViewController : UITableViewController {
+class CoreOptionsViewController : QuickTableViewController {
     let core : CoreOptional.Type
+
     init(withCore core : CoreOptional.Type) {
         self.core = core
-        super.init(style: .grouped)
+        super.init(nibName: nil, bundle: nil)
     }
 
     struct TableGroup {
@@ -47,30 +49,55 @@ class CoreOptionsViewController : UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        generateTableViewViewModels()
+        tableView.reloadData()
     }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return groups.count
+    func generateTableViewViewModels() {
+        typealias TableRow = Row & RowStyle
+
+        let sections : [Section] = groups.map {
+            let rows : [TableRow] = $0.options.map { option in
+                switch option {
+                case .bool(let display, let defaultValue):
+                    return SwitchRow(title: display.title, switchValue: core.valueForOption(Bool.self, option.key) ?? false, action: { (row) in
+                        let value = self.core.valueForOption(Bool.self, option.key) ?? false
+                        self.core.setValue(!value, forOption: option)
+                    })
+                case .multi(let display, let values):
+                    let subtitle : Subtitle = display.description != nil ? Subtitle.belowTitle(display.description!) : .none
+                    return NavigationRow<SystemSettingsCell>(title: display.title,
+                                                             subtitle: subtitle,
+                                                             icon: nil,
+                                                             customization: { (cell, row) in
+                    },
+                                                             action: { (row) in
+                                                                let currentSelection : String? = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String
+                                                                let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+                                                                values.forEach { value in
+                                                                    var title = value.title
+                                                                    if currentSelection == value.title {
+                                                                        title = title + "✔︎ "
+                                                                    }
+                                                                    let action = UIAlertAction(title: title, style: .default, handler: { (action) in
+                                                                        self.core.setValue(value.title, forOption: option)
+                                                                    })
+                                                                    actionController.addAction(action)
+                                                                }
+                                                                actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                self.present(actionController, animated: true)
+                    })
+                case .range(let display, let range, let defaultValue):
+                    fatalError("Unfinished feature")
+                case .string(let display, let defaultValue):
+                    fatalError("Unfinished feature")
+                default:
+                    fatalError("Unfinished feature")
+                }
+            }
+            return Section(title: $0.title, rows: rows)
+        }
+
+        self.tableContents = sections
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groups[section].options.count
-    }
-
-    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return groups.map { return $0.title }
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell : UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-
-        let group = groups[indexPath.section]
-        let option = group.options[indexPath.row]
-
-        cell.textLabel?.text = option.key
-
-        return cell
-    }
-
 }

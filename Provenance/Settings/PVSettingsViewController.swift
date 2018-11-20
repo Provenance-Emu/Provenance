@@ -92,6 +92,7 @@ final class SegueNavigationRow :  NavigationRow<SystemSettingsCell> {
     }
 }
 
+import RealmSwift
 final class PVSettingsViewController : QuickTableViewController {
 
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
@@ -117,6 +118,21 @@ final class PVSettingsViewController : QuickTableViewController {
         #endif
 
         let appSection = Section(title: "App", rows: appRows)
+
+        // -- Core Options
+        let realm = try! Realm()
+        let cores : [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).compactMap {
+            guard let coreClass = NSClassFromString($0.principleClass) as? CoreOptional.Type else {
+                DLOG("Class <\($0.principleClass)> does not impliment CoreOptional")
+                return nil
+            }
+
+            return NavigationRow<SystemSettingsCell>(title: $0.projectName, subtitle: .none, icon: nil, customization: nil, action: {[weak self] (row) in
+                self?.navigationController?.pushViewController(CoreOptionsViewController(withCore: coreClass), animated: true)
+            })
+        }
+
+        let coreOptionsSection = Section(title: "Core Options", rows: cores)
 
         // -- Section : Saves
         let saveRows : [TableRow] = [
@@ -311,9 +327,9 @@ final class PVSettingsViewController : QuickTableViewController {
 
         // Set table data
         #if os(tvOS)
-        self.tableContents = [appSection, savesSection, avSection, controllerSection, librarySection, librarySection2, buildSection, extraInfoSection]
+        self.tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, buildSection, extraInfoSection]
         #else
-        self.tableContents = [appSection, savesSection, avSection, controllerSection, librarySection, librarySection2, buildSection, extraInfoSection, debugSection]
+        self.tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, buildSection, extraInfoSection, debugSection]
         #endif
     }
 

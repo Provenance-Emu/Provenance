@@ -219,7 +219,7 @@
         <!--Cores-->
         <scene sceneID="K2h-Wk-6Pg">
             <objects>
-                <viewController title="Cores" useStoryboardIdentifierAsRestorationIdentifier="YES" id="o83-ke-qBP" customClass="PVCoresTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="coresTablewView" title="Cores" useStoryboardIdentifierAsRestorationIdentifier="YES" id="o83-ke-qBP" customClass="PVCoresTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MR6-pH-BxJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

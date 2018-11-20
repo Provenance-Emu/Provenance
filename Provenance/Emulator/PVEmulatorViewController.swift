@@ -1103,8 +1103,18 @@ extension PVEmulatorViewController {
 
 extension PVEmulatorViewController {
     func showCoreOptions() {
-        let nav = UINavigationController(rootViewController: CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type))
+        let optionsVC = CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type)
+        let nav = UINavigationController(rootViewController: optionsVC)
+        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.dismissNav))
         present(nav, animated: true, completion: nil)
+    }
+
+    @objc
+    func dismissNav() {
+        self.presentedViewController?.dismiss(animated: true, completion: nil)
+        core.setPauseEmulation(false)
+        self.isShowingMenu = false
+        self.enableContorllerInput(false)
     }
 }
 

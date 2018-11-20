@@ -15,5 +15,4 @@ FOUNDATION_EXPORT double PVMupen64Plus_coreVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVMupen64Plus_coreVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVMupen64Plus_core/PublicHeader.h>
-
-
+#import <PVMupen64Plus/MupenGameCore.h>

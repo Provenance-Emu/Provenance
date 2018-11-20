@@ -12,10 +12,17 @@ public protocol CoreOptional : class {
 	static var options : [CoreOption] {get}
 }
 
-extension CoreOptional where Self:PVEmulatorCore {
+public enum CoreOptionValue {
+    case bool(Bool)
+    case string(String)
+    case number(NSNumber)
+    case notFound
+}
+
+public extension CoreOptional { //where Self:PVEmulatorCore {
 	public static func valueForOption<T>(_ type: T.Type, _ option : String) -> T? {
 		let className = NSStringFromClass(Self.self)
-		let key = "\(className).option"
+		let key = "\(className).\(option)"
 
 		if let savedOption = UserDefaults.standard.value(forKey: key) as? T {
 			return savedOption
@@ -44,6 +51,47 @@ extension CoreOptional where Self:PVEmulatorCore {
 		}
 	}
 
+    public static func setValue(_ value: Any?, forOption option:CoreOption) {
+        let className = NSStringFromClass(Self.self)
+        let key = "\(className).\(option)"
+
+        // TODO: Make sure the value matches the option type
+
+        UserDefaults.standard.set(value, forKey: key)
+        UserDefaults.standard.synchronize()
+    }
+
+    public static func valueForOption(_ option : CoreOption) -> CoreOptionValue {
+        switch option {
+        case .bool:
+            let value = valueForOption(Bool.self, option.key) ?? false
+            return .bool(value)
+        case .string:
+            if let value = valueForOption(String.self, option.key) {
+                return .string(value)
+            } else {
+                return .notFound
+            }
+        case .range:
+            if let value = valueForOption(NSNumber.self, option.key) {
+                return .number(value)
+            } else {
+                return .notFound
+            }
+        case .multi:
+            if let value = valueForOption(NSNumber.self, option.key) {
+                return .number(value)
+            } else if let value = valueForOption(String.self, option.key) {
+                    return .string(value)
+            } else {
+                return .notFound
+            }
+        case .group:
+            assertionFailure("Feature unfinished")
+            return .notFound
+        }
+    }
+
 	static func findOption(forKey key : String, options: [CoreOption]) -> CoreOption? {
 		return options.first {
 			return $0.key == key
@@ -63,13 +111,15 @@ extension CoreOptional where Self:PVEmulatorCore {
 //	public let max : T
 //}
 
-public struct CoreOptionRange : Codable {
+public struct CoreOptionRange {
 	public let defaultValue : Int
 	public let min : Int
 	public let max : Int
 }
 
-public struct CoreOptionMultiValue : Codable {
+extension CoreOptionRange : Codable, Equatable, Hashable {}
+
+public struct CoreOptionMultiValue {
 	public let title : String
 	public let description : String?
 
@@ -92,15 +142,21 @@ public struct CoreOptionMultiValue : Codable {
 	}
 }
 
-public struct CoreOptionValueDisplay : Codable {
+extension CoreOptionMultiValue : Codable, Equatable, Hashable {}
+
+public struct CoreOptionValueDisplay {
 	public let title : String
 	public let description : String?
+    public let requiresRestart : Bool
 
-	public init(title : String, description: String? = nil) {
+    public init(title : String, description: String? = nil, requiresRestart: Bool = false) {
 		self.title = title
 		self.description = description
+        self.requiresRestart = requiresRestart
 	}
 }
+
+extension CoreOptionValueDisplay : Codable, Equatable, Hashable {}
 
 public enum CoreOption {
 	case bool(display: CoreOptionValueDisplay, defaultValue: Bool)
@@ -221,7 +277,7 @@ extension CoreOption : Codable {
 public typealias OptionAvailable = (()->(available: Bool, reasonNotAvailable: String?))
 
 extension CoreOptionMultiValue {
-	init(title : String, description: String) {
+	public init(title : String, description: String) {
 		self.title = title
 		self.description = description
 	}

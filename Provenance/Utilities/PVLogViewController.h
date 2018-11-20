@@ -8,10 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#if TARGET_OS_IOS
-#import <MessageUI/MessageUI.h>
-#endif
-
 @import PVSupport;
 @import CocoaLumberjack;
 //#import <UIForLumberJack/UIForLumberJack.h>
@@ -64,6 +60,8 @@
 @end
 
 #if TARGET_OS_IOS
-@interface PVLogViewController() : MFMailComposeViewControllerDelegate
+#import <MessageUI/MessageUI.h>
+
+@interface PVLogViewController() <MFMailComposeViewControllerDelegate>
 @end
 #endif
