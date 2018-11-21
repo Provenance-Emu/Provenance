@@ -158,6 +158,59 @@ public struct CoreOptionValueDisplay {
 
 extension CoreOptionValueDisplay : Codable, Equatable, Hashable {}
 
+public protocol OptionValueRepresentable : Codable {
+
+}
+
+extension Int : OptionValueRepresentable {}
+extension Bool : OptionValueRepresentable {}
+extension String : OptionValueRepresentable {}
+extension Float : OptionValueRepresentable {}
+
+public struct OptionDependency<OptionType:COption> {
+    let option : OptionType
+    let mustBe : OptionType.Type?
+    let mustNotBe : OptionType.Type?
+}
+
+public protocol COption {
+    associatedtype ValueType : OptionValueRepresentable
+
+    var key : String {get}
+    var title : String {get}
+    var description : String? {get}
+
+//    associatedtype Dependencies : COption
+//    var dependsOn : [OptionDependency<Dependencies>]? {get set}
+
+    var defaultValue : ValueType {get}
+    var value : ValueType {get}
+}
+
+public protocol MultiCOption : COption {
+    var options : [(key: String, title: String, description: String?)] {get}
+}
+
+//public struct CoreOptionModel : COption {
+//
+//    let key : String
+//    let title : String
+//    let description: String?
+//
+//    let defaultValue : ValueType
+//
+//    var value : ValueType {
+//        return UserDefaults.standard.value(forKey: key) as? ValueType ?? defaultValue
+//    }
+//
+//    public init<ValueType:OptionValueRepresentable>(key: String, title: String, description: String? = nil, defaultValue: ValueType) {
+//        self.key = key
+//        self.title = title
+//        self.description = description
+//        self.defaultValue = defaultValue
+//    }
+//}
+
 public enum CoreOption {
 	case bool(display: CoreOptionValueDisplay, defaultValue: Bool)
 	case range(display: CoreOptionValueDisplay, range: CoreOptionRange, defaultValue: Int)
