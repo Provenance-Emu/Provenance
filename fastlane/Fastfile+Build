@@ -112,11 +112,12 @@ lane :build_alpha do |options|
   build_number = number_of_commits(all: true)
   # increment_build_number(build_number: number_of_commits)
 
-  increment_build_number(
-    build_number: build_number, # specify specific build number (optional, omitting it increments by one)
-  )
+  # increment_build_number(
+  #   build_number: build_number, # specify specific build number (optional, omitting it increments by one)
+  # )
 
   ipa_name = "Provenance-#{platform}-#{git_branch}-#{build_number}.ipa"
+
 
   # if is_ci?
   #   increment_build_number_in_plist(
@@ -128,10 +129,31 @@ lane :build_alpha do |options|
   scheme = is_tvOS ? 'ProvenanceTV' : 'Provenance'
   scheme += is_ci ? '-Travis' : '-Release'
 
+  if is_tvOS
+    increment_build_number_in_plist(
+    build_number: build_number.to_s,
+    target: 'ProvenanceTV'
+    )
+    increment_build_number_in_plist(
+      build_number: build_number.to_s,
+      target: 'TopShelf'
+    )
+  else
+    increment_build_number_in_plist(
+      build_number: build_number.to_s,
+      target: 'Provenance'
+    )
+    increment_build_number_in_plist(
+      build_number: build_number.to_s,
+      target: 'Spotlight'
+    )
+  end
+
   badge_alpha
   build_ios_adhoc(
     scheme: scheme,
-    ipa_name: ipa_name
+    ipa_name: ipa_name,
+    platform: platform
   )
 end
 
@@ -139,6 +161,7 @@ end
  private_lane :build_ios_adhoc do |options|
   # activeArchOnly = options.fetch(:activeArchOnly, false)
   ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
+  platform = options.fetch(:platform, 'iOS')
   build_time = Time.now.strftime('%F')
   load_keys
 
@@ -157,12 +180,25 @@ end
   fullSizeImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png'
   appURL = "https://provenance-emu.com/builds/#{ipa_name}"
 
+
+  provisioningProfiles_ios = {
+    "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance",
+    "#{$dev_domain}.provenance.extension.spotlight" => "match AdHoc #{$dev_domain}.provenance.extension.spotlight"
+  }
+
+  provisioningProfiles_tvos = {
+    "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance tvos",
+    "#{$dev_domain}.provenance.provenance.topshelf-extension" => "match AdHoc com.provenance-emu.provenance.topshelf-extension tvos"
+  }
+
+  provisioningProfiles = platform == 'iOS' ? provisioningProfiles_ios : provisioningProfiles_tvos
+
   build_app(
     workspace: 'Provenance.xcworkspace',
     scheme: scheme,
     export_method: export_method,
     configuration: build_configuration,
-    codesigning_identity: 'iPhone Distribution',
+    # codesigning_identity: 'iPhone Distribution',
     silent: true,
     clean: false,
     skip_profile_detection: false,
@@ -180,10 +216,7 @@ end
         displayImageURL: displayImageURL,
         fullSizeImageURL: fullSizeImageURL
       },
-      provisioningProfiles: {
-        "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance",
-        "#{$dev_domain}.provenance.extension.spotlight" => "match AdHoc #{$dev_domain}.provenance.extension.spotlight"
-      },
+      provisioningProfiles: provisioningProfiles,
       compileBitcode: false,
       uploadBitcode: false,
     }
