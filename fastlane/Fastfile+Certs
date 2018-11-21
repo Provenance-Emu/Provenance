@@ -49,7 +49,7 @@ private_lane :match_private do |options|
   # types "appstore", "development", "adhoc", "enterprise"
   type = options.fetch(:type, 'development')
   force_for_new_devices = options.fetch(:force_for_new_devices, false)
-  readonly = options.fetch(:force_for_new_devices, true)
+  readonly = options.fetch(:readonly, true)
 
   match(
     app_identifier: [
