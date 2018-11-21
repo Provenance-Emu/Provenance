@@ -67,9 +67,12 @@ private_lane :publish_hockey do |options|
   # Send to hockey app
   # NOTE: hockey action will use the latest ipa and latest dsym built
   release_type = options.fetch(:release_type, '2')
+  platform = options.fetch(:platform, 'iOS')
+
+  defaultAppID = platform == 'tvOS' ? '613008343753414d93a7202324461575' : 'a1fd56cd852d4c959988484eba69f724'
 
   api_token = ENV['HOCKEY_APP_TOKEN'] || "6f0fc66f062044349a25aaeede834921"
-  public_identifier = ENV['HOCKEY_BETA_APP_ID'] || 'a1fd56cd852d4c959988484eba69f724'
+  public_identifier = ENV['HOCKEY_BETA_APP_ID'] || defaultAppID
   notify = '1'
   repository_url = 'https://github.com/Provenance-Emu/Provenance/'
 

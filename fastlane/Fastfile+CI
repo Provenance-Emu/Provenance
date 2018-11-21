@@ -5,12 +5,12 @@ lane :travis do
     platform: 'iOS',
     type: 'adhoc'
 	)
-	ci_upload
+	ci_upload(platform: 'iOS')
 	build_alpha(
     platform: 'tvOS',
     type: 'adhoc'
 	)
-	ci_upload
+	ci_upload(platform: 'tvOS')
 end
 
 desc 'Travis building iOS'
@@ -20,7 +20,7 @@ lane :travis_ios do
     platform: 'iOS',
     type: 'adhoc'
 	)
-	ci_upload
+	ci_upload(platform: 'iOS')
 end
 
 desc 'Travis building tvOS'
@@ -30,7 +30,7 @@ lane :travis_tvos do
     platform: 'tvOS',
     type: 'adhoc'
 	)
-	ci_upload
+	ci_upload(platform: 'tvOS')
 end
 
 private_lane :ci_prebuild do |options|
@@ -52,7 +52,9 @@ private_lane :ci_prebuild do |options|
   end
 end
 
-private_lane :ci_upload do
+private_lane :ci_upload do |options|
+  platform = options.fetch(:platform, 'iOS')
+
   # SCP to file server for storage
   # if is_ci?
   build_time = Time.now.strftime('%F')
@@ -69,7 +71,7 @@ private_lane :ci_upload do
   # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
   begin
     UI.message "Upload to hockey-app with id #{$dev_domain}.provenance"
-    publish_hockey(release_type: '2')
+    publish_hockey(release_type: '2', platform: platform)
   rescue StandardError => ex
     # re-raise the exception unless it's something we're OK with ignoring
     # raise ex unless ex.message.include?('Error message of interest')
