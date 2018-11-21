@@ -5,7 +5,8 @@ lane :travis do
     platform: 'iOS',
     type: 'adhoc'
 	)
-	ci_upload(platform: 'iOS')
+  ci_upload(platform: 'iOS')
+  ci_prebuild(platform: 'tvOS')
 	build_alpha(
     platform: 'tvOS',
     type: 'adhoc'

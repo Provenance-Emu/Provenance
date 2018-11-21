@@ -201,7 +201,7 @@ end
     # codesigning_identity: 'iPhone Distribution',
     silent: true,
     clean: false,
-    skip_profile_detection: false,
+    skip_profile_detection: true,
     output_directory: output_directory,
     output_name: ipa_name,
     include_bitcode: false,
