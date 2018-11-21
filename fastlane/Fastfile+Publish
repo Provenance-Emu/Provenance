@@ -1,7 +1,7 @@
 private_lane :publish_wordpress do |options|
   file = options.fetch(:file)
 
-  url = URI.parse('https://www.provenance-emu.com/wp/v2/media')
+  url = URI.parse('https://provenance-emu.com/wp/v2/media')
   filename = File.basename(file)
   File.open(file) do |ipa|
     req = Net::HTTP::Post::Multipart.new url.path,

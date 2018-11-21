@@ -44,7 +44,7 @@ lane :build_appstore do
     export_options: {
       method: 'app-store',
       # manifest: {
-      #   appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
+      #   appURL: "https://provenance-emu.com/builds/#{ipa_name}",
         # displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
         # fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
       # },
@@ -96,7 +96,7 @@ lane :build_alpha do |options|
     app_identifier: app_identifier,
     type: type,
     platform: platform,
-    readonly: true
+    readonly: false
   )
 
   # update_project_provisioning(
@@ -111,6 +111,10 @@ lane :build_alpha do |options|
   # build_number = ENV["build_number"]
   build_number = number_of_commits(all: true)
   # increment_build_number(build_number: number_of_commits)
+
+  increment_build_number(
+    build_number: build_number, # specify specific build number (optional, omitting it increments by one)
+  )
 
   ipa_name = "Provenance-#{platform}-#{git_branch}-#{build_number}.ipa"
 
@@ -151,7 +155,7 @@ end
   displayImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png'
   # 512x512
   fullSizeImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png'
-  appURL = "https://www.provenance-emu.com/builds/#{ipa_name}"
+  appURL = "https://provenance-emu.com/builds/#{ipa_name}"
 
   build_app(
     workspace: 'Provenance.xcworkspace',
@@ -161,7 +165,7 @@ end
     codesigning_identity: 'iPhone Distribution',
     silent: true,
     clean: false,
-    skip_profile_detection: true,
+    skip_profile_detection: false,
     output_directory: output_directory,
     output_name: ipa_name,
     include_bitcode: false,
@@ -170,7 +174,7 @@ end
     #export_xcargs: "-allowProvisioningUpdates",
     export_options: {
       method: export_method,
-      iCloudContainerEnvironment: "Production",
+      iCloudContainerEnvironment: 'Production',
       manifest: {
         appURL: appURL,
         displayImageURL: displayImageURL,
