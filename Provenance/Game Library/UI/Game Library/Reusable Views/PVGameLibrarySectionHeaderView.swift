@@ -6,28 +6,45 @@
 //  Created by James Addyman on 16/09/2013.
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
+import RxSwift
 
-final class PVGameLibrarySectionFooterView: UICollectionReusableView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+internal struct GameLibrarySectionViewModel {
+    internal let title : String
+    internal let collapsable : Bool
+    internal let collapsed : Bool
 
-        #if os(iOS)
-            let separator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 1.0))
-            separator.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
-            separator.autoresizingMask = .flexibleWidth
-            addSubview(separator)
-        #endif
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    internal init(title : String, collapsable: Bool, collapsed: Bool) {
+//        self.init(title: title, collapsable: collapsable, collapsed: collapsed)
+//    }
 }
 
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
+    var collapseImageView : UIImageView = {
+        let iv = UIImageView(image: UIImage(named: "chevron_down"))
+        iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+        return iv
+    }()
+
+    var disposeBag = DisposeBag()
+
+    var viewModel : GameLibrarySectionViewModel {
+        didSet {
+            #if os(tvOS)
+            titleLabel.text = viewModel.title
+            titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
+            #else
+            titleLabel.text = viewModel.title.uppercased()
+            titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
+            #endif
+            collapseImageView.isHidden = !viewModel.collapsable
+            collapseImageView.image = viewModel.collapsed ? UIImage(named: "chevron_left") : UIImage(named: "chevron_down")
+        }
+    }
 
     override init(frame: CGRect) {
+        self.viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
+
         super.init(frame: frame)
 #if os(tvOS)
         titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
@@ -66,6 +83,11 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.autoresizingMask = .flexibleWidth
         addSubview(titleLabel)
 
+        addSubview(collapseImageView)
+        collapseImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseImageView.widthAnchor.constraint(equalTo: collapseImageView.heightAnchor, multiplier: 1).isActive = true
+        collapseImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -88,5 +110,6 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 #endif
     override func prepareForReuse() {
         super.prepareForReuse()
+        self.disposeBag = DisposeBag()
     }
 }

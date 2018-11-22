@@ -9,6 +9,9 @@
 import Foundation
 import PVLibrary
 import PVSupport
+import RxSwift
+import RxCocoa
+import RxGesture
 
 // tvOS
 let tvOSCellUnit: CGFloat = 256.0
@@ -165,8 +168,12 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 			return Int(searchResults.count)
 		} else {
 			if section >= systemsSectionOffset {
-				let sectionNumber = section - systemsSectionOffset
-				return systems?[sectionNumber].games.count ?? 0
+                let sectionNumber = section - systemsSectionOffset
+                if let system = systems?[sectionNumber], let token = systemSectionsTokens[system.identifier] {
+                    return token.itemsCount
+                } else {
+                    return 0
+                }
 			} else if section == favoritesSection {
 				return 1
 			} else if section == saveStateSection {
@@ -247,24 +254,34 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 
 	func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 		if (kind == UICollectionView.elementKindSectionHeader) {
-			var headerView: PVGameLibrarySectionHeaderView?
-			let title = searchResults != nil ? "Search Results" : sectionTitles[indexPath.section]
+            let viewModel : GameLibrarySectionViewModel
+            let headerView = (collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+                                                                              withReuseIdentifier: PVGameLibraryHeaderViewIdentifier,
+                                                                              for: indexPath) as? PVGameLibrarySectionHeaderView)!
+            if searchResults != nil {
+                viewModel = GameLibrarySectionViewModel(title: "Search Results", collapsable: false, collapsed: false)
+            } else {
+                let title = sectionTitles[indexPath.section]
+                viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: false)
 
-			headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
-#if os(tvOS)
-            headerView?.titleLabel.text = title
-            headerView?.titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
-#else
-            headerView?.titleLabel.text = title.uppercased()
-            headerView?.titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
-#endif
+                if indexPath.section >= systemsSectionOffset, let system = systems?[indexPath.section - systemsSectionOffset] {
+                    headerView.collapseImageView.rx.tapGesture()
+                        .when(.recognized)
+                        .subscribe(onNext: { _ in
+                            let token = self.systemSectionsTokens[system.identifier]!
+                            token.viewModel.collapsed.toggle()
+                            collectionView.reloadSections([indexPath.section])
 
-			if let headerView = headerView {
-				return headerView
-			} else {
-				fatalError("Couldn't create header view")
-			}
-		} else if kind == UICollectionView.elementKindSectionFooter {
+                        })
+                        .disposed(by: headerView.disposeBag)
+                }
+            }
+
+
+            headerView.viewModel = viewModel
+
+            return headerView
+        } else if kind == UICollectionView.elementKindSectionFooter {
 			let footerView = self.collectionView!.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryFooterViewIdentifier, for: indexPath) as! PVGameLibrarySectionFooterView
 			return footerView
 		}

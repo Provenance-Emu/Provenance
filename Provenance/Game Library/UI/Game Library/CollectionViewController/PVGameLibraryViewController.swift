@@ -196,7 +196,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			if currentSort != oldValue {
                 systems = systemsByCurrentSort()
 				systemSectionsTokens.forEach {
-					$1.sortOrder = currentSort
+					$1.viewModel.sortOrder = currentSort
 				}
 
 				if isViewLoaded {
@@ -319,7 +319,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
-		#if os(tvOS)
+        #if os(tvOS)
 		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 		collectionView.remembersLastFocusedIndexPath = false
 		collectionView.clipsToBounds = false
@@ -478,24 +478,32 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 	}
 	#endif
 
-	final class SystemSection : Equatable {
-		let id : String
-		let system : PVSystem
-		let gameLibraryGameController : PVGameLibraryViewController
+    final class SystemSection : Equatable {
+        struct ViewModel {
+            var collapsed = false
+            var sortOrder : SortOptions = .title
+        }
+        let id : String
+        let system : PVSystem
 
-		var sortOrder : SortOptions {
-			didSet {
-				if sortOrder != oldValue {
-					self.storedQuery = generateQuery()
-					self.notificationToken = generateToken()
-				}
-			}
-		}
+        var viewModel = ViewModel() {
+            didSet {
+                if viewModel.sortOrder != oldValue.sortOrder {
+                    self.storedQuery = generateQuery()
+                    self.notificationToken = generateToken()
+                }
+            }
 
-		init(system : PVSystem, gameLibraryViewController: PVGameLibraryViewController, sortOrder : SortOptions = .title) {
+        }
+        var itemsCount : Int {
+            return viewModel.collapsed ? 0 : system.games.count
+        }
+        weak var gameLibraryGameController : PVGameLibraryViewController?
+
+        init(system : PVSystem, gameLibraryViewController: PVGameLibraryViewController, sortOrder : SortOptions = .title) {
 			self.system = system
 			self.id = system.identifier
-			self.sortOrder = sortOrder
+			self.viewModel.sortOrder = sortOrder
 			self.gameLibraryGameController = gameLibraryViewController
 			self.storedQuery = generateQuery()
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -523,7 +531,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 		private func generateQuery() -> Results<PVGame> {
 			var sortDescriptors = [SortDescriptor(keyPath: #keyPath(PVGame.isFavorite), ascending: false)]
-			switch sortOrder {
+			switch viewModel.sortOrder {
 			case .title:
 				break
 			case .importDate:
@@ -540,10 +548,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		private func generateToken() -> NotificationToken {
 			let newToken = query.observe {[weak self] (changes: RealmCollectionChange<Results<PVGame>>) in
                 guard let `self` = self else {return}
+                guard let gameLibraryGameController = self.gameLibraryGameController else {return}
+
 
 				switch changes {
 				case .initial:
-					if self.gameLibraryGameController.isInSearch {
+					if gameLibraryGameController.isInSearch {
 						return
 					}
 					// New additions already handled by systems token
@@ -558,34 +568,34 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     //                }
                     // Query results have changed, so apply them to the UICollectionView
 
-                    self.gameLibraryGameController.semaphore.wait()
+                    gameLibraryGameController.semaphore.wait()
                     defer {
-                        self.gameLibraryGameController.semaphore.signal()
+                        gameLibraryGameController.semaphore.signal()
                     }
-                    guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
+                    guard let indexOfSystem = gameLibraryGameController.systems?.index(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
-                    let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
-                    self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+                    let section = indexOfSystem + gameLibraryGameController.systemsSectionOffset
+                    gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
                 case .update(_, let deletions, let insertions, let modifications):
-                    if self.gameLibraryGameController.isInSearch {
+                    if gameLibraryGameController.isInSearch {
                         return
                     }
 
-                    self.gameLibraryGameController.semaphore.wait()
+                    gameLibraryGameController.semaphore.wait()
                     defer {
-                        self.gameLibraryGameController.semaphore.signal()
+                        gameLibraryGameController.semaphore.signal()
                     }
 
                     // Query results have changed, so apply them to the UICollectionView
-                    guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
+                    guard let indexOfSystem = gameLibraryGameController.systems?.index(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
 
-                    let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
-                    self.gameLibraryGameController.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
+                    let section = indexOfSystem + gameLibraryGameController.systemsSectionOffset
+                    gameLibraryGameController.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
                 case .error(let error):
                     // An error occurred while opening the Realm file on the background worker thread
                     fatalError("\(error)")

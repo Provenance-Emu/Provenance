@@ -1,5 +1,6 @@
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
+$(SRCROOT)/Carthage/Build/iOS/Differentiator.framework
 $(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
@@ -10,6 +11,8 @@ $(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/RxAtomic.framework
 $(SRCROOT)/Carthage/Build/iOS/RxBlocking.framework
 $(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework
+$(SRCROOT)/Carthage/Build/iOS/RxDataSources.framework
+$(SRCROOT)/Carthage/Build/iOS/RxGesture.framework
 $(SRCROOT)/Carthage/Build/iOS/RxRealm.framework
 $(SRCROOT)/Carthage/Build/iOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
