@@ -2,13 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "chevron_down.pdf",
-      "alignment-insets" : {
-        "top" : 0,
-        "left" : 100,
-        "bottom" : 0,
-        "right" : 0
-      }
+      "filename" : "chevron_down.pdf"
     }
   ],
   "info" : {
@@ -16,6 +10,8 @@
     "author" : "xcode"
   },
   "properties" : {
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "template",
+    "preserves-vector-representation" : true,
+    "auto-scaling" : "auto"
   }
 }

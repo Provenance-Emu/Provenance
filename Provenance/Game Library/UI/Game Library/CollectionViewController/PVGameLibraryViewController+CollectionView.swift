@@ -262,18 +262,26 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
                 viewModel = GameLibrarySectionViewModel(title: "Search Results", collapsable: false, collapsed: false)
             } else {
                 let title = sectionTitles[indexPath.section]
-                viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: false)
 
                 if indexPath.section >= systemsSectionOffset, let system = systems?[indexPath.section - systemsSectionOffset] {
+
+                    if let token = self.systemSectionsTokens[system.identifier] {
+                        viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: token.viewModel.collapsed)
+                    } else {
+                        viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: false)
+                    }
+
+
                     headerView.collapseImageView.rx.tapGesture()
                         .when(.recognized)
                         .subscribe(onNext: { _ in
                             let token = self.systemSectionsTokens[system.identifier]!
-                            token.viewModel.collapsed.toggle()
+                            token.viewModel.collapsed = !token.viewModel.collapsed
                             collectionView.reloadSections([indexPath.section])
-
                         })
                         .disposed(by: headerView.disposeBag)
+                } else {
+                    viewModel = GameLibrarySectionViewModel(title: title, collapsable: false, collapsed: false)
                 }
             }
 

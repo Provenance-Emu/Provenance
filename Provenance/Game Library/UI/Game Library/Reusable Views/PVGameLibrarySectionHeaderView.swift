@@ -22,6 +22,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
     var collapseImageView : UIImageView = {
         let iv = UIImageView(image: UIImage(named: "chevron_down"))
+        iv.clipsToBounds = true
+        iv.contentMode = .scaleAspectFit
         iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
         return iv
     }()
@@ -38,13 +40,13 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
             #endif
             collapseImageView.isHidden = !viewModel.collapsable
-            collapseImageView.image = viewModel.collapsed ? UIImage(named: "chevron_left") : UIImage(named: "chevron_down")
+            collapseImageView.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
+            setNeedsDisplay()
         }
     }
 
     override init(frame: CGRect) {
         self.viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
-
         super.init(frame: frame)
 #if os(tvOS)
         titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
@@ -84,10 +86,13 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         addSubview(titleLabel)
 
         addSubview(collapseImageView)
+        collapseImageView.translatesAutoresizingMaskIntoConstraints = false
         collapseImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.widthAnchor.constraint(equalTo: collapseImageView.heightAnchor, multiplier: 1).isActive = true
+        collapseImageView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         collapseImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+
+        isOpaque = true
     }
 
     required init?(coder aDecoder: NSCoder) {
