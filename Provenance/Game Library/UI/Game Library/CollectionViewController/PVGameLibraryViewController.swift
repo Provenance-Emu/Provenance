@@ -1247,7 +1247,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         // Skip the battery and saves folder
         // Don't move the Imge cache files, or delete them
 
-        let ignoredExtensions = ["jpg", "png", "gif"]
+        let ignoredExtensions = ["jpg", "png", "gif", "jpeg"]
         let filteredContents = contents.filter { (url) -> Bool in
             let dbFile = url.path.lowercased().contains("realm")
             let ignoredExtension = ignoredExtensions.contains(url.pathExtension)
@@ -2106,7 +2106,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
 
         dismiss(animated: true) {() -> Void in }
         let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
-        if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.pngData() {
+        if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.5) {
 
             let hash = (imageData as NSData).md5Hash
 

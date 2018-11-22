@@ -111,7 +111,7 @@ extension GameSharingViewController where Self : UIViewController {
 					originalExtension = localURL.pathExtension
 				}
 				if originalExtension.isEmpty {
-					originalExtension = "png" // now this is just a guess
+					originalExtension = "jpg" // now this is just a guess
 				}
 				let destination = tempDirURL.appendingPathComponent(game.title + suffix + "." + originalExtension, isDirectory: false)
 				try? FileManager.default.removeItem(at: destination)

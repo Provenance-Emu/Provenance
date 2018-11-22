@@ -617,7 +617,7 @@ public extension PVGameImporter {
         }
 
         // Create new Data from scaled image
-        guard let coverArtScaledData = coverArtScaledImage.pngData() else {
+        guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.5) else {
             ELOG("Failed to create data respresentation of scaled image")
             return nil
         }
