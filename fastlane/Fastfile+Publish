@@ -70,8 +70,9 @@ private_lane :publish_hockey do |options|
   platform = options.fetch(:platform, 'iOS')
 
   defaultAppID = platform == 'tvOS' ? '613008343753414d93a7202324461575' : 'a1fd56cd852d4c959988484eba69f724'
+  defaultAPIToken = platform == 'tvOS' ? 'ebab75c05afa4706b0ffa531fe3cf830' : "6f0fc66f062044349a25aaeede834921"
 
-  api_token = ENV['HOCKEY_APP_TOKEN'] || "6f0fc66f062044349a25aaeede834921"
+  api_token = ENV['HOCKEY_APP_TOKEN'] || defaultAPIToken
   public_identifier = ENV['HOCKEY_BETA_APP_ID'] || defaultAppID
   notify = '1'
   repository_url = 'https://github.com/Provenance-Emu/Provenance/'

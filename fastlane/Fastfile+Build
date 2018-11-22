@@ -188,10 +188,14 @@ end
 
   provisioningProfiles_tvos = {
     "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance tvos",
-    "#{$dev_domain}.provenance.provenance.topshelf-extension" => "match AdHoc com.provenance-emu.provenance.topshelf-extension tvos"
+    "#{$dev_domain}.provenance.provenance.topshelf-extension" => "match AdHoc #{$dev_domain}.provenance.topshelf-extension tvos"
   }
 
-  provisioningProfiles = platform == 'iOS' ? provisioningProfiles_ios : provisioningProfiles_tvos
+  is_ios = platform.to_s == 'iOS'.to_s
+
+  provisioningProfiles = is_ios ? provisioningProfiles_ios : provisioningProfiles_tvos
+
+  UI.message "Platform is #{platform}. is iOS? #{is_ios.to_s}. Profiles: #{provisioningProfiles.to_s}"
 
   build_app(
     workspace: 'Provenance.xcworkspace',
@@ -201,11 +205,12 @@ end
     # codesigning_identity: 'iPhone Distribution',
     silent: true,
     clean: false,
-    skip_profile_detection: true,
+    skip_profile_detection: false,
     output_directory: output_directory,
     output_name: ipa_name,
     include_bitcode: false,
     include_symbols: false,
+    # skip_build_archive: true,
     #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
     #export_xcargs: "-allowProvisioningUpdates",
     export_options: {
