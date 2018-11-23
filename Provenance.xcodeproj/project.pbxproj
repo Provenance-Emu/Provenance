@@ -225,6 +225,8 @@
 		B349AF701E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
+		B3532B2B21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
+		B3532B2C21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
@@ -758,6 +760,7 @@
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
+		B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsCell.swift; sourceTree = "<group>"; };
 		B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsHeaderCell.swift; sourceTree = "<group>"; };
@@ -1127,6 +1130,7 @@
 		1A1237F317CA27AD00CEC788 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				B3532B2921A78F97006CDA0F /* Cells */,
 				B354E7BD219A7D050041F971 /* SystemSettings */,
 				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */,
 				1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */,
@@ -1576,6 +1580,14 @@
 			path = SaveStates;
 			sourceTree = "<group>";
 		};
+		B3532B2921A78F97006CDA0F /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		B354E7BD219A7D050041F971 /* SystemSettings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1769,6 +1781,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
+				B3532B2D21A797A1006CDA0F /* Create Settings Credits */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
@@ -2158,6 +2171,25 @@
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
+		B3532B2D21A797A1006CDA0F /* Create Settings Credits */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Settings Credits";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Provenance/Resources/Settings.bundle/Credits.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Scripts/credits.py\" -s \"$SRCROOT\" -o \"$SRCROOT/Provenance/Resources/Settings.bundle/Credits.plist\"\n";
+		};
 		B369B0D7219E9D840064EDCA /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2409,6 +2441,7 @@
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
+				B3532B2B21A78FB2006CDA0F /* SwitchCell.swift in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
 				B38A2A462102328600374CDD /* PVEmulatorViewController~iOS.swift in Sources */,
 				B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */,
@@ -2511,6 +2544,7 @@
 				B3B104C0218F2EF400210C39 /* PV32XControllerViewController.swift in Sources */,
 				B354E7C0219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
 				1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */,
+				B3532B2C21A78FB2006CDA0F /* SwitchCell.swift in Sources */,
 				B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */,
 				B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
 				B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */,

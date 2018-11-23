@@ -113,8 +113,8 @@ struct RenderSettings {
     }
     glDeleteTextures(1, &texture);
     
-    [[PVSettingsModel sharedInstance] removeObserver:self forKeyPath:@"crtFilterEnabled"];
-    [[PVSettingsModel sharedInstance] removeObserver:self forKeyPath:@"imageSmoothing"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
@@ -127,11 +127,11 @@ struct RenderSettings {
             self.emulatorCore.renderDelegate = self;
         }
         
-        renderSettings.crtFilterEnabled = [[PVSettingsModel sharedInstance] crtFilterEnabled];
-        renderSettings.smoothingEnabled = [[PVSettingsModel sharedInstance] imageSmoothing];
+        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+        renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
         
-        [[PVSettingsModel sharedInstance] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
-        [[PVSettingsModel sharedInstance] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
 	return self;
@@ -139,9 +139,9 @@ struct RenderSettings {
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
-        renderSettings.crtFilterEnabled = [[PVSettingsModel sharedInstance] crtFilterEnabled];
+        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
     } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
-        renderSettings.smoothingEnabled = [[PVSettingsModel sharedInstance] imageSmoothing];
+        renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }

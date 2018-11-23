@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3532B3121A7B736006CDA0F"
+               BuildableName = "PVSupportTests.xctest"
+               BlueprintName = "PVSupportTests"
+               ReferencedContainer = "container:PVSupport.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+            BuildableName = "PVSupport.framework"
+            BlueprintName = "PVSupport-iOS"
+            ReferencedContainer = "container:PVSupport.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -60,6 +79,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+            BuildableName = "PVSupport.framework"
+            BlueprintName = "PVSupport-iOS"
+            ReferencedContainer = "container:PVSupport.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

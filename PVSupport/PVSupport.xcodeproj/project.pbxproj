@@ -54,6 +54,17 @@
 		B34AB5802106DC6100C45F09 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 		B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3532B3521A7B736006CDA0F /* PVSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3421A7B736006CDA0F /* PVSupportTests.swift */; };
+		B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
+		B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */; };
+		B3532B4021A7BF20006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
+		B3532B4121A7BF20006CDA0F /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
+		B3532B4221A7BF49006CDA0F /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
+		B3532B4321A7BF49006CDA0F /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
+		B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -125,6 +136,33 @@
 		B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B3532B3821A7B736006CDA0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
+			remoteInfo = "PVSupport-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3532B4421A7C01D006CDA0F /* Carthage Copy */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */,
+				B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */,
+				B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */,
+				B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */,
+			);
+			name = "Carthage Copy";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0592894D1DC194FD0012644D /* RealTimeThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealTimeThread.h; sourceTree = "<group>"; };
 		0592894E1DC194FD0012644D /* RealTimeThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RealTimeThread.m; sourceTree = "<group>"; };
@@ -153,6 +191,10 @@
 		B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioTimeStamp.cpp; sourceTree = "<group>"; };
 		B3447E85218B7E4B00557ACE /* CARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARingBuffer.h; sourceTree = "<group>"; };
 		B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
+		B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVSupportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3532B3421A7B736006CDA0F /* PVSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSupportTests.swift; sourceTree = "<group>"; };
+		B3532B3621A7B736006CDA0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSettingsTests.swift; sourceTree = "<group>"; };
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3721CF82191338200433E4C /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3721CF92191338200433E4C /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
@@ -222,6 +264,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B3532B2F21A7B736006CDA0F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */,
+				B3532B4021A7BF20006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */,
+				B3532B4121A7BF20006CDA0F /* CocoaLumberjack.framework in Frameworks */,
+				B3532B4221A7BF49006CDA0F /* NSLogger.framework in Frameworks */,
+				B3532B4321A7BF49006CDA0F /* NSLoggerSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C96E9A1D62C3A3003F1E93 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -271,6 +325,7 @@
 				1A4E718B1A6C693A005CA80F /* DebugUtils */,
 				1ACEA69017F748F80031B1C9 /* Audio */,
 				1ACEA64917F7467D0031B1C9 /* PVSupport */,
+				B3532B3321A7B736006CDA0F /* PVSupportTests */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
@@ -281,6 +336,7 @@
 			children = (
 				B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */,
 				B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */,
+				B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -378,6 +434,16 @@
 				B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		B3532B3321A7B736006CDA0F /* PVSupportTests */ = {
+			isa = PBXGroup;
+			children = (
+				B3532B3421A7B736006CDA0F /* PVSupportTests.swift */,
+				B3532B3621A7B736006CDA0F /* Info.plist */,
+				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
+			);
+			path = PVSupportTests;
 			sourceTree = "<group>";
 		};
 		B3721CF621912F7800433E4C /* Carthage-iOS */ = {
@@ -549,6 +615,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B3532B3121A7B736006CDA0F /* PVSupportTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3532B3D21A7B736006CDA0F /* Build configuration list for PBXNativeTarget "PVSupportTests" */;
+			buildPhases = (
+				B3532B2E21A7B736006CDA0F /* Sources */,
+				B3532B2F21A7B736006CDA0F /* Frameworks */,
+				B3532B4421A7C01D006CDA0F /* Carthage Copy */,
+				B3532B3021A7B736006CDA0F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3532B3921A7B736006CDA0F /* PBXTargetDependency */,
+			);
+			name = PVSupportTests;
+			productName = PVSupportTests;
+			productReference = B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */;
@@ -593,9 +678,13 @@
 			attributes = {
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
+				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					B3532B3121A7B736006CDA0F = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = V78REPMQFZ;
@@ -621,11 +710,19 @@
 			targets = (
 				B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */,
 				B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */,
+				B3532B3121A7B736006CDA0F /* PVSupportTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B3532B3021A7B736006CDA0F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C96E9C1D62C3A3003F1E93 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -643,6 +740,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B3532B2E21A7B736006CDA0F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */,
+				B3532B3521A7B736006CDA0F /* PVSupportTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C96E991D62C3A3003F1E93 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -722,6 +828,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3532B3921A7B736006CDA0F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
+			targetProxy = B3532B3821A7B736006CDA0F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1ACEA66517F7467D0031B1C9 /* Debug */ = {
@@ -958,6 +1072,103 @@
 			};
 			name = Archive;
 		};
+		B3532B3A21A7B736006CDA0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = PVSupportTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupportTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3532B3B21A7B736006CDA0F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = PVSupportTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupportTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3532B3C21A7B736006CDA0F /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = PVSupportTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupportTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B3C96EA31D62C3A3003F1E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1137,6 +1348,16 @@
 				1ACEA66517F7467D0031B1C9 /* Debug */,
 				1ACEA66617F7467D0031B1C9 /* Release */,
 				B324C5392191A7A8009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3532B3D21A7B736006CDA0F /* Build configuration list for PBXNativeTarget "PVSupportTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3532B3A21A7B736006CDA0F /* Debug */,
+				B3532B3B21A7B736006CDA0F /* Release */,
+				B3532B3C21A7B736006CDA0F /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

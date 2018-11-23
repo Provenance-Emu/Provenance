@@ -31,38 +31,6 @@ import QuickTableViewController
     #endif
 }
 
-final class PVSwitchCell : SwitchCell {
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.style()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        style()
-    }
-
-    func style() {
-        let bg = UIView(frame: bounds)
-        bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        #if os(iOS)
-        bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-        self.textLabel?.textColor = Theme.currentTheme.settingsCellText
-        self.detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
-        self.switchControl.onTintColor = Theme.currentTheme.switchON
-        self.switchControl.thumbTintColor = Theme.currentTheme.switchThumb
-
-        #else
-        bg.backgroundColor = UIColor.clear
-        if #available(tvOS 10.0, *) {
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-        }
-        #endif
-        self.backgroundView = bg
-    }
-}
-
 final class PVSettingsSwitchRow : SwitchRow<PVSwitchCell> {
 
     let keyPath : ReferenceWritableKeyPath<PVSettingsModel, Bool>
@@ -262,6 +230,21 @@ final class PVSettingsViewController : QuickTableViewController {
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
 
+        // Beta options
+        let betaRows : [TableRow] = [
+            PVSettingsSwitchRow(title: "iCloud Sync",
+                                subtitle: Subtitle.belowTitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
+                                key: \PVSettingsModel.debugOptions.iCloudSync),
+            PVSettingsSwitchRow(title: "Unsupported Cores",
+                                subtitle: Subtitle.belowTitle("Cores that are in development"),
+                                key: \PVSettingsModel.debugOptions.unsupportedCores)
+            ]
+
+        let betaSection = Section(
+                title: "Beta Features",
+                rows: betaRows,
+                footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss.")
+
         // Build Information
 
         #if DEBUG
@@ -350,9 +333,9 @@ final class PVSettingsViewController : QuickTableViewController {
 
         // Set table data
         #if os(tvOS)
-        self.tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, buildSection, extraInfoSection]
+        self.tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
         #else
-        self.tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, buildSection, extraInfoSection, debugSection]
+        self.tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection, debugSection]
         #endif
     }
 
