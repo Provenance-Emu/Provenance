@@ -209,7 +209,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		}
 		controllerViewController?.didMove(toParent: self)
 
-		let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
+		let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
 		menuButton = MenuButton(type: .custom)
 		menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
 		menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
@@ -334,7 +334,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		initMenuButton()
 		#endif
 
-        if PVSettingsModel.sharedInstance().showFPSCount {
+        if PVSettingsModel.shared.showFPSCount {
 			initFPSLabel()
         }
 
@@ -348,7 +348,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         core.startEmulation()
 
-        gameAudio.volume = PVSettingsModel.sharedInstance().volume
+        gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
         gameAudio.start()
 
@@ -533,7 +533,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 	}
 
     @objc func appWillResignActive(_ note: Notification?) {
-		if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
+		if PVSettingsModel.shared.autoSave, core.supportsSaveStates {
 			do {
 				try autoSaveState()
 			} catch {
@@ -919,7 +919,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     typealias QuitCompletion = () -> Void
 
 	func quit(optionallySave canSave : Bool = true, completion: QuitCompletion? = nil) {
-        if canSave, PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
+        if canSave, PVSettingsModel.shared.autoSave, core.supportsSaveStates {
 			do {
 				try autoSaveState()
 			} catch {

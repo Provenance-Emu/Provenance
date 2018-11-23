@@ -190,7 +190,7 @@ struct RenderSettings {
     }
 
         // Set scaling factor for retina displays.
-    if (PVSettingsModel.sharedInstance.nativeScaleEnabled) {
+    if (PVSettingsModel.shared.nativeScaleEnabled) {
         CGFloat scale = [[UIScreen mainScreen] scale];
         if (scale != 1.0f) {
             view.layer.contentsScale = scale;

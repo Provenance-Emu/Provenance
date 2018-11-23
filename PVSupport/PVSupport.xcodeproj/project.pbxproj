@@ -57,14 +57,14 @@
 		B3532B3521A7B736006CDA0F /* PVSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3421A7B736006CDA0F /* PVSupportTests.swift */; };
 		B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */; };
-		B3532B4021A7BF20006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
-		B3532B4121A7BF20006CDA0F /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
-		B3532B4221A7BF49006CDA0F /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
-		B3532B4321A7BF49006CDA0F /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
 		B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3532B5121A7CA58006CDA0F /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
+		B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
+		B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
+		B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -269,10 +269,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */,
-				B3532B4021A7BF20006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3532B4121A7BF20006CDA0F /* CocoaLumberjack.framework in Frameworks */,
-				B3532B4221A7BF49006CDA0F /* NSLogger.framework in Frameworks */,
-				B3532B4321A7BF49006CDA0F /* NSLoggerSwift.framework in Frameworks */,
+				B3532B5121A7CA58006CDA0F /* CocoaLumberjack.framework in Frameworks */,
+				B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */,
+				B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */,
+				B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1085,6 +1085,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupportTests/Info.plist;
@@ -1119,6 +1120,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupportTests/Info.plist;
@@ -1151,6 +1153,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupportTests/Info.plist;

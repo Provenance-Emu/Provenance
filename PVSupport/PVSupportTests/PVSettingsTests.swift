@@ -24,11 +24,25 @@ class PVSettingsTests: XCTestCase {
     func testSettings() {
         XCTAssertTrue(settings.askToAutoLoad)
         XCTAssertTrue(settings.buttonTints)
-//        XCTAssertEqual(settings.timedAutoSaves, minutes(10))
+        XCTAssertEqual(settings.timedAutoSaveInterval, minutes(10))
 
         settings.askToAutoLoad = false
 
         XCTAssertFalse(settings.askToAutoLoad)
-    }
 
+        settings.toggle(\PVSettingsModel.askToAutoLoad)
+        XCTAssertTrue(settings.askToAutoLoad)
+        let icValue = UserDefaults.standard.bool(forKey: "askToAutoLoad")
+        XCTAssertTrue(icValue)
+
+        XCTAssertFalse(settings.debugOptions.iCloudSync)
+        settings.debugOptions.iCloudSync = true
+        XCTAssertTrue(settings.debugOptions.iCloudSync)
+        let icValue2 = UserDefaults.standard.bool(forKey: "debugOptions.iCloudSync")
+        XCTAssertTrue(icValue2)
+
+        settings.toggle(\PVSettingsModel.debugOptions.iCloudSync)
+        XCTAssertFalse(settings.debugOptions.iCloudSync)
+
+    }
 }

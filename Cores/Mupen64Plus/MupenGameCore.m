@@ -51,7 +51,7 @@
 #if TARGET_OS_TV
 #define RESIZE_TO_FULLSCREEN TRUE
 #else
-#define RESIZE_TO_FULLSCREEN [PVSettingsModel.sharedInstance nativeScaleEnabled]
+#define RESIZE_TO_FULLSCREEN [PVSettingsModel.shared nativeScaleEnabled]
 #endif
 
 #import <dlfcn.h>

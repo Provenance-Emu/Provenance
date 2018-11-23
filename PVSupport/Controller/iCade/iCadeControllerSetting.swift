@@ -8,7 +8,7 @@
 //
 
 @objc
-public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable {
+public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
     case disabled
     case standard
     case eightBitdo

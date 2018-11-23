@@ -562,13 +562,13 @@ extension PVSettingsViewController : WebServerActivatorController { }
 //    }
 //
 //    override func viewDidLayoutSubviews() {
-//        if PVSettingsModel.sharedInstance().autoLoadSaves == true {
+//        if PVSettingsModel.shared.autoLoadSaves == true {
 //            disableAskToLoadSavesCell()
 //            disableAutoLoadSaves()
 //        } else {
 //            enableAskToLoadSavesCell()
 //        }
-//        if PVSettingsModel.sharedInstance().autoSave == false {
+//        if PVSettingsModel.shared.autoSave == false {
 //            disableTimedAutoSaveCell()
 //            disableTimedAutoSaves()
 //        } else {
@@ -653,19 +653,19 @@ extension PVSettingsViewController : WebServerActivatorController { }
 //    }
 //
 //    @IBAction func toggleButtonTints(_ sender: Any) {
-//        PVSettingsModel.sharedInstance().buttonTints = tintSwitch.isOn
+//        PVSettingsModel.shared.buttonTints = tintSwitch.isOn
 //    }
 //
 //    @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
-//        PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
+//        PVSettingsModel.shared.startSelectAlwaysOn = startSelectSwitch.isOn
 //    }
 //
 //    @IBAction func toggleVolumeHUD(_ sender: Any) {
-//        PVSettingsModel.sharedInstance().volumeHUD = volumeHUDSwitch.isOn
+//        PVSettingsModel.shared.volumeHUD = volumeHUDSwitch.isOn
 //    }
 //
 //    @IBAction func toggleAllRightShoulders(_ sender: Any) {
-//        PVSettingsModel.sharedInstance().allRightShoulders = allRightShouldersSwitch.isOn
+//        PVSettingsModel.shared.allRightShoulders = allRightShouldersSwitch.isOn
 //    }
 //
 //    func disableTimedAutoSaveCell() {
@@ -675,7 +675,7 @@ extension PVSettingsViewController : WebServerActivatorController { }
 //
 //    func disableTimedAutoSaves() {
 //        timedAutoSavesSwitch.setOn(false, animated: true)
-//        PVSettingsModel.sharedInstance().timedAutoSaves = false
+//        PVSettingsModel.shared.timedAutoSaves = false
 //    }
 //
 //    func enableTimedAutoSavesCell() {
@@ -690,7 +690,7 @@ extension PVSettingsViewController : WebServerActivatorController { }
 //
 //    func disableAutoLoadSaves() {
 //        askToLoadSwitch.setOn(false, animated: true)
-//        PVSettingsModel.sharedInstance().askToAutoLoad = false
+//        PVSettingsModel.shared.askToAutoLoad = false
 //    }
 //
 //    func enableAskToLoadSavesCell() {

@@ -9,167 +9,75 @@
 
 import Foundation
 
-private func minutes(_ minutes : Double) -> TimeInterval {
+internal func minutes(_ minutes : Double) -> TimeInterval {
     return TimeInterval(60 * minutes)
 }
 
-//let kAutoSaveKey = "kAutoSaveKey"
-//let kAutoLoadSavesKey = "kAutoLoadSavesKey"
-//let kControllerOpacityKey = "kControllerOpacityKey"
-//let kAskToAutoLoadKey = "kAskToAutoLoadKey"
-//let kDisableAutoLockKey = "kDisableAutoLockKey"
-//let kButtonVibrationKey = "kButtonVibrationKey"
-//let kImageSmoothingKey = "kImageSmoothingKey"
-//let kCRTFilterKey = "kCRTFilterKey"
-//let kNativeScaleKey = "kNativeScaleKey"
-//let kShowRecentGamesKey = "kShowRecentGamesKey"
-//let kShowRecentSavesKey = "kShowRecentSavesKey"
-//let kShowGameBadgesKey = "kShowGameBadgesKey"
-//let kTimedAutoSaves = "kTimedAutoSavesKey"
-//let kTimedAutoSaveInterval = "kTimedAutoSaveIntervalKey"
-//let kICadeControllerSettingKey = "kiCadeControllerSettingKey"
-//let kVolumeSettingKey = "kVolumeSettingKey"
-//let kFPSCountKey = "kFPSCountKey"
-//let kShowGameTitlesKey = "kShowGameTitlesKey"
-//let kWebDayAlwwaysOnKey = "kWebDavAlwaysOnKey"
-//let kThemeKey = "kThemeKey"
-//let kButtonTintsKey = "kButtonsTintsKey"
-//let kStartSelectAlwaysOnKey = "kStartSelectAlwaysOnKey"
-//let kAllRightShouldersKey = "kAllRightShouldersKey"
-//let kVolumeHUDKey = "kVolumeHUDKey"
+public protocol UserDefaultsRepresentable {
+    var defaultsValue : Any {get}
+}
 
-//let kGameLibraryScaleKey = "kkGameLibraryScaleKey"
+extension UserDefaultsRepresentable where Self:RawRepresentable {
+    public var defaultsValue : Any {
+        return self.rawValue
+    }
+}
 
-//@objc class PVSetting : NSObject, Codable {
-//    @objc let defaultValue : NSValue & Codable
-//
-//    init(_ defaultValue : AnyObject & Codable) {
-//        self.defaultValue = defaultValue
-//    }
-//}
+/// Root class that sets/loads settings by Swift's introspection 'Mirrored'
+/// Features
+/// 0 Full compatible with ObjC and Swift
+/// 1 Looks to see if value exists in UserDefaults, if yes, uses that, if no, uses the default let value
+/// 2 Automatically uses kvo to detected changes and stores in user defaults.
+/// 3 Supports custom types with `UserDefaultsRepresentable` protocol. RawRepresentable has default implimentation
+/// 4 Load default settings from Defaults.plist (Optional)
+/// 5 Quick flip of Bools via keyPath. .toggle(\.keyPath)
+/// 6 Supports grouping settings into sub-keys by using local NSObject classes
 
-@objcMembers
-@objc public final class PVSettingsModel: NSObject {
+public class MirroredSettings : NSObject {
 
-//    @objc public class DebugOptions : NSObject {
-//        @objc public dynamic var iCloudSync = false
-//        @objc public dynamic var unsupportedCores = false
-//    }
-
-//    @objc public dynamic var debugOptions = DebugOptions()
-
-    @objc public var autoSave = true
-    @objc public var timedAutoSaves = true
-    @objc public var timedAutoSaveInterval = minutes(10)
-
-    @objc public var askToAutoLoad = true
-    @objc public var autoLoadSaves = false
-
-    @objc public var disableAutoLock = false
-    @objc public var buttonVibration = true
-
-    @objc public var imageSmoothing = false
-    @objc public var crtFilterEnabled = false
-    @objc public var nativeScaleEnabled = true
-
-    @objc public var showRecentSaveStates = true
-    @objc public var showGameBadges = true
-    @objc public var showRecentGames = true
-
-    @objc public var showFPSCount = false
-
-    @objc public var showGameTitles = true
-    @objc public var gameLibraryScale = 1.0
-
-    @objc public var webDavAlwaysOn = false
-    @objc public var myiCadeControllerSetting = iCadeControllerSetting.disabled
-
-    @objc public var controllerOpacity = 0.8
-    @objc public var buttonTints = true
-    @objc public var startSelectAlwaysOn = false
-
-    @objc public var allRightShoulders = false
-
-    @objc public var volume = 1.0
-    @objc public var volumeHUD = true
-
-    @objc public static let shared = PVSettingsModel()
+    var plistPath : String? {
+        return  Bundle.main.path( forResource: "Defaults", ofType: "plist" )
+    }
 
     override init() {
-//        #if os(tvOS) && DEBUG
-//        let initialkStartSelectAlwaysOnKey = true
-//        #else
-//        let initialkStartSelectAlwaysOnKey = false
-//        #endif
-//
-//        UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
-//                                                  kTimedAutoSaves: true,
-//                                                  kTimedAutoSaveInterval: minutes(10),
-//                                                  kAskToAutoLoadKey: true,
-//                                                  kAutoLoadSavesKey: false,
-//                                                  kControllerOpacityKey: 0.8,
-//                                                  kDisableAutoLockKey: false,
-//                                                  kButtonVibrationKey: true,
-//                                                  kImageSmoothingKey: false,
-//                                                  kCRTFilterKey: false,
-//                                                  kNativeScaleKey: true,
-//                                                  kShowRecentGamesKey: true,
-//                                                  kShowRecentSavesKey: true,
-//                                                  kShowGameBadgesKey: true,
-//                                                  kICadeControllerSettingKey: iCadeControllerSetting.disabled.rawValue,
-//                                                  kVolumeSettingKey: 1.0,
-//                                                  kFPSCountKey: false,
-//                                                  kShowGameTitlesKey: true,
-//                                                  kWebDayAlwwaysOnKey: false,
-//                                                  kButtonTintsKey: false,
-//                                                  kStartSelectAlwaysOnKey: initialkStartSelectAlwaysOnKey,
-//                                                  kAllRightShouldersKey: false,
-//                                                  kVolumeHUDKey: true,
-//                                                  //                                                  kThemeKey: theme,
-//                                                  kGameLibraryScaleKey: 1.0 ])
-
-////        UserDefaults.standard.synchronize()
-//
-//        autoSave = UserDefaults.standard.bool(forKey: kAutoSaveKey)
-//        timedAutoSaves = UserDefaults.standard.bool(forKey: kTimedAutoSaves)
-//        timedAutoSaveInterval = UserDefaults.standard.double(forKey: kTimedAutoSaveInterval)
-//        autoLoadSaves = UserDefaults.standard.bool(forKey: kAutoLoadSavesKey)
-//        controllerOpacity = CGFloat(UserDefaults.standard.float(forKey: kControllerOpacityKey))
-//        disableAutoLock = UserDefaults.standard.bool(forKey: kDisableAutoLockKey)
-//        buttonVibration = UserDefaults.standard.bool(forKey: kButtonVibrationKey)
-//        imageSmoothing = UserDefaults.standard.bool(forKey: kImageSmoothingKey)
-//        crtFilterEnabled = UserDefaults.standard.bool(forKey: kCRTFilterKey)
-//        nativeScaleEnabled = UserDefaults.standard.bool(forKey: kNativeScaleKey)
-//        showRecentSaveStates = UserDefaults.standard.bool(forKey: kShowRecentSavesKey)
-//        showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
-//        showGameBadges = UserDefaults.standard.bool(forKey: kShowGameBadgesKey)
-//        let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
-//        myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade)) ?? iCadeControllerSetting.disabled
-//        volume = UserDefaults.standard.float(forKey: kVolumeSettingKey)
-//        showFPSCount = UserDefaults.standard.bool(forKey: kFPSCountKey)
-//        showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)
-//        webDavAlwaysOn = UserDefaults.standard.bool(forKey: kWebDayAlwwaysOnKey)
-//        askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
-//        buttonTints = UserDefaults.standard.bool(forKey: kButtonTintsKey)
-//        startSelectAlwaysOn = UserDefaults.standard.bool(forKey: kStartSelectAlwaysOnKey)
-//        allRightShoulders = UserDefaults.standard.bool(forKey: kAllRightShouldersKey)
-//        volumeHUD = UserDefaults.standard.bool(forKey: kVolumeHUDKey)
-//        gameLibraryScale = UserDefaults.standard.double(forKey: kGameLibraryScaleKey)
-
-//        #if os(iOS)
-//        let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue
-//        self.theme = Themes(rawValue: themeString) ?? Themes.defaultTheme
-//        #endif
-
         super.init()
 
-        for c in Mirror( reflecting: self ).children {
+        if let path = plistPath {
+            UserDefaults.standard.register( defaults: NSDictionary( contentsOfFile: path ) as? [ String : Any ] ?? [ : ] )
+        }
+
+        setInitialValues(self, rootKey: nil)
+        UserDefaults.standard.synchronize()
+    }
+
+    final private func setInitialValues(_ settings : NSObject, rootKey: String? = nil) {
+        for c in Mirror(reflecting: settings).children {
             guard let key = c.label else {
                 continue
             }
 
-            self.setValue( UserDefaults.standard.object( forKey: key ), forKey: key )
-            self.addObserver( self, forKeyPath: key, options: .new, context: nil )
+            let keyPath : String
+            if let rootKey = rootKey {
+                keyPath = [rootKey, key].joined(separator: ".")
+            } else {
+                keyPath = key
+            }
+
+            if let currentValue = UserDefaults.standard.object(forKey: keyPath) ?? UserDefaults.standard.object(forKey: "k\(key.uppercased())Key") {
+                // Handle case where value was previously set
+                self.setValue(currentValue, forKeyPath: keyPath)
+            } else {
+                if let sub = c.value as? NSObject {
+                    setInitialValues(sub, rootKey: key)
+                } else if let e = c.value as? UserDefaultsRepresentable {
+                    UserDefaults.standard.set(e.defaultsValue, forKey: keyPath)
+                } else {
+                    UserDefaults.standard.set(c.value, forKey: keyPath)
+                }
+            }
+
+            // TODO: rx observers?
+            self.addObserver(self, forKeyPath: keyPath, options:[.new], context:nil)
         }
     }
 
@@ -178,19 +86,124 @@ private func minutes(_ minutes : Double) -> TimeInterval {
             guard let key = c.label else {
                 continue
             }
-
-            self.removeObserver( self, forKeyPath: key )
+            // TODO: This doesn't handle sub paths
+            self.removeObserver( self, forKeyPath: key)
         }
     }
 
-	@discardableResult
-	func toggle(_ key : String) -> Bool {
-		guard var value = UserDefaults.standard.object(forKey: key) as? Bool else {
-			return false
-		}
+    @discardableResult
+    final func toggle<T:MirroredSettings>(_ key : ReferenceWritableKeyPath<T, Bool>) -> Bool {
+        let newValue = !(self as! T)[keyPath: key]
+        (self as! T)[keyPath: key] = newValue
+        return newValue
+    }
+}
 
-		value = !value
-		UserDefaults.standard.set(value, forKey: key)
-		return value
-	}
+extension MirroredSettings {
+    final private func searchAndSet(_ keyPath: String, on: Any, to newValue: Any, rootKey: String? = nil) -> Bool {
+        for c in Mirror( reflecting: on ).children {
+            guard let key = c.label else { continue }
+
+            // Handle sub-key paths
+            var split = keyPath.components(separatedBy: ".")
+            if split.count > 1 {
+                var lrootKey = String(split.first!)
+                if let rootKey = rootKey {
+                    lrootKey = rootKey + "." + lrootKey
+                }
+                split.removeFirst()
+                let subKeyPath = split.joined(separator: ".")
+                let found = searchAndSet(subKeyPath, on: c.value, to: newValue, rootKey: lrootKey)
+                if found {
+                    return true
+                }
+            } else if key == keyPath {
+                let myKeyPath : String
+                if let rootKey = rootKey {
+                    myKeyPath = rootKey + "." + keyPath
+                } else {
+                    myKeyPath = keyPath
+                }
+
+                if let e = newValue as? UserDefaultsRepresentable {
+                    UserDefaults.standard.set(e.defaultsValue, forKey: myKeyPath)
+                } else {
+                    UserDefaults.standard.set(newValue, forKey: myKeyPath)
+                }
+
+                return true
+            }
+        }
+
+        return false
+    }
+
+    public override func observeValue( forKeyPath keyPath: String?, of object: Any?, change: [ NSKeyValueChangeKey : Any ]?, context: UnsafeMutableRawPointer? ) {
+
+        guard let myChange = change, let newValue = myChange[.newKey], let keyPathNotNil = keyPath else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+            return
+        }
+
+        let found = searchAndSet(keyPathNotNil, on: self, to: newValue, rootKey: nil)
+
+        if !found {
+            super.observeValue(forKeyPath: keyPathNotNil, of: object, change: change, context: context)
+        } else {
+            UserDefaults.standard.synchronize()
+        }
+    }
+}
+
+@objcMembers
+@objc public final class PVSettingsModel: MirroredSettings {
+    @objc public static let shared = PVSettingsModel()
+
+    @objc public class DebugOptions : NSObject {
+        @objc public dynamic var iCloudSync = false
+//        @objc public dynamic var unsupportedCores = false
+        @objc public dynamic var multiThreadedGL = false
+    }
+
+    @objc public dynamic var debugOptions = DebugOptions()
+
+    @objc public dynamic var autoSave = true
+    @objc public dynamic var timedAutoSaves = true
+    @objc public dynamic var timedAutoSaveInterval = minutes(10)
+
+    @objc public dynamic var askToAutoLoad = true
+    @objc public dynamic var autoLoadSaves = false
+
+    @objc public dynamic var disableAutoLock = false
+    @objc public dynamic var buttonVibration = true
+
+    @objc public dynamic var imageSmoothing = false
+    @objc public dynamic var crtFilterEnabled = false
+    @objc public dynamic var nativeScaleEnabled = true
+
+    @objc public dynamic var showRecentSaveStates = true
+    @objc public dynamic var showGameBadges = true
+    @objc public dynamic var showRecentGames = true
+
+    @objc public dynamic var showFPSCount = false
+
+    @objc public dynamic var showGameTitles = true
+    @objc public dynamic var gameLibraryScale = 1.0
+
+    @objc public dynamic var webDavAlwaysOn = false
+    @objc public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
+
+    @objc public dynamic var controllerOpacity :CGFloat = 0.8
+    @objc public dynamic var buttonTints = true
+
+    #if os(tvOS)
+    @objc public dynamic var startSelectAlwaysOn = true
+    #else
+    @objc public dynamic var startSelectAlwaysOn = false
+    #endif
+
+    @objc public dynamic var allRightShoulders = false
+
+    @objc public dynamic var volume : Float = 1.0
+    @objc public dynamic var volumeHUD = true
 }

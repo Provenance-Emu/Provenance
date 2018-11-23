@@ -108,13 +108,13 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
     }
 
     override func viewDidLayoutSubviews() {
-        if PVSettingsModel.sharedInstance().autoLoadSaves == true {
+        if PVSettingsModel.shared.autoLoadSaves == true {
             disableAskToLoadSavesCell()
             disableAutoLoadSaves()
         } else {
             enableAskToLoadSavesCell()
         }
-        if PVSettingsModel.sharedInstance().autoSave == false {
+        if PVSettingsModel.shared.autoSave == false {
             disableTimedAutoSaveCell()
             disableTimedAutoSaves()
         } else {
@@ -297,7 +297,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         if timedAutoSavesValueLabel.text == "ON" {
             TOGGLE_SETTING(\PVSettingsModel.timedAutoSaves, timedAutoSavesValueLabel)
         }
-        PVSettingsModel.sharedInstance().timedAutoSaves = false
+        PVSettingsModel.shared.timedAutoSaves = false
     }
 
     func enableTimedAutoSavesCell() {
@@ -312,7 +312,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         if askToLoadSavesValueLabel.text == "ON" {
             TOGGLE_SETTING(\PVSettingsModel.askToAutoLoad, askToLoadSavesValueLabel)
         }
-        PVSettingsModel.sharedInstance().askToAutoLoad = false
+        PVSettingsModel.shared.askToAutoLoad = false
     }
 
     func enableAskToLoadSavesCell() {

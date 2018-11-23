@@ -161,7 +161,7 @@ extension PVEmulatorViewController {
 			}))
 		}
 		actionsheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-			if PVSettingsModel.sharedInstance().autoSave, self.core.supportsSaveStates {
+			if PVSettingsModel.shared.autoSave, self.core.supportsSaveStates {
 				try? self.autoSaveState()
 			}
 			self.core.setPauseEmulation(false)

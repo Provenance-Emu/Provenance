@@ -24,7 +24,7 @@ public extension CoreOptional { //where Self:PVEmulatorCore {
 		let className = NSStringFromClass(Self.self)
 		let key = "\(className).\(option)"
 
-		if let savedOption = UserDefaults.standard.value(forKey: key) as? T {
+		if let savedOption = UserDefaults.standard.object(forKey: key) as? T {
 			return savedOption
 		} else {
 			let levels = option.split(separator: ".")
