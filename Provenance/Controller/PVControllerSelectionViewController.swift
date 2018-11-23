@@ -46,6 +46,11 @@ final class PVControllerSelectionViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "controllerCell")!
 
         let labelText = "Player \(indexPath.row + 1)"
+
+        #if os(iOS)
+        cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+        #endif
+
         cell.textLabel?.text = labelText
 
         var controller: GCController?
