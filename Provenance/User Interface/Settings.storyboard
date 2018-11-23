@@ -26,7 +26,7 @@
             </objects>
             <point key="canvasLocation" x="127" y="-27"/>
         </scene>
-        <!--Settings View Controller-->
+        <!--Settings-->
         <scene sceneID="8zy-VM-QK4">
             <objects>
                 <viewController id="VXe-O0-7gC" customClass="PVSettingsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
@@ -36,8 +36,8 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="B24-dL-EUe"/>
                     </view>
-                    <navigationItem key="navigationItem" id="ghc-It-pGU">
-                        <barButtonItem key="leftBarButtonItem" title="i" id="tfB-zm-70S">
+                    <navigationItem key="navigationItem" title="Settings" id="ghc-It-pGU">
+                        <barButtonItem key="leftBarButtonItem" title="i" image="questionMark" id="tfB-zm-70S">
                             <color key="tintColor" red="0.10980392160000001" green="0.51372549020000002" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="help:" destination="VXe-O0-7gC" id="E1G-p0-ZSb"/>
@@ -73,13 +73,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="rCy-yj-qsk"/>
                     </view>
-                    <navigationItem key="navigationItem" id="4cT-Q6-yGj"/>
+                    <navigationItem key="navigationItem" title="Systems" id="4cT-Q6-yGj"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zCc-Pn-1OW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1668" y="-89"/>
+            <point key="canvasLocation" x="1714" y="-89"/>
         </scene>
-        <!--Licenses View Controller-->
+        <!--Acknowledgements-->
         <scene sceneID="Yih-Dr-Y9e">
             <objects>
                 <viewController storyboardIdentifier="licensesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="mYD-WN-8hF" customClass="PVLicensesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
@@ -89,13 +89,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="m4j-ft-O3O"/>
                     </view>
-                    <navigationItem key="navigationItem" id="LHP-GN-CVq"/>
+                    <navigationItem key="navigationItem" title="Acknowledgements" id="LHP-GN-CVq"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JMH-0x-3a0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2177" y="743"/>
         </scene>
-        <!--Controller Selection View Controller-->
+        <!--Controllers-->
         <scene sceneID="JM2-Wc-sLW">
             <objects>
                 <tableViewController storyboardIdentifier="PVControllerSelectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="tYF-TO-B5Z" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
@@ -134,7 +134,7 @@
                             <outlet property="delegate" destination="tYF-TO-B5Z" id="mDH-RJ-Qt8"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="4LS-j6-bCS"/>
+                    <navigationItem key="navigationItem" title="Controllers" id="4LS-j6-bCS"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rlq-Ko-4B4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -172,7 +172,7 @@
                             <outlet property="delegate" destination="BFd-r1-Ceq" id="Ks2-71-KlW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="xim-bo-qoF"/>
+                    <navigationItem key="navigationItem" title="Appearance" id="xim-bo-qoF"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O0f-WD-bJJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -210,7 +210,7 @@
                             <outlet property="delegate" destination="g7L-7e-WYC" id="A58-Xz-vXl"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="iDC-Ek-3P4"/>
+                    <navigationItem key="navigationItem" title="iCade" id="iDC-Ek-3P4"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fAv-Cx-In0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -226,12 +226,15 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="KWz-br-ANE"/>
                     </view>
-                    <navigationItem key="navigationItem" id="1TV-Jh-PuG"/>
+                    <navigationItem key="navigationItem" title="Cores" id="1TV-Jh-PuG"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pku-Wo-Aht" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2886" y="743"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="questionMark" width="20" height="20"/>
+    </resources>
     <color key="tintColor" red="0.51793235540390015" green="0.5159609317779541" blue="0.53913700580596924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

@@ -103,6 +103,11 @@ final class PVSettingsViewController : QuickTableViewController {
         super.viewDidLoad()
         generateTableViewViewModels()
         tableView.reloadData()
+
+        #if os(iOS)
+        self.navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+        self.navigationItem.rightBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+        #endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -137,14 +142,16 @@ final class PVSettingsViewController : QuickTableViewController {
 
         // -- Core Options
         let realm = try! Realm()
-        let cores : [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).compactMap {
-            guard let coreClass = NSClassFromString($0.principleClass) as? CoreOptional.Type else {
-                DLOG("Class <\($0.principleClass)> does not impliment CoreOptional")
+        let cores : [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).compactMap { pvcore in
+            guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
+                DLOG("Class <\(pvcore.principleClass)> does not impliment CoreOptional")
                 return nil
             }
 
-            return NavigationRow<SystemSettingsCell>(title: $0.projectName, subtitle: .none, icon: nil, customization: nil, action: {[weak self] (row) in
-                self?.navigationController?.pushViewController(CoreOptionsViewController(withCore: coreClass), animated: true)
+            return NavigationRow<SystemSettingsCell>(title: pvcore.projectName, subtitle: .none, icon: nil, customization: nil, action: {[weak self] (row) in
+                let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
+                coreOptionsVC.title = row.title
+                self?.navigationController?.pushViewController(coreOptionsVC, animated: true)
             })
         }
 

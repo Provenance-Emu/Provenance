@@ -10,7 +10,7 @@ import Foundation
 import PVSupport
 import QuickTableViewController
 
-class CoreOptionsViewController : QuickTableViewController {
+final class CoreOptionsViewController : QuickTableViewController {
     let core : CoreOptional.Type
 
     init(withCore core : CoreOptional.Type) {
