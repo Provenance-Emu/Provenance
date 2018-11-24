@@ -154,7 +154,7 @@ struct RenderSettings {
     float preferredFPS = self.emulatorCore.frameInterval;
     if (preferredFPS  < 10) {
         WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
-        preferredFPS = 60;
+        preferredFPS = 30;
     }
 
 	[self setPreferredFramesPerSecond:preferredFPS];
@@ -168,13 +168,16 @@ struct RenderSettings {
 
     ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
+        // TODO: Need to benchmark this
+    self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
     view.opaque = YES;
     view.layer.opaque = YES;
-
     view.context = self.glContext;
+    view.userInteractionEnabled = NO;
 
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
