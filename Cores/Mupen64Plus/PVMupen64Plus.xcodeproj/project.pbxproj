@@ -54,54 +54,6 @@
 		B35B3151206C7DF600AEAF88 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603272038AE7B001E70F1 /* 3DMathNeon.cpp */; };
 		B35B3152206C843400AEAF88 /* gSPNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603262038AE7B001E70F1 /* gSPNeon.cpp */; };
 		B35B3153206C846900AEAF88 /* RSP_LoadMatrixNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603282038AE7B001E70F1 /* RSP_LoadMatrixNeon.cpp */; };
-		B35B3196206C8E2700AEAF88 /* F3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3195206C8E1C00AEAF88 /* F3D.cpp */; };
-		B35B3197206C8E2700AEAF88 /* F3DAM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3181206C8E1400AEAF88 /* F3DAM.cpp */; };
-		B35B3198206C8E2700AEAF88 /* F3DBETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3173206C8E1100AEAF88 /* F3DBETA.cpp */; };
-		B35B3199206C8E2700AEAF88 /* F3DDKR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318B206C8E1900AEAF88 /* F3DDKR.cpp */; };
-		B35B319A206C8E2700AEAF88 /* F3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3169206C8E0F00AEAF88 /* F3DEX.cpp */; };
-		B35B319B206C8E2700AEAF88 /* F3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318C206C8E1A00AEAF88 /* F3DEX2.cpp */; };
-		B35B319C206C8E2700AEAF88 /* F3DEX2ACCLAIM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318A206C8E1600AEAF88 /* F3DEX2ACCLAIM.cpp */; };
-		B35B319D206C8E2700AEAF88 /* F3DEX2CBFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3178206C8E1200AEAF88 /* F3DEX2CBFD.cpp */; };
-		B35B319E206C8E2700AEAF88 /* F3DFLX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316B206C8E0F00AEAF88 /* F3DFLX2.cpp */; };
-		B35B319F206C8E2700AEAF88 /* F3DGOLDEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3187206C8E1500AEAF88 /* F3DGOLDEN.cpp */; };
-		B35B31A0206C8E2700AEAF88 /* F3DPD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316D206C8E1000AEAF88 /* F3DPD.cpp */; };
-		B35B31A1206C8E2700AEAF88 /* F3DSETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3171206C8E1000AEAF88 /* F3DSETA.cpp */; };
-		B35B31A2206C8E2700AEAF88 /* F3DSWRS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318D206C8E1A00AEAF88 /* F3DSWRS.cpp */; };
-		B35B31A3206C8E2700AEAF88 /* F3DTEXA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3192206C8E1B00AEAF88 /* F3DTEXA.cpp */; };
-		B35B31A4206C8E2700AEAF88 /* F3DZEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316C206C8E1000AEAF88 /* F3DZEX2.cpp */; };
-		B35B31A5206C8E2700AEAF88 /* L3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316F206C8E1000AEAF88 /* L3D.cpp */; };
-		B35B31A6206C8E2700AEAF88 /* L3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316A206C8E0F00AEAF88 /* L3DEX.cpp */; };
-		B35B31A7206C8E2700AEAF88 /* L3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3176206C8E1100AEAF88 /* L3DEX2.cpp */; };
-		B35B31A9206C8E2700AEAF88 /* S2DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3190206C8E1B00AEAF88 /* S2DEX2.cpp */; };
-		B35B31AB206C8E2700AEAF88 /* Turbo3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B317B206C8E1200AEAF88 /* Turbo3D.cpp */; };
-		B35B31AC206C8E2700AEAF88 /* ZSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3188206C8E1500AEAF88 /* ZSort.cpp */; };
-		B35B31AD206C8E2700AEAF88 /* ZSortBOSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B317F206C8E1300AEAF88 /* ZSortBOSS.cpp */; };
-		B35B31AE206C8E2700AEAF88 /* F3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3195206C8E1C00AEAF88 /* F3D.cpp */; };
-		B35B31AF206C8E2700AEAF88 /* F3DAM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3181206C8E1400AEAF88 /* F3DAM.cpp */; };
-		B35B31B0206C8E2700AEAF88 /* F3DBETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3173206C8E1100AEAF88 /* F3DBETA.cpp */; };
-		B35B31B1206C8E2700AEAF88 /* F3DDKR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318B206C8E1900AEAF88 /* F3DDKR.cpp */; };
-		B35B31B2206C8E2700AEAF88 /* F3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3169206C8E0F00AEAF88 /* F3DEX.cpp */; };
-		B35B31B3206C8E2700AEAF88 /* F3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318C206C8E1A00AEAF88 /* F3DEX2.cpp */; };
-		B35B31B4206C8E2700AEAF88 /* F3DEX2ACCLAIM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318A206C8E1600AEAF88 /* F3DEX2ACCLAIM.cpp */; };
-		B35B31B5206C8E2700AEAF88 /* F3DEX2CBFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3178206C8E1200AEAF88 /* F3DEX2CBFD.cpp */; };
-		B35B31B6206C8E2700AEAF88 /* F3DFLX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316B206C8E0F00AEAF88 /* F3DFLX2.cpp */; };
-		B35B31B7206C8E2700AEAF88 /* F3DGOLDEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3187206C8E1500AEAF88 /* F3DGOLDEN.cpp */; };
-		B35B31B8206C8E2700AEAF88 /* F3DPD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316D206C8E1000AEAF88 /* F3DPD.cpp */; };
-		B35B31B9206C8E2700AEAF88 /* F3DSETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3171206C8E1000AEAF88 /* F3DSETA.cpp */; };
-		B35B31BA206C8E2700AEAF88 /* F3DSWRS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B318D206C8E1A00AEAF88 /* F3DSWRS.cpp */; };
-		B35B31BB206C8E2700AEAF88 /* F3DTEXA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3192206C8E1B00AEAF88 /* F3DTEXA.cpp */; };
-		B35B31BC206C8E2700AEAF88 /* F3DZEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316C206C8E1000AEAF88 /* F3DZEX2.cpp */; };
-		B35B31BD206C8E2700AEAF88 /* L3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316F206C8E1000AEAF88 /* L3D.cpp */; };
-		B35B31BE206C8E2700AEAF88 /* L3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B316A206C8E0F00AEAF88 /* L3DEX.cpp */; };
-		B35B31BF206C8E2700AEAF88 /* L3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3176206C8E1100AEAF88 /* L3DEX2.cpp */; };
-		B35B31C0206C8E2700AEAF88 /* S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3179206C8E1200AEAF88 /* S2DEX.cpp */; };
-		B35B31C1206C8E2700AEAF88 /* S2DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3190206C8E1B00AEAF88 /* S2DEX2.cpp */; };
-		B35B31C2206C8E2700AEAF88 /* T3DUX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3186206C8E1500AEAF88 /* T3DUX.cpp */; };
-		B35B31C3206C8E2700AEAF88 /* Turbo3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B317B206C8E1200AEAF88 /* Turbo3D.cpp */; };
-		B35B31C4206C8E2700AEAF88 /* ZSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3188206C8E1500AEAF88 /* ZSort.cpp */; };
-		B35B31C5206C8E2700AEAF88 /* ZSortBOSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B317F206C8E1300AEAF88 /* ZSortBOSS.cpp */; };
-		B35B31C6206C8EC700AEAF88 /* S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3179206C8E1200AEAF88 /* S2DEX.cpp */; };
-		B35B31C7206C8EC700AEAF88 /* T3DUX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B3186206C8E1500AEAF88 /* T3DUX.cpp */; };
 		B35B31C8206C912C00AEAF88 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB602872038AE7A001E70F1 /* Types.h */; };
 		B35B31C9206C9AAC00AEAF88 /* opengl_CachedFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6037C2038AE7C001E70F1 /* opengl_CachedFunctions.cpp */; };
 		B35B31CC206CA65A00AEAF88 /* CRC_OPT_NEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */; };
@@ -441,6 +393,110 @@
 		B3B3B9381DED137100602746 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E9D1182551500BEAA42 /* libz.dylib */; };
 		B3B3B94E1DED13A200602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B96A1DED144100602746 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C3F40921A9CBAA00EFB09C /* F3DFLX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */; };
+		B3C3F40A21A9CBAA00EFB09C /* F3DFLX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */; };
+		B3C3F40B21A9CBAA00EFB09C /* F3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D821A9CB9B00EFB09C /* F3DEX2.cpp */; };
+		B3C3F40C21A9CBAA00EFB09C /* F3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D821A9CB9B00EFB09C /* F3DEX2.cpp */; };
+		B3C3F40D21A9CBAA00EFB09C /* F3DEX2ACCLAIM.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3D921A9CB9B00EFB09C /* F3DEX2ACCLAIM.h */; };
+		B3C3F40E21A9CBAA00EFB09C /* F3DEX2ACCLAIM.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3D921A9CB9B00EFB09C /* F3DEX2ACCLAIM.h */; };
+		B3C3F40F21A9CBAA00EFB09C /* F3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3DA21A9CB9B00EFB09C /* F3DEX.cpp */; };
+		B3C3F41021A9CBAA00EFB09C /* F3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3DA21A9CB9B00EFB09C /* F3DEX.cpp */; };
+		B3C3F41121A9CBAA00EFB09C /* F3DTEXA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3DB21A9CB9B00EFB09C /* F3DTEXA.cpp */; };
+		B3C3F41221A9CBAA00EFB09C /* F3DTEXA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3DB21A9CB9B00EFB09C /* F3DTEXA.cpp */; };
+		B3C3F41321A9CBAA00EFB09C /* F3DEX2CBFD.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3DC21A9CB9B00EFB09C /* F3DEX2CBFD.h */; };
+		B3C3F41421A9CBAA00EFB09C /* F3DEX2CBFD.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3DC21A9CB9B00EFB09C /* F3DEX2CBFD.h */; };
+		B3C3F41521A9CBAA00EFB09C /* F3DEX2ACCLAIM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3DD21A9CB9C00EFB09C /* F3DEX2ACCLAIM.cpp */; };
+		B3C3F41621A9CBAA00EFB09C /* F3DEX2ACCLAIM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3DD21A9CB9C00EFB09C /* F3DEX2ACCLAIM.cpp */; };
+		B3C3F41721A9CBAA00EFB09C /* L3DEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3DE21A9CB9C00EFB09C /* L3DEX2.h */; };
+		B3C3F41821A9CBAA00EFB09C /* L3DEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3DE21A9CB9C00EFB09C /* L3DEX2.h */; };
+		B3C3F41921A9CBAA00EFB09C /* L3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3DF21A9CB9C00EFB09C /* L3D.h */; };
+		B3C3F41A21A9CBAA00EFB09C /* L3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3DF21A9CB9C00EFB09C /* L3D.h */; };
+		B3C3F41B21A9CBAA00EFB09C /* F5Indi_Naboo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E021A9CB9C00EFB09C /* F5Indi_Naboo.cpp */; };
+		B3C3F41C21A9CBAA00EFB09C /* F5Indi_Naboo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E021A9CB9C00EFB09C /* F5Indi_Naboo.cpp */; };
+		B3C3F41D21A9CBAA00EFB09C /* F5Indi_Naboo.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E121A9CB9C00EFB09C /* F5Indi_Naboo.h */; };
+		B3C3F41E21A9CBAA00EFB09C /* F5Indi_Naboo.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E121A9CB9C00EFB09C /* F5Indi_Naboo.h */; };
+		B3C3F41F21A9CBAA00EFB09C /* F5Rogue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E221A9CB9C00EFB09C /* F5Rogue.cpp */; };
+		B3C3F42021A9CBAA00EFB09C /* F5Rogue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E221A9CB9C00EFB09C /* F5Rogue.cpp */; };
+		B3C3F42121A9CBAA00EFB09C /* F3DSETA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E321A9CB9D00EFB09C /* F3DSETA.h */; };
+		B3C3F42221A9CBAA00EFB09C /* F3DSETA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E321A9CB9D00EFB09C /* F3DSETA.h */; };
+		B3C3F42321A9CBAA00EFB09C /* F3DTEXA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E421A9CB9D00EFB09C /* F3DTEXA.h */; };
+		B3C3F42421A9CBAA00EFB09C /* F3DTEXA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E421A9CB9D00EFB09C /* F3DTEXA.h */; };
+		B3C3F42521A9CBAA00EFB09C /* F3DBETA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E521A9CB9D00EFB09C /* F3DBETA.h */; };
+		B3C3F42621A9CBAA00EFB09C /* F3DBETA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E521A9CB9D00EFB09C /* F3DBETA.h */; };
+		B3C3F42721A9CBAA00EFB09C /* F3DAM.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E621A9CB9D00EFB09C /* F3DAM.h */; };
+		B3C3F42821A9CBAA00EFB09C /* F3DAM.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E621A9CB9D00EFB09C /* F3DAM.h */; };
+		B3C3F42921A9CBAA00EFB09C /* L3DEX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E721A9CB9D00EFB09C /* L3DEX.h */; };
+		B3C3F42A21A9CBAA00EFB09C /* L3DEX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3E721A9CB9D00EFB09C /* L3DEX.h */; };
+		B3C3F42B21A9CBAA00EFB09C /* F3DZEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E821A9CB9F00EFB09C /* F3DZEX2.cpp */; };
+		B3C3F42C21A9CBAA00EFB09C /* F3DZEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E821A9CB9F00EFB09C /* F3DZEX2.cpp */; };
+		B3C3F42D21A9CBAA00EFB09C /* F3DGOLDEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E921A9CBA000EFB09C /* F3DGOLDEN.cpp */; };
+		B3C3F42E21A9CBAA00EFB09C /* F3DGOLDEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3E921A9CBA000EFB09C /* F3DGOLDEN.cpp */; };
+		B3C3F42F21A9CBAA00EFB09C /* F3DPD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3EA21A9CBA000EFB09C /* F3DPD.cpp */; };
+		B3C3F43021A9CBAA00EFB09C /* F3DPD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3EA21A9CBA000EFB09C /* F3DPD.cpp */; };
+		B3C3F43121A9CBAA00EFB09C /* ZSortBOSS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3EB21A9CBA100EFB09C /* ZSortBOSS.h */; };
+		B3C3F43221A9CBAA00EFB09C /* ZSortBOSS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3EB21A9CBA100EFB09C /* ZSortBOSS.h */; };
+		B3C3F43321A9CBAA00EFB09C /* T3DUX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3EC21A9CBA100EFB09C /* T3DUX.h */; };
+		B3C3F43421A9CBAA00EFB09C /* T3DUX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3EC21A9CBA100EFB09C /* T3DUX.h */; };
+		B3C3F43521A9CBAA00EFB09C /* S2DEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3ED21A9CBA200EFB09C /* S2DEX2.h */; };
+		B3C3F43621A9CBAA00EFB09C /* S2DEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3ED21A9CBA200EFB09C /* S2DEX2.h */; };
+		B3C3F43721A9CBAA00EFB09C /* ZSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3EE21A9CBA200EFB09C /* ZSort.cpp */; };
+		B3C3F43821A9CBAA00EFB09C /* ZSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3EE21A9CBA200EFB09C /* ZSort.cpp */; };
+		B3C3F43921A9CBAA00EFB09C /* F3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3EF21A9CBA200EFB09C /* F3D.h */; };
+		B3C3F43A21A9CBAA00EFB09C /* F3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3EF21A9CBA200EFB09C /* F3D.h */; };
+		B3C3F43B21A9CBAA00EFB09C /* F3DDKR.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F021A9CBA300EFB09C /* F3DDKR.h */; };
+		B3C3F43C21A9CBAA00EFB09C /* F3DDKR.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F021A9CBA300EFB09C /* F3DDKR.h */; };
+		B3C3F43D21A9CBAA00EFB09C /* F3DAM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F121A9CBA300EFB09C /* F3DAM.cpp */; };
+		B3C3F43E21A9CBAA00EFB09C /* F3DAM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F121A9CBA300EFB09C /* F3DAM.cpp */; };
+		B3C3F43F21A9CBAA00EFB09C /* F5Rogue.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F221A9CBA300EFB09C /* F5Rogue.h */; };
+		B3C3F44021A9CBAA00EFB09C /* F5Rogue.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F221A9CBA300EFB09C /* F5Rogue.h */; };
+		B3C3F44121A9CBAA00EFB09C /* T3DUX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F321A9CBA400EFB09C /* T3DUX.cpp */; };
+		B3C3F44221A9CBAA00EFB09C /* T3DUX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F321A9CBA400EFB09C /* T3DUX.cpp */; };
+		B3C3F44321A9CBAA00EFB09C /* ZSort.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F421A9CBA400EFB09C /* ZSort.h */; };
+		B3C3F44421A9CBAA00EFB09C /* ZSort.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F421A9CBA400EFB09C /* ZSort.h */; };
+		B3C3F44521A9CBAA00EFB09C /* F3DDKR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F521A9CBA400EFB09C /* F3DDKR.cpp */; };
+		B3C3F44621A9CBAA00EFB09C /* F3DDKR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F521A9CBA400EFB09C /* F3DDKR.cpp */; };
+		B3C3F44721A9CBAA00EFB09C /* S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F621A9CBA400EFB09C /* S2DEX.cpp */; };
+		B3C3F44821A9CBAA00EFB09C /* S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F621A9CBA400EFB09C /* S2DEX.cpp */; };
+		B3C3F44921A9CBAA00EFB09C /* F3DZEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F721A9CBA400EFB09C /* F3DZEX2.h */; };
+		B3C3F44A21A9CBAA00EFB09C /* F3DZEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3F721A9CBA400EFB09C /* F3DZEX2.h */; };
+		B3C3F44B21A9CBAA00EFB09C /* L3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F821A9CBA500EFB09C /* L3D.cpp */; };
+		B3C3F44C21A9CBAA00EFB09C /* L3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F821A9CBA500EFB09C /* L3D.cpp */; };
+		B3C3F44D21A9CBAA00EFB09C /* F3DSETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F921A9CBA500EFB09C /* F3DSETA.cpp */; };
+		B3C3F44E21A9CBAA00EFB09C /* F3DSETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3F921A9CBA500EFB09C /* F3DSETA.cpp */; };
+		B3C3F44F21A9CBAA00EFB09C /* F3DGOLDEN.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3FA21A9CBA500EFB09C /* F3DGOLDEN.h */; };
+		B3C3F45021A9CBAA00EFB09C /* F3DGOLDEN.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3FA21A9CBA500EFB09C /* F3DGOLDEN.h */; };
+		B3C3F45121A9CBAA00EFB09C /* L3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FB21A9CBA500EFB09C /* L3DEX2.cpp */; };
+		B3C3F45221A9CBAA00EFB09C /* L3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FB21A9CBA500EFB09C /* L3DEX2.cpp */; };
+		B3C3F45321A9CBAA00EFB09C /* Turbo3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FC21A9CBA500EFB09C /* Turbo3D.cpp */; };
+		B3C3F45421A9CBAA00EFB09C /* Turbo3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FC21A9CBA500EFB09C /* Turbo3D.cpp */; };
+		B3C3F45521A9CBAA00EFB09C /* S2DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FD21A9CBA600EFB09C /* S2DEX2.cpp */; };
+		B3C3F45621A9CBAA00EFB09C /* S2DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FD21A9CBA600EFB09C /* S2DEX2.cpp */; };
+		B3C3F45721A9CBAA00EFB09C /* ZSortBOSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FE21A9CBA600EFB09C /* ZSortBOSS.cpp */; };
+		B3C3F45821A9CBAA00EFB09C /* ZSortBOSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3FE21A9CBA600EFB09C /* ZSortBOSS.cpp */; };
+		B3C3F45921A9CBAA00EFB09C /* Turbo3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3FF21A9CBA600EFB09C /* Turbo3D.h */; };
+		B3C3F45A21A9CBAA00EFB09C /* Turbo3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3FF21A9CBA600EFB09C /* Turbo3D.h */; };
+		B3C3F45B21A9CBAA00EFB09C /* F3DEX2CBFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40021A9CBA700EFB09C /* F3DEX2CBFD.cpp */; };
+		B3C3F45C21A9CBAA00EFB09C /* F3DEX2CBFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40021A9CBA700EFB09C /* F3DEX2CBFD.cpp */; };
+		B3C3F45D21A9CBAA00EFB09C /* F3DFLX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40121A9CBA800EFB09C /* F3DFLX2.h */; };
+		B3C3F45E21A9CBAA00EFB09C /* F3DFLX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40121A9CBA800EFB09C /* F3DFLX2.h */; };
+		B3C3F45F21A9CBAA00EFB09C /* F3DEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40221A9CBA800EFB09C /* F3DEX2.h */; };
+		B3C3F46021A9CBAA00EFB09C /* F3DEX2.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40221A9CBA800EFB09C /* F3DEX2.h */; };
+		B3C3F46121A9CBAA00EFB09C /* L3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40321A9CBA900EFB09C /* L3DEX.cpp */; };
+		B3C3F46221A9CBAA00EFB09C /* L3DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40321A9CBA900EFB09C /* L3DEX.cpp */; };
+		B3C3F46321A9CBAA00EFB09C /* F3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40421A9CBA900EFB09C /* F3D.cpp */; };
+		B3C3F46421A9CBAA00EFB09C /* F3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40421A9CBA900EFB09C /* F3D.cpp */; };
+		B3C3F46521A9CBAA00EFB09C /* S2DEX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40521A9CBAA00EFB09C /* S2DEX.h */; };
+		B3C3F46621A9CBAA00EFB09C /* S2DEX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40521A9CBAA00EFB09C /* S2DEX.h */; };
+		B3C3F46721A9CBAA00EFB09C /* F3DEX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40621A9CBAA00EFB09C /* F3DEX.h */; };
+		B3C3F46821A9CBAA00EFB09C /* F3DEX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40621A9CBAA00EFB09C /* F3DEX.h */; };
+		B3C3F46921A9CBAA00EFB09C /* F3DPD.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40721A9CBAA00EFB09C /* F3DPD.h */; };
+		B3C3F46A21A9CBAA00EFB09C /* F3DPD.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F40721A9CBAA00EFB09C /* F3DPD.h */; };
+		B3C3F46B21A9CBAA00EFB09C /* F3DBETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40821A9CBAA00EFB09C /* F3DBETA.cpp */; };
+		B3C3F46C21A9CBAA00EFB09C /* F3DBETA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F40821A9CBAA00EFB09C /* F3DBETA.cpp */; };
+		B3C3F46F21A9CBFB00EFB09C /* glsl_FXAA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F46D21A9CBFB00EFB09C /* glsl_FXAA.h */; };
+		B3C3F47021A9CBFB00EFB09C /* glsl_FXAA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F46D21A9CBFB00EFB09C /* glsl_FXAA.h */; };
+		B3C3F47121A9CBFB00EFB09C /* glsl_FXAA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */; };
+		B3C3F47221A9CBFB00EFB09C /* glsl_FXAA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */; };
 		B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3CB4B22206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
@@ -1420,54 +1476,6 @@
 		B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRSPCXD4.h; sourceTree = "<group>"; };
 		B33115901C7309C200E9AD14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B34601D320813330008C049C /* gliden_osd.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gliden_osd.cpp; sourceTree = "<group>"; };
-		B35B3166206C8E0F00AEAF88 /* L3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = L3D.h; sourceTree = "<group>"; };
-		B35B3167206C8E0F00AEAF88 /* F3DPD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DPD.h; sourceTree = "<group>"; };
-		B35B3168206C8E0F00AEAF88 /* F3DDKR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DDKR.h; sourceTree = "<group>"; };
-		B35B3169206C8E0F00AEAF88 /* F3DEX.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX.cpp; sourceTree = "<group>"; };
-		B35B316A206C8E0F00AEAF88 /* L3DEX.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = L3DEX.cpp; sourceTree = "<group>"; };
-		B35B316B206C8E0F00AEAF88 /* F3DFLX2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DFLX2.cpp; sourceTree = "<group>"; };
-		B35B316C206C8E1000AEAF88 /* F3DZEX2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DZEX2.cpp; sourceTree = "<group>"; };
-		B35B316D206C8E1000AEAF88 /* F3DPD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DPD.cpp; sourceTree = "<group>"; };
-		B35B316E206C8E1000AEAF88 /* F3DAM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DAM.h; sourceTree = "<group>"; };
-		B35B316F206C8E1000AEAF88 /* L3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = L3D.cpp; sourceTree = "<group>"; };
-		B35B3170206C8E1000AEAF88 /* F3DBETA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DBETA.h; sourceTree = "<group>"; };
-		B35B3171206C8E1000AEAF88 /* F3DSETA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DSETA.cpp; sourceTree = "<group>"; };
-		B35B3172206C8E1100AEAF88 /* F3DEX2CBFD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DEX2CBFD.h; sourceTree = "<group>"; };
-		B35B3173206C8E1100AEAF88 /* F3DBETA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DBETA.cpp; sourceTree = "<group>"; };
-		B35B3174206C8E1100AEAF88 /* F3DFLX2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DFLX2.h; sourceTree = "<group>"; };
-		B35B3175206C8E1100AEAF88 /* F3DSETA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DSETA.h; sourceTree = "<group>"; };
-		B35B3176206C8E1100AEAF88 /* L3DEX2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = L3DEX2.cpp; sourceTree = "<group>"; };
-		B35B3177206C8E1100AEAF88 /* F3DEX2ACCLAIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DEX2ACCLAIM.h; sourceTree = "<group>"; };
-		B35B3178206C8E1200AEAF88 /* F3DEX2CBFD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2CBFD.cpp; sourceTree = "<group>"; };
-		B35B3179206C8E1200AEAF88 /* S2DEX.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = S2DEX.cpp; sourceTree = "<group>"; };
-		B35B317A206C8E1200AEAF88 /* F3DZEX2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DZEX2.h; sourceTree = "<group>"; };
-		B35B317B206C8E1200AEAF88 /* Turbo3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Turbo3D.cpp; sourceTree = "<group>"; };
-		B35B317C206C8E1200AEAF88 /* Turbo3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Turbo3D.h; sourceTree = "<group>"; };
-		B35B317D206C8E1300AEAF88 /* T3DUX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = T3DUX.h; sourceTree = "<group>"; };
-		B35B317E206C8E1300AEAF88 /* ZSortBOSS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZSortBOSS.h; sourceTree = "<group>"; };
-		B35B317F206C8E1300AEAF88 /* ZSortBOSS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ZSortBOSS.cpp; sourceTree = "<group>"; };
-		B35B3180206C8E1300AEAF88 /* F3DGOLDEN.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DGOLDEN.h; sourceTree = "<group>"; };
-		B35B3181206C8E1400AEAF88 /* F3DAM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DAM.cpp; sourceTree = "<group>"; };
-		B35B3182206C8E1400AEAF88 /* F3DTEXA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DTEXA.h; sourceTree = "<group>"; };
-		B35B3183206C8E1400AEAF88 /* F3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3D.h; sourceTree = "<group>"; };
-		B35B3184206C8E1400AEAF88 /* F3DEX2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DEX2.h; sourceTree = "<group>"; };
-		B35B3185206C8E1500AEAF88 /* S2DEX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = S2DEX.h; sourceTree = "<group>"; };
-		B35B3186206C8E1500AEAF88 /* T3DUX.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = T3DUX.cpp; sourceTree = "<group>"; };
-		B35B3187206C8E1500AEAF88 /* F3DGOLDEN.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DGOLDEN.cpp; sourceTree = "<group>"; };
-		B35B3188206C8E1500AEAF88 /* ZSort.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ZSort.cpp; sourceTree = "<group>"; };
-		B35B3189206C8E1500AEAF88 /* ZSort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZSort.h; sourceTree = "<group>"; };
-		B35B318A206C8E1600AEAF88 /* F3DEX2ACCLAIM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2ACCLAIM.cpp; sourceTree = "<group>"; };
-		B35B318B206C8E1900AEAF88 /* F3DDKR.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DDKR.cpp; sourceTree = "<group>"; };
-		B35B318C206C8E1A00AEAF88 /* F3DEX2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2.cpp; sourceTree = "<group>"; };
-		B35B318D206C8E1A00AEAF88 /* F3DSWRS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DSWRS.cpp; sourceTree = "<group>"; };
-		B35B318E206C8E1A00AEAF88 /* L3DEX2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = L3DEX2.h; sourceTree = "<group>"; };
-		B35B318F206C8E1A00AEAF88 /* L3DEX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = L3DEX.h; sourceTree = "<group>"; };
-		B35B3190206C8E1B00AEAF88 /* S2DEX2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = S2DEX2.cpp; sourceTree = "<group>"; };
-		B35B3191206C8E1B00AEAF88 /* S2DEX2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = S2DEX2.h; sourceTree = "<group>"; };
-		B35B3192206C8E1B00AEAF88 /* F3DTEXA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3DTEXA.cpp; sourceTree = "<group>"; };
-		B35B3193206C8E1B00AEAF88 /* F3DEX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DEX.h; sourceTree = "<group>"; };
-		B35B3194206C8E1C00AEAF88 /* F3DSWRS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DSWRS.h; sourceTree = "<group>"; };
-		B35B3195206C8E1C00AEAF88 /* F3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3D.cpp; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
 		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
 		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1662,6 +1670,58 @@
 		B3B3B9531DED13A200602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B9731DED144100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C1031E1C72C9BA00DD066C /* SDL_opengles2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_opengles2.h; sourceTree = "<group>"; };
+		B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DFLX2.cpp; sourceTree = "<group>"; };
+		B3C3F3D821A9CB9B00EFB09C /* F3DEX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2.cpp; sourceTree = "<group>"; };
+		B3C3F3D921A9CB9B00EFB09C /* F3DEX2ACCLAIM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DEX2ACCLAIM.h; sourceTree = "<group>"; };
+		B3C3F3DA21A9CB9B00EFB09C /* F3DEX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX.cpp; sourceTree = "<group>"; };
+		B3C3F3DB21A9CB9B00EFB09C /* F3DTEXA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DTEXA.cpp; sourceTree = "<group>"; };
+		B3C3F3DC21A9CB9B00EFB09C /* F3DEX2CBFD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DEX2CBFD.h; sourceTree = "<group>"; };
+		B3C3F3DD21A9CB9C00EFB09C /* F3DEX2ACCLAIM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2ACCLAIM.cpp; sourceTree = "<group>"; };
+		B3C3F3DE21A9CB9C00EFB09C /* L3DEX2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L3DEX2.h; sourceTree = "<group>"; };
+		B3C3F3DF21A9CB9C00EFB09C /* L3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L3D.h; sourceTree = "<group>"; };
+		B3C3F3E021A9CB9C00EFB09C /* F5Indi_Naboo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F5Indi_Naboo.cpp; sourceTree = "<group>"; };
+		B3C3F3E121A9CB9C00EFB09C /* F5Indi_Naboo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5Indi_Naboo.h; sourceTree = "<group>"; };
+		B3C3F3E221A9CB9C00EFB09C /* F5Rogue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F5Rogue.cpp; sourceTree = "<group>"; };
+		B3C3F3E321A9CB9D00EFB09C /* F3DSETA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DSETA.h; sourceTree = "<group>"; };
+		B3C3F3E421A9CB9D00EFB09C /* F3DTEXA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DTEXA.h; sourceTree = "<group>"; };
+		B3C3F3E521A9CB9D00EFB09C /* F3DBETA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DBETA.h; sourceTree = "<group>"; };
+		B3C3F3E621A9CB9D00EFB09C /* F3DAM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DAM.h; sourceTree = "<group>"; };
+		B3C3F3E721A9CB9D00EFB09C /* L3DEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L3DEX.h; sourceTree = "<group>"; };
+		B3C3F3E821A9CB9F00EFB09C /* F3DZEX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DZEX2.cpp; sourceTree = "<group>"; };
+		B3C3F3E921A9CBA000EFB09C /* F3DGOLDEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DGOLDEN.cpp; sourceTree = "<group>"; };
+		B3C3F3EA21A9CBA000EFB09C /* F3DPD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DPD.cpp; sourceTree = "<group>"; };
+		B3C3F3EB21A9CBA100EFB09C /* ZSortBOSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSortBOSS.h; sourceTree = "<group>"; };
+		B3C3F3EC21A9CBA100EFB09C /* T3DUX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T3DUX.h; sourceTree = "<group>"; };
+		B3C3F3ED21A9CBA200EFB09C /* S2DEX2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = S2DEX2.h; sourceTree = "<group>"; };
+		B3C3F3EE21A9CBA200EFB09C /* ZSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZSort.cpp; sourceTree = "<group>"; };
+		B3C3F3EF21A9CBA200EFB09C /* F3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3D.h; sourceTree = "<group>"; };
+		B3C3F3F021A9CBA300EFB09C /* F3DDKR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DDKR.h; sourceTree = "<group>"; };
+		B3C3F3F121A9CBA300EFB09C /* F3DAM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DAM.cpp; sourceTree = "<group>"; };
+		B3C3F3F221A9CBA300EFB09C /* F5Rogue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5Rogue.h; sourceTree = "<group>"; };
+		B3C3F3F321A9CBA400EFB09C /* T3DUX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = T3DUX.cpp; sourceTree = "<group>"; };
+		B3C3F3F421A9CBA400EFB09C /* ZSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSort.h; sourceTree = "<group>"; };
+		B3C3F3F521A9CBA400EFB09C /* F3DDKR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DDKR.cpp; sourceTree = "<group>"; };
+		B3C3F3F621A9CBA400EFB09C /* S2DEX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = S2DEX.cpp; sourceTree = "<group>"; };
+		B3C3F3F721A9CBA400EFB09C /* F3DZEX2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DZEX2.h; sourceTree = "<group>"; };
+		B3C3F3F821A9CBA500EFB09C /* L3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = L3D.cpp; sourceTree = "<group>"; };
+		B3C3F3F921A9CBA500EFB09C /* F3DSETA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DSETA.cpp; sourceTree = "<group>"; };
+		B3C3F3FA21A9CBA500EFB09C /* F3DGOLDEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DGOLDEN.h; sourceTree = "<group>"; };
+		B3C3F3FB21A9CBA500EFB09C /* L3DEX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = L3DEX2.cpp; sourceTree = "<group>"; };
+		B3C3F3FC21A9CBA500EFB09C /* Turbo3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Turbo3D.cpp; sourceTree = "<group>"; };
+		B3C3F3FD21A9CBA600EFB09C /* S2DEX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = S2DEX2.cpp; sourceTree = "<group>"; };
+		B3C3F3FE21A9CBA600EFB09C /* ZSortBOSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZSortBOSS.cpp; sourceTree = "<group>"; };
+		B3C3F3FF21A9CBA600EFB09C /* Turbo3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Turbo3D.h; sourceTree = "<group>"; };
+		B3C3F40021A9CBA700EFB09C /* F3DEX2CBFD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2CBFD.cpp; sourceTree = "<group>"; };
+		B3C3F40121A9CBA800EFB09C /* F3DFLX2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DFLX2.h; sourceTree = "<group>"; };
+		B3C3F40221A9CBA800EFB09C /* F3DEX2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DEX2.h; sourceTree = "<group>"; };
+		B3C3F40321A9CBA900EFB09C /* L3DEX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = L3DEX.cpp; sourceTree = "<group>"; };
+		B3C3F40421A9CBA900EFB09C /* F3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3D.cpp; sourceTree = "<group>"; };
+		B3C3F40521A9CBAA00EFB09C /* S2DEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = S2DEX.h; sourceTree = "<group>"; };
+		B3C3F40621A9CBAA00EFB09C /* F3DEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DEX.h; sourceTree = "<group>"; };
+		B3C3F40721A9CBAA00EFB09C /* F3DPD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3DPD.h; sourceTree = "<group>"; };
+		B3C3F40821A9CBAA00EFB09C /* F3DBETA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DBETA.cpp; sourceTree = "<group>"; };
+		B3C3F46D21A9CBFB00EFB09C /* glsl_FXAA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glsl_FXAA.h; sourceTree = "<group>"; };
+		B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glsl_FXAA.cpp; sourceTree = "<group>"; };
 		B3CB4B20206E54D10074706B /* Log_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Log_ios.mm; sourceTree = "<group>"; };
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDrawerStub.cpp; sourceTree = "<group>"; };
@@ -3756,54 +3816,56 @@
 		DFB601DA2038AE78001E70F1 /* uCodes */ = {
 			isa = PBXGroup;
 			children = (
-				B35B3195206C8E1C00AEAF88 /* F3D.cpp */,
-				B35B3181206C8E1400AEAF88 /* F3DAM.cpp */,
-				B35B3173206C8E1100AEAF88 /* F3DBETA.cpp */,
-				B35B318B206C8E1900AEAF88 /* F3DDKR.cpp */,
-				B35B3169206C8E0F00AEAF88 /* F3DEX.cpp */,
-				B35B318C206C8E1A00AEAF88 /* F3DEX2.cpp */,
-				B35B318A206C8E1600AEAF88 /* F3DEX2ACCLAIM.cpp */,
-				B35B3178206C8E1200AEAF88 /* F3DEX2CBFD.cpp */,
-				B35B316B206C8E0F00AEAF88 /* F3DFLX2.cpp */,
-				B35B3187206C8E1500AEAF88 /* F3DGOLDEN.cpp */,
-				B35B316D206C8E1000AEAF88 /* F3DPD.cpp */,
-				B35B3171206C8E1000AEAF88 /* F3DSETA.cpp */,
-				B35B318D206C8E1A00AEAF88 /* F3DSWRS.cpp */,
-				B35B3192206C8E1B00AEAF88 /* F3DTEXA.cpp */,
-				B35B316C206C8E1000AEAF88 /* F3DZEX2.cpp */,
-				B35B316F206C8E1000AEAF88 /* L3D.cpp */,
-				B35B316A206C8E0F00AEAF88 /* L3DEX.cpp */,
-				B35B3176206C8E1100AEAF88 /* L3DEX2.cpp */,
-				B35B3179206C8E1200AEAF88 /* S2DEX.cpp */,
-				B35B3190206C8E1B00AEAF88 /* S2DEX2.cpp */,
-				B35B3186206C8E1500AEAF88 /* T3DUX.cpp */,
-				B35B317B206C8E1200AEAF88 /* Turbo3D.cpp */,
-				B35B3188206C8E1500AEAF88 /* ZSort.cpp */,
-				B35B317F206C8E1300AEAF88 /* ZSortBOSS.cpp */,
-				B35B3183206C8E1400AEAF88 /* F3D.h */,
-				B35B316E206C8E1000AEAF88 /* F3DAM.h */,
-				B35B3170206C8E1000AEAF88 /* F3DBETA.h */,
-				B35B3168206C8E0F00AEAF88 /* F3DDKR.h */,
-				B35B3193206C8E1B00AEAF88 /* F3DEX.h */,
-				B35B3184206C8E1400AEAF88 /* F3DEX2.h */,
-				B35B3177206C8E1100AEAF88 /* F3DEX2ACCLAIM.h */,
-				B35B3172206C8E1100AEAF88 /* F3DEX2CBFD.h */,
-				B35B3174206C8E1100AEAF88 /* F3DFLX2.h */,
-				B35B3180206C8E1300AEAF88 /* F3DGOLDEN.h */,
-				B35B3167206C8E0F00AEAF88 /* F3DPD.h */,
-				B35B3175206C8E1100AEAF88 /* F3DSETA.h */,
-				B35B3194206C8E1C00AEAF88 /* F3DSWRS.h */,
-				B35B3182206C8E1400AEAF88 /* F3DTEXA.h */,
-				B35B317A206C8E1200AEAF88 /* F3DZEX2.h */,
-				B35B3166206C8E0F00AEAF88 /* L3D.h */,
-				B35B318F206C8E1A00AEAF88 /* L3DEX.h */,
-				B35B318E206C8E1A00AEAF88 /* L3DEX2.h */,
-				B35B3185206C8E1500AEAF88 /* S2DEX.h */,
-				B35B3191206C8E1B00AEAF88 /* S2DEX2.h */,
-				B35B317D206C8E1300AEAF88 /* T3DUX.h */,
-				B35B317C206C8E1200AEAF88 /* Turbo3D.h */,
-				B35B3189206C8E1500AEAF88 /* ZSort.h */,
-				B35B317E206C8E1300AEAF88 /* ZSortBOSS.h */,
+				B3C3F40421A9CBA900EFB09C /* F3D.cpp */,
+				B3C3F3EF21A9CBA200EFB09C /* F3D.h */,
+				B3C3F3F121A9CBA300EFB09C /* F3DAM.cpp */,
+				B3C3F3E621A9CB9D00EFB09C /* F3DAM.h */,
+				B3C3F40821A9CBAA00EFB09C /* F3DBETA.cpp */,
+				B3C3F3E521A9CB9D00EFB09C /* F3DBETA.h */,
+				B3C3F3F521A9CBA400EFB09C /* F3DDKR.cpp */,
+				B3C3F3F021A9CBA300EFB09C /* F3DDKR.h */,
+				B3C3F3DA21A9CB9B00EFB09C /* F3DEX.cpp */,
+				B3C3F40621A9CBAA00EFB09C /* F3DEX.h */,
+				B3C3F3D821A9CB9B00EFB09C /* F3DEX2.cpp */,
+				B3C3F40221A9CBA800EFB09C /* F3DEX2.h */,
+				B3C3F3DD21A9CB9C00EFB09C /* F3DEX2ACCLAIM.cpp */,
+				B3C3F3D921A9CB9B00EFB09C /* F3DEX2ACCLAIM.h */,
+				B3C3F40021A9CBA700EFB09C /* F3DEX2CBFD.cpp */,
+				B3C3F3DC21A9CB9B00EFB09C /* F3DEX2CBFD.h */,
+				B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */,
+				B3C3F40121A9CBA800EFB09C /* F3DFLX2.h */,
+				B3C3F3E921A9CBA000EFB09C /* F3DGOLDEN.cpp */,
+				B3C3F3FA21A9CBA500EFB09C /* F3DGOLDEN.h */,
+				B3C3F3EA21A9CBA000EFB09C /* F3DPD.cpp */,
+				B3C3F40721A9CBAA00EFB09C /* F3DPD.h */,
+				B3C3F3F921A9CBA500EFB09C /* F3DSETA.cpp */,
+				B3C3F3E321A9CB9D00EFB09C /* F3DSETA.h */,
+				B3C3F3DB21A9CB9B00EFB09C /* F3DTEXA.cpp */,
+				B3C3F3E421A9CB9D00EFB09C /* F3DTEXA.h */,
+				B3C3F3E821A9CB9F00EFB09C /* F3DZEX2.cpp */,
+				B3C3F3F721A9CBA400EFB09C /* F3DZEX2.h */,
+				B3C3F3E021A9CB9C00EFB09C /* F5Indi_Naboo.cpp */,
+				B3C3F3E121A9CB9C00EFB09C /* F5Indi_Naboo.h */,
+				B3C3F3E221A9CB9C00EFB09C /* F5Rogue.cpp */,
+				B3C3F3F221A9CBA300EFB09C /* F5Rogue.h */,
+				B3C3F3F821A9CBA500EFB09C /* L3D.cpp */,
+				B3C3F3DF21A9CB9C00EFB09C /* L3D.h */,
+				B3C3F40321A9CBA900EFB09C /* L3DEX.cpp */,
+				B3C3F3E721A9CB9D00EFB09C /* L3DEX.h */,
+				B3C3F3FB21A9CBA500EFB09C /* L3DEX2.cpp */,
+				B3C3F3DE21A9CB9C00EFB09C /* L3DEX2.h */,
+				B3C3F3F621A9CBA400EFB09C /* S2DEX.cpp */,
+				B3C3F40521A9CBAA00EFB09C /* S2DEX.h */,
+				B3C3F3FD21A9CBA600EFB09C /* S2DEX2.cpp */,
+				B3C3F3ED21A9CBA200EFB09C /* S2DEX2.h */,
+				B3C3F3F321A9CBA400EFB09C /* T3DUX.cpp */,
+				B3C3F3EC21A9CBA100EFB09C /* T3DUX.h */,
+				B3C3F3FC21A9CBA500EFB09C /* Turbo3D.cpp */,
+				B3C3F3FF21A9CBA600EFB09C /* Turbo3D.h */,
+				B3C3F3EE21A9CBA200EFB09C /* ZSort.cpp */,
+				B3C3F3F421A9CBA400EFB09C /* ZSort.h */,
+				B3C3F3FE21A9CBA600EFB09C /* ZSortBOSS.cpp */,
+				B3C3F3EB21A9CBA100EFB09C /* ZSortBOSS.h */,
 			);
 			path = uCodes;
 			sourceTree = "<group>";
@@ -4266,6 +4328,8 @@
 				DFB603642038AE7C001E70F1 /* glsl_ShaderStorage.h */,
 				DFB6035C2038AE7C001E70F1 /* glsl_SpecialShadersFactory.cpp */,
 				DFB603622038AE7C001E70F1 /* glsl_SpecialShadersFactory.h */,
+				B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */,
+				B3C3F46D21A9CBFB00EFB09C /* glsl_FXAA.h */,
 				DFB603662038AE7C001E70F1 /* glsl_Utils.cpp */,
 				DFB603602038AE7C001E70F1 /* glsl_Utils.h */,
 			);
@@ -4368,12 +4432,16 @@
 				DFB601842038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.h in Headers */,
 				DFB6059C2038BCFD001E70F1 /* svprop.h in Headers */,
 				DFB603E12038B9CF001E70F1 /* Debugger.h in Headers */,
+				B3C3F45F21A9CBAA00EFB09C /* F3DEX2.h in Headers */,
 				DFB6048E2038BB5E001E70F1 /* opengl_UnbufferedDrawer.h in Headers */,
+				B3C3F43B21A9CBAA00EFB09C /* F3DDKR.h in Headers */,
+				B3C3F42921A9CBAA00EFB09C /* L3DEX.h in Headers */,
 				DFB605A22038BCFD001E70F1 /* svpscmap.h in Headers */,
 				DFB6060B2038BD28001E70F1 /* glcorearb.h in Headers */,
 				DFB6054B2038BCD0001E70F1 /* m64p_plugin.h in Headers */,
 				DFB605D42038BD0F001E70F1 /* ftcffdrv.h in Headers */,
 				DFB604942038BB5E001E70F1 /* opengl_CachedFunctions.h in Headers */,
+				B3C3F40D21A9CBAA00EFB09C /* F3DEX2ACCLAIM.h in Headers */,
 				DFB605E52038BD0F001E70F1 /* ftrender.h in Headers */,
 				DFB605D02038BD0F001E70F1 /* fterrdef.h in Headers */,
 				DFB605862038BCF1001E70F1 /* ftpic.h in Headers */,
@@ -4383,12 +4451,14 @@
 				DFB605A32038BCFD001E70F1 /* svkern.h in Headers */,
 				DFB604C72038BBEC001E70F1 /* glsl_CombinerProgramBuilder.h in Headers */,
 				DFB604532038BA9D001E70F1 /* ZlutTexture.h in Headers */,
+				B3C3F43521A9CBAA00EFB09C /* S2DEX2.h in Headers */,
 				DFB604582038BAB8001E70F1 /* ColorBufferToRDRAMStub.h in Headers */,
 				DFB6042B2038BA67001E70F1 /* RDP.h in Headers */,
 				DFB604592038BAB8001E70F1 /* DepthBufferToRDRAM.h in Headers */,
 				DFB605882038BCF1001E70F1 /* ftmemory.h in Headers */,
 				DFB6043B2038BA86001E70F1 /* SoftwareRender.h in Headers */,
 				DFB606092038BD28001E70F1 /* glext.h in Headers */,
+				B3C3F43121A9CBAA00EFB09C /* ZSortBOSS.h in Headers */,
 				DFB604752038BB0B001E70F1 /* Context.h in Headers */,
 				DFB603D82038B996001E70F1 /* convert.h in Headers */,
 				DFB6059D2038BCFD001E70F1 /* svmm.h in Headers */,
@@ -4412,9 +4482,11 @@
 				DFB604982038BB5E001E70F1 /* opengl_ColorBufferReaderWithReadPixels.h in Headers */,
 				DFB605712038BCE7001E70F1 /* fttrigon.h in Headers */,
 				DFB605CE2038BD0F001E70F1 /* ftincrem.h in Headers */,
+				B3C3F41321A9CBAA00EFB09C /* F3DEX2CBFD.h in Headers */,
 				DFB6059F2038BCFD001E70F1 /* svttcmap.h in Headers */,
 				DFB605AC2038BCFD001E70F1 /* svttglyf.h in Headers */,
 				DFB604902038BB5E001E70F1 /* opengl_BufferManipulationObjectFactory.h in Headers */,
+				B3C3F44921A9CBAA00EFB09C /* F3DZEX2.h in Headers */,
 				DFB6057F2038BCF1001E70F1 /* pshints.h in Headers */,
 				DFB605DB2038BD0F001E70F1 /* tttables.h in Headers */,
 				DFB6045C2038BAB8001E70F1 /* ColorBufferToRDRAM.h in Headers */,
@@ -4448,12 +4520,15 @@
 				DFB605472038BCD0001E70F1 /* vidext.h in Headers */,
 				DFB605A02038BCFD001E70F1 /* svotval.h in Headers */,
 				DFB604952038BB5E001E70F1 /* opengl_ColorBufferReaderWithBufferStorage.h in Headers */,
+				B3C3F43321A9CBAA00EFB09C /* T3DUX.h in Headers */,
 				DFB606082038BD28001E70F1 /* wglext.h in Headers */,
 				DFB603DF2038B9CF001E70F1 /* DebugDump.h in Headers */,
 				DFB605DD2038BD0F001E70F1 /* ftglyph.h in Headers */,
+				B3C3F46721A9CBAA00EFB09C /* F3DEX.h in Headers */,
 				DFB605D12038BD0F001E70F1 /* ttnameid.h in Headers */,
 				DFB603C12038B6FE001E70F1 /* 3DMath.h in Headers */,
 				DFB6055D2038BCDB001E70F1 /* ftmm.h in Headers */,
+				B3C3F41D21A9CBAA00EFB09C /* F5Indi_Naboo.h in Headers */,
 				DFB605C62038BD0F001E70F1 /* ftsynth.h in Headers */,
 				DFB605442038BCD0001E70F1 /* callbacks.h in Headers */,
 				DFB605652038BCE2001E70F1 /* ftheader.h in Headers */,
@@ -4466,8 +4541,11 @@
 				DFB604962038BB5E001E70F1 /* opengl_ContextImpl.h in Headers */,
 				DFB605E12038BD0F001E70F1 /* ftmac.h in Headers */,
 				DFB605E02038BD0F001E70F1 /* ftlist.h in Headers */,
+				B3C3F43921A9CBAA00EFB09C /* F3D.h in Headers */,
+				B3C3F45921A9CBAA00EFB09C /* Turbo3D.h in Headers */,
 				DFB6049A2038BB5E001E70F1 /* opengl_TextureManipulationObjectFactory.h in Headers */,
 				DFB605592038BCDB001E70F1 /* ftsnames.h in Headers */,
+				B3C3F43F21A9CBAA00EFB09C /* F5Rogue.h in Headers */,
 				DFB6044F2038BA94001E70F1 /* VI.h in Headers */,
 				DFB605842038BCF1001E70F1 /* ftvalid.h in Headers */,
 				DFB605D52038BD0F001E70F1 /* ftchapters.h in Headers */,
@@ -4476,6 +4554,7 @@
 				DFB603C52038B704001E70F1 /* Combiner.h in Headers */,
 				DFB604192038BA3C001E70F1 /* N64.h in Headers */,
 				DFB6047A2038BB0B001E70F1 /* Parameter.h in Headers */,
+				B3C3F42121A9CBAA00EFB09C /* F3DSETA.h in Headers */,
 				DFB605A12038BCFD001E70F1 /* svgldict.h in Headers */,
 				DFB603E32038B9CF001E70F1 /* DepthBuffer.h in Headers */,
 				DFB605C42038BD0F001E70F1 /* ftoutln.h in Headers */,
@@ -4499,12 +4578,14 @@
 				DFB604CB2038BBEC001E70F1 /* glsl_CombinerProgramImpl.h in Headers */,
 				DFB6057B2038BCF1001E70F1 /* internal.h in Headers */,
 				DFB6057C2038BCF1001E70F1 /* ftdebug.h in Headers */,
+				B3C3F41921A9CBAA00EFB09C /* L3D.h in Headers */,
 				DFB605CF2038BD0F001E70F1 /* ftttdrv.h in Headers */,
 				DFB6057A2038BCF1001E70F1 /* sfnt.h in Headers */,
 				DFB605C82038BD0F001E70F1 /* ftgasp.h in Headers */,
 				DFB6041B2038BA3C001E70F1 /* NoiseTexture.h in Headers */,
 				DFB6048F2038BB5E001E70F1 /* opengl_ColorBufferReaderWithEGLImage.h in Headers */,
 				DFB604712038BB0A001E70F1 /* ColorBufferReader.h in Headers */,
+				B3C3F46921A9CBAA00EFB09C /* F3DPD.h in Headers */,
 				DFB6043D2038BA86001E70F1 /* TexrectDrawer.h in Headers */,
 				DFB6057D2038BCF1001E70F1 /* psaux.h in Headers */,
 				DFB605C92038BD0F001E70F1 /* ftstroke.h in Headers */,
@@ -4513,19 +4594,26 @@
 				DFB605812038BCF1001E70F1 /* autohint.h in Headers */,
 				DFB604682038BAD7001E70F1 /* ClipPolygon.h in Headers */,
 				DFB6047B2038BB0B001E70F1 /* Parameters.h in Headers */,
+				B3C3F46F21A9CBFB00EFB09C /* glsl_FXAA.h in Headers */,
 				DFB6060A2038BD28001E70F1 /* glxext.h in Headers */,
 				DFB604112038BA1B001E70F1 /* Log.h in Headers */,
 				DFB605D92038BD0F001E70F1 /* t1tables.h in Headers */,
 				DFB605462038BCD0001E70F1 /* m64p_debugger.h in Headers */,
 				DFB605A62038BCFD001E70F1 /* svgxval.h in Headers */,
+				B3C3F44321A9CBAA00EFB09C /* ZSort.h in Headers */,
+				B3C3F42321A9CBAA00EFB09C /* F3DTEXA.h in Headers */,
 				DFB605872038BCF1001E70F1 /* fttrace.h in Headers */,
+				B3C3F46521A9CBAA00EFB09C /* S2DEX.h in Headers */,
 				DFB6041D2038BA3C001E70F1 /* PaletteTexture.h in Headers */,
 				DFB605832038BCF1001E70F1 /* tttypes.h in Headers */,
 				DFB605402038BCD0001E70F1 /* m64p_frontend.h in Headers */,
 				DFB604732038BB0A001E70F1 /* CombinerProgram.h in Headers */,
+				B3C3F41721A9CBAA00EFB09C /* L3DEX2.h in Headers */,
 				DFB605C02038BD04001E70F1 /* ftrfork.h in Headers */,
+				B3C3F44F21A9CBAA00EFB09C /* F3DGOLDEN.h in Headers */,
 				DFB604692038BAD7001E70F1 /* DepthBufferRender.h in Headers */,
 				B35B31C8206C912C00AEAF88 /* Types.h in Headers */,
+				B3C3F42521A9CBAA00EFB09C /* F3DBETA.h in Headers */,
 				DFB605CD2038BD0F001E70F1 /* freetype.h in Headers */,
 				DFB604C92038BBEC001E70F1 /* glsl_Utils.h in Headers */,
 				DFB605482038BCD0001E70F1 /* vidext_sdl2_compat.h in Headers */,
@@ -4534,6 +4622,7 @@
 				DFB6049B2038BB5E001E70F1 /* opengl_BufferedDrawer.h in Headers */,
 				DFB605732038BCE7001E70F1 /* ftgzip.h in Headers */,
 				DFB604252038BA67001E70F1 /* Performance.h in Headers */,
+				B3C3F45D21A9CBAA00EFB09C /* F3DFLX2.h in Headers */,
 				DFB605D72038BD0F001E70F1 /* ftlzw.h in Headers */,
 				DFB605A72038BCFD001E70F1 /* svxf86nm.h in Headers */,
 				DFB604992038BB5E001E70F1 /* GLFunctions.h in Headers */,
@@ -4543,6 +4632,7 @@
 				DFB604772038BB0B001E70F1 /* FramebufferTextureFormats.h in Headers */,
 				DFB605DA2038BD0F001E70F1 /* ftimage.h in Headers */,
 				DFB605AA2038BCFD001E70F1 /* svtteng.h in Headers */,
+				B3C3F42721A9CBAA00EFB09C /* F3DAM.h in Headers */,
 				DFB605E42038BD0F001E70F1 /* ftbdf.h in Headers */,
 				DFB6042E2038BA67001E70F1 /* RSP.h in Headers */,
 				DFB605CC2038BD0F001E70F1 /* ftotval.h in Headers */,
@@ -4559,6 +4649,7 @@
 				DFB603E72038B9CF001E70F1 /* Debugger.h in Headers */,
 				DFB6049D2038BB5E001E70F1 /* opengl_UnbufferedDrawer.h in Headers */,
 				DFB605B42038BCFE001E70F1 /* svpscmap.h in Headers */,
+				B3C3F41A21A9CBAA00EFB09C /* L3D.h in Headers */,
 				DFB6060F2038BD29001E70F1 /* glcorearb.h in Headers */,
 				DFB605572038BCD1001E70F1 /* m64p_plugin.h in Headers */,
 				DFB605F62038BD10001E70F1 /* ftcffdrv.h in Headers */,
@@ -4568,12 +4659,15 @@
 				DFB605972038BCF2001E70F1 /* ftpic.h in Headers */,
 				DFB604A02038BB5E001E70F1 /* opengl_Utils.h in Headers */,
 				DFB6044B2038BA87001E70F1 /* TextureFilterHandler.h in Headers */,
+				B3C3F42621A9CBAA00EFB09C /* F3DBETA.h in Headers */,
 				DFB605782038BCE8001E70F1 /* ftbbox.h in Headers */,
 				DFB605B52038BCFE001E70F1 /* svkern.h in Headers */,
 				DFB604CF2038BBEC001E70F1 /* glsl_CombinerProgramBuilder.h in Headers */,
 				DFB604552038BA9E001E70F1 /* ZlutTexture.h in Headers */,
+				B3C3F43421A9CBAA00EFB09C /* T3DUX.h in Headers */,
 				DFB6045F2038BAB8001E70F1 /* ColorBufferToRDRAMStub.h in Headers */,
 				DFB604362038BA68001E70F1 /* RDP.h in Headers */,
+				B3C3F44021A9CBAA00EFB09C /* F5Rogue.h in Headers */,
 				DFB604602038BAB8001E70F1 /* DepthBufferToRDRAM.h in Headers */,
 				DFB605992038BCF2001E70F1 /* ftmemory.h in Headers */,
 				DFB604452038BA87001E70F1 /* SoftwareRender.h in Headers */,
@@ -4581,6 +4675,7 @@
 				DFB604832038BB0B001E70F1 /* Context.h in Headers */,
 				DFB603D92038B997001E70F1 /* convert.h in Headers */,
 				DFB605AF2038BCFE001E70F1 /* svmm.h in Headers */,
+				B3C3F46021A9CBAA00EFB09C /* F3DEX2.h in Headers */,
 				DFB604312038BA68001E70F1 /* Platform.h in Headers */,
 				DFB606042038BD10001E70F1 /* ftlcdfil.h in Headers */,
 				DFB605EC2038BD0F001E70F1 /* ftcache.h in Headers */,
@@ -4591,11 +4686,13 @@
 				DFB605512038BCD1001E70F1 /* m64p_types.h in Headers */,
 				DFB604A62038BB5E001E70F1 /* opengl_GLInfo.h in Headers */,
 				DFB6048B2038BB0B001E70F1 /* ShaderProgram.h in Headers */,
+				B3C3F45A21A9CBAA00EFB09C /* Turbo3D.h in Headers */,
 				DFB604152038BA1B001E70F1 /* Keys.h in Headers */,
 				DFB6048A2038BB0B001E70F1 /* PixelBuffer.h in Headers */,
 				DFB606002038BD10001E70F1 /* ftmoderr.h in Headers */,
 				DFB604D52038BBEC001E70F1 /* glsl_ShaderPart.h in Headers */,
 				DFB604842038BB0B001E70F1 /* ContextImpl.h in Headers */,
+				B3C3F43A21A9CBAA00EFB09C /* F3D.h in Headers */,
 				DFB605562038BCD1001E70F1 /* m64p_config.h in Headers */,
 				DFB603F12038B9DE001E70F1 /* DisplayWindow.h in Headers */,
 				DFB604A72038BB5E001E70F1 /* opengl_ColorBufferReaderWithReadPixels.h in Headers */,
@@ -4612,18 +4709,23 @@
 				DFB6040B2038BA09001E70F1 /* GraphicsDrawer.h in Headers */,
 				DFB604092038BA09001E70F1 /* GLideN64.h in Headers */,
 				DFB6054E2038BCD1001E70F1 /* m64p_vidext.h in Headers */,
+				B3C3F42A21A9CBAA00EFB09C /* L3DEX.h in Headers */,
 				DFB604A22038BB5E001E70F1 /* opengl_Attributes.h in Headers */,
 				DFB604D22038BBEC001E70F1 /* glsl_SpecialShadersFactory.h in Headers */,
 				DFB605B02038BCFE001E70F1 /* svwinfnt.h in Headers */,
 				DFB6059B2038BCF2001E70F1 /* ftserv.h in Headers */,
 				DFB603CF2038B938001E70F1 /* osal_files.h in Headers */,
+				B3C3F46A21A9CBAA00EFB09C /* F3DPD.h in Headers */,
 				DFB6056B2038BCE2001E70F1 /* ftconfig.h in Headers */,
 				DFB605692038BCE2001E70F1 /* ftstdlib.h in Headers */,
+				B3C3F45021A9CBAA00EFB09C /* F3DGOLDEN.h in Headers */,
 				DFB604CE2038BBEC001E70F1 /* glsl_CombinerProgramUniformFactory.h in Headers */,
+				B3C3F43621A9CBAA00EFB09C /* S2DEX2.h in Headers */,
 				DFB605BF2038BCFE001E70F1 /* svpostnm.h in Headers */,
 				DFB603DC2038B9C0001E70F1 /* CRC.h in Headers */,
 				DFB604AB2038BB5E001E70F1 /* opengl_ColorBufferReaderWithPixelBuffer.h in Headers */,
 				DFB605932038BCF2001E70F1 /* ftstream.h in Headers */,
+				B3C3F47021A9CBFB00EFB09C /* glsl_FXAA.h in Headers */,
 				DFB604612038BAB8001E70F1 /* WriteToRDRAM.h in Headers */,
 				DFB605C32038BD05001E70F1 /* ftcalc.h in Headers */,
 				DFB603FA2038B9F0001E70F1 /* FrameBufferInfo.h in Headers */,
@@ -4640,6 +4742,7 @@
 				DFB6060C2038BD29001E70F1 /* wglext.h in Headers */,
 				DFB603E52038B9CF001E70F1 /* DebugDump.h in Headers */,
 				DFB605FF2038BD10001E70F1 /* ftglyph.h in Headers */,
+				B3C3F45E21A9CBAA00EFB09C /* F3DFLX2.h in Headers */,
 				DFB605F32038BD10001E70F1 /* ttnameid.h in Headers */,
 				DFB603C32038B6FF001E70F1 /* 3DMath.h in Headers */,
 				DFB605632038BCDC001E70F1 /* ftmm.h in Headers */,
@@ -4648,9 +4751,11 @@
 				DFB6056A2038BCE2001E70F1 /* ftheader.h in Headers */,
 				DFB605E92038BD0F001E70F1 /* fterrors.h in Headers */,
 				DFB604A12038BB5E001E70F1 /* opengl_GraphicsDrawer.h in Headers */,
+				B3C3F42421A9CBAA00EFB09C /* F3DTEXA.h in Headers */,
 				DFB606172038BD4F001E70F1 /* GLideN64_mupenplus.h in Headers */,
 				DFB605612038BCDC001E70F1 /* ftsizes.h in Headers */,
 				DFB6054F2038BCD1001E70F1 /* m64p_common.h in Headers */,
+				B3C3F42221A9CBAA00EFB09C /* F3DSETA.h in Headers */,
 				DFB6055E2038BCDC001E70F1 /* ftxf86.h in Headers */,
 				DFB604A52038BB5E001E70F1 /* opengl_ContextImpl.h in Headers */,
 				DFB606032038BD10001E70F1 /* ftmac.h in Headers */,
@@ -4667,6 +4772,7 @@
 				DFB604882038BB0B001E70F1 /* Parameter.h in Headers */,
 				DFB605B32038BCFE001E70F1 /* svgldict.h in Headers */,
 				DFB603E92038B9CF001E70F1 /* DepthBuffer.h in Headers */,
+				B3C3F41821A9CBAA00EFB09C /* L3DEX2.h in Headers */,
 				DFB605E62038BD0F001E70F1 /* ftoutln.h in Headers */,
 				DFB605F52038BD10001E70F1 /* ftgxval.h in Headers */,
 				DFB603EF2038B9DE001E70F1 /* DisplayLoadProgress.h in Headers */,
@@ -4675,6 +4781,7 @@
 				DFB605602038BCDC001E70F1 /* ftwinfnt.h in Headers */,
 				DFB605622038BCDC001E70F1 /* fttypes.h in Headers */,
 				DFB6058F2038BCF2001E70F1 /* t1types.h in Headers */,
+				B3C3F43221A9CBAA00EFB09C /* ZSortBOSS.h in Headers */,
 				DFB605BA2038BCFE001E70F1 /* svbdf.h in Headers */,
 				DFB6056D2038BCE2001E70F1 /* ftmodule.h in Headers */,
 				DFB605962038BCF2001E70F1 /* ftobjs.h in Headers */,
@@ -4695,14 +4802,17 @@
 				DFB6049E2038BB5E001E70F1 /* opengl_ColorBufferReaderWithEGLImage.h in Headers */,
 				DFB6047F2038BB0B001E70F1 /* ColorBufferReader.h in Headers */,
 				DFB604472038BA87001E70F1 /* TexrectDrawer.h in Headers */,
+				B3C3F41E21A9CBAA00EFB09C /* F5Indi_Naboo.h in Headers */,
 				DFB6058E2038BCF2001E70F1 /* psaux.h in Headers */,
 				DFB605EB2038BD0F001E70F1 /* ftstroke.h in Headers */,
+				B3C3F40E21A9CBAA00EFB09C /* F3DEX2ACCLAIM.h in Headers */,
 				DFB606012038BD10001E70F1 /* ftbitmap.h in Headers */,
 				DFB603FB2038B9F0001E70F1 /* FrameBufferInfoAPI.h in Headers */,
 				DFB605922038BCF2001E70F1 /* autohint.h in Headers */,
 				DFB6046C2038BAD7001E70F1 /* ClipPolygon.h in Headers */,
 				DFB604892038BB0B001E70F1 /* Parameters.h in Headers */,
 				DFB6060E2038BD29001E70F1 /* glxext.h in Headers */,
+				B3C3F43C21A9CBAA00EFB09C /* F3DDKR.h in Headers */,
 				DFB604172038BA1B001E70F1 /* Log.h in Headers */,
 				DFB605FB2038BD10001E70F1 /* t1tables.h in Headers */,
 				DFB605522038BCD1001E70F1 /* m64p_debugger.h in Headers */,
@@ -4721,6 +4831,7 @@
 				DFB6059A2038BCF2001E70F1 /* ftgloadr.h in Headers */,
 				DFB604AA2038BB5E001E70F1 /* opengl_BufferedDrawer.h in Headers */,
 				DFB605792038BCE8001E70F1 /* ftgzip.h in Headers */,
+				B3C3F46621A9CBAA00EFB09C /* S2DEX.h in Headers */,
 				DFB604302038BA68001E70F1 /* Performance.h in Headers */,
 				DFB605F92038BD10001E70F1 /* ftlzw.h in Headers */,
 				DFB605B92038BCFE001E70F1 /* svxf86nm.h in Headers */,
@@ -4729,10 +4840,15 @@
 				DFB6045D2038BAB8001E70F1 /* RDRAMtoColorBuffer.h in Headers */,
 				DFB604072038BA09001E70F1 /* gDP.h in Headers */,
 				DFB604852038BB0B001E70F1 /* FramebufferTextureFormats.h in Headers */,
+				B3C3F46821A9CBAA00EFB09C /* F3DEX.h in Headers */,
+				B3C3F42821A9CBAA00EFB09C /* F3DAM.h in Headers */,
 				DFB605FC2038BD10001E70F1 /* ftimage.h in Headers */,
 				DFB605BC2038BCFE001E70F1 /* svtteng.h in Headers */,
 				DFB606062038BD10001E70F1 /* ftbdf.h in Headers */,
 				DFB605EE2038BD0F001E70F1 /* ftotval.h in Headers */,
+				B3C3F44A21A9CBAA00EFB09C /* F3DZEX2.h in Headers */,
+				B3C3F44421A9CBAA00EFB09C /* ZSort.h in Headers */,
+				B3C3F41421A9CBAA00EFB09C /* F3DEX2CBFD.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5580,71 +5696,75 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C3F44121A9CBAA00EFB09C /* T3DUX.cpp in Sources */,
+				B3C3F46B21A9CBAA00EFB09C /* F3DBETA.cpp in Sources */,
 				DFB6048C2038BB47001E70F1 /* GLFunctions.cpp in Sources */,
 				DFB604AE2038BBD5001E70F1 /* opengl_BufferManipulationObjectFactory.cpp in Sources */,
+				B3C3F44B21A9CBAA00EFB09C /* L3D.cpp in Sources */,
+				B3C3F41B21A9CBAA00EFB09C /* F5Indi_Naboo.cpp in Sources */,
 				B35B3151206C7DF600AEAF88 /* 3DMathNeon.cpp in Sources */,
-				B35B31A7206C8E2700AEAF88 /* L3DEX2.cpp in Sources */,
+				B3C3F43721A9CBAA00EFB09C /* ZSort.cpp in Sources */,
 				DFB603C82038B70E001E70F1 /* CombinerKey.cpp in Sources */,
 				DFB603C42038B704001E70F1 /* Combiner.cpp in Sources */,
-				B35B31A2206C8E2700AEAF88 /* F3DSWRS.cpp in Sources */,
 				DFB604B72038BBD5001E70F1 /* opengl_UnbufferedDrawer.cpp in Sources */,
+				B3C3F44521A9CBAA00EFB09C /* F3DDKR.cpp in Sources */,
+				B3C3F45321A9CBAA00EFB09C /* Turbo3D.cpp in Sources */,
 				DFB604282038BA67001E70F1 /* PostProcessor.cpp in Sources */,
+				B3C3F40B21A9CBAA00EFB09C /* F3DEX2.cpp in Sources */,
+				B3C3F45121A9CBAA00EFB09C /* L3DEX2.cpp in Sources */,
 				DFB604742038BB0A001E70F1 /* Context.cpp in Sources */,
 				DFB604722038BB0A001E70F1 /* CombinerProgram.cpp in Sources */,
-				B35B31A0206C8E2700AEAF88 /* F3DPD.cpp in Sources */,
 				DFB6041A2038BA3C001E70F1 /* NoiseTexture.cpp in Sources */,
-				B35B31C6206C8EC700AEAF88 /* S2DEX.cpp in Sources */,
 				DFB6044E2038BA94001E70F1 /* VI.cpp in Sources */,
-				B35B31A4206C8E2700AEAF88 /* F3DZEX2.cpp in Sources */,
 				DFB604B22038BBD5001E70F1 /* opengl_ColorBufferReaderWithReadPixels.cpp in Sources */,
-				B35B31A9206C8E2700AEAF88 /* S2DEX2.cpp in Sources */,
-				B35B31AB206C8E2700AEAF88 /* Turbo3D.cpp in Sources */,
 				DFB604B32038BBD5001E70F1 /* opengl_ContextImpl.cpp in Sources */,
 				DFB604D82038BC0B001E70F1 /* glsl_CombinerProgramImpl.cpp in Sources */,
+				B3C3F47121A9CBFB00EFB09C /* glsl_FXAA.cpp in Sources */,
 				DFB604672038BAD7001E70F1 /* ClipPolygon.cpp in Sources */,
 				DFB604642038BAC2001E70F1 /* RDRAMtoColorBuffer.cpp in Sources */,
 				DFB604182038BA3C001E70F1 /* N64.cpp in Sources */,
+				B3C3F42F21A9CBAA00EFB09C /* F3DPD.cpp in Sources */,
 				DFB604B52038BBD5001E70F1 /* opengl_Parameters.cpp in Sources */,
-				B35B31A5206C8E2700AEAF88 /* L3D.cpp in Sources */,
 				DFB6045B2038BAB8001E70F1 /* ColorBufferToRDRAM.cpp in Sources */,
 				DFB604522038BA9D001E70F1 /* ZlutTexture.cpp in Sources */,
 				DFB604782038BB0B001E70F1 /* ObjectHandle.cpp in Sources */,
 				DFB606152038BD4E001E70F1 /* CommonAPIImpl_mupenplus.cpp in Sources */,
 				DFB6042D2038BA67001E70F1 /* RSP.cpp in Sources */,
-				B35B319D206C8E2700AEAF88 /* F3DEX2CBFD.cpp in Sources */,
 				DFB606122038BD4E001E70F1 /* Config_mupenplus.cpp in Sources */,
+				B3C3F44D21A9CBAA00EFB09C /* F3DSETA.cpp in Sources */,
 				DFB604AC2038BBD5001E70F1 /* opengl_Attributes.cpp in Sources */,
 				DFB603FE2038BA09001E70F1 /* gDP.cpp in Sources */,
-				B35B31AC206C8E2700AEAF88 /* ZSort.cpp in Sources */,
-				B35B31A6206C8E2700AEAF88 /* L3DEX.cpp in Sources */,
 				DFB604AD2038BBD5001E70F1 /* opengl_BufferedDrawer.cpp in Sources */,
-				B35B31C7206C8EC700AEAF88 /* T3DUX.cpp in Sources */,
 				DFB604B82038BBD5001E70F1 /* opengl_Utils.cpp in Sources */,
 				B35B31C9206C9AAC00AEAF88 /* opengl_CachedFunctions.cpp in Sources */,
 				DFB604DA2038BC0B001E70F1 /* glsl_ShaderStorage.cpp in Sources */,
-				B35B319A206C8E2700AEAF88 /* F3DEX.cpp in Sources */,
 				DFB6040C2038BA1B001E70F1 /* gSP.cpp in Sources */,
-				B35B31AD206C8E2700AEAF88 /* ZSortBOSS.cpp in Sources */,
 				DFB604242038BA67001E70F1 /* Performance.cpp in Sources */,
-				B35B319C206C8E2700AEAF88 /* F3DEX2ACCLAIM.cpp in Sources */,
+				B3C3F40F21A9CBAA00EFB09C /* F3DEX.cpp in Sources */,
 				DFB604DB2038BC0B001E70F1 /* glsl_SpecialShadersFactory.cpp in Sources */,
 				DFB604402038BA86001E70F1 /* TextureFilterHandler.cpp in Sources */,
+				B3C3F41521A9CBAA00EFB09C /* F3DEX2ACCLAIM.cpp in Sources */,
+				B3C3F41F21A9CBAA00EFB09C /* F5Rogue.cpp in Sources */,
 				DFB6042A2038BA67001E70F1 /* RDP.cpp in Sources */,
 				DFB603F42038B9F0001E70F1 /* FrameBufferInfo.cpp in Sources */,
+				B3C3F42D21A9CBAA00EFB09C /* F3DGOLDEN.cpp in Sources */,
 				DFB603E02038B9CF001E70F1 /* Debugger.cpp in Sources */,
 				DFB604DC2038BC0B001E70F1 /* glsl_Utils.cpp in Sources */,
 				DFB6043C2038BA86001E70F1 /* TexrectDrawer.cpp in Sources */,
+				B3C3F42B21A9CBAA00EFB09C /* F3DZEX2.cpp in Sources */,
 				DFB604B02038BBD5001E70F1 /* opengl_ColorBufferReaderWithBufferStorage.cpp in Sources */,
 				B34601D62081333D008C049C /* gliden_osd.cpp in Sources */,
+				B3C3F46121A9CBAA00EFB09C /* L3DEX.cpp in Sources */,
+				B3C3F44721A9CBAA00EFB09C /* S2DEX.cpp in Sources */,
 				DFB604662038BAD7001E70F1 /* DepthBufferRender.cpp in Sources */,
 				DFB603EC2038B9DD001E70F1 /* DisplayWindow.cpp in Sources */,
-				B35B3197206C8E2700AEAF88 /* F3DAM.cpp in Sources */,
 				DFB604D72038BC0B001E70F1 /* glsl_CombinerProgramBuilder.cpp in Sources */,
 				B3EA448D206E473300E608F6 /* CRC_OPT.cpp in Sources */,
 				DFB604D92038BC0B001E70F1 /* glsl_CombinerProgramUniformFactory.cpp in Sources */,
-				B35B31A3206C8E2700AEAF88 /* F3DTEXA.cpp in Sources */,
+				B3C3F45B21A9CBAA00EFB09C /* F3DEX2CBFD.cpp in Sources */,
 				B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */,
 				DFB6046E2038BAE1001E70F1 /* CommonAPIImpl_common.cpp in Sources */,
+				B3C3F40921A9CBAA00EFB09C /* F3DFLX2.cpp in Sources */,
 				DFB604702038BB0A001E70F1 /* ColorBufferReader.cpp in Sources */,
 				DFB603FC2038BA09001E70F1 /* GBI.cpp in Sources */,
 				DFB6040E2038BA1B001E70F1 /* Keys.cpp in Sources */,
@@ -5652,20 +5772,16 @@
 				DFB603D02038B980001E70F1 /* CommonPluginAPI.cpp in Sources */,
 				DFB603F22038B9F0001E70F1 /* FrameBuffer.cpp in Sources */,
 				DFB6043A2038BA86001E70F1 /* SoftwareRender.cpp in Sources */,
-				B35B319B206C8E2700AEAF88 /* F3DEX2.cpp in Sources */,
 				DFB606142038BD4E001E70F1 /* MupenPlusAPIImpl.cpp in Sources */,
-				B35B3199206C8E2700AEAF88 /* F3DDKR.cpp in Sources */,
 				B35B31CE206CA72800AEAF88 /* xxhash.c in Sources */,
-				B35B319E206C8E2700AEAF88 /* F3DFLX2.cpp in Sources */,
 				DFB604D62038BC0B001E70F1 /* glsl_CombinerInputs.cpp in Sources */,
+				B3C3F41121A9CBAA00EFB09C /* F3DTEXA.cpp in Sources */,
+				B3C3F43D21A9CBAA00EFB09C /* F3DAM.cpp in Sources */,
 				DFB603D42038B98C001E70F1 /* convert.cpp in Sources */,
 				DFB603D22038B988001E70F1 /* Config.cpp in Sources */,
 				DFB603EA2038B9DD001E70F1 /* DisplayLoadProgress.cpp in Sources */,
 				DFB604422038BA86001E70F1 /* Textures.cpp in Sources */,
 				DFB60622203A7428001E70F1 /* osal_files_ios.mm in Sources */,
-				B35B31A1206C8E2700AEAF88 /* F3DSETA.cpp in Sources */,
-				B35B3196206C8E2700AEAF88 /* F3D.cpp in Sources */,
-				B35B319F206C8E2700AEAF88 /* F3DGOLDEN.cpp in Sources */,
 				DFB6041C2038BA3C001E70F1 /* PaletteTexture.cpp in Sources */,
 				B35B31CC206CA65A00AEAF88 /* CRC_OPT_NEON.cpp in Sources */,
 				DFB604572038BAB8001E70F1 /* DepthBufferToRDRAM.cpp in Sources */,
@@ -5675,13 +5791,15 @@
 				DFB606102038BD40001E70F1 /* MupenPlusPluginAPI.cpp in Sources */,
 				DFB604B62038BBD5001E70F1 /* opengl_TextureManipulationObjectFactory.cpp in Sources */,
 				B3EA448B206E471200E608F6 /* RSP_LoadMatrix.cpp in Sources */,
+				B3C3F46321A9CBAA00EFB09C /* F3D.cpp in Sources */,
 				B35B3153206C846900AEAF88 /* RSP_LoadMatrixNeon.cpp in Sources */,
 				B3EA448F206E473F00E608F6 /* 3DMath.cpp in Sources */,
-				B35B3198206C8E2700AEAF88 /* F3DBETA.cpp in Sources */,
+				B3C3F45721A9CBAA00EFB09C /* ZSortBOSS.cpp in Sources */,
 				DFB604B12038BBD5001E70F1 /* opengl_ColorBufferReaderWithPixelBuffer.cpp in Sources */,
 				DFB603E22038B9CF001E70F1 /* DepthBuffer.cpp in Sources */,
 				DFB604B42038BBD5001E70F1 /* opengl_GLInfo.cpp in Sources */,
 				DFB604022038BA09001E70F1 /* GraphicsDrawer.cpp in Sources */,
+				B3C3F45521A9CBAA00EFB09C /* S2DEX2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5689,91 +5807,91 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C3F44221A9CBAA00EFB09C /* T3DUX.cpp in Sources */,
+				B3C3F46C21A9CBAA00EFB09C /* F3DBETA.cpp in Sources */,
 				DFB6048D2038BB48001E70F1 /* GLFunctions.cpp in Sources */,
 				DFB604BB2038BBD6001E70F1 /* opengl_BufferManipulationObjectFactory.cpp in Sources */,
+				B3C3F44C21A9CBAA00EFB09C /* L3D.cpp in Sources */,
+				B3C3F41C21A9CBAA00EFB09C /* F5Indi_Naboo.cpp in Sources */,
 				DFB603CA2038B70E001E70F1 /* CombinerKey.cpp in Sources */,
-				B35B31BF206C8E2700AEAF88 /* L3DEX2.cpp in Sources */,
+				B3C3F43821A9CBAA00EFB09C /* ZSort.cpp in Sources */,
 				DFB603C62038B705001E70F1 /* Combiner.cpp in Sources */,
 				DFB604C42038BBD6001E70F1 /* opengl_UnbufferedDrawer.cpp in Sources */,
-				B35B31C2206C8E2700AEAF88 /* T3DUX.cpp in Sources */,
-				B35B31BA206C8E2700AEAF88 /* F3DSWRS.cpp in Sources */,
 				DFB604332038BA68001E70F1 /* PostProcessor.cpp in Sources */,
+				B3C3F44621A9CBAA00EFB09C /* F3DDKR.cpp in Sources */,
+				B3C3F45421A9CBAA00EFB09C /* Turbo3D.cpp in Sources */,
 				DFB604822038BB0B001E70F1 /* Context.cpp in Sources */,
+				B3C3F40C21A9CBAA00EFB09C /* F3DEX2.cpp in Sources */,
+				B3C3F45221A9CBAA00EFB09C /* L3DEX2.cpp in Sources */,
 				DFB604802038BB0B001E70F1 /* CombinerProgram.cpp in Sources */,
-				B35B31C0206C8E2700AEAF88 /* S2DEX.cpp in Sources */,
 				DFB604202038BA3D001E70F1 /* NoiseTexture.cpp in Sources */,
-				B35B31B8206C8E2700AEAF88 /* F3DPD.cpp in Sources */,
 				DFB604502038BA95001E70F1 /* VI.cpp in Sources */,
 				DFB604BF2038BBD6001E70F1 /* opengl_ColorBufferReaderWithReadPixels.cpp in Sources */,
-				B35B31BC206C8E2700AEAF88 /* F3DZEX2.cpp in Sources */,
 				DFB604C02038BBD6001E70F1 /* opengl_ContextImpl.cpp in Sources */,
-				B35B31C1206C8E2700AEAF88 /* S2DEX2.cpp in Sources */,
-				B35B31C3206C8E2700AEAF88 /* Turbo3D.cpp in Sources */,
 				DFB604DF2038BC0C001E70F1 /* glsl_CombinerProgramImpl.cpp in Sources */,
 				DFB6046B2038BAD7001E70F1 /* ClipPolygon.cpp in Sources */,
+				B3C3F47221A9CBFB00EFB09C /* glsl_FXAA.cpp in Sources */,
 				DFB604652038BAC3001E70F1 /* RDRAMtoColorBuffer.cpp in Sources */,
 				DFB6041E2038BA3D001E70F1 /* N64.cpp in Sources */,
 				DFB604C22038BBD6001E70F1 /* opengl_Parameters.cpp in Sources */,
+				B3C3F43021A9CBAA00EFB09C /* F3DPD.cpp in Sources */,
 				DFB604622038BAB8001E70F1 /* ColorBufferToRDRAM.cpp in Sources */,
-				B35B31BD206C8E2700AEAF88 /* L3D.cpp in Sources */,
 				DFB604542038BA9E001E70F1 /* ZlutTexture.cpp in Sources */,
 				DFB604862038BB0B001E70F1 /* ObjectHandle.cpp in Sources */,
 				DFB606192038BD4F001E70F1 /* CommonAPIImpl_mupenplus.cpp in Sources */,
 				B35B314A206C7C9300AEAF88 /* 3DMathNeon.cpp in Sources */,
 				DFB604382038BA68001E70F1 /* RSP.cpp in Sources */,
-				B35B31B5206C8E2700AEAF88 /* F3DEX2CBFD.cpp in Sources */,
 				DFB606162038BD4F001E70F1 /* Config_mupenplus.cpp in Sources */,
+				B3C3F44E21A9CBAA00EFB09C /* F3DSETA.cpp in Sources */,
 				DFB604B92038BBD6001E70F1 /* opengl_Attributes.cpp in Sources */,
 				DFB604062038BA09001E70F1 /* gDP.cpp in Sources */,
-				B35B31C4206C8E2700AEAF88 /* ZSort.cpp in Sources */,
-				B35B31BE206C8E2700AEAF88 /* L3DEX.cpp in Sources */,
 				DFB604BA2038BBD6001E70F1 /* opengl_BufferedDrawer.cpp in Sources */,
 				DFB604C52038BBD6001E70F1 /* opengl_Utils.cpp in Sources */,
 				DFB604E12038BC0C001E70F1 /* glsl_ShaderStorage.cpp in Sources */,
-				B35B31B2206C8E2700AEAF88 /* F3DEX.cpp in Sources */,
 				DFB604122038BA1B001E70F1 /* gSP.cpp in Sources */,
-				B35B31C5206C8E2700AEAF88 /* ZSortBOSS.cpp in Sources */,
 				DFB6042F2038BA68001E70F1 /* Performance.cpp in Sources */,
-				B35B31B4206C8E2700AEAF88 /* F3DEX2ACCLAIM.cpp in Sources */,
 				DFB604E22038BC0C001E70F1 /* glsl_SpecialShadersFactory.cpp in Sources */,
+				B3C3F41021A9CBAA00EFB09C /* F3DEX.cpp in Sources */,
 				DFB6044A2038BA87001E70F1 /* TextureFilterHandler.cpp in Sources */,
 				DFB604352038BA68001E70F1 /* RDP.cpp in Sources */,
+				B3C3F41621A9CBAA00EFB09C /* F3DEX2ACCLAIM.cpp in Sources */,
+				B3C3F42021A9CBAA00EFB09C /* F5Rogue.cpp in Sources */,
 				DFB603F92038B9F0001E70F1 /* FrameBufferInfo.cpp in Sources */,
 				DFB603E62038B9CF001E70F1 /* Debugger.cpp in Sources */,
+				B3C3F42E21A9CBAA00EFB09C /* F3DGOLDEN.cpp in Sources */,
 				DFB604E32038BC0C001E70F1 /* glsl_Utils.cpp in Sources */,
 				DFB604462038BA87001E70F1 /* TexrectDrawer.cpp in Sources */,
 				DFB604BD2038BBD6001E70F1 /* opengl_ColorBufferReaderWithBufferStorage.cpp in Sources */,
+				B3C3F42C21A9CBAA00EFB09C /* F3DZEX2.cpp in Sources */,
 				DFB6046A2038BAD7001E70F1 /* DepthBufferRender.cpp in Sources */,
 				B34601D72081333E008C049C /* gliden_osd.cpp in Sources */,
+				B3C3F46221A9CBAA00EFB09C /* L3DEX.cpp in Sources */,
+				B3C3F44821A9CBAA00EFB09C /* S2DEX.cpp in Sources */,
 				DFB603F02038B9DE001E70F1 /* DisplayWindow.cpp in Sources */,
-				B35B31AF206C8E2700AEAF88 /* F3DAM.cpp in Sources */,
 				DFB604DE2038BC0C001E70F1 /* glsl_CombinerProgramBuilder.cpp in Sources */,
 				DFB604E02038BC0C001E70F1 /* glsl_CombinerProgramUniformFactory.cpp in Sources */,
 				B3EA448E206E473400E608F6 /* CRC_OPT.cpp in Sources */,
-				B35B31BB206C8E2700AEAF88 /* F3DTEXA.cpp in Sources */,
 				DFB6046F2038BAE1001E70F1 /* CommonAPIImpl_common.cpp in Sources */,
+				B3C3F45C21A9CBAA00EFB09C /* F3DEX2CBFD.cpp in Sources */,
 				DFB6047E2038BB0B001E70F1 /* ColorBufferReader.cpp in Sources */,
 				B3CB4B22206E54D20074706B /* Log_ios.mm in Sources */,
+				B3C3F40A21A9CBAA00EFB09C /* F3DFLX2.cpp in Sources */,
 				DFB604042038BA09001E70F1 /* GBI.cpp in Sources */,
 				DFB604142038BA1B001E70F1 /* Keys.cpp in Sources */,
 				DFB603E42038B9CF001E70F1 /* DebugDump.cpp in Sources */,
 				DFB603D12038B981001E70F1 /* CommonPluginAPI.cpp in Sources */,
 				DFB603F72038B9F0001E70F1 /* FrameBuffer.cpp in Sources */,
 				DFB604442038BA87001E70F1 /* SoftwareRender.cpp in Sources */,
-				B35B31B3206C8E2700AEAF88 /* F3DEX2.cpp in Sources */,
 				DFB606182038BD4F001E70F1 /* MupenPlusAPIImpl.cpp in Sources */,
-				B35B31B1206C8E2700AEAF88 /* F3DDKR.cpp in Sources */,
-				B35B31B6206C8E2700AEAF88 /* F3DFLX2.cpp in Sources */,
 				B35B31CF206CA72A00AEAF88 /* xxhash.c in Sources */,
 				DFB604DD2038BC0C001E70F1 /* glsl_CombinerInputs.cpp in Sources */,
 				DFB603D52038B98C001E70F1 /* convert.cpp in Sources */,
+				B3C3F41221A9CBAA00EFB09C /* F3DTEXA.cpp in Sources */,
+				B3C3F43E21A9CBAA00EFB09C /* F3DAM.cpp in Sources */,
 				DFB603D32038B989001E70F1 /* Config.cpp in Sources */,
 				DFB603EE2038B9DE001E70F1 /* DisplayLoadProgress.cpp in Sources */,
 				DFB6044C2038BA87001E70F1 /* Textures.cpp in Sources */,
 				DFB60623203A7429001E70F1 /* osal_files_ios.mm in Sources */,
-				B35B31B9206C8E2700AEAF88 /* F3DSETA.cpp in Sources */,
-				B35B31AE206C8E2700AEAF88 /* F3D.cpp in Sources */,
-				B35B31B7206C8E2700AEAF88 /* F3DGOLDEN.cpp in Sources */,
 				DFB604222038BA3D001E70F1 /* PaletteTexture.cpp in Sources */,
 				DFB6045E2038BAB8001E70F1 /* DepthBufferToRDRAM.cpp in Sources */,
 				B35B31CD206CA65A00AEAF88 /* CRC_OPT_NEON.cpp in Sources */,
@@ -5784,13 +5902,15 @@
 				DFB604C32038BBD6001E70F1 /* opengl_TextureManipulationObjectFactory.cpp in Sources */,
 				B35B314B206C7C9300AEAF88 /* RSP_LoadMatrixNeon.cpp in Sources */,
 				B3EA448C206E471300E608F6 /* RSP_LoadMatrix.cpp in Sources */,
-				B35B31B0206C8E2700AEAF88 /* F3DBETA.cpp in Sources */,
+				B3C3F46421A9CBAA00EFB09C /* F3D.cpp in Sources */,
 				B3EA4490206E474000E608F6 /* 3DMath.cpp in Sources */,
 				DFB604BE2038BBD6001E70F1 /* opengl_ColorBufferReaderWithPixelBuffer.cpp in Sources */,
+				B3C3F45821A9CBAA00EFB09C /* ZSortBOSS.cpp in Sources */,
 				DFB603E82038B9CF001E70F1 /* DepthBuffer.cpp in Sources */,
 				DFB604C12038BBD6001E70F1 /* opengl_GLInfo.cpp in Sources */,
 				DFB604BC2038BBD6001E70F1 /* opengl_CachedFunctions.cpp in Sources */,
 				DFB6040A2038BA09001E70F1 /* GraphicsDrawer.cpp in Sources */,
+				B3C3F45621A9CBAA00EFB09C /* S2DEX2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6888,6 +7008,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
@@ -6944,6 +7065,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
@@ -6999,6 +7121,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
@@ -7055,6 +7178,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
@@ -7111,6 +7235,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
@@ -7164,6 +7289,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
@@ -7679,6 +7805,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
@@ -7734,6 +7861,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
@@ -7792,6 +7920,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
@@ -7845,6 +7974,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
@@ -7901,6 +8031,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
@@ -7956,6 +8087,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.1;
 				VALIDATE_PRODUCT = YES;
