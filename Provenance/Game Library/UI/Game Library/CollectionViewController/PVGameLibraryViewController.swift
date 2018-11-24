@@ -45,41 +45,6 @@ public extension Notification.Name {
     static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
 
-enum SortOptions: String {
-    case title = "Title"
-    case importDate = "Imported"
-    case lastPlayed = "Last Played"
-
-    var row: UInt {
-        switch self {
-        case .title:
-            return 0
-        case .importDate:
-            return 1
-        case .lastPlayed:
-            return 2
-        }
-    }
-
-	static var count : Int {
-		return 3
-	}
-
-    static func optionForRow(_ row: UInt) -> SortOptions {
-        switch row {
-        case 0:
-            return .title
-        case 1:
-            return .importDate
-        case 2:
-            return .lastPlayed
-        default:
-            ELOG("Bad row \(row)")
-            return .title
-        }
-    }
-}
-
 #if os(iOS)
 let USE_IOS_11_SEARCHBAR = true
 #endif
@@ -199,16 +164,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		return avc
 	}()
 
-    var currentSort: SortOptions = .title {
+    var currentSort: SortOptions = PVSettingsModel.shared.sort {
         didSet {
 			if currentSort != oldValue {
-                systems = systemsByCurrentSort()
+                PVSettingsModel.shared.sort = currentSort
 				systemSectionsTokens.forEach {
 					$1.viewModel.sortOrder = currentSort
 				}
 
 				if isViewLoaded {
-					fetchGames()
 					collectionView?.reloadData()
 				}
 			}

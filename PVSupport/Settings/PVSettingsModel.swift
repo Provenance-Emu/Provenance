@@ -245,4 +245,6 @@ extension MirroredSettings {
 
     @objc public dynamic var volume : Float = 1.0
     @objc public dynamic var volumeHUD = true
+
+    @objc public dynamic var sort : SortOptions = .title
 }
