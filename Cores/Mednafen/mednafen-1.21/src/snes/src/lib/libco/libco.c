@@ -12,6 +12,8 @@
     #include "x86.c"
   #elif defined(__amd64__)
     #include "amd64.c"
+  #elif defined(__GNUC__) && defined(__aarch64__)
+    #include "aarch64.c"
   #elif defined(__arm__)
     #include "arm.c"
   #elif defined(_ARCH_PPC)
