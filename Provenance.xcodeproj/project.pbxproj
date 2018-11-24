@@ -2195,7 +2195,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Carthage/Build/iOS/Fabric.framework/run\" 9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87 d04876f6ee4f665a16fac06f7e07bc7ebe34274e3acdb6da5a9a5a5f8a84c5f5\n";
+			shellScript = "releaseConfig=\"Archive\"\n\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${SRCROOT}/Carthage/Build/iOS/Fabric.framework/run\" 9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87 d04876f6ee4f665a16fac06f7e07bc7ebe34274e3acdb6da5a9a5a5f8a84c5f5\nfi\n";
 		};
 		B369B0DC219EA2B90064EDCA /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2214,7 +2214,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Carthage/Build/tvOS/Fabric.framework/run\" 9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87 d04876f6ee4f665a16fac06f7e07bc7ebe34274e3acdb6da5a9a5a5f8a84c5f5\n";
+			shellScript = "releaseConfig=\"Archive\"\n\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${SRCROOT}/Carthage/Build/tvOS/Fabric.framework/run\" 9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87 d04876f6ee4f665a16fac06f7e07bc7ebe34274e3acdb6da5a9a5a5f8a84c5f5\nfi\n";
 		};
 		B38E25F521573BC400355F53 /* Carthage Bootstrap */ = {
 			isa = PBXShellScriptBuildPhase;
