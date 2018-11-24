@@ -1,0 +1,22 @@
+os: osx
+language: objective-c
+osx_image: xcode9.4
+env:
+  - PLAT=macOS    DST="arch=x86_64"
+  - PLAT=iOS      DST="OS=11.4,name=iPhone 5s"
+  - PLAT=tvOS     DST="OS=11.4,name=Apple TV"
+  - PLAT=watchOS  DST="OS=4.3,name=Apple Watch - 38mm"
+cache:
+  directories:
+  - Carthage
+before_install:
+  - carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT --verbose
+install:
+  - xcodebuild -scheme PMKBolts -target PMKBolts -quiet -destination "$DST" build
+  - if [ $PLAT != "watchOS" ]; then
+      xcodebuild -scheme PMKBolts -target PMKBoltsTests -quiet -destination "$DST" build;
+    fi
+script:
+  - if [ $PLAT != "watchOS" ]; then
+      xcodebuild -scheme PMKBolts -quiet -destination "$DST" test;
+    fi

@@ -1,0 +1,58 @@
+branches:
+  only: 
+    - master
+os: osx
+language: objective-c
+jobs:
+  include:
+    - &lint
+      stage: lint
+      cache: cocoapods
+      osx_image: xcode8.3
+      env: SWIFT=3.1
+      before_install:
+        gem install cocoapods --prerelease --version 1.6.0.beta.1
+      install:
+        carthage bootstrap --no-build PromiseKit
+      script: |
+        cd Carthage/Checkouts/PromiseKit
+        mv .github/PromiseKit.podspec .
+        rm -rf Extensions/AddressBook/Sources
+        cp -R ../../../Sources Extensions/AddressBook
+        pod lib lint --subspec=PromiseKit/AddressBook --fail-fast --swift-version=$SWIFT
+    - <<: *lint
+      osx_image: xcode9.2
+      env: SWIFT=3.2
+    - <<: *lint
+      osx_image: xcode9.4
+      env: SWIFT=3.3
+    - <<: *lint
+      osx_image: xcode10
+      env: SWIFT=3.4
+    - <<: *lint
+      osx_image: xcode9.2
+      env: SWIFT=4.0
+    - <<: *lint
+      osx_image: xcode9.4
+      env: SWIFT=4.1
+    - <<: *lint
+      osx_image: xcode10
+      env: SWIFT=4.2
+      
+    - &test
+      stage: test
+      osx_image: xcode10
+      env: DST='OS=12.0,name=iPhone SE' PLAT=iOS
+      name: iOS Tests
+      cache:
+        directories:
+        - Carthage
+      before_install:
+        carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT
+      install:
+        xcodebuild -scheme PMKAddressBook -target PMKAddressBook -quiet -destination "$DST" SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+      script:
+        xcodebuild -scheme PMKAddressBook -quiet -destination "$DST" test
+    - <<: *test
+      env: DST='arch=x86_64' PLAT=macOS
+      name: macOS Tests

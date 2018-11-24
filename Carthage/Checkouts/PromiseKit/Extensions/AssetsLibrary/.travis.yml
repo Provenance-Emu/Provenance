@@ -1,0 +1,25 @@
+os: osx
+language: objective-c
+matrix:
+  include:
+    - {osx_image: xcode8.3, env: 'SWFT=3.1 DST="OS=10.3.1,name=iPhone SE"'}
+    - {osx_image: xcode9.2, env: 'SWFT=3.2 DST="OS=11.2,name=iPhone SE"'}
+    - {osx_image: xcode9.4, env: 'SWFT=3.3 DST="OS=11.4,name=iPhone 5s"'}
+    - {osx_image: xcode10,  env: 'SWFT=3.4 DST="OS=12.0,name=iPhone SE"'}
+    - {osx_image: xcode9.2, env: 'SWFT=4.0 DST="OS=11.2,name=iPhone SE"'}
+    - {osx_image: xcode9.4, env: 'SWFT=4.1 DST="OS=11.4,name=iPhone 5s" TEST=1'}
+    - {osx_image: xcode10,  env: 'SWFT=4.2 DST="OS=12.0,name=iPhone SE"'}
+cache:
+  directories:
+  - Carthage
+before_install:
+  - carthage bootstrap --cache-builds --no-use-binaries --platform iOS --verbose
+install:
+  - xcodebuild -scheme PMKAssetsLibrary -target PMKAssetsLibrary -quiet -destination "$DST" SWIFT_VERSION=$SWFT SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+  - if [[ $TEST == "1" ]]; then
+      xcodebuild -scheme PMKAssetsLibrary -target PMKALTests -quiet -destination "$DST" build;
+    fi
+script:
+  - if [ "$TEST" == "1" ]; then
+      xcodebuild -scheme PMKAssetsLibrary -quiet -destination "$DST" test;
+    fi

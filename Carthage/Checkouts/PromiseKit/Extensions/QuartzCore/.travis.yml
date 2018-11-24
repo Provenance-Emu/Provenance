@@ -1,0 +1,72 @@
+branches:
+  only: 
+    - master
+stages:
+  - lint
+  - test
+jobs:
+  include:
+    - &pod
+      stage: lint
+      osx_image: xcode8.3
+      env: SWIFT=3.1
+      name: pod lib lint --swift-version=3.1
+      os: osx
+      language: objective-c
+      before_install:
+        gem install cocoapods --prerelease --version 1.6.0.beta.1
+      install:
+        carthage bootstrap --no-build PromiseKit
+      script: |
+        cd Carthage/Checkouts/PromiseKit
+        mv .github/PromiseKit.podspec .
+        rm -rf Extensions/QuartzCore/Sources
+        cp -R ../../../Sources Extensions/QuartzCore
+        pod lib lint --subspec=PromiseKit/QuartzCore --fail-fast --swift-version=$SWIFT
+    - <<: *pod
+      osx_image: xcode9.2
+      env: SWIFT=3.2
+      name: pod lib lint --swift-version=3.2
+    - <<: *pod
+      osx_image: xcode9.4
+      env: SWIFT=3.3
+      name: pod lib lint --swift-version=3.3
+    - <<: *pod
+      osx_image: xcode10
+      env: SWIFT=3.4
+      name: pod lib lint --swift-version=3.4
+    - <<: *pod
+      osx_image: xcode9.2
+      env: SWIFT=4.0
+      name: pod lib lint --swift-version=4.0
+    - <<: *pod
+      osx_image: xcode9.4
+      env: SWIFT=4.1
+      name: pod lib lint --swift-version=4.1
+    - <<: *pod
+      osx_image: xcode10
+      env: SWIFT=4.2
+      name: pod lib lint --swift-version=4.2
+
+    - &test
+      stage: test
+      osx_image: xcode10
+      name: macOS Tests
+      env: DST='arch=x86_64' PLAT=macOS
+      os: osx
+      language: objective-c
+      cache:
+        directories:
+        - Carthage
+      before_install:
+        carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT
+      install:
+        xcodebuild -scheme PMKQuartzCore -target PMKQuartzCore -quiet -destination "$DST" SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+      script:
+        xcodebuild -scheme PMKQuartzCore -quiet -destination "$DST" test
+    - <<: *test
+      env: DST='OS=12.0,name=iPhone SE' PLAT=iOS
+      name: iOS Tests
+    - <<: *test
+      env: DST='OS=12.0,name=Apple TV' PLAT=tvOS
+      name: tvOS Tests

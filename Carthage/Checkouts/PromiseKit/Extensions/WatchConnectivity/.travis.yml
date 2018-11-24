@@ -1,0 +1,39 @@
+os: osx
+language: objective-c
+matrix:
+  include:
+    - {osx_image: xcode8.3,   env: 'PLAT=iOS      SWFT=3.1  DST="OS=10.3.1,name=iPhone SE"'}
+    - {osx_image: xcode8.3,   env: 'PLAT=watchOS  SWFT=3.1  DST="OS=3.2,name=Apple Watch - 38mm"'}
+
+    - {osx_image: xcode9.2,   env: 'PLAT=iOS      SWFT=3.2  DST="OS=11.2,name=iPhone SE"'}
+    - {osx_image: xcode9.2,   env: 'PLAT=watchOS  SWFT=3.2  DST="OS=4.2,name=Apple Watch - 38mm"'}
+                                                            
+    - {osx_image: xcode9.4,   env: 'PLAT=iOS      SWFT=3.3  DST="OS=11.4,name=iPhone 5s"'}
+    - {osx_image: xcode9.4,   env: 'PLAT=watchOS  SWFT=3.3  DST="OS=4.3,name=Apple Watch - 38mm"'}
+
+    - {osx_image: xcode9.2,   env: 'PLAT=iOS      SWFT=4.0  DST="OS=11.2,name=iPhone SE"'}
+    - {osx_image: xcode9.2,   env: 'PLAT=watchOS  SWFT=4.0  DST="OS=4.2,name=Apple Watch - 38mm"'}
+                                                            
+    - {osx_image: xcode9.3,   env: 'PLAT=iOS      SWFT=4.1  DST="OS=9.3,name=iPhone 5s"'}
+    - {osx_image: xcode9.4,   env: 'PLAT=iOS      SWFT=4.1  DST="OS=10.3.1,name=iPhone 5s"'}
+    - {osx_image: xcode9.4,   env: 'PLAT=iOS      SWFT=4.1  DST="OS=11.4,name=iPhone 5s" TEST=1'}
+    - {osx_image: xcode9.3,   env: 'PLAT=watchOS  SWFT=4.1  DST="OS=2.2,name=Apple Watch - 38mm"'}
+    - {osx_image: xcode9.3,   env: 'PLAT=watchOS  SWFT=4.1  DST="OS=3.2,name=Apple Watch - 38mm"'}
+    - {osx_image: xcode9.4,   env: 'PLAT=watchOS  SWFT=4.1  DST="OS=4.3,name=Apple Watch - 38mm"'}
+
+    - {osx_image: xcode10,    env: 'PLAT=iOS      SWFT=4.2  DST="OS=12.0,name=iPhone SE"'}
+    - {osx_image: xcode10,    env: 'PLAT=watchOS  SWFT=4.2  DST="OS=5.0,name=Apple Watch Series 3 - 42mm"'}
+cache:
+  directories:
+  - Carthage
+before_install:
+  - carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT --verbose
+install:
+  - xcodebuild -scheme PMKWatchConnectivity -target PMKWatchConnectivity -quiet -destination "$DST" SWIFT_VERSION=$SWFT SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+  - if [ "$TEST" == "1" ]; then
+      xcodebuild -scheme PMKWatchConnectivity -target PMKWCTests -quiet -destination "$DST" build;
+    fi
+script:
+  - if [ "$TEST" == "1" ]; then
+      xcodebuild -scheme PMKWatchConnectivity -quiet -destination "$DST" test;
+    fi

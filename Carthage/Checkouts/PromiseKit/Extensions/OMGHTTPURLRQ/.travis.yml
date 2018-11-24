@@ -1,0 +1,42 @@
+language: objective-c
+os: osx
+matrix:
+  include:
+    # - {osx_image: xcode8.3,  env: 'PLAT=macOS    SWFT=3.1  DST="arch=x86_64"'}
+    # - {osx_image: xcode8.3,  env: 'PLAT=iOS      SWFT=3.1  DST="OS=10.3.1,name=iPhone SE"'}
+    # - {osx_image: xcode8.3,  env: 'PLAT=tvOS     SWFT=3.1  DST="OS=10.2,name=Apple TV 1080p"'}
+    # - {osx_image: xcode8.3,  env: 'PLAT=watchOS  SWFT=3.1  DST="OS=3.2,name=Apple Watch - 38mm"'}
+                                                           
+    - {osx_image: xcode9.2,  env: 'PLAT=macOS    SWFT=3.2  DST="arch=x86_64"'}
+    - {osx_image: xcode9.2,  env: 'PLAT=iOS      SWFT=3.2  DST="OS=11.2,name=iPhone SE"'}
+    - {osx_image: xcode9.2,  env: 'PLAT=tvOS     SWFT=3.2  DST="OS=11.2,name=Apple TV"'}
+    - {osx_image: xcode9.2,  env: 'PLAT=watchOS  SWFT=3.2  DST="OS=4.2,name=Apple Watch - 38mm"'}
+
+    - {osx_image: xcode9.4,  env: 'PLAT=macOS    SWFT=3.3  DST="arch=x86_64"'}
+    - {osx_image: xcode9.4,  env: 'PLAT=iOS      SWFT=3.3  DST="OS=11.4,name=iPhone 5s"'}
+    - {osx_image: xcode9.4,  env: 'PLAT=tvOS     SWFT=3.3  DST="OS=11.4,name=Apple TV"'}
+    - {osx_image: xcode9.4,  env: 'PLAT=watchOS  SWFT=3.3  DST="OS=4.3,name=Apple Watch - 38mm"'}
+                                                           
+    - {osx_image: xcode9.2,  env: 'PLAT=macOS    SWFT=4.0  DST="arch=x86_64"'}
+    - {osx_image: xcode9.2,  env: 'PLAT=iOS      SWFT=4.0  DST="OS=11.2,name=iPhone SE"'}
+    - {osx_image: xcode9.2,  env: 'PLAT=tvOS     SWFT=4.0  DST="OS=11.2,name=Apple TV"'}
+    - {osx_image: xcode9.2,  env: 'PLAT=watchOS  SWFT=4.0  DST="OS=4.2,name=Apple Watch - 38mm"'}
+
+    - {osx_image: xcode9.4,  env: 'PLAT=macOS    SWFT=4.1  DST="arch=x86_64" TEST=1'}
+    - {osx_image: xcode9.4,  env: 'PLAT=iOS      SWFT=4.1  DST="OS=11.4,name=iPhone 5s" TEST=1'}
+    - {osx_image: xcode9.4,  env: 'PLAT=tvOS     SWFT=4.1  DST="OS=11.4,name=Apple TV" TEST=1'}
+    - {osx_image: xcode9.4,  env: 'PLAT=watchOS  SWFT=4.1  DST="OS=4.3,name=Apple Watch - 38mm"'}
+cache:
+  directories:
+  - Carthage
+before_install:
+  - carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT --verbose
+install:
+  - xcodebuild -scheme PMKOMGHTTPURLRQ -target PMKOMGHTTPURLRQ -quiet -destination "$DST" SWIFT_VERSION=$SWFT SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+  - if [[ $TEST == "1" ]]; then
+      xcodebuild -scheme PMKOMGHTTPURLRQ -target PMKOMGTests -quiet -destination "$DST" build;
+    fi
+script:
+  - if [[ $TEST == "1" ]]; then
+      xcodebuild -scheme PMKOMGHTTPURLRQ -quiet -destination "$DST" test;
+    fi

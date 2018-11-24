@@ -227,6 +227,8 @@
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3532B2B21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
 		B3532B2C21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
+		B3532C3F21A9B682006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C3E21A9B681006CDA0F /* PromiseKit.framework */; };
+		B3532C4121A9B698006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C4021A9B698006CDA0F /* PromiseKit.framework */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
@@ -761,6 +763,8 @@
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
+		B3532C3E21A9B681006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
+		B3532C4021A9B698006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/tvOS/PromiseKit.framework; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsCell.swift; sourceTree = "<group>"; };
 		B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsHeaderCell.swift; sourceTree = "<group>"; };
@@ -948,6 +952,7 @@
 				B3589E38219E954D001C5E12 /* Fabric.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
 				B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */,
+				B3532C3F21A9B682006CDA0F /* PromiseKit.framework in Frameworks */,
 				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
 				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
@@ -1036,6 +1041,7 @@
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
+				B3532C4121A9B698006CDA0F /* PromiseKit.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
@@ -1187,6 +1193,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3532C3E21A9B681006CDA0F /* PromiseKit.framework */,
+				B3532C4021A9B698006CDA0F /* PromiseKit.framework */,
 				B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */,
 				B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */,
 				B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */,

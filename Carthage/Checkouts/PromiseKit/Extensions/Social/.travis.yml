@@ -1,0 +1,26 @@
+os: osx
+language: objective-c
+osx_image: xcode10
+env:
+  - PLAT=macOS  SWFT=3.4  DST="arch=x86_64"
+  - PLAT=iOS    SWFT=3.4  DST="OS=11.4,name=iPhone 5s"
+
+  - PLAT=macOS  SWFT=4.2  DST="arch=x86_64"               TEST=1
+  - PLAT=iOS    SWFT=4.2  DST="OS=8.4,name=iPhone 4s"
+  - PLAT=iOS    SWFT=4.2  DST="OS=9.3,name=iPhone 5s"
+  - PLAT=iOS    SWFT=4.2  DST="OS=10.3.1,name=iPhone SE"
+  - PLAT=iOS    SWFT=4.2  DST="OS=11.4,name=iPhone 5s"    TEST=1
+cache:
+  directories:
+  - Carthage
+before_install:
+  - carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT --verbose
+install:
+  - xcodebuild -scheme PMKSocial -target PMKSocial -quiet -destination "$DST" build SWIFT_VERSION=$SWFT SWIFT_TREAT_WARNINGS_AS_ERRORS=YES
+  - if [[ $TEST == "1" ]]; then
+      xcodebuild -scheme PMKSocial -target PMKSLTests -quiet -destination "$DST" build;
+    fi
+script:
+  - if [[ $TEST == "1" ]]; then
+      xcodebuild -scheme PMKSocial -quiet -destination "$DST" test;
+    fi

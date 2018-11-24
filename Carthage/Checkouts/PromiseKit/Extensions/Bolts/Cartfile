@@ -1,0 +1,2 @@
+github "mxcl/PromiseKit" ~> 6.0
+github "BoltsFramework/Bolts-ObjC" ~> 1.9

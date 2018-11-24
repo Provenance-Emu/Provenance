@@ -1,0 +1,66 @@
+branches:
+  only: 
+    - master
+stages:
+  - lint
+  - test
+jobs:
+  include:
+    - &pod
+      stage: lint
+      osx_image: xcode8.3
+      env: SWIFT=3.1
+      name: pod lib lint --swift-version=3.1
+      cache: cocoapods
+      os: osx
+      language: objective-c
+      before_install:
+        gem install cocoapods --prerelease --version 1.6.0.beta.1
+      install:
+        carthage bootstrap --no-build PromiseKit
+      script: |
+        cd Carthage/Checkouts/PromiseKit
+        mv .github/PromiseKit.podspec .
+        rm -rf Extensions/AVFoundation/Sources
+        cp -R ../../../Sources Extensions/AVFoundation
+        pod lib lint --subspec=PromiseKit/AVFoundation --fail-fast --swift-version=$SWIFT
+    - <<: *pod
+      osx_image: xcode9.2
+      env: SWIFT=3.2
+      name: pod lib lint --swift-version=3.2
+    - <<: *pod
+      osx_image: xcode9.4
+      env: SWIFT=3.3
+      name: pod lib lint --swift-version=3.3
+    - <<: *pod
+      osx_image: xcode10
+      env: SWIFT=3.4
+      name: pod lib lint --swift-version=3.4
+    - <<: *pod
+      osx_image: xcode9.2
+      env: SWIFT=4.0
+      name: pod lib lint --swift-version=4.0
+    - <<: *pod
+      osx_image: xcode9.4
+      env: SWIFT=4.1
+      name: pod lib lint --swift-version=4.1
+    - <<: *pod
+      osx_image: xcode10
+      env: SWIFT=4.2
+      name: pod lib lint --swift-version=4.2
+
+    - stage: test
+      osx_image: xcode10
+      name: iOS Tests
+      env: DST='OS=12.0,name=iPhone SE' PLAT=iOS
+      os: osx
+      language: objective-c
+      cache:
+        directories:
+        - Carthage
+      before_install:
+        carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT
+      install:
+        xcodebuild -scheme PMKAVFoundation -target PMKAVFoundation -quiet -destination "$DST" SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+      script:
+        xcodebuild -scheme PMKAVFoundation -quiet -destination "$DST" test

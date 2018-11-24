@@ -1,0 +1,84 @@
+branches:
+  only: 
+    - master
+stages:
+  - lint
+  - carthage
+  - test
+jobs:
+  include:
+    - &pod
+      stage: lint
+      osx_image: xcode8.3
+      env: SWIFT=3.1
+      name: pod lib lint --swift-version=3.1
+      os: osx
+      language: objective-c
+      before_install:
+        gem install cocoapods --prerelease --version 1.6.0.beta.1
+      install:
+        carthage bootstrap --no-build PromiseKit
+      script: |
+        cd Carthage/Checkouts/PromiseKit
+        mv .github/PromiseKit.podspec .
+        rm -rf Extensions/CoreLocation/Sources
+        cp -R ../../../Sources Extensions/CoreLocation
+        pod lib lint --subspec=PromiseKit/CoreLocation --fail-fast --swift-version=$SWIFT
+    - <<: *pod
+      osx_image: xcode9.2
+      env: SWIFT=3.2
+      name: pod lib lint --swift-version=3.2
+    - <<: *pod
+      osx_image: xcode9.4
+      env: SWIFT=3.3
+      name: pod lib lint --swift-version=3.3
+    - <<: *pod
+      osx_image: xcode10
+      env: SWIFT=3.4
+      name: pod lib lint --swift-version=3.4
+    - <<: *pod
+      osx_image: xcode9.2
+      env: SWIFT=4.0
+      name: pod lib lint --swift-version=4.0
+    - <<: *pod
+      osx_image: xcode9.4
+      env: SWIFT=4.1
+      name: pod lib lint --swift-version=4.1
+    - <<: *pod
+      osx_image: xcode10
+      env: SWIFT=4.2
+      name: pod lib lint --swift-version=4.2
+
+    - stage: carthage
+      osx_image: xcode10
+      name: Carthage / watchOS
+      os: osx
+      language: objective-c
+      script:
+        carthage bootstrap --platform watchOS
+      cache:
+        directories:
+          - Carthage
+
+    - &test
+      stage: test
+      osx_image: xcode10
+      name: macOS Tests
+      env: DST='arch=x86_64' PLAT=macOS
+      os: osx
+      language: objective-c
+      cache:
+        directories:
+        - Carthage
+      before_install:
+        carthage bootstrap --cache-builds --no-use-binaries --platform $PLAT
+      install:
+        xcodebuild -scheme PMKCoreLocation -target PMKCoreLocation -quiet -destination "$DST" SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
+      script:
+        xcodebuild -scheme PMKCoreLocation -quiet -destination "$DST" test
+    - <<: *test
+      env: DST='OS=12.0,name=iPhone SE' PLAT=iOS
+      name: iOS Tests
+    - <<: *test
+      env: DST='OS=12.0,name=Apple TV' PLAT=tvOS
+      name: tvOS Tests

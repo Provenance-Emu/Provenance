@@ -5,6 +5,7 @@ github "xmartlabs/XLActionController" "4.1.0"
 github "bcylin/QuickTableViewController" "v1.0.0"
 github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
+github "mxcl/PromiseKit" ~> 6.0
 
 # Crashlytics - Static Libs
 # iOS
