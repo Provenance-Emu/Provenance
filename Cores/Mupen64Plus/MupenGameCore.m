@@ -257,14 +257,128 @@ static void MupenGetKeys(int Control, BUTTONS *Keys)
 
 static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
 {
+    GET_CURRENT_OR_RETURN();
+
     ControlInfo.Controls[0].Present = 1;
-    ControlInfo.Controls[0].Plugin = 2;
-    ControlInfo.Controls[1].Present = 1;
-    ControlInfo.Controls[1].Plugin = 2;
-    ControlInfo.Controls[2].Present = 1;
-    ControlInfo.Controls[2].Plugin = 2;
-    ControlInfo.Controls[3].Present = 1;
-    ControlInfo.Controls[3].Plugin = 2;
+    ControlInfo.Controls[0].Plugin = PLUGIN_RAW;
+    ControlInfo.Controls[1].Present = current.controller2 != nil;
+    ControlInfo.Controls[1].Plugin = PLUGIN_MEMPAK;
+    ControlInfo.Controls[2].Present = current.controller3 != nil;
+    ControlInfo.Controls[2].Plugin = PLUGIN_MEMPAK;
+    ControlInfo.Controls[3].Present = current.controller4 != nil;
+    ControlInfo.Controls[3].Plugin = PLUGIN_MEMPAK;
+}
+
+static unsigned char DataCRC( unsigned char *Data, int iLenght )
+{
+    unsigned char Remainder = Data[0];
+
+    int iByte = 1;
+    unsigned char bBit = 0;
+
+    while( iByte <= iLenght )
+    {
+        int HighBit = ((Remainder & 0x80) != 0);
+        Remainder = Remainder << 1;
+
+        Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
+
+        Remainder ^= (HighBit) ? 0x85 : 0;
+
+        bBit++;
+        iByte += bBit/8;
+        bBit %= 8;
+    }
+
+    return Remainder;
+}
+
+/******************************************************************
+ Function: ControllerCommand
+ Purpose:  To process the raw data that has just been sent to a
+ specific controller.
+ input:    - Controller Number (0 to 3) and -1 signalling end of
+ processing the pif ram.
+ - Pointer of data to be processed.
+ output:   none
+ note:     This function is only needed if the DLL is allowing raw
+ data, or the plugin is set to raw
+ the data that is being processed looks like this:
+ initilize controller: 01 03 00 FF FF FF
+ read controller:      01 04 01 FF FF FF FF
+ *******************************************************************/
+static void MupenControllerCommand(int Control, unsigned char *Command)
+{
+        // Some stuff from n-rage plugin
+#define RD_GETSTATUS        0x00        // get status
+#define RD_READKEYS         0x01        // read button values
+#define RD_READPAK          0x02        // read from controllerpack
+#define RD_WRITEPAK         0x03        // write to controllerpack
+#define RD_RESETCONTROLLER  0xff        // reset controller
+#define RD_READEEPROM       0x04        // read eeprom
+#define RD_WRITEEPROM       0x05        // write eeprom
+
+#define PAK_IO_RUMBLE       0xC000      // the address where rumble-commands are sent to
+
+    GET_CURRENT_OR_RETURN();
+
+    unsigned char *Data = &Command[5];
+
+    if (Control == -1)
+    return;
+
+    switch (Command[2])
+    {
+        case RD_GETSTATUS:
+        break;
+        case RD_READKEYS:
+        break;
+        case RD_READPAK: {
+//        if (controller[Control].control->Plugin == PLUGIN_RAW)
+//        {
+            unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
+
+            if(( dwAddress >= 0x8000 ) && ( dwAddress < 0x9000 ) )
+            memset( Data, 0x80, 32 );
+            else
+            memset( Data, 0x00, 32 );
+
+            Data[32] = DataCRC( Data, 32 );
+//        }
+        break;
+        }
+        case RD_WRITEPAK: {
+//        if (controller[Control].control->Plugin == PLUGIN_RAW)
+//        {
+            unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
+//            Data[32] = DataCRC( Data, 32 );
+//
+            if ((dwAddress == PAK_IO_RUMBLE) )//&& (rumble.set_rumble_state))
+            {
+                if (*Data)
+                {
+                    [current rumble];
+//                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0xFFFF);
+//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0xFFFF);
+                }
+                else
+                {
+//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0);
+//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0);
+                }
+            }
+//        }
+
+        break;
+        }
+        case RD_RESETCONTROLLER:
+        break;
+        case RD_READEEPROM:
+        break;
+        case RD_WRITEEPROM:
+        break;
+    }
 }
 
 - (void)pollControllers
@@ -942,6 +1056,7 @@ static void ConfigureRICE() {
     // Load Input
     input.getKeys = MupenGetKeys;
     input.initiateControllers = MupenInitiateControllers;
+    input.controllerCommand = MupenControllerCommand;
     plugin_start(M64PLUGIN_INPUT);
     
 
@@ -1431,5 +1546,13 @@ static void ConfigureRICE() {
 //    }
 }
 
+
+@end
+
+@implementation MupenGameCore (Rumble)
+
+- (BOOL)supportsRumble {
+    return TRUE;
+}
 
 @end
