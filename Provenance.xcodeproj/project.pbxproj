@@ -1789,7 +1789,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
-				B3532B2D21A797A1006CDA0F /* Create Settings Credits */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
@@ -2178,25 +2177,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
-		};
-		B3532B2D21A797A1006CDA0F /* Create Settings Credits */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Create Settings Credits";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Provenance/Resources/Settings.bundle/Credits.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Scripts/credits.py\" -s \"$SRCROOT\" -o \"$SRCROOT/Provenance/Resources/Settings.bundle/Credits.plist\"\n";
 		};
 		B369B0D7219E9D840064EDCA /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
