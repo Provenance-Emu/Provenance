@@ -235,9 +235,13 @@ final class PVSettingsViewController : QuickTableViewController {
             PVSettingsSwitchRow(title: "iCloud Sync",
                                 subtitle: Subtitle.belowTitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
-            PVSettingsSwitchRow(title: "Unsupported Cores",
-                                subtitle: Subtitle.belowTitle("Cores that are in development"),
-                                key: \PVSettingsModel.debugOptions.unsupportedCores)
+            PVSettingsSwitchRow(title: "Muti-threaded GL",
+                                subtitle: Subtitle.belowTitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.debugOptions.multiThreadedGL)
+
+//            PVSettingsSwitchRow(title: "Unsupported Cores",
+//                                subtitle: Subtitle.belowTitle("Cores that are in development"),
+//                                key: \PVSettingsModel.debugOptions.unsupportedCores)
             ]
 
         let betaSection = Section(

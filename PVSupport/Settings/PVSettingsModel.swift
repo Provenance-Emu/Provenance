@@ -23,6 +23,44 @@ extension UserDefaultsRepresentable where Self:RawRepresentable {
     }
 }
 
+public protocol SettingModel : NSObjectProtocol, UserDefaultsRepresentable {
+    associatedtype T : Any
+    var title : String {get}
+    var info : String? {get}
+    var defaultValue : T {get}
+    var value : T {get set}
+}
+
+//extension SettingModel {
+//    init(_ defaultValue : Bool, title: String, info: String? = nil) {
+//        self.defaultValue = defaultValue
+//        self.value = defaultValue
+//        self.title = title
+//        self.info = info
+//        super.init()
+//    }
+//}
+
+@objcMembers
+@objc public final class BoolSetting : NSObject, SettingModel {
+    public var defaultsValue: Any {
+        return value
+    }
+
+    public let defaultValue : Bool
+    public var value : Bool
+    public var title : String
+    public let info : String?
+
+    required public init(_ defaultValue : Bool, title: String, info: String? = nil) {
+        self.defaultValue = defaultValue
+        self.value = defaultValue
+        self.title = title
+        self.info = info
+        super.init()
+    }
+}
+
 /// Root class that sets/loads settings by Swift's introspection 'Mirrored'
 /// Features
 /// 0 Full compatible with ObjC and Swift
@@ -67,10 +105,10 @@ public class MirroredSettings : NSObject {
                 // Handle case where value was previously set
                 self.setValue(currentValue, forKeyPath: keyPath)
             } else {
-                if let sub = c.value as? NSObject {
-                    setInitialValues(sub, rootKey: key)
-                } else if let e = c.value as? UserDefaultsRepresentable {
+                if let e = c.value as? UserDefaultsRepresentable {
                     UserDefaults.standard.set(e.defaultsValue, forKey: keyPath)
+                } else if let sub = c.value as? NSObject {
+                    setInitialValues(sub, rootKey: key)
                 } else {
                     UserDefaults.standard.set(c.value, forKey: keyPath)
                 }
@@ -162,6 +200,7 @@ extension MirroredSettings {
     @objc public class DebugOptions : NSObject {
         @objc public dynamic var iCloudSync = false
 //        @objc public dynamic var unsupportedCores = false
+//        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
         @objc public dynamic var multiThreadedGL = false
     }
 

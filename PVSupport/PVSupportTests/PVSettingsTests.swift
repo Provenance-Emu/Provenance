@@ -44,5 +44,8 @@ class PVSettingsTests: XCTestCase {
         settings.toggle(\PVSettingsModel.debugOptions.iCloudSync)
         XCTAssertFalse(settings.debugOptions.iCloudSync)
 
+        XCTAssertFalse(settings.debugOptions.multiThreadedGL)
+        settings.debugOptions.multiThreadedGL = true
+        XCTAssertTrue(settings.debugOptions.multiThreadedGL)
     }
 }
