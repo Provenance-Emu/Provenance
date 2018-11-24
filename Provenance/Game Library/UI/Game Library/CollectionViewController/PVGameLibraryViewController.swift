@@ -133,8 +133,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             sectionsTitles.append("Recently Played")
         }
 
-        if let systems = systems {
-            sectionsTitles.append(contentsOf: systems.map { "\($0.manufacturer) : \($0.shortName)" })
+        if let filteredSystems = filteredSystems {
+            sectionsTitles.append(contentsOf: filteredSystems.map {
+                var title = "\($0.manufacturer) : \($0.shortName)"
+                let betaIDs : [SystemIdentifier] = [.AtariJaguar, .Saturn, .Dreamcast]
+                let id = $0.enumValue
+                if betaIDs.contains(id) {
+                    title += " Beta"
+                }
+                return title
+            })
         }
         return sectionsTitles
     }
