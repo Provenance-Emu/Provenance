@@ -12,6 +12,7 @@
 #import "RealTimeThread.h"
 #import "PVLogging.h"
 @import AVFoundation;
+@import UIKit;
 
 /* Timing */
 #include <mach/mach_time.h>
@@ -37,6 +38,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
 @property (nonatomic, assign, readwrite) BOOL isRunning;
+#if TARGET_OS_IOS
+@property (nonatomic, strong, readwrite, nullable) UIImpactFeedbackGenerator* rumbleGenerator;
+#endif
 @end
 
 @implementation PVEmulatorCore
@@ -96,9 +100,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 - (void)startEmulation {
 	if ([self class] != PVEmulatorCoreClass) {
-		if (!_isRunning)
-		{
+		if (!_isRunning) {
 #if !TARGET_OS_TV
+            [self startHaptic];
 			[self setPreferredSampleRate:[self audioSampleRate]];
 #endif
 			self.isRunning  = YES;
@@ -113,6 +117,41 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	[self doesNotImplementSelector:_cmd];
 }
 
+#if !TARGET_OS_TV
+-(BOOL)startHaptic {
+    if (!NSThread.isMainThread) {
+        __block BOOL started = NO;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            started = [self startHaptic];
+        });
+        return started;
+    }
+
+    if (@available(iOS 10, *)) {
+        if(self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
+            self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
+            [self.rumbleGenerator prepare];
+            return YES;
+        }
+    }
+    return NO;
+}
+
+-(void)stopHaptic {
+    if (!NSThread.isMainThread) {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self stopHaptic];
+        });
+        return;
+    }
+    self.rumbleGenerator = nil;
+}
+#else
+ // Unsupported
+-(void)startHaptic { }
+-(void)stopHaptic { }
+#endif
+
 // GameCores that render direct to OpenGL rather than a buffer should override this and return YES
 // If the GameCore subclass returns YES, the renderDelegate will set the appropriate GL Context
 // So the GameCore subclass can just draw to OpenGL
@@ -122,8 +161,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 - (void)setPauseEmulation:(BOOL)flag {
     if (flag) {
+        [self stopHaptic];
 		self.isRunning = NO;
 	} else {
+        [self startHaptic];
 		self.isRunning = YES;
 	}
 }
@@ -133,6 +174,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 }
 
 - (void)stopEmulation {
+    [self stopHaptic];
 	shouldStop = YES;
 	self.isRunning  = NO;
 
@@ -263,6 +305,50 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         NSLog(@"multiplier: %.1f", framerateMultiplier);
     }
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+}
+
+- (void)rumble {
+    if (!self.supportsRumble) {
+        WLOG(@"Rumble called on core that doesn't support it");
+        return;
+    }
+
+    if (self.controller1 && self.controller1.isAttachedToDevice == NO) {
+        // Don't rumble if using a controller and it's not an attached type.
+        return;
+    }
+
+    if (@available(iOS 10, *)) {
+        BOOL deviceHasHaptic = [[UIDevice currentDevice] valueForKey:@"_feedbackSupportLevel"] > 0;
+        if (deviceHasHaptic) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.rumbleGenerator impactOccurred];
+            });
+        } else {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        }
+    } else {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    }
+}
+
+- (BOOL)supportsRumble {
+    return NO;
+}
+
+-(void)setController1:(GCController *)controller1 {
+    if(![controller1 isEqual:_controller1]) {
+        _controller1 = controller1;
+    }
+
+    if (self.supportsRumble) {
+        if (controller1 != nil && !controller1.isAttachedToDevice) {
+                // Eats battery to have it running if we don't need it
+            [self stopHaptic];
+        } else {
+            [self startHaptic];
+        }
+    }
 }
 
 #if !TARGET_OS_TV

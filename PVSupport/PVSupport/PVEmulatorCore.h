@@ -70,6 +70,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, strong) NSString* romSerial;
 @property (nonatomic, assign) BOOL supportsSaveStates;
 @property (nonatomic, assign) BOOL supportsAsyncSaveStates;
+@property (nonatomic, readonly) BOOL supportsRumble;
 
 @property (atomic, assign) BOOL shouldResyncTime;
 
@@ -142,4 +143,5 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (BOOL)loadStateFromFileAtPath:(NSString *_Nonnull)path
                           error:(NSError * __nullable * __nullable)error;
 
+- (void)rumble;
 @end

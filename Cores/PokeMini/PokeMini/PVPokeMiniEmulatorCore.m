@@ -24,11 +24,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define VIDEO_UPSCALE 1
+
 #import "PVPokeMiniEmulatorCore.h"
 @import PVSupport;
-//#import <PVSupport/OERingBuffer.h>
-//#import <PVSupport/DebugUtils.h>
-//#import <PVSupport/PVLogging.h>
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -37,6 +36,7 @@
 #import "Hardware.h"
 #import "Joystick.h"
 #import "Video_x1.h"
+#import "Video_x4.h"
 
 typedef struct {
     bool a;
@@ -86,9 +86,14 @@ int OpenEmu_KeysMapping[] =
 
 - (instancetype)init {
     if(self = [super init]) {
+#if VIDEO_UPSCALE
+        videoWidth = 96 * 4;
+        videoHeight = 64 * 4;
+#else
         videoWidth = 96;
         videoHeight = 64;
-        
+#endif
+
         audioStream = malloc(PMSOUNDBUFF);
         videoBuffer = malloc(videoWidth*videoHeight*4);
         memset(videoBuffer, 0, videoWidth*videoHeight*4);
@@ -108,13 +113,84 @@ int OpenEmu_KeysMapping[] =
 
 #pragma - mark Execution
 
-- (void)setupEmulation
-{
+- (void)setupEmulation {
     CommandLineInit();
-    CommandLine.eeprom_share = 1;
-    
+    CommandLine.forcefreebios = 0; // OFF
+    CommandLine.eeprom_share = 1;  // OFF (there is no practical benefit to a shared eeprom save
+//                                   //      - it just gets full and becomes a nuisance...)
+    CommandLine.updatertc = 2;        // Update RTC (0=Off, 1=State, 2=Host)
+    CommandLine.joyenabled = 1;    // ON
+    CommandLine.lcdfilter = 1; // 0: None, 1: Dot-Matrix, 2: Scanline
+    CommandLine.lcdmode = 0; // LCD Mode (0: analog, 1: 3shades, 2: 2shades)
+    CommandLine.lcdcontrast = 64; // LCD contrast
+    CommandLine.lcdbright = 0; // LCD brightness offset
+    CommandLine.piezofilter = 1; // ON
+
+    CommandLine.palette = 0; // Palette Index (0 - 13; 0 == Default)
+/*
+ Reference of other palette's from libretro code
+ if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &variables))
+ {
+ if (strcmp(variables.value, "Old") == 0)
+ {
+ CommandLine.palette = 1;
+ }
+ else if (strcmp(variables.value, "Monochrome") == 0)
+ {
+ CommandLine.palette = 2;
+ }
+ else if (strcmp(variables.value, "Green") == 0)
+ {
+ CommandLine.palette = 3;
+ }
+ else if (strcmp(variables.value, "Green Vector") == 0)
+ {
+ CommandLine.palette = 4;
+ }
+ else if (strcmp(variables.value, "Red") == 0)
+ {
+ CommandLine.palette = 5;
+ }
+ else if (strcmp(variables.value, "Red Vector") == 0)
+ {
+ CommandLine.palette = 6;
+ }
+ else if (strcmp(variables.value, "Blue LCD") == 0)
+ {
+ CommandLine.palette = 7;
+ }
+ else if (strcmp(variables.value, "LEDBacklight") == 0)
+ {
+ CommandLine.palette = 8;
+ }
+ else if (strcmp(variables.value, "Girl Power") == 0)
+ {
+ CommandLine.palette = 9;
+ }
+ else if (strcmp(variables.value, "Blue") == 0)
+ {
+ CommandLine.palette = 10;
+ }
+ else if (strcmp(variables.value, "Blue Vector") == 0)
+ {
+ CommandLine.palette = 11;
+ }
+ else if (strcmp(variables.value, "Sepia") == 0)
+ {
+ CommandLine.palette = 12;
+ }
+ else if (strcmp(variables.value, "Monochrome Vector") == 0)
+ {
+ CommandLine.palette = 13;
+ }
+ }
+ */
     // Set video spec and check if is supported
+#if VIDEO_UPSCALE
+    if(!PokeMini_SetVideo((TPokeMini_VideoSpec *)&PokeMini_Video4x4, 32, CommandLine.lcdfilter, CommandLine.lcdmode))
+#else
     if(!PokeMini_SetVideo((TPokeMini_VideoSpec *)&PokeMini_Video1x1, 32, CommandLine.lcdfilter, CommandLine.lcdmode))
+#endif
     {
         NSLog(@"Couldn't set video spec.");
     }
@@ -129,41 +205,50 @@ int OpenEmu_KeysMapping[] =
     {
         PokeMini_LoadBIOSFile(CommandLine.bios_file);
     }
-    
-    [self EEPROMSetup];
-    
+
     JoystickSetup("OpenEmu", 0, 30000, NULL, 12, OpenEmu_KeysMapping);
-    
-    PokeMini_VideoPalette_Init(PokeMini_RGB32, 0);
+
+    int enableHighColor = 1;
+    PokeMini_VideoPalette_Init(PokeMini_BGR32, enableHighColor);
     PokeMini_VideoPalette_Index(CommandLine.palette, CommandLine.custompal, CommandLine.lcdcontrast, CommandLine.lcdbright);
     PokeMini_ApplyChanges();
     PokeMini_UseDefaultCallbacks();
-    
+
+    // enable sound
     MinxAudio_ChangeEngine(MINX_AUDIO_GENERATED);
+//    MinxAudio_ChangeEngine(CommandLine.sound);
+
+    [self EEPROMSetup];
 }
 
-- (void)EEPROMSetup
-{
-    PokeMini_CustomLoadEEPROM = loadEEPROM;
-    PokeMini_CustomSaveEEPROM = saveEEPROM;
-    
+- (void)EEPROMSetup {
+//    PokeMini_CustomLoadEEPROM = loadEEPROM;
+//    PokeMini_CustomSaveEEPROM = saveEEPROM;
+
     NSString *extensionlessFilename = [[romPath lastPathComponent] stringByDeletingPathExtension];
     NSString *batterySavesDirectory = [self batterySavesPath];
-    
-    if([batterySavesDirectory length] != 0)
-    {
-        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+
+    MinxIO_FormatEEPROM();
+    if([batterySavesDirectory length] != 0) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:NULL];
         
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"eep"]];
-        
         strcpy(CommandLine.eeprom_file, [filePath UTF8String]);
-        loadEEPROM(CommandLine.eeprom_file);
+
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+            PokeMini_LoadEEPROMFile(CommandLine.eeprom_file);
+            ILOG(@"Read EEPROM file %@", filePath);
+        }
+    } else {
+        ELOG(@"Empty battery saves path");
     }
 }
 
 // Read EEPROM
-int loadEEPROM(const char *filename)
-{
+int loadEEPROM(const char *filename) {
     FILE *fp;
     
     // Read EEPROM from RAM file
@@ -176,16 +261,15 @@ int loadEEPROM(const char *filename)
 }
 
 // Write EEPROM
-int saveEEPROM(const char *filename)
-{
+int saveEEPROM(const char *filename) {
     FILE *fp;
-    
+
     // Write EEPROM to RAM file
     fp = fopen(filename, "wb");
     if (!fp) return 0;
     fwrite(EEPROM, 8192, 1, fp);
     fclose(fp);
-    
+
     return 1;
 }
 
@@ -204,7 +288,7 @@ int saveEEPROM(const char *filename)
     
     if(PokeMini_Rumbling) {
         if (shouldRumble) {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+            [self rumble];
             shouldRumble = NO;
         }
 
@@ -234,6 +318,13 @@ int saveEEPROM(const char *filename)
 - (void)stopEmulation
 {
     PokeMini_SaveFromCommandLines(1);
+
+        // Save EEPROM
+    if (PokeMini_EEPROMWritten && StringIsSet(CommandLine.eeprom_file)) {
+        PokeMini_EEPROMWritten = 0;
+        PokeMini_SaveEEPROMFile(CommandLine.eeprom_file);
+        ILOG(@"Wrote EEPROM file: %s\n", CommandLine.eeprom_file);
+    }
     
     [super stopEmulation];
 }
@@ -245,21 +336,22 @@ int saveEEPROM(const char *filename)
 
 #pragma mark - Save State
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error
-{
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
     BOOL success = PokeMini_SaveSSFile(fileName.fileSystemRepresentation, romPath.fileSystemRepresentation);
 	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
+        if(error != nil) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to save state.",
+                                       NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @""
+                                       };
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
-
-		*error = newError;
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                                userInfo:userInfo];
+            
+            *error = newError;
+        }
 	}
 	return success;
 }
@@ -268,17 +360,19 @@ int saveEEPROM(const char *filename)
 {
     BOOL success = PokeMini_LoadSSFile(fileName.fileSystemRepresentation);
 	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
+        if (error != nil) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to save state.",
+                                       NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @""
+                                       };
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                userInfo:userInfo];
 
-		*error = newError;
+            *error = newError;
+        }
 	}
 	return success;
 }
@@ -540,6 +634,14 @@ int saveEEPROM(const char *filename)
         }
 #endif
     }
+}
+
+@end
+
+@implementation PVPokeMiniEmulatorCore (Rumble)
+
+- (BOOL)supportsRumble {
+    return YES;
 }
 
 @end
