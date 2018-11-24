@@ -30,7 +30,7 @@ public final class RealmConfiguration {
             ILOG("appGroupContainer is Nil")
             return nil
         }
-        
+
         ILOG("appGroupContainer => (\(appGroupContainer.absoluteString))")
 
         #if os(tvOS)
@@ -122,7 +122,26 @@ public final class RealmConfiguration {
         #else
             let deleteIfMigrationNeeded = false
         #endif
-        let config = Realm.Configuration(fileURL: realmURL, inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: 4, migrationBlock: migrationBlock, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
+        let schemaVersion : UInt64 = 6
+        let config = Realm.Configuration(
+            fileURL: realmURL,
+            inMemoryIdentifier: nil,
+            syncConfiguration: nil,
+            encryptionKey: nil,
+            readOnly: false,
+            schemaVersion: schemaVersion,
+            migrationBlock: migrationBlock,
+            deleteRealmIfMigrationNeeded: false,
+            shouldCompactOnLaunch: { totalBytes, usedBytes in
+                // totalBytes refers to the size of the file on disk in bytes (data + free space)
+                // usedBytes refers to the number of bytes used by data in the file
+
+                // Compact if the file is over 20MB in size and less than 60% 'used'
+                let twentyMB = 20 * 1024 * 1024
+                return (totalBytes > twentyMB) && (Double(usedBytes) / Double(totalBytes)) < 0.6
+            },
+            objectTypes: nil)
+
         return config
     }()
 }
