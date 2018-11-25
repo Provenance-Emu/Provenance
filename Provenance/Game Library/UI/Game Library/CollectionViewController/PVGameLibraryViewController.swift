@@ -1020,6 +1020,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         unregisterForChange()
+        watcher?.stopMonitoring()
+        watcherQueue.isSuspended = false
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1046,6 +1048,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		if isViewLoaded {
 			updateConflictsButton()
 		}
+
+        watcher?.startMonitoring()
+        watcherQueue.isSuspended = false
+
     }
 
 	var transitioningToSize: CGSize?
@@ -1346,6 +1352,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		setupDirectoryWatcher()
     }
 
+    lazy var watcherQueue : OperationQueue = {
+        let q = OperationQueue()
+        q.name = "WatcherQueue"
+        q.qualityOfService = .background
+        q.maxConcurrentOperationCount = 1
+        return q
+    }()
+
 	func setupDirectoryWatcher() {
 
 		let labelMaker: (URL) -> String = { path in
@@ -1395,23 +1409,24 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			}
 
 			if let paths = paths {
-				self.filePathsToImport.append(contentsOf: paths)
-				do {
-					let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-					let archives = contents.filter {
-						let exts = PVEmulatorConfiguration.archiveExtensions
-						let ext = $0.pathExtension.lowercased()
-						return exts.contains(ext)
-					}
-					if archives.count == 0 {
-						self.gameImporter?.startImport(forPaths: self.filePathsToImport)
-					}
-				} catch {
-					ELOG("\(error.localizedDescription)")
-				}
+                self.watcherQueue.addOperation({
+                    self.filePathsToImport.append(contentsOf: paths)
+                    do {
+                        let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                        let archives = contents.filter {
+                            let exts = PVEmulatorConfiguration.archiveExtensions
+                            let ext = $0.pathExtension.lowercased()
+                            return exts.contains(ext)
+                        }
+                        if archives.count == 0 {
+                            self.gameImporter?.startImport(forPaths: self.filePathsToImport)
+                        }
+                    } catch {
+                        ELOG("\(error.localizedDescription)")
+                    }
+                })
 			}
 		})
-
 		watcher?.startMonitoring()
 	}
 
