@@ -83,7 +83,10 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		#if os(tvOS)
 		return CGSize(width: 350, height: 280)
 		#else
-		return CGSize(width: 124, height: 130)
+        let ratio = 5.0 / 4.0
+        let width = 100.0
+        let height = width * ratio
+		return CGSize(width: width, height: height)
 		#endif
 	}
 
