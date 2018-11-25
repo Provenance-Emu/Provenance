@@ -227,6 +227,8 @@
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3532B2B21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
 		B3532B2C21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
+		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
+		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3F21A9B682006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C3E21A9B681006CDA0F /* PromiseKit.framework */; };
 		B3532C4121A9B698006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C4021A9B698006CDA0F /* PromiseKit.framework */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
@@ -763,6 +765,7 @@
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
+		B3532C3B21A9AC93006CDA0F /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		B3532C3E21A9B681006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
 		B3532C4021A9B698006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/tvOS/PromiseKit.framework; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1223,6 +1226,7 @@
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				378F49DB1B63D7CD0065FA39 /* http */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
+				B3532C3A21A9AC71006CDA0F /* Services */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
 				1A1237F217CA279900CEC788 /* User Interface */,
@@ -1594,6 +1598,14 @@
 				B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		B3532C3A21A9AC71006CDA0F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B3532C3B21A9AC93006CDA0F /* Services.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		B354E7BD219A7D050041F971 /* SystemSettings */ = {
@@ -2407,6 +2419,7 @@
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
+				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
@@ -2484,6 +2497,7 @@
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
 				B3B104D4218F2EF400210C39 /* PVWonderSwanControllerViewController.swift in Sources */,
 				B3B104C2218F2EF400210C39 /* PVAtari5200ControllerViewController.swift in Sources */,
+				B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */,
 				B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
 				B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */,

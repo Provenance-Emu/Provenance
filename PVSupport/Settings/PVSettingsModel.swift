@@ -14,10 +14,15 @@ internal func minutes(_ minutes : Double) -> TimeInterval {
 }
 
 public protocol UserDefaultsRepresentable {
+    var valueType : Any.Type {get}
     var defaultsValue : Any {get}
 }
 
 extension UserDefaultsRepresentable where Self:RawRepresentable {
+    public var valueType: Any.Type {
+        return type(of: self) //RawValue.self
+    }
+
     public var defaultsValue : Any {
         return self.rawValue
     }
@@ -29,6 +34,17 @@ public protocol SettingModel : NSObjectProtocol, UserDefaultsRepresentable {
     var info : String? {get}
     var defaultValue : T {get}
     var value : T {get set}
+}
+
+// Add Set support
+extension Set : UserDefaultsRepresentable {
+    public var valueType: Any.Type {
+        return Array<Element>.self
+    }
+
+    public var defaultsValue: Any {
+        return Array(self)
+    }
 }
 
 //extension SettingModel {
@@ -43,6 +59,10 @@ public protocol SettingModel : NSObjectProtocol, UserDefaultsRepresentable {
 
 @objcMembers
 @objc public final class BoolSetting : NSObject, SettingModel {
+    public var valueType: Any.Type {
+        return Bool.self
+    }
+
     public var defaultsValue: Any {
         return value
     }
@@ -102,8 +122,18 @@ public class MirroredSettings : NSObject {
             }
 
             if let currentValue = UserDefaults.standard.object(forKey: keyPath) ?? UserDefaults.standard.object(forKey: "k\(key.uppercased())Key") {
-                // Handle case where value was previously set
-                self.setValue(currentValue, forKeyPath: keyPath)
+
+                // Check we didnt't get a crazy value
+//                if let e = c.value as? UserDefaultsRepresentable, e.valueType != type(of: currentValue) {
+//                    assertionFailure("Read back wrong type. Got <\(type(of: currentValue))>, excpected: <\(e.valueType)>")
+//                }
+
+                if let e = c.value as? Set<AnyHashable>, let arrayValue = currentValue as? Array<AnyHashable> {
+                    self.setValue(Set(arrayValue), forKeyPath: keyPath)
+                } else {
+                    // Handle case where value was previously set
+                    self.setValue(currentValue, forKeyPath: keyPath)
+                }
             } else {
                 if let e = c.value as? UserDefaultsRepresentable {
                     UserDefaults.standard.set(e.defaultsValue, forKey: keyPath)
@@ -165,6 +195,8 @@ extension MirroredSettings {
 
                 if let e = newValue as? UserDefaultsRepresentable {
                     UserDefaults.standard.set(e.defaultsValue, forKey: myKeyPath)
+                } else if let s = newValue as? Set<AnyHashable> {
+                    UserDefaults.standard.set(Array(s), forKey: myKeyPath)
                 } else {
                     UserDefaults.standard.set(newValue, forKey: myKeyPath)
                 }
@@ -247,4 +279,7 @@ extension MirroredSettings {
     @objc public dynamic var volumeHUD = true
 
     @objc public dynamic var sort : SortOptions = .title
+
+    @objc public dynamic var haveWarnedAboutDebug = false
+    @objc public dynamic var collapsedSystems = Set<String>()
 }
