@@ -1030,7 +1030,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         // Warn non core dev users if they're running in debug mode
         #if DEBUG && !targetEnvironment(simulator)
-        if !PVSettingsModel.shared.haveWarnedAboutDebug && Bundle.main.bundleIdentifier!.contains("com.provenance-emu.provenance") {
+        if !PVSettingsModel.shared.haveWarnedAboutDebug && !officialBundleID {
             #if os(tvOS)
             let releaseScheme = "ProvenanceTV-Release"
             #else
@@ -1047,6 +1047,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
         #endif
     }
+    fileprivate lazy var officialBundleID : Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.")
 
 	var transitioningToSize: CGSize?
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
