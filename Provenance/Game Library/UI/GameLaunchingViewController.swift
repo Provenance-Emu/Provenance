@@ -33,7 +33,6 @@ public func PVMaxRecentsCount() -> Int {
  */
 
 public protocol GameLaunchingViewController: class {
-    var mustRefreshDataSource: Bool {get set}
     func canLoad(_ game: PVGame) throws
 	func load(_ game: PVGame, sender : Any?, core: PVCore?, saveState: PVSaveState?)
 	func openSaveState(_ saveState: PVSaveState)

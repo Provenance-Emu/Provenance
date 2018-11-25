@@ -115,7 +115,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     var searchResults: Results<PVGame>?
     @IBOutlet weak var searchField: UITextField?
     var isInitialAppearance = false
-    var mustRefreshDataSource = false
 
 	var needToShowConflictsAlert = false {
 		didSet {
@@ -351,6 +350,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		#if os(iOS)
 		view.bringSubviewToFront(libraryInfoContainerView)
 		#endif
+
+        setUpGameLibrary()
 
         loadGameFromShortcut()
         becomeFirstResponder()
@@ -764,11 +765,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 		savesStatesToken?.invalidate()
 		savesStatesToken = saveStates!.observe { [unowned self] (changes: RealmCollectionChange) in
-			guard self.presentedViewController == nil && self.isViewLoaded else {
-				self.mustRefreshDataSource = true
-				return
-			}
-
 			switch changes {
 			case .initial(let result):
 				if !result.isEmpty {
@@ -829,11 +825,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 		recentGamesToken?.invalidate()
         recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
-			guard self.presentedViewController == nil && self.isViewLoaded else {
-				self.mustRefreshDataSource = true
-				return
-			}
-
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -886,11 +877,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 		favoritesToken?.invalidate()
         favoritesToken = favoriteGames!.observe { [unowned self] (changes: RealmCollectionChange) in
-			guard self.presentedViewController == nil && self.isViewLoaded else {
-				self.mustRefreshDataSource = true
-				return
-			}
-
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -1005,11 +991,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			return
 		}
 
-        if (self.mustRefreshDataSource) {
-            fetchGames()
-            collectionView?.reloadData()
-        }
-
         registerForChange()
 
 		if isViewLoaded {
@@ -1038,11 +1019,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
 		guard RomDatabase.databaseInitilized else {
 			return
-		}
-
-		if (self.mustRefreshDataSource) {
-			fetchGames()
-			collectionView?.reloadData()
 		}
 
 		if isViewLoaded {
@@ -1365,7 +1341,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 	}
 
     func setUpGameLibrary() {
-        fetchGames()
 		setupGameImporter()
 		setupDirectoryWatcher()
     }
@@ -1445,7 +1420,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 })
 			}
 		})
-		watcher?.startMonitoring()
 	}
 
 	func setupGameImporter() {
@@ -1546,25 +1520,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		gameImporter.serialImportQueue.addOperation(completionOperation)
 	}
 
-    func fetchGames() {
-        let database = RomDatabase.sharedInstance
-        database.refresh()
-        mustRefreshDataSource = false
-    }
-
     func finishedImportingGame(withMD5 md5: String, modified: Bool) {
 
         DispatchQueue.main.async {
             if let hud = MBProgressHUD(for: self.view) {
                 hud.hide(true)
-            }
-        }
-
-        // Only refresh the whole collection if game was modified.
-        if modified {
-            fetchGames()
-            DispatchQueue.main.async {
-                self.collectionView?.reloadData()
             }
         }
 
@@ -1654,7 +1614,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
             DispatchQueue.main.async(execute: {() -> Void in
                 RomDatabase.sharedInstance.refresh()
-                self.fetchGames()
             })
         })
     }
@@ -1680,7 +1639,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             ELOG("Failed to delete all objects. \(error.localizedDescription)")
         }
 
-        fetchGames()
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
@@ -1938,8 +1896,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
 
             register3DTouchShortcuts()
-
-            fetchGames()
 
             DispatchQueue.main.async {
                 self.collectionView?.reloadData()

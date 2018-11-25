@@ -654,7 +654,6 @@ public extension PVGameImporter {
 
     public func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
         let database = RomDatabase.sharedInstance
-        database.refresh()
 
 		// If directory, map out sub directories if folder
 		let paths : [URL] = paths.compactMap { (url) -> [URL]? in
