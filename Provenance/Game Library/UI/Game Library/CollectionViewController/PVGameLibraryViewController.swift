@@ -2307,9 +2307,9 @@ extension PVGameLibraryViewController: UITableViewDataSource {
 		if indexPath.section == 0 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
 
-			let sortOption = SortOptions.optionForRow(UInt(indexPath.row))
+			let sortOption = SortOptions.allCases[indexPath.row]
 
-			cell.textLabel?.text = sortOption.rawValue
+			cell.textLabel?.text = sortOption.description
 			cell.accessoryType = indexPath.row == currentSort.row ? .checkmark : .none
 			return cell
 		} else if indexPath.section == 1 {
