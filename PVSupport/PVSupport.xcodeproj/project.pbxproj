@@ -65,6 +65,8 @@
 		B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
 		B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
 		B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
+		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
+		B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -195,6 +197,7 @@
 		B3532B3421A7B736006CDA0F /* PVSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSupportTests.swift; sourceTree = "<group>"; };
 		B3532B3621A7B736006CDA0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSettingsTests.swift; sourceTree = "<group>"; };
+		B3532C3521A925C1006CDA0F /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3721CF82191338200433E4C /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3721CF92191338200433E4C /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
@@ -432,6 +435,7 @@
 			isa = PBXGroup;
 			children = (
 				B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */,
+				B3532C3521A925C1006CDA0F /* SortOption.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -768,6 +772,7 @@
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
+				B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */,
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
@@ -807,6 +812,7 @@
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
+				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
 				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
