@@ -1052,6 +1052,24 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         watcher?.startMonitoring()
         watcherQueue.isSuspended = false
 
+        // Warn non core dev users if they're running in debug mode
+        #if DEBUG && !targetEnvironment(simulator)
+        if !PVSettingsModel.shared.haveWarnedAboutDebug && Bundle.main.bundleIdentifier!.contains("com.provenance-emu.provenance") {
+            #if os(tvOS)
+            let releaseScheme = "ProvenanceTV-Release"
+            #else
+            let releaseScheme = "Provenance-Release"
+            #endif
+            let alert = UIAlertController(title: "Debug Mode Detected",
+                                          message: "⚠️ Detected app built in 'Debug' mode. Build with the " + releaseScheme + " scheme in XCode for best performance. This alert will only be presented this one time.",
+                                          preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default) { _ in
+                PVSettingsModel.shared.haveWarnedAboutDebug = true
+            }
+            alert.addAction(ok)
+            self.present(alert, animated: true)
+        }
+        #endif
     }
 
 	var transitioningToSize: CGSize?
