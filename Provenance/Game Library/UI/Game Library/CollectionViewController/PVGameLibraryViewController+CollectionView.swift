@@ -157,7 +157,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 		if searchResults != nil {
 			return 1
 		} else {
-			let count = systemsSectionOffset + (systems?.count ?? 0)
+			let count = systemsSectionOffset + (filteredSystems?.count ?? 0)
 			VLOG("Sections : \(count)")
 			return count
 		}
@@ -169,7 +169,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 		} else {
 			if section >= systemsSectionOffset {
                 let sectionNumber = section - systemsSectionOffset
-                if let system = systems?[sectionNumber], let token = systemSectionsTokens[system.identifier] {
+                if let system = filteredSystems?[sectionNumber], let token = systemSectionsTokens[system.identifier] {
                     return token.itemsCount
                 } else {
                     return 0
@@ -263,21 +263,29 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
             } else {
                 let title = sectionTitles[indexPath.section]
 
-                if indexPath.section >= systemsSectionOffset, let system = systems?[indexPath.section - systemsSectionOffset] {
+                if indexPath.section >= systemsSectionOffset, let systemIdentifier = filteredSystems?[indexPath.section - systemsSectionOffset].identifier {
 
-                    if let token = self.systemSectionsTokens[system.identifier] {
+                    if let token = self.systemSectionsTokens[systemIdentifier] {
                         viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: token.viewModel.collapsed)
                     } else {
                         viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: false)
                     }
 
-
                     headerView.collapseImageView.rx.tapGesture()
                         .when(.recognized)
                         .subscribe(onNext: { _ in
-                            let token = self.systemSectionsTokens[system.identifier]!
-                            token.viewModel.collapsed = !token.viewModel.collapsed
-                            collectionView.reloadSections([indexPath.section])
+                            if let token = self.systemSectionsTokens[systemIdentifier] {
+                                let collapsed = !token.viewModel.collapsed
+                                token.viewModel.collapsed = collapsed
+                                if collapsed {
+                                    PVSettingsModel.shared.collapsedSystems.insert(systemIdentifier)
+                                } else {
+                                    PVSettingsModel.shared.collapsedSystems.remove(systemIdentifier)
+                                }
+                                collectionView.reloadSections([indexPath.section])
+                            } else {
+                                ELOG("systemSectionsTokens was missing entry for key <\(systemIdentifier)>")
+                            }
                         })
                         .disposed(by: headerView.disposeBag)
                 } else {
@@ -343,7 +351,9 @@ extension PVGameLibraryViewController {
 				let recentlyPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: recentGamesSection)) as! RecentlyPlayedCollectionCell
 
 				let location2 = recentlyPlayedCell.internalCollectionView.convert(location, from: collectionView)
-				let indexPath2 = recentlyPlayedCell.internalCollectionView.indexPathForItem(at: location2)!
+                guard let indexPath2 = recentlyPlayedCell.internalCollectionView.indexPathForItem(at: location2) else {
+                    return nil
+                }
 
 				if let recentGames = recentGames, recentGames.count > indexPath2.row {
 					game = recentGames[indexPath2.row].game
@@ -356,7 +366,7 @@ extension PVGameLibraryViewController {
 				} else {
 					ELOG("row \(row) out of bounds for saveStates count \(saveStates?.count ?? -1)")
 				}
-			} else if let system = systems?[section - systemsSectionOffset] {
+			} else if let system = filteredSystems?[section - systemsSectionOffset] {
 				game = systemSectionsTokens[system.identifier]?.query[row]
 			} else {
 				ELOG("Unknown section \(section)")

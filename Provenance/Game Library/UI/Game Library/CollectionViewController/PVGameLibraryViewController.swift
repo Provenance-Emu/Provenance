@@ -355,7 +355,22 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         loadGameFromShortcut()
         becomeFirstResponder()
     }
-    var systems: Results<PVSystem>?
+    var unsortedSystems: Results<PVSystem>? {
+        didSet {
+            filteredSystemClear()
+        }
+    }
+    internal func filteredSystemClear() { filteredSystemsCached = nil }
+    private var filteredSystemsCached : [PVSystem]?
+    var filteredSystems : [PVSystem]? {
+        if let filteredSystemsCached = filteredSystemsCached {
+            return filteredSystemsCached
+        }
+        let sorted = systemsByCurrentSort()
+        filteredSystemsCached = sorted
+        return sorted
+    }
+
 	var saveStates: Results<PVSaveState>?
     var favoriteGames: Results<PVGame>?
     var recentGames: Results<PVRecentGame>?
@@ -476,6 +491,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			self.system = system
 			self.id = system.identifier
 			self.viewModel.sortOrder = sortOrder
+            self.viewModel.collapsed = PVSettingsModel.shared.collapsedSystems.contains(system.identifier)
 			self.gameLibraryGameController = gameLibraryViewController
 			self.storedQuery = generateQuery()
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -507,9 +523,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			case .title:
 				break
 			case .importDate:
-				sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.importDate), ascending: true))
+				sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.importDate), ascending: false))
 			case .lastPlayed:
-				sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.lastPlayed), ascending: true))
+				sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.lastPlayed), ascending: false))
 			}
 
 			sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
@@ -544,12 +560,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     defer {
                         gameLibraryGameController.semaphore.signal()
                     }
-                    guard let indexOfSystem = gameLibraryGameController.systems?.index(of: self.system) else {
+                    guard let systems = gameLibraryGameController.filteredSystems, let indexOfSystem = systems.index(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
+
                     let section = indexOfSystem + gameLibraryGameController.systemsSectionOffset
-                    gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+//                    gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+                    gameLibraryGameController.collectionView?.reloadData()
                 case .update(_, let deletions, let insertions, let modifications):
                     if gameLibraryGameController.isInSearch {
                         return
@@ -561,7 +579,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     }
 
                     // Query results have changed, so apply them to the UICollectionView
-                    guard let indexOfSystem = gameLibraryGameController.systems?.index(of: self.system) else {
+                    guard let indexOfSystem = gameLibraryGameController.filteredSystems?.index(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
@@ -610,34 +628,67 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			return
 		}
 
-        systems = PVSystem.all.filter("games.@count > 0")
-        systems = systemsByCurrentSort()
+        unsortedSystems = PVSystem.all.filter("games.@count > 0")
 		saveStates = PVSaveState.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
     }
 
-    func systemsByCurrentSort() -> Results<PVSystem>? {
-        guard let systems = systems else {
+    func systemsByCurrentSort() -> [PVSystem]? {
+        guard let systems = unsortedSystems else {
             return nil
         }
 
-        let nameSort : [SortDescriptor] = [SortDescriptor(keyPath: #keyPath(PVSystem.manufacturer), ascending: true), SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)]
+        let nameSort : [SortDescriptor] = [SortDescriptor(keyPath: #keyPath(PVSystem.manufacturer), ascending: true),
+                                           SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)]
 
-//        switch currentSort {
-//        case .title:
-            return systems.sorted(by: nameSort)
-//        case .lastPlayed:
-//            let lastPlayedSort : [SortDescriptor] = [SortDescriptor(keyPath: "games.last.lastPlayed", ascending: true)] + nameSort
-//            return systems.sorted(by: lastPlayedSort)
-//        case .importDate:
-//            let lastImportSort : [SortDescriptor] = [SortDescriptor(keyPath: "games.last.importDate", ascending: true)] + nameSort
-//            return systems.sorted(by: lastImportSort)
-//        }
+        let titleSort : (PVSystem, PVSystem)->Bool = { (s1, s2) -> Bool in
+            let mc = s1.manufacturer.compare(s2.manufacturer)
+            if mc == .orderedSame {
+                return s1.name.compare(s2.name) == .orderedAscending
+            } else {
+                return mc == .orderedAscending
+            }
+        }
+
+        switch currentSort {
+        case .title:    
+            return systems.sorted(by: titleSort)
+        case .lastPlayed:
+            return systems.sorted(by: { (s1, s2) -> Bool in
+                let l1 = s1.games.sorted(byKeyPath: "lastPlayed", ascending: false).first?.lastPlayed
+                let l2 = s2.games.sorted(byKeyPath: "lastPlayed", ascending: false).first?.lastPlayed
+
+                if let l1 = l1, let l2 = l2 {
+                    return l1.compare(l2) == .orderedDescending
+                } else if l1 != nil {
+                    return true
+                } else if l2 != nil {
+                    return false
+                } else {
+                    return titleSort(s1, s2)
+                }
+            })
+        case .importDate:
+            return systems.sorted(by: { (s1, s2) -> Bool in
+                let l1 = s1.games.sorted(byKeyPath: "importDate", ascending: false).first?.importDate
+                let l2 = s2.games.sorted(byKeyPath: "importDate", ascending: false).first?.importDate
+
+                if let l1 = l1, let l2 = l2 {
+                    return l1.compare(l2) == .orderedDescending
+                } else if l1 != nil {
+                    return true
+                } else if l2 != nil {
+                    return false
+                } else {
+                    return titleSort(s1, s2)
+                }
+            })
+        }
     }
 
     func deinitRealmResultsStorage() {
-        systems = nil
+        unsortedSystems = nil
 		saveStates = nil
         recentGames = nil
         favoriteGames = nil
@@ -645,14 +696,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func registerForChange() {
 		systemsToken?.invalidate()
-        systemsToken = systems!.observe { [unowned self] (changes: RealmCollectionChange) in
-//			guard self.presentedViewController == nil && self.isViewLoaded else {
-//				self.mustRefreshDataSource = true
-//				return
-//			}
-
+        systemsToken = unsortedSystems!.observe { [unowned self] (changes: RealmCollectionChange) in
             switch changes {
             case .initial(let result):
+                self.filteredSystemClear()
+
                 result.forEach { system in
                     self.addSectionToken(forSystem: system)
                 }
@@ -661,44 +709,56 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 self.semaphore.wait()
                 self.setUpGameLibrary()
                 self.semaphore.signal()
+                #if os(iOS)
+                self.libraryInfoContainerView.isHidden = !result.isEmpty
+                #endif
             case .update(let systems, let deletions, let insertions, _):
+                self.filteredSystemClear()
+
                 if self.isInSearch {
                     return
                 }
 
                 guard let collectionView = self.collectionView else {return}
 
-                collectionView.performBatchUpdates({
-                    self.semaphore.wait()
+                #if os(iOS)
+                self.libraryInfoContainerView.isHidden = !systems.isEmpty
+                #endif
 
-                    let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
-                    collectionView.insertSections(IndexSet(insertIndexes))
-
-                    let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
-                    collectionView.deleteSections(IndexSet(delectIndexes))
-
-                    deletions.forEach {
-                        guard let systems = self.systems else {
-                            return
-                        }
-                        let identifier = systems[$0].identifier
-                        self.systemSectionsTokens.removeValue(forKey: identifier)
-                    }
-                    // Not needed since we have watchers per section
-                    // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
-                    self.semaphore.signal()
-                }, completion: { (success) in
-                    self.semaphore.wait()
-                    systems.filter({self.systemSectionsTokens[$0.identifier] == nil}).forEach { self.addSectionToken(forSystem: $0) }
-                    self.semaphore.signal()
-                })
+                self.semaphore.wait()
+                collectionView.reloadData()
+                self.semaphore.signal()
+//                collectionView.performBatchUpdates({
+//                    self.semaphore.wait()
+//
+//                    let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
+//                    collectionView.insertSections(IndexSet(insertIndexes))
+//
+//                    let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
+//                    collectionView.deleteSections(IndexSet(delectIndexes))
+//
+//                    deletions.forEach {
+//                        guard let systems = self.systems else {
+//                            return
+//                        }
+//                        let identifier = systems[$0].identifier
+//                        self.systemSectionsTokens.removeValue(forKey: identifier)
+//                    }
+//                    // Not needed since we have watchers per section
+//                    // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
+//                    self.semaphore.signal()
+//                }, completion: { (success) in
+//                    self.semaphore.wait()
+//                    systems.filter({self.systemSectionsTokens[$0.identifier] == nil}).forEach { self.addSectionToken(forSystem: $0) }
+//                    self.semaphore.signal()
+//                })
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
 
 			#if os(iOS)
-			self.libraryInfoContainerView.isHidden = (self.systems != nil && !self.systems!.isEmpty)
+			self.libraryInfoContainerView.isHidden = (self.unsortedSystems != nil && !self.unsortedSystems!.isEmpty)
 			#endif
         }
 
@@ -729,37 +789,38 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     self.semaphore.signal()
                 }
 
-                let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
-                let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
-
-                if self.saveStatesIsHidden {
-                    self.saveStatesIsEmpty = needsDelete
-                    return
-                }
-
-                let section = self.saveStateSection > -1 ? self.saveStateSection : 0
-
-                if needsInsert {
-                    ILOG("Needs insert, saveStatesIsHidden - false")
-                    self.saveStatesIsEmpty = false
-                }
-
-                if needsDelete {
-                    ILOG("Needs delete, saveStatesIsHidden - true")
-                    self.saveStatesIsEmpty = true
-                }
-
-                if needsInsert {
-                    ILOG("Inserting section \(section)")
-                    self.collectionView?.insertSections([section])
-                }
-
-                if needsDelete {
-                    ILOG("Deleting section \(section)")
-                    self.collectionView?.deleteSections([section])
-                }
-
-                self.saveStatesIsEmpty = needsDelete
+                self.collectionView?.reloadData()
+//                let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
+//                let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
+//
+//                if self.saveStatesIsHidden {
+//                    self.saveStatesIsEmpty = needsDelete
+//                    return
+//                }
+//
+//                let section = self.saveStateSection > -1 ? self.saveStateSection : 0
+//
+//                if needsInsert {
+//                    ILOG("Needs insert, saveStatesIsHidden - false")
+//                    self.saveStatesIsEmpty = false
+//                }
+//
+//                if needsDelete {
+//                    ILOG("Needs delete, saveStatesIsHidden - true")
+//                    self.saveStatesIsEmpty = true
+//                }
+//
+//                if needsInsert {
+//                    ILOG("Inserting section \(section)")
+//                    self.collectionView?.insertSections([section])
+//                }
+//
+//                if needsDelete {
+//                    ILOG("Deleting section \(section)")
+//                    self.collectionView?.deleteSections([section])
+//                }
+//
+//                self.saveStatesIsEmpty = needsDelete
             case .error(let error):
             // An error occurred while opening the Realm file on the background worker thread
 				fatalError("\(error)")
@@ -777,42 +838,45 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             case .initial(let result):
                 if !result.isEmpty {
                     self.recentGamesIsEmpty = false
-                }
 
-                self.collectionView?.reloadData()
+                    self.semaphore.wait()
+                    self.collectionView?.reloadData()
+                    self.semaphore.signal()
+                }
             case .update(_, let deletions, let insertions, _/*modifications*/):
 				if self.isInSearch {
 					return
 				}
 
-                self.semaphore.signal()
+                self.semaphore.wait()
                 defer {
                     self.semaphore.signal()
                 }
 
-                let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
-                let needsDelete = (self.recentGames?.isEmpty ?? true) && !deletions.isEmpty
-
-                if self.recentGamesIsHidden {
-                    self.recentGamesIsEmpty = needsDelete
-                    return
-                }
-
-//                let section = self.recentGamesSection > -1 ? self.recentGamesSection : 0
-
-                    if needsInsert {
-                        ILOG("Needs insert, recentGamesHidden - false")
-                        self.recentGamesIsEmpty = false
-                        self.collectionView?.insertSections([self.recentGamesSection])
-                    }
-
-                    if needsDelete {
-                        ILOG("Needs delete, recentGamesHidden - true")
-                        self.recentGamesIsEmpty = true
-                        self.collectionView?.deleteSections([self.recentGamesSection])
-                    }
-                	// Query results have changed, so apply them to the UICollectionView
-                self.recentGamesIsEmpty = needsDelete
+                self.collectionView?.reloadData()
+//                let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
+//                let needsDelete = (self.recentGames?.isEmpty ?? true) && !deletions.isEmpty
+//
+//                if self.recentGamesIsHidden {
+//                    self.recentGamesIsEmpty = needsDelete
+//                    return
+//                }
+//
+////                let section = self.recentGamesSection > -1 ? self.recentGamesSection : 0
+//
+//                    if needsInsert {
+//                        ILOG("Needs insert, recentGamesHidden - false")
+//                        self.recentGamesIsEmpty = false
+//                        self.collectionView?.insertSections([self.recentGamesSection])
+//                    }
+//
+//                    if needsDelete {
+//                        ILOG("Needs delete, recentGamesHidden - true")
+//                        self.recentGamesIsEmpty = true
+//                        self.collectionView?.deleteSections([self.recentGamesSection])
+//                    }
+//                    // Query results have changed, so apply them to the UICollectionView
+//                self.recentGamesIsEmpty = needsDelete
 
             case .error(let error):
                 	// An error occurred while opening the Realm file on the background worker thread
@@ -831,17 +895,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             case .initial(let result):
                 if !result.isEmpty {
                     self.favoritesIsHidden = false
+                    self.semaphore.wait()
+                    self.collectionView?.reloadData()
+                    self.semaphore.signal()
                 }
-
-                self.semaphore.wait()
-                self.collectionView?.reloadData()
-                self.semaphore.signal()
             case .update(_, let deletions, let insertions, _):
 				if self.isInSearch {
 					return
 				}
                 
-                self.semaphore.signal()
+                self.semaphore.wait()
                 defer {
                     self.semaphore.signal()
                 }
@@ -898,7 +961,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             DLOG("Library collection view update completed")
         })
         #else
-        collectionView.reloadSections([section])
+//        if section < collectionView.numberOfSections {
+//            collectionView.reloadSections([section])
+//        } else {
+            collectionView.reloadData()
+//        }
         #endif
     }
 
@@ -1169,7 +1236,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }))
             self.present(alert, animated: true) {() -> Void in }
         }
-
     }
 
 // MARK: - Game Library Management
@@ -1291,7 +1357,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 		}
 
 		watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.Paths.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
-
 			DispatchQueue.main.async {
 				guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
 					WLOG("No hud")
@@ -2504,7 +2569,7 @@ extension PVGameLibraryViewController {
 					return
 				}
 
-				if let systems = systems, sI < systems.count, let query = systemSectionsTokens[systems[sI].identifier]?.query, row < query.count {
+				if let systems = filteredSystems, sI < systems.count, let query = systemSectionsTokens[systems[sI].identifier]?.query, row < query.count {
 					focusedGame = query[row]
 				}
 			}
