@@ -9,6 +9,7 @@
 import Foundation
 
 public protocol SaveStateInfoProvider {
+    var id : String { get }
     var game: Game {get}
     var core: Core  {get}
     var file: FileInfo  {get}
@@ -19,6 +20,7 @@ public protocol SaveStateInfoProvider {
 }
 
 public struct SaveState : SaveStateInfoProvider, Codable {
+    public let id: String
 	public let game: Game
 	public let core: Core
 	public let file: FileInfo

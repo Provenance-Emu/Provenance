@@ -10,7 +10,7 @@
 import GameController
 
 // TODO: Make a class for gamepad and another for joystick to support dpad and joystick as seperate inputs
-
+@objc @objcMembers
 public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
     var handler: GCControllerDirectionPadValueChangedHandler?
     let _xAxis: PViCadeAxisInput = PViCadeAxisInput()

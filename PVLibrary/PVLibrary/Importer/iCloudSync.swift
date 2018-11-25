@@ -280,16 +280,9 @@ public final class iCloudSync {
 
             if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
                 DLOG("Read JSON data at (\(json.absoluteString)")
-                // TODO: Add UUID primary key to Saves
-                if let existing = realm.objects(PVSaveState.self).first(where: { (save) -> Bool in
-                    return save.file.fileName == save.file.fileName
-                }) {
-                    ILOG("Save state already exists for ID: \(save.uid)")
-                } else {
-                    let newSave = save.asRealm()
-                    realm.add(newSave)
-                    ILOG("Added new save \(newSave.debugDescription)")
-                }
+                let newSave = save.asRealm()
+                realm.add(newSave, update: true)
+                ILOG("Added new save \(newSave.debugDescription)")
             }
         }
     }

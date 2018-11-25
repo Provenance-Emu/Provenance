@@ -13,6 +13,7 @@ import PVSupport
 @objcMembers
 public final class PVSaveState: Object {
 
+    dynamic public var id = UUID().uuidString
     dynamic public var game: PVGame!
     dynamic public var core: PVCore!
     dynamic public var file: PVFile!
@@ -64,25 +65,30 @@ public final class PVSaveState: Object {
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
         return lhs.file.url == rhs.file.url
     }
+
+    override public static func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - Conversions
 fileprivate extension SaveState {
     init(with saveState : PVSaveState) {
+        id = saveState.id
         game = saveState.game.asDomain()
-        #warning ("DO me")
         core = saveState.core.asDomain()
-        //        core = saveState.core.asDomain()
         file = FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
         date = saveState.date
         lastOpened = saveState.lastOpened
-        #warning ("DO me")
-        image = nil
-        //        image = saveState.image
+
+        if let sImage = saveState.image {
+            image = LocalFile(url: sImage.url)
+        } else {
+            image = nil
+        }
         isAutosave = saveState.isAutosave
     }
 }
-
 
 extension PVSaveState : DomainConvertibleType {
     public typealias DomainType = SaveState

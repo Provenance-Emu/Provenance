@@ -11,6 +11,8 @@ import RealmSwift
 import PVSupport
 import UIKit
 
+let schemaVersion : UInt64 = 7
+
 public extension Notification.Name {
     static let DatabaseMigrationStarted  = Notification.Name("DatabaseMigrarionStarted")
     static let DatabaseMigrationFinished = Notification.Name("DatabaseMigrarionFinished")
@@ -122,7 +124,6 @@ public final class RealmConfiguration {
         #else
             let deleteIfMigrationNeeded = false
         #endif
-        let schemaVersion : UInt64 = 6
         let config = Realm.Configuration(
             fileURL: realmURL,
             inMemoryIdentifier: nil,
