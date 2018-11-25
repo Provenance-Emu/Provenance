@@ -24,7 +24,9 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         let iv = UIImageView(image: UIImage(named: "chevron_down"))
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFit
+        #if os(iOS)
         iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+        #endif
         return iv
     }()
 

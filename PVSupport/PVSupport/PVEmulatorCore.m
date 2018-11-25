@@ -308,6 +308,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 }
 
 - (void)rumble {
+#if TARGET_OS_IOS
     if (!self.supportsRumble) {
         WLOG(@"Rumble called on core that doesn't support it");
         return;
@@ -330,6 +331,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     } else {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     }
+#endif
 }
 
 - (BOOL)supportsRumble {

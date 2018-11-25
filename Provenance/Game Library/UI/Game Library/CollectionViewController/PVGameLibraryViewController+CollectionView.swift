@@ -11,7 +11,9 @@ import PVLibrary
 import PVSupport
 import RxSwift
 import RxCocoa
+#if canImport(RxGesture)
 import RxGesture
+#endif
 
 // tvOS
 let tvOSCellUnit: CGFloat = 256.0
@@ -270,7 +272,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
                     } else {
                         viewModel = GameLibrarySectionViewModel(title: title, collapsable: true, collapsed: false)
                     }
-
+                    #if canImport(RxGesture)
                     headerView.collapseImageView.rx.tapGesture()
                         .when(.recognized)
                         .subscribe(onNext: { _ in
@@ -288,6 +290,7 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
                             }
                         })
                         .disposed(by: headerView.disposeBag)
+                    #endif
                 } else {
                     viewModel = GameLibrarySectionViewModel(title: title, collapsable: false, collapsed: false)
                 }

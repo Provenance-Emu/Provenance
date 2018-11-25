@@ -11,12 +11,12 @@ import Foundation
 public protocol SaveStateInfoProvider {
     var id : String { get }
     var game: Game {get}
-    var core: Core  {get}
-    var file: FileInfo  {get}
-    var date: Date  {get}
-    var lastOpened: Date?  {get}
-    var image: LocalFile?  {get}
-    var isAutosave: Bool  {get}
+    var core: Core {get}
+    var file: FileInfo {get}
+    var date: Date {get}
+    var lastOpened: Date? {get}
+    var image: LocalFile? {get}
+    var isAutosave: Bool {get}
 }
 
 public struct SaveState : SaveStateInfoProvider, Codable {

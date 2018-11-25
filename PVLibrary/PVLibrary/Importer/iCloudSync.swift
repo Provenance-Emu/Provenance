@@ -33,9 +33,9 @@ extension Container {
 
 public protocol SyncFileToiCloud : Container {
     var metadataQuery: NSMetadataQuery {get}
-    func syncToiCloud(completionHandler: @escaping (SyncResult) -> ()) // -> Single<SyncResult>
-    func queryFile(completionHandler: @escaping (URL?) -> ()) // -> Single<URL>
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> ()) // -> Single<SyncResult>
+    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
+    func queryFile(completionHandler: @escaping (URL?) -> Void) // -> Single<URL>
+    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
 }
 
 public protocol iCloudTypeSyncer : Container {
@@ -110,7 +110,7 @@ extension iCloudTypeSyncer {
             }
         }
     }
-    
+
     func queryFinished(notification: Notification) {
         let mq = notification.object as! NSMetadataQuery
         mq.disableUpdates()
@@ -141,7 +141,7 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
         return containerURL.appendingPathComponent(self.url.relativePath)
     }
 
-    func syncToiCloud(completionHandler: @escaping (SyncResult) -> ()) {
+    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) {
         DispatchQueue.global(qos: .background).async {
             guard let destinationURL = self.destinationURL else {
                 completionHandler(.denied)
@@ -172,11 +172,10 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
     }
 
     /// - Parameter completionHandler: Non-main
-    func queryFile(completionHandler: @escaping (URL?) -> ()) {
+    func queryFile(completionHandler: @escaping (URL?) -> Void) {
         metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
 
         let center = NotificationCenter.default
-
 
         center.addObserver(forName: .NSMetadataQueryDidFinishGathering, object: metadataQuery, queue: nil) { notification in
             //            guard let `self` = self else {return}
@@ -200,10 +199,9 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
         metadataQuery.start()
     }
 
-
     /// - Parameters:
     ///   - completionHandler: Non-main
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> ()) {
+    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) {
 
         guard let destinationURL = self.destinationURL else {
             completionHandler(.denied)
