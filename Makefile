@@ -79,6 +79,10 @@ setup: \
 	install_ruby_gems \
 	install_carthage_dependencies
 
+## Install tvOS dependencies.
+setup_tvos: \
+    install_carthage_dependencies_tvos
+
 pull_request: \
 	test \
 	codecov_upload \
@@ -203,7 +207,7 @@ package:
 ## Update & build for iOS
 ios: | update developer
 
-## Update & for tvOS
+## Update & build for tvOS
 tvos: | update install_carthage_dependencies_tvos developer_tvos
 
 ## Open the workspace
