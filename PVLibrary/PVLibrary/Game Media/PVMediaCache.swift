@@ -108,6 +108,7 @@ public final class PVMediaCache: NSObject {
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
         do {
+            try FileManager.default.createDirectory(at: self.cachePath, withIntermediateDirectories: true, attributes: nil)
             try data.write(to: cachePath, options: [.atomic])
             return cachePath
         } catch {
