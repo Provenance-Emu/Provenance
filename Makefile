@@ -77,10 +77,7 @@ setup: \
 	install_carthage \
 	install_bundler_gem \
 	install_ruby_gems \
-	install_carthage_dependencies
-
-## Install tvOS dependencies.
-setup_tvos: \
+	install_carthage_dependencies_ios \
     install_carthage_dependencies_tvos
 
 pull_request: \
@@ -89,36 +86,36 @@ pull_request: \
 	danger
 
 pre_setup:
-	$(info iOS project setup ...)
+	$(info Project setup…)
 
 check_for_ruby:
-	$(info Checking for Ruby ...)
+	$(info Checking for Ruby…)
 
 ifeq ($(RUBY),)	
-	$(error Ruby is not installed)
+	$(error Ruby is not installed.)
 endif
 
 check_for_homebrew:
-	$(info Checking for Homebrew ...)
+	$(info Checking for Homebrew…)
 
 ifeq ($(HOMEBREW),)
 	$(error Homebrew is not installed)
 endif
 
 update_homebrew:
-	$(info Update Homebrew ...)
+	$(info Updating Homebrew…)
 
 	brew update
 
 install_swift_lint:
-	$(info Install swiftlint ...)
+	$(info Install swiftlint…)
 
 	brew unlink swiftlint || true
 	brew install swiftlint
 	brew link --overwrite swiftlint
 
 install_bundler_gem:
-	$(info Checking and install bundler ...)
+	$(info Checking and installing bundler…)
 
 ifeq ($(BUNDLER),)
 	gem install bundler -v '~> 1.17'
@@ -127,49 +124,49 @@ else
 endif
 
 install_ruby_gems:
-	$(info Install Ruby Gems ...)
+	$(info Installing Ruby gems…)
 
 	bundle install
 
 install_carthage:
-	$(info Install Carthage ...)
+	$(info Installing Carthage…)
 
 	brew unlink carthage || true
 	brew install carthage
 	brew link --overwrite carthage
 
-install_carthage_dependencies:
-	$(info Install Carthage Dependencies for iOS...)
+install_carthage_dependencies_ios:
+	$(info Installing Carthage dependencies for iOS…)
 
 	bundle exec fastlane carthage_bootstrap_ios
 
 install_carthage_dependencies_tvos:
-	$(info Install Carthage Dependencies for tvOS...)
+	$(info Installing Carthage dependencies for tvOS…)
 
 	bundle exec fastlane carthage_bootstrap_tvos
 
-update_carthage_dependencies:
-	$(info Update Carthage Dependencies for iOS...)
+update_carthage_dependencies_ios:
+	$(info Updating Carthage dependencies for iOS…)
 
 	bundle exec fastlane carthage_update_ios
 
 update_carthage_dependencies_tvos:
-	$(info Update Carthage Dependencies for tvOS...)
+	$(info Updating Carthage dependencies for tvOS…)
 
 	bundle exec fastlane carthage_update_tvos
 
 pull:
-	$(info Pulling new commits ...)
+	$(info Pulling new commits…)
 
 	git pull
 
 ## -- Source Code Tasks --
 
 ## Pull upstream and update 3rd party frameworks
-update: pull submodules install_ruby_gems install_carthage_dependencies
+update: pull submodules install_ruby_gems update_carthage_dependencies_ios update_carthage_dependencies_tvos
 
 submodules:
-	$(info Updating submodules ...)
+	$(info Updating submodules…)
 
 	git submodule update --init --recursive
 	
@@ -189,13 +186,13 @@ test:
 
 ## -- Building --
 
-developer:
-	$(info Building iOS for developer profile ...)
+developer_ios:
+	$(info Building iOS for Developer profile…)
 
-	bundle exec fastlane build_developer
+	bundle exec fastlane build_developer :scheme Provenance-Release
 	
 developer_tvos:
-	$(info Building tvOS for developer profile ...)
+	$(info Building tvOS for Developer profile…)
 
 	bundle exec fastlane build_developer :scheme ProvenanceTV-Release
 
@@ -205,10 +202,10 @@ package:
 	carthage archive PMS-UI PMSInterface
 
 ## Update & build for iOS
-ios: | update developer
+ios: | update developer_ios
 
 ## Update & build for tvOS
-tvos: | update install_carthage_dependencies_tvos developer_tvos
+tvos: | update developer_tvos
 
 ## Open the workspace
 open:
@@ -226,6 +223,6 @@ release: | _var_VERSION
 
 ## Clear carthage caches. Helps with carthage update issues
 carthage_clean:
-	$(info Deleting Carthage's checkout caches...)
+	$(info Deleting Carthage caches…)
 
 	rm -rf ~/Library/Caches/org.carthage.CarthageKit/dependencies/
