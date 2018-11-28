@@ -232,5 +232,4 @@ hockey:
 	git pull
 	git submodule update --init --recursive
 	bundle install
-	bundle exec fastlane travios_ios
-	
+	bundle exec fastlane travis_ios
