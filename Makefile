@@ -226,3 +226,11 @@ carthage_clean:
 	$(info Deleting Carthage caches…)
 
 	rm -rf ~/Library/Caches/org.carthage.CarthageKit/dependencies/
+
+hockey:
+	git stash push
+	git pull
+	git submodule update --init --recursive
+	bundle install
+	bundle exec fastlane travios_ios
+	
