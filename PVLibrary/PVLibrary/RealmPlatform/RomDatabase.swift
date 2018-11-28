@@ -11,7 +11,7 @@ import RealmSwift
 import PVSupport
 import UIKit
 
-let schemaVersion : UInt64 = 7
+let schemaVersion : UInt64 = 8
 
 public extension Notification.Name {
     static let DatabaseMigrationStarted  = Notification.Name("DatabaseMigrarionStarted")
