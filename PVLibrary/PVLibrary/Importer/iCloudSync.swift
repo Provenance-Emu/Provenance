@@ -262,7 +262,6 @@ public final class iCloudSync {
             }.joined()
         let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
         let jsonDecorder = JSONDecoder.init()
-        let realm = try! Realm()
 
         let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
 
@@ -274,12 +273,30 @@ public final class iCloudSync {
         //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
         //        }
 
+        let realm = try! Realm()
         jsonFiles.forEach { json in
 
             if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
                 DLOG("Read JSON data at (\(json.absoluteString)")
+
+                if realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id) != nil {
+                    // Skip if Save already exists
+                    // TODO: Maybe should update if detected moved to iCloud?
+                    return
+                }
+
                 let newSave = save.asRealm()
-                realm.add(newSave, update: true)
+                if !realm.isInWriteTransaction {
+                    do {
+                        try realm.write {
+                            realm.add(newSave, update: true)
+                        }
+                    } catch {
+                        ELOG(error.localizedDescription)
+                    }
+                } else {
+                    realm.add(newSave, update: true)
+                }
                 ILOG("Added new save \(newSave.debugDescription)")
             }
         }

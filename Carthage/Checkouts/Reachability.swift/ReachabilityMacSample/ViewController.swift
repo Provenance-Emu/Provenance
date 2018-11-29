@@ -12,18 +12,18 @@ import Reachability
 class ViewController: NSViewController {
     @IBOutlet weak var networkStatus: NSTextField!
     @IBOutlet weak var hostNameLabel: NSTextField!
-
+    
     var reachability: Reachability?
     let hostNames = [nil, "google.com", "invalidhost"]
     var hostIndex = 0
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.wantsLayer = true
-
+        
         startHost(at: 0)
     }
-
+    
     func startHost(at index: Int) {
         stopNotifier()
         setupReachability(hostNames[index], useClosures: true)
@@ -61,7 +61,7 @@ class ViewController: NSViewController {
             )
         }
     }
-
+    
     func startNotifier() {
         print("--- start notifier")
         do {
@@ -72,14 +72,14 @@ class ViewController: NSViewController {
             return
         }
     }
-
+    
     func stopNotifier() {
         print("--- stop notifier")
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: nil)
         reachability = nil
     }
-
+    
     func updateLabelColourWhenReachable(_ reachability: Reachability) {
         print("\(reachability.description) - \(reachability.connection.description)")
         if reachability.connection == .wifi {
@@ -87,21 +87,21 @@ class ViewController: NSViewController {
         } else {
             self.networkStatus.textColor = .blue
         }
-
+        
         self.networkStatus.stringValue = "\(reachability.connection)"
     }
-
+    
     func updateLabelColourWhenNotReachable(_ reachability: Reachability) {
         print("\(reachability.description) - \(reachability.connection)")
-
+        
         self.networkStatus.textColor = .red
-
+        
         self.networkStatus.stringValue = "\(reachability.connection)"
     }
-
+    
     @objc func reachabilityChanged(_ note: Notification) {
         let reachability = note.object as! Reachability
-
+        
         if reachability.connection != .none {
             updateLabelColourWhenReachable(reachability)
         } else {

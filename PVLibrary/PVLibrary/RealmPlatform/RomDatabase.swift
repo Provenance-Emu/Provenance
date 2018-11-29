@@ -184,7 +184,6 @@ public final class RomDatabase {
 		if !databaseInitilized {
 			RealmConfiguration.setDefaultRealmConfig()
 			try _sharedInstance = RomDatabase()
-			databaseInitilized = true
 
 			let existingLocalLibraries = _sharedInstance.realm.objects(PVLibrary.self).filter("isLocal == YES")
 
@@ -195,6 +194,8 @@ public final class RomDatabase {
 				VLOG("No local library, need to create")
 				createInitialLocalLibrary()
 			}
+
+            databaseInitilized = true
 		}
 	}
 

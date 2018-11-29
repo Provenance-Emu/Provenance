@@ -10,14 +10,14 @@ import XCTest
 @testable import Reachability
 
 class ReachabilityTests: XCTestCase {
-
+    
     func testValidHost() {
         let validHostName = "google.com"
-
+        
         guard let reachability = Reachability(hostname: validHostName) else {
             return XCTFail("Unable to create reachability")
         }
-
+        
         let expected = expectation(description: "Check valid host")
         reachability.whenReachable = { reachability in
             print("Pass: \(validHostName) is reachable - \(reachability)")
@@ -29,15 +29,15 @@ class ReachabilityTests: XCTestCase {
             print("\(validHostName) is initially unreachable - \(reachability)")
             // Expectation isn't fulfilled here, so wait will time out if this is the only closure called
         }
-
+        
         do {
             try reachability.startNotifier()
         } catch {
             return XCTFail("Unable to start notifier")
         }
-
+        
         waitForExpectations(timeout: 5, handler: nil)
-
+        
         reachability.stopNotifier()
     }
 
@@ -50,25 +50,25 @@ class ReachabilityTests: XCTestCase {
         guard let reachability = Reachability(hostname: invalidHostName) else {
             return XCTFail("Unable to create reachability")
         }
-
+        
         let expected = expectation(description: "Check invalid host")
         reachability.whenReachable = { reachability in
             print("\(invalidHostName) is initially reachable - \(reachability)")
         }
-
+        
         reachability.whenUnreachable = { reachability in
             print("Pass: \(invalidHostName) is unreachable - \(reachability))")
             expected.fulfill()
         }
-
+        
         do {
             try reachability.startNotifier()
         } catch {
             return XCTFail("Unable to start notifier")
         }
-
+        
         waitForExpectations(timeout: 5, handler: nil)
-
+        
         reachability.stopNotifier()
     }
 

@@ -8,7 +8,7 @@ let package = Package(
     products: [
         .library(
             name: "Reachability",
-            targets: ["Reachability"])
+            targets: ["Reachability"]),
     ],
     targets: [
         .target(
@@ -18,6 +18,6 @@ let package = Package(
         .testTarget(
             name: "ReachabilityTests",
             dependencies: ["Reachability"],
-            path: "Tests")
+            path: "Tests"),
     ]
 )

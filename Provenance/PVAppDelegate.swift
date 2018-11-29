@@ -26,6 +26,19 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 	var _logViewController: PVLogViewController?
 	#endif
 
+    func initCloudSync() {
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            if RomDatabase.databaseInitilized {
+                iCloudSync.importNewSaves()
+            } else {
+                // Keep trying // TODO: Add a notification for this
+                // instead of dumb loop
+                self.initCloudSync()
+            }
+        }
+    }
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
@@ -41,9 +54,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
 		do {
 			try RomDatabase.initDefaultDatabase()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                iCloudSync.importNewSaves()
-            }
+            initCloudSync()
 		} catch {
 			let appName : String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
 			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)

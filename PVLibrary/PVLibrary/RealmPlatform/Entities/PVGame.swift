@@ -181,7 +181,27 @@ extension Game: RealmRepresentable {
 
     public func asRealm() -> PVGame {
         return PVGame.build { object in
-            //            #warning DO me
+            object.title = title
+            // TODO: Test that file is correct
+            object.file = PVFile(withPartialPath: file.fileName)
+            object.md5Hash = md5
+            object.crc = crc
+            object.isFavorite = isFavorite
+            object.playCount = Int(playCount)
+            object.lastPlayed = lastPlayed
+
+            object.gameDescription = gameDescription
+            object.boxBackArtworkURL = boxBackArtworkURL
+            object.developer = developer
+            object.publisher = publisher
+            object.publishDate = publishDate
+            object.genres = genres  // Is a comma seperated list or single entry
+            object.referenceURL = referenceURL
+            object.releaseID = releaseID
+            object.regionName = regionName
+            object.regionID = regionID
+            object.systemShortName = systemShortName
+            object.language = language
         }
     }
 }

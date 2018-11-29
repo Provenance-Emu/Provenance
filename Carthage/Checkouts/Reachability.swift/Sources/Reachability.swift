@@ -45,8 +45,8 @@ public extension Notification.Name {
 
 public class Reachability {
 
-    public typealias NetworkReachable = (Reachability) -> Void
-    public typealias NetworkUnreachable = (Reachability) -> Void
+    public typealias NetworkReachable = (Reachability) -> ()
+    public typealias NetworkUnreachable = (Reachability) -> ()
 
     @available(*, unavailable, renamed: "Connection")
     public enum NetworkStatus: CustomStringConvertible {
@@ -97,7 +97,7 @@ public class Reachability {
         if flags == nil {
             try? setReachabilityFlags()
         }
-
+        
         switch flags?.connection {
         case .none?, nil: return .none
         case .cellular?: return allowsCellularConnection ? .cellular : .none
@@ -229,11 +229,11 @@ fileprivate extension Reachability {
                 self.stopNotifier()
                 throw ReachabilityError.UnableToGetInitialFlags
             }
-
+            
             self.flags = flags
         }
     }
-
+    
     func reachabilityChanged() {
         let block = connection != .none ? whenReachable : whenUnreachable
 
