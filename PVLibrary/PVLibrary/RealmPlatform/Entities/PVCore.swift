@@ -63,11 +63,17 @@ extension Core: RealmRepresentable {
     }
 
     public func asRealm() -> PVCore {
+        let realm = try! Realm()
+        if let existing = realm.object(ofType: PVCore.self, forPrimaryKey: identifier) {
+            return existing
+        }
+
         return PVCore.build({ object in
             object.identifier = identifier
             object.principleClass = principleClass
-            #warning("do me")
-            //            object.supportedSystems
+            let realm = try! Realm()
+            let rmSystems = systems.compactMap { realm.object(ofType: PVSystem.self, forPrimaryKey: $0.identifier) }
+            object.supportedSystems.append(objectsIn: rmSystems)
             object.projectName = project.name
             object.projectVersion = project.version
             object.projectURL = project.url.absoluteString

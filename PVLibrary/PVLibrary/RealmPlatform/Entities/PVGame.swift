@@ -180,6 +180,11 @@ extension Game: RealmRepresentable {
     }
 
     public func asRealm() -> PVGame {
+        let realm = try! Realm()
+        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+            return existing
+        }
+
         return PVGame.build { object in
             object.title = title
             // TODO: Test that file is correct
