@@ -10,9 +10,11 @@ import Foundation
 
 
 public struct Game : Codable {
-	
+
+    public let id : String
 	public let title : String
 	public let file : FileInfo
+    public let systemIdentifier : String
 
 	public let md5 : String
 	public let crc : String

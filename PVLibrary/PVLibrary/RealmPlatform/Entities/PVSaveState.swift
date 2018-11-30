@@ -108,23 +108,22 @@ extension SaveState: RealmRepresentable {
 
             object.id = id
             let realm = try! Realm()
-            let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5)
-//            let rmGame = game.asRealm()
+            let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) ?? game.asRealm()
             object.game = rmGame
-            let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier)
-            object.core = rmCore //core.asRealm()
+            let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) ?? core.asRealm()
+            object.core = rmCore
 
-            let dir = PVEmulatorConfiguration.saveStatePath(forGame: rmGame!)
-            let path = dir.appendingPathComponent(file.fileName)
+            let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName)
             object.file = PVFile(withURL: path)
-            print("file path: \(path)")
+            DLOG("file path: \(path)")
 
             object.date = date
             object.lastOpened = lastOpened
             if let image = image {
-                let path = dir.appendingPathComponent(image.fileName)
-                print("path: \(path)")
-                object.image = PVImageFile(withURL: path)
+                let dir = path.deletingLastPathComponent()
+                let imagePath = dir.appendingPathComponent(image.fileName)
+                DLOG("path: \(imagePath)")
+                object.image = PVImageFile(withURL: imagePath)
             }
             object.isAutosave = isAutosave
          }

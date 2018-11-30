@@ -27,7 +27,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 	#endif
 
     func initCloudSync() {
-
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             if RomDatabase.databaseInitilized {
                 iCloudSync.importNewSaves()
@@ -44,7 +43,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 		_initLogging()
         setDefaultsFromSettingsBundle()
 
-        iCloudSync.initICloudDocuments()
+        let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
+        if  useiCloud {
+            iCloudSync.initICloudDocuments()
+        }
 
 		#if targetEnvironment(simulator)
 		#else
@@ -54,7 +56,9 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
 		do {
 			try RomDatabase.initDefaultDatabase()
-            initCloudSync()
+            if useiCloud {
+                initCloudSync()
+            }
 		} catch {
 			let appName : String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
 			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)

@@ -48,7 +48,6 @@ internal extension Core {
     }
 }
 
-
 extension PVCore: DomainConvertibleType {
     public typealias DomainType = Core
 

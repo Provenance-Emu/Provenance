@@ -47,21 +47,41 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
                     imageView.layer.borderWidth = 1.0
                     imageView.layer.borderColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3).cgColor
                 }
-				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)) \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
 
-				let multipleCores = saveState.game.system.cores.count > 1
-				let system = saveState.game.system
-				var coreOrSystem : String = (multipleCores ? saveState.core.projectName : system?.shortNameAlt ?? system?.shortName ?? "")
+				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)) \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
+                timeStampLabel.text = timeText
+
+                guard let game = saveState.game, let system = game.system, !system.cores.isEmpty else {
+                    let gameNil = saveState.game == nil ? "true" : "false"
+                    let systemNil = saveState.game?.system == nil ? "true" : "false"
+                    let noCores = saveState.game?.system?.cores.isEmpty ?? true ? "true" : "false"
+                    ELOG("Something wrong with save state object. game nil? \(gameNil), system nil? \(systemNil), no cores? \(noCores)")
+
+                    let errorLabel : String
+                    if saveState.game == nil { errorLabel = "Missing Game!" }
+                    else if saveState.game.system == nil { errorLabel = "Missing System!" }
+                    else if saveState.game.system.cores.isEmpty { errorLabel = "Missing Cores!" }
+                    else { errorLabel = "Missing Data!" }
+
+                    if saveState.game == nil {
+                        titleLabel.text = errorLabel
+                    } else {
+                        timeStampLabel.text = errorLabel
+                    }
+                    return
+                }
+
+				let multipleCores = system.cores.count > 1
+				var coreOrSystem : String = (multipleCores ? saveState.core.projectName : system.shortNameAlt ?? system.shortName)
 				if coreOrSystem.count > 0 {
 					coreOrSystem = " " + coreOrSystem
 				}
 
-				titleLabel.text = saveState.game.title
-				timeStampLabel.text = timeText
+				titleLabel.text = game.title
 //#if os(tvOS)
 //                coreLabel.text = coreOrSystem
 //#else
-                coreLabel.text = system?.shortName
+                coreLabel.text = system.shortName
 //#endif
 			}
 

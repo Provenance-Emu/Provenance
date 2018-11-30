@@ -454,6 +454,10 @@ extension GameLaunchingViewController where Self : UIViewController {
             return
         }
 
+        if saveState != nil {
+            ILOG("Opening with save state at path: \(saveState!.file.url.path)")
+        }
+
 		// Check if file exists
 		if !game.file.online {
 			displayAndLogError(withTitle: "Cannot open game", message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")

@@ -28,7 +28,8 @@ public protocol Container {
 }
 
 extension Container {
-    var containerURL : URL? { return PVEmulatorConfiguration.containerUrl }
+    var containerURL : URL? { return PVEmulatorConfiguration.iCloudContainerDirectory }
+    var documentsURL : URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
 }
 
 public protocol SyncFileToiCloud : Container {
@@ -279,9 +280,21 @@ public final class iCloudSync {
             if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
                 DLOG("Read JSON data at (\(json.absoluteString)")
 
-                if realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id) != nil {
+                let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
+                if let existing = existing {
                     // Skip if Save already exists
-                    // TODO: Maybe should update if detected moved to iCloud?
+
+                    // See if game is missing and set
+                    if existing.game == nil, let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
+                        do {
+                            try realm.write {
+                                existing.game = game
+                            }
+                        } catch {
+                            ELOG("Failed to update game: \(error.localizedDescription)")
+                        }
+                    }
+                    // TODO: Maybe any other missing data updates or update values in general?
                     return
                 }
 

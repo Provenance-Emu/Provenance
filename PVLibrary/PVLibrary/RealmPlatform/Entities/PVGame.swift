@@ -144,7 +144,9 @@ public extension PVGame {
 // MARK: Conversions
 public extension Game {
     init(withGame game : PVGame) {
+        id = game.id
         title = game.title
+        systemIdentifier = game.systemIdentifier
         md5 = game.md5Hash
         crc = game.crc
         isFavorite = game.isFavorite
@@ -163,6 +165,7 @@ public extension Game {
         file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local:true)
         gameDescription = game.gameDescription
         publishDate = game.publishDate
+        // TODO: Screenshots
     }
 }
 
@@ -186,6 +189,7 @@ extension Game: RealmRepresentable {
         }
 
         return PVGame.build { object in
+            object.id = id
             object.title = title
             // TODO: Test that file is correct
             object.file = PVFile(withPartialPath: file.fileName)
@@ -194,6 +198,9 @@ extension Game: RealmRepresentable {
             object.isFavorite = isFavorite
             object.playCount = Int(playCount)
             object.lastPlayed = lastPlayed
+
+            let realm = try! Realm()
+            object.system = realm.object(ofType: PVSystem.self, forPrimaryKey: "identifier")
 
             object.gameDescription = gameDescription
             object.boxBackArtworkURL = boxBackArtworkURL

@@ -238,21 +238,39 @@ public final class PVEmulatorConfiguration: NSObject {
     }()
 
     /// This should be called on a background thread
-    static public var containerUrl: URL? {
-        let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
-        if let containerUrl = containerUrl {
+    static var iCloudContainerDirectory : URL? {
+        assert(!Thread.isMainThread, "Warning, this should only be called on background threads.")
+        return FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+    }
+
+    /// This should be called on a background thread
+    static public var iCloudDocumentsDirectory: URL? {
+        assert(!Thread.isMainThread, "Warning, this should only be called on background threads.")
+
+        guard PVSettingsModel.shared.debugOptions.iCloudSync else {
+            return nil
+        }
+
+        let documentsURL = iCloudContainerDirectory?.appendingPathComponent("Documents")
+        if let documentsURL = documentsURL {
             do {
-                try FileManager.default.createDirectory(at: containerUrl, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(at: documentsURL, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 ELOG("Failed creating dir on iCloud: \(error)")
             }
         }
-        return containerUrl
+        return documentsURL
+    }
+
+    static public var supportsICloud : Bool {
+        assert(!Thread.isMainThread, "Warning, this should only be called on background threads.")
+
+        return iCloudContainerDirectory != nil
     }
 
     /// This should be called on a background thread
     static public var documentsiCloudOrLocalPath : URL {
-        return containerUrl ?? documentsPath
+        return iCloudDocumentsDirectory ?? documentsPath
     }
 
     public struct Paths {
@@ -528,6 +546,18 @@ public extension PVEmulatorConfiguration {
 
     class func saveStatePath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
+        let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
+
+        do {
+            try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            ELOG("Error creating save state directory: \(saveSavesPath.path) : \(error.localizedDescription)")
+        }
+
+        return saveSavesPath
+    }
+
+    class func saveStatePath(forROMFilename romName: String) -> URL {
         let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
 
         do {
