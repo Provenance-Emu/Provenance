@@ -295,7 +295,7 @@ public final class iCloudSync {
                             // Skip if Save already exists
 
                             // See if game is missing and set
-                            if existing.game == nil || existing.game.system == nil , let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
+                            if existing.game == nil || existing.game.system == nil, let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
                                 do {
                                     try realm.write {
                                         existing.game = game
