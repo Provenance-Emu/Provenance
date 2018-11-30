@@ -239,14 +239,14 @@ public final class PVEmulatorConfiguration: NSObject {
 
     /// This should be called on a background thread
     static var iCloudContainerDirectory : URL? {
-        assert(!Thread.isMainThread, "Warning, this should only be called on background threads.")
+        if Thread.isMainThread {
+            WLOG("Warning, this should only be called on background threads.")
+        }
         return FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
     }
 
     /// This should be called on a background thread
     static public var iCloudDocumentsDirectory: URL? {
-        assert(!Thread.isMainThread, "Warning, this should only be called on background threads.")
-
         guard PVSettingsModel.shared.debugOptions.iCloudSync else {
             return nil
         }
@@ -263,8 +263,6 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     static public var supportsICloud : Bool {
-        assert(!Thread.isMainThread, "Warning, this should only be called on background threads.")
-
         return iCloudContainerDirectory != nil
     }
 

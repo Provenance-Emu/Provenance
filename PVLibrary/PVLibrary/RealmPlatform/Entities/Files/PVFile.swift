@@ -100,6 +100,14 @@ public extension PVFile {
 
     public private(set) var url: URL {
         get {
+            if partialPath.contains("iCloud") {
+                var pathComponents = (partialPath as NSString).pathComponents
+                pathComponents.removeFirst()
+                let path = pathComponents.joined(separator: "/")
+                let iCloudBase = path.contains("Documents") ? PVEmulatorConfiguration.iCloudContainerDirectory : PVEmulatorConfiguration.iCloudDocumentsDirectory
+                let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                return url
+            }
             let resolvedURL = relativeRoot.appendingPath(partialPath)
             return resolvedURL
         }

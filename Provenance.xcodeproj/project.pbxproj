@@ -453,6 +453,17 @@
 		B3DE5B1121B102F20066069E /* ProvenanceShared.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DE5B0121B102F10066069E /* ProvenanceShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DE5B1421B102F20066069E /* ProvenanceShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5AFF21B102F10066069E /* ProvenanceShared.framework */; };
 		B3DE5B1521B102F20066069E /* ProvenanceShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5AFF21B102F10066069E /* ProvenanceShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3DE5B2721B110A90066069E /* ProvenanceShared_tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DE5B2521B110A80066069E /* ProvenanceShared_tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3DE5B2A21B110A90066069E /* ProvenanceShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5B2321B110A80066069E /* ProvenanceShared.framework */; };
+		B3DE5B2B21B110A90066069E /* ProvenanceShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5B2321B110A80066069E /* ProvenanceShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3DE5B3121B110C20066069E /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5B3021B110C20066069E /* PVSupport.framework */; };
+		B3DE5B3321B110C70066069E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5B3221B110C70066069E /* PVLibrary.framework */; };
+		B3DE5B3421B110CD0066069E /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5B3021B110C20066069E /* PVSupport.framework */; };
+		B3DE5B3521B110D20066069E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE5B3221B110C70066069E /* PVLibrary.framework */; };
+		B3DE5B3621B110D60066069E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
+		B3DE5B3721B110DA0066069E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
+		B3DE5B3821B110DF0066069E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30121919596009F4EDC /* UIKit.framework */; };
+		B3DE5B3A21B110E80066069E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
@@ -558,6 +569,13 @@
 			remoteGlobalIDString = B3DE5AFE21B102F10066069E;
 			remoteInfo = ProvenanceShared;
 		};
+		B3DE5B2821B110A90066069E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3DE5B2221B110A80066069E;
+			remoteInfo = "ProvenanceShared-tvOS";
+		};
 		B3F9CDA52031FF4E007F808D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -592,6 +610,7 @@
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
+				B3DE5B2B21B110A90066069E /* ProvenanceShared.framework in Embed Frameworks */,
 				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
 				B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -938,6 +957,11 @@
 		B3DE5B0721B102F10066069E /* ProvenanceSharedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceSharedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DE5B0E21B102F20066069E /* ProvenanceSharedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceSharedTests.swift; sourceTree = "<group>"; };
 		B3DE5B1021B102F20066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3DE5B2321B110A80066069E /* ProvenanceShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProvenanceShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DE5B2521B110A80066069E /* ProvenanceShared_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProvenanceShared_tvOS.h; sourceTree = "<group>"; };
+		B3DE5B2621B110A90066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3DE5B3021B110C20066069E /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DE5B3221B110C70066069E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		B3E21D6B203211BE009939D3 /* Spotlight.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spotlight.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
@@ -1058,6 +1082,7 @@
 			files = (
 				B369B0DA219EA29A0064EDCA /* Fabric.framework in Frameworks */,
 				B369B0DB219EA29A0064EDCA /* Crashlytics.framework in Frameworks */,
+				B3DE5B2A21B110A90066069E /* ProvenanceShared.framework in Frameworks */,
 				B324C6222192059E009F4EDC /* PVMednafen.framework in Frameworks */,
 				B324C61B219203AF009F4EDC /* libc++.tbd in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
@@ -1133,6 +1158,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3DE5B3721B110DA0066069E /* Foundation.framework in Frameworks */,
+				B3DE5B3621B110D60066069E /* UIKit.framework in Frameworks */,
+				B3DE5B3521B110D20066069E /* PVLibrary.framework in Frameworks */,
+				B3DE5B3421B110CD0066069E /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1141,6 +1170,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3DE5B0821B102F10066069E /* ProvenanceShared.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3DE5B2021B110A80066069E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3DE5B3A21B110E80066069E /* Foundation.framework in Frameworks */,
+				B3DE5B3821B110DF0066069E /* UIKit.framework in Frameworks */,
+				B3DE5B3321B110C70066069E /* PVLibrary.framework in Frameworks */,
+				B3DE5B3121B110C20066069E /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1226,6 +1266,7 @@
 				B3E0A580215647BD004B4322 /* Scripts */,
 				B3DE5B0021B102F10066069E /* ProvenanceShared */,
 				B3DE5B0D21B102F20066069E /* ProvenanceSharedTests */,
+				B3DE5B2421B110A80066069E /* ProvenanceShared-tvOS */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
@@ -1242,6 +1283,7 @@
 				B3E21D6B203211BE009939D3 /* Spotlight.appex */,
 				B3DE5AFF21B102F10066069E /* ProvenanceShared.framework */,
 				B3DE5B0721B102F10066069E /* ProvenanceSharedTests.xctest */,
+				B3DE5B2321B110A80066069E /* ProvenanceShared.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1249,6 +1291,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3DE5B3221B110C70066069E /* PVLibrary.framework */,
+				B3DE5B3021B110C20066069E /* PVSupport.framework */,
 				B3532C3E21A9B681006CDA0F /* PromiseKit.framework */,
 				B3532C4021A9B698006CDA0F /* PromiseKit.framework */,
 				B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */,
@@ -1818,6 +1862,15 @@
 			path = ProvenanceSharedTests;
 			sourceTree = "<group>";
 		};
+		B3DE5B2421B110A80066069E /* ProvenanceShared-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3DE5B2521B110A80066069E /* ProvenanceShared_tvOS.h */,
+				B3DE5B2621B110A90066069E /* Info.plist */,
+			);
+			path = "ProvenanceShared-tvOS";
+			sourceTree = "<group>";
+		};
 		B3E21D6C203211BE009939D3 /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
@@ -1873,6 +1926,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3DE5B1121B102F20066069E /* ProvenanceShared.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3DE5B1E21B110A80066069E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3DE5B2721B110A90066069E /* ProvenanceShared_tvOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1939,6 +2000,7 @@
 			dependencies = (
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
 				B3F9CDA62031FF4E007F808D /* PBXTargetDependency */,
+				B3DE5B2921B110A90066069E /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			productName = ProvenanceTV;
@@ -2001,6 +2063,24 @@
 			productName = ProvenanceSharedTests;
 			productReference = B3DE5B0721B102F10066069E /* ProvenanceSharedTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B3DE5B2221B110A80066069E /* ProvenanceShared-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3DE5B2C21B110A90066069E /* Build configuration list for PBXNativeTarget "ProvenanceShared-tvOS" */;
+			buildPhases = (
+				B3DE5B1E21B110A80066069E /* Headers */,
+				B3DE5B1F21B110A80066069E /* Sources */,
+				B3DE5B2021B110A80066069E /* Frameworks */,
+				B3DE5B2121B110A80066069E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ProvenanceShared-tvOS";
+			productName = "ProvenanceShared-tvOS";
+			productReference = B3DE5B2321B110A80066069E /* ProvenanceShared.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		B3E21D6A203211BE009939D3 /* Spotlight */ = {
 			isa = PBXNativeTarget;
@@ -2112,6 +2192,9 @@
 						CreatedOnToolsVersion = 10.1;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
+					B3DE5B2221B110A80066069E = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1000;
@@ -2159,6 +2242,7 @@
 				B30C98E821AE3497007CD48B /* Hockey Upload */,
 				B3DE5AFE21B102F10066069E /* ProvenanceShared */,
 				B3DE5B0621B102F10066069E /* ProvenanceSharedTests */,
+				B3DE5B2221B110A80066069E /* ProvenanceShared-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -2219,6 +2303,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3DE5B0521B102F10066069E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3DE5B2121B110A80066069E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2787,6 +2878,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3DE5B1F21B110A80066069E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D67203211BE009939D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2852,6 +2950,11 @@
 			isa = PBXTargetDependency;
 			target = B3DE5AFE21B102F10066069E /* ProvenanceShared */;
 			targetProxy = B3DE5B1221B102F20066069E /* PBXContainerItemProxy */;
+		};
+		B3DE5B2921B110A90066069E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3DE5B2221B110A80066069E /* ProvenanceShared-tvOS */;
+			targetProxy = B3DE5B2821B110A90066069E /* PBXContainerItemProxy */;
 		};
 		B3F9CDA62031FF4E007F808D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4077,6 +4180,146 @@
 			};
 			name = Archive;
 		};
+		B3DE5B2D21B110A90066069E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "ProvenanceShared-tvOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared-tvOS";
+				PRODUCT_NAME = ProvenanceShared;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3DE5B2E21B110A90066069E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "ProvenanceShared-tvOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared-tvOS";
+				PRODUCT_NAME = ProvenanceShared;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3DE5B2F21B110A90066069E /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "ProvenanceShared-tvOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared-tvOS";
+				PRODUCT_NAME = ProvenanceShared;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4369,6 +4612,16 @@
 				B3DE5B1921B102F20066069E /* Debug */,
 				B3DE5B1A21B102F20066069E /* Release */,
 				B3DE5B1B21B102F20066069E /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3DE5B2C21B110A90066069E /* Build configuration list for PBXNativeTarget "ProvenanceShared-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3DE5B2D21B110A90066069E /* Debug */,
+				B3DE5B2E21B110A90066069E /* Release */,
+				B3DE5B2F21B110A90066069E /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -28,7 +28,7 @@ public protocol Container {
 }
 
 extension Container {
-    var containerURL : URL? { return PVEmulatorConfiguration.iCloudContainerDirectory }
+    public var containerURL : URL? { return PVEmulatorConfiguration.iCloudContainerDirectory }
     var documentsURL : URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
 }
 
@@ -40,7 +40,7 @@ public protocol SyncFileToiCloud : Container {
 }
 
 public protocol iCloudTypeSyncer : Container {
-    var metadataQuery: NSMetadataQuery {get set}
+    var metadataQuery: NSMetadataQuery {get}
     var metadataQueryPredicate : NSPredicate {get} //ex NSPredicate(format: "%K like 'PHOTO*'", NSMetadataItemFSNameKey)
 
     static func loadAllFromICloud() -> Completable
@@ -250,68 +250,91 @@ public final class iCloudSync {
     }
 
     public static func importNewSaves() {
-        let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
-        let legacySavesDirectory = PVEmulatorConfiguration.Paths.Legacy.saveSavesPath
-        let fm = FileManager.default
-        guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
-            ELOG("Failed to read saves path: \(savesDirectory.path)")
+        if !RomDatabase.databaseInitilized {
+            // Keep trying // TODO: Add a notification for this
+            // instead of dumb loop
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.importNewSaves()
+            }
             return
         }
+        DispatchQueue.global(qos: .background).async {
+            let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
+            let legacySavesDirectory = PVEmulatorConfiguration.Paths.Legacy.saveSavesPath
+            let fm = FileManager.default
+            guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
+                ELOG("Failed to read saves path: \(savesDirectory.path)")
+                return
+            }
 
-        let saveFiles = subDirs.compactMap {
-            return try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            }.joined()
-        let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
-        let jsonDecorder = JSONDecoder.init()
+            let saveFiles = subDirs.compactMap {
+                return try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                }.joined()
+            let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
+            let jsonDecorder = JSONDecoder.init()
 
-        let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
 
-        legacySubDirs?.forEach {
-            try? fm.setUbiquitous(true, itemAt: $0, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true))
-        }
-        //        let saves = realm.objects(PVSaveState.self)
-        //        saves.forEach {
-        //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
-        //        }
+            legacySubDirs?.forEach {
+                try? fm.setUbiquitous(true, itemAt: $0, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true))
+            }
+            //        let saves = realm.objects(PVSaveState.self)
+            //        saves.forEach {
+            //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
+            //        }
 
-        let realm = try! Realm()
-        jsonFiles.forEach { json in
+            DispatchQueue.main.async {
+                let realm = try! Realm()
+                jsonFiles.forEach { json in
 
-            if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
-                DLOG("Read JSON data at (\(json.absoluteString)")
+                    if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
+                        DLOG("Read JSON data at (\(json.absoluteString)")
 
-                let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
-                if let existing = existing {
-                    // Skip if Save already exists
+                        let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
+                        if let existing = existing {
+                            // Skip if Save already exists
 
-                    // See if game is missing and set
-                    if existing.game == nil, let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
-                        do {
-                            try realm.write {
-                                existing.game = game
+                            // See if game is missing and set
+                            if existing.game == nil || existing.game.system == nil , let game = realm.object(ofType: PVGame.self, forPrimaryKey: save.game.md5) {
+                                do {
+                                    try realm.write {
+                                        existing.game = game
+                                    }
+                                } catch {
+                                    ELOG("Failed to update game: \(error.localizedDescription)")
+                                }
                             }
-                        } catch {
-                            ELOG("Failed to update game: \(error.localizedDescription)")
+                            // TODO: Maybe any other missing data updates or update values in general?
+                            return
                         }
-                    }
-                    // TODO: Maybe any other missing data updates or update values in general?
-                    return
-                }
 
-                let newSave = save.asRealm()
-                if !realm.isInWriteTransaction {
-                    do {
-                        try realm.write {
+                        let newSave = save.asRealm()
+                        if !realm.isInWriteTransaction {
+                            do {
+                                try realm.write {
+                                    realm.add(newSave, update: true)
+                                }
+                            } catch {
+                                ELOG(error.localizedDescription)
+                            }
+                        } else {
                             realm.add(newSave, update: true)
                         }
-                    } catch {
-                        ELOG(error.localizedDescription)
+                        ILOG("Added new save \(newSave.debugDescription)")
                     }
-                } else {
-                    realm.add(newSave, update: true)
                 }
-                ILOG("Added new save \(newSave.debugDescription)")
             }
         }
     }
 }
+
+//class SaveStateSyncer : iCloudTypeSyncer {
+//    static func loadAllFromICloud() -> Completable {
+//        
+//    }
+//
+//    public var metadataQuery: NSMetadataQuery = NSMetadataQuery()
+//    public var metadataQueryPredicate: NSPredicate {
+//        return NSPredicate(format: "%K like 'SaveStates'", NSMetadataItemPathKey)
+//    }
+//}
