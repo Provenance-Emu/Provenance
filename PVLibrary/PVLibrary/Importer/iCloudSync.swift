@@ -43,12 +43,12 @@ public protocol iCloudTypeSyncer : Container {
     var metadataQuery: NSMetadataQuery {get}
     var metadataQueryPredicate : NSPredicate {get} //ex NSPredicate(format: "%K like 'PHOTO*'", NSMetadataItemFSNameKey)
 
-    static func loadAllFromICloud() -> Completable
-    static func removeAllFromICloud() -> Completable
+    func loadAllFromICloud() -> Completable
+    func removeAllFromICloud() -> Completable
 }
 
 extension iCloudTypeSyncer {
-    func loadAllFromICloud() -> Completable {
+    public func loadAllFromICloud() -> Completable {
         return Completable.create { completable in
             guard self.containerURL != nil else {
                 completable(.error(SyncError.noUbiquityURL))
@@ -72,7 +72,7 @@ extension iCloudTypeSyncer {
         }
     }
 
-    func removeAllFromICloud() -> Completable {
+    public func removeAllFromICloud() -> Completable {
         return Completable.create { completable in
 
             guard self.containerURL != nil else {
@@ -236,9 +236,13 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
     }
 }
 
+enum iCloudError : Error {
+    case dataReadFail
+}
 public final class iCloudSync {
     static let UbiquityIdentityTokenKey = "com.provenance-emu.provenenace.UbiquityIdentityToken"
 
+    static var disposeBag : DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -247,6 +251,16 @@ public final class iCloudSync {
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }
+
+        let saveStateSyncer = SaveStateSyncer()
+        let disposeBag = DisposeBag()
+        self.disposeBag = disposeBag
+        saveStateSyncer.loadAllFromICloud().subscribe(onCompleted: {
+            importNewSaves()
+            self.disposeBag = nil
+        }) { (error) in
+            ELOG("\(error.localizedDescription)")
+        }.disposed(by: disposeBag)
     }
 
     public static func importNewSaves() {
@@ -258,6 +272,7 @@ public final class iCloudSync {
             }
             return
         }
+
         DispatchQueue.global(qos: .background).async {
             let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
             let legacySavesDirectory = PVEmulatorConfiguration.Paths.Legacy.saveSavesPath
@@ -272,6 +287,7 @@ public final class iCloudSync {
                 }.joined()
             let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
             let jsonDecorder = JSONDecoder.init()
+            jsonDecorder.dataDecodingStrategy = .deferredToData
 
             let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
 
@@ -282,12 +298,28 @@ public final class iCloudSync {
             //        saves.forEach {
             //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
             //        }
+            jsonFiles.forEach { json in
+                do {
+                    try FileManager.default.startDownloadingUbiquitousItem(at: json)
+                } catch {
+                    ELOG("Download error: " + error.localizedDescription)
+                }
+            }
 
             DispatchQueue.main.async {
                 let realm = try! Realm()
                 jsonFiles.forEach { json in
+                    do {
+                        var dataMaybe = FileManager.default.contents(atPath: json.path)
+                        if dataMaybe == nil {
+                            dataMaybe = try Data(contentsOf: json, options: [.uncached])
+                        }
+                        guard let data = dataMaybe else {
+                            throw iCloudError.dataReadFail
+                        }
 
-                    if let data = try? Data(contentsOf: json), let save = try? jsonDecorder.decode(SaveState.self, from: data) {
+                        DLOG("Data read \(String(data: data, encoding: .utf8) ?? "Nil")")
+                        let save = try jsonDecorder.decode(SaveState.self, from: data)
                         DLOG("Read JSON data at (\(json.absoluteString)")
 
                         let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)
@@ -321,6 +353,9 @@ public final class iCloudSync {
                             realm.add(newSave, update: true)
                         }
                         ILOG("Added new save \(newSave.debugDescription)")
+                    } catch {
+                        ELOG("Decode error: " + error.localizedDescription)
+                        return
                     }
                 }
             }
@@ -328,13 +363,9 @@ public final class iCloudSync {
     }
 }
 
-//class SaveStateSyncer : iCloudTypeSyncer {
-//    static func loadAllFromICloud() -> Completable {
-//        
-//    }
-//
-//    public var metadataQuery: NSMetadataQuery = NSMetadataQuery()
-//    public var metadataQueryPredicate: NSPredicate {
-//        return NSPredicate(format: "%K like 'SaveStates'", NSMetadataItemPathKey)
-//    }
-//}
+class SaveStateSyncer : iCloudTypeSyncer {
+    public var metadataQuery: NSMetadataQuery = NSMetadataQuery()
+    public var metadataQueryPredicate: NSPredicate {
+        return NSPredicate(format: "%K CONTAINS[c] 'Save States'", NSMetadataItemPathKey)
+    }
+}

@@ -113,7 +113,7 @@ extension SaveState: RealmRepresentable {
             let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) ?? core.asRealm()
             object.core = rmCore
 
-            let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName)
+            let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
             object.file = PVFile(withURL: path)
             DLOG("file path: \(path)")
 
