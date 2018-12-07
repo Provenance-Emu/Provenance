@@ -158,7 +158,9 @@ update_carthage_dependencies_tvos:
 pull:
 	$(info Pulling new commits…)
 
+	git stash push
 	git pull
+	git stash pop
 
 ## -- Source Code Tasks --
 
