@@ -874,14 +874,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 				UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
 			})
 
-			if let jpegData = screenshot.jpegData(compressionQuality: 0.5) {
+			if let pngData = screenshot.pngData() {
 
 				let dateString = PVEmulatorConfiguration.string(fromDate: Date())
 
-				let fileName = game.title  + " - " + dateString + ".jpeg"
+				let fileName = game.title  + " - " + dateString + ".png"
 				let imageURL = PVEmulatorConfiguration.screenshotsPath(forGame: game).appendingPathComponent(fileName, isDirectory: false)
 				do {
-					try jpegData.write(to: imageURL)
+					try pngData.write(to: imageURL)
 					try RomDatabase.sharedInstance.writeTransaction {
 						let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
 						game.screenShots.append(newFile)
