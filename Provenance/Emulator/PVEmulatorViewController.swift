@@ -85,7 +85,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     lazy private(set) var glViewController: PVGLViewController = PVGLViewController(emulatorCore: core)
     lazy private(set) var controllerViewController: (UIViewController & StartSelectDelegate)? = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
 
-    lazy private(set) var gameAudio: OEGameAudio = OEGameAudio(core: core)
+    var audioInited : Bool = false
+    lazy private(set) var gameAudio: OEGameAudio = {
+        audioInited = true
+        return OEGameAudio(core: core)
+    }()
 
     var fpsTimer: Timer?
     let fpsLabel: UILabel = UILabel()
@@ -152,7 +156,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         core.stopEmulation()
         //Leave emulation loop first
-        gameAudio.stop()
+        if audioInited {
+            gameAudio.stop()
+        }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
         controllerViewController?.willMove(toParent: nil)
@@ -162,7 +168,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         glViewController.view?.removeFromSuperview()
         glViewController.removeFromParent()
 #if os(iOS)
-    GCController.controllers().forEach { $0.controllerPausedHandler = nil }
+        GCController.controllers().forEach { $0.controllerPausedHandler = nil }
 #endif
         updatePlayedDuration()
 		destroyAutosaveTimer()
