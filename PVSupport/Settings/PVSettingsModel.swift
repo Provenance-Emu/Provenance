@@ -128,6 +128,7 @@ public class MirroredSettings : NSObject {
 //                    assertionFailure("Read back wrong type. Got <\(type(of: currentValue))>, excpected: <\(e.valueType)>")
 //                }
 
+
                 if let e = c.value as? Set<AnyHashable>, let arrayValue = currentValue as? Array<AnyHashable> {
                     self.setValue(Set(arrayValue), forKeyPath: keyPath)
                 } else {
@@ -234,6 +235,7 @@ extension MirroredSettings {
 //        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
         @objc public dynamic var multiThreadedGL = false
+        @objc public dynamic var multiSampling = true
     }
 
     @objc public dynamic var debugOptions = DebugOptions()

@@ -225,8 +225,8 @@
 		B349AF701E9ABCFA00ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
-		B3532B2B21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
-		B3532B2C21A78FB2006CDA0F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */; };
+		B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
+		B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
 		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3F21A9B682006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C3E21A9B681006CDA0F /* PromiseKit.framework */; };
@@ -278,6 +278,18 @@
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
+		B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
+		B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
+		B378224E21D32A360077E86F /* SegueNavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224D21D32A360077E86F /* SegueNavigationRow.swift */; };
+		B378224F21D32A360077E86F /* SegueNavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224D21D32A360077E86F /* SegueNavigationRow.swift */; };
+		B378225121D32A6B0077E86F /* SettingsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225021D32A6B0077E86F /* SettingsTableView.swift */; };
+		B378225221D32A6B0077E86F /* SettingsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225021D32A6B0077E86F /* SettingsTableView.swift */; };
+		B378225421D32AD60077E86F /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
+		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
+		B378225821D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
+		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
+		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
+		B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -810,7 +822,7 @@
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
-		B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
+		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
 		B3532C3B21A9AC93006CDA0F /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		B3532C3E21A9B681006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
 		B3532C4021A9B698006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/tvOS/PromiseKit.framework; sourceTree = "<group>"; };
@@ -846,6 +858,14 @@
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B374932B2175667D00C65DD1 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
+		B378224921D329EC0077E86F /* SettingsRowSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSwitch.swift; sourceTree = "<group>"; };
+		B378224D21D32A360077E86F /* SegueNavigationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueNavigationRow.swift; sourceTree = "<group>"; };
+		B378225021D32A6B0077E86F /* SettingsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableView.swift; sourceTree = "<group>"; };
+		B378225321D32AD60077E86F /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
+		B378225621D32B0B0077E86F /* SliderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRow.swift; sourceTree = "<group>"; };
+		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
+		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
+		B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectorViewController.swift; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
@@ -1228,6 +1248,7 @@
 		1A1237F317CA27AD00CEC788 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				B378224C21D32A080077E86F /* Custom Rows */,
 				B3532B2921A78F97006CDA0F /* Cells */,
 				B354E7BD219A7D050041F971 /* SystemSettings */,
 				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */,
@@ -1235,6 +1256,8 @@
 				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */,
 				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
 				B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */,
+				B378225021D32A6B0077E86F /* SettingsTableView.swift */,
+				B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1692,7 +1715,9 @@
 		B3532B2921A78F97006CDA0F /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				B3532B2A21A78FB2006CDA0F /* SwitchCell.swift */,
+				B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */,
+				B378225B21D32FCC0077E86F /* PVSliderCell.swift */,
+				B378225321D32AD60077E86F /* SliderCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1732,6 +1757,17 @@
 				B35D668021814EAB0005A992 /* SaveStates.storyboard */,
 			);
 			path = "Story Boards";
+			sourceTree = "<group>";
+		};
+		B378224C21D32A080077E86F /* Custom Rows */ = {
+			isa = PBXGroup;
+			children = (
+				B378224921D329EC0077E86F /* SettingsRowSwitch.swift */,
+				B378225921D32F970077E86F /* SettingsRowSlider.swift */,
+				B378224D21D32A360077E86F /* SegueNavigationRow.swift */,
+				B378225621D32B0B0077E86F /* SliderRow.swift */,
+			);
+			path = "Custom Rows";
 			sourceTree = "<group>";
 		};
 		B38D30FA202AC26500E9A068 /* GCDWebDAVServer */ = {
@@ -2625,6 +2661,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */,
 				1A2FB109206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
@@ -2636,6 +2673,7 @@
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
 				B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */,
+				B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */,
 				B3AB37362187F569009D9244 /* PVAtariJaguarControllerViewController.swift in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
@@ -2662,6 +2700,8 @@
 				B3AB373D2187F569009D9244 /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
+				B378225721D32B0B0077E86F /* SliderRow.swift in Sources */,
+				B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */,
 				B3AB37392187F569009D9244 /* PVVBControllerViewController.swift in Sources */,
 				B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
 				B3AB37352187F569009D9244 /* PVWonderSwanControllerViewController.swift in Sources */,
@@ -2682,12 +2722,14 @@
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
+				B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				B32746C2219BD77300B78124 /* GameLibraryViewController.swift in Sources */,
 				B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
+				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3D5E2B0218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
@@ -2697,7 +2739,7 @@
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
-				B3532B2B21A78FB2006CDA0F /* SwitchCell.swift in Sources */,
+				B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
 				B38A2A462102328600374CDD /* PVEmulatorViewController~iOS.swift in Sources */,
 				B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */,
@@ -2712,6 +2754,7 @@
 				B3AB37412187F569009D9244 /* PVGenesisControllerViewController.swift in Sources */,
 				B3AB373E2187F569009D9244 /* PVAtari5200ControllerViewController.swift in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
+				B378225121D32A6B0077E86F /* SettingsTableView.swift in Sources */,
 				B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */,
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
@@ -2726,6 +2769,7 @@
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
 				B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
 				B302F31521713B17000322B9 /* PillPageControl.swift in Sources */,
+				B378224E21D32A360077E86F /* SegueNavigationRow.swift in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */,
 				B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */,
@@ -2747,6 +2791,7 @@
 				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3F64ED9205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
+				B378225821D32B0B0077E86F /* SliderRow.swift in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */,
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
@@ -2773,6 +2818,7 @@
 				B38A2A442102326800374CDD /* PVEmulatorViewController~tvOS.swift in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
+				B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
 				B349AE661E9ABCF900ACD416 /* (null) in Sources */,
 				B3B104CD218F2EF400210C39 /* PVPCEControllerViewController.swift in Sources */,
@@ -2801,7 +2847,7 @@
 				B3B104C0218F2EF400210C39 /* PV32XControllerViewController.swift in Sources */,
 				B354E7C0219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
 				1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */,
-				B3532B2C21A78FB2006CDA0F /* SwitchCell.swift in Sources */,
+				B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */,
 				B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */,
 				B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
 				B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */,
@@ -2822,6 +2868,7 @@
 				B3B104CA218F2EF400210C39 /* PVN64ControllerViewController.swift in Sources */,
 				B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */,
 				B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */,
+				B378224F21D32A360077E86F /* SegueNavigationRow.swift in Sources */,
 				B354E7D3219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
 				B3B104C8218F2EF400210C39 /* PVGenesisControllerViewController.swift in Sources */,
 				B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
@@ -2849,6 +2896,7 @@
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
+				B378225221D32A6B0077E86F /* SettingsTableView.swift in Sources */,
 				B3B104C1218F2EF400210C39 /* PVAtari2600ControllerViewController.swift in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
 				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.swift in Sources */,

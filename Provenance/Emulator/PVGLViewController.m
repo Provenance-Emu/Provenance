@@ -202,7 +202,9 @@ struct RenderSettings {
         }
 
             // Enable multisampling
-        view.drawableMultisample = GLKViewDrawableMultisample4X;
+        if(PVSettingsModel.shared.debugOptions.multiSampling) {
+            view.drawableMultisample = GLKViewDrawableMultisample4X;
+        }
     }
 
     [self setupVBOs];
