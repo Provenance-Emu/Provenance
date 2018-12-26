@@ -1,1 +1,0 @@
-../../RxTest/HotObservable.swift

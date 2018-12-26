@@ -25,7 +25,7 @@ public final class Guarantee<T>: Thenable {
 
     /// - See: `Thenable.pipe`
     public func pipe(to: @escaping(Result<T>) -> Void) {
-        pipe{ to(.fulfilled($0)) }
+        pipe { to(.fulfilled($0)) }
     }
 
     func pipe(to: @escaping(T) -> Void) {
@@ -76,7 +76,7 @@ public extension Guarantee {
         }
         return rg
     }
-    
+
     func get(on: DispatchQueue? = conf.Q.return, flags: DispatchWorkItemFlags? = nil, _ body: @escaping (T) -> Void) -> Guarantee<T> {
         return map(on: on, flags: flags) {
             body($0)
@@ -108,7 +108,7 @@ public extension Guarantee {
     public func asVoid() -> Guarantee<Void> {
         return map(on: nil) { _ in }
     }
-    
+
     /**
      Blocks this thread, so you know, don’t call this on a serial thread that
      any part of your chain may use. Like the main thread for example.
@@ -116,7 +116,7 @@ public extension Guarantee {
     public func wait() -> T {
 
         if Thread.isMainThread {
-            print("PromiseKit: warning: `wait()` called on main thread!")
+            conf.logHandler(.waitOnMainThread)
         }
 
         var result = value
@@ -127,7 +127,7 @@ public extension Guarantee {
             pipe { (foo: T) in result = foo; group.leave() }
             group.wait()
         }
-        
+
         return result!
     }
 }
@@ -163,7 +163,6 @@ public extension Guarantee where T == Void {
 }
 #endif
 
-
 public extension DispatchQueue {
     /**
      Asynchronously executes the provided closure on a dispatch queue.
@@ -187,7 +186,6 @@ public extension DispatchQueue {
         return rg
     }
 }
-
 
 #if os(Linux)
 import func CoreFoundation._CFIsMainThread

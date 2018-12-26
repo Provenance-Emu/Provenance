@@ -69,3 +69,15 @@ public extension HKSampleQuery {
         }
     }
 }
+
+@available(iOS 9.3, iOSApplicationExtension 9.3, watchOSApplicationExtension 2.2, *)
+public extension HKActivitySummaryQuery {
+    static func promise(predicate: NSPredicate, healthStore: HKHealthStore = .init()) -> Promise<[HKActivitySummary]> {
+        return Promise { seal in
+            let query = HKActivitySummaryQuery(predicate: predicate) {
+                seal.resolve($1, $2)
+            }
+            healthStore.execute(query)
+        }
+    }
+}

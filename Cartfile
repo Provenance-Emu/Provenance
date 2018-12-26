@@ -25,11 +25,9 @@ github "radex/SwiftyUserDefaults" "3.0.1"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
-github "ZipArchive/ZipArchive" "v2.1.4"
+github "tsolomko/SWCompression" ~> 4.5
 github "Provenance-Emu/realm-cocoa" "v3.11.1" # use our fork to speed up build times
-
 github "stephencelis/SQLite.swift" "0.11.5"
-github "weichsel/ZIPFoundation" "0.9.6"
 
 # Rx
 github "ReactiveX/RxSwift" "4.4.0"

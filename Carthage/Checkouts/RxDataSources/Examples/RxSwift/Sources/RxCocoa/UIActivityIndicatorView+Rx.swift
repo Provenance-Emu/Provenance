@@ -1,1 +1,0 @@
-../../RxCocoa/iOS/UIActivityIndicatorView+Rx.swift

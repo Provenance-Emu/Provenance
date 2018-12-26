@@ -109,7 +109,7 @@ public extension Promise {
     func wait() throws -> T {
 
         if Thread.isMainThread {
-            Swift.print("PromiseKit: warning: `wait()` called on main thread!")
+            conf.logHandler(LogEvent.waitOnMainThread)
         }
 
         var result = self.result
@@ -139,7 +139,6 @@ extension Promise where T == Void {
 }
 #endif
 
-
 public extension DispatchQueue {
     /**
      Asynchronously executes the provided closure on a dispatch queue.
@@ -167,7 +166,6 @@ public extension DispatchQueue {
         return promise
     }
 }
-
 
 /// used by our extensions to provide unambiguous functions with the same name as the original function
 public enum PMKNamespacer {

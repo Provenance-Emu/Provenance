@@ -1,11 +1,10 @@
 import Dispatch
 
 /// Provides `catch` and `recover` to your object that conforms to `Thenable`
-public protocol CatchMixin: Thenable
-{}
+public protocol CatchMixin: Thenable {}
 
 public extension CatchMixin {
-    
+
     /**
      The provided closure executes when this promise rejects.
      
@@ -52,9 +51,8 @@ public class PMKFinalizer {
     }
 }
 
-
 public extension CatchMixin {
-    
+
     /**
      The provided closure executes when this promise rejects.
      
@@ -179,8 +177,6 @@ public extension CatchMixin {
         return rp
     }
 
-
-
     /**
      Consumes the Swift unused-result warning.
      - Note: You should `catch`, but in situations where you know you don’t need a `catch`, `cauterize` makes your intentions clear.
@@ -188,14 +184,13 @@ public extension CatchMixin {
     @discardableResult
     func cauterize() -> PMKFinalizer {
         return self.catch {
-            Swift.print("PromiseKit:cauterized-error:", $0)
+            conf.logHandler(.cauterized($0))
         }
     }
 }
 
-
 public extension CatchMixin where T == Void {
-    
+
     /**
      The provided closure executes when this promise rejects.
      

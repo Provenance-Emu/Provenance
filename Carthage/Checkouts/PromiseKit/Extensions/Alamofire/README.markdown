@@ -40,7 +40,7 @@ firstly {
 }
 ```
 
-## CococaPods
+## CocoaPods
 
 ```ruby
 # Podfile
