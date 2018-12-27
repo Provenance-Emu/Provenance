@@ -63,8 +63,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 	lazy var collectionViewZoom : CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     let disposeBag = DisposeBag()
-    var watcher: PVDirectoryWatcher?
-    var gameImporter: PVGameImporter!
+    var watcher: DirectoryWatcher?
+    var gameImporter: GameImporter!
 	var filePathsToImport = [URL]()
 
     var collectionView: UICollectionView?
@@ -1364,7 +1364,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 			#endif
 		}
 
-		watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.Paths.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
+		watcher = DirectoryWatcher(directory: PVEmulatorConfiguration.Paths.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
 			DispatchQueue.main.async {
 				guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
 					WLOG("No hud")
@@ -1424,7 +1424,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 	}
 
 	func setupGameImporter() {
-		gameImporter = PVGameImporter.shared
+		gameImporter = GameImporter.shared
 		gameImporter.completionHandler = {[unowned self] (_ encounteredConflicts: Bool) -> Void in
 			self.updateConflictsButton()
 			if encounteredConflicts {

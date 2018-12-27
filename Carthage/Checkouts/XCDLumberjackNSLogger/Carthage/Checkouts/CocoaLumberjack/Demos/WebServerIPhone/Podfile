@@ -1,9 +1,0 @@
-
-xcodeproj 'WebServerIPhone'
-workspace '../Demos'
-
-target :'WebServerIPhone' do
-  platform :ios, '5.0'
-  pod 'CocoaLumberjack', :path => '../../'
-end
-

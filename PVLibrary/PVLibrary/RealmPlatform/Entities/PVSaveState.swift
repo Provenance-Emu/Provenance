@@ -10,9 +10,18 @@ import Foundation
 import RealmSwift
 import PVSupport
 
-@objcMembers
-public final class PVSaveState: Object {
+public protocol Filed {
+    associatedtype LocalFileProviderType : LocalFileProvider
+    var file : LocalFileProviderType! { get }
+}
 
+extension LocalFileProvider where Self : Filed {
+    public var url: URL { return file.url }
+    public var fileInfo : Self.LocalFileProviderType? { return file }
+}
+
+@objcMembers
+public final class PVSaveState: Object, Filed, LocalFileProvider {
     dynamic public var id = UUID().uuidString
     dynamic public var game: PVGame!
     dynamic public var core: PVCore!

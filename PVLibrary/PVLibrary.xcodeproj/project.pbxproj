@@ -42,7 +42,7 @@
 		B3274E7B2106BCEE00857F52 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */; };
 		B3274E7E2106BD7600857F52 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
 		B3274E7F2106BD7600857F52 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3274E802106BDD300857F52 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */; };
+		B3274E802106BDD300857F52 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -84,9 +84,27 @@
 		B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
+		B378226121D358190077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378225F21D358180077E86F /* SWCompression.framework */; };
+		B378226221D358190077E86F /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226021D358190077E86F /* BitByteData.framework */; };
+		B378226821D358740077E86F /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226721D358740077E86F /* BitByteData.framework */; };
+		B378226C21D35A2F0077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226B21D35A2F0077E86F /* SWCompression.framework */; };
+		B378226E21D409F20077E86F /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
+		B378226F21D409F20077E86F /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
+		B378227121D40A360077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FCE21916106000FA7F9 /* RxSwift.framework */; };
+		B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; };
+		B378227421D41D400077E86F /* Promises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378227321D41D400077E86F /* Promises.framework */; };
+		B378227621D41D4D0077E86F /* Promises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378227521D41D4D0077E86F /* Promises.framework */; };
+		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
+		B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
+		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
+		B378227E21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
+		B378228021D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
+		B378228121D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
+		B378228521D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
+		B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
 		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
-		B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
+		B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475921071CDB002211EE /* LzmaSDKObjCItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473E21071CA6002211EE /* LzmaSDKObjCItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -245,7 +263,7 @@
 		B3C04AA721077B3100E7AF79 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E662106BAF500857F52 /* UIImage+Scaling.m */; };
 		B3C04AA821077B3100E7AF79 /* OutBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AF21071CA6002211EE /* OutBuffer.cpp */; };
 		B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474021071CA6002211EE /* LzmaSDKObjCFileDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AAA21077B3100E7AF79 /* PVDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */; };
+		B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465E21071CA5002211EE /* Lzma2Register.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
 		B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466021071CA5002211EE /* CopyCoder.cpp */; };
@@ -306,7 +324,7 @@
 		B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D282106B4D700DDEBD6 /* PVLibrary.swift */; };
 		B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E321071CA6002211EE /* LzmaEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E821071CA6002211EE /* XzDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */; };
+		B3C04AE921077B3100E7AF79 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
 		B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461C21071CA5002211EE /* StringToInt.cpp */; };
 		B3C04AEB21077B3100E7AF79 /* StreamUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B721071CA6002211EE /* StreamUtils.cpp */; };
 		B3C04AEC21077B3100E7AF79 /* XzCrc64Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463221071CA5002211EE /* XzCrc64Reg.cpp */; };
@@ -384,6 +402,12 @@
 		B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
+		B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
+		B3CDEEB121D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
+		B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
+		B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
+		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -464,10 +488,21 @@
 		B3579D2F2106B4D700DDEBD6 /* PVRecentGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
 		B3579D302106B4D700DDEBD6 /* PVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFile.swift; sourceTree = "<group>"; };
 		B3579D312106B4D700DDEBD6 /* PVCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCore.swift; sourceTree = "<group>"; };
-		B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDirectoryWatcher.swift; sourceTree = "<group>"; };
-		B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameImporter.swift; sourceTree = "<group>"; };
+		B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher2.swift; sourceTree = "<group>"; };
+		B3579D342106B4D700DDEBD6 /* GameImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter.swift; sourceTree = "<group>"; };
 		B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
+		B378225F21D358180077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = ../Carthage/Build/iOS/SWCompression.framework; sourceTree = "<group>"; };
+		B378226021D358190077E86F /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = ../Carthage/Build/iOS/BitByteData.framework; sourceTree = "<group>"; };
+		B378226721D358740077E86F /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = ../Carthage/Build/tvOS/BitByteData.framework; sourceTree = "<group>"; };
+		B378226B21D35A2F0077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = ../Carthage/Build/tvOS/SWCompression.framework; sourceTree = "<group>"; };
+		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
+		B378227321D41D400077E86F /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = ../Carthage/Build/iOS/Promises.framework; sourceTree = "<group>"; };
+		B378227521D41D4D0077E86F /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = ../Carthage/Build/tvOS/Promises.framework; sourceTree = "<group>"; };
+		B378227921D41E1C0077E86F /* SavePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
+		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
+		B378227F21D41E460077E86F /* PackageResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageResult.swift; sourceTree = "<group>"; };
+		B378228421D41E9B0077E86F /* LibrarySerializerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySerializerError.swift; sourceTree = "<group>"; };
 		B383F3BB219BB29600DB6926 /* iCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSync.swift; sourceTree = "<group>"; };
 		B3AF460B21071CA5002211EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B3AF460C21071CA5002211EE /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
@@ -832,6 +867,9 @@
 		B3C04B632107867200E7AF79 /* PVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibraryTests.swift; sourceTree = "<group>"; };
 		B3C04B652107867200E7AF79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorConfiguration+Frameworks.swift"; sourceTree = "<group>"; };
+		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
+		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -839,8 +877,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B378226121D358190077E86F /* SWCompression.framework in Frameworks */,
+				B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */,
+				B378226221D358190077E86F /* BitByteData.framework in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */,
+				B378227421D41D400077E86F /* Promises.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
 			);
@@ -850,6 +892,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B378227121D40A360077E86F /* RxSwift.framework in Frameworks */,
+				B378226821D358740077E86F /* BitByteData.framework in Frameworks */,
+				B378227621D41D4D0077E86F /* Promises.framework in Frameworks */,
+				B378226C21D35A2F0077E86F /* SWCompression.framework in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
@@ -871,6 +917,12 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B378227321D41D400077E86F /* Promises.framework */,
+				B378227521D41D4D0077E86F /* Promises.framework */,
+				B378226B21D35A2F0077E86F /* SWCompression.framework */,
+				B378226021D358190077E86F /* BitByteData.framework */,
+				B378226721D358740077E86F /* BitByteData.framework */,
+				B378225F21D358180077E86F /* SWCompression.framework */,
 				B3AF6FB72191600A000FA7F9 /* iOS */,
 				B3AF6FB621916002000FA7F9 /* tvOS */,
 				B3AF6FA121915EE8000FA7F9 /* Carthage */,
@@ -1006,12 +1058,13 @@
 		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				B3579D322106B4D700DDEBD6 /* Importer */,
+				B378228221D41E5A0077E86F /* Serializer */,
 				B354E784219A76C80041F971 /* Domain */,
 				B3579D262106B4D700DDEBD6 /* RealmPlatform */,
 				B3274E5C2106BA1200857F52 /* Configuration */,
 				B3579D1D2106B4D600DDEBD6 /* Database */,
 				B3579D212106B4D600DDEBD6 /* Game Media */,
-				B3579D322106B4D700DDEBD6 /* Importer */,
 				B3579D352106B4D700DDEBD6 /* NSExtensions */,
 				B3579D232106B4D600DDEBD6 /* Util */,
 				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
@@ -1065,10 +1118,8 @@
 		B3579D322106B4D700DDEBD6 /* Importer */ = {
 			isa = PBXGroup;
 			children = (
-				B3579D332106B4D700DDEBD6 /* PVDirectoryWatcher.swift */,
-				B3579D342106B4D700DDEBD6 /* PVGameImporter.swift */,
-				B3274E852106BFD000857F52 /* ImportCandidateFile.swift */,
-				B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */,
+				B378227821D41DFA0077E86F /* Services */,
+				B378227721D41DEE0077E86F /* Models */,
 				B383F3BB219BB29600DB6926 /* iCloudSync.swift */,
 			);
 			path = Importer;
@@ -1087,6 +1138,47 @@
 				B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */,
 			);
 			path = NSExtensions;
+			sourceTree = "<group>";
+		};
+		B378227721D41DEE0077E86F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B3274E852106BFD000857F52 /* ImportCandidateFile.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B378227821D41DFA0077E86F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */,
+				B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */,
+				B378226D21D409F20077E86F /* Extractor.swift */,
+				B3579D342106B4D700DDEBD6 /* GameImporter.swift */,
+				B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		B378228221D41E5A0077E86F /* Serializer */ = {
+			isa = PBXGroup;
+			children = (
+				B378228321D41E680077E86F /* Models */,
+				B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */,
+			);
+			path = Serializer;
+			sourceTree = "<group>";
+		};
+		B378228321D41E680077E86F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B378227F21D41E460077E86F /* PackageResult.swift */,
+				B378227921D41E1C0077E86F /* SavePackage.swift */,
+				B378227C21D41E310077E86F /* GamePackage.swift */,
+				B378228421D41E9B0077E86F /* LibrarySerializerError.swift */,
+				B3CDEEB221D497CD000C55F7 /* Package.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		B3AF460A21071CA5002211EE /* LzmaSDKObjC */ = {
@@ -1801,12 +1893,13 @@
 				B3AF47AA21071F43002211EE /* InOutTempBuffer.cpp in Sources */,
 				B3AF47B621071F76002211EE /* BcjCoder.cpp in Sources */,
 				B3AF47C621071F76002211EE /* PpmdRegister.cpp in Sources */,
+				B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */,
 				B3AF476021071E28002211EE /* LzmaSDKObjC.mm in Sources */,
 				B3274E742106BC1D00857F52 /* PVFile.swift in Sources */,
 				B3274E682106BAF600857F52 /* UIImage+Scaling.m in Sources */,
 				B3AF47AE21071F43002211EE /* OutBuffer.cpp in Sources */,
 				B3AF476C21071E2D002211EE /* LzmaSDKObjCFileDecoder.cpp in Sources */,
-				B3AF42F42107145C002211EE /* PVDirectoryWatcher.swift in Sources */,
+				B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */,
 				B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
 				B3AF47C021071F76002211EE /* Lzma2Register.cpp in Sources */,
 				B3067F642106B8650091437F /* NSData+Hashing.m in Sources */,
@@ -1829,6 +1922,7 @@
 				B3AF477921071E85002211EE /* Bra.c in Sources */,
 				B3AF476921071E28002211EE /* LzmaSDKObjCWriter.mm in Sources */,
 				B3274E6C2106BC1D00857F52 /* PVBIOS.swift in Sources */,
+				B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */,
 				B3AF47C721071F92002211EE /* 7zAes.cpp in Sources */,
 				B3AF476621071E28002211EE /* LzmaSDKObjCMutableItem.mm in Sources */,
 				B3AF477E21071E85002211EE /* LzFind.c in Sources */,
@@ -1877,7 +1971,7 @@
 				B3AF478421071E85002211EE /* LzmaEnc.c in Sources */,
 				B3AF478E21071E85002211EE /* XzDec.c in Sources */,
 				B354E7A8219A78420041F971 /* Repository.swift in Sources */,
-				B3274E802106BDD300857F52 /* PVGameImporter.swift in Sources */,
+				B3274E802106BDD300857F52 /* GameImporter.swift in Sources */,
 				B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B3AF47D321071FC0002211EE /* StringToInt.cpp in Sources */,
 				B354E794219A76C80041F971 /* Core.swift in Sources */,
@@ -1898,7 +1992,9 @@
 				B3AF479821071EC1002211EE /* 7zIn.cpp in Sources */,
 				B354E78E219A76C80041F971 /* Game.swift in Sources */,
 				B3AF479421071EC1002211EE /* 7zFolderInStream.cpp in Sources */,
+				B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */,
 				B3AF47BB21071F76002211EE /* CodecExports.cpp in Sources */,
+				B378228521D41E9B0077E86F /* LibrarySerializerError.swift in Sources */,
 				B3AF476521071E28002211EE /* LzmaSDKObjCItem.mm in Sources */,
 				B3AF477521071E85002211EE /* AesOpt.c in Sources */,
 				B3AF477321071E85002211EE /* 7zStream.c in Sources */,
@@ -1918,6 +2014,7 @@
 				B3AF47D021071FC0002211EE /* MyWindows.cpp in Sources */,
 				B3AF476321071E28002211EE /* LzmaSDKObjCExtern.mm in Sources */,
 				B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */,
+				B378226E21D409F20077E86F /* Extractor.swift in Sources */,
 				B3AF478821071E85002211EE /* Ppmd7Enc.c in Sources */,
 				B3AF478F21071E85002211EE /* XzEnc.c in Sources */,
 				B354E7B6219A796A0041F971 /* Observable+Ext.swift in Sources */,
@@ -1930,12 +2027,15 @@
 				B3AF47A321071EE9002211EE /* OutStreamWithCRC.cpp in Sources */,
 				B3AF477F21071E85002211EE /* LzFindMt.c in Sources */,
 				B3AF476221071E28002211EE /* LzmaSDKObjCError.mm in Sources */,
+				B378227D21D41E310077E86F /* GamePackage.swift in Sources */,
+				B378228021D41E460077E86F /* PackageResult.swift in Sources */,
 				B3067F652106B8690091437F /* Time Utilities.swift in Sources */,
 				B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */,
 				B3AF478221071E85002211EE /* Lzma2Enc.c in Sources */,
 				B3AF47C421071F76002211EE /* PpmdDecoder.cpp in Sources */,
 				B3AF476121071E28002211EE /* LzmaSDKObjCBufferProcessor.mm in Sources */,
 				B3AF47B821071F76002211EE /* BranchMisc.cpp in Sources */,
+				B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */,
 				B3AF478521071E85002211EE /* MtCoder.c in Sources */,
 				B3AF478921071E85002211EE /* Sha256.c in Sources */,
 				B3AF47BF21071F76002211EE /* Lzma2Encoder.cpp in Sources */,
@@ -1975,12 +2075,13 @@
 				B3C04AA221077B3100E7AF79 /* InOutTempBuffer.cpp in Sources */,
 				B3C04AA321077B3100E7AF79 /* BcjCoder.cpp in Sources */,
 				B3C04AA421077B3100E7AF79 /* PpmdRegister.cpp in Sources */,
+				B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */,
 				B3C04AA521077B3100E7AF79 /* LzmaSDKObjC.mm in Sources */,
 				B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */,
 				B3C04AA721077B3100E7AF79 /* UIImage+Scaling.m in Sources */,
 				B3C04AA821077B3100E7AF79 /* OutBuffer.cpp in Sources */,
 				B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
-				B3C04AAA21077B3100E7AF79 /* PVDirectoryWatcher.swift in Sources */,
+				B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */,
 				B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
 				B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */,
 				B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */,
@@ -2003,6 +2104,7 @@
 				B3C04ABB21077B3100E7AF79 /* Bra.c in Sources */,
 				B3C04ABC21077B3100E7AF79 /* LzmaSDKObjCWriter.mm in Sources */,
 				B3C04ABD21077B3100E7AF79 /* PVBIOS.swift in Sources */,
+				B3CDEEB121D493AC000C55F7 /* GameImporter2.swift in Sources */,
 				B3C04ABE21077B3100E7AF79 /* 7zAes.cpp in Sources */,
 				B3C04ABF21077B3100E7AF79 /* LzmaSDKObjCMutableItem.mm in Sources */,
 				B3C04AC021077B3100E7AF79 /* LzFind.c in Sources */,
@@ -2051,7 +2153,7 @@
 				B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */,
 				B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */,
 				B354E7A9219A78420041F971 /* Repository.swift in Sources */,
-				B3C04AE921077B3100E7AF79 /* PVGameImporter.swift in Sources */,
+				B3C04AE921077B3100E7AF79 /* GameImporter.swift in Sources */,
 				B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */,
 				B354E795219A76C80041F971 /* Core.swift in Sources */,
@@ -2072,7 +2174,9 @@
 				B3C04AF621077B3100E7AF79 /* 7zIn.cpp in Sources */,
 				B354E78F219A76C80041F971 /* Game.swift in Sources */,
 				B3C04AF721077B3100E7AF79 /* 7zFolderInStream.cpp in Sources */,
+				B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */,
 				B3C04AF821077B3100E7AF79 /* CodecExports.cpp in Sources */,
+				B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */,
 				B3C04AF921077B3100E7AF79 /* LzmaSDKObjCItem.mm in Sources */,
 				B3C04AFA21077B3100E7AF79 /* AesOpt.c in Sources */,
 				B3C04AFB21077B3100E7AF79 /* 7zStream.c in Sources */,
@@ -2092,6 +2196,7 @@
 				B3C04B0921077B3100E7AF79 /* MyWindows.cpp in Sources */,
 				B3C04B0A21077B3100E7AF79 /* LzmaSDKObjCExtern.mm in Sources */,
 				B3C04B0B21077B3100E7AF79 /* PVImageFile.swift in Sources */,
+				B378226F21D409F20077E86F /* Extractor.swift in Sources */,
 				B3C04B0C21077B3100E7AF79 /* Ppmd7Enc.c in Sources */,
 				B3C04B0D21077B3100E7AF79 /* XzEnc.c in Sources */,
 				B354E7B7219A796A0041F971 /* Observable+Ext.swift in Sources */,
@@ -2104,12 +2209,15 @@
 				B3C04B1321077B3100E7AF79 /* OutStreamWithCRC.cpp in Sources */,
 				B3C04B1421077B3100E7AF79 /* LzFindMt.c in Sources */,
 				B3C04B1521077B3100E7AF79 /* LzmaSDKObjCError.mm in Sources */,
+				B378227E21D41E310077E86F /* GamePackage.swift in Sources */,
+				B378228121D41E460077E86F /* PackageResult.swift in Sources */,
 				B3C04B1621077B3100E7AF79 /* Time Utilities.swift in Sources */,
 				B3C04B1721077B3100E7AF79 /* PVAppConstants.swift in Sources */,
 				B3C04B1821077B3100E7AF79 /* Lzma2Enc.c in Sources */,
 				B3C04B1921077B3100E7AF79 /* PpmdDecoder.cpp in Sources */,
 				B3C04B1A21077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
 				B3C04B1B21077B3100E7AF79 /* BranchMisc.cpp in Sources */,
+				B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */,
 				B3C04B1C21077B3100E7AF79 /* MtCoder.c in Sources */,
 				B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */,
 				B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */,

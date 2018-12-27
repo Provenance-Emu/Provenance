@@ -78,7 +78,7 @@ setup: \
 	install_bundler_gem \
 	install_ruby_gems \
 	install_carthage_dependencies_ios \
-    install_carthage_dependencies_tvos
+  install_carthage_dependencies_tvos
 
 pull_request: \
 	test \

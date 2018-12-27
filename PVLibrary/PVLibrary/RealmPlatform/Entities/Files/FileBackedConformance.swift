@@ -11,11 +11,11 @@ import RealmSwift
 
 public extension FileBacked where Self : Object {
 	var online: Bool {
-		return file != nil || file!.online
+		return fileInfo != nil || fileInfo!.online
 	}
 
 	var md5: String? {
-		guard let file = file else {
+		guard let file = fileInfo else {
 			return nil
 		}
 		return file.md5

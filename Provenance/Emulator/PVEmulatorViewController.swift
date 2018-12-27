@@ -770,7 +770,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                     realm.add(saveState)
                 }
 
-                LibrarySerializer.serialize(saveState, completion: { result in
+                LibrarySerializer.storeMetadata(saveState, completion: { result in
                     switch result {
                     case .success(let  url):
                         ILOG("Serialzed save state metadata to (\(url.path))")

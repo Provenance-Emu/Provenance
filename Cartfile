@@ -5,7 +5,7 @@ github "xmartlabs/XLActionController" "4.1.0"
 github "bcylin/QuickTableViewController" "v1.0.0"
 github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
-github "mxcl/PromiseKit" ~> 6.0
+github "google/promises"
 
 # Crashlytics - Static Libs
 # iOS
@@ -25,6 +25,8 @@ github "radex/SwiftyUserDefaults" "3.0.1"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
+github "ZipArchive/ZipArchive" "v2.1.4"
+github "weichsel/ZIPFoundation" "0.9.6"
 github "tsolomko/SWCompression" ~> 4.5
 github "Provenance-Emu/realm-cocoa" "v3.11.1" # use our fork to speed up build times
 github "stephencelis/SQLite.swift" "0.11.5"

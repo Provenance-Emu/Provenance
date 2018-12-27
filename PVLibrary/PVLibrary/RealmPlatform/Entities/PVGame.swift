@@ -123,6 +123,8 @@ public extension PVGame {
     }
 }
 
+extension PVGame : Filed, LocalFileProvider { }
+
 public extension PVGame {
     public var autoSaves : Results<PVSaveState> {
         return saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false)

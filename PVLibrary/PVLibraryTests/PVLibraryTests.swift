@@ -24,7 +24,7 @@ class PVLibraryTests: XCTestCase {
     }
 
 	func testSQLSearch() {
-		let importer = PVGameImporter.shared
+		let importer = GameImporter.shared
 
 		// Expected test data
 		// Two entries share the same romFileName,

@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DomainConvertibleType {
-    associatedtype DomainType
+    associatedtype DomainType : Codable
 
     func asDomain() -> DomainType
 }

@@ -10,6 +10,7 @@ import UIKit
 import RealmSwift
 import PVLibrary
 import PVSupport
+import SWCompression
 import ZipArchive
 import Crashlytics
 

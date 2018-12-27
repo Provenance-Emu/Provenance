@@ -95,6 +95,7 @@ extension XCTestCase {
         }
     }
 
+
 /////////////////////////////////////////////////////////////////////////
 
     private func mkspecify(_ numberOfExpectations: Int, file: StaticString, line: UInt, body: @escaping (Promise<UInt32>, [XCTestExpectation], UInt32) -> Void) -> (String, _ feed: (UInt32) -> (Promise<UInt32>, () -> Void)) -> Void {
@@ -105,9 +106,9 @@ extension XCTestCase {
                 self.expectation(description: "\(desc) (\($0))")
             }
             body(promise, expectations, value)
-
+            
             executeAfter()
-
+            
             self.waitForExpectations(timeout: timeout) { err in
                 if let _ = err {
                     XCTFail("timed out: \(desc)", file: file, line: line)

@@ -1,10 +1,12 @@
+$(SRCROOT)/Carthage/Build/iOS/BitByteData.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/Differentiator.framework
+$(SRCROOT)/Carthage/Build/iOS/FBLPromises.framework
 $(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
-$(SRCROOT)/Carthage/Build/iOS/PromiseKit.framework
+$(SRCROOT)/Carthage/Build/iOS/Promises.framework
 $(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework
 $(SRCROOT)/Carthage/Build/iOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/iOS/Realm.framework
@@ -17,7 +19,7 @@ $(SRCROOT)/Carthage/Build/iOS/RxGesture.framework
 $(SRCROOT)/Carthage/Build/iOS/RxRealm.framework
 $(SRCROOT)/Carthage/Build/iOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
+$(SRCROOT)/Carthage/Build/iOS/SWCompression.framework
 $(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework
 $(SRCROOT)/Carthage/Build/iOS/XLActionController.framework
-$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework
 $(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework

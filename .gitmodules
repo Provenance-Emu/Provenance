@@ -25,3 +25,54 @@
 [submodule "Cores/PokeMini/PokeMini-libretro"]
 	path = Cores/PokeMini/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
+[submodule "Carthage/Checkouts/RxRealm"]
+	path = Carthage/Checkouts/RxRealm
+	url = https://github.com/Provenance-Emu/RxRealm.git
+[submodule "Carthage/Checkouts/RxSwift"]
+	path = Carthage/Checkouts/RxSwift
+	url = https://github.com/ReactiveX/RxSwift.git
+[submodule "Carthage/Checkouts/RxGesture"]
+	path = Carthage/Checkouts/RxGesture
+	url = https://github.com/RxSwiftCommunity/RxGesture.git
+[submodule "Carthage/Checkouts/BitByteData"]
+	path = Carthage/Checkouts/BitByteData
+	url = https://github.com/tsolomko/BitByteData.git
+[submodule "Carthage/Checkouts/HockeySDK-iOS"]
+	url = https://github.com/bitstadium/HockeySDK-iOS.git
+[submodule "Carthage/Checkouts/HockeySDK-tvOS"]
+	url = https://github.com/bitstadium/HockeySDK-tvOS.git
+[submodule "Carthage/Checkouts/Reachability.swift"]
+	path = Carthage/Checkouts/Reachability.swift
+	url = https://github.com/ashleymills/Reachability.swift.git
+[submodule "Carthage/Checkouts/RxDataSources"]
+	path = Carthage/Checkouts/RxDataSources
+	url = https://github.com/RxSwiftCommunity/RxDataSources.git
+[submodule "Carthage/Checkouts/SwiftyUserDefaults"]
+	url = https://github.com/radex/SwiftyUserDefaults.git
+[submodule "Carthage/Checkouts/NSLogger"]
+	path = Carthage/Checkouts/NSLogger
+	url = https://github.com/fpillet/NSLogger.git
+[submodule "Carthage/Checkouts/SQLite.swift"]
+	url = https://github.com/stephencelis/SQLite.swift.git
+[submodule "Carthage/Checkouts/realm-cocoa"]
+	url = https://github.com/Provenance-Emu/realm-cocoa.git
+[submodule "Carthage/Checkouts/CocoaLumberjack"]
+	url = https://github.com/CocoaLumberjack/CocoaLumberjack.git
+[submodule "Carthage/Checkouts/QuickTableViewController"]
+	path = Carthage/Checkouts/QuickTableViewController
+	url = https://github.com/bcylin/QuickTableViewController.git
+[submodule "Carthage/Checkouts/PromiseKit"]
+	url = https://github.com/mxcl/PromiseKit.git
+[submodule "Carthage/Checkouts/XLActionController"]
+	url = https://github.com/xmartlabs/XLActionController.git
+[submodule "Carthage/Checkouts/SWCompression"]
+	url = https://github.com/tsolomko/SWCompression.git
+[submodule "Carthage/Checkouts/promises"]
+	path = Carthage/Checkouts/promises
+	url = https://github.com/google/promises.git
+[submodule "Carthage/Checkouts/ZipArchive"]
+	path = Carthage/Checkouts/ZipArchive
+	url = https://github.com/ZipArchive/ZipArchive.git
+[submodule "Carthage/Checkouts/ZIPFoundation"]
+	path = Carthage/Checkouts/ZIPFoundation
+	url = https://github.com/weichsel/ZIPFoundation.git

@@ -37,6 +37,7 @@ public struct BIOS : BIOSFileProvider, Codable {
 	public let status : BIOSStatus
 
 	public let file : LocalFile?
+    public var fileInfo : LocalFile? { return file }
 }
 
 extension BIOS : Equatable {
@@ -178,21 +179,21 @@ public struct BIOSStatus : Codable {
 
 public extension BIOSStatus {
 	public init<T:BIOSFileProvider>(withBios bios : T) {
-		available = !(bios.file?.online ?? false)
+		available = !(bios.fileInfo?.online ?? false)
 		if available {
-			let md5Match = bios.file?.md5?.uppercased() == bios.expectedMD5.uppercased()
-			let sizeMatch = bios.file?.size == UInt64(bios.expectedSize)
-			let filenameMatch = bios.file?.fileName == bios.expectedFilename
+			let md5Match = bios.fileInfo?.md5?.uppercased() == bios.expectedMD5.uppercased()
+			let sizeMatch = bios.fileInfo?.size == UInt64(bios.expectedSize)
+			let filenameMatch = bios.fileInfo?.fileName == bios.expectedFilename
 
 			var misses = [Mismatch]()
 			if !md5Match {
-				misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.file?.md5?.uppercased() ?? "0"))
+				misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.fileInfo?.md5?.uppercased() ?? "0"))
 			}
 			if !sizeMatch {
-				misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.file?.size ?? 0)))
+				misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.fileInfo?.size ?? 0)))
 			}
 			if !filenameMatch {
-				misses.append(.filename(expected: bios.expectedFilename, actual: bios.file?.fileName ?? "Nil"))
+				misses.append(.filename(expected: bios.expectedFilename, actual: bios.fileInfo?.fileName ?? "Nil"))
 			}
 
 			state = misses.isEmpty ? .match : .mismatch(misses)

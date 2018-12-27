@@ -123,6 +123,16 @@
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
+		B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
+		B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
+		B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
+		B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC121D4C454000C55F7 /* Controls.swift */; };
+		B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC121D4C454000C55F7 /* Controls.swift */; };
+		B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC421D4C490000C55F7 /* CoreActions.swift */; };
+		B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC421D4C490000C55F7 /* CoreActions.swift */; };
+		B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
+		B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
 		B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
@@ -254,6 +264,11 @@
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
 		B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveSupport.swift; sourceTree = "<group>"; };
+		B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscSwappable.swift; sourceTree = "<group>"; };
+		B3CDEEC121D4C454000C55F7 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		B3CDEEC421D4C490000C55F7 /* CoreActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreActions.swift; sourceTree = "<group>"; };
+		B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateSupport.swift; sourceTree = "<group>"; };
 		B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
 		B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
 		B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtension.swift; sourceTree = "<group>"; };
@@ -321,6 +336,7 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
 				B3447F99218C1CBE00557ACE /* Settings */,
 				B3AB37F721882119009D9244 /* CoreOptions */,
 				B3AB36DC2187F4C4009D9244 /* Controller */,
@@ -365,9 +381,6 @@
 				B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */,
 				0592894D1DC194FD0012644D /* RealTimeThread.h */,
 				0592894E1DC194FD0012644D /* RealTimeThread.m */,
-				B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */,
-				B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */,
-				B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */,
 				B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */,
 				B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
@@ -558,6 +571,29 @@
 				B3AF6FDC219161BC000FA7F9 /* Foundation.framework */,
 			);
 			name = tvOS;
+			sourceTree = "<group>";
+		};
+		B3CDEEB821D4C394000C55F7 /* EmulatorCore */ = {
+			isa = PBXGroup;
+			children = (
+				B3CDEEBA21D4C3CE000C55F7 /* Features */,
+				B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */,
+				B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */,
+				B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */,
+			);
+			path = EmulatorCore;
+			sourceTree = "<group>";
+		};
+		B3CDEEBA21D4C3CE000C55F7 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */,
+				B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */,
+				B3CDEEC121D4C454000C55F7 /* Controls.swift */,
+				B3CDEEC421D4C490000C55F7 /* CoreActions.swift */,
+				B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */,
+			);
+			path = Features;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -759,6 +795,7 @@
 			files = (
 				B3FA5D5E1D6B908300060D71 /* OERingBuffer.m in Sources */,
 				B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
+				B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
 				B3AB37E421881A83009D9244 /* PViCadeGamepad.swift in Sources */,
 				B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */,
 				B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */,
@@ -766,18 +803,22 @@
 				B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
+				B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
 				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
+				B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */,
+				B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3AF700E21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
+				B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
 				B3447E91218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
@@ -799,6 +840,7 @@
 			files = (
 				B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */,
 				B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
+				B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
 				B34AB5782106DC5300C45F09 /* OERingBuffer.m in Sources */,
 				B34AB5772106DC5300C45F09 /* OEGameAudio.m in Sources */,
 				B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */,
@@ -806,18 +848,22 @@
 				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
+				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
 				B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
+				B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */,
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
+				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
 				B3AF700D21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
+				B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,

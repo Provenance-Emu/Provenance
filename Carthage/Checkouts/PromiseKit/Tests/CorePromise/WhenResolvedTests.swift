@@ -11,7 +11,7 @@ class JoinTests: XCTestCase {
         var joinFinished = false
         when(resolved: successPromise).done(on: nil) { _ in joinFinished = true }
         XCTAssert(joinFinished, "Join immediately finishes on fulfilled promise")
-
+        
         let promise2 = Promise.value(2)
         let promise3 = Promise.value(3)
         let promise4 = Promise.value(4)
@@ -24,17 +24,17 @@ class JoinTests: XCTestCase {
         let (promise1, seal1) = Promise<Void>.pending()
         let (promise2, seal2) = Promise<Void>.pending()
         let (promise3, seal3) = Promise<Void>.pending()
-
+        
         var finished = false
         when(resolved: promise1, promise2, promise3).done(on: nil) { _ in finished = true }
         XCTAssertFalse(finished, "Not all promises have resolved")
-
+        
         seal1.fulfill()
         XCTAssertFalse(finished, "Not all promises have resolved")
-
+        
         seal2.fulfill()
         XCTAssertFalse(finished, "Not all promises have resolved")
-
+        
         seal3.fulfill()
         XCTAssert(finished, "All promises have resolved")
     }

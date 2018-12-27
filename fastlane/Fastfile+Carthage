@@ -83,6 +83,7 @@ private_lane :carthage_private do |options|
     platform: platform,
     use_binaries: true,
     cache_builds: true,
+    use_submodules: true,
     use_ssh: use_ssh,
     project_directory: project_directory
   )

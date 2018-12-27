@@ -1,9 +1,0 @@
-
-xcodeproj 'BenchmarkIPhone'
-workspace '../../Demos'
-
-target :'BenchmarkIPhone' do
-  platform :ios, '5.0'
-  pod 'CocoaLumberjack', :path => '../../../'
-end
-

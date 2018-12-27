@@ -23,6 +23,7 @@ public final class PVBIOS: Object, BIOSFileProvider {
     dynamic public var expectedFilename: String = ""
 
     dynamic public var file: PVFile?
+    public var fileInfo: PVFile? { return file }
 
     public convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
         self.init()

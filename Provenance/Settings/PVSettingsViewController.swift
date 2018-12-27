@@ -17,7 +17,6 @@ import Reachability
 import QuickTableViewController
 import RealmSwift
 
-
 class PVQuickTableViewController : QuickTableViewController {
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
@@ -106,10 +105,11 @@ final class PVSettingsViewController : PVQuickTableViewController {
         // -- Section : Audio/Video
         var avRows = [TableRow]()
         #if os(iOS)
-        avRows.append(contentsOf: [PVSettingsSwitchRow(title: "Volume HUD", key: \PVSettingsModel.volumeHUD),
+        avRows.append(contentsOf: [PVSettingsSwitchRow(title: "Volume HUD", key: \PVSettingsModel.volumeHUD)
                                    ])
-        #endif
         avRows.append(PVSettingsSliderRow(title: "Volume", subtitle: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
+        #endif
+
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(title: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(title: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
@@ -185,7 +185,7 @@ final class PVSettingsViewController : PVQuickTableViewController {
                           customization: { (cell, row) in
                             let baseTitle = "Manually resolve conflicted imports"
                             let subTitle : String
-                            if let count = PVGameImporter.shared.conflictedFiles?.count, count > 0 {
+                            if let count = GameImporter.shared.conflictedFiles?.count, count > 0 {
                                 subTitle = baseTitle + ": \(count) detected"
                             } else {
                                 subTitle = baseTitle + ": None detected"
@@ -362,7 +362,7 @@ final class PVSettingsViewController : PVQuickTableViewController {
     }
 
     func manageConflictsAction() {
-        let gameImporter = PVGameImporter.shared
+        let gameImporter = GameImporter.shared
         let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
         navigationController?.pushViewController(conflictViewController, animated: true)
     }

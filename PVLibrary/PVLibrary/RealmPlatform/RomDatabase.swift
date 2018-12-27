@@ -401,7 +401,7 @@ public extension RomDatabase {
 
 				if game.releaseID == nil || game.releaseID!.isEmpty {
 					ILOG("Game isn't already matched, going to try to re-match after a rename")
-					PVGameImporter.shared.lookupInfo(for: game, overwrite: false)
+					GameImporter.shared.lookupInfo(for: game, overwrite: false)
 				}
 			} catch {
 				ELOG("Failed to rename game \(game.title)\n\(error.localizedDescription)")

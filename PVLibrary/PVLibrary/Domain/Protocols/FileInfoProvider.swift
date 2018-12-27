@@ -31,20 +31,16 @@ public struct FileInfo : Codable, FileInfoProvider {
 	}
 }
 
-public typealias FileProviderFetch = (Data?) -> Void
+public typealias FileProviderFetch = (() throws -> Data) -> Void
 /// A type that can represent a file for library import usage
 ///
 ///
-public protocol FileInfoProvider : Codable {
+public protocol FileInfoProvider {
 	var fileName : String { get }
 	var md5 : String? { get }
 //	var crc : String? { get }
 	var size : UInt64 { get }
 	var online : Bool { get }
-}
-
-public protocol FileProvider : FileInfoProvider {
-	func fetchData(completion: @escaping (Data?) -> Void)
 }
 
 public protocol LocalFileInfoProvider : FileInfoProvider {
@@ -56,20 +52,25 @@ public protocol LocalFileProvider : LocalFileInfoProvider, DataProvider {
 }
 
 public extension LocalFileProvider {
-	var data : Data? {
-		return try? Data(contentsOf: url)
-	}
+    func readData() throws -> Data {
+        return try Data(contentsOf: url)
+    }
 
 	func fetchData(completion: @escaping FileProviderFetch) {
 		DispatchQueue.global(qos: .background).async {
-			completion(self.data)
+			completion(self.readData)
 		}
 	}
 }
 
-public protocol DataProvider : Codable {
+public protocol DataProvider {
 	var data : Data? { get }
+    func readData() throws -> Data
 	func fetchData(completion: @escaping FileProviderFetch)
+}
+
+public extension DataProvider {
+    var data : Data? { return try? readData() }
 }
 
 public protocol RemoteFileInfoProvider : FileInfoProvider {
@@ -132,7 +133,7 @@ extension LocalFileInfoProvider {
 
 public protocol FileBacked {
 	associatedtype FileInfoProviderType : FileInfoProvider
-	var file: FileInfoProviderType? { get }
+	var fileInfo: FileInfoProviderType? { get }
 }
 
 public protocol LocalFileBacked : FileBacked where FileInfoProviderType : LocalFileInfoProvider {

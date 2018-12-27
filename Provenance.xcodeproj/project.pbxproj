@@ -229,8 +229,6 @@
 		B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
 		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
-		B3532C3F21A9B682006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C3E21A9B681006CDA0F /* PromiseKit.framework */; };
-		B3532C4121A9B698006CDA0F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3532C4021A9B698006CDA0F /* PromiseKit.framework */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
@@ -286,10 +284,12 @@
 		B378225221D32A6B0077E86F /* SettingsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225021D32A6B0077E86F /* SettingsTableView.swift */; };
 		B378225421D32AD60077E86F /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
-		B378225821D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
 		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
 		B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */; };
+		B378226521D358340077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226321D358340077E86F /* SWCompression.framework */; };
+		B378226621D358340077E86F /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226421D358340077E86F /* BitByteData.framework */; };
+		B378226A21D35A280077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226921D35A270077E86F /* SWCompression.framework */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -357,21 +357,15 @@
 		B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */; };
 		B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10469218F20FD00210C39 /* RxAtomic.framework */; };
 		B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046A218F20FD00210C39 /* NSLogger.framework */; };
-		B3B1047C218F20FE00210C39 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046B218F20FD00210C39 /* ZIPFoundation.framework */; };
 		B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046C218F20FD00210C39 /* XLActionController.framework */; };
 		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
 		B3B1047F218F20FE00210C39 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046E218F20FE00210C39 /* RxBlocking.framework */; };
-		B3B10480218F20FE00210C39 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
 		B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
 		B3B10498218F212800210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10485218F212500210C39 /* SQLite.framework */; };
-		B3B10499218F212800210C39 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10486218F212600210C39 /* ZIPFoundation.framework */; };
-		B3B1049A218F212800210C39 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10487218F212600210C39 /* ZipArchive.framework */; };
 		B3B1049C218F212800210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10489218F212600210C39 /* CocoaLumberjack.framework */; };
 		B3B1049D218F212800210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048A218F212600210C39 /* Realm.framework */; };
-		B3B1049F218F212800210C39 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048C218F212600210C39 /* RxBlocking.framework */; };
 		B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048E218F212700210C39 /* RxSwift.framework */; };
-		B3B104A2218F212800210C39 /* RxAtomic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048F218F212700210C39 /* RxAtomic.framework */; };
 		B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10490218F212700210C39 /* RxCocoa.framework */; };
 		B3B104A4218F212800210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10491218F212700210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10492218F212700210C39 /* SwiftyUserDefaults.framework */; };
@@ -443,6 +437,14 @@
 		B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; };
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
+		B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10487218F212600210C39 /* ZipArchive.framework */; };
+		B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10486218F212600210C39 /* ZIPFoundation.framework */; };
+		B3CDEED121D4D238000C55F7 /* Promises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED021D4D238000C55F7 /* Promises.framework */; };
+		B3CDEED321D4D31A000C55F7 /* Promises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED221D4D31A000C55F7 /* Promises.framework */; };
+		B3CDEED521D4D50F000C55F7 /* FBLPromises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */; };
+		B3CDEED721D4D517000C55F7 /* FBLPromises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED621D4D517000C55F7 /* FBLPromises.framework */; };
+		B3CDEED921D4D84E000C55F7 /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED821D4D84E000C55F7 /* BitByteData.framework */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -866,6 +868,9 @@
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
 		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
 		B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectorViewController.swift; sourceTree = "<group>"; };
+		B378226321D358340077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = Carthage/Build/iOS/SWCompression.framework; sourceTree = "<group>"; };
+		B378226421D358340077E86F /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = Carthage/Build/iOS/BitByteData.framework; sourceTree = "<group>"; };
+		B378226921D35A270077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = Carthage/Build/tvOS/SWCompression.framework; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
@@ -960,6 +965,11 @@
 		B3C9D5E61DEAA7E80068D057 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CDEED021D4D238000C55F7 /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = Carthage/Build/tvOS/Promises.framework; sourceTree = "<group>"; };
+		B3CDEED221D4D31A000C55F7 /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = Carthage/Build/iOS/Promises.framework; sourceTree = "<group>"; };
+		B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBLPromises.framework; path = Carthage/Build/iOS/FBLPromises.framework; sourceTree = "<group>"; };
+		B3CDEED621D4D517000C55F7 /* FBLPromises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBLPromises.framework; path = Carthage/Build/tvOS/FBLPromises.framework; sourceTree = "<group>"; };
+		B3CDEED821D4D84E000C55F7 /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = Carthage/Build/tvOS/BitByteData.framework; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		B3D534EB20B001D700A83D4E /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillPageControl.swift; sourceTree = "<group>"; };
 		B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmBindObserver.swift; sourceTree = "<group>"; };
@@ -1032,7 +1042,6 @@
 				B3589E38219E954D001C5E12 /* Fabric.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
 				B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */,
-				B3532C3F21A9B682006CDA0F /* PromiseKit.framework in Frameworks */,
 				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
 				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
@@ -1042,6 +1051,7 @@
 				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */,
+				B3CDEED521D4D50F000C55F7 /* FBLPromises.framework in Frameworks */,
 				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
 				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
 				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
@@ -1053,10 +1063,11 @@
 				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
 				B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
-				B3B10480218F20FE00210C39 /* ZipArchive.framework in Frameworks */,
-				B3B1047C218F20FE00210C39 /* ZIPFoundation.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
+				B378226521D358340077E86F /* SWCompression.framework in Frameworks */,
+				B378226621D358340077E86F /* BitByteData.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
+				B3CDEED321D4D31A000C55F7 /* Promises.framework in Frameworks */,
 				B324C61F2192057E009F4EDC /* PVFCEU.framework in Frameworks */,
 				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
 				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
@@ -1069,6 +1080,7 @@
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
+				B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
@@ -1108,22 +1120,20 @@
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
-				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C310219195C9009F4EDC /* MobileCoreServices.framework in Frameworks */,
 				B324C30E219195C0009F4EDC /* Security.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
+				B3B1049C218F212800210C39 /* CocoaLumberjack.framework in Frameworks */,
+				B3B104A4218F212800210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
-				B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */,
-				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3532C4121A9B698006CDA0F /* PromiseKit.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
@@ -1131,27 +1141,30 @@
 				B3AF701C21916E38000FA7F9 /* PVSupport.framework in Frameworks */,
 				B316B4E2219269D800693472 /* PVYabause-tvOS.framework in Frameworks */,
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
-				B3B1049C218F212800210C39 /* CocoaLumberjack.framework in Frameworks */,
-				B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */,
-				B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */,
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
-				B3B104A4218F212800210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
+				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
+				B3CDEED721D4D517000C55F7 /* FBLPromises.framework in Frameworks */,
+				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
 				B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */,
 				B3B104A9218F212800210C39 /* NSLoggerSwift.framework in Frameworks */,
+				B3CDEED121D4D238000C55F7 /* Promises.framework in Frameworks */,
 				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
+				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				B3B1049D218F212800210C39 /* Realm.framework in Frameworks */,
-				B3B104A2218F212800210C39 /* RxAtomic.framework in Frameworks */,
-				B3B1049F218F212800210C39 /* RxBlocking.framework in Frameworks */,
+				B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */,
+				B3CDEED921D4D84E000C55F7 /* BitByteData.framework in Frameworks */,
 				B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */,
+				B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */,
+				B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */,
 				B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */,
-				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
-				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
-				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
+				B378226A21D35A280077E86F /* SWCompression.framework in Frameworks */,
 				B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */,
-				B3B1049A218F212800210C39 /* ZipArchive.framework in Frameworks */,
-				B3B10499218F212800210C39 /* ZIPFoundation.framework in Frameworks */,
+				B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */,
+				B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */,
+				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
+				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
 				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
 				B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -1314,6 +1327,14 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CDEED821D4D84E000C55F7 /* BitByteData.framework */,
+				B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */,
+				B3CDEED621D4D517000C55F7 /* FBLPromises.framework */,
+				B3CDEED021D4D238000C55F7 /* Promises.framework */,
+				B3CDEED221D4D31A000C55F7 /* Promises.framework */,
+				B378226921D35A270077E86F /* SWCompression.framework */,
+				B378226421D358340077E86F /* BitByteData.framework */,
+				B378226321D358340077E86F /* SWCompression.framework */,
 				B3DE5B3221B110C70066069E /* PVLibrary.framework */,
 				B3DE5B3021B110C20066069E /* PVSupport.framework */,
 				B3532C3E21A9B681006CDA0F /* PromiseKit.framework */,
@@ -2791,7 +2812,6 @@
 				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3F64ED9205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
-				B378225821D32B0B0077E86F /* SliderRow.swift in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */,
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
