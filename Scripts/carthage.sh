@@ -107,7 +107,7 @@ runCarthageAndCopyResolved() {
     local SWIFT_VERSION_PATH="$SOURCEPATH/Carthage/.swift-version"
     local swiftVersion=$(get_swift_version "$(xcrun -f swift)")
     echo "Storing current swift version $swiftVersion to $SWIFT_VERSION_PATH"
-    echo "$swiftVersion" > "$SWIFT_VERSION_PATH"
+    echo "$swiftVersion" > "${SWIFT_VERSION_PATH}"
 
     echo "This will be used to check Carthage dependency updates in the future."
 }
