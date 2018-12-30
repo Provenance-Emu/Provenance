@@ -76,3 +76,6 @@
 [submodule "Carthage/Checkouts/ZIPFoundation"]
 	path = Carthage/Checkouts/ZIPFoundation
 	url = https://github.com/weichsel/ZIPFoundation.git
+[submodule "Carthage/Checkouts/SWCompression/Tests/Test Files"]
+	path = Carthage/Checkouts/SWCompression/Tests/Test Files
+	url = git@github.com:Provenance-Emu/Provenance.git
