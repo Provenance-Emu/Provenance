@@ -45,7 +45,7 @@
 #import <PVSupport/PVSupport-Swift.h>
 
 
-#define USE_PCE_FAST 0
+#define USE_PCE_FAST 1
 #define USE_SNES_FAUST 1
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
@@ -258,9 +258,9 @@ static void mednafen_init(MednafenGameCore* current)
 	// PCE_Fast settings
 
 	MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
-	MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
-//	MDFNI_SetSetting("pce_fast.slstart", "4"); // PCE: First rendered scanline
-//	MDFNI_SetSetting("pce_fast.slend", "235"); // PCE: Last rendered scanline
+//      MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
+	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
+	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
 
 	// PC-FX Settings
 	MDFNI_SetSetting("pcfx.cdspeed", "8"); // PCFX: Emulated CD-ROM speed. Setting the value higher than 2, the default, will decrease loading times in most games by some degree.
