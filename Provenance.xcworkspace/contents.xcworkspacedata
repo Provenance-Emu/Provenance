@@ -53,6 +53,9 @@
          location = "group:Cores/Stella/PVStella.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/TGBDual/PVTGBDual.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
       </FileRef>
       <FileRef

@@ -79,3 +79,6 @@
 [submodule "Carthage/Checkouts/SWCompression/Tests/Test Files"]
 	path = Carthage/Checkouts/SWCompression/Tests/Test Files
 	url = git@github.com:Provenance-Emu/Provenance.git
+[submodule "Cores/TGBDual/tgbdual-emulator"]
+	path = Cores/TGBDual/tgbdual-emulator
+	url = https://github.com/libretro/tgbdual-libretro.git
