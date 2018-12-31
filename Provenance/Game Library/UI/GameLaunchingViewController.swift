@@ -772,13 +772,20 @@ extension GameLaunchingViewController where Self : UIViewController {
 			}
 
 			gameVC.core.setPauseEmulation(true)
-			do {
-				try gameVC.core.loadStateFromFile(atPath: saveState.file.url.path)
-			} catch {
-				let reason = (error as NSError).localizedFailureReason
-				presentError("Failed to load save state: \(error.localizedDescription) \(reason ?? "")")
-			}
-			gameVC.core.setPauseEmulation(false)
+            gameVC.core.loadStateFromFile(atPath: saveState.file.url.path) { (success, maybeError) in
+                guard success else {
+                    let description = maybeError?.localizedDescription ?? "No reason given"
+                    let reason = (maybeError as NSError?)?.localizedFailureReason
+
+                    self.presentError("Failed to load save state: \(description) \(reason ?? "")") {
+                        gameVC.core.setPauseEmulation(false)
+                    }
+
+                    return
+                }
+
+                gameVC.core.setPauseEmulation(false)
+            }
 		} else {
 			presentWarning("No core loaded")
 		}

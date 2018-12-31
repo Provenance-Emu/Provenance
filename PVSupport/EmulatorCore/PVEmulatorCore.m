@@ -255,7 +255,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         }
         
         if(sleepTime >= 0) {
-            [NSThread sleepForTimeInterval:sleepTime];
+#if !defined(DEBUG)
+            [NSThread sleepForTimeInterval:sleepTime]
+#endif
         }
         else if (sleepTime < -0.1) {
             // We're behind, we need to reset emulation time,
@@ -558,26 +560,24 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return NO;
 }
 
+// Over load to support async
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    NSError *error = [self createError:@"Failed to async save state."];
+    NSError *error;
+    BOOL success = [self saveStateToFileAtPath:fileName error:&error];
 
-    block(NO, error);
-    [self doesNotImplementSelector:_cmd];
+    block(success, error);
 }
 
+// Over load to support async
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    NSError *error = [self createError:@"Failed to async load state."];
+    NSError *error;
+    BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
 
-    block(NO, error);
-    [self doesNotImplementSelector:_cmd];
+    block(success, error);
 }
 
 -(BOOL)supportsSaveStates {
 	return YES;
-}
-
--(BOOL)supportsAsyncSaveStates {
-    return NO;
 }
 
 @end

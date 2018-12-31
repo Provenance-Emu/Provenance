@@ -11,6 +11,8 @@
 
 #pragma mark -
 
+typedef void (^SaveStateCompletion)(BOOL, NSError *);
+
 /*!
  * @function GET_CURRENT_OR_RETURN
  * @abstract Fetch the current game core, or fail with given return code if there is none.
@@ -69,7 +71,6 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, strong) NSString* romMD5;
 @property (nonatomic, strong) NSString* romSerial;
 @property (nonatomic, assign) BOOL supportsSaveStates;
-@property (nonatomic, assign) BOOL supportsAsyncSaveStates;
 @property (nonatomic, readonly) BOOL supportsRumble;
 
 @property (atomic, assign) BOOL shouldResyncTime;
@@ -138,10 +139,15 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (OERingBuffer * _Nonnull)ringBufferAtIndex:(NSUInteger)index;
 
 - (BOOL)saveStateToFileAtPath:(NSString * _Nonnull)path
-                        error:(NSError * __nullable * __nullable)error;
+                        error:(NSError * __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use saveStateToFileAtPath:completionHandler: instead.");
 
 - (BOOL)loadStateFromFileAtPath:(NSString *_Nonnull)path
-                          error:(NSError * __nullable * __nullable)error;
+                          error:(NSError * __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use loadStateFromFileAtPath:completionHandler: instead.");
+
+- (void)saveStateToFileAtPath:(NSString * _Nonnull)fileName
+            completionHandler:(nonnull SaveStateCompletion)block;
+- (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
+              completionHandler:(nonnull SaveStateCompletion)block;
 
 - (void)rumble;
 @end

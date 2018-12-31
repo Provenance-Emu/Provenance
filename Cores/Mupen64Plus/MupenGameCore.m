@@ -1271,16 +1271,7 @@ static void ConfigureRICE() {
 }
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
-    dispatch_group_t group = dispatch_group_create();
-    dispatch_group_enter(group);
-    __block BOOL savedSuccessfully = NO;
-    [self saveStateToFileAtPath:fileName completionHandler:^(BOOL success, NSError *error)
-     {
-         savedSuccessfully = success;
-         dispatch_group_leave(group);
-     }];
-    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-    return savedSuccessfully;
+    NSAssert(NO, @"Shouldn't be here since we overwrite the async call");
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
@@ -1293,18 +1284,27 @@ static void ConfigureRICE() {
          NSAssert(paramType == M64CORE_STATE_SAVECOMPLETE, @"This block should only be called for save completion!");
          if(newValue == 0)
          {
-             NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain" code:-5 userInfo:@{
-                 NSLocalizedDescriptionKey : @"Mupen Could not save the current state.",
-                 NSFilePathErrorKey : fileName
-             }];
+
              if (block) {
-                 block(NO, error);
+                 NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
+                                                      code:-5
+                                                  userInfo:@{
+                                                             NSLocalizedDescriptionKey : @"Mupen Could not save the current state.",
+                                                             NSFilePathErrorKey : fileName
+                                                             }];
+
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     block(YES, nil);
+                 });
+
              }
              return NO;
          }
 
          if (block) {
-             block(YES, nil);
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 block(YES, nil);
+             });
          }
          return NO;
      }];
@@ -1336,16 +1336,7 @@ static void ConfigureRICE() {
 
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
-    dispatch_group_t group = dispatch_group_create();
-    dispatch_group_enter(group);
-    __block BOOL loadedSuccessfully = NO;
-    [self loadStateFromFileAtPath:fileName completionHandler:^(BOOL success, NSError *error)
-     {
-         loadedSuccessfully = success;
-         dispatch_group_leave(group);
-     }];
-    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-    return loadedSuccessfully;
+    NSAssert(NO, @"Shouldn't be here since we overwrite the async call");
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
@@ -1359,16 +1350,23 @@ static void ConfigureRICE() {
          [self setPauseEmulation:wasPaused];
          if(newValue == 0)
          {
-             NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain" code:-3 userInfo:@{
-                 NSLocalizedDescriptionKey : @"Mupen Could not load the save state",
-                 NSLocalizedRecoverySuggestionErrorKey : @"The loaded file is probably corrupted.",
-                 NSFilePathErrorKey : fileName
-             }];
-             block(NO, error);
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
+                                                      code:-3
+                                                  userInfo:@{
+                                                             NSLocalizedDescriptionKey : @"Mupen Could not load the save state",
+                                                             NSLocalizedRecoverySuggestionErrorKey : @"The loaded file is probably corrupted.",
+                                                             NSFilePathErrorKey : fileName
+                                                             }];
+                 block(NO, error);
+             });
              return NO;
          }
 
-         block(YES, nil);
+         dispatch_async(dispatch_get_main_queue(), ^{
+             block(YES, nil);
+         });
+
          return NO;
      }];
 

@@ -2423,12 +2423,13 @@ extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
 		dismiss(animated: true, completion: nil)
 	}
 
-	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
-
+    func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion){
+        // TODO: Should be a different protocol for loading / saving states then really.
+        assertionFailure("Shouldn't be here. Can't create save states in game library")
 	}
 
-	func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
-
+	func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState, completion: @escaping SaveCompletion) {
+        assertionFailure("Shouldn't be here. Can't create save states in game library")
 	}
 
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {

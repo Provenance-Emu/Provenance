@@ -355,51 +355,50 @@ __weak static ATR800GameCore * _currentCore;
 
 #pragma mark - Save States
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
-    BOOL success = StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"ATR800 failed to create save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-	return success;
+    NSAssert(NO, @"Shouldn't be here since we overload the async version");
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     BOOL success = StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
-    if(block) block(success==YES, nil);
+    if (!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"ATR800 failed to create save state.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @""
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                            userInfo:userInfo];
+        block(NO, newError);
+    } else {
+        block(YES, nil);
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
-    BOOL success = StateSav_ReadAtariState([fileName UTF8String], "rb");
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
-
-		*error = newError;
-	}
-	return success;
+    NSAssert(NO, @"Shouldn't be here since we overload the async version");
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     BOOL success = StateSav_ReadAtariState([fileName UTF8String], "rb");
-    if(block) block(success==YES, nil);
+    if (!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @""
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                            userInfo:userInfo];
+
+        block(NO, newError);
+    } else {
+        block(YES, nil);
+    }
 }
 
 #pragma mark - Input

@@ -12,7 +12,6 @@ import QuartzCore
 import UIKit
 import RealmSwift
 import PVLibrary
-import PVSupport
 
 #if os(iOS)
 import XLActionController
@@ -21,18 +20,16 @@ import XLActionController
 private weak var staticSelf: PVEmulatorViewController?
 
 func uncaughtExceptionHandler(exception: NSException?) {
-    if let staticSelf =  staticSelf, staticSelf.core.supportsSaveStates {
-        do {
-            try staticSelf.autoSaveState()
-        } catch {
-            ELOG("\(error.localizedDescription)")
+    if let staticSelf = staticSelf, staticSelf.core.supportsSaveStates {
+        staticSelf.autoSaveState { result in
+            switch result {
+            case .success:
+                break
+            case .error(let error):
+                ELOG(error.localizedDescription)
+            }
         }
     }
-}
-
-public enum SaveStateError: Error {
-	case saveStatesUnsupportedByCore
-	case failedToSave(isAutosave: Bool)
 }
 
 #if os(tvOS)
@@ -78,7 +75,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     let game: PVGame
 
     var batterySavesPath : URL { return PVEmulatorConfiguration.batterySavesPath(forGame: game) }
-    var saveStatePath : URL { return PVEmulatorConfiguration.saveStatePath(forGame: game) }
     var BIOSPath : URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
@@ -411,28 +407,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
 	var autosaveTimer : Timer?
-	func destroyAutosaveTimer() {
-		autosaveTimer?.invalidate()
-		autosaveTimer = nil
-	}
-	func createAutosaveTimer() {
-		autosaveTimer?.invalidate()
-		if #available(iOS 10.0, tvOS 10.0, *) {
-			let interval = PVSettingsModel.shared.timedAutoSaveInterval
-			autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { (timer) in
-				DispatchQueue.main.async {
-					let image = self.captureScreenshot()
-					do {
-						try self.createNewSaveState(auto: true, screenshot: image)
-					} catch {
-						ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
-					}
-				}
-			})
-		} else {
-			// Fallback on earlier versions
-		}
-	}
 
 	var gameStartTime : Date?
     @objc
@@ -540,11 +514,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func appWillResignActive(_ note: Notification?) {
 		if PVSettingsModel.shared.autoSave, core.supportsSaveStates {
-			do {
-				try autoSaveState()
-			} catch {
-				ELOG("Auto-save failed \(error.localizedDescription)")
-			}
+            autoSaveState { result in
+                switch result {
+                case .success:
+                    break
+                case .error(let error):
+                    ELOG("Auto-save failed \(error.localizedDescription)")
+                }
+            }
 		}
         gameAudio.pause()
         showMenu(self)
@@ -599,266 +576,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func updateFPSLabel() {
 #if DEBUG
-        print("FPS: \(glViewController.framesPerSecond ?? 0)")
+        print("FPS: \(glViewController.framesPerSecond)")
 #endif
         fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
-
-    @objc func showSaveStateMenu() {
-		guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
-			return
-		}
-
-		let image = captureScreenshot()
-
-		if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
-			saveStatesViewController.saveStates = game.saveStates
-			saveStatesViewController.delegate = self
-			saveStatesViewController.screenshot = image
-			saveStatesViewController.coreID = core.coreIdentifier
-		}
-
-		saveStatesNavController.modalPresentationStyle = .overCurrentContext
-
-#if os(iOS)
-		if traitCollection.userInterfaceIdiom == .pad {
-			saveStatesNavController.modalPresentationStyle = .formSheet
-		}
-#endif
-#if os(tvOS)
-		if #available(tvOS 11, *) {
-			saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
-		}
-#endif
-		present(saveStatesNavController, animated: true)
-    }
-
-	func convertOldSaveStatesToNewIfNeeded() {
-		let fileManager = FileManager.default
-        let infoURL = saveStatePath.appendingPathComponent("info.plist", isDirectory: false)
-		let autoSaveURL = saveStatePath.appendingPathComponent("auto.svs", isDirectory: false)
-        let saveStateURLs = (0...4).map { saveStatePath.appendingPathComponent("\($0).svs", isDirectory: false) }
-
-		if fileManager.fileExists(atPath: infoURL.path) {
-			do {
-				try fileManager.removeItem(at: infoURL)
-			} catch let error {
-				presentError("Unable to remove old save state info.plist: \(error.localizedDescription)")
-			}
-		}
-
-		guard let realm = try? Realm() else {
-			presentError("Unable to instantiate realm, abandoning old save state conversion")
-			return
-		}
-
-		if fileManager.fileExists(atPath: autoSaveURL.path) {
-			do {
-				guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-					presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
-					return
-				}
-
-				let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
-				try fileManager.moveItem(at: autoSaveURL, to: newURL)
-				let saveFile = PVFile(withURL: newURL)
-				let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: true)
-				try realm.write {
-					realm.add(newState)
-				}
-			} catch let error {
-				presentError("Unable to convert autosave to new format: \(error.localizedDescription)")
-			}
-		}
-
-		for url in saveStateURLs {
-			if fileManager.fileExists(atPath: url.path) {
-				do {
-					guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-						presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
-						return
-					}
-
-					let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
-					try fileManager.moveItem(at: url, to: newURL)
-					let saveFile = PVFile(withURL: newURL)
-					let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: false)
-					try realm.write {
-						realm.add(newState)
-					}
-				} catch let error {
-					presentError("Unable to convert autosave to new format: \(error.localizedDescription)")
-				}
-			}
-		}
-	}
-
-	func autoSaveState() throws {
-		guard core.supportsSaveStates else {
-			WLOG("Core \(core.description) doesn't support save states.")
-			throw SaveStateError.saveStatesUnsupportedByCore
-		}
-
-		if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1)  < minimumPlayTimeToMakeAutosave {
-			ILOG("Haven't been playing game long enough to make an autosave")
-			return
-		}
-
-		guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
-			ILOG("Last autosave is too new to make new one")
-			return
-		}
-
-		if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
-			ILOG("Latest manual save state is too recent to make a new auto save")
-			return
-		}
-
-		let image = captureScreenshot()
-        try createNewSaveState(auto: true, screenshot: image)
-    }
-
-//    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
-	func createNewSaveState(auto: Bool, screenshot: UIImage?) throws {
-		guard core.supportsSaveStates else {
-			WLOG("Core \(core.description) doesn't support save states.")
-			throw SaveStateError.saveStatesUnsupportedByCore
-		}
-
-        let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
-
-        let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
-        let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
-
-		var imageFile: PVImageFile?
-		if let screenshot = screenshot {
-			if let jpegData = screenshot.jpegData(compressionQuality: 0.5) {
-				let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
-				do {
-					try jpegData.write(to: imageURL)
-//					try RomDatabase.sharedInstance.writeTransaction {
-//						let newFile = PVImageFile(withURL: imageURL)
-//						game.screenShots.append(newFile)
-//					}
-				} catch let error {
-					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
-				}
-
-				imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
-			}
-		}
-
-		do {
-			try self.core.saveStateToFile(atPath: saveURL.path)
-		} catch {
-			throw error
-//			throw SaveStateError.failedToSave(isAutosave: auto)
-		}
-
-        DLOG("Succeeded saving state, auto: \(auto)")
-        if let realm = try? Realm() {
-            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-                presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
-                return
-            }
-
-            do {
-                var saveState : PVSaveState!
-
-                try realm.write {
-                    saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-                    realm.add(saveState)
-                }
-
-                LibrarySerializer.storeMetadata(saveState, completion: { result in
-                    switch result {
-                    case .success(let  url):
-                        ILOG("Serialzed save state metadata to (\(url.path))")
-                    case .error(let error):
-                        ELOG("Failed to serialize save metadata. \(error)")
-                    }
-                })
-            } catch let error {
-                presentError("Unable to write save state to realm: \(error.localizedDescription)")
-                throw error
-            }
-
-            do {
-                // Delete the oldest auto-saves over 5 count
-                try realm.write {
-                    let autoSaves = game.autoSaves
-                    if autoSaves.count > 5 {
-                        autoSaves.suffix(from: 5).forEach {
-                            DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
-                            realm.delete($0)
-                        }
-                    }
-                }
-            } catch let error {
-                presentError("Unable to delete old auto-save from database: \(error.localizedDescription)")
-            }
-        }
-	}
-
-	func loadSaveState(_ state: PVSaveState) {
-		guard core.supportsSaveStates else {
-			WLOG("Core \(core.description) doesn't support save states.")
-			return
-		}
-
-		let realm = try! Realm()
-		guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-			presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
-			return
-		}
-
-		let loadSave = {
-			try! realm.write {
-				state.lastOpened = Date()
-			}
-
-			do {
-				try self.core.loadStateFromFile(atPath: state.file.url.path)
-			} catch {
-				self.presentError("Failed to load save state. \(error.localizedDescription)")
-			}
-			self.core.setPauseEmulation(false)
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
-		}
-
-		if core.projectVersion != state.createdWithCoreVersion {
-			let message =
-			"""
-			Save state created with version \(state.createdWithCoreVersion ?? "nil") but current \(core.projectName) core is version \(core.projectVersion).
-			Save file may not load. Create a new save state to avoid this warning in the future.
-			"""
-			presentWarning(message, completion: loadSave)
-		} else {
-			loadSave()
-		}
-	}
-
-	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController) {
-		dismiss(animated: true, completion: nil)
-		self.core.setPauseEmulation(false)
-		self.isShowingMenu = false
-		self.enableContorllerInput(false)
-	}
-
-	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
-		try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
-	}
-
-    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
-        try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
-		try PVSaveState.delete(state)
-    }
-
-	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
-		dismiss(animated: true, completion: nil)
-		loadSaveState(state)
-	}
 
 	func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
@@ -926,11 +647,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 	func quit(optionallySave canSave : Bool = true, completion: QuitCompletion? = nil) {
         if canSave, PVSettingsModel.shared.autoSave, core.supportsSaveStates {
-			do {
-				try autoSaveState()
-			} catch {
-				ELOG("Auto-save failed \(error.localizedDescription)")
-			}
+            autoSaveState { result in
+                switch result {
+                case .success:
+                    break
+                case .error(let error):
+                    ELOG("Auto-save failed \(error.localizedDescription)")
+                }
+            }
         }
 
         core.stopEmulation()

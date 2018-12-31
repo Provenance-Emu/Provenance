@@ -397,7 +397,14 @@ extension PVEmulatorViewController {
 		}
 		actionSheet.addAction(Action( "Reset", style: .default, handler: { action in
 			if PVSettingsModel.shared.autoSave, self.core.supportsSaveStates {
-				try? self.autoSaveState()
+                self.autoSaveState { result in
+                    switch result {
+                    case .success:
+                        break
+                    case .error(let error):
+                        ELOG("Auto-save failed \(error.localizedDescription)")
+                    }
+                }
 			}
 			self.core.setPauseEmulation(false)
 			self.core.resetEmulation()

@@ -437,6 +437,8 @@
 		B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; };
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
+		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
 		B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10487218F212600210C39 /* ZipArchive.framework */; };
 		B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10486218F212600210C39 /* ZIPFoundation.framework */; };
@@ -965,6 +967,7 @@
 		B3C9D5E61DEAA7E80068D057 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
 		B3CDEED021D4D238000C55F7 /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = Carthage/Build/tvOS/Promises.framework; sourceTree = "<group>"; };
 		B3CDEED221D4D31A000C55F7 /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = Carthage/Build/iOS/Promises.framework; sourceTree = "<group>"; };
 		B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBLPromises.framework; path = Carthage/Build/iOS/FBLPromises.framework; sourceTree = "<group>"; };
@@ -1281,6 +1284,7 @@
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
 				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */,
+				B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */,
 				B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */,
 				B38A2A432102326800374CDD /* PVEmulatorViewController~tvOS.swift */,
 				B38A2A452102328600374CDD /* PVEmulatorViewController~iOS.swift */,
@@ -2696,6 +2700,7 @@
 				B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */,
 				B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */,
 				B3AB37362187F569009D9244 /* PVAtariJaguarControllerViewController.swift in Sources */,
+				B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */,
@@ -2838,6 +2843,7 @@
 				B38A2A442102326800374CDD /* PVEmulatorViewController~tvOS.swift in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
+				B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */,
 				B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
 				B349AE661E9ABCF900ACD416 /* (null) in Sources */,

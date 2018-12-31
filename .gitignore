@@ -29,3 +29,4 @@ report.xml
 .vscode
 *.zip
 /fastlane/test_output
+/.folio

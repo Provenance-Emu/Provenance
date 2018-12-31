@@ -224,7 +224,12 @@ bool S9xPollAxis(uint32 id, int16 *value)
 
 void S9xMessage (int type, int number, const char *message)
 {
-    DLOG(@"%s", message);
+    if( type == S9X_ERROR ) {
+            // TODO: Set a variable for last error message so we can return an NSError to save/load
+        ELOG(@"%s", message);
+    } else {
+        DLOG(@"%s", message);
+    }
 }
 
 const char *S9xChooseMovieFilename(bool8 read_only)

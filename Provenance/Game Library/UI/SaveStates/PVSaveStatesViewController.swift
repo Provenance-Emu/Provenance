@@ -17,8 +17,9 @@ import RxRealm
 
 protocol PVSaveStatesViewControllerDelegate: class {
 	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
-	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws
-    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws
+    func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion)
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState, completion: @escaping SaveCompletion)
+    // TODO: This should either throw or have a callback as well
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
 }
 
@@ -215,12 +216,15 @@ final class PVSaveStatesViewController: UICollectionViewController {
 	}
 
 	@IBAction func newSaveState(_ sender: Any) {
-		do {
-			try delegate?.saveStatesViewControllerCreateNewState(self)
-		} catch {
-			let reason = (error as NSError).localizedFailureReason
-			self.presentError("Error creating save state: \(error.localizedDescription) \(reason ?? "")")
-		}
+        delegate?.saveStatesViewControllerCreateNewState(self) { result in
+            switch result {
+            case .success:
+               break
+            case .error(let error):
+                let reason = (error as NSError).localizedFailureReason ?? ""
+                self.presentError("Error creating save state: \(error.localizedDescription) \(reason)")
+            }
+        }
 	}
 
     func showSaveStateOptions(saveState: PVSaveState) {
@@ -229,11 +233,14 @@ final class PVSaveStatesViewController: UICollectionViewController {
             self.delegate?.saveStatesViewController(self, load: saveState)
         }))
         alert.addAction(UIAlertAction(title: "Save & Overwrite", style: .default, handler: { (action: UIAlertAction) in
-			do {
-				try self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
-			} catch {
-				self.presentError("Error overwriting save state: \(error.localizedDescription)")
-			}
+            self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState) { result in
+                switch result {
+                case .success:
+                    break
+                case .error(let error):
+                    self.presentError("Error overwriting save state: \(error.localizedDescription)")
+                }
+            }
         }))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
 			do {
