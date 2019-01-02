@@ -9,6 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.gb</string>
+		<string>com.provenance.gbc</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>TGBDual</string>
