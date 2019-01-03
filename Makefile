@@ -191,12 +191,12 @@ test:
 developer_ios:
 	$(info Building iOS for Developer profile…)
 
-	bundle exec fastlane build_developer :scheme Provenance-Release
+	bundle exec fastlane build_developer scheme:Provenance-Release
 	
 developer_tvos:
 	$(info Building tvOS for Developer profile…)
 
-	bundle exec fastlane build_developer :scheme ProvenanceTV-Release
+	bundle exec fastlane build_developer scheme:ProvenanceTV-Release
 
 ## Make a .zip package of frameworks
 package:
