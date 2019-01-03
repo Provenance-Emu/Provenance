@@ -161,13 +161,26 @@ extension PVEmulatorViewController {
 			}))
 		}
 		actionsheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            let completion = {
+                self.core.setPauseEmulation(false)
+                self.core.resetEmulation()
+                self.isShowingMenu = false
+                self.enableContorllerInput(false)
+            }
+
 			if PVSettingsModel.shared.autoSave, self.core.supportsSaveStates {
-				try? self.autoSaveState()
-			}
-			self.core.setPauseEmulation(false)
-			self.core.resetEmulation()
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
+                self.autoSaveState { result in
+                    switch result {
+                    case .success:
+                        break
+                    case .error(let error):
+                        ELOG("Auto-save failed \(error.localizedDescription)")
+                    }
+                    completion()
+                }
+            } else {
+                completion()
+            }
 		}))
 
 		let lastPlayed = game.lastPlayed ?? Date()
