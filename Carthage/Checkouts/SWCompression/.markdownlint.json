@@ -1,7 +1,0 @@
-{
-    "MD007": { "indent": 4 },
-    "MD013": { "line_length": 120 },
-    "MD024": false,
-    "MD026": { "punctuation": ".,;:!"},
-    "MD029": { "style": "ordered" }
-}

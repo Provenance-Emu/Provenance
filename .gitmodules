@@ -65,8 +65,6 @@
 	url = https://github.com/mxcl/PromiseKit.git
 [submodule "Carthage/Checkouts/XLActionController"]
 	url = https://github.com/xmartlabs/XLActionController.git
-[submodule "Carthage/Checkouts/SWCompression"]
-	url = https://github.com/tsolomko/SWCompression.git
 [submodule "Carthage/Checkouts/promises"]
 	path = Carthage/Checkouts/promises
 	url = https://github.com/google/promises.git
@@ -76,9 +74,6 @@
 [submodule "Carthage/Checkouts/ZIPFoundation"]
 	path = Carthage/Checkouts/ZIPFoundation
 	url = https://github.com/weichsel/ZIPFoundation.git
-[submodule "Carthage/Checkouts/SWCompression/Tests/Test Files"]
-	path = Carthage/Checkouts/SWCompression/Tests/Test Files
-	url = git@github.com:Provenance-Emu/Provenance.git
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git

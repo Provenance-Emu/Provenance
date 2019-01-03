@@ -16,7 +16,6 @@ $(SRCROOT)/Carthage/Build/tvOS/RxDataSources.framework
 $(SRCROOT)/Carthage/Build/tvOS/RxRealm.framework
 $(SRCROOT)/Carthage/Build/tvOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/tvOS/SQLite.framework
-$(SRCROOT)/Carthage/Build/tvOS/SWCompression.framework
 $(SRCROOT)/Carthage/Build/tvOS/SwiftyUserDefaults.framework
 $(SRCROOT)/Carthage/Build/tvOS/ZIPFoundation.framework
 $(SRCROOT)/Carthage/Build/tvOS/ZipArchive.framework
