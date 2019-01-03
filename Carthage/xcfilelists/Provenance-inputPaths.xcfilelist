@@ -1,4 +1,3 @@
-$(SRCROOT)/Carthage/Build/iOS/BitByteData.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/Differentiator.framework

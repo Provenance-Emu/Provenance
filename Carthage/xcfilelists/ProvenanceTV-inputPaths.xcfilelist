@@ -1,4 +1,3 @@
-$(SRCROOT)/Carthage/Build/tvOS/BitByteData.framework
 $(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/tvOS/Differentiator.framework

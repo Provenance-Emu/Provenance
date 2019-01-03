@@ -293,9 +293,6 @@
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
 		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
 		B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */; };
-		B378226521D358340077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226321D358340077E86F /* SWCompression.framework */; };
-		B378226621D358340077E86F /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226421D358340077E86F /* BitByteData.framework */; };
-		B378226A21D35A280077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226921D35A270077E86F /* SWCompression.framework */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -452,7 +449,6 @@
 		B3CDEED321D4D31A000C55F7 /* Promises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED221D4D31A000C55F7 /* Promises.framework */; };
 		B3CDEED521D4D50F000C55F7 /* FBLPromises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */; };
 		B3CDEED721D4D517000C55F7 /* FBLPromises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED621D4D517000C55F7 /* FBLPromises.framework */; };
-		B3CDEED921D4D84E000C55F7 /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED821D4D84E000C55F7 /* BitByteData.framework */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -1079,8 +1075,6 @@
 				B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
-				B378226521D358340077E86F /* SWCompression.framework in Frameworks */,
-				B378226621D358340077E86F /* BitByteData.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
 				B3CDEED321D4D31A000C55F7 /* Promises.framework in Frameworks */,
 				B324C61F2192057E009F4EDC /* PVFCEU.framework in Frameworks */,
@@ -1171,13 +1165,11 @@
 				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				B3B1049D218F212800210C39 /* Realm.framework in Frameworks */,
 				B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */,
-				B3CDEED921D4D84E000C55F7 /* BitByteData.framework in Frameworks */,
 				B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */,
 				B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */,
 				B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */,
 				B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */,
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
-				B378226A21D35A280077E86F /* SWCompression.framework in Frameworks */,
 				B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */,
 				B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */,

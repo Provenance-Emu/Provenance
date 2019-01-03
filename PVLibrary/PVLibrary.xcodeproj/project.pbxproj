@@ -84,10 +84,6 @@
 		B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B378226121D358190077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378225F21D358180077E86F /* SWCompression.framework */; };
-		B378226221D358190077E86F /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226021D358190077E86F /* BitByteData.framework */; };
-		B378226821D358740077E86F /* BitByteData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226721D358740077E86F /* BitByteData.framework */; };
-		B378226C21D35A2F0077E86F /* SWCompression.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378226B21D35A2F0077E86F /* SWCompression.framework */; };
 		B378227121D40A360077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FCE21916106000FA7F9 /* RxSwift.framework */; };
 		B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; };
 		B378227421D41D400077E86F /* Promises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B378227321D41D400077E86F /* Promises.framework */; };
@@ -875,9 +871,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B378226121D358190077E86F /* SWCompression.framework in Frameworks */,
 				B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */,
-				B378226221D358190077E86F /* BitByteData.framework in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3067F762106B9190091437F /* MobileCoreServices.framework in Frameworks */,
 				B378227421D41D400077E86F /* Promises.framework in Frameworks */,
@@ -891,9 +885,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B378227121D40A360077E86F /* RxSwift.framework in Frameworks */,
-				B378226821D358740077E86F /* BitByteData.framework in Frameworks */,
 				B378227621D41D4D0077E86F /* Promises.framework in Frameworks */,
-				B378226C21D35A2F0077E86F /* SWCompression.framework in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
