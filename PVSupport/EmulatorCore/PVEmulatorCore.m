@@ -255,9 +255,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         }
         
         if(sleepTime >= 0) {
-#if !defined(DEBUG)
+//#if !defined(DEBUG)
             [NSThread sleepForTimeInterval:sleepTime];
-#endif
+//#endif
         }
         else if (sleepTime < -0.1) {
             // We're behind, we need to reset emulation time,
