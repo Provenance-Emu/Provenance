@@ -34,13 +34,12 @@
 [submodule "Carthage/Checkouts/RxGesture"]
 	path = Carthage/Checkouts/RxGesture
 	url = https://github.com/RxSwiftCommunity/RxGesture.git
-[submodule "Carthage/Checkouts/BitByteData"]
-	path = Carthage/Checkouts/BitByteData
-	url = https://github.com/tsolomko/BitByteData.git
 [submodule "Carthage/Checkouts/HockeySDK-iOS"]
 	url = https://github.com/bitstadium/HockeySDK-iOS.git
+	path = Carthage/Checkouts/HockeySDK-iOS
 [submodule "Carthage/Checkouts/HockeySDK-tvOS"]
 	url = https://github.com/bitstadium/HockeySDK-tvOS.git
+	path = Carthage/Checkouts/HockeySDK-tvOS
 [submodule "Carthage/Checkouts/Reachability.swift"]
 	path = Carthage/Checkouts/Reachability.swift
 	url = https://github.com/ashleymills/Reachability.swift.git
@@ -49,15 +48,19 @@
 	url = https://github.com/RxSwiftCommunity/RxDataSources.git
 [submodule "Carthage/Checkouts/SwiftyUserDefaults"]
 	url = https://github.com/radex/SwiftyUserDefaults.git
+	path = Carthage/Checkouts/SwiftyUserDefaults
 [submodule "Carthage/Checkouts/NSLogger"]
 	path = Carthage/Checkouts/NSLogger
 	url = https://github.com/fpillet/NSLogger.git
 [submodule "Carthage/Checkouts/SQLite.swift"]
 	url = https://github.com/stephencelis/SQLite.swift.git
+	path = Carthage/Checkouts/SQLite.swift
 [submodule "Carthage/Checkouts/realm-cocoa"]
 	url = https://github.com/Provenance-Emu/realm-cocoa.git
+	path = Carthage/Checkouts/realm-cocoa
 [submodule "Carthage/Checkouts/CocoaLumberjack"]
 	url = https://github.com/CocoaLumberjack/CocoaLumberjack.git
+	path = Carthage/Checkouts/CocoaLumberjack
 [submodule "Carthage/Checkouts/QuickTableViewController"]
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git
@@ -65,6 +68,7 @@
 	url = https://github.com/mxcl/PromiseKit.git
 [submodule "Carthage/Checkouts/XLActionController"]
 	url = https://github.com/xmartlabs/XLActionController.git
+	path = Carthage/Checkouts/XLActionController
 [submodule "Carthage/Checkouts/promises"]
 	path = Carthage/Checkouts/promises
 	url = https://github.com/google/promises.git
