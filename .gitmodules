@@ -81,3 +81,6 @@
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
+[submodule "Carthage/Checkouts/SteamController"]
+	path = Carthage/Checkouts/SteamController
+	url = https://github.com/zydeco/SteamController.git

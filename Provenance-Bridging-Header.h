@@ -6,6 +6,7 @@
 #import "PVLogViewController.h"
 //#import "Provenance/Version.h"
 #import <Realm/Realm.h>
+#import <SteamController/SteamController.h>
 // Hack cause they can't make modules for some reason
 //#import <ProSystem/ProSystemGameCore.h>
 //#import <PicoDrive/PicodriveGameCore.h>

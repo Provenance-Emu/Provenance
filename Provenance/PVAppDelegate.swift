@@ -238,6 +238,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
     }
     func applicationDidBecomeActive(_ application: UIApplication) {
+        SteamControllerManager.shared().scanForControllers()
     }
     func applicationWillTerminate(_ application: UIApplication) {
     }

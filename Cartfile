@@ -6,6 +6,7 @@ github "bcylin/QuickTableViewController" "v1.0.0"
 github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
 github "google/promises"
+github "zydeco/SteamController" "v1.0.1"
 
 # Crashlytics - Static Libs
 # iOS

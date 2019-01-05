@@ -18,6 +18,7 @@ $(SRCROOT)/Carthage/Build/iOS/RxGesture.framework
 $(SRCROOT)/Carthage/Build/iOS/RxRealm.framework
 $(SRCROOT)/Carthage/Build/iOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
+$(SRCROOT)/Carthage/Build/iOS/SteamController.framework
 $(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework
 $(SRCROOT)/Carthage/Build/iOS/XLActionController.framework
 $(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework
