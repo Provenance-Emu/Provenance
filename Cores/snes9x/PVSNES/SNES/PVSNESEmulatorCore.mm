@@ -801,6 +801,11 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 #endif
 }
 
+// Add in for double buffering and smoother scrolling // TODO: look into Vsync for Pv.
+- (BOOL)isDoubleBuffered {
+    return YES;
+}
+
 #pragma mark Audio
 
 bool8 S9xOpenSoundDevice(void)
