@@ -1468,7 +1468,7 @@
 				<key>PVControlType</key>
 				<string>PVLeftShoulderButton</string>
 				<key>PVControlTitle</key>
-				<string>L1</string>
+				<string>L</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1476,7 +1476,7 @@
 				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
-				<string>R1</string>
+				<string>R</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
