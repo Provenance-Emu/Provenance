@@ -367,6 +367,11 @@ static bool environment_callback(unsigned cmd, void *data)
 	return _frameInterval ? _frameInterval : 59.92;
 }
 
+// Add in for double buffering and smoother scrolling // TODO: look into Vsync for Pv.
+- (BOOL)isDoubleBuffered {
+    return YES;
+}
+
 #pragma mark - Audio
 
 - (double)audioSampleRate
