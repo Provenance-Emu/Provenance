@@ -39,7 +39,9 @@ final class PVSaturnControllerViewController: PVControllerViewController<PVSatur
                 button.buttonTag = .z
             }
         }
-
+        
+        leftShoulderButton?.buttonTag = .l
+        rightShoulderButton?.buttonTag = .r
         startButton?.buttonTag = .start
     }
 

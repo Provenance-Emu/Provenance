@@ -501,7 +501,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                     buttonGroup?.transform = CGAffineTransform(scaleX: scaleButtons, y: scaleButtons)
                     buttonGroup?.frame.origin.x += 30
                     buttonGroup?.frame.origin.y += 15
-                    if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "PCFX" {
+                    if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "SS" || system.shortName == "PCFX" {
                         buttonGroup?.frame.origin.x += 15
                         buttonGroup?.frame.origin.y += 5
                     } else if system.shortName == "N64" {
@@ -744,7 +744,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
-                if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "PCFX" {
+                if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "SS" || system.shortName == "PCFX" {
                     startFrame.origin.x -= (controlSize.width / 2)
                 }
             } else if (buttonGroup != nil) && (buttonGroup?.isHidden)! {
