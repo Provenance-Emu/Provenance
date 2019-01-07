@@ -124,12 +124,11 @@ final class PVSettingsViewController : PVQuickTableViewController {
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-        controllerRows.append(PVSettingsSliderRow(title: "Button Opacity", subtitle: nil, valueLimits: (min: 0.2, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+        controllerRows.append(PVSettingsSliderRow(title: "Opacity", subtitle: nil, valueLimits: (min: 0.2, max: 1.0), key: \PVSettingsModel.controllerOpacity))
 
         controllerRows.append(contentsOf: [
             PVSettingsSwitchRow(title: "Button Colors", key: \PVSettingsModel.buttonTints),
-            PVSettingsSwitchRow(title: "Start/Select Always", subtitle: Subtitle.belowTitle("Supports: SNES, SMS, SG, GG, SCD, PSX"), key: \PVSettingsModel.startSelectAlwaysOn),
-            PVSettingsSwitchRow(title: "All-Right Shoulder", subtitle: .belowTitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
+            PVSettingsSwitchRow(title: "All-Right Shoulders", subtitle: .belowTitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
             PVSettingsSwitchRow(title: "Haptic Feedback", key: \PVSettingsModel.buttonVibration)
             ])
         #endif
@@ -211,7 +210,11 @@ final class PVSettingsViewController : PVQuickTableViewController {
 
             PVSettingsSwitchRow(title: "4X Multisampling GL",
                                 subtitle: Subtitle.belowTitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling)
+                                key: \PVSettingsModel.debugOptions.multiSampling),
+            
+            PVSettingsSwitchRow(title: "Start/Select Always On-Screen",
+                                subtitle: Subtitle.belowTitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+                                key: \PVSettingsModel.startSelectAlwaysOn),
 
 //            PVSettingsSwitchRow(title: "Unsupported Cores",
 //                                subtitle: Subtitle.belowTitle("Cores that are in development"),
