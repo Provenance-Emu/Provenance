@@ -51,8 +51,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 				let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(text: "BIOSES",
 																		   detailText: .none,
 																		   icon: nil,
-																		   customization:
-					{ (cell, rowStyle) in
+																		   customization: { (cell, rowStyle) in
 						#if os(iOS)
 						let bgView = UIView()
 						bgView.backgroundColor = Theme.currentTheme.settingsCellBackground!.withAlphaComponent(0.9)
@@ -67,8 +66,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 					let biosRow = NavigationRow<SystemSettingsCell>(text: bios.descriptionText,
 																	detailText: .subtitle(subtitle),
 																	icon: nil,
-																	customization:
-						{ (cell, row) in
+																	customization: { (cell, row) in
 
 							#if os(iOS)
 							var backgroundColor : UIColor? = Theme.currentTheme.settingsCellBackground
@@ -105,8 +103,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 							cell.backgroundView = UIView()
 							cell.backgroundView?.backgroundColor = backgroundColor
 					},
-																	action:
-						{ row in
+																	action: { row in
 							#if os(iOS)
 							UIPasteboard.general.string = bios.expectedMD5.uppercased()
                             let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard", preferredStyle: .alert)
@@ -124,7 +121,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 						   footer: nil)
 		}
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -142,7 +139,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
             self.tableView.reloadData()
         }
     }
-    
+
     deinit {
         systemsToken?.invalidate()
     }

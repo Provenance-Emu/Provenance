@@ -87,9 +87,9 @@ final class CoreOptionsViewController : QuickTableViewController {
                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                                                                 self.present(actionController, animated: true)
                     })
-                case .range(_, _, _):
+                case .range:
                     fatalError("Unfinished feature")
-                case .string(_, _):
+                case .string:
                     fatalError("Unfinished feature")
                 default:
                     fatalError("Unfinished feature")

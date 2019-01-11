@@ -227,10 +227,10 @@ final class PVSettingsViewController : PVQuickTableViewController {
             PVSettingsSwitchRow(text: "4X Multisampling GL",
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
                                 key: \PVSettingsModel.debugOptions.multiSampling),
-            
+
             PVSettingsSwitchRow(text: "Start/Select Always On-Screen",
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
-                                key: \PVSettingsModel.startSelectAlwaysOn),
+                                key: \PVSettingsModel.startSelectAlwaysOn)
 
 //            PVSettingsSwitchRow(text: "Unsupported Cores",
 //                                detailText: .subtitle("Cores that are in development"),
