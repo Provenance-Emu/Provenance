@@ -64,8 +64,8 @@ final class PVSettingsViewController : PVQuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         // -- Section : App
-        let autolockRow = PVSettingsSwitchRow(title: "Disable Auto Lock", key: \PVSettingsModel.disableAutoLock)
-        let systemsRow = SegueNavigationRow(title: "Systems", viewController: self, segue: "pushSystemSettings")
+        let autolockRow = PVSettingsSwitchRow(text: "Disable Auto Lock", key: \PVSettingsModel.disableAutoLock)
+        let systemsRow = SegueNavigationRow(text: "Systems", viewController: self, segue: "pushSystemSettings")
 
         #if os(tvOS)
         let appRows : [TableRow] = [systemsRow]
@@ -83,9 +83,9 @@ final class PVSettingsViewController : PVQuickTableViewController {
                 return nil
             }
 
-            return NavigationRow<SystemSettingsCell>(title: pvcore.projectName, subtitle: .none, icon: nil, customization: nil, action: {[weak self] (row) in
+            return NavigationRow<SystemSettingsCell>(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: {[weak self] (row) in
                 let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
-                coreOptionsVC.title = row.title
+                coreOptionsVC.title = row.text
                 self?.navigationController?.pushViewController(coreOptionsVC, animated: true)
             })
         }
@@ -94,10 +94,10 @@ final class PVSettingsViewController : PVQuickTableViewController {
 
         // -- Section : Saves
         let saveRows : [TableRow] = [
-            PVSettingsSwitchRow(title: "Auto Save", key: \PVSettingsModel.autoSave),
-            PVSettingsSwitchRow(title: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
-            PVSettingsSwitchRow(title: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
-            PVSettingsSwitchRow(title: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
+            PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave),
+            PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
+            PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
+            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
         ]
 
         let savesSection = Section(title: "Saves", rows: saveRows)
@@ -105,16 +105,15 @@ final class PVSettingsViewController : PVQuickTableViewController {
         // -- Section : Audio/Video
         var avRows = [TableRow]()
         #if os(iOS)
-        avRows.append(contentsOf: [PVSettingsSwitchRow(title: "Volume HUD", key: \PVSettingsModel.volumeHUD)
-                                   ])
-        avRows.append(PVSettingsSliderRow(title: "Volume", subtitle: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
+        avRows.append(contentsOf: [PVSettingsSwitchRow(text: "Volume HUD", key: \PVSettingsModel.volumeHUD)])
+        avRows.append(PVSettingsSliderRow(text: "Volume", detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
         #endif
 
         avRows.append(contentsOf: [
-            PVSettingsSwitchRow(title: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
-            PVSettingsSwitchRow(title: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
-            PVSettingsSwitchRow(title: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
-            PVSettingsSwitchRow(title: "FPS Counter", key: \PVSettingsModel.showFPSCount)
+            PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
+            PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
+            PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
+            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
         ])
 
         let avSection = Section(title: "Audio/Video", rows: avRows)
@@ -124,17 +123,17 @@ final class PVSettingsViewController : PVQuickTableViewController {
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-        controllerRows.append(PVSettingsSliderRow(title: "Opacity", subtitle: nil, valueLimits: (min: 0.2, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+        controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.2, max: 1.0), key: \PVSettingsModel.controllerOpacity))
 
         controllerRows.append(contentsOf: [
-            PVSettingsSwitchRow(title: "Button Colors", key: \PVSettingsModel.buttonTints),
-            PVSettingsSwitchRow(title: "All-Right Shoulders", subtitle: .belowTitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
-            PVSettingsSwitchRow(title: "Haptic Feedback", key: \PVSettingsModel.buttonVibration)
+            PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
+            PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
+            PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration)
             ])
         #endif
         controllerRows.append(contentsOf: [
-            SegueNavigationRow(title: "Controllers", subtitle: .belowTitle("Assign players"), viewController: self, segue: "controllersSegue"),
-            SegueNavigationRow(title: "iCade Controller", subtitle: .belowTitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { (cell, row) in
+            SegueNavigationRow(text: "Controllers", detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
+            SegueNavigationRow(text: "iCade Controller", detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { (cell, row) in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
             })
             ])
@@ -144,26 +143,32 @@ final class PVSettingsViewController : PVQuickTableViewController {
         // Game Library
 
         var libraryRows : [TableRow] = [
-            NavigationRow<SystemSettingsCell>(title: "Launch Web Server", subtitle: .belowTitle("Import/Export ROMs, saves, cover art..."), icon: nil, customization: nil, action: {[weak self] (row) in
-                self?.launchWebServerAction()
+            NavigationRow<SystemSettingsCell>(
+                text: "Launch Web Server",
+                detailText: .subtitle("Import/Export ROMs, saves, cover art..."),
+                icon: nil,
+                customization: nil,
+                action: {[weak self] (row) in
+                    self?.launchWebServerAction()
             })
         ]
 
         #if os(tvOS)
-        let webServerAlwaysOn = PVSettingsSwitchRow(title: "Web Server Always-On",
-                                                    subtitle: .belowTitle(""),
-                                                    key: \PVSettingsModel.webDavAlwaysOn,
-                                                    customization: { (cell, row) in
-                                                        if PVSettingsModel.shared.webDavAlwaysOn {
-                                                            let subTitleText = "\nWebDav: \(PVWebServer.shared.webDavURLString)"
+        let webServerAlwaysOn = PVSettingsSwitchRow(
+            text: "Web Server Always-On",
+            detailText: .subtitle(""),
+            key: \PVSettingsModel.webDavAlwaysOn,
+            customization: { (cell, row) in
+                if PVSettingsModel.shared.webDavAlwaysOn {
+                    let subTitleText = "\nWebDav: \(PVWebServer.shared.webDavURLString)"
 
-                                                            let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
-                                                            let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
-                                                            cell.detailTextLabel?.attributedText = subTitleAttrString
-                                                        } else {
-                                                            cell.detailTextLabel?.text = nil
-                                                            cell.detailTextLabel?.attributedText = nil
-                                                        }
+                    let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
+                    let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
+                    cell.detailTextLabel?.attributedText = subTitleAttrString
+                } else {
+                    cell.detailTextLabel?.text = nil
+                    cell.detailTextLabel?.attributedText = nil
+                }
         })
         libraryRows.append(webServerAlwaysOn)
         #endif
@@ -172,52 +177,63 @@ final class PVSettingsViewController : PVQuickTableViewController {
 
         // Game Library 2
         let library2Rows : [TableRow] = [
-            NavigationRow<SystemSettingsCell>(title: "Refresh Game Library", subtitle: .belowTitle("Re-import ROMs ⚠️ Slow"), icon: nil, customization: nil, action: {[weak self] (row) in
-                self?.refreshGameLibraryAction()
+            NavigationRow<SystemSettingsCell>(
+                text: "Refresh Game Library",
+                detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
+                icon: nil,
+                customization: nil,
+                action: {[weak self] (row) in
+                    self?.refreshGameLibraryAction()
             }),
-            NavigationRow<SystemSettingsCell>(title: "Empty Image Cache", subtitle: .belowTitle("Re-download covers"), icon: nil, customization: nil, action: {[weak self] (row) in
-                self?.emptyImageCacheAction()
+            NavigationRow<SystemSettingsCell>(
+                text: "Empty Image Cache",
+                detailText: .subtitle("Re-download covers"),
+                icon: nil,
+                customization: nil,
+                action: {[weak self] (row) in
+                    self?.emptyImageCacheAction()
             }),
-            NavigationRow<SystemSettingsCell>(title: "Manage Conflicts",
-                          subtitle: .belowTitle("Manually resolve conflicted imports"),
-                          icon: nil,
-                          customization: { (cell, row) in
-                            let baseTitle = "Manually resolve conflicted imports"
-                            let subTitle : String
-                            if let count = GameImporter.shared.conflictedFiles?.count, count > 0 {
-                                subTitle = baseTitle + ": \(count) detected"
-                            } else {
-                                subTitle = baseTitle + ": None detected"
-                            }
+            NavigationRow<SystemSettingsCell>(
+                text: "Manage Conflicts",
+                detailText: .subtitle("Manually resolve conflicted imports"),
+                icon: nil,
+                customization: { (cell, row) in
+                    let baseTitle = "Manually resolve conflicted imports"
+                    let detailText : String
+                    if let count = GameImporter.shared.conflictedFiles?.count, count > 0 {
+                        detailText = baseTitle + ": \(count) detected"
+                    } else {
+                        detailText = baseTitle + ": None detected"
+                    }
 
-                            cell.detailTextLabel?.text = subTitle
-                },
-                          action: {[weak self] (row) in self?.manageConflictsAction() }),
-            SegueNavigationRow(title: "Appearance", subtitle: .belowTitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
+                    cell.detailTextLabel?.text = detailText
+            },
+                action: {[weak self] (row) in self?.manageConflictsAction() }),
+            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
         ]
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
 
         // Beta options
         let betaRows : [TableRow] = [
-            PVSettingsSwitchRow(title: "iCloud Sync",
-                                subtitle: Subtitle.belowTitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
+            PVSettingsSwitchRow(text: "iCloud Sync",
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
 
-            PVSettingsSwitchRow(title: "Multi-threaded GL",
-                                subtitle: Subtitle.belowTitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+            PVSettingsSwitchRow(text: "Multi-threaded GL",
+                                detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
                                 key: \PVSettingsModel.debugOptions.multiThreadedGL),
 
-            PVSettingsSwitchRow(title: "4X Multisampling GL",
-                                subtitle: Subtitle.belowTitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+            PVSettingsSwitchRow(text: "4X Multisampling GL",
+                                detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
                                 key: \PVSettingsModel.debugOptions.multiSampling),
             
-            PVSettingsSwitchRow(title: "Start/Select Always On-Screen",
-                                subtitle: Subtitle.belowTitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+            PVSettingsSwitchRow(text: "Start/Select Always On-Screen",
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
                                 key: \PVSettingsModel.startSelectAlwaysOn),
 
-//            PVSettingsSwitchRow(title: "Unsupported Cores",
-//                                subtitle: Subtitle.belowTitle("Cores that are in development"),
+//            PVSettingsSwitchRow(text: "Unsupported Cores",
+//                                detailText: .subtitle("Cores that are in development"),
 //                                key: \PVSettingsModel.debugOptions.unsupportedCores)
             ]
 
@@ -276,36 +292,37 @@ final class PVSettingsViewController : PVQuickTableViewController {
         let buildDateString : String = outputDateFormatter.string(from: buildDate)
 
         let buildInformationRows : [TableRow] = [
-            NavigationRow<SystemSettingsCell>(title: "Version",
-                          subtitle: .rightAligned(versionText ?? "Unknown"),
-                          icon: nil,
-                          customization: { (cell, row) in
-                            if !masterBranch {
-                                cell.detailTextLabel?.textColor = UIColor(hex: "#F5F5A0")
-                            }
+            NavigationRow<SystemSettingsCell>(
+                text: "Version",
+                detailText: .value2(versionText ?? "Unknown"),
+                icon: nil,
+                customization: { (cell, row) in
+                    if !masterBranch {
+                        cell.detailTextLabel?.textColor = UIColor(hex: "#F5F5A0")
+                    }
             },
-                          action: nil),
-            NavigationRow<SystemSettingsCell>(title: "Build", subtitle: .rightAligned(bundleVersion)),
-            NavigationRow<SystemSettingsCell>(title: "Mode", subtitle: .rightAligned(modeLabel)),
-            NavigationRow<SystemSettingsCell>(title: "Git Revision", subtitle: .rightAligned(revisionString)),
-            NavigationRow<SystemSettingsCell>(title: "Build Date", subtitle: .rightAligned(buildDateString)),
-            NavigationRow<SystemSettingsCell>(title: "Builder", subtitle: .rightAligned(builtByUser)),
-            NavigationRow<SystemSettingsCell>(title: "Bundle ID", subtitle: .rightAligned(Bundle.main.bundleIdentifier ?? "Unknown"))
+                action: nil),
+            NavigationRow<SystemSettingsCell>(text: "Build", detailText: .value2(bundleVersion)),
+            NavigationRow<SystemSettingsCell>(text: "Mode", detailText: .value2(modeLabel)),
+            NavigationRow<SystemSettingsCell>(text: "Git Revision", detailText: .value2(revisionString)),
+            NavigationRow<SystemSettingsCell>(text: "Build Date", detailText: .value2(buildDateString)),
+            NavigationRow<SystemSettingsCell>(text: "Builder", detailText: .value2(builtByUser)),
+            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
         ]
 
         let buildSection = Section(title: "Build Information", rows: buildInformationRows)
 
         // Extra Info Section
         let extraInfoRows : [TableRow] = [
-            SegueNavigationRow(title: "Cores", subtitle: .belowTitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
-            SegueNavigationRow(title: "Licenses", subtitle: .none, viewController: self, segue: "licensesSegue", customization: nil)
+            SegueNavigationRow(text: "Cores", detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
+            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
         ]
 
         let extraInfoSection = Section(title: "3rd Party & Legal", rows: extraInfoRows)
 
         // Debug section
         let debugRows : [TableRow] = [
-            NavigationRow<SystemSettingsCell>(title: "Logs", subtitle: .belowTitle("Live logging information"), icon: nil, customization: nil, action: { (row) in
+            NavigationRow<SystemSettingsCell>(text: "Logs", detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { (row) in
                 self.logsActions()
             })
         ]

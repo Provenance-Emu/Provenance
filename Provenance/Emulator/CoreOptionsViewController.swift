@@ -60,14 +60,14 @@ final class CoreOptionsViewController : QuickTableViewController {
             let rows : [TableRow] = $0.options.map { option in
                 switch option {
                 case .bool(let display, let defaultValue):
-                    return SwitchRow(title: display.title, switchValue: core.valueForOption(Bool.self, option.key) ?? false, action: { (row) in
-                        let value = self.core.valueForOption(Bool.self, option.key) ?? false
+                    return SwitchRow(text: display.title, detailText: .none, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { (row) in
+                        let value = self.core.valueForOption(Bool.self, option.key) ?? defaultValue
                         self.core.setValue(!value, forOption: option)
                     })
                 case .multi(let display, let values):
-                    let subtitle : Subtitle = display.description != nil ? Subtitle.belowTitle(display.description!) : .none
-                    return NavigationRow<SystemSettingsCell>(title: display.title,
-                                                             subtitle: subtitle,
+                    let detailText : DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
+                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                                                             detailText: detailText,
                                                              icon: nil,
                                                              customization: { (cell, row) in
                     },
@@ -87,9 +87,9 @@ final class CoreOptionsViewController : QuickTableViewController {
                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                                                                 self.present(actionController, animated: true)
                     })
-                case .range(let display, let range, let defaultValue):
+                case .range(_, _, _):
                     fatalError("Unfinished feature")
-                case .string(let display, let defaultValue):
+                case .string(_, _):
                     fatalError("Unfinished feature")
                 default:
                     fatalError("Unfinished feature")

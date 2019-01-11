@@ -13,8 +13,8 @@ final class PVSettingsSliderRow<T> : SliderRow<PVSliderCell> where T : BinaryFlo
 
     let keyPath : ReferenceWritableKeyPath<PVSettingsModel, T>
 
-    required init(title: String,
-                  subtitle: Subtitle? = nil,
+    required init(text: String,
+                  detailText: DetailText? = nil,
                   valueLimits: (min: Float, max: Float),
                   valueImages: (min: Icon?, max: Icon?) = (min: nil, max: nil),
                   key: ReferenceWritableKeyPath<PVSettingsModel, T>,
@@ -23,8 +23,8 @@ final class PVSettingsSliderRow<T> : SliderRow<PVSliderCell> where T : BinaryFlo
         let value = PVSettingsModel.shared[keyPath: key]
 
         super.init(
-            title: title,
-            subtitle: subtitle,
+            text: text,
+            detailText: detailText,
             value: Float(value),
                    valueLimits: valueLimits,
                    valueImages: valueImages,

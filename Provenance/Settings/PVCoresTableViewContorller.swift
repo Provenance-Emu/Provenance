@@ -26,7 +26,7 @@ final class PVCoresTableViewController: QuickTableViewController {
 				let systemsText = core.supportedSystems.map({return $0.shortName}).joined(separator: ", ")
 				let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 
-				return NavigationRow<SystemSettingsCell>(title: core.projectName, subtitle: .belowTitle(detailLabelText), icon: nil, customization: { (cell, rowStyle) in
+                return NavigationRow<SystemSettingsCell>(text: core.projectName, detailText: .subtitle(detailLabelText), icon: nil, customization: { (cell, rowStyle) in
 					#if os(iOS)
 					if URL.init(string: core.projectURL) != nil {
 						cell.accessoryType = .disclosureIndicator

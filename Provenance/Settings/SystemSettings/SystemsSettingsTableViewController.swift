@@ -24,7 +24,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 		tableContents = systemsModels.map { systemModel in
 			var rows = [Row & RowStyle]()
 			rows.append(
-				NavigationRow<SystemSettingsCell>(title: "Games", subtitle: .rightAligned("\(systemModel.gameCount)"))
+				NavigationRow<SystemSettingsCell>(text: "Games", detailText: .value2("\(systemModel.gameCount)"))
 			)
 
 			// CORES
@@ -32,24 +32,24 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 			if !systemModel.cores.isEmpty {
 				let coreNames = systemModel.cores.map {$0.project.name}.joined(separator: ",")
 				rows.append(
-					NavigationRow<SystemSettingsCell>(title: "Cores", subtitle: .rightAligned(coreNames))
+					NavigationRow<SystemSettingsCell>(text: "Cores", detailText: .value2(coreNames))
 				)
 			}
 //			} else {
 //				let preferredCore = systemModel.preferredCore
 //				rows.append(
-//					RadioSection(title: "Cores", options:
+//					RadioSection(text: "Cores", options:
 //						systemModel.cores.map { core in
 //							let selected = preferredCore != nil && core == preferredCore!
-//							return OptionRow(title: core.project.name, isSelected: selected, action: didSelectCore(systemIdentifier: core.identifier))
+//							return OptionRow(text: core.project.name, isSelected: selected, action: didSelectCore(systemIdentifier: core.identifier))
 //						}
 //					)
 //			}
 
 			// BIOSES
 			if let bioses = systemModel.bioses, !bioses.isEmpty {
-				let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(title: "BIOSES",
-																		   subtitle: .none,
+				let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(text: "BIOSES",
+																		   detailText: .none,
 																		   icon: nil,
 																		   customization:
 					{ (cell, rowStyle) in
@@ -64,8 +64,8 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 				bioses.forEach { bios in
 					let subtitle = "\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes"
 
-					let biosRow = NavigationRow<SystemSettingsCell>(title: bios.descriptionText,
-																	subtitle: .belowTitle(subtitle),
+					let biosRow = NavigationRow<SystemSettingsCell>(text: bios.descriptionText,
+																	detailText: .subtitle(subtitle),
 																	icon: nil,
 																	customization:
 						{ (cell, row) in
@@ -109,7 +109,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 						{ row in
 							#if os(iOS)
 							UIPasteboard.general.string = bios.expectedMD5.uppercased()
-							let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard", preferredStyle: .alert)
+                            let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard", preferredStyle: .alert)
 							self.present(alert, animated: true)
 							DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
 								alert.dismiss(animated: true, completion: nil)

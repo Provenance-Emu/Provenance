@@ -34,16 +34,16 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T : SliderCell {
 
     /// Initializes a `SliderRow` with a title, a value and an action closure.
     public init(
-        title : String = "",
-        subtitle : Subtitle? = nil,
+        text : String = "",
+        detailText : DetailText? = nil,
         value: Float,
         valueLimits: (min: Float, max: Float),
         valueImages: (min: Icon?, max: Icon?),
         customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil,
         action: ((Row) -> Void)?
         ) {
-        self.title = title
-        self.subtitle = subtitle
+        self.text = text
+        self.detailText = detailText
         self.value = value
         self.valueLimits = valueLimits
         self.valueImages = valueImages
@@ -72,10 +72,10 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T : SliderCell {
     // MARK: - Row
 
     /// The title is disabled in `SliderRow`.
-    public let title: String
+    public let text: String
 
     /// The subtitle is disabled in `SliderRow`.
-    public let subtitle: Subtitle?
+    public let detailText: DetailText?
 
     /// A closure that will be invoked when the `switchValue` is changed.
     public let action: ((Row) -> Void)?
@@ -110,9 +110,9 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T : SliderCell {
     /// Returns true iff `lhs` and `rhs` have equal titles, switch values, and icons.
     public static func == (lhs: SliderRow, rhs: SliderRow) -> Bool {
         return
-            lhs.title == rhs.title &&
-                lhs.value == rhs.value &&
-                lhs.icon == rhs.icon
+            lhs.text == rhs.text &&
+            lhs.value == rhs.value &&
+            lhs.icon == rhs.icon
     }
 
 }

@@ -12,14 +12,14 @@ import QuickTableViewController
 final class SegueNavigationRow :  NavigationRow<SystemSettingsCell> {
     weak var viewController : UIViewController?
 
-    required init(title: String,
-                  subtitle: Subtitle = .none,
+    required init(text: String,
+                  detailText: DetailText = .none,
                   viewController: UIViewController,
                   segue: String,
                   customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
         self.viewController = viewController
 
-        super.init(title: title, subtitle: subtitle, icon: nil, customization: customization) {[weak viewController] (row) in
+        super.init(text: text, detailText: detailText, icon: nil, customization: customization) {[weak viewController] (row) in
             guard let viewController = viewController else {return}
 
             viewController.performSegue(withIdentifier: segue, sender: nil)
