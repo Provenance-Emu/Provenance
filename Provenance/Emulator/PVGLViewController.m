@@ -151,13 +151,7 @@ struct RenderSettings {
 {
 	[super viewDidLoad];
 
-    float preferredFPS = self.emulatorCore.frameInterval;
-    if (preferredFPS  < 10) {
-        WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
-        preferredFPS = 30;
-    }
-
-	[self setPreferredFramesPerSecond:preferredFPS];
+    [self updatePreferredFPS];
 
     self.glContext = [self bestContext];
 
@@ -236,6 +230,16 @@ struct RenderSettings {
     return context;
 }
 
+- (void) updatePreferredFPS {
+    float preferredFPS = self.emulatorCore.frameInterval;
+    if (preferredFPS  < 10) {
+        WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
+        preferredFPS = 30;
+    }
+
+    [self setPreferredFramesPerSecond:preferredFPS];
+}
+
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
@@ -299,6 +303,8 @@ struct RenderSettings {
 
         [[self view] setFrame:CGRectMake(origin.x, origin.y, width, height)];
     }
+
+    [self updatePreferredFPS];
 }
 
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
