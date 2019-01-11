@@ -2,7 +2,7 @@
 github "bitstadium/HockeySDK-iOS" "5.1.4"
 github "bitstadium/HockeySDK-tvOS" "5.1.0"
 github "xmartlabs/XLActionController" "4.1.1"
-github "bcylin/QuickTableViewController" "v1.0.0"
+github "bcylin/QuickTableViewController" "v1.1.0"
 github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
 github "google/promises"
@@ -19,7 +19,7 @@ binary "https://building42.github.io/Specs/Carthage/tvOS/Crashlytics.json"
 binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
 
 # PVSupport
-github "fpillet/NSLogger" "v1.9.6"
+github "fpillet/NSLogger" "v1.9.7"
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
 github "radex/SwiftyUserDefaults" "3.0.1"
 github "ashleymills/Reachability.swift"
@@ -28,9 +28,9 @@ github "ashleymills/Reachability.swift"
 github "ZipArchive/ZipArchive" "v2.1.4"
 github "weichsel/ZIPFoundation" "0.9.6"
 #github "tsolomko/SWCompression" ~> 4.5
-github "Provenance-Emu/realm-cocoa" "v3.11.1" # use our fork to speed up build times
+github "realm/realm-cocoa"
 github "stephencelis/SQLite.swift" "0.11.5"
 
 # Rx
 github "ReactiveX/RxSwift" "4.4.0"
-github "Provenance-Emu/RxRealm" "0.7.6"
+github "RxSwiftCommunity/RxRealm"

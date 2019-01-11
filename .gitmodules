@@ -27,7 +27,7 @@
 	url = https://github.com/libretro/PokeMini.git
 [submodule "Carthage/Checkouts/RxRealm"]
 	path = Carthage/Checkouts/RxRealm
-	url = https://github.com/Provenance-Emu/RxRealm.git
+	url = https://github.com/RxSwiftCommunity/RxRealm.git
 [submodule "Carthage/Checkouts/RxSwift"]
 	path = Carthage/Checkouts/RxSwift
 	url = https://github.com/ReactiveX/RxSwift.git
@@ -56,7 +56,7 @@
 	url = https://github.com/stephencelis/SQLite.swift.git
 	path = Carthage/Checkouts/SQLite.swift
 [submodule "Carthage/Checkouts/realm-cocoa"]
-	url = https://github.com/Provenance-Emu/realm-cocoa.git
+	url = https://github.com/realm/realm-cocoa.git
 	path = Carthage/Checkouts/realm-cocoa
 [submodule "Carthage/Checkouts/CocoaLumberjack"]
 	url = https://github.com/CocoaLumberjack/CocoaLumberjack.git
@@ -64,8 +64,6 @@
 [submodule "Carthage/Checkouts/QuickTableViewController"]
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git
-[submodule "Carthage/Checkouts/PromiseKit"]
-	url = https://github.com/mxcl/PromiseKit.git
 [submodule "Carthage/Checkouts/XLActionController"]
 	url = https://github.com/xmartlabs/XLActionController.git
 	path = Carthage/Checkouts/XLActionController
