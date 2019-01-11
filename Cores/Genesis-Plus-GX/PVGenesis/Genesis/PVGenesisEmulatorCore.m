@@ -15,9 +15,19 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
 
+#include "shared.h"
+#include "libretro.h"
+#include "state.h"
+#include "genesis.h"
+#include "md_ntsc.h"
+#include "sms_ntsc.h"
+
 @interface PVGenesisEmulatorCore ()
 {
-	uint16_t *_videoBuffer;
+    uint16_t *videoBuffer;
+    uint16_t *videoBufferA;
+    uint16_t *videoBufferB;
+
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
 }
@@ -60,7 +70,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     
     dispatch_apply(height, the_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = strongCurrent->_videoBuffer + y * 320;
+        uint16_t *dst = strongCurrent->videoBuffer + y * 320;
         
         memcpy(dst, src, sizeof(uint16_t)*width);
     });
@@ -138,11 +148,10 @@ static bool environment_callback(unsigned cmd, void *data)
 	return true;
 }
 
-- (id)init
-{
-	if ((self = [super init]))
-	{
-		_videoBuffer = malloc(320 * 480 * 2);
+- (id)init {
+	if ((self = [super init])) {
+		videoBufferA = malloc(320 * 480 * 2);
+        videoBufferB = malloc(320 * 480 * 2);
 	}
 	
 	_current = self;
@@ -150,9 +159,12 @@ static bool environment_callback(unsigned cmd, void *data)
 	return self;
 }
 
-- (void)dealloc
-{
-	free(_videoBuffer);
+- (void)dealloc {
+    free(videoBufferA);
+    videoBufferA = NULL;
+    free(videoBufferB);
+    videoBufferB = NULL;
+    videoBuffer = NULL;
 }
 
 #pragma mark - Execution
@@ -181,9 +193,26 @@ static bool environment_callback(unsigned cmd, void *data)
 	});
 }
 
-- (void)executeFrame
-{
-	retro_run();
+- (void)executeFrame {
+    [self executeFrameSkippingFrame:false];
+}
+
+- (void)executeFrameSkippingFrame:(BOOL)skip {
+    int aud;
+    
+    int skipI = skip ? 1 : 0;
+    
+    if (system_hw == SYSTEM_MCD)
+        system_frame_scd(skipI);
+    else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
+        system_frame_gen(skipI);
+    else
+        system_frame_sms(skipI);
+    
+    video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
+    
+    aud = audio_update(soundbuffer) << 1;
+    audio_batch_callback(soundbuffer, aud >> 1);
 }
 
 - (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error
@@ -214,6 +243,30 @@ static bool environment_callback(unsigned cmd, void *data)
     size = [dataObj length];
     data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
+    
+    if (videoBufferA) {
+        free(videoBufferA);
+    }
+    videoBufferA = NULL;
+    
+    if (videoBufferB) {
+        free(videoBufferB);
+    }
+    videoBufferB = NULL;
+    
+    videoBuffer = NULL;
+    
+#if 0
+    videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
+    videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
+#else
+    videoBufferA = (unsigned char *)malloc(320 * 480 * 2);
+    videoBufferB = (unsigned char *)malloc(320 * 480 * 2);
+#endif
+    
+    bitmap.data = (short unsigned int *)videoBufferA;
+    videoBuffer = videoBufferB;
+    
     
     retro_set_environment(environment_callback);
 	retro_init();
@@ -250,7 +303,7 @@ static bool environment_callback(unsigned cmd, void *data)
         _sampleRate = info.timing.sample_rate;
         
         retro_get_region();
-        retro_run();
+        [self executeFrame];
         
         return YES;
     }
@@ -311,9 +364,27 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - Video
 
+- (void)swapBuffers
+{
+    if (bitmap.data == (short unsigned int *)videoBufferA)
+    {
+        videoBuffer = videoBufferA;
+        bitmap.data = (short unsigned int *)videoBufferB;
+    }
+    else
+    {
+        videoBuffer = videoBufferB;
+        bitmap.data = (short unsigned int *)videoBufferA;
+    }
+}
+
 - (const void *)videoBuffer
 {
-	return _videoBuffer;
+    return videoBuffer;
+}
+
+-(BOOL)isDoubleBuffered {
+    return YES;
 }
 
 - (CGRect)screenRect

@@ -66,7 +66,7 @@ static __weak PVSNESEmulatorCore *_current;
 bool8 S9xDeinitUpdate(int width, int height)
 {
     __strong PVSNESEmulatorCore *strongCurrent = _current;
-    [strongCurrent flipBuffers];
+    [strongCurrent swapBuffers];
 
     return true;
 }
@@ -738,7 +738,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 #pragma mark Video
 
-- (void)flipBuffers
+- (void)swapBuffers
 {
     if (GFX.Screen == (short unsigned int *)videoBufferA)
     {
@@ -799,6 +799,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 #else
 	return NO;
 #endif
+}
+
+- (BOOL)isDoubleBuffered {
+    return YES;
 }
 
 #pragma mark Audio
