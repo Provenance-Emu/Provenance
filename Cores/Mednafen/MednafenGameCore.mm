@@ -241,7 +241,7 @@ static void mednafen_init(MednafenGameCore* current)
 		 0x4000=x
 		 0x8000=□
 		 */
-	// Analog/Digital Toggle (hold for couple seconds)
+	// Analog/Digital Toggle
 	uint64 amct =
     ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonL2]) | (1 << PSXMap[PVPSXButtonR2]) | (1 << PSXMap[PVPSXButtonCircle])) ||
     ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonCircle]));
@@ -2096,7 +2096,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 			case PVPSXButtonStart:
 				return self.isStartPressed || (modifiersPressed && [[pad buttonX] isPressed]);
             case PVPSXButtonAnalogMode:
-                return self.isAnalogModePressed || (modifiersPressed && [[pad buttonX] isPressed] && [[pad buttonB] isPressed]);
+                return self.isAnalogModePressed || (modifiersPressed && [[pad buttonB] isPressed]);
             default:
                 break;
         }
