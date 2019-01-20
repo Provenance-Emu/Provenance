@@ -1211,11 +1211,20 @@ static void ConfigureRICE() {
     return M64ERR_SUCCESS;
 }
 
+- (dispatch_time_t)frameTime {
+    float frameTime = 1.0/[self frameInterval];
+    __block BOOL expired = NO;
+    dispatch_time_t killTime = dispatch_time(DISPATCH_TIME_NOW, frameTime * NSEC_PER_SEC);
+    return killTime;
+}
+
 - (void)videoInterrupt
 {
+
+
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
     
-    dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, DISPATCH_TIME_FOREVER);
+    dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
 }
 
 - (void)swapBuffers
@@ -1227,7 +1236,7 @@ static void ConfigureRICE() {
 {
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     
-    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
+    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
 }
 
 - (void)executeFrame
