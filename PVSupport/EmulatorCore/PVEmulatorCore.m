@@ -38,6 +38,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
 @property (nonatomic, assign, readwrite) BOOL isRunning;
+@property (nonatomic, assign) BOOL isDoubleBufferedCached;
 #if TARGET_OS_IOS
 @property (nonatomic, strong, readwrite, nullable) UIImpactFeedbackGenerator* rumbleGenerator;
 #endif
@@ -67,6 +68,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         _frontBufferLock         = [NSLock new];
         _isFrontBufferReady      = NO;
         _gameSpeed               = GameSpeedNormal;
+        _isDoubleBufferedCached = [self isDoubleBuffered];
 	}
 	
 	return self;
@@ -233,7 +235,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
         
-        if ([self isDoubleBuffered])
+        if (_isDoubleBufferedCached)
         {
             NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
             if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
