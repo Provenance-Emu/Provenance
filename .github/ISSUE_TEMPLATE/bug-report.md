@@ -10,9 +10,9 @@ assignees: ''
 <!--- DISCLAIMERS ---------------------------------------------------------------
 
 🛑 STOP! Before posting, make sure you…
-✅ have checked issues for existing bug reports.
-✅ are using the latest development build (may have been fixed already)
-✅ have discussed the issue on our Discord:     https://discord.gg/4TK7PU5
+✅ …have checked issues for existing bug reports.
+✅ …are using the latest development build (may have already been fixed).
+✅ …have discussed the issue on our Discord:     https://discord.gg/4TK7PU5
 
 🚫 We DO NOT support unofficial 3rd-party installations (buildstore, iemulators, tweakbox, etc…). 
 ☠️ Delete and use official install:  https://git.io/vxABg
