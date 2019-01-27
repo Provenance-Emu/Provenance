@@ -39,6 +39,10 @@ protocol StartSelectDelegate: class {
     func releaseSelect(forPlayer player: Int)
     func pressAnalogMode(forPlayer player: Int)
     func releaseAnalogMode(forPlayer player: Int)
+    func pressL3(forPlayer player: Int)
+    func releaseL3(forPlayer player: Int)
+    func pressR3(forPlayer player: Int)
+    func releaseR3(forPlayer player: Int)
 }
 
 protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
@@ -139,6 +143,22 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     func releaseAnalogMode(forPlayer player: Int) {
 
+    }
+
+    func pressL3(forPlayer player: Int) {
+        
+    }
+    
+    func releaseL3(forPlayer player: Int) {
+        
+    }
+
+    func pressR3(forPlayer player: Int) {
+        
+    }
+    
+    func releaseR3(forPlayer player: Int) {
+        
     }
 
     func buttonPressed(_ button: JSButton) {
@@ -261,8 +281,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 zTriggerButton?.isHidden = false
                 startButton?.isHidden = false
                 selectButton?.isHidden = false
-                leftAnalogButton?.isHidden = true
-                rightAnalogButton?.isHidden = true
+                leftAnalogButton?.isHidden = false
+                rightAnalogButton?.isHidden = false
             }
         setupTouchControls()
         #endif
@@ -271,10 +291,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     @objc func controllerDidDisconnect(_ note: Notification?) {
         #if os(iOS)
             if PVControllerManager.shared.hasControllers {
-                if PVControllerManager.shared.hasControllers {
-                    PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
-                        self.hideTouchControls(for: controller)
-                    })
                 if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                     self.hideTouchControls(for: controller)
                 }
@@ -361,21 +377,41 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         leftShoulderButton2?.isHidden = true
         rightShoulderButton2?.isHidden = true
         zTriggerButton?.isHidden = true
+        leftAnalogButton?.isHidden = true
+        rightAnalogButton?.isHidden = true
 
         //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
         let useStandardGamepad: [SystemIdentifier] = [.GB, .GBC, .GBA]
 
+        var supportsThumbstickButtons = false;
+        if #available(iOS 12.1, *) {
+            if let extendedGamepad = controller.extendedGamepad {
+                if (extendedGamepad.responds(to: #selector(getter: GCExtendedGamepad .leftThumbstickButton))) && extendedGamepad.leftThumbstickButton != nil {
+                    supportsThumbstickButtons = true
+                } else {
+                    supportsThumbstickButtons = false
+                }
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+        
         if ((controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue)) && !PVSettingsModel.shared.startSelectAlwaysOn {
             startButton?.isHidden = true
             selectButton?.isHidden = true
-            leftAnalogButton?.isHidden = true
-            rightAnalogButton?.isHidden = true
+            if supportsThumbstickButtons {
+                leftAnalogButton?.isHidden = true
+                rightAnalogButton?.isHidden = true
+            }
         } else if PVSettingsModel.shared.startSelectAlwaysOn {
             startButton?.isHidden = false
             selectButton?.isHidden = false
-            leftAnalogButton?.isHidden = false
-            rightAnalogButton?.isHidden = false
+            if !supportsThumbstickButtons {
+                leftAnalogButton?.isHidden = false
+                rightAnalogButton?.isHidden = false
+            }
         }
+
         setupTouchControls()
     }
 
@@ -530,11 +566,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 }
             }
         }
-        // TO DO: Shrink controls for landscaoe on old/smaller iPhones…
-//        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape {
-//            if UIScreen.main.bounds.height <= 640 || UIScreen.main.bounds.width <= 1136 {
-//            }
-//        }
         #endif
     }
 

@@ -96,6 +96,8 @@ static MDFNGI *game;
 static MDFN_Surface *backBufferSurf;
 static MDFN_Surface *frontBufferSurf;
 
+bool anyModifiersHeld = false;
+
 #pragma mark - Input maps
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
@@ -833,17 +835,11 @@ static void emulation_run(BOOL skipFrame) {
         if (controller) {
             uint8 *d8 = (uint8 *)inputBuffer[playerIndex];
             bool analogMode = (d8[2] & 0x02);
+            
             for (unsigned i=0; i<maxValue; i++) {
                 
 				if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex withAnalogMode:analogMode];
-                    
-                    // TODO Can we do this better?
-                    // we don't want to read l3/r3 from the controller
-                    if (self.systemType == MednaSystemPSX && (map[i]==1 || map[i]==2))
-                    {
-                        continue;
-                    }
                     
                     if(value > 0) {
                         inputBuffer[playerIndex][0] |= 1 << map[i];
@@ -1315,6 +1311,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         self.isStartPressed = true;
     } else if (button == PVPSXButtonSelect) {
         self.isSelectPressed = true;
+    } else if (button == PVPSXButtonL3) {
+        self.isL3Pressed = true;
+    } else if (button == PVPSXButtonR3) {
+        self.isR3Pressed = true;
     } else if (button == PVPSXButtonAnalogMode) {
         self.isAnalogModePressed = true;
     }
@@ -1327,6 +1327,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         self.isStartPressed = false;
     } else if (button == PVPSXButtonSelect) {
         self.isSelectPressed = false;
+    } else if (button == PVPSXButtonL3) {
+        self.isL3Pressed = false;
+    } else if (button == PVPSXButtonR3) {
+        self.isR3Pressed = false;
     } else if (button == PVPSXButtonAnalogMode) {
         self.isAnalogModePressed = false;
     }
@@ -2055,6 +2059,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
+        anyModifiersHeld = (modifier1Pressed || modifier2Pressed);
+        
         switch (buttonID) {
             case PVPSXButtonUp:
                 return ([[dpad up] isPressed] || (!analogMode && [[[gamepad leftThumbstick] up] isPressed]));
@@ -2085,13 +2091,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPSXButtonL2:
                 return [[gamepad leftTrigger] isPressed] && !modifier1Pressed;
             case PVPSXButtonL3:
-                return [[gamepad leftThumbstickButton] isPressed] || (modifiersPressed && [[dpad down] isPressed]);
+                return self.isL3Pressed || [[gamepad leftThumbstickButton] isPressed] || (modifiersPressed && [[dpad down] isPressed]);
             case PVPSXButtonR1:
                 return [[gamepad rightShoulder] isPressed] && !modifier2Pressed;
             case PVPSXButtonR2:
                 return [[gamepad rightTrigger] isPressed] && !modifier1Pressed;
             case PVPSXButtonR3:
-                return [[gamepad rightThumbstickButton] isPressed] || (modifiersPressed && [[gamepad buttonA] isPressed]);
+                return self.isR3Pressed || [[gamepad rightThumbstickButton] isPressed] || (modifiersPressed && [[gamepad buttonA] isPressed]);
             case PVPSXButtonSelect:
                 return self.isSelectPressed || (modifiersPressed && [[dpad right] isPressed]);
 			case PVPSXButtonStart:
@@ -2107,6 +2113,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCGamepad *gamepad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
+        anyModifiersHeld = modifierPressed;
+        
         switch (buttonID) {
             case PVPSXButtonUp:
                 return [[dpad up] isPressed] && !modifierPressed;

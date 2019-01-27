@@ -53,6 +53,8 @@ __attribute__((visibility("default")))
 @property (nonatomic) BOOL isStartPressed;
 @property (nonatomic) BOOL isSelectPressed;
 @property (nonatomic) BOOL isAnalogModePressed;
+@property (nonatomic) BOOL isL3Pressed;
+@property (nonatomic) BOOL isR3Pressed;
 
 @end
 
