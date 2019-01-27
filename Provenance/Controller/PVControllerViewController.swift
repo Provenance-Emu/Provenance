@@ -211,9 +211,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     func updateHideTouchControls() {
         if PVControllerManager.shared.hasControllers {
-            PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
+            if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                 self.hideTouchControls(for: controller)
-            })
+            }
         } else {
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
@@ -247,9 +247,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     @objc func controllerDidConnect(_ note: Notification?) {
         #if os(iOS)
             if PVControllerManager.shared.hasControllers {
-                PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
+                if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                     self.hideTouchControls(for: controller)
-                })
+                }
             } else {
                 dPad?.isHidden = false
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
@@ -275,6 +275,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                     PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
                         self.hideTouchControls(for: controller)
                     })
+                if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
+                    self.hideTouchControls(for: controller)
                 }
             } else {
                 dPad?.isHidden = false
