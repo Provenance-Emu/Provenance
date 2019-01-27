@@ -96,8 +96,6 @@ static MDFNGI *game;
 static MDFN_Surface *backBufferSurf;
 static MDFN_Surface *frontBufferSurf;
 
-bool anyModifiersHeld = false;
-
 #pragma mark - Input maps
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
@@ -2059,7 +2057,6 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
-        anyModifiersHeld = (modifier1Pressed || modifier2Pressed);
         
         switch (buttonID) {
             case PVPSXButtonUp:
@@ -2113,7 +2110,6 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCGamepad *gamepad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
-        anyModifiersHeld = modifierPressed;
         
         switch (buttonID) {
             case PVPSXButtonUp:

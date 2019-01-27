@@ -235,6 +235,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 self.hideTouchControls(for: controller)
             }
         } else {
+            // TODO: Fix this to show buttons for PSX by default, and write better layout code for these…
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
         }

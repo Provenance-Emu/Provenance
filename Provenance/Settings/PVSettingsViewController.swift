@@ -216,22 +216,23 @@ final class PVSettingsViewController : PVQuickTableViewController {
 
         // Beta options
         let betaRows : [TableRow] = [
+            
+            PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+                                key: \PVSettingsModel.startSelectAlwaysOn),
+            
             PVSettingsSwitchRow(text: "iCloud Sync",
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
-
+            
             PVSettingsSwitchRow(text: "Multi-threaded GL",
                                 detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
                                 key: \PVSettingsModel.debugOptions.multiThreadedGL),
-
+            
             PVSettingsSwitchRow(text: "4X Multisampling GL",
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
-
-            PVSettingsSwitchRow(text: "Start/Select Always On-Screen",
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
-                                key: \PVSettingsModel.startSelectAlwaysOn)
-
+                                key: \PVSettingsModel.debugOptions.multiSampling)
+            
 //            PVSettingsSwitchRow(text: "Unsupported Cores",
 //                                detailText: .subtitle("Cores that are in development"),
 //                                key: \PVSettingsModel.debugOptions.unsupportedCores)
