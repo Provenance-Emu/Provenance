@@ -408,28 +408,28 @@ static bool environment_callback(unsigned cmd, void *data)
     if ([[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"]) {
         
         if ([controller extendedGamepad]) {
-            GCExtendedGamepad *pad = [controller extendedGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCExtendedGamepad *gamepad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
-                    return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                    return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
                 case PVGenesisButtonDown:
-                    return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                    return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
                 case PVGenesisButtonLeft:
-                    return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                    return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
                 case PVGenesisButtonRight:
-                    return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                    return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
                 case PVGenesisButtonB: // SG1000 ButtonL/1
-                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+                    return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed]?:[[gamepad leftShoulder] isPressed]?:[[gamepad leftTrigger] isPressed];
                 case PVGenesisButtonC: // SG1000 ButtonR/2
-                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                    return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed]?:[[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
                 default:
                     break;
             }
             
         } else if ([controller gamepad]) {
-            GCGamepad *pad = [controller gamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed];
@@ -440,9 +440,9 @@ static bool environment_callback(unsigned cmd, void *data)
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed];
                 case PVGenesisButtonB: // SG1000 ButtonL/1
-                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad leftShoulder] isPressed];
+                    return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed]?:[[gamepad leftShoulder] isPressed];
                 case PVGenesisButtonC: // SG1000 ButtonR/2
-                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad rightShoulder] isPressed];
+                    return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed]?:[[gamepad rightShoulder] isPressed];
                 default:
                     break;
             }
@@ -451,8 +451,8 @@ static bool environment_callback(unsigned cmd, void *data)
 #if TARGET_OS_TV
 
         else if ([controller microGamepad]) {
-            GCMicroGamepad *pad = [controller microGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] value] > 0.5;
@@ -467,10 +467,10 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[dpad right] value] > 0.5;
                     break;
                 case PVGenesisButtonB: // SG1000 ButtonL/1
-                    return [[pad buttonA] isPressed];
+                    return [[gamepad buttonA] isPressed];
                     break;
                 case PVGenesisButtonC: // SG1000 ButtonR/2
-                    return [[pad buttonX] isPressed];
+                    return [[gamepad buttonX] isPressed];
                     break;
                 default:
                     break;
@@ -483,31 +483,31 @@ static bool environment_callback(unsigned cmd, void *data)
     } else if ([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"]) {
        
        if ([controller extendedGamepad]) {
-           GCExtendedGamepad *pad = [controller extendedGamepad];
-           GCControllerDirectionPad *dpad = [pad dpad];
+           GCExtendedGamepad *gamepad = [controller extendedGamepad];
+           GCControllerDirectionPad *dpad = [gamepad dpad];
            switch (buttonID) {
                case PVGenesisButtonUp:
-                   return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                   return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
                case PVGenesisButtonDown:
-                   return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                   return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
                case PVGenesisButtonLeft:
-                   return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                   return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
                case PVGenesisButtonRight:
-                   return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                   return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
                case PVGenesisButtonB: // Button1
-                   return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                   return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed]?:[[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
                case PVGenesisButtonC: // Button2
-                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed]?:[[pad leftTrigger] isPressed];
+                   return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed]?:[[gamepad leftTrigger] isPressed];
                case PVGenesisButtonStart: // MS Pause
-                   return [[pad leftShoulder] isPressed];
+                   return [[gamepad leftShoulder] isPressed];
                default:
                    break;
            }
            
        } else if ([controller gamepad]) {
            
-           GCGamepad *pad = [controller gamepad];
-           GCControllerDirectionPad *dpad = [pad dpad];
+           GCGamepad *gamepad = [controller gamepad];
+           GCControllerDirectionPad *dpad = [gamepad dpad];
            switch (buttonID) {
                case PVGenesisButtonUp:
                    return [[dpad up] isPressed];
@@ -518,11 +518,11 @@ static bool environment_callback(unsigned cmd, void *data)
                case PVGenesisButtonRight:
                    return [[dpad right] isPressed];
                case PVGenesisButtonB: // Button1
-                   return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed]?:[[pad rightShoulder] isPressed];
+                   return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed]?:[[gamepad rightShoulder] isPressed];
                case PVGenesisButtonC: // Button2
-                   return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+                   return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
                case PVGenesisButtonStart: // MS Pause
-                   return [[pad leftShoulder] isPressed];
+                   return [[gamepad leftShoulder] isPressed];
                default:
                    break;
            }
@@ -531,8 +531,8 @@ static bool environment_callback(unsigned cmd, void *data)
 #if TARGET_OS_TV
 
        else if ([controller microGamepad]) {
-           GCMicroGamepad *pad = [controller microGamepad];
-           GCControllerDirectionPad *dpad = [pad dpad];
+           GCMicroGamepad *gamepad = [controller microGamepad];
+           GCControllerDirectionPad *dpad = [gamepad dpad];
            switch (buttonID) {
                case PVGenesisButtonUp:
                    return [[dpad up] value] > 0.5;
@@ -547,10 +547,10 @@ static bool environment_callback(unsigned cmd, void *data)
                    return [[dpad right] value] > 0.5;
                    break;
                case PVGenesisButtonB: // Button1
-                   return [[pad buttonA] isPressed];
+                   return [[gamepad buttonA] isPressed];
                    break;
                case PVGenesisButtonC: // Button2
-                   return [[pad buttonX] isPressed];
+                   return [[gamepad buttonX] isPressed];
                    break;
                default:
                    break;
@@ -563,31 +563,31 @@ static bool environment_callback(unsigned cmd, void *data)
     } else if ([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
         
         if ([controller extendedGamepad]) {
-            GCExtendedGamepad *pad = [controller extendedGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCExtendedGamepad *gamepad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
-                    return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                    return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
                 case PVGenesisButtonDown:
-                    return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                    return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
                 case PVGenesisButtonLeft:
-                    return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                    return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
                 case PVGenesisButtonRight:
-                    return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                    return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
                 case PVGenesisButtonB: // Button1
-                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                    return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed];
                 case PVGenesisButtonC: // Button2
-                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+                    return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
                 case PVGenesisButtonStart: // GG Start
-                    return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+                    return [[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
                 default:
                     break;
             }
             
         } else if ([controller gamepad]) {
             
-            GCGamepad *pad = [controller gamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed];
@@ -598,11 +598,11 @@ static bool environment_callback(unsigned cmd, void *data)
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed];
                 case PVGenesisButtonB: // Button1
-                    return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+                    return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed];
                 case PVGenesisButtonC: // Button2
-                    return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+                    return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
                 case PVGenesisButtonStart: // GG Start
-                    return [[pad rightShoulder] isPressed];
+                    return [[gamepad rightShoulder] isPressed];
                 default:
                     break;
             }
@@ -611,8 +611,8 @@ static bool environment_callback(unsigned cmd, void *data)
 #if TARGET_OS_TV
         
         else if ([controller microGamepad]) {
-            GCMicroGamepad *pad = [controller microGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] value] > 0.5;
@@ -627,10 +627,10 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[dpad right] value] > 0.5;
                     break;
                 case PVGenesisButtonB: // Button1
-                    return [[pad buttonA] isPressed];
+                    return [[gamepad buttonA] isPressed];
                     break;
                 case PVGenesisButtonC: // Button2
-                    return [[pad buttonX] isPressed];
+                    return [[gamepad buttonX] isPressed];
                     break;
                 default:
                     break;
@@ -643,38 +643,38 @@ static bool environment_callback(unsigned cmd, void *data)
     } else {
        
         if ([controller extendedGamepad]) {
-            GCExtendedGamepad *pad = [controller extendedGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCExtendedGamepad *gamepad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
-                    return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                    return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
                 case PVGenesisButtonDown:
-                    return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                    return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
                 case PVGenesisButtonLeft:
-                    return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                    return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
                 case PVGenesisButtonRight:
-                    return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                    return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
                 case PVGenesisButtonA:
-                    return [[pad buttonX] isPressed];
+                    return [[gamepad buttonX] isPressed];
                 case PVGenesisButtonB:
-                    return [[pad buttonA] isPressed];
+                    return [[gamepad buttonA] isPressed];
                 case PVGenesisButtonC:
-                    return [[pad buttonB] isPressed];
+                    return [[gamepad buttonB] isPressed];
                 case PVGenesisButtonX:
-                    return [[pad leftShoulder] isPressed];
+                    return [[gamepad leftShoulder] isPressed];
                 case PVGenesisButtonY:
-                    return [[pad buttonY] isPressed];
+                    return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
-                    return [[pad rightShoulder] isPressed];
+                    return [[gamepad rightShoulder] isPressed];
                 case PVGenesisButtonStart:
-                    return [[pad rightTrigger] isPressed];
+                    return [[gamepad rightTrigger] isPressed];
                 default:
                     break;
             }
             
         } else if ([controller gamepad]) {
-            GCGamepad *pad = [controller gamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed];
@@ -685,17 +685,17 @@ static bool environment_callback(unsigned cmd, void *data)
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed];
                 case PVGenesisButtonA:
-                    return [[pad buttonX] isPressed];
+                    return [[gamepad buttonX] isPressed];
                 case PVGenesisButtonB:
-                    return [[pad buttonA] isPressed];
+                    return [[gamepad buttonA] isPressed];
                 case PVGenesisButtonC:
-                    return [[pad buttonB] isPressed];
+                    return [[gamepad buttonB] isPressed];
                 case PVGenesisButtonX:
-                    return [[pad leftShoulder] isPressed];
+                    return [[gamepad leftShoulder] isPressed];
                 case PVGenesisButtonY:
-                    return [[pad buttonY] isPressed];
+                    return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
-                    return [[pad rightShoulder] isPressed];
+                    return [[gamepad rightShoulder] isPressed];
                 default:
                     break;
             }
@@ -704,8 +704,8 @@ static bool environment_callback(unsigned cmd, void *data)
 #if TARGET_OS_TV
         
         else if ([controller microGamepad]) {
-            GCMicroGamepad *pad = [controller microGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] value] > 0.5;
@@ -720,10 +720,10 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[dpad right] value] > 0.5;
                     break;
                 case PVGenesisButtonA:
-                    return [[pad buttonA] isPressed];
+                    return [[gamepad buttonA] isPressed];
                     break;
                 case PVGenesisButtonB:
-                    return [[pad buttonX] isPressed];
+                    return [[gamepad buttonX] isPressed];
                     break;
                 default:
                     break;

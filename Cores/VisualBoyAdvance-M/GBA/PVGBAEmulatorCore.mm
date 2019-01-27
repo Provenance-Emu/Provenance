@@ -380,6 +380,7 @@ bool systemReadJoypads()
 
 				gamepad.leftTrigger.isPressed ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
                 gamepad.rightTrigger.isPressed ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
+                
             }
             else if ([controller gamepad])
             {

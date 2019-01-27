@@ -915,10 +915,10 @@ static void FinalizeSamplesAudioCallback(void *)
 
         if ([controller extendedGamepad])
         {
-            GCExtendedGamepad *pad = [controller extendedGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCExtendedGamepad *gamepad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
 
-            PVControllerAxisDirection axisDirection = [PVGameControllerUtilities axisDirectionForThumbstick:pad.leftThumbstick];
+            PVControllerAxisDirection axisDirection = [PVGameControllerUtilities axisDirectionForThumbstick:gamepad.leftThumbstick];
 
             BOOL upPressed = dpad.up.pressed || axisDirection == PVControllerAxisDirectionUp || axisDirection == PVControllerAxisDirectionUpLeft || axisDirection == PVControllerAxisDirectionUpRight;
             S9xReportButton(playerMask | PVSNESButtonUp, upPressed);
@@ -932,49 +932,49 @@ static void FinalizeSamplesAudioCallback(void *)
             BOOL rightPressed = dpad.right.pressed || axisDirection == PVControllerAxisDirectionRight || axisDirection == PVControllerAxisDirectionUpRight || axisDirection == PVControllerAxisDirectionDownRight;
             S9xReportButton(playerMask | PVSNESButtonRight, rightPressed);
 
-            S9xReportButton(playerMask | PVSNESButtonB, pad.buttonA.pressed);
-            S9xReportButton(playerMask | PVSNESButtonA, pad.buttonB.pressed);
-            S9xReportButton(playerMask | PVSNESButtonY, pad.buttonX.pressed);
-            S9xReportButton(playerMask | PVSNESButtonX, pad.buttonY.pressed);
+            S9xReportButton(playerMask | PVSNESButtonB, gamepad.buttonA.pressed);
+            S9xReportButton(playerMask | PVSNESButtonA, gamepad.buttonB.pressed);
+            S9xReportButton(playerMask | PVSNESButtonY, gamepad.buttonX.pressed);
+            S9xReportButton(playerMask | PVSNESButtonX, gamepad.buttonY.pressed);
 
-            S9xReportButton(playerMask | PVSNESButtonTriggerLeft, pad.leftShoulder.pressed);
-            S9xReportButton(playerMask | PVSNESButtonTriggerRight, pad.rightShoulder.pressed);
+            S9xReportButton(playerMask | PVSNESButtonTriggerLeft, gamepad.leftShoulder.pressed);
+            S9xReportButton(playerMask | PVSNESButtonTriggerRight, gamepad.rightShoulder.pressed);
 
-            S9xReportButton(playerMask | PVSNESButtonStart, pad.rightTrigger.pressed);
-            S9xReportButton(playerMask | PVSNESButtonSelect, pad.leftTrigger.pressed);
+            S9xReportButton(playerMask | PVSNESButtonStart, gamepad.rightTrigger.pressed);
+            S9xReportButton(playerMask | PVSNESButtonSelect, gamepad.leftTrigger.pressed);
 
         }
         else if ([controller gamepad])
         {
-            GCGamepad *pad = [controller gamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
 
             S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.pressed);
             S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.pressed);
             S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.pressed);
             S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.pressed);
 
-            S9xReportButton(playerMask | PVSNESButtonB, pad.buttonA.pressed);
-            S9xReportButton(playerMask | PVSNESButtonA, pad.buttonB.pressed);
-            S9xReportButton(playerMask | PVSNESButtonY, pad.buttonX.pressed);
-            S9xReportButton(playerMask | PVSNESButtonX, pad.buttonY.pressed);
+            S9xReportButton(playerMask | PVSNESButtonB, gamepad.buttonA.pressed);
+            S9xReportButton(playerMask | PVSNESButtonA, gamepad.buttonB.pressed);
+            S9xReportButton(playerMask | PVSNESButtonY, gamepad.buttonX.pressed);
+            S9xReportButton(playerMask | PVSNESButtonX, gamepad.buttonY.pressed);
 
-            S9xReportButton(playerMask | PVSNESButtonTriggerLeft, pad.leftShoulder.pressed);
-            S9xReportButton(playerMask | PVSNESButtonTriggerRight, pad.rightShoulder.pressed);
+            S9xReportButton(playerMask | PVSNESButtonTriggerLeft, gamepad.leftShoulder.pressed);
+            S9xReportButton(playerMask | PVSNESButtonTriggerRight, gamepad.rightShoulder.pressed);
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad])
         {
-            GCMicroGamepad *pad = [controller microGamepad];
-            GCControllerDirectionPad *dpad = [pad dpad];
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
 
             S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.value > 0.5);
             S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.value > 0.5);
             S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.value > 0.5);
             S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.value > 0.5);
 
-            S9xReportButton(playerMask | PVSNESButtonB, pad.buttonA.pressed);
-            S9xReportButton(playerMask | PVSNESButtonA, pad.buttonX.pressed);
+            S9xReportButton(playerMask | PVSNESButtonB, gamepad.buttonA.pressed);
+            S9xReportButton(playerMask | PVSNESButtonA, gamepad.buttonX.pressed);
         }
 #endif
     }
