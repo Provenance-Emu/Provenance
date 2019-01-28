@@ -219,7 +219,7 @@ final class PVSettingsViewController : PVQuickTableViewController {
             
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
-                                key: \PVSettingsModel.startSelectAlwaysOn),
+                                key: \PVSettingsModel.missingButtonsAlwaysOn),
             
             PVSettingsSwitchRow(text: "iCloud Sync",
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),

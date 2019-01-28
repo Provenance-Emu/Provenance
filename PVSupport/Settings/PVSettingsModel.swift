@@ -270,9 +270,9 @@ extension MirroredSettings {
     @objc public dynamic var buttonTints = true
 
     #if os(tvOS)
-    @objc public dynamic var startSelectAlwaysOn = true
+    @objc public dynamic var missingButtonsAlwaysOn = true
     #else
-    @objc public dynamic var startSelectAlwaysOn = false
+    @objc public dynamic var missingButtonsAlwaysOn = false
     #endif
 
     @objc public dynamic var allRightShoulders = false

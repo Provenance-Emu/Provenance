@@ -234,10 +234,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                 self.hideTouchControls(for: controller)
             }
-        } else {
-            // TODO: Fix this to show buttons for PSX by default, and write better layout code for these…
-            leftAnalogButton?.isHidden = true
-            rightAnalogButton?.isHidden = true
         }
     }
 
@@ -306,8 +302,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 zTriggerButton?.isHidden = false
                 startButton?.isHidden = false
                 selectButton?.isHidden = false
-                leftAnalogButton?.isHidden = true
-                rightAnalogButton?.isHidden = true
+                leftAnalogButton?.isHidden = false
+                rightAnalogButton?.isHidden = false
             }
         setupTouchControls()
         #endif
@@ -371,6 +367,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     @objc
     func hideTouchControls(for controller: GCController) {
+        
         dPad?.isHidden = true
         buttonGroup?.isHidden = true
         leftShoulderButton?.isHidden = true
@@ -378,41 +375,17 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         leftShoulderButton2?.isHidden = true
         rightShoulderButton2?.isHidden = true
         zTriggerButton?.isHidden = true
-        leftAnalogButton?.isHidden = true
-        rightAnalogButton?.isHidden = true
-
-        //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
-        let useStandardGamepad: [SystemIdentifier] = [.GB, .GBC, .GBA]
-
-        var supportsThumbstickButtons = false;
-        if #available(iOS 12.1, *) {
-            if let extendedGamepad = controller.extendedGamepad {
-                if (extendedGamepad.responds(to: #selector(getter: GCExtendedGamepad .leftThumbstickButton))) && extendedGamepad.leftThumbstickButton != nil {
-                    supportsThumbstickButtons = true
-                } else {
-                    supportsThumbstickButtons = false
-                }
-            }
-        } else {
-            // Fallback on earlier versions
+        
+        if !PVSettingsModel.shared.missingButtonsAlwaysOn {
+            selectButton?.isHidden = true
+            startButton?.isHidden = true
+            leftAnalogButton?.isHidden = true
+            rightAnalogButton?.isHidden = true
+        } else if controller.supportsThumbstickButtons() {
+            leftAnalogButton?.isHidden = true
+            rightAnalogButton?.isHidden = true
         }
         
-        if ((controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue)) && !PVSettingsModel.shared.startSelectAlwaysOn {
-            startButton?.isHidden = true
-            selectButton?.isHidden = true
-            if supportsThumbstickButtons {
-                leftAnalogButton?.isHidden = true
-                rightAnalogButton?.isHidden = true
-            }
-        } else if PVSettingsModel.shared.startSelectAlwaysOn {
-            startButton?.isHidden = false
-            selectButton?.isHidden = false
-            if !supportsThumbstickButtons {
-                leftAnalogButton?.isHidden = false
-                rightAnalogButton?.isHidden = false
-            }
-        }
-
         setupTouchControls()
     }
 
@@ -820,14 +793,25 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     func layoutLeftAnalogButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-        let yPadding: CGFloat = safeAreaInsets.bottom + 50
-        let xPadding: CGFloat = (gripControl ? safeAreaInsets.right : safeAreaInsets.left) + 10
-
-        let xcoord: CGFloat = (gripControl ? (view.frame.size.width - controlSize.width - xPadding) : xPadding)
-        var leftAnalogFrame = CGRect(x: xcoord, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-
-        if gripControl {
-            leftAnalogFrame.origin.y = (UIScreen.main.bounds.height * 0.40)
+        let xPadding: CGFloat = safeAreaInsets.left + 10
+        let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let spacing: CGFloat = 10
+        var layoutIsLandscape = false
+        var leftAnalogFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+        
+        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
+            layoutIsLandscape = true
+        }
+    
+        if !layoutIsLandscape {
+            leftAnalogFrame = (selectButton?.frame.offsetBy(dx: 0, dy: (controlSize.height + spacing / 2)))!
+        } else if (buttonGroup?.isHidden ?? true && PVSettingsModel.shared.missingButtonsAlwaysOn) {
+            leftAnalogFrame = (selectButton?.frame.offsetBy(dx: 0, dy: -(controlSize.height + spacing / 2)))!
+            var selectButtonFrame = selectButton?.frame
+            swap(&leftAnalogFrame, &selectButtonFrame!)
+            selectButton?.frame = selectButtonFrame!
+        } else {
+            leftAnalogFrame = (selectButton?.frame.offsetBy(dx: (controlSize.width + spacing), dy: 0))!
         }
 
         if let leftAnalogButton = self.leftAnalogButton {
@@ -852,14 +836,25 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     func layoutRightAnalogButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-        let yPadding: CGFloat = safeAreaInsets.bottom + 50
-        let xPadding: CGFloat = (gripControl ? safeAreaInsets.left : safeAreaInsets.right) + 10
-
-        let xcoord: CGFloat = (gripControl ? xPadding: (view.frame.size.width - controlSize.width - xPadding))
-        var rightAnalogFrame = CGRect(x: xcoord, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-
-        if gripControl {
-            rightAnalogFrame.origin.y = (UIScreen.main.bounds.height * 0.40)
+        let xPadding: CGFloat = safeAreaInsets.left + 10
+        let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let spacing: CGFloat = 10
+        var layoutIsLandscape = false
+        var rightAnalogFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+        
+        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
+            layoutIsLandscape = true
+        }
+        
+        if !layoutIsLandscape {
+            rightAnalogFrame = (startButton?.frame.offsetBy(dx: 0, dy: (controlSize.height + spacing / 2)))!
+        } else if (buttonGroup?.isHidden ?? true && PVSettingsModel.shared.missingButtonsAlwaysOn) {
+            rightAnalogFrame = (startButton?.frame.offsetBy(dx: 0, dy: -(controlSize.height + spacing / 2)))!
+            var startButtonFrame = startButton?.frame
+            swap(&rightAnalogFrame, &startButtonFrame!)
+            startButton?.frame = startButtonFrame!
+        } else {
+            rightAnalogFrame = (startButton?.frame.offsetBy(dx: -(controlSize.width + spacing), dy: 0))!
         }
 
         if let rightAnalogButton = self.rightAnalogButton {

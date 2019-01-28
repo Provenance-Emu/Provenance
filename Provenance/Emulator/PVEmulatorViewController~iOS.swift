@@ -279,7 +279,7 @@ extension PVEmulatorViewController {
 		var hideP1MenuActions = false
 		if let player1 = controllerManager.player1 {
 			#if os(iOS)
-			if PVSettingsModel.shared.startSelectAlwaysOn {
+			if PVSettingsModel.shared.missingButtonsAlwaysOn {
 				hideP1MenuActions = true
 			}
 			#endif
