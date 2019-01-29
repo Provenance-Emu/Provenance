@@ -434,14 +434,35 @@ extension PVEmulatorViewController {
                 self.isShowingMenu = false
                 self.enableContorllerInput(false)
             }
+		}
+
+		present(actionSheet, animated: true, completion: {() -> Void in
+			PVControllerManager.shared.iCadeController?.refreshListener()
+		})
+	}
+    
+    @objc func quicksave(_ sender: Any?) {
+        
+        let image = captureScreenshot()
+        
+        if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last {
+            
+            createNewSaveState(auto: false, screenshot: image) { result in
+                switch result {
+                case .success:
+                    do {
+                        try PVSaveState.delete(latestManualSaveState)
+                    } catch {
+                        self.presentError("Error deleting previous save after writing quicksave: \(error)")
+                    }
+                case .error(let error):
+                    self.presentError("Error writing quicksave: \(error)")
+                }
+            }
         }
-
-        present(actionSheet, animated: true, completion: { () -> Void in
-            PVControllerManager.shared.iCadeController?.refreshListener()
-        })
     }
-
-    //	override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-    //		super.dismiss(animated: flag, completion: completion)
-    //	}
+    
+    //    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+    //        super.dismiss(animated: flag, completion: completion)
+    //    }
 }
