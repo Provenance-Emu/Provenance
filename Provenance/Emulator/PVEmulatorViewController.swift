@@ -484,10 +484,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         super.viewDidLayoutSubviews()
     #if os(iOS)
         layoutMenuButton()
-        layoutQuicksaveButton()
+        
+        if PVSettingsModel.shared.showQuicksaveButton {
+            layoutQuicksaveButton()
+        }
     #endif
     }
-
     #if os(iOS)
         func layoutMenuButton() {
             if let menuButton = self.menuButton {

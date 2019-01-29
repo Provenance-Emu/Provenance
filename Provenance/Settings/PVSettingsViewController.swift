@@ -97,6 +97,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
             PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
             PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad),
+            PVSettingsSwitchRow(text: "Show Quicksave Button", key: \PVSettingsModel.showQuicksaveButton)
         ]
 
         let savesSection = Section(title: "Saves", rows: saveRows)

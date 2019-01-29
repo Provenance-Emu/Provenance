@@ -242,6 +242,7 @@ extension MirroredSettings {
 
     public dynamic var askToAutoLoad = true
     public dynamic var autoLoadSaves = false
+    public dynamic var showQuicksaveButton = false
 
     public dynamic var disableAutoLock = false
     public dynamic var buttonVibration = true
