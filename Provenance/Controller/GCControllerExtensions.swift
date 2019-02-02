@@ -11,7 +11,7 @@ import GameController
 extension GCController {
     
     func supportsThumbstickButtons() -> Bool {
-        if #available(iOS 12.1, *) {
+        if #available(iOS 12.1, tvOS 12.1,  *) {
             let controller = self.extendedGamepad
             return (controller!.responds(to: #selector(getter: GCExtendedGamepad .leftThumbstickButton))) && controller!.leftThumbstickButton != nil
         } else {
