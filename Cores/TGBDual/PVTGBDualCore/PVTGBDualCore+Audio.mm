@@ -10,16 +10,12 @@
 
 @implementation PVTGBDualCore (Audio)
 
-- (NSTimeInterval)frameInterval {
-    return 59.7275005696;
-}
-
 - (NSUInteger)channelCount {
     return 2;
 }
 
 - (double)audioSampleRate {
-    return _sampleRate;
+    return _sampleRate ? _sampleRate : 44100.0f;
 }
 
 @end
