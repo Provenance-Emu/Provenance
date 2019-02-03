@@ -15,6 +15,7 @@
 #include "libretro.h"
 
 @interface PVTGBDualCore () {
+    bool emulationHasRun;
 }
 
 @end
@@ -27,6 +28,7 @@ static __weak PVTGBDualCore *_current;
 #pragma mark - PVTGBDualCore Begin
 - (id)init {
     if (self = [super init]) {
+        emulationHasRun = false;
     }
     
     _current = self;
@@ -118,15 +120,13 @@ static __weak PVTGBDualCore *_current;
 
  - (void)startEmulation {
      if(self.isRunning == false) {
-       [super startEmulation];
+         emulationHasRun = true;
+         [super startEmulation];
      }
 }
 
 - (void)stopEmulation {
-    // TODO: When opening menu, emulation is paused (PVEmulatorCore::setPauseEmulation)
-    // which sets isRunning to false. If user selects >Quit< the emulation is not stopped.
-    // Any ideas how to handle/improve this?
-    if (self.isRunning) {
+    if (emulationHasRun) {
         if([self.batterySavesPath length]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
             NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
@@ -141,6 +141,8 @@ static __weak PVTGBDualCore *_current;
                 retro_unload_game();
                 retro_deinit();
         });
+        
+        emulationHasRun = false;
     }
 }
 
@@ -225,7 +227,6 @@ static bool environment_callback(unsigned cmd, void *data) {
                 default:
                     return false;
             }
-            //currentPixFmt = pix_fmt;
             break;
         }
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
