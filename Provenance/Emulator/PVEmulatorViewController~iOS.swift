@@ -388,6 +388,9 @@ extension PVEmulatorViewController {
             self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
         }))
         if core.supportsSaveStates {
+            actionSheet.addAction(Action( "Quicksave", style: .default, handler: { action in
+                self.perform(#selector(self.quicksave), with: nil, afterDelay: 0.1)
+                }))
             actionSheet.addAction(Action("Save States", style: .default, handler: { _ in
                 self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
             }))
@@ -443,6 +446,8 @@ extension PVEmulatorViewController {
     
     @objc func quicksave(_ sender: Any?) {
         
+        self.core.setPauseEmulation(true)
+        
         let image = captureScreenshot()
         
         if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last {
@@ -458,6 +463,9 @@ extension PVEmulatorViewController {
                 case .error(let error):
                     self.presentError("Error writing quicksave: \(error)")
                 }
+                
+                self.core.setPauseEmulation(false)
+                self.isShowingMenu = false
             }
         }
     }
