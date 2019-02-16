@@ -54,7 +54,7 @@ extension PVEmulatorViewController {
             autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
                 DispatchQueue.main.async {
                     let image = self.captureScreenshot()
-                    self.createNewSaveState(auto: true, screenshot: image) { result in
+                    self.createNewSaveState(type: .auto, screenshot: image) { result in
                         switch result {
                         case .success: break
                         case let .error(error):
@@ -91,11 +91,11 @@ extension PVEmulatorViewController {
         }
 
         let image = captureScreenshot()
-        createNewSaveState(auto: true, screenshot: image, completion: completion)
+        createNewSaveState(type: .auto, screenshot: image, completion: completion)
     }
 
     //    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
-    func createNewSaveState(auto: Bool, screenshot: UIImage?, completion: @escaping SaveCompletion) {
+    func createNewSaveState(type: SaveType, screenshot: UIImage?, completion: @escaping SaveCompletion) {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             completion(.error(.saveStatesUnsupportedByCore))
@@ -131,7 +131,7 @@ extension PVEmulatorViewController {
                 return
             }
 
-            DLOG("Succeeded saving state, auto: \(auto)")
+            DLOG("Succeeded saving state, type: \(type)")
             let realm = try! Realm()
             guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
                 completion(.error(.noCoreFound(self.core.coreIdentifier)))
@@ -142,7 +142,7 @@ extension PVEmulatorViewController {
                 var saveState: PVSaveState!
 
                 try realm.write {
-                    saveState = PVSaveState(withGame: self.game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
+                    saveState = PVSaveState(withGame: self.game, core: core, file: saveFile, type: type, image: imageFile)
                     realm.add(saveState)
                 }
 
@@ -239,11 +239,11 @@ extension PVEmulatorViewController {
     }
 
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion) {
-        createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot, completion: completion)
+        createNewSaveState(type: .manual, screenshot: saveStatesViewController.screenshot, completion: completion)
     }
 
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState, completion: @escaping SaveCompletion) {
-        createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot) { result in
+        createNewSaveState(type: .manual, screenshot: saveStatesViewController.screenshot) { result in
             switch result {
             case .success:
                 do {
@@ -321,7 +321,7 @@ extension PVEmulatorViewController {
                 let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
                 try fileManager.moveItem(at: autoSaveURL, to: newURL)
                 let saveFile = PVFile(withURL: newURL)
-                let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: true)
+                let newState = PVSaveState(withGame: game, core: core, file: saveFile, type: .auto, image: nil)
                 try realm.write {
                     realm.add(newState)
                 }
@@ -341,12 +341,12 @@ extension PVEmulatorViewController {
                     let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
                     try fileManager.moveItem(at: url, to: newURL)
                     let saveFile = PVFile(withURL: newURL)
-                    let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: false)
+                    let newState = PVSaveState(withGame: game, core: core, file: saveFile, type: .manual, image: nil)
                     try realm.write {
                         realm.add(newState)
                     }
                 } catch {
-                    presentError("Unable to convert autosave to new format: \(error.localizedDescription)")
+                    presentError("Unable to convert manual save state to new format: \(error.localizedDescription)")
                 }
             }
         }

@@ -10,6 +10,21 @@ import Foundation
 import PVSupport
 import RealmSwift
 
+@objc public enum SaveType: Int, Codable, CustomStringConvertible {
+    // These enums are explicitly given raw values. These values are encoded in the Realm database and are expected to remain consistent.
+    case manual = 0
+    case auto = 1
+    case quick = 2
+    
+    public var description : String {
+        switch self {
+        case .manual: return "Manual"
+        case .auto: return "Auto"
+        case .quick: return "Quick"
+        }
+    }
+}
+
 public protocol Filed {
     associatedtype LocalFileProviderType: LocalFileProvider
     var file: LocalFileProviderType! { get }
@@ -29,16 +44,22 @@ public final class PVSaveState: Object, Filed, LocalFileProvider {
     public dynamic var date: Date = Date()
     public dynamic var lastOpened: Date?
     public dynamic var image: PVImageFile?
-    public dynamic var isAutosave: Bool = false
+    
+    // Realm won't store enums, so we store the raw value but allow consumers to interact with the enum
+    @objc dynamic private var saveTypeValue: Int = SaveType.manual.rawValue
+    public dynamic var saveType: SaveType {
+        get { return SaveType(rawValue: saveTypeValue)! }
+        set { saveTypeValue = newValue.rawValue }
+    }
 
     public dynamic var createdWithCoreVersion: String!
 
-    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false) {
+    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, type: SaveType = .manual, image: PVImageFile? = nil) {
         self.init()
         self.game = game
         self.file = file
         self.image = image
-        self.isAutosave = isAutosave
+        self.saveType = type
         self.core = core
         createdWithCoreVersion = core.projectVersion
     }
@@ -63,13 +84,23 @@ public final class PVSaveState: Object, Filed, LocalFileProvider {
     }
 
     public dynamic var isNewestAutosave: Bool {
-        guard isAutosave, let game = game, let newestSave = game.autoSaves.first else {
+        guard saveType == .auto, let game = game, let newestSave = game.autoSaves.first else {
             return false
         }
 
         let isNewest = newestSave == self
         return isNewest
     }
+    
+    @objc dynamic public var isNewestQuicksave: Bool {
+        guard saveType == .quick, let game = game, let newestSave = game.quickSaves.first else {
+            return false
+        }
+        
+        let isNewest = newestSave == self
+        return isNewest
+    }
+
 
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
         return lhs.file.url == rhs.file.url
@@ -96,7 +127,8 @@ private extension SaveState {
         } else {
             image = nil
         }
-        isAutosave = saveState.isAutosave
+        
+        saveType = saveState.saveType
     }
 }
 
@@ -135,7 +167,7 @@ extension SaveState: RealmRepresentable {
                 DLOG("path: \(imagePath)")
                 object.image = PVImageFile(withURL: imagePath)
             }
-            object.isAutosave = isAutosave
+            object.saveType = saveType
         }
     }
 }

@@ -16,7 +16,7 @@ public protocol SaveStateInfoProvider {
     var date: Date { get }
     var lastOpened: Date? { get }
     var image: LocalFile? { get }
-    var isAutosave: Bool { get }
+    var saveType: SaveType { get }
 }
 
 public struct SaveState: SaveStateInfoProvider, Codable {
@@ -27,5 +27,5 @@ public struct SaveState: SaveStateInfoProvider, Codable {
     public let date: Date
     public let lastOpened: Date?
     public let image: LocalFile?
-    public let isAutosave: Bool
+    public let saveType: SaveType
 }

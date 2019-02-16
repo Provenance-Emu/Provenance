@@ -452,7 +452,7 @@ extension PVEmulatorViewController {
         
         if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last {
             
-            createNewSaveState(auto: false, screenshot: image) { result in
+            createNewSaveState(type: .quick, screenshot: image) { result in
                 switch result {
                 case .success:
                     do {

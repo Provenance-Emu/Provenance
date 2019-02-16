@@ -11,7 +11,7 @@ import PVSupport
 import RealmSwift
 import UIKit
 
-let schemaVersion: UInt64 = 8
+let schemaVersion: UInt64 = 9
 
 public extension Notification.Name {
     static let DatabaseMigrationStarted = Notification.Name("DatabaseMigrarionStarted")
@@ -73,9 +73,11 @@ public final class RealmConfiguration {
         }
 
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
+            if oldSchemaVersion < schemaVersion {
+                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
+            }
             if oldSchemaVersion < 2 {
                 ILOG("Migrating to version 2. Adding MD5s")
-                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
 
                 var counter = 0
                 var deletions = 0
@@ -116,6 +118,20 @@ public final class RealmConfiguration {
 
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
                 ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
+            }
+
+            if oldSchemaVersion < 9 {
+                ILOG("Migrating to version 9. Adding support for quicksaves.")
+
+                var counter = 0
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    counter += 1
+                    let isAutosave = oldObject!["isAutosave"] as! Bool
+                    newObject!["saveTypeValue"] = isAutosave ? SaveType.auto.rawValue : SaveType.manual.rawValue
+                }
+
+                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
+                ILOG("Migration complete of \(counter) save states.")
             }
         }
 
