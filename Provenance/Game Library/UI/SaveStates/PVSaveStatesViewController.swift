@@ -72,9 +72,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
             allSaves = saveStates.sorted(byKeyPath: "date", ascending: false)
         }
 
-        manualSaves = allSaves.filter("saveTypeValue == \(SaveType.manual.rawValue)")
-        autoSaves = allSaves.filter("saveTypeValue == \(SaveType.auto.rawValue)")
-        quickSaves = allSaves.filter("saveTypeValue == \(SaveType.quick.rawValue)")
+        manualSaves = allSaves.filter("saveTypeRawValue == '\(SaveType.manual.rawValue)'")
+        autoSaves = allSaves.filter("saveTypeRawValue == '\(SaveType.auto.rawValue)'")
+        quickSaves = allSaves.filter("saveTypeRawValue == '\(SaveType.quick.rawValue)'")
 
         if screenshot == nil {
             navigationItem.rightBarButtonItem = nil

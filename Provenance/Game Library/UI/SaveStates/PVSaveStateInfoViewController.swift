@@ -106,7 +106,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
             lastPlayedLabel.text = "Never"
         }
 
-        saveTypeLabel.text = String(describing: saveState.saveType).capitalized
+        saveTypeLabel.text = "\(saveState.saveType)".capitalized
     }
 
     @IBAction func playButtonTapped(_ sender: Any) {

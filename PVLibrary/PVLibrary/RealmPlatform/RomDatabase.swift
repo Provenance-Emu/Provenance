@@ -76,6 +76,7 @@ public final class RealmConfiguration {
             if oldSchemaVersion < schemaVersion {
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
             }
+            
             if oldSchemaVersion < 2 {
                 ILOG("Migrating to version 2. Adding MD5s")
 
@@ -116,7 +117,6 @@ public final class RealmConfiguration {
                     newObject!["importDate"] = Date()
                 }
 
-                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
                 ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
             }
 
@@ -127,11 +127,14 @@ public final class RealmConfiguration {
                 migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
                     counter += 1
                     let isAutosave = oldObject!["isAutosave"] as! Bool
-                    newObject!["saveTypeValue"] = isAutosave ? SaveType.auto.rawValue : SaveType.manual.rawValue
+                    newObject!["saveTypeRawValue"] = isAutosave ? SaveType.auto.rawValue : SaveType.manual.rawValue
                 }
 
-                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
                 ILOG("Migration complete of \(counter) save states.")
+            }
+            
+            if oldSchemaVersion < schemaVersion {
+                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
             }
         }
 

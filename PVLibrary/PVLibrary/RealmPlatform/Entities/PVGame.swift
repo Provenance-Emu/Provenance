@@ -127,11 +127,11 @@ extension PVGame: Filed, LocalFileProvider {}
 
 public extension PVGame {
     var autoSaves: Results<PVSaveState> {
-        return saveStates.filter("saveTypeValue == \(SaveType.auto.rawValue)").sorted(byKeyPath: "date", ascending: false)
+        return saveStates.filter("saveTypeRawValue == '\(SaveType.auto.rawValue)'").sorted(byKeyPath: "date", ascending: false)
     }
 
     public var quickSaves : Results<PVSaveState> {
-        return saveStates.filter("saveTypeValue == \(SaveType.quick.rawValue)").sorted(byKeyPath: "date", ascending: false)
+        return saveStates.filter("saveTypeRawValue == '\(SaveType.quick.rawValue)'").sorted(byKeyPath: "date", ascending: false)
     }
 
     var newestAutoSave: PVSaveState? {

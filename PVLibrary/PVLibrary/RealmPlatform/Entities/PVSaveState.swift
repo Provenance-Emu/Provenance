@@ -10,19 +10,10 @@ import Foundation
 import PVSupport
 import RealmSwift
 
-@objc public enum SaveType: Int, Codable, CustomStringConvertible {
-    // These enums are explicitly given raw values. These values are encoded in the Realm database and are expected to remain consistent.
-    case manual = 0
-    case auto = 1
-    case quick = 2
-    
-    public var description : String {
-        switch self {
-        case .manual: return "Manual"
-        case .auto: return "Auto"
-        case .quick: return "Quick"
-        }
-    }
+public enum SaveType: String, Codable {
+    case manual
+    case auto
+    case quick
 }
 
 public protocol Filed {
@@ -46,10 +37,10 @@ public final class PVSaveState: Object, Filed, LocalFileProvider {
     public dynamic var image: PVImageFile?
     
     // Realm won't store enums, so we store the raw value but allow consumers to interact with the enum
-    @objc dynamic private var saveTypeValue: Int = SaveType.manual.rawValue
+    @objc dynamic private var saveTypeRawValue: String = SaveType.manual.rawValue
     public dynamic var saveType: SaveType {
-        get { return SaveType(rawValue: saveTypeValue)! }
-        set { saveTypeValue = newValue.rawValue }
+        get { return SaveType(rawValue: saveTypeRawValue)! }
+        set { saveTypeRawValue = newValue.rawValue }
     }
 
     public dynamic var createdWithCoreVersion: String!
