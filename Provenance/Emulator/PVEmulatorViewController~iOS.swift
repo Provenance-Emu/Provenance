@@ -470,6 +470,14 @@ extension PVEmulatorViewController {
         }
     }
     
+    @objc func quickload(_ sender: Any?) {
+        guard let saveState = game.newestQuickSave else {
+            return
+        }
+        
+        loadSaveState(saveState)
+    }
+    
     //    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
     //        super.dismiss(animated: flag, completion: completion)
     //    }

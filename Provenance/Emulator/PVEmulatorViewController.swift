@@ -243,7 +243,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         quicksaveButton?.tintColor = UIColor.white
         quicksaveButton?.alpha = alpha
         quicksaveButton?.addTarget(self, action: #selector(PVEmulatorViewController.quicksave(_:)), for: .touchUpInside)
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVEmulatorViewController.quicksaveButtonLongPress))
+        quicksaveButton?.addGestureRecognizer(longPressRecognizer)
         view.addSubview(quicksaveButton!)
+    }
+
+    @objc private func quicksaveButtonLongPress(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == UIGestureRecognizer.State.began {
+            self.quickload(gesture)
+        }
     }
 
     private func initFPSLabel() {
