@@ -445,28 +445,17 @@ extension PVEmulatorViewController {
 	}
     
     @objc func quicksave(_ sender: Any?) {
-        
         self.core.setPauseEmulation(true)
         
-        let image = captureScreenshot()
-        
-        if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last {
-            
-            createNewSaveState(type: .quick, screenshot: image) { result in
-                switch result {
-                case .success:
-                    do {
-                        try PVSaveState.delete(latestManualSaveState)
-                    } catch {
-                        self.presentError("Error deleting previous save after writing quicksave: \(error)")
-                    }
-                case .error(let error):
-                    self.presentError("Error writing quicksave: \(error)")
-                }
-                
-                self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
+        let image = self.captureScreenshot()
+        self.createNewSaveState(type: .quick, screenshot: image) { result in
+            switch result {
+            case .success: break
+            case .error(let error):
+                ELOG("Quicksave failed to make save state: \(error.localizedDescription)")
             }
+            
+            self.core.setPauseEmulation(false)
         }
     }
     
