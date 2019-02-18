@@ -59,12 +59,18 @@ public final class PVSaveState: Object, Filed, LocalFileProvider {
         do {
             // Temp store these URLs
             let fileURL = state.file.url
+            let jsonFileURL = fileURL.appendingPathExtension("json")
             let imageURl = state.image?.url
 
             let database = RomDatabase.sharedInstance
             try database.delete(state)
 
             try FileManager.default.removeItem(at: fileURL)
+            
+            if (FileManager.default.fileExists(atPath: jsonFileURL.absoluteString)) {
+                try FileManager.default.removeItem(at: jsonFileURL)
+            }
+            
             if let imageURl = imageURl {
                 try FileManager.default.removeItem(at: imageURl)
             }
