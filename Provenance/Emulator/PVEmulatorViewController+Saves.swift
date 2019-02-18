@@ -207,6 +207,8 @@ extension PVEmulatorViewController {
                 state.lastOpened = Date()
             }
 
+            self.core.setPauseEmulation(true)
+
             self.core.loadStateFromFile(atPath: state.file.url.path) { success, error in
                 let completion = {
                     self.core.setPauseEmulation(false)
