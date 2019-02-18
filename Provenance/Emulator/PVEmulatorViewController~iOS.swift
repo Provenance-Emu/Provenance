@@ -390,6 +390,7 @@ extension PVEmulatorViewController {
         if core.supportsSaveStates {
             actionSheet.addAction(Action( "Quicksave", style: .default, handler: { action in
                 self.perform(#selector(self.quicksave), with: nil, afterDelay: 0.1)
+                self.isShowingMenu = false
                 }))
             actionSheet.addAction(Action("Save States", style: .default, handler: { _ in
                 self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
