@@ -162,24 +162,20 @@ extension PVEmulatorViewController {
             do {
                 if (type == .auto) {
                     // Delete the oldest auto-saves over 5 count
-                    try realm.write {
-                        let autoSaves = self.game.autoSaves
-                        if autoSaves.count > 5 {
-                            autoSaves.suffix(from: 5).reversed().forEach {
-                                DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
-                                realm.delete($0)
-                            }
+                    let autoSaves = self.game.autoSaves
+                    if autoSaves.count > 5 {
+                        try autoSaves.suffix(from: 5).reversed().forEach {
+                            DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
+                            try PVSaveState.delete($0)
                         }
                     }
                 } else if (type == .quick) {
                     // Delete the oldest quicksaves over 5 count
-                    try realm.write {
-                        let quickSaves = self.game.quickSaves
-                        if quickSaves.count > 5 {
-                            quickSaves.suffix(from: 5).reversed().forEach {
-                                DLOG("Deleting old quicksave of \($0.game.title) dated: \($0.date.description)")
-                                realm.delete($0)
-                            }
+                    let quickSaves = self.game.quickSaves
+                    if quickSaves.count > 5 {
+                        try quickSaves.suffix(from: 5).reversed().forEach {
+                            DLOG("Deleting old quicksave of \($0.game.title) dated: \($0.date.description)")
+                            try PVSaveState.delete($0)
                         }
                     }
                 }
