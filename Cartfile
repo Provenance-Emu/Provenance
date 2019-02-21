@@ -26,12 +26,12 @@ github "radex/SwiftyUserDefaults" "3.0.1"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
-github "ZipArchive/ZipArchive" "v2.1.4"
-github "weichsel/ZIPFoundation" "0.9.6"
+github "ZipArchive/ZipArchive" ~> 2.1.4
+github "weichsel/ZIPFoundation" ~> 0.9.8
 #github "tsolomko/SWCompression" ~> 4.5
 github "realm/realm-cocoa"
-github "stephencelis/SQLite.swift" "0.11.5"
+github "stephencelis/SQLite.swift" ~> 0.11.5
 
 # Rx
-github "ReactiveX/RxSwift" "4.4.0"
+github "ReactiveX/RxSwift" ~> 4.4.1
 github "RxSwiftCommunity/RxRealm"
