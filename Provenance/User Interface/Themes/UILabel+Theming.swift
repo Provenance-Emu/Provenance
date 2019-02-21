@@ -9,7 +9,6 @@
 import Foundation
 
 @IBDesignable class VerticalAlignLabel: UILabel {
-
     @IBInspectable var alignmentCode: Int = 0 {
         didSet {
             applyAlignmentCode()
@@ -33,13 +32,13 @@ import Foundation
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.applyAlignmentCode()
+        applyAlignmentCode()
     }
 
     override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
 
-        self.applyAlignmentCode()
+        applyAlignmentCode()
     }
 
     enum VerticalAlignment {
@@ -49,13 +48,13 @@ import Foundation
         case bottom
     }
 
-    var verticalAlignment : VerticalAlignment = .top {
+    var verticalAlignment: VerticalAlignment = .top {
         didSet {
             setNeedsDisplay()
         }
     }
 
-    override public func textRect(forBounds bounds: CGRect, limitedToNumberOfLines: Int) -> CGRect {
+    public override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines: Int) -> CGRect {
         let rect = super.textRect(forBounds: bounds, limitedToNumberOfLines: limitedToNumberOfLines)
 
         if #available(iOS 9.0, *) {
@@ -75,7 +74,7 @@ import Foundation
                 case .top:
                     return CGRect(x: bounds.origin.x, y: bounds.origin.y, width: rect.size.width, height: rect.size.height)
                 case .topcenter:
-                    return CGRect(x: (self.bounds.size.width / 2 ) - (rect.size.width / 2), y: bounds.origin.y, width: rect.size.width, height: rect.size.height)
+                    return CGRect(x: (self.bounds.size.width / 2) - (rect.size.width / 2), y: bounds.origin.y, width: rect.size.width, height: rect.size.height)
                 case .middle:
                     return CGRect(x: bounds.origin.x, y: bounds.origin.y + (bounds.size.height - rect.size.height) / 2, width: rect.size.width, height: rect.size.height)
                 case .bottom:
@@ -88,8 +87,8 @@ import Foundation
         }
     }
 
-    override public func drawText(in rect: CGRect) {
-        let r = self.textRect(forBounds: rect, limitedToNumberOfLines: self.numberOfLines)
+    public override func drawText(in rect: CGRect) {
+        let r = textRect(forBounds: rect, limitedToNumberOfLines: numberOfLines)
         super.drawText(in: r)
     }
 }

@@ -9,9 +9,9 @@
 import RxSwift
 
 internal struct GameLibrarySectionViewModel {
-    internal let title : String
-    internal let collapsable : Bool
-    internal let collapsed : Bool
+    internal let title: String
+    internal let collapsable: Bool
+    internal let collapsed: Bool
 
 //    internal init(title : String, collapsable: Bool, collapsed: Bool) {
 //        self.init(title: title, collapsable: collapsable, collapsed: collapsed)
@@ -20,26 +20,26 @@ internal struct GameLibrarySectionViewModel {
 
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    var collapseImageView : UIImageView = {
+    var collapseImageView: UIImageView = {
         let iv = UIImageView(image: UIImage(named: "chevron_down"))
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFit
         #if os(iOS)
-        iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+            iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
         #endif
         return iv
     }()
 
     var disposeBag = DisposeBag()
 
-    var viewModel : GameLibrarySectionViewModel {
+    var viewModel: GameLibrarySectionViewModel {
         didSet {
             #if os(tvOS)
-            titleLabel.text = viewModel.title
-            titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
+                titleLabel.text = viewModel.title
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
             #else
-            titleLabel.text = viewModel.title.uppercased()
-            titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
+                titleLabel.text = viewModel.title.uppercased()
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
             #endif
             collapseImageView.isHidden = !viewModel.collapsable
             collapseImageView.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
@@ -48,19 +48,19 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     }
 
     override init(frame: CGRect) {
-        self.viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
+        viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
         super.init(frame: frame)
-#if os(tvOS)
-        titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
-        titleLabel.textAlignment = .left
-        titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
-        titleLabel.textColor = colorForText
-#else
-    let labelHeight: CGFloat = 20.0
-    let labelBottomMargin: CGFloat = 5.0
+        #if os(tvOS)
+            titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
+            titleLabel.textAlignment = .left
+            titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
+            titleLabel.textColor = colorForText
+        #else
+            let labelHeight: CGFloat = 20.0
+            let labelBottomMargin: CGFloat = 5.0
 
-    titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
-    titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
+            titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
 
 //        let topSeparator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 1.0))
 //        topSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
@@ -68,21 +68,21 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //
 //        addSubview(topSeparator)
 
-        let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
-        bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
-        bottomSeparator.autoresizingMask = .flexibleWidth
+            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
+            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+            bottomSeparator.autoresizingMask = .flexibleWidth
 
-        addSubview(bottomSeparator)
+            addSubview(bottomSeparator)
 
-        // Style
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.8)
-        titleLabel.textAlignment = .left
-        titleLabel.backgroundColor = .clear
-        titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
+            // Style
+            backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            titleLabel.textAlignment = .left
+            titleLabel.backgroundColor = .clear
+            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
-        self.clipsToBounds = false
-#endif
+            clipsToBounds = false
+        #endif
         titleLabel.numberOfLines = 0
         titleLabel.autoresizingMask = .flexibleWidth
         addSubview(titleLabel)
@@ -97,26 +97,27 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         isOpaque = true
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-#if os(tvOS)
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        titleLabel.textColor = colorForText
-    }
-    var colorForText: UIColor {
-        if #available(tvOS 10.0, *) {
-            if traitCollection.userInterfaceStyle == .dark {
-                return UIColor.lightGray
-            }
+    #if os(tvOS)
+        override func traitCollectionDidChange(_: UITraitCollection?) {
+            titleLabel.textColor = colorForText
         }
 
-        return UIColor.darkGray
-    }
-#endif
+        var colorForText: UIColor {
+            if #available(tvOS 10.0, *) {
+                if traitCollection.userInterfaceStyle == .dark {
+                    return UIColor.lightGray
+                }
+            }
+
+            return UIColor.darkGray
+        }
+    #endif
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.disposeBag = DisposeBag()
+        disposeBag = DisposeBag()
     }
 }

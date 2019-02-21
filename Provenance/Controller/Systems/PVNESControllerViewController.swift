@@ -8,7 +8,7 @@
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVNESButton {
         get {
             return PVNESButton(rawValue: tag)!
@@ -42,28 +42,28 @@ final class PVNESControllerViewController: PVControllerViewController<PVNESSyste
         emulatorCore.didRelease(.left, forPlayer: 0)
         emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
-            case .upLeft:
-                emulatorCore.didPush(.up, forPlayer: 0)
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .up:
-                emulatorCore.didPush(.up, forPlayer: 0)
-            case .upRight:
-                emulatorCore.didPush(.up, forPlayer: 0)
-                emulatorCore.didPush(.right, forPlayer: 0)
-            case .left:
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .right:
-                emulatorCore.didPush(.right, forPlayer: 0)
-            case .downLeft:
-                emulatorCore.didPush(.down, forPlayer: 0)
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .down:
-                emulatorCore.didPush(.down, forPlayer: 0)
-            case .downRight:
-                emulatorCore.didPush(.down, forPlayer: 0)
-                emulatorCore.didPush(.right, forPlayer: 0)
-            default:
-                break
+        case .upLeft:
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .up:
+            emulatorCore.didPush(.up, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
+        case .left:
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .right:
+            emulatorCore.didPush(.right, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .down:
+            emulatorCore.didPush(.down, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
+        default:
+            break
         }
         super.dPad(dPad, didPress: direction)
     }

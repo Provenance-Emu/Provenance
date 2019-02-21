@@ -8,8 +8,7 @@
 
 import Foundation
 
-
-public enum SystemBits : Int, Codable {
+public enum SystemBits: Int, Codable {
     case unknown = 0
     case four = 4
     case eight = 8
@@ -19,7 +18,7 @@ public enum SystemBits : Int, Codable {
     case oneTwentyEight = 128
 }
 
-public enum SystemGeneration : UInt, Codable {
+public enum SystemGeneration: UInt, Codable {
     case none = 0
     case first
     case second
@@ -33,30 +32,30 @@ public enum SystemGeneration : UInt, Codable {
     case tenth
 }
 
-public struct System : Codable, SystemProtocol {
-    public let name : String
+public struct System: Codable, SystemProtocol {
+    public let name: String
     public let identifier: String
-    public let shortName : String
-    public let shortNameAlt : String?
-    public let manufacturer : String
-    public let releaseYear : Int
-    public let bits : SystemBits
+    public let shortName: String
+    public let shortNameAlt: String?
+    public let manufacturer: String
+    public let releaseYear: Int
+    public let bits: SystemBits
     //    public let generation : SystemGeneration
 
-    public let headerByteSize : Int
-    public let openvgDatabaseID : Int
+    public let headerByteSize: Int
+    public let openvgDatabaseID: Int
 
-    public let requiresBIOS : Bool
+    public let requiresBIOS: Bool
 
-    public let options : SystemOptions
+    public let options: SystemOptions
 
-    public let BIOSes : [BIOS]?
+    public let BIOSes: [BIOS]?
 
-    public let extensions : [String]
+    public let extensions: [String]
 
-    public let gameStructs : [Game]
+    public let gameStructs: [Game]
     public let coreStructs: [Core]
-    public let userPreferredCore : Core?
+    public let userPreferredCore: Core?
 
     public let usesCDs: Bool
     public let portableSystem: Bool
@@ -66,7 +65,7 @@ public struct System : Codable, SystemProtocol {
 }
 
 public extension System {
-    public init<S:SystemProtocol>(with system : S) where S.BIOSInfoProviderType : BIOSFileProvider {
+    init<S: SystemProtocol>(with system: S) where S.BIOSInfoProviderType: BIOSFileProvider {
         name = system.name
         identifier = system.identifier
         shortName = system.shortName
@@ -81,18 +80,18 @@ public extension System {
         options = system.options
         BIOSes = system.BIOSes?.map { (bios: BIOSInfoProvider) in
 
-            #warning ("FIX ME, file shoudl be able to beread from incoming if we can test type conformance confidiontally")
-            var file : LocalFile? = nil
+            #warning("FIX ME, file shoudl be able to beread from incoming if we can test type conformance confidiontally")
+            var file: LocalFile?
             //            if bios is LocalFileBacked {
             //                file = (bios as! LocalFileBacked).file
             //            }
 
-            let status : BIOSStatus
+            let status: BIOSStatus
             if let sp = bios as? BIOSStatusProvider {
                 status = sp.status
             } else {
-                let available :  Bool
-                let state : BIOSStatus.State
+                let available: Bool
+                let state: BIOSStatus.State
 
                 if let file = file {
                     available = file.online

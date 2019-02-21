@@ -9,12 +9,11 @@
 import Foundation
 import QuickTableViewController
 
-final class PVSettingsSwitchRow : SwitchRow<PVSwitchCell> {
-
-    let keyPath : ReferenceWritableKeyPath<PVSettingsModel, Bool>
+final class PVSettingsSwitchRow: SwitchRow<PVSwitchCell> {
+    let keyPath: ReferenceWritableKeyPath<PVSettingsModel, Bool>
 
     required init(text: String, detailText: DetailText? = nil, key: ReferenceWritableKeyPath<PVSettingsModel, Bool>, customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
-        self.keyPath = key
+        keyPath = key
         let value = PVSettingsModel.shared[keyPath: key]
 
         super.init(text: text, detailText: detailText, switchValue: value, customization: customization, action: { row in

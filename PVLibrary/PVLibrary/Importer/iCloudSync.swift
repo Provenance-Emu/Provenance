@@ -12,7 +12,7 @@ import RealmSwift
 import RxRealm
 import RxSwift
 
-public enum SyncError : Error {
+public enum SyncError: Error {
     case noUbiquityURL
 }
 
@@ -24,24 +24,24 @@ public enum SyncResult {
 }
 
 public protocol Container {
-    var containerURL : URL? {get}
+    var containerURL: URL? { get }
 }
 
 extension Container {
-    public var containerURL : URL? { return PVEmulatorConfiguration.iCloudContainerDirectory }
-    var documentsURL : URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
+    public var containerURL: URL? { return PVEmulatorConfiguration.iCloudContainerDirectory }
+    var documentsURL: URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
 }
 
-public protocol SyncFileToiCloud : Container {
-    var metadataQuery: NSMetadataQuery {get}
+public protocol SyncFileToiCloud: Container {
+    var metadataQuery: NSMetadataQuery { get }
     func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
     func queryFile(completionHandler: @escaping (URL?) -> Void) // -> Single<URL>
     func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
 }
 
-public protocol iCloudTypeSyncer : Container {
-    var metadataQuery: NSMetadataQuery {get}
-    var metadataQueryPredicate : NSPredicate {get} //ex NSPredicate(format: "%K like 'PHOTO*'", NSMetadataItemFSNameKey)
+public protocol iCloudTypeSyncer: Container {
+    var metadataQuery: NSMetadataQuery { get }
+    var metadataQueryPredicate: NSPredicate { get } // ex NSPredicate(format: "%K like 'PHOTO*'", NSMetadataItemFSNameKey)
 
     func loadAllFromICloud() -> Completable
     func removeAllFromICloud() -> Completable
@@ -52,7 +52,7 @@ extension iCloudTypeSyncer {
         return Completable.create { completable in
             guard self.containerURL != nil else {
                 completable(.error(SyncError.noUbiquityURL))
-                return Disposables.create { }
+                return Disposables.create {}
             }
 
             //        metadataQuery = NSMetadataQuery()
@@ -60,7 +60,7 @@ extension iCloudTypeSyncer {
             self.metadataQuery.predicate = self.metadataQueryPredicate
 
             var token: NSObjectProtocol?
-            token = NotificationCenter.default.addObserver(forName: Notification.Name.NSMetadataQueryDidFinishGathering, object: self.metadataQuery, queue: nil) { (notification) in
+            token = NotificationCenter.default.addObserver(forName: Notification.Name.NSMetadataQueryDidFinishGathering, object: self.metadataQuery, queue: nil) { notification in
                 self.queryFinished(notification: notification)
 
                 NotificationCenter.default.removeObserver(token!)
@@ -77,13 +77,13 @@ extension iCloudTypeSyncer {
 
             guard self.containerURL != nil else {
                 completable(.error(SyncError.noUbiquityURL))
-                return Disposables.create { }
+                return Disposables.create {}
             }
             //        metadataQuery = NSMetadataQuery()
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
             self.metadataQuery.predicate = self.metadataQueryPredicate
             var token: NSObjectProtocol?
-            token = NotificationCenter.default.addObserver(forName: Notification.Name.NSMetadataQueryDidFinishGathering, object: self.metadataQuery, queue: nil) { (notification) in
+            token = NotificationCenter.default.addObserver(forName: Notification.Name.NSMetadataQueryDidFinishGathering, object: self.metadataQuery, queue: nil) { notification in
                 self.removeQueryFinished(notification: notification)
                 NotificationCenter.default.removeObserver(token!)
                 completable(.completed)
@@ -121,7 +121,7 @@ extension iCloudTypeSyncer {
 //            let result = mq.result(at: i) as! NSMetadataItem
 //            let name = result.value(forAttribute: NSMetadataItemFSNameKey) as! String
 //            let url = result.value(forAttribute: NSMetadataItemURLKey) as! URL
-            // TODO: Some kind of observable rx?
+        // TODO: Some kind of observable rx?
 //            let document: Self.Type! = DocumentPhoto(fileURL: url)
 //            document?.open(completionHandler: {(success) -> Void in
 //
@@ -133,13 +133,12 @@ extension iCloudTypeSyncer {
 //            })
 //        }
     }
-
 }
 
-extension SyncFileToiCloud where Self:LocalFileInfoProvider {
-    private var destinationURL : URL? {
+extension SyncFileToiCloud where Self: LocalFileInfoProvider {
+    private var destinationURL: URL? {
         guard let containerURL = containerURL else { return nil }
-        return containerURL.appendingPathComponent(self.url.relativePath)
+        return containerURL.appendingPathComponent(url.relativePath)
     }
 
     func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) {
@@ -178,7 +177,7 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
 
         let center = NotificationCenter.default
 
-        center.addObserver(forName: .NSMetadataQueryDidFinishGathering, object: metadataQuery, queue: nil) { notification in
+        center.addObserver(forName: .NSMetadataQueryDidFinishGathering, object: metadataQuery, queue: nil) { _ in
             //            guard let `self` = self else {return}
 
             self.metadataQuery.disableUpdates()
@@ -189,8 +188,8 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
             guard self.metadataQuery.resultCount >= 1,
                 let item = self.metadataQuery.results.first as? NSMetadataItem,
                 let fileURL = item.value(forAttribute: NSMetadataItemURLKey) as? URL else {
-                    self.metadataQuery.enableUpdates()
-                    return completionHandler(nil)
+                self.metadataQuery.enableUpdates()
+                return completionHandler(nil)
             }
 
             completionHandler(fileURL)
@@ -203,15 +202,13 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
     /// - Parameters:
     ///   - completionHandler: Non-main
     func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) {
-
         guard let destinationURL = self.destinationURL else {
             completionHandler(.denied)
             return
         }
 
         DispatchQueue.global(qos: .background).async {
-
-            if (!FileManager.default.isUbiquitousItem(at: destinationURL)) {
+            if !FileManager.default.isUbiquitousItem(at: destinationURL) {
                 completionHandler(.fileNotExist)
                 return
             }
@@ -236,13 +233,14 @@ extension SyncFileToiCloud where Self:LocalFileInfoProvider {
     }
 }
 
-enum iCloudError : Error {
+enum iCloudError: Error {
     case dataReadFail
 }
+
 public final class iCloudSync {
     static let UbiquityIdentityTokenKey = "com.provenance-emu.provenenace.UbiquityIdentityToken"
 
-    static var disposeBag : DisposeBag?
+    static var disposeBag: DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
@@ -258,7 +256,7 @@ public final class iCloudSync {
         saveStateSyncer.loadAllFromICloud().subscribe(onCompleted: {
             importNewSaves()
             self.disposeBag = nil
-        }) { (error) in
+        }) { error in
             ELOG("\(error.localizedDescription)")
         }.disposed(by: disposeBag)
     }
@@ -283,10 +281,10 @@ public final class iCloudSync {
             }
 
             let saveFiles = subDirs.compactMap {
-                return try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                }.joined()
+                try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            }.joined()
             let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
-            let jsonDecorder = JSONDecoder.init()
+            let jsonDecorder = JSONDecoder()
             jsonDecorder.dataDecodingStrategy = .deferredToData
 
             let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
@@ -363,7 +361,7 @@ public final class iCloudSync {
     }
 }
 
-class SaveStateSyncer : iCloudTypeSyncer {
+class SaveStateSyncer: iCloudTypeSyncer {
     public var metadataQuery: NSMetadataQuery = NSMetadataQuery()
     public var metadataQueryPredicate: NSPredicate {
         return NSPredicate(format: "%K CONTAINS[c] 'Save States'", NSMetadataItemPathKey)

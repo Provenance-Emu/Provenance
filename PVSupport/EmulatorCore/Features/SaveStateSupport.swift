@@ -19,6 +19,6 @@ public protocol SaveStateSupport {
 }
 
 public protocol AsyncSaveStateSupport {
-    func loadState(atPath: URL, completion: @escaping (Result)->Void ) throws
-    func saveState(toPath: URL, completion: @escaping (Result)->Void ) throws
+    func loadState(atPath: URL, completion: @escaping (Result) -> Void) throws
+    func saveState(toPath: URL, completion: @escaping (Result) -> Void) throws
 }

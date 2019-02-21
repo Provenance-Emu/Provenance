@@ -6,11 +6,11 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import MobileCoreServices
 import CoreSpotlight
-import RealmSwift
-import PVSupport
+import MobileCoreServices
 import PVLibrary
+import PVSupport
+import RealmSwift
 
 public enum SpotlightError: Error {
     case appGroupsNotSupported
@@ -19,7 +19,6 @@ public enum SpotlightError: Error {
 }
 
 public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
-
     public override init() {
         super.init()
 
@@ -28,8 +27,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         }
     }
 
-    public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexAllSearchableItemsWithAcknowledgementHandler acknowledgementHandler: @escaping () -> Void) {
-
+    public override func searchableIndex(_: CSSearchableIndex, reindexAllSearchableItemsWithAcknowledgementHandler acknowledgementHandler: @escaping () -> Void) {
         if RealmConfiguration.supportsAppGroups {
             let database = RomDatabase.sharedInstance
 
@@ -43,7 +41,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         acknowledgementHandler()
     }
 
-    public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexSearchableItemsWithIdentifiers identifiers: [String], acknowledgementHandler: @escaping () -> Void) {
+    public override func searchableIndex(_: CSSearchableIndex, reindexSearchableItemsWithIdentifiers identifiers: [String], acknowledgementHandler: @escaping () -> Void) {
         // Reindex any items with the given identifiers and the provided index
 
         if RealmConfiguration.supportsAppGroups {
@@ -62,7 +60,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
 //        if !RealmConfiguration.supportsAppGroups {
 //            throw SpotlightError.appGroupsNotSupported
 //        }
-// Could make a scaled image too and supply the data
+    // Could make a scaled image too and supply the data
 //        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
 //
 //        if typeIdentifier == (kUTTypeImage as String) {
@@ -77,8 +75,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
 //        }
 //    }
 
-    public override func fileURL(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String, inPlace: Bool) throws -> URL {
-
+    public override func fileURL(for _: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String, inPlace _: Bool) throws -> URL {
         if !RealmConfiguration.supportsAppGroups {
             throw SpotlightError.appGroupsNotSupported
         }
@@ -100,23 +97,23 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
     }
 
     private func indexResults(_ results: Results<PVGame>) {
-		#if swift(>=4.1)
-		let items: [CSSearchableItem] = results.compactMap({ (game) -> CSSearchableItem? in
-			if !game.md5Hash.isEmpty {
-				return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
-			} else {
-				return nil
-			}
-		})
-		#else
-        let items: [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
-            if !game.md5Hash.isEmpty {
-                return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
-            } else {
-                return nil
-            }
-        })
-		#endif
+        #if swift(>=4.1)
+            let items: [CSSearchableItem] = results.compactMap({ (game) -> CSSearchableItem? in
+                if !game.md5Hash.isEmpty {
+                    return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
+                } else {
+                    return nil
+                }
+            })
+        #else
+            let items: [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
+                if !game.md5Hash.isEmpty {
+                    return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
+                } else {
+                    return nil
+                }
+            })
+        #endif
         CSSearchableIndex.default().indexSearchableItems(items) { error in
             if let error = error {
                 ELOG("indexing error: \(error)")

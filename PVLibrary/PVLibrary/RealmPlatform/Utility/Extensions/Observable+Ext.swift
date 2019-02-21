@@ -6,7 +6,7 @@ extension Observable where Element: Sequence, Element.Iterator.Element: DomainCo
 
     func mapToDomain() -> Observable<[DomainType]> {
         return map { sequence -> [DomainType] in
-            return sequence.mapToDomain()
+            sequence.mapToDomain()
         }
     }
 }
@@ -15,7 +15,7 @@ extension Sequence where Iterator.Element: DomainConvertibleType {
     typealias Element = Iterator.Element
     func mapToDomain() -> [Element.DomainType] {
         return map {
-            return $0.asDomain()
+            $0.asDomain()
         }
     }
 }

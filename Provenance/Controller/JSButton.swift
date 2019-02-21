@@ -7,8 +7,8 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-import UIKit
 import PVSupport
+import UIKit
 
 protocol JSButtonDelegate: class {
     func buttonPressed(_ button: JSButton)
@@ -30,6 +30,7 @@ final class JSButton: UIView {
             }
         }
     }
+
     var backgroundImagePressed: UIImage? {
         didSet {
             if !pressed {
@@ -63,6 +64,7 @@ final class JSButton: UIView {
             backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
         }
     }
+
     weak var delegate: JSButtonDelegate?
 
     func setEnabled(_ enabled: Bool) {
@@ -131,12 +133,12 @@ final class JSButton: UIView {
         }
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_: Set<UITouch>, with _: UIEvent?) {
         delegate?.buttonPressed(self)
         pressed = true
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touch = touches.first else {
             return
         }
@@ -158,12 +160,12 @@ final class JSButton: UIView {
         self.pressed = pressed
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
         delegate?.buttonReleased(self)
         pressed = false
     }
 
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
         delegate?.buttonReleased(self)
         pressed = false
     }

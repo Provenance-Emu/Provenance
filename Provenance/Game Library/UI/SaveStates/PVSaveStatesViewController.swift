@@ -6,30 +6,29 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import UIKit
-import Realm
-import RealmSwift
 import PVLibrary
 import PVSupport
-import RxSwift
+import Realm
+import RealmSwift
 import RxCocoa
 import RxRealm
+import RxSwift
+import UIKit
 
 protocol PVSaveStatesViewControllerDelegate: class {
-	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
+    func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion)
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState, completion: @escaping SaveCompletion)
     // TODO: This should either throw or have a callback as well
-	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
+    func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
 }
 
 struct SaveSection {
-    let title : String
-    let saves : Results<PVSaveState>
+    let title: String
+    let saves: Results<PVSaveState>
 }
 
 final class PVSaveStatesViewController: UICollectionViewController {
-
     private var autoSaveStatesObserverToken: NotificationToken!
     private var manualSaveStatesObserverToken: NotificationToken!
 
@@ -38,7 +37,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
     var saveStates: LinkingObjects<PVSaveState>!
     var screenshot: UIImage?
 
-    var coreID : String?
+    var coreID: String?
 
     private var autoSaves: Results<PVSaveState>!
     private var manualSaves: Results<PVSaveState>!
@@ -53,22 +52,22 @@ final class PVSaveStatesViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-#if os(iOS)
-		title = "Save States"
-#endif
-		#if os(tvOS)
-		collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
-		#else
-		collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
-		#endif
+        #if os(iOS)
+            title = "Save States"
+        #endif
+        #if os(tvOS)
+            collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+        #else
+            collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+        #endif
 
-		let allSaves : Results<PVSaveState>
-		if let coreID = coreID {
-			let filter : String = "core.identifier == \"" + coreID + "\""
-			allSaves = saveStates.filter(filter).sorted(byKeyPath: "date", ascending: false)
-		} else {
-			allSaves = saveStates.sorted(byKeyPath: "date", ascending: false)
-		}
+        let allSaves: Results<PVSaveState>
+        if let coreID = coreID {
+            let filter: String = "core.identifier == \"" + coreID + "\""
+            allSaves = saveStates.filter(filter).sorted(byKeyPath: "date", ascending: false)
+        } else {
+            allSaves = saveStates.sorted(byKeyPath: "date", ascending: false)
+        }
 
         autoSaves = allSaves.filter("isAutosave == true")
         manualSaves = allSaves.filter("isAutosave == false")
@@ -106,13 +105,13 @@ final class PVSaveStatesViewController: UICollectionViewController {
 //            .bind(to: collectionView.rx.items(dataSource: dataSource))
 //            .disposed(by: disposeBag)
 //
-    autoSaveStatesObserverToken = autoSaves.observe { [weak self] (changes: RealmCollectionChange) in
-        guard let `self` = self else { return }
+        autoSaveStatesObserverToken = autoSaves.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let `self` = self else { return }
             switch changes {
             case .initial:
                 self.collectionView?.reloadData()
             case .update(_, let deletions, _, _):
-                guard deletions.count > 0 else {
+                guard !deletions.isEmpty else {
                     return
                 }
 
@@ -123,7 +122,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 self.collectionView?.performBatchUpdates({
                     self.collectionView?.deleteItems(at: deletions.map(fromItem))
                 }, completion: nil)
-            case .error(let error):
+            case let .error(error):
                 ELOG("Error updating save states: " + error.localizedDescription)
             }
         }
@@ -135,7 +134,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
             case .initial:
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, _):
-                guard deletions.count > 0 || insertions.count > 0 else {
+                guard !deletions.isEmpty || !insertions.isEmpty else {
                     return
                 }
                 let fromItem = { (item: Int) -> IndexPath in
@@ -146,24 +145,24 @@ final class PVSaveStatesViewController: UICollectionViewController {
                     self.collectionView?.deleteItems(at: deletions.map(fromItem))
                     self.collectionView?.insertItems(at: insertions.map(fromItem))
                 }, completion: nil)
-            case .error(let error):
+            case let .error(error):
                 ELOG("Error updating save states: " + error.localizedDescription)
             }
         }
 
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressRecognized(_:)))
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
         collectionView?.addGestureRecognizer(longPressRecognizer)
     }
 
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
-		if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
-			emulatorViewController.core.setPauseEmulation(false)
-			emulatorViewController.isShowingMenu = false
-			emulatorViewController.enableContorllerInput(false)
-		}
-	}
+        if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
+            emulatorViewController.core.setPauseEmulation(false)
+            emulatorViewController.isShowingMenu = false
+            emulatorViewController.enableContorllerInput(false)
+        }
+    }
 
     @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
         switch recognizer.state {
@@ -171,11 +170,11 @@ final class PVSaveStatesViewController: UICollectionViewController {
             let point: CGPoint = recognizer.location(in: collectionView)
             var maybeIndexPath: IndexPath? = collectionView?.indexPathForItem(at: point)
 
-#if os(tvOS)
-            if maybeIndexPath == nil, let focusedView = UIScreen.main.focusedView as? UICollectionViewCell {
-                maybeIndexPath = collectionView?.indexPath(for: focusedView)
-            }
-#endif
+            #if os(tvOS)
+                if maybeIndexPath == nil, let focusedView = UIScreen.main.focusedView as? UICollectionViewCell {
+                    maybeIndexPath = collectionView?.indexPath(for: focusedView)
+                }
+            #endif
             guard let indexPath = maybeIndexPath else {
                 ELOG("No index path at touch point")
                 return
@@ -197,7 +196,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
             }
 
             let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
+            alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
                 do {
                     try PVSaveState.delete(saveState)
                 } catch {
@@ -211,41 +210,41 @@ final class PVSaveStatesViewController: UICollectionViewController {
         }
     }
 
-	@IBAction func done(_ sender: Any) {
-		delegate?.saveStatesViewControllerDone(self)
-	}
+    @IBAction func done(_: Any) {
+        delegate?.saveStatesViewControllerDone(self)
+    }
 
-	@IBAction func newSaveState(_ sender: Any) {
+    @IBAction func newSaveState(_: Any) {
         delegate?.saveStatesViewControllerCreateNewState(self) { result in
             switch result {
             case .success:
-               break
-            case .error(let error):
+                break
+            case let .error(error):
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 self.presentError("Error creating save state: \(error.localizedDescription) \(reason)")
             }
         }
-	}
+    }
 
     func showSaveStateOptions(saveState: PVSaveState) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { (action: UIAlertAction) in
+        alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { (_: UIAlertAction) in
             self.delegate?.saveStatesViewController(self, load: saveState)
         }))
-        alert.addAction(UIAlertAction(title: "Save & Overwrite", style: .default, handler: { (action: UIAlertAction) in
+        alert.addAction(UIAlertAction(title: "Save & Overwrite", style: .default, handler: { (_: UIAlertAction) in
             self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState) { result in
                 switch result {
                 case .success:
                     break
-                case .error(let error):
+                case let .error(error):
                     self.presentError("Error overwriting save state: \(error.localizedDescription)")
                 }
             }
         }))
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
-			do {
-				try PVSaveState.delete(saveState)
-			} catch {
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_: UIAlertAction) in
+            do {
+                try PVSaveState.delete(saveState)
+            } catch {
                 self.presentError("Error deleting save state: \(error.localizedDescription)")
             }
         }))
@@ -253,25 +252,25 @@ final class PVSaveStatesViewController: UICollectionViewController {
         present(alert, animated: true)
     }
 
-	override func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return 2
-	}
-
-	override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-		let reusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SaveStateHeader", for: indexPath) as! PVSaveStateHeaderView
-		switch indexPath.section {
-		case 0:
-			reusableView.label.text = "Auto Save"
-		case 1:
-			reusableView.label.text = "Save States"
-		default:
-			break
-		}
-
-		return reusableView
+    override func numberOfSections(in _: UICollectionView) -> Int {
+        return 2
     }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let reusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SaveStateHeader", for: indexPath) as! PVSaveStateHeaderView
+        switch indexPath.section {
+        case 0:
+            reusableView.label.text = "Auto Save"
+        case 1:
+            reusableView.label.text = "Save States"
+        default:
+            break
+        }
+
+        return reusableView
+    }
+
+    override func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
         case 0:
             return autoSaves.count
@@ -299,7 +298,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
         return cell
     }
 
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    override func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch indexPath.section {
         case 0:
             let saveState = autoSaves[indexPath.item]

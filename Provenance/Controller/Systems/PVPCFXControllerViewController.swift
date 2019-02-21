@@ -10,7 +10,7 @@ import Foundation
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVPCFXButton {
         get {
             return PVPCFXButton(rawValue: tag)!
@@ -22,7 +22,6 @@ fileprivate extension JSButton {
 }
 
 final class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSystemResponderClient> {
-
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -47,7 +46,7 @@ final class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSys
         startButton?.buttonTag = .run
     }
 
-    override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
+    override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)
@@ -79,7 +78,7 @@ final class PVPCFXControllerViewController: PVControllerViewController<PVPCFXSys
         vibrate()
     }
 
-    override func dPadDidReleaseDirection(_ dPad: JSDPad) {
+    override func dPadDidReleaseDirection(_: JSDPad) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)

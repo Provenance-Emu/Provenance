@@ -8,14 +8,14 @@
 
 import Foundation
 
-public func days(_ days : Double) -> TimeInterval {
-	return hours(24) * days
+public func days(_ days: Double) -> TimeInterval {
+    return hours(24) * days
 }
 
-public func hours(_ hours : Double) -> TimeInterval {
-	return hours * minutes(60)
+public func hours(_ hours: Double) -> TimeInterval {
+    return hours * minutes(60)
 }
 
-public func minutes(_ minutes : Double) -> TimeInterval {
-	return TimeInterval(60 * minutes)
+public func minutes(_ minutes: Double) -> TimeInterval {
+    return TimeInterval(60 * minutes)
 }

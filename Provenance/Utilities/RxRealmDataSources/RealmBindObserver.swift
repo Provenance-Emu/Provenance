@@ -8,9 +8,9 @@
 import Foundation
 
 import RealmSwift
-import RxSwift
 import RxCocoa
 import RxRealm
+import RxSwift
 
 public class RealmBindObserver<O: Object, C: RealmCollection, DS>: ObserverType {
     typealias BindingType = (DS, C, RealmChangeset?) -> Void
@@ -26,7 +26,7 @@ public class RealmBindObserver<O: Object, C: RealmCollection, DS>: ObserverType 
 
     public func on(_ event: Event<E>) {
         switch event {
-        case .next(let element):
+        case let .next(element):
             binding(dataSource, element.0, element.1)
         case .error:
             return

@@ -6,11 +6,12 @@
 //
 
 import Foundation
-import UIKit
-import RealmSwift
 import PVSupport
+import RealmSwift
+import UIKit
 
 // MARK: - System Scanner
+
 public extension PVEmulatorConfiguration {
     static var coreClasses: [ClassInfo] {
         let motherClassInfo = ClassInfo(PVEmulatorCore.self)
@@ -19,31 +20,31 @@ public extension PVEmulatorConfiguration {
         var count = UInt32(0)
         let classList = objc_copyClassList(&count)!
 
-        for i in 0..<Int(count) {
-			if let classInfo = ClassInfo(classList[i], withSuperclass: "PVEmulatorCore"),
+        for i in 0 ..< Int(count) {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: "PVEmulatorCore"),
                 let superclassInfo = classInfo.superclassInfo,
                 superclassInfo == motherClassInfo {
                 subclassList.append(classInfo)
             }
         }
 
-		return subclassList.filter {return $0.className != "PVEmulatorCore" && $0.superclassInfo?.className == "PVEmulatorCore"}
+        return subclassList.filter { $0.className != "PVEmulatorCore" && $0.superclassInfo?.className == "PVEmulatorCore" }
     }
 
     class func updateCores(fromPlists plists: [URL]) {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
-		// Remove all existing cores first incase things have been updated
-//		if !database.realm.isInWriteTransaction {
-//			try! database.writeTransaction {
-//				try! database.deleteAll(PVCore.self)
-//			}
-//		} else {
-//			try! database.deleteAll(PVCore.self)
-//		}
+        // Remove all existing cores first incase things have been updated
+        //		if !database.realm.isInWriteTransaction {
+        //			try! database.writeTransaction {
+        //				try! database.deleteAll(PVCore.self)
+        //			}
+        //		} else {
+        //			try! database.deleteAll(PVCore.self)
+        //		}
 
-        plists.forEach { (plist) in
+        plists.forEach { plist in
             do {
                 let data = try Data(contentsOf: plist)
                 let core = try decoder.decode(CorePlistEntry.self, from: data)
@@ -89,7 +90,6 @@ public extension PVEmulatorConfiguration {
                             ELOG("Failed to make new system: \(error)")
                         }
                     }
-
                 }
             } catch {
                 // Handle error
@@ -142,6 +142,6 @@ public extension PVEmulatorConfiguration {
                     try! database.add(newBIOS)
                 }
             }
-         }
+        }
     }
 }

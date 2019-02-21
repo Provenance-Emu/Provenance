@@ -5,9 +5,9 @@
 //  Created by Joseph Mattiello on 3/8/18.
 //
 
-import UIKit
 import PVSupport
-//import PVMednafen.Private
+import UIKit
+// import PVMednafen.Private
 
 extension MednafenGameCore: DiscSwappable {
     public var numberOfDiscs: UInt {
@@ -35,21 +35,21 @@ extension MednafenGameCore: DiscSwappable {
 }
 
 extension MednafenGameCore: CoreActions {
-	public var coreActions : [CoreAction]? {
-		switch systemType {
-		case .virtualBoy:
-			return [CoreAction(title: "Change Palette", options: nil)]
-		default:
-			return nil
-		}
-	}
+    public var coreActions: [CoreAction]? {
+        switch systemType {
+        case .virtualBoy:
+            return [CoreAction(title: "Change Palette", options: nil)]
+        default:
+            return nil
+        }
+    }
 
-	public func selected(action : CoreAction) {
-		switch action.title {
-		case "Change Palette":
-			self.changeDisplayMode()
-		default:
-			print("Unknown action: "+action.title)
-		}
-	}
+    public func selected(action: CoreAction) {
+        switch action.title {
+        case "Change Palette":
+            changeDisplayMode()
+        default:
+            print("Unknown action: " + action.title)
+        }
+    }
 }

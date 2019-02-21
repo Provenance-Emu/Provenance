@@ -19,15 +19,14 @@ extension Notification.Name {
 typealias iCadeListenCompletion = () -> Void
 
 #if targetEnvironment(simulator)
-let isSimulator = true
+    let isSimulator = true
 #else
-let isSimulator = false
+    let isSimulator = false
 #endif
 
 final class PVControllerManager: NSObject {
-
     var allLiveControllers: [Int: GCController] {
-        var allLiveControllers = [Int:GCController]()
+        var allLiveControllers = [Int: GCController]()
         if let player1 = player1 {
             allLiveControllers[1] = player1
         }
@@ -51,6 +50,7 @@ final class PVControllerManager: NSObject {
             }
         }
     }
+
     private(set) var player2: GCController? {
         didSet {
             if player2 != oldValue {
@@ -58,6 +58,7 @@ final class PVControllerManager: NSObject {
             }
         }
     }
+
     private(set) var player3: GCController? {
         didSet {
             if player3 != oldValue {
@@ -65,6 +66,7 @@ final class PVControllerManager: NSObject {
             }
         }
     }
+
     private(set) var player4: GCController? {
         didSet {
             if player4 != oldValue {
@@ -80,52 +82,52 @@ final class PVControllerManager: NSObject {
 
     static let shared: PVControllerManager = PVControllerManager()
 
-	func listenForICadeControllers(window: UIWindow?, preferredPlayer : Int = -1, completion: iCadeListenCompletion? = nil ) {
-        iCadeController?.controllerPressedAnyKey = {[unowned self] (controller) -> Void in
-			var player = 0
+    func listenForICadeControllers(window: UIWindow?, preferredPlayer: Int = -1, completion: iCadeListenCompletion? = nil) {
+        iCadeController?.controllerPressedAnyKey = { [unowned self] (_) -> Void in
+            var player = 0
 
-			var controllerReplacing : GCController?
-			if preferredPlayer == -1 {
-				#if os(tvOS)
-				if self.player1 == nil || self.player1?.microGamepad != nil {
-					player = 1
-				} else if self.player2 == nil || self.player2?.microGamepad != nil {
-					player = 2
-				} else if self.player3 == nil || self.player3?.microGamepad != nil {
-					player = 3
-				} else if self.player4 == nil || self.player4?.microGamepad != nil {
-					player = 1
-				} else {
-					completion?()
-					return
-				}
-				#else
-				if self.player1 == nil {
-					player = 1
-				} else if self.player2 == nil {
-					player = 2
-				} else if self.player3 == nil {
-					player = 3
-				} else if self.player4 == nil {
-					player = 1
-				} else {
-					completion?()
-					return
-				}
-				#endif
-			} else {
-				player = preferredPlayer
+            var controllerReplacing: GCController?
+            if preferredPlayer == -1 {
+                #if os(tvOS)
+                    if self.player1 == nil || self.player1?.microGamepad != nil {
+                        player = 1
+                    } else if self.player2 == nil || self.player2?.microGamepad != nil {
+                        player = 2
+                    } else if self.player3 == nil || self.player3?.microGamepad != nil {
+                        player = 3
+                    } else if self.player4 == nil || self.player4?.microGamepad != nil {
+                        player = 1
+                    } else {
+                        completion?()
+                        return
+                    }
+                #else
+                    if self.player1 == nil {
+                        player = 1
+                    } else if self.player2 == nil {
+                        player = 2
+                    } else if self.player3 == nil {
+                        player = 3
+                    } else if self.player4 == nil {
+                        player = 1
+                    } else {
+                        completion?()
+                        return
+                    }
+                #endif
+            } else {
+                player = preferredPlayer
 
-				controllerReplacing = self.allLiveControllers[preferredPlayer]
-			}
+                controllerReplacing = self.allLiveControllers[preferredPlayer]
+            }
 
             self.setController(self.iCadeController, toPlayer: player)
             self.stopListeningForICadeControllers()
             NotificationCenter.default.post(name: .GCControllerDidConnect, object: PVControllerManager.shared.iCadeController)
 
-			if let controllerReplacing = controllerReplacing {
-				self.assign(controllerReplacing)
-			}
+            if let controllerReplacing = controllerReplacing {
+                self.assign(controllerReplacing)
+            }
 
             completion?()
         }
@@ -153,24 +155,23 @@ final class PVControllerManager: NSObject {
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
         setupICade()
-
     }
 
-	func isAssigned(_ controller : GCController) -> Bool {
-		return allLiveControllers.contains(where: { (index, existingController) -> Bool in
-			return controller == existingController
-		})
-	}
+    func isAssigned(_ controller: GCController) -> Bool {
+        return allLiveControllers.contains(where: { (_, existingController) -> Bool in
+            controller == existingController
+        })
+    }
 
-	func index(forController controller : GCController) -> Int? {
-		if let (index, _) = allLiveControllers.first(where: { (index, existingController) -> Bool in
-			controller == existingController
-		}) {
-			return index
-		} else {
-			return nil
-		}
-	}
+    func index(forController controller: GCController) -> Int? {
+        if let (index, _) = allLiveControllers.first(where: { (_, existingController) -> Bool in
+            controller == existingController
+        }) {
+            return index
+        } else {
+            return nil
+        }
+    }
 
     func setupICade() {
         if iCadeController == nil {
@@ -224,7 +225,7 @@ final class PVControllerManager: NSObject {
         }
 
         var assigned = false
-        if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
+        if controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController {
             // For 8Bitdo, we set to listen again for controllers after disconnecting
             // so we can detect when they connect again
             if iCadeController != nil {
@@ -241,7 +242,7 @@ final class PVControllerManager: NSObject {
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if (keyPath == "kICadeControllerSettingKey") {
+        if keyPath == "kICadeControllerSettingKey" {
             setupICade()
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
@@ -249,22 +250,23 @@ final class PVControllerManager: NSObject {
     }
 
     func listenForICadeControllers() {
-        listenForICadeControllers(window: nil) {() -> Void in }
+        listenForICadeControllers(window: nil) { () -> Void in }
     }
 
-// MARK: - Controllers assignment
-    func setController(_ controller: GCController?, toPlayer player: Int) {
-		if let controller = controller, let currentIndex = index(forController: controller), currentIndex != player {
-			setController(nil, toPlayer: currentIndex)
-		}
+    // MARK: - Controllers assignment
 
-#if TARGET_OS_TV
-        // check if controller is iCade, otherwise crash
-        if !((controller is PViCadeController) && controller?.microGamepad) {
-            controller?.microGamepad?.allowsRotation = true
-            controller?.microGamepad?.reportsAbsoluteDpadValues = true
+    func setController(_ controller: GCController?, toPlayer player: Int) {
+        if let controller = controller, let currentIndex = index(forController: controller), currentIndex != player {
+            setController(nil, toPlayer: currentIndex)
         }
-#endif
+
+        #if TARGET_OS_TV
+            // check if controller is iCade, otherwise crash
+            if !((controller is PViCadeController) && controller?.microGamepad) {
+                controller?.microGamepad?.allowsRotation = true
+                controller?.microGamepad?.reportsAbsoluteDpadValues = true
+            }
+        #endif
         controller?.playerIndex = GCControllerPlayerIndex(rawValue: player - 1)!
         // TODO: keep an array of players/controllers we support more than 2 players
         if player == 1 {
@@ -296,8 +298,8 @@ final class PVControllerManager: NSObject {
         }
         var assigned = false
         controllers.forEach { controller in
-            if !allLiveControllers.contains(where: { (number, existingController) -> Bool in
-                return controller == existingController
+            if !allLiveControllers.contains(where: { (_, existingController) -> Bool in
+                controller == existingController
             }) {
                 assigned = assigned || assign(controller)
             }
@@ -308,30 +310,28 @@ final class PVControllerManager: NSObject {
 
     @discardableResult
     func assign(_ controller: GCController) -> Bool {
+        if isAssigned(controller) {
+            return false
+        }
 
-		if isAssigned(controller) {
-			return false
-		}
-
-		ILOG("Assign controller \(controller.vendorName ?? "nil")")
+        ILOG("Assign controller \(controller.vendorName ?? "nil")")
         // Assign the controller to the first player without a controller assigned, or
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
-        for i in 1...4 {
-
+        for i in 1 ... 4 {
             let previouslyAssignedController: GCController? = self.controller(forPlayer: i)
             let newGamepadNotRemote = controller.gamepad != nil || controller.extendedGamepad != nil
             let previousGamepadNotRemote = previouslyAssignedController?.gamepad != nil || previouslyAssignedController?.extendedGamepad != nil
 
-			// Skip making duplicate
-			if let previouslyAssignedController = previouslyAssignedController, previouslyAssignedController == controller {
-				continue
-			}
+            // Skip making duplicate
+            if let previouslyAssignedController = previouslyAssignedController, previouslyAssignedController == controller {
+                continue
+            }
 
             if previouslyAssignedController == nil || (newGamepadNotRemote && !previousGamepadNotRemote) {
                 setController(controller, toPlayer: i)
                 // Move the previously assigned controller to another player
                 if let previouslyAssignedController = previouslyAssignedController {
-					ILOG("Controller #\(i) \(previouslyAssignedController.vendorName ?? "nil") being reassigned")
+                    ILOG("Controller #\(i) \(previouslyAssignedController.vendorName ?? "nil") being reassigned")
                     assign(previouslyAssignedController)
                 }
                 NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)

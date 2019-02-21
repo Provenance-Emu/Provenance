@@ -9,10 +9,8 @@
 import Foundation
 import UIKit
 
-final class GameLibraryViewController : UIViewController {
-
+final class GameLibraryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
 }

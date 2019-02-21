@@ -1,7 +1,7 @@
 import UIKit
 
 /*
-                EN      FR      DE
+ EN      FR      DE
  UP ON,OFF  =   w,e     z,e     w,e
  RT ON,OFF  =   d,c     d,c     d,c
  DN ON,OFF  =   x,z     x,w     x,y
@@ -17,187 +17,181 @@ import UIKit
  // Mocute Extensions
  I  ON,OFF  =   [,] Left Trigger
  J  ON,OFF  =   1,2 Right Trigger
-*/
+ */
 
 /// Add the `inserting` and `removing` functions
 private extension OptionSet where Element == Self {
-	/// Duplicate the set and insert the given option
-	func inserting(_ newMember: Self) -> Self {
-		var opts = self
-		opts.insert(newMember)
-		return opts
-	}
+    /// Duplicate the set and insert the given option
+    func inserting(_ newMember: Self) -> Self {
+        var opts = self
+        opts.insert(newMember)
+        return opts
+    }
 
-	/// Duplicate the set and remove the given option
-	func removing(_ member: Self) -> Self {
-		var opts = self
-		opts.remove(member)
-		return opts
-	}
+    /// Duplicate the set and remove the given option
+    func removing(_ member: Self) -> Self {
+        var opts = self
+        opts.remove(member)
+        return opts
+    }
 }
 
 extension String {
-	var length: Int {
-		get {
-			return self.count
-		}
-	}
+    var length: Int {
+        return count
+    }
 
-	/// The first index of the given string
-	public func indexRaw(of str: String, after: Int = 0, options: String.CompareOptions = .literal, locale: Locale? = nil) -> String.Index? {
-		guard str.length > 0 else {
-			// Can't look for nothing
-			return nil
-		}
-		guard (str.length + after) <= self.length else {
-			// Make sure the string you're searching for will actually fit
-			return nil
-		}
+    /// The first index of the given string
+    public func indexRaw(of str: String, after: Int = 0, options: String.CompareOptions = .literal, locale: Locale? = nil) -> String.Index? {
+        guard str.length > 0 else {
+            // Can't look for nothing
+            return nil
+        }
+        guard (str.length + after) <= length else {
+            // Make sure the string you're searching for will actually fit
+            return nil
+        }
 
-		let startRange = self.index(self.startIndex, offsetBy: after)..<self.endIndex
-		return self.range(of: str, options: options.removing(.backwards), range: startRange, locale: locale)?.lowerBound
-	}
+        let startRange = index(startIndex, offsetBy: after) ..< endIndex
+        return range(of: str, options: options.removing(.backwards), range: startRange, locale: locale)?.lowerBound
+    }
 
-	public func index(of str: String, after: Int = 0, options: String.CompareOptions = .literal, locale: Locale? = nil) -> Int {
-		guard let index = indexRaw(of: str, after: after, options: options, locale: locale) else {
-			return -1
-		}
-		return self.distance(from: self.startIndex, to: index)
-	}
+    public func index(of str: String, after: Int = 0, options: String.CompareOptions = .literal, locale: Locale? = nil) -> Int {
+        guard let index = indexRaw(of: str, after: after, options: options, locale: locale) else {
+            return -1
+        }
+        return distance(from: startIndex, to: index)
+    }
 }
 
 // Mocute MTK
-//private let ON_STATES_EN :[Character] = ",`—-/.\\,;’=[".map{$0}
-//private let OFF_STATES_EN :[Character] = "".map{$0}
+// private let ON_STATES_EN :[Character] = ",`—-/.\\,;’=[".map{$0}
+// private let OFF_STATES_EN :[Character] = "".map{$0}
 
-private let ON_STATES_EN :[Character] = "wdxayhujikol[1".map{$0}
-private let OFF_STATES_EN :[Character] = "eczqtrfnmpgv]2".map{$0}
+private let ON_STATES_EN: [Character] = "wdxayhujikol[1".map { $0 }
+private let OFF_STATES_EN: [Character] = "eczqtrfnmpgv]2".map { $0 }
 
-private let ON_STATES_FR :[Character] = "zdxqyhujikol".map{$0}
-private let OFF_STATES_FR :[Character] = "ecwatrfn,pgv".map{$0}
+private let ON_STATES_FR: [Character] = "zdxqyhujikol".map { $0 }
+private let OFF_STATES_FR: [Character] = "ecwatrfn,pgv".map { $0 }
 
-private let ON_STATES_DE :[Character] = "wdxazhujikol".map{$0}
-private let OFF_STATES_DE :[Character] = "ecyqtrfnmpgv".map{$0}
+private let ON_STATES_DE: [Character] = "wdxazhujikol".map { $0 }
+private let OFF_STATES_DE: [Character] = "ecyqtrfnmpgv".map { $0 }
 
-public final class iCadeReaderView : UIView {
+public final class iCadeReaderView: UIView {
+    #if os(tvOS)
+        private let _inputView = UIInputView(frame: CGRect.zero)
+    #else
+        private let _inputView = UIView(frame: CGRect.zero)
+    #endif
 
-	#if os(tvOS)
-	private let _inputView = UIInputView(frame: CGRect.zero)
-	#else
-	private let _inputView = UIView(frame: CGRect.zero)
-	#endif
+    public var states: [iCadeControllerState] = [iCadeControllerState.none, iCadeControllerState.none]
 
-	public var states : [iCadeControllerState] = [iCadeControllerState.none, iCadeControllerState.none]
+    public weak var delegate: iCadeEventDelegate?
+    public var active: Bool = false {
+        willSet {
+            if active == newValue, newValue {
+                resignFirstResponder()
+            }
+        }
 
-	public weak var delegate : iCadeEventDelegate?
-	public var active : Bool = false {
+        didSet {
+            if active {
+                if UIApplication.shared.applicationState == .active {
+                    becomeFirstResponder()
+                }
+            } else {
+                resignFirstResponder()
+            }
+        }
+    }
 
-		willSet {
-			if active == newValue && newValue {
-				resignFirstResponder()
-			}
-		}
+    public internal(set) var onStates: [Character]
+    public internal(set) var offStates: [Character]
 
-		didSet {
-			if active {
-				if UIApplication.shared.applicationState == .active {
-					becomeFirstResponder()
-				}
-			} else {
-				resignFirstResponder()
-			}
-		}
-	}
+    public override init(frame: CGRect) {
+        let localeIdentifier = NSLocale.current.identifier
+        if localeIdentifier.hasPrefix("de") {
+            onStates = ON_STATES_DE
+            offStates = OFF_STATES_DE
+        } else if localeIdentifier.hasPrefix("fr") {
+            onStates = ON_STATES_FR
+            offStates = OFF_STATES_FR
+        } else {
+            onStates = ON_STATES_EN
+            offStates = OFF_STATES_EN
+        }
 
-	public internal(set) var onStates : [Character]
-	public internal(set) var offStates : [Character]
+        super.init(frame: frame)
 
-	public override init(frame: CGRect) {
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
 
-		let localeIdentifier = NSLocale.current.identifier
-		if localeIdentifier.hasPrefix("de") {
-			onStates = ON_STATES_DE
-			offStates = OFF_STATES_DE
-		} else if localeIdentifier.hasPrefix("fr") {
-			onStates = ON_STATES_FR
-			offStates = OFF_STATES_FR
-		} else {
-			onStates = ON_STATES_EN
-			offStates = OFF_STATES_EN
-		}
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-		super.init(frame: frame)
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
 
-		NotificationCenter.default.addObserver(self, selector: #selector(self.willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-	}
+    @objc func willResignActive() {
+        if active {
+            resignFirstResponder()
+        }
+    }
 
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
+    @objc func didBecomeActive() {
+        if active {
+            becomeFirstResponder()
+        }
+    }
 
-	deinit {
-		NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
-		NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
-	}
+    public override var canBecomeFirstResponder: Bool {
+        return true
+    }
 
-	@objc func willResignActive() {
-		if active {
-			resignFirstResponder()
-		}
-	}
+    public override var inputView: UIView? {
+        return _inputView
+    }
 
-	@objc func didBecomeActive() {
-		if active {
-			becomeFirstResponder()
-		}
-	}
+    // MARK: - keys
 
-	public override var canBecomeFirstResponder: Bool {
-		return true
-	}
+    #if os(tvOS)
+        public override var keyCommands: [UIKeyCommand]? {
+            let allStates = onStates + offStates
+            return allStates.map {
+                UIKeyCommand(input: String($0), modifierFlags: [], action: #selector(self.keyPressed(_:)))
+            }
+        }
 
-	public override var inputView: UIView? {
-		return _inputView
-	}
+        @objc func keyPressed(_ keyCommand: UIKeyCommand?) {
+            print("Keypressed \(keyCommand?.input ?? "nil")")
 
-	// MARK: - keys
+            guard
+                let keyCommand = keyCommand,
+                let input = keyCommand.input else {
+                print("No key input")
+                return
+            }
 
-	#if os(tvOS)
-	public override var keyCommands: [UIKeyCommand]? {
-		let allStates = onStates + offStates
-		return allStates.map {
-			return UIKeyCommand(input: String($0), modifierFlags: [], action: #selector(self.keyPressed(_:)))
-		}
-	}
+            handleIcadeInput(input)
+        }
+    #endif
 
-	@objc func keyPressed(_ keyCommand: UIKeyCommand?) {
-
-		print("Keypressed \(keyCommand?.input ?? "nil")")
-
-		guard
-			let keyCommand = keyCommand,
-			let input = keyCommand.input else {
-				print("No key input")
-			return
-		}
-
-		handleIcadeInput(input)
-	}
-	#endif
-
-	var cycleResponder: Int = 0
-	func handleIcadeInput(_ input : String) {
-		VLOG("handleIcadeInput: \(input)")
-		defer {
-			cycleResponder += 1
-			if cycleResponder > 20 {
-				// necessary to clear a buffer that accumulates internally
-				cycleResponder = 0
-				resignFirstResponder()
-				becomeFirstResponder()
-			}
-		}
+    var cycleResponder: Int = 0
+    func handleIcadeInput(_ input: String) {
+        VLOG("handleIcadeInput: \(input)")
+        defer {
+            cycleResponder += 1
+            if cycleResponder > 20 {
+                // necessary to clear a buffer that accumulates internally
+                cycleResponder = 0
+                resignFirstResponder()
+                becomeFirstResponder()
+            }
+        }
 
         var stateChanged = false
 
@@ -230,29 +224,31 @@ public final class iCadeReaderView : UIView {
             }
         }
 
-		if stateChanged {
-			delegate?.stateChanged(state: states[i])
-		}
-	}
+        if stateChanged {
+            delegate?.stateChanged(state: states[i])
+        }
+    }
 }
 
-extension iCadeReaderView : UIKeyInput {
-	// MARK: -
-	// MARK: UIKeyInput Protocol Methods
-	public var hasText: Bool {
-		return false
-	}
+extension iCadeReaderView: UIKeyInput {
+    // MARK: -
 
-	public func insertText(_ text: String) {
-		// does not to work on tvOS, use keyCommands + keyPressed instead
-		#if os(iOS)
-        VLOG("TextInput: \(text)")
-		handleIcadeInput(text)
-		#endif
-	}
+    // MARK: UIKeyInput Protocol Methods
 
-	public func deleteBackward() {
-		// This space intentionally left blank to complete protocol
+    public var hasText: Bool {
+        return false
+    }
+
+    public func insertText(_ text: String) {
+        // does not to work on tvOS, use keyCommands + keyPressed instead
+        #if os(iOS)
+            VLOG("TextInput: \(text)")
+            handleIcadeInput(text)
+        #endif
+    }
+
+    public func deleteBackward() {
+        // This space intentionally left blank to complete protocol
         VLOG("iCade backspace!")
-	}
+    }
 }

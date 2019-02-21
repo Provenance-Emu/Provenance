@@ -8,9 +8,7 @@
 
 import Foundation
 
-@objc public protocol ResponderClient: class {
-
-}
+@objc public protocol ResponderClient: class {}
 
 @objc public protocol ButtonResponder {
     func didPush(_ button: Int, forPlayer player: Int)
@@ -24,6 +22,7 @@ import Foundation
 @objc extension PVEmulatorCore: ResponderClient {}
 
 // MARK: - Sega 32X
+
 @objc public enum PVSega32XButton: Int {
     case up
     case down
@@ -48,6 +47,7 @@ import Foundation
 }
 
 // MARK: - N64
+
 @objc public enum PVN64Button: Int {
     // D-Pad
     case dPadUp
@@ -84,6 +84,7 @@ import Foundation
 }
 
 // MARK: - Atari 2600
+
 @objc public enum PV2600Button: Int {
     case up
     case down
@@ -107,6 +108,7 @@ import Foundation
 }
 
 // MARK: - NES
+
 @objc public enum PVNESButton: Int {
     case up
     case down
@@ -127,6 +129,7 @@ import Foundation
 }
 
 // MARK: - Game Boy
+
 @objc public enum PVGBButton: Int {
     case up
     case down
@@ -147,6 +150,7 @@ import Foundation
 }
 
 // MARK: - Pokemon Mini
+
 @objc public enum PVPMButton: Int {
     case menu
     case a
@@ -168,6 +172,7 @@ import Foundation
 }
 
 // MARK: - SNES
+
 @objc public enum PVSNESButton: Int {
     case up
     case down
@@ -192,6 +197,7 @@ import Foundation
 }
 
 // MARK: - Atari 7800
+
 @objc public enum PV7800Button: Int {
     case up
     case down
@@ -219,6 +225,7 @@ import Foundation
 }
 
 // MARK: - Genesis
+
 @objc public enum PVGenesisButton: Int {
     case b = 0
     case a
@@ -243,6 +250,7 @@ import Foundation
 }
 
 // MARK: - Deamcast
+
 @objc public enum PVDreamcastButton: Int {
     case up
     case down
@@ -274,6 +282,7 @@ import Foundation
 }
 
 // MARK: - Master System
+
 @objc public enum PVMasterSystemButton: Int {
     case b = 0
     case c
@@ -293,6 +302,7 @@ import Foundation
 }
 
 // MARK: - SG1000
+
 @objc public enum PVSG1000Button: Int {
     case b = 0
     case c
@@ -312,6 +322,7 @@ import Foundation
 }
 
 // MARK: - Game Boy Advanced
+
 @objc public enum PVGBAButton: Int {
     case up
     case down
@@ -334,6 +345,7 @@ import Foundation
 }
 
 // MARK: - Atari 5200
+
 @objc public enum PV5200Button: Int {
     case up
     case down
@@ -486,6 +498,7 @@ import Foundation
 }
 
 // MARK: - PCE
+
 @objc public enum PVPCEButton: Int {
     case up
     case down
@@ -511,6 +524,7 @@ import Foundation
 }
 
 // MARK: - PCE FX
+
 @objc public enum PVPCFXButton: Int {
     case up
     case down
@@ -536,6 +550,7 @@ import Foundation
 }
 
 // MARK: - PCE CD
+
 @objc public enum PVPCECDButton: Int {
     case up
     case down
@@ -561,6 +576,7 @@ import Foundation
 }
 
 // MARK: - Atari Lynx
+
 @objc public enum PVLynxButton: Int {
     case up
     case down
@@ -581,6 +597,7 @@ import Foundation
 }
 
 // MARK: - Neo Geo Pocket + Color
+
 @objc public enum PVNGPButton: Int {
     case up
     case down
@@ -591,6 +608,7 @@ import Foundation
     case option
     case count
 }
+
 @objc public protocol PVNeoGeoPocketSystemResponderClient: ResponderClient, ButtonResponder {
     @objc(didPushNGPButton:forPlayer:)
     func didPush(_ button: PVNGPButton, forPlayer player: Int)
@@ -599,7 +617,8 @@ import Foundation
 }
 
 // MARK: - Atari Jaguar
-@objc public enum PVJaguarButton : Int {
+
+@objc public enum PVJaguarButton: Int {
     case up
     case down
     case left
@@ -642,7 +661,8 @@ import Foundation
 }
 
 // MARK: - Sega Saturn
-@objc public enum PVSaturnButton : Int {
+
+@objc public enum PVSaturnButton: Int {
     case up
     case down
     case left

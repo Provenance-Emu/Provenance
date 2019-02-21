@@ -9,7 +9,7 @@ import Foundation
 import PVLibrary
 import PVSupport
 
-//extension PVSystem {
+// extension PVSystem {
 //    var responderClassType : AnyClass {
 //        guard let responderClassHandle = NSClassFromString(self.responderClass) else {
 //            fatalError("Couldn't get class for <\(self.responderClass)>")
@@ -17,12 +17,12 @@ import PVSupport
 //
 //        return responderClassHandle
 //    }
-//}
+// }
 
 extension PVCore {
     func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
         guard let coreClass = NSClassFromString(self.principleClass) as? PVEmulatorCore.Type else {
-            ELOG("Couldn't get class for <\(self.principleClass)>")
+            ELOG("Couldn't get class for <\(principleClass)>")
             return nil
         }
 
@@ -31,7 +31,7 @@ extension PVCore {
         DLOG("Created core : <\(emuCore.debugDescription)>")
 
         emuCore.systemIdentifier = system.identifier
-		emuCore.coreIdentifier = self.identifier
+        emuCore.coreIdentifier = identifier
         return emuCore
     }
 }
@@ -49,25 +49,25 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't impliment PVGenesisSystemResponderClient")
             }
-		case .Dreamcast:
-			if let core = core as? PVDreamcastSystemResponderClient {
-				return PVDreamcastControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
-			} else {
-				fatalError("Core doesn't impliment PVDreamcastSystemResponderClient")
-			}
-//        TO DO: strip out MS and SG1000 from Genesis, etc…
-//        case .MasterSystem:
-//            if let core = core as? PVMasterSystemSystemResponderClient {
-//                return PVMasterSystemControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
-//            } else {
-//                fatalError("Core doesn't impliment PVMasterSystemSystemResponderClient")
-//            }
-//        case .SG1000:
-//            if let core = core as? PVSG1000SystemResponderClient {
-//                return PVSG1000ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
-//            } else {
-//                fatalError("Core doesn't impliment PVSG1000SystemSystemResponderClient")
-//            }
+        case .Dreamcast:
+            if let core = core as? PVDreamcastSystemResponderClient {
+                return PVDreamcastControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't impliment PVDreamcastSystemResponderClient")
+            }
+        //        TO DO: strip out MS and SG1000 from Genesis, etc…
+        //        case .MasterSystem:
+        //            if let core = core as? PVMasterSystemSystemResponderClient {
+        //                return PVMasterSystemControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+        //            } else {
+        //                fatalError("Core doesn't impliment PVMasterSystemSystemResponderClient")
+        //            }
+        //        case .SG1000:
+        //            if let core = core as? PVSG1000SystemResponderClient {
+        //                return PVSG1000ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+        //            } else {
+        //                fatalError("Core doesn't impliment PVSG1000SystemSystemResponderClient")
+        //            }
         case .SNES:
             if let core = core as? PVSNESSystemResponderClient {
                 return PVSNESControllerViewController(controlLayout: controllerLayout, system: system, responder: core)

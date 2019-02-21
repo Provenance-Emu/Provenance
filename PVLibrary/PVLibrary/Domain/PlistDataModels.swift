@@ -9,6 +9,7 @@
 import Foundation
 
 // MARK: - Systems.plist
+
 public struct SystemPlistBIOSEntry: Codable {
     public private(set) var Description: String
     public private(set) var MD5: String
@@ -41,7 +42,7 @@ public struct ControlLayoutEntry: Codable {
 }
 
 public extension ControlLayoutEntry {
-    public var dictionaryValue: [String: Any] {
+    var dictionaryValue: [String: Any] {
         do {
             let data = try JSONEncoder().encode(self)
             let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
@@ -73,6 +74,7 @@ public struct SytemPlistEntry: Codable {
 }
 
 // MARK: Core.plist
+
 public struct CorePlistEntry: Codable {
     public let PVCoreIdentifier: String
     public let PVPrincipleClass: String

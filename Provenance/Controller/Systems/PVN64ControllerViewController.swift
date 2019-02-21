@@ -9,7 +9,7 @@
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVN64Button {
         get {
             return PVN64Button(rawValue: tag)!
@@ -25,27 +25,26 @@ fileprivate extension JSButton {
 // and the extension overrides in this format overrode the default extension implimentations.
 // I give up after many many hours figuringn out why. Just use a descrete subclass for now.
 
-//extension ControllerVC where Self == PVN64ControllerViewController {
-//extension ControllerVC where ResponderType : PVN64SystemResponderClient {
+// extension ControllerVC where Self == PVN64ControllerViewController {
+// extension ControllerVC where ResponderType : PVN64SystemResponderClient {
 
 final class PVN64ControllerViewController: PVControllerViewController<PVN64SystemResponderClient> {
-
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
-            if (button.titleLabel?.text == "A") {
+            if button.titleLabel?.text == "A" {
                 button.buttonTag = .a
-            } else if (button.titleLabel?.text == "B") {
+            } else if button.titleLabel?.text == "B" {
                 button.buttonTag = .b
-            } else if (button.titleLabel?.text == "C▲") {
+            } else if button.titleLabel?.text == "C▲" {
                 button.buttonTag = .cUp
-            } else if (button.titleLabel?.text == "C▼") {
+            } else if button.titleLabel?.text == "C▼" {
                 button.buttonTag = .cDown
-            } else if (button.titleLabel?.text == "C◀") {
+            } else if button.titleLabel?.text == "C◀" {
                 button.buttonTag = .cLeft
-            } else if (button.titleLabel?.text == "C▶") {
+            } else if button.titleLabel?.text == "C▶" {
                 button.buttonTag = .cRight
             }
         }
@@ -56,39 +55,39 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
         startButton?.buttonTag = .start
     }
 
-    override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
+    override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
         emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
         emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
         emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
         switch direction {
-            case .upLeft:
-                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
-            case .up:
-                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-            case .upRight:
-                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
-            case .left:
-                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
-            case .right:
-                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
-            case .downLeft:
-                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
-            case .down:
-                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-            case .downRight:
-                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
-            default:
-                break
+        case .upLeft:
+            emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+            emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+        case .up:
+            emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+            emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+        case .left:
+            emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+        case .right:
+            emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+            emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+        case .down:
+            emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+            emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+        default:
+            break
         }
         vibrate()
     }
 
-    override func dPadDidReleaseDirection(_ dPad: JSDPad) {
+    override func dPadDidReleaseDirection(_: JSDPad) {
         emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
         emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
         emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)

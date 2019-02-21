@@ -6,27 +6,26 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
-
 public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible {
     public let rawValue: Int
 
-    public init(rawValue : Int) {
+    public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
     public var hashValue: Int {
-        return self.rawValue
+        return rawValue
     }
 
-    static let none                          = iCadeControllerState(rawValue: 0)
-    static let joystickUp                    = iCadeControllerState(rawValue: 1 << 0)
-    static let joystickRight                 = iCadeControllerState(rawValue: 1 << 1)
-    static let joystickDown                  = iCadeControllerState(rawValue: 1 << 2)
-    static let joystickLeft                  = iCadeControllerState(rawValue: 1 << 3)
-    static let joystickUpRight: iCadeControllerState   = [.joystickUp, .joystickRight]
+    static let none = iCadeControllerState(rawValue: 0)
+    static let joystickUp = iCadeControllerState(rawValue: 1 << 0)
+    static let joystickRight = iCadeControllerState(rawValue: 1 << 1)
+    static let joystickDown = iCadeControllerState(rawValue: 1 << 2)
+    static let joystickLeft = iCadeControllerState(rawValue: 1 << 3)
+    static let joystickUpRight: iCadeControllerState = [.joystickUp, .joystickRight]
     static let joystickDownRight: iCadeControllerState = [.joystickDown, .joystickRight]
-    static let joystickUpLeft: iCadeControllerState    = [.joystickUp, .joystickLeft]
-    static let joystickDownLeft: iCadeControllerState  = [.joystickDown, .joystickLeft]
+    static let joystickUpLeft: iCadeControllerState = [.joystickUp, .joystickLeft]
+    static let joystickDownLeft: iCadeControllerState = [.joystickDown, .joystickLeft]
 
     static let buttonA = iCadeControllerState(rawValue: 1 << 4)
     static let buttonB = iCadeControllerState(rawValue: 1 << 5)
@@ -54,22 +53,23 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         .buttonI,
         .buttonJ,
         .buttonK,
-        .buttonL]
+        .buttonL,
+    ]
 
     public var description: String {
         var result = [String]()
         for key in iCadeControllerState.debugDescriptions.keys {
-            guard self.contains(key),
+            guard contains(key),
                 let description = iCadeControllerState.debugDescriptions[key]
-                else { continue }
+            else { continue }
             result.append(description)
         }
-        return "iCadeControllerState(rawValue: \(self.rawValue)) \(result)"
+        return "iCadeControllerState(rawValue: \(rawValue)) \(result)"
     }
 
-    static var debugDescriptions: [iCadeControllerState:String] = {
-        var descriptions = [iCadeControllerState:String]()
-        
+    static var debugDescriptions: [iCadeControllerState: String] = {
+        var descriptions = [iCadeControllerState: String]()
+
         descriptions[.joystickUp] = "JoyUp"
         descriptions[.joystickDown] = "JoyDown"
         descriptions[.joystickLeft] = "JoyLeft"
@@ -92,8 +92,8 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
     }()
 }
 
-public protocol iCadeEventDelegate : class {
-    func stateChanged(state : iCadeControllerState)
-    func buttonDown(button : iCadeControllerState)
-    func buttonUp(button : iCadeControllerState)
+public protocol iCadeEventDelegate: class {
+    func stateChanged(state: iCadeControllerState)
+    func buttonDown(button: iCadeControllerState)
+    func buttonUp(button: iCadeControllerState)
 }

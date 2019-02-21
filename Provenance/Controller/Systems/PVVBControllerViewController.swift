@@ -8,7 +8,7 @@
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVVBButton {
         get {
             return PVVBButton(rawValue: tag)!
@@ -38,39 +38,39 @@ final class PVVBControllerViewController: PVControllerViewController<PVVirtualBo
         startButton?.buttonTag = .start
     }
 
-    override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
+    override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.leftUp, forPlayer: 0)
         emulatorCore.didRelease(.leftDown, forPlayer: 0)
         emulatorCore.didRelease(.leftLeft, forPlayer: 0)
         emulatorCore.didRelease(.leftRight, forPlayer: 0)
         switch direction {
-            case .upLeft:
-                emulatorCore.didPush(.leftUp, forPlayer: 0)
-                emulatorCore.didPush(.leftLeft, forPlayer: 0)
-            case .up:
-                emulatorCore.didPush(.leftUp, forPlayer: 0)
-            case .upRight:
-                emulatorCore.didPush(.leftUp, forPlayer: 0)
-                emulatorCore.didPush(.leftRight, forPlayer: 0)
-            case .left:
-                emulatorCore.didPush(.leftLeft, forPlayer: 0)
-            case .right:
-                emulatorCore.didPush(.leftRight, forPlayer: 0)
-            case .downLeft:
-                emulatorCore.didPush(.leftDown, forPlayer: 0)
-                emulatorCore.didPush(.leftLeft, forPlayer: 0)
-            case .down:
-                emulatorCore.didPush(.leftDown, forPlayer: 0)
-            case .downRight:
-                emulatorCore.didPush(.leftDown, forPlayer: 0)
-                emulatorCore.didPush(.leftRight, forPlayer: 0)
-            default:
-                break
+        case .upLeft:
+            emulatorCore.didPush(.leftUp, forPlayer: 0)
+            emulatorCore.didPush(.leftLeft, forPlayer: 0)
+        case .up:
+            emulatorCore.didPush(.leftUp, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didPush(.leftUp, forPlayer: 0)
+            emulatorCore.didPush(.leftRight, forPlayer: 0)
+        case .left:
+            emulatorCore.didPush(.leftLeft, forPlayer: 0)
+        case .right:
+            emulatorCore.didPush(.leftRight, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didPush(.leftDown, forPlayer: 0)
+            emulatorCore.didPush(.leftLeft, forPlayer: 0)
+        case .down:
+            emulatorCore.didPush(.leftDown, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didPush(.leftDown, forPlayer: 0)
+            emulatorCore.didPush(.leftRight, forPlayer: 0)
+        default:
+            break
         }
         vibrate()
     }
 
-    override func dPadDidReleaseDirection(_ dPad: JSDPad) {
+    override func dPadDidReleaseDirection(_: JSDPad) {
         emulatorCore.didRelease(.leftUp, forPlayer: 0)
         emulatorCore.didRelease(.leftDown, forPlayer: 0)
         emulatorCore.didRelease(.leftLeft, forPlayer: 0)

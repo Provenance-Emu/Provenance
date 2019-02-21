@@ -11,13 +11,13 @@ import RealmSwift
 
 @objcMembers
 public final class PVCore: Object {
-    dynamic public var identifier: String = ""
-    dynamic public var principleClass: String = ""
-    dynamic public var supportedSystems = List<PVSystem>()
+    public dynamic var identifier: String = ""
+    public dynamic var principleClass: String = ""
+    public dynamic var supportedSystems = List<PVSystem>()
 
-    dynamic public var projectName = ""
-    dynamic public var projectURL = ""
-    dynamic public var projectVersion = ""
+    public dynamic var projectName = ""
+    public dynamic var projectURL = ""
+    public dynamic var projectVersion = ""
 
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
@@ -28,19 +28,20 @@ public final class PVCore: Object {
         self.principleClass = principleClass
         self.supportedSystems.removeAll()
         self.supportedSystems.append(objectsIn: supportedSystems)
-        self.projectName = name
-        self.projectURL = url
-        self.projectVersion = version
+        projectName = name
+        projectURL = url
+        projectVersion = version
     }
 
-    override public static func primaryKey() -> String? {
+    public override static func primaryKey() -> String? {
         return "identifier"
     }
 }
 
 // MARK: - Conversions
+
 internal extension Core {
-    init(with core : PVCore) {
+    init(with core: PVCore) {
         identifier = core.identifier
         principleClass = core.principleClass
         // TODO: Supported systems

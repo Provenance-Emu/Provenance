@@ -9,14 +9,14 @@
 import Foundation
 
 public let PVMaxRecentsShortcutCount: Int = 4
-public let PVAppGroupId                    = "group.provenance-emu.provenance"
+public let PVAppGroupId = "group.provenance-emu.provenance"
 public let kInterfaceDidChangeNotification = "kInterfaceDidChangeNotification"
-public let PVGameControllerKey             = "PlayController"
-public let PVGameMD5Key                    = "md5"
-public let PVAppURLKey                     = "provenance"
+public let PVGameControllerKey = "PlayController"
+public let PVGameMD5Key = "md5"
+public let PVAppURLKey = "provenance"
 
 #if os(tvOS)
-public let PVThumbnailMaxResolution: Float = 400.0
+    public let PVThumbnailMaxResolution: Float = 400.0
 #else
-public let PVThumbnailMaxResolution: Float = 200.0
+    public let PVThumbnailMaxResolution: Float = 200.0
 #endif

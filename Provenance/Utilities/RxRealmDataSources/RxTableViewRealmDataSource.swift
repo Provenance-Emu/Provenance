@@ -8,11 +8,12 @@
 import Foundation
 
 import RealmSwift
-import RxSwift
 import RxCocoa
 import RxRealm
+import RxSwift
 
 #if os(iOS)
+
     // MARK: - iOS / UIKit
 
     import UIKit
@@ -21,7 +22,6 @@ import RxRealm
     public typealias TableCellConfig<E: Object, CellType: UITableViewCell> = (CellType, IndexPath, E) -> Void
 
     open class RxTableViewRealmDataSource<E: Object>: NSObject, UITableViewDataSource {
-
         private var items: AnyRealmCollection<E>?
 
         // MARK: - Configuration
@@ -31,12 +31,14 @@ import RxRealm
         public var rowAnimations = (
             insert: UITableView.RowAnimation.automatic,
             update: UITableView.RowAnimation.automatic,
-            delete: UITableView.RowAnimation.automatic)
+            delete: UITableView.RowAnimation.automatic
+        )
 
         public var headerTitle: String?
         public var footerTitle: String?
 
         // MARK: - Init
+
         public let cellIdentifier: String
         public let cellFactory: TableCellFactory<E>
 
@@ -45,9 +47,9 @@ import RxRealm
             self.cellFactory = cellFactory
         }
 
-        public init<CellType>(cellIdentifier: String, cellType: CellType.Type, cellConfig: @escaping TableCellConfig<E, CellType>) where CellType: UITableViewCell {
+        public init<CellType>(cellIdentifier: String, cellType _: CellType.Type, cellConfig: @escaping TableCellConfig<E, CellType>) where CellType: UITableViewCell {
             self.cellIdentifier = cellIdentifier
-            self.cellFactory = {ds, tv, ip, model in
+            cellFactory = { _, tv, ip, model in
                 let cell = tv.dequeueReusableCell(withIdentifier: cellIdentifier, for: ip) as! CellType
                 cellConfig(cell, ip, model)
                 return cell
@@ -55,16 +57,18 @@ import RxRealm
         }
 
         // MARK: - Data access
+
         public func model(at indexPath: IndexPath) -> E {
             return items![indexPath.row]
         }
 
         // MARK: - UITableViewDataSource protocol
-        public func numberOfSections(in tableView: UITableView) -> Int {
+
+        public func numberOfSections(in _: UITableView) -> Int {
             return 1
         }
 
-        public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        public func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
             return items?.count ?? 0
         }
 
@@ -72,16 +76,17 @@ import RxRealm
             return cellFactory(self, tableView, indexPath, items![indexPath.row])
         }
 
-        public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        public func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
             return headerTitle
         }
 
-        public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        public func tableView(_: UITableView, titleForFooterInSection _: Int) -> String? {
             return footerTitle
         }
 
         // MARK: - Applying changeset to the table view
-        private let fromRow = {(row: Int) in return IndexPath(row: row, section: 0)}
+
+        private let fromRow = { (row: Int) in IndexPath(row: row, section: 0) }
 
         func applyChanges(items: AnyRealmCollection<E>, changes: RealmChangeset?) {
             if self.items == nil {
@@ -117,6 +122,7 @@ import RxRealm
     }
 
 #elseif os(OSX)
+
     // MARK: - macOS / Cocoa
 
     import Cocoa
@@ -125,7 +131,6 @@ import RxRealm
     public typealias TableCellConfig<E: Object, CellType: NSTableCellView> = (CellType, Int, E) -> Void
 
     open class RxTableViewRealmDataSource<E: Object>: NSObject, NSTableViewDataSource, NSTableViewDelegate {
-
         private var items: AnyRealmCollection<E>?
 
         // MARK: - Configuration
@@ -135,12 +140,14 @@ import RxRealm
         public var rowAnimations = (
             insert: NSTableView.AnimationOptions.effectFade,
             update: NSTableView.AnimationOptions.effectFade,
-            delete: NSTableView.AnimationOptions.effectFade)
+            delete: NSTableView.AnimationOptions.effectFade
+        )
 
         public weak var delegate: NSTableViewDelegate?
         public weak var dataSource: NSTableViewDataSource?
 
         // MARK: - Init
+
         public let cellIdentifier: String
         public let cellFactory: TableCellFactory<E>
 
@@ -149,25 +156,27 @@ import RxRealm
             self.cellFactory = cellFactory
         }
 
-        public init<CellType>(cellIdentifier: String, cellType: CellType.Type, cellConfig: @escaping TableCellConfig<E, CellType>) where CellType: NSTableCellView {
+        public init<CellType>(cellIdentifier: String, cellType _: CellType.Type, cellConfig: @escaping TableCellConfig<E, CellType>) where CellType: NSTableCellView {
             self.cellIdentifier = cellIdentifier
-            self.cellFactory = { ds, tv, row, model in
-              let cell = tv.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: tv) as! CellType
+            cellFactory = { _, tv, row, model in
+                let cell = tv.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: tv) as! CellType
                 cellConfig(cell, row, model)
                 return cell
             }
         }
 
         // MARK: - UITableViewDataSource protocol
-        public func numberOfRows(in tableView: NSTableView) -> Int {
+
+        public func numberOfRows(in _: NSTableView) -> Int {
             return items?.count ?? 0
         }
 
-        public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        public func tableView(_ tableView: NSTableView, viewFor _: NSTableColumn?, row: Int) -> NSView? {
             return cellFactory(self, tableView, row, items![row])
         }
 
         // MARK: - Proxy unimplemented data source and delegate methods
+
         open override func responds(to aSelector: Selector!) -> Bool {
             if RxTableViewRealmDataSource.instancesRespond(to: aSelector) {
                 return true
@@ -180,12 +189,13 @@ import RxRealm
             }
         }
 
-        open override func forwardingTarget(for aSelector: Selector!) -> Any? {
+        open override func forwardingTarget(for _: Selector!) -> Any? {
             return delegate ?? dataSource
         }
 
         // MARK: - Applying changeset to the table view
-        private let fromRow = {(row: Int) in return IndexPath(item: row, section: 0)}
+
+        private let fromRow = { (row: Int) in IndexPath(item: row, section: 0) }
 
         func applyChanges(items: AnyRealmCollection<E>, changes: RealmChangeset?) {
             if self.items == nil {
@@ -211,7 +221,7 @@ import RxRealm
                 tableView.reloadData()
                 return
             }
-            
+
             tableView.beginUpdates()
             tableView.removeRows(at: IndexSet(changes.deleted), withAnimation: rowAnimations.delete)
             tableView.insertRows(at: IndexSet(changes.inserted), withAnimation: rowAnimations.insert)
@@ -219,5 +229,5 @@ import RxRealm
             tableView.endUpdates()
         }
     }
-    
+
 #endif

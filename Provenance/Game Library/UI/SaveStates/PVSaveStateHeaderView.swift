@@ -9,5 +9,5 @@
 import UIKit
 
 final class PVSaveStateHeaderView: UICollectionReusableView {
-	@IBOutlet weak var label: UILabel!
+    @IBOutlet var label: UILabel!
 }

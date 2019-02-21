@@ -7,9 +7,9 @@
 //
 
 import Foundation
+import PVSupport
 import RealmSwift
 import UIKit
-import PVSupport
 
 public enum RelativeRoot: Int {
     case documents
@@ -17,14 +17,14 @@ public enum RelativeRoot: Int {
     case iCloud
 
     #if os(tvOS)
-    public static let platformDefault = RelativeRoot.caches
+        public static let platformDefault = RelativeRoot.caches
     #else
-    public static let platformDefault = RelativeRoot.documents
+        public static let platformDefault = RelativeRoot.documents
     #endif
 
-    static let documentsDirectory : URL = PVEmulatorConfiguration.documentsPath
-    static let cachesDirectory : URL = PVEmulatorConfiguration.cachesPath
-    static var iCloudDocumentsDirectory : URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
+    static let documentsDirectory: URL = PVEmulatorConfiguration.documentsPath
+    static let cachesDirectory: URL = PVEmulatorConfiguration.cachesPath
+    static var iCloudDocumentsDirectory: URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
 
     var directoryURL: URL {
         switch self {
@@ -59,7 +59,7 @@ public enum RelativeRoot: Int {
 
     func appendingPath(_ path: String) -> URL {
         if #available(iOS 9.0, *) {
-            return URL.init(fileURLWithPath: path, relativeTo: directoryURL)
+            return URL(fileURLWithPath: path, relativeTo: directoryURL)
         } else {
             return directoryURL.appendingPathComponent(path, isDirectory: false)
         }
@@ -70,11 +70,11 @@ public enum RelativeRoot: Int {
 public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public typealias DomainType = LocalFile
 
-    @objc internal dynamic var partialPath: String = ""
-    @objc private dynamic var md5Cache: String?
+    internal dynamic var partialPath: String = ""
+    private dynamic var md5Cache: String?
     //    @objc private dynamic var crcCache: String?
-    @objc private(set) dynamic public var createdDate = Date()
-    @objc dynamic private var _relativeRoot: Int = RelativeRoot.documents.rawValue
+    public private(set) dynamic var createdDate = Date()
+    private dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
@@ -85,12 +85,12 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
-        self.partialPath = relativeRoot.createRelativePath(fromURL: url)
+        partialPath = relativeRoot.createRelativePath(fromURL: url)
     }
 }
 
 public extension PVFile {
-    public internal(set) var relativeRoot: RelativeRoot {
+    internal(set) var relativeRoot: RelativeRoot {
         get {
             return RelativeRoot(rawValue: _relativeRoot)!
         } set {
@@ -98,7 +98,7 @@ public extension PVFile {
         }
     }
 
-    public private(set) var url: URL {
+    private(set) var url: URL {
         get {
             if partialPath.contains("iCloud") {
                 var pathComponents = (partialPath as NSString).pathComponents
@@ -122,7 +122,7 @@ public extension PVFile {
         }
     }
 
-    public private(set) var md5: String? {
+    private(set) var md5: String? {
         get {
             if let md5 = md5Cache {
                 return md5
@@ -172,7 +172,7 @@ public extension PVFile {
     //        }
     //    }
 
-    public var size: UInt64 {
+    var size: UInt64 {
         let fileSize: UInt64
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
@@ -183,19 +183,19 @@ public extension PVFile {
         return fileSize
     }
 
-    public var online: Bool {
+    var online: Bool {
         return FileManager.default.fileExists(atPath: url.path)
     }
 
-    public var pathExtension: String {
+    var pathExtension: String {
         return url.pathExtension
     }
 
-    public var fileName: String {
+    var fileName: String {
         return url.lastPathComponent
     }
 
-    public var fileNameWithoutExtension: String {
+    var fileNameWithoutExtension: String {
         return url.deletingPathExtension().lastPathComponent
     }
 }

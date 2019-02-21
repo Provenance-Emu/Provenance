@@ -11,18 +11,18 @@ import RealmSwift
 
 @objcMembers
 public final class PVBIOS: Object, BIOSFileProvider {
-    dynamic public var system: PVSystem!
+    public dynamic var system: PVSystem!
 
-    dynamic public var descriptionText: String = ""
-    dynamic public var regions: RegionOptions = .unknown
-    dynamic public var version: String = ""
-    dynamic public var optional: Bool = false
+    public dynamic var descriptionText: String = ""
+    public dynamic var regions: RegionOptions = .unknown
+    public dynamic var version: String = ""
+    public dynamic var optional: Bool = false
 
-    dynamic public var expectedMD5: String = ""
-    dynamic public var expectedSize: Int = 0
-    dynamic public var expectedFilename: String = ""
+    public dynamic var expectedMD5: String = ""
+    public dynamic var expectedSize: Int = 0
+    public dynamic var expectedFilename: String = ""
 
-    dynamic public var file: PVFile?
+    public dynamic var file: PVFile?
     public var fileInfo: PVFile? { return file }
 
     public convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
@@ -35,7 +35,7 @@ public final class PVBIOS: Object, BIOSFileProvider {
         self.expectedFilename = expectedFilename
     }
 
-    override public static func primaryKey() -> String? {
+    public override static func primaryKey() -> String? {
         return "expectedFilename"
     }
 }
@@ -47,14 +47,15 @@ public extension PVBIOS {
 }
 
 extension PVBIOS {
-    public var status : BIOSStatus {
+    public var status: BIOSStatus {
         return BIOSStatus(withBios: self)
     }
 }
 
 // MARK: - Conversions
-fileprivate extension BIOS {
-    init(with bios : PVBIOS) {
+
+private extension BIOS {
+    init(with bios: PVBIOS) {
         descriptionText = bios.descriptionText
         optional = bios.optional
         expectedMD5 = bios.expectedMD5

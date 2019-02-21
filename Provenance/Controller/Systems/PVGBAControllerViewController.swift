@@ -9,7 +9,7 @@
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVGBAButton {
         get {
             return PVGBAButton(rawValue: tag)!
@@ -21,53 +21,52 @@ fileprivate extension JSButton {
 }
 
 final class PVGBAControllerViewController: PVControllerViewController<PVGBASystemResponderClient> {
-
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
 
-            if (button.titleLabel?.text == "A") {
-                button.buttonTag =  .a
-            } else if (button.titleLabel?.text == "B") {
-                button.buttonTag =  .b
+            if button.titleLabel?.text == "A" {
+                button.buttonTag = .a
+            } else if button.titleLabel?.text == "B" {
+                button.buttonTag = .b
             }
         }
 
-        leftShoulderButton?.buttonTag =  .l
-        rightShoulderButton?.buttonTag =  .r
+        leftShoulderButton?.buttonTag = .l
+        rightShoulderButton?.buttonTag = .r
 
-        startButton?.buttonTag =  .start
-        selectButton?.buttonTag =  .select
+        startButton?.buttonTag = .start
+        selectButton?.buttonTag = .select
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        emulatorCore.didRelease( .up, forPlayer: 0)
-        emulatorCore.didRelease( .down, forPlayer: 0)
-        emulatorCore.didRelease( .left, forPlayer: 0)
-        emulatorCore.didRelease( .right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
         case .upLeft:
-            emulatorCore.didPush( .up, forPlayer: 0)
-            emulatorCore.didPush( .left, forPlayer: 0)
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
         case .up:
-            emulatorCore.didPush( .up, forPlayer: 0)
+            emulatorCore.didPush(.up, forPlayer: 0)
         case .upRight:
-            emulatorCore.didPush( .up, forPlayer: 0)
-            emulatorCore.didPush( .right, forPlayer: 0)
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         case .left:
-            emulatorCore.didPush( .left, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
         case .right:
-            emulatorCore.didPush( .right, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didPush( .down, forPlayer: 0)
-            emulatorCore.didPush( .left, forPlayer: 0)
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
         case .down:
-            emulatorCore.didPush( .down, forPlayer: 0)
+            emulatorCore.didPush(.down, forPlayer: 0)
         case .downRight:
-            emulatorCore.didPush( .down, forPlayer: 0)
-            emulatorCore.didPush( .right, forPlayer: 0)
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         case .none:
             break
         }
@@ -75,10 +74,10 @@ final class PVGBAControllerViewController: PVControllerViewController<PVGBASyste
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        emulatorCore.didRelease( .up, forPlayer: 0)
-        emulatorCore.didRelease( .down, forPlayer: 0)
-        emulatorCore.didRelease( .left, forPlayer: 0)
-        emulatorCore.didRelease( .right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         super.dPadDidReleaseDirection(dPad)
     }
 
@@ -93,22 +92,22 @@ final class PVGBAControllerViewController: PVControllerViewController<PVGBASyste
     }
 
     override func pressStart(forPlayer player: Int) {
-        emulatorCore.didPush( .start, forPlayer: player)
+        emulatorCore.didPush(.start, forPlayer: player)
         super.pressStart(forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        emulatorCore.didRelease( .start, forPlayer: player)
+        emulatorCore.didRelease(.start, forPlayer: player)
         super.releaseStart(forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        emulatorCore.didPush( .select, forPlayer: player)
+        emulatorCore.didPush(.select, forPlayer: player)
         super.pressSelect(forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        emulatorCore.didRelease( .select, forPlayer: player)
+        emulatorCore.didRelease(.select, forPlayer: player)
         super.releaseSelect(forPlayer: player)
     }
 }

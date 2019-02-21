@@ -10,7 +10,7 @@
 import GameController
 
 public final class PViCadeGamepad: GCExtendedGamepad {
-	public let _dpad: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
+    public let _dpad: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
     public let _buttonA: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
     public let _buttonB: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
     public let _buttonX: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
@@ -49,7 +49,7 @@ public final class PViCadeGamepad: GCExtendedGamepad {
         return _buttonX
     }
 
-   	public override var buttonY: PViCadeGamepadButtonInput {
+    public override var buttonY: PViCadeGamepadButtonInput {
         return _buttonY
     }
 

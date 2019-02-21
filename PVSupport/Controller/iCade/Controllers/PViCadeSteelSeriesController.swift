@@ -8,31 +8,30 @@
 //
 
 public final class PViCadeSteelSeriesController: PViCadeController {
-
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
         case iCadeControllerState.buttonA:
-            return self.iCadeGamepad.buttonX
+            return iCadeGamepad.buttonX
         case iCadeControllerState.buttonB:
-            return self.iCadeGamepad.buttonA
+            return iCadeGamepad.buttonA
         case iCadeControllerState.buttonC:
-            return self.iCadeGamepad.buttonY
+            return iCadeGamepad.buttonY
         case iCadeControllerState.buttonD:
-            return self.iCadeGamepad.buttonB
+            return iCadeGamepad.buttonB
         case iCadeControllerState.buttonE:
-            return self.iCadeGamepad.leftShoulder
+            return iCadeGamepad.leftShoulder
         case iCadeControllerState.buttonF:
-            return self.iCadeGamepad.rightShoulder
+            return iCadeGamepad.rightShoulder
         case iCadeControllerState.buttonG:
-            return self.iCadeGamepad.rightTrigger
+            return iCadeGamepad.rightTrigger
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.leftTrigger
+            return iCadeGamepad.leftTrigger
         default:
             return nil
         }
     }
 
-	public override var vendorName: String? {
-		return "Steel Series"
-	}
+    public override var vendorName: String? {
+        return "Steel Series"
+    }
 }

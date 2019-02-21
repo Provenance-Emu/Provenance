@@ -9,37 +9,37 @@
 
 import Foundation
 
-internal func minutes(_ minutes : Double) -> TimeInterval {
+internal func minutes(_ minutes: Double) -> TimeInterval {
     return TimeInterval(60 * minutes)
 }
 
 public protocol UserDefaultsRepresentable {
-    var valueType : Any.Type {get}
-    var defaultsValue : Any {get}
+    var valueType: Any.Type { get }
+    var defaultsValue: Any { get }
 }
 
-extension UserDefaultsRepresentable where Self:RawRepresentable {
+extension UserDefaultsRepresentable where Self: RawRepresentable {
     public var valueType: Any.Type {
-        return type(of: self) //RawValue.self
+        return type(of: self) // RawValue.self
     }
 
-    public var defaultsValue : Any {
-        return self.rawValue
+    public var defaultsValue: Any {
+        return rawValue
     }
 }
 
-public protocol SettingModel : NSObjectProtocol, UserDefaultsRepresentable {
-    associatedtype T : Any
-    var title : String {get}
-    var info : String? {get}
-    var defaultValue : T {get}
-    var value : T {get set}
+public protocol SettingModel: NSObjectProtocol, UserDefaultsRepresentable {
+    associatedtype T: Any
+    var title: String { get }
+    var info: String? { get }
+    var defaultValue: T { get }
+    var value: T { get set }
 }
 
 // Add Set support
-extension Set : UserDefaultsRepresentable {
+extension Set: UserDefaultsRepresentable {
     public var valueType: Any.Type {
-        return Array<Element>.self
+        return [Element].self
     }
 
     public var defaultsValue: Any {
@@ -47,7 +47,7 @@ extension Set : UserDefaultsRepresentable {
     }
 }
 
-//extension SettingModel {
+// extension SettingModel {
 //    init(_ defaultValue : Bool, title: String, info: String? = nil) {
 //        self.defaultValue = defaultValue
 //        self.value = defaultValue
@@ -55,10 +55,10 @@ extension Set : UserDefaultsRepresentable {
 //        self.info = info
 //        super.init()
 //    }
-//}
+// }
 
 @objcMembers
-@objc public final class BoolSetting : NSObject, SettingModel {
+@objc public final class BoolSetting: NSObject, SettingModel {
     public var valueType: Any.Type {
         return Bool.self
     }
@@ -67,14 +67,14 @@ extension Set : UserDefaultsRepresentable {
         return value
     }
 
-    public let defaultValue : Bool
-    public var value : Bool
-    public var title : String
-    public let info : String?
+    public let defaultValue: Bool
+    public var value: Bool
+    public var title: String
+    public let info: String?
 
-    required public init(_ defaultValue : Bool, title: String, info: String? = nil) {
+    public required init(_ defaultValue: Bool, title: String, info: String? = nil) {
         self.defaultValue = defaultValue
-        self.value = defaultValue
+        value = defaultValue
         self.title = title
         self.info = info
         super.init()
@@ -91,30 +91,29 @@ extension Set : UserDefaultsRepresentable {
 /// 5 Quick flip of Bools via keyPath. .toggle(\.keyPath)
 /// 6 Supports grouping settings into sub-keys by using local NSObject classes
 
-public class MirroredSettings : NSObject {
-
-    var plistPath : String? {
-        return  Bundle.main.path( forResource: "Defaults", ofType: "plist" )
+public class MirroredSettings: NSObject {
+    var plistPath: String? {
+        return Bundle.main.path(forResource: "Defaults", ofType: "plist")
     }
 
     override init() {
         super.init()
 
         if let path = plistPath {
-            UserDefaults.standard.register( defaults: NSDictionary( contentsOfFile: path ) as? [ String : Any ] ?? [ : ] )
+            UserDefaults.standard.register(defaults: NSDictionary(contentsOfFile: path) as? [String: Any] ?? [:])
         }
 
         setInitialValues(self, rootKey: nil)
         UserDefaults.standard.synchronize()
     }
 
-    final private func setInitialValues(_ settings : NSObject, rootKey: String? = nil) {
+    private final func setInitialValues(_ settings: NSObject, rootKey: String? = nil) {
         for c in Mirror(reflecting: settings).children {
             guard let key = c.label else {
                 continue
             }
 
-            let keyPath : String
+            let keyPath: String
             if let rootKey = rootKey {
                 keyPath = [rootKey, key].joined(separator: ".")
             } else {
@@ -122,18 +121,16 @@ public class MirroredSettings : NSObject {
             }
 
             if let currentValue = UserDefaults.standard.object(forKey: keyPath) ?? UserDefaults.standard.object(forKey: "k\(key.uppercased())Key") {
-
                 // Check we didnt't get a crazy value
 //                if let e = c.value as? UserDefaultsRepresentable, e.valueType != type(of: currentValue) {
 //                    assertionFailure("Read back wrong type. Got <\(type(of: currentValue))>, excpected: <\(e.valueType)>")
 //                }
 
-
-                if let e = c.value as? Set<AnyHashable>, let arrayValue = currentValue as? Array<AnyHashable> {
-                    self.setValue(Set(arrayValue), forKeyPath: keyPath)
+                if let e = c.value as? Set<AnyHashable>, let arrayValue = currentValue as? [AnyHashable] {
+                    setValue(Set(arrayValue), forKeyPath: keyPath)
                 } else {
                     // Handle case where value was previously set
-                    self.setValue(currentValue, forKeyPath: keyPath)
+                    setValue(currentValue, forKeyPath: keyPath)
                 }
             } else {
                 if let e = c.value as? UserDefaultsRepresentable {
@@ -146,22 +143,22 @@ public class MirroredSettings : NSObject {
             }
 
             // TODO: rx observers?
-            self.addObserver(self, forKeyPath: keyPath, options:[.new], context:nil)
+            addObserver(self, forKeyPath: keyPath, options: [.new], context: nil)
         }
     }
 
     deinit {
-        for c in Mirror( reflecting: self ).children {
+        for c in Mirror(reflecting: self).children {
             guard let key = c.label else {
                 continue
             }
             // TODO: This doesn't handle sub paths
-            self.removeObserver( self, forKeyPath: key)
+            self.removeObserver(self, forKeyPath: key)
         }
     }
 
     @discardableResult
-    final func toggle<T:MirroredSettings>(_ key : ReferenceWritableKeyPath<T, Bool>) -> Bool {
+    final func toggle<T: MirroredSettings>(_ key: ReferenceWritableKeyPath<T, Bool>) -> Bool {
         let newValue = !(self as! T)[keyPath: key]
         (self as! T)[keyPath: key] = newValue
         return newValue
@@ -169,8 +166,8 @@ public class MirroredSettings : NSObject {
 }
 
 extension MirroredSettings {
-    final private func searchAndSet(_ keyPath: String, on: Any, to newValue: Any, rootKey: String? = nil) -> Bool {
-        for c in Mirror( reflecting: on ).children {
+    private final func searchAndSet(_ keyPath: String, on: Any, to newValue: Any, rootKey: String? = nil) -> Bool {
+        for c in Mirror(reflecting: on).children {
             guard let key = c.label else { continue }
 
             // Handle sub-key paths
@@ -187,7 +184,7 @@ extension MirroredSettings {
                     return true
                 }
             } else if key == keyPath {
-                let myKeyPath : String
+                let myKeyPath: String
                 if let rootKey = rootKey {
                     myKeyPath = rootKey + "." + keyPath
                 } else {
@@ -209,8 +206,7 @@ extension MirroredSettings {
         return false
     }
 
-    public override func observeValue( forKeyPath keyPath: String?, of object: Any?, change: [ NSKeyValueChangeKey : Any ]?, context: UnsafeMutableRawPointer? ) {
-
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard let myChange = change, let newValue = myChange[.newKey], let keyPathNotNil = keyPath else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return
@@ -228,9 +224,9 @@ extension MirroredSettings {
 
 @objcMembers
 @objc public final class PVSettingsModel: MirroredSettings {
-    @objc public static let shared = PVSettingsModel()
+    public static let shared = PVSettingsModel()
 
-    @objc public class DebugOptions : NSObject {
+    @objc public class DebugOptions: NSObject {
         @objc public dynamic var iCloudSync = false
 //        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
@@ -238,50 +234,50 @@ extension MirroredSettings {
         @objc public dynamic var multiSampling = true
     }
 
-    @objc public dynamic var debugOptions = DebugOptions()
+    public dynamic var debugOptions = DebugOptions()
 
-    @objc public dynamic var autoSave = true
-    @objc public dynamic var timedAutoSaves = true
-    @objc public dynamic var timedAutoSaveInterval = minutes(10)
+    public dynamic var autoSave = true
+    public dynamic var timedAutoSaves = true
+    public dynamic var timedAutoSaveInterval = minutes(10)
 
-    @objc public dynamic var askToAutoLoad = true
-    @objc public dynamic var autoLoadSaves = false
+    public dynamic var askToAutoLoad = true
+    public dynamic var autoLoadSaves = false
 
-    @objc public dynamic var disableAutoLock = false
-    @objc public dynamic var buttonVibration = true
+    public dynamic var disableAutoLock = false
+    public dynamic var buttonVibration = true
 
-    @objc public dynamic var imageSmoothing = false
-    @objc public dynamic var crtFilterEnabled = false
-    @objc public dynamic var nativeScaleEnabled = true
+    public dynamic var imageSmoothing = false
+    public dynamic var crtFilterEnabled = false
+    public dynamic var nativeScaleEnabled = true
 
-    @objc public dynamic var showRecentSaveStates = true
-    @objc public dynamic var showGameBadges = true
-    @objc public dynamic var showRecentGames = true
+    public dynamic var showRecentSaveStates = true
+    public dynamic var showGameBadges = true
+    public dynamic var showRecentGames = true
 
-    @objc public dynamic var showFPSCount = false
+    public dynamic var showFPSCount = false
 
-    @objc public dynamic var showGameTitles = true
-    @objc public dynamic var gameLibraryScale = 1.0
+    public dynamic var showGameTitles = true
+    public dynamic var gameLibraryScale = 1.0
 
-    @objc public dynamic var webDavAlwaysOn = false
-    @objc public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
+    public dynamic var webDavAlwaysOn = false
+    public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
 
-    @objc public dynamic var controllerOpacity :CGFloat = 0.8
-    @objc public dynamic var buttonTints = true
+    public dynamic var controllerOpacity: CGFloat = 0.8
+    public dynamic var buttonTints = true
 
     #if os(tvOS)
-    @objc public dynamic var missingButtonsAlwaysOn = true
+        @objc public dynamic var missingButtonsAlwaysOn = true
     #else
-    @objc public dynamic var missingButtonsAlwaysOn = false
+        @objc public dynamic var missingButtonsAlwaysOn = false
     #endif
 
-    @objc public dynamic var allRightShoulders = false
+    public dynamic var allRightShoulders = false
 
-    @objc public dynamic var volume : Float = 1.0
-    @objc public dynamic var volumeHUD = true
+    public dynamic var volume: Float = 1.0
+    public dynamic var volumeHUD = true
 
-    @objc public dynamic var sort : SortOptions = .title
+    public dynamic var sort: SortOptions = .title
 
-    @objc public dynamic var haveWarnedAboutDebug = false
-    @objc public dynamic var collapsedSystems = Set<String>()
+    public dynamic var haveWarnedAboutDebug = false
+    public dynamic var collapsedSystems = Set<String>()
 }

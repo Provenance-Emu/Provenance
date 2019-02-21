@@ -7,16 +7,16 @@
 //
 
 import Foundation
-import RealmSwift
 import PVSupport
+import RealmSwift
 
 @objcMembers
 public final class PVImageFile: PVFile {
-    dynamic internal(set) public var _cgsize: String!
-    dynamic public var ratio: Float = 0.0
-    dynamic public var width: Int = 0
-    dynamic public var height: Int = 0
-    dynamic public var layout: String = ""
+    public internal(set) dynamic var _cgsize: String!
+    public dynamic var ratio: Float = 0.0
+    public dynamic var width: Int = 0
+    public dynamic var height: Int = 0
+    public dynamic var layout: String = ""
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
@@ -28,7 +28,7 @@ public final class PVImageFile: PVFile {
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
-        self.partialPath = relativeRoot.createRelativePath(fromURL: url)
+        partialPath = relativeRoot.createRelativePath(fromURL: url)
         calculateSizeData()
     }
 
@@ -38,11 +38,11 @@ public final class PVImageFile: PVFile {
             return
         }
 
-        let size  = image.size
+        let size = image.size
         cgsize = size
     }
 
-    private(set) public var cgsize: CGSize {
+    public private(set) var cgsize: CGSize {
         get {
             return NSCoder.cgSize(for: _cgsize)
         }

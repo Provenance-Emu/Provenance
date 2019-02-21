@@ -9,15 +9,15 @@
 import Foundation
 import RealmSwift
 
-public extension FileBacked where Self : Object {
-	var online: Bool {
-		return fileInfo != nil || fileInfo!.online
-	}
+public extension FileBacked where Self: Object {
+    var online: Bool {
+        return fileInfo != nil || fileInfo!.online
+    }
 
-	var md5: String? {
-		guard let file = fileInfo else {
-			return nil
-		}
-		return file.md5
-	}
+    var md5: String? {
+        guard let file = fileInfo else {
+            return nil
+        }
+        return file.md5
+    }
 }

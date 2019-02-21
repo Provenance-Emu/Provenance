@@ -7,10 +7,10 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-import UIKit
-import RealmSwift
 import PVLibrary
 import PVSupport
+import RealmSwift
+import UIKit
 
 final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false
@@ -22,27 +22,26 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         RomDatabase.sharedInstance.refresh()
         (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
 
-		if #available(iOS 9.0, tvOS 9.0, *) {
-			#if os(iOS)
-			collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-			#else
-			collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-			#endif
-		} else {
-			collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-		}
-		collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+        if #available(iOS 9.0, tvOS 9.0, *) {
+            #if os(iOS)
+                collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            #else
+                collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            #endif
+        } else {
+            collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        }
+        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 
-		let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVSearchViewController.longPressRecognized(_:)))
-		collectionView?.addGestureRecognizer(longPressRecognizer)
-
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVSearchViewController.longPressRecognized(_:)))
+        collectionView?.addGestureRecognizer(longPressRecognizer)
     }
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+    override func numberOfSections(in _: UICollectionView) -> Int {
         return 1
     }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return searchResults?.count ?? 0
     }
 
@@ -58,64 +57,63 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let game = searchResults?[indexPath.item] {
-			load(game, sender:collectionView, core: nil)
+            load(game, sender: collectionView, core: nil)
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         return CGSize(width: 250, height: 360)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
         return 88
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt _: Int) -> CGFloat {
         return 30
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt _: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 40, left: 40, bottom: 120, right: 40)
     }
 
-	@objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
-		guard let collectionView = collectionView else {
-			return
-		}
+    @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
+        guard let collectionView = collectionView else {
+            return
+        }
 
-		if recognizer.state == .began, let indexPath = collectionView.indexPathForItem(at: recognizer.location(in: collectionView)), let game = searchResults?[indexPath.item] {
+        if recognizer.state == .began, let indexPath = collectionView.indexPathForItem(at: recognizer.location(in: collectionView)), let game = searchResults?[indexPath.item] {
+            let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-			let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            //			actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            //				self.moreInfo(for: game)
+            //			}))
 
-//			actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-//				self.moreInfo(for: game)
-//			}))
+            actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.toggleFavorite(for: game)
+            }))
 
-			actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-				self.toggleFavorite(for: game)
-			}))
+            //			actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            //				self.renameGame(game)
+            //			}))
 
-//			actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-//				self.renameGame(game)
-//			}))
-
-			present(actionSheet, animated: true, completion: nil)
-		}
-	}
+            present(actionSheet, animated: true, completion: nil)
+        }
+    }
 }
 
 extension PVSearchViewController {
-	func toggleFavorite(for game: PVGame) {
-		do {
-			try RomDatabase.sharedInstance.writeTransaction {
-				game.isFavorite = !game.isFavorite
-			}
+    func toggleFavorite(for game: PVGame) {
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                game.isFavorite = !game.isFavorite
+            }
 
-			register3DTouchShortcuts()
-		} catch {
-			ELOG("Failed to toggle Favourite for game \(game.title)")
-		}
-	}
+            register3DTouchShortcuts()
+        } catch {
+            ELOG("Failed to toggle Favourite for game \(game.title)")
+        }
+    }
 }
 
 extension PVSearchViewController: UISearchResultsUpdating {

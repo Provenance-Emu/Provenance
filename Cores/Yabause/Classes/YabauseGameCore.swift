@@ -8,7 +8,7 @@
 import Foundation
 import PVSupport
 
-//extension PVYabauseGameCore: DiscSwappable {
+// extension PVYabauseGameCore: DiscSwappable {
 //	public var numberOfDiscs: UInt {
 //		return numberOfDiscs
 //	}
@@ -26,4 +26,4 @@ import PVSupport
 //			self.setMedia(false, forDisc: index)
 //		}
 //	}
-//}
+// }

@@ -12,15 +12,15 @@ final class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
     override init() {
         super.init()
         #if os(iOS)
-        if #available(iOS 9.0, *) {
-            self.sectionHeadersPinToVisibleBounds = true
-        }
+            if #available(iOS 9.0, *) {
+                self.sectionHeadersPinToVisibleBounds = true
+            }
         #elseif os(tvOS)
-        self.sectionHeadersPinToVisibleBounds = true
+            sectionHeadersPinToVisibleBounds = true
         #endif
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

@@ -24,30 +24,29 @@
 //  SOFTWARE.
 //
 
-import UIKit
 import QuickTableViewController
+import UIKit
 
 /// A class that represents a row with a switch.
-open class SliderRow<T>: SliderRowCompatible, Equatable where T : SliderCell {
-
+open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
     // MARK: - Initializer
 
     /// Initializes a `SliderRow` with a title, a value and an action closure.
     public init(
-        text : String = "",
-        detailText : DetailText? = nil,
+        text: String = "",
+        detailText: DetailText? = nil,
         value: Float,
         valueLimits: (min: Float, max: Float),
         valueImages: (min: Icon?, max: Icon?),
         customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil,
         action: ((Row) -> Void)?
-        ) {
+    ) {
         self.text = text
         self.detailText = detailText
         self.value = value
         self.valueLimits = valueLimits
         self.valueImages = valueImages
-        self.customize = customization
+        customize = customization
         self.action = action
     }
 
@@ -86,7 +85,7 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T : SliderCell {
     public let cellType: UITableViewCell.Type = T.self
 
     /// The reuse identifier of the table view cell to display the row. The default value is **SliderCell**.
-    public let cellReuseIdentifier: String = "SliderCell" //T.reuseIdentifier
+    public let cellReuseIdentifier: String = "SliderCell" // T.reuseIdentifier
 
     /// The cell style is `.default`.
     public let cellStyle: UITableViewCell.CellStyle = .default
@@ -114,5 +113,4 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T : SliderCell {
             lhs.value == rhs.value &&
             lhs.icon == rhs.icon
     }
-
 }

@@ -7,12 +7,12 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-import UIKit
 import PVSupport
+import UIKit
 
 final class PVLicensesViewController: UIViewController {
     #if os(tvOS)
-    @IBOutlet weak var textView: UITextView!
+        @IBOutlet var textView: UITextView!
     #endif
 
     override func viewDidLoad() {
@@ -21,7 +21,7 @@ final class PVLicensesViewController: UIViewController {
         title = "Acknowledgements"
 
         #if os(iOS)
-            self.view.backgroundColor = UIColor.black
+            view.backgroundColor = UIColor.black
             let filesystemPath: String? = Bundle.main.path(forResource: "licenses", ofType: "html")
             let htmlContent = try? String(contentsOfFile: filesystemPath ?? "", encoding: .utf8)
 
@@ -41,7 +41,7 @@ final class PVLicensesViewController: UIViewController {
 
             let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
             // Change font colors for tvOS
-            let html = try! String.init(contentsOf: url).replacingOccurrences(of: "white", with: "black").replacingOccurrences(of: "#dddddd", with: "#555").replacingOccurrences(of: "#ccc", with: "#444")
+            let html = try! String(contentsOf: url).replacingOccurrences(of: "white", with: "black").replacingOccurrences(of: "#dddddd", with: "#555").replacingOccurrences(of: "#ccc", with: "#444")
 
             let attributedString = try! NSMutableAttributedString(data: html.data(using: .utf8)!, options: options, documentAttributes: nil)
 
@@ -63,8 +63,8 @@ final class PVLicensesViewController: UIViewController {
     }
 
     #if os(tvOS)
-    override var preferredFocusedView: UIView? {
-        return textView
-    }
+        override var preferredFocusedView: UIView? {
+            return textView
+        }
     #endif
 }

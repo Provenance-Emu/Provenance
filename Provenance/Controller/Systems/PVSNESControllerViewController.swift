@@ -9,7 +9,7 @@
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVSNESButton {
         get {
             return PVSNESButton(rawValue: tag)!
@@ -26,13 +26,13 @@ final class PVSNESControllerViewController: PVControllerViewController<PVSNESSys
             guard let button = $0 as? JSButton else {
                 return
             }
-            if (button.titleLabel?.text == "A") {
+            if button.titleLabel?.text == "A" {
                 button.buttonTag = .a
             } else if (button.titleLabel?.text == "B") || (button.titleLabel?.text == "1") {
                 button.buttonTag = .b
             } else if (button.titleLabel?.text == "X") || (button.titleLabel?.text == "2") {
                 button.buttonTag = .x
-            } else if (button.titleLabel?.text == "Y") {
+            } else if button.titleLabel?.text == "Y" {
                 button.buttonTag = .y
             }
         }
@@ -49,28 +49,28 @@ final class PVSNESControllerViewController: PVControllerViewController<PVSNESSys
         emulatorCore.didRelease(.left, forPlayer: 0)
         emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
-            case .upLeft:
-                emulatorCore.didPush(.up, forPlayer: 0)
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .up:
-                emulatorCore.didPush(.up, forPlayer: 0)
-            case .upRight:
-                emulatorCore.didPush(.up, forPlayer: 0)
-                emulatorCore.didPush(.right, forPlayer: 0)
-            case .left:
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .right:
-                emulatorCore.didPush(.right, forPlayer: 0)
-            case .downLeft:
-                emulatorCore.didPush(.down, forPlayer: 0)
-                emulatorCore.didPush(.left, forPlayer: 0)
-            case .down:
-                emulatorCore.didPush(.down, forPlayer: 0)
-            case .downRight:
-                emulatorCore.didPush(.down, forPlayer: 0)
-                emulatorCore.didPush(.right, forPlayer: 0)
-            default:
-                break
+        case .upLeft:
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .up:
+            emulatorCore.didPush(.up, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
+        case .left:
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .right:
+            emulatorCore.didPush(.right, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
+        case .down:
+            emulatorCore.didPush(.down, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
+        default:
+            break
         }
         super.dPad(dPad, didPress: direction)
     }
