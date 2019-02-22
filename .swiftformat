@@ -6,5 +6,6 @@
 --operatorfunc nospace
 --ifdef noindent
 --stripunusedargs closure-only
---exclude Carthage Cores
+--disable redundantObjc,redundantExtensionACL
+--exclude Carthage,Cores
 
