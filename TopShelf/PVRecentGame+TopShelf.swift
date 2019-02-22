@@ -7,9 +7,9 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 
-import TVServices
 import PVLibrary
 import PVSupport
+import TVServices
 
 // Top shelf extensions
 extension PVRecentGame {
@@ -24,22 +24,22 @@ extension PVRecentGame {
         item.title = game.title
         item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
         item.imageShape = game.system.imageType
-        item.displayURL = self.displayURL
+        item.displayURL = displayURL
         item.lastAccessedDate = lastPlayedDate
 
         return item
     }
 
     var displayURL: URL {
-		guard let game = game else {
-			ELOG("Nil game")
-			return URL(fileURLWithPath: "")
-		}
+        guard let game = game else {
+            ELOG("Nil game")
+            return URL(fileURLWithPath: "")
+        }
 
         var components = URLComponents()
         components.scheme = PVAppURLKey
         components.path = PVGameControllerKey
-        	components.queryItems = [URLQueryItem(name: PVGameMD5Key, value: game.md5Hash)]
+        components.queryItems = [URLQueryItem(name: PVGameMD5Key, value: game.md5Hash)]
         return components.url ?? URL(fileURLWithPath: "")
     }
 }

@@ -4,7 +4,7 @@ import RealmSwift
 import RxSwift
 
 extension Object {
-    static func build<O: Object>(_ builder: (O) -> () ) -> O {
+    static func build<O: Object>(_ builder: (O) -> Void) -> O {
         let object = O()
         builder(object)
         return object
@@ -13,13 +13,13 @@ extension Object {
 
 extension SortDescriptor {
     init(sortDescriptor: NSSortDescriptor) {
-        self.keyPath = sortDescriptor.key ?? ""
-        self.ascending = sortDescriptor.ascending
+        keyPath = sortDescriptor.key ?? ""
+        ascending = sortDescriptor.ascending
     }
 }
 
 extension Reactive where Base: Realm {
-    func save<R: RealmRepresentable>(entity: R, update: Bool = true) -> Observable<Void> where R.RealmType: Object  {
+    func save<R: RealmRepresentable>(entity: R, update: Bool = true) -> Observable<()> where R.RealmType: Object {
         return Observable.create { observer in
             do {
                 try self.base.write {
@@ -34,7 +34,7 @@ extension Reactive where Base: Realm {
         }
     }
 
-    func delete<R: RealmRepresentable>(entity: R) -> Observable<Void> where R.RealmType: Object {
+    func delete<R: RealmRepresentable>(entity: R) -> Observable<()> where R.RealmType: Object {
         return Observable.create { observer in
             do {
                 guard let object = self.base.object(ofType: R.RealmType.self, forPrimaryKey: entity.uid) else { fatalError() }

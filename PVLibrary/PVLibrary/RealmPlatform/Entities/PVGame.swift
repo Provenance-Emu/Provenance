@@ -14,8 +14,8 @@ protocol PVLibraryEntry where Self: Object {}
 
 @objcMembers
 public final class PVGame: Object, PVLibraryEntry {
-    dynamic public var title: String                = ""
-    dynamic public var id                            = NSUUID().uuidString
+    public dynamic var title: String = ""
+    public dynamic var id = NSUUID().uuidString
 
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
     // We should make this an absolute path but would need a Realm translater and modifying
@@ -23,30 +23,30 @@ public final class PVGame: Object, PVLibraryEntry {
     // and then we just need to change that method but I haven't check that every method uses that
     // The other option is to only use the filename and then path(forGame:) would determine the
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
-    dynamic public var romPath: String            = ""
-    dynamic public var file: PVFile!
+    public dynamic var romPath: String = ""
+    public dynamic var file: PVFile!
     public private(set) var relatedFiles = List<PVFile>()
 
-    dynamic public var customArtworkURL: String   = ""
-    dynamic public var originalArtworkURL: String = ""
-    dynamic public var originalArtworkFile: PVImageFile?
+    public dynamic var customArtworkURL: String = ""
+    public dynamic var originalArtworkURL: String = ""
+    public dynamic var originalArtworkFile: PVImageFile?
 
-    dynamic public var requiresSync: Bool         = true
-    dynamic public var isFavorite: Bool           = false
+    public dynamic var requiresSync: Bool = true
+    public dynamic var isFavorite: Bool = false
 
-    dynamic public var romSerial: String?
-    dynamic public var romHeader: String?
-    dynamic public private(set) var importDate: Date           = Date()
+    public dynamic var romSerial: String?
+    public dynamic var romHeader: String?
+    public private(set) dynamic var importDate: Date = Date()
 
-    dynamic public var systemIdentifier: String   = ""
-    dynamic public var system: PVSystem!
+    public dynamic var systemIdentifier: String = ""
+    public dynamic var system: PVSystem!
 
-    dynamic public var md5Hash: String            = ""
-    dynamic public var crc: String            = ""
+    public dynamic var md5Hash: String = ""
+    public dynamic var crc: String = ""
 
     // If the user has set 'always use' for a specfic core
     // We don't use PVCore incase cores are removed / deleted
-    dynamic public var userPreferredCoreID : String?
+    public dynamic var userPreferredCoreID: String?
 
     /* Links to other objects */
     public private(set) var saveStates = LinkingObjects<PVSaveState>(fromType: PVSaveState.self, property: "game")
@@ -56,10 +56,10 @@ public final class PVGame: Object, PVLibraryEntry {
     public private(set) var libraries = LinkingObjects<PVLibrary>(fromType: PVLibrary.self, property: "games")
 
     /* Tracking data */
-    dynamic public var lastPlayed: Date?
-    dynamic public var playCount: Int = 0
-    dynamic public var timeSpentInGame: Int = 0
-    dynamic public var rating: Int = -1 {
+    public dynamic var lastPlayed: Date?
+    public dynamic var playCount: Int = 0
+    public dynamic var timeSpentInGame: Int = 0
+    public dynamic var rating: Int = -1 {
         willSet {
             assert(-1 ... 5 ~= newValue, "Setting rating out of range -1 to 5")
         }
@@ -71,24 +71,24 @@ public final class PVGame: Object, PVLibraryEntry {
     }
 
     /* Extra metadata from OpenBG */
-    dynamic public var gameDescription: String?
-    dynamic public var boxBackArtworkURL: String?
-    dynamic public var developer: String?
-    dynamic public var publisher: String?
-    dynamic public var publishDate: String?
-    dynamic public var genres: String? // Is a comma seperated list or single entry
-    dynamic public var referenceURL: String?
-    dynamic public var releaseID: String?
-    dynamic public var regionName: String?
-    dynamic public var regionID: Int?
-    dynamic public var systemShortName: String?
-    dynamic public var language: String?
+    public dynamic var gameDescription: String?
+    public dynamic var boxBackArtworkURL: String?
+    public dynamic var developer: String?
+    public dynamic var publisher: String?
+    public dynamic var publishDate: String?
+    public dynamic var genres: String? // Is a comma seperated list or single entry
+    public dynamic var referenceURL: String?
+    public dynamic var releaseID: String?
+    public dynamic var regionName: String?
+    public dynamic var regionID: Int?
+    public dynamic var systemShortName: String?
+    public dynamic var language: String?
 
     public convenience init(withFile file: PVFile, system: PVSystem) {
         self.init()
         self.file = file
         self.system = system
-        self.systemIdentifier = system.identifier
+        systemIdentifier = system.identifier
     }
 
     /*
@@ -97,24 +97,24 @@ public final class PVGame: Object, PVLibraryEntry {
      Seems sane enough since it's on the serial queue. Could always use
      an async dispatch if it's an issue. - jm
      */
-    override public static func primaryKey() -> String? {
+    public override static func primaryKey() -> String? {
         return "md5Hash"
     }
 
-    override public static func indexedProperties() -> [String] {
+    public override static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
     }
 }
 
 public extension PVGame {
-    public var isCD : Bool {
+    var isCD: Bool {
         let ext = (romPath as NSString).pathExtension
         var exts = PVEmulatorConfiguration.supportedCDFileExtensions
         exts.formUnion(["m3u"])
         return exts.contains(ext.lowercased())
     }
 
-    public var discCount : Int {
+    var discCount: Int {
         if isCD {
             return relatedFiles.filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
         } else {
@@ -123,18 +123,18 @@ public extension PVGame {
     }
 }
 
-extension PVGame : Filed, LocalFileProvider { }
+extension PVGame: Filed, LocalFileProvider {}
 
 public extension PVGame {
-    public var autoSaves : Results<PVSaveState> {
+    var autoSaves: Results<PVSaveState> {
         return saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false)
     }
 
-    public var newestAutoSave : PVSaveState? {
+    var newestAutoSave: PVSaveState? {
         return autoSaves.first
     }
 
-    public var lastAutosaveAge : TimeInterval? {
+    var lastAutosaveAge: TimeInterval? {
         guard let first = autoSaves.first else {
             return nil
         }
@@ -144,8 +144,9 @@ public extension PVGame {
 }
 
 // MARK: Conversions
+
 public extension Game {
-    init(withGame game : PVGame) {
+    init(withGame game: PVGame) {
         id = game.id
         title = game.title
         systemIdentifier = game.systemIdentifier
@@ -164,14 +165,14 @@ public extension Game {
         regionName = game.regionName
         systemShortName = game.systemShortName
         language = game.language
-        file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local:true)
+        file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
         gameDescription = game.gameDescription
         publishDate = game.publishDate
         // TODO: Screenshots
     }
 }
 
-extension PVGame : DomainConvertibleType {
+extension PVGame: DomainConvertibleType {
     public typealias DomainType = Game
 
     public func asDomain() -> Game {
@@ -209,7 +210,7 @@ extension Game: RealmRepresentable {
             object.developer = developer
             object.publisher = publisher
             object.publishDate = publishDate
-            object.genres = genres  // Is a comma seperated list or single entry
+            object.genres = genres // Is a comma seperated list or single entry
             object.referenceURL = referenceURL
             object.releaseID = releaseID
             object.regionName = regionName

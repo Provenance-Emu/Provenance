@@ -1,0 +1,11 @@
+--indent 4
+--indentcase false
+--trimwhitespace always
+--ranges nospace
+--empty tuple
+--operatorfunc nospace
+--ifdef noindent
+--stripunusedargs closure-only
+--disable redundantObjc,redundantExtensionACL
+--exclude Carthage,Cores
+

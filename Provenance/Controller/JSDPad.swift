@@ -6,8 +6,8 @@
 //  Copyright (c) 2018 Joe Mattiello. All rights reserved.
 //
 
-import UIKit
 import PVSupport
+import UIKit
 
 enum JSDPadDirection: Int {
     case upLeft = 1
@@ -87,29 +87,29 @@ final class JSDPad: UIView {
     func image(for direction: JSDPadDirection) -> UIImage? {
         var image: UIImage?
         switch direction {
-            case .up:
-                image = UIImage(named: "dPad-Up")
-            case .down:
-                image = UIImage(named: "dPad-Down")
-            case .left:
-                image = UIImage(named: "dPad-Left")
-            case .right:
-                image = UIImage(named: "dPad-Right")
-            case .upLeft:
-                image = UIImage(named: "dPad-UpLeft")
-            case .upRight:
-                image = UIImage(named: "dPad-UpRight")
-            case .downLeft:
-                image = UIImage(named: "dPad-DownLeft")
-            case .downRight:
-                image = UIImage(named: "dPad-DownRight")
-            case .none:
-                image = UIImage(named: "dPad-None")
+        case .up:
+            image = UIImage(named: "dPad-Up")
+        case .down:
+            image = UIImage(named: "dPad-Down")
+        case .left:
+            image = UIImage(named: "dPad-Left")
+        case .right:
+            image = UIImage(named: "dPad-Right")
+        case .upLeft:
+            image = UIImage(named: "dPad-UpLeft")
+        case .upRight:
+            image = UIImage(named: "dPad-UpRight")
+        case .downLeft:
+            image = UIImage(named: "dPad-DownLeft")
+        case .downRight:
+            image = UIImage(named: "dPad-DownRight")
+        case .none:
+            image = UIImage(named: "dPad-None")
         }
         return image
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
         let touch = touches.first!
         let point = touch.location(in: self)
         let direction: JSDPadDirection = self.direction(for: point)
@@ -121,7 +121,7 @@ final class JSDPad: UIView {
         }
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
         let touch = touches.first!
         let point = touch.location(in: self)
         let direction: JSDPadDirection = self.direction(for: point)
@@ -132,13 +132,13 @@ final class JSDPad: UIView {
         }
     }
 
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
         delegate?.dPadDidReleaseDirection(self)
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
         delegate?.dPadDidReleaseDirection(self)

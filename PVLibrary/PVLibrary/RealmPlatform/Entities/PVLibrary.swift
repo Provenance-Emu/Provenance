@@ -15,29 +15,27 @@ import RealmSwift
 
 @objcMembers
 public final class PVLibrary: Object {
-    dynamic public var uuid : String = ""
-    dynamic public var name : String = ""
+    public dynamic var uuid: String = ""
+    public dynamic var name: String = ""
 
-    dynamic public var isLocal : Bool = true
+    public dynamic var isLocal: Bool = true
 
     // Remote info
-    dynamic public var ipaddress : String = ""
-    dynamic public var domainname : String = ""
-    dynamic public var bonjourName : String = ""
-    dynamic public var port : Int = 7769 // prov on phone pad
+    public dynamic var ipaddress: String = ""
+    public dynamic var domainname: String = ""
+    public dynamic var bonjourName: String = ""
+    public dynamic var port: Int = 7769 // prov on phone pad
 
-    dynamic public var lastSeen : Date = Date()
+    public dynamic var lastSeen: Date = Date()
 
     public private(set) var games = List<PVGame>()
 }
 
 // PVLibrary - Network
 public extension PVLibrary {
-    public var isOnline : Bool {
+    var isOnline: Bool {
         return isLocal ? true : false
     }
 }
 
-@objcMembers public final class PVRemoteFile: Object {
-
-}
+@objcMembers public final class PVRemoteFile: Object {}

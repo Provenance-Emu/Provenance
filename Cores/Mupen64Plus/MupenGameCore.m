@@ -1433,6 +1433,10 @@ static void ConfigureRICE() {
     return YES;
 }
 
+//- (BOOL)isDoubleBuffered {
+//    return YES;
+//}
+
 - (const void *)videoBuffer
 {
     return NULL;

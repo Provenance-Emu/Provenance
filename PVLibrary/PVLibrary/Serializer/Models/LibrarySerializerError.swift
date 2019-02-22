@@ -8,6 +8,6 @@
 
 import Foundation
 
-public enum LibrarySerializerError : Error {
+public enum LibrarySerializerError: Error {
     case noDataAtPath(URL)
 }

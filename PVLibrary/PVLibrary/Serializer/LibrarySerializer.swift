@@ -10,21 +10,21 @@ import Foundation
 import PVSupport
 
 public protocol Packageable {
-    associatedtype PackageType : Package
-    var packageType : SerializerPackageType { get }
+    associatedtype PackageType: Package
+    var packageType: SerializerPackageType { get }
     func toPackage() throws -> PackageType
 }
 
 public typealias JSONMetadataSerialable = DomainConvertibleType & LocalFileInfoProvider & DataProvider
 
-extension Packageable where Self : JSONMetadataSerialable {
+extension Packageable where Self: JSONMetadataSerialable {
     internal func packageParts() throws -> (Data, Self.DomainType) {
         let data = try readData()
         return (data, asDomain())
     }
 }
 
-extension PVSaveState : Packageable {
+extension PVSaveState: Packageable {
     public var packageType: SerializerPackageType { return .saveState }
 
     public typealias PackageType = SavePackage
@@ -34,7 +34,7 @@ extension PVSaveState : Packageable {
     }
 }
 
-extension PVGame : Packageable {
+extension PVGame: Packageable {
     public var packageType: SerializerPackageType { return .game }
 
     public typealias PackageType = GamePackage
@@ -52,16 +52,17 @@ extension PVGame : Packageable {
     }
 }
 
-public typealias SerliazeCompletion = (_ result : PackageResult)->Void
-public typealias PackageCompletion = (_ result : PackageResult)->Void
+public typealias SerliazeCompletion = (_ result: PackageResult) -> Void
+public typealias PackageCompletion = (_ result: PackageResult) -> Void
 
 public final class LibrarySerializer {
-    fileprivate init() { }
+    fileprivate init() {}
 
-    static private let serializeQueue = DispatchQueue(label: "com.provenance.serializer", qos: .background)
+    private static let serializeQueue = DispatchQueue(label: "com.provenance.serializer", qos: .background)
 
     // MARK: - Metadata
-    static public func storeMetadata<O:JSONMetadataSerialable>(_ object : O, completion: @escaping SerliazeCompletion) {
+
+    public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) {
         let directory = object.url.deletingLastPathComponent()
         let fileName = object.fileName
         let data = object.asDomain()
@@ -79,13 +80,13 @@ public final class LibrarySerializer {
     }
 
     // MARK: - Packaging
-    static public func storePackage<P:Packageable & JSONMetadataSerialable>(_ object : P, completion: @escaping PackageCompletion) {
+
+    public static func storePackage<P: Packageable & JSONMetadataSerialable>(_ object: P, completion: @escaping PackageCompletion) {
         let path = object.url
         let directory = path.deletingLastPathComponent()
         let fileName = object.fileName
 
         LibrarySerializer.serializeQueue.async {
-
             let jsonFilename = fileName + "." + object.packageType.extension
             let saveURL = directory.appendingPathComponent(jsonFilename, isDirectory: false)
             do {
@@ -100,6 +101,7 @@ public final class LibrarySerializer {
 }
 
 // MARK: Disk save / load
+
 extension LibrarySerializer {
     /// Store an encodable struct to the specified directory on disk
     ///
@@ -147,7 +149,7 @@ extension LibrarySerializer {
     }
 
     /// Remove specified file from specified directory
-    static func remove(_ url : URL) {
+    static func remove(_ url: URL) {
         if FileManager.default.fileExists(atPath: url.path) {
             do {
                 try FileManager.default.removeItem(at: url)
@@ -158,7 +160,7 @@ extension LibrarySerializer {
     }
 
     /// Returns BOOL indicating whether file exists at specified directory with specified file name
-    static func fileExists(_ url : URL) -> Bool {
+    static func fileExists(_ url: URL) -> Bool {
         return FileManager.default.fileExists(atPath: url.path)
     }
 }

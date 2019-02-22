@@ -9,14 +9,15 @@
 import Foundation
 
 public protocol CoreActions {
-    var coreActions : [CoreAction]? { get }
-    func selected(action : CoreAction)
+    var coreActions: [CoreAction]? { get }
+    func selected(action: CoreAction)
 }
 
 // MARK: - Models
+
 public struct CoreActionOption {
-    public let title : String
-    public let selected : Bool
+    public let title: String
+    public let selected: Bool
 
     public init(title: String, selected: Bool = false) {
         self.title = title
@@ -25,9 +26,9 @@ public struct CoreActionOption {
 }
 
 public struct CoreAction {
-    public let title : String
-    public let requiresReset : Bool
-    public let options : [CoreActionOption]?
+    public let title: String
+    public let requiresReset: Bool
+    public let options: [CoreActionOption]?
 
     public init(title: String, requiresReset: Bool = false, options: [CoreActionOption]? = nil) {
         self.title = title
@@ -35,5 +36,3 @@ public struct CoreAction {
         self.options = options
     }
 }
-
-

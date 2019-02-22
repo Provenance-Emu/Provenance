@@ -8,10 +8,10 @@
 
 import Foundation
 
-public struct GamePackage : Package {
-    public var type: SerializerPackageType  { return .game } 
-    
-    public let data : Data
-    public let metadata : Game
-    public let saves : [SavePackage]
+public struct GamePackage: Package {
+    public var type: SerializerPackageType { return .game }
+
+    public let data: Data
+    public let metadata: Game
+    public let saves: [SavePackage]
 }

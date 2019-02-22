@@ -20,29 +20,29 @@ import GameController
 public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
     var handler: GCControllerButtonValueChangedHandler?
 
-	private var _value : Float = 0.0
-	public override var value : Float {
-		get {
-			return _value
-		}
-		set {
-			_value = newValue
-		}
-	}
+    private var _value: Float = 0.0
+    public override var value: Float {
+        get {
+            return _value
+        }
+        set {
+            _value = newValue
+        }
+    }
 
-	private var _isPressed : Bool = false
-	public override var isPressed :Bool {
-		get {
-			return _isPressed
-		}
-		set {
-			_isPressed = newValue
-			_value = _isPressed ? 1.0 : 0.0
-			handler?(self, _value, _isPressed)
-		}
-	}
+    private var _isPressed: Bool = false
+    public override var isPressed: Bool {
+        get {
+            return _isPressed
+        }
+        set {
+            _isPressed = newValue
+            _value = _isPressed ? 1.0 : 0.0
+            handler?(self, _value, _isPressed)
+        }
+    }
 
-	override public var valueChangedHandler: GCControllerButtonValueChangedHandler? {
+    public override var valueChangedHandler: GCControllerButtonValueChangedHandler? {
         get {
             return super.valueChangedHandler
         }
@@ -51,7 +51,7 @@ public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
         }
     }
 
-	override public var pressedChangedHandler: GCControllerButtonValueChangedHandler? {
+    public override var pressedChangedHandler: GCControllerButtonValueChangedHandler? {
         get {
             return super.pressedChangedHandler
         }

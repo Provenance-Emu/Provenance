@@ -8,23 +8,25 @@
 
 import UIKit
 
-//@IBDesignable
+// @IBDesignable
 final class PillPageControl: UIView {
-
     // MARK: - PageControl
-	// TODO: Fixme when true, not refreshing on rotation
-	var hideOnSinglePage : Bool = true
+
+    // TODO: Fixme when true, not refreshing on rotation
+    var hideOnSinglePage: Bool = true
 
     @IBInspectable public var pageCount: Int = 0 {
         didSet {
             updateNumberOfPages(pageCount)
         }
     }
+
     @IBInspectable public var progress: CGFloat = 0 {
         didSet {
             layoutActivePageIndicator(progress)
         }
     }
+
     public var currentPage: Int {
         return Int(round(progress))
     }
@@ -32,20 +34,21 @@ final class PillPageControl: UIView {
     // MARK: - Appearance
 
     @IBInspectable public var pillSize: CGSize = CGSize(width: 20, height: 2.5) {
-        didSet {
-
-        }
+        didSet {}
     }
+
     @IBInspectable public var activeTint: UIColor = UIColor.white {
         didSet {
             activeLayer.backgroundColor = activeTint.cgColor
         }
     }
+
     @IBInspectable public var inactiveTint: UIColor = UIColor(white: 1, alpha: 0.3) {
         didSet {
             inactiveLayers.forEach { $0.backgroundColor = inactiveTint.cgColor }
         }
     }
+
     @IBInspectable public var indicatorPadding: CGFloat = 7 {
         didSet {
             layoutInactivePageIndicators(inactiveLayers)
@@ -58,18 +61,19 @@ final class PillPageControl: UIView {
         layer.frame = CGRect(origin: CGPoint.zero,
                              size: CGSize(width: self.pillSize.width, height: self.pillSize.height))
         layer.backgroundColor = self.activeTint.cgColor
-        layer.cornerRadius = self.pillSize.height/2
+        layer.cornerRadius = self.pillSize.height / 2
         layer.actions = [
             "bounds": NSNull(),
             "frame": NSNull(),
-            "position": NSNull()]
+            "position": NSNull(),
+        ]
         return layer
     }()
 
     // MARK: - State Update
 
     fileprivate func updateNumberOfPages(_ count: Int) {
-		isHidden = hideOnSinglePage && pageCount < 2
+        isHidden = hideOnSinglePage && pageCount < 2
 
         // no need to update
         guard count != inactiveLayers.count else { return }
@@ -77,7 +81,7 @@ final class PillPageControl: UIView {
         inactiveLayers.forEach { $0.removeFromSuperlayer() }
         inactiveLayers = [CALayer]()
         // add layers for new page count
-        inactiveLayers = stride(from: 0, to:count, by:1).map { _ in
+        inactiveLayers = stride(from: 0, to: count, by: 1).map { _ in
             let layer = CALayer()
             layer.backgroundColor = self.inactiveTint.cgColor
             self.layer.addSublayer(layer)
@@ -85,16 +89,16 @@ final class PillPageControl: UIView {
         }
         layoutInactivePageIndicators(inactiveLayers)
         // ensure active page indicator is on top
-        self.layer.addSublayer(activeLayer)
+        layer.addSublayer(activeLayer)
         layoutActivePageIndicator(progress)
-        self.invalidateIntrinsicContentSize()
+        invalidateIntrinsicContentSize()
     }
 
     // MARK: - Layout
 
     fileprivate func layoutActivePageIndicator(_ progress: CGFloat) {
         // ignore if progress is outside of page indicators' bounds
-        guard progress >= 0 && progress <= CGFloat(pageCount - 1) else { return }
+        guard progress >= 0, progress <= CGFloat(pageCount - 1) else { return }
         let denormalizedProgress = progress * (pillSize.width + indicatorPadding)
         activeLayer.frame.origin.x = denormalizedProgress
     }
@@ -108,11 +112,11 @@ final class PillPageControl: UIView {
         }
     }
 
-    override public var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         return sizeThatFits(CGSize.zero)
     }
 
-    override public func sizeThatFits(_ size: CGSize) -> CGSize {
+    public override func sizeThatFits(_: CGSize) -> CGSize {
         return CGSize(width: CGFloat(inactiveLayers.count) * pillSize.width + CGFloat(inactiveLayers.count - 1) * indicatorPadding,
                       height: pillSize.height)
     }

@@ -9,7 +9,7 @@
 
 import PVSupport
 
-fileprivate extension JSButton {
+private extension JSButton {
     var buttonTag: PVWSButton {
         get {
             return PVWSButton(rawValue: tag)!
@@ -21,7 +21,6 @@ fileprivate extension JSButton {
 }
 
 final class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderSwanSystemResponderClient> {
-
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -39,39 +38,39 @@ final class PVWonderSwanControllerViewController: PVControllerViewController<PVW
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
         /*
-             .x1 == Up
-             .x2 == Right
-             .x3 == Down
-             .x4 == Left
-             */
+         .x1 == Up
+         .x2 == Right
+         .x3 == Down
+         .x4 == Left
+         */
         if dPad == self.dPad {
             emulatorCore.didRelease(.x1, forPlayer: 0)
             emulatorCore.didRelease(.x2, forPlayer: 0)
             emulatorCore.didRelease(.x3, forPlayer: 0)
             emulatorCore.didRelease(.x4, forPlayer: 0)
             switch direction {
-                case .upLeft:
-                    emulatorCore.didPush(.x1, forPlayer: 0)
-                    emulatorCore.didPush(.x4, forPlayer: 0)
-                case .up:
-                    emulatorCore.didPush(.x1, forPlayer: 0)
-                case .upRight:
-                    emulatorCore.didPush(.x1, forPlayer: 0)
-                    emulatorCore.didPush(.x2, forPlayer: 0)
-                case .left:
-                    emulatorCore.didPush(.x4, forPlayer: 0)
-                case .right:
-                    emulatorCore.didPush(.x2, forPlayer: 0)
-                case .downLeft:
-                    emulatorCore.didPush(.x3, forPlayer: 0)
-                    emulatorCore.didPush(.x4, forPlayer: 0)
-                case .down:
-                    emulatorCore.didPush(.x3, forPlayer: 0)
-                case .downRight:
-                    emulatorCore.didPush(.x3, forPlayer: 0)
-                    emulatorCore.didPush(.x2, forPlayer: 0)
-                default:
-                    break
+            case .upLeft:
+                emulatorCore.didPush(.x1, forPlayer: 0)
+                emulatorCore.didPush(.x4, forPlayer: 0)
+            case .up:
+                emulatorCore.didPush(.x1, forPlayer: 0)
+            case .upRight:
+                emulatorCore.didPush(.x1, forPlayer: 0)
+                emulatorCore.didPush(.x2, forPlayer: 0)
+            case .left:
+                emulatorCore.didPush(.x4, forPlayer: 0)
+            case .right:
+                emulatorCore.didPush(.x2, forPlayer: 0)
+            case .downLeft:
+                emulatorCore.didPush(.x3, forPlayer: 0)
+                emulatorCore.didPush(.x4, forPlayer: 0)
+            case .down:
+                emulatorCore.didPush(.x3, forPlayer: 0)
+            case .downRight:
+                emulatorCore.didPush(.x3, forPlayer: 0)
+                emulatorCore.didPush(.x2, forPlayer: 0)
+            default:
+                break
             }
         } else {
             emulatorCore.didRelease(.y1, forPlayer: 0)
@@ -79,28 +78,28 @@ final class PVWonderSwanControllerViewController: PVControllerViewController<PVW
             emulatorCore.didRelease(.y3, forPlayer: 0)
             emulatorCore.didRelease(.y4, forPlayer: 0)
             switch direction {
-                case .upLeft:
-                    emulatorCore.didPush(.y1, forPlayer: 0)
-                    emulatorCore.didPush(.y4, forPlayer: 0)
-                case .up:
-                    emulatorCore.didPush(.y1, forPlayer: 0)
-                case .upRight:
-                    emulatorCore.didPush(.y1, forPlayer: 0)
-                    emulatorCore.didPush(.y2, forPlayer: 0)
-                case .left:
-                    emulatorCore.didPush(.y4, forPlayer: 0)
-                case .right:
-                    emulatorCore.didPush(.y2, forPlayer: 0)
-                case .downLeft:
-                    emulatorCore.didPush(.y3, forPlayer: 0)
-                    emulatorCore.didPush(.y4, forPlayer: 0)
-                case .down:
-                    emulatorCore.didPush(.y3, forPlayer: 0)
-                case .downRight:
-                    emulatorCore.didPush(.y3, forPlayer: 0)
-                    emulatorCore.didPush(.y2, forPlayer: 0)
-                default:
-                    break
+            case .upLeft:
+                emulatorCore.didPush(.y1, forPlayer: 0)
+                emulatorCore.didPush(.y4, forPlayer: 0)
+            case .up:
+                emulatorCore.didPush(.y1, forPlayer: 0)
+            case .upRight:
+                emulatorCore.didPush(.y1, forPlayer: 0)
+                emulatorCore.didPush(.y2, forPlayer: 0)
+            case .left:
+                emulatorCore.didPush(.y4, forPlayer: 0)
+            case .right:
+                emulatorCore.didPush(.y2, forPlayer: 0)
+            case .downLeft:
+                emulatorCore.didPush(.y3, forPlayer: 0)
+                emulatorCore.didPush(.y4, forPlayer: 0)
+            case .down:
+                emulatorCore.didPush(.y3, forPlayer: 0)
+            case .downRight:
+                emulatorCore.didPush(.y3, forPlayer: 0)
+                emulatorCore.didPush(.y2, forPlayer: 0)
+            default:
+                break
             }
         }
         vibrate()

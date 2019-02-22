@@ -9,8 +9,8 @@
 import Foundation
 import QuickTableViewController
 
-final class SegueNavigationRow :  NavigationRow<SystemSettingsCell> {
-    weak var viewController : UIViewController?
+final class SegueNavigationRow: NavigationRow<SystemSettingsCell> {
+    weak var viewController: UIViewController?
 
     required init(text: String,
                   detailText: DetailText = .none,
@@ -19,8 +19,8 @@ final class SegueNavigationRow :  NavigationRow<SystemSettingsCell> {
                   customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
         self.viewController = viewController
 
-        super.init(text: text, detailText: detailText, icon: nil, customization: customization) {[weak viewController] (row) in
-            guard let viewController = viewController else {return}
+        super.init(text: text, detailText: detailText, icon: nil, customization: customization) { [weak viewController] _ in
+            guard let viewController = viewController else { return }
 
             viewController.performSegue(withIdentifier: segue, sender: nil)
         }

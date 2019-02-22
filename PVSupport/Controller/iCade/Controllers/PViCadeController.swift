@@ -10,7 +10,6 @@
 import GameController
 
 public class PViCadeController: GCController {
-	
     public private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
     public let reader: PViCadeReader = PViCadeReader.shared
     public var controllerPressedAnyKey: ((_ controller: PViCadeController?) -> Void)?
@@ -27,25 +26,25 @@ public class PViCadeController: GCController {
     func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
         case iCadeControllerState.buttonA:
-            return self.iCadeGamepad.rightTrigger
+            return iCadeGamepad.rightTrigger
         case iCadeControllerState.buttonB:
-            return self.iCadeGamepad.leftShoulder
+            return iCadeGamepad.leftShoulder
         case iCadeControllerState.buttonC:
-            return self.iCadeGamepad.leftTrigger
+            return iCadeGamepad.leftTrigger
         case iCadeControllerState.buttonD:
-            return self.iCadeGamepad.rightShoulder
+            return iCadeGamepad.rightShoulder
         case iCadeControllerState.buttonE:
-            return self.iCadeGamepad.buttonY
+            return iCadeGamepad.buttonY
         case iCadeControllerState.buttonF:
-            return self.iCadeGamepad.buttonB
+            return iCadeGamepad.buttonB
         case iCadeControllerState.buttonG:
-            return self.iCadeGamepad.buttonX
+            return iCadeGamepad.buttonX
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.buttonA
+            return iCadeGamepad.buttonA
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.leftTrigger
+            return iCadeGamepad.leftTrigger
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.rightTrigger
+            return iCadeGamepad.rightTrigger
         default:
             return nil
         }
@@ -54,14 +53,14 @@ public class PViCadeController: GCController {
     public override init() {
         super.init()
 
-		reader.buttonDownHandler = { [weak self] button in
+        reader.buttonDownHandler = { [weak self] button in
             guard let `self` = self else { return }
 
             switch button {
-			case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+            case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
                 DLOG("Pad Changed: \(button)")
-				self.iCadeGamepad.dpad.padChanged()
-			default:
+                self.iCadeGamepad.dpad.padChanged()
+            default:
                 if let button = self.button(forState: button) {
                     DLOG("Pressed button: \(button)")
                     button.isPressed = true
@@ -70,10 +69,10 @@ public class PViCadeController: GCController {
                 }
             }
 
-			self.controllerPressedAnyKey?(self)
-		}
+            self.controllerPressedAnyKey?(self)
+        }
 
-		reader.buttonUpHandler = { [weak self] button in
+        reader.buttonUpHandler = { [weak self] button in
             guard let `self` = self else { return }
 
             switch button {
@@ -88,10 +87,10 @@ public class PViCadeController: GCController {
                     DLOG("Unsupported button: \(button)")
                 }
             }
-		}
+        }
     }
 
-	override public var controllerPausedHandler: ((GCController) -> Void)? {
+    public override var controllerPausedHandler: ((GCController) -> Void)? {
         get {
             return super.controllerPausedHandler
         }
@@ -100,31 +99,31 @@ public class PViCadeController: GCController {
         }
     }
 
-	override public var gamepad: GCGamepad? {
+    public override var gamepad: GCGamepad? {
         return nil
     }
 
-	override public var extendedGamepad: GCExtendedGamepad? {
+    public override var extendedGamepad: GCExtendedGamepad? {
         return iCadeGamepad
     }
 
-	override public var vendorName: String? {
+    public override var vendorName: String? {
         return "iCade"
     }
 
     // don't know if it's nessesary but seems good
-	public override var isAttachedToDevice: Bool {
-		return false
-	}
+    public override var isAttachedToDevice: Bool {
+        return false
+    }
 
     // don't know if it's nessesary to set a specific index but without implementing this method the app crashes
-	private var _playerIndex: GCControllerPlayerIndex = GCControllerPlayerIndex(rawValue: 0)!
-	override public var playerIndex: GCControllerPlayerIndex {
-		get {
-			return _playerIndex
-		}
-		set {
-			_playerIndex = newValue
-		}
-	}
+    private var _playerIndex: GCControllerPlayerIndex = GCControllerPlayerIndex(rawValue: 0)!
+    public override var playerIndex: GCControllerPlayerIndex {
+        get {
+            return _playerIndex
+        }
+        set {
+            _playerIndex = newValue
+        }
+    }
 }

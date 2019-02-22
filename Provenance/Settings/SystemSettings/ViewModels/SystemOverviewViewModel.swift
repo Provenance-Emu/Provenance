@@ -11,16 +11,16 @@ import PVLibrary
 import PVSupport
 
 struct SystemOverviewViewModel {
-    let title : String
-    let identifier : String
-    let gameCount : Int
-    let cores : [Core]
-    let preferredCore : Core?
-    let bioses : [BIOSInfoProvider]?
+    let title: String
+    let identifier: String
+    let gameCount: Int
+    let cores: [Core]
+    let preferredCore: Core?
+    let bioses: [BIOSInfoProvider]?
 }
 
 extension SystemOverviewViewModel {
-    init<S:SystemProtocol>(withSystem system : S) {
+    init<S: SystemProtocol>(withSystem system: S) {
         title = system.name
         identifier = system.identifier
         gameCount = system.gameStructs.count

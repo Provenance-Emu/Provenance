@@ -10,12 +10,11 @@ import Foundation
 import RealmSwift
 
 @objcMembers public final class PVRecentGame: Object, PVLibraryEntry {
+    public dynamic var game: PVGame!
+    public dynamic var lastPlayedDate: Date = Date()
+    public dynamic var core: PVCore?
 
-    dynamic public var game: PVGame!
-    dynamic public var lastPlayedDate: Date = Date()
-    dynamic public var core: PVCore?
-
-    override public static func indexedProperties() -> [String] {
+    public override static func indexedProperties() -> [String] {
         return ["lastPlayedDate"]
     }
 

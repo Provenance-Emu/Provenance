@@ -7,11 +7,11 @@
 //
 
 import Foundation
-//import Promises
+// import Promises
 
 struct ServicesOptions: OptionSet {
     let rawValue: Int
-    public init(rawValue : Int) {
+    public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
@@ -27,7 +27,7 @@ struct ServicesOptions: OptionSet {
     static let hockeyAppOnly: ServicesOptions = all.subtracting([.unofficialBuilds, .debugBuilds])
     static let iOSOnly: ServicesOptions = all.subtracting(.tvOS)
 
-    static var isOfficialBuild : Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.provenance")
+    static var isOfficialBuild: Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.provenance")
 }
 
 enum ServicePlatforms {
@@ -36,24 +36,24 @@ enum ServicePlatforms {
 }
 
 protocol Service {
-    var title : String {get}
-    var description : String {get}
+    var title: String { get }
+    var description: String { get }
 
-    var supportsCurrentConfiguration : Bool {get}
-    var supportedConfigurations : ServicesOptions {get}
+    var supportsCurrentConfiguration: Bool { get }
+    var supportedConfigurations: ServicesOptions { get }
     func start() // -> Promise<Bool>
 }
 
 extension Service {
-    var supportsCurrentConfiguration : Bool {
+    var supportsCurrentConfiguration: Bool {
         #if os(tvOS)
-        if !supportedConfigurations.contains(.tvOS) {
-            return false
-        }
+            if !supportedConfigurations.contains(.tvOS) {
+                return false
+            }
         #elseif os(iOS)
-        if !supportedConfigurations.contains(.iOS) {
-            return false
-        }
+            if !supportedConfigurations.contains(.iOS) {
+                return false
+            }
         #endif
 
         let official = ServicesOptions.isOfficialBuild
@@ -61,11 +61,11 @@ extension Service {
         guard !(!official && !supportedConfigurations.contains(.unofficialBuilds)) else { return false }
 
         #if DEBUG
-        let debug = true
-        let release = false
+            let debug = true
+            let release = false
         #else
-        let debug = false
-        let release = true
+            let debug = false
+            let release = true
         #endif
 
         guard !(debug && !supportedConfigurations.contains(.debugBuilds)) else { return false }

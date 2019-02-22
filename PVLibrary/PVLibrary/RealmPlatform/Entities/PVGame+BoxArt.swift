@@ -6,8 +6,8 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import Foundation
 import CoreGraphics
+import Foundation
 import RealmSwift
 
 public enum PVGameBoxArtAspectRatio: CGFloat {
@@ -17,8 +17,8 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
 }
 
 public extension PVGame {
-    public var boxartAspectRatio: PVGameBoxArtAspectRatio {
-        switch self.system.enumValue {
+    var boxartAspectRatio: PVGameBoxArtAspectRatio {
+        switch system.enumValue {
         case .SNES, .N64:
             return .wide
         case .NES, .Genesis, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor:

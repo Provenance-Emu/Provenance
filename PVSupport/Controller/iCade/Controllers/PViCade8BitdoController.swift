@@ -10,25 +10,24 @@
 import Foundation
 
 public final class PViCade8BitdoController: PViCadeController {
-
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
         case iCadeControllerState.buttonA:
-            return self.iCadeGamepad.buttonX
+            return iCadeGamepad.buttonX
         case iCadeControllerState.buttonB:
-            return self.iCadeGamepad.buttonA
+            return iCadeGamepad.buttonA
         case iCadeControllerState.buttonC:
-            return self.iCadeGamepad.buttonB
+            return iCadeGamepad.buttonB
         case iCadeControllerState.buttonD:
-            return self.iCadeGamepad.buttonY
+            return iCadeGamepad.buttonY
         case iCadeControllerState.buttonE:
-            return self.iCadeGamepad.rightShoulder
+            return iCadeGamepad.rightShoulder
         case iCadeControllerState.buttonF:
-            return self.iCadeGamepad.leftShoulder
+            return iCadeGamepad.leftShoulder
         case iCadeControllerState.buttonG:
-            return self.iCadeGamepad.rightTrigger
+            return iCadeGamepad.rightTrigger
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.leftTrigger
+            return iCadeGamepad.leftTrigger
         default:
             return nil
         }
@@ -40,25 +39,24 @@ public final class PViCade8BitdoController: PViCadeController {
 }
 
 public final class PViCade8BitdoSNES30Controller: PViCadeController {
-
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
         case iCadeControllerState.buttonA:
-            return self.iCadeGamepad.buttonX
+            return iCadeGamepad.buttonX
         case iCadeControllerState.buttonB:
-            return self.iCadeGamepad.buttonA
+            return iCadeGamepad.buttonA
         case iCadeControllerState.buttonC:
-            return self.iCadeGamepad.buttonB
+            return iCadeGamepad.buttonB
         case iCadeControllerState.buttonD:
-            return self.iCadeGamepad.buttonY
+            return iCadeGamepad.buttonY
         case iCadeControllerState.buttonE:
-            return self.iCadeGamepad.rightShoulder
+            return iCadeGamepad.rightShoulder
         case iCadeControllerState.buttonF:
-            return self.iCadeGamepad.leftShoulder
+            return iCadeGamepad.leftShoulder
         case iCadeControllerState.buttonG:
-            return self.iCadeGamepad.rightTrigger
+            return iCadeGamepad.rightTrigger
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.leftTrigger
+            return iCadeGamepad.leftTrigger
         default:
             return nil
         }
@@ -70,31 +68,30 @@ public final class PViCade8BitdoSNES30Controller: PViCadeController {
 }
 
 public final class PViCade8BitdoZeroController: PViCadeController {
-
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
         case iCadeControllerState.buttonA:
-            return self.iCadeGamepad.buttonY
+            return iCadeGamepad.buttonY
         case iCadeControllerState.buttonB:
-            return self.iCadeGamepad.buttonB
+            return iCadeGamepad.buttonB
         case iCadeControllerState.buttonC:
-            return self.iCadeGamepad.buttonA
+            return iCadeGamepad.buttonA
         case iCadeControllerState.buttonD:
-            return self.iCadeGamepad.buttonX
+            return iCadeGamepad.buttonX
         case iCadeControllerState.buttonE:
-            return self.iCadeGamepad.rightShoulder
+            return iCadeGamepad.rightShoulder
         case iCadeControllerState.buttonF:
-            return self.iCadeGamepad.leftShoulder
+            return iCadeGamepad.leftShoulder
         case iCadeControllerState.buttonG:
-            return self.iCadeGamepad.rightTrigger
+            return iCadeGamepad.rightTrigger
         case iCadeControllerState.buttonH:
-            return self.iCadeGamepad.leftTrigger
+            return iCadeGamepad.leftTrigger
         default:
             return nil
         }
     }
 
-	override public var vendorName: String? {
+    public override var vendorName: String? {
         return "8Bitdo Zero"
     }
 }

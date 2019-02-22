@@ -8,7 +8,7 @@
 //
 
 @objc
-public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
+public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
     case disabled
     case standard
     case eightBitdo
@@ -16,37 +16,37 @@ public enum iCadeControllerSetting : Int, CustomStringConvertible, CaseIterable,
     case steelSeries
     case mocute
 
-	public var description : String {
-		switch self {
-		case .disabled:
-			return "Disabled"
-		case .standard:
-			return "Standard Controller"
-		case .eightBitdo:
-			return "8Bitdo Controller"
-		case .eightBitdoZero:
-			return "8Bitdo Zero Controller"
-		case .steelSeries:
-			return "SteelSeries Free Controller"
-		case .mocute:
-			return "Mocute Controller"
+    public var description: String {
+        switch self {
+        case .disabled:
+            return "Disabled"
+        case .standard:
+            return "Standard Controller"
+        case .eightBitdo:
+            return "8Bitdo Controller"
+        case .eightBitdoZero:
+            return "8Bitdo Zero Controller"
+        case .steelSeries:
+            return "SteelSeries Free Controller"
+        case .mocute:
+            return "Mocute Controller"
         }
-	}
+    }
 
-	public func createController() -> PViCadeController? {
-		switch self {
-		case .disabled:
-			return  nil
-		case .standard:
-			return  PViCadeController()
-		case .eightBitdo:
-			return  PViCade8BitdoController()
-		case .eightBitdoZero:
-			return  PViCade8BitdoZeroController()
-		case .steelSeries:
-			return  PViCadeSteelSeriesController()
-		case .mocute:
-			return  PViCadeMocuteController()
+    public func createController() -> PViCadeController? {
+        switch self {
+        case .disabled:
+            return nil
+        case .standard:
+            return PViCadeController()
+        case .eightBitdo:
+            return PViCade8BitdoController()
+        case .eightBitdoZero:
+            return PViCade8BitdoZeroController()
+        case .steelSeries:
+            return PViCadeSteelSeriesController()
+        case .mocute:
+            return PViCadeMocuteController()
         }
-	}
+    }
 }

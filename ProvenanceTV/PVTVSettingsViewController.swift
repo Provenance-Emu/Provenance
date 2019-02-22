@@ -5,31 +5,31 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 
-import UIKit
 import PVLibrary
 import PVSupport
+import UIKit
 
 final class PVTVSettingsViewController: UITableViewController, WebServerActivatorController {
     lazy var gameImporter: GameImporter = GameImporter.shared
-    @IBOutlet weak var autoSaveValueLabel: UILabel!
-    @IBOutlet weak var timedAutoSavesValueLabel: UILabel!
-    @IBOutlet weak var timedAutoSavesCell: UITableViewCell!
-    @IBOutlet weak var autoLoadValueLabel: UILabel!
-    @IBOutlet weak var askToLoadSavesValueLabel: UILabel!
-    @IBOutlet weak var versionValueLabel: UILabel!
-    @IBOutlet weak var askToLoadSavesCell: UITableViewCell!
-    @IBOutlet weak var revisionLabel: UILabel!
-    @IBOutlet weak var modeValueLabel: UILabel!
-    @IBOutlet weak var showFPSCountValueLabel: UILabel!
-    @IBOutlet weak var iCadeControllerSetting: UILabel!
-    @IBOutlet weak var crtFilterLabel: UILabel!
-    @IBOutlet weak var webDavAlwaysOnValueLabel: UILabel!
-    @IBOutlet weak var webDavAlwaysOnTitleLabel: UILabel!
-    @IBOutlet weak var imageSmoothingLabel: UILabel!
-	@IBOutlet weak var bundleIDLabel: UILabel!
-	@IBOutlet weak var builderLabel: UILabel!
-	@IBOutlet weak var buildDateLabel: UILabel!
-	@IBOutlet weak var buildNumberLabel: UILabel!
+    @IBOutlet var autoSaveValueLabel: UILabel!
+    @IBOutlet var timedAutoSavesValueLabel: UILabel!
+    @IBOutlet var timedAutoSavesCell: UITableViewCell!
+    @IBOutlet var autoLoadValueLabel: UILabel!
+    @IBOutlet var askToLoadSavesValueLabel: UILabel!
+    @IBOutlet var versionValueLabel: UILabel!
+    @IBOutlet var askToLoadSavesCell: UITableViewCell!
+    @IBOutlet var revisionLabel: UILabel!
+    @IBOutlet var modeValueLabel: UILabel!
+    @IBOutlet var showFPSCountValueLabel: UILabel!
+    @IBOutlet var iCadeControllerSetting: UILabel!
+    @IBOutlet var crtFilterLabel: UILabel!
+    @IBOutlet var webDavAlwaysOnValueLabel: UILabel!
+    @IBOutlet var webDavAlwaysOnTitleLabel: UILabel!
+    @IBOutlet var imageSmoothingLabel: UILabel!
+    @IBOutlet var bundleIDLabel: UILabel!
+    @IBOutlet var builderLabel: UILabel!
+    @IBOutlet var buildDateLabel: UILabel!
+    @IBOutlet var buildNumberLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,15 +52,15 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
             versionText = "\(versionText ?? "") Beta"
-            versionValueLabel.textColor = UIColor.init(hex: "#F5F5A0")
+            versionValueLabel.textColor = UIColor(hex: "#F5F5A0")
         }
         versionValueLabel.text = versionText
 
-#if DEBUG
-        modeValueLabel.text = "DEBUG"
-#else
-        modeValueLabel.text = "RELEASE"
-#endif
+        #if DEBUG
+            modeValueLabel.text = "DEBUG"
+        #else
+            modeValueLabel.text = "RELEASE"
+        #endif
 
         let color = UIColor(white: 0.0, alpha: 0.1)
         if var revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
@@ -73,30 +73,30 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
             revisionLabel.text = "(none)"
         }
 
-		buildNumberLabel.text = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "nil"
+        buildNumberLabel.text = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "nil"
 
-		let incomingDateFormatter = DateFormatter()
-		incomingDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-		incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
+        let incomingDateFormatter = DateFormatter()
+        incomingDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
 
-		let outputDateFormatter = DateFormatter()
-		outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
+        let outputDateFormatter = DateFormatter()
+        outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
 
         var buildDate = Date(timeIntervalSinceReferenceDate: 0)
-		if let processedDate = incomingDateFormatter.date(from: gitdate) {
-			buildDate = processedDate
-		} else {
-			// Try chaninging local - depends on which local was build with for git string
-			// more than the current local
-			incomingDateFormatter.locale = Locale.current
-			if let processedDate = incomingDateFormatter.date(from: gitdate) {
-				buildDate = processedDate
-			}
-		}
+        if let processedDate = incomingDateFormatter.date(from: gitdate) {
+            buildDate = processedDate
+        } else {
+            // Try chaninging local - depends on which local was build with for git string
+            // more than the current local
+            incomingDateFormatter.locale = Locale.current
+            if let processedDate = incomingDateFormatter.date(from: gitdate) {
+                buildDate = processedDate
+            }
+        }
 
-		buildDateLabel.text = outputDateFormatter.string(from: buildDate)
-		bundleIDLabel.text = Bundle.main.bundleIdentifier
-		builderLabel.text = builtByUser
+        buildDateLabel.text = outputDateFormatter.string(from: buildDate)
+        bundleIDLabel.text = Bundle.main.bundleIdentifier
+        builderLabel.text = builtByUser
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -128,7 +128,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         webDavAlwaysOnValueLabel.text = isAlwaysOn ? "ON" : "OFF"
         // Use 2 lines if on to make space for the sub title
         webDavAlwaysOnTitleLabel.numberOfLines = isAlwaysOn ? 2 : 1
-            // The main title is always present
+        // The main title is always present
         var firstLineAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 38)]
 
         if #available(tvOS 10.0, *), traitCollection.userInterfaceStyle == .dark {
@@ -148,8 +148,8 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
     }
 
     private struct Selections {
-        enum Sections : Int {
-			case app
+        enum Sections: Int {
+            case app
             case saves
             case audioVideo
             case controller
@@ -158,6 +158,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
             case buildInformation
             case externalInformation
         }
+
         static let launchWebServer = IndexPath(row: 0, section: Sections.gameLibrary.rawValue)
 
         static let refreshGameLibrary = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
@@ -171,16 +172,17 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
         static let h = IndexPath(row: 0, section: Sections.gameLibrary2.rawValue)
     }
 
-// MARK: - UITableViewDelegate
+    // MARK: - UITableViewDelegate
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
 
-		let section = Selections.Sections(rawValue: indexPath.section)!
+        let section = Selections.Sections(rawValue: indexPath.section)!
         switch section {
-		case .app, .controller, .buildInformation, .externalInformation:
-			break
+        case .app, .controller, .buildInformation, .externalInformation:
+            break
         case .saves:
             // Settings
             switch indexPath.row {
@@ -250,7 +252,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
                 // Currently this is only exposed on ATV since it would be a drain on battery
                 // for a mobile device to have this on and doesn't seem nearly as useful.
                 // Web dav can still be manually started alone side the web server
-                if PVSettingsModel.shared.webDavAlwaysOn && !PVWebServer.shared.isWebDavServerRunning {
+                if PVSettingsModel.shared.webDavAlwaysOn, !PVWebServer.shared.isWebDavServerRunning {
                     PVWebServer.shared.startWebDavServer()
                 } else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
                     PVWebServer.shared.stopWebDavServer()
@@ -267,19 +269,19 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
             case 0:
                 // Refresh
                 let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
                     NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-                present(alert, animated: true) {() -> Void in }
+                present(alert, animated: true) { () -> Void in }
             case 1:
                 // Empty Cache
                 let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
                     try? PVMediaCache.empty()
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-                present(alert, animated: true) {() -> Void in }
+                present(alert, animated: true) { () -> Void in }
             case 2:
                 let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
                 navigationController?.pushViewController(conflictViewController, animated: true)
@@ -321,7 +323,7 @@ final class PVTVSettingsViewController: UITableViewController, WebServerActivato
 }
 
 // Reduce code, use a macro!
-fileprivate extension Bool {
+private extension Bool {
     var onOffString: String {
         return self ? "ON" : "OFF"
     }

@@ -7,33 +7,32 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-import UIKit
 import PVSupport
+import UIKit
 
 final class PVAppearanceViewController: UITableViewController {
-
     #if os(iOS)
-    var hideTitlesSwitch: UISwitch?
-    var recentlyPlayedSwitch: UISwitch?
-	var saveStatesSwitch: UISwitch?
+        var hideTitlesSwitch: UISwitch?
+        var recentlyPlayedSwitch: UISwitch?
+        var saveStatesSwitch: UISwitch?
     #endif
 
     override func viewDidLoad() {
         super.viewDidLoad()
-#if os(iOS)
-        let settings = PVSettingsModel.shared
-        hideTitlesSwitch = UISwitch()
-        hideTitlesSwitch?.isOn = settings.showGameTitles
-        hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+        #if os(iOS)
+            let settings = PVSettingsModel.shared
+            hideTitlesSwitch = UISwitch()
+            hideTitlesSwitch?.isOn = settings.showGameTitles
+            hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 
-        recentlyPlayedSwitch = UISwitch()
-        recentlyPlayedSwitch?.isOn = settings.showRecentGames
-        recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+            recentlyPlayedSwitch = UISwitch()
+            recentlyPlayedSwitch?.isOn = settings.showRecentGames
+            recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 
-		saveStatesSwitch = UISwitch()
-		saveStatesSwitch?.isOn = settings.showRecentSaveStates
-		saveStatesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
-#endif
+            saveStatesSwitch = UISwitch()
+            saveStatesSwitch?.isOn = settings.showRecentSaveStates
+            saveStatesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+        #endif
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,30 +40,32 @@ final class PVAppearanceViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-#if os(iOS)
-    @objc func switchChangedValue(_ switchItem: UISwitch) {
-        if switchItem == hideTitlesSwitch {
-            PVSettingsModel.shared.showGameTitles = switchItem.isOn
-		} else if switchItem == recentlyPlayedSwitch {
-			PVSettingsModel.shared.showRecentGames = switchItem.isOn
-		} else if switchItem == saveStatesSwitch {
-            PVSettingsModel.shared.showRecentSaveStates = switchItem.isOn
+    #if os(iOS)
+        @objc func switchChangedValue(_ switchItem: UISwitch) {
+            if switchItem == hideTitlesSwitch {
+                PVSettingsModel.shared.showGameTitles = switchItem.isOn
+            } else if switchItem == recentlyPlayedSwitch {
+                PVSettingsModel.shared.showRecentGames = switchItem.isOn
+            } else if switchItem == saveStatesSwitch {
+                PVSettingsModel.shared.showRecentSaveStates = switchItem.isOn
+            }
+
+            NotificationCenter.default.post(name: NSNotification.Name("kInterfaceDidChangeNotification"), object: nil)
         }
 
-        NotificationCenter.default.post(name: NSNotification.Name("kInterfaceDidChangeNotification"), object: nil)
-    }
+    #endif
 
-#endif
-// MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    // MARK: - Table view data source
+
+    override func numberOfSections(in _: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
         return "Game Library Appearance"
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 3
         }
@@ -79,50 +80,50 @@ final class PVAppearanceViewController: UITableViewController {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 cell?.textLabel?.text = "Show game Titles"
-#if os(tvOS)
-                cell?.detailTextLabel?.text = PVSettingsModel.shared.showGameTitles ? "On" : "Off"
-#else
-                cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
-                cell?.accessoryView = hideTitlesSwitch
-#endif
+                #if os(tvOS)
+                    cell?.detailTextLabel?.text = PVSettingsModel.shared.showGameTitles ? "On" : "Off"
+                #else
+                    cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                    cell?.accessoryView = hideTitlesSwitch
+                #endif
             } else if indexPath.row == 1 {
                 cell?.textLabel?.text = "Show recently played games"
-#if os(tvOS)
-                cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentGames ? "On" : "Off"
-#else
-                cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
-                cell?.accessoryView = recentlyPlayedSwitch
-#endif
-			} else if indexPath.row == 2 {
-				cell?.textLabel?.text = "Show recent save states"
-				#if os(tvOS)
-				cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentSaveStates ? "On" : "Off"
-				#else
-				cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
-				cell?.accessoryView = saveStatesSwitch
-				#endif
-			}
-		}
+                #if os(tvOS)
+                    cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentGames ? "On" : "Off"
+                #else
+                    cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                    cell?.accessoryView = recentlyPlayedSwitch
+                #endif
+            } else if indexPath.row == 2 {
+                cell?.textLabel?.text = "Show recent save states"
+                #if os(tvOS)
+                    cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentSaveStates ? "On" : "Off"
+                #else
+                    cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                    cell?.accessoryView = saveStatesSwitch
+                #endif
+            }
+        }
         cell?.selectionStyle = .none
         return cell ?? UITableViewCell()
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-#if os(tvOS)
-        let cell: UITableViewCell? = tableView.cellForRow(at: indexPath)
-        let settings = PVSettingsModel.shared
-        if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                settings.showGameTitles = !settings.showGameTitles
-                cell?.detailTextLabel?.text = settings.showGameTitles ? "On" : "Off"
-            } else if indexPath.row == 1 {
-                settings.showRecentGames = !settings.showRecentGames
-                cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
-			} else if indexPath.row == 2 {
-				settings.showRecentSaveStates = !settings.showRecentSaveStates
-				cell?.detailTextLabel?.text = settings.showRecentSaveStates ? "On" : "Off"
-			}
-		}
-#endif
+        #if os(tvOS)
+            let cell: UITableViewCell? = tableView.cellForRow(at: indexPath)
+            let settings = PVSettingsModel.shared
+            if indexPath.section == 0 {
+                if indexPath.row == 0 {
+                    settings.showGameTitles = !settings.showGameTitles
+                    cell?.detailTextLabel?.text = settings.showGameTitles ? "On" : "Off"
+                } else if indexPath.row == 1 {
+                    settings.showRecentGames = !settings.showRecentGames
+                    cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
+                } else if indexPath.row == 2 {
+                    settings.showRecentSaveStates = !settings.showRecentSaveStates
+                    cell?.detailTextLabel?.text = settings.showRecentSaveStates ? "On" : "Off"
+                }
+            }
+        #endif
     }
 }

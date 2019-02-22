@@ -9,7 +9,6 @@
 import UIKit
 
 internal struct AppearanceScope {
-
     internal static var main = AppearanceScope()
 
     private enum StackElement {
@@ -21,12 +20,11 @@ internal struct AppearanceScope {
     private var stack: [StackElement] = []
 
     internal struct Context {
-
         internal let traitCollection: UITraitCollection?
         internal let containerTypes: [UIAppearanceContainer.Type]?
 
         internal init(_ traitCollections: [UITraitCollection], _ containerTypes: [UIAppearanceContainer.Type]) {
-            self.traitCollection = traitCollections.isEmpty ? nil : UITraitCollection(traitsFrom: traitCollections)
+            traitCollection = traitCollections.isEmpty ? nil : UITraitCollection(traitsFrom: traitCollections)
             self.containerTypes = containerTypes.isEmpty ? nil : containerTypes.reversed()
         }
     }
@@ -69,24 +67,23 @@ internal struct AppearanceScope {
 }
 
 internal extension UIAppearance {
-
-    internal static func appearance(context: AppearanceScope.Context) -> Self {
+    static func appearance(context: AppearanceScope.Context) -> Self {
         switch (context.traitCollection, context.containerTypes) {
         case let (.some(traitCollection), .some(containerTypes)):
-			if #available(iOS 9.0, *) {
-				return appearance(for: traitCollection, whenContainedInInstancesOf: containerTypes)
-			} else {
-				preconditionFailure("SwiftyAppearance: whenContainedInInstancesOf not available on this platform")
-			}
-		case let (.some(traitCollection), .none):
+            if #available(iOS 9.0, *) {
+                return appearance(for: traitCollection, whenContainedInInstancesOf: containerTypes)
+            } else {
+                preconditionFailure("SwiftyAppearance: whenContainedInInstancesOf not available on this platform")
+            }
+        case let (.some(traitCollection), .none):
             return appearance(for: traitCollection)
         case let (.none, .some(containerTypes)):
-			if #available(iOS 9.0, *) {
-				return appearance(whenContainedInInstancesOf: containerTypes)
-			} else {
-				preconditionFailure("SwiftyAppearance: whenContainedInInstancesOf not available on this platform")
-			}
-		case (.none, .none):
+            if #available(iOS 9.0, *) {
+                return appearance(whenContainedInInstancesOf: containerTypes)
+            } else {
+                preconditionFailure("SwiftyAppearance: whenContainedInInstancesOf not available on this platform")
+            }
+        case (.none, .none):
             return appearance()
         }
     }

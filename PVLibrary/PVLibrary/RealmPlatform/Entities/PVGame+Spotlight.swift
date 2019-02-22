@@ -11,88 +11,87 @@ import RealmSwift
 
 import CoreSpotlight
 import MobileCoreServices
-//import UIKit
+// import UIKit
 
 public extension PVGame {
-
-    public var url: URL {
+    var url: URL {
         return file.url
     }
 
     #if os(iOS)
-    @available(iOS 9.0, *)
-    public var spotlightContentSet: CSSearchableItemAttributeSet {
-        let systemName = self.systemName
+        @available(iOS 9.0, *)
+        public var spotlightContentSet: CSSearchableItemAttributeSet {
+            let systemName = self.systemName
 
-        var description = "\(systemName ?? "")"
+            var description = "\(systemName ?? "")"
 
-        // Determine if any of these have a value, and if so, seperate them by a space
-        let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
-                                          developer,
-                                          publishDate != nil ? "(\(publishDate!)" : nil,
-                                          regionName != nil ? "(\(regionName!))" : nil]
+            // Determine if any of these have a value, and if so, seperate them by a space
+            let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
+                                              developer,
+                                              publishDate != nil ? "(\(publishDate!)" : nil,
+                                              regionName != nil ? "(\(regionName!))" : nil]
 
-        #if swift(>=4.1)
-        let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
-            return maybeString
-            }.joined(separator: " ")
-        #else
-        let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
-        return maybeString
-        }.joined(separator: " ")
-        #endif
-        if !secondLine.isEmpty {
-            description += "\n\(secondLine)"
+            #if swift(>=4.1)
+                let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
+                    maybeString
+                }.joined(separator: " ")
+            #else
+                let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
+                    maybeString
+                }.joined(separator: " ")
+            #endif
+            if !secondLine.isEmpty {
+                description += "\n\(secondLine)"
+            }
+
+            if let g = genres, !g.isEmpty, !md5Hash.isEmpty {
+                let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
+                description += "\n\(genresWithSpaces)"
+            }
+
+            // Maybe should use kUTTypeData?
+            let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
+            contentSet.title = title
+            contentSet.relatedUniqueIdentifier = md5Hash
+            contentSet.contentDescription = description
+            contentSet.rating = NSNumber(value: isFavorite)
+            contentSet.thumbnailURL = pathOfCachedImage
+            var keywords = ["rom"]
+            if let systemName = systemName {
+                keywords.append(systemName)
+            }
+            if let genres = genres {
+                keywords.append(contentsOf: genres.components(separatedBy: ","))
+            }
+
+            contentSet.keywords = keywords
+
+            //            contentSet.authorNames             = [data.authorName]
+            // Could generate small thumbnail here
+            if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
+                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.5)
+            }
+            return contentSet
         }
 
-        if let g = genres, !g.isEmpty, !md5Hash.isEmpty {
-            let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
-            description += "\n\(genresWithSpaces)"
+        public var pathOfCachedImage: URL? {
+            let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+            if !PVMediaCache.fileExists(forKey: artworkKey) {
+                return nil
+            }
+            let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
+            return artworkURL
         }
 
-        // Maybe should use kUTTypeData?
-        let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
-        contentSet.title                   = title
-        contentSet.relatedUniqueIdentifier = md5Hash
-        contentSet.contentDescription      = description
-        contentSet.rating                  = NSNumber.init(value: isFavorite)
-        contentSet.thumbnailURL            = pathOfCachedImage
-        var keywords                       = ["rom"]
-        if let systemName = systemName {
-            keywords.append(systemName)
+        public var spotlightUniqueIdentifier: String {
+            return "com.provenance-emu.game.\(md5Hash)"
         }
-        if let genres = genres {
-            keywords.append(contentsOf: genres.components(separatedBy: ","))
-        }
-
-        contentSet.keywords = keywords
-
-        //            contentSet.authorNames             = [data.authorName]
-        // Could generate small thumbnail here
-        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
-            contentSet.thumbnailData = s.jpegData(compressionQuality: 0.5)
-        }
-        return contentSet
-    }
-
-    public var pathOfCachedImage: URL? {
-        let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-        if !PVMediaCache.fileExists(forKey: artworkKey) {
-            return nil
-        }
-        let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
-        return artworkURL
-    }
-
-    public var spotlightUniqueIdentifier: String {
-        return "com.provenance-emu.game.\(md5Hash)"
-    }
     #endif
 
-    public var spotlightActivity: NSUserActivity {
+    var spotlightActivity: NSUserActivity {
         let activity = NSUserActivity(activityType: "com.provenance-emu.game.play")
         activity.title = title
-        activity.userInfo = ["md5" : md5Hash]
+        activity.userInfo = ["md5": md5Hash]
 
         if #available(iOS 9.0, tvOS 10.0, *) {
             activity.requiredUserInfoKeys = ["md5"]
@@ -100,7 +99,7 @@ public extension PVGame {
             activity.isEligibleForHandoff = false
 
             #if os(iOS)
-            activity.contentAttributeSet  = spotlightContentSet
+                activity.contentAttributeSet = spotlightContentSet
             #endif
             activity.requiredUserInfoKeys = ["md5"]
             //            activity.expirationDate       =
@@ -111,6 +110,6 @@ public extension PVGame {
 
     // Don't want to have to import GameLibraryConfiguration in Spotlight extension so copying this required code to map id to short name
     private var systemName: String? {
-        return self.system.name
+        return system.name
     }
 }

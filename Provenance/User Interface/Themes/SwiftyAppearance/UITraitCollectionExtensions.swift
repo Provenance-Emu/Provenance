@@ -9,7 +9,6 @@
 import UIKit
 
 public extension UITraitCollection {
-
     /// Umbrella emun wrapping all possible traits
     ///
     /// - userInterfaceIdiom: user interface idiom specifier
@@ -20,8 +19,7 @@ public extension UITraitCollection {
     /// - layoutDirection: layout direction specifier
     /// - preferredContentSizeCategory: preferred content size category specifier
     /// - displayGamut: display gamut specifier
-    public enum Trait {
-
+    enum Trait {
         case userInterfaceIdiom(UIUserInterfaceIdiom)
 
         case displayScale(CGFloat)
@@ -38,14 +36,14 @@ public extension UITraitCollection {
         @available(iOSApplicationExtension 10.0, *)
         case preferredContentSizeCategory(UIContentSizeCategory)
 
-		@available(iOS 10.0, tvOS 10.0, *)
+        @available(iOS 10.0, tvOS 10.0, *)
         case displayGamut(UIDisplayGamut)
     }
 
     /// Returns a new trait collection containing single specified trait
     ///
     /// - Parameter trait: A Trait value specifying the trait for the new trait collection
-    public convenience init(trait: Trait) {
+    convenience init(trait: Trait) {
         switch trait {
         case let .userInterfaceIdiom(value):
             self.init(userInterfaceIdiom: value)
@@ -68,13 +66,13 @@ public extension UITraitCollection {
                 preconditionFailure("SwiftyAppearance: layoutDirection trait not available on this platform")
             }
         case let .preferredContentSizeCategory(value):
-			if #available(iOS 10.0, tvOS 10.0, *) {
+            if #available(iOS 10.0, tvOS 10.0, *) {
                 self.init(preferredContentSizeCategory: value)
             } else {
                 preconditionFailure("SwiftyAppearance: preferredContentSizeCategory trait not available on this platform")
             }
         case let .displayGamut(value):
-			if #available(iOS 10.0, tvOS 10.0, *) {
+            if #available(iOS 10.0, tvOS 10.0, *) {
                 self.init(displayGamut: value)
             } else {
                 preconditionFailure("SwiftyAppearance: displayGamut trait not available on this platform")
@@ -85,7 +83,7 @@ public extension UITraitCollection {
     /// Returns a new trait collection consisting of traits merged from a specified array of traits
     ///
     /// - Parameter entities: An array of Trait values
-    public convenience init<S>(traits: S) where S: Sequence, S.Iterator.Element == Trait {
+    convenience init<S>(traits: S) where S: Sequence, S.Iterator.Element == Trait {
         self.init(traitsFrom: traits.map(UITraitCollection.init(trait:)))
     }
 }

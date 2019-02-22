@@ -7,23 +7,23 @@
 //  Copyright (c) 2015 James Addyman. All rights reserved.
 //
 
-import UIKit
 import PVSupport
+import UIKit
 
 final class PViCadeControllerViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-		#if os(tvOS)
-		tableView.backgroundColor = UIColor.clear
-        tableView.backgroundView = nil
-		#endif
+        #if os(tvOS)
+            tableView.backgroundColor = UIColor.clear
+            tableView.backgroundView = nil
+        #endif
     }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    override func numberOfSections(in _: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return iCadeControllerSetting.allCases.count
     }
 
@@ -35,27 +35,27 @@ final class PViCadeControllerViewController: UITableViewController {
         } else {
             cell.accessoryType = .none
         }
-		cell.textLabel?.text = iCadeControllerSetting(rawValue: indexPath.row)?.description ?? "nil"
+        cell.textLabel?.text = iCadeControllerSetting(rawValue: indexPath.row)?.description ?? "nil"
 
-#if os(iOS)
-        cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-#endif
+        #if os(iOS)
+            cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+        #endif
 
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
         return "Supported iCade Controllers"
     }
 
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    override func tableView(_: UITableView, titleForFooterInSection _: Int) -> String? {
         return "Controllers must be paired with device."
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+    override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         if let aRow = self.tableView.indexPathForSelectedRow {
-            self.tableView.deselectRow(at: aRow, animated: true)
+            tableView.deselectRow(at: aRow, animated: true)
         }
         PVSettingsModel.shared.myiCadeControllerSetting = iCadeControllerSetting(rawValue: indexPath.row)!
         PVControllerManager.shared.resetICadeController()

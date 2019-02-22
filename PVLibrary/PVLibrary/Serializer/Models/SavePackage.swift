@@ -8,9 +8,9 @@
 
 import Foundation
 
-public struct SavePackage : Package {
+public struct SavePackage: Package {
     public var type: SerializerPackageType { return .saveState }
 
-    public let data : Data
-    public let metadata : SaveState
+    public let data: Data
+    public let metadata: SaveState
 }

@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import RealmSwift
 import PVSupport
+import RealmSwift
 #if os(tvOS)
-import TVServices
+    import TVServices
 #endif
 
 public enum ScreenType: String, Codable {
@@ -21,44 +21,46 @@ public enum ScreenType: String, Codable {
     case modern = "Modern"
 }
 
-public struct SystemOptions : OptionSet, Codable {
-    public init(rawValue : Int) {
+public struct SystemOptions: OptionSet, Codable {
+    public init(rawValue: Int) {
         self.rawValue = rawValue
     }
-    public let rawValue : Int
+
+    public let rawValue: Int
 
     public static let cds = SystemOptions(rawValue: 1 << 0)
-    public static let portable  = SystemOptions(rawValue: 1 << 1)
-    public static let rumble  = SystemOptions(rawValue: 1 << 2)
+    public static let portable = SystemOptions(rawValue: 1 << 1)
+    public static let rumble = SystemOptions(rawValue: 1 << 2)
 }
 
 @objcMembers
 public final class PVSystem: Object, SystemProtocol {
     public typealias BIOSInfoProviderType = PVBIOS
 
-    dynamic public var name: String = ""
-    dynamic public var shortName: String = ""
-    dynamic public var shortNameAlt: String?
-    dynamic public var manufacturer: String = ""
-    dynamic public var releaseYear: Int = 0
-    dynamic public var bit: Int = 0
-    public var bits : SystemBits {
+    public dynamic var name: String = ""
+    public dynamic var shortName: String = ""
+    public dynamic var shortNameAlt: String?
+    public dynamic var manufacturer: String = ""
+    public dynamic var releaseYear: Int = 0
+    public dynamic var bit: Int = 0
+    public var bits: SystemBits {
         return SystemBits(rawValue: bit) ?? .unknown
     }
-    dynamic public var headerByteSize: Int = 0
-    dynamic public var openvgDatabaseID: Int = 0
-    dynamic public var requiresBIOS: Bool = false
-    dynamic public var usesCDs: Bool = false
-    dynamic public var portableSystem: Bool = false
 
-    dynamic public var supportsRumble: Bool = false
-    dynamic public var _screenType: String = ScreenType.unknown.rawValue
+    public dynamic var headerByteSize: Int = 0
+    public dynamic var openvgDatabaseID: Int = 0
+    public dynamic var requiresBIOS: Bool = false
+    public dynamic var usesCDs: Bool = false
+    public dynamic var portableSystem: Bool = false
 
-    public var options : SystemOptions {
+    public dynamic var supportsRumble: Bool = false
+    public dynamic var _screenType: String = ScreenType.unknown.rawValue
+
+    public var options: SystemOptions {
         var systemOptions = [SystemOptions]()
-        if usesCDs { systemOptions.append(.cds)}
-        if portableSystem { systemOptions.append(.portable)}
-        if supportsRumble { systemOptions.append(.rumble)}
+        if usesCDs { systemOptions.append(.cds) }
+        if portableSystem { systemOptions.append(.portable) }
+        if supportsRumble { systemOptions.append(.rumble) }
 
         return SystemOptions(systemOptions)
     }
@@ -70,7 +72,7 @@ public final class PVSystem: Object, SystemProtocol {
     }
 
     public var extensions: [String] {
-        return supportedExtensions.map { return $0 }
+        return supportedExtensions.map { $0 }
     }
 
     // Reverse Links
@@ -90,22 +92,23 @@ public final class PVSystem: Object, SystemProtocol {
         guard let userPreferredCoreID = userPreferredCoreID,
             let realm = try? Realm(),
             let preferredCore = realm.object(ofType: PVCore.self, forPrimaryKey: userPreferredCoreID) else {
-                return nil
+            return nil
         }
         return Core(with: preferredCore)
     }
 
-    dynamic public var userPreferredCoreID : String?
+    public dynamic var userPreferredCoreID: String?
 
-    dynamic public var identifier: String = ""
+    public dynamic var identifier: String = ""
 
-    override public static func primaryKey() -> String? {
+    public override static func primaryKey() -> String? {
         return "identifier"
     }
 
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data
-    @objc dynamic private var controlLayoutData: Data?
+
+    private dynamic var controlLayoutData: Data?
     public var controllerLayout: [ControlLayoutEntry]? {
         get {
             guard let controlLayoutData = controlLayoutData else {
@@ -135,13 +138,13 @@ public final class PVSystem: Object, SystemProtocol {
         }
     }
 
-    override public static func ignoredProperties() -> [String] {
+    public override static func ignoredProperties() -> [String] {
         return ["controllerLayout"]
     }
 }
 
 public extension PVSystem {
-    public var screenType: ScreenType {
+    var screenType: ScreenType {
         get {
             return ScreenType(rawValue: _screenType)!
         }
@@ -152,41 +155,41 @@ public extension PVSystem {
         }
     }
 
-    public var enumValue: SystemIdentifier {
+    var enumValue: SystemIdentifier {
         return SystemIdentifier(rawValue: identifier) ?? .Unknown
     }
 
-    public var biosesHave: [PVBIOS]? {
+    var biosesHave: [PVBIOS]? {
         let have = bioses.filter({ (bios) -> Bool in
-            return bios.online
+            bios.online
         })
 
         return !have.isEmpty ? Array(have) : nil
     }
 
-    public var missingBIOSes: [PVBIOS]? {
+    var missingBIOSes: [PVBIOS]? {
         let missing = bioses.filter({ (bios) -> Bool in
-            return !bios.online
+            !bios.online
         })
 
         return !missing.isEmpty ? Array(missing) : nil
     }
 
-    public var hasAllRequiredBIOSes: Bool {
+    var hasAllRequiredBIOSes: Bool {
         return missingBIOSes != nil
     }
 
     #if os(tvOS)
-    public var imageType: TVContentItemImageShape {
-        switch self.enumValue {
-        case .NES, .Dreamcast, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .Lynx, .WonderSwan, .WonderSwanColor:
-            return .poster
-        case .GameGear, .GB, .GBC, .GBA, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .Unknown:
-            return .square
-        case .N64, .SNES:
-            return .HDTV
+        public var imageType: TVContentItemImageShape {
+            switch enumValue {
+            case .NES, .Dreamcast, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .Lynx, .WonderSwan, .WonderSwanColor:
+                return .poster
+            case .GameGear, .GB, .GBC, .GBA, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .Unknown:
+                return .square
+            case .N64, .SNES:
+                return .HDTV
+            }
         }
-    }
     #endif
 }
 

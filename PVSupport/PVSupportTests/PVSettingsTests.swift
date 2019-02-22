@@ -6,12 +6,11 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-import XCTest
 @testable import PVSupport
+import XCTest
 
 class PVSettingsTests: XCTestCase {
-
-    var settings : PVSettingsModel!
+    var settings: PVSettingsModel!
 
     override func setUp() {
         settings = PVSettingsModel()

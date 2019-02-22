@@ -7,36 +7,36 @@
 //
 
 import Foundation
-import RealmSwift
 import PVSupport
+import RealmSwift
 
 public protocol Filed {
-    associatedtype LocalFileProviderType : LocalFileProvider
-    var file : LocalFileProviderType! { get }
+    associatedtype LocalFileProviderType: LocalFileProvider
+    var file: LocalFileProviderType! { get }
 }
 
-extension LocalFileProvider where Self : Filed {
+extension LocalFileProvider where Self: Filed {
     public var url: URL { return file.url }
-    public var fileInfo : Self.LocalFileProviderType? { return file }
+    public var fileInfo: Self.LocalFileProviderType? { return file }
 }
 
 @objcMembers
 public final class PVSaveState: Object, Filed, LocalFileProvider {
-    dynamic public var id = UUID().uuidString
-    dynamic public var game: PVGame!
-    dynamic public var core: PVCore!
-    dynamic public var file: PVFile!
-    dynamic public var date: Date = Date()
-    dynamic public var lastOpened: Date?
-    dynamic public var image: PVImageFile?
-    dynamic public var isAutosave: Bool = false
+    public dynamic var id = UUID().uuidString
+    public dynamic var game: PVGame!
+    public dynamic var core: PVCore!
+    public dynamic var file: PVFile!
+    public dynamic var date: Date = Date()
+    public dynamic var lastOpened: Date?
+    public dynamic var image: PVImageFile?
+    public dynamic var isAutosave: Bool = false
 
-    dynamic public var createdWithCoreVersion: String!
+    public dynamic var createdWithCoreVersion: String!
 
     public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false) {
         self.init()
-        self.game  = game
-        self.file  = file
+        self.game = game
+        self.file = file
         self.image = image
         self.isAutosave = isAutosave
         self.core = core
@@ -62,7 +62,7 @@ public final class PVSaveState: Object, Filed, LocalFileProvider {
         }
     }
 
-    @objc dynamic public var isNewestAutosave : Bool {
+    public dynamic var isNewestAutosave: Bool {
         guard isAutosave, let game = game, let newestSave = game.autoSaves.first else {
             return false
         }
@@ -75,14 +75,15 @@ public final class PVSaveState: Object, Filed, LocalFileProvider {
         return lhs.file.url == rhs.file.url
     }
 
-    override public static func primaryKey() -> String? {
+    public override static func primaryKey() -> String? {
         return "id"
     }
 }
 
 // MARK: - Conversions
-fileprivate extension SaveState {
-    init(with saveState : PVSaveState) {
+
+private extension SaveState {
+    init(with saveState: PVSaveState) {
         id = saveState.id
         game = saveState.game.asDomain()
         core = saveState.core.asDomain()
@@ -99,7 +100,7 @@ fileprivate extension SaveState {
     }
 }
 
-extension PVSaveState : DomainConvertibleType {
+extension PVSaveState: DomainConvertibleType {
     public typealias DomainType = SaveState
 
     public func asDomain() -> SaveState {
@@ -135,6 +136,6 @@ extension SaveState: RealmRepresentable {
                 object.image = PVImageFile(withURL: imagePath)
             }
             object.isAutosave = isAutosave
-         }
+        }
     }
 }

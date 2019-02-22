@@ -10,22 +10,22 @@ import Foundation
 import PVSupport
 
 extension PVGBEmulatorCore: CoreActions {
-	public var coreActions : [CoreAction]? {
-		if !isGameboyColor {
-			return [CoreAction(title: "Change Palette", options: nil)]
-		} else {
-			return nil
-		}
-	}
+    public var coreActions: [CoreAction]? {
+        if !isGameboyColor {
+            return [CoreAction(title: "Change Palette", options: nil)]
+        } else {
+            return nil
+        }
+    }
 
-	public func selected(action : CoreAction) {
-		switch action.title {
-		case "Change Palette":
-			let nextI = self.currentDisplayMode() + 1
-			let next = GBPalette(rawValue:nextI) ?? .peaSoupGreen
-			self.changeDisplayMode(next.rawValue)
-		default:
-			print("Unknown action: "+action.title)
-		}
-	}
+    public func selected(action: CoreAction) {
+        switch action.title {
+        case "Change Palette":
+            let nextI = currentDisplayMode() + 1
+            let next = GBPalette(rawValue: nextI) ?? .peaSoupGreen
+            changeDisplayMode(next.rawValue)
+        default:
+            print("Unknown action: " + action.title)
+        }
+    }
 }

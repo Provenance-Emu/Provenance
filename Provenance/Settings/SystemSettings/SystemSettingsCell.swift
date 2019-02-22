@@ -8,8 +8,8 @@
 
 import Foundation
 
-public class SystemSettingsCell : UITableViewCell {
-    public static let identifier : String = String(describing: self)
+public class SystemSettingsCell: UITableViewCell {
+    public static let identifier: String = String(describing: self)
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,16 +25,16 @@ public class SystemSettingsCell : UITableViewCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-        bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-        self.textLabel?.textColor = Theme.currentTheme.settingsCellText
-        self.detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
+            bg.backgroundColor = Theme.currentTheme.settingsCellBackground
+            textLabel?.textColor = Theme.currentTheme.settingsCellText
+            detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
         #else
-        bg.backgroundColor = UIColor.clear
-        if #available(tvOS 10.0, *) {
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-        }
+            bg.backgroundColor = UIColor.clear
+            if #available(tvOS 10.0, *) {
+                self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
+                self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
+            }
         #endif
-        self.backgroundView = bg
+        backgroundView = bg
     }
 }

@@ -26,7 +26,7 @@ public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaul
         return rawValue
     }
 
-    public static var count : Int {
+    public static var count: Int {
         return allCases.count
     }
 

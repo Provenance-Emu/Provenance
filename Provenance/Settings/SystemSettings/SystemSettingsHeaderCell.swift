@@ -8,20 +8,20 @@
 
 import Foundation
 
-final public class SystemSettingsHeaderCell : SystemSettingsCell {
+public final class SystemSettingsHeaderCell: SystemSettingsCell {
     override func style() {
         super.style()
         #if os(iOS)
-        self.backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
-        self.textLabel?.textColor = Theme.currentTheme.settingsHeaderText
-        self.detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
+            backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+            textLabel?.textColor = Theme.currentTheme.settingsHeaderText
+            detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
         #else
-        self.backgroundView?.backgroundColor = UIColor.clear
-        if #available(tvOS 10.0, *) {
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-        }
+            backgroundView?.backgroundColor = UIColor.clear
+            if #available(tvOS 10.0, *) {
+                self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
+                self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
+            }
         #endif
-        self.textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
+        textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
     }
 }

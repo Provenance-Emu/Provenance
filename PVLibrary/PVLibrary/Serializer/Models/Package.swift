@@ -8,11 +8,11 @@
 
 import Foundation
 
-public enum SerializerPackageType : String, Codable {
+public enum SerializerPackageType: String, Codable {
     case game
     case saveState
 
-    var `extension` : String {
+    var `extension`: String {
         switch self {
         case .game: return "pvrom"
         case .saveState: return "psvsave"
@@ -20,9 +20,9 @@ public enum SerializerPackageType : String, Codable {
     }
 }
 
-public protocol Package : Codable {
-    associatedtype Metadata : Codable
-    var type : SerializerPackageType { get }
-    var data : Data { get }
-    var metadata : Metadata { get }
+public protocol Package: Codable {
+    associatedtype Metadata: Codable
+    var type: SerializerPackageType { get }
+    var data: Data { get }
+    var metadata: Metadata { get }
 }

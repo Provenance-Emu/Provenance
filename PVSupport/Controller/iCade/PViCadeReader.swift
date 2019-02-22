@@ -11,20 +11,19 @@ import UIKit
 public typealias iCadeButtonEventHandler = (_ button: iCadeControllerState) -> Void
 public typealias iCadeStateEventHandler = (_ state: iCadeControllerState) -> Void
 
-final public class PViCadeReader: NSObject, iCadeEventDelegate {
-
-	var stateChangedHandler: iCadeStateEventHandler? = nil
-	var buttonDownHandler: iCadeButtonEventHandler? = nil
-    var buttonUpHandler: iCadeButtonEventHandler? = nil
+public final class PViCadeReader: NSObject, iCadeEventDelegate {
+    var stateChangedHandler: iCadeStateEventHandler?
+    var buttonDownHandler: iCadeButtonEventHandler?
+    var buttonUpHandler: iCadeButtonEventHandler?
     var internalReader: iCadeReaderView = iCadeReaderView(frame: CGRect.zero)
 
-	public static var shared: PViCadeReader = PViCadeReader()
+    public static var shared: PViCadeReader = PViCadeReader()
 
     public func listen(to window: UIWindow?) {
         let keyWindow: UIWindow? = window ?? UIApplication.shared.keyWindow
         if keyWindow != internalReader.window {
             internalReader.removeFromSuperview()
-			keyWindow?.addSubview(internalReader)
+            keyWindow?.addSubview(internalReader)
         } else {
             keyWindow?.bringSubviewToFront(internalReader)
         }
@@ -42,34 +41,35 @@ final public class PViCadeReader: NSObject, iCadeEventDelegate {
         internalReader.removeFromSuperview()
     }
 
-	public var states : [iCadeControllerState] {
+    public var states: [iCadeControllerState] {
         return internalReader.states
     }
 
-	deinit {
-		internalReader.active = false
-		internalReader.delegate = nil
-	}
+    deinit {
+        internalReader.active = false
+        internalReader.delegate = nil
+    }
 
-// MARK: - iCadeEventDelegate
+    // MARK: - iCadeEventDelegate
+
     public func buttonDown(button: iCadeControllerState) {
         #if DEBUG
-        if buttonDownHandler == nil { WLOG("No buttonDownHandler set") }
+            if buttonDownHandler == nil { WLOG("No buttonDownHandler set") }
         #endif
-		buttonDownHandler?(button)
+        buttonDownHandler?(button)
     }
 
     public func buttonUp(button: iCadeControllerState) {
         #if DEBUG
-        if buttonUpHandler == nil { WLOG("No button up handler set") }
+            if buttonUpHandler == nil { WLOG("No button up handler set") }
         #endif
-		buttonUpHandler?(button)
+        buttonUpHandler?(button)
     }
 
-	public func stateChanged(state: iCadeControllerState) {
+    public func stateChanged(state: iCadeControllerState) {
         #if DEBUG
-        if stateChangedHandler == nil { WLOG("No stateChangedHandler set") }
+            if stateChangedHandler == nil { WLOG("No stateChangedHandler set") }
         #endif
-		stateChangedHandler?(state)
-	}
+        stateChangedHandler?(state)
+    }
 }

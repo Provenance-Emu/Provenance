@@ -7,19 +7,18 @@
 //
 
 import Foundation
-import ZipArchive
 import PVSupport
+import ZipArchive
 
 public typealias PVExtractionStartedHandler = (_ path: URL) -> Void
 public typealias PVExtractionUpdatedHandler = (_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void
 public typealias PVExtractionCompleteHandler = (_ paths: [URL]?) -> Void
 
 public extension NSNotification.Name {
-    public static let PVArchiveInflationFailed = NSNotification.Name(rawValue: "PVArchiveInflationFailedNotification")
+    static let PVArchiveInflationFailed = NSNotification.Name(rawValue: "PVArchiveInflationFailedNotification")
 }
 
-public final class DirectoryWatcher : NSObject {
-
+public final class DirectoryWatcher: NSObject {
     private let watchedDirectory: URL
 
     private let extractionStartedHandler: PVExtractionStartedHandler?
@@ -74,16 +73,16 @@ public final class DirectoryWatcher : NSObject {
         DLOG("Start Monitoring \(watchedDirectory.path)")
         _stopMonitoring()
 
-        let fd: Int32 = open(self.watchedDirectory.path, O_EVTONLY)
+        let fd: Int32 = open(watchedDirectory.path, O_EVTONLY)
 
         if fd == 0 {
-            ELOG("Unable open file system ref \(self.watchedDirectory)")
-            assertionFailure("Unable open file system ref \(self.watchedDirectory)")
+            ELOG("Unable open file system ref \(watchedDirectory)")
+            assertionFailure("Unable open file system ref \(watchedDirectory)")
             return
         }
 
         // makeReadSource or makeWriteSource
-        let dispatch_source =  DispatchSource.makeFileSystemObjectSource(fileDescriptor: fd, eventMask: [.write], queue: serialQueue) //makeWriteSource(fileDescriptor: fd, queue: serialQueue)
+        let dispatch_source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fd, eventMask: [.write], queue: serialQueue) // makeWriteSource(fileDescriptor: fd, queue: serialQueue)
         self.dispatch_source = dispatch_source
 
         dispatch_source.setRegistrationHandler {
@@ -96,7 +95,7 @@ public final class DirectoryWatcher : NSObject {
 
                 contentsSet = contentsSet.filter({ (url) -> Bool in
                     // Ignore special files
-                    return url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("_MACOSX")
+                    url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("_MACOSX")
                 })
 
                 contentsSet.forEach { file in
@@ -114,8 +113,8 @@ public final class DirectoryWatcher : NSObject {
         }
 
         dispatch_source.resume()
-            // trigger the event watcher above to start an initial import on launch
-        let triggerPath = self.watchedDirectory.appendingPathComponent("0")
+        // trigger the event watcher above to start an initial import on launch
+        let triggerPath = watchedDirectory.appendingPathComponent("0")
 
         do {
             try "0".write(to: triggerPath, atomically: false, encoding: .utf8)
@@ -138,17 +137,16 @@ public final class DirectoryWatcher : NSObject {
     }
 
     public func watchFile(at path: URL) {
-
         DLOG("Start watching \(path.lastPathComponent)")
 
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
 
             let filesize: UInt64 = attributes[FileAttributeKey.size] as? UInt64 ?? 0
-			let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
-			print("immutable \(immutable)")
+            let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
+            print("immutable \(immutable)")
 
-            DispatchQueue.main.async {[weak self] () -> Void in
+            DispatchQueue.main.async { [weak self] () -> Void in
                 if let weakSelf = self {
                     Timer.scheduledTimer(timeInterval: 2.0, target: weakSelf, selector: #selector(DirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": filesize, "wasZeroBefore": false], repeats: false)
                 }
@@ -161,7 +159,6 @@ public final class DirectoryWatcher : NSObject {
 
     @objc
     func checkFileProgress(_ timer: Timer) {
-
         guard let userInfo = timer.userInfo as? [String: Any], let path = userInfo["path"] as? URL, let previousFilesize = userInfo["filesize"] as? UInt64 else {
             ELOG("Timer missing userInfo or elements of it.")
             return
@@ -177,12 +174,12 @@ public final class DirectoryWatcher : NSObject {
 
         let currentFilesize: UInt64 = attributes[FileAttributeKey.size] as! UInt64
 
-            // This is because webDAv will show 0 for both values on the first write
+        // This is because webDAv will show 0 for both values on the first write
         let wasZeroBefore: Bool = userInfo["wasZeroBefore"] as! Bool
 
         let sizeHasntChanged = previousFilesize == currentFilesize
 
-        if sizeHasntChanged && (currentFilesize > 0 || wasZeroBefore) {
+        if sizeHasntChanged, (currentFilesize > 0 || wasZeroBefore) {
             let compressedExtensions = PVEmulatorConfiguration.archiveExtensions
             let ext = path.pathExtension
 
@@ -192,7 +189,7 @@ public final class DirectoryWatcher : NSObject {
                 }
             } else {
                 if extractionCompleteHandler != nil {
-                    DispatchQueue.main.async(execute: {() -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
                         self.extractionCompleteHandler?([path])
                     })
                 }
@@ -204,12 +201,11 @@ public final class DirectoryWatcher : NSObject {
     }
 
     public func extractArchive(at filePath: URL) {
-
         if filePath.path.contains("MACOSX") {
             return
         }
 
-        DispatchQueue.main.async(execute: {() -> Void in
+        DispatchQueue.main.async(execute: { () -> Void in
             self.extractionStartedHandler?(filePath)
         })
 
@@ -225,7 +221,7 @@ public final class DirectoryWatcher : NSObject {
         let ext = filePath.pathExtension.lowercased()
 
         if ext == "zip" {
-            SSZipArchive.unzipFile(atPath: filePath.path, toDestination: watchedDirectory.path, overwrite: true, password: nil, progressHandler: { (entry : String, zipInfo : unz_file_info, entryNumber : Int, total : Int) in
+            SSZipArchive.unzipFile(atPath: filePath.path, toDestination: watchedDirectory.path, overwrite: true, password: nil, progressHandler: { (entry: String, _: unz_file_info, entryNumber: Int, total: Int) in
                 if !entry.isEmpty {
                     let url = watchedDirectory.appendingPathComponent(entry)
                     self.unzippedFiles.append(url)
@@ -236,7 +232,7 @@ public final class DirectoryWatcher : NSObject {
                         self.extractionUpdatedHandler?(filePath, entryNumber, total, Float(total) / Float(entryNumber))
                     }
                 }
-            }, completionHandler: { (path: String?, succeeded: Bool, error: Error?) in
+            }, completionHandler: { (_: String?, succeeded: Bool, error: Error?) in
                 if succeeded {
                     if self.extractionCompleteHandler != nil {
                         let unzippedItems = self.unzippedFiles
@@ -251,7 +247,7 @@ public final class DirectoryWatcher : NSObject {
                     }
                 } else if let error = error {
                     ELOG("Unable to unzip file: \(filePath) because: \(error.localizedDescription)")
-                    DispatchQueue.main.async(execute: {() -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
                         self.extractionCompleteHandler?(nil)
                         NotificationCenter.default.post(name: NSNotification.Name.PVArchiveInflationFailed, object: self)
                     })
@@ -292,16 +288,16 @@ public final class DirectoryWatcher : NSObject {
                 return true // Continue to iterate
             })
 
-			// TODO : Support natively using 7zips by matching crcs
-			let crcs = Set(items.filter({ $0.crc32 != 0}).map { return String($0.crc32, radix: 16, uppercase: true) })
-			if let releaseID = GameImporter.shared.releaseID(forCRCs: crcs) {
-				ILOG("Found a release ID \(releaseID) inside this 7Zip")
-			}
+            // TODO: Support natively using 7zips by matching crcs
+            let crcs = Set(items.filter({ $0.crc32 != 0 }).map { String($0.crc32, radix: 16, uppercase: true) })
+            if let releaseID = GameImporter.shared.releaseID(forCRCs: crcs) {
+                ILOG("Found a release ID \(releaseID) inside this 7Zip")
+            }
 
             stopMonitoring()
             reader.extract(items, toPath: watchedDirectory.path, withFullPaths: false)
         } else {
-            self.startMonitoring()
+            startMonitoring()
         }
     }
 
@@ -312,6 +308,7 @@ public final class DirectoryWatcher : NSObject {
         })
     }
 }
+
 extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
     public func onLzmaSDKObjCReader(_ reader: LzmaSDKObjCReader, extractProgress progress: Float) {
         guard let fileURL = reader.fileURL else {
@@ -322,7 +319,7 @@ extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
         if progress >= 1 {
             if extractionCompleteHandler != nil {
                 let unzippedItems = unzippedFiles
-                DispatchQueue.main.async(execute: {() -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
                     self.extractionCompleteHandler?(unzippedItems)
                 })
             }
@@ -337,7 +334,7 @@ extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
             delayedStartMonitoring()
         } else {
             if extractionUpdatedHandler != nil {
-                DispatchQueue.main.async(execute: {() -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
                     let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
                     self.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
                 })

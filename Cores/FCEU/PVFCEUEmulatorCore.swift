@@ -6,10 +6,10 @@
 //  Copyright © 2018 JamSoft. All rights reserved.
 //
 
-import PVSupport
 import Foundation
+import PVSupport
 
-//extension PVFCEUEmulatorCore: PVNESSystemResponderClient {
+// extension PVFCEUEmulatorCore: PVNESSystemResponderClient {
 //	func didPush(_ button: PVNESButton, forPlayer player: Int) {
 //
 //	}
@@ -17,7 +17,7 @@ import Foundation
 //	func didRelease(_ button: PVNESButton, forPlayer player: Int) {
 //
 //	}
-//}
+// }
 
 extension PVFCEUEmulatorCore: DiscSwappable {
     public var numberOfDiscs: UInt {
@@ -33,8 +33,8 @@ extension PVFCEUEmulatorCore: DiscSwappable {
     }
 }
 
-extension PVFCEUEmulatorCore : ArchiveSupport {
-	public var supportedArchiveFormats : ArchiveSupportOptions {
-		return [.gzip, .zip]
-	}
+extension PVFCEUEmulatorCore: ArchiveSupport {
+    public var supportedArchiveFormats: ArchiveSupportOptions {
+        return [.gzip, .zip]
+    }
 }

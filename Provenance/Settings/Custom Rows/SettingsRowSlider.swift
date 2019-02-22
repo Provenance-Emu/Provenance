@@ -9,9 +9,8 @@
 import Foundation
 import QuickTableViewController
 
-final class PVSettingsSliderRow<T> : SliderRow<PVSliderCell> where T : BinaryFloatingPoint {
-
-    let keyPath : ReferenceWritableKeyPath<PVSettingsModel, T>
+final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloatingPoint {
+    let keyPath: ReferenceWritableKeyPath<PVSettingsModel, T>
 
     required init(text: String,
                   detailText: DetailText? = nil,
@@ -19,19 +18,20 @@ final class PVSettingsSliderRow<T> : SliderRow<PVSliderCell> where T : BinaryFlo
                   valueImages: (min: Icon?, max: Icon?) = (min: nil, max: nil),
                   key: ReferenceWritableKeyPath<PVSettingsModel, T>,
                   customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
-        self.keyPath = key
+        keyPath = key
         let value = PVSettingsModel.shared[keyPath: key]
 
         super.init(
             text: text,
             detailText: detailText,
             value: Float(value),
-                   valueLimits: valueLimits,
-                   valueImages: valueImages,
-                   customization: customization, action: { row in
-            if let row = row as? SliderRowCompatible {
-                PVSettingsModel.shared[keyPath: key] = T(row.value)
+            valueLimits: valueLimits,
+            valueImages: valueImages,
+            customization: customization, action: { row in
+                if let row = row as? SliderRowCompatible {
+                    PVSettingsModel.shared[keyPath: key] = T(row.value)
+                }
             }
-        })
+        )
     }
 }
