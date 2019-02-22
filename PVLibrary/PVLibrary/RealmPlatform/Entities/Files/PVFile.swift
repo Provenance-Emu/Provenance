@@ -71,10 +71,10 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public typealias DomainType = LocalFile
 
     internal dynamic var partialPath: String = ""
-    private dynamic var md5Cache: String?
+    internal dynamic var md5Cache: String?
     //    @objc private dynamic var crcCache: String?
     public private(set) dynamic var createdDate = Date()
-    private dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
+    internal dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
