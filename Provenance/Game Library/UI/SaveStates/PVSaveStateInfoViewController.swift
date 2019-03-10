@@ -21,7 +21,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
     @IBOutlet var coreVersionLabel: UILabel!
     @IBOutlet var createdLabel: UILabel!
     @IBOutlet var lastPlayedLabel: UILabel!
-    @IBOutlet var autosaveLabel: UILabel!
+    @IBOutlet var saveTypeLabel: UILabel!
 
     @IBOutlet var playBarButtonItem: UIBarButtonItem!
 
@@ -77,6 +77,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
             coreVersionLabel.text = ""
             createdLabel.text = ""
             lastPlayedLabel.text = ""
+            saveTypeLabel.text = ""
 
             return
         }
@@ -105,7 +106,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
             lastPlayedLabel.text = "Never"
         }
 
-        autosaveLabel.text = saveState.isAutosave ? "Yes" : "No"
+        saveTypeLabel.text = "\(saveState.saveType)".capitalized
     }
 
     @IBAction func playButtonTapped(_ sender: Any) {

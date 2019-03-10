@@ -30,6 +30,7 @@ struct SaveSection {
 
 final class PVSaveStatesViewController: UICollectionViewController {
     private var autoSaveStatesObserverToken: NotificationToken!
+    private var quickSaveStatesObserverToken: NotificationToken!
     private var manualSaveStatesObserverToken: NotificationToken!
 
     weak var delegate: PVSaveStatesViewControllerDelegate?
@@ -40,12 +41,14 @@ final class PVSaveStatesViewController: UICollectionViewController {
     var coreID: String?
 
     private var autoSaves: Results<PVSaveState>!
+    private var quickSaves: Results<PVSaveState>!
     private var manualSaves: Results<PVSaveState>!
 
     deinit {
         autoSaveStatesObserverToken.invalidate()
         autoSaveStatesObserverToken = nil
-        manualSaveStatesObserverToken.invalidate()
+        quickSaveStatesObserverToken?.invalidate()
+        quickSaveStatesObserverToken = nil
         manualSaveStatesObserverToken = nil
     }
 
@@ -69,8 +72,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
             allSaves = saveStates.sorted(byKeyPath: "date", ascending: false)
         }
 
-        autoSaves = allSaves.filter("isAutosave == true")
-        manualSaves = allSaves.filter("isAutosave == false")
+        manualSaves = allSaves.filter("saveTypeRawValue == '\(SaveType.manual.rawValue)'")
+        autoSaves = allSaves.filter("saveTypeRawValue == '\(SaveType.auto.rawValue)'")
+        quickSaves = allSaves.filter("saveTypeRawValue == '\(SaveType.quick.rawValue)'")
 
         if screenshot == nil {
             navigationItem.rightBarButtonItem = nil
@@ -107,51 +111,41 @@ final class PVSaveStatesViewController: UICollectionViewController {
 //
         autoSaveStatesObserverToken = autoSaves.observe { [weak self] (changes: RealmCollectionChange) in
             guard let `self` = self else { return }
-            switch changes {
-            case .initial:
-                self.collectionView?.reloadData()
-            case .update(_, let deletions, _, _):
-                guard !deletions.isEmpty else {
-                    return
-                }
-
-                let fromItem = { (item: Int) -> IndexPath in
-                    let section = 0
-                    return IndexPath(item: item, section: section)
-                }
-                self.collectionView?.performBatchUpdates({
-                    self.collectionView?.deleteItems(at: deletions.map(fromItem))
-                }, completion: nil)
-            case let .error(error):
-                ELOG("Error updating save states: " + error.localizedDescription)
-            }
+            self.handleRealmCollectionChange(changes: changes, collectionView: self.collectionView, section: 0)
+        }
+        
+        quickSaveStatesObserverToken = quickSaves.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let `self` = self else { return }
+            self.handleRealmCollectionChange(changes: changes, collectionView: self.collectionView, section: 1)
         }
 
         manualSaveStatesObserverToken = manualSaves.observe { [weak self] (changes: RealmCollectionChange) in
             guard let `self` = self else { return }
-
-            switch changes {
-            case .initial:
-                self.collectionView?.reloadData()
-            case .update(_, let deletions, let insertions, _):
-                guard !deletions.isEmpty || !insertions.isEmpty else {
-                    return
-                }
-                let fromItem = { (item: Int) -> IndexPath in
-                    let section = 1
-                    return IndexPath(item: item, section: section)
-                }
-                self.collectionView?.performBatchUpdates({
-                    self.collectionView?.deleteItems(at: deletions.map(fromItem))
-                    self.collectionView?.insertItems(at: insertions.map(fromItem))
-                }, completion: nil)
-            case let .error(error):
-                ELOG("Error updating save states: " + error.localizedDescription)
-            }
+            self.handleRealmCollectionChange(changes: changes, collectionView: self.collectionView, section: 2)
         }
-
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
+        
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressRecognized(_:)))
         collectionView?.addGestureRecognizer(longPressRecognizer)
+    }
+    
+    func handleRealmCollectionChange(changes: RealmCollectionChange<Results<PVSaveState>>, collectionView: UICollectionView, section: Int) {
+        switch changes {
+        case .initial:
+            self.collectionView?.reloadData()
+        case .update(_, let deletions, let insertions, _):
+            guard deletions.count > 0 || insertions.count > 0 else {
+                return
+            }
+            let fromItem = { (item: Int) -> IndexPath in
+                return IndexPath(item: item, section: section)
+            }
+            self.collectionView?.performBatchUpdates({
+                self.collectionView?.deleteItems(at: deletions.map(fromItem))
+                self.collectionView?.insertItems(at: insertions.map(fromItem))
+            }, completion: nil)
+        case .error(let error):
+            ELOG("Error updating save states: " + error.localizedDescription)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -185,6 +179,8 @@ final class PVSaveStatesViewController: UICollectionViewController {
             case 0:
                 state = autoSaves[indexPath.item]
             case 1:
+                state = quickSaves[indexPath.item]
+            case 2:
                 state = manualSaves[indexPath.item]
             default:
                 break
@@ -253,7 +249,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
     }
 
     override func numberOfSections(in _: UICollectionView) -> Int {
-        return 2
+        return 3
     }
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -262,6 +258,8 @@ final class PVSaveStatesViewController: UICollectionViewController {
         case 0:
             reusableView.label.text = "Auto Save"
         case 1:
+            reusableView.label.text = "Quick Save"
+        case 2:
             reusableView.label.text = "Save States"
         default:
             break
@@ -275,6 +273,8 @@ final class PVSaveStatesViewController: UICollectionViewController {
         case 0:
             return autoSaves.count
         case 1:
+            return quickSaves.count
+        case 2:
             return manualSaves.count
         default:
             return 0
@@ -288,6 +288,8 @@ final class PVSaveStatesViewController: UICollectionViewController {
         case 0:
             saveState = autoSaves[indexPath.item]
         case 1:
+            saveState = quickSaves[indexPath.item]
+        case 2:
             saveState = manualSaves[indexPath.item]
         default:
             break
@@ -304,6 +306,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
             let saveState = autoSaves[indexPath.item]
             delegate?.saveStatesViewController(self, load: saveState)
         case 1:
+            let saveState = quickSaves[indexPath.item]
+            delegate?.saveStatesViewController(self, load: saveState)
+        case 2:
             var saveState: PVSaveState?
             saveState = manualSaves[indexPath.item]
             guard let state = saveState else {

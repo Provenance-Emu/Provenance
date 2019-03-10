@@ -388,6 +388,10 @@ extension PVEmulatorViewController {
             self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
         }))
         if core.supportsSaveStates {
+            actionSheet.addAction(Action( "Quicksave", style: .default, handler: { action in
+                self.perform(#selector(self.quicksave), with: nil, afterDelay: 0.1)
+                self.isShowingMenu = false
+                }))
             actionSheet.addAction(Action("Save States", style: .default, handler: { _ in
                 self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
             }))
@@ -434,14 +438,37 @@ extension PVEmulatorViewController {
                 self.isShowingMenu = false
                 self.enableContorllerInput(false)
             }
+		}
+
+		present(actionSheet, animated: true, completion: {() -> Void in
+			PVControllerManager.shared.iCadeController?.refreshListener()
+		})
+	}
+    
+    @objc func quicksave(_ sender: Any?) {
+        self.core.setPauseEmulation(true)
+        
+        let image = self.captureScreenshot()
+        self.createNewSaveState(type: .quick, screenshot: image) { result in
+            switch result {
+            case .success: break
+            case .error(let error):
+                ELOG("Quicksave failed to make save state: \(error.localizedDescription)")
+            }
+            
+            self.core.setPauseEmulation(false)
         }
-
-        present(actionSheet, animated: true, completion: { () -> Void in
-            PVControllerManager.shared.iCadeController?.refreshListener()
-        })
     }
-
-    //	override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-    //		super.dismiss(animated: flag, completion: completion)
-    //	}
+    
+    @objc func quickload(_ sender: Any?) {
+        guard let saveState = game.newestQuickSave else {
+            return
+        }
+        
+        loadSaveState(saveState)
+    }
+    
+    //    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+    //        super.dismiss(animated: flag, completion: completion)
+    //    }
 }
