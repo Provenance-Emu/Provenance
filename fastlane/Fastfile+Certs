@@ -39,8 +39,18 @@ lane :update_devices do
     devices_file: 'fastlane/devices.txt',
     team_id: team_id
   )
-  match(type: 'development', force_for_new_devices: true, readonly: false)
-  match(type: 'adhoc', force_for_new_devices: true, readonly: false)
+
+  match_private(
+    type: 'development',
+    force_for_new_devices: true,
+    readonly: false
+  )
+
+  match_private(
+    type: 'adhoc',
+    force_for_new_devices: true,
+    readonly: false
+  )
 end
 
 private_lane :match_private do |options|
