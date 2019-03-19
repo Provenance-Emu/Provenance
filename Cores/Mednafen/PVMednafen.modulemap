@@ -1,0 +1,23 @@
+framework module PVMednafen {
+    umbrella header "PVMednafen-umbrella.h"
+
+    export *
+    module * { export * }
+
+    explicit module Private {
+        header "MednafenGameCore.h"
+    }
+}
+
+
+framework module PVMednafenPrivate {
+    umbrella header "PVMednafen-umbrella.h"
+    header "MednafenGameCore.h"
+
+    export *
+//    module * { export * }
+
+//    explicit module Private {
+//        header "MednafenGameCore.h"
+//    }
+}

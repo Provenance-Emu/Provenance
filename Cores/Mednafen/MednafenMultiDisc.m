@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MednafenGameCore.h"
+#import <PVMednafen/PVMednafen-Swift.h>
 
 @implementation MednafenGameCore (MultiDisc)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiDiscPSXGames {

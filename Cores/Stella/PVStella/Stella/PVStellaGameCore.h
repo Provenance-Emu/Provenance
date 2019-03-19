@@ -27,7 +27,6 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport-Swift.h>
-#import <PVSupport/PVEmulatorCore.h>
 
 __attribute__((visibility("default")))
 @interface PVStellaGameCore : PVEmulatorCore <PV2600SystemResponderClient>

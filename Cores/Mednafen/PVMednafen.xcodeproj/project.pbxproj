@@ -2024,6 +2024,8 @@
 		94454E3617852E44006C057B /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread.cpp; sourceTree = "<group>"; };
 		94454E3717852E44006C057B /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
 		94454E3B17852E61006C057B /* stubs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stubs.mm; sourceTree = "<group>"; };
+		B30872B121F51F480010462A /* PVMednafen.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = PVMednafen.modulemap; sourceTree = "<group>"; };
+		B30872B221F51F480010462A /* PVMednafen-umbrella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVMednafen-umbrella.h"; sourceTree = "<group>"; };
 		B314E30F21081E9200D0C27A /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C34221919BC6009F4EDC /* libpsx-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpsx-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwvideo-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4268,6 +4270,8 @@
 				94454E3B17852E61006C057B /* stubs.mm */,
 				94454E3617852E44006C057B /* thread.cpp */,
 				94454E3717852E44006C057B /* thread.h */,
+				B30872B221F51F480010462A /* PVMednafen-umbrella.h */,
+				B30872B121F51F480010462A /* PVMednafen.modulemap */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -8430,6 +8434,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				English,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Mednafen */;
 			projectDirPath = "";
@@ -11217,6 +11222,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/include\"",
+					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+				);
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -11237,7 +11249,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/PVMednafen\"",
+					"$(SRCROOT)",
+				);
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -15534,6 +15549,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/include\"",
+					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+				);
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -15556,7 +15578,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/PVMednafen\"",
+					"$(SRCROOT)",
+				);
 				USE_HEADERMAP = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -15597,6 +15622,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen-1.21/include\"",
+					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+				);
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -15617,7 +15649,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/PVMednafen\"",
+					"$(SRCROOT)",
+				);
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

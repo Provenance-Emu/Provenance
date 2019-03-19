@@ -931,8 +931,8 @@ static void ConfigureRICE() {
 								   NSLocalizedRecoverySuggestionErrorKey: @"Check the file hasn't been moved or deleted."
 								   };
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+												code:EmulatorCoreErrorCodeCouldNotLoadRom
 											userInfo:userInfo];
 
 		*error = newError;
@@ -950,8 +950,8 @@ static void ConfigureRICE() {
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mupen64Plus ROM format."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -971,8 +971,8 @@ static void ConfigureRICE() {
 //								   NSLocalizedRecoverySuggestionErrorKey: @"The video system is invalid. Developer error. Kill the developer."
 //								   };
 //
-//		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-//												code:PVEmulatorCoreErrorCodeCouldNotStart
+//		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+//												code:EmulatorCoreErrorCodeCouldNotStart
 //											userInfo:userInfo];
 //
 //		*error = newError;
@@ -1037,8 +1037,8 @@ static void ConfigureRICE() {
                                    NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -1082,8 +1082,8 @@ static void ConfigureRICE() {
                                    NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;

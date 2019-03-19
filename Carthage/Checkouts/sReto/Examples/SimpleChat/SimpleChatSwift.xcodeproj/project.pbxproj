@@ -1,0 +1,674 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BE02E64BFE4D942B9D5D8D0 /* Pods_SimpleChatMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C7267963FF909BF8F4373E4 /* Pods_SimpleChatMac.framework */; };
+		484852A870C6B676EAD6728E /* Pods_SimpleChatIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A52F2A8F3435D0BFD8F0FD8 /* Pods_SimpleChatIOS.framework */; };
+		CD1814161A79B95E0027BB09 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1814151A79B95E0027BB09 /* AssetsLibrary.framework */; };
+		CD1814181A79C0050027BB09 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1814171A79C0050027BB09 /* QuickLook.framework */; };
+		CDE6FDC61A782E1D00CC8B6C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE6FDC51A782E1D00CC8B6C /* AppDelegate.swift */; };
+		CDE6FDC81A782E1D00CC8B6C /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE6FDC71A782E1D00CC8B6C /* MasterViewController.swift */; };
+		CDE6FDCA1A782E1D00CC8B6C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE6FDC91A782E1D00CC8B6C /* DetailViewController.swift */; };
+		CDE6FDCD1A782E1D00CC8B6C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDE6FDCB1A782E1D00CC8B6C /* Main.storyboard */; };
+		CDE6FDCF1A782E1D00CC8B6C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDE6FDCE1A782E1D00CC8B6C /* Images.xcassets */; };
+		CDE6FDD21A782E1D00CC8B6C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDE6FDD01A782E1D00CC8B6C /* LaunchScreen.xib */; };
+		CDE6FDE71A7838D800CC8B6C /* LocalChatPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE70F2F19FA50370080AAE4 /* LocalChatPeer.swift */; };
+		CDE6FDE81A7838D800CC8B6C /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE70F3119FA50430080AAE4 /* ChatRoom.swift */; };
+		CDE70F1319FA44A30080AAE4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE70F1219FA44A30080AAE4 /* AppDelegate.swift */; };
+		CDE70F1519FA44A30080AAE4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE70F1419FA44A30080AAE4 /* ViewController.swift */; };
+		CDE70F1719FA44A30080AAE4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDE70F1619FA44A30080AAE4 /* Images.xcassets */; };
+		CDE70F1A19FA44A30080AAE4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDE70F1819FA44A30080AAE4 /* Main.storyboard */; };
+		CDE70F3019FA50370080AAE4 /* LocalChatPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE70F2F19FA50370080AAE4 /* LocalChatPeer.swift */; };
+		CDE70F3219FA50430080AAE4 /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE70F3119FA50430080AAE4 /* ChatRoom.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CDE6FDEC1A78396000CC8B6C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1A52F2A8F3435D0BFD8F0FD8 /* Pods_SimpleChatIOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SimpleChatIOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		561C328604207464EC0DC29E /* Pods-SimpleChatIOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimpleChatIOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-SimpleChatIOS/Pods-SimpleChatIOS.release.xcconfig"; sourceTree = "<group>"; };
+		5E6A8AFACC5F9DD99BF16D71 /* Pods-SimpleChatIOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimpleChatIOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SimpleChatIOS/Pods-SimpleChatIOS.debug.xcconfig"; sourceTree = "<group>"; };
+		6C7267963FF909BF8F4373E4 /* Pods_SimpleChatMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SimpleChatMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		90AAAE5B3D06C06F9B1E7FFB /* Pods-SimpleChatMac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimpleChatMac.release.xcconfig"; path = "Pods/Target Support Files/Pods-SimpleChatMac/Pods-SimpleChatMac.release.xcconfig"; sourceTree = "<group>"; };
+		CD1814151A79B95E0027BB09 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/AssetsLibrary.framework; sourceTree = DEVELOPER_DIR; };
+		CD1814171A79C0050027BB09 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/QuickLook.framework; sourceTree = DEVELOPER_DIR; };
+		CDE6FDC11A782E1D00CC8B6C /* SimpleChatIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleChatIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDE6FDC41A782E1D00CC8B6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CDE6FDC51A782E1D00CC8B6C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		CDE6FDC71A782E1D00CC8B6C /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MasterViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		CDE6FDC91A782E1D00CC8B6C /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DetailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		CDE6FDCC1A782E1D00CC8B6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CDE6FDCE1A782E1D00CC8B6C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		CDE6FDD11A782E1D00CC8B6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		CDE70F0D19FA44A30080AAE4 /* SimpleChatMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleChatMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDE70F1119FA44A30080AAE4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CDE70F1219FA44A30080AAE4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		CDE70F1419FA44A30080AAE4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		CDE70F1619FA44A30080AAE4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		CDE70F1919FA44A30080AAE4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CDE70F2F19FA50370080AAE4 /* LocalChatPeer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = LocalChatPeer.swift; path = Common/LocalChatPeer.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		CDE70F3119FA50430080AAE4 /* ChatRoom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = ChatRoom.swift; path = Common/ChatRoom.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E452266B30132749782F79E6 /* Pods-SimpleChatMac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimpleChatMac.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SimpleChatMac/Pods-SimpleChatMac.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CDE6FDBE1A782E1D00CC8B6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD1814181A79C0050027BB09 /* QuickLook.framework in Frameworks */,
+				CD1814161A79B95E0027BB09 /* AssetsLibrary.framework in Frameworks */,
+				484852A870C6B676EAD6728E /* Pods_SimpleChatIOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDE70F0A19FA44A30080AAE4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BE02E64BFE4D942B9D5D8D0 /* Pods_SimpleChatMac.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		088ADBFC4D31A5B253374B6B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5E6A8AFACC5F9DD99BF16D71 /* Pods-SimpleChatIOS.debug.xcconfig */,
+				561C328604207464EC0DC29E /* Pods-SimpleChatIOS.release.xcconfig */,
+				E452266B30132749782F79E6 /* Pods-SimpleChatMac.debug.xcconfig */,
+				90AAAE5B3D06C06F9B1E7FFB /* Pods-SimpleChatMac.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		6AD37979517B060F14FB38EA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A52F2A8F3435D0BFD8F0FD8 /* Pods_SimpleChatIOS.framework */,
+				6C7267963FF909BF8F4373E4 /* Pods_SimpleChatMac.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CDE6FDC21A782E1D00CC8B6C /* SimpleChatIOS */ = {
+			isa = PBXGroup;
+			children = (
+				CDE6FDC51A782E1D00CC8B6C /* AppDelegate.swift */,
+				CDE6FDC71A782E1D00CC8B6C /* MasterViewController.swift */,
+				CDE6FDC91A782E1D00CC8B6C /* DetailViewController.swift */,
+				CDE6FDCB1A782E1D00CC8B6C /* Main.storyboard */,
+				CDE6FDCE1A782E1D00CC8B6C /* Images.xcassets */,
+				CDE6FDD01A782E1D00CC8B6C /* LaunchScreen.xib */,
+				CD1814151A79B95E0027BB09 /* AssetsLibrary.framework */,
+				CD1814171A79C0050027BB09 /* QuickLook.framework */,
+				CDE6FDC31A782E1D00CC8B6C /* Supporting Files */,
+			);
+			path = SimpleChatIOS;
+			sourceTree = "<group>";
+		};
+		CDE6FDC31A782E1D00CC8B6C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDE6FDC41A782E1D00CC8B6C /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CDE6FDEE1A78398300CC8B6C /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				CDE70F2F19FA50370080AAE4 /* LocalChatPeer.swift */,
+				CDE70F3119FA50430080AAE4 /* ChatRoom.swift */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		CDE70F0419FA44A30080AAE4 = {
+			isa = PBXGroup;
+			children = (
+				CDE6FDEE1A78398300CC8B6C /* Common */,
+				CDE70F0F19FA44A30080AAE4 /* SimpleChatMac */,
+				CDE6FDC21A782E1D00CC8B6C /* SimpleChatIOS */,
+				CDE70F0E19FA44A30080AAE4 /* Products */,
+				088ADBFC4D31A5B253374B6B /* Pods */,
+				6AD37979517B060F14FB38EA /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CDE70F0E19FA44A30080AAE4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDE70F0D19FA44A30080AAE4 /* SimpleChatMac.app */,
+				CDE6FDC11A782E1D00CC8B6C /* SimpleChatIOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CDE70F0F19FA44A30080AAE4 /* SimpleChatMac */ = {
+			isa = PBXGroup;
+			children = (
+				CDE70F1219FA44A30080AAE4 /* AppDelegate.swift */,
+				CDE70F1419FA44A30080AAE4 /* ViewController.swift */,
+				CDE70F1619FA44A30080AAE4 /* Images.xcassets */,
+				CDE70F1819FA44A30080AAE4 /* Main.storyboard */,
+				CDE70F1019FA44A30080AAE4 /* Supporting Files */,
+			);
+			path = SimpleChatMac;
+			sourceTree = "<group>";
+		};
+		CDE70F1019FA44A30080AAE4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDE70F1119FA44A30080AAE4 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CDE6FDC01A782E1D00CC8B6C /* SimpleChatIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDE6FDE51A782E1D00CC8B6C /* Build configuration list for PBXNativeTarget "SimpleChatIOS" */;
+			buildPhases = (
+				4BC6291F4537F033EA43820F /* [CP] Check Pods Manifest.lock */,
+				CDE6FDBD1A782E1D00CC8B6C /* Sources */,
+				CDE6FDBE1A782E1D00CC8B6C /* Frameworks */,
+				CDE6FDBF1A782E1D00CC8B6C /* Resources */,
+				CDE6FDEC1A78396000CC8B6C /* CopyFiles */,
+				ECF45A2DF9F7962C48E1FB08 /* [CP] Embed Pods Frameworks */,
+				5A11E2F16C30CB1627A2E9DE /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimpleChatIOS;
+			productName = SimpleChatIOS;
+			productReference = CDE6FDC11A782E1D00CC8B6C /* SimpleChatIOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CDE70F0C19FA44A30080AAE4 /* SimpleChatMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDE70F2919FA44A30080AAE4 /* Build configuration list for PBXNativeTarget "SimpleChatMac" */;
+			buildPhases = (
+				C29693F297B60345DB8F3C83 /* [CP] Check Pods Manifest.lock */,
+				CDE70F0919FA44A30080AAE4 /* Sources */,
+				CDE70F0A19FA44A30080AAE4 /* Frameworks */,
+				CDE70F0B19FA44A30080AAE4 /* Resources */,
+				5BFE8FD0C1BD3EBFDBAE4301 /* [CP] Embed Pods Frameworks */,
+				F615BD01FDDB89698EF8D4B4 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimpleChatMac;
+			productName = SimpleChatMac;
+			productReference = CDE70F0D19FA44A30080AAE4 /* SimpleChatMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CDE70F0519FA44A30080AAE4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "LS1 TUM";
+				TargetAttributes = {
+					CDE6FDC01A782E1D00CC8B6C = {
+						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 0920;
+						ProvisioningStyle = Manual;
+					};
+					CDE70F0C19FA44A30080AAE4 = {
+						CreatedOnToolsVersion = 6.1;
+						LastSwiftMigration = 0820;
+					};
+				};
+			};
+			buildConfigurationList = CDE70F0819FA44A30080AAE4 /* Build configuration list for PBXProject "SimpleChatSwift" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CDE70F0419FA44A30080AAE4;
+			productRefGroup = CDE70F0E19FA44A30080AAE4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDE70F0C19FA44A30080AAE4 /* SimpleChatMac */,
+				CDE6FDC01A782E1D00CC8B6C /* SimpleChatIOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CDE6FDBF1A782E1D00CC8B6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDE6FDCD1A782E1D00CC8B6C /* Main.storyboard in Resources */,
+				CDE6FDD21A782E1D00CC8B6C /* LaunchScreen.xib in Resources */,
+				CDE6FDCF1A782E1D00CC8B6C /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDE70F0B19FA44A30080AAE4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDE70F1719FA44A30080AAE4 /* Images.xcassets in Resources */,
+				CDE70F1A19FA44A30080AAE4 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4BC6291F4537F033EA43820F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SimpleChatIOS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5A11E2F16C30CB1627A2E9DE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SimpleChatIOS/Pods-SimpleChatIOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5BFE8FD0C1BD3EBFDBAE4301 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SimpleChatMac/Pods-SimpleChatMac-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket-macOS/CocoaAsyncSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/SocketRocket-macOS/SocketRocket.framework",
+				"${BUILT_PRODUCTS_DIR}/sReto-macOS/sReto.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sReto.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SimpleChatMac/Pods-SimpleChatMac-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C29693F297B60345DB8F3C83 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SimpleChatMac-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ECF45A2DF9F7962C48E1FB08 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SimpleChatIOS/Pods-SimpleChatIOS-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket-iOS/CocoaAsyncSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/SocketRocket-iOS/SocketRocket.framework",
+				"${BUILT_PRODUCTS_DIR}/sReto-iOS/sReto.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sReto.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SimpleChatIOS/Pods-SimpleChatIOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F615BD01FDDB89698EF8D4B4 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SimpleChatMac/Pods-SimpleChatMac-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDE6FDBD1A782E1D00CC8B6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDE6FDCA1A782E1D00CC8B6C /* DetailViewController.swift in Sources */,
+				CDE6FDE81A7838D800CC8B6C /* ChatRoom.swift in Sources */,
+				CDE6FDE71A7838D800CC8B6C /* LocalChatPeer.swift in Sources */,
+				CDE6FDC81A782E1D00CC8B6C /* MasterViewController.swift in Sources */,
+				CDE6FDC61A782E1D00CC8B6C /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDE70F0919FA44A30080AAE4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDE70F1519FA44A30080AAE4 /* ViewController.swift in Sources */,
+				CDE70F3019FA50370080AAE4 /* LocalChatPeer.swift in Sources */,
+				CDE70F1319FA44A30080AAE4 /* AppDelegate.swift in Sources */,
+				CDE70F3219FA50430080AAE4 /* ChatRoom.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CDE6FDCB1A782E1D00CC8B6C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDE6FDCC1A782E1D00CC8B6C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		CDE6FDD01A782E1D00CC8B6C /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDE6FDD11A782E1D00CC8B6C /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		CDE70F1819FA44A30080AAE4 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDE70F1919FA44A30080AAE4 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CDE6FDDF1A782E1D00CC8B6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5E6A8AFACC5F9DD99BF16D71 /* Pods-SimpleChatIOS.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SimpleChatIOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tum.in.www1.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CDE6FDE01A782E1D00CC8B6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 561C328604207464EC0DC29E /* Pods-SimpleChatIOS.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SimpleChatIOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tum.in.www1.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CDE70F2719FA44A30080AAE4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CDE70F2819FA44A30080AAE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		CDE70F2A19FA44A30080AAE4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E452266B30132749782F79E6 /* Pods-SimpleChatMac.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SimpleChatMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tum.in.www1.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		CDE70F2B19FA44A30080AAE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 90AAAE5B3D06C06F9B1E7FFB /* Pods-SimpleChatMac.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SimpleChatMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tum.in.www1.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CDE6FDE51A782E1D00CC8B6C /* Build configuration list for PBXNativeTarget "SimpleChatIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDE6FDDF1A782E1D00CC8B6C /* Debug */,
+				CDE6FDE01A782E1D00CC8B6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDE70F0819FA44A30080AAE4 /* Build configuration list for PBXProject "SimpleChatSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDE70F2719FA44A30080AAE4 /* Debug */,
+				CDE70F2819FA44A30080AAE4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDE70F2919FA44A30080AAE4 /* Build configuration list for PBXNativeTarget "SimpleChatMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDE70F2A19FA44A30080AAE4 /* Debug */,
+				CDE70F2B19FA44A30080AAE4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CDE70F0519FA44A30080AAE4 /* Project object */;
+}

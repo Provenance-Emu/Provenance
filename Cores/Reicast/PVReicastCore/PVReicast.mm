@@ -8,9 +8,6 @@
 
 #import "PVReicastCore.h"
 #import "PVReicastCore+Controls.h"
-#import "PVReicastCore+Video.h"
-
-#import "PVReicast+Audio.h"
 
 #include <stdio.h>
 

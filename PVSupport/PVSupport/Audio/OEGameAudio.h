@@ -27,14 +27,13 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
+@protocol EmulatorCore;
 
 #define AudioDeviceID unsigned
 
-@class PVEmulatorCore;
-
 @interface OEGameAudio : NSObject
 {
-    PVEmulatorCore *gameCore;
+    NSObject<EmulatorCore> *gameCore;
     AUGraph     mGraph;
     AUNode      mConverterNode, mMixerNode, mOutputNode;
     AudioUnit   mConverterUnit, mMixerUnit, mOutputUnit;
@@ -45,7 +44,7 @@
 @property float volume;
 @property AudioDeviceID outputDeviceID;
 
-- (id)initWithCore:(PVEmulatorCore *)core;
+- (id)initWithCore:(NSObject<EmulatorCore>* ) core;
 
 - (void)createGraph;
 - (void)startAudio;

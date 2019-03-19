@@ -25,6 +25,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdatomic.h>
 #endif
 
 typedef struct {

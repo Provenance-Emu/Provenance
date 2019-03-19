@@ -1,0 +1,24 @@
+framework module PVAtari800 {
+    umbrella header "PVAtari800-umbrella.h"
+    export *
+    module * { export * }
+
+    link framework "PVSupport"
+//
+//    private header "../Atari800Core/Source/ATR5200ControllerState.h"
+////    private header "../Atari800Core/Source/ATR800GameCore.h"
+//    private header "../Atari800Core/Source/ATR800GameCore+Private.h"
+//    module Private {
+//        export *
+//    }
+//    module Swift {
+//        header "ATR800GameCore+Private.h"
+//    }
+    explicit module Private {
+        header "ATR800GameCore+Private.h"
+    }
+}
+
+module PVAtari800.Swift {
+    header "ATR800GameCore+Private.h"
+}

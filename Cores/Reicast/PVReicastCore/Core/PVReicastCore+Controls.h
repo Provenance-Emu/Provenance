@@ -7,6 +7,7 @@
 //
 
 #import <PVReicast/PVReicastCore.h>
+#import <PVReicast/PVReicast-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

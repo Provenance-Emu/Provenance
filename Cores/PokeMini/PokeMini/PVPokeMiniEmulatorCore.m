@@ -200,7 +200,7 @@ int OpenEmu_KeysMapping[] =
         NSLog(@"Error while initializing emulator.");
     }
     
-    PokeMini_GotoCustomDir([[self BIOSPath] UTF8String]);
+    PokeMini_GotoCustomDir([[self biosPath] UTF8String]);
     if(FileExist(CommandLine.bios_file))
     {
         PokeMini_LoadBIOSFile(CommandLine.bios_file);
@@ -346,8 +346,8 @@ int saveEEPROM(const char *filename) {
                                        NSLocalizedRecoverySuggestionErrorKey: @""
                                        };
 
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeCouldNotSaveState
+            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                    code:EmulatorCoreErrorCodeCouldNotSaveState
                                                 userInfo:userInfo];
             
             *error = newError;
@@ -367,8 +367,8 @@ int saveEEPROM(const char *filename) {
                                        NSLocalizedRecoverySuggestionErrorKey: @""
                                        };
 
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
+            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                    code:EmulatorCoreErrorCodeCouldNotLoadSaveState
                                                 userInfo:userInfo];
 
             *error = newError;

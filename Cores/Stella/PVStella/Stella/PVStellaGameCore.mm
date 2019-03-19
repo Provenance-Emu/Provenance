@@ -144,7 +144,7 @@ static bool environment_callback(unsigned cmd, void *data) {
     
     switch(cmd) {
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
-            NSString *appSupportPath = [strongCurrent BIOSPath];
+            NSString *appSupportPath = [strongCurrent biosPath];
             
             *(const char **)data = [appSupportPath UTF8String];
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
@@ -346,8 +346,8 @@ static void writeSaveFile(const char* path, int type)
 							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
 							   };
 
-	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-											code:PVEmulatorCoreErrorCodeCouldNotSaveState
+	NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+											code:EmulatorCoreErrorCodeCouldNotSaveState
 										userInfo:userInfo];
 
 	*error = newError;
@@ -362,8 +362,8 @@ static void writeSaveFile(const char* path, int type)
 							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
 							   };
 
-	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-											code:PVEmulatorCoreErrorCodeCouldNotLoadState
+	NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+											code:EmulatorCoreErrorCodeCouldNotLoadSaveState
 										userInfo:userInfo];
 
 	*error = newError;

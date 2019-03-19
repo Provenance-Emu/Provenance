@@ -609,7 +609,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core/hw\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core/deps\"",
@@ -806,7 +806,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core/hw\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core/deps\"",
@@ -876,7 +876,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core/hw\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core\"",
 					"\"$(SRCROOT)/tgbdual-emulator/core/deps\"",

@@ -170,6 +170,8 @@
 		B301797D207C908F0051B93D /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B301797E207C908F0051B93D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339414220783CBB008DBAB4 /* driver.cpp */; };
 		B301797F207C909E0051B93D /* libreicast-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libreicast-iOS.a */; };
+		B308722621F4B1000010462A /* PVReicastCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B308722521F4B1000010462A /* PVReicastCore.swift */; };
+		B308722721F4B1000010462A /* PVReicastCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B308722521F4B1000010462A /* PVReicastCore.swift */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B316B4E821926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
@@ -186,20 +188,11 @@
 		B3447EA3218BBFBC00557ACE /* PVReicast+AudioTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA2218BBFB700557ACE /* PVReicast+AudioTypes.h */; };
 		B3447EA5218BC36B00557ACE /* PVReicast+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */; };
 		B3447EA7218BC3A600557ACE /* PVReicast+CoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA6218BC3A600557ACE /* PVReicast+CoreAudio.h */; };
-		B3447EAB218BC59D00557ACE /* PVReicastCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */; };
-		B3447EAC218BC59D00557ACE /* PVReicastCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */; };
-		B3447EAF218BC5C500557ACE /* PVReicastCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */; };
-		B3447EB0218BC5C500557ACE /* PVReicastCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */; };
-		B3447EB3218BC69700557ACE /* PVReicastCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */; };
-		B3447EB4218BC69700557ACE /* PVReicastCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */; };
 		B3447EC2218BEDD200557ACE /* PVReicast+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E9B218B826F00557ACE /* PVReicast+Audio.mm */; };
 		B3447EC3218BEDD200557ACE /* PVReicastCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVReicastCore+Controls.mm */; };
 		B3447EC4218BEDD200557ACE /* PVReicastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVReicastCore.mm */; };
-		B3447EC5218BEDD200557ACE /* PVReicastCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */; };
 		B3447EC6218BEDD200557ACE /* PVReicast.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVReicast.mm */; };
-		B3447EC7218BEDD200557ACE /* PVReicastCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */; };
 		B3447EC8218BEDD200557ACE /* PVReicast+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */; };
-		B3447EC9218BEDD200557ACE /* PVReicastCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */; };
 		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -209,12 +202,9 @@
 		B3447ED6218BEDD200557ACE /* PVReicast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVReicast.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3447ED7218BEDD200557ACE /* PVReicastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVReicastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3447ED8218BEDD200557ACE /* PVReicast+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVReicast+Audio.h */; };
-		B3447ED9218BEDD200557ACE /* PVReicastCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */; };
-		B3447EDA218BEDD200557ACE /* PVReicastCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */; };
 		B3447EDB218BEDD200557ACE /* PVReicast+AudioTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA2218BBFB700557ACE /* PVReicast+AudioTypes.h */; };
 		B3447EDC218BEDD200557ACE /* PVReicast+CoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA6218BC3A600557ACE /* PVReicast+CoreAudio.h */; };
 		B3447EDD218BEDD200557ACE /* PVReicastCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVReicastCore+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447EDE218BEDD200557ACE /* PVReicastCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */; };
 		B3447EE0218BEDD200557ACE /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438720783CC0008DBAB4 /* Shader.fsh */; };
 		B3447EE1218BEDD200557ACE /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438820783CC0008DBAB4 /* Shader.vsh */; };
 		B3447EE2218BEDD200557ACE /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
@@ -417,6 +407,7 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libreicast-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libreicast-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B308722521F4B1000010462A /* PVReicastCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVReicastCore.swift; sourceTree = "<group>"; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339412120783CBB008DBAB4 /* rec_x64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rec_x64.cpp; sourceTree = "<group>"; };
@@ -1383,12 +1374,6 @@
 		B3447EA2218BBFB700557ACE /* PVReicast+AudioTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicast+AudioTypes.h"; sourceTree = "<group>"; };
 		B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVReicast+CoreAudio.mm"; sourceTree = "<group>"; };
 		B3447EA6218BC3A600557ACE /* PVReicast+CoreAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVReicast+CoreAudio.h"; sourceTree = "<group>"; };
-		B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Saves.h"; sourceTree = "<group>"; };
-		B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVReicastCore+Saves.m"; sourceTree = "<group>"; };
-		B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Video.h"; sourceTree = "<group>"; };
-		B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVReicastCore+Video.m"; sourceTree = "<group>"; };
-		B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Audio.h"; sourceTree = "<group>"; };
-		B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVReicastCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3447EE6218BEDD200557ACE /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447F91218BEE3F00557ACE /* libreicast-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libreicast-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3749,13 +3734,8 @@
 			isa = PBXGroup;
 			children = (
 				B3C76223207833DE009950E4 /* PVReicastCore.h */,
+				B308722521F4B1000010462A /* PVReicastCore.swift */,
 				B3C76224207833DE009950E4 /* PVReicastCore.mm */,
-				B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */,
-				B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */,
-				B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */,
-				B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */,
-				B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */,
-				B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */,
 				B3447E96218B809200557ACE /* PVReicastCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVReicastCore+Controls.mm */,
 			);
@@ -3835,12 +3815,9 @@
 				B3447ED6218BEDD200557ACE /* PVReicast.h in Headers */,
 				B3447ED7218BEDD200557ACE /* PVReicastCore.h in Headers */,
 				B3447ED8218BEDD200557ACE /* PVReicast+Audio.h in Headers */,
-				B3447ED9218BEDD200557ACE /* PVReicastCore+Audio.h in Headers */,
-				B3447EDA218BEDD200557ACE /* PVReicastCore+Saves.h in Headers */,
 				B3447EDB218BEDD200557ACE /* PVReicast+AudioTypes.h in Headers */,
 				B3447EDC218BEDD200557ACE /* PVReicast+CoreAudio.h in Headers */,
 				B3447EDD218BEDD200557ACE /* PVReicastCore+Controls.h in Headers */,
-				B3447EDE218BEDD200557ACE /* PVReicastCore+Video.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3851,12 +3828,9 @@
 				B3C7621520783162009950E4 /* PVReicast.h in Headers */,
 				B3C76225207833DE009950E4 /* PVReicastCore.h in Headers */,
 				B3447E9C218B826F00557ACE /* PVReicast+Audio.h in Headers */,
-				B3447EB3218BC69700557ACE /* PVReicastCore+Audio.h in Headers */,
-				B3447EAB218BC59D00557ACE /* PVReicastCore+Saves.h in Headers */,
 				B3447EA3218BBFBC00557ACE /* PVReicast+AudioTypes.h in Headers */,
 				B3447EA7218BC3A600557ACE /* PVReicast+CoreAudio.h in Headers */,
 				B3447E9F218B858100557ACE /* PVReicastCore+Controls.h in Headers */,
-				B3447EAF218BC5C500557ACE /* PVReicastCore+Video.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3947,8 +3921,12 @@
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
+					B3447EC0218BEDD200557ACE = {
+						LastSwiftMigration = 1010;
+					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -4175,11 +4153,9 @@
 				B3447EC2218BEDD200557ACE /* PVReicast+Audio.mm in Sources */,
 				B3447EC3218BEDD200557ACE /* PVReicastCore+Controls.mm in Sources */,
 				B3447EC4218BEDD200557ACE /* PVReicastCore.mm in Sources */,
-				B3447EC5218BEDD200557ACE /* PVReicastCore+Saves.m in Sources */,
 				B3447EC6218BEDD200557ACE /* PVReicast.mm in Sources */,
-				B3447EC7218BEDD200557ACE /* PVReicastCore+Video.m in Sources */,
+				B308722721F4B1000010462A /* PVReicastCore.swift in Sources */,
 				B3447EC8218BEDD200557ACE /* PVReicast+CoreAudio.mm in Sources */,
-				B3447EC9218BEDD200557ACE /* PVReicastCore+Audio.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4359,11 +4335,9 @@
 				B3447E9D218B826F00557ACE /* PVReicast+Audio.mm in Sources */,
 				B3447E9E218B857A00557ACE /* PVReicastCore+Controls.mm in Sources */,
 				B3C76226207833DE009950E4 /* PVReicastCore.mm in Sources */,
-				B3447EAC218BC59D00557ACE /* PVReicastCore+Saves.m in Sources */,
 				B3447EA1218B881000557ACE /* PVReicast.mm in Sources */,
-				B3447EB0218BC5C500557ACE /* PVReicastCore+Video.m in Sources */,
+				B308722621F4B1000010462A /* PVReicastCore.swift in Sources */,
 				B3447EA5218BC36B00557ACE /* PVReicast+CoreAudio.mm in Sources */,
-				B3447EB4218BC69700557ACE /* PVReicastCore+Audio.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4474,7 +4448,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/reicast-emulator/core/hw\"",
 					"\"$(SRCROOT)/reicast-emulator/core\"",
 					"\"$(SRCROOT)/reicast-emulator/core/deps\"",
@@ -4507,6 +4481,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4527,6 +4502,7 @@
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
@@ -4534,6 +4510,7 @@
 		B324C5032191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4555,6 +4532,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
@@ -4593,6 +4571,7 @@
 		B3447EE4218BEDD200557ACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4614,6 +4593,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -4621,6 +4602,7 @@
 		B3447EE5218BEDD200557ACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4642,6 +4624,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -4735,7 +4718,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/reicast-emulator/core/hw\"",
 					"\"$(SRCROOT)/reicast-emulator/core\"",
 					"\"$(SRCROOT)/reicast-emulator/core/deps\"",
@@ -4806,7 +4789,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/reicast-emulator/core/hw\"",
 					"\"$(SRCROOT)/reicast-emulator/core\"",
 					"\"$(SRCROOT)/reicast-emulator/core/deps\"",
@@ -4840,6 +4823,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4860,6 +4844,8 @@
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -4867,6 +4853,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4887,6 +4874,7 @@
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

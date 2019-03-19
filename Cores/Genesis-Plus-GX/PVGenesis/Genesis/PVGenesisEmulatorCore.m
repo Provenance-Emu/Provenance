@@ -128,7 +128,7 @@ static bool environment_callback(unsigned cmd, void *data)
 	{
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
 		{
-			NSString *appSupportPath = [strongCurrent BIOSPath];
+			NSString *appSupportPath = [strongCurrent biosPath];
 			
 			*(const char **)data = [appSupportPath UTF8String];
 			DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
@@ -233,8 +233,8 @@ static bool environment_callback(unsigned cmd, void *data)
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and exists."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -314,8 +314,8 @@ static bool environment_callback(unsigned cmd, void *data)
                                NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported GenPlusGX ROM format."
                                };
     
-    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+    NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                            code:EmulatorCoreErrorCodeCouldNotLoadRom
                                         userInfo:userInfo];
     
     *error = newError;
@@ -846,8 +846,8 @@ static bool environment_callback(unsigned cmd, void *data)
 									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
 									   };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+			NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+													code:EmulatorCoreErrorCodeCouldNotLoadSaveState
 												userInfo:userInfo];
 			*error = newError;
             ELOG(@"Unable to load save state from path: %@", path);
@@ -862,8 +862,8 @@ static bool environment_callback(unsigned cmd, void *data)
 									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
 									   };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+			NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+													code:EmulatorCoreErrorCodeCouldNotLoadSaveState
 												userInfo:userInfo];
 			*error = newError;
             DLOG(@"Unable to load save state");

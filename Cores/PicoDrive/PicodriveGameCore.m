@@ -143,7 +143,7 @@ static bool environment_callback(unsigned cmd, void *data)
         }
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
         {
-            NSString *appSupportPath = current.BIOSPath;
+            NSString *appSupportPath = current.biosPath;
             
             *(const char **)data = [appSupportPath UTF8String];
             NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
@@ -430,7 +430,7 @@ static void writeSaveFile(const char* path, int type)
     NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
     NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
     
-    NSString *systemPath = self.BIOSPath;
+    NSString *systemPath = self.biosPath;
     NSString *destinationPath = [systemPath stringByAppendingPathComponent:@"carthw.cfg"];
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -442,7 +442,7 @@ static void writeSaveFile(const char* path, int type)
         if(!success) {
             NSLog(@"Error copying carthw.cfg:\n %@", error.localizedDescription);
         } else {
-            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
+            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.biosPath);
         }
     }
 }
@@ -528,8 +528,8 @@ static void writeSaveFile(const char* path, int type)
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -675,7 +675,7 @@ static void writeSaveFile(const char* path, int type)
         return [NSData dataWithBytesNoCopy:bytes length:length];
 
     if(outError) {
-        *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
+        *outError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
             NSLocalizedDescriptionKey : @"Save state data could not be written",
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
@@ -689,7 +689,7 @@ static void writeSaveFile(const char* path, int type)
     size_t serial_size = retro_serialize_size();
     if(serial_size != [state length]) {
         if(outError) {
-            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
+            *outError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
                 NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The save state does not have the right size, %ld expected, got: %ld.", serial_size, [state length]]
             }];
@@ -702,7 +702,7 @@ static void writeSaveFile(const char* path, int type)
         return YES;
 
     if(outError) {
-        *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
+        *outError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeCouldNotLoadSaveState userInfo:@{
             NSLocalizedDescriptionKey : @"The save state data could not be read"
         }];
     }
@@ -717,8 +717,8 @@ static void writeSaveFile(const char* path, int type)
 
     if(!retro_serialize([stateData mutableBytes], serial_size)) {
         if (error) {
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeCouldNotSaveState
+            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                    code:EmulatorCoreErrorCodeCouldNotSaveState
                                                 userInfo:@{
                                                            NSLocalizedDescriptionKey : @"Save state data could not be written",
                                                            NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
@@ -748,8 +748,8 @@ static void writeSaveFile(const char* path, int type)
                                        NSLocalizedRecoverySuggestionErrorKey: @""
                                        };
 
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
+            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                    code:EmulatorCoreErrorCodeCouldNotLoadSaveState
                                                 userInfo:userInfo];
 
             *error = newError;
@@ -760,8 +760,8 @@ static void writeSaveFile(const char* path, int type)
     int serial_size = 678514;
     if(serial_size != [data length]) {
         if (error) {
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                 code:PVEmulatorCoreErrorCodeStateHasWrongSize
+            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                 code:EmulatorCoreErrorCodeStateHasWrongSize
                                              userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
                 NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
@@ -775,7 +775,7 @@ static void writeSaveFile(const char* path, int type)
 
     if(!retro_unserialize([data bytes], serial_size)) {
         if (error) {
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
+            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeCouldNotLoadSaveState userInfo:@{
                                                                                                                                             NSLocalizedDescriptionKey : @"The save state data could not be read",
                                                                                                                                             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
                                                                                                                                             }];

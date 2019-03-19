@@ -112,7 +112,7 @@ static __weak PVFCEUEmulatorCore *_current;
     [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     //FCEUI_SetBaseDirectory([[self biosDirectoryPath] UTF8String]); unused for now
     FCEUI_SetDirOverride(FCEUIOD_NV, strdup([[batterySavesDirectory path] UTF8String]));
-    FCEUI_SetDirOverride(FCEUIOD_FDSROM, strdup([[self BIOSPath] UTF8String]));
+    FCEUI_SetDirOverride(FCEUIOD_FDSROM, strdup([[self biosPath] UTF8String]));
 
     FCEUI_SetSoundVolume(256);
     FCEUI_Sound(48000);
@@ -127,8 +127,8 @@ static __weak PVFCEUEmulatorCore *_current;
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported FCEUI ROM format."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -264,8 +264,8 @@ static __weak PVFCEUEmulatorCore *_current;
 									   NSLocalizedRecoverySuggestionErrorKey: @""
 									   };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+			NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
+													code:EmulatorCoreErrorCodeCouldNotLoadSaveState
 												userInfo:userInfo];
 
 			*error = newError;

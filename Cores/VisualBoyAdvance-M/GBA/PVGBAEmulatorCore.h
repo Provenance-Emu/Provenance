@@ -26,8 +26,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport.h>
 #import <PVSupport/PVSupport-Swift.h>
+
 
 @interface PVGBAEmulatorCore : PVEmulatorCore <PVGBASystemResponderClient>
 

@@ -24,9 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import Foundation;
+@import PVSupport.PVEmulatorCore;
+
 
 __attribute__((visibility("default")))
 @interface PVPokeMiniEmulatorCore : PVEmulatorCore <PVPokeMiniSystemResponderClient>

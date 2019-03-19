@@ -1,0 +1,24 @@
+language: objective-c
+osx_image: xcode7
+env:
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+  matrix:
+    - DESTINATION="OS=9.0,name=iPhone 6s" SCHEME="sRetoTests" SDK=iphonesimulator9.0 BUILD_EXAMPLE="YES"
+#    - DESTINATION="arch=x86_64" SCHEME="sRetoTests" SDK=macosx10.11 BUILD_EXAMPLE="NO"
+before_install:
+   - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+script:
+  - set -o pipefail
+  - xcodebuild -version
+  - xcodebuild -project Source/sReto.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c
+  - xcodebuild -project Source/sReto.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Release ONLY_ACTIVE_ARCH=NO test | xcpretty -c
+  - if [ $BUILD_EXAMPLE == "YES" ]; then 
+      xcodebuild -project "Examples/SimpleChat/SimpleChatSwift.xcworkspace" -scheme "SimpleChatIOS" -sdk "$SDK" -destination "$DESTINATION" 
+      -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
+    fi
+  - if [ $BUILD_EXAMPLE == "YES" ]; then 
+      xcodebuild -project "Examples/SimpleChat/SimpleChatSwift.xcworkspace" -scheme "SimpleChatIOS" -sdk "$SDK" -destination "$DESTINATION" 
+      -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
+    fi

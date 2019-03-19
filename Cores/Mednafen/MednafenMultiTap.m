@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MednafenGameCore.h"
+#import <PVMednafen/PVMednafen-Swift.h>
 
 @implementation MednafenGameCore (MultiTap)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapPSXGames {
