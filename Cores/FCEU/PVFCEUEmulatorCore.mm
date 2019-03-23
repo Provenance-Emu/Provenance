@@ -24,20 +24,14 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "PVFCEUEmulatorCore.h"
+#import <PVFCEU/PVFCEU.h>
+//#import <PVFCEU/PVFCEU-Swift.h>
 #import <PVSupport/PVSupport-Swift.h>
+
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-#include "FCEU/fceu.h"
-#include "FCEU/driver.h"
-#include "FCEU/input.h"
-#include "FCEU/sound.h"
-#include "FCEU/movie.h"
-#include "FCEU/palette.h"
-#include "FCEU/state.h"
-#include "FCEU/emufile.h"
-#include "zlib.h"
+@import FCEU;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
@@ -57,7 +51,7 @@ static uint32_t palette[256];
 
 @end
 
-@implementation PVFCEUEmulatorCore
+@implementation PVFCEUEmulatorCore ()
 
 static __weak PVFCEUEmulatorCore *_current;
 

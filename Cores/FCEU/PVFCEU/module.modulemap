@@ -1,11 +1,29 @@
-framework module PVAtari800 {
-    umbrella header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Atari800/PVAtari800/PVAtari800-umbrella.h"
-//    umbrella header "PVAtari800/PVAtari800-umbrella.h"
+module FCEU [extern_c] {
+    header "../FCEU/fceu.h"
+//    header "../FCEU/driver.h"
+//    header "../FCEU/input.h"
+//    header "../FCEU/sound.h"
+//    header "../FCEU/movie.h"
+//    header "../FCEU/palette.h"
+//    header "../FCEU/state.h"
+//    header "../FCEU/emufile.h"
+    link "stdc++"
+    link "zlib"
+    // header "zlib.h"
+    export *
+}
+
+framework module PVFCEU {
+//    umbrella header "PVFCEU.h"
+umbrella header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/FCEU/PVFCEU/PVFCEU.h"
     export *
     module * { export * }
 
     link framework "PVSupport"
-    private header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Atari800/PVAtari800/PVAtari800.h"
+    link "FCEU"
+
+//    private header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/FCEU/PVFCEUEmulatorCore+Controls.h"
+//    private header "PVFCEUEmulatorCore+Controls.h"
 
 //    private header "../Atari800Core/Source/ATR5200ControllerState.h"
 //    private header "../Atari800Core/Source/ATR800GameCore.h"
@@ -17,24 +35,19 @@ framework module PVAtari800 {
 //        header "ATR800GameCore+Private.h"
 //    }
 
-
-
-
     explicit module Private {
-        header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Atari800/PVAtari800/PVAtari800.h"
-        header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Atari800/PVAtari800/ATR5200ControllerState.h"
-//        header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Atari800/PVAtari800/ATR800GameCore+Private.h"
-//        header "ATR800GameCore+Private.h"
+//        header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/FCEU/PVFCEUEmulatorCore+Controls.h"
+
         requires objc
         export *
     }
 }
 
-module PVAtari800.__Swift {
-    exclude header "PVAtari800-Swift.h"
+module PVFCEU.__Swift {
+    exclude header "PVFCEU-Swift.h"
 }
 
-module PVAtari800.Swift {
+module PVFCEU.Swift {
 //    header "PVAtari800-Swift.h"
 //    header "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Atari800/PVAtari800/ATR800GameCore+Private.h"
 //    header "ATR800GameCore+Private.h"

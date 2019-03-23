@@ -8,6 +8,18 @@
 
 import Foundation
 import PVSupport
+import FCEU
+
+@objcMembers
+@objc
+public class PVFCEUEmulatorCore : PVEmulatorCore {
+    let pad : [[UInt32]] = Array<Array<UInt32>>.init(repeating: Array<UInt32>(repeating: 0, count: PVNESButton.count.rawValue), count: 2)
+// UInt32[2][PVSNESButton.count];
+
+    public override var audioSampleRate: Double {
+        return FSettings.SndRate
+    }
+}
 
 // extension PVFCEUEmulatorCore: PVNESSystemResponderClient {
 //	func didPush(_ button: PVNESButton, forPlayer player: Int) {
