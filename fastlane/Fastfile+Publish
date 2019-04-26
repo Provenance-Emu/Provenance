@@ -31,7 +31,7 @@ private_lane :publish_s3 do |options|
    # Optional but nice if you want to put multiple apps in same bucket
   app_directory = 'iOS'
 
-  endpoint = 'http://provenance.joemattiello.com:9000'
+  endpoint = 'http://provenance.joemattiello.com:9002'
 
   # Upload version.json, plist and HTML.
   upload_metadata = false
