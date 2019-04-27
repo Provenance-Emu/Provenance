@@ -801,9 +801,9 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 #endif
 }
 
-- (BOOL)isDoubleBuffered {
-    return YES;
-}
+//- (BOOL)isDoubleBuffered {
+//    return YES;
+//}
 
 #pragma mark Audio
 
