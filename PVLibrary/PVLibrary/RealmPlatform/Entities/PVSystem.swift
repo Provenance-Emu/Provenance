@@ -180,7 +180,7 @@ public extension PVSystem {
     }
 
     #if os(tvOS)
-        public var imageType: TVContentItemImageShape {
+        var imageType: TVContentItemImageShape {
             switch enumValue {
             case .NES, .Dreamcast, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .Lynx, .WonderSwan, .WonderSwanColor:
                 return .poster

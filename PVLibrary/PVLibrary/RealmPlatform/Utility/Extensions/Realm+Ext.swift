@@ -13,8 +13,7 @@ extension Object {
 
 extension SortDescriptor {
     init(sortDescriptor: NSSortDescriptor) {
-        keyPath = sortDescriptor.key ?? ""
-        ascending = sortDescriptor.ascending
+        self.init(keyPath: sortDescriptor.key ?? "", ascending: sortDescriptor.ascending)
     }
 }
 

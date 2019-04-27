@@ -1,25 +1,89 @@
-desc "Download cached Rome builds"
-lane :rome_download do
-  rome_cmd(command: 'download')
+def swiftVersion
+  version = %x[xcrun swift -version | head -1 | sed \"s/.*\((.*)\).*/\1/\" | tr -d \"()\"].lines.first.split(" ").last(2).join("-")
+  return version
 end
 
-desc "Upload cached Rome builds"
-lane :rome_upload do
-  rome_cmd(command: 'upload')
+def command?(command)
+  system("which #{ command} > /dev/null 2>&1")
 end
 
-private_lane :rome_cmd do |options|
-  command = options.fetch(:platform, 'download')
-  platform = options.fetch(:platform, 'iOS,tvOS')
+SWIFT_VERSION=swiftVersion()
+HAS_ROME=command?("rome")
+ENV["AWS_ACCESS_KEY_ID"] = "M2B65BPG5JRKHIC8RAKX"
+ENV["AWS_SECRET_ACCESS_KEY"] = "R1pwhbv7foHK88VDgq1cZ3jlVi2YS6PFv9ueZi4p"
+ENV["AWS_ENDPOINT"] = "http://provenance.joemattiello.com:9002"
+ENV["AWS_REGION"] = "us-east-1"
 
-  swift_version = sh("swift --version | head -1 | sed 's/.*\((.*)\).*/\1/' | tr -d \"()\" | tr \" \" \"-\"")
+desc "Use Rome for Carthage to download pre-built binaries"
+lane :rome_download do |options|
+    platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
+        
+    if !HAS_ROME
+        UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
+        next
+    end
 
-  UI.message "Running Rome '#{command}' for platform(s) ('#{platform}'"
-  UI.message "Detected Swift version: #{swift_version}"
+    UI.message("Swift version '#{SWIFT_VERSION}'")
 
-  rome(
-    command: command,     # One of: download, upload, list
-    platform: platform,   # Define which platform to build for (one of 'all', 'Mac', 'iOS', 'watchOS', 'tvOS', or comma-separated values of the formers except for 'all')
-    cacheprefix: swift_version
-  )
+    rome(
+        command: "download",
+        platform: platform,
+        cacheprefix: SWIFT_VERSION,
+        concurrently: true
+    )
+end
+
+desc "Upload current carthage cache to Rome's S3 bucket"
+lane :rome_upload do |options|
+    platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
+
+    if !HAS_ROME
+        UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
+        next
+    end
+
+    UI.message("Swift version '#{SWIFT_VERSION}'")
+
+    rome(
+        command: "upload",
+        platform: platform,
+        cacheprefix: SWIFT_VERSION,
+        concurrently: true
+    )
+end
+
+desc "List missing carts in Rome cache"
+lane :rome_missing do |options|
+    platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
+
+    if !HAS_ROME
+        UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
+        next
+    end
+
+    UI.message("Swift version '#{SWIFT_VERSION}'")
+
+    rome(
+        command: "list",
+        platform: platform,
+        cacheprefix: "#{SWIFT_VERSION} --missing",
+    )
+end
+
+desc "List present carts in Rome cache"
+lane :rome_present do |options|
+    platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
+
+    if !HAS_ROME
+        UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
+        next
+    end
+
+    UI.message("Swift version '#{SWIFT_VERSION}'")
+
+    rome(
+        command: "list",
+        platform: platform,
+        cacheprefix: "#{SWIFT_VERSION} --present",
+    )
 end

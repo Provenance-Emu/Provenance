@@ -12,6 +12,7 @@ import RealmSwift
 public struct Core: Codable {
     public let identifier: String
     public let principleClass: String
+//    public let systems: [System]
     #warning("un-realm me")
     public var systems: [System] {
         let realm = try! Realm()
@@ -22,8 +23,14 @@ public struct Core: Codable {
         }
         return systems.map { $0 }
     }
-
     public let project: CoreProject
+    
+//    public init(identifier: String, principleClass: String, systems: [System], project: CoreProject) {
+//        self.identifier = identifier
+//        self.principleClass = principleClass
+//        self.systems = systems
+//        self.project = project
+//    }
 }
 
 extension Core: Equatable {

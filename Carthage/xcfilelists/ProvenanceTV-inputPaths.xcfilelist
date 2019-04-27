@@ -5,7 +5,6 @@ $(SRCROOT)/Carthage/Build/tvOS/FBLPromises.framework
 $(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/tvOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/tvOS/NSLoggerSwift.framework
-$(SRCROOT)/Carthage/Build/tvOS/Promises.framework
 $(SRCROOT)/Carthage/Build/tvOS/QuickTableViewController.framework
 $(SRCROOT)/Carthage/Build/tvOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/tvOS/Realm.framework

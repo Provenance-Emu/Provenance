@@ -6,12 +6,17 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+#ifdef __cplusplus
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
+#else
+@import Foundation;
+@import GameController;
+#endif
 
 #pragma mark -
 
-typedef void (^SaveStateCompletion)(BOOL, NSError *);
+typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
 
 /*!
  * @function GET_CURRENT_OR_RETURN
@@ -20,7 +25,7 @@ typedef void (^SaveStateCompletion)(BOOL, NSError *);
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 @class OERingBuffer;
-extern NSString *const PVEmulatorCoreErrorDomain;
+extern NSString * _Nonnull const PVEmulatorCoreErrorDomain;
 
 typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeCouldNotStart            = -1,
@@ -58,18 +63,18 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, assign) double emulationFPS;
 @property (nonatomic, assign) double renderFPS;
 
-@property(weak)     id<PVAudioDelegate>    audioDelegate;
-@property(weak)     id<PVRenderDelegate>   renderDelegate;
+@property(weak, nullable)     id<PVAudioDelegate>    audioDelegate;
+@property(weak, nullable)     id<PVRenderDelegate>   renderDelegate;
 
 @property (nonatomic, assign, readonly) BOOL isRunning;
-@property (nonatomic, copy) NSString *romName;
-@property (nonatomic, copy) NSString *saveStatesPath;
-@property (nonatomic, copy) NSString *batterySavesPath;
-@property (nonatomic, copy) NSString *BIOSPath;
-@property (nonatomic, copy) NSString *systemIdentifier;
-@property (nonatomic, copy) NSString *coreIdentifier;
-@property (nonatomic, strong) NSString* romMD5;
-@property (nonatomic, strong) NSString* romSerial;
+@property (nonatomic, copy, nullable) NSString *romName;
+@property (nonatomic, copy, nullable) NSString *saveStatesPath;
+@property (nonatomic, copy, nullable) NSString *batterySavesPath;
+@property (nonatomic, copy, nullable) NSString *BIOSPath;
+@property (nonatomic, copy, nullable) NSString *systemIdentifier;
+@property (nonatomic, copy, nullable) NSString *coreIdentifier;
+@property (nonatomic, copy, nullable) NSString* romMD5;
+@property (nonatomic, copy, nullable) NSString* romSerial;
 @property (nonatomic, assign) BOOL supportsSaveStates;
 @property (nonatomic, readonly) BOOL supportsRumble;
 

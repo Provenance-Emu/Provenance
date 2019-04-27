@@ -15,38 +15,6 @@ Install _fastlane_ using
 or alternatively using `brew cask install fastlane`
 
 # Available Actions
-### derived_data
-```
-fastlane derived_data
-```
-Clear your DerivedData
-### reset_checkout
-```
-fastlane reset_checkout
-```
-Reset build enviroment
-
-Use this lane if you're having build issues
-
-Use `git stash` first to save any changes you may want to keep.
-### check_env
-```
-fastlane check_env
-```
-Print Environment Settings
-### updatePlistForBranch
-```
-fastlane updatePlistForBranch
-```
-Updates the bundle id and app name if a beta build
-### plist_reset
-```
-fastlane plist_reset
-```
-Resets the bundle id and app name after build
-
-----
-
 ## iOS
 ### ios build_developer
 ```
@@ -124,16 +92,6 @@ Lane to update all carthage dependencies to latest versions for iOS only
 fastlane ios carthage_update_tvos
 ```
 Lane to update all carthage dependencies to latest versions for tvOS only
-### ios rome_download
-```
-fastlane ios rome_download
-```
-Download cached Rome builds
-### ios rome_upload
-```
-fastlane ios rome_upload
-```
-Upload cached Rome builds
 ### ios certificates_download
 ```
 fastlane ios certificates_download
@@ -149,6 +107,26 @@ Create Certs for Match
 fastlane ios update_devices
 ```
 Update device UDID list in iTunes connect from fastlane/devices.text
+### ios rome_download
+```
+fastlane ios rome_download
+```
+Use Rome for Carthage to download pre-built binaries
+### ios rome_upload
+```
+fastlane ios rome_upload
+```
+Upload current carthage cache to Rome's S3 bucket
+### ios rome_missing
+```
+fastlane ios rome_missing
+```
+List missing carts in Rome cache
+### ios rome_present
+```
+fastlane ios rome_present
+```
+List present carts in Rome cache
 ### ios default_changelog
 ```
 fastlane ios default_changelog
@@ -174,6 +152,35 @@ Travis building tvOS
 fastlane ios test
 ```
 Build and run tests
+### ios derived_data
+```
+fastlane ios derived_data
+```
+Clear your DerivedData
+### ios reset_checkout
+```
+fastlane ios reset_checkout
+```
+Reset build enviroment
+
+Use this lane if you're having build issues
+
+Use `git stash` first to save any changes you may want to keep.
+### ios check_env
+```
+fastlane ios check_env
+```
+Print Environment Settings
+### ios updatePlistForBranch
+```
+fastlane ios updatePlistForBranch
+```
+Updates the bundle id and app name if a beta build
+### ios plist_reset
+```
+fastlane ios plist_reset
+```
+Resets the bundle id and app name after build
 
 ----
 

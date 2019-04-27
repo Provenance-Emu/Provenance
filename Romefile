@@ -1,3 +1,45 @@
+cache:
+  local: ~/Library/Caches/Rome/
+  s3Bucket: carthage
+# currentMap:
+# - PVLibrary:
+#     - name: PVLibrary
+#       platforms: [iOS]
+#     - name: PVLibrary tvOS
+#       platforms: [tvOS]
+# - PVSupport:
+    # - name: PVSupport
+    #   platforms: [iOS, tvOS]
+# - PVStella:
+#     - name: PVStella
+#       platforms: [iOS, tvOS]
+# - PVGenesis:
+#     - name: PVGenesis
+#       platforms: [iOS, tvOS]
+# - PVGB:
+#     - name: PVGB
+#       platforms: [iOS, tvOS]
+# - PVGBA:
+#     - name: PVGBA
+#       platforms: [iOS, tvOS]
+# - PVMednafen:
+#     - name: PVMednafen
+#       platforms: [iOS, tvOS]
+# - PVSNES:
+#     - name: PVSNES
+#       platforms: [iOS, tvOS]
+# - PVPokeMini:
+#     - name: PVPokeMini
+#       platforms: [iOS, tvOS]
+# - PVFCEU:
+#     - name: PVFCEU
+#       platforms: [iOS, tvOS]
+# - PicoDrive:
+#     - name: PicoDrive
+#       platforms: [iOS, tvOS]
+# - ProSystem:
+#     - name: ProSystem
+#       platforms: [iOS, tvOS]  
 repositoryMap:
 - RxSwift:
   - name: RxSwift
@@ -5,47 +47,55 @@ repositoryMap:
   - name: RxAtomic
   - name: RxBlocking
   - name: RxTest
+    platforms: [iOS,tvOS]
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
-- HockeySDK-tvOS:
-  - name: HockeySDK
-    platforms: [tvOS] # optional, all platforms if empty
 - HockeySDK-iOS:
   - name: HockeySDK
-    platforms: [iOS] # optional, all platforms if empty
+    platforms: [iOS]
+- HockeySDK-tvOS:
+  - name: HockeySDK
+    platforms: [tvOS]
 - XLActionController:
   - name: XLActionController
-    platforms: [iOS] # optional, all platforms if empty
+    platforms: [iOS]
 - ZIPFoundation:
   - name: ZIPFoundation
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - realm-cocoa:
   - name: Realm
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
   - name: RealmSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - SQLite.swift:
   - name: SQLite
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
   - name: SQLite.swift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - ZipArchive:
   - name: ZipArchive
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - SwiftyUserDefaults:
   - name: SwiftyUserDefaults
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - CocoaLumberjack:
   - name: CocoaLumberjack
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
   - name: CocoaLumberjackSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - NSLogger:
   - name: NSLogger
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
   - name: NSLoggerSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
-cache:
-  local: ~/Library/Caches/Rome/
-  s3Bucket: provenance-carthage
+    platforms: [iOS,tvOS]
+ignoreMap:
+- Fabric:
+  - name: Fabric
+    # platforms: [iOS, tvOS]
+- Answers:
+  - name: Answers
+    # platforms: [iOS, tvOS]
+- Crashlytics:
+  - name: Crashlytics
+    # platforms: [iOS, tvOS]

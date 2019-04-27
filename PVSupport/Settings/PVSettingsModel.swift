@@ -126,7 +126,7 @@ public class MirroredSettings: NSObject {
 //                    assertionFailure("Read back wrong type. Got <\(type(of: currentValue))>, excpected: <\(e.valueType)>")
 //                }
 
-                if let e = c.value as? Set<AnyHashable>, let arrayValue = currentValue as? [AnyHashable] {
+                if c.value is Set<AnyHashable>, let arrayValue = currentValue as? [AnyHashable] {
                     setValue(Set(arrayValue), forKeyPath: keyPath)
                 } else {
                     // Handle case where value was previously set
@@ -262,7 +262,7 @@ extension MirroredSettings {
     public dynamic var webDavAlwaysOn = false
     public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
 
-    public dynamic var controllerOpacity: CGFloat = 0.8
+    public dynamic var controllerOpacity: Double = 0.8
     public dynamic var buttonTints = true
 
     #if os(tvOS)

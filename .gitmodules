@@ -35,7 +35,7 @@
 	path = Carthage/Checkouts/RxGesture
 	url = https://github.com/RxSwiftCommunity/RxGesture.git
 [submodule "Carthage/Checkouts/HockeySDK-iOS"]
-	url = https://github.com/bitstadium/HockeySDK-iOS.git
+	url = https://github.com/nsoperations/HockeySDK-iOS.git
 	path = Carthage/Checkouts/HockeySDK-iOS
 [submodule "Carthage/Checkouts/HockeySDK-tvOS"]
 	url = https://github.com/bitstadium/HockeySDK-tvOS.git

@@ -25,6 +25,8 @@ app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf-e
 username("mail@joemattiello.com") # Your Apple Developer Portal username
 team_name("Joe Mattiello")
 team_id("9DSA2J9CHZ")
+shallow_clone true         # because I don't need the whole git history of the certs
+force_for_new_devices true # if someone adds a device I want to make sure they can test the app
 
 # For all available options run `fastlane match --help`
 # Remove the # in the beginning of the line to enable the other options

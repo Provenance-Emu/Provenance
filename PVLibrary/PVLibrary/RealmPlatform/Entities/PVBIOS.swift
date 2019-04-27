@@ -14,7 +14,7 @@ public final class PVBIOS: Object, BIOSFileProvider {
     public dynamic var system: PVSystem!
 
     public dynamic var descriptionText: String = ""
-    public dynamic var regions: RegionOptions = .unknown
+    public var regions: RegionOptions = .unknown
     public dynamic var version: String = ""
     public dynamic var optional: Bool = false
 

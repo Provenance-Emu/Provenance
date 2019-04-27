@@ -647,8 +647,6 @@ public extension GameImporter {
     }
 
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
-        let database = RomDatabase.sharedInstance
-
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
             if #available(iOS 9.0, *) {
@@ -792,7 +790,7 @@ public extension GameImporter {
                             try FileManager.default.moveItem(at: path, to: conflictPath)
                             let matchedSystems = systems.map { $0.identifier }.joined(separator: ", ")
                             let matchedGames = existingGames.map { $0.romPath }.joined(separator: ", ")
-                            WLOG("Scanned game matched with multiple systems {\(matchedSystems)} and multiple existing games \({ matchedGames }) so we moved \(filename) to conflicts dir. You figure it out!")
+                            WLOG("Scanned game matched with multiple systems {\(matchedSystems)} and multiple existing games \(matchedGames) so we moved \(filename) to conflicts dir. You figure it out!")
                         } catch {
                             ELOG("Failed to move \(urlPath.path) to conflicts dir.")
                         }
@@ -958,8 +956,8 @@ public extension GameImporter {
                     game.regionName = regionName
                 }
 
-                if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID == nil {
-                    game.regionID = regionID
+                if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID.value == nil {
+                    game.regionID.value = regionID
                 }
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
@@ -1394,7 +1392,10 @@ extension GameImporter {
         // check by md5
         let fileMD5 = candidateFile.md5?.uppercased()
 
-        if let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5 ?? ""), let gotit = searchResults?.first,
+        if let fileMD5 = fileMD5,
+            !fileMD5.isEmpty,
+            let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
+            let gotit = searchResults.first,
             let sid: Int = gotit["systemID"] as? Int,
             let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
             let subfolderPath = self.path(forSystemID: system.identifier),

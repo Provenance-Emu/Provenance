@@ -1,183 +1,157 @@
 desc 'Lane to run bootstrap carthage in new checkout for iOS only'
 lane :carthage_bootstrap_ios do |_options|
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+
   carthage_bootstrap(
-    platform: 'iOS'
+    platform: 'iOS',
+    use_binaries: use_binaries,
+    use_rome: use_rome
   )
 end
 
 desc 'Lane to run bootstrap carthage in new checkout for tvOS only'
 lane :carthage_bootstrap_tvos do |_options|
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+
   carthage_bootstrap(
-    platform: 'tvOS'
-  )
+    platform: 'tvOS',
+    use_binaries: use_binaries,
+    use_rome: use_rome
+)
 end
 
 desc 'Lane to run bootstrap carthage in new checkout'
 desc 'Option: `platform` tvOS,iOS'
 lane :carthage_bootstrap do |options|
-  platform = options.fetch(:platform, 'tvOS,iOS')
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
 
   carthage_private(
     command: 'bootstrap',
-    platform: platform
-  )
+    platform: platform,
+    use_binaries: use_binaries,
+    use_rome: use_rome
+)
 end
 
 desc 'Lane to run build all carthage dependencies'
 desc 'Option: `platform` tvOS,iOS'
 lane :carthage_build do |options|
-  platform = options.fetch(:platform, 'tvOS,iOS')
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
 
   carthage_private(
     command: 'build',
-    platform: platform
+    platform: platform,
+    use_binaries: use_binaries,
+    use_rome: use_rome
   )
 end
 
 desc 'Lane to run build all carthage dependencies - iOS'
 lane :carthage_build_ios do
-    carthage_private(command: 'build', platform: 'iOS')
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+  
+  carthage_private(
+    command: 'build', 
+    platform: 'iOS',
+    use_binaries: use_binaries,
+    use_rome: use_rome
+  )
 end
 
 desc 'Lane to run build all carthage dependencies - tvOS'
 lane :carthage_build_tvos do
-    carthage_private(command: 'build', platform: 'iOS')
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+  
+  carthage_private(
+    command: 'build', 
+    platform: 'tvOS',
+    use_binaries: use_binaries,
+    use_rome: use_rome
+  )
 end
 
 desc 'Lane to update all carthage dependencies to latest versions'
 desc 'Option: `platform` tvOS,iOS'
 lane :carthage_update do |options|
-  platform = options.fetch(:platform, 'tvOS,iOS')
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
 
   carthage_private(
     command: 'update',
-    platform: platform
+    platform: platform,
+    use_binaries: use_binaries,
+    use_rome: use_rome
   )
+
+  if use_rome
+    rome_upload(platform: platform)
+  end
 end
 
 desc 'Lane to update all carthage dependencies to latest versions for iOS only'
 lane :carthage_update_ios do |_options|
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
   carthage_update(
-    platform: 'iOS'
+    platform: 'iOS',
+    use_binaries: use_binaries,
+    use_rome: use_rome
   )
 end
 
 desc 'Lane to update all carthage dependencies to latest versions for tvOS only'
 lane :carthage_update_tvos do |_options|
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
   carthage_update(
-    platform: 'tvOS'
+    platform: 'tvOS',
+    use_binaries: use_binaries,
+    use_rome: use_rome
   )
 end
 
 private_lane :carthage_private do |options|
   command = options.fetch(:command, 'bootstrap')
-  use_ssh = options.fetch(:use_ssh, false)
 
-  platform = options.fetch(:platform, 'tvOS,iOS')
+  use_binaries = options.fetch(:use_binaries, true)
+  use_ssh = options.fetch(:use_ssh, false)
+  use_rome = options.fetch(:use_rome, true)
+  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
+  cache_builds = options.fetch(:cache_builds, true)
+
   project_directory = options.fetch(:project_directory, './')
 
   UI.message "Running Carthage '#{command}' for platform(s) ('#{platform}'( in directory ('#{project_directory}')"
 
-  rome_download(platform: platform)
+  if use_rome
+    rome_download(platform: platform)
+  end
 
   carthage(
     command: command,
     platform: platform,
-    use_binaries: true,
-    cache_builds: true,
-    use_submodules: true,
+    use_binaries: use_binaries,
+    cache_builds: cache_builds,
+    use_submodules: use_ssh,
     use_ssh: use_ssh,
     project_directory: project_directory
-  )
-end
-
-
-def swiftVersion
-  version = %x[xcrun swift -version | head -1 | sed \"s/.*\((.*)\).*/\1/\" | tr -d \"()\"].lines.first.split(" ").last(2).join("-")
-  return version
-end
-
-def command?(command)
-  system("which #{ command} > /dev/null 2>&1")
-end
-
-SWIFT_VERSION=swiftVersion()
-HAS_ROME=command?("rome")
-ENV["AWS_SECRET_ACCESS_KEY"] = "R1pwhbv7foHK88VDgq1cZ3jlVi2YS6PFv9ueZi4p"
-ENV["AWS_ACCESS_KEY_ID"] = "M2B65BPG5JRKHIC8RAKX"
-ENV["AWS_REGION"] = "us-east-1"
-ENV["AWS_ENDPOINT"] = "http://provenance.joemattiello.com:9002"
-
-desc "Use Rome for Carthage to download pre-built binaries"
-lane :rome_download do |options|
-  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
-
-  if !HAS_ROME
-      UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
-      next
-  end
-
-  UI.message("Swift version '#{SWIFT_VERSION}'")
-
-  rome(
-      command: "download",
-      platform: platform,
-      cacheprefix: SWIFT_VERSION,
-      concurrently: true
-  )
-end
-
-desc "Upload current carthage cache to Rome's S3 bucket"
-lane :rome_upload do |options|
-  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
-
-  if !HAS_ROME
-      UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
-      next
-  end
-
-  UI.message("Swift version '#{SWIFT_VERSION}'")
-
-  rome(
-      command: "upload",
-      platform: platform,
-      cacheprefix: SWIFT_VERSION,
-      concurrently: true
-  )
-end
-
-desc "List missing carts in Rome cache"
-lane :rome_missing do |options|
-  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
-
-  if !HAS_ROME
-      UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
-      next
-  end
-
-  UI.message("Swift version '#{SWIFT_VERSION}'")
-
-  rome(
-      command: "list",
-      platform: platform,
-      cacheprefix: "#{SWIFT_VERSION} --missing",
-  )
-end
-
-desc "List present carts in Rome cache"
-lane :rome_present do |options|
-  platform = options.fetch(:platform, CARTHAGE_PLATFORMS)
-
-  if !HAS_ROME
-      UI.important "Rome not installed. Skipping caches. \n To install: \n$ brew tap blender/tap https://github.com/blender/homebrew-tap.git\n$ brew install blender/homebrew-tap/rome"
-      next
-  end
-
-  UI.message("Swift version '#{SWIFT_VERSION}'")
-
-  rome(
-      command: "list",
-      platform: platform,
-      cacheprefix: "#{SWIFT_VERSION} --present",
   )
 end

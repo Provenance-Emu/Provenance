@@ -158,7 +158,11 @@ extension PVSaveStateInfoViewController {
     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {
         let playAction = UIPreviewAction(title: "Play", style: .default) { [unowned self] _, _ in
-            self.play(self.view)
+            if let view = self.view {
+                self.play(view)
+            } else {
+                assertionFailure("Nil view")
+            }
         }
 
         let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { [unowned self] _, _ in

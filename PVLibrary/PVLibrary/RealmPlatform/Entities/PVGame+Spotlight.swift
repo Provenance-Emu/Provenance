@@ -20,7 +20,7 @@ public extension PVGame {
 
     #if os(iOS)
         @available(iOS 9.0, *)
-        public var spotlightContentSet: CSSearchableItemAttributeSet {
+    var spotlightContentSet: CSSearchableItemAttributeSet {
             let systemName = self.systemName
 
             var description = "\(systemName ?? "")"
@@ -74,7 +74,7 @@ public extension PVGame {
             return contentSet
         }
 
-        public var pathOfCachedImage: URL? {
+    var pathOfCachedImage: URL? {
             let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
             if !PVMediaCache.fileExists(forKey: artworkKey) {
                 return nil
@@ -83,7 +83,7 @@ public extension PVGame {
             return artworkURL
         }
 
-        public var spotlightUniqueIdentifier: String {
+    var spotlightUniqueIdentifier: String {
             return "com.provenance-emu.game.\(md5Hash)"
         }
     #endif

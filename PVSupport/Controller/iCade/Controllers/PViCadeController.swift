@@ -10,7 +10,7 @@
 import GameController
 
 public class PViCadeController: GCController {
-    public private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
+    internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
     public let reader: PViCadeReader = PViCadeReader.shared
     public var controllerPressedAnyKey: ((_ controller: PViCadeController?) -> Void)?
 

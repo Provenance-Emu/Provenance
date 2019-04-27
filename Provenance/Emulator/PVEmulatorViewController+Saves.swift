@@ -134,7 +134,7 @@ extension PVEmulatorViewController {
             DLOG("Succeeded saving state, auto: \(auto)")
             let realm = try! Realm()
             guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
-                completion(.error(.noCoreFound(self.core.coreIdentifier)))
+                completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
                 return
             }
 

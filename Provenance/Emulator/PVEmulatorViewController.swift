@@ -210,7 +210,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         controllerViewController?.didMove(toParent: self)
 
-        let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
+        let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)

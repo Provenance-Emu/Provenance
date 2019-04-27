@@ -80,7 +80,7 @@ public final class PVGame: Object, PVLibraryEntry {
     public dynamic var referenceURL: String?
     public dynamic var releaseID: String?
     public dynamic var regionName: String?
-    public dynamic var regionID: Int?
+    public var regionID = RealmOptional<Int>()
     public dynamic var systemShortName: String?
     public dynamic var language: String?
 
@@ -161,7 +161,7 @@ public extension Game {
         genres = game.genres
         referenceURL = game.referenceURL
         releaseID = game.releaseID
-        regionID = game.regionID
+        regionID = game.regionID.value
         regionName = game.regionName
         systemShortName = game.systemShortName
         language = game.language
@@ -214,7 +214,7 @@ extension Game: RealmRepresentable {
             object.referenceURL = referenceURL
             object.releaseID = releaseID
             object.regionName = regionName
-            object.regionID = regionID
+            object.regionID.value = regionID
             object.systemShortName = systemShortName
             object.language = language
         }

@@ -563,7 +563,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     defer {
                         gameLibraryGameController.semaphore.signal()
                     }
-                    guard let systems = gameLibraryGameController.filteredSystems, let indexOfSystem = systems.index(of: self.system) else {
+                    guard let systems = gameLibraryGameController.filteredSystems, let indexOfSystem = systems.firstIndex(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
@@ -582,7 +582,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     }
 
                     // Query results have changed, so apply them to the UICollectionView
-                    guard let indexOfSystem = gameLibraryGameController.filteredSystems?.index(of: self.system) else {
+                    guard let indexOfSystem = gameLibraryGameController.filteredSystems?.firstIndex(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
@@ -642,8 +642,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             return nil
         }
 
-        let nameSort: [SortDescriptor] = [SortDescriptor(keyPath: #keyPath(PVSystem.manufacturer), ascending: true),
-                                          SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)]
+//        let nameSort: [SortDescriptor] = [SortDescriptor(keyPath: #keyPath(PVSystem.manufacturer), ascending: true),
+//                                          SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)]
 
         let titleSort: (PVSystem, PVSystem) -> Bool = { (s1, s2) -> Bool in
             let mc = s1.manufacturer.compare(s2.manufacturer)
@@ -1058,8 +1058,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
-        coordinator.notifyWhenInteractionEnds { [weak self] _ in
-            self?.transitioningToSize = nil
+        if #available(iOS 10.0, *) {
+            coordinator.notifyWhenInteractionChanges { [weak self] _ in
+                self?.transitioningToSize = nil
+            }
+        } else {
+            coordinator.notifyWhenInteractionEnds { [weak self] _ in
+                self?.transitioningToSize = nil
+            }
         }
     }
 

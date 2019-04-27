@@ -25,6 +25,7 @@
  */
 
 @import Foundation;
+@import GameController;
 @import PVSupport;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;

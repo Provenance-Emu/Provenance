@@ -5,7 +5,6 @@ $(SRCROOT)/Carthage/Build/iOS/FBLPromises.framework
 $(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
-$(SRCROOT)/Carthage/Build/iOS/Promises.framework
 $(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework
 $(SRCROOT)/Carthage/Build/iOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/iOS/Realm.framework

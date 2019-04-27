@@ -174,7 +174,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     var leftAnalogButton: JSButton?
     var rightAnalogButton: JSButton?
 
-    let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
+    let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
 
     #if os(iOS)
         private var _feedbackGenerator: AnyObject?
@@ -587,8 +587,9 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             if rightShoulderButton != nil {
                 zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
             } else {
-                zTriggerFrame = CGRect(x: view.frame.size.width - (controlSize.width * 2) - xPadding, y: view.frame.size.height - (controlSize.height * 2)
-                    - yPadding, width: controlSize.width, height: controlSize.height)
+                let x: CGFloat = view.frame.size.width - (controlSize.width * 2) - xPadding
+                let y: CGFloat = view.frame.size.height - (controlSize.height * 2) - yPadding
+                zTriggerFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
             }
 
             if let zTriggerButton = self.zTriggerButton {
