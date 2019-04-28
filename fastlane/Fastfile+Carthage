@@ -1,5 +1,5 @@
 desc 'Lane to run bootstrap carthage in new checkout for iOS only'
-lane :carthage_bootstrap_ios do |_options|
+lane :carthage_bootstrap_ios do |options|
   use_binaries = options.fetch(:use_binaries, true)
   use_ssh = options.fetch(:use_ssh, false)
   use_rome = options.fetch(:use_rome, true)
@@ -12,7 +12,7 @@ lane :carthage_bootstrap_ios do |_options|
 end
 
 desc 'Lane to run bootstrap carthage in new checkout for tvOS only'
-lane :carthage_bootstrap_tvos do |_options|
+lane :carthage_bootstrap_tvos do |options|
   use_binaries = options.fetch(:use_binaries, true)
   use_ssh = options.fetch(:use_ssh, false)
   use_rome = options.fetch(:use_rome, true)
@@ -105,7 +105,7 @@ lane :carthage_update do |options|
 end
 
 desc 'Lane to update all carthage dependencies to latest versions for iOS only'
-lane :carthage_update_ios do |_options|
+lane :carthage_update_ios do |options|
   use_binaries = options.fetch(:use_binaries, true)
   use_ssh = options.fetch(:use_ssh, false)
   use_rome = options.fetch(:use_rome, true)
@@ -117,7 +117,7 @@ lane :carthage_update_ios do |_options|
 end
 
 desc 'Lane to update all carthage dependencies to latest versions for tvOS only'
-lane :carthage_update_tvos do |_options|
+lane :carthage_update_tvos do |options|
   use_binaries = options.fetch(:use_binaries, true)
   use_ssh = options.fetch(:use_ssh, false)
   use_rome = options.fetch(:use_rome, true)
