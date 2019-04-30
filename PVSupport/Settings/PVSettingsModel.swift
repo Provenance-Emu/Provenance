@@ -243,10 +243,6 @@ extension MirroredSettings {
     public dynamic var askToAutoLoad = true
     public dynamic var autoLoadSaves = false
 
-<<<<<<< Updated upstream
-    public dynamic var disableAutoLock = false
-    public dynamic var buttonVibration = true
-=======
     #if os(tvOS)
     @objc public dynamic var disableAutoLock = true
     #else
@@ -254,7 +250,6 @@ extension MirroredSettings {
     #endif
     
     @objc public dynamic var buttonVibration = true
->>>>>>> Stashed changes
 
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
