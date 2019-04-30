@@ -70,6 +70,11 @@ repositoryMap:
   - name: RxBlocking
   - name: RxTest
     platforms: [iOS,tvOS]
+- RxDataSources:
+  - name: RxDataSources
+    platforms: [iOS,tvOS]
+  - name: Differentiator
+    platforms: [iOS,tvOS]
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
