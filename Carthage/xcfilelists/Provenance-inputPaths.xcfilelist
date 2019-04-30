@@ -1,7 +1,6 @@
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/Differentiator.framework
-$(SRCROOT)/Carthage/Build/iOS/FBLPromises.framework
 $(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
