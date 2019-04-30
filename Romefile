@@ -1,45 +1,67 @@
 cache:
   local: ~/Library/Caches/Rome/
   s3Bucket: carthage
-# currentMap:
-# - PVLibrary:
-#     - name: PVLibrary
-#       platforms: [iOS]
-#     - name: PVLibrary tvOS
-#       platforms: [tvOS]
-# - PVSupport:
-    # - name: PVSupport
-    #   platforms: [iOS, tvOS]
-# - PVStella:
-#     - name: PVStella
-#       platforms: [iOS, tvOS]
-# - PVGenesis:
-#     - name: PVGenesis
-#       platforms: [iOS, tvOS]
-# - PVGB:
-#     - name: PVGB
-#       platforms: [iOS, tvOS]
-# - PVGBA:
-#     - name: PVGBA
-#       platforms: [iOS, tvOS]
-# - PVMednafen:
-#     - name: PVMednafen
-#       platforms: [iOS, tvOS]
-# - PVSNES:
-#     - name: PVSNES
-#       platforms: [iOS, tvOS]
-# - PVPokeMini:
-#     - name: PVPokeMini
-#       platforms: [iOS, tvOS]
-# - PVFCEU:
-#     - name: PVFCEU
-#       platforms: [iOS, tvOS]
-# - PicoDrive:
-#     - name: PicoDrive
-#       platforms: [iOS, tvOS]
-# - ProSystem:
-#     - name: ProSystem
-#       platforms: [iOS, tvOS]  
+currentMap:
+- PVLibrary:
+    - name: PVLibrary
+      platforms: [iOS]
+    - name: PVLibrary tvOS
+      platforms: [tvOS]
+- PVSupport:
+    - name: PVSupport
+      platforms: [iOS]
+    - name: PVSupport tvOS
+      platforms: [tvOS]
+- PVStella:
+    - name: PVStella
+      platforms: [iOS]
+    - name: PVStella tvOS
+      platforms: [tvOS]
+- PVGenesis:
+    - name: PVGenesis
+      platforms: [iOS]
+    - name: PVGenesis tvOS
+      platforms: [tvOS]
+- PVGB:
+    - name: PVGB
+      platforms: [iOS]
+    - name: PVGB tvOS
+      platforms: [tvOS]
+- PVGBA:
+    - name: PVGBA
+      platforms: [iOS]
+    - name: PVGBA tvOS
+      platforms: [tvOS]
+- PVMednafen:
+    - name: PVMednafen
+      platforms: [iOS]
+    - name: PVMednafen tvOS
+      platforms: [tvOS]
+- PVSNES:
+    - name: PVSNES
+      platforms: [iOS]
+    - name: PVSNES tvOS
+      platforms: [tvOS]
+- PVPokeMini:
+    - name: PVPokeMini
+      platforms: [iOS]
+    - name: PVPokeMini tvOS
+      platforms: [tvOS]
+- PVFCEU:
+    - name: PVFCEU
+      platforms: [iOS]
+    - name: PVFCEU tvOS
+      platforms: [tvOS]
+- PicoDrive:
+    - name: PicoDrive
+      platforms: [iOS]
+    - name: PicoDrive tvOS
+      platforms: [tvOS]
+- ProSystem:
+    - name: ProSystem
+      platforms: [iOS]
+    - name: ProSystem tvOS
+      platforms: [tvOS]  
 repositoryMap:
 - RxSwift:
   - name: RxSwift
@@ -71,8 +93,8 @@ repositoryMap:
 - SQLite.swift:
   - name: SQLite
     platforms: [iOS,tvOS]
-  - name: SQLite.swift
-    platforms: [iOS,tvOS]
+  # - name: SQLite.swift
+  #   platforms: [iOS,tvOS]
 - ZipArchive:
   - name: ZipArchive
     platforms: [iOS,tvOS]
@@ -88,6 +110,12 @@ repositoryMap:
   - name: NSLogger
     platforms: [iOS,tvOS]
   - name: NSLoggerSwift
+    platforms: [iOS,tvOS]
+- RxGesture:
+  - name: RxGesture
+    platforms: [iOS]
+- Reachability.swift:
+  - name: Reachability
     platforms: [iOS,tvOS]
 ignoreMap:
 - Fabric:

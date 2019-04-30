@@ -11,10 +11,11 @@ lockfile_waithold "rome-upload"
 
 echo "Uploading $PLATFORM ..."
 
-MISSING=`rome list --missing --platform ${PLATFORM} --cache-prefix "{$SWIFT_VERSION}" | awk '{print $1}'`
+MISSING=`rome list --missing --platform ${PLATFORM} --cache-prefix "${CACHE_PREFIX}" | awk '{print $1}'`
 echo "Missing ${MISSING}"
-#echo "${MISSING}" | awk '{print $1}' | carthage update --platform $PLATFORM --cache-builds && rome list --missing --platform $PLATFORM --cache-prefix "${SWIFT_VERSION}" | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix "${SWIFT_VERSION}"
-echo "${MISSING}" | awk '{print $1}' | carthage build --platform $PLATFORM --no-skip-current --cache-builds && rome list --missing --platform $PLATFORM --cache-prefix "${SWIFT_VERSION}" --no-skip-current | awk '{print $1}' | xargs rome upload --concurrently --platform $PLATFORM --cache-prefix "${SWIFT_VERSION}" --no-skip-current
+#echo "${MISSING}" | awk '{print $1}' | carthage update --platform $PLATFORM --cache-builds && rome list --missing --platform $PLATFORM --cache-prefix "${CACHE_PREFIX}" | awk '{print $1}' | xargs rome upload --platform $PLATFORM --cache-prefix "${CACHE_PREFIX}"
+#echo "${MISSING}" | awk '{print $1}' | carthage build --platform $PLATFORM --no-skip-current --cache-builds && rome list --missing --platform $PLATFORM --cache-prefix "${CACHE_PREFIX}" --no-skip-current | awk '{print $1}' | xargs rome upload --concurrently --platform $PLATFORM --cache-prefix "${CACHE_PREFIX}" --no-skip-current
+echo "${MISSING}" | awk '{print $1}' | carthage build --platform $PLATFORM --cache-builds && rome list --missing --platform $PLATFORM --cache-prefix "${CACHE_PREFIX}" | awk '{print $1}' | xargs rome upload --concurrently --platform $PLATFORM --cache-prefix "${CACHE_PREFIX}"
 
 echo "Done."
 

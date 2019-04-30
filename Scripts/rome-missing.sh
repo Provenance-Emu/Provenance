@@ -9,7 +9,7 @@ source "$DIR/rome-env.sh"
 
 if [ -x "$(command -v rome)" ]; then
   echo "Checking ${PLATFORM} ..."
-  rome list --missing --platform ${PLATFORM} --cache-prefix "${SWIFT_VERSION}"
+  rome list --missing --platform ${PLATFORM} --cache-prefix "${CACHE_PREFIX}"
   echo "Done."
 else
   echo "Rome not installed. Skipping cached frameworks."

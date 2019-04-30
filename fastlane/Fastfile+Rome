@@ -9,9 +9,11 @@ end
 
 SWIFT_VERSION=swiftVersion()
 HAS_ROME=command?("rome")
+DIRECTORY="carthage"
+CACHE_PREFIX="#{SWIFT_VERSION}"
 ENV["AWS_ACCESS_KEY_ID"] = "M2B65BPG5JRKHIC8RAKX"
 ENV["AWS_SECRET_ACCESS_KEY"] = "R1pwhbv7foHK88VDgq1cZ3jlVi2YS6PFv9ueZi4p"
-ENV["AWS_ENDPOINT"] = "http://provenance.joemattiello.com:9002"
+ENV["AWS_ENDPOINT"] = "http://provenance-emu.app/minio/"
 ENV["AWS_REGION"] = "us-east-1"
 
 desc "Use Rome for Carthage to download pre-built binaries"
@@ -23,12 +25,12 @@ lane :rome_download do |options|
         next
     end
 
-    UI.message("Swift version '#{SWIFT_VERSION}'")
+    UI.message("Swift version '#{SWIFT_VERSION}'. Prefix: '#{CACHE_PREFIX}'")
 
     rome(
         command: "download",
         platform: platform,
-        cacheprefix: SWIFT_VERSION,
+        cacheprefix: CACHE_PREFIX,
         concurrently: true
     )
 end
@@ -42,12 +44,12 @@ lane :rome_upload do |options|
         next
     end
 
-    UI.message("Swift version '#{SWIFT_VERSION}'")
+    UI.message("Swift version '#{SWIFT_VERSION}'. Prefix: '#{CACHE_PREFIX}'")
 
     rome(
         command: "upload",
         platform: platform,
-        cacheprefix: SWIFT_VERSION,
+        cacheprefix: CACHE_PREFIX,
         concurrently: true
     )
 end
@@ -61,12 +63,12 @@ lane :rome_missing do |options|
         next
     end
 
-    UI.message("Swift version '#{SWIFT_VERSION}'")
+    UI.message("Swift version '#{SWIFT_VERSION}'. Prefix: '#{CACHE_PREFIX}'")
 
     rome(
         command: "list",
         platform: platform,
-        cacheprefix: "#{SWIFT_VERSION} --missing",
+        cacheprefix: "#{CACHE_PREFIX} --missing",
     )
 end
 
@@ -79,11 +81,11 @@ lane :rome_present do |options|
         next
     end
 
-    UI.message("Swift version '#{SWIFT_VERSION}'")
+    UI.message("Swift version '#{SWIFT_VERSION}'. Prefix: '#{CACHE_PREFIX}'")
 
     rome(
         command: "list",
         platform: platform,
-        cacheprefix: "#{SWIFT_VERSION} --present",
+        cacheprefix: "#{CACHE_PREFIX} --present",
     )
 end

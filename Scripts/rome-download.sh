@@ -11,7 +11,7 @@ lockfile_waithold "rome-download"
 
 if [ -x "$(command -v rome)" ]; then
   echo "Downloading ${PLATFORM} ..."
-  carthage bootstrap --no-build --use-ssh --use-submodules --platform ${PLATFORM} && rome download --concurrently --platform ${PLATFORM} --cache-prefix "${SWIFT_VERSION}"
+  carthage bootstrap --no-build --use-submodules --platform ${PLATFORM} && rome download --concurrently --platform ${PLATFORM} --cache-prefix "${CACHE_PREFIX}"
   echo "Done."
 else
   echo "Rome not installed. Skipping cached frameworks."
