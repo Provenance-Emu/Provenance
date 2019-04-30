@@ -446,8 +446,6 @@
 		B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
 		B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10487218F212600210C39 /* ZipArchive.framework */; };
 		B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10486218F212600210C39 /* ZIPFoundation.framework */; };
-		B3CDEED521D4D50F000C55F7 /* FBLPromises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */; };
-		B3CDEED721D4D517000C55F7 /* FBLPromises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CDEED621D4D517000C55F7 /* FBLPromises.framework */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -1065,7 +1063,6 @@
 				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */,
-				B3CDEED521D4D50F000C55F7 /* FBLPromises.framework in Frameworks */,
 				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
 				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
 				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
@@ -1158,7 +1155,6 @@
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
-				B3CDEED721D4D517000C55F7 /* FBLPromises.framework in Frameworks */,
 				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
 				B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */,
 				B3B104A9218F212800210C39 /* NSLoggerSwift.framework in Frameworks */,
