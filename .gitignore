@@ -30,3 +30,5 @@ report.xml
 *.zip
 /fastlane/test_output
 /.folio
+.DS_Store
+xcshareddata
