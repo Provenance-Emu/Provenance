@@ -53,7 +53,7 @@ extension PVGBEmulatorCore: CoreOptional {
             "GameBoy Color - Pastel Mix",
             "GameBoy Color - Inverted",
             "GameBoy Color - Rom Title",
-            "GameBoy Color - Grayscale",
+            "GameBoy Color - Grayscale"
     ])
 
     static var paletteOption: CoreOption = {

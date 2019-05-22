@@ -244,12 +244,12 @@ extension MirroredSettings {
     public dynamic var autoLoadSaves = false
 
     #if os(tvOS)
-    @objc public dynamic var disableAutoLock = true
+    public dynamic var disableAutoLock = true
     #else
-    @objc public dynamic var disableAutoLock = false
+    public dynamic var disableAutoLock = false
     #endif
-    
-    @objc public dynamic var buttonVibration = true
+
+    public dynamic var buttonVibration = true
 
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
@@ -271,9 +271,9 @@ extension MirroredSettings {
     public dynamic var buttonTints = true
 
     #if os(tvOS)
-        @objc public dynamic var missingButtonsAlwaysOn = true
+        public dynamic var missingButtonsAlwaysOn = true
     #else
-        @objc public dynamic var missingButtonsAlwaysOn = false
+        public dynamic var missingButtonsAlwaysOn = false
     #endif
 
     public dynamic var allRightShoulders = false

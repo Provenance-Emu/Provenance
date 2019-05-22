@@ -21,14 +21,14 @@ extension MupenGameCore: CoreOptional {
                                                                             description: nil),
                                             values: [
                                                 CoreOptionMultiValue(title: "GlideN64", description: "Newer, GLES3 GFX Driver"),
-                                                CoreOptionMultiValue(title: "RICE", description: "Older, faster, less feature rich GFX Driver"),
+                                                CoreOptionMultiValue(title: "RICE", description: "Older, faster, less feature rich GFX Driver")
         ])
 
         let rspOptions = CoreOption.multi(display: CoreOptionValueDisplay(title: "RSP Plugin",
                                                                           description: "GlideN64 is newer but slower. Try RICE for older devices"),
                                           values: [
                                               CoreOptionMultiValue(title: "RSPHLE", description: "Faster, default RSP"),
-                                              CoreOptionMultiValue(title: "CXD4", description: "Slower. More features for some games, breaks others."),
+                                              CoreOptionMultiValue(title: "CXD4", description: "Slower. More features for some games, breaks others.")
         ])
         let plugins = CoreOption.group(display: CoreOptionValueDisplay(title: "Plugins", description: nil), subOptions: [glidenOption, rspOptions])
 

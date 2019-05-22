@@ -332,7 +332,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
                     collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
                     collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-                    collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                    collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
                 ])
                 layout.sectionInsetReference = .fromSafeArea
             } else {
@@ -2603,12 +2603,12 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
 
 // Helper function inserted by Swift 4.2 migrator.
 #if os(iOS)
-    fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+    private func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
         return Dictionary(uniqueKeysWithValues: input.map { key, value in (key.rawValue, value) })
     }
 
     // Helper function inserted by Swift 4.2 migrator.
-    fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
+    private func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
         return input.rawValue
     }
 #endif

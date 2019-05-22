@@ -62,7 +62,7 @@ public struct System: Codable, SystemProtocol {
 
     public let supportsRumble: Bool
     public let screenType: ScreenType
-    
+
     public init(name: String, identifier: String, shortName: String, shortNameAlt: String? = nil, manufacturer: String,
                 releaseYear: Int, bits: SystemBits, headerByteSize: Int, openvgDatabaseID: Int, requiresBIOS: Bool = false,
                 options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil, usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType) {
@@ -108,7 +108,7 @@ public extension System {
 
         let options = system.options
         let bioses = system.BIOSes?.map { (bios: BIOSInfoProvider) -> BIOS in
-            
+
             let file: LocalFile?
             if let b = bios as? BIOS {
                 file = b.file

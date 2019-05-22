@@ -66,6 +66,11 @@ excluded: # paths to ignore during linting. overridden byincluded.
   - PVSupport/Carthage
   - PVLibrary/Carthage
   - Pods
+  - Cores
+  - Scripts
+  - fastlane
+  - build
+  - archive
 # parameterized rules can be customized from this configuration file
 line_length: 200
 # parameterized rules are first parameterized as a warning level, then error level.

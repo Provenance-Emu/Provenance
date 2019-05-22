@@ -24,7 +24,7 @@ public struct Core: Codable {
         return systems.map { $0 }
     }
     public let project: CoreProject
-    
+
 //    public init(identifier: String, principleClass: String, systems: [System], project: CoreProject) {
 //        self.identifier = identifier
 //        self.principleClass = principleClass

@@ -96,7 +96,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave),
             PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
             PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
-            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad),
+            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
         ]
 
         let savesSection = Section(title: "Saves", rows: saveRows)
@@ -112,7 +112,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
             PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
-            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount),
+            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
         ])
 
         let avSection = Section(title: "Audio/Video", rows: avRows)
@@ -127,14 +127,14 @@ final class PVSettingsViewController: PVQuickTableViewController {
             controllerRows.append(contentsOf: [
                 PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
                 PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
-                PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration),
+                PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration)
             ])
         #endif
         controllerRows.append(contentsOf: [
             SegueNavigationRow(text: "Controllers", detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
             SegueNavigationRow(text: "iCade Controller", detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
-            }),
+            })
         ])
 
         let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check wiki for Controls per systems")
@@ -150,7 +150,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 action: { [weak self] _ in
                     self?.launchWebServerAction()
                 }
-            ),
+            )
         ]
 
         #if os(tvOS)
@@ -213,7 +213,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 },
                 action: { [weak self] _ in self?.manageConflictsAction() }
             ),
-            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue"),
+            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
         ]
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
@@ -234,7 +234,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
             PVSettingsSwitchRow(text: "4X Multisampling GL",
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
+                                key: \PVSettingsModel.debugOptions.multiSampling)
 
 //            PVSettingsSwitchRow(text: "Unsupported Cores",
 //                                detailText: .subtitle("Cores that are in development"),
@@ -313,7 +313,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             NavigationRow<SystemSettingsCell>(text: "Git Revision", detailText: .value2(revisionString)),
             NavigationRow<SystemSettingsCell>(text: "Build Date", detailText: .value2(buildDateString)),
             NavigationRow<SystemSettingsCell>(text: "Builder", detailText: .value2(builtByUser)),
-            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown")),
+            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
         ]
 
         let buildSection = Section(title: "Build Information", rows: buildInformationRows)
@@ -321,7 +321,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
             SegueNavigationRow(text: "Cores", detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
-            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil),
+            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
         ]
 
         let extraInfoSection = Section(title: "3rd Party & Legal", rows: extraInfoRows)
@@ -330,7 +330,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let debugRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(text: "Logs", detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { _ in
                 self.logsActions()
-            }),
+            })
         ]
 
         let debugSection = Section(title: "Debug", rows: debugRows)

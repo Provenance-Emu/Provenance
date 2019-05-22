@@ -53,7 +53,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         .buttonI,
         .buttonJ,
         .buttonK,
-        .buttonL,
+        .buttonL
     ]
 
     public var description: String {

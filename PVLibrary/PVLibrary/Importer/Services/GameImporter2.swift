@@ -54,7 +54,6 @@ extension URL {
 //    var isFileArchive: Promise<Bool> { return Promise { self.url.isFileArchive } }
 //}
 
-
 //public final class ImporterService {
 //    public static let shared: ImporterService = ImporterService()
 //

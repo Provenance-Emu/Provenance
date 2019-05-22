@@ -38,7 +38,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable {
             guard let s = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
                 return 0
             }
-            
+
             return UInt64(s)
         } catch {
             ELOG("\(error.localizedDescription)")

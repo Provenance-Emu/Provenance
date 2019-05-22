@@ -65,7 +65,7 @@ final class PillPageControl: UIView {
         layer.actions = [
             "bounds": NSNull(),
             "frame": NSNull(),
-            "position": NSNull(),
+            "position": NSNull()
         ]
         return layer
     }()

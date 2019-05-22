@@ -47,7 +47,7 @@ final class PVCoresTableViewController: QuickTableViewController {
                         self.navigationController?.pushViewController(webVC, animated: true)
                     #endif
                 })
-            }),
+            })
         ]
     }
 }

@@ -29,7 +29,7 @@ env:
     - LANG=en_US.UTF-8
     - LC_ALL=en_US.UTF-8
     - WORKSPACE_NAME="Provenance.xcworkspace"
-    - PROJECT_NAME="Provenance.xcodeproj"
+    #- PROJECT_NAME="Provenance.xcodeproj"
     - SCHEME_IOS_APP="Provenance-Release"
     - SCHEME_TVOS_APP="ProvenanceTV-Release"
     # - IOS_PLATFORM="iOS Simulator"
@@ -77,7 +77,8 @@ before_script:
     # - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
       # This can take a while so using the above to not make travis abort
   # - git lfs pull
-  - ./Scripts/rome-download.sh
+  - bundle exec fastlane rome_download
+  # - ./Scripts/rome-download.sh
   # - ./Scripts/rome-travis.sh > /tmp/carthage.log
     #- carthage bootstrap --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./" --configuration $CONFIGURATION > /tmp/carthage.log
         # Killing background sleep loop
@@ -97,7 +98,7 @@ after_failure:
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 script:
-  # - set -o pipefail
+  - set -o pipefail
   - bundle exec fastlane travis_ios
   # - swiftlint
   # - travis_wait 60 xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -configuration "$CONFIGURATION" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`
