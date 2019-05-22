@@ -15,7 +15,7 @@ git:
 
 addons:
   ssh_known_hosts:
-  - provenance.joemattiello.com
+  - provenance-emu.com
   - bitbucket.org
 
 branches:
@@ -51,6 +51,7 @@ before_install:
   - brew install git-lfs || true
   - brew install imagemagick || true
   # - brew install hudochenkov/sshpass/sshpass
+  - brew tap blender/tap https://github.com/blender/homebrew-tap.git || true
   - brew install blender/homebrew-tap/rome || true
   - bundle install
 before_script:
@@ -70,7 +71,7 @@ before_script:
   - ssh-add ~/.ssh/id_provenance
   #- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - echo -e "Host bitbucket.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-  - echo -e "Host provenance.joemattiello.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host provenance-emu.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   # bootstrap the dependencies for the project
         # Output something every 10 minutes or Travis kills the job
     # - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
