@@ -16,6 +16,9 @@
   <img src="https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square"/>
 </a>
 <img src="https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square"/>
+<a href="https://codecov.io/gh/Provenance-Emu/Provenance">
+  <img src="https://codecov.io/gh/Provenance-Emu/Provenance/branch/develop/graph/badge.svg"/>
+</a>
 </div>
 
 
