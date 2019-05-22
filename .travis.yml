@@ -87,10 +87,9 @@ after_success:
   - wget https://raw.githubusercontent.com/JoeMatt/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
-  - ./Scripts/travis-upload.bash
+  #- ./Scripts/travis-upload.bash
   # Test code covered, add -enableCodeCoverage YES to xcodebuild
   - sleep 5
-  #- bash <(curl -s https://codecov.io/bash)
 after_failure:
   - tail -100 /tmp/carthage.log
   - wget https://raw.githubusercontent.com/JoeMatt/travis-ci-discord-webhook/master/send.sh
