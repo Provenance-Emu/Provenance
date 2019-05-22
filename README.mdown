@@ -19,6 +19,9 @@
 <a href="https://codecov.io/gh/Provenance-Emu/Provenance">
   <img src="https://codecov.io/gh/Provenance-Emu/Provenance/branch/develop/graph/badge.svg"/>
 </a>
+<a href="https://travis-ci.org/Provenance-Emu/Provenance#">
+  <img src="https://travis-ci.org/Provenance-Emu/Provenance.svg?branch=develop"/>
+</a>
 </div>
 
 
