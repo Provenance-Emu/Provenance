@@ -13,7 +13,7 @@ DIRECTORY="carthage"
 CACHE_PREFIX="#{SWIFT_VERSION}"
 ENV["AWS_ACCESS_KEY_ID"] = "M2B65BPG5JRKHIC8RAKX"
 ENV["AWS_SECRET_ACCESS_KEY"] = "R1pwhbv7foHK88VDgq1cZ3jlVi2YS6PFv9ueZi4p"
-ENV["AWS_ENDPOINT"] = "http://provenance-emu.app/minio/"
+ENV["AWS_ENDPOINT"] = "http://provenance-emu.com:9002"
 ENV["AWS_REGION"] = "us-east-1"
 
 desc "Use Rome for Carthage to download pre-built binaries"
