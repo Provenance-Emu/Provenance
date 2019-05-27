@@ -122,7 +122,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-            controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.2, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+            controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.5, max: 1.0), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
                 PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
