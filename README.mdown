@@ -28,9 +28,9 @@
 
 ## Installation
 
-To get started, please follow the [Installation](https://github.com/Provenance-Emu/Provenance/wiki) instructions on the wiki.
+To get started, please follow the [Installation](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance) instructions on the wiki.
 
-<sup>If you run into trouble, check the [Frequently Asked Questions](https://github.com/Provenance-Emu/Provenance/wiki/Frequently-Asked-Questions) and please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting any new issues.</sup>
+<sup>If you run into trouble, check the [Frequently Asked Questions](https://wiki.provenance-emu.com/faqs) and please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting any new issues.</sup>
 
 
 ### Why 'Provenance'?
@@ -100,26 +100,26 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
 - ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
-  - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/Provenance-Emu/Provenance/wiki/Restoring-Files):
+  - [Import](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) / [Export](https://wiki.provenance-emu.com/info/miscellaneous/restoring-files):
     - Uploading _(via built-in web server)_
-  - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs):
+  - [Import](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms):
     - Downloading _(from mobile browsers)_
     - Copying _(from other mobile apps and AirDrop)_
     - Injecting _(with desktop apps)_
 - Game Library Searching
 - iOS 9+ (iPhone, iPad)
-  - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
+  - 3D Touch Shortcuts for Recent Games (iPhone 6s and later, except iPhone SE and iPhone Xʀ)
   - Taptic Engine Button Feedback (iPhone 7 and later)
-  - Spotlight Searching ([Setup](https://github.com/Provenance-Emu/Provenance/wiki/Installing-Provenance#advanced-features-full))
+  - Spotlight Searching ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
 - tvOS 9+ (Apple TV 4+)
-  - TopShelf Support ([Setup](https://github.com/Provenance-Emu/Provenance/wiki/Installing-Provenance#advanced-features-full))
+  - TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
 
 <sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
 
 ----
 
 ### Importing ROMs
-Visit our wiki on [Importing ROMs](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs) to learn how to load ROMs into Provenance.
+Visit our wiki on [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) to learn how to load ROMs into Provenance.
 
 
 ### Release Roadmap
