@@ -237,7 +237,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         fpsLabel.layer.masksToBounds = false
         fpsLabel.layer.shadowRadius = 1.0
         fpsLabel.layer.shadowOpacity = 1.0
-        fpsLabel.layer.shadowOffset = CGSize (width: 1, height:2)
+        fpsLabel.layer.shadowOffset = CGSize (width: 1, height: 2)
         #if os(tvOS)
             fpsLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         #else
