@@ -509,6 +509,8 @@
 		B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869A2313835D00A9DDF6 /* RxRelay.framework */; };
+		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
@@ -1030,6 +1032,8 @@
 		B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerManager.swift; sourceTree = "<group>"; };
 		B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerSelectionViewController.swift; sourceTree = "<group>"; };
 		B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVConflictViewController.swift; sourceTree = "<group>"; };
+		B3FD869A2313835D00A9DDF6 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
+		B3FD869C2313836B00A9DDF6 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/tvOS/RxRelay.framework; sourceTree = "<group>"; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		BE9FDCBE1C210B9F0046DF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1057,6 +1061,7 @@
 				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
 				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
+				B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */,
 				B3B10473218F20FE00210C39 /* NSLoggerSwift.framework in Frameworks */,
 				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
 				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
@@ -1144,6 +1149,7 @@
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
+				B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B324C6222192059E009F4EDC /* PVMednafen.framework in Frameworks */,
 				14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */,
@@ -1337,6 +1343,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
+				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
 				B3CDEED821D4D84E000C55F7 /* BitByteData.framework */,
 				B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */,
 				B3CDEED621D4D517000C55F7 /* FBLPromises.framework */,

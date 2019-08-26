@@ -14,6 +14,7 @@ $(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework
 $(SRCROOT)/Carthage/Build/iOS/RxDataSources.framework
 $(SRCROOT)/Carthage/Build/iOS/RxGesture.framework
 $(SRCROOT)/Carthage/Build/iOS/RxRealm.framework
+$(SRCROOT)/Carthage/Build/iOS/RxRelay.framework
 $(SRCROOT)/Carthage/Build/iOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
 $(SRCROOT)/Carthage/Build/iOS/SteamController.framework
