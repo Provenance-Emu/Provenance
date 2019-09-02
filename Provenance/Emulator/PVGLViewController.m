@@ -491,9 +491,6 @@ struct RenderSettings {
     {
         MAKESTRONG(self);
 
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
@@ -528,10 +525,7 @@ struct RenderSettings {
             glUseProgram(strongself->blitShaderProgram);
             glUniform1i(strongself->blitUniform_EmulatedImage, 0);
         }
-        
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        
+                
         [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
         
         glBindBuffer(GL_ARRAY_BUFFER, strongself->vertexVBO);
