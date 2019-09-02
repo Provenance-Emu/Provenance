@@ -1,5 +1,5 @@
 #ifdef GL_ES
-precision mediump float;
+precision lowp float;
 #endif
 
 #if __VERSION__ < 300
@@ -8,7 +8,7 @@ precision mediump float;
 
 uniform sampler2D EmulatedImage;
 
-varying highp vec2 fTexCoord;
+varying lowp vec2 fTexCoord;
 
 void main( void )
 {
