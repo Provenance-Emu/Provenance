@@ -3,12 +3,14 @@
 github "nsoperations/HockeySDK-iOS" "bugfix/xcode_10_2"
 github "bitstadium/HockeySDK-tvOS" "5.1.0"
 
-github "xmartlabs/XLActionController" ~> 5.0.0
-github "bcylin/QuickTableViewController" ~> 1.1.0
+# github "xmartlabs/XLActionController" ~> 5.0.0
+github "Puasonych/XLActionController" "update-for-xcode-11"
+
+github "bcylin/QuickTableViewController"
 github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
 #github "google/promises"
-github "zydeco/SteamController" ~> 1.0.3
+github "zydeco/SteamController"
 
 # Crashlytics - Static Libs
 # iOS
@@ -24,18 +26,18 @@ binary "https://building42.github.io/Specs/Carthage/tvOS/Crashlytics.json"
 binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
 
 # PVSupport
-github "fpillet/NSLogger" ~> 1.9.7
-github "CocoaLumberjack/CocoaLumberjack" ~> 3.5.3
-github "radex/SwiftyUserDefaults" ~> 4.0.0
+github "fpillet/NSLogger"
+github "CocoaLumberjack/CocoaLumberjack"
+github "radex/SwiftyUserDefaults"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
-github "ZipArchive/ZipArchive" ~> 2.1.5
-github "weichsel/ZIPFoundation" ~> 0.9.8
-#github "tsolomko/SWCompression" ~> 4.5
+github "ZipArchive/ZipArchive"
+github "weichsel/ZIPFoundation"
+#github "tsolomko/SWCompression"
 github "realm/realm-cocoa"
-github "stephencelis/SQLite.swift" ~> 0.12.0
+github "stephencelis/SQLite.swift"
 
 # Rx
-github "ReactiveX/RxSwift" ~> 5.0
+github "ReactiveX/RxSwift"
 github "RxSwiftCommunity/RxRealm"

@@ -361,11 +361,9 @@
 		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
 		B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
 		B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */; };
-		B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10469218F20FD00210C39 /* RxAtomic.framework */; };
 		B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046A218F20FD00210C39 /* NSLogger.framework */; };
 		B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046C218F20FD00210C39 /* XLActionController.framework */; };
 		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
-		B3B1047F218F20FE00210C39 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046E218F20FE00210C39 /* RxBlocking.framework */; };
 		B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
 		B3B10498218F212800210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10485218F212500210C39 /* SQLite.framework */; };
@@ -1067,11 +1065,9 @@
 				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
 				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B3B1047A218F20FE00210C39 /* RxAtomic.framework in Frameworks */,
 				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
 				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
 				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
-				B3B1047F218F20FE00210C39 /* RxBlocking.framework in Frameworks */,
 				B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */,
 				B3DE5B1421B102F20066069E /* ProvenanceShared.framework in Frameworks */,
 				B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */,

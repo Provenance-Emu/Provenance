@@ -25,6 +25,7 @@ public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
         get {
             return _value
         }
+        @objc(setButtonValue:)
         set {
             _value = newValue
         }
