@@ -107,5 +107,7 @@
 			<dict/>
 		</dict>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Provenance uses Bluetooth to support game controllers</string>
 </dict>
 </plist>
