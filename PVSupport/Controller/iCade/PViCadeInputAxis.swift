@@ -10,10 +10,12 @@ import GameController
 
 public final class PViCadeAxisInput: GCControllerAxisInput {
     private var _value: Float = 0.0
+
     public override var value: Float {
         get {
             return _value
         }
+        @objc(setButtonValue:)
         set {
             _value = newValue
         }

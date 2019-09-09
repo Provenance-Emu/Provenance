@@ -65,7 +65,7 @@
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git
 [submodule "Carthage/Checkouts/XLActionController"]
-	url = https://github.com/xmartlabs/XLActionController.git
+	url = https://github.com/Puasonych/XLActionController.git
 	path = Carthage/Checkouts/XLActionController
 [submodule "Carthage/Checkouts/promises"]
 	path = Carthage/Checkouts/promises
