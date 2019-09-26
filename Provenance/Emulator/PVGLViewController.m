@@ -487,10 +487,15 @@ struct RenderSettings {
 
     MAKEWEAK(self);
 
-    void (^renderBlock)(void) = ^()
+    void (^renderBlock)(BOOL hasDepth) = ^()
     {
         MAKESTRONG(self);
 
+#if DEBUG
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+#endif
+        
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
@@ -524,6 +529,11 @@ struct RenderSettings {
         {
             glUseProgram(strongself->blitShaderProgram);
             glUniform1i(strongself->blitUniform_EmulatedImage, 0);
+        }
+        
+        if (!hasDepth) {
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
         }
                 
         [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
@@ -565,7 +575,7 @@ struct RenderSettings {
             if (isFrontBufferReady)
             {
                 fetchVideoBuffer();
-                renderBlock();
+                renderBlock(YES);
                 [_emulatorCore.frontBufferCondition lock];
                 _emulatorCore.isFrontBufferReady = NO;
                 [_emulatorCore.frontBufferCondition signal];
@@ -578,7 +588,7 @@ struct RenderSettings {
         if (self.emulatorCore.isSpeedModified)
         {
             fetchVideoBuffer();
-            renderBlock();
+            renderBlock(NO);
         }
         else
         {
@@ -589,7 +599,7 @@ struct RenderSettings {
                 _emulatorCore.isFrontBufferReady = NO;
                 [_emulatorCore.frontBufferLock lock];
                 fetchVideoBuffer();
-                renderBlock();
+                renderBlock(NO);
                 [_emulatorCore.frontBufferLock unlock];
                 [_emulatorCore.frontBufferCondition unlock];
             }
@@ -598,7 +608,7 @@ struct RenderSettings {
                 @synchronized(self.emulatorCore)
                 {
                     fetchVideoBuffer();
-                    renderBlock();
+                    renderBlock(NO);
                 }
             }
         }
