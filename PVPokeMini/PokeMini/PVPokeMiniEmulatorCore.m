@@ -368,7 +368,10 @@ int saveEEPROM(const char *filename)
             self.controller1.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
                 __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
                 
-                // Buttons
+                // Buttons, see pages 10 and 11:
+// https://www.pokemon-mini.net/download/manuals/Pokemon-Mini-Manual.pdf
+                
+                // A on the MFI extended Gamepad is also A in-game
                 if (element == gamepad.buttonA) {
                     if (strongSelf->controllerState.a != gamepad.buttonA.isPressed) {
                         JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
@@ -376,39 +379,62 @@ int saveEEPROM(const char *filename)
                         DLog(@"A %@", strongSelf->controllerState.a ? @"Pressed" : @"Unpressed");
                     }
                 }
-                else if (element == gamepad.buttonB) {
-                    if (strongSelf->controllerState.b != gamepad.buttonB.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
-                        strongSelf->controllerState.b = gamepad.buttonB.isPressed;
+/*
+                X is B, per Apple's Documentation
+                Please see Table 1-2:
+https://developer.apple.com/library/archive/documentation/ServicesDiscovery/Conceptual/GameControllerPG/IncorporatingControllersintoYourDesign/IncorporatingControllersintoYourDesign.html#//apple_ref/doc/uid/TP40013276-CH4-SW4
+  */
+                else if (element == gamepad.buttonX) {
+                    if (strongSelf->controllerState.b != gamepad.buttonX.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonX.isPressed ? 1 : 0);
+                        strongSelf->controllerState.b = gamepad.buttonX.isPressed;
                         DLog(@"B %@", strongSelf->controllerState.b ? @"Pressed" : @"Unpressed");
                     }
                 }
-                else if (element == gamepad.buttonX) {
-                    if (strongSelf->controllerState.c != gamepad.buttonX.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
-                        strongSelf->controllerState.c = gamepad.buttonX.isPressed;
+                // Setting both Right Shoulder and Trigger to map to C.
+                else if (element == gamepad.rightTrigger  {
+                    if (strongSelf->controllerState.c != gamepad.rightTrigger.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonC, gamepad.rightTrigger.isPressed ? 1 : 0);
+                        strongSelf->controllerState.c = gamepad.rightTrigger.isPressed;
                         DLog(@"C %@", strongSelf->controllerState.c ? @"Pressed" : @"Unpressed");
                     }
                 }
-                // Extra buttons
-                else if (element == gamepad.leftTrigger) {
-                    if (strongSelf->controllerState.menu != gamepad.leftTrigger.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.leftTrigger.isPressed ? 1 : 0);
-                        strongSelf->controllerState.menu = gamepad.leftTrigger.isPressed;
+                else if (element == gamepad.rightShoulder  {
+                    if (strongSelf->controllerState.c != gamepad.rightShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonC, gamepad.rightShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.c = gamepad.rightShoulder.isPressed;
+                        DLog(@"C %@", strongSelf->controllerState.c ? @"Pressed" : @"Unpressed");
+                    }
+                }
+                // B brings up the menu
+                else if (element == gamepad.buttonB) {
+                    if (strongSelf->controllerState.menu != gamepad.buttonB.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonB.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.buttonB.isPressed;
                         DLog(@"Menu %@", strongSelf->controllerState.menu ? @"Pressed" : @"Unpressed");
                     }
                 }
-                else if (element == gamepad.rightTrigger) {
-                    if (strongSelf->controllerState.shake != gamepad.rightTrigger.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonShake, gamepad.rightTrigger.isPressed ? 1 : 0);
-                        strongSelf->controllerState.shake = gamepad.rightTrigger.isPressed;
+                // Setting both Left Shoulder and Trigger to "Shake"
+                else if (element == gamepad.leftTrigger) {
+                    if (strongSelf->controllerState.shake != gamepad.leftTrigger.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.leftTrigger.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.leftTrigger.isPressed;
                         DLog(@"Shake %@", strongSelf->controllerState.shake ? @"Pressed" : @"Unpressed");
                     }
                 }
-                else if (element == gamepad.leftShoulder) {
-                    if (strongSelf->controllerState.power != gamepad.leftShoulder.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
-                        strongSelf->controllerState.power = gamepad.leftShoulder.isPressed;
+               else if (element == gamepad.leftShoulder) {
+                    if (strongSelf->controllerState.shake != gamepad.leftShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.leftShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.leftShoulder.isPressed;
+                        DLog(@"Shake %@", strongSelf->controllerState.shake ? @"Pressed" : @"Unpressed");
+                    }
+                }
+ 
+                // Y is Power
+                else if (element == gamepad.buttonY) {
+                    if (strongSelf->controllerState.power != gamepad.buttonY.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.buttonY.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.buttonY.isPressed;
                         DLog(@"Power %@", strongSelf->controllerState.power ? @"Pressed" : @"Unpressed");
                     }
                 }
@@ -427,47 +453,55 @@ int saveEEPROM(const char *filename)
             self.controller1.gamepad.valueChangedHandler = ^(GCGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
                 __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
 
-                    // Buttons
+                // Buttons matching the above, we just don't have
+                // Thumbsticks or triggers.
                 if (element == gamepad.buttonA) {
                     if (strongSelf->controllerState.a != gamepad.buttonA.isPressed) {
                         JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
                         strongSelf->controllerState.a = gamepad.buttonA.isPressed;
                     }
                 }
-                else if (element == gamepad.buttonB) {
-                    if (strongSelf->controllerState.b != gamepad.buttonB.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
-                        strongSelf->controllerState.b = gamepad.buttonB.isPressed;
-                    }
-                }
                 else if (element == gamepad.buttonX) {
-                    if (strongSelf->controllerState.c != gamepad.buttonX.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
-                        strongSelf->controllerState.c = gamepad.buttonX.isPressed;
-                    }
-                }
-                // Extra buttons
-                else if (element == gamepad.buttonX) {
-                    if (strongSelf->controllerState.menu != gamepad.buttonX.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonX.isPressed ? 1 : 0);
-                        strongSelf->controllerState.menu = gamepad.buttonX.isPressed;
+                    if (strongSelf->controllerState.b != gamepad.buttonX.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonX.isPressed ? 1 : 0);
+                        strongSelf->controllerState.b = gamepad.buttonX.isPressed;
                     }
                 }
                 else if (element == gamepad.rightShoulder) {
-                    if (strongSelf->controllerState.shake != gamepad.rightShoulder.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonShake, gamepad.rightShoulder.isPressed ? 1 : 0);
-                        strongSelf->controllerState.shake = gamepad.rightShoulder.isPressed;
+                    if (strongSelf->controllerState.c != gamepad.rightShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonC, gamepad.rightShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.c = gamepad.rightShoulder.isPressed;
+                    }
+                }
+                // Extra buttons
+                else if (element == gamepad.buttonB) {
+                    if (strongSelf->controllerState.menu != gamepad.buttonB.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonB.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.buttonB.isPressed;
                     }
                 }
                 else if (element == gamepad.leftShoulder) {
-                    if (strongSelf->controllerState.power != gamepad.leftShoulder.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
-                        strongSelf->controllerState.power = gamepad.leftShoulder.isPressed;
+                    if (strongSelf->controllerState.shake != gamepad.leftShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.leftShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.leftShoulder.isPressed;
+                    }
+                }
+                else if (element == gamepad.buttonY) {
+                    if (strongSelf->controllerState.power != gamepad.buttonY.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.buttonY.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.buttonY.isPressed;
                     }
                 }
             };
         }
 #if TARGET_OS_TV
+/*
+        Going to have to trust that this is correct for the Siri
+        Remote, as the documentation refers to it by button number,
+        not letters.  See (Figure 1-3):
+
+https://developer.apple.com/library/archive/documentation/ServicesDiscovery/Conceptual/GameControllerPG/IncorporatingControllersintoYourDesign/IncorporatingControllersintoYourDesign.html#//apple_ref/doc/uid/TP40013276-CH4-SW4
+*/
         else if ([self.controller1 microGamepad]) {
             GCMicroGamepad *microGamepad = [self.controller1 microGamepad];
             
