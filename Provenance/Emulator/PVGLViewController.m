@@ -531,7 +531,7 @@ struct RenderSettings {
             glUniform1i(strongself->blitUniform_EmulatedImage, 0);
         }
         
-        if (!hasDepth) {
+        if (!doesCoreRenderToOpenGL) {
             glDisable(GL_DEPTH_TEST);
             glDisable(GL_CULL_FACE);
         }
