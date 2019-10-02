@@ -487,7 +487,7 @@ struct RenderSettings {
 
     MAKEWEAK(self);
 
-    void (^renderBlock)(BOOL hasDepth) = ^()
+    void (^renderBlock)(BOOL doesCoreRenderToOpenGL) = ^()
     {
         MAKESTRONG(self);
 
