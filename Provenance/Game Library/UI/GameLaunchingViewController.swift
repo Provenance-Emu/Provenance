@@ -572,6 +572,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     private func presentEMUVC(_ emulatorViewController: PVEmulatorViewController, withGame game: PVGame, loadingSaveState saveState: PVSaveState? = nil) {
         // Present the emulator VC
         emulatorViewController.modalTransitionStyle = .crossDissolve
+        emulatorViewController.modalPresentationStyle = .fullScreen
         emulatorViewController.glViewController.view.isHidden = saveState != nil
 
         present(emulatorViewController, animated: true) { () -> Void in
