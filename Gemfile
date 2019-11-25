@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Ruby 
+# Ruby
 gem 'dotenv'
 
 # Fastlane
@@ -19,6 +19,11 @@ group :documentation do
 end
 
 group :test do
+  # Temporary workaround for bug in binary file diffing
+  # https://github.com/danger/danger/issues/1055
+  # https://github.com/ruby-git/ruby-git/pull/405
+  gem 'git', git: 'https://github.com/jcouball/ruby-git.git', :branch => 'normalize_encoding'
+
   gem 'git_diff_parser'
   gem 'xcpretty'
 
