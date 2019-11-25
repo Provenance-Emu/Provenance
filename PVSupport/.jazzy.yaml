@@ -1,0 +1,36 @@
+# ---- About ----
+module: PVSupport
+module_version: 1.5
+author: Provenance EMU
+author_url: https://provenance-emu.com
+readme: README.md
+copyright: '© 2015–2019 [Provenance-EMU](https://provenance-emu.com/). See [license](https://github.com/Provenance-EMU/Provenance/blob/master/LICENSE.md) for more details.'
+
+# ---- URLs ----
+github_url: https://github.com/Provenance-Emu/Provenance/
+root_url: https://provenance-emu.com/docs/PVSupport/1.5.0/api/
+github_file_prefix: https://github.com/Provenance-Emu/Provenance/tree/version/1.5/PVSupport
+dash_url: https://provenance-emu.com/docs/PVSupport/1.5.0/PVSupport.xml
+
+# ---- Sources ----
+documentation: *.md
+# include: ./**/*.swift
+# framework_root: PVSupport
+# source_directory: PVSupport/
+
+# ---- Formatting ----
+theme: apple
+
+# ---- Generation ----
+clean: true
+output: ../docs/PVSupport
+min_acl: public
+hide_documentation_coverage: false
+skip_undocumented: false
+objc: false
+# swift_version: 5.0
+sdk: iphonesimulator
+xcodebuild_arguments: ["-workspace","PVSupport.xcworkspace","-scheme","PVSupport"]
+
+# ---- Unused ----
+# docset_icon: documentation/resources/docset-icon@2x.png
