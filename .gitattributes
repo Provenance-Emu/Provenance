@@ -1,0 +1,7 @@
+# Read http://robots.thoughtbot.com/xcode-and-git-bridging-the-gap for an explanation
+# Read https://roadfiresoftware.com/2015/09/automatically-resolving-git-merge-conflicts-in-xcodes-project-pbxproj/ for more
+# I've read a few different varients. Binary can cause issues with braces - though is also commonly used.
+#*.pbxproj binary merge=union
+# *.pbxproj merge=union
+*.pbxproj -crlf -diff -merge
+*.strings text diff

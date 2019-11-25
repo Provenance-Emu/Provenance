@@ -1,0 +1,23 @@
+inherit_from:
+ - .rubocop_cocoapods.yml
+ - .rubocop_todo.yml
+
+#- cocoapods-keys -------------------------------------------------------------
+
+Naming/FileName:
+  Exclude:
+    - bin/*
+    - Rakefile
+    - Podfile
+    - '**/*.podspec'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - Podfile
+    - '*.podspec'
+
+#- cocoapods-keys support for Ruby 2.0.0 -------------------------------------#
+
+Security/YAMLLoad:
+  Enabled: false
