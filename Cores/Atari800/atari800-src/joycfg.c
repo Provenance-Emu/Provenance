@@ -185,9 +185,16 @@ volatile int ext=0,left,key;
 volatile int hi,lo;
 volatile int buffer[100];
 
-void key_handler(void)
+void key_handler(void);
+
+asm("key_handler:"
+    "cli; pusha;"
+    "call key_handler_impl;"
+    "popa; sti;"
+    "ret;");
+
+void key_handler_impl(void)
 {
-	asm("cli; pusha");
 	raw_key = inportb(0x60);
         if (ext==2) ext=1;else /*ext 2 is used for pause*/
         if (ext==1)
@@ -211,7 +218,6 @@ void key_handler(void)
           }
         }
 	outportb(0x20, 0x20);
-	asm("popa; sti");
 }
 
 void key_init(void)
