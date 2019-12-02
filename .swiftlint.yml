@@ -1,76 +1,20 @@
 disabled_rules:
-  - switch_case_alignment
   - block_based_kvo
-  - multiple_closures_with_trailing_closure
   - colon
-  - force_cast
-  - type_name
-  - discarded_notification_center_observer
-  - force_try
-  #- identifier_name_min_length
-  - identifier_name
   - control_statement
-  - line_length
-  - type_body_length
-  - todo
-  - file_length
   - cyclomatic_complexity
-  - unused_closure_parameter
-  # - trailing_newline
-  # - opening_brace
-  # - empty_count
-  # - comma
-  # - trailing_semicolon
-  # - function_body_length
+  - discarded_notification_center_observer
+  - file_length
+  - function_parameter_count
+  - generic_type_name
+  - identifier_name
+  - multiple_closures_with_trailing_closure
   - nesting
-  # - conditional_binding_cascade
-  # - variable_name_max_length
-  # - operator_whitespace
-  # - legacy_constant
-  # - return_arrow_whitespace
-  # - trailing_whitespace
-  # - closing_brace
-  # - statement_position
-  # - legacy_constructor
-  # - valid_docs
-  # - missing_docs
-  # - leading_whitespace
-  # - redundant_optional_initialization
-  # - unused_optional_initialization
-  # - unused_optional_binding
-  # - void_return
-  # - implicit_getter
-  # - mark
-  # - notification_center_detachment
-  # - for_where
-  # - vertical_whitespace
-  # - empty_parameters
-  # - class_delegate_protocol
-  # - syntactic_sugar
-  # - function_parameter_count
-  # - trailing_comma
-  # - weak_delegate
-  # - redundant_string_enum_value
-  # - unused_enumerated
-  # - empty_enum_arguments
-  # - shorthand_operator
-  # - empty_parentheses_with_trailing_closure
-  # - closure_parameter_position
-  # - redundant_discardable_let
-  # - large_tuple
-  # - vertical_parameter_alignment
-  # - compiler_protocol_init
-  # - private_over_fileprivate
-excluded: # paths to ignore during linting. overridden byincluded.
-  - Carthage
-  - PVSupport/Carthage
-  - PVLibrary/Carthage
-  - Pods
-  - Cores
-  - Scripts
-  - fastlane
-  - build
-  - archive
+  - switch_case_alignment
+  - todo
+  - type_name
+  - unused_closure_parameter
+
 # parameterized rules can be customized from this configuration file
 line_length: 200
 # parameterized rules are first parameterized as a warning level, then error level.
@@ -91,3 +35,56 @@ function_body_length:
 large_tuple:
   - 4 # warning
   - 6 # error
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+
+included:
+  - Provenance
+  - Provenance Tests
+  - ProvenanceShared
+  - ProvenanceShared-tvOS
+  - ProvenanceTV
+  - PVLibrary
+  - PVSupport
+  - Spotlight
+  - TopShelf
+
+excluded: # paths to ignore during linting. overridden byincluded.
+  - Carthage
+  - PVSupport/Carthage
+  - PVLibrary/Carthage
+  - Pods
+  - Cores
+  - Scripts
+  - fastlane
+  - build
+  - archive
+
+analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
+  - explicit_self
+
+# Override these rules to be warnings for now
+force_cast: warning
+force_try: warning
+empty_count: warning
+
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit)
+
+custom_rules:
+  placeholders_in_comments:
+    included: ".*\\.swift"
+    name: "No Placeholders in Comments"
+    regex: "<#([^#]+)#>"
+    match_kinds:
+      - comment
+      - doccomment
+    message: "Placeholder left in comment."
+  tiles_deprecated:
+    included: ".*\\.swift"
+    name: "Tiles are deprecated in favor of Frame"
+    regex: "([T,t]ile$|^[T,t]il[e,es])"
+    message: "Tiles are deprecated in favor of Frame"
+    severity: warning
+
