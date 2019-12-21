@@ -231,14 +231,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     private func initFPSLabel() {
         fpsLabel.textColor = UIColor.yellow
-        fpsLabel.text = "\(glViewController.framesPerSecond)"
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         fpsLabel.textAlignment = .right
+        fpsLabel.isOpaque = true
         #if os(tvOS)
-            fpsLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
+            fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 40, weight: .bold)
         #else
             if #available(iOS 8.2, *) {
-                fpsLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+                fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
             }
         #endif
         glViewController.view.addSubview(fpsLabel)
