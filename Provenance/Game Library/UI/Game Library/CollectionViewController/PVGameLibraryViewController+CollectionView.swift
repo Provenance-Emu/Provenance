@@ -146,7 +146,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             if section == saveStateSection || section == recentGamesSection || section == favoritesSection {
                 return UIEdgeInsets.zero
             } else {
-                return UIEdgeInsets(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
+                return UIEdgeInsets(top: 15, left: 10, bottom: 5, right: 10)
             }
         #endif
     }
@@ -299,10 +299,10 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
             headerView.viewModel = viewModel
 
             return headerView
-        } else if kind == UICollectionView.elementKindSectionFooter {
+        }/* else if kind == UICollectionView.elementKindSectionFooter {
             let footerView = self.collectionView!.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryFooterViewIdentifier, for: indexPath) as! PVGameLibrarySectionFooterView
             return footerView
-        }
+        }*/
 
         fatalError("Don't support type \(kind)")
     }

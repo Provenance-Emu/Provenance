@@ -25,9 +25,8 @@ public class SystemSettingsCell: UITableViewCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-            textLabel?.textColor = Theme.currentTheme.settingsCellText
-            detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
+        textLabel?.textColor = .label
+        detailTextLabel?.textColor = .secondaryLabel
         #else
             bg.backgroundColor = UIColor.clear
             if #available(tvOS 10.0, *) {

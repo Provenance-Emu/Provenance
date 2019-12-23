@@ -435,7 +435,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (NSTimeInterval)frameInterval
 {
-	return _frameInterval ? _frameInterval : 59.92;
+	return _frameInterval ? _frameInterval : 60;
 }
 
 #pragma mark - Audio

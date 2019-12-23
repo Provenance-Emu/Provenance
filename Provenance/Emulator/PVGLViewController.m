@@ -63,6 +63,7 @@ struct RenderSettings {
 
 @end
 
+
 @implementation PVGLViewController
 
 + (void)initialize
@@ -232,9 +233,9 @@ struct RenderSettings {
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
-    if (preferredFPS  < 10) {
+    if (preferredFPS < 10) {
         WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
-        preferredFPS = 30;
+        preferredFPS = 60;
     }
 
     [self setPreferredFramesPerSecond:preferredFPS];
@@ -294,7 +295,7 @@ struct RenderSettings {
         CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0);
         if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width))
         {
-            origin.y = parentSafeAreaInsets.top + 40.0f; // directly below menu button at top of screen
+            origin.y = parentSafeAreaInsets.top; // directly below menu button at top of screen
         }
         else
         {

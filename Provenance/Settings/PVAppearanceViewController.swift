@@ -83,7 +83,7 @@ final class PVAppearanceViewController: UITableViewController {
                 #if os(tvOS)
                     cell?.detailTextLabel?.text = PVSettingsModel.shared.showGameTitles ? "On" : "Off"
                 #else
-                    cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                cell?.textLabel?.textColor = .label
                     cell?.accessoryView = hideTitlesSwitch
                 #endif
             } else if indexPath.row == 1 {
@@ -91,7 +91,7 @@ final class PVAppearanceViewController: UITableViewController {
                 #if os(tvOS)
                     cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentGames ? "On" : "Off"
                 #else
-                    cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                cell?.textLabel?.textColor = .label
                     cell?.accessoryView = recentlyPlayedSwitch
                 #endif
             } else if indexPath.row == 2 {
@@ -99,7 +99,7 @@ final class PVAppearanceViewController: UITableViewController {
                 #if os(tvOS)
                     cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentSaveStates ? "On" : "Off"
                 #else
-                    cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                cell?.textLabel?.textColor = .label
                     cell?.accessoryView = saveStatesSwitch
                 #endif
             }

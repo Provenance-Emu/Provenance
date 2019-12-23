@@ -12,9 +12,8 @@ public final class SystemSettingsHeaderCell: SystemSettingsCell {
     override func style() {
         super.style()
         #if os(iOS)
-            backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
-            textLabel?.textColor = Theme.currentTheme.settingsHeaderText
-            detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
+        textLabel?.textColor = .label
+        detailTextLabel?.textColor = .secondaryLabel
         #else
             backgroundView?.backgroundColor = UIColor.clear
             if #available(tvOS 10.0, *) {

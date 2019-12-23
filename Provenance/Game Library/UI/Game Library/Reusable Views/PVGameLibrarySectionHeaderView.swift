@@ -21,11 +21,11 @@ internal struct GameLibrarySectionViewModel {
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
     var collapseImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "chevron_down"))
+        let iv = UIImageView(image: UIImage(systemName: "chevron.down"))
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFit
         #if os(iOS)
-            iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+            iv.tintColor = .systemIndigo
         #endif
         return iv
     }()
@@ -56,43 +56,44 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
             titleLabel.textColor = colorForText
         #else
-            let labelHeight: CGFloat = 20.0
-            let labelBottomMargin: CGFloat = 5.0
+            // let labelHeight: CGFloat = 20.0
+            // let labelBottomMargin: CGFloat = 5.0
 
-            titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
             titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
 
-//        let topSeparator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 1.0))
-//        topSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
-//        topSeparator.autoresizingMask = .flexibleWidth
+//          let topSeparator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 1.0))
+//          topSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+//          topSeparator.autoresizingMask = .flexibleWidth
 //
-//        addSubview(topSeparator)
+//          addSubview(topSeparator)
 
-            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
-            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
-            bottomSeparator.autoresizingMask = .flexibleWidth
+        let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
+        bottomSeparator.backgroundColor = .systemGray5
+        bottomSeparator.autoresizingMask = .flexibleWidth
+        addSubview(bottomSeparator)
 
-            addSubview(bottomSeparator)
-
-            // Style
-            backgroundColor = UIColor.black.withAlphaComponent(0.8)
-            titleLabel.textAlignment = .left
-            titleLabel.backgroundColor = .clear
-            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
-//        topSeparator.backgroundColor = UIColor(hex: "#262626")
-//        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
-            clipsToBounds = false
+        
+        backgroundColor = .systemGray6
+        titleLabel.textAlignment = .left
+        titleLabel.backgroundColor = .clear
+        titleLabel.textColor = .label
+        clipsToBounds = false
         #endif
+        
         titleLabel.numberOfLines = 0
         titleLabel.autoresizingMask = .flexibleWidth
+        
         addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6).isActive = true
 
         addSubview(collapseImageView)
         collapseImageView.translatesAutoresizingMaskIntoConstraints = false
-        collapseImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseImageView.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        collapseImageView.widthAnchor.constraint(equalToConstant: 22).isActive = true
         collapseImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
 
         isOpaque = true
     }

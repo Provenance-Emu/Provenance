@@ -208,7 +208,11 @@ public enum SubtleVolumeError: Error {
         volume.setVolumeThumbImage(UIImage(), for: UIControl.State())
         volume.isUserInteractionEnabled = false
         volume.alpha = 0.0001
-        volume.showsRouteButton = false
+        if #available(iOS 13, *) {
+            volume.showsVolumeSlider = false
+        } else {
+            volume.showsRouteButton = false
+        }
 
         addSubview(volume)
 

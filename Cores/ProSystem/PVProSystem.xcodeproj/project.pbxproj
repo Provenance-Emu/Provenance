@@ -388,7 +388,6 @@
 				TargetAttributes = {
 					B36DE79F1D6B7558002EE3ED = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = V78REPMQFZ;
 					};
 				};
 			};
@@ -657,9 +656,11 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -677,7 +678,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.ProSystem;
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -742,6 +743,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -765,7 +767,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.ProSystem;
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -784,9 +786,11 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -804,7 +808,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.ProSystem;
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

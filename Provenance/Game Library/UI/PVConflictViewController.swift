@@ -116,7 +116,7 @@ final class PVConflictViewController: UITableViewController {
         }
 
         #if os(iOS)
-            cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+        cell.textLabel?.textColor = .label
         #endif
         return cell
     }

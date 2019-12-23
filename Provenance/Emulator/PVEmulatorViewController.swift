@@ -163,7 +163,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         glViewController.view?.removeFromSuperview()
         glViewController.removeFromParent()
         #if os(iOS)
-            GCController.controllers().forEach { $0.controllerPausedHandler = nil }
+        GCController.controllers().forEach { $0.extendedGamepad?.buttonMenu.pressedChangedHandler = nil }
         #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
@@ -213,16 +213,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
-        menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
-        // Commenting out title label for now (menu has changed to graphic only)
-        // [self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
-        // menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        // menuButton?.setTitleColor(UIColor.white, for: .normal)
-        menuButton?.layer.shadowOffset = CGSize(width: 0, height: 1)
-        menuButton?.layer.shadowRadius = 3.0
+        menuButton?.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        menuButton?.layer.shadowOffset = CGSize(width: 0, height: 0)
+        menuButton?.layer.shadowRadius = 2.0
         menuButton?.layer.shadowColor = UIColor.black.cgColor
-        menuButton?.layer.shadowOpacity = 0.75
+        menuButton?.layer.shadowOpacity = 1.0
         menuButton?.tintColor = UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
@@ -230,21 +225,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
     private func initFPSLabel() {
-        fpsLabel.textColor = UIColor.yellow
+        fpsLabel.textColor = UIColor.systemYellow
         fpsLabel.text = "\(glViewController.framesPerSecond)"
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         fpsLabel.textAlignment = .right
+        fpsLabel.sizeToFit()
         #if os(tvOS)
             fpsLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         #else
             if #available(iOS 8.2, *) {
-                fpsLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+                fpsLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
             }
         #endif
         glViewController.view.addSubview(fpsLabel)
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
-
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .centerY, relatedBy: .equal, toItem: menuButton!, attribute: .centerY, multiplier: 1.0, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -16))
+        
         if #available(iOS 10.0, tvOS 10.0, *) {
             // Block-based NSTimer method is only available on iOS 10 and later
             fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
@@ -267,7 +263,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     override func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = .black
 
         initNotifcationObservers()
         initCore()
@@ -299,7 +295,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
                 alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                     if let aString = URL(string: "https://bitly.com/provm3u") {
-                        UIApplication.shared.openURL(aString)
+                        UIApplication.shared.open(aString, options: [:], completionHandler: nil)
                     }
                 }))
             }
@@ -386,11 +382,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             }
         #endif
 
-        #if os(iOS)
-            // Ignore Smart Invert
-            view.ignoresInvertColors = true
-        #endif
-
         if PVSettingsModel.shared.timedAutoSaves {
             createAutosaveTimer()
         }
@@ -464,7 +455,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         #if os(iOS)
-            layoutMenuButton()
+        layoutMenuButton()
+        view.layoutSubviews()
         #endif
     }
 

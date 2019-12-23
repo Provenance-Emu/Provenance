@@ -171,7 +171,7 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
 
     func setupViews() {
         #if os(iOS)
-            backgroundColor = Theme.currentTheme.gameLibraryBackground
+        backgroundColor = .systemBackground
         #endif
 
         addSubview(internalCollectionView)
@@ -195,7 +195,7 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
             NSLayoutConstraint(item: internalCollectionView, attribute: .height, relatedBy: .equal, toItem: self, attribute: .height, multiplier: 1.0, constant: 0.0).isActive = true
         }
         #if os(iOS)
-            internalCollectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+        internalCollectionView.backgroundColor = .systemBackground
         #endif
 
         // setup page indicator layout

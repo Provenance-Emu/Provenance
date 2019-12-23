@@ -9,6 +9,7 @@
 
 import PVSupport
 import UIKit
+import WebKit
 
 final class PVLicensesViewController: UIViewController {
     #if os(tvOS)
@@ -25,11 +26,10 @@ final class PVLicensesViewController: UIViewController {
             let filesystemPath: String? = Bundle.main.path(forResource: "licenses", ofType: "html")
             let htmlContent = try? String(contentsOfFile: filesystemPath ?? "", encoding: .utf8)
 
-            let webView = UIWebView(frame: view.bounds)
+            let webView = WKWebView(frame: view.bounds)
             webView.isOpaque = false
             webView.backgroundColor = UIColor.black
             webView.loadHTMLString(htmlContent ?? "", baseURL: nil)
-            webView.scalesPageToFit = false
             webView.scrollView.bounces = false
             webView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
             view.addSubview(webView)

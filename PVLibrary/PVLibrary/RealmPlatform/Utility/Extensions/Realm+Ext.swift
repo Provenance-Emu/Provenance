@@ -18,7 +18,7 @@ extension SortDescriptor {
 }
 
 extension Reactive where Base: Realm {
-    func save<R: RealmRepresentable>(entity: R, update: Bool = true) -> Observable<()> where R.RealmType: Object {
+    func save<R: RealmRepresentable>(entity: R, update: Realm.UpdatePolicy) -> Observable<()> where R.RealmType: Object {
         return Observable.create { observer in
             do {
                 try self.base.write {

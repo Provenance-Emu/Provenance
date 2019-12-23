@@ -54,7 +54,7 @@ protocol WebServerActivatorController: class {
         @available(iOS 9.0, *)
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
-            let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
+            let safariVC = SFSafariViewController(url: URL(string: ipURL)!)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
         }

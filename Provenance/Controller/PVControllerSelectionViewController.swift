@@ -49,7 +49,7 @@ final class PVControllerSelectionViewController: UITableViewController {
         let labelText = "Player \(indexPath.row + 1)"
 
         #if os(iOS)
-            cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+        cell.textLabel?.textColor = .label
         #endif
 
         cell.textLabel?.text = labelText

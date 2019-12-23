@@ -369,11 +369,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 imageView.contentMode = .scaleAspectFit
                 imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             }
-
-            #if os(iOS)
-                // Ignore Smart Invert
-                imageView.ignoresInvertColors = true
-            #endif
         }
     }
 
@@ -678,12 +673,12 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 if let deleteActionView = deleteActionView {
                     deleteActionView.removeFromSuperview()
                     deleteActionView.translatesAutoresizingMaskIntoConstraints = false
-                    deleteActionView.frame = contentView.bounds
+                    deleteActionView.frame = self.bounds
                     backgroundView = UIView(frame: bounds)
                     backgroundView?.isOpaque = true
-                    backgroundView?.backgroundColor = Theme.currentTheme.gameLibraryBackground
-                    contentView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-                    backgroundColor = Theme.currentTheme.gameLibraryBackground
+                    backgroundView?.backgroundColor = .systemBackground
+                    contentView.backgroundColor = .systemBackground
+                    backgroundColor = .systemBackground
                     isOpaque = true
                     contentView.isOpaque = true
 
@@ -695,8 +690,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                         }
                     }
 
-                    deleteActionView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
-                    deleteActionView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+                    deleteActionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+                    deleteActionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
                     deleteActionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
                     deleteActionView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
                 }
@@ -859,7 +854,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+        let backgroundColor: UIColor = .systemBackground
         #else
             let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
         #endif
@@ -871,7 +866,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         paragraphStyle.alignment = .center
 
         #if os(iOS)
-            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.label])
         #else
             let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
         #endif
@@ -943,6 +938,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 }
                 imageView.frame.size.height = imageHeight
             }
+        
+        imageView.backgroundColor = .systemBackground
+        imageView.layer.cornerRadius = 12
+        imageView.layer.borderColor = UIColor.systemGray2.cgColor
+        imageView.layer.borderWidth = 2
         #endif
 
         updateImageConstraints()

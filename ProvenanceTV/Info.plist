@@ -79,10 +79,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Provenance uses Bluetooth to support game controllers</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>com.provenance-emu.webserver</string>
-		<string>com.provenance-emu.game.play</string>
+		<string>com.antique.game.play</string>
 	</array>
 	<key>Revision</key>
 	<string>f9c61252</string>
@@ -107,7 +109,5 @@
 			<dict/>
 		</dict>
 	</array>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Provenance uses Bluetooth to support game controllers</string>
 </dict>
 </plist>

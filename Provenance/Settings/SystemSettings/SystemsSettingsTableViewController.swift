@@ -51,11 +51,11 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                                                                            detailText: .none,
                                                                            icon: nil,
                                                                            customization: { cell, _ in
-                                                                               #if os(iOS)
-                                                                                   let bgView = UIView()
-                                                                                   bgView.backgroundColor = Theme.currentTheme.settingsCellBackground!.withAlphaComponent(0.9)
-                                                                                   cell.backgroundView = bgView
-                                                                               #endif
+                                                                            #if os(iOS)
+                                                                            let bgView = UIView()
+                                                                            bgView.backgroundColor = .systemBackground
+                                                                            cell.backgroundView = bgView
+                                                                            #endif
                 }, action: nil)
 
                 rows.append(biosesHeader)
@@ -68,7 +68,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                                                                     customization: { cell, _ in
 
                                                                         #if os(iOS)
-                                                                            var backgroundColor: UIColor? = Theme.currentTheme.settingsCellBackground
+                                                                        var backgroundColor: UIColor? = .systemBackground
                                                                         #else
                                                                             var backgroundColor: UIColor? = UIColor.clear
                                                                         #endif
@@ -125,7 +125,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
         super.viewDidLoad()
 
         #if os(iOS)
-            tableView.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+        tableView.backgroundColor = .systemBackground
             tableView.separatorStyle = .singleLine
         #else
             tableView.backgroundColor = UIColor.clear

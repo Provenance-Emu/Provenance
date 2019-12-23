@@ -193,10 +193,6 @@
     return UIBarPositionTopAttached;
 }
 
-- (BOOL)automaticallyAdjustsScrollViewInsets {
-    return YES;
-}
-
 - (void)viewDidLoad {
 #if TARGET_OS_IOS
     _textView.editable = NO;
@@ -499,6 +495,7 @@
     const char *key, *val;
 
     q = asl_new(ASL_TYPE_QUERY);
+
 
         // Search exampls
         //    asl_set_query(q, ASL_KEY_SENDER, "Logger", ASL_QUERY_OP_EQUAL);

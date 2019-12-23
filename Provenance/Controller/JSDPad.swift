@@ -30,7 +30,8 @@ final class JSDPad: UIView {
     weak var delegate: JSDPadDelegate?
 
     private var currentDirection: JSDPadDirection = .none
-
+    var isDPad = false
+    
     private lazy var dPadImageView: UIImageView = {
         let dPadImageView = UIImageView(image: UIImage(named: "dPad-None"))
         let frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
@@ -39,10 +40,6 @@ final class JSDPad: UIView {
         dPadImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         dPadImageView.contentMode = .center
         dPadImageView.layer.masksToBounds = false
-        dPadImageView.layer.shadowColor = UIColor.black.cgColor
-        dPadImageView.layer.shadowRadius = 4.0
-        dPadImageView.layer.shadowOpacity = 0.75
-        dPadImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
         return dPadImageView
     }()
 
@@ -70,6 +67,17 @@ final class JSDPad: UIView {
         tintColor = .white
         addSubview(dPadImageView)
         clipsToBounds = false
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if self.isDPad {
+            dPadImageView.layer.shadowColor = UIColor.black.cgColor
+            dPadImageView.layer.shadowRadius = 4.0
+            dPadImageView.layer.shadowOpacity = 1.0
+            dPadImageView.layer.shadowOffset = CGSize(width: 0, height: 1)
+        }
     }
 
     func direction(for point: CGPoint) -> JSDPadDirection {

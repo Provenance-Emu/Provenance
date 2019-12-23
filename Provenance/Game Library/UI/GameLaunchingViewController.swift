@@ -20,7 +20,7 @@ public func PVMaxRecentsCount() -> Int {
         #if EXTENSION
             return 9
         #else
-            return UIApplication.shared.keyWindow?.traitCollection.userInterfaceIdiom == .phone ? 6 : 9
+            return UIApplication.shared.windows[0].traitCollection.userInterfaceIdiom == .phone ? 6 : 9
         #endif
     #endif
 }
@@ -534,7 +534,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             #if os(iOS)
                 let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                    UIApplication.shared.openURL(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!)
+                    UIApplication.shared.open(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!, options: [:], completionHandler: nil)
                 })
                 displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
             #else
@@ -632,13 +632,13 @@ extension GameLaunchingViewController where Self: UIViewController {
                     // Add a save this setting toggle
                     alert.addTextField { textField in
                         textField.text = "Auto Load Saves"
-                        textField.backgroundColor = Theme.currentTheme.settingsCellBackground
-                        textField.textColor = Theme.currentTheme.settingsCellText
-                        textField.tintColor = Theme.currentTheme.settingsCellBackground
+                        textField.backgroundColor = .systemBackground
+                        textField.textColor = .label
+                        textField.tintColor = .systemBackground
                         textField.rightViewMode = .always
                         textField.rightView = switchControl
                         textField.borderStyle = .none
-                        textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
+                        textField.layer.borderColor = UIColor.systemBackground.cgColor
                         textField.delegate = textEditBlocker // Weak ref
 
                         switchControl.translatesAutoresizingMaskIntoConstraints = false

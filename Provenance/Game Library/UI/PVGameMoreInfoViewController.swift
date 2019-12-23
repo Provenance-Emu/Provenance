@@ -24,15 +24,6 @@ import UIKit
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
-#if os(iOS)
-    extension UIImageView {
-        public override var ignoresInvertColors: Bool {
-            get {
-                return true
-            } set {}
-        }
-    }
-#endif
 
 // Special label that renders Countries as flag emojis when available
 final class RegionLabel: LongPressLabel {
@@ -78,6 +69,9 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
         super.viewDidLoad()
         dataSource = self
         delegate = self
+        
+        self.title = "Game Info"
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
 
     var game: PVGame? {
@@ -285,12 +279,10 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         layer.shadowOpacity = 0.7
 
         #if os(iOS)
-            // Ignore Smart Invert
-            artworkImageView.ignoresInvertColors = true
 
             if #available(iOS 9.0, *) {} else {
                 // Fix iOS 8 colors
-                descriptionTextView.textColor = Theme.currentTheme.settingsCellText
+                descriptionTextView.textColor = .label
             }
         #endif
     }
@@ -346,7 +338,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         #endif
 
         nameLabel.text = game?.title ?? ""
-        filenameLabel.text = game?.file.fileName ?? ""
+        //filenameLabel.text = game?.file.fileName ?? ""
         systemLabel.text = game?.system.name ?? ""
         developerLabel.text = game?.developer ?? ""
         publishDateLabel.text = game?.publishDate ?? ""
@@ -415,7 +407,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+        let backgroundColor: UIColor = .systemBackground
         #else
             let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
         #endif
@@ -427,7 +419,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         paragraphStyle.alignment = .center
 
         #if os(iOS)
-            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.label])
         #else
             let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
         #endif

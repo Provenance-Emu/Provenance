@@ -87,7 +87,7 @@ open class Cache<KeyType: Hashable, ObjectType> {
 
     open var totalCostLimit: Int {
         get { return cache.totalCostLimit }
-        set { cache.totalCostLimit = totalCostLimit }
+        set { cache.totalCostLimit = newValue }
     }
 
     open var countLimit: Int {

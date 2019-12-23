@@ -223,7 +223,6 @@
 		B3AF47D521071FC0002211EE /* XzCrc64Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463221071CA5002211EE /* XzCrc64Reg.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3AF47D621071FCD002211EE /* PropVariantConv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DA21071CA6002211EE /* PropVariantConv.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3AF47D721071FCD002211EE /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3AF47DF21072AD4002211EE /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
 		B3AF6FBB219160B9000FA7F9 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBA219160B9000FA7F9 /* MobileCoreServices.framework */; };
 		B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */; };
@@ -387,7 +386,6 @@
 		B3C04B2E21077B3100E7AF79 /* BranchRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465F21071CA5002211EE /* BranchRegister.cpp */; };
 		B3C04B2F21077B3100E7AF79 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E782106BC8800857F52 /* PVObject.swift */; };
 		B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2D2106B4D700DDEBD6 /* PVSaveState.swift */; };
-		B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3C04B4021077B3100E7AF79 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
 		B3C04B642107867200E7AF79 /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B632107867200E7AF79 /* PVLibraryTests.swift */; };
 		B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
@@ -400,6 +398,7 @@
 		B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
 		B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		C1C05E1723B065980024E294 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C1C05E1623B065890024E294 /* openvgdb.sqlite */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -814,7 +813,6 @@
 		B3AF475321071CA6002211EE /* LzmaSDKObjCMutableItem+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LzmaSDKObjCMutableItem+Private.h"; sourceTree = "<group>"; };
 		B3AF475421071CA6002211EE /* LzmaSDKObjCExtractCallback.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LzmaSDKObjCExtractCallback.mm; sourceTree = "<group>"; };
 		B3AF475521071CA6002211EE /* LzmaSDKObjCItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LzmaSDKObjCItem.mm; sourceTree = "<group>"; };
-		B3AF47DC21072AD3002211EE /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 		B3AF47DD21072AD3002211EE /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		B3AF6FBA219160B9000FA7F9 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -862,6 +860,7 @@
 		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		C1C05E1623B065890024E294 /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1599,7 +1598,7 @@
 		B3AF47DB21072AD3002211EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B3AF47DC21072AD3002211EE /* openvgdb.sqlite */,
+				C1C05E1623B065890024E294 /* openvgdb.sqlite */,
 				B3AF47DD21072AD3002211EE /* systems.plist */,
 			);
 			path = Resources;
@@ -1806,7 +1805,7 @@
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 0940;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3579D0E2106B11D00DDEBD6 = {
@@ -1844,7 +1843,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */,
+				C1C05E1723B065980024E294 /* openvgdb.sqlite in Resources */,
 				B3AF47DF21072AD4002211EE /* systems.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1853,7 +1852,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */,
 				B3C04B4021077B3100E7AF79 /* systems.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2311,12 +2309,13 @@
 		B324C5362191A78D009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2342,9 +2341,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.PVLibrary;
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2548,11 +2548,12 @@
 		B3579D182106B11D00DDEBD6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2579,9 +2580,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.PVLibrary;
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2591,12 +2593,13 @@
 		B3579D192106B11D00DDEBD6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2622,9 +2625,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.PVLibrary;
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -293,7 +293,6 @@
 		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
 		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
-		B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -416,7 +415,6 @@
 		B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9781DED14A100602746 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
@@ -455,8 +453,6 @@
 		B3D5E2B3218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
 		B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2BE218EC62E0015C690 /* Sections.swift */; };
 		B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2BE218EC62E0015C690 /* Sections.swift */; };
-		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
-		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -511,6 +507,7 @@
 		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		C1F1ADAA23AE1D060022BED7 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1F1ADA923AE1D060022BED7 /* Photos.framework */; };
 		C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
@@ -877,7 +874,6 @@
 		B378225621D32B0B0077E86F /* SliderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRow.swift; sourceTree = "<group>"; };
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
 		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
-		B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectorViewController.swift; sourceTree = "<group>"; };
 		B378226321D358340077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = Carthage/Build/iOS/SWCompression.framework; sourceTree = "<group>"; };
 		B378226421D358340077E86F /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = Carthage/Build/iOS/BitByteData.framework; sourceTree = "<group>"; };
 		B378226921D35A270077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = Carthage/Build/tvOS/SWCompression.framework; sourceTree = "<group>"; };
@@ -963,7 +959,6 @@
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
-		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -988,8 +983,6 @@
 		B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxTableViewRealmDataSource.swift; sourceTree = "<group>"; };
 		B3D5E2AD218EC1AE0015C690 /* RxCollectionViewRealmDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxCollectionViewRealmDataSource.swift; sourceTree = "<group>"; };
 		B3D5E2BE218EC62E0015C690 /* Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sections.swift; sourceTree = "<group>"; };
-		B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIAlertController+Theming.swift"; path = "Provenance/User Interface/Themes/UIAlertController+Theming.swift"; sourceTree = SOURCE_ROOT; };
-		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DE5AFF21B102F10066069E /* ProvenanceShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProvenanceShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1038,6 +1031,7 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		C1F1ADA923AE1D060022BED7 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCControllerExtensions.swift; sourceTree = "<group>"; };
 		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
@@ -1104,6 +1098,7 @@
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
 				B3AF701021916C30000FA7F9 /* PVSupport.framework in Frameworks */,
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				C1F1ADAA23AE1D060022BED7 /* Photos.framework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */,
@@ -1280,7 +1275,6 @@
 				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
 				B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */,
 				B378225021D32A6B0077E86F /* SettingsTableView.swift */,
-				B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1339,6 +1333,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C1F1ADA923AE1D060022BED7 /* Photos.framework */,
 				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
 				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
 				B3CDEED821D4D84E000C55F7 /* BitByteData.framework */,
@@ -1851,9 +1846,6 @@
 			isa = PBXGroup;
 			children = (
 				B3B923A2202D2EAE00580FFC /* SwiftyAppearance */,
-				B3B923A9202D2EAE00580FFC /* Theme.swift */,
-				B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */,
-				B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */,
 				C6C125BF20B0826900DC045B /* UILabel+Theming.swift */,
 			);
 			path = Themes;
@@ -2732,7 +2724,6 @@
 				B3AB373A2187F569009D9244 /* PVPCFXControllerViewController.swift in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
 				B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
-				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
@@ -2755,7 +2746,6 @@
 				B3AB37422187F569009D9244 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
-				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
@@ -2765,7 +2755,6 @@
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
-				B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
@@ -2775,7 +2764,6 @@
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3D5E2B0218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
-				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
 				378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */,
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
@@ -3191,9 +3179,10 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2780;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3208,12 +3197,12 @@
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -3239,8 +3228,10 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2780;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3248,6 +3239,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "GLES_SILENCE_DEPRECATION=1";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
@@ -3255,13 +3247,13 @@
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -3286,13 +3278,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3317,9 +3309,9 @@
 					"@executable_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance;
 				PRODUCT_NAME = Provenance;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
@@ -3343,12 +3335,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3374,9 +3367,9 @@
 					"@executable_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance;
 				PRODUCT_NAME = Provenance;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 3;
@@ -3395,8 +3388,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -3438,6 +3433,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SUPPRESS_WARNINGS = YES;
@@ -3456,9 +3452,11 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3497,6 +3495,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance.app/Provenance";
 			};
 			name = Release;
@@ -3650,11 +3649,13 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = Provenance/Provenance.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2780;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3669,13 +3670,13 @@
 					"\"$(SRCROOT)/Carthage/Build/iOS\"",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.provenance-emu.provenance";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -3700,14 +3701,14 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3733,9 +3734,9 @@
 					"@executable_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance;
 				PRODUCT_NAME = Provenance;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.provenance-emu.provenance tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 3;
@@ -3754,9 +3755,11 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3795,6 +3798,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance.app/Provenance";
 			};
 			name = Archive;
@@ -3809,13 +3813,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3835,9 +3839,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.antique.provenance.topshelf-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.provenance-emu.provenance.topshelf-extension tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
@@ -3848,6 +3852,7 @@
 		B3721CF021912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -3859,13 +3864,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2770;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3883,9 +3889,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.extension.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance.extension.spotlight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.provenance-emu.provenance.extension.spotlight";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
 				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
@@ -4022,11 +4028,12 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4043,7 +4050,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.ProvenanceShared;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -4067,12 +4074,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4090,7 +4098,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.ProvenanceShared;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -4113,12 +4121,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4136,7 +4145,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.ProvenanceShared;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -4162,7 +4171,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -4202,7 +4211,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4242,7 +4251,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4282,7 +4291,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4298,7 +4307,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.antique.ProvenanceShared-tvOS";
 				PRODUCT_NAME = ProvenanceShared;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -4329,7 +4338,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4346,7 +4355,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.antique.ProvenanceShared-tvOS";
 				PRODUCT_NAME = ProvenanceShared;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -4376,7 +4385,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4393,7 +4402,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProvenanceShared-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.antique.ProvenanceShared-tvOS";
 				PRODUCT_NAME = ProvenanceShared;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -4407,6 +4416,7 @@
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -4420,9 +4430,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2770;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -4439,9 +4450,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.extension.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance.extension.spotlight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.extension.spotlight";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG EXTENSION";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -4455,6 +4466,7 @@
 		B3E21D75203211BE009939D3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -4465,13 +4477,14 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2770;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4489,9 +4502,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.extension.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.antique.provenance.extension.spotlight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.extension.spotlight";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
 				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
@@ -4510,12 +4523,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4534,9 +4547,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.antique.provenance.topshelf-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.topshelf-extension tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
@@ -4554,12 +4567,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = Z3ZEABYY6P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4579,9 +4592,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.antique.provenance.topshelf-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.topshelf-extension tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";

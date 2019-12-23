@@ -220,7 +220,7 @@ static void mednafen_init(MednafenGameCore* current)
 
 
 	// PSX Settings
-	MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
+	MDFNI_SetSettingB("psx.h_overscan", false); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
 	MDFNI_SetSettingB("psx.input.analog_mode_ct", false); // Enable Analog mode toggle

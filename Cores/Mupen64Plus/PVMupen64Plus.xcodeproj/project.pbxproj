@@ -5165,6 +5165,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Mupen64Plus */;
 			projectDirPath = "";

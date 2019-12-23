@@ -107,12 +107,10 @@ final class PVCoresTableViewController: QuickTableViewController {
 
     extension WebkitViewController: WKNavigationDelegate {
         func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
             hud.show(true)
         }
 
         func webView(_: WKWebView, didFinish _: WKNavigation!) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
             hud.hide(true, afterDelay: 0.0)
         }
     }

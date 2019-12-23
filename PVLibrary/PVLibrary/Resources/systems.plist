@@ -107,7 +107,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 				<key>PVControlTint</key>
@@ -263,7 +263,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -271,7 +271,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -604,7 +604,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -612,7 +612,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -705,7 +705,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -789,7 +789,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -865,7 +865,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -959,7 +959,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1081,7 +1081,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1218,7 +1218,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1320,7 +1320,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1460,7 +1460,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>
@@ -1540,7 +1540,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1685,7 +1685,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>
@@ -1858,7 +1858,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1866,7 +1866,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1961,7 +1961,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -1969,7 +1969,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2049,7 +2049,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2057,7 +2057,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2122,7 +2122,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2130,7 +2130,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2204,7 +2204,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2212,7 +2212,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2291,7 +2291,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2299,7 +2299,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2415,7 +2415,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2491,7 +2491,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>SELECT</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2697,7 +2697,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -2790,7 +2790,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>START</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>

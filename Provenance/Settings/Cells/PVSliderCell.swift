@@ -24,12 +24,11 @@ final class PVSliderCell: SliderCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-            textLabel?.textColor = Theme.currentTheme.settingsCellText
-            detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
-            slider.tintColor = Theme.currentTheme.defaultTintColor
-            slider.thumbTintColor = Theme.currentTheme.switchThumb
-            slider.isContinuous = false
+        textLabel?.textColor = .label
+        detailTextLabel?.textColor = .secondaryLabel
+        slider.tintColor = .systemIndigo
+        slider.thumbTintColor = .white
+        slider.isContinuous = false
         #else
             bg.backgroundColor = UIColor.clear
             if #available(tvOS 10.0, *) {

@@ -75,7 +75,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2770</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -132,6 +132,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Provenance uses Bluetooth to support game controllers</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -180,7 +182,7 @@
 	<key>UIStatusBarHidden</key>
 	<false/>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -380,7 +382,5 @@
 			<string>com.provenance.savestate</string>
 		</dict>
 	</array>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Provenance uses Bluetooth to support game controllers</string>
 </dict>
 </plist>

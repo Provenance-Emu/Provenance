@@ -278,12 +278,13 @@ OSStatus RenderCallback(void                       *in,
         if(err) {
             ELOG(@"couldn't set player's input stream format");
         } {
-            DLOG(@"Set the play'ers input stream format");
+            DLOG(@"Set the players input stream format");
         }
-
+        
+        
         err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, i);
         if(err) { ELOG(@"Couldn't connect the converter to the mixer"); }
-        else { ELOG(@"Conncted the converter to the mixer"); }
+        else { DLOG(@"Connected the converter to the mixer"); }
     }
     // connect the player to the output unit (stream format will propagate)
          
@@ -291,7 +292,7 @@ OSStatus RenderCallback(void                       *in,
     if(err) {
         ELOG(@"Could not connect the input of the output");
     } {
-        DLOG(@"Conncted input of the output");
+        DLOG(@"Connected input of the output");
     }
     
     //AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, [[[GameDocumentController sharedDocumentController] preferenceController] volume] ,0);

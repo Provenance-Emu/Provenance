@@ -60,7 +60,7 @@ final class CoreOptionsViewController: QuickTableViewController {
             let rows: [TableRow] = $0.options.map { option in
                 switch option {
                 case let .bool(display, defaultValue):
-                    return SwitchRow(text: display.title, detailText: .none, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
+                    return SwitchRow(text: display.title, detailText: DetailText.none, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
                         let value = self.core.valueForOption(Bool.self, option.key) ?? defaultValue
                         self.core.setValue(!value, forOption: option)
                     })
@@ -73,7 +73,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              },
                                                              action: { _ in
                                                                  let currentSelection: String? = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String
-                                                                 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+                                                                 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .alert)
                                                                  values.forEach { value in
                                                                      var title = value.title
                                                                      if currentSelection == value.title {

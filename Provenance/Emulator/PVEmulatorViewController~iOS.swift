@@ -50,7 +50,7 @@ public final class EmulatorActionCell: ActionCell {
     }
 
     func initialize() {
-        backgroundColor = Theme.currentTheme.settingsCellBackground?.withAlphaComponent(0.3)
+        backgroundColor = .systemBackground
         let backgroundView = UIView()
         backgroundView.backgroundColor = backgroundColor
         selectedBackgroundView = backgroundView
@@ -75,7 +75,6 @@ open class EmulatorActionController: DynamicsActionController<EmulatorActionCell
     fileprivate lazy var blurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
         blurView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        blurView.alpha = 0.75
         return blurView
     }()
 
@@ -103,7 +102,7 @@ open class EmulatorActionController: DynamicsActionController<EmulatorActionCell
         settings.cancelView.hideCollectionViewBehindCancelView = true
         settings.cancelView.title = "Resume"
 
-        collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 6.0, right: 0.0)
+        collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 20, bottom: 6.0, right: 20)
         (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 24.0, left: 0.0, bottom: 24.0, right: 0.0)
 
         sectionHeaderSpec = .cellClass(height: { _ in 24 })
@@ -158,9 +157,9 @@ open class EmulatorActionController: DynamicsActionController<EmulatorActionCell
             case .destructive:
                 cell.actionTitleLabel?.textColor = UIColor(red: 210 / 255.0, green: 77 / 255.0, blue: 56 / 255.0, alpha: 1.0)
             case .default:
-                cell.actionTitleLabel?.textColor = Theme.currentTheme.settingsCellText
+                cell.actionTitleLabel?.textColor = .label
             case .cancel:
-                cell.actionTitleLabel?.textColor = Theme.currentTheme.defaultTintColor
+                cell.actionTitleLabel?.textColor = .systemBlue
             }
 
             var corners = UIRectCorner()
@@ -169,6 +168,7 @@ open class EmulatorActionController: DynamicsActionController<EmulatorActionCell
             }
             if indexPath.item == actionsCount - 1 {
                 corners = corners.union([.bottomLeft, .bottomRight])
+                cell.hideSeparator()
             }
 
             if corners == .allCorners {
@@ -195,10 +195,10 @@ open class EmulatorActionController: DynamicsActionController<EmulatorActionCell
         backgroundView.addSubview(blurView)
 
         cancelView?.frame.origin.y = view.bounds.size.height // Starts hidden below screen
-        cancelView?.layer.shadowColor = UIColor.black.cgColor
-        cancelView?.layer.shadowOffset = CGSize(width: 0, height: -4)
-        cancelView?.layer.shadowRadius = 2
-        cancelView?.layer.shadowOpacity = 0.8
+        cancelView?.layer.shadowColor = UIColor.black.withAlphaComponent(0.5).cgColor
+        cancelView?.layer.shadowOffset = CGSize(width: 0, height: 0)
+        cancelView?.layer.shadowRadius = 8
+        cancelView?.layer.shadowOpacity = 0.5
     }
 
     open override func viewWillAppear(_ animated: Bool) {

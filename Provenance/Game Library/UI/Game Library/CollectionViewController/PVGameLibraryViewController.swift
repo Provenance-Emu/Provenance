@@ -13,6 +13,7 @@
 #endif
 import CoreSpotlight
 import GameController
+import Photos
 import PVLibrary
 import PVSupport
 import QuartzCore
@@ -53,7 +54,7 @@ public extension Notification.Name {
     final class PVDocumentPickerViewController: UIDocumentPickerViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
-            navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
+            navigationController?.navigationBar.barStyle = .default
         }
     }
 #endif
@@ -197,7 +198,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     #if os(iOS)
         override var preferredStatusBarStyle: UIStatusBarStyle {
-            return .lightContent
+            return .default
         }
     #endif
 
@@ -218,6 +219,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         super.viewDidLoad()
         isInitialAppearance = true
         definesPresentationContext = true
+        
+        navigationController?.navigationBar.prefersLargeTitles = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.databaseMigrationStarted(_:)), name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.databaseMigrationFinished(_:)), name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
@@ -229,8 +232,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
-            navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
-            navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.tintColor = .systemIndigo
+        navigationItem.leftBarButtonItem?.tintColor = .systemIndigo
 
             NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: { (_: Notification) -> Void in
                 DispatchQueue.main.async {
@@ -254,7 +258,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 // Navigation bar large titles
                 navigationController?.navigationBar.prefersLargeTitles = false
-                navigationItem.title = nil
+                navigationItem.title = "Library"
 
                 // Create a search controller
                 let searchController = UISearchController(searchResultsController: nil)
@@ -294,8 +298,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             collectionView.remembersLastFocusedIndexPath = false
             collectionView.clipsToBounds = false
         #else
-            collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-            searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
+        collectionView.backgroundColor = .systemBackground
+        searchField?.keyboardAppearance = .default
 
             let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.didReceivePinchGesture(gesture:)))
             pinchGesture.cancelsTouchesInView = true
@@ -1050,7 +1054,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
     }
 
-    fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.")
+    fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("com.antique.")
 
     var transitioningToSize: CGSize?
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -1096,7 +1100,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         @available(iOS 9.0, *)
         func showServer() {
             let ipURL = URL(string: PVWebServer.shared.urlString)
-            let safariVC = SFSafariViewController(url: ipURL!, entersReaderIfAvailable: false)
+            let safariVC = SFSafariViewController(url: ipURL!)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
         }
@@ -1127,11 +1131,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             if traitCollection.horizontalSizeClass == .compact {
                 let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
+                sortOptionsTableViewController.navigationItem.rightBarButtonItem?.tintColor = .systemIndigo
                 sortOptionsTableView.reloadData()
                 present(navController, animated: true, completion: nil)
                 return
             } else {
                 sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
+                sortOptionsTableViewController.navigationItem.rightBarButtonItem?.tintColor = .systemIndigo
                 sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
                 sortOptionsTableView.reloadData()
                 present(sortOptionsTableViewController, animated: true, completion: nil)
@@ -1556,7 +1562,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                         let spotlightUniqueIdentifier = game.spotlightUniqueIdentifier
                         let spotlightContentSet = game.spotlightContentSet
 
-                        let spotlightItem = CSSearchableItem(uniqueIdentifier: spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: spotlightContentSet)
+                        let spotlightItem = CSSearchableItem(uniqueIdentifier: spotlightUniqueIdentifier, domainIdentifier: "com.antique.game", attributeSet: spotlightContentSet)
                         CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
                             if let error = error {
                                 ELOG("indexing error: \(error)")
@@ -1960,19 +1966,58 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 pickerController.sourceType = .photoLibrary
                 self.present(pickerController, animated: true) { () -> Void in }
             }
-            assetsLibrary = ALAssetsLibrary()
-            assetsLibrary?.enumerateGroups(withTypes: ALAssetsGroupType(ALAssetsGroupSavedPhotos), using: { group, _ in
-                guard let group = group else {
-                    return
-                }
+            //assetsLibrary = ALAssetsLibrary()
+            //assetsLibrary?.enumerateGroups(withTypes: ALAssetsGroupType(ALAssetsGroupSavedPhotos), using: { group, _ in
+            //    guard let group = group else {
+            //        return
+            //    }
 
-                group.setAssetsFilter(ALAssetsFilter.allPhotos())
-                let index: Int = group.numberOfAssets() - 1
-                VLOG("Group: \(group)")
+            //    group.setAssetsFilter(ALAssetsFilter.allPhotos())
+            //    let index: Int = group.numberOfAssets() - 1
+            //    VLOG("Group: \(group)")
+            
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+            let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            if fetchResult.count > 0 {
+                let lastPhoto = fetchResult.lastObject
+                
+                imagePickerActionSheet.pv_addButton(withTitle: "Use Last Photo Taken", action: { () -> Void in
+                    PHImageManager.default().requestImage(for: lastPhoto!, targetSize: CGSize(width: lastPhoto!.pixelWidth, height: lastPhoto!.pixelHeight), contentMode: .aspectFill, options: PHImageRequestOptions(), resultHandler: { (image, _) in
+                        let orientation: UIImage.Orientation = UIImage.Orientation(rawValue: (image?.imageOrientation)!.rawValue)!
+
+                        let lastPhoto2 = UIImage(cgImage: image!.cgImage!, scale: CGFloat(image!.scale), orientation: orientation)
+                        lastPhoto!.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (input, _) in
+                            do {
+                                try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: (input?.fullSizeImageURL!.absoluteString)!)
+                                try RomDatabase.sharedInstance.writeTransaction {
+                                    game.customArtworkURL = (input?.fullSizeImageURL!.absoluteString)!
+                                }
+                            } catch {
+                            ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
+                            }
+                        }
+                    })
+                })
+            }
+                    
+            if cameraIsAvailable || photoLibraryIsAvaialble {
+                if cameraIsAvailable {
+                    imagePickerActionSheet.pv_addButton(withTitle: "Take Photo...", action: cameraAction)
+                }
+                if photoLibraryIsAvaialble {
+                    imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
+                }
+            }
+            imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+            imagePickerActionSheet.show(in: self.view)
+            
+            
+            /*
                 if index >= 0 {
 //                var indexPathsToUpdate = [IndexPath]()
 
-                    group.enumerateAssets(at: IndexSet(integer: index), options: [], using: { result, _, _ in
+                    /*group.enumerateAssets(at: IndexSet(integer: index), options: [], using: { result, _, _ in
                         if let rep: ALAssetRepresentation = result?.defaultRepresentation() {
                             imagePickerActionSheet.pv_addButton(withTitle: "Use Last Photo Taken", action: { () -> Void in
                                 let orientation: UIImage.Orientation = UIImage.Orientation(rawValue: rep.orientation().rawValue)!
@@ -1987,7 +2032,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                                 } catch {
                                     ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
                                 }
-                            })
+                            })*/
                             if cameraIsAvailable || photoLibraryIsAvaialble {
                                 if cameraIsAvailable {
                                     imagePickerActionSheet.pv_addButton(withTitle: "Take Photo...", action: cameraAction)
@@ -1998,8 +2043,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                             }
                             imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
                             imagePickerActionSheet.show(in: self.view)
-                        }
-                    })
+                        //}
+                    //})
 
 //                DispatchQueue.main.async {
 //                    self.collectionView?.reloadItems(at: indexPathsToUpdate)
@@ -2021,7 +2066,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
                 imagePickerActionSheet.show(in: self.view)
                 self.assetsLibrary = nil
-            })
+            })*/
         }
 
         func pasteCustomArtwork(for game: PVGame) {
@@ -2218,17 +2263,18 @@ extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
 // MARK: UIDocumentMenuDelegate
 
 #if os(iOS)
-    extension PVGameLibraryViewController: UIDocumentMenuDelegate {
-        func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
-            documentPicker.delegate = self
-            documentPicker.popoverPresentationController?.sourceView = view
-            present(documentMenu, animated: true, completion: nil)
+/*
+    extension PVGameLibraryViewController: UIDocumentPickerDelegate {
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+            controller.delegate = self
+            controller.popoverPresentationController?.sourceView = view
+            present(controller, animated: true, completion: nil)
         }
 
         func documentMenuWasCancelled(_: UIDocumentMenuViewController) {
             ILOG("DocumentMenu was cancelled")
         }
-    }
+    }*/
 
     // MARK: UIDocumentPickerDelegate
 
@@ -2454,7 +2500,8 @@ extension PVGameLibraryViewController {
             #else
                 let flags: UIKeyModifierFlags = .command
             #endif
-            let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
+            let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)))
+            command.title = title
             sectionCommands.append(command)
         }
 
@@ -2476,13 +2523,16 @@ extension PVGameLibraryViewController {
                 sectionCommands.append(sortCommand)
             }
         #elseif os(iOS)
-            let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find …")
+            let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.selectSearch(_:)))
+            findCommand.title = "Find"
             sectionCommands.append(findCommand)
 
-            let sortCommand = UIKeyCommand(input: "s", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+            let sortCommand = UIKeyCommand(input: "s", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)))
+            sortCommand.title = "Sorting"
             sectionCommands.append(sortCommand)
 
-            let settingsCommand = UIKeyCommand(input: ",", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.settingsCommand), discoverabilityTitle: "Settings")
+            let settingsCommand = UIKeyCommand(input: ",", modifierFlags: [.command], action: #selector(PVGameLibraryViewController.settingsCommand))
+            settingsCommand.title = "Settings"
             sectionCommands.append(settingsCommand)
 
         #endif

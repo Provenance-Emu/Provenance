@@ -38,6 +38,8 @@ final class JSButton: UIView {
             }
         }
     }
+    
+    var isSelectStart = false
 
     var titleEdgeInsets: UIEdgeInsets = .zero {
         didSet {
@@ -86,19 +88,19 @@ final class JSButton: UIView {
         backgroundImageView.frame = bounds
         backgroundImageView.contentMode = .center
         backgroundImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        backgroundImageView.layer.shadowColor = UIColor.black.cgColor
-        backgroundImageView.layer.shadowRadius = 4.0
-        backgroundImageView.layer.shadowOpacity = 0.75
-        backgroundImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        //backgroundImageView.layer.shadowColor = UIColor.black.cgColor
+        //backgroundImageView.layer.shadowRadius = 4.0
+        //backgroundImageView.layer.shadowOpacity = 0.75
+        //backgroundImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
         addSubview(backgroundImageView)
 
         titleLabel = UILabel()
         titleLabel.backgroundColor = UIColor.clear
-        titleLabel.textColor = UIColor.white.withAlphaComponent(0.6)
-        titleLabel.layer.shadowColor = UIColor.black.cgColor
-        titleLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
-        titleLabel.layer.shadowRadius = 1.0
-        titleLabel.layer.shadowOpacity = 0.75
+        titleLabel.textColor = .white
+        //titleLabel.layer.shadowColor = UIColor.black.cgColor
+        //titleLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
+        //titleLabel.layer.shadowRadius = 1.0
+        //titleLabel.layer.shadowOpacity = 0.75
         titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
         titleLabel.frame = bounds
         titleLabel.textAlignment = .center
@@ -131,6 +133,12 @@ final class JSButton: UIView {
             frame.size.height -= titleEdgeInsets.bottom
             titleLabel.frame = frame
         }
+        
+        if isSelectStart {
+            layer.borderColor = UIColor.darkGray.cgColor
+            layer.borderWidth = 2
+            layer.cornerRadius = 5
+        } //self.layoutIfNeeded()
     }
 
     override func touchesBegan(_: Set<UITouch>, with _: UIEvent?) {

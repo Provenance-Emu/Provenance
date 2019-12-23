@@ -203,7 +203,11 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     deinit {
         NotificationCenter.default.removeObserver(self)
         GCController.controllers().forEach {
-            $0.controllerPausedHandler = nil
+            if #available(iOS 13, *) {
+                $0.extendedGamepad?.buttonMenu.pressedChangedHandler = nil
+            } else {
+                $0.controllerPausedHandler = nil
+            }
         }
     }
 
@@ -399,6 +403,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                         if let tintColor = control.PVControlTint {
                             dPad2.tintColor = UIColor(hex: tintColor)
                         }
+                        dPad2.isDPad = true
                         self.dPad2 = dPad2
                         dPad2.delegate = self
                         dPad2.alpha = alpha
@@ -409,6 +414,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                         if let tintColor = control.PVControlTint {
                             dPad.tintColor = UIColor(hex: tintColor)
                         }
+                        dPad.isDPad = true
                         self.dPad = dPad
                         dPad.delegate = self
                         dPad.alpha = alpha
@@ -473,11 +479,12 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 } else if controlType == Keys.StartButton {
                     layoutStartButton(control: control)
                 } else if controlType == Keys.LeftAnalogButton {
-                    layoutLeftAnalogButton(control: control)
+                    //layoutLeftAnalogButton(control: control)
                 } else if controlType == Keys.RightAnalogButton {
-                    layoutRightAnalogButton(control: control)
+                    //layoutRightAnalogButton(control: control)
                 }
             }
+        
             // Fix overlapping buttons on old/smaller iPhones
             if super.view.bounds.size.width < super.view.bounds.size.height {
                 if UIScreen.main.bounds.height <= 568 || UIScreen.main.bounds.width <= 320 {
@@ -524,161 +531,168 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
 
     #if os(iOS)
         func layoutRightShoulderButtons(control: ControlLayoutEntry) {
-            let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-            let xPadding: CGFloat = safeAreaInsets.right + 10
-            let yPadding: CGFloat = safeAreaInsets.bottom + 10
-            var rightShoulderFrame: CGRect!
-
-            if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-                rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
-
-                if PVSettingsModel.shared.allRightShoulders, (system.shortName == "GBA" || system.shortName == "VB") {
-                    rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
-                }
-
-            } else {
-                rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
-            }
-
             if rightShoulderButton == nil {
-                let rightShoulderButton = JSButton(frame: rightShoulderFrame)
+                let rightShoulderButton = JSButton(frame: .zero)
                 if let tintColor = control.PVControlTint {
                     rightShoulderButton.tintColor = UIColor(hex: tintColor)
                 }
-                self.rightShoulderButton = rightShoulderButton
+                
+                rightShoulderButton.translatesAutoresizingMaskIntoConstraints = false
                 rightShoulderButton.titleLabel?.text = control.PVControlTitle
-                rightShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-                rightShoulderButton.backgroundImage = UIImage(named: "button-thin")
-                rightShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                rightShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+                rightShoulderButton.backgroundColor = .clear
+                rightShoulderButton.isSelectStart = true
                 rightShoulderButton.delegate = self
-                rightShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                 rightShoulderButton.alpha = alpha
-                rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                 view.addSubview(rightShoulderButton)
+                self.rightShoulderButton = rightShoulderButton
+                
+                self.rightShoulderButton?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+                self.rightShoulderButton?.topAnchor.constraint(equalTo: buttonGroup!.topAnchor, constant: -48).isActive = true
+                self.rightShoulderButton?.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                self.rightShoulderButton?.heightAnchor.constraint(equalToConstant: 24).isActive = true
+                
             } else if rightShoulderButton2 == nil, let title = control.PVControlTitle, title == "R2" {
-                let rightShoulderButton2 = JSButton(frame: rightShoulderFrame)
+                let rightShoulderButton2 = JSButton(frame: .zero)
                 if let tintColor = control.PVControlTint {
                     rightShoulderButton2.tintColor = UIColor(hex: tintColor)
                 }
-                self.rightShoulderButton2 = rightShoulderButton2
+                
+                rightShoulderButton2.translatesAutoresizingMaskIntoConstraints = false
                 rightShoulderButton2.titleLabel?.text = control.PVControlTitle
-                rightShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-                rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
-                rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                rightShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+                rightShoulderButton2.backgroundColor = .clear
+                rightShoulderButton2.isSelectStart = true
                 rightShoulderButton2.delegate = self
-                rightShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                 rightShoulderButton2.alpha = alpha
-                rightShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
-                rightShoulderFrame.origin.y += controlSize.height
                 view.addSubview(rightShoulderButton2)
-            } else {
-                rightShoulderButton2?.frame = rightShoulderFrame
-                rightShoulderFrame.origin.y += rightShoulderButton!.frame.size.height
-                rightShoulderButton?.frame = rightShoulderFrame
+                self.rightShoulderButton2 = rightShoulderButton2
+                
+                self.rightShoulderButton2?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+                self.rightShoulderButton2?.bottomAnchor.constraint(equalTo: self.rightShoulderButton!.topAnchor, constant: -8).isActive = true
+                self.rightShoulderButton2?.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                self.rightShoulderButton2?.heightAnchor.constraint(equalToConstant: 24).isActive = true
             }
+            
+            self.updateViewConstraints()
         }
 
         func layoutZTriggerButton(control: ControlLayoutEntry) {
-            let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-            let xPadding: CGFloat = safeAreaInsets.right + 10
-            let yPadding: CGFloat = safeAreaInsets.bottom + 10
-            var zTriggerFrame: CGRect!
-
-            if rightShoulderButton != nil {
-                zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
-            } else {
-                let x: CGFloat = view.frame.size.width - (controlSize.width * 2) - xPadding
-                let y: CGFloat = view.frame.size.height - (controlSize.height * 2) - yPadding
-                zTriggerFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
-            }
-
-            if let zTriggerButton = self.zTriggerButton {
-                zTriggerButton.frame = zTriggerFrame
-            } else {
-                let zTriggerButton = JSButton(frame: zTriggerFrame)
+            if zTriggerButton == nil {
+                let zTriggerButton = JSButton(frame: .zero)
                 if let tintColor = control.PVControlTint {
                     zTriggerButton.tintColor = UIColor(hex: tintColor)
                 }
-                self.zTriggerButton = zTriggerButton
+            
+                zTriggerButton.translatesAutoresizingMaskIntoConstraints = false
                 zTriggerButton.titleLabel?.text = control.PVControlTitle
-                zTriggerButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-                zTriggerButton.backgroundImage = UIImage(named: "button-thin")
-                zTriggerButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                zTriggerButton.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+                zTriggerButton.backgroundColor = .clear
+                zTriggerButton.isSelectStart = true
                 zTriggerButton.delegate = self
-                zTriggerButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                 zTriggerButton.alpha = alpha
-                zTriggerButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                 view.addSubview(zTriggerButton)
+                self.zTriggerButton = zTriggerButton
+            
+                self.zTriggerButton?.trailingAnchor.constraint(equalTo: rightShoulderButton!.leadingAnchor, constant: -20).isActive = true
+                self.zTriggerButton?.topAnchor.constraint(equalTo: buttonGroup!.topAnchor, constant: -48).isActive = true
+                self.zTriggerButton?.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                self.zTriggerButton?.heightAnchor.constraint(equalToConstant: 24).isActive = true
             }
+            
+            self.updateViewConstraints()
         }
 
         func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
-            let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-            let xPadding: CGFloat = safeAreaInsets.left + 10
-            let yPadding: CGFloat = safeAreaInsets.bottom + 10
-            var leftShoulderFrame: CGRect!
-            if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-                leftShoulderFrame = CGRect(x: xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
-            } else {
-                leftShoulderFrame = CGRect(x: xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
-            }
-
-            if PVSettingsModel.shared.allRightShoulders {
-                if zTriggerButton != nil {
-                    leftShoulderFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
-                } else if zTriggerButton == nil, rightShoulderButton != nil {
-                    leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
-
-                    if system.shortName == "GBA" || system.shortName == "VB" {
-                        leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
-                    }
-                }
-            }
-
             if leftShoulderButton == nil {
-                let leftShoulderButton = JSButton(frame: leftShoulderFrame)
-                self.leftShoulderButton = leftShoulderButton
-                leftShoulderButton.titleLabel?.text = control.PVControlTitle
-                leftShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
+                let leftShoulderButton = JSButton(frame: .zero)
                 if let tintColor = control.PVControlTint {
                     leftShoulderButton.tintColor = UIColor(hex: tintColor)
                 }
-                leftShoulderButton.backgroundImage = UIImage(named: "button-thin")
-                leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                
+                leftShoulderButton.translatesAutoresizingMaskIntoConstraints = false
+                leftShoulderButton.titleLabel?.text = control.PVControlTitle
+                leftShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+                leftShoulderButton.backgroundColor = .clear
+                leftShoulderButton.isSelectStart = true
                 leftShoulderButton.delegate = self
-                leftShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                 leftShoulderButton.alpha = alpha
-                leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                 view.addSubview(leftShoulderButton)
+                self.leftShoulderButton = leftShoulderButton
+                
+                self.leftShoulderButton?.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+                self.leftShoulderButton?.topAnchor.constraint(equalTo: buttonGroup!.topAnchor, constant: -48).isActive = true
+                self.leftShoulderButton?.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                self.leftShoulderButton?.heightAnchor.constraint(equalToConstant: 24).isActive = true
+                
             } else if leftShoulderButton2 == nil, let title = control.PVControlTitle, title == "L2" {
-                let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
+                let leftShoulderButton2 = JSButton(frame: .zero)
                 if let tintColor = control.PVControlTint {
                     leftShoulderButton2.tintColor = UIColor(hex: tintColor)
                 }
-                self.leftShoulderButton2 = leftShoulderButton2
+                
+                leftShoulderButton2.translatesAutoresizingMaskIntoConstraints = false
                 leftShoulderButton2.titleLabel?.text = control.PVControlTitle
-                leftShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-                leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
-                leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                leftShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+                leftShoulderButton2.backgroundColor = .clear
+                leftShoulderButton2.isSelectStart = true
                 leftShoulderButton2.delegate = self
-                leftShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                 leftShoulderButton2.alpha = alpha
-                leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                 view.addSubview(leftShoulderButton2)
-
-            } else {
-                leftShoulderButton2?.frame = leftShoulderFrame
-                leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height
-                leftShoulderButton?.frame = leftShoulderFrame
+                self.leftShoulderButton2 = leftShoulderButton2
+                
+                self.leftShoulderButton2?.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+                self.leftShoulderButton2?.bottomAnchor.constraint(equalTo: self.leftShoulderButton!.topAnchor, constant: -8).isActive = true
+                self.leftShoulderButton2?.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                self.leftShoulderButton2?.heightAnchor.constraint(equalToConstant: 24).isActive = true
             }
+            
+            self.updateViewConstraints()
         }
 
         func layoutSelectButton(control: ControlLayoutEntry) {
+            let selectButton = JSButton(frame: .zero)
+            if let tintColor = control.PVControlTint {
+                selectButton.tintColor = UIColor(hex: tintColor)
+            }
+            
+            selectButton.translatesAutoresizingMaskIntoConstraints = false
+            selectButton.titleLabel?.text = control.PVControlTitle
+            selectButton.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+            selectButton.backgroundColor = .clear
+            selectButton.isSelectStart = true
+            selectButton.delegate = self
+            selectButton.alpha = alpha
+            view.addSubview(selectButton)
+            self.selectButton = selectButton
+            
+            selectButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -8).isActive = true
+            selectButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+            selectButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+            selectButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
+            
+            /*
             let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
             let yPadding: CGFloat = safeAreaInsets.bottom + 10
             let xPadding: CGFloat = safeAreaInsets.left + 10
-            let spacing: CGFloat = 20
+            //let spacing: CGFloat = 20
             var selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+            
+            let selectButton = JSButton(frame: .zero)
+            if let tintColor = control.PVControlTint {
+                selectButton.tintColor = UIColor(hex: tintColor)
+            }
+                
+            selectButton.translatesAutoresizingMaskIntoConstraints = false
+            selectButton.titleLabel?.text = control.PVControlTitle
+            selectButton.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .medium)
+            selectButton.backgroundColor = .clear
+            selectButton.isSelectStart = true
+            selectButton.delegate = self
+            selectButton.alpha = alpha
+            view.addSubview(selectButton)
+            self.selectButton = selectButton
+            
 
             if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
                 if dPad != nil, !(dPad?.isHidden)! {
@@ -691,41 +705,73 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 }
 
             } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
-                let x: CGFloat = (view.frame.size.width / 2) - controlSize.width - (spacing / 2)
-                let y: CGFloat = (buttonGroup?.frame.maxY ?? 0) + spacing
-                selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
+                selectButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -20).isActive = true
+                selectButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
+                selectButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                selectButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
             }
 
             if selectFrame.maxY >= view.frame.size.height {
                 selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
-            }
-
-            if let selectButton = self.selectButton {
-                selectButton.frame = selectFrame
-            } else {
-                let selectButton = JSButton(frame: selectFrame)
-                if let tintColor = control.PVControlTint {
-                    selectButton.tintColor = UIColor(hex: tintColor)
-                }
-                self.selectButton = selectButton
-                selectButton.titleLabel?.text = control.PVControlTitle
-                selectButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-                selectButton.backgroundImage = UIImage(named: "button-thin")
-                selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
-                selectButton.delegate = self
-                selectButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
-                selectButton.alpha = alpha
-                selectButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
-                view.addSubview(selectButton)
-            }
+            }*/
+            
+            self.updateViewConstraints()
         }
 
         func layoutStartButton(control: ControlLayoutEntry) {
+            let startButton = JSButton(frame: .zero)
+            if let tintColor = control.PVControlTint {
+                startButton.tintColor = UIColor(hex: tintColor)
+            }
+            
+            startButton.translatesAutoresizingMaskIntoConstraints = false
+            startButton.titleLabel?.text = control.PVControlTitle
+            startButton.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+            startButton.backgroundColor = .clear
+            startButton.isSelectStart = true
+            startButton.delegate = self
+            startButton.alpha = alpha
+            view.addSubview(startButton)
+            self.startButton = startButton
+            
+            
+            let leading = NSLayoutConstraint(item: startButton, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 8)
+            let horizontal = NSLayoutConstraint(item: startButton, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0)
+            
+            // startButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 8).isActive = true
+            if system.shortName == "N64" {
+                view.removeConstraint(leading)
+                view.addConstraint(horizontal)
+            } else {
+                view.removeConstraint(horizontal)
+                view.addConstraint(leading)
+            }
+            startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+            startButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+            startButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
+            
+            /*
             let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
             let yPadding: CGFloat = safeAreaInsets.bottom + 10
             let xPadding: CGFloat = safeAreaInsets.right + 10
-            let spacing: CGFloat = 20
+            //let spacing: CGFloat = 20
             var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+            
+            let startButton = JSButton(frame: startFrame)
+            if let tintColor = control.PVControlTint {
+                startButton.tintColor = UIColor(hex: tintColor)
+            }
+            
+            startButton.translatesAutoresizingMaskIntoConstraints = false
+            startButton.titleLabel?.text = control.PVControlTitle
+            startButton.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .medium)
+            startButton.backgroundColor = .clear
+            startButton.isSelectStart = true
+            startButton.delegate = self
+            startButton.alpha = alpha
+            view.addSubview(startButton)
+            self.startButton = startButton
+            
 
             if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
                 if buttonGroup != nil, !(buttonGroup?.isHidden)! {
@@ -740,34 +786,17 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     }
                 }
             } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
-                startFrame = CGRect(x: (view.frame.size.width / 2) + (spacing / 2), y: (buttonGroup?.frame.maxY)! + spacing, width: controlSize.width, height: controlSize.height)
-                if selectButton == nil {
-                    startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
-                }
+                startButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 20).isActive = true
+                startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
+                startButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+                startButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
             }
 
             if startFrame.maxY >= view.frame.size.height {
                 startFrame.origin.y -= (startFrame.maxY - view.frame.size.height) + yPadding
-            }
-
-            if let startButton = self.startButton {
-                startButton.frame = startFrame
-            } else {
-                let startButton = JSButton(frame: startFrame)
-                if let tintColor = control.PVControlTint {
-                    startButton.tintColor = UIColor(hex: tintColor)
-                }
-                self.startButton = startButton
-                startButton.titleLabel?.text = control.PVControlTitle
-                startButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-                startButton.backgroundImage = UIImage(named: "button-thin")
-                startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
-                startButton.delegate = self
-                startButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
-                startButton.alpha = alpha
-                startButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
-                view.addSubview(startButton)
-            }
+            }*/
+            
+            self.updateViewConstraints()
         }
 
         func layoutLeftAnalogButton(control: ControlLayoutEntry) {

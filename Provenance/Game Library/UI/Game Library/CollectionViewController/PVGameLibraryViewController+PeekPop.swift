@@ -28,6 +28,7 @@ import UIKit
             if let indexPath = collectionView!.indexPathForItem(at: location), let cellAttributes = collectionView!.layoutAttributesForItem(at: indexPath) {
                 // This will show the cell clearly and blur the rest of the screen for our peek.
                 previewingContext.sourceRect = cellAttributes.frame
+                
 
                 if searchResults == nil, indexPath.section == saveStateSection {
                     let storyBoard = UIStoryboard(name: "SaveStates", bundle: nil)

@@ -13,12 +13,12 @@ import UIKit
     #if os(iOS)
         public override init(frame: CGRect, style: UITableView.Style) {
             super.init(frame: frame, style: style)
-            backgroundColor = Theme.currentTheme.settingsHeaderBackground
+            backgroundColor = .systemBackground
         }
 
         public required init?(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
-            backgroundColor = Theme.currentTheme.settingsHeaderBackground
+            backgroundColor = .systemBackground
         }
     #endif
 }

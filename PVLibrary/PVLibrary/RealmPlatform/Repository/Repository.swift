@@ -57,7 +57,7 @@ final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.R
 
     func save(entity: T) -> Observable<()> {
         return Observable.deferred {
-            self.realm.rx.save(entity: entity)
+            self.realm.rx.save(entity: entity, update: .all)
         }.subscribeOn(scheduler)
     }
 

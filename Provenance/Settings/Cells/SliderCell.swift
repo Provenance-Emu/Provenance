@@ -108,12 +108,18 @@ extension QuickTableViewController: SliderCellDelegate {
                 slider.setValue(row.value, animated: true)
             }
         }
-
-//    open override func layoutSubviews() {
-//        super.layoutSubviews()
-//        let leftInset = (textLabel?.bounds.width ?? 0) + 16
-//        slider.frame = contentView.bounds.inset(by: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 16))
-//    }
+        
+        open override func layoutSubviews() {
+            super.layoutSubviews()
+            //let leftInset = (textLabel?.bounds.width ?? 0) + 16
+            //slider.frame = contentView.bounds.inset(by: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 16))
+            
+            DispatchQueue.main.async {
+                self.textLabel?.sizeToFit()
+                self.layoutIfNeeded()
+                self.updateConstraints()
+            }
+        }
 
         // MARK: - Private
 
@@ -123,10 +129,17 @@ extension QuickTableViewController: SliderCellDelegate {
         }
 
         private func setUpAppearance() {
-            slider.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-            let leftInset = (textLabel?.bounds.width ?? 0) + 16
-            slider.frame = contentView.bounds.inset(by: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 16))
+            slider.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(slider)
+            
+            textLabel?.translatesAutoresizingMaskIntoConstraints = false
+            textLabel?.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+            textLabel?.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
+            textLabel?.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
+            
+            slider.leadingAnchor.constraint(equalTo: textLabel!.trailingAnchor, constant: 20).isActive = true
+            slider.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+            slider.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         }
     }
 #endif
