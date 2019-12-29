@@ -451,13 +451,13 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            _inputState[PV7800MFiButtonJoy1Up]    = dpad.up.value > 0.5;
-            _inputState[PV7800MFiButtonJoy1Down]  = dpad.down.value > 0.5;
-            _inputState[PV7800MFiButtonJoy1Left]  = dpad.left.value > 0.5;
-            _inputState[PV7800MFiButtonJoy1Right] = dpad.right.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset]    = dpad.up.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset]  = dpad.down.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset]  = dpad.left.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = dpad.right.value > 0.5;
             
-            _inputState[PV7800MFiButtonJoy1Button1] = gamepad.buttonX.isPressed;
-            _inputState[PV7800MFiButtonJoy1Button2] = gamepad.buttonA.isPressed;
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = gamepad.buttonX.isPressed;
+            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = gamepad.buttonA.isPressed;
         }
 #endif
     }
