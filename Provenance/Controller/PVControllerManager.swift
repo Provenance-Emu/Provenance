@@ -150,7 +150,6 @@ final class PVControllerManager: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)
-        SteamControllerManager.shared().scanForControllers()
         // automatically assign the first connected controller to player 1
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()

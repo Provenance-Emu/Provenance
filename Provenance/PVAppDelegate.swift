@@ -96,6 +96,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let database = RomDatabase.sharedInstance
         database.refresh()
 
+        SteamControllerManager.listenForConnections()
+        
         return true
     }
 
@@ -235,9 +237,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_: UIApplication) {}
 
-    func applicationDidBecomeActive(_: UIApplication) {
-        SteamControllerManager.shared().scanForControllers()
-    }
+    func applicationDidBecomeActive(_: UIApplication) {}
 
     func applicationWillTerminate(_: UIApplication) {}
 
