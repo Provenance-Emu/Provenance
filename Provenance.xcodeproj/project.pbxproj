@@ -144,7 +144,6 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
-		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
 		B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; };
@@ -511,6 +510,7 @@
 		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
@@ -1038,6 +1038,7 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		C13CC82823CABE2800463EDD /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCControllerExtensions.swift; sourceTree = "<group>"; };
 		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
@@ -1067,6 +1068,7 @@
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
 				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
+				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
 				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
 				B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */,
 				B3DE5B1421B102F20066069E /* ProvenanceShared.framework in Frameworks */,
@@ -1091,7 +1093,6 @@
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
-				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				B316B4DF219269C600693472 /* PVYabause.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
@@ -1339,6 +1340,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C13CC82823CABE2800463EDD /* Photos.framework */,
 				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
 				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
 				B3CDEED821D4D84E000C55F7 /* BitByteData.framework */,

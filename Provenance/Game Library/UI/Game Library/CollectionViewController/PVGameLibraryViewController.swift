@@ -8,7 +8,7 @@
 //
 
 #if os(iOS)
-    import AssetsLibrary
+    import Photos
     import SafariServices
 #endif
 import CoreSpotlight
@@ -70,7 +70,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     let maxForSpecialSection = 6
 
     #if os(iOS)
-        var assetsLibrary: ALAssetsLibrary?
+        var photoLibrary: PHPhotoLibrary?
     #endif
     var gameForCustomArt: PVGame?
 
@@ -1941,87 +1941,66 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #if os(iOS)
         func chooseCustomArtwork(for game: PVGame) {
             weak var weakSelf: PVGameLibraryViewController? = self
-            let imagePickerActionSheet = UIActionSheet()
+            let imagePickerActionSheet = UIAlertController(title: "Choose Artwork", message: "Choose the location of the artwork.\n\nUse Latest Photo: Use the last image in the camera roll.\nTake Photo: Use the camera to take a photo.\nChoose Photo: Use the camera roll to choose an image.", preferredStyle: .actionSheet)
+            
             let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
             let photoLibraryIsAvaialble: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
-            let cameraAction: PVUIActionSheetAction = { () -> Void in
+            
+            let cameraAction = UIAlertAction(title: "Take Photo", style: .default, handler: { action in
                 self.gameForCustomArt = game
                 let pickerController = UIImagePickerController()
                 pickerController.delegate = weakSelf
                 pickerController.allowsEditing = false
                 pickerController.sourceType = .camera
                 self.present(pickerController, animated: true) { () -> Void in }
-            }
-            let libraryAction: PVUIActionSheetAction = { () -> Void in
+            })
+            
+            let libraryAction = UIAlertAction(title: "Choose Photo", style: .default, handler: { action in
                 self.gameForCustomArt = game
                 let pickerController = UIImagePickerController()
                 pickerController.delegate = weakSelf
                 pickerController.allowsEditing = false
                 pickerController.sourceType = .photoLibrary
                 self.present(pickerController, animated: true) { () -> Void in }
-            }
-            assetsLibrary = ALAssetsLibrary()
-            assetsLibrary?.enumerateGroups(withTypes: ALAssetsGroupType(ALAssetsGroupSavedPhotos), using: { group, _ in
-                guard let group = group else {
-                    return
-                }
+            })
+            
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+            let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            if fetchResult.count > 0 {
+                let lastPhoto = fetchResult.lastObject
+                
+                imagePickerActionSheet.addAction(UIAlertAction(title: "Use Latest Photo", style: .default, handler: { (action) in
+                    PHImageManager.default().requestImage(for: lastPhoto!, targetSize: CGSize(width: lastPhoto!.pixelWidth, height: lastPhoto!.pixelHeight), contentMode: .aspectFill, options: PHImageRequestOptions(), resultHandler: { (image, _) in
+                        let orientation: UIImage.Orientation = UIImage.Orientation(rawValue: (image?.imageOrientation)!.rawValue)!
 
-                group.setAssetsFilter(ALAssetsFilter.allPhotos())
-                let index: Int = group.numberOfAssets() - 1
-                VLOG("Group: \(group)")
-                if index >= 0 {
-//                var indexPathsToUpdate = [IndexPath]()
-
-                    group.enumerateAssets(at: IndexSet(integer: index), options: [], using: { result, _, _ in
-                        if let rep: ALAssetRepresentation = result?.defaultRepresentation() {
-                            imagePickerActionSheet.pv_addButton(withTitle: "Use Last Photo Taken", action: { () -> Void in
-                                let orientation: UIImage.Orientation = UIImage.Orientation(rawValue: rep.orientation().rawValue)!
-
-                                let lastPhoto = UIImage(cgImage: rep.fullScreenImage().takeUnretainedValue(), scale: CGFloat(rep.scale()), orientation: orientation)
-
-                                do {
-                                    try PVMediaCache.writeImage(toDisk: lastPhoto, withKey: rep.url().path)
-                                    try RomDatabase.sharedInstance.writeTransaction {
-                                        game.customArtworkURL = rep.url().path
-                                    }
-                                } catch {
-                                    ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
+                        let lastPhoto2 = UIImage(cgImage: image!.cgImage!, scale: CGFloat(image!.scale), orientation: orientation)
+                        lastPhoto!.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (input, _) in
+                            do {
+                                try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: (input?.fullSizeImageURL!.absoluteString)!)
+                                try RomDatabase.sharedInstance.writeTransaction {
+                                    game.customArtworkURL = (input?.fullSizeImageURL!.absoluteString)!
                                 }
-                            })
-                            if cameraIsAvailable || photoLibraryIsAvaialble {
-                                if cameraIsAvailable {
-                                    imagePickerActionSheet.pv_addButton(withTitle: "Take Photo...", action: cameraAction)
-                                }
-                                if photoLibraryIsAvaialble {
-                                    imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
-                                }
+                            } catch {
+                            ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
                             }
-                            imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
-                            imagePickerActionSheet.show(in: self.view)
                         }
                     })
-
-//                DispatchQueue.main.async {
-//                    self.collectionView?.reloadItems(at: indexPathsToUpdate)
-//                }
-                } else {
-                    let alert = UIAlertController(title: "No Photos", message: "There are no photos in your library to choose from", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(alert, animated: true) { () -> Void in }
+                }))
+            }
+                    
+            if cameraIsAvailable || photoLibraryIsAvaialble {
+                if cameraIsAvailable {
+                    imagePickerActionSheet.addAction(cameraAction)
                 }
-            }, failureBlock: { _ in
-                if cameraIsAvailable || photoLibraryIsAvaialble {
-                    if cameraIsAvailable {
-                        imagePickerActionSheet.pv_addButton(withTitle: "Take Photo...", action: cameraAction)
-                    }
-                    if photoLibraryIsAvaialble {
-                        imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
-                    }
+                if photoLibraryIsAvaialble {
+                    imagePickerActionSheet.addAction(libraryAction)
                 }
-                imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
-                imagePickerActionSheet.show(in: self.view)
-                self.assetsLibrary = nil
-            })
+            }
+            imagePickerActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+                imagePickerActionSheet.dismiss(animated: true, completion: nil)
+            }))
+            present(imagePickerActionSheet, animated: true, completion: nil)
         }
 
         func pasteCustomArtwork(for game: PVGame) {
