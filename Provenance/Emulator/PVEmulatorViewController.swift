@@ -127,6 +127,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "isRunning" {
+            #if os(tvOS)
+            PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
+            #endif
             if core.isRunning {
                 if gameStartTime != nil {
                     ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
@@ -732,6 +735,9 @@ extension PVEmulatorViewController {
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
         core.controller4 = PVControllerManager.shared.player4
+        #if os(tvOS)
+        PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
+        #endif
     }
 
     // MARK: - UIScreenNotifications

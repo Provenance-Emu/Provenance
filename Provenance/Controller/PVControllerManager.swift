@@ -201,6 +201,13 @@ final class PVControllerManager: NSObject {
             return
         }
 
+        #if os(tvOS)
+        if let steamController = controller as? SteamController {
+            // PVEmulatorViewController will set to controller mode if game is running
+            steamController.steamControllerMode = .keyboardAndMouse
+        }
+        #endif
+        
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
     }
@@ -338,5 +345,11 @@ final class PVControllerManager: NSObject {
             }
         }
         return false
+    }
+    
+    func setSteamControllersMode(_ mode: SteamControllerMode) {
+        for controller in SteamControllerManager.shared().controllers {
+            controller.steamControllerMode = mode
+        }
     }
 }
