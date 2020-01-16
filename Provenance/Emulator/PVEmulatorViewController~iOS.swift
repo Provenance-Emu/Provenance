@@ -249,7 +249,10 @@ extension PVEmulatorViewController {
         core.setPauseEmulation(true)
         isShowingMenu = true
 
-        let actionSheet = EmulatorActionController()
+        //let actionSheet = EmulatorActionController()
+        
+        let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
+        
 
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = menuButton
@@ -257,16 +260,16 @@ extension PVEmulatorViewController {
         }
 
         if PVControllerManager.shared.iCadeController != nil {
-            actionSheet.addAction(Action("Disconnect iCade", style: .default) { _ in
+            actionSheet.addAction(UIAlertAction(title: "Disconnect iCade", style: .default, handler: { action in
                 NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
                 self.enableContorllerInput(false)
-            })
+            }))
         }
 
         if core is CoreOptional {
-            actionSheet.addAction(Action("Core Options", style: .default, handler: { _ in
+            actionSheet.addAction(UIAlertAction(title: "Core Options", style: .default, handler: { action in
                 self.showCoreOptions()
             }))
         }
@@ -283,7 +286,7 @@ extension PVEmulatorViewController {
             if player1.extendedGamepad != nil || wantsStartSelectInMenu, !hideP1MenuActions {
                 // left trigger bound to Start
                 // right trigger bound to Select
-                actionSheet.addAction(Action("P1 Start", style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: "P1 Start", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressStart(forPlayer: 0)
@@ -292,7 +295,7 @@ extension PVEmulatorViewController {
                     })
                     self.enableContorllerInput(false)
                 }))
-                actionSheet.addAction(Action("P1 Select", style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: "P1 Select", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressSelect(forPlayer: 0)
@@ -303,7 +306,7 @@ extension PVEmulatorViewController {
                 }))
             }
             if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                actionSheet.addAction(Action("P1 AnalogMode", style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: "P1 Analog Mode", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressAnalogMode(forPlayer: 0)
@@ -316,7 +319,7 @@ extension PVEmulatorViewController {
         }
         if let player2 = controllerManager.player2 {
             if player2.extendedGamepad != nil || wantsStartSelectInMenu {
-                actionSheet.addAction(Action("P2 Start", style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: "P2 Start", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressStart(forPlayer: 1)
@@ -325,7 +328,7 @@ extension PVEmulatorViewController {
                     })
                     self.enableContorllerInput(false)
                 }))
-                actionSheet.addAction(Action("P2 Select", style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: "P2 Select", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressSelect(forPlayer: 1)
@@ -334,7 +337,7 @@ extension PVEmulatorViewController {
                     })
                     self.enableContorllerInput(false)
                 }))
-                actionSheet.addAction(Action("P2 AnalogMode", style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: "P2 Analog Mode", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressAnalogMode(forPlayer: 1)
@@ -346,7 +349,7 @@ extension PVEmulatorViewController {
             }
         }
         if let swappableCore = core as? DiscSwappable, swappableCore.currentGameSupportsMultipleDiscs {
-            actionSheet.addAction(Action("Swap Disc", style: .default, handler: { _ in
+            actionSheet.addAction(UIAlertAction(title: "Swap Disc", style: .default, handler: { action in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                     self.showSwapDiscsMenu()
                 })
@@ -355,7 +358,7 @@ extension PVEmulatorViewController {
 
         if let actionableCore = core as? CoreActions, let actions = actionableCore.coreActions {
             actions.forEach { coreAction in
-                actionSheet.addAction(Action(coreAction.title, style: .default, handler: { _ in
+                actionSheet.addAction(UIAlertAction(title: coreAction.title, style: .destructive, handler: { action in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                         actionableCore.selected(action: coreAction)
                         self.core.setPauseEmulation(false)
@@ -369,11 +372,11 @@ extension PVEmulatorViewController {
             }
         }
         #if os(iOS)
-            actionSheet.addAction(Action("Save Screenshot", style: .default, handler: { _ in
+            actionSheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: { action in
                 self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
             }))
         #endif
-        actionSheet.addAction(Action("Game Info", style: .default, handler: { _ in
+        actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: { action in
             let sb = UIStoryboard(name: "Provenance", bundle: nil)
             let moreInfoViewContrller = sb.instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController
             moreInfoViewContrller?.game = self.game
@@ -384,15 +387,15 @@ extension PVEmulatorViewController {
             self.isShowingMenu = false
             self.enableContorllerInput(false)
         }))
-        actionSheet.addAction(Action("Game Speed", style: .default, handler: { _ in
+        actionSheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: { action in
             self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
         }))
         if core.supportsSaveStates {
-            actionSheet.addAction(Action("Save States", style: .default, handler: { _ in
+            actionSheet.addAction(UIAlertAction(title: "Save States", style: .default, handler: { action in
                 self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
             }))
         }
-        actionSheet.addAction(Action("Reset", style: .default, handler: { _ in
+        actionSheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: { action in
             if PVSettingsModel.shared.autoSave, self.core.supportsSaveStates {
                 self.autoSaveState { result in
                     switch result {
@@ -416,19 +419,29 @@ extension PVEmulatorViewController {
         shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
 
         // Add Non-Saving quit first
-        let quitTitle = shouldSave ? "Quit (without save)" : "Quit"
-        actionSheet.addAction(Action(quitTitle, style: shouldSave ? .default : .destructive, handler: { _ in
+        let quitTitle = shouldSave ? "Quit (without saving)" : "Quit"
+        actionSheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: { action in
             self.quit(optionallySave: false)
         }))
 
         // If save and quit is an option, add it last with different style
         if shouldSave {
-            actionSheet.addAction(Action("Save & Quit", style: .destructive, handler: { _ in
+            actionSheet.addAction(UIAlertAction(title: "Save & Quit", style: .destructive, handler: { action in
                 self.quit(optionallySave: true)
             }))
         }
+        
+        actionSheet.addAction(UIAlertAction(title: "Resume", style: .default, handler: { action in
+            actionSheet.dismiss(animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.core.setPauseEmulation(false)
+                    self.isShowingMenu = false
+                    self.enableContorllerInput(false)
+                }
+            }
+        }))
 
-        actionSheet.cancelBlock = {
+        if actionSheet.isBeingDismissed {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
