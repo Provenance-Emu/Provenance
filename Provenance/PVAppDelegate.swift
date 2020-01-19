@@ -97,7 +97,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         database.refresh()
 
         SteamControllerManager.listenForConnections()
-        
+
         return true
     }
 

@@ -213,7 +213,7 @@ final class PVControllerManager: NSObject {
                 }
             }
         }
-        
+
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
     }
@@ -275,7 +275,7 @@ final class PVControllerManager: NSObject {
             controller.steamRightTrackpadRequiresClick = !controller.steamRightTrackpadRequiresClick
         case .stick:
             // toggle stick mapping between d-pad and left stick
-            if (controller.steamThumbstickMapping == .leftThumbstick) {
+            if controller.steamThumbstickMapping == .leftThumbstick {
                 controller.steamThumbstickMapping = .dPad
                 controller.steamLeftTrackpadMapping = .leftThumbstick
             } else {
@@ -286,7 +286,7 @@ final class PVControllerManager: NSObject {
             return
         }
     }
-    
+
     // MARK: - Controllers assignment
 
     func setController(_ controller: GCController?, toPlayer player: Int) {
@@ -374,7 +374,7 @@ final class PVControllerManager: NSObject {
         }
         return false
     }
-    
+
     func setSteamControllersMode(_ mode: SteamControllerMode) {
         for controller in SteamControllerManager.shared().controllers {
             controller.steamControllerMode = mode
