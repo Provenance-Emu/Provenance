@@ -370,13 +370,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if let aRecognizer = menuGestureRecognizer {
                 view.addGestureRecognizer(aRecognizer)
             }
-        #else
-            GCController.controllers().forEach { [unowned self] in
-                $0.controllerPausedHandler = { controller in
-                    self.controllerPauseButtonPressed(controller)
-                }
-            }
         #endif
+        GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
+            $0.controllerPausedHandler = { controller in
+                self.controllerPauseButtonPressed(controller)
+            }
+        }
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -709,11 +708,13 @@ extension PVEmulatorViewController {
         if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true
             // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-            #if os(iOS)
-
+            // Except for the Apple Remote, where it's handled in the menuGestureRecognizer
+            if controller?.vendorName != "Remote" {
                 controller?.controllerPausedHandler = { [unowned self] controller in
                     self.controllerPauseButtonPressed(controller)
                 }
+            }
+            #if os(iOS)
                 if #available(iOS 11.0, *) {
                     setNeedsUpdateOfHomeIndicatorAutoHidden()
                 }
