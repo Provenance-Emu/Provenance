@@ -32,3 +32,5 @@ report.xml
 /.folio
 .DS_Store
 xcshareddata
+.build
+.swiftpm
