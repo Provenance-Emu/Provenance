@@ -127,6 +127,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "isRunning" {
+            #if os(tvOS)
+            PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
+            #endif
             if core.isRunning {
                 if gameStartTime != nil {
                     ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
@@ -367,13 +370,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if let aRecognizer = menuGestureRecognizer {
                 view.addGestureRecognizer(aRecognizer)
             }
-        #else
-            GCController.controllers().forEach { [unowned self] in
-                $0.controllerPausedHandler = { controller in
-                    self.controllerPauseButtonPressed(controller)
-                }
-            }
         #endif
+        GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
+            $0.controllerPausedHandler = { controller in
+                self.controllerPauseButtonPressed(controller)
+            }
+        }
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -706,11 +708,13 @@ extension PVEmulatorViewController {
         if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true
             // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-            #if os(iOS)
-
+            // Except for the Apple Remote, where it's handled in the menuGestureRecognizer
+            if controller?.vendorName != "Remote" {
                 controller?.controllerPausedHandler = { [unowned self] controller in
                     self.controllerPauseButtonPressed(controller)
                 }
+            }
+            #if os(iOS)
                 if #available(iOS 11.0, *) {
                     setNeedsUpdateOfHomeIndicatorAutoHidden()
                 }
@@ -732,6 +736,9 @@ extension PVEmulatorViewController {
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
         core.controller4 = PVControllerManager.shared.player4
+        #if os(tvOS)
+        PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
+        #endif
     }
 
     // MARK: - UIScreenNotifications

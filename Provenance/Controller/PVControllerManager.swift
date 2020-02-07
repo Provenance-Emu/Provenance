@@ -150,7 +150,6 @@ final class PVControllerManager: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)
-        SteamControllerManager.shared().scanForControllers()
         // automatically assign the first connected controller to player 1
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
@@ -202,6 +201,19 @@ final class PVControllerManager: NSObject {
             return
         }
 
+        if let steamController = controller as? SteamController {
+            #if os(tvOS)
+            // PVEmulatorViewController will set to controller mode if game is running
+            steamController.steamControllerMode = .keyboardAndMouse
+            #endif
+            // combinations for mode toggles
+            steamController.steamButtonCombinationHandler = { (controller, button, down) in
+                if down {
+                    self.handleSteamControllerCombination(controller: controller, button: button)
+                }
+            }
+        }
+
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
     }
@@ -251,6 +263,28 @@ final class PVControllerManager: NSObject {
 
     func listenForICadeControllers() {
         listenForICadeControllers(window: nil) { () -> Void in }
+    }
+
+    func handleSteamControllerCombination(controller: SteamController, button: SteamControllerButton) {
+        switch button {
+        case .leftTrackpadClick:
+            // toggle left trackpad click to input
+            controller.steamLeftTrackpadRequiresClick = !controller.steamLeftTrackpadRequiresClick
+        case .rightTrackpadClick:
+            // toggle right trackpad click to input
+            controller.steamRightTrackpadRequiresClick = !controller.steamRightTrackpadRequiresClick
+        case .stick:
+            // toggle stick mapping between d-pad and left stick
+            if controller.steamThumbstickMapping == .leftThumbstick {
+                controller.steamThumbstickMapping = .dPad
+                controller.steamLeftTrackpadMapping = .leftThumbstick
+            } else {
+                controller.steamThumbstickMapping = .leftThumbstick
+                controller.steamLeftTrackpadMapping = .dPad
+            }
+        default:
+            return
+        }
     }
 
     // MARK: - Controllers assignment
@@ -339,5 +373,11 @@ final class PVControllerManager: NSObject {
             }
         }
         return false
+    }
+
+    func setSteamControllersMode(_ mode: SteamControllerMode) {
+        for controller in SteamControllerManager.shared().controllers {
+            controller.steamControllerMode = mode
+        }
     }
 }
