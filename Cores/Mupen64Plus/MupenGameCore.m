@@ -664,7 +664,7 @@ static void ConfigureGLideN64(NSString *romFolder) {
 
     if(RESIZE_TO_FULLSCREEN) {
         #if TARGET_OS_TV
-            aspectRatio = 2;
+            aspectRatio = 1;
         #else
             aspectRatio = 3;
         #endif
