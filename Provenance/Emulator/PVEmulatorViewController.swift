@@ -630,12 +630,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         let speeds = ["Slow", "Normal", "Fast"]
         speeds.enumerated().forEach { idx, title in
-            actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
+            let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
                 self.enableContorllerInput(false)
-            }))
+            })
+            actionSheet.addAction(action)
+            if idx == self.core.gameSpeed.rawValue {
+                actionSheet.preferredAction = action
+            }
         }
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
