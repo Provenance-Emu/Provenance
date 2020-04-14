@@ -1146,7 +1146,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         dismiss(animated: true, completion: nil)
     }
 
-    lazy var reachability = Reachability()!
+    lazy var reachability = try! Reachability()
 
     // MARK: - Filesystem Helpers
 
