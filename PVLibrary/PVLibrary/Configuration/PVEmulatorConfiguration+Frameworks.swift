@@ -18,7 +18,8 @@ public extension PVEmulatorConfiguration {
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
-        let classList = objc_copyClassList(&count)!
+        let classListPointer = objc_copyClassList(&count)!
+        let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
             if let classInfo = ClassInfo(classList[i], withSuperclass: "PVEmulatorCore"),

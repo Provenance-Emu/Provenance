@@ -86,7 +86,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
     func showServerActiveAlert() {
         // Start Webserver
         // Check to see if we are connected to WiFi. Cannot continue otherwise.
-        let reachability = Reachability()!
+        let reachability = try! Reachability()
 
         do {
             try reachability.startNotifier()

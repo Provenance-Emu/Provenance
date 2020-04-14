@@ -31,7 +31,7 @@ class PVQuickTableViewController: QuickTableViewController {
 
 final class PVSettingsViewController: PVQuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
-    let reachability: Reachability = Reachability()!
+    let reachability: Reachability = try! Reachability()
 
     override func viewDidLoad() {
         super.viewDidLoad()

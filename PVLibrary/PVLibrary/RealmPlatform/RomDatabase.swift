@@ -364,13 +364,13 @@ public extension RomDatabase {
     @objc
     func add(_ object: Object, update: Bool = false) throws {
         try writeTransaction {
-            realm.add(object, update: update)
+            realm.add(object, update: update ? .all : .error)
         }
     }
 
     func add<T: Object>(objects: [T], update: Bool = false) throws {
         try writeTransaction {
-            realm.add(objects, update: update)
+            realm.add(objects, update: update ? .all : .error)
         }
     }
 
