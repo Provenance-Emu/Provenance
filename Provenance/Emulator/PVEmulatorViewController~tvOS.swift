@@ -70,7 +70,7 @@ extension PVEmulatorViewController {
                 }))
             }
             if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                actionsheet.addAction(UIAlertAction(title: "P1 AnalogMode", style: .default, handler: { (_: UIAlertAction) -> Void in
+                actionsheet.addAction(UIAlertAction(title: "P1 Analog Mode", style: .default, handler: { (_: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressAnalogMode(forPlayer: 0)
@@ -101,7 +101,7 @@ extension PVEmulatorViewController {
                     })
                     self.enableContorllerInput(false)
                 }))
-                actionsheet.addAction(UIAlertAction(title: "P2 AnalogMode", style: .default, handler: { (_: UIAlertAction) -> Void in
+                actionsheet.addAction(UIAlertAction(title: "P2 Analog Mode", style: .default, handler: { (_: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
                     self.controllerViewController?.pressAnalogMode(forPlayer: 1)
