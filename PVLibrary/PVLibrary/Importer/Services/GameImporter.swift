@@ -961,7 +961,9 @@ public extension GameImporter {
                 }
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
-                    game.gameDescription = gameDescription
+                    let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
+                    let htmlDecodedGameDescription = try! NSMutableAttributedString(data: gameDescription.data(using: .utf8)!, options: options, documentAttributes: nil)
+                    game.gameDescription = htmlDecodedGameDescription.string
                 }
 
                 if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {
