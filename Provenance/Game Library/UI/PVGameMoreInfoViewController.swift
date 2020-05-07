@@ -305,9 +305,21 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        descriptionTextView.showsVerticalScrollIndicator = true
-        descriptionTextView.flashScrollIndicators()
-        descriptionTextView.indicatorStyle = .white
+
+        #if os(iOS)
+            descriptionTextView.showsVerticalScrollIndicator = true
+            descriptionTextView.flashScrollIndicators()
+            descriptionTextView.indicatorStyle = .white
+        #endif
+
+        #if os(tvOS)
+            if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
+                descriptionTextView.isUserInteractionEnabled = true
+                descriptionTextView.isSelectable = true
+                descriptionTextView.isScrollEnabled = true
+                descriptionTextView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+            }
+        #endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -791,6 +803,14 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
         }
 
         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            if context.previouslyFocusedView?.isDescendant(of: descriptionTextView) == true {
+                if descriptionTextView.contentOffset.y > 0 {
+                    UIView.animate(withDuration: 0.2, delay: 0, animations: {
+                        self.descriptionTextView.contentOffset.y = 0
+                    }, completion: nil)
+                }
+            }
+
             super.didUpdateFocus(in: context, with: coordinator)
 
 //        coordinator.addCoordinatedAnimations({ [unowned self] in
