@@ -225,16 +225,6 @@ public final class Theme {
             }
         }
 
-        appearance(in: [UITableViewHeaderFooterView.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsHeaderText
-            }
-        }
-
-        UITableViewHeaderFooterView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-        }
-
         let selectedView = UIView()
         selectedView.backgroundColor = theme.defaultTintColor
 
