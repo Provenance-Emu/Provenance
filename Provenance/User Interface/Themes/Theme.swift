@@ -194,7 +194,7 @@ public final class Theme {
         }
 
         // Settings
-        appearance(in: [SettingsTableView.self]) {
+        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, SettingsTableView.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
             UITableViewCell.appearance {
                 $0.backgroundColor = theme.settingsCellBackground
                 $0.textLabel?.backgroundColor = theme.settingsCellBackground
