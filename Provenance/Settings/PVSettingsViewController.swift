@@ -35,6 +35,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
 
@@ -46,6 +47,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        splitViewController?.title = "Settings"
         do {
             try reachability.startNotifier()
         } catch {
