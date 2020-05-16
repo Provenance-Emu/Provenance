@@ -409,7 +409,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     @IBAction func help(_: Any) {
         #if canImport(SafariServices)
-            let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki")!)
+            let webVC = WebkitViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)
             navigationController?.pushViewController(webVC, animated: true)
         #endif
     }
