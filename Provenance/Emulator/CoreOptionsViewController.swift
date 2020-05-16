@@ -77,7 +77,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                  values.forEach { value in
                                                                      var title = value.title
                                                                      if currentSelection == value.title {
-                                                                         title += "✔︎ "
+                                                                         title += " ✔︎"
                                                                      }
                                                                      let action = UIAlertAction(title: title, style: .default, handler: { _ in
                                                                          self.core.setValue(value.title, forOption: option)
