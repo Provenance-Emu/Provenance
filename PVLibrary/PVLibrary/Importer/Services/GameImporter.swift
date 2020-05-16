@@ -961,7 +961,9 @@ public extension GameImporter {
                 }
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
-                    game.gameDescription = gameDescription
+                    let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
+                    let htmlDecodedGameDescription = try! NSMutableAttributedString(data: gameDescription.data(using: .utf8)!, options: options, documentAttributes: nil)
+                    game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
                 }
 
                 if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {
