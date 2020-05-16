@@ -20,25 +20,21 @@ protocol WebServerActivatorController: class {
 
     extension WebServerActivatorController where Self: UIViewController & SFSafariViewControllerDelegate {
         // Show "Web Server Active" alert view
-        func showServerActiveAlert() {
+        var webServerAlertMessage: String {
+            let webServerAddress: String = PVWebServer.shared.urlString
+            let webDavAddress: String = PVWebServer.shared.webDavURLString
             let message = """
             Read Importing ROMs wiki…
             Upload/Download files at:
 
+            \(webServerAddress)  ᵂᵉᵇᵁᴵ
+            \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
             """
-            let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-            let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
-            ipField.backgroundColor = UIColor.clear
-            ipField.textAlignment = .center
-            ipField.font = UIFont.systemFont(ofSize: 13)
-            ipField.textColor = UIColor.gray
-            let ipFieldText = """
-            WebUI: \(PVWebServer.shared.urlString)
-            WebDav: \(PVWebServer.shared.webDavURLString)
-            """
-            ipField.text = ipFieldText
-            ipField.isUserInteractionEnabled = false
-            alert.view.addSubview(ipField)
+            return message
+        }
+
+        func showServerActiveAlert() {
+            let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                 PVWebServer.shared.stopServers()
             }))
@@ -78,7 +74,6 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
 
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
-
         """
         return message
     }
