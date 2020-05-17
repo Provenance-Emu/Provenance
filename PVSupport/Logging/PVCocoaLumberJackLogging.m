@@ -80,12 +80,7 @@
 //    [DDLog addLogger:[DDASLLogger sharedInstance]];
 
         // TTY Logger - The Debug console output
-    [DDLog addLogger:[DDTTYLogger sharedInstance] withLevel:DDLogLevelDebug];
-//    [[DDTTYLogger sharedInstance] setLogFormatter:dmFormatter];
-
-        // Enable colors in console. XCode colors is required
-        // https://github.com/robbiehanson/XcodeColors
-    [[DDTTYLogger sharedInstance] setColorsEnabled:YES];
+    [DDLog addLogger:[DDOSLogger sharedInstance] withLevel:DDLogLevelDebug];
 
         // NSLogger binding - network logging
         // https://cocoapods.org/?q=XCDLumberjackNSLogger
@@ -95,12 +90,7 @@
 - (void)initReleaseLogging {
 	// TTY Logger - The Debug console output
 	// Release uses only extreme levels
-	[DDLog addLogger:[DDTTYLogger sharedInstance] withLevel:DDLogLevelWarning];
-//	[[DDTTYLogger sharedInstance] setLogFormatter:dmFormatter];
-
-	// Enable colors in console. XCode colors is required
-	// https://github.com/robbiehanson/XcodeColors
-	[[DDTTYLogger sharedInstance] setColorsEnabled:YES];
+	[DDLog addLogger:[DDOSLogger sharedInstance] withLevel:DDLogLevelWarning];
 }
 
 - (NSArray*)logFilePaths {

@@ -276,8 +276,7 @@ extension PVAppDelegate {
             window?.addLogViewerGesture()
         #endif
 
-        DDTTYLogger.sharedInstance?.colorsEnabled = true
-        DDTTYLogger.sharedInstance?.logFormatter = PVTTYFormatter()
+        DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
     }
 
     func _initHockeyApp() {
