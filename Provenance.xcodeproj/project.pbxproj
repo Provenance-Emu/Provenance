@@ -354,7 +354,6 @@
 		B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */; };
 		B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
 		B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B374932B2175667D00C65DD1 /* QuickTableViewController.framework */; };
-		B3B10473218F20FE00210C39 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10462218F20FC00210C39 /* NSLoggerSwift.framework */; };
 		B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10463218F20FC00210C39 /* Realm.framework */; };
 		B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10464218F20FC00210C39 /* RxRealm.framework */; };
 		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
@@ -371,7 +370,6 @@
 		B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10490218F212700210C39 /* RxCocoa.framework */; };
 		B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10492218F212700210C39 /* SwiftyUserDefaults.framework */; };
 		B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10495218F212800210C39 /* QuickTableViewController.framework */; };
-		B3B104A9218F212800210C39 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10496218F212800210C39 /* NSLoggerSwift.framework */; };
 		B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10497218F212800210C39 /* NSLogger.framework */; };
 		B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B3B104BE218F2EAA00210C39 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
@@ -1061,7 +1059,6 @@
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
 				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
 				B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */,
-				B3B10473218F20FE00210C39 /* NSLoggerSwift.framework in Frameworks */,
 				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
 				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
 				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
@@ -1160,7 +1157,6 @@
 				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
 				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
 				B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */,
-				B3B104A9218F212800210C39 /* NSLoggerSwift.framework in Frameworks */,
 				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
 				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				B3B1049D218F212800210C39 /* Realm.framework in Frameworks */,

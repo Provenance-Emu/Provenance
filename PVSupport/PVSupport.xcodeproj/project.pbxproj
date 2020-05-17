@@ -106,11 +106,9 @@
 		B3B104F82191851900210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
 		B3B104F92191851900210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
 		B3B104FA2191851900210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
-		B3B104FB2191851900210C39 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
 		B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */; };
 		B3B105112191855200210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B105122191855200210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B105002191854900210C39 /* NSLogger.framework */; };
-		B3B105132191855200210C39 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
@@ -304,7 +302,6 @@
 				B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B105112191855200210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B105122191855200210C39 /* NSLogger.framework in Frameworks */,
-				B3B105132191855200210C39 /* NSLoggerSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,7 +314,6 @@
 				B3B104F82191851900210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B104F92191851900210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3B104FA2191851900210C39 /* NSLogger.framework in Frameworks */,
-				B3B104FB2191851900210C39 /* NSLoggerSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
