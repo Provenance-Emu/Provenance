@@ -139,7 +139,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             })
         ])
 
-        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check wiki for Controls per systems")
+        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
 
         // Game Library
 
@@ -176,7 +176,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             libraryRows.append(webServerAlwaysOn)
         #endif
 
-        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about Importing ROMs.")
+        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about importing ROMs.")
 
         // Game Library 2
         let library2Rows: [TableRow] = [
