@@ -54,6 +54,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; };
 		14C4C1A021EBADC90055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; };
@@ -692,6 +693,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVTVTabBarController.swift; sourceTree = "<group>"; };
 		14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A0938B917CD45D400029021 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = SOURCE_ROOT; };
@@ -1591,6 +1593,7 @@
 			children = (
 				B35D667D21814EAB0005A992 /* Story Boards */,
 				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
+				11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
 				1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
@@ -2916,6 +2919,7 @@
 				B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */,
 				B3D5E2B1218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
+				11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */,
 				B3B104C5218F2EF400210C39 /* PVDreamcastControllerViewController.swift in Sources */,
 				B3B104CE218F2EF400210C39 /* PVPCFXControllerViewController.swift in Sources */,
 				B3D5E2B3218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
