@@ -83,6 +83,8 @@ import UIKit
 
             // TODO: Could do the same for 'destructive' types
 
+            view.tintColor = settings.textColor
+
             AlertContentViews.forEach {
 //                print("AlertContentSubview \(String(describing: $0))")
 
