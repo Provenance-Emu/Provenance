@@ -7,7 +7,6 @@
 //
 
 import Foundation
-//import Promises
 import RxSwift
 
 public enum ImporterFileType {

@@ -87,9 +87,6 @@ repositoryMap:
 - XLActionController:
   - name: XLActionController
     platforms: [iOS]
-- ZIPFoundation:
-  - name: ZIPFoundation
-    platforms: [iOS,tvOS]
 - realm-cocoa:
   - name: Realm
     platforms: [iOS,tvOS]
