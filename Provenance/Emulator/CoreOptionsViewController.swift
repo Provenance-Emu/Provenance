@@ -60,7 +60,8 @@ final class CoreOptionsViewController: QuickTableViewController {
             let rows: [TableRow] = $0.options.map { option in
                 switch option {
                 case let .bool(display, defaultValue):
-                    return SwitchRow(text: display.title, detailText: .none, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
+                    let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
+                    return SwitchRow(text: display.title, detailText: detailText, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
                         let value = self.core.valueForOption(Bool.self, option.key) ?? defaultValue
                         self.core.setValue(!value, forOption: option)
                     })
