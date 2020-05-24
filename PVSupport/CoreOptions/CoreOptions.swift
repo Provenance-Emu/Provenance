@@ -27,27 +27,9 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         if let savedOption = UserDefaults.standard.object(forKey: key) as? T {
             return savedOption
         } else {
-            let levels = option.split(separator: ".")
-
-            var currentOptions: [CoreOption] = options
-            var foundOption: CoreOption?
-            for (i, level) in levels.enumerated() {
-                if i == levels.count - 1 {
-                    foundOption = findOption(forKey: String(level), options: currentOptions)
-                } else {
-                    if let nextSubOption = findOption(forKey: String(level), options: currentOptions) {
-                        switch nextSubOption {
-                        case let .group(_, subOptions):
-                            currentOptions = subOptions
-                        default:
-                            break
-                        }
-                    } else {
-                        break
-                    }
-                }
-            }
-            return foundOption?.defaultValue as? T
+            let currentOptions: [CoreOption] = options
+            let foundOption = findOption(forKey: option, options: currentOptions)
+            return UserDefaults.standard.object(forKey: "\(className).\(foundOption!)") as? T
         }
     }
 
@@ -93,9 +75,14 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     }
 
     static func findOption(forKey key: String, options: [CoreOption]) -> CoreOption? {
-        return options.first {
-            $0.key == key
+        var foundOption: CoreOption?
+        for option in options {
+            let subOption = option.subOptionForKey(key)
+            if subOption != nil {
+                foundOption = subOption
+            }
         }
+        return foundOption
     }
 }
 
