@@ -105,7 +105,7 @@ extension QuickTableViewController: SliderCellDelegate {
                 slider.maximumValue = row.valueLimits.max
                 slider.minimumValueImage = row.valueImages.min?.image
                 slider.maximumValueImage = row.valueImages.max?.image
-                slider.setValue(row.value, animated: true)
+                slider.setValue(row.value, animated: false)
             }
         }
 
