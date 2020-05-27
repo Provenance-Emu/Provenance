@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11D381F7247D9980005594A2 /* RxSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D381F8247D9996005594A2 /* CocoaLumberjack.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700421916979000FA7F9 /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D381F9247D9A47005594A2 /* Realm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700221916978000FA7F9 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D381FA247D9A59005594A2 /* RealmSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700821916979000FA7F9 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D381FD247D9ACD005594A2 /* RxRealm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = 11D381FB247D9A82005594A2 /* RxRealm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D381FE247D9B67005594A2 /* SQLite.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF6FF621916978000FA7F9 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D381FF247D9B78005594A2 /* ZipArchive.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700721916979000FA7F9 /* ZipArchive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D38200247D9BBE005594A2 /* CocoaLumberjackSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11D38201247D9BF5005594A2 /* NSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF6FFB21916978000FA7F9 /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -419,7 +428,16 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				11D381FF247D9B78005594A2 /* ZipArchive.framework in Copy Framework */,
+				11D381F9247D9A47005594A2 /* Realm.framework in Copy Framework */,
 				B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */,
+				11D381F7247D9980005594A2 /* RxSwift.framework in Copy Framework */,
+				11D381F8247D9996005594A2 /* CocoaLumberjack.framework in Copy Framework */,
+				11D38200247D9BBE005594A2 /* CocoaLumberjackSwift.framework in Copy Framework */,
+				11D381FA247D9A59005594A2 /* RealmSwift.framework in Copy Framework */,
+				11D381FD247D9ACD005594A2 /* RxRealm.framework in Copy Framework */,
+				11D381FE247D9B67005594A2 /* SQLite.framework in Copy Framework */,
+				11D38201247D9BF5005594A2 /* NSLogger.framework in Copy Framework */,
 			);
 			name = "Copy Framework";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -427,6 +445,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		11D381FB247D9A82005594A2 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = iOS/RxRealm.framework; sourceTree = "<group>"; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B3067F752106B9180091437F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -1618,6 +1637,7 @@
 		B3AF6FA221915F5C000FA7F9 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				11D381FB247D9A82005594A2 /* RxRealm.framework */,
 				B3AF700421916979000FA7F9 /* CocoaLumberjack.framework */,
 				B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */,
 				B3AF6FF921916978000FA7F9 /* HockeySDK.framework */,

@@ -639,7 +639,7 @@
 			name = gen68k;
 			productName = gen68k;
 			productReference = 946C18D51714A48600C64BF9 /* gen68k */;
-			productType = "com.apple.product-type.tool";
+			productType = "com.apple.product-type.application";
 		};
 		B32775221E9C8444000FEC38 /* PVYabause-iOS */ = {
 			isa = PBXNativeTarget;
