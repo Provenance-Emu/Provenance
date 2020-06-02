@@ -210,8 +210,6 @@
 		B324C651219216FF009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
 		B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
 		B32746BE219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
-		B32746C2219BD77300B78124 /* GameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746C1219BD77300B78124 /* GameLibraryViewController.swift */; };
-		B32746C3219BD77300B78124 /* GameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746C1219BD77300B78124 /* GameLibraryViewController.swift */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
@@ -826,7 +824,6 @@
 		B324C6212192059E009F4EDC /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C64E219216DD009F4EDC /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionFlowLayout.swift; sourceTree = "<group>"; };
-		B32746C1219BD77300B78124 /* GameLibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLibraryViewController.swift; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
@@ -1880,7 +1877,6 @@
 				B32746BF219BD6C700B78124 /* Reusable Views */,
 				B32746C0219BD6EE00B78124 /* CollectionViewController */,
 				B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */,
-				B32746C1219BD77300B78124 /* GameLibraryViewController.swift */,
 			);
 			path = "Game Library";
 			sourceTree = "<group>";
@@ -2756,7 +2752,6 @@
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
-				B32746C2219BD77300B78124 /* GameLibraryViewController.swift in Sources */,
 				B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
@@ -2817,7 +2812,6 @@
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
 				B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */,
-				B32746C3219BD77300B78124 /* GameLibraryViewController.swift in Sources */,
 				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3F64ED9205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
