@@ -210,8 +210,6 @@
 		B324C651219216FF009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
 		B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
 		B32746BE219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
-		B32746C2219BD77300B78124 /* GameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746C1219BD77300B78124 /* GameLibraryViewController.swift */; };
-		B32746C3219BD77300B78124 /* GameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746C1219BD77300B78124 /* GameLibraryViewController.swift */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
@@ -441,7 +439,6 @@
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
 		B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10487218F212600210C39 /* ZipArchive.framework */; };
-		B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10486218F212600210C39 /* ZIPFoundation.framework */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -827,7 +824,6 @@
 		B324C6212192059E009F4EDC /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C64E219216DD009F4EDC /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionFlowLayout.swift; sourceTree = "<group>"; };
-		B32746C1219BD77300B78124 /* GameLibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLibraryViewController.swift; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
@@ -933,7 +929,6 @@
 		B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3B10469218F20FD00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/iOS/RxAtomic.framework; sourceTree = "<group>"; };
 		B3B1046A218F20FD00210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3B1046B218F20FD00210C39 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = Carthage/Build/iOS/ZIPFoundation.framework; sourceTree = "<group>"; };
 		B3B1046C218F20FD00210C39 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = Carthage/Build/iOS/XLActionController.framework; sourceTree = "<group>"; };
 		B3B1046D218F20FE00210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		B3B1046E218F20FE00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/iOS/RxBlocking.framework; sourceTree = "<group>"; };
@@ -941,7 +936,6 @@
 		B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3B10472218F20FE00210C39 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		B3B10485218F212500210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/tvOS/SQLite.framework; sourceTree = "<group>"; };
-		B3B10486218F212600210C39 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = Carthage/Build/tvOS/ZIPFoundation.framework; sourceTree = "<group>"; };
 		B3B10487218F212600210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/tvOS/ZipArchive.framework; sourceTree = "<group>"; };
 		B3B10489218F212600210C39 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3B1048A218F212600210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
@@ -976,10 +970,6 @@
 		B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
-		B3CDEED021D4D238000C55F7 /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = Carthage/Build/tvOS/Promises.framework; sourceTree = "<group>"; };
-		B3CDEED221D4D31A000C55F7 /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = Carthage/Build/iOS/Promises.framework; sourceTree = "<group>"; };
-		B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBLPromises.framework; path = Carthage/Build/iOS/FBLPromises.framework; sourceTree = "<group>"; };
-		B3CDEED621D4D517000C55F7 /* FBLPromises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBLPromises.framework; path = Carthage/Build/tvOS/FBLPromises.framework; sourceTree = "<group>"; };
 		B3CDEED821D4D84E000C55F7 /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = Carthage/Build/tvOS/BitByteData.framework; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		B3D534EB20B001D700A83D4E /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillPageControl.swift; sourceTree = "<group>"; };
@@ -1170,7 +1160,6 @@
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
 				B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */,
-				B3CDEECF21D4D22E000C55F7 /* ZIPFoundation.framework in Frameworks */,
 				2882D23621DEBB6700AA0B5D /* SteamController.framework in Frameworks */,
 				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
 				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
@@ -1342,10 +1331,6 @@
 				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
 				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
 				B3CDEED821D4D84E000C55F7 /* BitByteData.framework */,
-				B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */,
-				B3CDEED621D4D517000C55F7 /* FBLPromises.framework */,
-				B3CDEED021D4D238000C55F7 /* Promises.framework */,
-				B3CDEED221D4D31A000C55F7 /* Promises.framework */,
 				B378226921D35A270077E86F /* SWCompression.framework */,
 				B378226421D358340077E86F /* BitByteData.framework */,
 				B378226321D358340077E86F /* SWCompression.framework */,
@@ -1499,7 +1484,6 @@
 				B324C30221919596009F4EDC /* TVUIKit.framework */,
 				B324C30121919596009F4EDC /* UIKit.framework */,
 				B3B10487218F212600210C39 /* ZipArchive.framework */,
-				B3B10486218F212600210C39 /* ZIPFoundation.framework */,
 			);
 			name = tvOS;
 			sourceTree = "<group>";
@@ -1562,7 +1546,6 @@
 				1A3D409717B2DCE4004DFFFC /* UIKit.framework */,
 				B3B1046C218F20FD00210C39 /* XLActionController.framework */,
 				B3B1046F218F20FE00210C39 /* ZipArchive.framework */,
-				B3B1046B218F20FD00210C39 /* ZIPFoundation.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -1894,7 +1877,6 @@
 				B32746BF219BD6C700B78124 /* Reusable Views */,
 				B32746C0219BD6EE00B78124 /* CollectionViewController */,
 				B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */,
-				B32746C1219BD77300B78124 /* GameLibraryViewController.swift */,
 			);
 			path = "Game Library";
 			sourceTree = "<group>";
@@ -2770,7 +2752,6 @@
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
-				B32746C2219BD77300B78124 /* GameLibraryViewController.swift in Sources */,
 				B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
@@ -2831,7 +2812,6 @@
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
 				B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */,
-				B32746C3219BD77300B78124 /* GameLibraryViewController.swift in Sources */,
 				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3F64ED9205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,

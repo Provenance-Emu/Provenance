@@ -9,7 +9,6 @@ github "Puasonych/XLActionController" "update-for-xcode-11"
 github "bcylin/QuickTableViewController"
 github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
-#github "google/promises"
 github "zydeco/SteamController"
 
 # Crashlytics - Static Libs
@@ -33,7 +32,6 @@ github "ashleymills/Reachability.swift"
 
 # PVLibrary
 github "ZipArchive/ZipArchive"
-github "weichsel/ZIPFoundation"
 #github "tsolomko/SWCompression"
 github "realm/realm-cocoa"
 github "stephencelis/SQLite.swift"

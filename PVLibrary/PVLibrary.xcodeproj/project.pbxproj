@@ -508,8 +508,6 @@
 		B378226721D358740077E86F /* BitByteData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BitByteData.framework; path = ../Carthage/Build/tvOS/BitByteData.framework; sourceTree = "<group>"; };
 		B378226B21D35A2F0077E86F /* SWCompression.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWCompression.framework; path = ../Carthage/Build/tvOS/SWCompression.framework; sourceTree = "<group>"; };
 		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
-		B378227321D41D400077E86F /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = ../Carthage/Build/iOS/Promises.framework; sourceTree = "<group>"; };
-		B378227521D41D4D0077E86F /* Promises.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Promises.framework; path = ../Carthage/Build/tvOS/Promises.framework; sourceTree = "<group>"; };
 		B378227921D41E1C0077E86F /* SavePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
 		B378227F21D41E460077E86F /* PackageResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageResult.swift; sourceTree = "<group>"; };
@@ -852,7 +850,6 @@
 		B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = tvOS/QuickTableViewController.framework; sourceTree = "<group>"; };
 		B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = tvOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B3AF6FCE21916106000FA7F9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = tvOS/RxSwift.framework; sourceTree = "<group>"; };
-		B3AF6FCF21916106000FA7F9 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = tvOS/ZIPFoundation.framework; sourceTree = "<group>"; };
 		B3AF6FD021916106000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = tvOS/SQLite.framework; sourceTree = "<group>"; };
 		B3AF6FF621916978000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = iOS/SQLite.framework; sourceTree = "<group>"; };
 		B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
@@ -863,7 +860,6 @@
 		B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3AF6FFD21916978000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = iOS/RxTest.framework; sourceTree = "<group>"; };
 		B3AF6FFF21916978000FA7F9 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = iOS/XLActionController.framework; sourceTree = "<group>"; };
-		B3AF700021916978000FA7F9 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZIPFoundation.framework; path = iOS/ZIPFoundation.framework; sourceTree = "<group>"; };
 		B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3AF700221916978000FA7F9 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = iOS/Realm.framework; sourceTree = "<group>"; };
 		B3AF700321916978000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = iOS/RxBlocking.framework; sourceTree = "<group>"; };
@@ -922,8 +918,6 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B378227321D41D400077E86F /* Promises.framework */,
-				B378227521D41D4D0077E86F /* Promises.framework */,
 				B378226B21D35A2F0077E86F /* SWCompression.framework */,
 				B378226021D358190077E86F /* BitByteData.framework */,
 				B378226721D358740077E86F /* BitByteData.framework */,
@@ -1655,7 +1649,6 @@
 				B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */,
 				B3AF6FFF21916978000FA7F9 /* XLActionController.framework */,
 				B3AF700721916979000FA7F9 /* ZipArchive.framework */,
-				B3AF700021916978000FA7F9 /* ZIPFoundation.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -1678,7 +1671,6 @@
 				B3AF6FD021916106000FA7F9 /* SQLite.framework */,
 				B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */,
 				B3AF6FC921916105000FA7F9 /* ZipArchive.framework */,
-				B3AF6FCF21916106000FA7F9 /* ZIPFoundation.framework */,
 			);
 			name = tvOS;
 			sourceTree = "<group>";

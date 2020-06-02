@@ -248,7 +248,6 @@
 		B3B105022191854900210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
 		B3B105042191854900210C39 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickTableViewController.framework; sourceTree = "<group>"; };
 		B3B105052191854900210C39 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
-		B3B105062191854900210C39 /* ZIPFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZIPFoundation.framework; sourceTree = "<group>"; };
 		B3B105072191854900210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		B3B105082191854900210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SQLite.framework; sourceTree = "<group>"; };
 		B3B105092191854A00210C39 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
@@ -501,7 +500,6 @@
 				B3B105082191854900210C39 /* SQLite.framework */,
 				B3B104FF2191854800210C39 /* SwiftyUserDefaults.framework */,
 				B3B104FD2191854800210C39 /* ZipArchive.framework */,
-				B3B105062191854900210C39 /* ZIPFoundation.framework */,
 			);
 			name = "Carthage-tvOS";
 			path = ../Carthage/Build/tvOS;
