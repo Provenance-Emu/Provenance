@@ -180,22 +180,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     // MARK: - Lifecycle
 
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-
-        do {
-            try RomDatabase.initDefaultDatabase()
-            UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
-        } catch {
-            let alert = UIAlertController(title: "Database Error", message: error.localizedDescription, preferredStyle: .alert)
-            ELOG(error.localizedDescription)
-            alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { _ in
-                fatalError(error.localizedDescription)
-            }))
-            present(alert, animated: true, completion: nil)
-        }
-    }
-
     #if os(iOS)
         override var preferredStatusBarStyle: UIStatusBarStyle {
             return .lightContent
@@ -241,9 +225,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             })
         #endif
 
-        if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
-            migrateLibrary()
-        }
+        // Handle migrating library
+        handleLibraryMigration()
         initRealmResultsStorage()
 //        setUpGameLibrary()
 
@@ -1251,81 +1234,29 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     // MARK: - Game Library Management
 
-    // This method is probably outdated
-    func migrateLibrary() {
-        let hud = MBProgressHUD.showAdded(to: view, animated: true)!
-        hud.isUserInteractionEnabled = false
-        hud.mode = .indeterminate
-        hud.labelText = "Migrating Game Library"
-        hud.detailsLabelText = "Please be patient, this may take a while..."
-
-        let libraryPath: String = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!
-
-        do {
-            try FileManager.default.removeItem(at: URL(fileURLWithPath: libraryPath).appendingPathComponent("PVGame.sqlite")) } catch {
-            ILOG("Unable to delete PVGame.sqlite because \(error.localizedDescription)")
-        }
-
-        do {
-            try FileManager.default.removeItem(at: URL(fileURLWithPath: libraryPath).appendingPathComponent("PVGame.sqlite-shm")) } catch {
-            ILOG("Unable to delete PVGame.sqlite-shm because \(error.localizedDescription)")
-        }
-
-        do {
-            try FileManager.default.removeItem(at: URL(fileURLWithPath: libraryPath).appendingPathComponent("PVGame.sqlite-wal")) } catch {
-            ILOG("Unable to delete PVGame.sqlite-wal because \(error.localizedDescription)")
-        }
-
-        do {
-            try FileManager.default.createDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, withIntermediateDirectories: true, attributes: nil) } catch {
-            ELOG("Unable to create roms directory because \(error.localizedDescription)")
-            // dunno what else can be done if this fails
-            return
-        }
-
-        // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
-        let contents: [URL]
-        do {
-            contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-        } catch {
-            ELOG("Unable to get contents of documents because \(error.localizedDescription)")
-            return
-        }
-
-        // TODO: Use the known ROM and BIOS extensions to skip those
-        // Skip the battery and saves folder
-        // Don't move the Imge cache files, or delete them
-
-        let ignoredExtensions = ["jpg", "png", "gif", "jpeg"]
-        let filteredContents = contents.filter { (url) -> Bool in
-            let dbFile = url.path.lowercased().contains("realm")
-            let ignoredExtension = ignoredExtensions.contains(url.pathExtension)
-            return !dbFile && !ignoredExtension
-        }
-
-        filteredContents.forEach { path in
-            var isDir: ObjCBool = false
-            let exists: Bool = FileManager.default.fileExists(atPath: path.path, isDirectory: &isDir)
-
-            if exists, !isDir.boolValue, !path.path.lowercased().contains("realm") {
-                let toPath = PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent(path.lastPathComponent)
-
-                do {
-                    try FileManager.default.moveItem(at: path, to: toPath)
-                } catch {
-                    ELOG("Unable to move \(path.path) to \(toPath.path) because \(error.localizedDescription)")
-                }
-            }
-        }
-
-        hud.hide(true)
-        UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
-
-        do {
-            let paths = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
-            gameImporter?.startImport(forPaths: paths)
-        } catch {
-            ELOG("Couldn't get rom paths")
+    // TODO: It would be nice to move this and the importer-logic out of the ViewController at some point
+    func handleLibraryMigration() {
+        UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
+        if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
+            let hud = MBProgressHUD.showAdded(to: view, animated: true)!
+            gameLibrary.migrate()
+                .subscribe(onNext: { event in
+                    switch event {
+                    case .starting:
+                        hud.isUserInteractionEnabled = false
+                        hud.mode = .indeterminate
+                        hud.labelText = "Migrating Game Library"
+                        hud.detailsLabelText = "Please be patient, this may take a while..."
+                    case .pathsToImport(let paths):
+                        hud.hide(true)
+                        let _ = self.gameImporter.importFiles(atPaths: paths)
+                    }
+                }, onError: { error in
+                    ELOG(error.localizedDescription)
+                }, onCompleted: {
+                    UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
+                })
+                .disposed(by: disposeBag)
         }
     }
 
