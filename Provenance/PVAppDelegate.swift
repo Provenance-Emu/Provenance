@@ -14,19 +14,21 @@ import HockeySDK
 import PVLibrary
 import PVSupport
 import RealmSwift
+import RxSwift
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var shortcutItemGame: PVGame?
     var fileLogger: DDFileLogger = DDFileLogger()
+    let disposeBag = DisposeBag()
 
     #if os(iOS)
         var _logViewController: PVLogViewController?
     #endif
 
-    func application(_: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
         setDefaultsFromSettingsBundle()
 
@@ -67,6 +69,17 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         #if os(iOS)
             if #available(iOS 9.0, *) {
+                // Setup shortcuts
+                Observable.combineLatest(
+                    gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
+                    gameLibrary.recents.mapMany { $0.asShortcut(isFavorite: false) }
+                ) { $0 + $1 }
+                    .bind(onNext: { shortcuts in
+                        application.shortcutItems = shortcuts
+                    })
+                    .disposed(by: disposeBag)
+
+                // Handle if started from shortcut
                 if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                     shortcutItemGame = matchedGame
                 }
@@ -375,3 +388,19 @@ extension PVAppDelegate: BITHockeyManagerDelegate {
         }
     }
 }
+
+#if os(iOS)
+@available(iOS 9.0, *)
+extension PVGame {
+    func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
+        let icon: UIApplicationShortcutIcon = {
+            if #available(iOS 9.1, *), isFavorite {
+                return UIApplicationShortcutIcon(type: .favorite)
+            } else {
+                return UIApplicationShortcutIcon(type: .play)
+            }
+        }()
+        return UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: systemIdentifier), icon: icon, userInfo: ["PVGameHash": md5Hash as NSSecureCoding])
+    }
+}
+#endif
