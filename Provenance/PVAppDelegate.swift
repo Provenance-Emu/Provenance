@@ -65,6 +65,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
+        let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
+
         #if os(iOS)
             if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
@@ -75,7 +77,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             if let tabBarController = window?.rootViewController as? UITabBarController {
                 let flowLayout = UICollectionViewFlowLayout()
                 flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-                let searchViewController = PVSearchViewController(collectionViewLayout: flowLayout)
+                let searchViewController = PVSearchViewController(collectionViewLayout: flowLayout, gameLibrary: gameLibrary)
                 let searchController = UISearchController(searchResultsController: searchViewController)
                 searchController.searchResultsUpdater = searchViewController
                 let searchContainerController = UISearchContainerViewController(searchController: searchController)
@@ -108,8 +110,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         let gameLibraryViewController = rootNavigation.viewControllers[0] as! PVGameLibraryViewController
 
+        // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
         gameLibraryViewController.updatesController = libraryUpdatesController
         gameLibraryViewController.gameImporter = gameImporter
+        gameLibraryViewController.gameLibrary = gameLibrary
 
         startOptionalWebDavServer()
 

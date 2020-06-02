@@ -63,6 +63,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     let disposeBag = DisposeBag()
     var updatesController: PVGameLibraryUpdatesController!
+    var gameLibrary: PVGameLibrary!
     var gameImporter: GameImporter!
     var filePathsToImport = [URL]()
 
@@ -1618,19 +1619,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     func toggleFavorite(for game: PVGame) {
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                game.isFavorite = !game.isFavorite
-            }
-
-            register3DTouchShortcuts()
-
-            DispatchQueue.main.async {
+        gameLibrary.toggleFavorite(for: game)
+            .subscribe(onCompleted: {
                 self.collectionView?.reloadData()
-            }
-        } catch {
-            ELOG("Failed to toggle Favourite for game \(game.title)")
-        }
+            }, onError: { error in
+                ELOG("Failed to toggle Favourite for game \(game.title)")
+            })
+            .disposed(by: disposeBag)
     }
 
     func moreInfo(for game: PVGame) {
