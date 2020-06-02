@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
 		1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
+		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
+		112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
+		11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
+		11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
 		11D381F7247D9980005594A2 /* RxSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		11D381F8247D9996005594A2 /* CocoaLumberjack.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700421916979000FA7F9 /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		11D381F9247D9A47005594A2 /* Realm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700221916978000FA7F9 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -18,8 +22,6 @@
 		11D381FF247D9B78005594A2 /* ZipArchive.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700721916979000FA7F9 /* ZipArchive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		11D38200247D9BBE005594A2 /* CocoaLumberjackSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		11D38201247D9BF5005594A2 /* NSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF6FFB21916978000FA7F9 /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
-		112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -451,6 +453,7 @@
 		1180B31F2492A9C200636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		11D381FB247D9A82005594A2 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = iOS/RxRealm.framework; sourceTree = "<group>"; };
 		112E7E2E247EF3840050431C /* PVGameLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibrary.swift; sourceTree = "<group>"; };
+		11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1064,6 +1067,7 @@
 				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
 				B3AF47DB21072AD3002211EE /* Resources */,
 				112E7E2E247EF3840050431C /* PVGameLibrary.swift */,
+				11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */,
 				B3579D122106B11D00DDEBD6 /* PVLibrary.h */,
 				B3579D132106B11D00DDEBD6 /* Info.plist */,
 			);
@@ -1946,6 +1950,7 @@
 				B354E7C9219A7E470041F971 /* System.swift in Sources */,
 				B3AF478B21071E85002211EE /* Xz.c in Sources */,
 				B3AF47CF21071FC0002211EE /* MyString.cpp in Sources */,
+				11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */,
 				B3AF47A221071EE9002211EE /* ItemNameUtils.cpp in Sources */,
 				B354E79C219A76C80041F971 /* LocalFile.swift in Sources */,
 				B3AF478121071E85002211EE /* Lzma2DecMt.c in Sources */,
@@ -2128,6 +2133,7 @@
 				B354E7CA219A7E470041F971 /* System.swift in Sources */,
 				B3C04AD521077B3100E7AF79 /* Xz.c in Sources */,
 				B3C04AD621077B3100E7AF79 /* MyString.cpp in Sources */,
+				11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */,
 				B3C04AD721077B3100E7AF79 /* ItemNameUtils.cpp in Sources */,
 				B354E79D219A76C80041F971 /* LocalFile.swift in Sources */,
 				B3C04AD821077B3100E7AF79 /* Lzma2DecMt.c in Sources */,
