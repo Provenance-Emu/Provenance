@@ -10,12 +10,24 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+import RxSwift
 import UIKit
 
 final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false
 
+    private let gameLibrary: PVGameLibrary
+    private let disposeBag = DisposeBag()
     var searchResults: Results<PVGame>?
+
+    init(collectionViewLayout layout: UICollectionViewLayout, gameLibrary: PVGameLibrary) {
+        self.gameLibrary = gameLibrary
+        super.init(collectionViewLayout: layout)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,7 +102,13 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
             //			}))
 
             actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.toggleFavorite(for: game)
+                self.gameLibrary.toggleFavorite(for: game)
+                    .catchError { _ in
+                        ELOG("Failed to toggle Favourite for game \(game.title)")
+                        return .never()
+                }
+                .subscribe()
+                .disposed(by: self.disposeBag)
             }))
 
             //			actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -98,20 +116,6 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
             //			}))
 
             present(actionSheet, animated: true, completion: nil)
-        }
-    }
-}
-
-extension PVSearchViewController {
-    func toggleFavorite(for game: PVGame) {
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                game.isFavorite = !game.isFavorite
-            }
-
-            register3DTouchShortcuts()
-        } catch {
-            ELOG("Failed to toggle Favourite for game \(game.title)")
         }
     }
 }
