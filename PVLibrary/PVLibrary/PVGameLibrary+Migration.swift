@@ -82,8 +82,6 @@ extension PVGameLibrary {
             })
             .asObservable()
 
-
-
         return deleteDatabase
             .andThen(createDirectory)
             .andThen(moveFiles)
