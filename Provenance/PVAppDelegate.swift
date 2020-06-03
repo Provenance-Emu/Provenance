@@ -88,16 +88,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         #if os(tvOS)
             if let tabBarController = window?.rootViewController as? UITabBarController {
-                let flowLayout = UICollectionViewFlowLayout()
-                flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-                let searchViewController = PVSearchViewController(collectionViewLayout: flowLayout, gameLibrary: gameLibrary)
-                let searchController = UISearchController(searchResultsController: searchViewController)
-                searchController.searchResultsUpdater = searchViewController
-                let searchContainerController = UISearchContainerViewController(searchController: searchController)
-                searchContainerController.title = "Search"
-                let navController = UINavigationController(rootViewController: searchContainerController)
+                let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
+
                 var viewControllers = tabBarController.viewControllers!
-                viewControllers.insert(navController, at: 1)
+                viewControllers.insert(searchNavigationController, at: 1)
                 tabBarController.viewControllers = viewControllers
             }
         #else

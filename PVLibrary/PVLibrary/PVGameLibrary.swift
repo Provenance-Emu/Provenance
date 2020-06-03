@@ -27,6 +27,13 @@ public struct PVGameLibrary {
             .mapMany { $0.game }
     }
 
+    public func search(for searchText: String) -> Observable<[PVGame]> {
+        let results = self.database
+            .all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
+            .sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        return Observable.collection(from: results).mapMany { $0 }
+    }
+
     public func toggleFavorite(for game: PVGame) -> Completable {
         Completable.create { observer in
             do {
