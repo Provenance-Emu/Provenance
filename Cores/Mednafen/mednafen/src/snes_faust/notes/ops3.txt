@@ -1,0 +1,16 @@
+BRK #1 * ORA (d,x) * COP #1  * ORA r,s     * TSB d   * ORA d   * ASL d   * ORA [d]   * PHP s * ORA #m  * ASL A * PHD s * TSB a     * ORA a   * ASL a   * ORA al
+BPL r  * ORA (d),y * ORA (d) * ORA (r,s),y * TRB d   * ORA d,x * ASL d,x * ORA [d],y * CLC i * ORA a,y * INC A * TCS i * TRB a     * ORA a,x * ASL a,x * ORA al,x
+JSR a  * AND (d,x) * JSL al  * AND r,s     * BIT d   * AND d   * ROL d   * AND [d]   * PLP s * AND #m  * ROL A * PLD s * BIT a     * AND a   * ROL a   * AND al
+BMI r  * AND (d),y * AND (d) * AND (r,s),y * BIT d,x * AND d,x * ROL d,x * AND [d],y * SEC i * AND a,y * DEC A * TSC i * BIT a,x   * AND a,x * ROL a,x * AND al,x
+RTI s  * EOR (d,x) * WDM #1  * EOR r,s     * MVP xya * EOR d   * LSR d   * EOR [d]   * PHA s * EOR #m  * LSR A * PHK s * JMP a     * EOR a   * LSR a   * EOR al
+BVC r  * EOR (d),y * EOR (d) * EOR (r,s),y * MVN xya * EOR d,x * LSR d,x * EOR [d],y * CLI i * EOR a,y * PHY s * TCD i * JMP al    * EOR a,x * LSR a,x * EOR al,x
+RTS s  * ADC (d,x) * PER rl  * ADC r,s     * STZ d   * ADC d   * ROR d   * ADC [d]   * PLA s * ADC #m  * ROR A * RTL s * JMP (a)   * ADC a   * ROR a   * ADC al
+BVS r  * ADC (d),y * ADC (d) * ADC (r,s),y * STZ d,x * ADC d,x * ROR d,x * ADC [d],y * SEI i * ADC a,y * PLY s * TDC i * JMP (a,x) * ADC a,x * ROR a,x * ADC al,x
+BRA r  * STA (d,x) * BRL rl  * STA r,s     * STY d   * STA d   * STX d   * STA [d]   * DEY i * BIT #m  * TXA i * PHB s * STY a     * STA a   * STX a   * STA al
+BCC r  * STA (d),y * STA (d) * STA (r,s),y * STY d,x * STA d,x * STX d,y * STA [d],y * TYA i * STA a,y * TXS i * TXY i * STZ a     * STA a,x * STZ a,x * STA al,x
+LDY #x * LDA (d,x) * LDX #x  * LDA r,s     * LDY d   * LDA d   * LDX d   * LDA [d]   * TAY i * LDA #m  * TAX i * PLB s * LDY a     * LDA a   * LDX a   * LDA al
+BCS r  * LDA (d),y * LDA (d) * LDA (r,s),y * LDY d,x * LDA d,x * LDX d,y * LDA [d],y * CLV i * LDA a,y * TSX i * TYX i * LDY a,x   * LDA a,x * LDX a,y * LDA al,x
+CPY #x * CMP (d,x) * REP #1  * CMP r,s     * CPY d   * CMP d   * DEC d   * CMP [d]   * INY i * CMP #m  * DEX i * WAI i * CPY a     * CMP a   * DEC a   * CMP al
+BNE r  * CMP (d),y * CMP (d) * CMP (r,s),y * PEI d   * CMP d,x * DEC d,x * CMP [d],y * CLD i * CMP a,y * PHX s * STP i * JML (a)   * CMP a,x * DEC a,x * CMP al,x
+CPX #x * SBC (d,x) * SEP #1  * SBC r,s     * CPX d   * SBC d   * INC d   * SBC [d]   * INX i * SBC #m  * NOP i * XBA i * CPX a     * SBC a   * INC a   * SBC al
+BEQ r  * SBC (d),y * SBC (d) * SBC (r,s),y * PEA a   * SBC d,x * INC d,x * SBC [d],y * SED i * SBC a,y * PLX s * XCE i * JSR (a,x) * SBC a,x * INC a,x * SBC al,x

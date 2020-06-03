@@ -4259,7 +4259,7 @@
 			isa = PBXGroup;
 			children = (
 				8CB3E08917F1DFFF0090372A /* include */,
-				B3AA9D6920736B030097D86F /* mednafen-1.21 */,
+				B3AA9D6920736B030097D86F /* mednafen */,
 				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
 				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
@@ -4389,7 +4389,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B3AA9D6920736B030097D86F /* mednafen-1.21 */ = {
+		B3AA9D6920736B030097D86F /* mednafen */ = {
 			isa = PBXGroup;
 			children = (
 				B3AAA41820736B050097D86F /* ABOUT-NLS */,
@@ -4428,7 +4428,7 @@
 				B3AAAA6820736EE70097D86F /* src */,
 				B3AAA40220736B050097D86F /* tests */,
 			);
-			path = "mednafen-1.21";
+			path = mednafen;
 			sourceTree = "<group>";
 		};
 		B3AA9D6C20736B030097D86F /* Documentation */ = {
@@ -8301,7 +8301,6 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = "Provenance Emu";
@@ -10293,7 +10292,7 @@
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
@@ -10316,9 +10315,9 @@
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.21.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102103",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102402",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10348,8 +10347,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
@@ -10410,7 +10409,7 @@
 				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
@@ -10433,9 +10432,9 @@
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.21.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102103",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102402",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10465,8 +10464,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
@@ -10486,9 +10485,9 @@
 					"-fjump-tables",
 					"-ftree-vectorize",
 					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.21.3\\\"",
+					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102103",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102402",
 					"-DPSS_STYLE=1",
 					"-DMPC_FIXED_POINT",
 					"-DARCH_ARM",
@@ -10856,11 +10855,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen-1.21/src/snes/src/lib\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -10891,11 +10890,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen-1.21/src/snes/src/lib\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -11069,7 +11068,7 @@
 				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
@@ -11092,9 +11091,9 @@
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.21.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102103",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102402",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -11124,8 +11123,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
@@ -11145,9 +11144,9 @@
 					"-fjump-tables",
 					"-ftree-vectorize",
 					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.21.3\\\"",
+					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102103",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102402",
 					"-DPSS_STYLE=1",
 					"-DMPC_FIXED_POINT",
 					"-DARCH_ARM",
@@ -11207,7 +11206,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 					"\"$(SRCROOT)/../../Carthage/Build/iOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -11225,6 +11224,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.24.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -11269,7 +11269,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 					"\"$(SRCROOT)/../../Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -12259,11 +12259,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen-1.21/src/snes/src/lib\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -12294,11 +12294,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen-1.21/src/snes/src/lib\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15520,7 +15520,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 					"\"$(SRCROOT)/../../Carthage/Build/iOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -15540,6 +15540,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.24.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15584,7 +15585,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 					"\"$(SRCROOT)/../../Carthage/Build/iOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -15602,6 +15603,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.24.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15647,7 +15649,7 @@
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 					"\"$(SRCROOT)/../../Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -15709,7 +15711,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/src\"",
+					"\"$(SRCROOT)/mednafen/src\"",
 					"\"$(SRCROOT)/../../Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -15830,11 +15832,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen-1.21/src/snes/src/lib\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15864,11 +15866,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen-1.21/include\"",
-					"\"$(SRCROOT)/mednafen-1.21/intl\"",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen-1.21/src/snes/src/lib\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
