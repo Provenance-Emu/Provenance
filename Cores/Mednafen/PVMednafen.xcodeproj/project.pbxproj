@@ -2058,7 +2058,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		11AFB2B9248803A0000A3922 /* UPDATING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = UPDATING.md; sourceTree = "<group>"; };
 		11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtMemStream.cpp; sourceTree = "<group>"; };
 		11AFB2BB24880B98000A3922 /* VirtualFS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualFS.cpp; sourceTree = "<group>"; };
 		11AFB2BC24880B98000A3922 /* MTStreamReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MTStreamReader.cpp; sourceTree = "<group>"; };
@@ -2116,6 +2115,7 @@
 		11AFB3362488205F000A3922 /* idct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = idct.h; sourceTree = "<group>"; };
 		11AFB3372488209B000A3922 /* crc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crc.h; sourceTree = "<group>"; };
 		11AFB3382488209B000A3922 /* crc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = crc.cpp; sourceTree = "<group>"; };
+		11AFB33D248828D5000A3922 /* UPDATING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = UPDATING.md; sourceTree = "<group>"; };
 		824088340FFDDCF400F0FE7D /* MednafenGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MednafenGameCore.h; sourceTree = "<group>"; };
 		824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MednafenGameCore.mm; sourceTree = "<group>"; };
 		82CFBC510FFEF432002B6C7C /* Mednafen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Mednafen.icns; sourceTree = "<group>"; };
@@ -4337,6 +4337,7 @@
 		089C166AFE841209C02AAC07 /* Mednafen */ = {
 			isa = PBXGroup;
 			children = (
+				11AFB33D248828D5000A3922 /* UPDATING.md */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
