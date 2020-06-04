@@ -573,7 +573,6 @@ extension GameLaunchingViewController where Self: UIViewController {
         // Present the emulator VC
         emulatorViewController.modalTransitionStyle = .crossDissolve
         emulatorViewController.modalPresentationStyle = .fullScreen
-        emulatorViewController.glViewController.view.isHidden = saveState != nil
 
         present(emulatorViewController, animated: true) { () -> Void in
             // Open the save state after a bootup delay if the user selected one
