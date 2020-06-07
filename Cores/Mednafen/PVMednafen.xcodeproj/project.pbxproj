@@ -1202,6 +1202,181 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		11389F98248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C5B02191ABB7009F4EDC;
+			remoteInfo = "cdrom-tvOS";
+		};
+		11389F9A248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C4C82191A1AC009F4EDC;
+			remoteInfo = "gb-tvOS";
+		};
+		11389F9C248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C4AC21919E72009F4EDC;
+			remoteInfo = "gba-tvOS";
+		};
+		11389F9E248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF13721923EB40058E2E7;
+			remoteInfo = "hwaudio-tvOS";
+		};
+		11389FA0248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF1C5219240270058E2E7;
+			remoteInfo = "hwmisc-tvOS";
+		};
+		11389FA2248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C34421919C1C009F4EDC;
+			remoteInfo = "hwvideo-tvOS";
+		};
+		11389FA4248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF17921923F740058E2E7;
+			remoteInfo = "lynx-tvOS";
+		};
+		11389FA6248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C3FB21919D73009F4EDC;
+			remoteInfo = "mednafen-tvOS";
+		};
+		11389FA8248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C53C2191A8A5009F4EDC;
+			remoteInfo = "mpcdec-tvOS";
+		};
+		11389FAA248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF15621923F520058E2E7;
+			remoteInfo = "neogeopocket-tvOS";
+		};
+		11389FAC248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C34E21919CD6009F4EDC;
+			remoteInfo = "nes-tvOS";
+		};
+		11389FAE248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF18A21923F790058E2E7;
+			remoteInfo = "pce-tvOS";
+		};
+		11389FB0248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF1A021923F7F0058E2E7;
+			remoteInfo = "pcefast-tvOS";
+		};
+		11389FB2248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C5CA2191ACE1009F4EDC;
+			remoteInfo = "pcfx-tvOS";
+		};
+		11389FB4248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C32221919BC6009F4EDC;
+			remoteInfo = "psx-tvOS";
+		};
+		11389FB6248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C5832191AB4E009F4EDC;
+			remoteInfo = "quicklz-tvOS";
+		};
+		11389FB8248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF1B221923F850058E2E7;
+			remoteInfo = "segamastersystem-tvOS";
+		};
+		11389FBA248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C42C21919DC9009F4EDC;
+			remoteInfo = "snes-tvOS";
+		};
+		11389FBC248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C54E2191AAD1009F4EDC;
+			remoteInfo = "snes_faust-tvOS";
+		};
+		11389FBE248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C5A12191ABAD009F4EDC;
+			remoteInfo = "sound-tvOS";
+		};
+		11389FC0248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C56B2191AB34009F4EDC;
+			remoteInfo = "tremor-tvOS";
+		};
+		11389FC2248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C55E2191AAFE009F4EDC;
+			remoteInfo = "trio-tvOS";
+		};
+		11389FC4248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C58F2191AB9D009F4EDC;
+			remoteInfo = "video-tvOS";
+		};
+		11389FC6248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B32CF14821923F330058E2E7;
+			remoteInfo = "virtualboy-tvOS";
+		};
+		11389FC8248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B324C5E02191AD13009F4EDC;
+			remoteInfo = "wonderswan-tvOS";
+		};
 		B34AB5872106DF8400C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -1378,181 +1553,6 @@
 			remoteInfo = snes;
 		};
 		B34AB5BB2106DF8400C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3FBDF9E207FF5D800E661D1;
-			remoteInfo = snes_faust;
-		};
-		B34AB5BD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B333502C207AFBA30036A448;
-			remoteInfo = psx;
-		};
-		B34AB5BF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3335061207AFD3D0036A448;
-			remoteInfo = wonderswan;
-		};
-		B34AB5C12106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3335091207AFF2B0036A448;
-			remoteInfo = virtualboy;
-		};
-		B34AB5C32106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33350A4207AFFE80036A448;
-			remoteInfo = nes;
-		};
-		B34AB5C52106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B333518F207B00F70036A448;
-			remoteInfo = gb;
-		};
-		B34AB5C72106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351A3207B01460036A448;
-			remoteInfo = gba;
-		};
-		B34AB5C92106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351B0207B01570036A448;
-			remoteInfo = lynx;
-		};
-		B34AB5CB2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351BD207B016F0036A448;
-			remoteInfo = neogeopocket;
-		};
-		B34AB5CD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351CA207B01860036A448;
-			remoteInfo = pce;
-		};
-		B34AB5CF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351D7207B01970036A448;
-			remoteInfo = pcefast;
-		};
-		B34AB5D12106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351E4207B01C60036A448;
-			remoteInfo = segamastersystem;
-		};
-		B34AB5D32106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33351FB207B020C0036A448;
-			remoteInfo = pcfx;
-		};
-		B34AB5D72106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33352A6207B06550036A448;
-			remoteInfo = hwaudio;
-		};
-		B34AB5D92106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33352B3207B06610036A448;
-			remoteInfo = hwvideo;
-		};
-		B34AB5DD2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33352CD207B067F0036A448;
-			remoteInfo = hwmisc;
-		};
-		B34AB5DF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B333546E207B1B500036A448;
-			remoteInfo = cdrom;
-		};
-		B34AB5E12106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3335492207B1BF30036A448;
-			remoteInfo = sound;
-		};
-		B34AB5E32106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33354B3207B1C520036A448;
-			remoteInfo = video;
-		};
-		B34AB5E52106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33354CA207B1D850036A448;
-			remoteInfo = mednafen;
-		};
-		B34AB5E72106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33355A1207B1E930036A448;
-			remoteInfo = mpcdec;
-		};
-		B34AB5E92106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33355B7207B20420036A448;
-			remoteInfo = quicklz;
-		};
-		B34AB5EB2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33355C6207B20BE0036A448;
-			remoteInfo = tremor;
-		};
-		B34AB5ED2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33355E3207B278E0036A448;
-			remoteInfo = trio;
-		};
-		B34AB5EF2106DFB100C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3FBDEF7207FF0E300E661D1;
-			remoteInfo = snes;
-		};
-		B34AB5F12106DFB100C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
@@ -8384,32 +8384,32 @@
 			buildRules = (
 			);
 			dependencies = (
+				11389F99248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389F9B248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389F9D248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389F9F248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FA1248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FA3248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FA5248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FA7248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FA9248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FAB248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FAD248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FAF248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FB1248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FB3248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FB5248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FB7248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FB9248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FBB248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FBD248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FBF248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FC1248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FC3248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FC5248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FC7248D4F6B0089CBFF /* PBXTargetDependency */,
+				11389FC9248D4F6B0089CBFF /* PBXTargetDependency */,
 				B35D6693218185FF0005A992 /* PBXTargetDependency */,
-				B34AB5BE2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5C02106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5C22106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5C42106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5C62106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5C82106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5CA2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5CC2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5CE2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5D02106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5D22106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5D42106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5D82106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5E02106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5E22106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5E42106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5E62106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5E82106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5EA2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5EC2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5EE2106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5F02106DFB100C45F09 /* PBXTargetDependency */,
-				B34AB5F22106DFB100C45F09 /* PBXTargetDependency */,
 			);
 			name = "PVMednafen-tvOS";
 			productName = "PVMednafen tvOS";
@@ -10206,6 +10206,131 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		11389F99248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C5B02191ABB7009F4EDC /* cdrom-tvOS */;
+			targetProxy = 11389F98248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389F9B248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C4C82191A1AC009F4EDC /* gb-tvOS */;
+			targetProxy = 11389F9A248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389F9D248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C4AC21919E72009F4EDC /* gba-tvOS */;
+			targetProxy = 11389F9C248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389F9F248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF13721923EB40058E2E7 /* hwaudio-tvOS */;
+			targetProxy = 11389F9E248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FA1248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF1C5219240270058E2E7 /* hwmisc-tvOS */;
+			targetProxy = 11389FA0248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FA3248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C34421919C1C009F4EDC /* hwvideo-tvOS */;
+			targetProxy = 11389FA2248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FA5248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF17921923F740058E2E7 /* lynx-tvOS */;
+			targetProxy = 11389FA4248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FA7248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C3FB21919D73009F4EDC /* mednafen-tvOS */;
+			targetProxy = 11389FA6248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FA9248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C53C2191A8A5009F4EDC /* mpcdec-tvOS */;
+			targetProxy = 11389FA8248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FAB248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF15621923F520058E2E7 /* neogeopocket-tvOS */;
+			targetProxy = 11389FAA248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FAD248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C34E21919CD6009F4EDC /* nes-tvOS */;
+			targetProxy = 11389FAC248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FAF248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF18A21923F790058E2E7 /* pce-tvOS */;
+			targetProxy = 11389FAE248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FB1248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF1A021923F7F0058E2E7 /* pcefast-tvOS */;
+			targetProxy = 11389FB0248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FB3248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C5CA2191ACE1009F4EDC /* pcfx-tvOS */;
+			targetProxy = 11389FB2248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FB5248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C32221919BC6009F4EDC /* psx-tvOS */;
+			targetProxy = 11389FB4248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FB7248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C5832191AB4E009F4EDC /* quicklz-tvOS */;
+			targetProxy = 11389FB6248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FB9248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF1B221923F850058E2E7 /* segamastersystem-tvOS */;
+			targetProxy = 11389FB8248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FBB248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C42C21919DC9009F4EDC /* snes-tvOS */;
+			targetProxy = 11389FBA248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FBD248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C54E2191AAD1009F4EDC /* snes_faust-tvOS */;
+			targetProxy = 11389FBC248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FBF248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C5A12191ABAD009F4EDC /* sound-tvOS */;
+			targetProxy = 11389FBE248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FC1248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C56B2191AB34009F4EDC /* tremor-tvOS */;
+			targetProxy = 11389FC0248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FC3248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C55E2191AAFE009F4EDC /* trio-tvOS */;
+			targetProxy = 11389FC2248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FC5248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C58F2191AB9D009F4EDC /* video-tvOS */;
+			targetProxy = 11389FC4248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FC7248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32CF14821923F330058E2E7 /* virtualboy-tvOS */;
+			targetProxy = 11389FC6248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		11389FC9248D4F6B0089CBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B324C5E02191AD13009F4EDC /* wonderswan-tvOS */;
+			targetProxy = 11389FC8248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
 		B34AB5882106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B333502C207AFBA30036A448 /* psx-iOS */;
@@ -10335,131 +10460,6 @@
 			isa = PBXTargetDependency;
 			target = B3FBDF9E207FF5D800E661D1 /* snes_faust-iOS */;
 			targetProxy = B34AB5BB2106DF8400C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5BE2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B333502C207AFBA30036A448 /* psx-iOS */;
-			targetProxy = B34AB5BD2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5C02106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3335061207AFD3D0036A448 /* wonderswan-iOS */;
-			targetProxy = B34AB5BF2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5C22106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3335091207AFF2B0036A448 /* virtualboy-iOS */;
-			targetProxy = B34AB5C12106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5C42106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33350A4207AFFE80036A448 /* nes-iOS */;
-			targetProxy = B34AB5C32106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5C62106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B333518F207B00F70036A448 /* gb-iOS */;
-			targetProxy = B34AB5C52106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5C82106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351A3207B01460036A448 /* gba-iOS */;
-			targetProxy = B34AB5C72106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5CA2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351B0207B01570036A448 /* lynx-iOS */;
-			targetProxy = B34AB5C92106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5CC2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351BD207B016F0036A448 /* neogeopocket-iOS */;
-			targetProxy = B34AB5CB2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5CE2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351CA207B01860036A448 /* pce-iOS */;
-			targetProxy = B34AB5CD2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5D02106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351D7207B01970036A448 /* pcefast-iOS */;
-			targetProxy = B34AB5CF2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5D22106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351E4207B01C60036A448 /* segamastersystem-iOS */;
-			targetProxy = B34AB5D12106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5D42106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33351FB207B020C0036A448 /* pcfx-iOS */;
-			targetProxy = B34AB5D32106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5D82106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33352A6207B06550036A448 /* hwaudio-iOS */;
-			targetProxy = B34AB5D72106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5DA2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33352B3207B06610036A448 /* hwvideo-iOS */;
-			targetProxy = B34AB5D92106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5DE2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33352CD207B067F0036A448 /* hwmisc-iOS */;
-			targetProxy = B34AB5DD2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5E02106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B333546E207B1B500036A448 /* cdrom-iOS */;
-			targetProxy = B34AB5DF2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5E22106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3335492207B1BF30036A448 /* sound-iOS */;
-			targetProxy = B34AB5E12106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5E42106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33354B3207B1C520036A448 /* video-iOS */;
-			targetProxy = B34AB5E32106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5E62106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33354CA207B1D850036A448 /* mednafen-iOS */;
-			targetProxy = B34AB5E52106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5E82106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33355A1207B1E930036A448 /* mpcdec-iOS */;
-			targetProxy = B34AB5E72106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5EA2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33355B7207B20420036A448 /* quicklz-iOS */;
-			targetProxy = B34AB5E92106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5EC2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33355C6207B20BE0036A448 /* tremor-iOS */;
-			targetProxy = B34AB5EB2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5EE2106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33355E3207B278E0036A448 /* trio-iOS */;
-			targetProxy = B34AB5ED2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5F02106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3FBDEF7207FF0E300E661D1 /* snes-iOS */;
-			targetProxy = B34AB5EF2106DFB100C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5F22106DFB100C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3FBDF9E207FF5D800E661D1 /* snes_faust-iOS */;
-			targetProxy = B34AB5F12106DFB100C45F09 /* PBXContainerItemProxy */;
 		};
 		B35D6693218185FF0005A992 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
