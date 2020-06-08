@@ -28,10 +28,13 @@ public struct PVGameLibrary {
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
-        let results = self.database
-            .all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
-            .sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
-        return Observable.collection(from: results).mapMany { $0 }
+        // Search first by title, and a broader search if that one's empty
+        let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
+        let results = !titleResults.isEmpty ?
+            titleResults :
+            self.database.all(PVGame.self, filter: NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText]))
+
+        return Observable.collection(from: results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)).mapMany { $0 }
     }
 
     public func toggleFavorite(for game: PVGame) -> Completable {
