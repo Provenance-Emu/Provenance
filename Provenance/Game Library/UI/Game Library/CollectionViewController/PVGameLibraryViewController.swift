@@ -112,7 +112,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         return sectionsTitles
     }
 
-    var searchResults: Results<PVGame>?
+    var searchResults: [PVGame]?
     @IBOutlet var searchField: UITextField?
     var isInitialAppearance = false
 
@@ -210,7 +210,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleCacheEmptied(_:)), name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArchiveInflationFailed(_:)), name: NSNotification.Name.PVArchiveInflationFailed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: UITextField.textDidChangeNotification, object: searchField)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
@@ -231,6 +230,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 //        setUpGameLibrary()
 
         #if os(iOS)
+            let searchText: Observable<String?>
             if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
                 // Hide the pre-iOS 11 search bar
                 searchField?.removeFromSuperview()
@@ -243,14 +243,32 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 // Create a search controller
                 let searchController = UISearchController(searchResultsController: nil)
                 searchController.searchBar.placeholder = "Search"
-                searchController.searchResultsUpdater = self
                 searchController.obscuresBackgroundDuringPresentation = false
                 searchController.hidesNavigationBarDuringPresentation = true
-
-                searchController.delegate = self
                 navigationItem.hidesSearchBarWhenScrolling = true
                 navigationItem.searchController = searchController
+
+                searchText = searchController.rx.searchText
+                searchController.rx.didDismiss
+                    .subscribe(onNext: {
+                        self.searchResults = nil
+                        self.collectionView?.reloadData()
+                    })
+                    .disposed(by: disposeBag)
+            } else {
+                searchText = searchField!.rx.text.asObservable()
             }
+
+            searchText
+                .flatMap({ text -> Observable<[PVGame]?> in
+                    guard let text = text, !text.isEmpty else { return .just(nil) }
+                    return self.gameLibrary.search(for: text).map(Optional.init)
+                })
+                .subscribe(onNext: { results in
+                    self.searchResults = results
+                    self.collectionView?.reloadData()
+                })
+                .disposed(by: disposeBag)
 
             // TODO: For below iOS 11, can make searchController.searchbar. the navigationItem.titleView and get a similiar effect
         #endif
@@ -365,8 +383,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     var savesStatesToken: NotificationToken?
     var favoritesToken: NotificationToken?
     var recentGamesToken: NotificationToken?
-
-    var searchResultsToken: NotificationToken?
 
     var favoritesIsHidden = true
     var saveStatesIsEmpty = true
@@ -946,13 +962,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         savesStatesToken?.invalidate()
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
-        searchResultsToken?.invalidate()
 
         systemsToken = nil
         savesStatesToken = nil
         recentGamesToken = nil
         favoritesToken = nil
-        searchResultsToken = nil
         systemSectionsTokens.removeAll()
     }
 
@@ -1972,57 +1986,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     #endif
 
-    // MARK: - Searching
-
-    func searchLibrary(_ searchText: String) {
-        let predicate = NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])
-        let titleSearchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
-
-        if !titleSearchResults.isEmpty {
-            searchResults = titleSearchResults
-        } else {
-            let predicate = NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText])
-            searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
-        }
-
-        searchResultsToken?.invalidate()
-        searchResultsToken = searchResults!.observe { [unowned self] (changes: RealmCollectionChange) in
-            switch changes {
-            case .initial:
-                self.collectionView?.reloadData()
-            case .update:
-                self.collectionView?.reloadData()
-            case let .error(error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
-    }
-
-    func clearSearch() {
-        searchField?.text = nil
-        searchResults = nil
-        searchResultsToken?.invalidate()
-        searchResultsToken = nil
-        collectionView?.reloadData()
-    }
-
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
             return CGSize(width: view.bounds.size.width, height: 90)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif
-    }
-
-    // MARK: - Text Field and Keyboard Delegate
-
-    @objc func handleTextFieldDidChange(_: Notification) {
-        if let text = searchField?.text, !text.isEmpty {
-            searchLibrary(text)
-        } else {
-            clearSearch()
-        }
     }
 
     // MARK: - Image Picker Delegate
@@ -2225,24 +2194,6 @@ extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
 #if os(iOS)
     extension PVGameLibraryViewController: UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {}
 #endif
-
-extension PVGameLibraryViewController: UISearchControllerDelegate {
-    func didDismissSearchController(_: UISearchController) {
-        clearSearch()
-    }
-}
-
-// MARK: - UISearchResultsUpdating
-
-extension PVGameLibraryViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        if let text = searchController.searchBar.text, !text.isEmpty {
-            searchLibrary(searchController.searchBar.text ?? "")
-        } else {
-            clearSearch()
-        }
-    }
-}
 
 extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {

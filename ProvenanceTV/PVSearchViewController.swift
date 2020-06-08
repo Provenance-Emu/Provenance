@@ -55,6 +55,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
 
         let sections: Observable<[Section]> = searchController
             .rx.searchText
+            .compactMap { $0 }
             .flatMap { self.gameLibrary.search(for: $0) }
             .map { games in [Section(items: games)] }
 

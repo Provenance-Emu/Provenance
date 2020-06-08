@@ -23,9 +23,28 @@ private class RxUISearchResultsUpdating: DelegateProxy<UISearchController, UISea
         object.searchResultsUpdater = delegate
     }
 
-    fileprivate var updates = PublishSubject<UISearchController>()
+    fileprivate let updates = PublishSubject<UISearchController>()
     func updateSearchResults(for searchController: UISearchController) {
         updates.onNext(searchController)
+    }
+}
+
+private class RxUISearchControllerDelegate: DelegateProxy<UISearchController, UISearchControllerDelegate>, DelegateProxyType, UISearchControllerDelegate {
+    static func currentDelegate(for object: UISearchController) -> UISearchControllerDelegate? {
+        return object.delegate
+    }
+
+    static func setCurrentDelegate(_ delegate: UISearchControllerDelegate?, to object: UISearchController) {
+        object.delegate = delegate
+    }
+
+    static func registerKnownImplementations() {
+        self.register(make: { RxUISearchControllerDelegate.init(parentObject: $0, delegateProxy: RxUISearchControllerDelegate.self) })
+    }
+
+    fileprivate let didDismiss = PublishSubject<UISearchController>()
+    func didDismissSearchController(_ searchController: UISearchController) {
+        didDismiss.onNext(searchController)
     }
 }
 
@@ -33,8 +52,17 @@ extension Reactive where Base: UISearchController {
     private var searchResultsUpdating: RxUISearchResultsUpdating {
         RxUISearchResultsUpdating.proxy(for: base)
     }
-    var searchText: Observable<String> {
+
+    private var delegate: RxUISearchControllerDelegate {
+        RxUISearchControllerDelegate.proxy(for: base)
+    }
+
+    var searchText: Observable<String?> {
         searchResultsUpdating.updates
-            .compactMap { $0.searchBar.text }
+            .map { $0.searchBar.text }
+    }
+
+    var didDismiss: Observable<Void> {
+        delegate.didDismiss.map { _ in}
     }
 }
