@@ -220,8 +220,8 @@
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
-		B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
-		B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
+		B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
+		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
 		B349AE5C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE661E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -836,7 +836,7 @@
 		B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionFlowLayout.swift; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
-		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
+		B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInCollectionViewCell.swift; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
@@ -1724,7 +1724,7 @@
 			isa = PBXGroup;
 			children = (
 				B33468D120AB347300092CA6 /* CenterFlowLayout.swift */,
-				B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */,
+				B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */,
 				B3D534EB20B001D700A83D4E /* PillPageControl.swift */,
 			);
 			path = CollectionViewInACell;
@@ -2800,7 +2800,7 @@
 				B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */,
 				B39EE44E2274EEBB0013474F /* UIActionSheet+BlockAdditions.m in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
-				B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
+				B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,
 				B302F31521713B17000322B9 /* PillPageControl.swift in Sources */,
 				B378224E21D32A360077E86F /* SegueNavigationRow.swift in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
@@ -2924,7 +2924,7 @@
 				B3B104D3218F2EF400210C39 /* PVVBControllerViewController.swift in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
-				B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */,
+				B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,
 				B3B104C7218F2EF400210C39 /* PVGBControllerViewController.swift in Sources */,
 				B3B104CC218F2EF400210C39 /* PVNESControllerViewController.swift in Sources */,
 				B35E6C24207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,

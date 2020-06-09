@@ -13,6 +13,7 @@ import RealmSwift
 import RxRealm
 
 public struct PVGameLibrary {
+    public let saveStates: Observable<[PVSaveState]>
     public let favorites: Observable<[PVGame]>
     public let recents: Observable<[PVGame]>
 
@@ -20,6 +21,9 @@ public struct PVGameLibrary {
 
     public init(database: RomDatabase) {
         self.database = database
+        self.saveStates = Observable
+            .collection(from: database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false))
+            .mapMany { $0 }
         self.favorites = Observable
             .collection(from: database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false))
             .mapMany { $0 }

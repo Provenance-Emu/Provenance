@@ -9,27 +9,11 @@
 import Foundation
 import PVLibrary
 import PVSupport
-import RealmSwift
+import RxSwift
 
-protocol RealmCollectinViewCellDelegate: class {
-    func didSelectObject(_: Object, indexPath: IndexPath)
-}
+public let PageIndicatorHeight: CGFloat = 2.5
 
-protocol RealmCollectionViewCellBase {
-    var minimumInteritemSpacing: CGFloat { get }
-    //	var additionalFilter : Bool { get }
-    //	func isIncluded(_ object : Object) -> Bool
-}
-
-extension RealmCollectionViewCellBase {
-    //	func isIncluded(_ object : Object) -> Bool {
-    //		return true
-    //	}
-
-    //	var additionalFilter : Bool {
-    //		return false
-    //	}
-
+class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, SelectionObject>: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
     var minimumInteritemSpacing: CGFloat {
         #if os(tvOS)
             return 50
@@ -37,43 +21,8 @@ extension RealmCollectionViewCellBase {
             return 8.0
         #endif
     }
-}
-
-public let PageIndicatorHeight: CGFloat = 2.5
-
-class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: Object>: UICollectionViewCell, RealmCollectionViewCellBase, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UICollectionViewDataSource {
-    var additionalFilter: Bool {
-        return false
-    }
-
-    func isIncluded(_: SelectionObject) -> Bool {
-        return true
-    }
-
-    var queryUpdateToken: NotificationToken? {
-        willSet {
-            queryUpdateToken?.invalidate()
-        }
-    }
-
-    weak var selectionDelegate: RealmCollectinViewCellDelegate?
-
-    let query: Results<SelectionObject>
-    var count: Int {
-        if additionalFilter {
-            return query.filter({ self.isIncluded($0) }).count
-        } else {
-            return query.count
-        }
-    }
-
-    func itemForIndex(_ index: Int) -> SelectionObject {
-        if additionalFilter {
-            return query.filter({ self.isIncluded($0) })[index]
-        } else {
-            return query[index]
-        }
-    }
+    let disposeBag = DisposeBag()
+    let items = PublishSubject<[SelectionObject]>()
 
     let cellId: String
 
@@ -129,8 +78,6 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.clipsToBounds = false // allows tvOS magnifcations to overflow the borders
         collectionView.remembersLastFocusedIndexPath = false
@@ -149,21 +96,22 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(frame: CGRect, query: Results<SelectionObject>, cellId: String) {
+    init(frame: CGRect, cellId: String) {
         self.cellId = cellId
-        self.query = query
         super.init(frame: frame)
         setupViews()
-        setupToken()
+
+        items.bind(to: internalCollectionView.rx.items(cellIdentifier: cellId, cellType: CellClass.self)) { _, item, cell in
+            self.setCellObject(item, cell: cell)
+        }
+        .disposed(by: disposeBag)
+        items.bind(onNext: { _ in self.refreshCollectionView() }).disposed(by: disposeBag)
+        internalCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
     }
 
     @objc
     func rotated() {
         refreshCollectionView()
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 
     func setupViews() {
@@ -177,7 +125,7 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         internalCollectionView.frame = bounds
 
         #if os(iOS)
-            NotificationCenter.default.addObserver(self, selector: #selector(RealmCollectinViewCell.rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(CollectionViewInCollectionViewCell.rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
         #endif
 
         let margins = self.layoutMarginsGuide
@@ -212,13 +160,6 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         pageIndicator.pageCount = layout.numberOfPages
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        selectionDelegate = nil
-        //		queryUpdateToken?.invalidate()
-        //		queryUpdateToken = nil
-    }
-
     lazy var pageIndicator: PillPageControl = {
         let pageIndicator = PillPageControl(frame: CGRect(origin: CGPoint(x: bounds.midX - 38.2, y: bounds.maxY - 18), size: CGSize(width: 38, height: PageIndicatorHeight)))
         pageIndicator.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
@@ -233,72 +174,12 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         return pageIndicator
     }()
 
-    // ----
-    private func setupToken() {
-        queryUpdateToken = query.observe { [weak self] (changes: RealmCollectionChange) in
-            guard let `self` = self else { return }
-            switch changes {
-            case let .initial(result):
-                VLOG("Initial query result: \(result.count)")
-                DispatchQueue.main.async { [weak self] in
-                    guard let `self` = self else { return }
-                    self.refreshCollectionView()
-                }
-            case let .update(_, deletions, insertions, modifications):
-                // Query results have changed, so apply them to the UICollectionView
-                self.handleUpdate(deletions: deletions, insertions: insertions, modifications: modifications)
-            case let .error(error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
-    }
-
     func refreshCollectionView() {
         internalCollectionView.invalidateIntrinsicContentSize()
         internalCollectionView.collectionViewLayout.invalidateLayout()
         internalCollectionView.reloadData()
         pageIndicator.pageCount = layout.numberOfPages
     }
-
-    func handleUpdate(deletions _: [Int], insertions _: [Int], modifications _: [Int]) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            guard let `self` = self else { return }
-
-            ILOG("Update for collection view cell for class \(self.cellId)")
-            self.refreshCollectionView()
-        }
-        //		internalCollectionView.performBatchUpdates({
-        //			ILOG("Section SaveStates updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
-        //			internalCollectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: 0) }))
-        //			internalCollectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: 0) }))
-        //			internalCollectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: 0) }))
-        //		}, completion: { (completed) in
-        //
-        //		})
-    }
-
-    //	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    //		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + PageIndicatorHeight : PageIndicatorHeight
-    //		let height = max(0, (collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
-//
-    //		let viewWidth = internalCollectionView.bounds.size.width
-//
-    //		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
-    //		let width :CGFloat = max(0, (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow))
-//
-    //		return CGSize(width: width, height: height)
-    //	}
-
-    //	#if os(tvOS)
-    //	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-    //		// Quick hack to fix paging on left scrolling on tvOS, not sure why the layout class is missing this, somehting to do with tvOS focus and autoscrolling
-    //		if var indexPath = context.nextFocusedIndexPath, context.focusHeading == .left, let previouslyFocusedIndexPath = context.previouslyFocusedIndexPath, previouslyFocusedIndexPath.row % layout.columnCount == 0 {
-    //			indexPath.row = max(0, indexPath.row - layout.columnCount)
-    //			collectionView.scrollToItem(at: indexPath, at: [.right], animated: true)
-    //		}
-    //	}
-    //	#endif
 
     /// whether or not dragging has ended
     fileprivate var endDragging = false
@@ -310,52 +191,14 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         }
     }
 
-    // MARK: - UICollectionViewDataSource
-
-    func numberOfSections(in _: UICollectionView) -> Int {
-        return 1
-    }
-
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return count
-    }
-
-    // MARK: - UICollectionViewDelegate
-
-    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedObject = itemForIndex(indexPath.row)
-        selectionDelegate?.didSelectObject(selectedObject, indexPath: indexPath)
-    }
-
     override func didTransition(from oldLayout: UICollectionViewLayout, to newLayout: UICollectionViewLayout) {
         super.didTransition(from: oldLayout, to: newLayout)
         pageIndicator.pageCount = layout.numberOfPages
     }
 
-    // MARK: - UICollectionViewDataSource
-
-    func collectionView(_: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = internalCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as? CellClass else {
-            fatalError("Couldn't create cell of type ...")
-        }
-
-        //		if indexPath.row < count {
-        let objectForRow = itemForIndex(indexPath.row)
-        setCellObject(objectForRow, cell: cell)
-        //		}
-
-        return cell
-    }
-
     func setCellObject(_: SelectionObject, cell _: CellClass) {
-        //
         fatalError("Override me")
     }
-
-    // }
-//
-//
-    // extension RealmCollectinViewCell : UIScrollViewDelegate {
 
     /**
      Update accessory views (i.e. UIPageControl, UIButtons).
@@ -409,13 +252,12 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
 // 1) Cell class to use for sub items
 // 2) Query and return type
 
-class RecentlyPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollectionViewCell, PVRecentGame> {
+class RecentlyPlayedCollectionCell: CollectionViewInCollectionViewCell<PVGameLibraryCollectionViewCell, PVRecentGame> {
     typealias SelectionObject = PVRecentGame
     typealias CellClass = PVGameLibraryCollectionViewCell
 
     @objc init(frame: CGRect) {
-        let recentGamesQuery: Results<SelectionObject> = SelectionObject.all.filter("game != nil").sorted(byKeyPath: #keyPath(SelectionObject.lastPlayedDate), ascending: false)
-        super.init(frame: frame, query: recentGamesQuery, cellId: PVGameLibraryCollectionViewCellIdentifier)
+        super.init(frame: frame, cellId: PVGameLibraryCollectionViewCellIdentifier)
     }
 
     override func registerSubCellClass() {
@@ -436,13 +278,12 @@ class RecentlyPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollecti
     }
 }
 
-class FavoritesPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollectionViewCell, PVGame> {
+class FavoritesPlayedCollectionCell: CollectionViewInCollectionViewCell<PVGameLibraryCollectionViewCell, PVGame> {
     typealias SelectionObject = PVGame
     typealias CellClass = PVGameLibraryCollectionViewCell
 
     @objc init(frame: CGRect) {
-        let favoriteGamesQuery: Results<SelectionObject> = RomDatabase.sharedInstance.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
-        super.init(frame: frame, query: favoriteGamesQuery, cellId: PVGameLibraryCollectionViewCellIdentifier)
+        super.init(frame: frame, cellId: PVGameLibraryCollectionViewCellIdentifier)
     }
 
     override func registerSubCellClass() {
@@ -463,33 +304,12 @@ class FavoritesPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollect
     }
 }
 
-class SaveStatesCollectionCell: RealmCollectinViewCell<PVSaveStateCollectionViewCell, PVSaveState> {
+class SaveStatesCollectionCell: CollectionViewInCollectionViewCell<PVSaveStateCollectionViewCell, PVSaveState> {
     typealias SelectionObject = PVSaveState
     typealias CellClass = PVSaveStateCollectionViewCell
 
-    //	override var subCellSize : CGSize {
-    //		#if os(tvOS)
-    //		return CGSize(width: 300, height: 300)
-    //		#else
-    //		return CGSize(width: 124, height: 144)
-    //		#endif
-    //	}
-
     @objc init(frame: CGRect) {
-        //		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.lastOpened), ascending: false), SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
-        let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
-
-        let saveStatesQuery: Results<SelectionObject> = SelectionObject.all.filter("game != nil").sorted(by: sortDescriptors)
-
-        super.init(frame: frame, query: saveStatesQuery, cellId: "SaveStateView")
-    }
-
-    @objc override func isIncluded(_ object: SelectionObject) -> Bool {
-        return !object.isAutosave || object.isNewestAutosave
-    }
-
-    @objc override var additionalFilter: Bool {
-        return true
+        super.init(frame: frame, cellId: "SaveStateView")
     }
 
     override func registerSubCellClass() {

@@ -11,21 +11,23 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: UICollectionView {
-    func longPressed<Model>(_ model: Model.Type) -> ControlEvent<(item: Model, at: IndexPath)> {
+    func longPressed<Model>(_ model: Model.Type) -> ControlEvent<(item: Model, at: IndexPath, point: CGPoint)> {
         let longPressRecognizer = UILongPressGestureRecognizer()
-        let source: Observable<(item: Model, at: IndexPath)> = longPressRecognizer.rx.event
+        let source: Observable<(item: Model, at: IndexPath, point: CGPoint)> = longPressRecognizer.rx.event
             .filter { $0.state == .began }
-            .compactMap({ point in
-                let maybeIndexPath = self.base.indexPathForItem(at: point.location(in: self.base))
+            .compactMap({ event -> (IndexPath, CGPoint)? in
+                let point = event.location(in: self.base)
+                var maybeIndexPath = self.base.indexPathForItem(at: point)
 
                 #if os(tvOS)
                     if maybeIndexPath == nil, let focusedView = UIScreen.main.focusedView as? UICollectionViewCell {
-                        return self.base.indexPath(for: focusedView)
+                        maybeIndexPath = self.base.indexPath(for: focusedView)
                     }
                 #endif
-                return maybeIndexPath
+                guard let indexPath = maybeIndexPath else { return nil }
+                return (indexPath, point)
             })
-            .map { indexPath in (item: try self.model(at: indexPath), at: indexPath) }
+            .map { indexPath, point in (item: try self.model(at: indexPath), at: indexPath, point: point) }
             .do(onSubscribe: {
                 self.base.addGestureRecognizer(longPressRecognizer)
             }, onDispose: {

@@ -91,10 +91,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             sectionsTitles.append("Favorites")
         }
 
-        if !saveStatesIsHidden {
-            sectionsTitles.append("Recently Saved")
-        }
-
         if !recentGamesIsHidden {
             sectionsTitles.append("Recently Played")
         }
@@ -143,6 +139,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     let currentSort = BehaviorSubject(value: PVSettingsModel.shared.sort)
     let collapsedSystems = BehaviorSubject(value: PVSettingsModel.shared.collapsedSystems)
+    let showSaveStates = BehaviorSubject(value: PVSettingsModel.shared.showRecentSaveStates)
 
     // MARK: - Lifecycle
 
@@ -172,6 +169,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         enum Item {
             case game(PVGame)
+            case saves([PVSaveState])
         }
 
         enum Collapsable {
@@ -255,6 +253,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         // Persist some settings, could probably be done in a better way
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
         currentSort.bind(onNext: { PVSettingsModel.shared.sort = $0 }).disposed(by: disposeBag)
+        showSaveStates.bind(onNext: { PVSettingsModel.shared.showRecentSaveStates = $0 }).disposed(by: disposeBag)
 
         let layout = PVGameLibraryCollectionFlowLayout()
         layout.scrollDirection = .vertical
@@ -264,11 +263,20 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 //        let selectedSubItem = PublishSubject<GameOrSave>()
 
+        let selectedSave = PublishSubject<(PVSaveState, UICollectionViewCell?)>()
+
         let dataSource = RxCollectionViewSectionedReloadDataSource<Section>(configureCell: { _, collectionView, indexPath, item in
             switch item {
             case .game(let game):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
                 cell.game = game
+                return cell
+            case .saves(let saves):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as! SaveStatesCollectionCell
+                cell.items.onNext(saves)
+                cell.internalCollectionView.rx.itemSelected
+                    .map { indexPath in (try! cell.internalCollectionView.rx.model(at: indexPath), cell.internalCollectionView.cellForItem(at: indexPath)) }
+                    .bind(to: selectedSave).disposed(by: cell.disposeBag)
                 return cell
             }
         })
@@ -310,6 +318,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
         }
 
+        let saveStateSection =
+            Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1 : [] }
+                .map({ saveStates -> Section? in
+                    guard !saveStates.isEmpty else { return nil }
+                    return Section(header: "Recently Saved", items: [.saves(saveStates)], collapsable: nil)
+
+                })
+
+        let topSections = saveStateSection.map { [$0] }
+
         // MARK: DataSource sections
 
         let searchSection = searchText
@@ -336,7 +354,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 return Section(header: header, items: items,
                                collapsable: isCollapsed ? .collapsed(systemToken: system.identifier) : .notCollapsed(systemToken: system.identifier))
             })
-        let nonSearchSections = systemSections
+        let nonSearchSections = Observable.combineLatest(topSections, systemSections) { $0 + $1 }
             // Remove empty sections
             .map { sections in sections.compactMap { $0 }}
 
@@ -359,8 +377,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 switch item {
                 case .game(let game):
                     self.load(game, sender: cell, core: nil)
+                case .saves:
+                    // Handled in another place
+                    break
                 }
             })
+            .disposed(by: disposeBag)
+
+        selectedSave
+            .bind(onNext: { save, cell in self.load(save.game, sender: cell, core: save.core, saveState: save)})
             .disposed(by: disposeBag)
 
         collectionView.rx.longPressed(Section.Item.self)
@@ -466,45 +491,19 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         becomeFirstResponder()
     }
 
-    var saveStates: Results<PVSaveState>?
     var favoriteGames: Results<PVGame>?
     var recentGames: Results<PVRecentGame>?
 
-    var savesStatesToken: NotificationToken?
     var favoritesToken: NotificationToken?
     var recentGamesToken: NotificationToken?
 
     var favoritesIsHidden = true
-    var saveStatesIsEmpty = true
-    var saveStatesIsHidden: Bool {
-        return saveStatesIsEmpty || !PVSettingsModel.shared.showRecentSaveStates
-    }
 
     let semaphore = DispatchSemaphore(value: 1)
 
     var recentGamesIsEmpty = true
     var recentGamesIsHidden: Bool {
         return recentGamesIsEmpty || !PVSettingsModel.shared.showRecentGames
-    }
-
-    var favoritesSection: Int {
-        return favoritesIsHidden ? -1 : 0
-    }
-
-    var saveStateSection: Int {
-        if saveStatesIsHidden {
-            return -1
-        } else {
-            return favoritesIsHidden ? 0 : 1
-        }
-    }
-
-    var recentGamesSection: Int {
-        if recentGamesIsHidden {
-            return -1
-        } else {
-            return (favoritesIsHidden ? 0 : 1) + (saveStatesIsHidden ? 0 : 1)
-        }
     }
 
     #if os(tvOS)
@@ -561,76 +560,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         guard RomDatabase.databaseInitilized else {
             return
         }
-
-        saveStates = PVSaveState.all.filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
     }
 
     func deinitRealmResultsStorage() {
-        saveStates = nil
         recentGames = nil
         favoriteGames = nil
     }
 
     func registerForChange() {
-        savesStatesToken?.invalidate()
-        savesStatesToken = saveStates!.observe { [unowned self] (changes: RealmCollectionChange) in
-            switch changes {
-            case let .initial(result):
-                if !result.isEmpty {
-                    self.saveStatesIsEmpty = false
-                }
-
-                self.semaphore.wait()
-                self.collectionView?.reloadData()
-                self.semaphore.signal()
-            case let .update(_, deletions, insertions, modifications):
-                ILOG("Save states update: \(deletions.count) \(insertions.count) \(modifications.count)")
-
-                self.semaphore.signal()
-                defer {
-                    self.semaphore.signal()
-                }
-
-                self.collectionView?.reloadData()
-            //                let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
-            //                let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
-            //
-            //                if self.saveStatesIsHidden {
-            //                    self.saveStatesIsEmpty = needsDelete
-            //                    return
-            //                }
-            //
-            //                let section = self.saveStateSection > -1 ? self.saveStateSection : 0
-            //
-            //                if needsInsert {
-            //                    ILOG("Needs insert, saveStatesIsHidden - false")
-            //                    self.saveStatesIsEmpty = false
-            //                }
-            //
-            //                if needsDelete {
-            //                    ILOG("Needs delete, saveStatesIsHidden - true")
-            //                    self.saveStatesIsEmpty = true
-            //                }
-            //
-            //                if needsInsert {
-            //                    ILOG("Inserting section \(section)")
-            //                    self.collectionView?.insertSections([section])
-            //                }
-            //
-            //                if needsDelete {
-            //                    ILOG("Deleting section \(section)")
-            //                    self.collectionView?.deleteSections([section])
-            //                }
-            //
-            //                self.saveStatesIsEmpty = needsDelete
-            case let .error(error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
-
         recentGamesToken?.invalidate()
         recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
             switch changes {
@@ -703,16 +642,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     let totalDeletions = deletions.count - insertions.count
                     needsDelete = (favoriteGames.isEmpty && insertions.isEmpty) || (favoriteGames.count < totalDeletions)
                 }
-                let existingFavoritesSection = self.favoritesSection
-                self.favoritesIsHidden = needsDelete
-
-                if needsInsert {
-                    self.collectionView?.insertSections([self.favoritesSection])
-                }
-
-                if needsDelete, existingFavoritesSection >= 0 {
-                    self.collectionView?.deleteSections([existingFavoritesSection])
-                }
             case let .error(error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -758,11 +687,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     func unregisterForChange() {
-        savesStatesToken?.invalidate()
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
 
-        savesStatesToken = nil
         recentGamesToken = nil
         favoritesToken = nil
     }
@@ -1130,9 +1057,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
 
-    private func longPressed(item: Section.Item, at indexPath: IndexPath) {
-        let cell = collectionView?.cellForItem(at: indexPath)
-        let actionSheet = contextMenu(for: item, sender: cell)
+    private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
+        let cell = collectionView!.cellForItem(at: indexPath)!
+        let actionSheet = contextMenu(for: item, cell: cell, point: point)
 
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = cell
@@ -1142,10 +1069,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         present(actionSheet, animated: true)
     }
 
-    private func contextMenu(for item: Section.Item, sender: Any?) -> UIAlertController {
+    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIAlertController {
         switch item {
         case .game(let game):
-            return contextMenu(for: game, sender: sender)
+            return contextMenu(for: game, sender: cell)
+        case .saves(let saves):
+            let cell = cell as! SaveStatesCollectionCell
+            let location2 = cell.internalCollectionView.convert(point, from: collectionView)
+            let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
+            return contextMenu(for: saves[indexPath2.row])
         }
     }
 
@@ -1285,6 +1217,20 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }))
 
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        return actionSheet
+    }
+
+    private func contextMenu(for saveState: PVSaveState) -> UIAlertController {
+        let actionSheet = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .actionSheet)
+
+        actionSheet.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
+            do {
+                try PVSaveState.delete(saveState)
+            } catch {
+                self.presentError("Error deleting save state: \(error.localizedDescription)")
+            }
+        })
+        actionSheet.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
         return actionSheet
     }
 
@@ -1500,20 +1446,20 @@ extension PVGameLibraryViewController {
     }
 }
 
-extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
-    func didSelectObject(_ object: Object, indexPath _: IndexPath) {
-        if let game = object as? PVGame {
-            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: favoritesSection))
-            load(game, sender: cell, core: nil, saveState: nil)
-        } else if let recentGame = object as? PVRecentGame {
-            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: recentGamesSection))
-            load(recentGame.game, sender: cell, core: recentGame.core, saveState: nil)
-        } else if let saveState = object as? PVSaveState {
-            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: saveStateSection))
-            load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
-        }
-    }
-}
+//extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
+//    func didSelectObject(_ object: Object, indexPath _: IndexPath) {
+//        if let game = object as? PVGame {
+//            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: favoritesSection))
+//            load(game, sender: cell, core: nil, saveState: nil)
+//        } else if let recentGame = object as? PVRecentGame {
+//            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: recentGamesSection))
+//            load(recentGame.game, sender: cell, core: recentGame.core, saveState: nil)
+//        } else if let saveState = object as? PVSaveState {
+//            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: saveStateSection))
+//            load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
+//        }
+//    }
+//}
 
 // MARK: - Spotlight
 
@@ -1705,7 +1651,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             case 1:
                 PVSettingsModel.shared.showRecentGames = !PVSettingsModel.shared.showRecentGames
             case 2:
-                PVSettingsModel.shared.showRecentSaveStates = !PVSettingsModel.shared.showRecentSaveStates
+                showSaveStates.onNext(!PVSettingsModel.shared.showRecentSaveStates)
             case 3:
                 PVSettingsModel.shared.showGameBadges = !PVSettingsModel.shared.showGameBadges
             default:

@@ -66,24 +66,13 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             case .game:
                 width *= collectionViewZoom
                 height *= collectionViewZoom
-            }
-            return .init(width: width, height: height)
-            //		if let game = self.game(at: indexPath) {
-            //			let ratioWidth = (game.boxartAspectRatio.rawValue * height) - minimumInteritemSpacing
-            //			 width = min(width, ratioWidth)
-            //		}
-
-            if indexPath.section == saveStateSection {
+            case .saves:
                 // TODO: Multirow?
                 let numberOfRows = 1
                 width = viewWidth
                 height = (height + PageIndicatorHeight + 24) * CGFloat(numberOfRows)
-            } else if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
-                let numberOfRows = 1
-                width = viewWidth
-                height = (height + PageIndicatorHeight + 24) * CGFloat(numberOfRows)
-            } else {
             }
+            return .init(width: width, height: height)
         }
     #endif
 
@@ -94,6 +83,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             case .game(let game):
                 let boxartSize = CGSize(width: tvOSCellUnit, height: tvOSCellUnit / game.boxartAspectRatio.rawValue)
                 return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
+            case .saves:
+            // TODO: Multirow?
+                let numberOfRows: CGFloat = 1.0
+                let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 4
+                let height = tvOSCellUnit * numberOfRows + PageIndicatorHeight
+                return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             }
             if searchResults != nil {
                 return CGSize(width: tvOSCellUnit, height: tvOSCellUnit)
@@ -101,11 +96,6 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
             let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
             if indexPath.section == saveStateSection {
-                // TODO: Multirow?
-                let numberOfRows: CGFloat = 1.0
-                let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 4
-                let height = tvOSCellUnit * numberOfRows + PageIndicatorHeight
-                return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             }
 
             if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
@@ -147,11 +137,8 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             return .zero
         case .some(.game):
             return minimumInteritemSpacing
-        }
-        if section == recentGamesSection || section == favoritesSection || section == saveStateSection {
+        case .saves:
             return 0
-        } else {
-            return minimumInteritemSpacing
         }
     }
 
@@ -165,12 +152,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             return .zero
         case .some(.game):
             return .init(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
+        case .saves:
+            return .zero
         }
-            if section == saveStateSection || section == recentGamesSection || section == favoritesSection {
-                return UIEdgeInsets.zero
-            } else {
-                return UIEdgeInsets(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
-            }
         #endif
     }
 
