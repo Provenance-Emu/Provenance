@@ -60,6 +60,8 @@
 		1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
+		1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
+		1180B30824924AEA00636C8A /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
 		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; };
@@ -698,6 +700,7 @@
 		1180B3172492A93F00636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		1180B31B2492A95400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryUpdatesController.swift; sourceTree = "<group>"; };
+		1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Rx.swift"; sourceTree = "<group>"; };
 		11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVTVTabBarController.swift; sourceTree = "<group>"; };
 		11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISearchController+Rx.swift"; sourceTree = "<group>"; };
 		14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1568,6 +1571,7 @@
 				1A5665071D96A18A006EAE01 /* UIDevice+Hardware.h */,
 				1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */,
 				B394C98920609E180014A65D /* UIColor+Hex.swift */,
+				1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2719,6 +2723,7 @@
 				B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
 				B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */,
@@ -2915,6 +2920,7 @@
 				B3B104D2218F2EF400210C39 /* PVSNESControllerViewController.swift in Sources */,
 				B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */,
+				1180B30824924AEA00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B3B104D3218F2EF400210C39 /* PVVBControllerViewController.swift in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,

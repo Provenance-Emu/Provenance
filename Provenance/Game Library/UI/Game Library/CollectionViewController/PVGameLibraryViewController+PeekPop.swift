@@ -12,6 +12,8 @@ import PVSupport
 import UIKit
 
 #if os(iOS)
+#warning("FIXME: Peekpop")
+/*
     extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
         func previewingContext(_: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
             if let moreInfoVC = viewControllerToCommit as? PVGameMoreInfoViewController {
@@ -22,7 +24,6 @@ import UIKit
                 navigationController!.show(saveSaveInfoVC, sender: self)
             }
         }
-
         func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
             if let indexPath = collectionView!.indexPathForItem(at: location), let cellAttributes = collectionView!.layoutAttributesForItem(at: indexPath) {
                 // This will show the cell clearly and blur the rest of the screen for our peek.
@@ -54,4 +55,5 @@ import UIKit
             return nil
         }
     }
+ */
 #endif

@@ -60,15 +60,18 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             let itemsPerRow: CGFloat = viewWidth > 800 ? 6 : 3
 
             var width: CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow * 0.67)
+
+            let item: Section.Item = try! collectionView.rx.model(at: indexPath)
+            switch item {
+            case .game:
+                width *= collectionViewZoom
+                height *= collectionViewZoom
+            }
+            return .init(width: width, height: height)
             //		if let game = self.game(at: indexPath) {
             //			let ratioWidth = (game.boxartAspectRatio.rawValue * height) - minimumInteritemSpacing
             //			 width = min(width, ratioWidth)
             //		}
-
-            if searchResults != nil {
-                let size = CGSize(width: width, height: height)
-                return size
-            }
 
             if indexPath.section == saveStateSection {
                 // TODO: Multirow?
@@ -80,17 +83,18 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
                 width = viewWidth
                 height = (height + PageIndicatorHeight + 24) * CGFloat(numberOfRows)
             } else {
-                width *= collectionViewZoom
-                height *= collectionViewZoom
             }
-
-            let size = CGSize(width: width, height: height)
-            return size
         }
     #endif
 
     #if os(tvOS)
         private func tvos_collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            let item: Section.Item = try! collectionView.rx.model(at: indexPath)
+            switch item {
+            case .game(let game):
+                let boxartSize = CGSize(width: tvOSCellUnit, height: tvOSCellUnit / game.boxartAspectRatio.rawValue)
+                return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
+            }
             if searchResults != nil {
                 return CGSize(width: tvOSCellUnit, height: tvOSCellUnit)
             }
@@ -122,7 +126,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #endif
 
     #if os(tvOS)
-        func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+            let item: Section.Item = try! collectionView.rx.model(at: indexPath)
+            switch item {
+            case .game(let game):
+                return 88
+            }
             if section == recentGamesSection || section == favoritesSection || section == saveStateSection {
                 return 0
             } else {
@@ -131,7 +140,14 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
         }
     #endif
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        let item: Section.Item? = firstModel(in: collectionView, at: section)
+        switch item {
+        case .none:
+            return .zero
+        case .some(.game):
+            return minimumInteritemSpacing
+        }
         if section == recentGamesSection || section == favoritesSection || section == saveStateSection {
             return 0
         } else {
@@ -139,10 +155,17 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         #if os(tvOS)
             return UIEdgeInsets(top: 32, left: 0, bottom: 64, right: 0)
         #else
+        let item: Section.Item? = firstModel(in: collectionView, at: section)
+        switch item {
+        case .none:
+            return .zero
+        case .some(.game):
+            return .init(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
+        }
             if section == saveStateSection || section == recentGamesSection || section == favoritesSection {
                 return UIEdgeInsets.zero
             } else {
@@ -150,10 +173,15 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             }
         #endif
     }
+
+    private func firstModel(in collectionView: UICollectionView, at section: Int) -> Section.Item? {
+        guard collectionView.numberOfItems(inSection: section) > 0 else { return nil }
+        return try? collectionView.rx.model(at: IndexPath(item: 0, section: section))
+    }
 }
 
 // MARK: - UICollectionViewDataSource
-
+/*
 extension PVGameLibraryViewController: UICollectionViewDataSource {
     // MARK: - UICollectionViewDataSource
 
@@ -307,7 +335,6 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
         fatalError("Don't support type \(kind)")
     }
 }
-
 // MARK: - UICollectionViewDelegate
 
 extension PVGameLibraryViewController: UICollectionViewDelegate {
@@ -380,3 +407,4 @@ extension PVGameLibraryViewController {
         return game
     }
 }
+*/
