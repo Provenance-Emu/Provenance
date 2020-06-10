@@ -37,14 +37,12 @@
 		11AFB31224881206000A3922 /* sa1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB300248811EC000A3922 /* sa1.cpp */; };
 		11AFB31324881206000A3922 /* sa1cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30B248811EE000A3922 /* sa1cpu.cpp */; };
 		11AFB31424881206000A3922 /* sdd1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB301248811EC000A3922 /* sdd1.cpp */; };
-		11AFB31524881206000A3922 /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
 		11AFB31624881207000A3922 /* cx4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB302248811EC000A3922 /* cx4.cpp */; };
 		11AFB31724881207000A3922 /* dsp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30A248811EE000A3922 /* dsp1.cpp */; };
 		11AFB31824881207000A3922 /* dsp2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB309248811ED000A3922 /* dsp2.cpp */; };
 		11AFB31924881207000A3922 /* sa1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB300248811EC000A3922 /* sa1.cpp */; };
 		11AFB31A24881207000A3922 /* sa1cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30B248811EE000A3922 /* sa1cpu.cpp */; };
 		11AFB31B24881207000A3922 /* sdd1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB301248811EC000A3922 /* sdd1.cpp */; };
-		11AFB31C24881207000A3922 /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
 		11AFB31F2488132B000A3922 /* Deinterlacer_Blend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB31D2488132A000A3922 /* Deinterlacer_Blend.cpp */; };
 		11AFB3202488132B000A3922 /* Deinterlacer_Blend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB31D2488132A000A3922 /* Deinterlacer_Blend.cpp */; };
 		11AFB3212488132B000A3922 /* Deinterlacer_Simple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB31E2488132A000A3922 /* Deinterlacer_Simple.cpp */; };
@@ -9154,7 +9152,6 @@
 				B324C5542191AAD1009F4EDC /* snes.cpp in Sources */,
 				B324C5552191AAD1009F4EDC /* cart.cpp in Sources */,
 				11AFB2EC24880C4A000A3922 /* debug.cpp in Sources */,
-				11AFB31C24881207000A3922 /* superfx.cpp in Sources */,
 				11AFB31924881207000A3922 /* sa1.cpp in Sources */,
 				11AFB2F124880C4A000A3922 /* ppu_st.cpp in Sources */,
 				11AFB2ED24880C4A000A3922 /* dis65816.cpp in Sources */,
@@ -10196,7 +10193,6 @@
 				B3FBDFAA207FF5F200E661D1 /* snes.cpp in Sources */,
 				B3FBDFAD207FF5F200E661D1 /* cart.cpp in Sources */,
 				11AFB2E624880C49000A3922 /* debug.cpp in Sources */,
-				11AFB31524881206000A3922 /* superfx.cpp in Sources */,
 				11AFB31224881206000A3922 /* sa1.cpp in Sources */,
 				11AFB2EB24880C49000A3922 /* ppu_st.cpp in Sources */,
 				11AFB2E724880C49000A3922 /* dis65816.cpp in Sources */,
