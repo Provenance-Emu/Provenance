@@ -27,9 +27,8 @@ let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
-let PVGameLibraryCollectionViewFavoritesCellIdentifier = "FavoritesColletionCell"
 let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateColletionCell"
-let PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier = "RecentlyPlayedColletionCell"
+let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedColletionCell"
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
@@ -87,10 +86,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     var sectionTitles: [String] {
         var sectionsTitles = [String]()
-        if !favoritesIsHidden {
-            sectionsTitles.append("Favorites")
-        }
-
         if !recentGamesIsHidden {
             sectionsTitles.append("Recently Played")
         }
@@ -169,6 +164,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         enum Item {
             case game(PVGame)
+            case favorites([PVGame])
             case saves([PVSaveState])
         }
 
@@ -261,9 +257,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//        let selectedSubItem = PublishSubject<GameOrSave>()
 
-        let selectedSave = PublishSubject<(PVSaveState, UICollectionViewCell?)>()
+        typealias Playable = (PVGame, UICollectionViewCell?, PVCore?, PVSaveState?)
+        let selectedPlayable = PublishSubject<Playable>()
 
         let dataSource = RxCollectionViewSectionedReloadDataSource<Section>(configureCell: { _, collectionView, indexPath, item in
             switch item {
@@ -271,15 +267,42 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
                 cell.game = game
                 return cell
+            case .favorites(let games):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewInCollectionViewCell<PVGame>.identifier, for: indexPath) as! CollectionViewInCollectionViewCell<PVGame>
+                cell.items.onNext(games)
+                cell.internalCollectionView.rx.itemSelected
+                    .map { indexPath in (try cell.internalCollectionView.rx.model(at: indexPath), cell.internalCollectionView.cellForItem(at: indexPath)) }
+                    .map { ($0, $1, nil, nil) }
+                    .bind(to: selectedPlayable)
+                    .disposed(by: cell.disposeBag)
+                return cell
             case .saves(let saves):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as! SaveStatesCollectionCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewInCollectionViewCell<PVSaveState>.identifier, for: indexPath) as! CollectionViewInCollectionViewCell<PVSaveState>
                 cell.items.onNext(saves)
                 cell.internalCollectionView.rx.itemSelected
-                    .map { indexPath in (try! cell.internalCollectionView.rx.model(at: indexPath), cell.internalCollectionView.cellForItem(at: indexPath)) }
-                    .bind(to: selectedSave).disposed(by: cell.disposeBag)
+                    .map { indexPath in (try cell.internalCollectionView.rx.model(at: indexPath), cell.internalCollectionView.cellForItem(at: indexPath)) }
+                    .map { ($0.game, $1, $0.core, $0) }
+                    .bind(to: selectedPlayable)
+                    .disposed(by: cell.disposeBag)
                 return cell
             }
         })
+
+        collectionView.rx.itemSelected
+            .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
+            .compactMap({ item, cell -> Playable? in
+                switch item {
+                case .game(let game):
+                    return (game, cell, nil, nil)
+                case .saves, .favorites:
+                    // Handled in another place
+                    return nil
+                }
+            })
+            .bind(to: selectedPlayable)
+            .disposed(by: disposeBag)
+
+        selectedPlayable.bind(onNext: self.load).disposed(by: disposeBag)
 
         dataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
             switch kind {
@@ -318,15 +341,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
         }
 
-        let saveStateSection =
-            Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1 : [] }
-                .map({ saveStates -> Section? in
-                    guard !saveStates.isEmpty else { return nil }
-                    return Section(header: "Recently Saved", items: [.saves(saveStates)], collapsable: nil)
+        let favoritesSection = gameLibrary.favorites
+            .map { favorites in favorites.isEmpty ? nil : Section(header: "Favorites", items: [.favorites(favorites)], collapsable: nil)}
 
-                })
+        let saveStateSection = Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1 : [] }
+            .map { saveStates in saveStates.isEmpty ? nil : Section(header: "Recently Saved", items: [.saves(saveStates)], collapsable: nil) }
 
-        let topSections = saveStateSection.map { [$0] }
+        let topSections = Observable.combineLatest(favoritesSection, saveStateSection) { [$0, $1] }
 
         // MARK: DataSource sections
 
@@ -371,23 +392,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         sections.map { !$0.isEmpty }.bind(to: libraryInfoContainerView.rx.isHidden).disposed(by: disposeBag)
         #endif
 
-        collectionView.rx.itemSelected
-            .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
-            .bind(onNext: { item, cell in
-                switch item {
-                case .game(let game):
-                    self.load(game, sender: cell, core: nil)
-                case .saves:
-                    // Handled in another place
-                    break
-                }
-            })
-            .disposed(by: disposeBag)
-
-        selectedSave
-            .bind(onNext: { save, cell in self.load(save.game, sender: cell, core: save.core, saveState: save)})
-            .disposed(by: disposeBag)
-
         collectionView.rx.longPressed(Section.Item.self)
             .bind(onNext: self.longPressed)
             .disposed(by: disposeBag)
@@ -416,9 +420,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         view.addSubview(collectionView)
 
         // Cells that are a collection view themsevles
-        collectionView.register(FavoritesPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewFavoritesCellIdentifier)
-        collectionView.register(SaveStatesCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
-        collectionView.register(RecentlyPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier)
+        collectionView.register(CollectionViewInCollectionViewCell<PVGame>.self, forCellWithReuseIdentifier: CollectionViewInCollectionViewCell<PVGame>.identifier)
+        collectionView.register(CollectionViewInCollectionViewCell<PVSaveState>.self, forCellWithReuseIdentifier: CollectionViewInCollectionViewCell<PVSaveState>.identifier)
 
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
         #if os(iOS)
@@ -491,13 +494,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         becomeFirstResponder()
     }
 
-    var favoriteGames: Results<PVGame>?
     var recentGames: Results<PVRecentGame>?
 
-    var favoritesToken: NotificationToken?
     var recentGamesToken: NotificationToken?
-
-    var favoritesIsHidden = true
 
     let semaphore = DispatchSemaphore(value: 1)
 
@@ -561,12 +560,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             return
         }
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-        favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
     }
 
     func deinitRealmResultsStorage() {
         recentGames = nil
-        favoriteGames = nil
     }
 
     func registerForChange() {
@@ -618,35 +615,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 fatalError("\(error)")
             }
         }
-
-        favoritesToken?.invalidate()
-        favoritesToken = favoriteGames!.observe { [unowned self] (changes: RealmCollectionChange) in
-            switch changes {
-            case let .initial(result):
-                if !result.isEmpty {
-                    self.favoritesIsHidden = false
-                    self.semaphore.wait()
-                    self.collectionView?.reloadData()
-                    self.semaphore.signal()
-                }
-            case .update(_, let deletions, let insertions, _):
-                
-                self.semaphore.wait()
-                defer {
-                    self.semaphore.signal()
-                }
-
-                let needsInsert = self.favoritesIsHidden && !insertions.isEmpty
-                var needsDelete: Bool = false
-                if let favoriteGames = self.favoriteGames {
-                    let totalDeletions = deletions.count - insertions.count
-                    needsDelete = (favoriteGames.isEmpty && insertions.isEmpty) || (favoriteGames.count < totalDeletions)
-                }
-            case let .error(error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
     }
 
     func filterRecents(_ changes: [Int]) -> [Int] {
@@ -688,10 +656,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func unregisterForChange() {
         recentGamesToken?.invalidate()
-        favoritesToken?.invalidate()
 
         recentGamesToken = nil
-        favoritesToken = nil
     }
 
     func loadGameFromShortcut() {
@@ -1073,8 +1039,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
+        case .favorites(let games):
+            let cell = cell as! CollectionViewInCollectionViewCell<PVGame>
+            let location2 = cell.internalCollectionView.convert(point, from: collectionView)
+            let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
+            return contextMenu(for: games[indexPath2.row], sender: cell)
         case .saves(let saves):
-            let cell = cell as! SaveStatesCollectionCell
+            let cell = cell as! CollectionViewInCollectionViewCell<PVSaveState>
             let location2 = cell.internalCollectionView.convert(point, from: collectionView)
             let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
             return contextMenu(for: saves[indexPath2.row])

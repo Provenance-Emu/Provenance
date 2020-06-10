@@ -66,7 +66,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             case .game:
                 width *= collectionViewZoom
                 height *= collectionViewZoom
-            case .saves:
+            case .saves, .favorites:
                 // TODO: Multirow?
                 let numberOfRows = 1
                 width = viewWidth
@@ -137,7 +137,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             return .zero
         case .some(.game):
             return minimumInteritemSpacing
-        case .saves:
+        case .saves, .favorites:
             return 0
         }
     }
@@ -152,7 +152,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             return .zero
         case .some(.game):
             return .init(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
-        case .saves:
+        case .saves, .favorites:
             return .zero
         }
         #endif

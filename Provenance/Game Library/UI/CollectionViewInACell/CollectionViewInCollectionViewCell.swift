@@ -13,7 +13,14 @@ import RxSwift
 
 public let PageIndicatorHeight: CGFloat = 2.5
 
-class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, SelectionObject>: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
+protocol SubCellItem {
+    associatedtype Cell: UICollectionViewCell
+    func configure(in cell: Cell)
+    static var identifier: String { get }
+    static func registerCell(in collectionView: UICollectionView)
+}
+
+class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
     var minimumInteritemSpacing: CGFloat {
         #if os(tvOS)
             return 50
@@ -21,10 +28,13 @@ class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, Select
             return 8.0
         #endif
     }
-    let disposeBag = DisposeBag()
-    let items = PublishSubject<[SelectionObject]>()
+    private let internalDisposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
+    let items = PublishSubject<[Item]>()
 
-    let cellId: String
+    public static var identifier: String {
+        String(describing: Self.self)
+    }
 
     var numberOfRows = 1
 
@@ -96,17 +106,22 @@ class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, Select
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(frame: CGRect, cellId: String) {
-        self.cellId = cellId
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
+        Item.registerCell(in: internalCollectionView)
 
-        items.bind(to: internalCollectionView.rx.items(cellIdentifier: cellId, cellType: CellClass.self)) { _, item, cell in
-            self.setCellObject(item, cell: cell)
+        items.bind(to: internalCollectionView.rx.items(cellIdentifier: Item.identifier, cellType: Item.Cell.self)) { _, item, cell in
+            item.configure(in: cell)
         }
-        .disposed(by: disposeBag)
-        items.bind(onNext: { _ in self.refreshCollectionView() }).disposed(by: disposeBag)
-        internalCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
+        .disposed(by: internalDisposeBag)
+        items.bind(onNext: { _ in self.refreshCollectionView() }).disposed(by: internalDisposeBag)
+        internalCollectionView.rx.setDelegate(self).disposed(by: internalDisposeBag)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = .init()
     }
 
     @objc
@@ -121,7 +136,6 @@ class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, Select
 
         addSubview(internalCollectionView)
 
-        registerSubCellClass()
         internalCollectionView.frame = bounds
 
         #if os(iOS)
@@ -148,10 +162,6 @@ class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, Select
         pageIndicator.heightAnchor.constraint(equalToConstant: PageIndicatorHeight).isActive = true
         pageIndicator.pageCount = layout.numberOfPages
         // internalCollectionView
-    }
-
-    func registerSubCellClass() {
-        internalCollectionView.register(CellClass.self, forCellWithReuseIdentifier: cellId)
     }
 
     override func layoutMarginsDidChange() {
@@ -194,10 +204,6 @@ class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, Select
     override func didTransition(from oldLayout: UICollectionViewLayout, to newLayout: UICollectionViewLayout) {
         super.didTransition(from: oldLayout, to: newLayout)
         pageIndicator.pageCount = layout.numberOfPages
-    }
-
-    func setCellObject(_: SelectionObject, cell _: CellClass) {
-        fatalError("Override me")
     }
 
     /**
@@ -248,83 +254,48 @@ class CollectionViewInCollectionViewCell<CellClass: UICollectionViewCell, Select
     }
 }
 
-// TODO: This is so similiar to the save states versoin that they can probably be combined by generalziing
-// 1) Cell class to use for sub items
-// 2) Query and return type
-
-class RecentlyPlayedCollectionCell: CollectionViewInCollectionViewCell<PVGameLibraryCollectionViewCell, PVRecentGame> {
-    typealias SelectionObject = PVRecentGame
-    typealias CellClass = PVGameLibraryCollectionViewCell
-
-    @objc init(frame: CGRect) {
-        super.init(frame: frame, cellId: PVGameLibraryCollectionViewCellIdentifier)
+private extension PVGameLibraryCollectionViewCell {
+    static var identifier: String {
+        String(describing: self)
     }
 
-    override func registerSubCellClass() {
+    static func registerCell(in collectionView: UICollectionView, identifier: String) {
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
         #if os(iOS)
-            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         #else
-            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: identifier)
         #endif
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func setCellObject(_ object: PVRecentGame, cell: PVGameLibraryCollectionViewCell) {
-        cell.game = object.game
     }
 }
 
-class FavoritesPlayedCollectionCell: CollectionViewInCollectionViewCell<PVGameLibraryCollectionViewCell, PVGame> {
-    typealias SelectionObject = PVGame
-    typealias CellClass = PVGameLibraryCollectionViewCell
-
-    @objc init(frame: CGRect) {
-        super.init(frame: frame, cellId: PVGameLibraryCollectionViewCellIdentifier)
+extension PVGame: SubCellItem {
+    func configure(in cell: PVGameLibraryCollectionViewCell) {
+        cell.game = self
     }
 
-    override func registerSubCellClass() {
-        // TODO: Use nib for cell once we drop iOS 8 and can use layouts
-        #if os(iOS)
-            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        #else
-            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        #endif
+    static var identifier: String {
+        Cell.identifier
     }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    static func registerCell(in collectionView: UICollectionView) {
+        Cell.registerCell(in: collectionView, identifier: Self.identifier)
     }
-
-    override func setCellObject(_ object: PVGame, cell: PVGameLibraryCollectionViewCell) {
-        cell.game = object
-    }
+    typealias Cell = PVGameLibraryCollectionViewCell
 }
 
-class SaveStatesCollectionCell: CollectionViewInCollectionViewCell<PVSaveStateCollectionViewCell, PVSaveState> {
-    typealias SelectionObject = PVSaveState
-    typealias CellClass = PVSaveStateCollectionViewCell
-
-    @objc init(frame: CGRect) {
-        super.init(frame: frame, cellId: "SaveStateView")
+extension PVSaveState: SubCellItem {
+    func configure(in cell: PVSaveStateCollectionViewCell) {
+        cell.saveState = self
     }
 
-    override func registerSubCellClass() {
+    static var identifier: String {
+        "SaveStateView"
+    }
+    static func registerCell(in collectionView: UICollectionView) {
         #if os(tvOS)
-            internalCollectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+            collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: Self.identifier)
         #else
-            internalCollectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+            collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: Self.identifier)
         #endif
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func setCellObject(_ object: SelectionObject, cell: PVSaveStateCollectionViewCell) {
-        cell.saveState = object
     }
 }
