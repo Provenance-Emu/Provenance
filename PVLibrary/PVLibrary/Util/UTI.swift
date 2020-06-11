@@ -8,11 +8,7 @@
 
 import Foundation
 
-#if os(iOS) || os(watchOS) || os(tvOS)
-    import MobileCoreServices
-#elseif os(macOS)
-    import CoreServices
-#endif
+import CoreServices
 
 public extension UTI {
     static let rom = UTI(rawValue: "com.provenance.rom")

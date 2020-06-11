@@ -7,7 +7,7 @@
 //
 
 import CoreSpotlight
-import MobileCoreServices
+import CoreServices
 import PVLibrary
 import PVSupport
 import RealmSwift
