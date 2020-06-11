@@ -68,7 +68,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     var filePathsToImport = [URL]()
 
     var collectionView: UICollectionView?
-    let maxForSpecialSection = 6
 
     #if os(iOS)
         var photoLibrary: PHPhotoLibrary?
@@ -83,15 +82,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         @IBOutlet var libraryInfoContainerView: UIStackView!
         @IBOutlet var libraryInfoLabel: UILabel!
     #endif
-
-    var sectionTitles: [String] {
-        var sectionsTitles = [String]()
-        if !recentGamesIsHidden {
-            sectionsTitles.append("Recently Played")
-        }
-
-        return sectionsTitles
-    }
 
     @IBOutlet var searchField: UITextField?
     var isInitialAppearance = false
@@ -135,6 +125,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     let currentSort = BehaviorSubject(value: PVSettingsModel.shared.sort)
     let collapsedSystems = BehaviorSubject(value: PVSettingsModel.shared.collapsedSystems)
     let showSaveStates = BehaviorSubject(value: PVSettingsModel.shared.showRecentSaveStates)
+    let showRecentGames = BehaviorSubject(value: PVSettingsModel.shared.showRecentGames)
 
     // MARK: - Lifecycle
 
@@ -146,8 +137,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-
-        unregisterForChange()
     }
 
     @objc func handleAppDidBecomeActive(_: Notification) {
@@ -166,6 +155,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             case game(PVGame)
             case favorites([PVGame])
             case saves([PVSaveState])
+            case recents([PVRecentGame])
         }
 
         enum Collapsable {
@@ -211,7 +201,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         // Handle migrating library
         handleLibraryMigration()
-        initRealmResultsStorage()
 
         let searchText: Observable<String?>
         #if os(iOS)
@@ -250,6 +239,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
         currentSort.bind(onNext: { PVSettingsModel.shared.sort = $0 }).disposed(by: disposeBag)
         showSaveStates.bind(onNext: { PVSettingsModel.shared.showRecentSaveStates = $0 }).disposed(by: disposeBag)
+        showRecentGames.bind(onNext: { PVSettingsModel.shared.showRecentGames = $0 }).disposed(by: disposeBag)
 
         let layout = PVGameLibraryCollectionFlowLayout()
         layout.scrollDirection = .vertical
@@ -285,6 +275,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     .bind(to: selectedPlayable)
                     .disposed(by: cell.disposeBag)
                 return cell
+            case .recents(let games):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewInCollectionViewCell<PVRecentGame>.identifier, for: indexPath) as! CollectionViewInCollectionViewCell<PVRecentGame>
+                cell.items.onNext(games)
+                cell.internalCollectionView.rx.itemSelected
+                    .map { indexPath -> (PVRecentGame, UICollectionViewCell?) in (try cell.internalCollectionView.rx.model(at: indexPath), cell.internalCollectionView.cellForItem(at: indexPath)) }
+                    .map { ($0.game, $1, $0.core, nil) }
+                    .bind(to: selectedPlayable)
+                    .disposed(by: cell.disposeBag)
+                return cell
             }
         })
 
@@ -294,7 +293,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 switch item {
                 case .game(let game):
                     return (game, cell, nil, nil)
-                case .saves, .favorites:
+                case .saves, .favorites, .recents:
                     // Handled in another place
                     return nil
                 }
@@ -347,7 +346,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let saveStateSection = Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1 : [] }
             .map { saveStates in saveStates.isEmpty ? nil : Section(header: "Recently Saved", items: [.saves(saveStates)], collapsable: nil) }
 
-        let topSections = Observable.combineLatest(favoritesSection, saveStateSection) { [$0, $1] }
+        let recentsSection = Observable.combineLatest(showRecentGames, gameLibrary.recents) { $0 ? $1 : [] }
+            .map { recentGames in recentGames.isEmpty ? nil : Section(header: "Recently Played", items: [.recents(recentGames)], collapsable: nil) }
+
+        let topSections = Observable.combineLatest(favoritesSection, saveStateSection, recentsSection) { [$0, $1, $2] }
 
         // MARK: DataSource sections
 
@@ -422,6 +424,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         // Cells that are a collection view themsevles
         collectionView.register(CollectionViewInCollectionViewCell<PVGame>.self, forCellWithReuseIdentifier: CollectionViewInCollectionViewCell<PVGame>.identifier)
         collectionView.register(CollectionViewInCollectionViewCell<PVSaveState>.self, forCellWithReuseIdentifier: CollectionViewInCollectionViewCell<PVSaveState>.identifier)
+        collectionView.register(CollectionViewInCollectionViewCell<PVRecentGame>.self, forCellWithReuseIdentifier: CollectionViewInCollectionViewCell<PVRecentGame>.identifier)
 
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
         #if os(iOS)
@@ -494,17 +497,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         becomeFirstResponder()
     }
 
-    var recentGames: Results<PVRecentGame>?
-
-    var recentGamesToken: NotificationToken?
-
-    let semaphore = DispatchSemaphore(value: 1)
-
-    var recentGamesIsEmpty = true
-    var recentGamesIsHidden: Bool {
-        return recentGamesIsEmpty || !PVSettingsModel.shared.showRecentGames
-    }
-
     #if os(tvOS)
         var focusedGame: PVGame?
     #endif
@@ -555,111 +547,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     #endif
 
-    func initRealmResultsStorage() {
-        guard RomDatabase.databaseInitilized else {
-            return
-        }
-        recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-    }
-
-    func deinitRealmResultsStorage() {
-        recentGames = nil
-    }
-
-    func registerForChange() {
-        recentGamesToken?.invalidate()
-        recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
-            switch changes {
-            case let .initial(result):
-                if !result.isEmpty {
-                    self.recentGamesIsEmpty = false
-
-                    self.semaphore.wait()
-                    self.collectionView?.reloadData()
-                    self.semaphore.signal()
-                }
-            case .update:
-
-                self.semaphore.wait()
-                defer {
-                    self.semaphore.signal()
-                }
-
-                self.collectionView?.reloadData()
-//                let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
-//                let needsDelete = (self.recentGames?.isEmpty ?? true) && !deletions.isEmpty
-//
-//                if self.recentGamesIsHidden {
-//                    self.recentGamesIsEmpty = needsDelete
-//                    return
-//                }
-//
-                ////                let section = self.recentGamesSection > -1 ? self.recentGamesSection : 0
-//
-//                    if needsInsert {
-//                        ILOG("Needs insert, recentGamesHidden - false")
-//                        self.recentGamesIsEmpty = false
-//                        self.collectionView?.insertSections([self.recentGamesSection])
-//                    }
-//
-//                    if needsDelete {
-//                        ILOG("Needs delete, recentGamesHidden - true")
-//                        self.recentGamesIsEmpty = true
-//                        self.collectionView?.deleteSections([self.recentGamesSection])
-//                    }
-//                    // Query results have changed, so apply them to the UICollectionView
-//                self.recentGamesIsEmpty = needsDelete
-
-            case let .error(error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
-    }
-
-    func filterRecents(_ changes: [Int]) -> [Int] {
-        return changes.filter { $0 < self.maxForSpecialSection }
-    }
-
-    func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
-        guard let collectionView = collectionView else { return }
-        #if false
-            collectionView.performBatchUpdates({
-                // 1. Delete
-                if needsDelete {
-                    ILOG("Deleting section \(section)")
-                    collectionView.deleteSections([section])
-                }
-
-                // 2. Update
-                ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
-                collectionView.deleteItems(at: deletions.map({ IndexPath(row: $0, section: section) }))
-                collectionView.reloadItems(at: modifications.map({ IndexPath(row: $0, section: section) }))
-                collectionView.insertItems(at: insertions.map({ IndexPath(row: $0, section: section) }))
-
-                // 3. Insert
-                if needsInsert {
-                    ILOG("Inserting section \(section)")
-                    collectionView.insertSections([section])
-                }
-            }, completion: { _ in
-                DLOG("Library collection view update completed")
-            })
-        #else
-//        if section < collectionView.numberOfSections {
-//            collectionView.reloadSections([section])
-//        } else {
-            collectionView.reloadData()
-//        }
-        #endif
-    }
-
-    func unregisterForChange() {
-        recentGamesToken?.invalidate()
-
-        recentGamesToken = nil
-    }
-
     func loadGameFromShortcut() {
         let appDelegate = UIApplication.shared.delegate as! PVAppDelegate
 
@@ -680,13 +567,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         guard RomDatabase.databaseInitilized else {
             return
         }
-
-        registerForChange()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        unregisterForChange()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1012,17 +892,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
 
-    func loadGame(fromMD5 md5: String) {
-        let database = RomDatabase.sharedInstance
-        let recentGames = database.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5)
-
-        if let mostRecentGame = recentGames.first {
-            load(mostRecentGame, sender: collectionView, core: nil)
-        } else {
-            ELOG("No game found for MD5 \(md5)")
-        }
-    }
-
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
         let actionSheet = contextMenu(for: item, cell: cell, point: point)
@@ -1049,6 +918,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let location2 = cell.internalCollectionView.convert(point, from: collectionView)
             let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
             return contextMenu(for: saves[indexPath2.row])
+        case .recents(let games):
+            let cell = cell as! CollectionViewInCollectionViewCell<PVRecentGame>
+            let location2 = cell.internalCollectionView.convert(point, from: collectionView)
+            let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
+            return contextMenu(for: games[indexPath2.row].game, sender: cell)
         }
     }
 
@@ -1620,7 +1494,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             case 0:
                 PVSettingsModel.shared.showGameTitles = !PVSettingsModel.shared.showGameTitles
             case 1:
-                PVSettingsModel.shared.showRecentGames = !PVSettingsModel.shared.showRecentGames
+                showRecentGames.onNext(!PVSettingsModel.shared.showRecentGames)
             case 2:
                 showSaveStates.onNext(!PVSettingsModel.shared.showRecentSaveStates)
             case 3:
@@ -1668,12 +1542,12 @@ extension PVGameLibraryViewController {
         #else
             let flags: UIKeyModifierFlags = .command
         #endif
-
-        for (i, title) in sectionTitles.enumerated() {
-            let input = "\(i)"
-            let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
-            sectionCommands.append(command)
-        }
+#warning("FIXME: section-shortcuts")
+//        for (i, title) in sectionTitles.enumerated() {
+//            let input = "\(i)"
+//            let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
+//            sectionCommands.append(command)
+//        }
 
         #if os(tvOS)
             if focusedGame != nil {

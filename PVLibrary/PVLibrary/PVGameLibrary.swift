@@ -15,7 +15,7 @@ import RxRealm
 public struct PVGameLibrary {
     public let saveStates: Observable<[PVSaveState]>
     public let favorites: Observable<[PVGame]>
-    public let recents: Observable<[PVGame]>
+    public let recents: Observable<[PVRecentGame]>
 
     private let database: RomDatabase
 
@@ -29,7 +29,7 @@ public struct PVGameLibrary {
             .mapMany { $0 }
         self.recents = Observable
             .collection(from: database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false))
-            .mapMany { $0.game }
+            .mapMany { $0 }
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {

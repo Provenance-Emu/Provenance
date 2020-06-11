@@ -87,6 +87,7 @@ public extension PVEmulatorConfiguration {
                         newSystem.identifier = system.PVSystemIdentifier
                         setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
                         do {
+                            database.refresh()
                             try database.add(newSystem, update: true)
                             DLOG("Added new system for id \(system.PVSystemIdentifier)")
                         } catch {
@@ -142,6 +143,7 @@ public extension PVEmulatorConfiguration {
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)
                 } else {
+                    database.refresh()
                     try! database.add(newBIOS)
                 }
             }

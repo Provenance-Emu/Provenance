@@ -299,3 +299,17 @@ extension PVSaveState: SubCellItem {
         #endif
     }
 }
+
+extension PVRecentGame: SubCellItem {
+    func configure(in cell: PVGameLibraryCollectionViewCell) {
+        cell.game = game
+    }
+
+    static var identifier: String {
+        Cell.identifier
+    }
+    static func registerCell(in collectionView: UICollectionView) {
+        Cell.registerCell(in: collectionView, identifier: Self.identifier)
+    }
+    typealias Cell = PVGameLibraryCollectionViewCell
+}
