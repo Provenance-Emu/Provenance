@@ -1627,36 +1627,35 @@ extension PVGameLibraryViewController {
             promptToDeleteGame(focusedGame)
         }
 
-        func collectionView(_: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
-            #warning("FIXME: Focus")
-            focusedGame = nil
-//
-//            if let focusedIndexPath = context.nextFocusedIndexPath {
-//                let section = focusedIndexPath.section
-//                let row = focusedIndexPath.row
-//
-//                if section == favoritesSection {
-//                    guard let favoriteGames = favoriteGames else {
-//                        return
-//                    }
-//                    if row < favoriteGames.count {
-//                        focusedGame = favoriteGames[row]
-//                    }
-//                } else if section == recentGamesSection {
-//                    return
-//                } else if section == saveStateSection {
-//                    return
-//                } else {
-//                    let sI = section - systemsSectionOffset
-//                    if sI < 0 {
-//                        return
-//                    }
-//
-//                    if let systems = filteredSystems, sI < systems.count, let query = systemSectionsTokens[systems[sI].identifier]?.query, row < query.count {
-//                        focusedGame = query[row]
-//                    }
-//                }
-//            }
+        func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
+            focusedGame = getFocusedGame(in: collectionView, focusContext: context)
+        }
+
+        private func getFocusedGame(in collectionView: UICollectionView, focusContext context: UICollectionViewFocusUpdateContext) -> PVGame? {
+            guard let indexPath = context.nextFocusedIndexPath,
+                let item: Section.Item = try? collectionView.rx.model(at: indexPath)
+                else { return nil }
+
+            switch item {
+                case .game(let game):
+                    return game
+            case .favorites(let games):
+                if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVGame>,
+                    let innerCell = context.nextFocusedItem as? UICollectionViewCell,
+                    let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
+                    return games[innerIndexPath.row]
+                }
+                return nil
+            case .recents(let games):
+                if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVRecentGame>,
+                    let innerCell = context.nextFocusedItem as? UICollectionViewCell,
+                    let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
+                    return games[innerIndexPath.row].game
+                }
+                return nil
+            case .saves:
+                return nil
+            }
         }
     #endif
 

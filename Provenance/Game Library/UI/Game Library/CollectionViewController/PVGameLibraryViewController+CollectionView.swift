@@ -79,53 +79,34 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #if os(tvOS)
         private func tvos_collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
             let item: Section.Item = try! collectionView.rx.model(at: indexPath)
+            let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
             switch item {
             case .game(let game):
                 let boxartSize = CGSize(width: tvOSCellUnit, height: tvOSCellUnit / game.boxartAspectRatio.rawValue)
                 return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
             case .saves:
-            // TODO: Multirow?
+                // TODO: Multirow?
                 let numberOfRows: CGFloat = 1.0
                 let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 4
                 let height = tvOSCellUnit * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
-            }
-            if searchResults != nil {
-                return CGSize(width: tvOSCellUnit, height: tvOSCellUnit)
-            }
-
-            let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
-            if indexPath.section == saveStateSection {
-            }
-
-            if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
+            case .favorites, .recents:
                 let numberOfRows: CGFloat = 1.0
                 let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 5
                 let height: CGFloat = tvOSCellUnit * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
-//            return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height / PVGameBoxArtAspectRatio.tall.rawValue))
-            }
-
-            if let game = self.game(at: indexPath, location: .zero) {
-                let boxartSize = CGSize(width: tvOSCellUnit, height: tvOSCellUnit / game.boxartAspectRatio.rawValue)
-                return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
-            } else {
-                return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: tvOSCellUnit, height: tvOSCellUnit))
             }
         }
     #endif
 
     #if os(tvOS)
         func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-            let item: Section.Item = try! collectionView.rx.model(at: indexPath)
+            let item: Section.Item = try! collectionView.rx.model(at: IndexPath(item: 0, section: section))
             switch item {
-            case .game(let game):
+            case .game:
                 return 88
-            }
-            if section == recentGamesSection || section == favoritesSection || section == saveStateSection {
+            case .saves, .favorites, .recents:
                 return 0
-            } else {
-                return 88
             }
         }
     #endif
