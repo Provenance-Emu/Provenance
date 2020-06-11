@@ -452,10 +452,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
         // Force touch
         #if os(iOS)
-        #warning("FIXME: PeekPop")
-        /*
             registerForPreviewing(with: self, sourceView: collectionView)
- */
         #endif
 
         #if os(iOS)
@@ -908,21 +905,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
-        case .favorites(let games):
-            let cell = cell as! CollectionViewInCollectionViewCell<PVGame>
-            let location2 = cell.internalCollectionView.convert(point, from: collectionView)
-            let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
-            return contextMenu(for: games[indexPath2.row], sender: cell)
-        case .saves(let saves):
-            let cell = cell as! CollectionViewInCollectionViewCell<PVSaveState>
-            let location2 = cell.internalCollectionView.convert(point, from: collectionView)
-            let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
-            return contextMenu(for: saves[indexPath2.row])
-        case .recents(let games):
-            let cell = cell as! CollectionViewInCollectionViewCell<PVRecentGame>
-            let location2 = cell.internalCollectionView.convert(point, from: collectionView)
-            let indexPath2 = cell.internalCollectionView.indexPathForItem(at: location2)!
-            return contextMenu(for: games[indexPath2.row].game, sender: cell)
+        case .favorites:
+            let game: PVGame = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
+            return contextMenu(for: game, sender: cell)
+        case .saves:
+            let saveState: PVSaveState = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
+            return contextMenu(for: saveState)
+        case .recents:
+            let game: PVRecentGame = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
+            return contextMenu(for: game.game, sender: cell)
         }
     }
 
