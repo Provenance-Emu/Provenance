@@ -143,9 +143,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         loadGameFromShortcut()
     }
 
-    /// Cell to focus on if we update focus
-    var manualFocusCell: IndexPath?
-
     struct Section: SectionModelType {
         let header: String
         let items: [Item]
@@ -1281,47 +1278,6 @@ extension PVGameLibraryViewController {
         MBProgressHUD.hide(for: view!, animated: true)
     }
 }
-
-//extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
-//    func didSelectObject(_ object: Object, indexPath _: IndexPath) {
-//        if let game = object as? PVGame {
-//            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: favoritesSection))
-//            load(game, sender: cell, core: nil, saveState: nil)
-//        } else if let recentGame = object as? PVRecentGame {
-//            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: recentGamesSection))
-//            load(recentGame.game, sender: cell, core: recentGame.core, saveState: nil)
-//        } else if let saveState = object as? PVSaveState {
-//            let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: saveStateSection))
-//            load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
-//        }
-//    }
-//}
-
-// MARK: - Spotlight
-
-#if os(iOS)
-    extension PVGameLibraryViewController {
-        private func deleteFromSpotlight(game: PVGame) {
-            CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in
-                if let error = error {
-                    print("Error deleting game spotlight item: \(error)")
-                } else {
-                    print("Game indexing deleted.")
-                }
-            })
-        }
-
-        private func deleteAllGamesFromSpotlight() {
-            CSSearchableIndex.default().deleteAllSearchableItems { error in
-                if let error = error {
-                    print("Error deleting all games spotlight index: \(error)")
-                } else {
-                    print("Game indexing deleted.")
-                }
-            }
-        }
-    }
-#endif
 
 // MARK: UIDocumentMenuDelegate
 
