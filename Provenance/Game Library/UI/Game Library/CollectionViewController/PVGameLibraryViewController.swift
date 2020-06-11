@@ -1542,12 +1542,15 @@ extension PVGameLibraryViewController {
         #else
             let flags: UIKeyModifierFlags = .command
         #endif
-#warning("FIXME: section-shortcuts")
-//        for (i, title) in sectionTitles.enumerated() {
-//            let input = "\(i)"
-//            let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
-//            sectionCommands.append(command)
-//        }
+
+        if let dataSource = collectionView?.rx.dataSource.forwardToDelegate() as? CollectionViewSectionedDataSource<Section> {
+            for (i, section) in dataSource.sectionModels.enumerated() {
+                let input = "\(i)"
+                let title = section.header
+                let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
+                sectionCommands.append(command)
+            }
+        }
 
         #if os(tvOS)
             if focusedGame != nil {
