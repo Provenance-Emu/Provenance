@@ -2487,18 +2487,18 @@ static_assert(sizeof(void*) >= 4, "unexpected size");
 //static_assert(sizeof(void*) >= sizeof(void (*)(void)), "unexpected size");
 static_assert(sizeof(uintptr_t) >= sizeof(void*), "unexpected size");
 
-static_assert(sizeof(char) == SIZEOF_CHAR, "unexpected size");
-static_assert(sizeof(short) == SIZEOF_SHORT, "unexpected size");
-static_assert(sizeof(int) == SIZEOF_INT, "unexpected size");
-static_assert(sizeof(long) == SIZEOF_LONG, "unexpected size");
-static_assert(sizeof(long long) == SIZEOF_LONG_LONG, "unexpected size");
-
-static_assert(sizeof(off_t) == SIZEOF_OFF_T, "unexpected size");
-static_assert(sizeof(ptrdiff_t) == SIZEOF_PTRDIFF_T, "unexpected size");
-static_assert(sizeof(size_t) == SIZEOF_SIZE_T, "unexpected size");
-static_assert(sizeof(void*) == SIZEOF_VOID_P, "unexpected size");
-
-static_assert(sizeof(double) == SIZEOF_DOUBLE, "unexpected size");
+//static_assert(sizeof(char) == SIZEOF_CHAR, "unexpected size");
+//static_assert(sizeof(short) == SIZEOF_SHORT, "unexpected size");
+//static_assert(sizeof(int) == SIZEOF_INT, "unexpected size");
+//static_assert(sizeof(long) == SIZEOF_LONG, "unexpected size");
+//static_assert(sizeof(long long) == SIZEOF_LONG_LONG, "unexpected size");
+//
+//static_assert(sizeof(off_t) == SIZEOF_OFF_T, "unexpected size");
+//static_assert(sizeof(ptrdiff_t) == SIZEOF_PTRDIFF_T, "unexpected size");
+//static_assert(sizeof(size_t) == SIZEOF_SIZE_T, "unexpected size");
+//static_assert(sizeof(void*) == SIZEOF_VOID_P, "unexpected size");
+//
+//static_assert(sizeof(double) == SIZEOF_DOUBLE, "unexpected size");
 
 // Make sure the "char" type is signed(pass -fsigned-char to gcc).  New code in Mednafen shouldn't be written with the
 // assumption that "char" is signed, but there likely is at least some code that does.
