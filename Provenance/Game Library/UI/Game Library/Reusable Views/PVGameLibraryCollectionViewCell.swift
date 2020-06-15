@@ -823,9 +823,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        contentView.translatesAutoresizingMaskIntoConstraints = true
-
         titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
 
         #if os(iOS)
