@@ -2171,7 +2171,7 @@ extension PVGameLibraryViewController {
         for (i, title) in sectionTitles.enumerated() {
             let input = "\(i)"
             // Simulator Command + number has shorcuts already
-            #if TARGET_OS_SIMULATOR
+            #if arch(i386) || arch(x86_64)
                 let flags: UIKeyModifierFlags = [.control, .command]
             #else
                 let flags: UIKeyModifierFlags = .command
