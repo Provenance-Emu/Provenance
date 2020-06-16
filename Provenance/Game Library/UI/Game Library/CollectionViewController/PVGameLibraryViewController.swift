@@ -1056,6 +1056,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
+        collectionView?.reloadData()
+        
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
         if #available(iOS 10.0, *) {
