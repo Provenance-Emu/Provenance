@@ -945,7 +945,9 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             }
         #endif
 
-        updateImageConstraints()
+        DispatchQueue.main.async {
+            self.updateImageConstraints()
+        }
 
         #if os(iOS)
             if !PVSettingsModel.shared.showGameTitles, let titleLabelHeightConstraint = titleLabelHeightConstraint {
