@@ -2186,20 +2186,20 @@ extension PVGameLibraryViewController {
                 let toggleFavoriteCommand = UIKeyCommand(input: "=", modifierFlags: flags, action: #selector(PVGameLibraryViewController.toggleFavoriteCommand), discoverabilityTitle: "Toggle Favorite")
                 sectionCommands.append(toggleFavoriteCommand)
 
-                let showMoreInfo = UIKeyCommand(input: "i", modifierFlags: flags, action: #selector(PVGameLibraryViewController.showMoreInfoCommand), discoverabilityTitle: "More info ...")
+                let showMoreInfo = UIKeyCommand(input: "i", modifierFlags: flags, action: #selector(PVGameLibraryViewController.showMoreInfoCommand), discoverabilityTitle: "More info…")
                 sectionCommands.append(showMoreInfo)
 
-                let renameCommand = UIKeyCommand(input: "r", modifierFlags: flags, action: #selector(PVGameLibraryViewController.renameCommand), discoverabilityTitle: "Rename ...")
+                let renameCommand = UIKeyCommand(input: "r", modifierFlags: flags, action: #selector(PVGameLibraryViewController.renameCommand), discoverabilityTitle: "Rename…")
                 sectionCommands.append(renameCommand)
 
-                let deleteCommand = UIKeyCommand(input: "x", modifierFlags: flags, action: #selector(PVGameLibraryViewController.deleteCommand), discoverabilityTitle: "Delete ...")
+                let deleteCommand = UIKeyCommand(input: "x", modifierFlags: flags, action: #selector(PVGameLibraryViewController.deleteCommand), discoverabilityTitle: "Delete…")
                 sectionCommands.append(deleteCommand)
 
                 let sortCommand = UIKeyCommand(input: "s", modifierFlags: flags, action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
                 sectionCommands.append(sortCommand)
             }
         #elseif os(iOS)
-            let findCommand = UIKeyCommand(input: "f", modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find …")
+            let findCommand = UIKeyCommand(input: "f", modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find…")
             sectionCommands.append(findCommand)
 
             let sortCommand = UIKeyCommand(input: "s", modifierFlags: flags, action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
