@@ -62,7 +62,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     lazy var collectionViewZoom: CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     let disposeBag = DisposeBag()
-    var watcher: DirectoryWatcher?
+    var updatesController: PVGameLibraryUpdatesController!
     var gameImporter: GameImporter!
     var filePathsToImport = [URL]()
 
@@ -115,21 +115,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     @IBOutlet var searchField: UITextField?
     var isInitialAppearance = false
 
-    var needToShowConflictsAlert = false {
-        didSet {
-            updateConflictsButton()
-        }
-    }
-
-    func updateConflictsButton() {
-        guard let gameImporter = gameImporter else {
-            return
-        }
-
+    func updateConflictsButton(_ hasConflicts: Bool) {
         #if os(tvOS)
-            let enabled = !(gameImporter.conflictedFiles?.isEmpty ?? true)
             var items = [sortOptionBarButtonItem!, getMoreRomsBarButtonItem!]
-            if enabled, let conflictsBarButtonItem = conflictsBarButtonItem {
+            if hasConflicts, let conflictsBarButtonItem = conflictsBarButtonItem {
                 items.append(conflictsBarButtonItem)
             }
             navigationItem.leftBarButtonItems = items
@@ -350,7 +339,36 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             view.bringSubviewToFront(libraryInfoContainerView)
         #endif
 
-        setUpGameLibrary()
+        let hud = MBProgressHUD(view: view)!
+        hud.isUserInteractionEnabled = false
+        view.addSubview(hud)
+        updatesController.hudState
+            .subscribe(onNext: { state in
+                switch state {
+                case .hidden:
+                    hud.hide(true)
+                case .title(let title):
+                    hud.show(true)
+                    hud.mode = .indeterminate
+                    hud.labelText = title
+                case .titleAndProgress(let title, let progress):
+                    hud.show(true)
+                    hud.mode = .annularDeterminate
+                    hud.progress = progress
+                    hud.labelText = title
+                }
+            })
+            .disposed(by: disposeBag)
+
+        updatesController.conflicts
+            .map { !$0.isEmpty }
+            .subscribe(onNext: { hasConflicts in
+                self.updateConflictsButton(hasConflicts)
+                if hasConflicts {
+                    self.showConflictsAlert()
+                }
+            })
+            .disposed(by: disposeBag)
 
         loadGameFromShortcut()
         becomeFirstResponder()
@@ -710,7 +728,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 // Results are now populated and can be accessed without blocking the UI
                 self.semaphore.wait()
-                self.setUpGameLibrary()
                 self.semaphore.signal()
                 #if os(iOS)
                     self.libraryInfoContainerView.isHidden = !result.isEmpty
@@ -994,17 +1011,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
 
         registerForChange()
-
-        if isViewLoaded {
-            updateConflictsButton()
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         unregisterForChange()
-        watcher?.stopMonitoring()
-        watcherQueue.isSuspended = false
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1022,13 +1033,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         guard RomDatabase.databaseInitilized else {
             return
         }
-
-        if isViewLoaded {
-            updateConflictsButton()
-        }
-
-        watcher?.startMonitoring()
-        watcherQueue.isSuspended = false
 
         // Warn non core dev users if they're running in debug mode
         #if DEBUG && !targetEnvironment(simulator)
@@ -1076,7 +1080,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #endif
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "SettingsSegue" {} else if segue.identifier == "gameMoreInfoSegue" {
+        if segue.identifier == "SettingsSegue" {
+            let settingsVC = (segue.destination as! UINavigationController).topViewController as! PVSettingsViewController
+            settingsVC.conflictsController = updatesController
+        } else if segue.identifier == "gameMoreInfoSegue" {
             let game = sender as! PVGame
             let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
             moreInfoVC.game = game
@@ -1329,275 +1336,21 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     fileprivate func showConflictsAlert() {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: { [unowned self] (_: UIAlertAction) -> Void in
-                self.needToShowConflictsAlert = false
-                self.displayConflictVC()
-            }))
+        let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: { [unowned self] (_: UIAlertAction) -> Void in
+            self.displayConflictVC()
+        }))
 
-            alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: { [unowned self] (_: UIAlertAction) -> Void in self.needToShowConflictsAlert = false }))
-            self.present(alert, animated: true) { () -> Void in }
+        alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: nil))
+        self.present(alert, animated: true) { () -> Void in }
 
-            ILOG("Encountered conflicts, should be showing message")
-        }
+        ILOG("Encountered conflicts, should be showing message")
     }
 
     fileprivate func displayConflictVC() {
-        let conflictViewController = PVConflictViewController(gameImporter: gameImporter!)
+        let conflictViewController = PVConflictViewController(conflictsController: updatesController)
         let navController = UINavigationController(rootViewController: conflictViewController)
         present(navController, animated: true) { () -> Void in }
-    }
-
-    func setUpGameLibrary() {
-        setupGameImporter()
-        setupDirectoryWatcher()
-    }
-
-    lazy var watcherQueue: OperationQueue = {
-        let q = OperationQueue()
-        q.name = "WatcherQueue"
-        q.qualityOfService = .background
-        q.maxConcurrentOperationCount = 1
-        return q
-    }()
-
-    func setupDirectoryWatcher() {
-        let labelMaker: (URL) -> String = { path in
-            #if os(tvOS)
-                return "Extracting Archive: \(path.lastPathComponent)"
-            #else
-                return "Extracting Archive..."
-            #endif
-        }
-
-        watcher = DirectoryWatcher(directory: PVEmulatorConfiguration.Paths.romsImportPath, extractionStartedHandler: { (_ path: URL) -> Void in
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
-                    WLOG("No hud")
-                    return
-                }
-
-                hud.show(true)
-                hud.isUserInteractionEnabled = false
-                hud.mode = .annularDeterminate
-                hud.progress = 0
-                hud.labelText = labelMaker(path)
-            }
-        }, extractionUpdatedHandler: { (_ path: URL, _: Int, _: Int, _ progress: Float) -> Void in
-
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) else {
-                    WLOG("No hud")
-                    return
-                }
-                hud.isUserInteractionEnabled = false
-                hud.mode = .annularDeterminate
-                hud.progress = progress
-                hud.labelText = labelMaker(path)
-            }
-        }, extractionCompleteHandler: { (_ paths: [URL]?) -> Void in
-            DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) {
-                    hud.isUserInteractionEnabled = false
-                    hud.mode = .annularDeterminate
-                    hud.progress = 1
-                    hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
-                    hud.hide(true, afterDelay: 0.5)
-                } else {
-                    WLOG("No hud")
-                }
-            }
-
-            if let paths = paths {
-                self.watcherQueue.addOperation({
-                    self.filePathsToImport.append(contentsOf: paths)
-                    do {
-                        let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-                        let archives = contents.filter {
-                            let exts = PVEmulatorConfiguration.archiveExtensions
-                            let ext = $0.pathExtension.lowercased()
-                            return exts.contains(ext)
-                        }
-                        if archives.isEmpty {
-                            self.gameImporter?.startImport(forPaths: self.filePathsToImport)
-                        }
-                    } catch {
-                        ELOG("\(error.localizedDescription)")
-                    }
-                })
-            }
-        })
-    }
-
-    func setupGameImporter() {
-        gameImporter = GameImporter.shared
-        gameImporter.completionHandler = { [unowned self] (_ encounteredConflicts: Bool) -> Void in
-            self.updateConflictsButton()
-            if encounteredConflicts {
-                self.needToShowConflictsAlert = true
-                self.showConflictsAlert()
-            }
-        }
-
-        gameImporter.importStartedHandler = { (_ path: String) -> Void in
-            DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) {
-                    hud.isUserInteractionEnabled = false
-                    hud.mode = .indeterminate
-                    let filename = URL(fileURLWithPath: path).lastPathComponent
-                    hud.labelText = "Importing \(filename)"
-                }
-            }
-        }
-
-        gameImporter.finishedImportHandler = { (_ md5: String, _ modified: Bool) -> Void in
-            // This callback is always called,
-            // even if the started handler was not called because it didn't require a refresh.
-            self.finishedImportingGame(withMD5: md5, modified: modified)
-        }
-
-        gameImporter.finishedArtworkHandler = { (_: String) -> Void in
-        }
-
-        // Wait for the importer to finish setting up it's data from Realm
-        gameImporter.initialized.notify(queue: DispatchQueue.global(qos: .background)) {
-            self.initialROMScan()
-        }
-
-        updateConflictsButton()
-    }
-
-    private func initialROMScan() {
-        do {
-            let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
-            if !existingFiles.isEmpty {
-                gameImporter.startImport(forPaths: existingFiles)
-            }
-        } catch {
-            ELOG("No existing ROM path at \(PVEmulatorConfiguration.Paths.romsImportPath.path)")
-        }
-
-        importerScanSystemsDirs()
-    }
-
-    private func importerScanSystemsDirs() {
-        // Scan each Core direxctory and looks for ROMs in them
-        let allSystems = PVSystem.all.map { $0.asDomain() }
-
-        let importOperation = BlockOperation()
-
-        allSystems.forEach { system in
-            let systemDir = system.romsDirectory
-            // URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
-
-            // Check if a folder actually exists, nothing to do if it doesn't
-            guard FileManager.default.fileExists(atPath: systemDir.path) else {
-                VLOG("Nothing found at \(systemDir.path)")
-                return
-            }
-
-            guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir,
-                                                                              includingPropertiesForKeys: nil,
-                                                                              options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]),
-                !contents.isEmpty else {
-                return
-            }
-
-            let acceptedExtensions = system.extensions
-            let filtered = contents.filter {
-                acceptedExtensions.contains($0.pathExtension)
-            }
-
-            importOperation.addExecutionBlock {
-                self.gameImporter.getRomInfoForFiles(atPaths: filtered, userChosenSystem: system)
-            }
-        }
-
-        let completionOperation = BlockOperation {
-            if let completionHandler = self.gameImporter.completionHandler {
-                DispatchQueue.main.async {
-                    self.updateConflictsButton()
-                    completionHandler(self.gameImporter.encounteredConflicts)
-                }
-            }
-        }
-
-        completionOperation.addDependency(importOperation)
-        gameImporter.serialImportQueue.addOperation(importOperation)
-        gameImporter.serialImportQueue.addOperation(completionOperation)
-    }
-
-    func finishedImportingGame(withMD5 md5: String, modified _: Bool) {
-        DispatchQueue.main.async {
-            if let hud = MBProgressHUD(for: self.view) {
-                hud.hide(true)
-            }
-        }
-
-        #if os(iOS)
-            // Add to spotlight database
-            if #available(iOS 9.0, *) {
-                // TODO: Would be better to pass the PVGame direclty using threads.
-                // https://realm.io/blog/obj-c-swift-2-2-thread-safe-reference-sort-properties-relationships/
-                // let realm = try! Realm()
-                // if let game = realm.resolve(gameRef) { }
-
-                // Have to do the import here so the images are ready
-                if let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
-                    let gameRef = ThreadSafeReference(to: game)
-
-                    DispatchQueue.global(qos: .background).async {
-                        let realm = try! Realm()
-                        guard let game = realm.resolve(gameRef) else {
-                            return // game was deleted
-                        }
-
-                        let spotlightUniqueIdentifier = game.spotlightUniqueIdentifier
-                        let spotlightContentSet = game.spotlightContentSet
-
-                        let spotlightItem = CSSearchableItem(uniqueIdentifier: spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: spotlightContentSet)
-                        CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
-                            if let error = error {
-                                ELOG("indexing error: \(error)")
-                            }
-                        }
-                    }
-                }
-            }
-        #endif
-
-        // code below is simply to animate updates... currently crashy
-        //    NSArray *oldSectionInfo = [self.sectionInfo copy];
-        //    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:md5];
-        //    [self fetchGames];
-        //    if (indexPath)
-        //    {
-        //        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-        //    }
-        //    else
-        //    {
-        //        indexPath = [self indexPathForGameWithMD5Hash:md5];
-        //        PVGame *game = [[PVGame objectsInRealm:self.realm where:@"md5Hash == %@", md5] firstObject];
-        //        NSString *systemID = [game systemIdentifier];
-        //        __block BOOL needToInsertSection = YES;
-        //        [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *section, NSUInteger sectionIndex, BOOL *stop) {
-        //            if ([systemID isEqualToString:section])
-        //            {
-        //                needToInsertSection = NO;
-        //                *stop = YES;
-        //            }
-        //        }];
-        //
-        //        [self.collectionView performBatchUpdates:^{
-        //            if (needToInsertSection)
-        //            {
-        //                [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
-        //            }
-        //            [self.collectionView insertItemsAtIndexPaths:@[indexPath]];
-        //        } completion:^(BOOL finished) {
-        //        }];
-        //    }
     }
 
     @objc func handleCacheEmptied(_: NotificationCenter) {
@@ -1647,16 +1400,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
-
-        initialROMScan()
-//        setUpGameLibrary()
-        //    dispatch_async([self.gameImporter serialImportQueue], ^{
-        //        [self.gameImporter getRomInfoForFilesAtPaths:romPaths userChosenSystem:nil];
-        //        if ([self.gameImporter completionHandler])
-        //        {
-        //            [self.gameImporter completionHandler]([self.gameImporter encounteredConflicts]);
-        //        }
-        //    });
     }
 
     func loadGame(fromMD5 md5: String) {
