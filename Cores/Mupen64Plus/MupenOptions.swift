@@ -18,10 +18,10 @@ extension MupenGameCore: CoreOptional {
         var options = [CoreOption]()
 
         let glidenOption = CoreOption.multi(display: CoreOptionValueDisplay(title: "GFX Plugin",
-                                                                            description: "GlideN64 is newer but slower. Try Rice Video for older devices"),
+                                                                            description: "GlideN64 is newer but slower. Try Rice for older devices."),
                                             values: [
                                                 CoreOptionMultiValue(title: "GlideN64", description: "Newer, GLES3 GFX Driver"),
-                                                CoreOptionMultiValue(title: "Rice Video", description: "Older, faster, less feature rich GFX Driver")
+                                                CoreOptionMultiValue(title: "Rice Video", description: "Older, faster, less feature rich GFX Driver.")
         ])
 
         let rspOptions = CoreOption.multi(display: CoreOptionValueDisplay(title: "RSP Plugin",
