@@ -3,11 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
+		1188DE10249E42AB0026D8AB /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1188DE0F249E42AB0026D8AB /* CocoaLumberjackSwift */; };
+		1188DE12249E42AB0026D8AB /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 1188DE11249E42AB0026D8AB /* CocoaLumberjack */; };
+		1188DE14249E42B80026D8AB /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 1188DE13249E42B80026D8AB /* CocoaLumberjack */; };
+		1188DE16249E42B80026D8AB /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1188DE15249E42B80026D8AB /* CocoaLumberjackSwift */; };
 		B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
@@ -57,12 +61,8 @@
 		B3532B3521A7B736006CDA0F /* PVSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3421A7B736006CDA0F /* PVSupportTests.swift */; };
 		B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */; };
-		B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3532B5121A7CA58006CDA0F /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
-		B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
 		B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
 		B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
 		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
@@ -103,11 +103,7 @@
 		B3AF700C21916B41000FA7F9 /* XCDLumberjackNSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF700921916B41000FA7F9 /* XCDLumberjackNSLogger.h */; };
 		B3AF700D21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */; };
 		B3AF700E21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */; };
-		B3B104F82191851900210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
-		B3B104F92191851900210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
 		B3B104FA2191851900210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
-		B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */; };
-		B3B105112191855200210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B105122191855200210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B105002191854900210C39 /* NSLogger.framework */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -163,8 +159,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */,
-				B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */,
 				B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */,
 				B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */,
 			);
@@ -209,12 +203,10 @@
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3721CF82191338200433E4C /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3721CF92191338200433E4C /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3721CFA2191338300433E4C /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3721CFB2191338300433E4C /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
 		B3721CFC2191338300433E4C /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickTableViewController.framework; sourceTree = "<group>"; };
 		B3721CFD2191338300433E4C /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxBlocking.framework; sourceTree = "<group>"; };
 		B3721CFE2191338300433E4C /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3721D002191338300433E4C /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
 		B3721D012191338300433E4C /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		B3721D022191338300433E4C /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
@@ -252,10 +244,8 @@
 		B3B105082191854900210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SQLite.framework; sourceTree = "<group>"; };
 		B3B105092191854A00210C39 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
 		B3B1050A2191854A00210C39 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
-		B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B3B1050D2191854A00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
-		B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3B1050F2191854A00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxBlocking.framework; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -284,8 +274,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */,
-				B3532B5121A7CA58006CDA0F /* CocoaLumberjack.framework in Frameworks */,
-				B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */,
 				B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */,
 			);
@@ -297,9 +285,9 @@
 			files = (
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
+				1188DE14249E42B80026D8AB /* CocoaLumberjack in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
-				B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */,
-				B3B105112191855200210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
+				1188DE16249E42B80026D8AB /* CocoaLumberjackSwift in Frameworks */,
 				B3B105122191855200210C39 /* NSLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -310,8 +298,8 @@
 			files = (
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
-				B3B104F82191851900210C39 /* CocoaLumberjack.framework in Frameworks */,
-				B3B104F92191851900210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
+				1188DE12249E42AB0026D8AB /* CocoaLumberjack in Frameworks */,
+				1188DE10249E42AB0026D8AB /* CocoaLumberjackSwift in Frameworks */,
 				B3B104FA2191851900210C39 /* NSLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,8 +449,6 @@
 		B3721CF621912F7800433E4C /* Carthage-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				B3721CFA2191338300433E4C /* CocoaLumberjack.framework */,
-				B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */,
 				B3721D012191338300433E4C /* HockeySDK.framework */,
 				B3721D032191338300433E4C /* NSLogger.framework */,
 				B3721CF92191338200433E4C /* NSLoggerSwift.framework */,
@@ -483,8 +469,6 @@
 		B3721CF721912FDE00433E4C /* Carthage-tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */,
-				B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */,
 				B3B1050A2191854A00210C39 /* HockeySDK.framework */,
 				B3B105002191854900210C39 /* NSLogger.framework */,
 				B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */,
@@ -682,6 +666,10 @@
 			dependencies = (
 			);
 			name = "PVSupport-tvOS";
+			packageProductDependencies = (
+				1188DE13249E42B80026D8AB /* CocoaLumberjack */,
+				1188DE15249E42B80026D8AB /* CocoaLumberjackSwift */,
+			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -700,6 +688,10 @@
 			dependencies = (
 			);
 			name = "PVSupport-iOS";
+			packageProductDependencies = (
+				1188DE0F249E42AB0026D8AB /* CocoaLumberjackSwift */,
+				1188DE11249E42AB0026D8AB /* CocoaLumberjack */,
+			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -740,6 +732,9 @@
 				Base,
 			);
 			mainGroup = 1ACEA63B17F7467D0031B1C9;
+			packageReferences = (
+				1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
+			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1440,6 +1435,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:CocoaLumberjack/CocoaLumberjack.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.6.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1188DE0F249E42AB0026D8AB /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+		1188DE11249E42AB0026D8AB /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		1188DE13249E42B80026D8AB /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		1188DE15249E42B80026D8AB /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1ACEA63C17F7467D0031B1C9 /* Project object */;
 }

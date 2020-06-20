@@ -1,5 +1,3 @@
-$(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjack.framework
-$(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/tvOS/Differentiator.framework
 $(SRCROOT)/Carthage/Build/tvOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/tvOS/NSLogger.framework

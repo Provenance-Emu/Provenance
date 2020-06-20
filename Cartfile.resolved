@@ -2,7 +2,6 @@ binary "https://building42.github.io/Specs/Carthage/iOS/Crashlytics.json" "3.13.
 binary "https://building42.github.io/Specs/Carthage/iOS/Fabric.json" "1.10.2"
 binary "https://building42.github.io/Specs/Carthage/tvOS/Crashlytics.json" "3.13.4"
 binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json" "1.10.2"
-github "CocoaLumberjack/CocoaLumberjack" "3.5.3"
 github "Puasonych/XLActionController" "29fe09f0ebb655b4941ca2392c59ee28e192ad84"
 github "ReactiveX/RxSwift" "5.0.1"
 github "RxSwiftCommunity/RxDataSources" "4.0.1"

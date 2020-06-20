@@ -48,7 +48,6 @@ userInfo:nil];
 //}
 
 #import <CocoaLumberjack/DDLogMacros.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -104,12 +104,6 @@
     // filters
     //#define LOG_LEVEL_DEF ddLogLevel
 //#define DD_LEGACY_MARCROS 0
-//@import CocoaLumberjack;
-//#import <CocoaLumberjack/CocoaLumberjack.h>
-//#import <CocoaLumberjack/DDLegacyMacros.h>
-
-//#import <CocoaLumberjack/DDLogMacros.h>
-//#import <CocoaLumberjack/CocoaLumberjack.h>
 static int ddLogLevel = 0xFF; //DDLogLevelDebug;
 
 #ifdef __cplusplus

@@ -58,9 +58,6 @@
 [submodule "Carthage/Checkouts/realm-cocoa"]
 	url = https://github.com/realm/realm-cocoa.git
 	path = Carthage/Checkouts/realm-cocoa
-[submodule "Carthage/Checkouts/CocoaLumberjack"]
-	url = https://github.com/CocoaLumberjack/CocoaLumberjack.git
-	path = Carthage/Checkouts/CocoaLumberjack
 [submodule "Carthage/Checkouts/QuickTableViewController"]
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git

@@ -14,9 +14,6 @@
 @import PVSupport;
 @import CocoaLumberjack;
 
-//#import <UIForLumberJack/UIForLumberJack.h>
-@import CocoaLumberjack.DDFileLogger;
-
 /* Subclass to get rid of the prominent header we don't need */
 @interface UIForLumberjack ()
 //@property (nonatomic, strong) id<DDLogFormatter> logFormatter;

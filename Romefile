@@ -103,11 +103,6 @@ repositoryMap:
 - SwiftyUserDefaults:
   - name: SwiftyUserDefaults
     platforms: [iOS,tvOS]
-- CocoaLumberjack:
-  - name: CocoaLumberjack
-    platforms: [iOS,tvOS]
-  - name: CocoaLumberjackSwift
-    platforms: [iOS,tvOS]
 - NSLogger:
   - name: NSLogger
     platforms: [iOS,tvOS]

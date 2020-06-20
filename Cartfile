@@ -26,7 +26,6 @@ binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
 
 # PVSupport
 github "fpillet/NSLogger"
-github "CocoaLumberjack/CocoaLumberjack"
 github "radex/SwiftyUserDefaults"
 github "ashleymills/Reachability.swift"
 
