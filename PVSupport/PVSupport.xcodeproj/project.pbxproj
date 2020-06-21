@@ -201,18 +201,8 @@
 		B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSettingsTests.swift; sourceTree = "<group>"; };
 		B3532C3521A925C1006CDA0F /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
-		B3721CF82191338200433E4C /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3721CF92191338200433E4C /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3721CFB2191338300433E4C /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
-		B3721CFC2191338300433E4C /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3721CFD2191338300433E4C /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxBlocking.framework; sourceTree = "<group>"; };
-		B3721CFE2191338300433E4C /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		B3721D002191338300433E4C /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
-		B3721D012191338300433E4C /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
-		B3721D022191338300433E4C /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
 		B3721D032191338300433E4C /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLogger.framework; sourceTree = "<group>"; };
-		B3721D042191338300433E4C /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
-		B3721D062191338300433E4C /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XLActionController.framework; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadDirectionPad.swift; sourceTree = "<group>"; };
 		B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeControllerSetting.swift; sourceTree = "<group>"; };
@@ -232,21 +222,8 @@
 		B3AF6FDE219161C0000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF700921916B41000FA7F9 /* XCDLumberjackNSLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCDLumberjackNSLogger.h; sourceTree = "<group>"; };
 		B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCDLumberjackNSLogger.m; sourceTree = "<group>"; };
-		B3B104FD2191854800210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
-		B3B104FE2191854800210C39 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxRealm.framework; sourceTree = "<group>"; };
-		B3B104FF2191854800210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3B105002191854900210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLogger.framework; sourceTree = "<group>"; };
-		B3B105012191854900210C39 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
-		B3B105022191854900210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
-		B3B105042191854900210C39 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3B105052191854900210C39 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
-		B3B105072191854900210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		B3B105082191854900210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SQLite.framework; sourceTree = "<group>"; };
-		B3B105092191854A00210C39 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
-		B3B1050A2191854A00210C39 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3B1050D2191854A00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
-		B3B1050F2191854A00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxBlocking.framework; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
@@ -449,18 +426,8 @@
 		B3721CF621912F7800433E4C /* Carthage-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				B3721D012191338300433E4C /* HockeySDK.framework */,
 				B3721D032191338300433E4C /* NSLogger.framework */,
 				B3721CF92191338200433E4C /* NSLoggerSwift.framework */,
-				B3721CFC2191338300433E4C /* QuickTableViewController.framework */,
-				B3721CFE2191338300433E4C /* Realm.framework */,
-				B3721D042191338300433E4C /* RxAtomic.framework */,
-				B3721CFD2191338300433E4C /* RxBlocking.framework */,
-				B3721D002191338300433E4C /* RxCocoa.framework */,
-				B3721D022191338300433E4C /* RxSwift.framework */,
-				B3721CFB2191338300433E4C /* RxTest.framework */,
-				B3721D062191338300433E4C /* XLActionController.framework */,
-				B3721CF82191338200433E4C /* ZipArchive.framework */,
 			);
 			name = "Carthage-iOS";
 			path = ../Carthage/Build/iOS;
@@ -469,21 +436,8 @@
 		B3721CF721912FDE00433E4C /* Carthage-tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				B3B1050A2191854A00210C39 /* HockeySDK.framework */,
 				B3B105002191854900210C39 /* NSLogger.framework */,
 				B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */,
-				B3B105042191854900210C39 /* QuickTableViewController.framework */,
-				B3B105072191854900210C39 /* Realm.framework */,
-				B3B105012191854900210C39 /* RealmSwift.framework */,
-				B3B1050D2191854A00210C39 /* RxAtomic.framework */,
-				B3B1050F2191854A00210C39 /* RxBlocking.framework */,
-				B3B105052191854900210C39 /* RxCocoa.framework */,
-				B3B104FE2191854800210C39 /* RxRealm.framework */,
-				B3B105022191854900210C39 /* RxSwift.framework */,
-				B3B105092191854A00210C39 /* RxTest.framework */,
-				B3B105082191854900210C39 /* SQLite.framework */,
-				B3B104FF2191854800210C39 /* SwiftyUserDefaults.framework */,
-				B3B104FD2191854800210C39 /* ZipArchive.framework */,
 			);
 			name = "Carthage-tvOS";
 			path = ../Carthage/Build/tvOS;

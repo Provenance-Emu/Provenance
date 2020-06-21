@@ -3,19 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
 		1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
-		11D381F7247D9980005594A2 /* RxSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		11D381F9247D9A47005594A2 /* Realm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700221916978000FA7F9 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		11D381FA247D9A59005594A2 /* RealmSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700821916979000FA7F9 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		11D381FD247D9ACD005594A2 /* RxRealm.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = 11D381FB247D9A82005594A2 /* RxRealm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		11D381FE247D9B67005594A2 /* SQLite.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF6FF621916978000FA7F9 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		11D381FF247D9B78005594A2 /* ZipArchive.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700721916979000FA7F9 /* ZipArchive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		11D38201247D9BF5005594A2 /* NSLogger.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF6FFB21916978000FA7F9 /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1189E70924A0BD880067EB34 /* SharedDependencies-tvOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70824A0BD880067EB34 /* SharedDependencies-tvOS */; };
+		1189E70A24A0BD880067EB34 /* SharedDependencies-tvOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70824A0BD880067EB34 /* SharedDependencies-tvOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1189E70C24A0BD910067EB34 /* SharedDependencies-iOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70B24A0BD910067EB34 /* SharedDependencies-iOS */; };
+		1189E70D24A0BD920067EB34 /* SharedDependencies-iOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70B24A0BD910067EB34 /* SharedDependencies-iOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -92,8 +89,6 @@
 		B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B378227121D40A360077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FCE21916106000FA7F9 /* RxSwift.framework */; };
-		B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
@@ -420,20 +415,35 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1189E6E924A0B7DB0067EB34 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1189E70D24A0BD920067EB34 /* SharedDependencies-iOS in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1189E6ED24A0B7E20067EB34 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1189E70A24A0BD880067EB34 /* SharedDependencies-tvOS in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C04B6C21078CD900E7AF79 /* Copy Framework */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				11D381FF247D9B78005594A2 /* ZipArchive.framework in Copy Framework */,
-				11D381F9247D9A47005594A2 /* Realm.framework in Copy Framework */,
 				B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */,
-				11D381F7247D9980005594A2 /* RxSwift.framework in Copy Framework */,
-				11D381FA247D9A59005594A2 /* RealmSwift.framework in Copy Framework */,
-				11D381FD247D9ACD005594A2 /* RxRealm.framework in Copy Framework */,
-				11D381FE247D9B67005594A2 /* SQLite.framework in Copy Framework */,
-				11D38201247D9BF5005594A2 /* NSLogger.framework in Copy Framework */,
 			);
 			name = "Copy Framework";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -443,7 +453,6 @@
 /* Begin PBXFileReference section */
 		1180B31D2492A9B400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B31F2492A9C200636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
-		11D381FB247D9A82005594A2 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = iOS/RxRealm.framework; sourceTree = "<group>"; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -828,34 +837,6 @@
 		B3AF47DD21072AD3002211EE /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FBE219160C4000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B3AF6FC021916105000FA7F9 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = tvOS/Realm.framework; sourceTree = "<group>"; };
-		B3AF6FC121916105000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = tvOS/RxTest.framework; sourceTree = "<group>"; };
-		B3AF6FC221916105000FA7F9 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3AF6FC321916105000FA7F9 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = tvOS/RxAtomic.framework; sourceTree = "<group>"; };
-		B3AF6FC421916105000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = tvOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3AF6FC521916105000FA7F9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = tvOS/RxCocoa.framework; sourceTree = "<group>"; };
-		B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
-		B3AF6FC921916105000FA7F9 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = tvOS/ZipArchive.framework; sourceTree = "<group>"; };
-		B3AF6FCB21916106000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = tvOS/RxBlocking.framework; sourceTree = "<group>"; };
-		B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = tvOS/QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = tvOS/HockeySDK.framework; sourceTree = "<group>"; };
-		B3AF6FCE21916106000FA7F9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = tvOS/RxSwift.framework; sourceTree = "<group>"; };
-		B3AF6FD021916106000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = tvOS/SQLite.framework; sourceTree = "<group>"; };
-		B3AF6FF621916978000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = iOS/SQLite.framework; sourceTree = "<group>"; };
-		B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3AF6FF821916978000FA7F9 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3AF6FF921916978000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = iOS/HockeySDK.framework; sourceTree = "<group>"; };
-		B3AF6FFA21916978000FA7F9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = iOS/RxCocoa.framework; sourceTree = "<group>"; };
-		B3AF6FFB21916978000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = iOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
-		B3AF6FFD21916978000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = iOS/RxTest.framework; sourceTree = "<group>"; };
-		B3AF6FFF21916978000FA7F9 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = iOS/XLActionController.framework; sourceTree = "<group>"; };
-		B3AF700221916978000FA7F9 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = iOS/Realm.framework; sourceTree = "<group>"; };
-		B3AF700321916978000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = iOS/RxBlocking.framework; sourceTree = "<group>"; };
-		B3AF700521916979000FA7F9 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = iOS/RxAtomic.framework; sourceTree = "<group>"; };
-		B3AF700621916979000FA7F9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = iOS/RxSwift.framework; sourceTree = "<group>"; };
-		B3AF700721916979000FA7F9 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = iOS/ZipArchive.framework; sourceTree = "<group>"; };
-		B3AF700821916979000FA7F9 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B3AF701521916CF3000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B4421077B3100E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibraryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -872,8 +853,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
+				1189E70C24A0BD910067EB34 /* SharedDependencies-iOS in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
@@ -884,7 +865,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B378227121D40A360077E86F /* RxSwift.framework in Frameworks */,
+				1189E70924A0BD880067EB34 /* SharedDependencies-tvOS in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
 				1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */,
@@ -908,7 +889,6 @@
 			children = (
 				B3AF6FB72191600A000FA7F9 /* iOS */,
 				B3AF6FB621916002000FA7F9 /* tvOS */,
-				B3AF6FA121915EE8000FA7F9 /* Carthage */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1602,59 +1582,6 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		B3AF6FA121915EE8000FA7F9 /* Carthage */ = {
-			isa = PBXGroup;
-			children = (
-				B3AF6FA321915F62000FA7F9 /* tvOS */,
-				B3AF6FA221915F5C000FA7F9 /* iOS */,
-			);
-			name = Carthage;
-			path = ../Carthage/Build;
-			sourceTree = SOURCE_ROOT;
-		};
-		B3AF6FA221915F5C000FA7F9 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				11D381FB247D9A82005594A2 /* RxRealm.framework */,
-				B3AF6FF921916978000FA7F9 /* HockeySDK.framework */,
-				B3AF6FFB21916978000FA7F9 /* NSLogger.framework */,
-				B3AF6FF821916978000FA7F9 /* NSLoggerSwift.framework */,
-				B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */,
-				B3AF700221916978000FA7F9 /* Realm.framework */,
-				B3AF700821916979000FA7F9 /* RealmSwift.framework */,
-				B3AF700521916979000FA7F9 /* RxAtomic.framework */,
-				B3AF700321916978000FA7F9 /* RxBlocking.framework */,
-				B3AF6FFA21916978000FA7F9 /* RxCocoa.framework */,
-				B3AF700621916979000FA7F9 /* RxSwift.framework */,
-				B3AF6FFD21916978000FA7F9 /* RxTest.framework */,
-				B3AF6FF621916978000FA7F9 /* SQLite.framework */,
-				B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */,
-				B3AF6FFF21916978000FA7F9 /* XLActionController.framework */,
-				B3AF700721916979000FA7F9 /* ZipArchive.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
-		B3AF6FA321915F62000FA7F9 /* tvOS */ = {
-			isa = PBXGroup;
-			children = (
-				B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */,
-				B3AF6FC421916105000FA7F9 /* NSLogger.framework */,
-				B3AF6FC221916105000FA7F9 /* NSLoggerSwift.framework */,
-				B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */,
-				B3AF6FC021916105000FA7F9 /* Realm.framework */,
-				B3AF6FC321916105000FA7F9 /* RxAtomic.framework */,
-				B3AF6FCB21916106000FA7F9 /* RxBlocking.framework */,
-				B3AF6FC521916105000FA7F9 /* RxCocoa.framework */,
-				B3AF6FCE21916106000FA7F9 /* RxSwift.framework */,
-				B3AF6FC121916105000FA7F9 /* RxTest.framework */,
-				B3AF6FD021916106000FA7F9 /* SQLite.framework */,
-				B3AF6FC821916105000FA7F9 /* SwiftyUserDefaults.framework */,
-				B3AF6FC921916105000FA7F9 /* ZipArchive.framework */,
-			);
-			name = tvOS;
-			sourceTree = "<group>";
-		};
 		B3AF6FB621916002000FA7F9 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1742,12 +1669,16 @@
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
+				1189E6E924A0B7DB0067EB34 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "PVLibrary-iOS";
+			packageProductDependencies = (
+				1189E70B24A0BD910067EB34 /* SharedDependencies-iOS */,
+			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1760,12 +1691,16 @@
 				B3C04A9B21077B3100E7AF79 /* Sources */,
 				B3C04B3121077B3100E7AF79 /* Frameworks */,
 				B3C04B3E21077B3100E7AF79 /* Resources */,
+				1189E6ED24A0B7E20067EB34 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "PVLibrary-tvOS";
+			packageProductDependencies = (
+				1189E70824A0BD880067EB34 /* SharedDependencies-tvOS */,
+			);
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1820,6 +1755,8 @@
 				Base,
 			);
 			mainGroup = B3579D052106B11D00DDEBD6;
+			packageReferences = (
+			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2806,6 +2743,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1189E70824A0BD880067EB34 /* SharedDependencies-tvOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SharedDependencies-tvOS";
+		};
+		1189E70B24A0BD910067EB34 /* SharedDependencies-iOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SharedDependencies-iOS";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3579D062106B11D00DDEBD6 /* Project object */;
 }

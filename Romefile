@@ -63,18 +63,6 @@ currentMap:
     - name: ProSystem tvOS
       platforms: [tvOS]  
 repositoryMap:
-- RxSwift:
-  - name: RxSwift
-  - name: RxCocoa
-  - name: RxAtomic
-  - name: RxBlocking
-  - name: RxTest
-    platforms: [iOS,tvOS]
-- RxDataSources:
-  - name: RxDataSources
-    platforms: [iOS,tvOS]
-  - name: Differentiator
-    platforms: [iOS,tvOS]
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
@@ -87,11 +75,6 @@ repositoryMap:
 - XLActionController:
   - name: XLActionController
     platforms: [iOS]
-- realm-cocoa:
-  - name: Realm
-    platforms: [iOS,tvOS]
-  - name: RealmSwift
-    platforms: [iOS,tvOS]
 - SQLite.swift:
   - name: SQLite
     platforms: [iOS,tvOS]
@@ -108,9 +91,6 @@ repositoryMap:
     platforms: [iOS,tvOS]
   - name: NSLoggerSwift
     platforms: [iOS,tvOS]
-- RxGesture:
-  - name: RxGesture
-    platforms: [iOS]
 - Reachability.swift:
   - name: Reachability
     platforms: [iOS,tvOS]

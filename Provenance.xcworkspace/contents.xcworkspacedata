@@ -65,4 +65,7 @@
          location = "group:Cores/Yabause/PVYabause.xcodeproj">
       </FileRef>
    </Group>
+   <FileRef
+      location = "group:SharedDependencies">
+   </FileRef>
 </Workspace>

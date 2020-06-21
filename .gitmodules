@@ -25,15 +25,6 @@
 [submodule "Cores/PokeMini/PokeMini-libretro"]
 	path = Cores/PokeMini/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
-[submodule "Carthage/Checkouts/RxRealm"]
-	path = Carthage/Checkouts/RxRealm
-	url = https://github.com/RxSwiftCommunity/RxRealm.git
-[submodule "Carthage/Checkouts/RxSwift"]
-	path = Carthage/Checkouts/RxSwift
-	url = https://github.com/ReactiveX/RxSwift.git
-[submodule "Carthage/Checkouts/RxGesture"]
-	path = Carthage/Checkouts/RxGesture
-	url = https://github.com/RxSwiftCommunity/RxGesture.git
 [submodule "Carthage/Checkouts/HockeySDK-iOS"]
 	url = https://github.com/nsoperations/HockeySDK-iOS.git
 	path = Carthage/Checkouts/HockeySDK-iOS
@@ -43,9 +34,6 @@
 [submodule "Carthage/Checkouts/Reachability.swift"]
 	path = Carthage/Checkouts/Reachability.swift
 	url = https://github.com/ashleymills/Reachability.swift.git
-[submodule "Carthage/Checkouts/RxDataSources"]
-	path = Carthage/Checkouts/RxDataSources
-	url = https://github.com/RxSwiftCommunity/RxDataSources.git
 [submodule "Carthage/Checkouts/SwiftyUserDefaults"]
 	url = https://github.com/radex/SwiftyUserDefaults.git
 	path = Carthage/Checkouts/SwiftyUserDefaults
@@ -55,9 +43,6 @@
 [submodule "Carthage/Checkouts/SQLite.swift"]
 	url = https://github.com/stephencelis/SQLite.swift.git
 	path = Carthage/Checkouts/SQLite.swift
-[submodule "Carthage/Checkouts/realm-cocoa"]
-	url = https://github.com/realm/realm-cocoa.git
-	path = Carthage/Checkouts/realm-cocoa
 [submodule "Carthage/Checkouts/QuickTableViewController"]
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git

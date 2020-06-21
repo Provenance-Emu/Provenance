@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -58,6 +58,14 @@
 		1180B3182492A94200636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
 		1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
+		1189E6FD24A0BD640067EB34 /* SharedDependencies-iOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1189E6FC24A0BD640067EB34 /* SharedDependencies-iOS */; };
+		1189E6FE24A0BD650067EB34 /* SharedDependencies-iOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E6FC24A0BD640067EB34 /* SharedDependencies-iOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1189E70024A0BD6E0067EB34 /* SharedDependencies-tvOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1189E6FF24A0BD6E0067EB34 /* SharedDependencies-tvOS */; };
+		1189E70124A0BD6E0067EB34 /* SharedDependencies-tvOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E6FF24A0BD6E0067EB34 /* SharedDependencies-tvOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1189E70324A0BD750067EB34 /* SharedDependencies-tvOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70224A0BD750067EB34 /* SharedDependencies-tvOS */; };
+		1189E70424A0BD750067EB34 /* SharedDependencies-tvOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70224A0BD750067EB34 /* SharedDependencies-tvOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1189E70624A0BD7F0067EB34 /* SharedDependencies-iOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70524A0BD7F0067EB34 /* SharedDependencies-iOS */; };
+		1189E70724A0BD7F0067EB34 /* SharedDependencies-iOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70524A0BD7F0067EB34 /* SharedDependencies-iOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; };
@@ -170,8 +178,6 @@
 		B316B4E3219269D800693472 /* PVYabause-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4E1219269D800693472 /* PVYabause-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; };
 		B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F421919394009F4EDC /* RealmSwift.framework */; };
-		B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F521919394009F4EDC /* RxRealm.framework */; };
 		B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
 		B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FF2191958D009F4EDC /* CoreGraphics.framework */; };
@@ -353,22 +359,12 @@
 		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
 		B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B374932B2175667D00C65DD1 /* QuickTableViewController.framework */; };
-		B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10463218F20FC00210C39 /* Realm.framework */; };
-		B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10464218F20FC00210C39 /* RxRealm.framework */; };
 		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
-		B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
 		B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */; };
-		B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046A218F20FD00210C39 /* NSLogger.framework */; };
 		B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046C218F20FD00210C39 /* XLActionController.framework */; };
-		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
-		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
 		B3B10498218F212800210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10485218F212500210C39 /* SQLite.framework */; };
-		B3B1049D218F212800210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048A218F212600210C39 /* Realm.framework */; };
-		B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048E218F212700210C39 /* RxSwift.framework */; };
-		B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10490218F212700210C39 /* RxCocoa.framework */; };
 		B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10492218F212700210C39 /* SwiftyUserDefaults.framework */; };
 		B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10495218F212800210C39 /* QuickTableViewController.framework */; };
-		B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10497218F212800210C39 /* NSLogger.framework */; };
 		B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B3B104BE218F2EAA00210C39 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
@@ -395,8 +391,6 @@
 		B3B104D4218F2EF400210C39 /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */; };
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
-		B3B104F0218F7D6A00210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10463218F20FC00210C39 /* Realm.framework */; };
-		B3B104F1218F7D6A00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
 		B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -483,11 +477,6 @@
 		B3F43DDE2169D42500CDD40A /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
 		B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
-		B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */; };
-		B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */; };
-		B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */; };
-		B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */; };
-		B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -499,8 +488,6 @@
 		B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869A2313835D00A9DDF6 /* RxRelay.framework */; };
-		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -596,6 +583,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		111962B5249F6CEB006EAA16 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1189E70724A0BD7F0067EB34 /* SharedDependencies-iOS in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		111962D124A0B4C9006EAA16 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1189E70424A0BD750067EB34 /* SharedDependencies-tvOS in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AACCAE61BB60DB500DC21AE /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -616,6 +625,7 @@
 				B324C650219216DD009F4EDC /* PVLibrary.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				1189E70124A0BD6E0067EB34 /* SharedDependencies-tvOS in Embed Frameworks */,
 				B316B4E3219269D800693472 /* PVYabause-tvOS.framework in Embed Frameworks */,
 				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
@@ -655,6 +665,7 @@
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				1189E6FE24A0BD650067EB34 /* SharedDependencies-iOS in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3DE5B1521B102F20066069E /* ProvenanceShared.framework in Embed Frameworks */,
 				B316B4E0219269C600693472 /* PVYabause.framework in Embed Frameworks */,
@@ -798,8 +809,6 @@
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4DE219269C600693472 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4E1219269D800693472 /* PVYabause-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVYabause-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B324C2F421919394009F4EDC /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
-		B324C2F521919394009F4EDC /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = Carthage/Build/tvOS/RxRealm.framework; sourceTree = "<group>"; };
 		B324C2FC21919568009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B324C2FF2191958D009F4EDC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B324C30121919596009F4EDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -916,30 +925,14 @@
 		B3AF701B21916E38000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AF705921916F2F000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF70652191733D000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
-		B3B10462218F20FC00210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3B10463218F20FC00210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
-		B3B10464218F20FC00210C39 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = Carthage/Build/iOS/RxRealm.framework; sourceTree = "<group>"; };
 		B3B10465218F20FD00210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
-		B3B10467218F20FD00210C39 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
-		B3B10469218F20FD00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/iOS/RxAtomic.framework; sourceTree = "<group>"; };
-		B3B1046A218F20FD00210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3B1046C218F20FD00210C39 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = Carthage/Build/iOS/XLActionController.framework; sourceTree = "<group>"; };
-		B3B1046D218F20FE00210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
-		B3B1046E218F20FE00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/iOS/RxBlocking.framework; sourceTree = "<group>"; };
 		B3B1046F218F20FE00210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
-		B3B10472218F20FE00210C39 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		B3B10485218F212500210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/tvOS/SQLite.framework; sourceTree = "<group>"; };
 		B3B10487218F212600210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/tvOS/ZipArchive.framework; sourceTree = "<group>"; };
-		B3B1048A218F212600210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
-		B3B1048C218F212600210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/tvOS/RxBlocking.framework; sourceTree = "<group>"; };
-		B3B1048E218F212700210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/tvOS/RxSwift.framework; sourceTree = "<group>"; };
-		B3B1048F218F212700210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/tvOS/RxAtomic.framework; sourceTree = "<group>"; };
-		B3B10490218F212700210C39 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/tvOS/RxCocoa.framework; sourceTree = "<group>"; };
 		B3B10492218F212700210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3B10495218F212800210C39 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/tvOS/QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3B10496218F212800210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3B10497218F212800210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/tvOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -999,19 +992,12 @@
 		B3F43DD82169B94E00CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SaveStates.storyboard; sourceTree = "<group>"; };
 		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
-		B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
-		B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/iOS/RxDataSources.framework; sourceTree = "<group>"; };
-		B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differentiator.framework; path = Carthage/Build/iOS/Differentiator.framework; sourceTree = "<group>"; };
-		B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/tvOS/RxDataSources.framework; sourceTree = "<group>"; };
-		B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differentiator.framework; path = Carthage/Build/tvOS/Differentiator.framework; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
 		B3F64ECE205CD1F100C273C7 /* JSButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSButton.swift; sourceTree = "<group>"; };
 		B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVButtonGroupOverlayView.swift; sourceTree = "<group>"; };
 		B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerManager.swift; sourceTree = "<group>"; };
 		B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerSelectionViewController.swift; sourceTree = "<group>"; };
 		B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVConflictViewController.swift; sourceTree = "<group>"; };
-		B3FD869A2313835D00A9DDF6 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
-		B3FD869C2313836B00A9DDF6 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/tvOS/RxRelay.framework; sourceTree = "<group>"; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		BE9FDCBE1C210B9F0046DF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1037,20 +1023,10 @@
 				B3589E38219E954D001C5E12 /* Fabric.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
 				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
-				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
-				B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */,
 				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
-				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
-				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
-				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
-				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
-				B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */,
 				B3DE5B1421B102F20066069E /* ProvenanceShared.framework in Frameworks */,
-				B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */,
-				B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */,
 				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
 				B3B10479218F20FE00210C39 /* SwiftyUserDefaults.framework in Frameworks */,
 				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
@@ -1088,6 +1064,7 @@
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				1189E6FD24A0BD640067EB34 /* SharedDependencies-iOS in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
@@ -1101,6 +1078,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1189E70024A0BD6E0067EB34 /* SharedDependencies-tvOS in Frameworks */,
 				B369B0DA219EA29A0064EDCA /* Fabric.framework in Frameworks */,
 				B369B0DB219EA29A0064EDCA /* Crashlytics.framework in Frameworks */,
 				B3DE5B2A21B110A90066069E /* ProvenanceShared.framework in Frameworks */,
@@ -1120,7 +1098,6 @@
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
-				B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B324C6222192059E009F4EDC /* PVMednafen.framework in Frameworks */,
 				14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */,
@@ -1131,17 +1108,9 @@
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
-				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
 				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
-				B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */,
 				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
 				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
-				B3B1049D218F212800210C39 /* Realm.framework in Frameworks */,
-				B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */,
-				B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */,
-				B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */,
-				B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */,
-				B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
 				B3B104A5218F212800210C39 /* SwiftyUserDefaults.framework in Frameworks */,
@@ -1207,9 +1176,8 @@
 			files = (
 				B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */,
 				B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */,
-				B3B104F0218F7D6A00210C39 /* Realm.framework in Frameworks */,
 				111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */,
-				B3B104F1218F7D6A00210C39 /* RealmSwift.framework in Frameworks */,
+				1189E70624A0BD7F0067EB34 /* SharedDependencies-iOS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1217,6 +1185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1189E70324A0BD750067EB34 /* SharedDependencies-tvOS in Frameworks */,
 				B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */,
 				B324C5F82191FDAA009F4EDC /* PVSupport.framework in Frameworks */,
 				B324C651219216FF009F4EDC /* PVLibrary.framework in Frameworks */,
@@ -1313,17 +1282,10 @@
 			isa = PBXGroup;
 			children = (
 				C13CC82823CABE2800463EDD /* Photos.framework */,
-				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
-				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
 				B3DE5B3221B110C70066069E /* PVLibrary.framework */,
 				B3DE5B3021B110C20066069E /* PVSupport.framework */,
 				B3532C3E21A9B681006CDA0F /* PromiseKit.framework */,
 				B3532C4021A9B698006CDA0F /* PromiseKit.framework */,
-				B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */,
-				B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */,
-				B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */,
-				B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */,
-				B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */,
 				B369B0E621A458940064EDCA /* Reachability.framework */,
 				B369B0E821A4589E0064EDCA /* Reachability.framework */,
 				B369B0D9219EA29A0064EDCA /* Crashlytics.framework */,
@@ -1422,8 +1384,6 @@
 				B324C618219203A5009F4EDC /* libsqlite3.tbd */,
 				B324C6162192038C009F4EDC /* libxml2.tbd */,
 				B324C61421920384009F4EDC /* libz.tbd */,
-				B3B10497218F212800210C39 /* NSLogger.framework */,
-				B3B10496218F212800210C39 /* NSLoggerSwift.framework */,
 				B324C305219195A0009F4EDC /* OpenGLES.framework */,
 				B324C31D219197D7009F4EDC /* PicoDrive.framework */,
 				B324C61021920037009F4EDC /* ProSystem.framework */,
@@ -1447,13 +1407,6 @@
 				B3AF701B21916E38000FA7F9 /* PVSupport.framework */,
 				B316B4DB219265B700693472 /* PVVirtualJaguar.framework */,
 				B3B10495218F212800210C39 /* QuickTableViewController.framework */,
-				B3B1048A218F212600210C39 /* Realm.framework */,
-				B324C2F421919394009F4EDC /* RealmSwift.framework */,
-				B3B1048F218F212700210C39 /* RxAtomic.framework */,
-				B3B1048C218F212600210C39 /* RxBlocking.framework */,
-				B3B10490218F212700210C39 /* RxCocoa.framework */,
-				B324C2F521919394009F4EDC /* RxRealm.framework */,
-				B3B1048E218F212700210C39 /* RxSwift.framework */,
 				B324C30D219195C0009F4EDC /* Security.framework */,
 				B3B10485218F212500210C39 /* SQLite.framework */,
 				2882D23521DEBB6700AA0B5D /* SteamController.framework */,
@@ -1487,8 +1440,6 @@
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
 				1A4869D717C8D54D0019F6D2 /* libxml2.dylib */,
 				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
-				B3B1046A218F20FD00210C39 /* NSLogger.framework */,
-				B3B10462218F20FC00210C39 /* NSLoggerSwift.framework */,
 				1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */,
 				B3AD689A1D6EA6180021B949 /* PicoDrive.framework */,
 				B354693B1DECDA710018B6F3 /* PVAtari800.framework */,
@@ -1508,13 +1459,6 @@
 				B3AF700F21916C30000FA7F9 /* PVSupport.framework */,
 				B316B4D62192659900693472 /* PVVirtualJaguar.framework */,
 				B374932B2175667D00C65DD1 /* QuickTableViewController.framework */,
-				B3B10463218F20FC00210C39 /* Realm.framework */,
-				B3B10467218F20FD00210C39 /* RealmSwift.framework */,
-				B3B10469218F20FD00210C39 /* RxAtomic.framework */,
-				B3B1046E218F20FE00210C39 /* RxBlocking.framework */,
-				B3B10472218F20FE00210C39 /* RxCocoa.framework */,
-				B3B10464218F20FC00210C39 /* RxRealm.framework */,
-				B3B1046D218F20FE00210C39 /* RxSwift.framework */,
 				1A4869DB17C8D60C0019F6D2 /* Security.framework */,
 				B3B10465218F20FD00210C39 /* SQLite.framework */,
 				2882D23321DEBB4600AA0B5D /* SteamController.framework */,
@@ -2015,6 +1959,9 @@
 				B3DE5B1321B102F20066069E /* PBXTargetDependency */,
 			);
 			name = Provenance;
+			packageProductDependencies = (
+				1189E6FC24A0BD640067EB34 /* SharedDependencies-iOS */,
+			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
 			productType = "com.apple.product-type.application";
@@ -2040,6 +1987,9 @@
 				B3DE5B2921B110A90066069E /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
+			packageProductDependencies = (
+				1189E6FF24A0BD6E0067EB34 /* SharedDependencies-tvOS */,
+			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
 			productType = "com.apple.product-type.application";
@@ -2126,6 +2076,7 @@
 				B3E21D67203211BE009939D3 /* Sources */,
 				B3F43DCC216802FD00CDD40A /* Set bundle version */,
 				B3E21D68203211BE009939D3 /* Frameworks */,
+				111962B5249F6CEB006EAA16 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2133,6 +2084,9 @@
 				B3B29D482156184400903290 /* PBXTargetDependency */,
 			);
 			name = Spotlight;
+			packageProductDependencies = (
+				1189E70524A0BD7F0067EB34 /* SharedDependencies-iOS */,
+			);
 			productName = Spotlight;
 			productReference = B3E21D6B203211BE009939D3 /* Spotlight.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -2144,6 +2098,7 @@
 				BE9FDCB31C210B9E0046DF0E /* Sources */,
 				B3F43DCD216805F600CDD40A /* Set bundle version */,
 				BE9FDCB41C210B9E0046DF0E /* Frameworks */,
+				111962D124A0B4C9006EAA16 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2151,6 +2106,9 @@
 				B3B29D4A2156184A00903290 /* PBXTargetDependency */,
 			);
 			name = TopShelf;
+			packageProductDependencies = (
+				1189E70224A0BD750067EB34 /* SharedDependencies-tvOS */,
+			);
 			productName = TopShelf;
 			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
 			productType = "com.apple.product-type.tv-app-extension";
@@ -2264,6 +2222,8 @@
 				Base,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
+			packageReferences = (
+			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -4695,6 +4655,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1189E6FC24A0BD640067EB34 /* SharedDependencies-iOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SharedDependencies-iOS";
+		};
+		1189E6FF24A0BD6E0067EB34 /* SharedDependencies-tvOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SharedDependencies-tvOS";
+		};
+		1189E70224A0BD750067EB34 /* SharedDependencies-tvOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SharedDependencies-tvOS";
+		};
+		1189E70524A0BD7F0067EB34 /* SharedDependencies-iOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SharedDependencies-iOS";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 }
