@@ -14,12 +14,14 @@ import HockeySDK
 import PVLibrary
 import PVSupport
 import RealmSwift
+import RxSwift
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var shortcutItemGame: PVGame?
     var fileLogger: DDFileLogger = DDFileLogger()
+    let disposeBag = DisposeBag()
 
     #if os(iOS)
         var _logViewController: PVLogViewController?
@@ -90,6 +92,26 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 //        Theme.currentTheme = currentTheme.theme
             Theme.currentTheme = Theme.darkTheme
         #endif
+
+        // Setup importing/updating library
+        let gameImporter = GameImporter.shared
+        let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+        #if os(iOS)
+            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
+        #endif
+
+        #if os(iOS)
+        let rootNavigation = window!.rootViewController as! UINavigationController
+        #else
+        let tabBarController = window!.rootViewController as! UITabBarController
+        let rootNavigation = tabBarController.viewControllers![0] as! UINavigationController
+        let settingsVC = ((tabBarController.viewControllers![2] as! PVTVSplitViewController).viewControllers[1] as! UINavigationController).topViewController as! PVSettingsViewController
+        settingsVC.conflictsController = libraryUpdatesController
+        #endif
+        let gameLibraryViewController = rootNavigation.viewControllers[0] as! PVGameLibraryViewController
+
+        gameLibraryViewController.updatesController = libraryUpdatesController
+        gameLibraryViewController.gameImporter = gameImporter
 
         startOptionalWebDavServer()
 

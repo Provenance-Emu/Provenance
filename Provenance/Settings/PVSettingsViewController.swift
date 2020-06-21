@@ -16,6 +16,7 @@ import QuickTableViewController
 import Reachability
 import RealmSwift
 import UIKit
+import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -32,12 +33,23 @@ class PVQuickTableViewController: QuickTableViewController {
 final class PVSettingsViewController: PVQuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
+    var conflictsController: ConflictsController!
+    private var numberOfConflicts = 0
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
+
+        conflictsController.conflicts
+            .bind(onNext: {
+                self.numberOfConflicts = $0.count
+                self.generateTableViewViewModels()
+                self.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
 
         #if os(iOS)
             navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
@@ -200,20 +212,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
             ),
             NavigationRow<SystemSettingsCell>(
                 text: "Manage Conflicts",
-                detailText: .subtitle("Manually resolve conflicted imports"),
+                detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
                 icon: nil,
-                customization: { cell, _ in
-                    let baseTitle = "Manually resolve conflicted imports"
-                    let detailText: String
-                    if let count = GameImporter.shared.conflictedFiles?.count, count > 0 {
-                        detailText = baseTitle + ": \(count) detected"
-                    } else {
-                        detailText = baseTitle + ": None detected"
-                    }
-
-                    cell.detailTextLabel?.text = detailText
-                },
-                action: { [weak self] _ in self?.manageConflictsAction() }
+                action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
             ),
             SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
         ]
@@ -390,8 +391,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
     }
 
     func manageConflictsAction() {
-        let gameImporter = GameImporter.shared
-        let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
+        let conflictViewController = PVConflictViewController(conflictsController: conflictsController)
         navigationController?.pushViewController(conflictViewController, animated: true)
     }
 
