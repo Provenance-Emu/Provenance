@@ -2169,7 +2169,7 @@ extension PVGameLibraryViewController {
         var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
 
         // Simulator Command + number has shorcuts already
-        #if arch(i386) || arch(x86_64)
+        #if targetEnvironment(simulator)
             let flags: UIKeyModifierFlags = [.control, .command]
         #else
             let flags: UIKeyModifierFlags = .command
