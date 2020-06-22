@@ -24,7 +24,6 @@ binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
 
 # PVSupport
 github "fpillet/NSLogger"
-github "ashleymills/Reachability.swift"
 
 # PVLibrary
 github "ZipArchive/ZipArchive"

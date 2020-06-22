@@ -68,6 +68,8 @@
 		1189E70724A0BD7F0067EB34 /* SharedDependencies-iOS in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1189E70524A0BD7F0067EB34 /* SharedDependencies-iOS */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
+		11F0E68724A12FF500F34C96 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 11F0E68624A12FF500F34C96 /* Reachability */; };
+		11F0E68924A12FFD00F34C96 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 11F0E68824A12FFD00F34C96 /* Reachability */; };
 		14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; };
 		14C4C1A021EBADC90055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; };
@@ -283,8 +285,6 @@
 		B369B0DB219EA29A0064EDCA /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0D9219EA29A0064EDCA /* Crashlytics.framework */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
-		B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0E621A458940064EDCA /* Reachability.framework */; };
-		B369B0E921A4589E0064EDCA /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0E821A4589E0064EDCA /* Reachability.framework */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -865,8 +865,6 @@
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
 		B369B0D8219EA29A0064EDCA /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/tvOS/Fabric.framework; sourceTree = "<group>"; };
 		B369B0D9219EA29A0064EDCA /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/tvOS/Crashlytics.framework; sourceTree = "<group>"; };
-		B369B0E621A458940064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
-		B369B0E821A4589E0064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		B369B0EA21A458F60064EDCA /* xcfilelists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = xcfilelists; path = Carthage/xcfilelists; sourceTree = "<group>"; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
@@ -1014,7 +1012,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B369B0E921A4589E0064EDCA /* Reachability.framework in Frameworks */,
+				11F0E68724A12FF500F34C96 /* Reachability in Frameworks */,
 				B3589E37219E954D001C5E12 /* Crashlytics.framework in Frameworks */,
 				B3589E38219E954D001C5E12 /* Fabric.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
@@ -1089,6 +1087,7 @@
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
+				11F0E68924A12FFD00F34C96 /* Reachability in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
@@ -1105,7 +1104,6 @@
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
 				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
-				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
 				B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */,
@@ -1280,8 +1278,6 @@
 				B3DE5B3021B110C20066069E /* PVSupport.framework */,
 				B3532C3E21A9B681006CDA0F /* PromiseKit.framework */,
 				B3532C4021A9B698006CDA0F /* PromiseKit.framework */,
-				B369B0E621A458940064EDCA /* Reachability.framework */,
-				B369B0E821A4589E0064EDCA /* Reachability.framework */,
 				B369B0D9219EA29A0064EDCA /* Crashlytics.framework */,
 				B369B0D8219EA29A0064EDCA /* Fabric.framework */,
 				B3589E33219E954C001C5E12 /* Answers.framework */,
@@ -1953,6 +1949,7 @@
 			name = Provenance;
 			packageProductDependencies = (
 				1189E6FC24A0BD640067EB34 /* SharedDependencies-iOS */,
+				11F0E68624A12FF500F34C96 /* Reachability */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -1981,6 +1978,7 @@
 			name = ProvenanceTV;
 			packageProductDependencies = (
 				1189E6FF24A0BD6E0067EB34 /* SharedDependencies-tvOS */,
+				11F0E68824A12FFD00F34C96 /* Reachability */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -2215,6 +2213,7 @@
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
+				11F0E68524A12FF500F34C96 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -4648,6 +4647,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		11F0E68524A12FF500F34C96 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:ashleymills/Reachability.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		1189E6FC24A0BD640067EB34 /* SharedDependencies-iOS */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4664,6 +4674,16 @@
 		1189E70524A0BD7F0067EB34 /* SharedDependencies-iOS */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "SharedDependencies-iOS";
+		};
+		11F0E68624A12FF500F34C96 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11F0E68524A12FF500F34C96 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
+		};
+		11F0E68824A12FFD00F34C96 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11F0E68524A12FF500F34C96 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

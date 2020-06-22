@@ -88,9 +88,6 @@ repositoryMap:
     platforms: [iOS,tvOS]
   - name: NSLoggerSwift
     platforms: [iOS,tvOS]
-- Reachability.swift:
-  - name: Reachability
-    platforms: [iOS,tvOS]
 ignoreMap:
 - Fabric:
   - name: Fabric

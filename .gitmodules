@@ -31,9 +31,6 @@
 [submodule "Carthage/Checkouts/HockeySDK-tvOS"]
 	url = https://github.com/bitstadium/HockeySDK-tvOS.git
 	path = Carthage/Checkouts/HockeySDK-tvOS
-[submodule "Carthage/Checkouts/Reachability.swift"]
-	path = Carthage/Checkouts/Reachability.swift
-	url = https://github.com/ashleymills/Reachability.swift.git
 [submodule "Carthage/Checkouts/NSLogger"]
 	path = Carthage/Checkouts/NSLogger
 	url = https://github.com/fpillet/NSLogger.git
