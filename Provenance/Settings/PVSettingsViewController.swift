@@ -339,10 +339,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let debugSection = Section(title: "Debug", rows: debugRows)
 
         // Set table data
-        #if os(tvOS)
-            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
-        #else
-            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection, debugSection]
+        tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
+        #if os(iOS)
+            tableContents.append(debugSection)
         #endif
     }
 
