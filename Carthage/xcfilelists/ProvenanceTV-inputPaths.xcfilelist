@@ -5,5 +5,4 @@ $(SRCROOT)/Carthage/Build/tvOS/QuickTableViewController.framework
 $(SRCROOT)/Carthage/Build/tvOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/tvOS/SQLite.framework
 $(SRCROOT)/Carthage/Build/tvOS/SteamController.framework
-$(SRCROOT)/Carthage/Build/tvOS/SwiftyUserDefaults.framework
 $(SRCROOT)/Carthage/Build/tvOS/ZipArchive.framework

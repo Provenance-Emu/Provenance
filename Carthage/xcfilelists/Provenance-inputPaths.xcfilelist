@@ -5,6 +5,5 @@ $(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework
 $(SRCROOT)/Carthage/Build/iOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
 $(SRCROOT)/Carthage/Build/iOS/SteamController.framework
-$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework
 $(SRCROOT)/Carthage/Build/iOS/XLActionController.framework
 $(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework
