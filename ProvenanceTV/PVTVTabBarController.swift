@@ -12,10 +12,16 @@ class PVTVTabBarController: UITabBarController {
     public override var keyCommands: [UIKeyCommand]? {
         var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
 
-        let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(PVTVTabBarController.searchAction), discoverabilityTitle: "Find …")
+        #if targetEnvironment(simulator)
+            let flags: UIKeyModifierFlags = [.control, .command]
+        #else
+            let flags: UIKeyModifierFlags = .command
+        #endif
+        
+        let findCommand = UIKeyCommand(input: "f", modifierFlags: flags, action: #selector(PVTVTabBarController.searchAction), discoverabilityTitle: "Find…")
         sectionCommands.append(findCommand)
 
-        let settingsCommand = UIKeyCommand(input: ",", modifierFlags: [.command], action: #selector(PVTVTabBarController.settingsAction), discoverabilityTitle: "Settings")
+        let settingsCommand = UIKeyCommand(input: ",", modifierFlags: flags, action: #selector(PVTVTabBarController.settingsAction), discoverabilityTitle: "Settings")
         sectionCommands.append(settingsCommand)
 
         return sectionCommands
