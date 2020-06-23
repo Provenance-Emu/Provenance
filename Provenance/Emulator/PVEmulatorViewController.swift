@@ -301,8 +301,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             let code = (error as NSError).code
             if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
                 alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-                    if let aString = URL(string: "https://bitly.com/provm3u") {
-                        UIApplication.shared.openURL(aString)
+                    if let url = URL(string: "https://bitly.com/provm3u") {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
                     }
                 }))
             }

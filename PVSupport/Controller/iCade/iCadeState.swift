@@ -17,7 +17,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         return rawValue
     }
 
-    static let none = iCadeControllerState(rawValue: 0)
+    static let none = iCadeControllerState([])
     static let joystickUp = iCadeControllerState(rawValue: 1 << 0)
     static let joystickRight = iCadeControllerState(rawValue: 1 << 1)
     static let joystickDown = iCadeControllerState(rawValue: 1 << 2)

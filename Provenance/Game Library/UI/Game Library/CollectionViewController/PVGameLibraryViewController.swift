@@ -582,12 +582,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     defer {
                         gameLibraryGameController.semaphore.signal()
                     }
-                    guard let systems = gameLibraryGameController.filteredSystems, let indexOfSystem = systems.firstIndex(of: self.system) else {
+                    guard let systems = gameLibraryGameController.filteredSystems, let _ = systems.firstIndex(of: self.system) else {
                         WLOG("Index of system changed.")
                         return
                     }
 
-                    let section = indexOfSystem + gameLibraryGameController.systemsSectionOffset
 //                    gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
                     gameLibraryGameController.collectionView?.reloadData()
                 case let .update(_, deletions, insertions, modifications):
@@ -733,7 +732,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 #if os(iOS)
                     self.libraryInfoContainerView.isHidden = !result.isEmpty
                 #endif
-            case .update(let systems, let deletions, let insertions, _):
+            case .update(let systems, _, _, _):
                 self.filteredSystemClear()
 
                 if self.isInSearch {
@@ -854,7 +853,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     self.collectionView?.reloadData()
                     self.semaphore.signal()
                 }
-            case .update(_, let deletions, let insertions, _ /* modifications */ ):
+            case .update:
                 if self.isInSearch {
                     return
                 }

@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 
 import CoreSpotlight
-import MobileCoreServices
+import CoreServices
 // import UIKit
 
 public extension PVGame {
