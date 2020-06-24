@@ -224,11 +224,11 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Beta options
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
 
             PVSettingsSwitchRow(text: "iCloud Sync",
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
 
             PVSettingsSwitchRow(text: "Multi-threaded GL",
