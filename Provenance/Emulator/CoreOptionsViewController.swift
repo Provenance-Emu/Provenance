@@ -57,7 +57,7 @@ final class CoreOptionsViewController: QuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         let sections: [Section] = groups.map {
-            let rows: [TableRow] = $0.options.map { option in
+            let rows: [TableRow] = $0.options.enumerated().map { (rowIndex, option) in
                 switch option {
                 case let .bool(display, defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
@@ -75,6 +75,13 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { _ in
                                                                  let currentSelection: String? = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+
+                                                                 if let popoverPresentationController = actionController.popoverPresentationController {
+                                                                    let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
+                                                                    popoverPresentationController.sourceView = self.tableView
+                                                                    popoverPresentationController.sourceRect = cellRect
+                                                                 }
+
                                                                  values.forEach { value in
                                                                      var title = value.title
                                                                      if currentSelection == value.title {
