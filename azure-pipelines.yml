@@ -18,6 +18,8 @@ steps:
     key: 'carthage | "$(carthage-platform)" | Cartfile.resolved'
     path: Carthage/Build
   displayName: Carthage cache
+- script: xcodebuild -workspace Provenance.xcworkspace -scheme $(scheme) -resolvePackageDependencies
+  displayName: Resolve Swift packages
 - script: carthage bootstrap --platform $(carthage-platform) --project-directory ./ --cache-builds
   displayName: Carthage bootstrap
 - task: Xcode@5
