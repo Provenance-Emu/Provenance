@@ -8,8 +8,6 @@
 let TEST_THEMES = false
 import CocoaLumberjackSwift
 import CoreSpotlight
-import Crashlytics
-import Fabric
 import PVLibrary
 import PVSupport
 import RealmSwift
@@ -40,11 +38,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
-        #if targetEnvironment(simulator)
-        #else
-            _initCrashlytics()
-        #endif
 
         do {
             try RomDatabase.initDefaultDatabase()
@@ -297,10 +290,6 @@ extension PVAppDelegate {
         #endif
 
         DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
-    }
-
-    func _initCrashlytics() {
-        Fabric.with([Answers.self, Crashlytics.self])
     }
 
     func setDefaultsFromSettingsBundle() {

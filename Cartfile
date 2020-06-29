@@ -4,19 +4,6 @@ github "Puasonych/XLActionController" "update-for-xcode-11"
 github "bcylin/QuickTableViewController"
 github "zydeco/SteamController"
 
-# Crashlytics - Static Libs
-# iOS
-# binary "https://building42.github.io/Specs/Carthage/iOS/Answers.json"
-binary "https://building42.github.io/Specs/Carthage/iOS/Crashlytics.json"
-binary "https://building42.github.io/Specs/Carthage/iOS/Fabric.json"
-#binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAnalyticsBinary.json"
-
-
-# tvOS
-# binary "https://building42.github.io/Specs/Carthage/tvOS/Answers.json"
-binary "https://building42.github.io/Specs/Carthage/tvOS/Crashlytics.json"
-binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
-
 # PVSupport
 github "fpillet/NSLogger"
 

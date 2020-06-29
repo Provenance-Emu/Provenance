@@ -83,12 +83,6 @@ repositoryMap:
   - name: NSLoggerSwift
     platforms: [iOS,tvOS]
 ignoreMap:
-- Fabric:
-  - name: Fabric
-    # platforms: [iOS, tvOS]
 - Answers:
   - name: Answers
-    # platforms: [iOS, tvOS]
-- Crashlytics:
-  - name: Crashlytics
     # platforms: [iOS, tvOS]
