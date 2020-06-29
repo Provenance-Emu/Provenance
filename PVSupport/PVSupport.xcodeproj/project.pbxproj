@@ -1393,7 +1393,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		1188DE0E249E42AB0026D8AB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:CocoaLumberjack/CocoaLumberjack.git";
+			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.6.1;

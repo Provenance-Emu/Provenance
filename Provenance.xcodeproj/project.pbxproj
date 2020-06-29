@@ -4642,7 +4642,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		11F0E68524A12FF500F34C96 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:ashleymills/Reachability.swift.git";
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
