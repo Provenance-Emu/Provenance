@@ -194,7 +194,6 @@
 		B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C313219195E0009F4EDC /* TVServices.framework */; };
 		B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; };
 		B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
 		B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B324C5F82191FDAA009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; };
 		B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
@@ -357,7 +356,6 @@
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
 		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
 		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
 		B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B374932B2175667D00C65DD1 /* QuickTableViewController.framework */; };
 		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
 		B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046C218F20FD00210C39 /* XLActionController.framework */; };
@@ -800,8 +798,6 @@
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B30670E220C29FDE002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
-		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1016,7 +1012,6 @@
 				B3589E37219E954D001C5E12 /* Crashlytics.framework in Frameworks */,
 				B3589E38219E954D001C5E12 /* Fabric.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
-				B3B1045F218F20FC00210C39 /* HockeySDK.framework in Frameworks */,
 				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
@@ -1102,7 +1097,6 @@
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
-				B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */,
 				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
 				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
@@ -1369,7 +1363,6 @@
 				B3AF705921916F2F000FA7F9 /* Foundation.framework */,
 				B3AF70652191733D000FA7F9 /* GameController.framework */,
 				B324C307219195A8009F4EDC /* GLKit.framework */,
-				B30670E420C29FE6002ECE63 /* HockeySDK.framework */,
 				B324C61A219203AF009F4EDC /* libc++.tbd */,
 				B324C618219203A5009F4EDC /* libsqlite3.tbd */,
 				B324C6162192038C009F4EDC /* libxml2.tbd */,
@@ -1423,7 +1416,6 @@
 				1A3D409917B2DCE4004DFFFC /* Foundation.framework */,
 				B32D8F811EA7FDBE00175FBF /* GameController.framework */,
 				1ADDA5B317B30CD7008A7ADD /* GLKit.framework */,
-				B30670E220C29FDE002ECE63 /* HockeySDK.framework */,
 				1A2B0E8D1AD18961005FB77C /* libc++.dylib */,
 				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,

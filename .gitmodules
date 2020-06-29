@@ -25,12 +25,6 @@
 [submodule "Cores/PokeMini/PokeMini-libretro"]
 	path = Cores/PokeMini/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
-[submodule "Carthage/Checkouts/HockeySDK-iOS"]
-	url = https://github.com/nsoperations/HockeySDK-iOS.git
-	path = Carthage/Checkouts/HockeySDK-iOS
-[submodule "Carthage/Checkouts/HockeySDK-tvOS"]
-	url = https://github.com/bitstadium/HockeySDK-tvOS.git
-	path = Carthage/Checkouts/HockeySDK-tvOS
 [submodule "Carthage/Checkouts/NSLogger"]
 	path = Carthage/Checkouts/NSLogger
 	url = https://github.com/fpillet/NSLogger.git
