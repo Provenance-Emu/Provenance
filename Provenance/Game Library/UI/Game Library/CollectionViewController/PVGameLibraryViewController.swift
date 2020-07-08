@@ -1056,14 +1056,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
-        if #available(iOS 10.0, *) {
-            coordinator.notifyWhenInteractionChanges { [weak self] _ in
-                self?.transitioningToSize = nil
-            }
-        } else {
-            coordinator.notifyWhenInteractionEnds { [weak self] _ in
-                self?.transitioningToSize = nil
-            }
+        coordinator.notifyWhenInteractionChanges { [weak self] _ in
+            self?.transitioningToSize = nil
         }
     }
 

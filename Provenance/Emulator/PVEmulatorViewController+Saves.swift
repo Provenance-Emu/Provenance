@@ -49,23 +49,19 @@ extension PVEmulatorViewController {
 
     func createAutosaveTimer() {
         autosaveTimer?.invalidate()
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            let interval = PVSettingsModel.shared.timedAutoSaveInterval
-            autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
-                DispatchQueue.main.async {
-                    let image = self.captureScreenshot()
-                    self.createNewSaveState(auto: true, screenshot: image) { result in
-                        switch result {
-                        case .success: break
-                        case let .error(error):
-                            ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
-                        }
+        let interval = PVSettingsModel.shared.timedAutoSaveInterval
+        autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
+            DispatchQueue.main.async {
+                let image = self.captureScreenshot()
+                self.createNewSaveState(auto: true, screenshot: image) { result in
+                    switch result {
+                    case .success: break
+                    case let .error(error):
+                        ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
                     }
                 }
-            })
-        } else {
-            // Fallback on earlier versions
-        }
+            }
+        })
     }
 
     func autoSaveState(completion: @escaping SaveCompletion) {

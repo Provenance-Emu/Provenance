@@ -577,23 +577,13 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {
                 emulatorViewController.glViewController.view.isHidden = true
-                if #available(iOS 10.0, tvOS 10.0, *) {
-                    _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { timer in
-                        if !emulatorViewController.core.isEmulationPaused {
-                            timer.invalidate()
-                            self.openSaveState(saveState)
-                            emulatorViewController.glViewController.view.isHidden = false
-                        }
-                    })
-                } else {
-                    // Fallback on earlier versions
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                        guard let `self` = self else { return }
-
+                _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { timer in
+                    if !emulatorViewController.core.isEmulationPaused {
+                        timer.invalidate()
                         self.openSaveState(saveState)
                         emulatorViewController.glViewController.view.isHidden = false
-                    })
-                }
+                    }
+                })
             }
         }
 
