@@ -189,25 +189,18 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
 
     @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
         #if os(iOS)
+            if let urlString = game?.referenceURL, let url = URL(string: urlString) {
+                if #available(iOS 11.0, *) {
+                    let config = SFSafariViewController.Configuration()
+                    config.barCollapsingEnabled = true
+                    config.entersReaderIfAvailable = true
 
-            if #available(iOS 9.0, *) {
-                if let urlString = game?.referenceURL, let url = URL(string: urlString) {
-                    if #available(iOS 11.0, *) {
-                        let config = SFSafariViewController.Configuration()
-                        config.barCollapsingEnabled = true
-                        config.entersReaderIfAvailable = true
-
-                        let webVC = SFSafariViewController(url: url, configuration: config)
-                        present(webVC, animated: true, completion: nil)
-                    } else {
-                        let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-                        present(webVC, animated: true, completion: nil)
-                    }
+                    let webVC = SFSafariViewController(url: url, configuration: config)
+                    present(webVC, animated: true, completion: nil)
+                } else {
+                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+                    present(webVC, animated: true, completion: nil)
                 }
-            } else {
-                let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                present(alert, animated: true, completion: nil)
             }
         #endif
     }
@@ -464,24 +457,18 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     #if os(iOS)
 
         @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
-            if #available(iOS 9.0, *) {
-                if let urlString = game?.referenceURL, let url = URL(string: urlString) {
-                    if #available(iOS 11.0, *) {
-                        let config = SFSafariViewController.Configuration()
-                        config.barCollapsingEnabled = true
-                        config.entersReaderIfAvailable = true
+            if let urlString = game?.referenceURL, let url = URL(string: urlString) {
+                if #available(iOS 11.0, *) {
+                    let config = SFSafariViewController.Configuration()
+                    config.barCollapsingEnabled = true
+                    config.entersReaderIfAvailable = true
 
-                        let webVC = SFSafariViewController(url: url, configuration: config)
-                        present(webVC, animated: true, completion: nil)
-                    } else {
-                        let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-                        present(webVC, animated: true, completion: nil)
-                    }
+                    let webVC = SFSafariViewController(url: url, configuration: config)
+                    present(webVC, animated: true, completion: nil)
+                } else {
+                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+                    present(webVC, animated: true, completion: nil)
                 }
-            } else {
-                let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                present(alert, animated: true, completion: nil)
             }
         }
     #endif
@@ -707,7 +694,6 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     }
 }
 
-@available(iOS 9.0, *)
 extension PVGameMoreInfoViewController {
     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {

@@ -133,10 +133,7 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
         collectionView.dataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.clipsToBounds = false // allows tvOS magnifcations to overflow the borders
-
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            collectionView.remembersLastFocusedIndexPath = false
-        }
+        collectionView.remembersLastFocusedIndexPath = false
 
         #if os(iOS)
             collectionView.isPagingEnabled = true
@@ -183,39 +180,25 @@ class RealmCollectinViewCell<CellClass: UICollectionViewCell, SelectionObject: O
             NotificationCenter.default.addObserver(self, selector: #selector(RealmCollectinViewCell.rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
         #endif
 
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            let margins = self.layoutMarginsGuide
+        let margins = self.layoutMarginsGuide
 
-            internalCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
-            internalCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
-            internalCollectionView.heightAnchor.constraint(equalTo: margins.heightAnchor, constant: 0).isActive = true
-        } else {
-            NSLayoutConstraint(item: internalCollectionView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
-            NSLayoutConstraint(item: internalCollectionView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
-            NSLayoutConstraint(item: internalCollectionView, attribute: .height, relatedBy: .equal, toItem: self, attribute: .height, multiplier: 1.0, constant: 0.0).isActive = true
-        }
+        internalCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
+        internalCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
+        internalCollectionView.heightAnchor.constraint(equalTo: margins.heightAnchor, constant: 0).isActive = true
+
         #if os(iOS)
             internalCollectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
         #endif
 
         // setup page indicator layout
         addSubview(pageIndicator)
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            let margins = self.layoutMarginsGuide
 
-            //			pageIndicator.leadingAnchor.constraint(lessThanOrEqualTo: margins.leadingAnchor, constant: 8).isActive = true
-            //			pageIndicator.trailingAnchor.constraint(lessThanOrEqualTo: margins.trailingAnchor, constant: 8).isActive = true
-            pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
-            pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
-            pageIndicator.heightAnchor.constraint(equalToConstant: PageIndicatorHeight).isActive = true
-            pageIndicator.pageCount = layout.numberOfPages
-        } else {
-            NSLayoutConstraint(item: pageIndicator, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0).isActive = true
-            NSLayoutConstraint(item: pageIndicator, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
-            NSLayoutConstraint(item: pageIndicator, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: PageIndicatorHeight).isActive = true
-            NSLayoutConstraint(item: pageIndicator, attribute: .leading, relatedBy: .lessThanOrEqual, toItem: self, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
-            NSLayoutConstraint(item: pageIndicator, attribute: .trailing, relatedBy: .lessThanOrEqual, toItem: self, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
-        }
+        //			pageIndicator.leadingAnchor.constraint(lessThanOrEqualTo: margins.leadingAnchor, constant: 8).isActive = true
+        //			pageIndicator.trailingAnchor.constraint(lessThanOrEqualTo: margins.trailingAnchor, constant: 8).isActive = true
+        pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
+        pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
+        pageIndicator.heightAnchor.constraint(equalToConstant: PageIndicatorHeight).isActive = true
+        pageIndicator.pageCount = layout.numberOfPages
         // internalCollectionView
     }
 
@@ -437,15 +420,11 @@ class RecentlyPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollecti
 
     override func registerSubCellClass() {
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            #if os(iOS)
-                internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #else
-                internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #endif
-        } else {
-            internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        }
+        #if os(iOS)
+            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #else
+            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #endif
     }
 
     required init?(coder _: NSCoder) {
@@ -468,15 +447,11 @@ class FavoritesPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollect
 
     override func registerSubCellClass() {
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            #if os(iOS)
-                internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #else
-                internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #endif
-        } else {
-            internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        }
+        #if os(iOS)
+            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #else
+            internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #endif
     }
 
     required init?(coder _: NSCoder) {

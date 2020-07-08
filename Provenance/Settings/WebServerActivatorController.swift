@@ -38,16 +38,13 @@ protocol WebServerActivatorController: class {
             alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                 PVWebServer.shared.stopServers()
             }))
-            if #available(iOS 9.0, *) {
-                let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-                alert.addAction(viewAction)
-            }
+            let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.showServer()
+            })
+            alert.addAction(viewAction)
             present(alert, animated: true) { () -> Void in }
         }
 
-        @available(iOS 9.0, *)
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
             let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
@@ -98,12 +95,10 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     PVWebServer.shared.stopServers()
                 }))
                 #if os(iOS)
-                    if #available(iOS 9.0, *) {
-                        let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                            self.showServer()
-                        })
-                        alert.addAction(viewAction)
-                    }
+                    let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                        self.showServer()
+                    })
+                    alert.addAction(viewAction)
                 #endif
                 present(alert, animated: true) { () -> Void in
                     alert.message = self.webServerAlertMessage

@@ -302,15 +302,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.register(RecentlyPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier)
 
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            #if os(iOS)
-                collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #else
-                collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #endif
-        } else {
-            collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        }
+        #if os(iOS)
+            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #else
+            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #endif
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
@@ -331,9 +327,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
         // Force touch
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                registerForPreviewing(with: self, sourceView: collectionView)
-            }
+            registerForPreviewing(with: self, sourceView: collectionView)
         #endif
 
         #if os(iOS)
@@ -1100,7 +1094,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     #if os(iOS)
         // Show web server (stays on)
-        @available(iOS 9.0, *)
         func showServer() {
             let ipURL = URL(string: PVWebServer.shared.urlString)
             let safariVC = SFSafariViewController(url: ipURL!, entersReaderIfAvailable: false)
@@ -1108,13 +1101,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             present(safariVC, animated: true) { () -> Void in }
         }
 
-        @available(iOS 9.0, *)
         func safariViewController(_: SFSafariViewController, didCompleteInitialLoad _: Bool) {
             // Load finished
         }
 
         // Dismiss and shut down web server
-        @available(iOS 9.0, *)
         func safariViewControllerDidFinish(_: SFSafariViewController) {
             // Done button pressed
             navigationController?.popViewController(animated: true)
@@ -1913,7 +1904,6 @@ extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
 // MARK: - Spotlight
 
 #if os(iOS)
-    @available(iOS 9.0, *)
     extension PVGameLibraryViewController {
         private func deleteFromSpotlight(game: PVGame) {
             CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in
@@ -1958,23 +1948,18 @@ extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
         func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             // If directory, map out sub directories if folder
             let urls: [URL] = urls.compactMap { (url) -> [URL]? in
-                if #available(iOS 9.0, *) {
-                    if url.hasDirectoryPath {
-                        ILOG("Trying to import directory \(url.path). Scanning subcontents")
-                        do {
-                            _ = url.startAccessingSecurityScopedResource()
-                            let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey], options: .skipsHiddenFiles)
-                            url.stopAccessingSecurityScopedResource()
-                            return subFiles
-                        } catch {
-                            ELOG("Subdir scan failed. \(error)")
-                            return [url]
-                        }
-                    } else {
+                if url.hasDirectoryPath {
+                    ILOG("Trying to import directory \(url.path). Scanning subcontents")
+                    do {
+                        _ = url.startAccessingSecurityScopedResource()
+                        let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey], options: .skipsHiddenFiles)
+                        url.stopAccessingSecurityScopedResource()
+                        return subFiles
+                    } catch {
+                        ELOG("Subdir scan failed. \(error)")
                         return [url]
                     }
                 } else {
-                    // Fallback on earlier versions
                     return [url]
                 }
             }.joined().map { $0 }
@@ -1994,11 +1979,7 @@ extension PVGameLibraryViewController: RealmCollectinViewCellDelegate {
                 //            if access {
                 let fileName = url.lastPathComponent
                 let destination: URL
-                if #available(iOS 9.0, *) {
-                    destination = importPath.appendingPathComponent(fileName, isDirectory: url.hasDirectoryPath)
-                } else {
-                    destination = importPath.appendingPathComponent(fileName, isDirectory: false)
-                }
+                destination = importPath.appendingPathComponent(fileName, isDirectory: url.hasDirectoryPath)
                 do {
                     // Since we're in UIDocumentPickerModeImport, these URLs are temporary URLs so a move is what we want
                     try FileManager.default.moveItem(at: url, to: destination)

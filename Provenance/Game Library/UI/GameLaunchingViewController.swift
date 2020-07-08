@@ -238,27 +238,25 @@ public enum GameLaunchingError: Error {
             textField.superview?.backgroundColor = textField.backgroundColor
 
             // Fix the switches frame from being below center
-            if #available(iOS 9.0, *) {
-                if !didSetConstraints, let switchControl = switchControl {
-                    switchControl.constraints.forEach {
-                        if $0.firstAttribute == .height {
-                            switchControl.removeConstraint($0)
-                        }
+            if !didSetConstraints, let switchControl = switchControl {
+                switchControl.constraints.forEach {
+                    if $0.firstAttribute == .height {
+                        switchControl.removeConstraint($0)
                     }
-
-                    switchControl.heightAnchor.constraint(equalTo: textField.heightAnchor, constant: -4).isActive = true
-                    let centerAnchor = switchControl.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0)
-                    centerAnchor.priority = .defaultHigh + 1
-                    centerAnchor.isActive = true
-
-                    textField.constraints.forEach {
-                        if $0.firstAttribute == .height {
-                            $0.constant += 20
-                        }
-                    }
-
-                    didSetConstraints = true
                 }
+
+                switchControl.heightAnchor.constraint(equalTo: textField.heightAnchor, constant: -4).isActive = true
+                let centerAnchor = switchControl.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0)
+                centerAnchor.priority = .defaultHigh + 1
+                centerAnchor.isActive = true
+
+                textField.constraints.forEach {
+                    if $0.firstAttribute == .height {
+                        $0.constant += 20
+                    }
+                }
+
+                didSetConstraints = true
             }
 
             return false
@@ -786,43 +784,35 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     func register3DTouchShortcuts() {
-        if #available(iOS 9.0, *) {
-            #if os(iOS)
-                // Add 3D touch shortcuts to recent games
-                var shortcuts = [UIApplicationShortcutItem]()
+        #if os(iOS)
+            // Add 3D touch shortcuts to recent games
+            var shortcuts = [UIApplicationShortcutItem]()
 
-                let database = RomDatabase.sharedInstance
+            let database = RomDatabase.sharedInstance
 
-                let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
-                for game in favorites {
+            let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
+            for game in favorites {
+                let icon: UIApplicationShortcutIcon?
+                icon = UIApplicationShortcutIcon(type: .favorite)
+
+                let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
+                shortcuts.append(shortcut)
+            }
+
+            let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+
+            for recentGame in sortedRecents {
+                if let game = recentGame.game {
                     let icon: UIApplicationShortcutIcon?
-                    if #available(iOS 9.1, *) {
-                        icon = UIApplicationShortcutIcon(type: .favorite)
-                    } else {
-                        icon = UIApplicationShortcutIcon(type: .play)
-                    }
+                    icon = UIApplicationShortcutIcon(type: .play)
 
                     let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
                     shortcuts.append(shortcut)
                 }
+            }
 
-                let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-
-                for recentGame in sortedRecents {
-                    if let game = recentGame.game {
-                        let icon: UIApplicationShortcutIcon?
-                        icon = UIApplicationShortcutIcon(type: .play)
-
-                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
-                        shortcuts.append(shortcut)
-                    }
-                }
-
-                UIApplication.shared.shortcutItems = shortcuts
-            #endif
-        } else {
-            // Fallback on earlier versions
-        }
+            UIApplication.shared.shortcutItems = shortcuts
+        #endif
     }
 }
 

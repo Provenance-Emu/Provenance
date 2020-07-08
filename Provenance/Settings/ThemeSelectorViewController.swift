@@ -10,7 +10,6 @@ import Foundation
 
 #if os(iOS)
     @available(tvOS, unavailable, message: "SliderCellDelegate is not available on tvOS.")
-    @available(iOS 9.0, *)
     class ThemeSelectorViewController: UITableViewController {
         override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
             return section == 0 ? 2 : 0

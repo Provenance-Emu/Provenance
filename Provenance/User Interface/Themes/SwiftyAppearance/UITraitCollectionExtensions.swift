@@ -54,11 +54,7 @@ public extension UITraitCollection {
         case let .verticalSizeClass(value):
             self.init(verticalSizeClass: value)
         case let .forceTouchCapability(value):
-            if #available(iOS 9.0, *) {
-                self.init(forceTouchCapability: value)
-            } else {
-                preconditionFailure("SwiftyAppearance: forceTouchCapability trait not available on this platform")
-            }
+            self.init(forceTouchCapability: value)
         case let .layoutDirection(value):
             if #available(iOS 10.0, tvOS 10.0, *) {
                 self.init(layoutDirection: value)

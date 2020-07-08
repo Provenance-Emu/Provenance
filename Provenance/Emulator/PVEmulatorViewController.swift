@@ -684,7 +684,6 @@ extension PVEmulatorViewController {
 extension PVEmulatorViewController {
     // #if os(tvOS)
     // Ensure that override of menu gesture is caught and handled properly for tvOS
-    @available(iOS 9.0, *)
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         if let press = presses.first, press.type == .menu, !isShowingMenu {
             //         [self controllerPauseButtonPressed];
@@ -857,7 +856,6 @@ extension PVEmulatorViewController {
 }
 
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
-@available(iOS 9.0, *)
 extension NSNumber {
     static var menu: NSNumber {
         return NSNumber(pressType: .menu)
@@ -894,7 +892,6 @@ extension NSNumber {
     }
 }
 
-@available(iOS 9.0, *)
 extension NSNumber {
     static var direct: NSNumber {
         return NSNumber(touchType: .direct)

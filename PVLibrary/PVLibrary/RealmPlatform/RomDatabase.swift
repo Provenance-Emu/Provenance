@@ -452,9 +452,7 @@ public extension RomDatabase {
 
         // Delete from Spotlight search
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                deleteFromSpotlight(game: game)
-            }
+            deleteFromSpotlight(game: game)
         #endif
 
         do {
@@ -514,7 +512,6 @@ public extension RomDatabase {
 #if os(iOS)
     import CoreSpotlight
 
-    @available(iOS 9.0, *)
     extension RomDatabase {
         private func deleteFromSpotlight(game: PVGame) {
             CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in

@@ -12,7 +12,6 @@ import PVSupport
 import UIKit
 
 #if os(iOS)
-    @available(iOS 9.0, *)
     extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
         func previewingContext(_: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
             if let moreInfoVC = viewControllerToCommit as? PVGameMoreInfoViewController {

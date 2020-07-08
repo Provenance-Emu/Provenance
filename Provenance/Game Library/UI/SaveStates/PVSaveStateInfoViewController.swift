@@ -153,7 +153,6 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
     }
 }
 
-@available(iOS 9.0, *)
 extension PVSaveStateInfoViewController {
     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {

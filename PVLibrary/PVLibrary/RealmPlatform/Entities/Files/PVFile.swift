@@ -58,11 +58,7 @@ public enum RelativeRoot: Int {
     }
 
     func appendingPath(_ path: String) -> URL {
-        if #available(iOS 9.0, *) {
-            return URL(fileURLWithPath: path, relativeTo: directoryURL)
-        } else {
-            return directoryURL.appendingPathComponent(path, isDirectory: false)
-        }
+        return URL(fileURLWithPath: path, relativeTo: directoryURL)
     }
 }
 
