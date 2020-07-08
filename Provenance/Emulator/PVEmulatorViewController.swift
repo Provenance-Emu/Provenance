@@ -240,9 +240,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #if os(tvOS)
             fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 40, weight: .bold)
         #else
-            if #available(iOS 8.2, *) {
-                fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
-            }
+            fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
         #endif
         glViewController.view.addSubview(fpsLabel)
         view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))

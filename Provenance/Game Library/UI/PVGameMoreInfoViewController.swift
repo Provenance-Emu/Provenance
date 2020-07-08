@@ -287,11 +287,6 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         #if os(iOS)
             // Ignore Smart Invert
             artworkImageView.ignoresInvertColors = true
-
-            if #available(iOS 9.0, *) {} else {
-                // Fix iOS 8 colors
-                descriptionTextView.textColor = Theme.currentTheme.settingsCellText
-            }
         #endif
     }
 
