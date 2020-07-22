@@ -446,41 +446,16 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 
     #endif
-
-    var token: NotificationToken?
     var game: PVGame? {
         didSet {
-            token?.invalidate()
-            token = nil
-
-            DispatchQueue.main.async { [weak self] in
-                guard let `self` = self else { return }
-
-                if let game = self.game {
-                    self.token = game.observe { [weak self] change in
-                        switch change {
-                        case let .change(properties):
-                            if !properties.isEmpty {
-                                self?.setup(with: game)
-                            }
-                        case let .error(error):
-                            ELOG("An error occurred: \(error)")
-                        case .deleted:
-                            ELOG("The object was deleted.")
-                        }
-                    }
-                    self.setup(with: game)
-                } else {
-                    self.discCountContainerView?.isHidden = true
-                    self.topRightCornerBadgeView?.isHidden = true
-                    self.missingFileView?.isHidden = true
-                }
+            if let game = game {
+                self.setup(with: game)
+            } else {
+                self.discCountContainerView?.isHidden = true
+                self.topRightCornerBadgeView?.isHidden = true
+                self.missingFileView?.isHidden = true
             }
         }
-    }
-
-    deinit {
-        token?.invalidate()
     }
 
     private func updateImageBageConstraints() {}
@@ -843,21 +818,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-//        image = nil
-        //		imageView.tintColor = nil
-//        titleLabel.text = nil
-//        discCountLabel?.text = nil
-//        discCountContainerView?.isHidden = true
-//        topRightCornerBadgeView?.isHidden = true
-//        missingFileView?.isHidden = true
-        token?.invalidate()
 
         // Clear image loading from the queue is not needed
         if let operation = operation, !operation.isFinished, !operation.isExecuting {
             operation.cancel()
         }
-
-        token = nil
     }
 
     override func layoutSubviews() {

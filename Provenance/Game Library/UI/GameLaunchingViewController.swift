@@ -37,7 +37,6 @@ public protocol GameLaunchingViewController: class {
     func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
     func openSaveState(_ saveState: PVSaveState)
     func updateRecentGames(_ game: PVGame)
-    func register3DTouchShortcuts()
     func presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
@@ -743,8 +742,6 @@ extension GameLaunchingViewController where Self: UIViewController {
                 ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
             }
         }
-
-        register3DTouchShortcuts()
     }
 
     func openSaveState(_ saveState: PVSaveState) {
@@ -771,38 +768,6 @@ extension GameLaunchingViewController where Self: UIViewController {
         } else {
             presentWarning("No core loaded")
         }
-    }
-
-    func register3DTouchShortcuts() {
-        #if os(iOS)
-            // Add 3D touch shortcuts to recent games
-            var shortcuts = [UIApplicationShortcutItem]()
-
-            let database = RomDatabase.sharedInstance
-
-            let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
-            for game in favorites {
-                let icon: UIApplicationShortcutIcon?
-                icon = UIApplicationShortcutIcon(type: .favorite)
-
-                let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
-                shortcuts.append(shortcut)
-            }
-
-            let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-
-            for recentGame in sortedRecents {
-                if let game = recentGame.game {
-                    let icon: UIApplicationShortcutIcon?
-                    icon = UIApplicationShortcutIcon(type: .play)
-
-                    let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
-                    shortcuts.append(shortcut)
-                }
-            }
-
-            UIApplication.shared.shortcutItems = shortcuts
-        #endif
     }
 }
 
