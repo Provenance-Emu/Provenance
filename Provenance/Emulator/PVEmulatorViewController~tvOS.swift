@@ -207,9 +207,7 @@ extension PVEmulatorViewController {
             self.enableContorllerInput(false)
         })
         actionsheet.addAction(resumeAction)
-        if #available(iOS 9.0, *) {
-            actionsheet.preferredAction = resumeAction
-        }
+        actionsheet.preferredAction = resumeAction
         present(actionsheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })

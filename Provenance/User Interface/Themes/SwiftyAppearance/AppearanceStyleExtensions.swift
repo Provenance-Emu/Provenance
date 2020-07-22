@@ -48,14 +48,6 @@ public extension UIViewController {
     }
 
     private var appearanceRoot: UIWindow? {
-        if #available(iOS 9.0, *) {
-            return viewIfLoaded?.window
-        } else {
-            if isViewLoaded {
-                return view.window
-            } else {
-                return nil
-            }
-        }
+        return viewIfLoaded?.window
     }
 }

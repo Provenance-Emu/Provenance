@@ -89,11 +89,7 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
     class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
         let size: CGSize
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
-        } else {
-            size = CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
-        }
+        size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
         return size
     }
 

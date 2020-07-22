@@ -129,13 +129,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         return started;
     }
 
-    if (@available(iOS 10, *)) {
-        if(self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
-            self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
-            [self.rumbleGenerator prepare];
-            return YES;
-        }
+    if (self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
+        self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
+        [self.rumbleGenerator prepare];
+        return YES;
     }
+
     return NO;
 }
 
@@ -323,15 +322,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         return;
     }
 
-    if (@available(iOS 10, *)) {
-        BOOL deviceHasHaptic = [[UIDevice currentDevice] valueForKey:@"_feedbackSupportLevel"] > 0;
-        if (deviceHasHaptic) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.rumbleGenerator impactOccurred];
-            });
-        } else {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-        }
+    BOOL deviceHasHaptic = [[UIDevice currentDevice] valueForKey:@"_feedbackSupportLevel"] > 0;
+    if (deviceHasHaptic) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.rumbleGenerator impactOccurred];
+        });
     } else {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     }

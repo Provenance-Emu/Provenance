@@ -240,30 +240,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #if os(tvOS)
             fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 40, weight: .bold)
         #else
-            if #available(iOS 8.2, *) {
-                fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
-            }
+            fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
         #endif
         glViewController.view.addSubview(fpsLabel)
         view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
         view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
 
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            // Block-based NSTimer method is only available on iOS 10 and later
-            fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
-                guard let `self` = self else { return }
+        fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
+            guard let `self` = self else { return }
 
-                if abs(self.core.renderFPS - self.core.emulationFPS) < 1 {
-                    self.fpsLabel.text = String(format: "%2.02f", self.core.renderFPS)
-                } else {
-                    self.fpsLabel.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
-                }
-            })
-        } else {
-            // Use traditional scheduledTimerWithTimeInterval method on older version of iOS
-            fpsTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateFPSLabel), userInfo: nil, repeats: true)
-            fpsTimer?.fire()
-        }
+            if abs(self.core.renderFPS - self.core.emulationFPS) < 1 {
+                self.fpsLabel.text = String(format: "%2.02f", self.core.renderFPS)
+            } else {
+                self.fpsLabel.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
+            }
+        })
     }
 
     // TODO: This method is way too big, break it up
@@ -686,7 +677,6 @@ extension PVEmulatorViewController {
 extension PVEmulatorViewController {
     // #if os(tvOS)
     // Ensure that override of menu gesture is caught and handled properly for tvOS
-    @available(iOS 9.0, *)
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         if let press = presses.first, press.type == .menu, !isShowingMenu {
             //         [self controllerPauseButtonPressed];
@@ -859,7 +849,6 @@ extension PVEmulatorViewController {
 }
 
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
-@available(iOS 9.0, *)
 extension NSNumber {
     static var menu: NSNumber {
         return NSNumber(pressType: .menu)
@@ -896,7 +885,6 @@ extension NSNumber {
     }
 }
 
-@available(iOS 9.0, *)
 extension NSNumber {
     static var direct: NSNumber {
         return NSNumber(touchType: .direct)

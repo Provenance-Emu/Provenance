@@ -107,11 +107,11 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
     - Copying _(from other mobile apps and AirDrop)_
     - Injecting _(with desktop apps)_
 - Game Library Searching
-- iOS 9+ (iPhone, iPad)
+- iOS 10+ (iPhone, iPad)
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later, except iPhone SE and iPhone Xʀ)
   - Taptic Engine Button Feedback (iPhone 7 and later)
   - Spotlight Searching ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
-- tvOS 9+ (Apple TV 4+)
+- tvOS 10+ (Apple TV 4+)
   - TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
 
 <sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>

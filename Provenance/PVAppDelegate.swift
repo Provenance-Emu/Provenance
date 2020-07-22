@@ -66,10 +66,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                    shortcutItemGame = matchedGame
-                }
+            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+                shortcutItemGame = matchedGame
             }
         #endif
 
@@ -138,15 +136,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 // Doesn't seem we need access in dev builds?
                 _ = url.startAccessingSecurityScopedResource()
 
-                if #available(iOS 9.0, *) {
-                    if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
-                        try FileManager.default.copyItem(at: url, to: destinationPath)
-                    } else {
-                        try FileManager.default.moveItem(at: url, to: destinationPath)
-                    }
-                } else {
-                    // Fallback on earlier versions
+                if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
                     try FileManager.default.copyItem(at: url, to: destinationPath)
+                } else {
+                    try FileManager.default.moveItem(at: url, to: destinationPath)
                 }
             } catch {
                 ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
@@ -160,10 +153,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 return false
             }
 
-            if #available(iOS 9.0, *) {
-                let sendingAppID = options[.sourceApplication]
-                ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
-            }
+            let sendingAppID = options[.sourceApplication]
+            ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
 
             if components.host == "open" {
                 guard let queryItems = components.queryItems, !queryItems.isEmpty else {
@@ -223,7 +214,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     #if os(iOS)
-        @available(iOS 9.0, *)
         func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
             if shortcutItem.type == "kRecentGameShortcut", let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
@@ -237,15 +227,13 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // Spotlight search click-through
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                if userActivity.activityType == CSSearchableItemActionType {
-                    if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String, let md5Value = md5.components(separatedBy: ".").last, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                        // Comes in a format of "com....md5"
-                        shortcutItemGame = matchedGame
-                        return true
-                    } else {
-                        WLOG("Spotlight activity didn't contain the MD5 I was looking for")
-                    }
+            if userActivity.activityType == CSSearchableItemActionType {
+                if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String, let md5Value = md5.components(separatedBy: ".").last, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+                    // Comes in a format of "com....md5"
+                    shortcutItemGame = matchedGame
+                    return true
+                } else {
+                    WLOG("Spotlight activity didn't contain the MD5 I was looking for")
                 }
             }
         #endif
