@@ -174,8 +174,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
                     if PVSettingsModel.shared.webDavAlwaysOn {
-                        let subTitleText = "\nWebDav: \(PVWebServer.shared.webDavURLString)"
-
+                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
                         let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
                         let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
                         cell.detailTextLabel?.attributedText = subTitleAttrString
@@ -224,11 +223,11 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Beta options
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
 
             PVSettingsSwitchRow(text: "iCloud Sync",
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
 
             PVSettingsSwitchRow(text: "Multi-threaded GL",
