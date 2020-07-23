@@ -61,7 +61,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                 switch option {
                 case let .bool(display, defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    return SwitchRow(text: display.title, detailText: detailText, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
+                    return SwitchRow<PVSwitchCell>(text: display.title, detailText: detailText, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
                         let value = self.core.valueForOption(Bool.self, option.key) ?? defaultValue
                         self.core.setValue(!value, forOption: option)
                     })
