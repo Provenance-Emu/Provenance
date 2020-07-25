@@ -208,14 +208,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 // Navigation bar large titles
                 navigationController?.navigationBar.prefersLargeTitles = false
-                navigationController?.navigationBar.translatesAutoresizingMaskIntoConstraints = false
                 navigationItem.title = nil
 
                 // Create a search controller
                 let searchController = UISearchController(searchResultsController: nil)
                 searchController.searchBar.placeholder = "Search"
                 searchController.obscuresBackgroundDuringPresentation = false
-                searchController.hidesNavigationBarDuringPresentation = false
+                searchController.hidesNavigationBarDuringPresentation = true
                 navigationItem.hidesSearchBarWhenScrolling = true
                 navigationItem.searchController = searchController
 
