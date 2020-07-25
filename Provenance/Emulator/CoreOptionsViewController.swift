@@ -94,6 +94,10 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                  }
                                                                  actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                                                                  self.present(actionController, animated: true)
+
+                                                                 if let indexPath = self.tableView.indexPathForSelectedRow {
+                                                                     self.tableView.deselectRow(at: indexPath, animated: false)
+                                                                 }
                     })
                 case .range:
                     fatalError("Unfinished feature")
