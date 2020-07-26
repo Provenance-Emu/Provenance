@@ -8,21 +8,20 @@
 
 import UIKit
 
-class PVButtonGroupOverlayView: UIView {
+final class PVButtonGroupOverlayView: UIView {
     var buttons = [JSButton]()
 
     init(buttons: [JSButton]) {
         super.init(frame: CGRect.zero)
 
-#if os(iOS)
-        isMultipleTouchEnabled = true
-#endif
+        #if os(iOS)
+            isMultipleTouchEnabled = true
+        #endif
         backgroundColor = UIColor.clear
         self.buttons = buttons
-
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

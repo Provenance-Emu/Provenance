@@ -6,11 +6,14 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import UIKit
+import PVLibrary
+import PVSupport
 import RealmSwift
+import UIKit
+
 #if os(iOS)
-import SafariServices
-import AssetsLibrary
+    import AssetsLibrary
+    import SafariServices
 #endif
 
 /* TODO:
@@ -21,15 +24,24 @@ import AssetsLibrary
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
+#if os(iOS)
+    extension UIImageView {
+        public override var ignoresInvertColors: Bool {
+            get {
+                return true
+            } set {}
+        }
+    }
+#endif
 
 // Special label that renders Countries as flag emojis when available
-class RegionLabel: LongPressLabel {
+final class RegionLabel: LongPressLabel {
     override var text: String? {
         get {
             return super.text
         }
         set {
-            let flags = ["Europe" : "🇪🇺", "USA" : "🇺🇸", "Japan" : "🇯🇵", "World" : "🌎", "Korea" : "🇰🇷", "Spain" : "🇪🇸", "Taiwan" : "🇹🇼", "China" : "🇨🇳", "Australia" : "🇦🇺", "Netherlands" : "🇳🇱", "Italy" : "🇮🇹", "Germany" : "🇩🇪", "France" : "🇫🇷", "Brazil" : "🇧🇷", "Asia" : "🌏"]
+            let flags = ["Europe": "🇪🇺", "USA": "🇺🇸", "Japan": "🇯🇵", "World": "🌎", "Korea": "🇰🇷", "Spain": "🇪🇸", "Taiwan": "🇹🇼", "China": "🇨🇳", "Australia": "🇦🇺", "Netherlands": "🇳🇱", "Italy": "🇮🇹", "Germany": "🇩🇪", "France": "🇫🇷", "Brazil": "🇧🇷", "Asia": "🌏"]
             let swappedFlagsText = flags.reduce(newValue, { (result, dict) -> String? in
                 let (text, flag) = dict
                 return result?.replacingOccurrences(of: text, with: flag)
@@ -41,33 +53,35 @@ class RegionLabel: LongPressLabel {
 
 class LongPressLabel: UILabel {
     #if os(tvOS)
-    override var canBecomeFocused: Bool {
-        return true
-    }
+        override var canBecomeFocused: Bool {
+            return true
+        }
 
-    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        coordinator.addCoordinatedAnimations({ [unowned self] in
-            if self.isFocused {
-                self.backgroundColor = UIColor.lightGray
-            } else {
-                self.backgroundColor = nil
-            }
+        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            super.didUpdateFocus(in: context, with: coordinator)
+
+            coordinator.addCoordinatedAnimations({ [unowned self] in
+                if self.isFocused {
+                    self.backgroundColor = UIColor.lightGray
+                } else {
+                    self.backgroundColor = nil
+                }
             }, completion: nil)
-    }
+        }
     #endif
 }
 
-class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController {
+final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dataSource = self
-        self.delegate = self
+        dataSource = self
+        delegate = self
     }
 
     var game: PVGame? {
-        return (self.viewControllers?.first as? PVGameMoreInfoViewController)?.game
+        return (viewControllers?.first as? PVGameMoreInfoViewController)?.game
     }
 
     lazy var games: Results<PVGame> = {
@@ -77,12 +91,18 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     // MARK: - Delegate
 
     // Sent when a gesture-initiated transition begins.
-    public func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+    public func pageViewController(_: UIPageViewController, willTransitionTo _: [UIViewController]) {}
 
+    @IBAction func shareButtonClicked(_ sender: Any) {
+        guard let game = game else {
+            return
+        }
+
+        share(for: game, sender: sender)
     }
 
     // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
-    public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    public func pageViewController(_: UIPageViewController, didFinishAnimating _: Bool, previousViewControllers _: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             #if os(iOS)
                 if let referenceURL = game?.referenceURL, !referenceURL.isEmpty {
@@ -95,27 +115,30 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     }
 
     #if os(iOS)
-    // Delegate may specify a different spine location for after the interface orientation change. Only sent for transition style 'UIPageViewControllerTransitionStylePageCurl'.
-    // Delegate may set new view controllers or update double-sided state within this method's implementation as well.
-    public func pageViewController(_ pageViewController: UIPageViewController, spineLocationFor orientation: UIInterfaceOrientation) -> UIPageViewControllerSpineLocation {
-        return .min
-    }
+        // Delegate may specify a different spine location for after the interface orientation change. Only sent for transition style 'UIPageViewControllerTransitionStylePageCurl'.
+        // Delegate may set new view controllers or update double-sided state within this method's implementation as well.
+        public func pageViewController(_: UIPageViewController, spineLocationFor _: UIInterfaceOrientation) -> UIPageViewController.SpineLocation {
+            return .min
+        }
 
-    public func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController) -> UIInterfaceOrientationMask {
-        return [.portrait]
-    }
+        public func pageViewControllerSupportedInterfaceOrientations(_: UIPageViewController) -> UIInterfaceOrientationMask {
+            return [.portrait]
+        }
 
-    public func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
-        return .portrait
-    }
+        public func pageViewControllerPreferredInterfaceOrientationForPresentation(_: UIPageViewController) -> UIInterfaceOrientation {
+            return .portrait
+        }
     #endif
 
     // MARK: - Data Source
+
     // In terms of navigation direction. For example, for 'UIPageViewControllerNavigationOrientationHorizontal', view controllers coming 'before' would be to the left of the argument view controller, those coming 'after' would be to the right.
     // Return 'nil' to indicate that no more progress can be made in the given direction.
     // For gesture-initiated transitions, the page view controller obtains view controllers via these methods, so use of setViewControllers:direction:animated:completion: is not required.
+
     // MARK: - UIPageViewControllerDataSource
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+
+    public func pageViewController(_: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let moreInfoviewController = viewController as? PVGameMoreInfoViewController else {
             ELOG("Wrong controller type \(viewController.debugDescription)")
             return nil
@@ -123,7 +146,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
         return nextFrom(viewController: moreInfoviewController, direction: .reverse)
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    public func pageViewController(_: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let moreInfoviewController = viewController as? PVGameMoreInfoViewController else {
             ELOG("Wrong controller type \(viewController.debugDescription)")
             return nil
@@ -136,7 +159,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
 //    public func presentationCount(for pageViewController: UIPageViewController) -> Int // The number of items reflected in the page indicator.
 //    public func presentationIndex(for pageViewController: UIPageViewController) -> Int // The selected item reflected in the page indicator.
 
-    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewControllerNavigationDirection) -> PVGameMoreInfoViewController? {
+    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewController.NavigationDirection) -> PVGameMoreInfoViewController? {
         guard let game = viewController.game, let currentIndex = games.index(of: game) else {
             ELOG("Game or current index was nil")
             return nil
@@ -148,7 +171,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
             return nil
         }
 
-        let storyboard = UIStoryboard.init(name: "Provenance", bundle: nil)
+        let storyboard = UIStoryboard(name: "Provenance", bundle: nil)
         let nextViewController = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
 
         let nextGame = games[nextGameIndex]
@@ -157,16 +180,15 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     }
 
     // MARK: Actions
+
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game {
-            load(game)
+            load(game, sender: sender, core: nil)
         }
     }
 
-    @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
+    @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
         #if os(iOS)
-
-        if #available(iOS 9.0, *) {
             if let urlString = game?.referenceURL, let url = URL(string: urlString) {
                 if #available(iOS 11.0, *) {
                     let config = SFSafariViewController.Configuration()
@@ -180,19 +202,13 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
                     present(webVC, animated: true, completion: nil)
                 }
             }
-        } else {
-            let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
-        }
         #endif
     }
 
-    @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
+    @IBOutlet var onlineLookupBarButtonItem: UIBarButtonItem!
 }
 
-class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
-
+final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     @objc
     public var game: PVGame! {
         didSet {
@@ -212,24 +228,25 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     var showsPlayButton: Bool = true {
         didSet {
             #if os(iOS)
-            if showsPlayButton {
-                navigationItem.rightBarButtonItems = [playBarButtonItem, onlineLookupBarButtonItem]
-            } else {
-                navigationItem.rightBarButtonItems = [onlineLookupBarButtonItem]
-            }
+                if showsPlayButton {
+                    navigationItem.rightBarButtonItems = [playBarButtonItem, onlineLookupBarButtonItem]
+                } else {
+                    navigationItem.rightBarButtonItems = [onlineLookupBarButtonItem]
+                }
             #endif
         }
     }
 
-    @IBOutlet weak var artworkImageView: UIImageView!
+    @IBOutlet var artworkImageView: UIImageView!
 
-    @IBOutlet weak var nameLabel: LongPressLabel!
-    @IBOutlet weak var systemLabel: UILabel!
-    @IBOutlet weak var developerLabel: LongPressLabel!
-    @IBOutlet weak var publishDateLabel: LongPressLabel!
-    @IBOutlet weak var genresLabel: LongPressLabel!
-    @IBOutlet weak var regionLabel: RegionLabel!
-    @IBOutlet weak var descriptionTextView: UITextView!
+    @IBOutlet var nameLabel: LongPressLabel!
+    @IBOutlet var filenameLabel: UILabel!
+    @IBOutlet var systemLabel: UILabel!
+    @IBOutlet var developerLabel: LongPressLabel!
+    @IBOutlet var publishDateLabel: LongPressLabel!
+    @IBOutlet var genresLabel: LongPressLabel!
+    @IBOutlet var regionLabel: RegionLabel!
+    @IBOutlet var descriptionTextView: UITextView!
 
     @IBOutlet var singleImageTapGesture: UITapGestureRecognizer!
     @IBOutlet var doubleImageTapGesture: UITapGestureRecognizer!
@@ -239,9 +256,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet var timeSpentLabel: LongPressLabel!
 
     #if os(iOS)
-    @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
+        @IBOutlet var onlineLookupBarButtonItem: UIBarButtonItem!
     #endif
-    @IBOutlet weak var playBarButtonItem: UIBarButtonItem!
+    @IBOutlet var playBarButtonItem: UIBarButtonItem!
 
     var mustRefreshDataSource = false
 
@@ -250,7 +267,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
         // Prevent double tap from triggering single tap also
         #if os(iOS)
-        singleImageTapGesture.require(toFail: doubleImageTapGesture)
+            singleImageTapGesture.require(toFail: doubleImageTapGesture)
         #endif
 
         // Add a shadow to artwork
@@ -261,9 +278,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         layer.shadowOpacity = 0.7
 
         #if os(iOS)
-		// Ignore Smart Invert
-		artworkImageView.ignoresInvertColors = true
+            // Ignore Smart Invert
+            artworkImageView.ignoresInvertColors = true
         #endif
+    }
+
+    deinit {
+        token?.invalidate()
     }
 
 //    override func viewWillDisappear(_ animated: Bool) {
@@ -272,9 +293,21 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        descriptionTextView.showsVerticalScrollIndicator = true
-        descriptionTextView.flashScrollIndicators()
-        descriptionTextView.indicatorStyle = .white
+
+        #if os(iOS)
+            descriptionTextView.showsVerticalScrollIndicator = true
+            descriptionTextView.flashScrollIndicators()
+            descriptionTextView.indicatorStyle = .white
+        #endif
+
+        #if os(tvOS)
+            if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
+                descriptionTextView.isUserInteractionEnabled = true
+                descriptionTextView.isSelectable = true
+                descriptionTextView.isScrollEnabled = true
+                descriptionTextView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+            }
+        #endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -289,39 +322,41 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     /*
-    // MARK: - Navigation
+     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    private func secondsToHoursMinutesSeconds (seconds: Int) -> (Int, Int, Int) {
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    private func secondsToHoursMinutesSeconds(seconds: Int) -> (Int, Int, Int) {
         return (seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
     }
 
     func updateContent() {
-        self.title = game?.title
+        title = game?.title
 
         #if os(iOS)
-        if showsPlayButton {
-            navigationItem.rightBarButtonItems = [playBarButtonItem, onlineLookupBarButtonItem]
-        } else {
-            navigationItem.rightBarButtonItems = [onlineLookupBarButtonItem]
-        }
+            if showsPlayButton {
+                navigationItem.rightBarButtonItems = [playBarButtonItem, onlineLookupBarButtonItem]
+            } else {
+                navigationItem.rightBarButtonItems = [onlineLookupBarButtonItem]
+            }
         #endif
 
         nameLabel.text = game?.title ?? ""
+        filenameLabel.text = game?.file.fileName ?? ""
         systemLabel.text = game?.system.name ?? ""
-        developerLabel.text = game?.developer  ?? ""
-        publishDateLabel.text = game?.publishDate  ?? ""
-        genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ")  ?? ""
+        developerLabel.text = game?.developer ?? ""
+        publishDateLabel.text = game?.publishDate ?? ""
+        genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ") ?? ""
         regionLabel.text = game?.regionName
 
-        var descriptionText = game?.gameDescription  ?? ""
+        var descriptionText = game?.gameDescription ?? ""
         #if DEBUG
-            descriptionText = [game?.debugDescription ?? "", descriptionText].joined(separator: "\n")
+            // Add debuging info about the PVGame database entry to the bottom of the text field
+            descriptionText = [descriptionText, game?.debugDescription ?? ""].joined(separator: "\n")
         #endif
         descriptionTextView.text = descriptionText
 
@@ -370,12 +405,39 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         updateImageView()
 
         #if os(iOS)
-        if let referenceURL = game?.referenceURL, !referenceURL.isEmpty {
-            onlineLookupBarButtonItem.isEnabled = true
-        } else {
-            onlineLookupBarButtonItem.isEnabled = false
-        }
+            if let referenceURL = game?.referenceURL, !referenceURL.isEmpty {
+                onlineLookupBarButtonItem.isEnabled = true
+            } else {
+                onlineLookupBarButtonItem.isEnabled = false
+            }
         #endif
+    }
+
+    func image(withText text: String) -> UIImage? {
+        #if os(iOS)
+            let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+        #else
+            let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
+        #endif
+        if text == "" {
+            return UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: NSAttributedString(string: ""))
+        }
+        // TODO: To be replaced with the correct system placeholder
+        let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        #if os(iOS)
+            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+        #else
+            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
+        #endif
+
+        let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
+        let ratio: CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
+        let width: CGFloat = height * ratio
+        let size = CGSize(width: width, height: height)
+        let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
+        return missingArtworkImage
     }
 
     var showingFrontArt = true
@@ -388,9 +450,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
     }
 
+    @IBAction func shareButtonClicked(_ sender: Any) {
+        share(for: game, sender: sender)
+    }
+
     #if os(iOS)
-    @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
-        if #available(iOS 9.0, *) {
+
+        @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
             if let urlString = game?.referenceURL, let url = URL(string: urlString) {
                 if #available(iOS 11.0, *) {
                     let config = SFSafariViewController.Configuration()
@@ -404,22 +470,17 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                     present(webVC, animated: true, completion: nil)
                 }
             }
-        } else {
-            let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
         }
-    }
     #endif
 
-    @IBAction func imageViewTapped(_ sender: UITapGestureRecognizer) {
+    @IBAction func imageViewTapped(_: UITapGestureRecognizer) {
         if canShowBackArt {
             showingFrontArt = !showingFrontArt
             updateImageView()
         }
     }
 
-    @IBAction func imageViewDoubleTapped(_ sender: UITapGestureRecognizer) {
+    @IBAction func imageViewDoubleTapped(_: UITapGestureRecognizer) {
         let mediaZoom = MediaZoom(with: artworkImageView, animationTime: 0.5, useBlur: true)
         view.addSubview(mediaZoom)
         mediaZoom.show {
@@ -429,14 +490,14 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game {
-            load(game)
+            load(game, sender: sender, core: nil)
         }
     }
 
     private func updateImageView() {
         if showingFrontArt {
             if let imageKey = (game?.customArtworkURL.isEmpty ?? true) ? game?.originalArtworkURL : game?.customArtworkURL {
-                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
+                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { _, image in
                     if let image = image {
                         if self.artworkImageView.image == nil {
                             // Don't animate the first load, it's annoying
@@ -444,12 +505,16 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                         } else {
                             self.flipImageView(withImage: image)
                         }
+                    } else {
+                        self.artworkImageView.image = self.image(withText: self.game.title)
                     }
                 })
+            } else {
+                artworkImageView.image = image(withText: game.title)
             }
         } else {
             if let imageKey = game?.boxBackArtworkURL, !imageKey.isEmpty {
-                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
+                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { _, image in
                     if let image = image {
                         self.flipImageView(withImage: image)
                     } else {
@@ -460,13 +525,14 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                         }
 
                         // Download the art now
-                        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+                        URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
                             if let data = data {
-
                                 // Save to cache for later
                                 _ = try? PVMediaCache.writeData(toDisk: data, withKey: imageKey)
 
-                                DispatchQueue.main.async {
+                                DispatchQueue.main.async { [weak self] in
+                                    guard let `self` = self else { return }
+
                                     if let newImage = UIImage(data: data) {
                                         self.flipImageView(withImage: newImage)
                                     }
@@ -480,52 +546,52 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     private func flipImageView(withImage image: UIImage) {
-        let direction: UIViewAnimationOptions = showingFrontArt ? .transitionFlipFromLeft : .transitionFlipFromRight
+        let direction: UIView.AnimationOptions = showingFrontArt ? .transitionFlipFromLeft : .transitionFlipFromRight
         UIView.transition(with: artworkImageView, duration: 0.4, options: direction, animations: {
             self.artworkImageView.image = image
         }, completion: nil)
     }
 
-    @IBAction func nameTapped(_ sender: Any) {
-        editKey(\PVGame.title, title: "Title", label: nameLabel)
+    @IBAction func nameTapped(_: Any) {
+        editKey(\PVGame.title, title: "Title", label: nameLabel, reloadGameInfoAfter: true)
     }
 
-    @IBAction func developerTapped(_ sender: Any) {
+    @IBAction func developerTapped(_: Any) {
         editKey(\PVGame.developer, title: "Developer", label: developerLabel)
     }
 
-    @IBAction func publishDateTapped(_ sender: Any) {
+    @IBAction func publishDateTapped(_: Any) {
         editKey(\PVGame.publishDate, title: "Published Date", label: publishDateLabel)
     }
 
-    @IBAction func genresTapped(_ sender: Any) {
+    @IBAction func genresTapped(_: Any) {
         editKey(\PVGame.genres, title: "Genres", label: genresLabel)
     }
 
-    @IBAction func regionLongPressed(_ sender: Any) {
+    @IBAction func regionLongPressed(_: Any) {
         editKey(\PVGame.regionName, title: "Regions", label: regionLabel)
     }
 
-    @IBAction func descriptionTapped(_ sender: Any) {
+    @IBAction func descriptionTapped(_: Any) {
         descriptionTextView.isUserInteractionEnabled = true
         #if os(iOS)
-        descriptionTextView.isEditable = true
+            descriptionTextView.isEditable = true
         #endif
         descriptionTextView.becomeFirstResponder()
         descriptionTextView.delegate = self
     }
 
-    @IBAction func imageLongPressed(_ sender: Any) {
+    @IBAction func imageLongPressed(_: Any) {
         #if os(iOS)
-        askToChangeArtwork()
+            askToChangeArtwork()
         #endif
     }
 
-    @IBAction func timeSpentTapped(_ sender: Any) {
+    @IBAction func timeSpentTapped(_: Any) {
         askToResetAnalytics()
     }
 
-    @IBAction func playsTapped(_ sender: Any) {
+    @IBAction func playsTapped(_: Any) {
         askToResetAnalytics()
     }
 
@@ -534,16 +600,16 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
 
-        alert.addTextField { (textField) in
+        alert.addTextField { textField in
             textField.placeholder = title
             textField.text = currentValue
             textField.allowsEditingTextAttributes = false
             textField.clearButtonMode = .always
-            textField.keyboardAppearance  = .dark
+            textField.keyboardAppearance = .dark
         }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
-        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { (action) in
+        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             let textField = alert.textFields?.first!
             let submittedValue = textField?.text
 
@@ -563,23 +629,21 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     // Deal with non-null - non-empty keys paths
-    private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel) {
-
+    private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel, reloadGameInfoAfter: Bool = false) {
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
 
-        alert.addTextField { (textField) in
+        alert.addTextField { textField in
             textField.placeholder = title
             textField.text = currentValue
             textField.allowsEditingTextAttributes = false
             textField.clearButtonMode = .always
-            textField.keyboardAppearance  = .dark
+            textField.keyboardAppearance = .dark
             textField.autocapitalizationType = .sentences
-
         }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
-        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { (action) in
+        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             let textField = alert.textFields?.first!
             let submittedValue = textField?.text
 
@@ -594,6 +658,10 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                     }
 
                     label.text = newValue
+
+                    if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
+                        GameImporter.shared.lookupInfo(for: self.game, overwrite: false)
+                    }
                 } catch {
                     ELOG("Failed to update value of \(key) to \(newValue). \(error.localizedDescription)")
                 }
@@ -605,15 +673,19 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     var token: NotificationToken?
     func registerForChange() {
-        token = game?.observe({ (change) in
+        token?.invalidate()
+        token = game?.observe({ [weak self] change in
+            guard let `self` = self else { return }
+
             switch change {
-            case .change(let properties):
-                if !properties.isEmpty {
-                    DispatchQueue.main.async {
+            case let .change(_, properties):
+                if !properties.isEmpty, self.isViewLoaded {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let `self` = self else { return }
                         self.updateContent()
                     }
                 }
-            case .error(let error):
+            case let .error(error):
                 ELOG("An error occurred: \(error)")
             case .deleted:
                 print("The object was deleted.")
@@ -622,19 +694,21 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 }
 
-@available(iOS 9.0, *)
 extension PVGameMoreInfoViewController {
-
-     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
+    // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {
-        let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
+        guard let game = game else {
+            return [UIPreviewActionItem]()
+        }
+
+        let playAction = UIPreviewAction(title: "Play", style: .default) { _, _ in
             if let libVC = self.presentingViewController as? PVGameLibraryViewController {
-                libVC.load(self.game!)
+                libVC.load(game, sender: self.view, core: nil)
             }
         }
 
-        let isFavorite = game?.isFavorite ?? false
-        let favoriteToggle = UIPreviewAction(title: "Favorite", style: isFavorite ? .selected : .default) { (action, viewController) in
+        let isFavorite = game.isFavorite
+        let favoriteToggle = UIPreviewAction(title: "Favorite", style: isFavorite ? .selected : .default) { _, _ in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
                     self.game.isFavorite = !self.game.isFavorite
@@ -644,28 +718,33 @@ extension PVGameMoreInfoViewController {
             }
         }
 
-        let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { (action, viewController) in
+        let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { _, _ in
             let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
+            alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_: UIAlertAction) -> Void in
                 // Delete from Realm
-//                self.delete(game: self.game!)
+                do {
+                    try RomDatabase.sharedInstance.delete(game: game)
+                } catch {
+                    self.presentError(error.localizedDescription)
+                }
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            self.present(alert, animated: true) {() -> Void in }
+            (UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
         }
-        //        let action2 = UIPreviewAction(title: "Press Me!", style: .default) { (action, viewController) in
-//            print("I believe I can fly")
-//        }
-//        let action3 = UIPreviewAction(title: "Press Me!", style: .default) { (action, viewController) in
-//            print("I believe I can fly")
-//        }
-//        let actionGroup = UIPreviewActionGroup(title: "Look at me, I can grow!", style: .default, actions: [action1, action2, action3])
-        return [playAction, favoriteToggle, deleteAction]
+
+        let shareAction = UIPreviewAction(title: "Share", style: .default) { _, viewController in
+
+            if let libVC = viewController as? (UIViewController & GameSharingViewController) {
+                libVC.share(for: game, sender: libVC.view)
+            }
+        }
+
+        return [playAction, favoriteToggle, shareAction, deleteAction]
     }
 }
 
 extension PVGameMoreInfoViewController: UITextViewDelegate {
-    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+    func textViewShouldEndEditing(_: UITextView) -> Bool {
         return true
     }
 
@@ -673,7 +752,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
         if textView == descriptionTextView {
             descriptionTextView.resignFirstResponder()
             #if os(iOS)
-            descriptionTextView.isEditable = false
+                descriptionTextView.isEditable = false
             #endif
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
@@ -685,7 +764,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
         }
     }
 
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             return false
@@ -695,20 +774,30 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 }
 
 #if os(tvOS)
-extension PVGameMoreInfoViewController {
-    override var preferredFocusedView: UIView? {
-        return artworkImageView
-    }
+    extension PVGameMoreInfoViewController {
+//    override var preferredFocusedView: UIView? {
+//        return artworkImageView
+//    }
 
-    override var preferredFocusEnvironments: [UIFocusEnvironment] {
-        return [artworkImageView, nameLabel, developerLabel, publishDateLabel, regionLabel, genresLabel, playCountLabel, timeSpentLabel, descriptionTextView]
-    }
+        override var preferredFocusEnvironments: [UIFocusEnvironment] {
+            return [artworkImageView, nameLabel, developerLabel, publishDateLabel, regionLabel, genresLabel, playCountLabel, timeSpentLabel, descriptionTextView]
+        }
 
-    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        coordinator.addCoordinatedAnimations({ [unowned self] in
+        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            if context.previouslyFocusedView?.isDescendant(of: descriptionTextView) == true {
+                if descriptionTextView.contentOffset.y > 0 {
+                    UIView.animate(withDuration: 0.2, delay: 0, animations: {
+                        self.descriptionTextView.contentOffset.y = 0
+                    }, completion: nil)
+                }
+            }
 
-            }, completion: nil)
-    }
+            super.didUpdateFocus(in: context, with: coordinator)
+
+//        coordinator.addCoordinatedAnimations({ [unowned self] in
+//
+//            }, completion: nil)
+        }
 
 //    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 //        super.didUpdateFocus(in: context, with: coordinator)
@@ -719,15 +808,16 @@ extension PVGameMoreInfoViewController {
 //            backgroundColor = .clear
 //        }
 //    }
-}
+    }
 #endif
 
 // MARK: - Edit Gesture
+
 extension PVGameMoreInfoViewController {
     private func askToResetAnalytics() {
         let alert = UIAlertController(title: "Erase history?", message: "Would you like to erase your play counter and time spent in \(game!.title)?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
                     self.game?.playCount = 0
@@ -754,7 +844,7 @@ extension PVGameMoreInfoViewController {
 //                self.chooseCustomArtwork(for: game)
 //            }))
 
-            actionSheet.addAction(UIAlertAction(title: "Paste Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            actionSheet.addAction(UIAlertAction(title: "Paste Custom Artwork", style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.pasteCustomArtwork(for: game)
             }))
 
@@ -779,14 +869,14 @@ extension PVGameMoreInfoViewController {
 //            }
 
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        self.present(actionSheet, animated: true, completion: nil)
+            present(actionSheet, animated: true, completion: nil)
         #endif
     }
 
     // TODO: These are copied from PVGameLibraryViewController
     // Can make a protocol with default implimentation instead
     #if os(iOS)
-    func chooseCustomArtwork(for game: PVGame) {
+        func chooseCustomArtwork(for _: PVGame) {
 //
 //        let imagePickerActionSheet = UIActionSheet()
 //        let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
@@ -876,52 +966,51 @@ extension PVGameMoreInfoViewController {
 //            imagePickerActionSheet.show(in: self.view)
 //            self.assetsLibrary = nil
 //        })
-    }
+        }
 
-    func pasteCustomArtwork(for game: PVGame) {
-        let pb = UIPasteboard.general
-        var pastedImageMaybe: UIImage? = pb.image
+        func pasteCustomArtwork(for game: PVGame) {
+            let pb = UIPasteboard.general
+            var pastedImageMaybe: UIImage? = pb.image
 
-        let pastedURL: URL? = pb.url
+            let pastedURL: URL? = pb.url
 
-        if pastedImageMaybe == nil {
-            if let pastedURL = pastedURL {
+            if pastedImageMaybe == nil {
+                if let pastedURL = pastedURL {
+                    do {
+                        let data = try Data(contentsOf: pastedURL)
+                        pastedImageMaybe = UIImage(data: data)
+                    } catch {
+                        ELOG("Failed to read pasteboard URL: \(error.localizedDescription)")
+                    }
+                } else {
+                    ELOG("No image or image url in pasteboard")
+                    return
+                }
+            }
+
+            if let pastedImage = pastedImageMaybe {
+                var key: String
+                if let pastedURL = pastedURL {
+                    key = pastedURL.lastPathComponent
+                } else {
+                    key = UUID().uuidString
+                }
+
                 do {
-                    let data = try Data(contentsOf: pastedURL)
-                    pastedImageMaybe = UIImage(data: data)
+                    try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
+                    try RomDatabase.sharedInstance.writeTransaction {
+                        game.customArtworkURL = key
+                    }
+                    updateImageView()
                 } catch {
-                    ELOG("Failed to read pasteboard URL: \(error.localizedDescription)")
+                    ELOG("Failed to set custom artwork URL for game \(game.title).\n\(error.localizedDescription)")
                 }
             } else {
-                ELOG("No image or image url in pasteboard")
-                return
+                ELOG("No pasted image")
             }
         }
-
-        if let pastedImage = pastedImageMaybe {
-            var key: String
-            if let pastedURL = pastedURL {
-                key = pastedURL.lastPathComponent
-            } else {
-                key = UUID().uuidString
-            }
-
-            do {
-                try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
-                try RomDatabase.sharedInstance.writeTransaction {
-                    game.customArtworkURL = key
-                }
-                self.updateImageView()
-            } catch {
-                ELOG("Failed to set custom artwork URL for game \(game.title).\n\(error.localizedDescription)")
-            }
-        } else {
-            ELOG("No pasted image")
-        }
-    }
 
     #endif
-
 }
 
 // TEMP
@@ -954,13 +1043,12 @@ extension PVGameMoreInfoViewController {
 
 import UIKit
 
-public class MediaZoom: UIView, UIScrollViewDelegate {
-
+public final class MediaZoom: UIView, UIScrollViewDelegate {
     public lazy var imageView: UIImageView = {
         let image = UIImageView(frame: self.mediaFrame())
         image.clipsToBounds = true
         image.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .scaleAspectFit
         return image
     }()
 
@@ -987,12 +1075,12 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         super.init(frame: frame)
 
         #if os(iOS)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(deviceOrientationDidChange(notification:)),
-            name: .UIDeviceOrientationDidChange,
-            object: nil
-        )
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(deviceOrientationDidChange(notification:)),
+                name: UIDevice.orientationDidChangeNotification,
+                object: nil
+            )
         #endif
         imageView.image = image.image
         addGestureRecognizer(
@@ -1007,7 +1095,7 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         addSubview(contentView)
     }
 
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -1015,6 +1103,8 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         let frame = MediaZoom.currentFrame()
         self.frame = frame
         backgroundView.frame = frame
+        // Make the content modes match the animation starts at the right layout
+        imageView.contentMode = originalImageView.contentMode
         imageView.frame = mediaFrame()
         hideHandler = callback
         UIView.animate(
@@ -1073,21 +1163,21 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
     }
 
     #if os(iOS)
-    @objc func deviceOrientationDidChange(notification: NSNotification) {
-        let orientation = UIDevice.current.orientation
-        switch orientation {
-        case .landscapeLeft, .landscapeRight, .portrait:
-            let newFrame = MediaZoom.currentFrame()
-            frame = newFrame
-            backgroundView.frame = newFrame
-            imageView.frame = imageFrame()
-        default:
-            break
+        @objc func deviceOrientationDidChange(notification _: NSNotification) {
+            let orientation = UIDevice.current.orientation
+            switch orientation {
+            case .landscapeLeft, .landscapeRight, .portrait:
+                let newFrame = MediaZoom.currentFrame()
+                frame = newFrame
+                backgroundView.frame = newFrame
+                imageView.frame = imageFrame()
+            default:
+                break
+            }
         }
-    }
     #endif
 
-    @objc public func handleSingleTap(sender: UITapGestureRecognizer) {
+    @objc public func handleSingleTap(sender _: UITapGestureRecognizer) {
         willHandleSingleTap()
         UIView.animate(
             withDuration: animationTime,
@@ -1118,16 +1208,11 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         return imageView
     }
 
-    open func willHandleSingleTap() {
+    public func willHandleSingleTap() {}
 
-    }
-
-    open func showAnimationDidFinish() {
-
-    }
+    public func showAnimationDidFinish() {}
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
 }

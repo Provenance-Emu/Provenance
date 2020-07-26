@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Yabause (Gtk port)
+Comment=Sega Saturn emulator
+TryExec=yabause
+Exec=@YAB_PORT_NAME@
+Icon=yabause
+Categories=GNOME;GTK;Game;

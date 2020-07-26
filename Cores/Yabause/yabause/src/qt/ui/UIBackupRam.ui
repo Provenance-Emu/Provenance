@@ -1,0 +1,190 @@
+<ui version="4.0" >
+ <class>UIBackupRam</class>
+ <widget class="QDialog" name="UIBackupRam" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>450</width>
+    <height>460</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Backup Ram Manager</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QGroupBox" name="gbDeviceList" >
+     <property name="title" >
+      <string>Device List</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QComboBox" name="cbDeviceList" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="gbSaveList" >
+     <property name="maximumSize" >
+      <size>
+       <width>220</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="title" >
+      <string>Save List</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QListWidget" name="lwSaveList" />
+      </item>
+      <item>
+       <widget class="QLabel" name="lBlocks" />
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QPushButton" name="pbDelete" >
+          <property name="text" >
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pbFormat" >
+          <property name="text" >
+           <string>Format</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QGroupBox" name="gbSaveInformations" >
+     <property name="title" >
+      <string>Save Information</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QLabel" name="lFileName" >
+        <property name="text" >
+         <string>File Name :</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leFileName" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lComment" >
+        <property name="text" >
+         <string>Comment :</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leComment" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lLanguage" >
+        <property name="text" >
+         <string>Language :</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leLanguage" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lDataSize" >
+        <property name="text" >
+         <string>Data Size :</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leDataSize" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lBlockSize" >
+        <property name="text" >
+         <string>Block Size :</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leBlockSize" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QDialogButtonBox" name="dbbButton" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>dbbButton</sender>
+   <signal>rejected()</signal>
+   <receiver>UIBackupRam</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>312</x>
+     <y>445</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>605</x>
+     <y>443</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

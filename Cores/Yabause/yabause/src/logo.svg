@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="59.209827"
+   height="52.5"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docbase="/Users/anders/work/yabause"
+   sodipodi:docname="logo_yabause_2.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.0">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient11077">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop11079" />
+      <stop
+         style="stop-color:#d79988;stop-opacity:1;"
+         offset="1"
+         id="stop11081" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient8147">
+      <stop
+         id="stop8151"
+         offset="0"
+         style="stop-color:#adbcff;stop-opacity:1" />
+      <stop
+         id="stop8149"
+         offset="1"
+         style="stop-color:#060c79;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5183">
+      <stop
+         style="stop-color:#f6d6ce;stop-opacity:1;"
+         offset="0"
+         id="stop5185" />
+      <stop
+         id="stop7132"
+         offset="0.07965899"
+         style="stop-color:#f6d6ce;stop-opacity:1;" />
+      <stop
+         id="stop7130"
+         offset="0.59487379"
+         style="stop-color:#b64627;stop-opacity:1;" />
+      <stop
+         style="stop-color:#9b391e;stop-opacity:1"
+         offset="1"
+         id="stop5187" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5183"
+       id="radialGradient5189"
+       cx="176.95291"
+       cy="142.03055"
+       fx="176.95291"
+       fy="142.03055"
+       r="8.5130091"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.7341717,0.7341702,-0.7071056,0.707108,147.46968,-88.31393)" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8147"
+       id="radialGradient8155"
+       cx="156.85027"
+       cy="193.92966"
+       fx="156.85027"
+       fy="193.92966"
+       r="28"
+       gradientTransform="matrix(0,0.7932643,-0.813875,0,227.83449,-84.882969)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8147"
+       id="radialGradient10104"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,0.7932643,-0.813875,0,227.83449,-84.882969)"
+       cx="156.85027"
+       cy="193.92966"
+       fx="156.85027"
+       fy="193.92966"
+       r="28" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5183"
+       id="radialGradient10106"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.7341717,0.7341702,-0.7071056,0.707108,57.46968,-246.31393)"
+       cx="176.95291"
+       cy="142.03055"
+       fx="176.95291"
+       fy="142.03055"
+       r="8.5130091" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11077"
+       id="radialGradient11083"
+       cx="147.20378"
+       cy="218.01555"
+       fx="147.20378"
+       fy="218.01555"
+       r="22.241161"
+       gradientTransform="matrix(2.1666565e-2,-0.6556982,1.0681498,3.5295357e-2,-162.81267,146.68848)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.313708"
+     inkscape:cx="51.567572"
+     inkscape:cy="29.266432"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="970"
+     inkscape:window-x="1280"
+     inkscape:window-y="22"
+     width="150px"
+     height="200px" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Yabause Logo</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-39.790172,-16.11218)">
+    <path
+       style="fill:url(#radialGradient8155);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 43,17.36218 L 58.46429,17.36218 L 69,35.36218 L 71,35.36218 L 82.25,17.36218 L 97,17.36218 L 77,44.46932 L 77,67.36218 L 63,67.36218 L 63,44.34432 L 43,17.36218 z "
+       id="path3239"
+       sodipodi:nodetypes="ccccccccccc" />
+    <path
+       style="opacity:1;color:#000000;fill:url(#radialGradient10106);fill-opacity:1;fill-rule:evenodd;stroke:url(#radialGradient11083);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 81.25269,53.02118 C 82.81449,53.10726 84.23508,55.09609 82.42459,56.68504 C 80.0516,58.33649 71.54941,62.132 59.25,61.65682 C 25.57769,60.34927 41.94642,22.00504 76.46429,22.36218 C 46.69644,24.41575 32.36627,56.09108 60.44643,55.75503 C 72.39096,55.61163 78.26161,52.84262 81.25269,53.02118 z "
+       id="path5181"
+       sodipodi:nodetypes="ccscsc" />
+    <path
+       style="fill:url(#radialGradient10104);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 77,50.375 L 77,44.46875 L 97,17.375 L 82.25,17.375 L 71,35.375 L 69,35.375 L 58.46875,17.375 L 43,17.375 L 63,44.34375 L 63,50.375"
+       id="path10097"
+       sodipodi:nodetypes="cccccccccc" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:1;color:#000000;fill:url(#radialGradient5189);fill-opacity:1;fill-rule:evenodd;stroke:#832e18;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="path4210"
+       sodipodi:cx="180.50163"
+       sodipodi:cy="144.80325"
+       sodipodi:rx="7.5130095"
+       sodipodi:ry="7.5130095"
+       d="M 188.01464 144.80325 A 7.5130095 7.5130095 0 1 1  172.98862,144.80325 A 7.5130095 7.5130095 0 1 1  188.01464 144.80325 z"
+       transform="matrix(1.0572054,0,0,1.0572054,-100.8273,-104.7246)" />
+  </g>
+</svg>

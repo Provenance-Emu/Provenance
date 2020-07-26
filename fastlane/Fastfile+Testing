@@ -1,0 +1,4 @@
+desc 'Build and run tests'
+lane :test do
+  scan
+end

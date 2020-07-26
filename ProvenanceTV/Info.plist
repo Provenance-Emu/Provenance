@@ -32,7 +32,46 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>800</string>
+	<string>2775</string>
+	<key>Fabric</key>
+	<dict>
+		<key>APIKey</key>
+		<string>9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87</string>
+		<key>Kits</key>
+		<array>
+			<dict>
+				<key>KitInfo</key>
+				<dict/>
+				<key>KitName</key>
+				<string>Crashlytics</string>
+			</dict>
+			<dict>
+				<key>KitInfo</key>
+				<dict/>
+				<key>KitName</key>
+				<string>Answers</string>
+			</dict>
+		</array>
+	</dict>
+	<key>GCSupportedGameControllers</key>
+	<array>
+		<dict>
+			<key>ProfileName</key>
+			<string>ExtendedGamepad</string>
+		</dict>
+		<dict>
+			<key>ProfileName</key>
+			<string>MicroGamepad</string>
+		</dict>
+	</array>
+	<key>GCSupportsControllerUserInteraction</key>
+	<true/>
+	<key>GitBranch</key>
+	<string></string>
+	<key>GitDate</key>
+	<string></string>
+	<key>GitTag</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -68,5 +107,7 @@
 			<dict/>
 		</dict>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Provenance uses Bluetooth to support game controllers</string>
 </dict>
 </plist>

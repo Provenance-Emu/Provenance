@@ -7,69 +7,107 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
+import PVLibrary
+import PVSupport
+import RxSwift
+import RxDataSources
 import UIKit
-import RealmSwift
 
-class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
-    var mustRefreshDataSource: Bool = false
-
-    var searchResults: Results<PVGame>?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        RomDatabase.sharedInstance.refresh()
-        (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-        collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: "SearchResultCell")
-        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
-    }
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return searchResults?.count ?? 0
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchResultCell", for: indexPath) as! PVGameLibraryCollectionViewCell
-
-        if let game = searchResults?[indexPath.item] {
-            cell.game = game
-        }
-        cell.setNeedsLayout()
-        return cell
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let game = searchResults?[indexPath.item] {
-            load(game)
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 250, height: 360)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 88
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 30
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 40, left: 40, bottom: 120, right: 40)
+extension PVSearchViewController {
+    static func createEmbeddedInNavigationController(gameLibrary: PVGameLibrary) -> UINavigationController {
+        let searchViewController = PVSearchViewController(gameLibrary: gameLibrary)
+        let searchController = UISearchController(searchResultsController: searchViewController)
+        searchViewController.searchController = searchController
+        let searchContainerController = UISearchContainerViewController(searchController: searchController)
+        searchContainerController.title = "Search"
+        return UINavigationController(rootViewController: searchContainerController)
     }
 }
 
-extension PVSearchViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        let searchText = searchController.searchBar.text ?? ""
+final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
+    private let gameLibrary: PVGameLibrary
+    fileprivate var searchController: UISearchController!
+    private let disposeBag = DisposeBag()
 
-        let sorted = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
-        searchResults = sorted
-        collectionView?.reloadData()
+    init(gameLibrary: PVGameLibrary) {
+        self.gameLibrary = gameLibrary
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = .init(top: 20, left: 0, bottom: 20, right: 0)
+        super.init(collectionViewLayout: flowLayout)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        #if os(iOS)
+            collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #else
+            collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #endif
+        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+
+        let sections: Observable<[Section]> = searchController
+            .rx.searchText
+            .compactMap { $0 }
+            .flatMap { self.gameLibrary.search(for: $0) }
+            .map { games in [Section(items: games)] }
+
+        let dataSource = RxCollectionViewSectionedReloadDataSource<Section>(configureCell: { _, collectionView, indexPath, game -> UICollectionViewCell in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
+            cell.game = game
+            cell.setNeedsLayout()
+            return cell
+        })
+
+        sections.bind(to: collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+        collectionView.rx.modelSelected(PVGame.self)
+            .bind(onNext: { self.load($0, sender: self.collectionView, core: nil) })
+            .disposed(by: disposeBag)
+
+        let longPressRecognizer = UILongPressGestureRecognizer()
+        collectionView.addGestureRecognizer(longPressRecognizer)
+        longPressRecognizer.rx.event
+            .filter { $0.state == .began }
+            .compactMap { self.collectionView.indexPathForItem(at: $0.location(in: self.collectionView) ) }
+            .map { try self.collectionView.rx.model(at: $0) }
+            .flatMapLatest({ (game: PVGame) -> Observable<PVGame> in
+                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                let (action, selected) = UIAlertAction.createReactive(title: "Toggle Favorite", style: .default)
+                actionSheet.addAction(action)
+                self.present(actionSheet, animated: true)
+                return selected.map { _ in game }
+            })
+            .flatMapLatest({ game in
+                self.gameLibrary.toggleFavorite(for: game)
+                    .catchError { _ in
+                        ELOG("Failed to toggle Favourite for game \(game.title)")
+                        return .never()
+                }
+            })
+            .subscribe()
+            .disposed(by: self.disposeBag)
+    }
+
+    private struct Section: SectionModelType {
+        let items: [PVGame]
+
+        init(items: [PVGame]) {
+            self.items = items
+        }
+
+        init(original: PVSearchViewController.Section, items: [PVGame]) {
+            self.init(items: items)
+        }
+    }
+}
+
+private extension UIAlertAction {
+    static func createReactive(title: String?, style: Style) -> (UIAlertAction, Observable<Void>) {
+        let didSelect = PublishSubject<UIAlertAction>()
+        let action = UIAlertAction(title: title, style: style, handler: didSelect.onNext)
+        return (action, didSelect.map { _ in})
     }
 }

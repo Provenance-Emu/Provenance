@@ -96,8 +96,9 @@
 #import "UIImage+ImageEffects.h"
 
 @import Accelerate;
-#import <float.h>
+@import PVSupport;
 
+#import <float.h>
 
 @implementation UIImage (ImageEffects)
 

@@ -1,0 +1,68 @@
+Control input names are completely defined by the individual ports. This
+document is intended to collect the rules for all ports.
+
+The various meta-characters in the rules are:
+  #     - A number. The range is determined by the context
+  ##    - A two-digit number (i.e. with leading zeros)
+  [...] - Something optional
+  (...) - For grouping with |
+  |     - "or", choose one of the options.
+  <...> - A named field
+  {...} - A list of possible values. Multiple values may be used, but they
+          must be in the order listed and joined with +-signs.
+  ""    - 'ditto', used to indicate the same list as the above line.
+
+================================================================================
+Unix
+================================================================================
+
+Input names:
+  Jxx:Axis#                            Axis # on joystick xx. Axis0 may be
+                                       Up/Down, and Axis1 Left/Right.
+  Jxx:B#                               Button # on joystick xx.
+
+  Jxx:{M1,M2,M3,M4,M5,M6,M7,M8}+B#     Used with the 'JSx Meta#' port
+  Jxx:{M1,M2,M3,M4,M5,M6,M7,M8}+Axis#  command.
+
+  Jxx:X+B#                             Used to 'define' this key for all
+  Jxx:X+Axis#                          combinations of JS Meta.
+
+Port-specific Commands:
+  JSx Meta#          Used to specify modifier keys (i.e. Shift, Control) to
+                     affect the specified joystick. For example, you could
+                     map J00:B20 to "JS0 Meta1", then map J00:B0 to "Joypad1
+                     A" and J00:M1+B0 to "Joypad1 Turbo A". '#' may range
+                     from 1-8.
+
+  Jsx ToggleMeta#    Like the above, but toggles the meta-state each time
+                     the button is pressed.
+
+================================================================================
+Unix/X11
+================================================================================
+
+Keyboard Input:
+
+ Note that only one keyboard (K00) is currently supported. If you know how
+ to support multiple keyboards (and can test it!), feel free to fix x11.cpp
+ and delete this note.
+
+ Keyboard modifiers are S=Shift, C=Control, A=Alt, M=Meta. Combine them in
+ order, i.e. all 4 would be "SCAM".
+
+  Kxx:<keyname>              Key names are as recognized by XStringToKeysym.
+  Kxx:<mods>+<keyname>       Note however that keys are mapped by keycode,
+                             so for example on a standard qwerty keyboard
+                             "K00:colon" and "K00:semicolon" are identical.
+
+Pointer Input:
+
+ Note that only one mouse (M00) is currently supported. If you know how to
+ support multiple pointing devices (and can test it!), feel free to fix
+ x11.cpp and delete this note.
+
+  Mxx:Pointer                Map the mouse pointer. If someone has a mouse
+  Mxx:Pointer#               device with multiple pointers, fix x11.cpp to
+                             report that and you can use the second syntax.
+
+  Mxx:B#                     Mouse buttons.

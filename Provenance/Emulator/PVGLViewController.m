@@ -7,9 +7,13 @@
 //
 
 #import "PVGLViewController.h"
-#import <PVSupport/PVEmulatorCore.h>
+@import PVSupport;
 #import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
+
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
 
 struct PVVertex
 {
@@ -18,6 +22,11 @@ struct PVVertex
 };
 
 #define BUFFER_OFFSET(x) ((char *)NULL + (x))
+
+struct RenderSettings {
+    BOOL crtFilterEnabled;
+    BOOL smoothingEnabled;
+} RenderSettings;
 
 @interface PVGLViewController () <PVRenderDelegate>
 {
@@ -43,11 +52,15 @@ struct PVVertex
     GLuint indexVBO, vertexVBO;
     
 	GLuint texture;
+    
+    struct RenderSettings renderSettings;
 }
 
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
+@property (nonatomic, assign) GLESVersion glesVersion;
+
 @end
 
 @implementation PVGLViewController
@@ -99,6 +112,9 @@ struct PVVertex
         glDeleteShader(defaultVertexShader);
     }
     glDeleteTextures(1, &texture);
+    
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
@@ -110,27 +126,81 @@ struct PVVertex
         {
             self.emulatorCore.renderDelegate = self;
         }
+        
+        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+        renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
+        
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
 	return self;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
+        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+    } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
+        renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
 
-	[self setPreferredFramesPerSecond:60];
+    [self updatePreferredFPS];
 
-	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-    if (self.glContext == nil)
-    {
-        self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    self.glContext = [self bestContext];
+
+    if (self.glContext == nil) {
+        // TODO: Alert NO gl here
+        return;
     }
+
+    ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
+
+        // TODO: Need to benchmark this
+    self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
+    view.opaque = YES;
+    view.layer.opaque = YES;
     view.context = self.glContext;
-    
+    view.userInteractionEnabled = NO;
+
+    GLenum depthFormat = self.emulatorCore.depthFormat;
+    switch (depthFormat) {
+        case GL_DEPTH_COMPONENT16:
+            view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+            break;
+        case GL_DEPTH_COMPONENT24:
+            view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+            break;
+
+        default:
+            break;
+    }
+
+        // Set scaling factor for retina displays.
+    if (PVSettingsModel.shared.nativeScaleEnabled) {
+        CGFloat scale = [[UIScreen mainScreen] scale];
+        if (scale != 1.0f) {
+            view.layer.contentsScale = scale;
+            view.layer.rasterizationScale = scale;
+            view.contentScaleFactor = scale;
+        }
+
+            // Enable multisampling
+        if(PVSettingsModel.shared.debugOptions.multiSampling) {
+            view.drawableMultisample = GLKViewDrawableMultisample4X;
+        }
+    }
+
     [self setupVBOs];
 	[self setupTexture];
     defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
@@ -142,6 +212,32 @@ struct PVVertex
     alternateThreadColorTextureBack = 0;
     alternateThreadColorTextureFront = 0;
     alternateThreadDepthRenderbuffer = 0;
+}
+
+-(EAGLContext*)bestContext {
+    EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    self.glesVersion = GLESVersion3;
+    if (context == nil)
+    {
+        context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        self.glesVersion = GLESVersion2;
+        if (context == nil) {
+            context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+            self.glesVersion = GLESVersion1;
+        }
+    }
+
+    return context;
+}
+
+- (void) updatePreferredFPS {
+    float preferredFPS = self.emulatorCore.frameInterval;
+    if (preferredFPS  < 10) {
+        WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
+        preferredFPS = 30;
+    }
+
+    [self setPreferredFramesPerSecond:preferredFPS];
 }
 
 - (void)viewDidLayoutSubviews
@@ -207,6 +303,8 @@ struct PVVertex
 
         [[self view] setFrame:CGRectMake(origin.x, origin.y, width, height)];
     }
+
+    [self updatePreferredFPS];
 }
 
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
@@ -318,7 +416,7 @@ struct PVVertex
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-	if ([[PVSettingsModel sharedInstance] imageSmoothing] || [[PVSettingsModel sharedInstance] crtFilterEnabled])
+	if (renderSettings.smoothingEnabled)
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -386,23 +484,27 @@ struct PVVertex
         videoBufferSize = [self.emulatorCore bufferSize];
         videoBuffer = [self.emulatorCore videoBuffer];
     };
-    
+
+    MAKEWEAK(self);
+
     void (^renderBlock)(void) = ^()
     {
+        MAKESTRONG(self);
+
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
-            frontBufferTex = alternateThreadColorTextureFront;
+            frontBufferTex = strongself->alternateThreadColorTextureFront;
             [self.emulatorCore.frontBufferLock lock];
         }
         else
         {
-            glBindTexture(GL_TEXTURE_2D, texture);
+            glBindTexture(GL_TEXTURE_2D, strongself->texture);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
-            frontBufferTex = texture;
+            frontBufferTex = strongself->texture;
         }
         
         if (frontBufferTex)
@@ -411,20 +513,20 @@ struct PVVertex
             glBindTexture(GL_TEXTURE_2D, frontBufferTex);
         }
         
-        if ([[PVSettingsModel sharedInstance] crtFilterEnabled])
+        if (strongself->renderSettings.crtFilterEnabled)
         {
-            glUseProgram(crtShaderProgram);
-            glUniform4f(crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
-            glUniform1i(crtUniform_EmulatedImage, 0);
-            glUniform2f(crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
+            glUseProgram(strongself->crtShaderProgram);
+            glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
+            glUniform1i(strongself->crtUniform_EmulatedImage, 0);
+            glUniform2f(strongself->crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
             float finalResWidth = view.drawableWidth;
             float finalResHeight = view.drawableHeight;
-            glUniform2f(crtUniform_FinalRes, finalResWidth, finalResHeight);
+            glUniform2f(strongself->crtUniform_FinalRes, finalResWidth, finalResHeight);
         }
         else
         {
-            glUseProgram(blitShaderProgram);
-            glUniform1i(blitUniform_EmulatedImage, 0);
+            glUseProgram(strongself->blitShaderProgram);
+            glUniform1i(strongself->blitUniform_EmulatedImage, 0);
         }
         
         glDisable(GL_DEPTH_TEST);
@@ -432,7 +534,7 @@ struct PVVertex
         
         [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
         
-        glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, strongself->vertexVBO);
         
         glEnableVertexAttribArray(GLKVertexAttribPosition);
         glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(0));
@@ -442,7 +544,7 @@ struct PVVertex
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, strongself->indexVBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         
@@ -451,10 +553,10 @@ struct PVVertex
         
         glBindTexture(GL_TEXTURE_2D, 0);
         
-        if ([self.emulatorCore rendersToOpenGL])
+        if ([strongself->_emulatorCore rendersToOpenGL])
         {
             glFlush();
-            [self.emulatorCore.frontBufferLock unlock];
+            [strongself->_emulatorCore.frontBufferLock unlock];
         }
     };
     
@@ -470,10 +572,10 @@ struct PVVertex
             {
                 fetchVideoBuffer();
                 renderBlock();
-                [self.emulatorCore.frontBufferCondition lock];
-                [self.emulatorCore setIsFrontBufferReady:NO];
-                [self.emulatorCore.frontBufferCondition signal];
-                [self.emulatorCore.frontBufferCondition unlock];
+                [_emulatorCore.frontBufferCondition lock];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferCondition signal];
+                [_emulatorCore.frontBufferCondition unlock];
             }
         }
     }
@@ -490,12 +592,12 @@ struct PVVertex
             {
                 [self.emulatorCore.frontBufferCondition lock];
                 while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
-                [self.emulatorCore setIsFrontBufferReady:NO];
-                [self.emulatorCore.frontBufferLock lock];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferLock lock];
                 fetchVideoBuffer();
                 renderBlock();
-                [self.emulatorCore.frontBufferLock unlock];
-                [self.emulatorCore.frontBufferCondition unlock];
+                [_emulatorCore.frontBufferLock unlock];
+                [_emulatorCore.frontBufferCondition unlock];
             }
             else
             {
@@ -513,6 +615,7 @@ struct PVVertex
 
 - (void)startRenderingOnAlternateThread
 {
+    self.emulatorCore.glesVersion = self.glesVersion;
     self.alternateThreadBufferCopyGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
     [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
     

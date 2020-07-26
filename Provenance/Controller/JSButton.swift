@@ -7,6 +7,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+import PVSupport
 import UIKit
 
 protocol JSButtonDelegate: class {
@@ -14,7 +15,7 @@ protocol JSButtonDelegate: class {
     func buttonReleased(_ button: JSButton)
 }
 
-class JSButton: UIView {
+final class JSButton: UIView {
     private(set) var titleLabel: UILabel!
     private var backgroundImageView: UIImageView! {
         didSet {
@@ -29,6 +30,7 @@ class JSButton: UIView {
             }
         }
     }
+
     var backgroundImagePressed: UIImage? {
         didSet {
             if !pressed {
@@ -58,10 +60,11 @@ class JSButton: UIView {
             if pressed == oldValue {
                 return
             }
-            
+
             backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
         }
     }
+
     weak var delegate: JSButtonDelegate?
 
     func setEnabled(_ enabled: Bool) {
@@ -92,8 +95,10 @@ class JSButton: UIView {
         titleLabel = UILabel()
         titleLabel.backgroundColor = UIColor.clear
         titleLabel.textColor = UIColor.white.withAlphaComponent(0.6)
-        titleLabel.shadowColor = UIColor.black
-        titleLabel.shadowOffset = CGSize(width: 0, height: 1)
+        titleLabel.layer.shadowColor = UIColor.black.cgColor
+        titleLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
+        titleLabel.layer.shadowRadius = 1.0
+        titleLabel.layer.shadowOpacity = 0.75
         titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
         titleLabel.frame = bounds
         titleLabel.textAlignment = .center
@@ -128,12 +133,12 @@ class JSButton: UIView {
         }
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_: Set<UITouch>, with _: UIEvent?) {
         delegate?.buttonPressed(self)
         pressed = true
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touch = touches.first else {
             return
         }
@@ -142,27 +147,25 @@ class JSButton: UIView {
         let touchArea = CGRect(x: point.x - 10, y: point.y - 10, width: 20, height: 20)
 
         var pressed: Bool = self.pressed
-        if !pressed {
-            pressed = true
-            delegate?.buttonPressed(self)
-        }
-
         if !touchArea.intersects(frame) {
             if pressed {
                 pressed = false
                 delegate?.buttonReleased(self)
             }
+        } else if !pressed {
+            pressed = true
+            delegate?.buttonPressed(self)
         }
 
         self.pressed = pressed
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
         delegate?.buttonReleased(self)
         pressed = false
     }
 
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
         delegate?.buttonReleased(self)
         pressed = false
     }

@@ -1,0 +1,14 @@
+Cheat file format:
+
+
+Cheat type: S(substitute on read), C(substitute on read with compare) or R(replace value before vblank)
+Cheat active:  "A"ctive or "I"nactive
+
+
+Cheat value length in bytes(1,2,3,4,5,6,7,8), values in big(B) or little endian(L)?, (RESERVED), 
+cheat address, cheat value, optionally the compare value, and the cheat name or description.
+
+Example for a cheat:
+
+R A 1 L 0 001f006d 09 Infinite time
+1 L 0x1F00F5 & 0x2, 1 L 0x1F0058 > 0

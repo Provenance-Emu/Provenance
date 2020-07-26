@@ -7,311 +7,415 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-import SafariServices
+#if canImport(SafariServices)
+    import SafariServices
+#endif
+import PVLibrary
+import PVSupport
+import QuickTableViewController
+import Reachability
+import RealmSwift
 import UIKit
+import RxSwift
 
-// Subclass to help with themeing
-@objc public class SettingsTableView: UITableView {
-    public override init(frame: CGRect, style: UITableViewStyle) {
-        super.init(frame: frame, style: style)
-        self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
-    }
+class PVQuickTableViewController: QuickTableViewController {
+    open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+        #if os(iOS)
+            (cell as? SliderCell)?.delegate = self
+        #endif
+
+        return cell
     }
 }
 
-class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate {
-    @IBOutlet weak var autoSaveSwitch: UISwitch!
-    @IBOutlet weak var autoLoadSwitch: UISwitch!
-    @IBOutlet weak var autoLockSwitch: UISwitch!
-    @IBOutlet weak var vibrateSwitch: UISwitch!
-    @IBOutlet weak var imageSmoothing: UISwitch!
-    @IBOutlet weak var crtFilterSwitch: UISwitch!
-    @IBOutlet weak var opacitySlider: UISlider!
-    @IBOutlet weak var opacityValueLabel: UILabel!
-    @IBOutlet weak var versionLabel: UILabel!
-    @IBOutlet weak var revisionLabel: UILabel!
-    @IBOutlet weak var modeLabel: UILabel!
-    @IBOutlet weak var iCadeControllerSetting: UILabel!
-    @IBOutlet weak var volumeSlider: UISlider!
-    @IBOutlet weak var volumeValueLabel: UILabel!
-    @IBOutlet weak var fpsCountSwitch: UISwitch!
-    @IBOutlet weak var importLabel: UILabel!
-    @IBOutlet weak var tintSwitch: UISwitch!
-
-    @IBOutlet weak var themeValueLabel: UILabel!
-
-    var gameImporter: PVGameImporter?
-
-    @IBAction func wikiLinkButton(_ sender: Any) {
-        UIApplication.shared.openURL((URL(string: "https://github.com/jasarien/Provenance/wiki/Importing-ROMs"))!)
-    }
-
-    @IBAction func done(_ sender: Any) {
-        presentingViewController?.dismiss(animated: true) {() -> Void in }
-    }
+final class PVSettingsViewController: PVQuickTableViewController {
+    // Check to see if we are connected to WiFi. Cannot continue otherwise.
+    let reachability: Reachability = try! Reachability()
+    var conflictsController: ConflictsController!
+    private var numberOfConflicts = 0
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Settings"
-        let settings = PVSettingsModel.shared
-        autoSaveSwitch.isOn = settings.autoSave
-        autoLoadSwitch.isOn = settings.autoLoadAutoSaves
-        opacitySlider.value = Float(settings.controllerOpacity)
-        autoLockSwitch.isOn = settings.disableAutoLock
-        vibrateSwitch.isOn = settings.buttonVibration
-        imageSmoothing.isOn = settings.imageSmoothing
-        crtFilterSwitch.isOn = settings.crtFilterEnabled
-        fpsCountSwitch.isOn = settings.showFPSCount
-        tintSwitch.isOn = settings.buttonTints
-        volumeSlider.value = settings.volume
-        volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
-        opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
-        var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
-        versionLabel.text = versionText
-#if DEBUG
-        modeLabel.text = "DEBUG"
-#else
-        modeLabel.text = "RELEASE"
-#endif
-        let color: UIColor? = UIColor(white: 0.0, alpha: 0.1)
-        if let revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
-            revisionLabel.text = revisionString
-        } else {
-            revisionLabel.textColor = color ?? UIColor.clear
-            revisionLabel.text = "(none)"
-        }
-    }
+        splitViewController?.title = "Settings"
+        generateTableViewViewModels()
+        tableView.reloadData()
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+        conflictsController.conflicts
+            .bind(onNext: {
+                self.numberOfConflicts = $0.count
+                self.generateTableViewViewModels()
+                self.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
+
+        #if os(iOS)
+            navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+            navigationItem.rightBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+        #endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let settings = PVSettingsModel.shared
-        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
-
-        if #available(iOS 9.0, *) {
-            themeValueLabel.text = settings.theme.rawValue
+        splitViewController?.title = "Settings"
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        // placed for animation use later…
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        reachability.stopNotifier()
     }
 
-    @IBAction func help(_ sender: Any) {
-        UIApplication.shared.openURL((URL(string: "https://github.com/jasarien/Provenance/wiki"))!)
-    }
+    func generateTableViewViewModels() {
+        typealias TableRow = Row & RowStyle
 
-    @IBAction func toggleFPSCount(_ sender: Any) {
-        PVSettingsModel.shared.showFPSCount = fpsCountSwitch.isOn
-    }
+        // -- Section : App
+        let autolockRow = PVSettingsSwitchRow(text: "Disable Auto Lock", key: \PVSettingsModel.disableAutoLock)
+        let systemsRow = SegueNavigationRow(text: "Systems", viewController: self, segue: "pushSystemSettings")
 
-    @IBAction func toggleAutoSave(_ sender: Any) {
-        PVSettingsModel.shared.autoSave = autoSaveSwitch.isOn
-    }
+        #if os(tvOS)
+            let appRows: [TableRow] = [systemsRow]
+        #else
+            let appRows: [TableRow] = [autolockRow, systemsRow]
+        #endif
 
-    @IBAction func toggleAutoLoadAutoSaves(_ sender: Any) {
-        PVSettingsModel.shared.autoLoadAutoSaves = autoLoadSwitch.isOn
-    }
+        let appSection = Section(title: "App", rows: appRows)
 
-    @IBAction func controllerOpacityChanged(_ sender: Any) {
-        opacitySlider.value = floor(opacitySlider.value / 0.05) * 0.05
-        opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
-        PVSettingsModel.shared.controllerOpacity = CGFloat(opacitySlider.value)
-    }
+        // -- Core Options
+        let realm = try! Realm()
+        let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).sorted(byKeyPath: "identifier").compactMap { pvcore in
+            guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
+                DLOG("Class <\(pvcore.principleClass)> does not impliment CoreOptional")
+                return nil
+            }
 
-    @IBAction func toggleAutoLock(_ sender: Any) {
-        PVSettingsModel.shared.disableAutoLock = autoLockSwitch.isOn
-    }
-
-    @IBAction func toggleVibration(_ sender: Any) {
-        PVSettingsModel.shared.buttonVibration = vibrateSwitch.isOn
-    }
-
-    @IBAction func toggleSmoothing(_ sender: Any) {
-        PVSettingsModel.shared.imageSmoothing = imageSmoothing.isOn
-    }
-
-    @IBAction func toggleCRTFilter(_ sender: Any) {
-        PVSettingsModel.shared.crtFilterEnabled = crtFilterSwitch.isOn
-    }
-
-    @IBAction func volumeChanged(_ sender: Any) {
-        PVSettingsModel.shared.volume = volumeSlider.value
-        volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
-    }
-
-    @IBAction func toggleButtonTints(_ sender: Any) {
-        PVSettingsModel.sharedInstance().buttonTints = tintSwitch.isOn
-    }
-
-    // Show web server (stays on)
-    @available(iOS 9.0, *)
-    func showServer() {
-        let ipURL: String = PVWebServer.shared.urlString
-        let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
-        safariVC.delegate = self
-        present(safariVC, animated: true) {() -> Void in }
-    }
-
-    @available(iOS 9.0, *)
-    func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-        // Load finished
-    }
-
-    // Dismiss and shut down web server
-    @available(iOS 9.0, *)
-    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        // Done button pressed
-        navigationController?.popViewController(animated: true)
-        PVWebServer.shared.stopServers()
-        importLabel.text = "Web server: OFF"
-    }
-
-    // Show "Web Server Active" alert view
-    func showServerActiveAlert() {
-        let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
-
-
-            """
-        let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-        let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
-        ipField.backgroundColor = UIColor.clear
-        ipField.textAlignment = .center
-        ipField.font = UIFont.systemFont(ofSize: 13)
-        ipField.textColor = UIColor.gray
-		let ipFieldText = """
-        WebUI:  \(PVWebServer.shared.urlString)
-        WebDav: \(PVWebServer.shared.webDavURLString)
-        """
-        ipField.text = ipFieldText
-        ipField.isUserInteractionEnabled = false
-        alert.view.addSubview(ipField)
-        alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-            PVWebServer.shared.stopServers()
-            self.importLabel.text = "Web server: OFF"
-        }))
-
-        if #available(iOS 9.0, *) {
-            let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-            alert.addAction(viewAction)
+            return NavigationRow<SystemSettingsCell>(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: { [weak self] row in
+                let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
+                coreOptionsVC.title = row.text
+                self?.navigationController?.pushViewController(coreOptionsVC, animated: true)
+            })
         }
-        present(alert, animated: true) {() -> Void in }
-    }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 3 {
-            let iCadeControllerViewController = PViCadeControllerViewController()
-            navigationController?.pushViewController(iCadeControllerViewController, animated: true)
-        } else if indexPath.section == 3 && indexPath.row == 0 {
-            // import/export roms and game saves button
-            tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-                // Check to see if we are connected to WiFi. Cannot continue otherwise.
-            let reachability = Reachability.forLocalWiFi()
-            reachability.startNotifier()
-            let status: NetworkStatus = reachability.currentReachabilityStatus()
-            if status != ReachableViaWiFi {
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                }))
-                present(alert, animated: true) {() -> Void in }
-            } else {
-                // connected via wifi, let's continue
-                // start web transfer service
-                if PVWebServer.shared.startServers() {
-                    importLabel.text = "Web server: ON"
-                    //show alert view
-                    showServerActiveAlert()
-                } else {
-                        // Display error
-                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    }))
-                    present(alert, animated: true) {() -> Void in }
+        let coreOptionsSection = Section(title: "Core Options", rows: cores)
+
+        // -- Section : Saves
+        let saveRows: [TableRow] = [
+            PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave),
+            PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
+            PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
+            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
+        ]
+
+        let savesSection = Section(title: "Saves", rows: saveRows)
+
+        // -- Section : Audio/Video
+        var avRows = [TableRow]()
+        #if os(iOS)
+            avRows.append(contentsOf: [PVSettingsSwitchRow(text: "Volume HUD", key: \PVSettingsModel.volumeHUD)])
+            avRows.append(PVSettingsSliderRow(text: "Volume", detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
+        #endif
+
+        avRows.append(contentsOf: [
+            PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
+            PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
+            PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
+            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
+        ])
+
+        let avSection = Section(title: "Audio/Video", rows: avRows)
+
+        // -- Section : Controler
+
+        var controllerRows = [TableRow]()
+
+        #if os(iOS)
+            controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.5, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+
+            controllerRows.append(contentsOf: [
+                PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
+                PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
+                PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration)
+            ])
+        #endif
+        controllerRows.append(contentsOf: [
+            SegueNavigationRow(text: "Controllers", detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
+            SegueNavigationRow(text: "iCade Controller", detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
+                cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
+            })
+        ])
+
+        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
+
+        // Game Library
+
+        var libraryRows: [TableRow] = [
+            NavigationRow<SystemSettingsCell>(
+                text: "Launch Web Server",
+                detailText: .subtitle("Import/Export ROMs, saves, cover art..."),
+                icon: nil,
+                customization: nil,
+                action: { [weak self] _ in
+                    self?.launchWebServerAction()
                 }
+            )
+        ]
+
+        #if os(tvOS)
+            let webServerAlwaysOn = PVSettingsSwitchRow(
+                text: "Web Server Always-On",
+                detailText: .subtitle(""),
+                key: \PVSettingsModel.webDavAlwaysOn,
+                customization: { cell, _ in
+                    if PVSettingsModel.shared.webDavAlwaysOn {
+                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
+                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
+                        let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
+                        cell.detailTextLabel?.attributedText = subTitleAttrString
+                    } else {
+                        cell.detailTextLabel?.text = nil
+                        cell.detailTextLabel?.attributedText = nil
+                    }
+                }
+            )
+            libraryRows.append(webServerAlwaysOn)
+        #endif
+
+        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about importing ROMs.")
+
+        // Game Library 2
+        let library2Rows: [TableRow] = [
+            NavigationRow<SystemSettingsCell>(
+                text: "Refresh Game Library",
+                detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
+                icon: nil,
+                customization: nil,
+                action: { [weak self] _ in
+                    self?.refreshGameLibraryAction()
+                }
+            ),
+            NavigationRow<SystemSettingsCell>(
+                text: "Empty Image Cache",
+                detailText: .subtitle("Re-download covers"),
+                icon: nil,
+                customization: nil,
+                action: { [weak self] _ in
+                    self?.emptyImageCacheAction()
+                }
+            ),
+            NavigationRow<SystemSettingsCell>(
+                text: "Manage Conflicts",
+                detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
+                icon: nil,
+                action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
+            ),
+            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
+        ]
+
+        let librarySection2 = Section(title: nil, rows: library2Rows)
+
+        // Beta options
+        let betaRows: [TableRow] = [
+            PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
+                                key: \PVSettingsModel.missingButtonsAlwaysOn),
+
+            PVSettingsSwitchRow(text: "iCloud Sync",
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
+                                key: \PVSettingsModel.debugOptions.iCloudSync),
+
+            PVSettingsSwitchRow(text: "Multi-threaded GL",
+                                detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
+
+            PVSettingsSwitchRow(text: "4X Multisampling GL",
+                                detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+                                key: \PVSettingsModel.debugOptions.multiSampling)
+
+//            PVSettingsSwitchRow(text: "Unsupported Cores",
+//                                detailText: .subtitle("Cores that are in development"),
+//                                key: \PVSettingsModel.debugOptions.unsupportedCores)
+        ]
+
+        let betaSection = Section(
+            title: "Beta Features",
+            rows: betaRows,
+            footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss."
+        )
+
+        // Build Information
+
+        #if DEBUG
+            let modeLabel = "DEBUG"
+        #else
+            let modeLabel = "RELEASE"
+        #endif
+
+        let masterBranch: Bool = kGITBranch.lowercased() == "master"
+        let bundleVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+
+        var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
+        if !masterBranch {
+            versionText = "\(versionText ?? "") Beta"
+//            versionLabel.textColor = UIColor.init(hex: "#F5F5A0")
+        }
+
+        // Git Revision (branch/hash)
+        var revisionString = "Unknown"
+        if var bundleRevision = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
+            if !masterBranch {
+                bundleRevision = "\(kGITBranch)/\(bundleRevision)"
             }
-        } else if indexPath.section == 4 && indexPath.row == 0 {
-            tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-            let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
-            }))
-            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            present(alert, animated: true) {() -> Void in }
-        } else if indexPath.section == 4 && indexPath.row == 1 {
-            tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-            let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                try? PVMediaCache.empty()
-            }))
-            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            present(alert, animated: true) {() -> Void in }
-        } else if indexPath.section == 4 && indexPath.row == 2 {
-            if let gameImporter = gameImporter {
-                let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
-                navigationController?.pushViewController(conflictViewController, animated: true)
-            } else {
-                ELOG("No game importer instance")
-            }
-        } else if indexPath.section == 0 && indexPath.row == 8 {
-            if #available(iOS 9.0, *) {
-                let themeSelectorViewController = ThemeSelectorViewController()
-                navigationController?.pushViewController(themeSelectorViewController, animated: true)
-            } else {
-                let alert = UIAlertController(title: "Not Available", message: "Themes are only available in iOS 9 and above.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                present(alert, animated: true, completion: nil)
+            revisionString = bundleRevision
+        }
+
+        // Build date string
+        let incomingDateFormatter = DateFormatter()
+        incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
+
+        let outputDateFormatter = DateFormatter()
+        outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
+
+        var buildDate = Date(timeIntervalSince1970: 0)
+
+        if let processedDate = incomingDateFormatter.date(from: gitdate) {
+            buildDate = processedDate
+        } else {
+            // Try chaninging local - depends on which local was build with for git string
+            // more than the current local
+            incomingDateFormatter.locale = Locale.current
+            if let processedDate = incomingDateFormatter.date(from: gitdate) {
+                buildDate = processedDate
             }
         }
 
-        self.tableView.deselectRow(at: indexPath, animated: true)
-        navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVSettingsViewController.done(_:))), animated: false)
+        let buildDateString: String = outputDateFormatter.string(from: buildDate)
+
+        let buildInformationRows: [TableRow] = [
+            NavigationRow<SystemSettingsCell>(
+                text: "Version",
+                detailText: .value2(versionText ?? "Unknown"),
+                icon: nil,
+                customization: { cell, _ in
+                    if !masterBranch {
+                        cell.detailTextLabel?.textColor = UIColor(hex: "#F5F5A0")
+                    }
+                },
+                action: nil
+            ),
+            NavigationRow<SystemSettingsCell>(text: "Build", detailText: .value2(bundleVersion)),
+            NavigationRow<SystemSettingsCell>(text: "Mode", detailText: .value2(modeLabel)),
+            NavigationRow<SystemSettingsCell>(text: "Git Revision", detailText: .value2(revisionString)),
+            NavigationRow<SystemSettingsCell>(text: "Build Date", detailText: .value2(buildDateString)),
+            NavigationRow<SystemSettingsCell>(text: "Builder", detailText: .value2(builtByUser)),
+            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
+        ]
+
+        let buildSection = Section(title: "Build Information", rows: buildInformationRows)
+
+        // Extra Info Section
+        let extraInfoRows: [TableRow] = [
+            SegueNavigationRow(text: "Cores", detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
+            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
+        ]
+
+        let extraInfoSection = Section(title: "3rd Party & Legal", rows: extraInfoRows)
+
+        // Debug section
+        let debugRows: [TableRow] = [
+            NavigationRow<SystemSettingsCell>(text: "Logs", detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { _ in
+                self.logsActions()
+            })
+        ]
+
+        let debugSection = Section(title: "Debug", rows: debugRows)
+
+        // Set table data
+        #if os(tvOS)
+            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
+        #else
+            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection, debugSection]
+        #endif
+    }
+
+    func launchWebServerAction() {
+        if reachability.connection == .wifi {
+            // connected via wifi, let's continue
+            // start web transfer service
+            if PVWebServer.shared.startServers() {
+                // show alert view
+                showServerActiveAlert()
+            } else {
+                // Display error
+                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+                }))
+                present(alert, animated: true) { () -> Void in }
+            }
+        } else {
+            let alert = UIAlertController(title: "Unable to start web server!",
+                                          message: "Your device needs to be connected to a WiFi network to continue!",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) { () -> Void in }
+        }
+    }
+
+    func refreshGameLibraryAction() {
+        tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
+        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
+            NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        present(alert, animated: true) { () -> Void in }
+    }
+
+    func emptyImageCacheAction() {
+        tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
+        let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
+            try? PVMediaCache.empty()
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        present(alert, animated: true) { () -> Void in }
+    }
+
+    func manageConflictsAction() {
+        let conflictViewController = PVConflictViewController(conflictsController: conflictsController)
+        navigationController?.pushViewController(conflictViewController, animated: true)
+    }
+
+    func logsActions() {
+        // Log Viewer
+        let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
+        logViewController.hideDoneButton()
+        navigationController?.pushViewController(logViewController, animated: true)
+        logViewController.hideDoneButton()
+    }
+
+    @IBAction func done(_: Any) {
+        presentingViewController?.dismiss(animated: true) { () -> Void in }
+    }
+
+    @IBAction func help(_: Any) {
+        #if canImport(SafariServices)
+            let webVC = WebkitViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)
+            navigationController?.pushViewController(webVC, animated: true)
+        #endif
     }
 }
 
-@available(iOS 9.0, *)
-class ThemeSelectorViewController: UITableViewController {
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : 0
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-
-        let currentTheme = Theme.currentTheme
-
-        if indexPath.row == 0 {
-            cell.textLabel?.text = Themes.light.rawValue
-            cell.accessoryType = currentTheme.theme == .light ? .checkmark : .none
-        } else if indexPath.row == 1 {
-            cell.textLabel?.text = Themes.dark.rawValue
-            cell.accessoryType = currentTheme.theme == .dark ? .checkmark : .none
-        }
-
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            Theme.setTheme(LightTheme())
-            PVSettingsModel.shared.theme = .light
-        } else if indexPath.row == 1 {
-            Theme.setTheme(DarkTheme())
-            PVSettingsModel.shared.theme = .dark
-        }
-
-        tableView.reloadData()
-    }
-}
+#if canImport(SafariServices)
+    extension PVSettingsViewController: WebServerActivatorController, SFSafariViewControllerDelegate {}
+#else
+    extension PVSettingsViewController: WebServerActivatorController {}
+#endif

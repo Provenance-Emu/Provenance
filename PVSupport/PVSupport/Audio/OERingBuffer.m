@@ -28,6 +28,7 @@
 
 @implementation OERingBuffer
 @synthesize bytesWritten;
+@synthesize bytesRead;
 
 - (id)init
 {
@@ -72,6 +73,7 @@
     availableBytes = MIN(availableBytes, len);
     memcpy(outBuffer, head, availableBytes);
     TPCircularBufferConsume(&buffer, availableBytes);
+	bytesRead += availableBytes;
     return availableBytes;
 }
 

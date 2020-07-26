@@ -6,66 +6,49 @@
 //  Copyright © 2018 Joe Mattiello. All rights reserved.
 //
 
-import UIKit
+import PVLibrary
+import QuickTableViewController
 import RealmSwift
+import UIKit
 
-class PVCoresTableViewController: UITableViewController {
-
-    let cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
-
+final class PVCoresTableViewController: QuickTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
+        let cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-// MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cores.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "coreCell")!
-
-        let core = cores[indexPath.row]
-        let systemsText = core.supportedSystems.map({return $0.shortName}).joined(separator: ", ")
-
-        cell.textLabel?.text = core.projectName
-        cell.detailTextLabel?.text = "\(core.projectVersion) : \(systemsText)"
-
-        #if os(iOS)
-        if URL.init(string: core.projectURL) != nil {
-            cell.accessoryType = .disclosureIndicator
-        } else {
-            cell.accessoryType = .none
-        }
-        #else
-            cell.accessoryType = .none
+        #if os(tvOS)
+            splitViewController?.title = "Cores"
         #endif
 
-        return cell
-    }
+        tableContents = [
+            Section(title: "Cores", rows: cores.map { core in
+                let systemsText = core.supportedSystems.map({ $0.shortName }).joined(separator: ", ")
+                let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        #if os(iOS)
-        let core = cores[indexPath.row]
+                return NavigationRow<SystemSettingsCell>(text: core.projectName, detailText: .subtitle(detailLabelText), icon: nil, customization: { cell, _ in
+                    #if os(iOS)
+                        if URL(string: core.projectURL) != nil {
+                            cell.accessoryType = .disclosureIndicator
+                        } else {
+                            cell.accessoryType = .none
+                        }
+                    #else
+                        cell.accessoryType = .none
+                    #endif
+                }, action: { _ in
+                    #if os(iOS)
+                        guard let url = URL(string: core.projectURL) else {
+                            return
+                        }
 
-        guard let url = URL.init(string: core.projectURL) else {
-            return
-        }
+                        let webVC = WebkitViewController(url: url)
+                        webVC.title = core.projectName
 
-        let webVC = WebkitViewController(url: url)
-        webVC.title = core.projectName
-
-        navigationController?.pushViewController(webVC, animated: true)
-        #endif
+                        self.navigationController?.pushViewController(webVC, animated: true)
+                    #endif
+                })
+            })
+        ]
     }
 }
 
@@ -82,7 +65,7 @@ class PVCoresTableViewController: UITableViewController {
             super.init(nibName: nil, bundle: nil)
         }
 
-        required init?(coder aDecoder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
@@ -101,7 +84,7 @@ class PVCoresTableViewController: UITableViewController {
 
             view.addSubview(webView)
 
-            let hud = MBProgressHUD.init(view: view)!
+            let hud = MBProgressHUD(view: view)!
             hud.isUserInteractionEnabled = false
             hud.mode = .determinateHorizontalBar
             hud.progress = 0
@@ -110,7 +93,7 @@ class PVCoresTableViewController: UITableViewController {
             self.hud = hud
             webView.addSubview(hud)
 
-            token = webView.observe(\.estimatedProgress) { (webView, change) in
+            token = webView.observe(\.estimatedProgress) { webView, _ in
                 let estimatedProgress = webView.estimatedProgress
                 self.hud.progress = Float(estimatedProgress)
             }
@@ -123,14 +106,14 @@ class PVCoresTableViewController: UITableViewController {
     }
 
     extension WebkitViewController: WKNavigationDelegate {
-        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            self.hud.show(true)
+            hud.show(true)
         }
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        func webView(_: WKWebView, didFinish _: WKNavigation!) {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            self.hud.hide(true, afterDelay: 0.0)
+            hud.hide(true, afterDelay: 0.0)
         }
     }
 #endif

@@ -2,45 +2,67 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Provenance.xctestplan">
+   </FileRef>
+   <FileRef
       location = "container:Provenance.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:PVLibrary/PVLibrary.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:PVSupport/PVSupport.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:PVAtari800/PVAtari800.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVGBA/PVGBA.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVGenesis/PVGenesis.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVProSystem/PVProSystem.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVPicoDrive/PVPicoDrive.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Mednafen/PVMednafen.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVSNES/PVSNES.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVStella/PVStella.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVPokeMini/PVPokeMini.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVGB/PVGB.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVMupen64Plus/PVMupen64Plus.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVFCEU/PVFCEU.xcodeproj">
-   </FileRef>
+   <Group
+      location = "container:"
+      name = "Cores">
+      <FileRef
+         location = "group:Cores/Atari800/PVAtari800.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/FCEU/PVFCEU.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Gambatte/PVGB.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/VisualBoyAdvance-M/PVGBA.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Genesis-Plus-GX/PVGenesis.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Mednafen/PVMednafen.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/PokeMini/PVPokeMini.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/ProSystem/PVProSystem.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Reicast/PVReicast.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/snes9x/PVSNES.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Stella/PVStella.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/TGBDual/PVTGBDual.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Yabause/PVYabause.xcodeproj">
+      </FileRef>
+   </Group>
 </Workspace>

@@ -1,0 +1,374 @@
+%1 Images (*.%2)|%1 Images (*.%2)
+%1/%2 blocks free|%1/%2 blocks free
+&About...|Yabauseについて...(&A)
+&Action Replay|リプレイ(&A)
+&Backup Manager...|バックアップマネージャ(&B)
+&Browse|ブラウズ(&B)
+&Cancel|キャンセル(&C)
+&Capture Screen|スクリーンキャプチャ(&C)
+&Cheat List|チートリスト(&C)
+&Cheats|チート(&C)
+&Cheats List...|チートリスト(&C)
+&Clear|消去(&C)
+&Close|閉じる(&C)
+&Debug|デバッグ(&D)
+&Delete|削除(&D)
+&Emulation|エミュレーション(&E)
+&File|ファイル(&F)
+&Frame Skip/Limiter|フレームスキップ/制限(&F)
+&Fullscreen|フルスクリーン(&F)
+&Help|ヘルプ(&F)
+&Layer|レイヤー(&L)
+&Load From File|ファイルをロード(&L)
+&Log|ログ(&L)
+&Master SH2|マスターSH2(&M)
+&Memory Transfer|メモリ転送(&M)
+&OK|&OK
+&Pause|一時停止(&P)
+&Quit|終了(&Q)
+&Raw Memory Address|&Raw Memory Address
+&Reset|リセット(&R)
+&Save To File|ファイルに保存(&S)
+&Settings...|設定(&S)
+&Slave SH2|スレーブSH2(&S)
+&Tools|ツール(&T)
+&Transfer|転送(&T)
+&View|表示(&V)
+16 Mbit Backup Ram|16Mbバックアップラム
+16 Mbit ROM|16Mb ROM
+16-bit|16ビット
+16-bit Relative value(s)|16-bit Relative value(s)
+32 Mbit Backup Ram|32MbバックアップRAM
+32 Mbit Dram|32Mb DRAM
+32-bit|32ビット
+3D Control Pad|3Dコントロールパッド
+4 Mbit Backup Ram|4MbバックアップRAM
+503/512 blocks free|503/512ブロック空き
+510/512 blocks free|510/512ブロック空き
+8 Mbit Backup Ram|8MbバックアップRAM
+8 Mbit Dram|8Mb DRAM
+8-bit|8ビット
+8-bit Relative value(s)|8-bit Relative value(s)
+<font color="red"><b>WARNING:</b> Master Codes are <b>NOT</b> supported.</font>|<font color="red"><b>警告:</b> マスタコードはサポート <b>されません</b>。</font>
+About...|Yabauseについて...
+Action Replay Code :|Action Replay Code :
+Add|追加
+Add Action Replay Code|Add Action Replay Code
+Add Cheat|チート追加
+Add Codes...|Add Codes...
+Add Raw Memory Code|Add Raw Memory Code
+Address|アドレス
+Address :|Address :
+Advanced|Advanced
+Always|常時
+Are you sure you want to delete '%1' ?|'%1'を本当に削除してよいですか？
+Are you sure you want to format '%1' ?|'%1'を本当にフォーマットしてよいですか？
+Asia (NTSC)|アジア(NTSC)
+Asia (PAL)|アジア(PAL)
+Auto-detect|自動検出
+Autostart|Autostart
+Awaiting input for|Awaiting input for
+Axis|軸
+Backtrace|バックトレース
+Backup Ram Manager|バックアップRAMマネージャ
+Binary Files (*.bin)|バイナリファイル (*.bin)
+Bios|BIOS
+Block Size :|Block Size :
+Browse|ブラウズ
+Byte|バイト
+Byte Write|Byte Write
+CD Images (*.iso *.cue *.bin)|CDイメージ  (*.iso *.cue *.bin)
+Cancel|キャンセル
+Cannot initialize|初期化不可
+Cannot initialize Windows SPTI Driver|Windows SPTIドライバの初期化不可
+Cart/Memory|カートリッジ/メモリ
+Cartridge|カートリッジ
+Cd-Rom|CD-ROM
+Central/South America (NTSC)|中南米 (NTSC)
+Central/South America (PAL)|中南米 (PAL)
+Cheat &Search...|Cheat &Search...
+Cheat Search|チート検索
+Cheat Type|チートタイプ
+Cheats|チート
+Cheats File|チートファイル
+Choose a binary file|バイナリファイルを選んでください
+Choose a cartridge file|カートリッジファイルを選んでください
+Choose a cdrom drive/mount point|Choose a cdrom drive/mount point
+Choose a cheat file to open|開くファイルを選んでください
+Choose a cheat file to save to|Choose a cheat file to save to
+Choose a file to save your state|状態を保存するファイルを選んでください
+Choose a location for binary file|バイナリファイルの場所を選んでください
+Choose a location for your screenshot|スクリーンショットの場所を選んでください
+Choose a memory file|メモリファイルを選んでください
+Choose a mpeg rom|Mpeg ROMを選んでください
+Clear configuration|Clear configuration
+Close|閉じる
+Code|コード
+Code Breakpoints|Code Breakpoints
+Comment :|コメント
+Common Control Registers|Common Control Registers
+Compare Type|Compare Type
+DSP Control Registers|DSP Control Registers
+DSP Registers|DSP Registers
+Data Size|データサイズ
+Data Size :|データサイズ:
+Data Type|データタイプ
+Debug CPU|CPUをデバッグする
+Debug M68K|M68Kをデバッグする
+Debug Master SH2|マスターSH2をデバッグする
+Debug SCU DSP|SCU DSPをデバッグする
+Debug Slave SH2|スレーブSH2をデバッグする
+Debug VDP1|VDP1をデバッグする
+Debug VDP2Viewer|VDP2ビューアをデバッグする
+Del|Del
+Delete|消去
+Description|Description
+Description :|Description :
+Device List|デバイスリスト
+DirectX Input Interface|DirectX入力インタフェース
+DirectX Sound Interface|DirectXサウンドインタフェース
+Disabled|Disabled
+Disassembled Code|逆アセンブルコード
+Display Enabled|Display Enabled
+Display on Hover|Display on Hover
+Down|Down
+Download|ダウンロード
+Draw End|Draw End
+Dummy CD Drive|Dummy CD Drive
+Dummy Input Interface|Dummy Input Interface
+Dummy OSD Interface|Dummy OSD Interface
+Dummy Sound Interface|Dummy Sound Interface
+Dummy Video Interface|Dummy Video Interface
+Edit configuration|Edit configuration
+Emu-Compatibility|Emu-Compatibility
+Emulation|エミュレーション
+Enable|Enable
+Enable Frame Skip/Limiter|Enable Frame Skip/Limiter
+Enabled|Enabled
+End Address:|End Address:
+English|英語
+Enter New Value|Enter New Value
+Europe + others (PAL)|欧州他 (PAL)
+Exact|Exact
+FPS|FPS
+File|ファイル
+File Name :|File Name :
+File transfer|File transfer
+File:|File:
+Format|Format
+Frame Skip/Limiter|Frame Skip/Limiter
+French|French
+From|From
+From File|From File
+From File...|From File...
+Fullscreen|Fullscreen
+Fullscreen Resolution|Fullscreen Resolution
+General|General
+General Info|General Info
+German|ドイツ語
+Glut OSD Interface|Glut OSD Interface
+Goto Address|Goto Address
+Greater then|Greater then
+Hard Reset|Hard Reset
+Height|Height
+Hex value(s)|Hex value(s)
+Hide Menubar|Hide Menubar
+Hide Toolbar|Hide Toolbar
+ISO-File Virtual Drive|ISO-File Virtual Drive
+Information...|Information...
+Input|Input
+Invalid Address|無効なアドレス
+Invalid Value|無効な値
+Italian|イタリア語
+Japan (NTSC)|日本 (NTSC)
+Japanese|日本語
+Japanese Modem|Japanese Modem
+Korea (NTSC)|韓国 (NTSC)
+L&oad State|L&oad State
+Language :|Language :
+Layer|Layer
+Left|Left
+Left trigger|Left trigger
+Less than|Less than
+Linux CD Drive|Linux CD Drive
+Load|Load
+Load State|Load State
+Load State As|Load State As
+Load as executable|Load as executable
+Local Coordinates|Local Coordinates
+Log|ログ
+Long|Long
+Long Write|Long Write
+Loop Track Clear|Loop Track Clear
+Loop Track Start|Loop Track Start
+M68K|M68K
+M68K Registers|M68Kレジスタ
+MSH2|MSH2
+Master SH2|マスターSH2
+Memory|メモリ
+Memory &Editor|Memory &Editor
+Memory Breakpoints|Memory Breakpoints
+Memory Dump|Memory Dump
+Memory Editor|Memory Editor
+Memory Search|Memory Search
+Memory Transfer|Memory Transfer
+Memory dump|Memory dump
+Middle|Middle
+Mouse|Mouse
+Mouse Configuration|Mouse Configuration
+Mpeg ROM|MPEG ROM
+NBG0|NBG0
+NBG0/RBG1 Info|NBG0/RBG1 Info
+NBG1|NBG1
+NBG1 Info|NBG1 Info
+NBG2|NBG2
+NBG2 Info|NBG2 Info
+NBG3|NBG3
+NBG3 Info|NBG3 Info
+Netlink|Netlink
+Never|Never
+None|None
+Normal Sprite|Normal Sprite
+North America (NTSC)|北米 (NTSC)
+OSD Core|OSD Core
+Ok|Ok
+On fullscreen|On fullscreen
+On message|On message
+Open &CD Rom...|Open &CD Rom...
+Open &ISO...|Open &ISO...
+Open CD Rom|CD-ROMを開く
+OpenGL Video Interface|OpenGLビデオインタフェース
+Options|オプション
+Other Debug|Other Debug
+Pad|Pad
+Pad Configuration|Pad Configuration
+Pause|一時停止
+Press Esc key to cancel|Press Esc key to cancel
+Pro Action Replay|Pro Action Replay
+Qt Keyboard Input Interface|Qtキーボード入力インタフェース
+Quit|終了
+R&un|R&un
+RBG0|RBG0
+RBG0 Info|RBG0 Info
+Read|Read
+Region|Region
+Registers|Registers
+Reset|Reset
+Resolution|Resolution
+Right|Right
+Right trigger|Right trigger
+Run|Run
+S&ave State|S&ave State
+SCSP|SCSP
+SCU-DSP|SCU-DSP
+SDL Joystick Interface|SDLジョイスティックインタフェース
+SDL Sound Interface|SDLサウンドインタフェース
+SH2 Debugger Interpreter|SH2デバッガインタプリタ
+SH2 Dynamic Recompiler|SH2ダイナミックリコンバイラ
+SH2 Interpreter|SH2インタプリタ
+SH2 Registers|SH2 Registers
+SSH2|SSH2
+Save|Save
+Save As WAV|Save As WAV
+Save Bitmap|Save Bitmap
+Save Information|Save Information
+Save List|Save List
+Save MD0|Save MD0
+Save MD1|Save MD1
+Save MD2|Save MD2
+Save MD3|Save MD3
+Save Program|Save Program
+Save Selected|Save Selected
+Save Slot Registers|Save Slot Registers
+Save State|Save State
+Save State As|Save State As
+Save States|Save States
+Sc&reenshot|Sc&reenshot
+Screen Enabled|Screen Enabled
+Screenshot|スクリーンショット
+Search|Search
+Search Criteria|Search Criteria
+Search Memory|Search Memory
+Search Value:|Search Value:
+Search/Add Cheats|Search/Add Cheats
+Select a file to load your state|Select a file to load your state
+Select your iso/cue/bin file|Select your iso/cue/bin file
+Set PC to Start Address|Set PC to Start Address
+Settings|Settings
+Shortcuts|Shortcuts
+Show FPS|Show FPS
+Show Log Window|Show Log Window
+Signed|Signed
+Signed 16-bit value|Signed 16-bit value
+Signed 32-bit value|Signed 32-bit value
+Signed 8-bit value|Signed 8-bit value
+Slave SH2|スレーブSH2
+Slot Info|Slot Info
+Slot Number:|Slot Number:
+Software OSD Interface|Software OSD Interface
+Software Video Interface|Software Video Interface
+Sound|サウンド
+Sound Core|サウンドコア
+Spanish|スペイン語
+Start|Start
+Start Address:|Start Address:
+Start in Fullscreen|Start in Fullscreen
+Status|Status
+Step Into|Step Into
+Step Out|Step Out
+Step Over|Step Over
+Store|Store
+Synchronize Saturn internal clock with set time|Synchronize Saturn internal clock with set time
+System Clipping Coordinates|System Clipping Coordinates
+Text|Text
+Texture|Texture
+To|To
+To File...|To File...
+Tools|Tools
+Track Inf Loop Results|Track Inf Loop Results
+Transfer|Transfer
+Translation|Translation
+Type:|Type:
+Unable to add code|Unable to add code
+Unable to change description|Unable to change description
+Unable to open file for loading|Unable to open file for loading
+Unable to open file for saving|Unable to open file for saving
+Unable to remove code|Unable to remove code
+Unknow (%1)|Unknow (%1)
+Unsigned|Unsigned
+Unsigned 16-bit value|Unsigned 16-bit value
+Unsigned 32-bit value|Unsigned 32-bit value
+Unsigned 8-bit value|Unsigned 8-bit value
+Up|Up
+Upload|Upload
+Use System Locale|Use System Locale
+VDP1|Vdp1
+VDP1 Command Info|VDP1 Command Info
+VDP1 Command List|VDP1 Command List
+VDP2|Vdp2
+Value|Value
+Value :|Value :
+Value:|Value:
+Vdp1|Vdp1
+Vdp2|Vdp2
+Video|Video
+Video Core|Video Core
+Video Driver|ビデオドライバ
+Video Format|ビデオフォーマット
+View|View
+Viewer|Viewer
+Waiting Input...|Waiting Input...
+Width|Width
+Window Resolution|Window Resolution
+Windows SPTI Driver|Windows SPTIドライバ
+Word|Word
+Word Write|Word Write
+Write|Write
+Yabause Cheat Files (*.yct);;All Files (*)|Yabause Cheat Files (*.yct);;All Files (*)
+Yabause Qt GUI|Yabause Qt GUI
+Yabause Qt Gui<br />Based on Yabause %1<br /><a href="http://yabause.org">http://yabause.org</a><br />The Yabause Team<br /><a href="mailto:pasnox@gmail.com">Filipe AZEVEDO</a>|Yabause Qt Gui<br />Based on Yabause %1<br /><a href="http://yabause.org">http://yabause.org</a><br />The Yabause Team<br /><a href="mailto:pasnox@gmail.com">Filipe AZEVEDO</a>
+Yabause Save State (*.yss)|Yabause Save State (*.yss)
+Yabause is not initialized, can't manage backup ram.|Yabause is not initialized, can't manage backup ram.
+http://www.emu-compatibility.com/yabause/index.php?lang=uk|http://www.emu-compatibility.com/yabause/index.php?lang=uk
+http://www.monkeystudio.org|http://www.monkeystudio.org
+toolBar|toolBar

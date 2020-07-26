@@ -1,0 +1,145 @@
+<ui version="4.0" >
+ <class>UICheatRaw</class>
+ <widget class="QDialog" name="UICheatRaw" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>458</width>
+    <height>246</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Add Raw Memory Code</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QGroupBox" name="gbType" >
+     <property name="title" >
+      <string>Cheat Type</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QRadioButton" name="rbEnable" >
+        <property name="text" >
+         <string>Enable</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbByte" >
+        <property name="text" >
+         <string>Byte Write</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbWord" >
+        <property name="text" >
+         <string>Word Write</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbLong" >
+        <property name="text" >
+         <string>Long Write</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="lAddress" >
+     <property name="text" >
+      <string>Address :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLineEdit" name="leAddress" >
+     <property name="maxLength" >
+      <number>8</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="lValue" >
+     <property name="text" >
+      <string>Value :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QLineEdit" name="leValue" >
+     <property name="maxLength" >
+      <number>23</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="leDescription" >
+     <property name="text" >
+      <string>Description :</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QTextEdit" name="teDescription" >
+     <property name="acceptRichText" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2" >
+    <widget class="QDialogButtonBox" name="dbbButtons" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>dbbButtons</sender>
+   <signal>accepted()</signal>
+   <receiver>UICheatRaw</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>334</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>336</x>
+     <y>346</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dbbButtons</sender>
+   <signal>rejected()</signal>
+   <receiver>UICheatRaw</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>423</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>437</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

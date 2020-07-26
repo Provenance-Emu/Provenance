@@ -1,0 +1,1 @@
+Modified to not use mprotect() and similar, instead using __attribute__((section(".text")))

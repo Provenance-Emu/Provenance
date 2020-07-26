@@ -1,0 +1,374 @@
+%1 Images (*.%2)|%1 镜像 (*.%2)
+%1/%2 blocks free|%1/%2 空闲区块
+&About...|关于(&A)...
+&Action Replay|金手指(&A)
+&Backup Manager...|备份管理器(&B)...
+&Browse|浏览(&B)
+&Cancel|取消(&C)
+&Capture Screen|屏幕捕获(&C)
+&Cheat List|作弊列表(&C)
+&Cheats|作弊码(&C)
+&Cheats List...|作弊列表(&C)...
+&Clear|清理(&C)
+&Close|关闭(&C)
+&Debug|调试(&C)
+&Delete|删除(&D)
+&Emulation|模拟(&E)
+&File|文件(&F)
+&Frame Skip/Limiter|跳帧/限帧(&F)
+&Fullscreen|全屏(&F)
+&Help|帮助(&H)
+&Layer|图层(&L)
+&Load From File|从文件读取(&L)
+&Log|日志(&L)
+&Master SH2|主SH2(&M)
+&Memory Transfer|内存传输(&M)
+&OK|确定(&O)
+&Pause|暂停(&P)
+&Quit|退出(&Q)
+&Raw Memory Address|原始内存地址(&R)
+&Reset|重启(&R)
+&Save To File|保存到文件(&S)
+&Settings...|设置(&S)...
+&Slave SH2|次SH2(&S)
+&Tools|工具(&T)
+&Transfer|传输(&T)
+&View|查看(&V)
+16 Mbit Backup Ram|16 Mbit备份记忆卡
+16 Mbit ROM|16 Mbit专用游戏卡
+16-bit|16位
+16-bit Relative value(s)|16位相对值
+32 Mbit Backup Ram|32 Mbit备份记忆卡
+32 Mbit Dram|32 Mbit扩张加速卡
+32-bit|32位
+3D Control Pad|3D手柄控制器
+4 Mbit Backup Ram|4 Mbit备份记忆卡
+503/512 blocks free|503/512 空闲区块
+510/512 blocks free|510/512 空闲区块
+8 Mbit Backup Ram|8 Mbit备份记忆卡
+8 Mbit Dram|8 Mbit扩张加速卡
+8-bit|8位
+8-bit Relative value(s)|8位相对值
+<font color="red"><b>WARNING:</b> Master Codes are <b>NOT</b> supported.</font>|<font color="red"><b>警告:</b>主代码<b>不</b>支持.</font>
+About...|关于...
+Action Replay Code :|金手指代码 :
+Add|添加
+Add Action Replay Code|添加金手指代码
+Add Cheat|添加作弊码
+Add Codes...|添加代码...
+Add Raw Memory Code|添加原始内存代码
+Address|地址
+Address :|地址 :
+Advanced|高级
+Always|总是
+Are you sure you want to delete '%1' ?|是否确定删除 '%1' ?
+Are you sure you want to format '%1' ?|是否确定格式化 '%1' ?
+Asia (NTSC)|亚洲 (NTSC)
+Asia (PAL)|亚洲 (PAL)
+Auto-detect|自动检测
+Autostart|自动开始
+Awaiting input for|正在等待输入
+Axis|轴
+Backtrace|回溯
+Backup Ram Manager|备份内存管理
+Binary Files (*.bin)|二进制文件 (*.bin)
+Bios|BIOS
+Block Size :|区块大小 :
+Browse|浏览
+Byte|1字节
+Byte Write|1字节写入
+CD Images (*.iso *.cue *.bin)|光盘镜像 (*.iso *.cue *.bin)
+Cancel|取消
+Cannot initialize|无法初始化
+Cannot initialize Windows SPTI Driver|无法初始化Windows SPTI驱动器
+Cart/Memory|卡带/内置记忆
+Cartridge|卡带
+Cd-Rom|CD-ROM
+Central/South America (NTSC)|中/南美 (NTSC)
+Central/South America (PAL)|中/南美 (PAL)
+Cheat &Search...|作弊码搜索(&S)...
+Cheat Search|作弊码搜索
+Cheat Type|作弊码类型
+Cheats|作弊码
+Cheats File|作弊码文件
+Choose a binary file|选择二进制文件
+Choose a cartridge file|选择卡带文件
+Choose a cdrom drive/mount point|选择光驱/挂载点
+Choose a cheat file to open|选择打开作弊码文件
+Choose a cheat file to save to|选择保存作弊码文件
+Choose a file to save your state|选择保存即时文件
+Choose a location for binary file|选择二进制文件位置
+Choose a location for your screenshot|选择截图位置
+Choose a memory file|选择内置记忆文件
+Choose a mpeg rom|选择MPEG卡内核文件
+Clear configuration|清除配置
+Close|关闭
+Code|代码
+Code Breakpoints|代码断点
+Comment :|注释 :
+Common Control Registers|共用控制寄存器
+Compare Type|比较类型
+DSP Control Registers|DSP控制寄存器
+DSP Registers|DSP寄存器
+Data Size|数据大小
+Data Size :|数据大小 :
+Data Type|数据类型
+Debug CPU|调试CPU
+Debug M68K|调试M68K
+Debug Master SH2|调试主SH2
+Debug SCU DSP|调试SCU DSP
+Debug Slave SH2|调试次SH2
+Debug VDP1|调试VDP1
+Debug VDP2Viewer|调试VDP2查看器
+Del|删除
+Delete|删除
+Description|描述
+Description :|描述 :
+Device List|设备列表
+DirectX Input Interface|DirectX输入接口
+DirectX Sound Interface|DirectX音频接口
+Disabled|已禁用
+Disassembled Code|反汇编代码
+Display Enabled|显示已启用
+Display on Hover|悬浮显示
+Down|下
+Download|下载
+Draw End|绘制结束
+Dummy CD Drive|空光盘驱动器
+Dummy Input Interface|空输入接口
+Dummy OSD Interface|空屏显接口
+Dummy Sound Interface|空音频接口
+Dummy Video Interface|空视频接口
+Edit configuration|编辑配置
+Emu-Compatibility|模拟兼容性
+Emulation|模拟
+Enable|启用
+Enable Frame Skip/Limiter|启用跳帧/限帧
+Enabled|已启用
+End Address:|结束地址:
+English|英语
+Enter New Value|输入新值
+Europe + others (PAL)|欧洲 + 其他 (PAL)
+Exact|等于
+FPS|帧数
+File|文件
+File Name :|文件名称 :
+File transfer|文件传输
+File:|文件:
+Format|格式化
+Frame Skip/Limiter|跳帧/限帧
+French|法语
+From|来自
+From File|来自文件
+From File...|来自文件...
+Fullscreen|全屏
+Fullscreen Resolution|全屏分辨率
+General|常规
+General Info|常规信息
+German|德语
+Glut OSD Interface|GLUT屏显接口
+Goto Address|跳转地址
+Greater then|大于
+Hard Reset|硬件重启
+Height|高度
+Hex value(s)|十六进制值
+Hide Menubar|隐藏菜单栏
+Hide Toolbar|隐藏工具栏
+ISO-File Virtual Drive|镜像文件虚拟驱动器
+Information...|信息...
+Input|输入
+Invalid Address|无效地址
+Invalid Value|无效值
+Italian|意大利语
+Japan (NTSC)|日本 (NTSC)
+Japanese|日语
+Japanese Modem|日本调制解调器
+Korea (NTSC)|韩国 (NTSC)
+L&oad State|即时读取(&O)
+Language :|语言 :
+Layer|图层
+Left|左
+Left trigger|左扳机
+Less than|小于
+Linux CD Drive|Linux光盘驱动器
+Load|读取
+Load State|即时读取
+Load State As|即时读取
+Load as executable|可执行文件读取
+Local Coordinates|本地坐标
+Log|日志
+Long|4字节
+Long Write|4字节写入
+Loop Track Clear|清除循环跟踪
+Loop Track Start|开始循环跟踪
+M68K|M68K
+M68K Registers|M68K寄存器
+MSH2|MSH2
+Master SH2|主SH2
+Memory|内置记忆
+Memory &Editor|内存编辑(&E)
+Memory Breakpoints|内存断点
+Memory Dump|内存转储
+Memory Editor|内存编辑
+Memory Search|内存搜索
+Memory Transfer|内存传输
+Memory dump|内存转储
+Middle|中
+Mouse|鼠标
+Mouse Configuration|鼠标配置
+Mpeg ROM|MPEG电影卡
+NBG0|NBG0
+NBG0/RBG1 Info|NBG0/RBG1信息
+NBG1|NBG1
+NBG1 Info|NBG1信息
+NBG2|NBG2
+NBG2 Info|NBG2信息
+NBG3|NBG3
+NBG3 Info|NBG3信息
+Netlink|Netlink网卡
+Never|从不
+None|无
+Normal Sprite|普通活动块
+North America (NTSC)|北美 (NTSC)
+OSD Core|屏显核心
+Ok|确定
+On fullscreen|全屏中
+On message|信息中
+Open &CD Rom...|打开光驱(&C)...
+Open &ISO...|打开镜像(&I)...
+Open CD Rom|打开光驱
+OpenGL Video Interface|OpenGL视频接口
+Options|选项
+Other Debug|其他调试
+Pad|手柄
+Pad Configuration|手柄配置
+Pause|暂停
+Press Esc key to cancel|按Esc键取消
+Pro Action Replay|专用金手指卡
+Qt Keyboard Input Interface|Qt键盘输入接口
+Quit|退出
+R&un|运行(&U)
+RBG0|RBG0
+RBG0 Info|RBG0信息
+Read|读取
+Region|区域
+Registers|寄存器
+Reset|重启
+Resolution|分辨率
+Right|右
+Right trigger|右扳机
+Run|运行
+S&ave State|即时保存(&A)
+SCSP|SCSP
+SCU-DSP|SCU-DSP
+SDL Joystick Interface|SDL摇杆接口
+SDL Sound Interface|SDL音频接口
+SH2 Debugger Interpreter|SH2调试用解释器
+SH2 Dynamic Recompiler|SH2动态重编译器
+SH2 Interpreter|SH2解释器
+SH2 Registers|SH2寄存器
+SSH2|SSH2
+Save|保存
+Save As WAV|保存为WAV
+Save Bitmap|保存位图
+Save Information|存档信息
+Save List|存档列表
+Save MD0|保存MD0
+Save MD1|保存MD1
+Save MD2|保存MD2
+Save MD3|保存MD3
+Save Program|保存程序
+Save Selected|保存选定
+Save Slot Registers|保存指令槽寄存器
+Save State|即时保存
+Save State As|即时保存
+Save States|即时保存
+Sc&reenshot|截图(&R)
+Screen Enabled|屏幕已启用
+Screenshot|截图
+Search|搜索
+Search Criteria|搜索条件
+Search Memory|搜索内存
+Search Value:|搜索数值:
+Search/Add Cheats|搜索/添加作弊码
+Select a file to load your state|选择读取即时文件
+Select your iso/cue/bin file|选择iso/cue/bin文件
+Set PC to Start Address|设置电脑起始地址
+Settings|设置
+Shortcuts|快捷键
+Show FPS|显示帧数
+Show Log Window|显示日志窗口
+Signed|有符号
+Signed 16-bit value|有符号16位数值
+Signed 32-bit value|有符号32位数值
+Signed 8-bit value|有符号8位数值
+Slave SH2|次SH2
+Slot Info|指令槽信息
+Slot Number:|指令槽编号:
+Software OSD Interface|软件屏显接口
+Software Video Interface|软件视频接口
+Sound|音频
+Sound Core|音频核心
+Spanish|西班牙语
+Start|开始
+Start Address:|起始地址:
+Start in Fullscreen|全屏开始
+Status|状态
+Step Into|步进
+Step Out|步出
+Step Over|步越
+Store|储存
+Synchronize Saturn internal clock with set time|使用设置时间同步土星内部时钟
+System Clipping Coordinates|系统裁剪坐标
+Text|文本
+Texture|纹理
+To|到
+To File...|存到文件...
+Tools|工具
+Track Inf Loop Results|跟踪无限循环结果
+Transfer|传输
+Translation|翻译
+Type:|类型:
+Unable to add code|无法添加代码
+Unable to change description|无法更改描述
+Unable to open file for loading|无法打开正在读取的文件
+Unable to open file for saving|无法打开正在保存的文件
+Unable to remove code|无法删除代码
+Unknow (%1)|未知 (%1)
+Unsigned|无符号
+Unsigned 16-bit value|无符号16位数值
+Unsigned 32-bit value|无符号32位数值
+Unsigned 8-bit value|无符号8位数值
+Up|上
+Upload|上传
+Use System Locale|使用系统语言环境
+VDP1|VDP1
+VDP1 Command Info|VDP1命令信息
+VDP1 Command List|VDP1命令列表
+VDP2|VDP2
+Value|数值
+Value :|数值 :
+Value:|数值:
+Vdp1|VDP1
+Vdp2|VDP2
+Video|视频
+Video Core|视频核心
+Video Driver|视频驱动程序
+Video Format|视频格式
+View|查看
+Viewer|查看器
+Waiting Input...|正在等待输入...
+Width|宽度
+Window Resolution|窗口分辨率
+Windows SPTI Driver|Windows SPTI驱动程序
+Word|2字节
+Word Write|2字节写入
+Write|写入
+Yabause Cheat Files (*.yct);;All Files (*)|Yabause作弊码文件 (*.yct);;所有文件 (*)
+Yabause Qt GUI|Yabause Qt界面
+Yabause Qt Gui<br />Based on Yabause %1<br /><a href="http://yabause.org">http://yabause.org</a><br />The Yabause Team<br /><a href="mailto:pasnox@gmail.com">Filipe AZEVEDO</a>|Yabause Qt界面<br />基于Yabause %1<br /><a href="http://yabause.org">http://yabause.org</a><br />Yabause团队<br /><a href="mailto:pasnox@gmail.com">Filipe AZEVEDO</a>
+Yabause Save State (*.yss)|Yabause即时存档 (*.yss)
+Yabause is not initialized, can't manage backup ram.|Yabause未初始化, 无法管理备份内存.
+http://www.emu-compatibility.com/yabause/index.php?lang=uk|http://www.emu-compatibility.com/yabause/index.php?lang=uk
+http://www.monkeystudio.org|http://www.monkeystudio.org
+toolBar|工具栏

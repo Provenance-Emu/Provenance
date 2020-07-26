@@ -1,0 +1,39 @@
+# Xcode
+# Build, test, and archive an Xcode workspace on macOS.
+# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
+
+pool:
+  vmImage: 'macOS-latest'
+
+variables:
+  scheme: 'Provenance'
+  sdk: 'iphonesimulator'
+  configuration: 'Debug'
+  carthage-platform: 'iOS'
+
+steps:
+- task: Cache@2
+  inputs:
+    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved'
+    path: Carthage/Build
+  displayName: Carthage cache
+- script: carthage bootstrap --platform $(carthage-platform) --project-directory ./ --cache-builds
+  displayName: Carthage bootstrap
+- task: Xcode@5
+  inputs:
+    scheme: '$(scheme)'
+    xcWorkspacePath: 'Provenance.xcworkspace'
+    xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    packageApp: false
+  displayName: Building project
+- task: Xcode@5
+  inputs:
+    actions: 'test'
+    scheme: '$(scheme)'
+    xcWorkspacePath: 'Provenance.xcworkspace'
+    xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    packageApp: false
+    destinationPlatformOption: iOS
+    destinationSimulators: iPhone 8
+  displayName: Running tests

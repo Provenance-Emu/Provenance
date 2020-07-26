@@ -1,0 +1,8 @@
+Goals for a 1.0.0 release
+--------------------------
+-Full "stock" saturn emulation. At the very least it should be "feature complete"(most major bugs should be fixed at this point too)
+-Any external carts or peripheral do not need to be fully emulated at this point
+-Switchable SH2 Dynarec/Interpreter cores
+-Full debugging support
+-Speed should be high at this point(It's too tough ironing out those bugs with Yabause at its current state)
+-Save States

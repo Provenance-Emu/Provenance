@@ -7,6 +7,8 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 
+import PVLibrary
+import PVSupport
 import TVServices
 
 // Top shelf extensions
@@ -16,41 +18,28 @@ extension PVRecentGame {
             return nil
         }
 
-        guard let identifier = TVContentIdentifier(identifier: game.md5Hash, container: containerIdentifier),
-        let item = TVContentItem(contentIdentifier: identifier) else {
-            return nil
-        }
+        let identifier = TVContentIdentifier(identifier: game.md5Hash, container: containerIdentifier)
+        let item = TVContentItem(contentIdentifier: identifier)
 
         item.title = game.title
         item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
-        item.imageShape = imageType
-        item.displayURL = self.displayURL
+        item.imageShape = game.system.imageType
+        item.displayURL = displayURL
         item.lastAccessedDate = lastPlayedDate
+
         return item
     }
 
     var displayURL: URL {
+        guard let game = game else {
+            ELOG("Nil game")
+            return URL(fileURLWithPath: "")
+        }
+
         var components = URLComponents()
         components.scheme = PVAppURLKey
         components.path = PVGameControllerKey
-        components.queryItems = [URLQueryItem(name: PVGameMD5Key, value: game!.md5Hash)]
-        return (components.url)!
-    }
-
-    var imageType: TVContentItemImageShape {
-        guard let game = game else {
-            return .square
-        }
-
-        let system = game.system.enumValue
-
-        switch system {
-        case .NES, .Genesis, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .Lynx, .WonderSwan, .WonderSwanColor:
-            return .poster
-        case .GameGear, .GB, .GBC, .GBA, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini:
-            return .square
-        case .N64, .SNES:
-            return .HDTV
-        }
+        components.queryItems = [URLQueryItem(name: PVGameMD5Key, value: game.md5Hash)]
+        return components.url ?? URL(fileURLWithPath: "")
     }
 }
