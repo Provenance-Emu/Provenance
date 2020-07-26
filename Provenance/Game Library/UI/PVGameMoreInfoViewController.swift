@@ -678,7 +678,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             guard let `self` = self else { return }
 
             switch change {
-            case let .change(properties):
+            case let .change(_, properties):
                 if !properties.isEmpty, self.isViewLoaded {
                     DispatchQueue.main.async { [weak self] in
                         guard let `self` = self else { return }
