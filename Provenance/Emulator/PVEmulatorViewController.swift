@@ -249,7 +249,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
 
-            self.fpsLabel.text = String ( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", self.core.renderFPS/self.core.frameInterval*100, (self.glViewController.timeSinceLastDraw*1000), (1000/(self.glViewController.timeSinceLastDraw*1000)) )
+            let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
+            let drawTime =  self.glViewController.timeSinceLastDraw * 1000
+            let fps = 1000 / drawTime
+            self.fpsLabel.text = String ( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
         })
     }
 
