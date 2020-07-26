@@ -10,7 +10,6 @@ github "zydeco/SteamController"
 # PVSupport
 github "fpillet/NSLogger"
 github "CocoaLumberjack/CocoaLumberjack"
-github "radex/SwiftyUserDefaults"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
