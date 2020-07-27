@@ -5,13 +5,7 @@
       location = "group:Provenance.xctestplan">
    </FileRef>
    <FileRef
-      location = "container:Provenance.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVLibrary/PVLibrary.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVSupport/PVSupport.xcodeproj">
+      location = "group:Provenance.xcodeproj">
    </FileRef>
    <Group
       location = "container:"
@@ -65,4 +59,7 @@
          location = "group:Cores/Yabause/PVYabause.xcodeproj">
       </FileRef>
    </Group>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
 </Workspace>

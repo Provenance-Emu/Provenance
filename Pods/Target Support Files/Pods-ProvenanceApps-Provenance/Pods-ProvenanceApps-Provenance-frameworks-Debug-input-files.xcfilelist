@@ -1,0 +1,13 @@
+${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance-frameworks.sh
+${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework
+${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework
+${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework
+${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework
+${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework
+${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework
+${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework
+${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework
+${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework
+${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework
+${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework

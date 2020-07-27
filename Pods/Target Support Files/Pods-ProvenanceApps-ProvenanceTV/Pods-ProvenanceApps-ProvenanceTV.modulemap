@@ -1,0 +1,6 @@
+framework module Pods_ProvenanceApps_ProvenanceTV {
+  umbrella header "Pods-ProvenanceApps-ProvenanceTV-umbrella.h"
+
+  export *
+  module * { export * }
+}

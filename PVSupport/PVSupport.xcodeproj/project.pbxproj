@@ -325,21 +325,14 @@
 				1A4E718C1A6C699F005CA80F /* DebugUtils.h */,
 				B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */,
 			);
-			name = DebugUtils;
+			path = DebugUtils;
 			sourceTree = "<group>";
 		};
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
-				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
-				B3447F99218C1CBE00557ACE /* Settings */,
-				B3AB37F721882119009D9244 /* CoreOptions */,
-				B3AB36DC2187F4C4009D9244 /* Controller */,
-				B302F89420B71C2300C5E502 /* Logging */,
-				1A4E718B1A6C693A005CA80F /* DebugUtils */,
-				1ACEA69017F748F80031B1C9 /* Audio */,
-				1ACEA64917F7467D0031B1C9 /* PVSupport */,
-				B3532B3321A7B736006CDA0F /* PVSupportTests */,
+				B338953B24CE55A7002FF98B /* Sources */,
+				B3532B3321A7B736006CDA0F /* Tests */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
@@ -380,7 +373,8 @@
 				B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
 			);
-			path = PVSupport;
+			name = PVSupport;
+			path = ../PVSupport;
 			sourceTree = "<group>";
 		};
 		1ACEA64A17F7467D0031B1C9 /* Supporting Files */ = {
@@ -404,7 +398,7 @@
 				1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */,
 			);
 			name = Audio;
-			path = PVSupport/Audio;
+			path = ../PVSupport/Audio;
 			sourceTree = "<group>";
 		};
 		B302F89420B71C2300C5E502 /* Logging */ = {
@@ -422,7 +416,23 @@
 				B302F89A20B73D6200C5E502 /* PVLogging.h */,
 				B302F89E20B73D6400C5E502 /* PVLogging.m */,
 			);
-			path = Logging;
+			name = Logging;
+			path = ../Logging;
+			sourceTree = "<group>";
+		};
+		B338953B24CE55A7002FF98B /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				1ACEA64917F7467D0031B1C9 /* PVSupport */,
+				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
+				B3447F99218C1CBE00557ACE /* Settings */,
+				B3AB37F721882119009D9244 /* CoreOptions */,
+				B3AB36DC2187F4C4009D9244 /* Controller */,
+				B302F89420B71C2300C5E502 /* Logging */,
+				1A4E718B1A6C693A005CA80F /* DebugUtils */,
+				1ACEA69017F748F80031B1C9 /* Audio */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		B3447E7E218B7E2C00557ACE /* CARingBuffer */ = {
@@ -445,17 +455,18 @@
 				B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */,
 				B3532C3521A925C1006CDA0F /* SortOption.swift */,
 			);
-			path = Settings;
+			name = Settings;
+			path = ../Settings;
 			sourceTree = "<group>";
 		};
-		B3532B3321A7B736006CDA0F /* PVSupportTests */ = {
+		B3532B3321A7B736006CDA0F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				B3532B3421A7B736006CDA0F /* PVSupportTests.swift */,
 				B3532B3621A7B736006CDA0F /* Info.plist */,
 				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
 			);
-			path = PVSupportTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		B3721CF621912F7800433E4C /* Carthage-iOS */ = {
@@ -510,7 +521,8 @@
 			children = (
 				B3AB37462187F57A009D9244 /* iCade */,
 			);
-			path = Controller;
+			name = Controller;
+			path = ../Controller;
 			sourceTree = "<group>";
 		};
 		B3AB37462187F57A009D9244 /* iCade */ = {
@@ -545,7 +557,8 @@
 			children = (
 				B35E6C36207EE15D0040709A /* CoreOptions.swift */,
 			);
-			path = CoreOptions;
+			name = CoreOptions;
+			path = ../CoreOptions;
 			sourceTree = "<group>";
 		};
 		B3AF6FDB21916177000FA7F9 /* iOS */ = {
@@ -575,7 +588,8 @@
 				B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */,
 				B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */,
 			);
-			path = EmulatorCore;
+			name = EmulatorCore;
+			path = ../EmulatorCore;
 			sourceTree = "<group>";
 		};
 		B3CDEEBA21D4C3CE000C55F7 /* Features */ = {

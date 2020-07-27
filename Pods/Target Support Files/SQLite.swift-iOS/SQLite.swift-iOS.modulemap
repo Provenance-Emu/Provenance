@@ -1,0 +1,6 @@
+framework module SQLite {
+  umbrella header "SQLite.swift-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

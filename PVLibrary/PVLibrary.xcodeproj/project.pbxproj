@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
-		1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
 		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
+		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
+		1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
 		11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
 		11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
 		11D381F7247D9980005594A2 /* RxSwift.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -449,11 +449,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		112E7E2E247EF3840050431C /* PVGameLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibrary.swift; sourceTree = "<group>"; };
 		1180B31D2492A9B400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B31F2492A9C200636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
-		11D381FB247D9A82005594A2 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = iOS/RxRealm.framework; sourceTree = "<group>"; };
-		112E7E2E247EF3840050431C /* PVGameLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibrary.swift; sourceTree = "<group>"; };
 		11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
+		11D381FB247D9A82005594A2 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = iOS/RxRealm.framework; sourceTree = "<group>"; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1035,8 +1035,8 @@
 		B3579D052106B11D00DDEBD6 = {
 			isa = PBXGroup;
 			children = (
-				B3579D112106B11D00DDEBD6 /* PVLibrary */,
-				B3C04B622107867200E7AF79 /* PVLibraryTests */,
+				B3579D112106B11D00DDEBD6 /* Sources */,
+				B3C04B622107867200E7AF79 /* Tests */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
 			);
@@ -1052,7 +1052,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
+		B3579D112106B11D00DDEBD6 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				B3579D322106B4D700DDEBD6 /* Importer */,
@@ -1071,7 +1071,7 @@
 				B3579D122106B11D00DDEBD6 /* PVLibrary.h */,
 				B3579D132106B11D00DDEBD6 /* Info.plist */,
 			);
-			path = PVLibrary;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		B3579D1D2106B4D600DDEBD6 /* Database */ = {
@@ -1697,13 +1697,13 @@
 			path = iOS;
 			sourceTree = "<group>";
 		};
-		B3C04B622107867200E7AF79 /* PVLibraryTests */ = {
+		B3C04B622107867200E7AF79 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				B3C04B632107867200E7AF79 /* PVLibraryTests.swift */,
 				B3C04B652107867200E7AF79 /* Info.plist */,
 			);
-			path = PVLibraryTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

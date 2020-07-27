@@ -1,0 +1,768 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		18622DE0038CBEB33052E0C88A84C454 /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 874055C64C39AB52C4D3DFF58071B79E /* ZipArchive.m */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		31382EF57A08BB96F5C07707DA4A1D04 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 211BB1A13AEC9C66A856DA1F4A3FC60F /* unzip.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3569139240DAAE386E1975A228E80EA3 /* ZipArchive-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FFCD15FEA53DBE3145833AA66AA38193 /* ZipArchive-tvOS-dummy.m */; };
+		4399D6D628AD4347CE256808A9120E12 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = E6FBA4D214667E3EE78325B35CB6AC5E /* zip.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4861D93A82F1C6004340F18A16FB676F /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 8672A3AAE09387F8A56D0D14060D250D /* mztools.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4AF59F556A291084FCCD7FD3C291411C /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 95304A88DBE524BE90F5BA77F70E5FF1 /* ZipArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B0C3009C1B7CF1D9CFD2B3DEA790127 /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 8672A3AAE09387F8A56D0D14060D250D /* mztools.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5CC8A1517EDBAEEF5DAE040DADE39349 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DAE9CC5EEEF33740C24BD4554BCC27EC /* unzip.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		5F1B28B96D070E168C62D3B1802C3301 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 42DA36962A2138D07BE75A91EF724879 /* ioapi.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		6B996305BBF4DBD0A02655FB896435E4 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C4C96F52BD453967436857B954A6BC /* ioapi.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		73DDCA496A4686D0B1FF78D6AC01898F /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BB590E2D2E5FB863D9634038F190DDE /* mztools.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		763A4A034379AB2BC34127D1372E4B69 /* ZipArchive-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A7874136A4AD9420E960698BC9636BC8 /* ZipArchive-iOS-dummy.m */; };
+		79E76BAB4A85101F25957F7969C58148 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 211BB1A13AEC9C66A856DA1F4A3FC60F /* unzip.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		7BD6C18217C55893B9EAC0BD089486C4 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BB590E2D2E5FB863D9634038F190DDE /* mztools.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		7E68B8834A0664A63464CCA6340AB05A /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = B55721F7959BA5A3867BA1CFCB3AEBD7 /* crypt.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		854CF97A7DB2AC7003D1CBA4BD6DCFE9 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C4C96F52BD453967436857B954A6BC /* ioapi.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		87656C125AC995F4C225F2DB45C5A44F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C20DD94D5330CEA3C8B2706196673C8 /* Foundation.framework */; };
+		9F44A134EAC04ED709524B47E7C4656E /* ZipArchive-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B268365407AE135BCE317514AA7C7F2 /* ZipArchive-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4BD870E4E91E9497EBE5A2DF6072F30 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 42DA36962A2138D07BE75A91EF724879 /* ioapi.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		B7B279E950414412E6D187F49A742FCD /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F384D8CB1EA17D0800A255653E001 /* zip.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		C0575B0303434EF338D77DEA496B1ABE /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = E6FBA4D214667E3EE78325B35CB6AC5E /* zip.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C3BD415FA6C86C9636A3CEB594F134CF /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 874055C64C39AB52C4D3DFF58071B79E /* ZipArchive.m */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		C876EF12C9C720215B7FBC2C951C87DC /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = B55721F7959BA5A3867BA1CFCB3AEBD7 /* crypt.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		CE0EF3CA5D7AD5D19BFEFEE94C84C5E1 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DAE9CC5EEEF33740C24BD4554BCC27EC /* unzip.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		D17862360B13B59399965792BBA448C0 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F384D8CB1EA17D0800A255653E001 /* zip.c */; settings = {COMPILER_FLAGS = "-Dunix -fno-objc-arc -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		DBABA9068E74D61880E9074F4655E0AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14E30E1D8C8354E0A9EC983EDB818911 /* Foundation.framework */; };
+		E5CBC160B63E91BAC28CF7DC83139399 /* ZipArchive-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6486635DF28575D79A8F7610C07CAFC7 /* ZipArchive-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F93BBD1B2971A5EA4E9782775B8ADA81 /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 95304A88DBE524BE90F5BA77F70E5FF1 /* ZipArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		14E30E1D8C8354E0A9EC983EDB818911 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		211BB1A13AEC9C66A856DA1F4A3FC60F /* unzip.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		2BB590E2D2E5FB863D9634038F190DDE /* mztools.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mztools.c; sourceTree = "<group>"; };
+		42DA36962A2138D07BE75A91EF724879 /* ioapi.c */ = {isa = PBXFileReference; includeInIndex = 1; path = ioapi.c; sourceTree = "<group>"; };
+		552AB02992241418F5FA3386CA8C95B5 /* ZipArchive-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ZipArchive-iOS-Info.plist"; sourceTree = "<group>"; };
+		6486635DF28575D79A8F7610C07CAFC7 /* ZipArchive-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "ZipArchive-tvOS-umbrella.h"; path = "../ZipArchive-tvOS/ZipArchive-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		650C20FA0410740FC2C9B8797D70E2E4 /* ZipArchive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = ZipArchive.framework; path = "ZipArchive-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B268365407AE135BCE317514AA7C7F2 /* ZipArchive-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ZipArchive-iOS-umbrella.h"; sourceTree = "<group>"; };
+		6C20DD94D5330CEA3C8B2706196673C8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		6E1F384D8CB1EA17D0800A255653E001 /* zip.c */ = {isa = PBXFileReference; includeInIndex = 1; path = zip.c; sourceTree = "<group>"; };
+		7531A2B6574A7AAA46FF9F83D12149FA /* ZipArchive-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "ZipArchive-iOS.modulemap"; sourceTree = "<group>"; };
+		7929C228C85DB449D8918F150CBD3A6D /* ZipArchive-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "ZipArchive-tvOS-Info.plist"; path = "../ZipArchive-tvOS/ZipArchive-tvOS-Info.plist"; sourceTree = "<group>"; };
+		8672A3AAE09387F8A56D0D14060D250D /* mztools.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		874055C64C39AB52C4D3DFF58071B79E /* ZipArchive.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ZipArchive.m; sourceTree = "<group>"; };
+		91CF9D9A487A95C8D3E27B3F1EC51E5A /* ZipArchive-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "ZipArchive-tvOS.modulemap"; path = "../ZipArchive-tvOS/ZipArchive-tvOS.modulemap"; sourceTree = "<group>"; };
+		95304A88DBE524BE90F5BA77F70E5FF1 /* ZipArchive.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
+		99C4C96F52BD453967436857B954A6BC /* ioapi.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		9BF8B1050EC9336A799A36412E88FA34 /* ZipArchive-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ZipArchive-iOS-prefix.pch"; sourceTree = "<group>"; };
+		A7874136A4AD9420E960698BC9636BC8 /* ZipArchive-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ZipArchive-iOS-dummy.m"; sourceTree = "<group>"; };
+		A9C0221A0F56181A7D742D81E8D6F56B /* ZipArchive-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "ZipArchive-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		B55721F7959BA5A3867BA1CFCB3AEBD7 /* crypt.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		BF26776F2737DAF6BE42F8B249C70E44 /* ZipArchive-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "ZipArchive-tvOS.release.xcconfig"; path = "../ZipArchive-tvOS/ZipArchive-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		D54C7924AA1B957B766B072ACE1E73D7 /* ZipArchive-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "ZipArchive-tvOS.debug.xcconfig"; path = "../ZipArchive-tvOS/ZipArchive-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		D7626D345B98387029CD2D9C75B2C044 /* ZipArchive-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "ZipArchive-tvOS-prefix.pch"; path = "../ZipArchive-tvOS/ZipArchive-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		DAE9CC5EEEF33740C24BD4554BCC27EC /* unzip.c */ = {isa = PBXFileReference; includeInIndex = 1; path = unzip.c; sourceTree = "<group>"; };
+		DE4165C38CEACBDE502F3267DB18F3C0 /* ZipArchive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = ZipArchive.framework; path = "ZipArchive-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6FBA4D214667E3EE78325B35CB6AC5E /* zip.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		E72417FE7D1F5BC792199A9FBE90A656 /* ZipArchive-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "ZipArchive-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		FFCD15FEA53DBE3145833AA66AA38193 /* ZipArchive-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "ZipArchive-tvOS-dummy.m"; path = "../ZipArchive-tvOS/ZipArchive-tvOS-dummy.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3C5BC2AB22EAC51B03052123B6F088DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DBABA9068E74D61880E9074F4655E0AB /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A8204DB4165FE9C6E5BD6683EE5181B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				87656C125AC995F4C225F2DB45C5A44F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3656FE0129840B48FFA07173C1465912 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7E90D52C93FB9620D1D3FDA6CDC4AA9D /* iOS */,
+				6D29E17FEBC59E6A920647E858DA7EED /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		36BDB8A30F55B49E5D29F73FF76780A0 /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				B55721F7959BA5A3867BA1CFCB3AEBD7 /* crypt.h */,
+				42DA36962A2138D07BE75A91EF724879 /* ioapi.c */,
+				99C4C96F52BD453967436857B954A6BC /* ioapi.h */,
+				2BB590E2D2E5FB863D9634038F190DDE /* mztools.c */,
+				8672A3AAE09387F8A56D0D14060D250D /* mztools.h */,
+				DAE9CC5EEEF33740C24BD4554BCC27EC /* unzip.c */,
+				211BB1A13AEC9C66A856DA1F4A3FC60F /* unzip.h */,
+				6E1F384D8CB1EA17D0800A255653E001 /* zip.c */,
+				E6FBA4D214667E3EE78325B35CB6AC5E /* zip.h */,
+			);
+			name = minizip;
+			path = minizip;
+			sourceTree = "<group>";
+		};
+		69974933799D8CBD2DE96E2EC96F6105 /* ZipArchive */ = {
+			isa = PBXGroup;
+			children = (
+				95304A88DBE524BE90F5BA77F70E5FF1 /* ZipArchive.h */,
+				874055C64C39AB52C4D3DFF58071B79E /* ZipArchive.m */,
+				36BDB8A30F55B49E5D29F73FF76780A0 /* minizip */,
+				B2D7BAA6C32F401BB80C7C472AD0E496 /* Support Files */,
+			);
+			name = ZipArchive;
+			path = ZipArchive;
+			sourceTree = "<group>";
+		};
+		6D29E17FEBC59E6A920647E858DA7EED /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				14E30E1D8C8354E0A9EC983EDB818911 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		7E90D52C93FB9620D1D3FDA6CDC4AA9D /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				6C20DD94D5330CEA3C8B2706196673C8 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		8EEBFBADDF916EE4B6CF6D90AC2C53E5 = {
+			isa = PBXGroup;
+			children = (
+				3656FE0129840B48FFA07173C1465912 /* Frameworks */,
+				D2E0984C235EDCBBAE87E0CCE3AEE01F /* Products */,
+				69974933799D8CBD2DE96E2EC96F6105 /* ZipArchive */,
+			);
+			sourceTree = "<group>";
+		};
+		B2D7BAA6C32F401BB80C7C472AD0E496 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				7531A2B6574A7AAA46FF9F83D12149FA /* ZipArchive-iOS.modulemap */,
+				A7874136A4AD9420E960698BC9636BC8 /* ZipArchive-iOS-dummy.m */,
+				552AB02992241418F5FA3386CA8C95B5 /* ZipArchive-iOS-Info.plist */,
+				9BF8B1050EC9336A799A36412E88FA34 /* ZipArchive-iOS-prefix.pch */,
+				6B268365407AE135BCE317514AA7C7F2 /* ZipArchive-iOS-umbrella.h */,
+				E72417FE7D1F5BC792199A9FBE90A656 /* ZipArchive-iOS.debug.xcconfig */,
+				A9C0221A0F56181A7D742D81E8D6F56B /* ZipArchive-iOS.release.xcconfig */,
+				91CF9D9A487A95C8D3E27B3F1EC51E5A /* ZipArchive-tvOS.modulemap */,
+				FFCD15FEA53DBE3145833AA66AA38193 /* ZipArchive-tvOS-dummy.m */,
+				7929C228C85DB449D8918F150CBD3A6D /* ZipArchive-tvOS-Info.plist */,
+				D7626D345B98387029CD2D9C75B2C044 /* ZipArchive-tvOS-prefix.pch */,
+				6486635DF28575D79A8F7610C07CAFC7 /* ZipArchive-tvOS-umbrella.h */,
+				D54C7924AA1B957B766B072ACE1E73D7 /* ZipArchive-tvOS.debug.xcconfig */,
+				BF26776F2737DAF6BE42F8B249C70E44 /* ZipArchive-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/ZipArchive-iOS";
+			sourceTree = "<group>";
+		};
+		D2E0984C235EDCBBAE87E0CCE3AEE01F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DE4165C38CEACBDE502F3267DB18F3C0 /* ZipArchive.framework */,
+				650C20FA0410740FC2C9B8797D70E2E4 /* ZipArchive.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		11DB23DE2221922A2622B7B6026C495C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E68B8834A0664A63464CCA6340AB05A /* crypt.h in Headers */,
+				6B996305BBF4DBD0A02655FB896435E4 /* ioapi.h in Headers */,
+				4B0C3009C1B7CF1D9CFD2B3DEA790127 /* mztools.h in Headers */,
+				79E76BAB4A85101F25957F7969C58148 /* unzip.h in Headers */,
+				C0575B0303434EF338D77DEA496B1ABE /* zip.h in Headers */,
+				9F44A134EAC04ED709524B47E7C4656E /* ZipArchive-iOS-umbrella.h in Headers */,
+				F93BBD1B2971A5EA4E9782775B8ADA81 /* ZipArchive.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0256F0A0A958E17F2D5548F4A1CA6CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C876EF12C9C720215B7FBC2C951C87DC /* crypt.h in Headers */,
+				854CF97A7DB2AC7003D1CBA4BD6DCFE9 /* ioapi.h in Headers */,
+				4861D93A82F1C6004340F18A16FB676F /* mztools.h in Headers */,
+				31382EF57A08BB96F5C07707DA4A1D04 /* unzip.h in Headers */,
+				4399D6D628AD4347CE256808A9120E12 /* zip.h in Headers */,
+				E5CBC160B63E91BAC28CF7DC83139399 /* ZipArchive-tvOS-umbrella.h in Headers */,
+				4AF59F556A291084FCCD7FD3C291411C /* ZipArchive.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1308AE69082A08C9F09D2F377FB3187A /* ZipArchive-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 134EE9C3A8F9C7C5F43CA6082098416A /* Build configuration list for PBXNativeTarget "ZipArchive-tvOS" */;
+			buildPhases = (
+				C0256F0A0A958E17F2D5548F4A1CA6CA /* Headers */,
+				2789BFEE462A99A1994A977CDD419D0D /* Sources */,
+				3C5BC2AB22EAC51B03052123B6F088DD /* Frameworks */,
+				6590981A06A5EA27047E96E0D0159D58 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ZipArchive-tvOS";
+			productName = "ZipArchive-tvOS";
+			productReference = 650C20FA0410740FC2C9B8797D70E2E4 /* ZipArchive.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		8C7E2F3FAAC142C9D7983A77ADF1CC12 /* ZipArchive-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2D9858A69B9D0D710F8BCEFA42187F6 /* Build configuration list for PBXNativeTarget "ZipArchive-iOS" */;
+			buildPhases = (
+				11DB23DE2221922A2622B7B6026C495C /* Headers */,
+				8053258A585288C5B178DB4F299D689B /* Sources */,
+				8A8204DB4165FE9C6E5BD6683EE5181B /* Frameworks */,
+				0DB082F0F116F556AEC91851D54C811E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ZipArchive-iOS";
+			productName = "ZipArchive-iOS";
+			productReference = DE4165C38CEACBDE502F3267DB18F3C0 /* ZipArchive.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AC5556E8BE6DE7BD70BA15FA8AD5C33B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 3C31F1CFFF6F3DF942CDC558015BA8F2 /* Build configuration list for PBXProject "ZipArchive" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8EEBFBADDF916EE4B6CF6D90AC2C53E5;
+			productRefGroup = D2E0984C235EDCBBAE87E0CCE3AEE01F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8C7E2F3FAAC142C9D7983A77ADF1CC12 /* ZipArchive-iOS */,
+				1308AE69082A08C9F09D2F377FB3187A /* ZipArchive-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0DB082F0F116F556AEC91851D54C811E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6590981A06A5EA27047E96E0D0159D58 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2789BFEE462A99A1994A977CDD419D0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F1B28B96D070E168C62D3B1802C3301 /* ioapi.c in Sources */,
+				73DDCA496A4686D0B1FF78D6AC01898F /* mztools.c in Sources */,
+				CE0EF3CA5D7AD5D19BFEFEE94C84C5E1 /* unzip.c in Sources */,
+				B7B279E950414412E6D187F49A742FCD /* zip.c in Sources */,
+				3569139240DAAE386E1975A228E80EA3 /* ZipArchive-tvOS-dummy.m in Sources */,
+				C3BD415FA6C86C9636A3CEB594F134CF /* ZipArchive.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8053258A585288C5B178DB4F299D689B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4BD870E4E91E9497EBE5A2DF6072F30 /* ioapi.c in Sources */,
+				7BD6C18217C55893B9EAC0BD089486C4 /* mztools.c in Sources */,
+				5CC8A1517EDBAEEF5DAE040DADE39349 /* unzip.c in Sources */,
+				D17862360B13B59399965792BBA448C0 /* zip.c in Sources */,
+				763A4A034379AB2BC34127D1372E4B69 /* ZipArchive-iOS-dummy.m in Sources */,
+				18622DE0038CBEB33052E0C88A84C454 /* ZipArchive.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2E4AB7ADA329BB016BC607FE9BEA9D44 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9C0221A0F56181A7D742D81E8D6F56B /* ZipArchive-iOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS.modulemap";
+				PRODUCT_MODULE_NAME = ZipArchive;
+				PRODUCT_NAME = ZipArchive;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		33668B70B476B0F15CAF26B9F319B440 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Archive;
+		};
+		3967F70A3C01EC996C6C4E651901076B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E72417FE7D1F5BC792199A9FBE90A656 /* ZipArchive-iOS.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS.modulemap";
+				PRODUCT_MODULE_NAME = ZipArchive;
+				PRODUCT_NAME = ZipArchive;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		57999029F16932C2F6DA2689E63FFB5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF26776F2737DAF6BE42F8B249C70E44 /* ZipArchive-tvOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = ZipArchive;
+				PRODUCT_NAME = ZipArchive;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		6BFE7D4C5C62C554D4E0A20307F65262 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		91BCB9889B25E2D782B97A269C6060E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D54C7924AA1B957B766B072ACE1E73D7 /* ZipArchive-tvOS.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = ZipArchive;
+				PRODUCT_NAME = ZipArchive;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		9E311BB7A92C5A41F280312A0551AFDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		A4EBD6A5AB8DCF66C5B4EFDDD2148F0D /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF26776F2737DAF6BE42F8B249C70E44 /* ZipArchive-tvOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ZipArchive-tvOS/ZipArchive-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = ZipArchive;
+				PRODUCT_NAME = ZipArchive;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		DF58C39D48020BCAB54C2702930D7AEA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9C0221A0F56181A7D742D81E8D6F56B /* ZipArchive-iOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ZipArchive-iOS/ZipArchive-iOS.modulemap";
+				PRODUCT_MODULE_NAME = ZipArchive;
+				PRODUCT_NAME = ZipArchive;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		134EE9C3A8F9C7C5F43CA6082098416A /* Build configuration list for PBXNativeTarget "ZipArchive-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4EBD6A5AB8DCF66C5B4EFDDD2148F0D /* Archive */,
+				91BCB9889B25E2D782B97A269C6060E5 /* Debug */,
+				57999029F16932C2F6DA2689E63FFB5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3C31F1CFFF6F3DF942CDC558015BA8F2 /* Build configuration list for PBXProject "ZipArchive" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33668B70B476B0F15CAF26B9F319B440 /* Archive */,
+				6BFE7D4C5C62C554D4E0A20307F65262 /* Debug */,
+				9E311BB7A92C5A41F280312A0551AFDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E2D9858A69B9D0D710F8BCEFA42187F6 /* Build configuration list for PBXNativeTarget "ZipArchive-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E4AB7ADA329BB016BC607FE9BEA9D44 /* Archive */,
+				3967F70A3C01EC996C6C4E651901076B /* Debug */,
+				DF58C39D48020BCAB54C2702930D7AEA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AC5556E8BE6DE7BD70BA15FA8AD5C33B /* Project object */;
+}

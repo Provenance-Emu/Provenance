@@ -1,0 +1,90 @@
+PODS:
+  - CocoaLumberjack/Core (3.6.1)
+  - CocoaLumberjack/Swift (3.6.1):
+    - CocoaLumberjack/Core
+  - NSLogger (1.9.7):
+    - NSLogger/ObjC (= 1.9.7)
+  - NSLogger/ObjC (1.9.7)
+  - ProvenanceCores/Atari800 (1.5):
+    - PVLibrary
+    - PVSupport
+  - PVLibrary (1.5.0):
+    - RealmSwift
+    - RxSwift
+    - SQLite.swift
+    - ZipArchive
+  - PVSupport (1.5.0):
+    - CocoaLumberjack/Swift
+    - NSLogger
+    - PVLibrary
+  - Realm (5.3.2):
+    - Realm/Headers (= 5.3.2)
+  - Realm/Headers (5.3.2)
+  - RealmSwift (5.3.2):
+    - Realm (= 5.3.2)
+  - RxRealm (3.1.0):
+    - RealmSwift (~> 5.2)
+    - RxSwift (~> 5.0)
+  - RxSwift (5.1.1)
+  - SQLite.swift (0.12.2):
+    - SQLite.swift/standard (= 0.12.2)
+  - SQLite.swift/standard (0.12.2)
+  - XLActionController (5.0.0):
+    - XLActionController/Core (= 5.0.0)
+  - XLActionController/Core (5.0.0)
+  - ZipArchive (1.4.0)
+
+DEPENDENCIES:
+  - CocoaLumberjack/Swift
+  - ProvenanceCores/Atari800 (from `./`)
+  - PVLibrary (from `./`)
+  - PVSupport (from `./`)
+  - RealmSwift
+  - RxRealm
+  - RxSwift
+  - XLActionController (from `https://github.com/Puasonych/XLActionController.git`, branch `update-for-xcode-11`)
+
+SPEC REPOS:
+  https://cdn.cocoapods.org/:
+    - CocoaLumberjack
+    - NSLogger
+    - Realm
+    - RealmSwift
+    - RxRealm
+    - RxSwift
+    - SQLite.swift
+    - ZipArchive
+
+EXTERNAL SOURCES:
+  ProvenanceCores:
+    :path: "./"
+  PVLibrary:
+    :path: "./"
+  PVSupport:
+    :path: "./"
+  XLActionController:
+    :branch: update-for-xcode-11
+    :git: https://github.com/Puasonych/XLActionController.git
+
+CHECKOUT OPTIONS:
+  XLActionController:
+    :commit: 29fe09f0ebb655b4941ca2392c59ee28e192ad84
+    :git: https://github.com/Puasonych/XLActionController.git
+
+SPEC CHECKSUMS:
+  CocoaLumberjack: b17ae15142558d08bbacf69775fa10c4abbebcc9
+  NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
+  ProvenanceCores: 37501e0d124226c7b23ad0a5edcc023a2961a416
+  PVLibrary: 665f300186226493f444e7f24c1d0d8bfdefbdd9
+  PVSupport: 0bc2652e09d230271ff14d5b0df9a62a45bb069d
+  Realm: c6794276ca8884808ba168a22f9d71362b170b85
+  RealmSwift: 42ec6cec3170aeeda407f797f07268a7d055ebc7
+  RxRealm: 50e5fe5c1f22518205afbb313fbc5580d73bc586
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
+  XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
+  ZipArchive: e25a4373192673e3229ac8d6e9f64a3e5713c966
+
+PODFILE CHECKSUM: a99bb270a8370bd6242941c6cec37861e8d56d3c
+
+COCOAPODS: 1.9.3
