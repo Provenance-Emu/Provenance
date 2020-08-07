@@ -76,3 +76,6 @@
 [submodule "Carthage/Checkouts/SteamController"]
 	path = Carthage/Checkouts/SteamController
 	url = https://github.com/zydeco/SteamController.git
+[submodule "Carthage/Checkouts/appcenter-sdk-apple"]
+	path = Carthage/Checkouts/appcenter-sdk-apple
+	url = https://github.com/microsoft/appcenter-sdk-apple.git

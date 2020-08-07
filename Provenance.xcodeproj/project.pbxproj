@@ -221,6 +221,13 @@
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
+		B339B89E24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B339B89D24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift */; };
+		B339B89F24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B339B89D24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift */; };
+		B339B8A524DE142A00FEF8C8 /* AppCenterCrashes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B339B8A024DE142900FEF8C8 /* AppCenterCrashes.framework */; };
+		B339B8A624DE142A00FEF8C8 /* AppCenterPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B339B8A124DE142900FEF8C8 /* AppCenterPush.framework */; };
+		B339B8A724DE142A00FEF8C8 /* AppCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B339B8A224DE142900FEF8C8 /* AppCenter.framework */; };
+		B339B8A824DE142A00FEF8C8 /* AppCenterDistribute.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B339B8A324DE142A00FEF8C8 /* AppCenterDistribute.framework */; };
+		B339B8A924DE142A00FEF8C8 /* AppCenterAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B339B8A424DE142A00FEF8C8 /* AppCenterAnalytics.framework */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
 		B349AE5C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE661E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -829,6 +836,12 @@
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInCollectionViewCell.swift; sourceTree = "<group>"; };
+		B339B89D24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate-MicrosoftAppCenter.swift"; sourceTree = "<group>"; };
+		B339B8A024DE142900FEF8C8 /* AppCenterCrashes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterCrashes.framework; path = Carthage/Build/iOS/AppCenterCrashes.framework; sourceTree = "<group>"; };
+		B339B8A124DE142900FEF8C8 /* AppCenterPush.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterPush.framework; path = Carthage/Build/iOS/AppCenterPush.framework; sourceTree = "<group>"; };
+		B339B8A224DE142900FEF8C8 /* AppCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenter.framework; path = Carthage/Build/iOS/AppCenter.framework; sourceTree = "<group>"; };
+		B339B8A324DE142A00FEF8C8 /* AppCenterDistribute.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterDistribute.framework; path = Carthage/Build/iOS/AppCenterDistribute.framework; sourceTree = "<group>"; };
+		B339B8A424DE142A00FEF8C8 /* AppCenterAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterAnalytics.framework; path = Carthage/Build/iOS/AppCenterAnalytics.framework; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
@@ -1060,10 +1073,12 @@
 				B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */,
 				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
 				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
+				B339B8A524DE142A00FEF8C8 /* AppCenterCrashes.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
 				B324C61F2192057E009F4EDC /* PVFCEU.framework in Frameworks */,
 				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
+				B339B8A724DE142A00FEF8C8 /* AppCenter.framework in Frameworks */,
 				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
 				B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */,
@@ -1072,6 +1087,7 @@
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
+				B339B8A624DE142A00FEF8C8 /* AppCenterPush.framework in Frameworks */,
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
@@ -1091,10 +1107,12 @@
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */,
+				B339B8A924DE142A00FEF8C8 /* AppCenterAnalytics.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
+				B339B8A824DE142A00FEF8C8 /* AppCenterDistribute.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
@@ -1347,6 +1365,7 @@
 			isa = PBXGroup;
 			children = (
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
+				B339B89D24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
@@ -1478,6 +1497,11 @@
 		1A4DF9F91C0E411500DDBC20 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				B339B8A224DE142900FEF8C8 /* AppCenter.framework */,
+				B339B8A424DE142A00FEF8C8 /* AppCenterAnalytics.framework */,
+				B339B8A024DE142900FEF8C8 /* AppCenterCrashes.framework */,
+				B339B8A324DE142A00FEF8C8 /* AppCenterDistribute.framework */,
+				B339B8A124DE142900FEF8C8 /* AppCenterPush.framework */,
 				1180B3172492A93F00636C8A /* CoreServices.framework */,
 				B316B4DE219269C600693472 /* PVYabause.framework */,
 				423BB97A17DD35B10048F457 /* AssetsLibrary.framework */,
@@ -2686,6 +2710,7 @@
 				B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				B339B89E24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift in Sources */,
 				1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
@@ -2860,6 +2885,7 @@
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
+				B339B89F24DE119000FEF8C8 /* PVAppDelegate-MicrosoftAppCenter.swift in Sources */,
 				B3D5E2AF218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				1A2FB110206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
