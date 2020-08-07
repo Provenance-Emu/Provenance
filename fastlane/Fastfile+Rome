@@ -11,10 +11,11 @@ SWIFT_VERSION=swiftVersion()
 HAS_ROME=command?("rome")
 DIRECTORY="carthage"
 CACHE_PREFIX="#{SWIFT_VERSION}"
-ENV["AWS_ACCESS_KEY_ID"] = "M2B65BPG5JRKHIC8RAKX"
-ENV["AWS_SECRET_ACCESS_KEY"] = "R1pwhbv7foHK88VDgq1cZ3jlVi2YS6PFv9ueZi4p"
-ENV["AWS_ENDPOINT"] = "http://provenance-emu.com:9002"
-ENV["AWS_REGION"] = "us-east-1"
+# provenance-public AWS user
+ENV["AWS_ACCESS_KEY_ID"] = "AKIAUSTWGKVGXWRBPEX2"
+ENV["AWS_SECRET_ACCESS_KEY"] = "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"
+# ENV["AWS_ENDPOINT"] = "http://provenance-emu.com:9002"
+ENV["AWS_REGION"] = "us-east-2"
 
 desc "Use Rome for Carthage to download pre-built binaries"
 lane :rome_download do |options|
