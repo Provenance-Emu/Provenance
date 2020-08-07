@@ -8,9 +8,6 @@
 let TEST_THEMES = false
 import CocoaLumberjackSwift
 import CoreSpotlight
-import Crashlytics
-import Fabric
-import HockeySDK
 import PVLibrary
 import PVSupport
 import RealmSwift
@@ -41,12 +38,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
-        #if targetEnvironment(simulator)
-        #else
-            _initHockeyApp()
-            _initCrashlytics()
-        #endif
 
         do {
             try RomDatabase.initDefaultDatabase()
@@ -298,43 +289,6 @@ extension PVAppDelegate {
         DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
     }
 
-    func _initHockeyApp() {
-        #if os(tvOS)
-            BITHockeyManager.shared().configure(withIdentifier: "613008343753414d93a7202324461575", delegate: self)
-        #else
-            BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
-        #endif
-
-        #if DEBUG
-            BITHockeyManager.shared().isMetricsManagerDisabled = true
-        #endif
-
-        let masterBranch = kGITBranch.lowercased() == "master"
-        let developBranch = kGITBranch.lowercased() == "develop"
-        let travisBuild = ["jmattiello", "travis"].contains(builtByUser)
-        let masterOrDevelopBranch = masterBranch || developBranch
-//        let feedbackEnabled = masterOrDevelopBranch && travisBuild
-
-        #if os(iOS)
-            BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
-            BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
-        #endif
-
-        BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch && travisBuild
-
-//        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
-//            BITHockeyManager.shared().isUpdateManagerDisabled = true
-//        }
-
-        BITHockeyManager.shared().logLevel = BITLogLevel.warning
-        BITHockeyManager.shared().start()
-        BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
-    }
-
-    func _initCrashlytics() {
-        Fabric.with([Answers.self, Crashlytics.self])
-    }
-
     func setDefaultsFromSettingsBundle() {
         // Read PreferenceSpecifiers from Root.plist in Settings.Bundle
         if let settingsURL = Bundle.main.url(forResource: "Root", withExtension: "plist", subdirectory: "Settings.bundle"),
@@ -351,33 +305,6 @@ extension PVAppDelegate {
             }
         } else {
             ELOG("registerDefaultsFromSettingsBundle: Could not find Settings.bundle")
-        }
-    }
-}
-
-extension PVAppDelegate: BITHockeyManagerDelegate {
-    func getLogFilesContentWithMaxSize(_ maxSize: Int) -> String {
-        var description = ""
-        fileLogger.logFileManager.sortedLogFileInfos.forEach { logFile in
-            if let logData = FileManager.default.contents(atPath: logFile.filePath) {
-                if !logData.isEmpty {
-                    description.append(String(data: logData, encoding: String.Encoding.utf8)!)
-                }
-            }
-        }
-        if description.count > maxSize {
-            let index = description.index(description.startIndex, offsetBy: description.count - maxSize - 1)
-            description = String(description.suffix(from: index))
-        }
-        return description
-    }
-
-    func applicationLog(for _: BITCrashManager!) -> String! {
-        let description = getLogFilesContentWithMaxSize(5000) // 5000 bytes should be enough!
-        if description.isEmpty {
-            return nil
-        } else {
-            return description
         }
     }
 }

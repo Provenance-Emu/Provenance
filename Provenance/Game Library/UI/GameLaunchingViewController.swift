@@ -6,7 +6,6 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import Crashlytics
 import PVLibrary
 import PVSupport
 import RealmSwift

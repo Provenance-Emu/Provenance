@@ -12,16 +12,6 @@
 			<key>Title</key>
 			<string>Notifications</string>
 		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Disable HockeyApp update notifications</string>
-			<key>Key</key>
-			<string>hockeyAppDisabled</string>
-			<key>DefaultValue</key>
-			<false/>
-		</dict>
 	</array>
 </dict>
 </plist>
