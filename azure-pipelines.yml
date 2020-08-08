@@ -49,9 +49,6 @@ steps:
 - task: Cache@2
   inputs:
     key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
-    restoreKeys: |
-       yarn | "$(Agent.OS)"
-       yarn
     path: Carthage/Build
   displayName: Carthage cache
 - script: |
