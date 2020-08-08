@@ -56,6 +56,8 @@ steps:
   displayName: Carthage cache
 - script: |
     bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
+  env:
+    GITHUB_ACCESS_TOKEN: $(GitHubAccessToken)
   displayName: Carthage bootstrap
 
 - task: Cache@2
@@ -69,8 +71,8 @@ steps:
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: false
-    workingDirectory: build
   displayName: Building project
 
 - task: Xcode@5
@@ -82,5 +84,4 @@ steps:
     packageApp: false
     destinationPlatformOption: iOS
     destinationSimulators: iPhone 8
-    workingDirectory: build
   displayName: Running tests
