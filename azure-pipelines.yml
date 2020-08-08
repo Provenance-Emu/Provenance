@@ -14,6 +14,12 @@ variables:
 
 steps:
 
+- checkout: self # self represents the repo where the initial Pipelines YAML file was found
+  clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+  submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
+  path: string  # path to check out source code, relative to the agent's build directory (e.g. \_work\1); defaults to a directory called `s`
+  persistCredentials: true  # if 'true', leave the OAuth token in the Git config after the initial fetch; defaults to false
+
 - task: UseRubyVersion@0
   displayName: 'Use Ruby >= 2.5.1'
   inputs:
@@ -24,10 +30,6 @@ steps:
   inputs:
     key: 'gems | $(Agent.OS) | Gemfile | Gemfile.lock'
     path: '$(BUNDLE_PATH)'
-
-# - script: 'gem install bundler'
-#   displayName: 'Install bundler'
-
 - script: 'bundle install --jobs=8 --binstubs --without documentation test'
   displayName: 'Install Gems'
   
