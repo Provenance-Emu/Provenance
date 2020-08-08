@@ -30,13 +30,15 @@ steps:
   inputs:
     key: 'gems | $(Agent.OS) | Gemfile | Gemfile.lock'
     path: '$(BUNDLE_PATH)'
-- script: 'bundle install --jobs=8 --binstubs --without documentation test'
+- script: |
+    bundle config set without 'documentation test'
+    bundle install --jobs=8
   displayName: 'Install Gems'
-  
+
 - task: Cache@2
   inputs:
     key: 'Romefile'
-    path: ~/Library/Caches/Rome
+    path: $(HOME)/Library/Caches/Rome
   displayName: Rome cache
 - script: |
     brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
@@ -56,12 +58,19 @@ steps:
     bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
   displayName: Carthage bootstrap
 
+- task: Cache@2
+  inputs:
+    key: 'swiftc --version'
+    path: build
+  displayName: XCode cache
+
 - task: Xcode@5
   inputs:
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
     packageApp: false
+    workingDirectory: build
   displayName: Building project
 
 - task: Xcode@5
@@ -73,4 +82,5 @@ steps:
     packageApp: false
     destinationPlatformOption: iOS
     destinationSimulators: iPhone 8
+    workingDirectory: build
   displayName: Running tests
