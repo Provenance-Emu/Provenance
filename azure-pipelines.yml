@@ -59,6 +59,10 @@ steps:
     bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
   displayName: Carthage bootstrap
 
+- script: |
+    bundle exec fastlane rome_upload platform:$(carthage-platform)
+  displayName: Rome upload
+
 - task: Cache@2
   inputs:
     key: 'swiftc --version'
