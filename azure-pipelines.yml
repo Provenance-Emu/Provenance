@@ -28,7 +28,7 @@ steps:
 
 - task: Cache@2
   inputs:
-    key: 'gems | "$(Agent.OS)" | my.gemspec'
+    key: 'gems | "$(Agent.OS)"'
     restoreKeys: | 
       gems | "$(Agent.OS)"
       gems
