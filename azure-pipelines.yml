@@ -28,7 +28,7 @@ steps:
 # - script: 'gem install bundler'
 #   displayName: 'Install bundler'
 
-- script: 'bundle install --jobs=8 --binstubs'
+- script: 'bundle install --jobs=8 --binstubs --without documentation test'
   displayName: 'Install Gems'
   
 - task: Cache@2
