@@ -11,6 +11,7 @@ variables:
   sdk: 'iphonesimulator'
   configuration: 'Debug'
   carthage-platform: 'iOS'
+  BUNDLE_PATH: $(Pipeline.Workspace)/.bundle
 
 steps:
 
@@ -26,10 +27,13 @@ steps:
     versionSpec: '>= 2.5.1'
 
 - task: Cache@2
-  displayName: 'Cache gems'
   inputs:
-    key: 'gems | $(Agent.OS) | Gemfile | Gemfile.lock'
-    path: '$(BUNDLE_PATH)'
+    key: 'gems | "$(Agent.OS)" | my.gemspec'
+    restoreKeys: | 
+      gems | "$(Agent.OS)"
+      gems
+    path: $(BUNDLE_PATH)
+  displayName: Cache gems
 - script: |
     bundle config set without 'documentation test'
     bundle install --jobs=8
@@ -53,8 +57,6 @@ steps:
   displayName: Carthage cache
 - script: |
     bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
-  env:
-    GITHUB_ACCESS_TOKEN: $(GitHubAccessToken)
   displayName: Carthage bootstrap
 
 - task: Cache@2
