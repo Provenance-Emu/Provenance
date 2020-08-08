@@ -13,13 +13,34 @@ variables:
   carthage-platform: 'iOS'
 
 steps:
+
 - task: Cache@2
   inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved'
+    key: 'Gemfile | Gemfile.lock | Romefile'
+    restoreKeys: |
+       Gemfile.lock | Romefile
+       Romefile
+    path: ~/Library/Caches/Rome
+  displayName: Rome cache
+- script: |
+    brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
+    brew install tmspzz/homebrew-tap/rome
+    bundle install
+    bundle exec fastlane rome_download platform:$(carthage-platform)
+  displayName: Rome download
+
+- task: Cache@2
+  inputs:
+    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
+    restoreKeys: |
+       yarn | "$(Agent.OS)"
+       yarn
     path: Carthage/Build
   displayName: Carthage cache
-- script: carthage bootstrap --platform $(carthage-platform) --project-directory ./ --cache-builds
+- script: |
+    bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
   displayName: Carthage bootstrap
+
 - task: Xcode@5
   inputs:
     scheme: '$(scheme)'
@@ -27,6 +48,7 @@ steps:
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
     packageApp: false
   displayName: Building project
+
 - task: Xcode@5
   inputs:
     actions: 'test'
