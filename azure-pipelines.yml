@@ -38,7 +38,7 @@ steps:
   displayName: Rome cache
 - script: |
     brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
-    brew install tmspzz/homebrew-tap/rome
+    brew install tmspzz/homebrew-tap/rome 2>/dev/null || true
     bundle exec fastlane rome_download platform:$(carthage-platform)
   displayName: Rome download
 
