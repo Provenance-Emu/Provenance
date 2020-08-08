@@ -14,18 +14,31 @@ variables:
 
 steps:
 
+- task: UseRubyVersion@0
+  displayName: 'Use Ruby >= 2.5.1'
+  inputs:
+    versionSpec: '>= 2.5.1'
+
+- task: Cache@2
+  displayName: 'Cache gems'
+  inputs:
+    key: 'gems | $(Agent.OS) | Gemfile | Gemfile.lock'
+    path: '$(BUNDLE_PATH)'
+
+# - script: 'gem install bundler'
+#   displayName: 'Install bundler'
+
+- script: 'bundle install --jobs=8 --binstubs'
+  displayName: 'Install Gems'
+  
 - task: Cache@2
   inputs:
-    key: 'Gemfile | Gemfile.lock | Romefile'
-    restoreKeys: |
-       Gemfile.lock | Romefile
-       Romefile
+    key: 'Romefile'
     path: ~/Library/Caches/Rome
   displayName: Rome cache
 - script: |
     brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
     brew install tmspzz/homebrew-tap/rome
-    bundle install
     bundle exec fastlane rome_download platform:$(carthage-platform)
   displayName: Rome download
 
