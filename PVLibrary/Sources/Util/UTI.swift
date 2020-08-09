@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 import CoreServices
 
 public extension UTI {

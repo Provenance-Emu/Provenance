@@ -1,0 +1,764 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1206BC42063F3DBDC4E1D89E2A430BCB /* RxRelay-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D18EA278B52AFA3C33B313FCFD02B1 /* RxRelay-tvOS-dummy.m */; };
+		1BAB2EE10F5597773D62F73921172404 /* RxRelay-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = A8AEADBAE1251C0394D0AD25A7AFD3F1 /* RxRelay-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2323B91EB738D00B23F3BE8A4FAD3DC5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4145FA586BDA85ECFB3A93C41BFF63 /* Utils.swift */; };
+		3C34178E10A45CAC69656BBA0AB4AB29 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4145FA586BDA85ECFB3A93C41BFF63 /* Utils.swift */; };
+		3CD2688E46D0BB8F13C207B82F4EE13A /* Observable+Bind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E67D8B251659ACB75A299179D5779AB /* Observable+Bind.swift */; };
+		61E054738F7147FC0F7C99DCED550144 /* PublishRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D39B6C07BCFF28D898788CC2385259 /* PublishRelay.swift */; };
+		6B829301B4822C265851EF10C895E6D1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F535243BB6B0D9038970B8516BE885BE /* Foundation.framework */; };
+		726F09188551708BE0363652CDE257FF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A773C466C51032F2B8E8EA409B406179 /* Foundation.framework */; };
+		83A2E51C51900E2213F88F38047D5097 /* BehaviorRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145036FBEFEC168F076C69E6FA838DC /* BehaviorRelay.swift */; };
+		8CC8F28A64278A987DBC2DC0747D60DB /* RxRelay-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D6260F5EBB7A797A7902A847F74FFC34 /* RxRelay-iOS-dummy.m */; };
+		9EABA8C87DEBB4A3D05D4906F74E24FA /* Observable+Bind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E67D8B251659ACB75A299179D5779AB /* Observable+Bind.swift */; };
+		CFD84C413CC66B828B235963662ECABD /* PublishRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D39B6C07BCFF28D898788CC2385259 /* PublishRelay.swift */; };
+		E5611BA51201C5E6C63A76E1AABA5E93 /* RxRelay-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8680CCE0F13A5A1C55D3CC5A5F3DF31E /* RxRelay-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EAA3EAACA2E5F64FB4EB90DE938E17C2 /* BehaviorRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145036FBEFEC168F076C69E6FA838DC /* BehaviorRelay.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		804E7678B7D0F411545C10FFE3910EAB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 869F01310E427726268AB4C7B3FF922D /* RxSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A8D89AD6E813D43721E0B30A19DCA863;
+			remoteInfo = "RxSwift-iOS";
+		};
+		9A2C2BD38C1C102CDA9ECC032D8EFE9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 869F01310E427726268AB4C7B3FF922D /* RxSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2B4DC59739E6A2FEA529728FB1146453;
+			remoteInfo = "RxSwift-tvOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02D39B6C07BCFF28D898788CC2385259 /* PublishRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PublishRelay.swift; path = RxRelay/PublishRelay.swift; sourceTree = "<group>"; };
+		18D18EA278B52AFA3C33B313FCFD02B1 /* RxRelay-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "RxRelay-tvOS-dummy.m"; path = "../RxRelay-tvOS/RxRelay-tvOS-dummy.m"; sourceTree = "<group>"; };
+		1BEA3DB200B8B92E6992040DE14B1FBE /* RxRelay-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "RxRelay-tvOS.debug.xcconfig"; path = "../RxRelay-tvOS/RxRelay-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		2B86ED73192B6541ACAF2EA934F7CD4A /* RxRelay-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "RxRelay-iOS-Info.plist"; sourceTree = "<group>"; };
+		3E67D8B251659ACB75A299179D5779AB /* Observable+Bind.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Observable+Bind.swift"; path = "RxRelay/Observable+Bind.swift"; sourceTree = "<group>"; };
+		49A630860DE69DE8172876734EDD7FF7 /* RxRelay-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "RxRelay-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		65011AAF821DF6E30EAE11E9FA97E628 /* RxRelay-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "RxRelay-tvOS.modulemap"; path = "../RxRelay-tvOS/RxRelay-tvOS.modulemap"; sourceTree = "<group>"; };
+		6F746BEFE5A3A6C95BA8582A8D630481 /* RxRelay-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "RxRelay-iOS.modulemap"; sourceTree = "<group>"; };
+		8680CCE0F13A5A1C55D3CC5A5F3DF31E /* RxRelay-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RxRelay-iOS-umbrella.h"; sourceTree = "<group>"; };
+		869F01310E427726268AB4C7B3FF922D /* RxSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxSwift; path = RxSwift.xcodeproj; sourceTree = "<group>"; };
+		918EA5A6CA138EA2E158F8FF27238C78 /* RxRelay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = RxRelay.framework; path = "RxRelay-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9342C85D91B3F48194AE83404ADD38CC /* RxRelay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = RxRelay.framework; path = "RxRelay-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		96D25DCE4E251223EA1B930792DF4E0E /* RxRelay-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "RxRelay-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		9DEAA7B45BD01BFA456B28F928EB0F87 /* RxRelay-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "RxRelay-tvOS-prefix.pch"; path = "../RxRelay-tvOS/RxRelay-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		A145036FBEFEC168F076C69E6FA838DC /* BehaviorRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BehaviorRelay.swift; path = RxRelay/BehaviorRelay.swift; sourceTree = "<group>"; };
+		A6D5EC26484AD69400536B6BF9153390 /* RxRelay-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RxRelay-iOS-prefix.pch"; sourceTree = "<group>"; };
+		A773C466C51032F2B8E8EA409B406179 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		A8AEADBAE1251C0394D0AD25A7AFD3F1 /* RxRelay-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "RxRelay-tvOS-umbrella.h"; path = "../RxRelay-tvOS/RxRelay-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		AA4145FA586BDA85ECFB3A93C41BFF63 /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = RxRelay/Utils.swift; sourceTree = "<group>"; };
+		AB5EEF39168356B7953CA28E460A9B69 /* RxRelay-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "RxRelay-tvOS.release.xcconfig"; path = "../RxRelay-tvOS/RxRelay-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		D6260F5EBB7A797A7902A847F74FFC34 /* RxRelay-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "RxRelay-iOS-dummy.m"; sourceTree = "<group>"; };
+		F535243BB6B0D9038970B8516BE885BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		FD64EFDC8AD27AFC1FE8428D28EC072E /* RxRelay-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "RxRelay-tvOS-Info.plist"; path = "../RxRelay-tvOS/RxRelay-tvOS-Info.plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		081FBE75E87A874BC5DF9A12BCD98B96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B829301B4822C265851EF10C895E6D1 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F96BC4D89872679A27E55650C7DE820 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				726F09188551708BE0363652CDE257FF /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2F5D2CD301E27E5DABE6F82EFD5846E3 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				A773C466C51032F2B8E8EA409B406179 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		3C95B9B7E356A90CDFC189D5E6FD6A2E = {
+			isa = PBXGroup;
+			children = (
+				AA8CAAE9561BB37539B14170AB4A7D24 /* Dependencies */,
+				47E60B6E8319410FC9A0070A5121E8DD /* Frameworks */,
+				8E47627941238ED8223398CF0DA22F1B /* Products */,
+				A9B3006FE5221DBDE2368C714228F08A /* RxRelay */,
+			);
+			sourceTree = "<group>";
+		};
+		47E60B6E8319410FC9A0070A5121E8DD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9FA1A805A883F6DEB4FDB8BBFB12F170 /* iOS */,
+				2F5D2CD301E27E5DABE6F82EFD5846E3 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8E47627941238ED8223398CF0DA22F1B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9342C85D91B3F48194AE83404ADD38CC /* RxRelay.framework */,
+				918EA5A6CA138EA2E158F8FF27238C78 /* RxRelay.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		98DDE3873A07A6C86196B2DE85AE1F84 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				6F746BEFE5A3A6C95BA8582A8D630481 /* RxRelay-iOS.modulemap */,
+				D6260F5EBB7A797A7902A847F74FFC34 /* RxRelay-iOS-dummy.m */,
+				2B86ED73192B6541ACAF2EA934F7CD4A /* RxRelay-iOS-Info.plist */,
+				A6D5EC26484AD69400536B6BF9153390 /* RxRelay-iOS-prefix.pch */,
+				8680CCE0F13A5A1C55D3CC5A5F3DF31E /* RxRelay-iOS-umbrella.h */,
+				49A630860DE69DE8172876734EDD7FF7 /* RxRelay-iOS.debug.xcconfig */,
+				96D25DCE4E251223EA1B930792DF4E0E /* RxRelay-iOS.release.xcconfig */,
+				65011AAF821DF6E30EAE11E9FA97E628 /* RxRelay-tvOS.modulemap */,
+				18D18EA278B52AFA3C33B313FCFD02B1 /* RxRelay-tvOS-dummy.m */,
+				FD64EFDC8AD27AFC1FE8428D28EC072E /* RxRelay-tvOS-Info.plist */,
+				9DEAA7B45BD01BFA456B28F928EB0F87 /* RxRelay-tvOS-prefix.pch */,
+				A8AEADBAE1251C0394D0AD25A7AFD3F1 /* RxRelay-tvOS-umbrella.h */,
+				1BEA3DB200B8B92E6992040DE14B1FBE /* RxRelay-tvOS.debug.xcconfig */,
+				AB5EEF39168356B7953CA28E460A9B69 /* RxRelay-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/RxRelay-iOS";
+			sourceTree = "<group>";
+		};
+		9FA1A805A883F6DEB4FDB8BBFB12F170 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				F535243BB6B0D9038970B8516BE885BE /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		A9B3006FE5221DBDE2368C714228F08A /* RxRelay */ = {
+			isa = PBXGroup;
+			children = (
+				A145036FBEFEC168F076C69E6FA838DC /* BehaviorRelay.swift */,
+				3E67D8B251659ACB75A299179D5779AB /* Observable+Bind.swift */,
+				02D39B6C07BCFF28D898788CC2385259 /* PublishRelay.swift */,
+				AA4145FA586BDA85ECFB3A93C41BFF63 /* Utils.swift */,
+				98DDE3873A07A6C86196B2DE85AE1F84 /* Support Files */,
+			);
+			name = RxRelay;
+			path = RxRelay;
+			sourceTree = "<group>";
+		};
+		AA8CAAE9561BB37539B14170AB4A7D24 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				869F01310E427726268AB4C7B3FF922D /* RxSwift */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		20BE2B00A735117AE61971D962676F01 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5611BA51201C5E6C63A76E1AABA5E93 /* RxRelay-iOS-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5BB890688283EAE70073967D4F18C91 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BAB2EE10F5597773D62F73921172404 /* RxRelay-tvOS-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4BA3F394AB8B882AEB99A3B6EF4D5C87 /* RxRelay-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADC92316C2ADC41806252F65EAE765FF /* Build configuration list for PBXNativeTarget "RxRelay-tvOS" */;
+			buildPhases = (
+				A5BB890688283EAE70073967D4F18C91 /* Headers */,
+				233D42105DBB30FE2256FC65E36541A6 /* Sources */,
+				5F96BC4D89872679A27E55650C7DE820 /* Frameworks */,
+				DB61F83FC8A1AF739E9298DE6AB551EC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C5387C2C10A1FD322B0ACB285E1C97A4 /* PBXTargetDependency */,
+			);
+			name = "RxRelay-tvOS";
+			productName = "RxRelay-tvOS";
+			productReference = 918EA5A6CA138EA2E158F8FF27238C78 /* RxRelay.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		BFAA16E7CFB98ABF9404AF74D2384C2E /* RxRelay-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 936322CBFD9B0658D1BA148A18420666 /* Build configuration list for PBXNativeTarget "RxRelay-iOS" */;
+			buildPhases = (
+				20BE2B00A735117AE61971D962676F01 /* Headers */,
+				5C05241A14C6292F483ABA3528C112FA /* Sources */,
+				081FBE75E87A874BC5DF9A12BCD98B96 /* Frameworks */,
+				5DA1EC3EB3D5C657871D18F15736A2B5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				96EE01D5DCF897F6A087335306B9E333 /* PBXTargetDependency */,
+			);
+			name = "RxRelay-iOS";
+			productName = "RxRelay-iOS";
+			productReference = 9342C85D91B3F48194AE83404ADD38CC /* RxRelay.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ACF0932BA2A502AF6DF97FEB57C23FB9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 9234695EF8CA2CCC67C337DE7A7F64E2 /* Build configuration list for PBXProject "RxRelay" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3C95B9B7E356A90CDFC189D5E6FD6A2E;
+			productRefGroup = 8E47627941238ED8223398CF0DA22F1B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProjectRef = 869F01310E427726268AB4C7B3FF922D /* RxSwift */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				BFAA16E7CFB98ABF9404AF74D2384C2E /* RxRelay-iOS */,
+				4BA3F394AB8B882AEB99A3B6EF4D5C87 /* RxRelay-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5DA1EC3EB3D5C657871D18F15736A2B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB61F83FC8A1AF739E9298DE6AB551EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		233D42105DBB30FE2256FC65E36541A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83A2E51C51900E2213F88F38047D5097 /* BehaviorRelay.swift in Sources */,
+				9EABA8C87DEBB4A3D05D4906F74E24FA /* Observable+Bind.swift in Sources */,
+				61E054738F7147FC0F7C99DCED550144 /* PublishRelay.swift in Sources */,
+				1206BC42063F3DBDC4E1D89E2A430BCB /* RxRelay-tvOS-dummy.m in Sources */,
+				2323B91EB738D00B23F3BE8A4FAD3DC5 /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C05241A14C6292F483ABA3528C112FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAA3EAACA2E5F64FB4EB90DE938E17C2 /* BehaviorRelay.swift in Sources */,
+				3CD2688E46D0BB8F13C207B82F4EE13A /* Observable+Bind.swift in Sources */,
+				CFD84C413CC66B828B235963662ECABD /* PublishRelay.swift in Sources */,
+				8CC8F28A64278A987DBC2DC0747D60DB /* RxRelay-iOS-dummy.m in Sources */,
+				3C34178E10A45CAC69656BBA0AB4AB29 /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		96EE01D5DCF897F6A087335306B9E333 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-iOS";
+			targetProxy = 804E7678B7D0F411545C10FFE3910EAB /* PBXContainerItemProxy */;
+		};
+		C5387C2C10A1FD322B0ACB285E1C97A4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-tvOS";
+			targetProxy = 9A2C2BD38C1C102CDA9ECC032D8EFE9B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0F5C8FD296C2C5631982248F02CBC311 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		3351D22ECBA79D0D90DBC0F4C991417E /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB5EEF39168356B7953CA28E460A9B69 /* RxRelay-tvOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = RxRelay;
+				PRODUCT_NAME = RxRelay;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		544B516802DB5309B0C0E9542E5B3B34 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 49A630860DE69DE8172876734EDD7FF7 /* RxRelay-iOS.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/RxRelay-iOS/RxRelay-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RxRelay-iOS/RxRelay-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxRelay-iOS/RxRelay-iOS.modulemap";
+				PRODUCT_MODULE_NAME = RxRelay;
+				PRODUCT_NAME = RxRelay;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		6C53E0833328F36702CBFE8064617010 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 96D25DCE4E251223EA1B930792DF4E0E /* RxRelay-iOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/RxRelay-iOS/RxRelay-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RxRelay-iOS/RxRelay-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxRelay-iOS/RxRelay-iOS.modulemap";
+				PRODUCT_MODULE_NAME = RxRelay;
+				PRODUCT_NAME = RxRelay;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		75F147C90ED5A128EFAC5DC2224A4D78 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Archive;
+		};
+		8842E7EEF2DC674C844FA492C12BDB62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		8D6AA9EAAFBC1EED4A56AD21B2E280DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB5EEF39168356B7953CA28E460A9B69 /* RxRelay-tvOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = RxRelay;
+				PRODUCT_NAME = RxRelay;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B84FA596FCE0D64275F104E714534C23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BEA3DB200B8B92E6992040DE14B1FBE /* RxRelay-tvOS.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxRelay-tvOS/RxRelay-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = RxRelay;
+				PRODUCT_NAME = RxRelay;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E7AA8347E0F794ECB875F337EF6C1F73 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 96D25DCE4E251223EA1B930792DF4E0E /* RxRelay-iOS.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/RxRelay-iOS/RxRelay-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RxRelay-iOS/RxRelay-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxRelay-iOS/RxRelay-iOS.modulemap";
+				PRODUCT_MODULE_NAME = RxRelay;
+				PRODUCT_NAME = RxRelay;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9234695EF8CA2CCC67C337DE7A7F64E2 /* Build configuration list for PBXProject "RxRelay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				75F147C90ED5A128EFAC5DC2224A4D78 /* Archive */,
+				0F5C8FD296C2C5631982248F02CBC311 /* Debug */,
+				8842E7EEF2DC674C844FA492C12BDB62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		936322CBFD9B0658D1BA148A18420666 /* Build configuration list for PBXNativeTarget "RxRelay-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6C53E0833328F36702CBFE8064617010 /* Archive */,
+				544B516802DB5309B0C0E9542E5B3B34 /* Debug */,
+				E7AA8347E0F794ECB875F337EF6C1F73 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADC92316C2ADC41806252F65EAE765FF /* Build configuration list for PBXNativeTarget "RxRelay-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3351D22ECBA79D0D90DBC0F4C991417E /* Archive */,
+				B84FA596FCE0D64275F104E714534C23 /* Debug */,
+				8D6AA9EAAFBC1EED4A56AD21B2E280DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ACF0932BA2A502AF6DF97FEB57C23FB9 /* Project object */;
+}

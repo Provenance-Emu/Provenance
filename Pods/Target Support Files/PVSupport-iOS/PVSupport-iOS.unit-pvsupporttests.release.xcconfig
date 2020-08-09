@@ -2,7 +2,7 @@ APPLICATION_EXTENSION_API_ONLY = YES
 FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/NSLogger-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/PVSupport-iOS"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
-OTHER_LDFLAGS = $(inherited) -ObjC -framework "CFNetwork" -framework "CocoaLumberjack" -framework "Foundation" -framework "NSLogger" -framework "PVSupport" -framework "SystemConfiguration" -framework "UIKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -framework "AVFoundation" -framework "CFNetwork" -framework "CocoaLumberjack" -framework "Foundation" -framework "GameController" -framework "NSLogger" -framework "PVSupport" -framework "SystemConfiguration" -framework "UIKit"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

@@ -32,19 +32,21 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '10.0'
   s.osx.deployment_target = '10.15'
 
-  s.frameworks = 'CoreGraphic'
-  s.frameworks = 'CoreServices'
-  s.frameworks = 'Foundation'
+  s.frameworks = 'CoreGraphics', 'CoreServices', 'Foundation'
 
   s.module_name = 'PVLibrary'
   s.header_dir = 'PVLibrary'
 
   s.dependency 'LzmaSDK-ObjC'
-  s.dependency 'PVSupport'
+  s.dependency 'Realm'
   s.dependency 'RealmSwift'
+  s.dependency 'RxCocoa'
+  s.dependency 'RxRealm'
   s.dependency 'RxSwift'
   s.dependency 'SQLite.swift'
-  s.dependency 'ZipArchive'
+  s.dependency 'SWCompression'
+  s.dependency 'SSZipArchive'
+  s.dependency 'PVSupport'
 
   @sources_root = 'PVLibrary/Sources'
   @tests_root = 'PVLibrary/Tests'
@@ -63,4 +65,6 @@ Pod::Spec.new do |s|
     # test_spec.test_type = :ui
     test_spec.source_files = 'PVLibrary/Tests/**/*.swift'
   end
+
+  s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
 end

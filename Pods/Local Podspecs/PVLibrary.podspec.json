@@ -26,17 +26,27 @@
     "tvos": "10.0",
     "osx": "10.15"
   },
-  "frameworks": "Foundation",
+  "frameworks": [
+    "CoreGraphics",
+    "CoreServices",
+    "Foundation"
+  ],
   "module_name": "PVLibrary",
   "header_dir": "PVLibrary",
   "dependencies": {
     "LzmaSDK-ObjC": [
 
     ],
-    "PVSupport": [
+    "Realm": [
 
     ],
     "RealmSwift": [
+
+    ],
+    "RxCocoa": [
+
+    ],
+    "RxRealm": [
 
     ],
     "RxSwift": [
@@ -45,7 +55,13 @@
     "SQLite.swift": [
 
     ],
-    "ZipArchive": [
+    "SWCompression": [
+
+    ],
+    "SSZipArchive": [
+
+    ],
+    "PVSupport": [
 
     ]
   },
@@ -53,6 +69,9 @@
   "source_files": [
     "PVLibrary/Sources/**/*.{swift,h,m,mm,c}"
   ],
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "-lObjC"
+  },
   "testspecs": [
     {
       "name": "PVLibraryTests",

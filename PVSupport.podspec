@@ -32,8 +32,7 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '10.0'
   s.osx.deployment_target = '10.15'
 
-  s.frameworks = 'GameController'
-  s.frameworks = 'Foundation'
+  s.frameworks = 'AVFoundation', 'Foundation', 'GameController'
 
   s.module_name = 'PVSupport'
   s.header_dir = 'PVSupport'

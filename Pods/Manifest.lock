@@ -6,6 +6,7 @@ PODS:
     - AppCenter/Core
   - AppCenter/Distribute (3.3.2):
     - AppCenter/Core
+  - BitByteData (1.4.3)
   - CocoaLumberjack/Core (3.6.2)
   - CocoaLumberjack/Swift (3.6.2):
     - CocoaLumberjack/Core
@@ -19,17 +20,25 @@ PODS:
   - PVLibrary (1.5.0):
     - LzmaSDK-ObjC
     - PVSupport
+    - Realm
     - RealmSwift
+    - RxCocoa
+    - RxRealm
     - RxSwift
     - SQLite.swift
-    - ZipArchive
+    - SSZipArchive
+    - SWCompression
   - PVLibrary/PVLibraryTests (1.5.0):
     - LzmaSDK-ObjC
     - PVSupport
+    - Realm
     - RealmSwift
+    - RxCocoa
+    - RxRealm
     - RxSwift
     - SQLite.swift
-    - ZipArchive
+    - SSZipArchive
+    - SWCompression
   - PVSupport (1.5.0):
     - CocoaLumberjack/Swift
     - NSLogger
@@ -41,17 +50,60 @@ PODS:
   - Realm/Headers (5.3.3)
   - RealmSwift (5.3.3):
     - Realm (= 5.3.3)
+  - RxCocoa (5.1.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
   - RxRealm (3.1.0):
     - RealmSwift (~> 5.2)
     - RxSwift (~> 5.0)
+  - RxRelay (5.1.1):
+    - RxSwift (~> 5)
   - RxSwift (5.1.1)
   - SQLite.swift (0.12.2):
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
+  - SSZipArchive (2.2.3)
+  - SWCompression (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/BZip2 (= 4.5.5)
+    - SWCompression/Deflate (= 4.5.5)
+    - SWCompression/GZip (= 4.5.5)
+    - SWCompression/LZMA (= 4.5.5)
+    - SWCompression/LZMA2 (= 4.5.5)
+    - SWCompression/SevenZip (= 4.5.5)
+    - SWCompression/TAR (= 4.5.5)
+    - SWCompression/XZ (= 4.5.5)
+    - SWCompression/ZIP (= 4.5.5)
+    - SWCompression/Zlib (= 4.5.5)
+  - SWCompression/BZip2 (4.5.5):
+    - BitByteData (~> 1.4.3)
+  - SWCompression/Deflate (4.5.5):
+    - BitByteData (~> 1.4.3)
+  - SWCompression/GZip (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/Deflate
+  - SWCompression/LZMA (4.5.5):
+    - BitByteData (~> 1.4.3)
+  - SWCompression/LZMA2 (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/LZMA
+  - SWCompression/SevenZip (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/LZMA2
+  - SWCompression/TAR (4.5.5):
+    - BitByteData (~> 1.4.3)
+  - SWCompression/XZ (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/LZMA2
+  - SWCompression/ZIP (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/Deflate
+  - SWCompression/Zlib (4.5.5):
+    - BitByteData (~> 1.4.3)
+    - SWCompression/Deflate
   - XLActionController (5.0.0):
     - XLActionController/Core (= 5.0.0)
   - XLActionController/Core (5.0.0)
-  - ZipArchive (1.4.0)
 
 DEPENDENCIES:
   - AppCenter/Analytics
@@ -71,14 +123,18 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppCenter
+    - BitByteData
     - CocoaLumberjack
     - NSLogger
     - Realm
     - RealmSwift
+    - RxCocoa
     - RxRealm
+    - RxRelay
     - RxSwift
     - SQLite.swift
-    - ZipArchive
+    - SSZipArchive
+    - SWCompression
 
 EXTERNAL SOURCES:
   LzmaSDK-ObjC:
@@ -104,20 +160,24 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
+  BitByteData: 36729e2125ec321935754f9feb1f4b297e00b501
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
   ProvenanceCores: 37501e0d124226c7b23ad0a5edcc023a2961a416
-  PVLibrary: 5b6accac6a583aaee07b73b01fd69e75951760fc
-  PVSupport: 9a5947abe96af73e150aa3c6a16ebf29eb70b3b5
+  PVLibrary: b8baaaf9a9a5b7df6892592cad9a0077be25b4ff
+  PVSupport: 11ffedd95e9e5a2110083390aed605e65aef926b
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
   RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
+  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRealm: 50e5fe5c1f22518205afbb313fbc5580d73bc586
+  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
+  SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
+  SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
-  ZipArchive: e25a4373192673e3229ac8d6e9f64a3e5713c966
 
-PODFILE CHECKSUM: c70a9ec49d930596a7646026f38ba580d5887113
+PODFILE CHECKSUM: 46747a084e9275467bc382dcfe1cbffafd552455
 
 COCOAPODS: 1.9.3

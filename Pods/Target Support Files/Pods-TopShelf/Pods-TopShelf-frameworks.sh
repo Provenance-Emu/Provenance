@@ -212,6 +212,7 @@ if [ -r "${ARTIFACT_LIST_FILE}" ]; then
 fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-tvOS/BitByteData.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
@@ -219,11 +220,16 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxCocoa-tvOS/RxCocoa.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-tvOS/RxRealm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRelay-tvOS/RxRelay.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-tvOS/BitByteData.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
@@ -231,11 +237,16 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxCocoa-tvOS/RxCocoa.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-tvOS/RxRealm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRelay-tvOS/RxRelay.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework"
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-tvOS/BitByteData.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
@@ -243,9 +254,13 @@ if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxCocoa-tvOS/RxCocoa.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-tvOS/RxRealm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRelay-tvOS/RxRelay.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

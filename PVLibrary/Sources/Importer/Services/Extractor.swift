@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import RxSwift
+import RxCocoa
 import SWCompression
 
 enum CompressionFormats {
@@ -57,6 +58,7 @@ extension SWCompression.CompressionMethod {
 /// WIP Class. SWCompression supports multiple containers and compression types, but it's very
 /// unclear how to decompress containers with mutliple files. It's very manual in compresspressing
 /// and decompressing single instances of Data.
+#if false
 public final class Extractor {
     static let shared: Extractor = Extractor()
 
@@ -125,3 +127,4 @@ public final class Extractor {
         }
     }
 }
+#endif

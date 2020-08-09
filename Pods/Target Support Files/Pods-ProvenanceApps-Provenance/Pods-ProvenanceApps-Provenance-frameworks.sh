@@ -212,6 +212,7 @@ if [ -r "${ARTIFACT_LIST_FILE}" ]; then
 fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-iOS/BitByteData.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
@@ -219,14 +220,18 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxCocoa-iOS/RxCocoa.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRelay-iOS/RxRelay.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-iOS/BitByteData.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
@@ -234,14 +239,18 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxCocoa-iOS/RxCocoa.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRelay-iOS/RxRelay.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-iOS/BitByteData.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
@@ -249,11 +258,14 @@ if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxCocoa-iOS/RxCocoa.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxRelay-iOS/RxRelay.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

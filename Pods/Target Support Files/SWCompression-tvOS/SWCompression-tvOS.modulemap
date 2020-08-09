@@ -1,0 +1,6 @@
+framework module SWCompression {
+  umbrella header "SWCompression-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

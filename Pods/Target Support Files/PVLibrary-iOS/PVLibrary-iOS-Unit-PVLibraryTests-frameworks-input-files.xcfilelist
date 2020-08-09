@@ -1,11 +1,16 @@
 ${PODS_ROOT}/Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework
 ${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework
+${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework
+${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/RxCocoa-iOS/RxCocoa.framework
+${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework
+${BUILT_PRODUCTS_DIR}/RxRelay-iOS/RxRelay.framework
+${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework
+${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework
+${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework
+${BUILT_PRODUCTS_DIR}/BitByteData-iOS/BitByteData.framework
+${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework
 ${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework
 ${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework
 ${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework
-${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework
-${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework
-${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework
-${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework
-${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework

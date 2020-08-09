@@ -1,0 +1,6 @@
+framework module SWCompression {
+  umbrella header "SWCompression-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

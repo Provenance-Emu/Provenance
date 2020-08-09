@@ -26,7 +26,7 @@ install!  'cocoapods',
           share_schemes_for_development_pods: true,
           deterministic_uuids: true,
           lock_pod_sources: lock_pod_sources,
-          preserve_pod_file_structure: true
+          preserve_pod_file_structure: false
 
 def pvlibrary
   pod 'LzmaSDK-ObjC',
@@ -126,4 +126,40 @@ end
 target 'TopShelf' do
   platform :tvos, '10.0'
   pod 'CocoaLumberjack/Swift'
+end
+
+#post_install do |installer|
+#  installer.generated_aggregate_targets.each do |project|
+#    puts "Setting preprocessor macro for #{project}..."
+#    project.targets.each do |target|
+#      puts "Setting preprocessor macro for #{target.name}..."
+#      if target.name.include?('SSZipArchive')
+#        puts "Setting preprocessor macro for #{target.name}..."
+#        target.build_configurations.each do |config|
+#          puts "#{config} configuration..."
+#          puts "before: #{config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].inspect}"
+#          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+#          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC=1'
+#          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC_OMIT_UNUSED_CODE=1'
+#          puts "after: #{config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].inspect}"
+#          puts '---'
+#        end
+#      end
+#    end
+#  end
+#end
+
+post_install do |installer|
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+        config.build_settings['ENABLE_BITCODE'] = 'NO'
+        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC=1'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC_OMIT_UNUSED_CODE=1'
+      end
+    end
+  end
 end

@@ -8,7 +8,7 @@
 
 #import "PVLogViewController.h"
 @import QuartzCore;
-@import ZipArchive;
+@import SSZipArchive;
 #import "Provenance-Swift.h"
 #import <asl.h>
 @import PVSupport;

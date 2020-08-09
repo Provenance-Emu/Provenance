@@ -8,7 +8,8 @@
 
 import Foundation
 import PVSupport
-import ZipArchive
+import SSZipArchive
+import LzmaSDK_ObjC
 
 public typealias PVExtractionStartedHandler = (_ path: URL) -> Void
 public typealias PVExtractionUpdatedHandler = (_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void

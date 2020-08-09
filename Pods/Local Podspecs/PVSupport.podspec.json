@@ -26,7 +26,11 @@
     "tvos": "10.0",
     "osx": "10.15"
   },
-  "frameworks": "Foundation",
+  "frameworks": [
+    "AVFoundation",
+    "Foundation",
+    "GameController"
+  ],
   "module_name": "PVSupport",
   "header_dir": "PVSupport",
   "dependencies": {

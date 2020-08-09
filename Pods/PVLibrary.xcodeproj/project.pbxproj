@@ -7,252 +7,315 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		030498347C84BE5848AD7032DB44C4B6 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B85A2D22AD31FB9EF0D935DAF067DE /* NSString+Hashing.m */; };
-		054FBA869429A79E11ED679D83A9DEC6 /* PVLibrary-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A5992EC5BF258676B84E21E03A6A9836 /* PVLibrary-iOS-dummy.m */; };
-		06BE9C417B0C8CEF80D1D9963A3E262C /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D293AF645A83C6D304F168535955C902 /* GameImporter.swift */; };
-		0C1C53482D58956F12D04633B18BB371 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552F35A790F109436F2A1503FAE8137 /* PVBIOS.swift */; };
-		0CFEE11F4FE29DA68C0A77C29AC5BE62 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD5024302ECAF2D52A8D243FF388D7 /* Cache.swift */; };
-		0DF017060EA6598DE4169E0EC612FA6A /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B07F88671ADBEA27C272C116B814EED /* PVImageFile.swift */; };
-		0E739C688BB5E839A7B643D6D165A4BC /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF15B481D9A95F24CDEDFCF63536DC1 /* ImportCandidateFile.swift */; };
-		0FE980E57DFE56171732C9732D546B25 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3837839429A2533070E28070D147E6F5 /* Package.swift */; };
-		10B7F5E2A1FF84D0C35A13930CF872E2 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 78BF658E4FEAFD48DD6F211DE0741294 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		136CD9A9E6C8121CF4166C1EAB4C7830 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5727F0ABFE4ACCEDE38AE7DB5F72A423 /* Extractor.swift */; };
-		138998C1A267D233C657E7B78AE6A42A /* PVLibrary-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F331022CD3538EFEA5A2A2A85DFD46FD /* PVLibrary-tvOS-dummy.m */; };
-		144DA9D586F7FFC176087BCDA2E18CA2 /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126E785669873E342E34C6A3EE078C91 /* FileBackedConformance.swift */; };
-		197BEC55BBCD96F362B8D622D4131DF6 /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E8DDEF0A3DBA7E5CF044846BE56F9E /* LibrarySerializerError.swift */; };
-		1999F5EA60E453A05F7F84F232911883 /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CF86D27B9870EAC5DF281480680DA0 /* PVLibraryTests.swift */; };
-		1E0409C201299EC31582A9FC032669B8 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DB9175700F83824ABA06618A634EF0 /* PVEmulatorConfiguration.swift */; };
-		1E449A03BF541A27C3DAC0D3E401C3FF /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313A4E2B8A8C106E8A46796101A9EF96 /* PVGameLibrary.swift */; };
-		1FA742DA338821B6B7755E824D8B7EBF /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A732444121078A3E437A38468129B4A9 /* PackageResult.swift */; };
-		233D51A934BE923E14EB67097A8DC9C9 /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1266A8B3BCECF4E5450BF3B5C984362E /* SavePackage.swift */; };
-		2358F747AEEAAAEB46E3059C4482D9ED /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C15CD93C7B7EC2CA557FC875D6B822 /* Observable+Ext.swift */; };
-		23A2A9647B5B5011866290E5E7ED465F /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB2C95FDEA47DA640957A2191045D83 /* RunLoopThreadScheduler.swift */; };
-		25CCF7F36856247D268B97B0F50B397F /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126E785669873E342E34C6A3EE078C91 /* FileBackedConformance.swift */; };
-		264820CDEE83167ABCE8074CA6D82C74 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A92006FE2C30E49DD03659ECC506E /* FileInfoProvider.swift */; };
-		271AECB750F846A0D318E88DF6074DEB /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552F35A790F109436F2A1503FAE8137 /* PVBIOS.swift */; };
-		27DA2A063E3A228F8CA5189306D6D26B /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 2296343E5DB08D71B0585A4C7EBCF747 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2B5AB4F240BC797116DEB2E59A789995 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 25574DC8A9305697F3D49675992AF573 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2B7BBB88D132A12165E15400F88D99BC /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BFBCE31D75684E456AF2020E27055D /* Game.swift */; };
-		2E00D34B1CFDD50CD3423FB379FFA265 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD37896178BDAB60601861F9C13C3840 /* PlistDataModels.swift */; };
-		2FE485C95D3BD6EF34F87799B0C069C0 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B0743393E0477C4260864523C55618 /* System.swift */; };
-		30A601C5B333156165660B5A2D82988D /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE69FBA199025D5A09C61299EC88314 /* DirectoryWatcher.swift */; };
-		30D6392CDB84499E55027A8DC4EC5C73 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FAA50F77383D0B09FCB9B3D89BCD2E /* Protocols.swift */; };
-		33974C4190C862F437D0CB27D9D95433 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 87FACA76092912DCF212A8D7D263C19E /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		34D370F8BEF491773AFD23B89226CCEE /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2EDDF7EB4FA6351744ADBD6F95EF03 /* SystemProtocol.swift */; };
-		356C08627CB1DB78B80F14476A33906B /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCD4BE06327A55DE1C1BADCBC05B5C8 /* iCloudSync.swift */; };
-		35F63D0E61F8681A730302FDC7E7A149 /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FC3978A43B0A81FB6777F885FBE7CA /* GamePackage.swift */; };
-		38AA5FF5407B985A6F392ACE7D546FCC /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE69FBA199025D5A09C61299EC88314 /* DirectoryWatcher.swift */; };
-		3A66FC8E690ABC77F3DA20B5A0850A04 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416B4AA351EF9F10B9E7AC30F818AFBD /* Core.swift */; };
-		3B1674E437F2FD2C7434CC762BE23A38 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 002B4D68475A8E7EF4AA2B40D2291604 /* NSData+Hashing.m */; };
-		3EF3A9A783ECCF0F29C1EA30E0DC526C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BFBCE31D75684E456AF2020E27055D /* Game.swift */; };
-		3FBC4A376366D8F4C61441D68E1C29EE /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF24C4B64196462974452E200A34B9E /* BIOS.swift */; };
-		401A941E6889770CD51D9384A5B8F999 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A92006FE2C30E49DD03659ECC506E /* FileInfoProvider.swift */; };
-		41BA4149D628C2B7A33E2D3D3963EABC /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A39D34B9440EFF453A77970FD20DA41 /* PVObject.swift */; };
-		427870881CB36F78D7BB9DA922D71545 /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313A4E2B8A8C106E8A46796101A9EF96 /* PVGameLibrary.swift */; };
-		438A976FCA3DA7913ED42453786F35E2 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 25221C0DA235C092CAAE907F17FA1653 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		441296E5A45018DF49D1B1C019DEA81C /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD233843797FDB04B647C4C0327A957 /* LocalFile.swift */; };
-		4815CFC934E67B4E45348277A44DFBBF /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7638B0E0CB37658FDF516A0684B3A /* Repository.swift */; };
-		4830E63D88D3F0D426FE870A4929AA39 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E313110DE310FD25072F56C7564B1216 /* PVGameLibrary+Migration.swift */; };
-		49C5823DEF8F418C784A06249691B41B /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DAB12E5BEC797E807271F4DB044A85 /* PVSystem.swift */; };
-		4BAD38A9B013C1D3B243C7AB273B3E79 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDBD9A04458426A08645D0351F87F05 /* NSFileManager+Hashing.m */; };
-		4F819B4FC7F07EE8F1498C0CC4572666 /* PVLibrary-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 03B40EA37E46D80DE8B1013A9C3C92B7 /* PVLibrary-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4FA422B085CDB703EECF0235BE1A615C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60660BB2775299F4F1E64539C60D38EB /* Foundation.framework */; };
-		54790E0F3245E040177C0C65DE1DF121 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3837839429A2533070E28070D147E6F5 /* Package.swift */; };
-		55B6DB4868BB820AED370216D6311A87 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 002B4D68475A8E7EF4AA2B40D2291604 /* NSData+Hashing.m */; };
-		5704F04CE82D9795E75E6544A6A2AB61 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD2E29307DA8EAC3AC949987893BAB /* PVEmulatorConfiguration+Frameworks.swift */; };
-		570B99814F9AA145414EED736BF16D82 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDBD9A04458426A08645D0351F87F05 /* NSFileManager+Hashing.m */; };
-		57231A77F9603E4819BEA662638901AF /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFECFA6F82BAF68D2FF40009293B6801 /* SaveState.swift */; };
-		596411FC40FA4818B453825A1157C46F /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B85A2D22AD31FB9EF0D935DAF067DE /* NSString+Hashing.m */; };
-		5B31246E88CEEDBB7524280F840DA14E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B12043AAF531FA9922BD5E762A3F22 /* OESQLiteDatabase.m */; };
-		5B8840164E9E751FA738DE37DA6230B5 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0584699B183A4EEEFF8986C944AEBE93 /* DomainConvertibleType.swift */; };
-		5BF814E1492C16AB023AB079700DF7A4 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCD4BE06327A55DE1C1BADCBC05B5C8 /* iCloudSync.swift */; };
-		5E625F7251F23BD02CAC5E870B37E072 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B493F957CD0D5FEA4B944973C88B45C1 /* PVSaveState.swift */; };
-		5EAD661E7CBCA8F6D8FA2F2F048CB866 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7677506117E59A90BFCAB7FA492C6CB /* PVRecentGame.swift */; };
-		601E80A20F5CEBC1141C273CFFA8BFEF /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416B4AA351EF9F10B9E7AC30F818AFBD /* Core.swift */; };
-		61E85892A274898AEDA40343E4EF4294 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560AD5FBEA95D4ABEEC1010540CA73E0 /* PVAppConstants.swift */; };
-		6284C95F978407835C34201BECEF21AA /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C14004075F774CB95F11162E3AC446AB /* PVLibrary.framework */; };
-		6314F77AAE2702658F4E2BB2DDCB417E /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF5AD515A291AB171FC7A4C35C1CFE1 /* PVGame+Spotlight.swift */; };
-		636089C1AB042054B3D24A16C7AEEF68 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331CAAA82A6C50FBEE34F6912D671DD2 /* PVGame+BoxArt.swift */; };
-		6388BC4F9E12F6EA17171368F2CA2900 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB2AAF0339D6B6E2004D417053F16A3 /* RomDatabase.swift */; };
-		64E92B58339E19188C1FBA2B55727EED /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2EDDF7EB4FA6351744ADBD6F95EF03 /* SystemProtocol.swift */; };
-		6901E72207AA5887B0149B3DEABE937B /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5D09A7E70C778F489C7AF84623E253 /* Realm+Ext.swift */; };
-		690C567149470733E9E73E676D302F97 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FAA50F77383D0B09FCB9B3D89BCD2E /* Protocols.swift */; };
-		6A08F0E60AF923DEA1C5CD8114660870 /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D8771700445A3B54B6460E73E79D31 /* RealmRepresentable.swift */; };
-		6A11972099995CA5C97F5ECA2364B157 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 99408EE5DD8CA7EA8FB517DDBB1FA0B1 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4722978259FAA8BACB7C543EF4AED4 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0584699B183A4EEEFF8986C944AEBE93 /* DomainConvertibleType.swift */; };
-		7114442D9E1AE333B1443E42A689E0CF /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5727F0ABFE4ACCEDE38AE7DB5F72A423 /* Extractor.swift */; };
-		74D66D0C4AE980D0CFF9C3DAAF85DA4D /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF8D6CE63F2124EF10A6F9F32B2291E /* PVGame.swift */; };
-		7637BE6F4420360FF3B624EDE6243650 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 78BF658E4FEAFD48DD6F211DE0741294 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		789C3F186A81EC4340DD8DD50711724B /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9421AAE2EFBD8F02C8FAFFB551313B /* UIImage+Scaling.m */; };
-		7C6B86C22A10B33AC5A42082D2276613 /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5D09A7E70C778F489C7AF84623E253 /* Realm+Ext.swift */; };
-		7CA9F8EE6DFDBD68EB7AC14329B0D37D /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E8DDEF0A3DBA7E5CF044846BE56F9E /* LibrarySerializerError.swift */; };
-		7D7E77D0A9AD5EA37042248D994D2E29 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A39D34B9440EFF453A77970FD20DA41 /* PVObject.swift */; };
-		80578F794B1D62BAB09A8423E135BF13 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B07F88671ADBEA27C272C116B814EED /* PVImageFile.swift */; };
-		8308549225BFC0295DD10FC99ADBE550 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB2AAF0339D6B6E2004D417053F16A3 /* RomDatabase.swift */; };
-		844F4508C97D3900ECCA30BD6596883A /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD2E29307DA8EAC3AC949987893BAB /* PVEmulatorConfiguration+Frameworks.swift */; };
-		853AC740C498A94D2F0B0EB7984FAB3D /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF24C4B64196462974452E200A34B9E /* BIOS.swift */; };
-		863D35BBA7D6D371F9375E4534FDF8BA /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 25574DC8A9305697F3D49675992AF573 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8A114A58CD5D3D6AA905CF11B425D59C /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF15B481D9A95F24CDEDFCF63536DC1 /* ImportCandidateFile.swift */; };
-		8BF01A27C12171D117C64C2392EC7946 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B493F957CD0D5FEA4B944973C88B45C1 /* PVSaveState.swift */; };
-		8EDA5F2679B64C6560E27BC84E66110B /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DAB12E5BEC797E807271F4DB044A85 /* PVSystem.swift */; };
-		93866E3CBA0D98335375F83C5EB70EBF /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7638B0E0CB37658FDF516A0684B3A /* Repository.swift */; };
-		94916365EB6F12A3B5C8C5055283BD7C /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 99408EE5DD8CA7EA8FB517DDBB1FA0B1 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9713204D89B67344673AC7C3BBA0634C /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B2C952A68A9C217DD6960D3BB2EC9B /* PVCore.swift */; };
-		98E5E67F248C814F87FC8959E49328FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D202287CFDF0235B981D3E69694402 /* Foundation.framework */; };
-		9A00DD39A518F2B955AA764A895D8544 /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB2C95FDEA47DA640957A2191045D83 /* RunLoopThreadScheduler.swift */; };
-		9A04A89F8806467525BB53387DE19893 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F57C96731FF155ECBBD55A542DDFE4 /* GameImporter2.swift */; };
-		9AC27EA9A5E8369B301E9F2BEDD10A86 /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B2C952A68A9C217DD6960D3BB2EC9B /* PVCore.swift */; };
-		9DB5C359162E1F4BDA174AEB9FA331C8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F423AAAC024B4DA7B56210891CD660D /* PVSupport.framework */; };
-		9F93F53F2CE8E486F47AF3A361AC9DDE /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D293AF645A83C6D304F168535955C902 /* GameImporter.swift */; };
-		9FD1BD85127E4C5DE886700B43F3A208 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DB9175700F83824ABA06618A634EF0 /* PVEmulatorConfiguration.swift */; };
-		A2FCA8C5F8796915D1F87BAAA79CA81B /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 2296343E5DB08D71B0585A4C7EBCF747 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A3E4A5A5CF449E885451997726F2791E /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD5024302ECAF2D52A8D243FF388D7 /* Cache.swift */; };
-		A448E428C1FEB993CA05382C706FB61B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60660BB2775299F4F1E64539C60D38EB /* Foundation.framework */; };
-		A4588A8DC85A0FD08136590422A24693 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD37896178BDAB60601861F9C13C3840 /* PlistDataModels.swift */; };
-		A5371DECC21AA13D6A14B6E260E8CE94 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8502B80D401DEDC3BD353B93BD568D04 /* PVMediaCache.swift */; };
-		A6130DB34C692AB6E1A58827E294490D /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B0743393E0477C4260864523C55618 /* System.swift */; };
-		A716AA919DEEC7BC8D368A9C1AB00919 /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C15CD93C7B7EC2CA557FC875D6B822 /* Observable+Ext.swift */; };
-		A7F43FC7FB650C5D7286F3A1991BA9B7 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D461CD56BB4E02713660B32AF4C4EA5 /* DirectoryWatcher2.swift */; };
-		A9C4E32258D2C47CAA58836E13C0B3F5 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B12043AAF531FA9922BD5E762A3F22 /* OESQLiteDatabase.m */; };
-		AA71864C4302C3B3F3FE04D1A25A40E2 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C2FC08FC0FD6B90637123B562BA2BE /* Time Utilities.swift */; };
-		B1A1618C1D3916B0AC7D96271ADBBEBB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D202287CFDF0235B981D3E69694402 /* Foundation.framework */; };
-		B237FD3AA18467CE61BAA0BBC63652F1 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 87FACA76092912DCF212A8D7D263C19E /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B2391409692FF76FEE9A97DD8A97D902 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F423AAAC024B4DA7B56210891CD660D /* PVSupport.framework */; };
-		B40C089F3575DC854016CAD0473ABB1C /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560AD5FBEA95D4ABEEC1010540CA73E0 /* PVAppConstants.swift */; };
-		B57039956C869B80ACCB12933506DD41 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C2FC08FC0FD6B90637123B562BA2BE /* Time Utilities.swift */; };
-		B5DA7C8F0F994A3A26B81A20E3C286B2 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9421AAE2EFBD8F02C8FAFFB551313B /* UIImage+Scaling.m */; };
-		B90C62961487A6F46FCA3CB74106B98F /* PVLibrary-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ED9235E353A1E8CFD58FC10671743F9 /* PVLibrary-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BC5715D901D644EF1E306774B4B16AF3 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFECFA6F82BAF68D2FF40009293B6801 /* SaveState.swift */; };
-		BEC41FD90B620629633BE25D4396B0E2 /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13BD6F3A56913BE3AB75C1EB43620D7 /* PVFile.swift */; };
-		C2656769427A37939D9ECF25E9D6AF22 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 25221C0DA235C092CAAE907F17FA1653 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C3E48D1499B9215BA6F07B9D421A3670 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF5AD515A291AB171FC7A4C35C1CFE1 /* PVGame+Spotlight.swift */; };
-		C7B61C07BE2C6C4A5B2D0AA0616627AC /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD233843797FDB04B647C4C0327A957 /* LocalFile.swift */; };
-		CF817A24F25ED57C8D65C310A16F378F /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331CAAA82A6C50FBEE34F6912D671DD2 /* PVGame+BoxArt.swift */; };
-		D3419A19968D9B4AD2F45C91DA0E92CE /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E313110DE310FD25072F56C7564B1216 /* PVGameLibrary+Migration.swift */; };
-		D6798E55C5DC9D8B0F05F9939132222E /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C14004075F774CB95F11162E3AC446AB /* PVLibrary.framework */; };
-		D8D66847836227091DBEDE3CB0AE1B53 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF8D6CE63F2124EF10A6F9F32B2291E /* PVGame.swift */; };
-		D926D9785667719BCEC7E21048901095 /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A732444121078A3E437A38468129B4A9 /* PackageResult.swift */; };
-		DBA8F7314B8B88A3CAABD9DD925809E0 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F57C96731FF155ECBBD55A542DDFE4 /* GameImporter2.swift */; };
-		DC07E698288759FCA6345D391BFC74B5 /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FC3978A43B0A81FB6777F885FBE7CA /* GamePackage.swift */; };
-		DC8B77A36DAE69728E1FD391AC520F4E /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D8771700445A3B54B6460E73E79D31 /* RealmRepresentable.swift */; };
-		E43F60BA3A4F41E21F009E245D284F39 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D461CD56BB4E02713660B32AF4C4EA5 /* DirectoryWatcher2.swift */; };
-		E46DB0781AFFB55E34C3BAC1F0CB007B /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13BD6F3A56913BE3AB75C1EB43620D7 /* PVFile.swift */; };
-		E89FCEA0F0EC05AD5AA72FAF2B18E132 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F3EC97877E693474827C47E91836AA /* LibrarySerializer.swift */; };
-		EAE6D1F32ABDD32CFA95064DCE263079 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD74C38037C41483EF248CA520E3A19 /* UTI.swift */; };
-		EB3C6D2F716678DFACDA997C4824ADA6 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8502B80D401DEDC3BD353B93BD568D04 /* PVMediaCache.swift */; };
-		EC544B486BDCD7D9EF120E333E973953 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459560B65B888E29FC022841AC5085E /* PVLibrary.swift */; };
-		EFD3F1835C780BD7FE015CD5BEBF1D7F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1266A8B3BCECF4E5450BF3B5C984362E /* SavePackage.swift */; };
-		F29DA2E854B357D544F199D3CF3C8D04 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD74C38037C41483EF248CA520E3A19 /* UTI.swift */; };
-		F87A094F284C5984819B6B793173EA4A /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CF86D27B9870EAC5DF281480680DA0 /* PVLibraryTests.swift */; };
-		F87EF402A5CFFDBF7B5DB6CB7A175EFA /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F3EC97877E693474827C47E91836AA /* LibrarySerializer.swift */; };
-		FAECF1FF7A7F8A6469AE5292BBBD04CD /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7677506117E59A90BFCAB7FA492C6CB /* PVRecentGame.swift */; };
-		FD1C764160E15786BF9EE95813ABFD3E /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459560B65B888E29FC022841AC5085E /* PVLibrary.swift */; };
+		01E7ECA9A159D6C17F1AFC0E53D35206 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7638B0E0CB37658FDF516A0684B3A /* Repository.swift */; };
+		0536553D2DE527478EF91C410FC1BCD6 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDBD9A04458426A08645D0351F87F05 /* NSFileManager+Hashing.m */; };
+		05B0FD4031D827F6F6831C2584799CD7 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FAA50F77383D0B09FCB9B3D89BCD2E /* Protocols.swift */; };
+		0E24935D1BCF8501C890E1196D5FEF8A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9363BEEEFDCCAD425DD63C83AF51426 /* Foundation.framework */; };
+		0E685E38CFB38904DF0F08D224713226 /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF24C4B64196462974452E200A34B9E /* BIOS.swift */; };
+		0E88E5733E5DEA7ED4029198E5A5D426 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B0743393E0477C4260864523C55618 /* System.swift */; };
+		0F4E568D1B5B266DB4288FB9AAE2BDE2 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B5D2C34B9A9D5A7CD2C60F7558BE445 /* PVLibrary.framework */; };
+		1144C6E2B2D1862B0B64E58F57A978BF /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 87FACA76092912DCF212A8D7D263C19E /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		16E4CC73A63E4CAEAC0158370C3842BB /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7638B0E0CB37658FDF516A0684B3A /* Repository.swift */; };
+		17B1A8A42F4742E3CFBD543FBFE62B2C /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B07F88671ADBEA27C272C116B814EED /* PVImageFile.swift */; };
+		181A8279983897C16F83D49EAB35073E /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB2C95FDEA47DA640957A2191045D83 /* RunLoopThreadScheduler.swift */; };
+		1BDE965F43F2A08FCF8447A6B5C9CDD9 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F57C96731FF155ECBBD55A542DDFE4 /* GameImporter2.swift */; };
+		1C1E20DF91D0419AEDE767740DA57F3C /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1266A8B3BCECF4E5450BF3B5C984362E /* SavePackage.swift */; };
+		1F12107D9851113B89DD9BDB3CC92C17 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416B4AA351EF9F10B9E7AC30F818AFBD /* Core.swift */; };
+		1F9CC600E2B1AD52F760A38D711538E7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE69FBA199025D5A09C61299EC88314 /* DirectoryWatcher.swift */; };
+		20E93617BAD3B6818DB4E093B322EC8C /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13BD6F3A56913BE3AB75C1EB43620D7 /* PVFile.swift */; };
+		21B5AEEB3357D309FEB2894454240F32 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 25574DC8A9305697F3D49675992AF573 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		21C41E1E1973C5755EE8ABB06E05F9F7 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A92006FE2C30E49DD03659ECC506E /* FileInfoProvider.swift */; };
+		234D73714E7DE644DDF6FF5859A053F1 /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313A4E2B8A8C106E8A46796101A9EF96 /* PVGameLibrary.swift */; };
+		2F9B04F3AE1AD2BE3BA7F4912D613A88 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7677506117E59A90BFCAB7FA492C6CB /* PVRecentGame.swift */; };
+		2FB443926EA964191682B29AF34C3B34 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B12043AAF531FA9922BD5E762A3F22 /* OESQLiteDatabase.m */; };
+		30998380FF04C32683CC93CCCCA03BCC /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BFBCE31D75684E456AF2020E27055D /* Game.swift */; };
+		30E19D7D07CF8B112D7FC6723DE0996E /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 99408EE5DD8CA7EA8FB517DDBB1FA0B1 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		322BD0D45DD5180DD50FD918BE37FAFA /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 311A9E8C25C371DF5B373686DCC83CEA /* CoreServices.framework */; };
+		384957FB104CC18007FF026C6A7ADE70 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 002B4D68475A8E7EF4AA2B40D2291604 /* NSData+Hashing.m */; };
+		3AA7E6130A8BBEEDEED54A0A7791E870 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A39D34B9440EFF453A77970FD20DA41 /* PVObject.swift */; };
+		3E109F86A602D8BD3A98B5BAFE63351F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1266A8B3BCECF4E5450BF3B5C984362E /* SavePackage.swift */; };
+		3E5DA847EE6EFE8AE4355E9C1D75FEBB /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CF86D27B9870EAC5DF281480680DA0 /* PVLibraryTests.swift */; };
+		4318FE78A1B180F68115A035EECDE86D /* PVLibrary-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F331022CD3538EFEA5A2A2A85DFD46FD /* PVLibrary-tvOS-dummy.m */; };
+		449F0FF6421FB0C7F3B52CBD402694F3 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB2AAF0339D6B6E2004D417053F16A3 /* RomDatabase.swift */; };
+		44DFCA7BE1D053B1A6D94D97A1BF56C3 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD74C38037C41483EF248CA520E3A19 /* UTI.swift */; };
+		472F48001F14124E2844F595751DF155 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD37896178BDAB60601861F9C13C3840 /* PlistDataModels.swift */; };
+		47518D98373ED4C288F8832F59453E6B /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5727F0ABFE4ACCEDE38AE7DB5F72A423 /* Extractor.swift */; };
+		4AE614C464E80EADBE19EDDD1A5F4BC6 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5727F0ABFE4ACCEDE38AE7DB5F72A423 /* Extractor.swift */; };
+		4B7C0FA80714B6626345925041FD67DD /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B5D2C34B9A9D5A7CD2C60F7558BE445 /* PVLibrary.framework */; };
+		4C87CAA594953243F04FB91E5E9B1F2A /* PVLibrary-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ED9235E353A1E8CFD58FC10671743F9 /* PVLibrary-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4C8F3B5CEC3526D0C4A7E4C2E60E62CC /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7677506117E59A90BFCAB7FA492C6CB /* PVRecentGame.swift */; };
+		4E287E1411BC8C93349BCB38473B4F40 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B85A2D22AD31FB9EF0D935DAF067DE /* NSString+Hashing.m */; };
+		4E9FF94F81E16C30BB07969CD731A501 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3837839429A2533070E28070D147E6F5 /* Package.swift */; };
+		51DCE617640CFA202E245E7E610E7E90 /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C15CD93C7B7EC2CA557FC875D6B822 /* Observable+Ext.swift */; };
+		51EF8232D97DD208A49302782A300709 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3837839429A2533070E28070D147E6F5 /* Package.swift */; };
+		54211A36FB9CA2AB55B64D43F398C0EF /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B493F957CD0D5FEA4B944973C88B45C1 /* PVSaveState.swift */; };
+		5706BF7B7C7B2B09D02C3CA2634FAE41 /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB2C95FDEA47DA640957A2191045D83 /* RunLoopThreadScheduler.swift */; };
+		57A297ADF577D346618460C702E875A1 /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DAB12E5BEC797E807271F4DB044A85 /* PVSystem.swift */; };
+		5952D49F999C005C4AA4C1A465E69EF1 /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126E785669873E342E34C6A3EE078C91 /* FileBackedConformance.swift */; };
+		5CF8377061EEA8368781B4A6D2964B6C /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A732444121078A3E437A38468129B4A9 /* PackageResult.swift */; };
+		5D56EDAF3DF56A635DB1398E80CD35DB /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD2E29307DA8EAC3AC949987893BAB /* PVEmulatorConfiguration+Frameworks.swift */; };
+		5E09FD57F1C307D14284183D60F96063 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552F35A790F109436F2A1503FAE8137 /* PVBIOS.swift */; };
+		5E2388D2438FA4D8BEFEC326862EFCCC /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D293AF645A83C6D304F168535955C902 /* GameImporter.swift */; };
+		5F8C3D54E575813BDE8A01038F7617FF /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF8D6CE63F2124EF10A6F9F32B2291E /* PVGame.swift */; };
+		60218DD59BABA6899F798C3C18A9BC17 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 25574DC8A9305697F3D49675992AF573 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60579C5F84ED0D9947629616FCC75187 /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313A4E2B8A8C106E8A46796101A9EF96 /* PVGameLibrary.swift */; };
+		6073054E492B82951A68C5CB0FCCA27B /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD2E29307DA8EAC3AC949987893BAB /* PVEmulatorConfiguration+Frameworks.swift */; };
+		62A62EB40347BB0D18F20D2C05CEE411 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 2296343E5DB08D71B0585A4C7EBCF747 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		62D28F0D8123BC94C357994F4EBA4588 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416B4AA351EF9F10B9E7AC30F818AFBD /* Core.swift */; };
+		63A2C8BE346883CC1C8F4D157F3FE4A5 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560AD5FBEA95D4ABEEC1010540CA73E0 /* PVAppConstants.swift */; };
+		6418411A080C5D3C29B5BF58DA431700 /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FC3978A43B0A81FB6777F885FBE7CA /* GamePackage.swift */; };
+		66E1D06AD53BBEB118A7A72EF218529F /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459560B65B888E29FC022841AC5085E /* PVLibrary.swift */; };
+		673CD2A1F13E682E4F41380EC988187A /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF24C4B64196462974452E200A34B9E /* BIOS.swift */; };
+		6868C73B8B764890C9413A49CFCAFE21 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFECFA6F82BAF68D2FF40009293B6801 /* SaveState.swift */; };
+		6C066CC40CE1DA7AF0A68912D6A7C291 /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B2C952A68A9C217DD6960D3BB2EC9B /* PVCore.swift */; };
+		6DD153D80F8EC34A45A413FA4DDBB089 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 78BF658E4FEAFD48DD6F211DE0741294 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		70F57EF1D460608C41D0E2FB482F8D8E /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF5AD515A291AB171FC7A4C35C1CFE1 /* PVGame+Spotlight.swift */; };
+		73FEFA56711463AA93DE749949E9A1E6 /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E8DDEF0A3DBA7E5CF044846BE56F9E /* LibrarySerializerError.swift */; };
+		7555B03091ED187361ADF4E498B1CDAC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09EBAA87F345B406E3A1E736A96DE973 /* CoreGraphics.framework */; };
+		784E081D44BCF424418E759F17C84430 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459560B65B888E29FC022841AC5085E /* PVLibrary.swift */; };
+		789117720D976B3684E4DB261E0088E7 /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126E785669873E342E34C6A3EE078C91 /* FileBackedConformance.swift */; };
+		7A4ECD88A1FDED458E714ECD45D8A863 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD233843797FDB04B647C4C0327A957 /* LocalFile.swift */; };
+		7C717461B714D2798C347A5048154D09 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 87FACA76092912DCF212A8D7D263C19E /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7E052D0FF22DBCC2E8AB31D9120F4CB4 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF163F07BFC20A59509ABC5D34021BD8 /* CoreServices.framework */; };
+		7E15B59A8D220340E395651597879565 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF15B481D9A95F24CDEDFCF63536DC1 /* ImportCandidateFile.swift */; };
+		817B336D1C1588479EA95D6F9154B96C /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD5024302ECAF2D52A8D243FF388D7 /* Cache.swift */; };
+		85E0A5A1329739BD865FDA237F8D3E78 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331CAAA82A6C50FBEE34F6912D671DD2 /* PVGame+BoxArt.swift */; };
+		8AF38AE97179CA852E4EC14BAE742728 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFECFA6F82BAF68D2FF40009293B6801 /* SaveState.swift */; };
+		8BF6D00D362C401C97F2BC0484769356 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2EDDF7EB4FA6351744ADBD6F95EF03 /* SystemProtocol.swift */; };
+		8F729141FD26C1116D1AE26AC5456D12 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 2296343E5DB08D71B0585A4C7EBCF747 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		923A0E8897926FE5F6D65039AC304D76 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB54D7314E1D4000723E8C2DACBED4D0 /* CoreGraphics.framework */; };
+		92506337FCCBF0B87ECE3F041F2776FE /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F3EC97877E693474827C47E91836AA /* LibrarySerializer.swift */; };
+		94E29404C2E45EF279F48A66F5D8B8FE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D461CD56BB4E02713660B32AF4C4EA5 /* DirectoryWatcher2.swift */; };
+		95C999196BD92DA1ED433C087BE7A0B6 /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C15CD93C7B7EC2CA557FC875D6B822 /* Observable+Ext.swift */; };
+		97241D18E474FC8E07953CC640EB345C /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B0743393E0477C4260864523C55618 /* System.swift */; };
+		98D395C61CEEE0258C7B5B747EABE8BF /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF8D6CE63F2124EF10A6F9F32B2291E /* PVGame.swift */; };
+		9A4D5F93253A17B9163B521D97F33B4B /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D8771700445A3B54B6460E73E79D31 /* RealmRepresentable.swift */; };
+		9E9A49BB0C07DED6BEAEC0BA04916686 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D461CD56BB4E02713660B32AF4C4EA5 /* DirectoryWatcher2.swift */; };
+		A38ED85B080776E57BA96BC734371BBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09EBAA87F345B406E3A1E736A96DE973 /* CoreGraphics.framework */; };
+		A599F3BADE21537D02BE7F4CF96D1CD3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4503F46D9E7775B2ADCEFF283ECFF411 /* Foundation.framework */; };
+		A5A1D2393A37D8E13986410E1D196976 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 25221C0DA235C092CAAE907F17FA1653 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5FBD0A86E6D92A45141878EC636A266 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560AD5FBEA95D4ABEEC1010540CA73E0 /* PVAppConstants.swift */; };
+		A8ECCED334E0F91DB0D294C293A3D9C1 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F57C96731FF155ECBBD55A542DDFE4 /* GameImporter2.swift */; };
+		A9DAC4543F0498408F8653B863DDD1C1 /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D8771700445A3B54B6460E73E79D31 /* RealmRepresentable.swift */; };
+		AA86EDC3A3795C6325DFF5BEAF6CAB36 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 311A9E8C25C371DF5B373686DCC83CEA /* CoreServices.framework */; };
+		AB337412E2D92E925A6491A708EF56CD /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E313110DE310FD25072F56C7564B1216 /* PVGameLibrary+Migration.swift */; };
+		ABECC078DD0BD181321C3059A0F650D8 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF5AD515A291AB171FC7A4C35C1CFE1 /* PVGame+Spotlight.swift */; };
+		AF68C8E9A9BAEEB3D42F583EBCF9203B /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B493F957CD0D5FEA4B944973C88B45C1 /* PVSaveState.swift */; };
+		AFF034DFB423BB32B696C05C3B93CB62 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2EDDF7EB4FA6351744ADBD6F95EF03 /* SystemProtocol.swift */; };
+		B0B12C7A287D9E5D336CEA62126C19A8 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 78BF658E4FEAFD48DD6F211DE0741294 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B47655299EC99F6B41BBC4B060978215 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF163F07BFC20A59509ABC5D34021BD8 /* CoreServices.framework */; };
+		B654FF741E1E369E77E08668A113258A /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDBD9A04458426A08645D0351F87F05 /* NSFileManager+Hashing.m */; };
+		B70780ABBF06F49491B86C36545B36E2 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DB9175700F83824ABA06618A634EF0 /* PVEmulatorConfiguration.swift */; };
+		B7A1C784ABECB621EF1C54F17444DBED /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A39D34B9440EFF453A77970FD20DA41 /* PVObject.swift */; };
+		B81EEE627BBF1E55056E1794906C37E0 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B85A2D22AD31FB9EF0D935DAF067DE /* NSString+Hashing.m */; };
+		B8A2AC81AD07DEC4DB03429FC1F9F316 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE69FBA199025D5A09C61299EC88314 /* DirectoryWatcher.swift */; };
+		B923D4F92EAEBD029B6EFE6DA941C2F5 /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5D09A7E70C778F489C7AF84623E253 /* Realm+Ext.swift */; };
+		BAB6787C2C41E9E6D170003A91FB30E2 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8502B80D401DEDC3BD353B93BD568D04 /* PVMediaCache.swift */; };
+		BAF75DD3763F6F12B58B1694E94F9952 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD233843797FDB04B647C4C0327A957 /* LocalFile.swift */; };
+		BC8BF5057E6A66379745FD9B816415E8 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E313110DE310FD25072F56C7564B1216 /* PVGameLibrary+Migration.swift */; };
+		BDD13C24B837E2A84AC1803848B6721B /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B07F88671ADBEA27C272C116B814EED /* PVImageFile.swift */; };
+		C0285A216A6B3031F5FE3D5717402A2D /* PVLibrary-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 03B40EA37E46D80DE8B1013A9C3C92B7 /* PVLibrary-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C22535269E69C3242EB75435BD2BD0A1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4503F46D9E7775B2ADCEFF283ECFF411 /* Foundation.framework */; };
+		C2FE3AF45A0829BC3F93EC74CF783DF3 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C2FC08FC0FD6B90637123B562BA2BE /* Time Utilities.swift */; };
+		C5F3C092D202ADD234F7C12F876FBBAA /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B12043AAF531FA9922BD5E762A3F22 /* OESQLiteDatabase.m */; };
+		C645FA11FDBFEDABF9A2DA25329D8D32 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C2FC08FC0FD6B90637123B562BA2BE /* Time Utilities.swift */; };
+		C691A43C11E784C50912D6237EEA34B6 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8502B80D401DEDC3BD353B93BD568D04 /* PVMediaCache.swift */; };
+		C74F9987362C215072C8854C3DD7AF92 /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FC3978A43B0A81FB6777F885FBE7CA /* GamePackage.swift */; };
+		C82DA521E449F00A4125367E110764CD /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = 25221C0DA235C092CAAE907F17FA1653 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C8B79F9408A8B0ACBD05C02E9D5E3C40 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9421AAE2EFBD8F02C8FAFFB551313B /* UIImage+Scaling.m */; };
+		C968E5E36D0F817816D76BFDA88A5839 /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A732444121078A3E437A38468129B4A9 /* PackageResult.swift */; };
+		CDD45A59753C2D74DCD7B4197E82ECDB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9363BEEEFDCCAD425DD63C83AF51426 /* Foundation.framework */; };
+		CF1EF8D9B82F5E9C85AC38D40FD1A430 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F3EC97877E693474827C47E91836AA /* LibrarySerializer.swift */; };
+		CF857E1FE3C9799444CC49022E0EDDC0 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCD4BE06327A55DE1C1BADCBC05B5C8 /* iCloudSync.swift */; };
+		D1C3995227D7116EB55C07803A12E248 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCD4BE06327A55DE1C1BADCBC05B5C8 /* iCloudSync.swift */; };
+		D1F217447E0C01D8A1D2404228C80460 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94A92006FE2C30E49DD03659ECC506E /* FileInfoProvider.swift */; };
+		D21F70EFC107E9FD0356C0EAC49AD035 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 002B4D68475A8E7EF4AA2B40D2291604 /* NSData+Hashing.m */; };
+		D421D200E5239738362C94A6FA1DF9CC /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BFBCE31D75684E456AF2020E27055D /* Game.swift */; };
+		D9179EC3CCC3EB978E123147C02968D1 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB2AAF0339D6B6E2004D417053F16A3 /* RomDatabase.swift */; };
+		DBBFAE6B51BD9B17B0E99480DF334688 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD5024302ECAF2D52A8D243FF388D7 /* Cache.swift */; };
+		DD8388122C5ED5BF8AD0596833FABD02 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9421AAE2EFBD8F02C8FAFFB551313B /* UIImage+Scaling.m */; };
+		DDA422A3B093A485FBA60DFE09883E40 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552F35A790F109436F2A1503FAE8137 /* PVBIOS.swift */; };
+		DFA702E41A44FEE579348C6DC8A51187 /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DAB12E5BEC797E807271F4DB044A85 /* PVSystem.swift */; };
+		E3DD2D3DB9DE026BBF55FB4D1D12DBD7 /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5D09A7E70C778F489C7AF84623E253 /* Realm+Ext.swift */; };
+		EA4BFADE493A5CE09F85040E14D7C0D8 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0584699B183A4EEEFF8986C944AEBE93 /* DomainConvertibleType.swift */; };
+		EB1A727739547A2678A0FDBFCD6F92C3 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DB9175700F83824ABA06618A634EF0 /* PVEmulatorConfiguration.swift */; };
+		EBF0C4A391BF931ECC69F4FF00C1FB66 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D293AF645A83C6D304F168535955C902 /* GameImporter.swift */; };
+		EEE0D174A58DF8C8E67CC8F1352391DF /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0584699B183A4EEEFF8986C944AEBE93 /* DomainConvertibleType.swift */; };
+		EEF1266F48B25D8D5A0EDFB055B9B82E /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD74C38037C41483EF248CA520E3A19 /* UTI.swift */; };
+		F20DDFC8C716CB255BF503ADB719DA3C /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B2C952A68A9C217DD6960D3BB2EC9B /* PVCore.swift */; };
+		F265E8427CFBCD2D66D9780D7BC129C5 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD37896178BDAB60601861F9C13C3840 /* PlistDataModels.swift */; };
+		F2CCF8ADA72CE9B41A8431EEF0A23D66 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331CAAA82A6C50FBEE34F6912D671DD2 /* PVGame+BoxArt.swift */; };
+		F53D6E11743FA34A8B5F91524C1D20CD /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E8DDEF0A3DBA7E5CF044846BE56F9E /* LibrarySerializerError.swift */; };
+		F67F2E5C23B14F1506B312B3B02CCFA4 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF15B481D9A95F24CDEDFCF63536DC1 /* ImportCandidateFile.swift */; };
+		F9BB3533801A361553C1852192A0DB0B /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13BD6F3A56913BE3AB75C1EB43620D7 /* PVFile.swift */; };
+		FC463EE78A43F3783F792FD8249C7FD0 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FAA50F77383D0B09FCB9B3D89BCD2E /* Protocols.swift */; };
+		FCBC80B7B3B8626E67C470913A7D230C /* PVLibrary-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A5992EC5BF258676B84E21E03A6A9836 /* PVLibrary-iOS-dummy.m */; };
+		FE9E3428132B9B0ED76DD334394EB09A /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CF86D27B9870EAC5DF281480680DA0 /* PVLibraryTests.swift */; };
+		FF0220B5E64ECF8005D6AF63BAED7C58 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB54D7314E1D4000723E8C2DACBED4D0 /* CoreGraphics.framework */; };
+		FF1552BAC090B1DB71D620A488F6B002 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = 99408EE5DD8CA7EA8FB517DDBB1FA0B1 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0B1DAEED0F16AED7D0F751497FAF1ECC /* PBXContainerItemProxy */ = {
+		008FC9E535825AEC7C87B1339B39C4B5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 77D3436B1D431E28145E4C547F9D4180 /* RealmSwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D4944F1478B34E109711C982D2C6C460;
-			remoteInfo = "RealmSwift-iOS";
-		};
-		140D13B7A1CC0101DA818239D8DB1372 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4BBF5C02710C0CE8116629F26C8E03FC /* SQLite.swift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BDF878B196F96293FBCB88F0320176DA;
-			remoteInfo = "SQLite.swift-tvOS";
-		};
-		1A1BAE52D64726A84E072C3A3D460469 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E9CA8AD264B869A2B8C83C7C701A4E7C /* ZipArchive.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 1308AE69082A08C9F09D2F377FB3187A;
-			remoteInfo = "ZipArchive-tvOS";
-		};
-		1CE04294DFFB5224C0EACE0E68D2C8E0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3F870AEDCE0287E7FC68FDA64D41075D /* RxSwift.xcodeproj */;
+			containerPortal = 029F5B4E545A25AE064604400575A74C /* RxSwift.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = A8D89AD6E813D43721E0B30A19DCA863;
 			remoteInfo = "RxSwift-iOS";
 		};
-		21EF96D942232C68B4AE21E28CDA4377 /* PBXContainerItemProxy */ = {
+		09C993FFEBBC074A7170F4F5EAFA5F7D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 77D3436B1D431E28145E4C547F9D4180 /* RealmSwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9EE1DAD3F2FAC73CA4856B7C2F044551;
-			remoteInfo = "RealmSwift-tvOS";
-		};
-		22B6BC1A8922E210190EB2193B069F93 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B57B68507657A556F801239EA57E23E /* PVSupport.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
-			remoteInfo = "PVSupport-iOS";
-		};
-		2A1F0E0303C670039E593F208C6E516F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4BBF5C02710C0CE8116629F26C8E03FC /* SQLite.swift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = AF79E706BFD97C419C4CA68DBC7C9C39;
-			remoteInfo = "SQLite.swift-iOS";
-		};
-		3426D65400D4C7FA2C3A522743F8A38A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 96B14D772AF1C3B92181F77372691911 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
-			remoteInfo = "PVLibrary-iOS";
-		};
-		4211A4D57FB255681D56597E3E647C49 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3F870AEDCE0287E7FC68FDA64D41075D /* RxSwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2B4DC59739E6A2FEA529728FB1146453;
-			remoteInfo = "RxSwift-tvOS";
-		};
-		709BE4B383FA9FEC7938A16DC73F622E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 743ABF98A97E6E80C82C0064543FEFA9 /* LzmaSDK-ObjC.xcodeproj */;
+			containerPortal = 4AA55F230C754FDC7E92EAD3077540AF /* LzmaSDK-ObjC.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 5335286ACDC6AAC932FCBEBA6130019B;
 			remoteInfo = "LzmaSDK-ObjC-iOS";
 		};
-		9EE1FC3D5E1E44129AF76AE29AD01CE4 /* PBXContainerItemProxy */ = {
+		0EB3BDAE34637D3B52E74D9F78FB733C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 63CC3DDC1A6997E6137589F81362C6E2 /* RxCocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 66079BBD0D3ADFE73390F28ED07289C9;
+			remoteInfo = "RxCocoa-tvOS";
+		};
+		119FC4C7FE6B3F3041CF16572B6C9DE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D78FF9AF97CE9A01CDA44128354674BC /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
+			remoteInfo = "PVSupport-tvOS";
+		};
+		3571DF25A1CE69C1E2817718109C9197 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BEF31695C7ADFB0DEF100D388A1B6C7A /* RxRealm.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 68601DD0427B92E8B220CF7B98DFCC7D;
+			remoteInfo = "RxRealm-tvOS";
+		};
+		3D4156018EFC70BA01A27A656A0A8A46 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5D081E8BACF63DE92E9FDDC129661877 /* Realm.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6282122FD5ABDC34E6F303B2C1581A35;
+			remoteInfo = "Realm-iOS";
+		};
+		456013999F6B772A404CF2A5719C4E1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 731D2DEE3A067939C996FE2F5DED6B05 /* SQLite.swift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = AF79E706BFD97C419C4CA68DBC7C9C39;
+			remoteInfo = "SQLite.swift-iOS";
+		};
+		4EE228525E58F0DF6E38CA9E2286182D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D78FF9AF97CE9A01CDA44128354674BC /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
+			remoteInfo = "PVSupport-iOS";
+		};
+		510FD0989AE9081FEB1BA5FE8B4C6BAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB83CD38D7F0EA97AE6A87A119A4AC43 /* SSZipArchive.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DFB3B550C9CCCE5F688088CA7B50B560;
+			remoteInfo = "SSZipArchive-iOS";
+		};
+		7981BE3A70028D46E87B789450BC5739 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAEEB552347B99005ED27D0EBD076576 /* RealmSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9EE1DAD3F2FAC73CA4856B7C2F044551;
+			remoteInfo = "RealmSwift-tvOS";
+		};
+		8697E5BFE42F27CC8BA98A8AACF381BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB006D1AB466E7846987712931D9362D /* SWCompression.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 47FF2F022345939E9D7AC5AA15DDC103;
+			remoteInfo = "SWCompression-iOS";
+		};
+		8F421C4A350712D9E59CEB95DCA560F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 029F5B4E545A25AE064604400575A74C /* RxSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2B4DC59739E6A2FEA529728FB1146453;
+			remoteInfo = "RxSwift-tvOS";
+		};
+		902773815D0A661508763B9D28A165A6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB006D1AB466E7846987712931D9362D /* SWCompression.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BC7B9AFD90F64CAE0FDE1DB8D1742F7C;
+			remoteInfo = "SWCompression-tvOS";
+		};
+		AF16221D9D9A06342CA746D094C7DEC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BEF31695C7ADFB0DEF100D388A1B6C7A /* RxRealm.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 80BB45F1236BBD270596BEB59B585B8A;
+			remoteInfo = "RxRealm-iOS";
+		};
+		B15E0C7DD11541142AD278D215CF3D8F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5D081E8BACF63DE92E9FDDC129661877 /* Realm.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D052D2949D48D25DD6FCF5D10D15B163;
+			remoteInfo = "Realm-tvOS";
+		};
+		CF50122ECB2E95C5F8457ABC8734E7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4AA55F230C754FDC7E92EAD3077540AF /* LzmaSDK-ObjC.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AB224A4D0E4ACD6E4322E33CAA202AD;
+			remoteInfo = "LzmaSDK-ObjC-tvOS";
+		};
+		D4F5D2C925711C03D2A98ABA58005C2E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 731D2DEE3A067939C996FE2F5DED6B05 /* SQLite.swift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BDF878B196F96293FBCB88F0320176DA;
+			remoteInfo = "SQLite.swift-tvOS";
+		};
+		D6029FD63968B00AE1A5F19FC2179766 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 96B14D772AF1C3B92181F77372691911 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
 			remoteInfo = "PVLibrary-tvOS";
 		};
-		B3270F00B18502719E4DEFCC07AD0850 /* PBXContainerItemProxy */ = {
+		E9BAF14137D0947CD0B3D82253C5452D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4B57B68507657A556F801239EA57E23E /* PVSupport.xcodeproj */;
+			containerPortal = 96B14D772AF1C3B92181F77372691911 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
-			remoteInfo = "PVSupport-tvOS";
+			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
+			remoteInfo = "PVLibrary-iOS";
 		};
-		C5AD1928869A979FB76AF57B1143C4B1 /* PBXContainerItemProxy */ = {
+		EEB5FC54A62B5881FC949506F8B4CB26 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 743ABF98A97E6E80C82C0064543FEFA9 /* LzmaSDK-ObjC.xcodeproj */;
+			containerPortal = DB83CD38D7F0EA97AE6A87A119A4AC43 /* SSZipArchive.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1AB224A4D0E4ACD6E4322E33CAA202AD;
-			remoteInfo = "LzmaSDK-ObjC-tvOS";
+			remoteGlobalIDString = F899FAD52B9972F00228A7DAA0BF60F2;
+			remoteInfo = "SSZipArchive-tvOS";
 		};
-		EC5C159B3A55D3DEEED6427E2FEAA6E6 /* PBXContainerItemProxy */ = {
+		FDB12D2F38E6CBA7409C629FE74A186A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = E9CA8AD264B869A2B8C83C7C701A4E7C /* ZipArchive.xcodeproj */;
+			containerPortal = 63CC3DDC1A6997E6137589F81362C6E2 /* RxCocoa.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8C7E2F3FAAC142C9D7983A77ADF1CC12;
-			remoteInfo = "ZipArchive-iOS";
+			remoteGlobalIDString = DB765C963AAFF5C61FA1D944105D582C;
+			remoteInfo = "RxCocoa-iOS";
+		};
+		FE69D9CED8CF067E12F42F8CA93B070D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAEEB552347B99005ED27D0EBD076576 /* RealmSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D4944F1478B34E109711C982D2C6C460;
+			remoteInfo = "RealmSwift-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		002B4D68475A8E7EF4AA2B40D2291604 /* NSData+Hashing.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
 		0296CA437175B18D562E7F7B44FAF251 /* PVLibrary-tvOS-Unit-PVLibraryTests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = "PVLibrary-tvOS-Unit-PVLibraryTests-frameworks.sh"; path = "../PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-frameworks.sh"; sourceTree = "<group>"; };
+		029F5B4E545A25AE064604400575A74C /* RxSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxSwift; path = RxSwift.xcodeproj; sourceTree = "<group>"; };
 		03B40EA37E46D80DE8B1013A9C3C92B7 /* PVLibrary-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PVLibrary-tvOS-umbrella.h"; path = "../PVLibrary-tvOS/PVLibrary-tvOS-umbrella.h"; sourceTree = "<group>"; };
 		03C335A94FDCE794BD587EFBB0F88679 /* PVLibrary-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVLibrary-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		0552F35A790F109436F2A1503FAE8137 /* PVBIOS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVBIOS.swift; sourceTree = "<group>"; };
@@ -260,6 +323,7 @@
 		05DC17B02906BC9C56C78619F82EED18 /* PVLibrary.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PVLibrary.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		064B72A300DE7295D0239F67D814DCC0 /* PVLibrary-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "PVLibrary-iOS.modulemap"; sourceTree = "<group>"; };
 		06B0743393E0477C4260864523C55618 /* System.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
+		09EBAA87F345B406E3A1E736A96DE973 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		0EB2AAF0339D6B6E2004D417053F16A3 /* RomDatabase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RomDatabase.swift; sourceTree = "<group>"; };
 		1230E39489AC2E5854216CC0FF90A536 /* PVLibrary-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "PVLibrary-tvOS.modulemap"; path = "../PVLibrary-tvOS/PVLibrary-tvOS.modulemap"; sourceTree = "<group>"; };
 		1266A8B3BCECF4E5450BF3B5C984362E /* SavePackage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
@@ -271,29 +335,29 @@
 		1CC7638B0E0CB37658FDF516A0684B3A /* Repository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		20FAA50F77383D0B09FCB9B3D89BCD2E /* Protocols.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		2296343E5DB08D71B0585A4C7EBCF747 /* NSData+Hashing.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
-		22D202287CFDF0235B981D3E69694402 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		25221C0DA235C092CAAE907F17FA1653 /* NSString+Hashing.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSString+Hashing.h"; sourceTree = "<group>"; };
 		25574DC8A9305697F3D49675992AF573 /* PVLibrary.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PVLibrary.h; path = PVLibrary/Sources/PVLibrary.h; sourceTree = "<group>"; };
 		2771A2F6022B57B2EE5CFE68005AEF49 /* PVLibrary-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PVLibrary-iOS-Info.plist"; sourceTree = "<group>"; };
+		2B5D2C34B9A9D5A7CD2C60F7558BE445 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		311A9E8C25C371DF5B373686DCC83CEA /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		313A4E2B8A8C106E8A46796101A9EF96 /* PVGameLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PVGameLibrary.swift; path = PVLibrary/Sources/PVGameLibrary.swift; sourceTree = "<group>"; };
 		331CAAA82A6C50FBEE34F6912D671DD2 /* PVGame+BoxArt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "PVGame+BoxArt.swift"; sourceTree = "<group>"; };
 		33BFBCE31D75684E456AF2020E27055D /* Game.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		37F68F79424C5F0F51139D69E603A89C /* PVLibrary-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PVLibrary-iOS-prefix.pch"; sourceTree = "<group>"; };
 		3837839429A2533070E28070D147E6F5 /* Package.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		3BB2C95FDEA47DA640957A2191045D83 /* RunLoopThreadScheduler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RunLoopThreadScheduler.swift; sourceTree = "<group>"; };
-		3F870AEDCE0287E7FC68FDA64D41075D /* RxSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxSwift; path = RxSwift.xcodeproj; sourceTree = "<group>"; };
 		416B4AA351EF9F10B9E7AC30F818AFBD /* Core.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		44D1C9B7F5923E8758283CB95BA8F376 /* PVLibrary-iOS.unit-pvlibrarytests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVLibrary-iOS.unit-pvlibrarytests.release.xcconfig"; sourceTree = "<group>"; };
+		4503F46D9E7775B2ADCEFF283ECFF411 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		48ACC49286294DA9512E5D42F0ABD806 /* PVLibrary-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVLibrary-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		48C15CD93C7B7EC2CA557FC875D6B822 /* Observable+Ext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Observable+Ext.swift"; sourceTree = "<group>"; };
-		4B57B68507657A556F801239EA57E23E /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
-		4BBF5C02710C0CE8116629F26C8E03FC /* SQLite.swift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SQLite.swift; path = SQLite.swift.xcodeproj; sourceTree = "<group>"; };
+		4AA55F230C754FDC7E92EAD3077540AF /* LzmaSDK-ObjC */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "LzmaSDK-ObjC"; path = "LzmaSDK-ObjC.xcodeproj"; sourceTree = "<group>"; };
 		4BE69FBA199025D5A09C61299EC88314 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		560AD5FBEA95D4ABEEC1010540CA73E0 /* PVAppConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
 		5727F0ABFE4ACCEDE38AE7DB5F72A423 /* Extractor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
-		5F423AAAC024B4DA7B56210891CD660D /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D081E8BACF63DE92E9FDDC129661877 /* Realm */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Realm; path = Realm.xcodeproj; sourceTree = "<group>"; };
 		603DB1BC862A9CE93A19449E7A38C35D /* PVLibrary-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVLibrary-tvOS.debug.xcconfig"; path = "../PVLibrary-tvOS/PVLibrary-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		60660BB2775299F4F1E64539C60D38EB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		63CC3DDC1A6997E6137589F81362C6E2 /* RxCocoa */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxCocoa; path = RxCocoa.xcodeproj; sourceTree = "<group>"; };
 		66C00E23EF761D6AA5D92AA3E2E4808B /* PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch"; path = "../PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch"; sourceTree = "<group>"; };
 		6B846737BBA1E26B1FEF41FBD2042ECC /* PVLibrary-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "PVLibrary-tvOS-Info.plist"; path = "../PVLibrary-tvOS/PVLibrary-tvOS-Info.plist"; sourceTree = "<group>"; };
 		6CC072921003C109B28694D4AE039DF4 /* PVLibrary-tvOS-Unit-PVLibraryTests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "PVLibrary-tvOS-Unit-PVLibraryTests"; path = "PVLibrary-tvOS-Unit-PVLibraryTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -301,9 +365,8 @@
 		6DF5AD515A291AB171FC7A4C35C1CFE1 /* PVGame+Spotlight.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "PVGame+Spotlight.swift"; sourceTree = "<group>"; };
 		6DFD2E29307DA8EAC3AC949987893BAB /* PVEmulatorConfiguration+Frameworks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "PVEmulatorConfiguration+Frameworks.swift"; sourceTree = "<group>"; };
 		6EF49669E3BE2EBE566BC54A08895864 /* PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist"; path = "../PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist"; sourceTree = "<group>"; };
-		743ABF98A97E6E80C82C0064543FEFA9 /* LzmaSDK-ObjC */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "LzmaSDK-ObjC"; path = "LzmaSDK-ObjC.xcodeproj"; sourceTree = "<group>"; };
+		731D2DEE3A067939C996FE2F5DED6B05 /* SQLite.swift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SQLite.swift; path = SQLite.swift.xcodeproj; sourceTree = "<group>"; };
 		74CF86D27B9870EAC5DF281480680DA0 /* PVLibraryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PVLibraryTests.swift; path = PVLibrary/Tests/PVLibraryTests.swift; sourceTree = "<group>"; };
-		77D3436B1D431E28145E4C547F9D4180 /* RealmSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RealmSwift; path = RealmSwift.xcodeproj; sourceTree = "<group>"; };
 		78BF658E4FEAFD48DD6F211DE0741294 /* OESQLiteDatabase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		7E0656B41D00912D45FB6B624A1A346B /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVLibrary.framework; path = "PVLibrary-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8459560B65B888E29FC022841AC5085E /* PVLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVLibrary.swift; sourceTree = "<group>"; };
@@ -327,12 +390,13 @@
 		A732444121078A3E437A38468129B4A9 /* PackageResult.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PackageResult.swift; sourceTree = "<group>"; };
 		B1F57C96731FF155ECBBD55A542DDFE4 /* GameImporter2.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B493F957CD0D5FEA4B944973C88B45C1 /* PVSaveState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVSaveState.swift; sourceTree = "<group>"; };
+		BB54D7314E1D4000723E8C2DACBED4D0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		BB755DA2628BB9744F070BD52C907638 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVLibrary.framework; path = "PVLibrary-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBFEC8CFF2C403130CA52FDAFEA0EEFA /* PVLibrary-iOS.unit-pvlibrarytests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVLibrary-iOS.unit-pvlibrarytests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCDBD9A04458426A08645D0351F87F05 /* NSFileManager+Hashing.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Hashing.m"; sourceTree = "<group>"; };
+		BEF31695C7ADFB0DEF100D388A1B6C7A /* RxRealm */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxRealm; path = RxRealm.xcodeproj; sourceTree = "<group>"; };
 		C0F282181C98EC53C24BF0FB78857C2E /* LICENSE.md */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.md; sourceTree = "<group>"; };
 		C0FC3978A43B0A81FB6777F885FBE7CA /* GamePackage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
-		C14004075F774CB95F11162E3AC446AB /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1D8771700445A3B54B6460E73E79D31 /* RealmRepresentable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RealmRepresentable.swift; sourceTree = "<group>"; };
 		C1DB9175700F83824ABA06618A634EF0 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		CA8F5296E9619A581445603CC1B82D7F /* PVLibrary-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVLibrary-tvOS.release.xcconfig"; path = "../PVLibrary-tvOS/PVLibrary-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -341,13 +405,18 @@
 		D13BD6F3A56913BE3AB75C1EB43620D7 /* PVFile.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVFile.swift; sourceTree = "<group>"; };
 		D293AF645A83C6D304F168535955C902 /* GameImporter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GameImporter.swift; sourceTree = "<group>"; };
 		D7677506117E59A90BFCAB7FA492C6CB /* PVRecentGame.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
+		D78FF9AF97CE9A01CDA44128354674BC /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
 		D94A92006FE2C30E49DD03659ECC506E /* FileInfoProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileInfoProvider.swift; sourceTree = "<group>"; };
 		DAD74C38037C41483EF248CA520E3A19 /* UTI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UTI.swift; sourceTree = "<group>"; };
+		DAEEB552347B99005ED27D0EBD076576 /* RealmSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RealmSwift; path = RealmSwift.xcodeproj; sourceTree = "<group>"; };
+		DB006D1AB466E7846987712931D9362D /* SWCompression */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SWCompression; path = SWCompression.xcodeproj; sourceTree = "<group>"; };
+		DB83CD38D7F0EA97AE6A87A119A4AC43 /* SSZipArchive */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSZipArchive; path = SSZipArchive.xcodeproj; sourceTree = "<group>"; };
 		DFF8D6CE63F2124EF10A6F9F32B2291E /* PVGame.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVGame.swift; sourceTree = "<group>"; };
 		E313110DE310FD25072F56C7564B1216 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "PVGameLibrary+Migration.swift"; path = "PVLibrary/Sources/PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
 		E4E8DDEF0A3DBA7E5CF044846BE56F9E /* LibrarySerializerError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibrarySerializerError.swift; sourceTree = "<group>"; };
-		E9CA8AD264B869A2B8C83C7C701A4E7C /* ZipArchive */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZipArchive; path = ZipArchive.xcodeproj; sourceTree = "<group>"; };
+		E9363BEEEFDCCAD425DD63C83AF51426 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		ED5D09A7E70C778F489C7AF84623E253 /* Realm+Ext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Realm+Ext.swift"; sourceTree = "<group>"; };
+		EF163F07BFC20A59509ABC5D34021BD8 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		EFECFA6F82BAF68D2FF40009293B6801 /* SaveState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		F0280751879775E58EBEA64C5F0F7E4F /* PVLibrary-iOS-Unit-PVLibraryTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PVLibrary-iOS-Unit-PVLibraryTests-Info.plist"; sourceTree = "<group>"; };
 		F0F3EC97877E693474827C47E91836AA /* LibrarySerializer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibrarySerializer.swift; sourceTree = "<group>"; };
@@ -358,39 +427,45 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A5C0F905699D6162868CB639C99129EA /* Frameworks */ = {
+		1045710807CEB657FEEEB4C90FB36726 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98E5E67F248C814F87FC8959E49328FA /* Foundation.framework in Frameworks */,
-				9DB5C359162E1F4BDA174AEB9FA331C8 /* PVSupport.framework in Frameworks */,
+				FF0220B5E64ECF8005D6AF63BAED7C58 /* CoreGraphics.framework in Frameworks */,
+				7E052D0FF22DBCC2E8AB31D9120F4CB4 /* CoreServices.framework in Frameworks */,
+				CDD45A59753C2D74DCD7B4197E82ECDB /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AE7591244AD01DAE2D7173C49FFE092E /* Frameworks */ = {
+		224A32A909CFCA84C5E7A5C5CE46DCC7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1A1618C1D3916B0AC7D96271ADBBEBB /* Foundation.framework in Frameworks */,
-				6284C95F978407835C34201BECEF21AA /* PVLibrary.framework in Frameworks */,
+				A38ED85B080776E57BA96BC734371BBA /* CoreGraphics.framework in Frameworks */,
+				AA86EDC3A3795C6325DFF5BEAF6CAB36 /* CoreServices.framework in Frameworks */,
+				A599F3BADE21537D02BE7F4CF96D1CD3 /* Foundation.framework in Frameworks */,
+				4B7C0FA80714B6626345925041FD67DD /* PVLibrary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FD69462B5571AB3F4290D142CE5D3E31 /* Frameworks */ = {
+		26C968B53DED19218131056D34FFB5FA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FA422B085CDB703EECF0235BE1A615C /* Foundation.framework in Frameworks */,
-				B2391409692FF76FEE9A97DD8A97D902 /* PVSupport.framework in Frameworks */,
+				7555B03091ED187361ADF4E498B1CDAC /* CoreGraphics.framework in Frameworks */,
+				322BD0D45DD5180DD50FD918BE37FAFA /* CoreServices.framework in Frameworks */,
+				C22535269E69C3242EB75435BD2BD0A1 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FD933D15634AB5040E8A307679C25A54 /* Frameworks */ = {
+		C09F2105FFF1E5301890FF2255FB6117 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A448E428C1FEB993CA05382C706FB61B /* Foundation.framework in Frameworks */,
-				D6798E55C5DC9D8B0F05F9939132222E /* PVLibrary.framework in Frameworks */,
+				923A0E8897926FE5F6D65039AC304D76 /* CoreGraphics.framework in Frameworks */,
+				B47655299EC99F6B41BBC4B060978215 /* CoreServices.framework in Frameworks */,
+				0E24935D1BCF8501C890E1196D5FEF8A /* Foundation.framework in Frameworks */,
+				0F4E568D1B5B266DB4288FB9AAE2BDE2 /* PVLibrary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,11 +496,28 @@
 		0A54163112757E3961DA4BFB7D13E2D7 = {
 			isa = PBXGroup;
 			children = (
-				A04D4015F47C8F65164566F277073B9D /* Dependencies */,
-				114B97D51E484F6F049A51849AEF5860 /* Frameworks */,
+				0CAD98BA1DE88B2C7A5E16976670994C /* Dependencies */,
+				963CD0495E9F384E99F6AE84AC239DF8 /* Frameworks */,
 				2ED6235FE2B8EDDC138C7B356A1A9F7F /* Products */,
 				17F83AE122824B53F2C19958F308EEFE /* PVLibrary */,
 			);
+			sourceTree = "<group>";
+		};
+		0CAD98BA1DE88B2C7A5E16976670994C /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				4AA55F230C754FDC7E92EAD3077540AF /* LzmaSDK-ObjC */,
+				D78FF9AF97CE9A01CDA44128354674BC /* PVSupport */,
+				5D081E8BACF63DE92E9FDDC129661877 /* Realm */,
+				DAEEB552347B99005ED27D0EBD076576 /* RealmSwift */,
+				63CC3DDC1A6997E6137589F81362C6E2 /* RxCocoa */,
+				BEF31695C7ADFB0DEF100D388A1B6C7A /* RxRealm */,
+				029F5B4E545A25AE064604400575A74C /* RxSwift */,
+				731D2DEE3A067939C996FE2F5DED6B05 /* SQLite.swift */,
+				DB83CD38D7F0EA97AE6A87A119A4AC43 /* SSZipArchive */,
+				DB006D1AB466E7846987712931D9362D /* SWCompression */,
+			);
+			name = Dependencies;
 			sourceTree = "<group>";
 		};
 		0CFC70DCD8283EE89E1E255FF0EAF7FF /* Domain */ = {
@@ -442,17 +534,6 @@
 			);
 			name = Domain;
 			path = PVLibrary/Sources/Domain;
-			sourceTree = "<group>";
-		};
-		114B97D51E484F6F049A51849AEF5860 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				C14004075F774CB95F11162E3AC446AB /* PVLibrary.framework */,
-				5F423AAAC024B4DA7B56210891CD660D /* PVSupport.framework */,
-				C04777704CC5DEAB033D5CF1089257FD /* iOS */,
-				E3F3957C7ABB3D5D1D86CF6CE226669D /* tvOS */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		17F83AE122824B53F2C19958F308EEFE /* PVLibrary */ = {
@@ -522,6 +603,16 @@
 			);
 			name = Files;
 			path = Files;
+			sourceTree = "<group>";
+		};
+		3C19C5461AEE60754E0C91E9A8E5011E /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				09EBAA87F345B406E3A1E736A96DE973 /* CoreGraphics.framework */,
+				311A9E8C25C371DF5B373686DCC83CEA /* CoreServices.framework */,
+				4503F46D9E7775B2ADCEFF283ECFF411 /* Foundation.framework */,
+			);
+			name = tvOS;
 			sourceTree = "<group>";
 		};
 		3E21E5CA40D4781DF464A0C4792D9E8C /* Entities */ = {
@@ -600,6 +691,16 @@
 			path = Conversion;
 			sourceTree = "<group>";
 		};
+		963CD0495E9F384E99F6AE84AC239DF8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B5D2C34B9A9D5A7CD2C60F7558BE445 /* PVLibrary.framework */,
+				C60DBFA67EFF4C00B7730C2345A268B9 /* iOS */,
+				3C19C5461AEE60754E0C91E9A8E5011E /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		992DD2E32478BC837DB2F31AC7900B39 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
@@ -607,19 +708,6 @@
 				05DC17B02906BC9C56C78619F82EED18 /* PVLibrary.podspec */,
 			);
 			name = Pod;
-			sourceTree = "<group>";
-		};
-		A04D4015F47C8F65164566F277073B9D /* Dependencies */ = {
-			isa = PBXGroup;
-			children = (
-				743ABF98A97E6E80C82C0064543FEFA9 /* LzmaSDK-ObjC */,
-				4B57B68507657A556F801239EA57E23E /* PVSupport */,
-				77D3436B1D431E28145E4C547F9D4180 /* RealmSwift */,
-				3F870AEDCE0287E7FC68FDA64D41075D /* RxSwift */,
-				4BBF5C02710C0CE8116629F26C8E03FC /* SQLite.swift */,
-				E9CA8AD264B869A2B8C83C7C701A4E7C /* ZipArchive */,
-			);
-			name = Dependencies;
 			sourceTree = "<group>";
 		};
 		A1CBC3A7A50021C66590752AC71DC884 /* Serializer */ = {
@@ -657,14 +745,6 @@
 			path = PVLibrary/Sources/NSExtensions;
 			sourceTree = "<group>";
 		};
-		C04777704CC5DEAB033D5CF1089257FD /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				22D202287CFDF0235B981D3E69694402 /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
 		C0F4DA73884D5AE0DBFFD3711B397BB5 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -686,6 +766,16 @@
 			);
 			name = Utility;
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		C60DBFA67EFF4C00B7730C2345A268B9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				BB54D7314E1D4000723E8C2DACBED4D0 /* CoreGraphics.framework */,
+				EF163F07BFC20A59509ABC5D34021BD8 /* CoreServices.framework */,
+				E9363BEEEFDCCAD425DD63C83AF51426 /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		C701260A5FA2DE342CBBE4EFC4605776 /* Game Media */ = {
@@ -719,14 +809,6 @@
 			);
 			name = Extensions;
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		E3F3957C7ABB3D5D1D86CF6CE226669D /* tvOS */ = {
-			isa = PBXGroup;
-			children = (
-				60660BB2775299F4F1E64539C60D38EB /* Foundation.framework */,
-			);
-			name = tvOS;
 			sourceTree = "<group>";
 		};
 		EF795B46456D1914C0C95461C905B005 /* Support Files */ = {
@@ -764,31 +846,31 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		82A605444EFA830F426EFDB713D4B78E /* Headers */ = {
+		5DD1313FE14474B08DE0E0C91722B937 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2FCA8C5F8796915D1F87BAAA79CA81B /* NSData+Hashing.h in Headers */,
-				B237FD3AA18467CE61BAA0BBC63652F1 /* NSFileManager+Hashing.h in Headers */,
-				C2656769427A37939D9ECF25E9D6AF22 /* NSString+Hashing.h in Headers */,
-				10B7F5E2A1FF84D0C35A13930CF872E2 /* OESQLiteDatabase.h in Headers */,
-				B90C62961487A6F46FCA3CB74106B98F /* PVLibrary-iOS-umbrella.h in Headers */,
-				863D35BBA7D6D371F9375E4534FDF8BA /* PVLibrary.h in Headers */,
-				94916365EB6F12A3B5C8C5055283BD7C /* UIImage+Scaling.h in Headers */,
+				62A62EB40347BB0D18F20D2C05CEE411 /* NSData+Hashing.h in Headers */,
+				1144C6E2B2D1862B0B64E58F57A978BF /* NSFileManager+Hashing.h in Headers */,
+				C82DA521E449F00A4125367E110764CD /* NSString+Hashing.h in Headers */,
+				B0B12C7A287D9E5D336CEA62126C19A8 /* OESQLiteDatabase.h in Headers */,
+				4C87CAA594953243F04FB91E5E9B1F2A /* PVLibrary-iOS-umbrella.h in Headers */,
+				60218DD59BABA6899F798C3C18A9BC17 /* PVLibrary.h in Headers */,
+				FF1552BAC090B1DB71D620A488F6B002 /* UIImage+Scaling.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B17AFBF5BBE35F874AA5F76AD25E1AD7 /* Headers */ = {
+		BB7E12599E498C68C44BEA9FE8CD6630 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27DA2A063E3A228F8CA5189306D6D26B /* NSData+Hashing.h in Headers */,
-				33974C4190C862F437D0CB27D9D95433 /* NSFileManager+Hashing.h in Headers */,
-				438A976FCA3DA7913ED42453786F35E2 /* NSString+Hashing.h in Headers */,
-				7637BE6F4420360FF3B624EDE6243650 /* OESQLiteDatabase.h in Headers */,
-				4F819B4FC7F07EE8F1498C0CC4572666 /* PVLibrary-tvOS-umbrella.h in Headers */,
-				2B5AB4F240BC797116DEB2E59A789995 /* PVLibrary.h in Headers */,
-				6A11972099995CA5C97F5ECA2364B157 /* UIImage+Scaling.h in Headers */,
+				8F729141FD26C1116D1AE26AC5456D12 /* NSData+Hashing.h in Headers */,
+				7C717461B714D2798C347A5048154D09 /* NSFileManager+Hashing.h in Headers */,
+				A5A1D2393A37D8E13986410E1D196976 /* NSString+Hashing.h in Headers */,
+				6DD153D80F8EC34A45A413FA4DDBB089 /* OESQLiteDatabase.h in Headers */,
+				C0285A216A6B3031F5FE3D5717402A2D /* PVLibrary-tvOS-umbrella.h in Headers */,
+				21B5AEEB3357D309FEB2894454240F32 /* PVLibrary.h in Headers */,
+				30E19D7D07CF8B112D7FC6723DE0996E /* UIImage+Scaling.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -797,22 +879,26 @@
 /* Begin PBXNativeTarget section */
 		092614E117CBAD12432CE71E038C9F80 /* PVLibrary-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6867C3DECAB27F0E73E2C517DB22FB0F /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */;
+			buildConfigurationList = A9FFA4866E87A13F6BA6178974279639 /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */;
 			buildPhases = (
-				82A605444EFA830F426EFDB713D4B78E /* Headers */,
-				A714B372A2BB9F8547EBAA4E65DE9289 /* Sources */,
-				A5C0F905699D6162868CB639C99129EA /* Frameworks */,
-				66FC2737B68BAA396D40E213BE5120AD /* Resources */,
+				5DD1313FE14474B08DE0E0C91722B937 /* Headers */,
+				1FB1EBE5AFDE6687C6DC1801DBC0BC64 /* Sources */,
+				1045710807CEB657FEEEB4C90FB36726 /* Frameworks */,
+				7FC0A07677EE60A7D63EE6A961F92657 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				44B4EA5C67071C1EB7C54C213449A8D5 /* PBXTargetDependency */,
-				E62A27AF053B5D929A819EFE1BA6C830 /* PBXTargetDependency */,
-				5D2C2FB7BDE98299729DD1123BB99A5E /* PBXTargetDependency */,
-				F915345C6B0D713D2D4987FD3B3173AD /* PBXTargetDependency */,
-				042A19675A2BB5625464E25B1D9E5B18 /* PBXTargetDependency */,
-				F1E255CD721591FCE55C2A359707CC4B /* PBXTargetDependency */,
+				875DE1E1D758B186111AD291B6DCA7CC /* PBXTargetDependency */,
+				1005AE4A04615B5473D18DDFBBF7254F /* PBXTargetDependency */,
+				D6B111513D8686387FEBEB5D402BC986 /* PBXTargetDependency */,
+				5A2F39E8FDB642A0EC733455A00132EA /* PBXTargetDependency */,
+				20EB4960E111436548AA574FFFF77B73 /* PBXTargetDependency */,
+				4623DB88CED2126ED99DE145854282A6 /* PBXTargetDependency */,
+				22E0D4D2FF68DE929C8E58BE7C2CDE50 /* PBXTargetDependency */,
+				DB166D1DB64C130C076A0E29908AAAAB /* PBXTargetDependency */,
+				90606A2F8EA68D0A53B1F1180DABEEDF /* PBXTargetDependency */,
+				1BB6002C80240CBB31CA107D081CF3D2 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-iOS";
 			productName = "PVLibrary-iOS";
@@ -821,17 +907,17 @@
 		};
 		22B08709CA4AB184293DC4270FC537BB /* PVLibrary-tvOS-Unit-PVLibraryTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 98FBA30CDD7E20D3904605364C202651 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS-Unit-PVLibraryTests" */;
+			buildConfigurationList = 1536F8954A0914A0472741844DEDBFF9 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS-Unit-PVLibraryTests" */;
 			buildPhases = (
-				3E4A7B3884AB1C15A43D746EC4D1CACE /* Sources */,
-				FD933D15634AB5040E8A307679C25A54 /* Frameworks */,
-				CC94665863E2EE168328F4A1D94A0B99 /* Resources */,
-				512B2ABD09804D3A9DFD8EAAFF6A93CC /* [CP] Embed Pods Frameworks */,
+				B021EA4554AA2B802BD61DA993B15ACE /* Sources */,
+				224A32A909CFCA84C5E7A5C5CE46DCC7 /* Frameworks */,
+				B5E9371EEF306EFB5B9804F9D2D6F851 /* Resources */,
+				25937860F1C1ACD1DD2581B43FCD6D0E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				7AAE6E0CDE7B51F64C7D59348806C6DD /* PBXTargetDependency */,
+				1BCA8AE79037231AF6215815413F1865 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-tvOS-Unit-PVLibraryTests";
 			productName = "PVLibrary-tvOS-Unit-PVLibraryTests";
@@ -840,17 +926,17 @@
 		};
 		A585EBA6E4565986EEC16CF23E949CD1 /* PVLibrary-iOS-Unit-PVLibraryTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4540289AC7FE572153CC81B788ED71DD /* Build configuration list for PBXNativeTarget "PVLibrary-iOS-Unit-PVLibraryTests" */;
+			buildConfigurationList = F1B04D78720D33CF2D91AF31E587BAFA /* Build configuration list for PBXNativeTarget "PVLibrary-iOS-Unit-PVLibraryTests" */;
 			buildPhases = (
-				7A30F5F232531F8EAA1AB2D1F1042139 /* Sources */,
-				AE7591244AD01DAE2D7173C49FFE092E /* Frameworks */,
-				0F78F21B9A1EF9E7BA2AC9FB0BB709E4 /* Resources */,
-				5F944C5201E4E59ADC40C070EEFFC11B /* [CP] Embed Pods Frameworks */,
+				4E64BFD0FE5AA9ED9481AFD78C962C69 /* Sources */,
+				C09F2105FFF1E5301890FF2255FB6117 /* Frameworks */,
+				07889570E331FE8698A81E2D0ABB7C0D /* Resources */,
+				72E6A18EECE5FC3368B1B7B8E2E47C02 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B491CD936C31AA105CAE3517B0955285 /* PBXTargetDependency */,
+				E6D0B1C8128BFC336AD6EECC53A01368 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-iOS-Unit-PVLibraryTests";
 			productName = "PVLibrary-iOS-Unit-PVLibraryTests";
@@ -859,22 +945,26 @@
 		};
 		A965087799233BFFE565E513D2CAC008 /* PVLibrary-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 71110765A8BBFBB4037F56B52B3AFD81 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */;
+			buildConfigurationList = 225000E679ECBA464839E425BE4FB390 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */;
 			buildPhases = (
-				B17AFBF5BBE35F874AA5F76AD25E1AD7 /* Headers */,
-				A3176C7854513D227C793CECB8D3729A /* Sources */,
-				FD69462B5571AB3F4290D142CE5D3E31 /* Frameworks */,
-				B36DDBF4261D7574E152288732A0F7CC /* Resources */,
+				BB7E12599E498C68C44BEA9FE8CD6630 /* Headers */,
+				5039EE51980597366D1628683FF9836E /* Sources */,
+				26C968B53DED19218131056D34FFB5FA /* Frameworks */,
+				3C9757A47DE4DCCAB57D47D8CF6F5BBB /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EAD9EEFF3B08434A57F8DBD14CE57EC1 /* PBXTargetDependency */,
-				51EB6A751E80C866D9790D57643937A7 /* PBXTargetDependency */,
-				A3B251A7260BDDE6F7123CCDD4EE972B /* PBXTargetDependency */,
-				629CFEEAFECA5C260A598F4A76332257 /* PBXTargetDependency */,
-				8C5EDEFAA6F46556022BB05C65B60A6E /* PBXTargetDependency */,
-				CA262D2749F8E9924172B41B912BD5D1 /* PBXTargetDependency */,
+				FE894245119ECDFD8D7320E20097E7E9 /* PBXTargetDependency */,
+				1B03846CF5C6C896C7A4B2538B8C8554 /* PBXTargetDependency */,
+				CDA500C6220A9B72342F327F6E250EC4 /* PBXTargetDependency */,
+				15DB308A2408B73B5639D3810CCA141E /* PBXTargetDependency */,
+				C85E1BDD43D6F92B30591BB93CBC1D23 /* PBXTargetDependency */,
+				00DCF9108346458A19D8012C6DB9A124 /* PBXTargetDependency */,
+				BDB72AEF22EDEEB6AF423F8DB079B3CA /* PBXTargetDependency */,
+				55763992CA21F07A19658BFCCF9F4755 /* PBXTargetDependency */,
+				1956DD60A4CB0B5AA415EF01C9D9D971 /* PBXTargetDependency */,
+				8378D47DAEF7BDBBE320AA80A8317BF0 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-tvOS";
 			productName = "PVLibrary-tvOS";
@@ -903,22 +993,34 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProjectRef = 743ABF98A97E6E80C82C0064543FEFA9 /* LzmaSDK-ObjC */;
+					ProjectRef = 4AA55F230C754FDC7E92EAD3077540AF /* LzmaSDK-ObjC */;
 				},
 				{
-					ProjectRef = 4B57B68507657A556F801239EA57E23E /* PVSupport */;
+					ProjectRef = 5D081E8BACF63DE92E9FDDC129661877 /* Realm */;
 				},
 				{
-					ProjectRef = 77D3436B1D431E28145E4C547F9D4180 /* RealmSwift */;
+					ProjectRef = DAEEB552347B99005ED27D0EBD076576 /* RealmSwift */;
 				},
 				{
-					ProjectRef = 3F870AEDCE0287E7FC68FDA64D41075D /* RxSwift */;
+					ProjectRef = 63CC3DDC1A6997E6137589F81362C6E2 /* RxCocoa */;
 				},
 				{
-					ProjectRef = 4BBF5C02710C0CE8116629F26C8E03FC /* SQLite.swift */;
+					ProjectRef = BEF31695C7ADFB0DEF100D388A1B6C7A /* RxRealm */;
 				},
 				{
-					ProjectRef = E9CA8AD264B869A2B8C83C7C701A4E7C /* ZipArchive */;
+					ProjectRef = 029F5B4E545A25AE064604400575A74C /* RxSwift */;
+				},
+				{
+					ProjectRef = 731D2DEE3A067939C996FE2F5DED6B05 /* SQLite.swift */;
+				},
+				{
+					ProjectRef = DB006D1AB466E7846987712931D9362D /* SWCompression */;
+				},
+				{
+					ProjectRef = DB83CD38D7F0EA97AE6A87A119A4AC43 /* SSZipArchive */;
+				},
+				{
+					ProjectRef = D78FF9AF97CE9A01CDA44128354674BC /* PVSupport */;
 				},
 			);
 			projectRoot = "";
@@ -932,28 +1034,28 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0F78F21B9A1EF9E7BA2AC9FB0BB709E4 /* Resources */ = {
+		07889570E331FE8698A81E2D0ABB7C0D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		66FC2737B68BAA396D40E213BE5120AD /* Resources */ = {
+		3C9757A47DE4DCCAB57D47D8CF6F5BBB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B36DDBF4261D7574E152288732A0F7CC /* Resources */ = {
+		7FC0A07677EE60A7D63EE6A961F92657 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CC94665863E2EE168328F4A1D94A0B99 /* Resources */ = {
+		B5E9371EEF306EFB5B9804F9D2D6F851 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -963,7 +1065,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		512B2ABD09804D3A9DFD8EAAFF6A93CC /* [CP] Embed Pods Frameworks */ = {
+		25937860F1C1ACD1DD2581B43FCD6D0E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -980,7 +1082,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5F944C5201E4E59ADC40C070EEFFC11B /* [CP] Embed Pods Frameworks */ = {
+		72E6A18EECE5FC3368B1B7B8E2E47C02 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1000,254 +1102,276 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3E4A7B3884AB1C15A43D746EC4D1CACE /* Sources */ = {
+		1FB1EBE5AFDE6687C6DC1801DBC0BC64 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F87A094F284C5984819B6B793173EA4A /* PVLibraryTests.swift in Sources */,
+				0E685E38CFB38904DF0F08D224713226 /* BIOS.swift in Sources */,
+				DBBFAE6B51BD9B17B0E99480DF334688 /* Cache.swift in Sources */,
+				62D28F0D8123BC94C357994F4EBA4588 /* Core.swift in Sources */,
+				1F9CC600E2B1AD52F760A38D711538E7 /* DirectoryWatcher.swift in Sources */,
+				94E29404C2E45EF279F48A66F5D8B8FE /* DirectoryWatcher2.swift in Sources */,
+				EEE0D174A58DF8C8E67CC8F1352391DF /* DomainConvertibleType.swift in Sources */,
+				47518D98373ED4C288F8832F59453E6B /* Extractor.swift in Sources */,
+				5952D49F999C005C4AA4C1A465E69EF1 /* FileBackedConformance.swift in Sources */,
+				21C41E1E1973C5755EE8ABB06E05F9F7 /* FileInfoProvider.swift in Sources */,
+				D421D200E5239738362C94A6FA1DF9CC /* Game.swift in Sources */,
+				5E2388D2438FA4D8BEFEC326862EFCCC /* GameImporter.swift in Sources */,
+				1BDE965F43F2A08FCF8447A6B5C9CDD9 /* GameImporter2.swift in Sources */,
+				6418411A080C5D3C29B5BF58DA431700 /* GamePackage.swift in Sources */,
+				D1C3995227D7116EB55C07803A12E248 /* iCloudSync.swift in Sources */,
+				7E15B59A8D220340E395651597879565 /* ImportCandidateFile.swift in Sources */,
+				CF1EF8D9B82F5E9C85AC38D40FD1A430 /* LibrarySerializer.swift in Sources */,
+				73FEFA56711463AA93DE749949E9A1E6 /* LibrarySerializerError.swift in Sources */,
+				7A4ECD88A1FDED458E714ECD45D8A863 /* LocalFile.swift in Sources */,
+				384957FB104CC18007FF026C6A7ADE70 /* NSData+Hashing.m in Sources */,
+				0536553D2DE527478EF91C410FC1BCD6 /* NSFileManager+Hashing.m in Sources */,
+				B81EEE627BBF1E55056E1794906C37E0 /* NSString+Hashing.m in Sources */,
+				51DCE617640CFA202E245E7E610E7E90 /* Observable+Ext.swift in Sources */,
+				C5F3C092D202ADD234F7C12F876FBBAA /* OESQLiteDatabase.m in Sources */,
+				51EF8232D97DD208A49302782A300709 /* Package.swift in Sources */,
+				C968E5E36D0F817816D76BFDA88A5839 /* PackageResult.swift in Sources */,
+				472F48001F14124E2844F595751DF155 /* PlistDataModels.swift in Sources */,
+				05B0FD4031D827F6F6831C2584799CD7 /* Protocols.swift in Sources */,
+				63A2C8BE346883CC1C8F4D157F3FE4A5 /* PVAppConstants.swift in Sources */,
+				DDA422A3B093A485FBA60DFE09883E40 /* PVBIOS.swift in Sources */,
+				F20DDFC8C716CB255BF503ADB719DA3C /* PVCore.swift in Sources */,
+				6073054E492B82951A68C5CB0FCCA27B /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
+				EB1A727739547A2678A0FDBFCD6F92C3 /* PVEmulatorConfiguration.swift in Sources */,
+				20E93617BAD3B6818DB4E093B322EC8C /* PVFile.swift in Sources */,
+				F2CCF8ADA72CE9B41A8431EEF0A23D66 /* PVGame+BoxArt.swift in Sources */,
+				70F57EF1D460608C41D0E2FB482F8D8E /* PVGame+Spotlight.swift in Sources */,
+				5F8C3D54E575813BDE8A01038F7617FF /* PVGame.swift in Sources */,
+				AB337412E2D92E925A6491A708EF56CD /* PVGameLibrary+Migration.swift in Sources */,
+				60579C5F84ED0D9947629616FCC75187 /* PVGameLibrary.swift in Sources */,
+				BDD13C24B837E2A84AC1803848B6721B /* PVImageFile.swift in Sources */,
+				FCBC80B7B3B8626E67C470913A7D230C /* PVLibrary-iOS-dummy.m in Sources */,
+				66E1D06AD53BBEB118A7A72EF218529F /* PVLibrary.swift in Sources */,
+				BAB6787C2C41E9E6D170003A91FB30E2 /* PVMediaCache.swift in Sources */,
+				B7A1C784ABECB621EF1C54F17444DBED /* PVObject.swift in Sources */,
+				4C8F3B5CEC3526D0C4A7E4C2E60E62CC /* PVRecentGame.swift in Sources */,
+				54211A36FB9CA2AB55B64D43F398C0EF /* PVSaveState.swift in Sources */,
+				57A297ADF577D346618460C702E875A1 /* PVSystem.swift in Sources */,
+				E3DD2D3DB9DE026BBF55FB4D1D12DBD7 /* Realm+Ext.swift in Sources */,
+				A9DAC4543F0498408F8653B863DDD1C1 /* RealmRepresentable.swift in Sources */,
+				01E7ECA9A159D6C17F1AFC0E53D35206 /* Repository.swift in Sources */,
+				449F0FF6421FB0C7F3B52CBD402694F3 /* RomDatabase.swift in Sources */,
+				5706BF7B7C7B2B09D02C3CA2634FAE41 /* RunLoopThreadScheduler.swift in Sources */,
+				1C1E20DF91D0419AEDE767740DA57F3C /* SavePackage.swift in Sources */,
+				8AF38AE97179CA852E4EC14BAE742728 /* SaveState.swift in Sources */,
+				0E88E5733E5DEA7ED4029198E5A5D426 /* System.swift in Sources */,
+				AFF034DFB423BB32B696C05C3B93CB62 /* SystemProtocol.swift in Sources */,
+				C645FA11FDBFEDABF9A2DA25329D8D32 /* Time Utilities.swift in Sources */,
+				C8B79F9408A8B0ACBD05C02E9D5E3C40 /* UIImage+Scaling.m in Sources */,
+				44DFCA7BE1D053B1A6D94D97A1BF56C3 /* UTI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7A30F5F232531F8EAA1AB2D1F1042139 /* Sources */ = {
+		4E64BFD0FE5AA9ED9481AFD78C962C69 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1999F5EA60E453A05F7F84F232911883 /* PVLibraryTests.swift in Sources */,
+				FE9E3428132B9B0ED76DD334394EB09A /* PVLibraryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A3176C7854513D227C793CECB8D3729A /* Sources */ = {
+		5039EE51980597366D1628683FF9836E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				853AC740C498A94D2F0B0EB7984FAB3D /* BIOS.swift in Sources */,
-				0CFEE11F4FE29DA68C0A77C29AC5BE62 /* Cache.swift in Sources */,
-				601E80A20F5CEBC1141C273CFFA8BFEF /* Core.swift in Sources */,
-				38AA5FF5407B985A6F392ACE7D546FCC /* DirectoryWatcher.swift in Sources */,
-				E43F60BA3A4F41E21F009E245D284F39 /* DirectoryWatcher2.swift in Sources */,
-				5B8840164E9E751FA738DE37DA6230B5 /* DomainConvertibleType.swift in Sources */,
-				136CD9A9E6C8121CF4166C1EAB4C7830 /* Extractor.swift in Sources */,
-				25CCF7F36856247D268B97B0F50B397F /* FileBackedConformance.swift in Sources */,
-				401A941E6889770CD51D9384A5B8F999 /* FileInfoProvider.swift in Sources */,
-				3EF3A9A783ECCF0F29C1EA30E0DC526C /* Game.swift in Sources */,
-				9F93F53F2CE8E486F47AF3A361AC9DDE /* GameImporter.swift in Sources */,
-				DBA8F7314B8B88A3CAABD9DD925809E0 /* GameImporter2.swift in Sources */,
-				35F63D0E61F8681A730302FDC7E7A149 /* GamePackage.swift in Sources */,
-				356C08627CB1DB78B80F14476A33906B /* iCloudSync.swift in Sources */,
-				0E739C688BB5E839A7B643D6D165A4BC /* ImportCandidateFile.swift in Sources */,
-				F87EF402A5CFFDBF7B5DB6CB7A175EFA /* LibrarySerializer.swift in Sources */,
-				7CA9F8EE6DFDBD68EB7AC14329B0D37D /* LibrarySerializerError.swift in Sources */,
-				441296E5A45018DF49D1B1C019DEA81C /* LocalFile.swift in Sources */,
-				55B6DB4868BB820AED370216D6311A87 /* NSData+Hashing.m in Sources */,
-				570B99814F9AA145414EED736BF16D82 /* NSFileManager+Hashing.m in Sources */,
-				030498347C84BE5848AD7032DB44C4B6 /* NSString+Hashing.m in Sources */,
-				2358F747AEEAAAEB46E3059C4482D9ED /* Observable+Ext.swift in Sources */,
-				5B31246E88CEEDBB7524280F840DA14E /* OESQLiteDatabase.m in Sources */,
-				54790E0F3245E040177C0C65DE1DF121 /* Package.swift in Sources */,
-				D926D9785667719BCEC7E21048901095 /* PackageResult.swift in Sources */,
-				A4588A8DC85A0FD08136590422A24693 /* PlistDataModels.swift in Sources */,
-				30D6392CDB84499E55027A8DC4EC5C73 /* Protocols.swift in Sources */,
-				61E85892A274898AEDA40343E4EF4294 /* PVAppConstants.swift in Sources */,
-				0C1C53482D58956F12D04633B18BB371 /* PVBIOS.swift in Sources */,
-				9713204D89B67344673AC7C3BBA0634C /* PVCore.swift in Sources */,
-				5704F04CE82D9795E75E6544A6A2AB61 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
-				9FD1BD85127E4C5DE886700B43F3A208 /* PVEmulatorConfiguration.swift in Sources */,
-				BEC41FD90B620629633BE25D4396B0E2 /* PVFile.swift in Sources */,
-				636089C1AB042054B3D24A16C7AEEF68 /* PVGame+BoxArt.swift in Sources */,
-				6314F77AAE2702658F4E2BB2DDCB417E /* PVGame+Spotlight.swift in Sources */,
-				D8D66847836227091DBEDE3CB0AE1B53 /* PVGame.swift in Sources */,
-				D3419A19968D9B4AD2F45C91DA0E92CE /* PVGameLibrary+Migration.swift in Sources */,
-				1E449A03BF541A27C3DAC0D3E401C3FF /* PVGameLibrary.swift in Sources */,
-				80578F794B1D62BAB09A8423E135BF13 /* PVImageFile.swift in Sources */,
-				138998C1A267D233C657E7B78AE6A42A /* PVLibrary-tvOS-dummy.m in Sources */,
-				EC544B486BDCD7D9EF120E333E973953 /* PVLibrary.swift in Sources */,
-				A5371DECC21AA13D6A14B6E260E8CE94 /* PVMediaCache.swift in Sources */,
-				41BA4149D628C2B7A33E2D3D3963EABC /* PVObject.swift in Sources */,
-				5EAD661E7CBCA8F6D8FA2F2F048CB866 /* PVRecentGame.swift in Sources */,
-				5E625F7251F23BD02CAC5E870B37E072 /* PVSaveState.swift in Sources */,
-				49C5823DEF8F418C784A06249691B41B /* PVSystem.swift in Sources */,
-				7C6B86C22A10B33AC5A42082D2276613 /* Realm+Ext.swift in Sources */,
-				DC8B77A36DAE69728E1FD391AC520F4E /* RealmRepresentable.swift in Sources */,
-				93866E3CBA0D98335375F83C5EB70EBF /* Repository.swift in Sources */,
-				8308549225BFC0295DD10FC99ADBE550 /* RomDatabase.swift in Sources */,
-				9A00DD39A518F2B955AA764A895D8544 /* RunLoopThreadScheduler.swift in Sources */,
-				233D51A934BE923E14EB67097A8DC9C9 /* SavePackage.swift in Sources */,
-				57231A77F9603E4819BEA662638901AF /* SaveState.swift in Sources */,
-				2FE485C95D3BD6EF34F87799B0C069C0 /* System.swift in Sources */,
-				64E92B58339E19188C1FBA2B55727EED /* SystemProtocol.swift in Sources */,
-				AA71864C4302C3B3F3FE04D1A25A40E2 /* Time Utilities.swift in Sources */,
-				B5DA7C8F0F994A3A26B81A20E3C286B2 /* UIImage+Scaling.m in Sources */,
-				EAE6D1F32ABDD32CFA95064DCE263079 /* UTI.swift in Sources */,
+				673CD2A1F13E682E4F41380EC988187A /* BIOS.swift in Sources */,
+				817B336D1C1588479EA95D6F9154B96C /* Cache.swift in Sources */,
+				1F12107D9851113B89DD9BDB3CC92C17 /* Core.swift in Sources */,
+				B8A2AC81AD07DEC4DB03429FC1F9F316 /* DirectoryWatcher.swift in Sources */,
+				9E9A49BB0C07DED6BEAEC0BA04916686 /* DirectoryWatcher2.swift in Sources */,
+				EA4BFADE493A5CE09F85040E14D7C0D8 /* DomainConvertibleType.swift in Sources */,
+				4AE614C464E80EADBE19EDDD1A5F4BC6 /* Extractor.swift in Sources */,
+				789117720D976B3684E4DB261E0088E7 /* FileBackedConformance.swift in Sources */,
+				D1F217447E0C01D8A1D2404228C80460 /* FileInfoProvider.swift in Sources */,
+				30998380FF04C32683CC93CCCCA03BCC /* Game.swift in Sources */,
+				EBF0C4A391BF931ECC69F4FF00C1FB66 /* GameImporter.swift in Sources */,
+				A8ECCED334E0F91DB0D294C293A3D9C1 /* GameImporter2.swift in Sources */,
+				C74F9987362C215072C8854C3DD7AF92 /* GamePackage.swift in Sources */,
+				CF857E1FE3C9799444CC49022E0EDDC0 /* iCloudSync.swift in Sources */,
+				F67F2E5C23B14F1506B312B3B02CCFA4 /* ImportCandidateFile.swift in Sources */,
+				92506337FCCBF0B87ECE3F041F2776FE /* LibrarySerializer.swift in Sources */,
+				F53D6E11743FA34A8B5F91524C1D20CD /* LibrarySerializerError.swift in Sources */,
+				BAF75DD3763F6F12B58B1694E94F9952 /* LocalFile.swift in Sources */,
+				D21F70EFC107E9FD0356C0EAC49AD035 /* NSData+Hashing.m in Sources */,
+				B654FF741E1E369E77E08668A113258A /* NSFileManager+Hashing.m in Sources */,
+				4E287E1411BC8C93349BCB38473B4F40 /* NSString+Hashing.m in Sources */,
+				95C999196BD92DA1ED433C087BE7A0B6 /* Observable+Ext.swift in Sources */,
+				2FB443926EA964191682B29AF34C3B34 /* OESQLiteDatabase.m in Sources */,
+				4E9FF94F81E16C30BB07969CD731A501 /* Package.swift in Sources */,
+				5CF8377061EEA8368781B4A6D2964B6C /* PackageResult.swift in Sources */,
+				F265E8427CFBCD2D66D9780D7BC129C5 /* PlistDataModels.swift in Sources */,
+				FC463EE78A43F3783F792FD8249C7FD0 /* Protocols.swift in Sources */,
+				A5FBD0A86E6D92A45141878EC636A266 /* PVAppConstants.swift in Sources */,
+				5E09FD57F1C307D14284183D60F96063 /* PVBIOS.swift in Sources */,
+				6C066CC40CE1DA7AF0A68912D6A7C291 /* PVCore.swift in Sources */,
+				5D56EDAF3DF56A635DB1398E80CD35DB /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
+				B70780ABBF06F49491B86C36545B36E2 /* PVEmulatorConfiguration.swift in Sources */,
+				F9BB3533801A361553C1852192A0DB0B /* PVFile.swift in Sources */,
+				85E0A5A1329739BD865FDA237F8D3E78 /* PVGame+BoxArt.swift in Sources */,
+				ABECC078DD0BD181321C3059A0F650D8 /* PVGame+Spotlight.swift in Sources */,
+				98D395C61CEEE0258C7B5B747EABE8BF /* PVGame.swift in Sources */,
+				BC8BF5057E6A66379745FD9B816415E8 /* PVGameLibrary+Migration.swift in Sources */,
+				234D73714E7DE644DDF6FF5859A053F1 /* PVGameLibrary.swift in Sources */,
+				17B1A8A42F4742E3CFBD543FBFE62B2C /* PVImageFile.swift in Sources */,
+				4318FE78A1B180F68115A035EECDE86D /* PVLibrary-tvOS-dummy.m in Sources */,
+				784E081D44BCF424418E759F17C84430 /* PVLibrary.swift in Sources */,
+				C691A43C11E784C50912D6237EEA34B6 /* PVMediaCache.swift in Sources */,
+				3AA7E6130A8BBEEDEED54A0A7791E870 /* PVObject.swift in Sources */,
+				2F9B04F3AE1AD2BE3BA7F4912D613A88 /* PVRecentGame.swift in Sources */,
+				AF68C8E9A9BAEEB3D42F583EBCF9203B /* PVSaveState.swift in Sources */,
+				DFA702E41A44FEE579348C6DC8A51187 /* PVSystem.swift in Sources */,
+				B923D4F92EAEBD029B6EFE6DA941C2F5 /* Realm+Ext.swift in Sources */,
+				9A4D5F93253A17B9163B521D97F33B4B /* RealmRepresentable.swift in Sources */,
+				16E4CC73A63E4CAEAC0158370C3842BB /* Repository.swift in Sources */,
+				D9179EC3CCC3EB978E123147C02968D1 /* RomDatabase.swift in Sources */,
+				181A8279983897C16F83D49EAB35073E /* RunLoopThreadScheduler.swift in Sources */,
+				3E109F86A602D8BD3A98B5BAFE63351F /* SavePackage.swift in Sources */,
+				6868C73B8B764890C9413A49CFCAFE21 /* SaveState.swift in Sources */,
+				97241D18E474FC8E07953CC640EB345C /* System.swift in Sources */,
+				8BF6D00D362C401C97F2BC0484769356 /* SystemProtocol.swift in Sources */,
+				C2FE3AF45A0829BC3F93EC74CF783DF3 /* Time Utilities.swift in Sources */,
+				DD8388122C5ED5BF8AD0596833FABD02 /* UIImage+Scaling.m in Sources */,
+				EEF1266F48B25D8D5A0EDFB055B9B82E /* UTI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A714B372A2BB9F8547EBAA4E65DE9289 /* Sources */ = {
+		B021EA4554AA2B802BD61DA993B15ACE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FBC4A376366D8F4C61441D68E1C29EE /* BIOS.swift in Sources */,
-				A3E4A5A5CF449E885451997726F2791E /* Cache.swift in Sources */,
-				3A66FC8E690ABC77F3DA20B5A0850A04 /* Core.swift in Sources */,
-				30A601C5B333156165660B5A2D82988D /* DirectoryWatcher.swift in Sources */,
-				A7F43FC7FB650C5D7286F3A1991BA9B7 /* DirectoryWatcher2.swift in Sources */,
-				6E4722978259FAA8BACB7C543EF4AED4 /* DomainConvertibleType.swift in Sources */,
-				7114442D9E1AE333B1443E42A689E0CF /* Extractor.swift in Sources */,
-				144DA9D586F7FFC176087BCDA2E18CA2 /* FileBackedConformance.swift in Sources */,
-				264820CDEE83167ABCE8074CA6D82C74 /* FileInfoProvider.swift in Sources */,
-				2B7BBB88D132A12165E15400F88D99BC /* Game.swift in Sources */,
-				06BE9C417B0C8CEF80D1D9963A3E262C /* GameImporter.swift in Sources */,
-				9A04A89F8806467525BB53387DE19893 /* GameImporter2.swift in Sources */,
-				DC07E698288759FCA6345D391BFC74B5 /* GamePackage.swift in Sources */,
-				5BF814E1492C16AB023AB079700DF7A4 /* iCloudSync.swift in Sources */,
-				8A114A58CD5D3D6AA905CF11B425D59C /* ImportCandidateFile.swift in Sources */,
-				E89FCEA0F0EC05AD5AA72FAF2B18E132 /* LibrarySerializer.swift in Sources */,
-				197BEC55BBCD96F362B8D622D4131DF6 /* LibrarySerializerError.swift in Sources */,
-				C7B61C07BE2C6C4A5B2D0AA0616627AC /* LocalFile.swift in Sources */,
-				3B1674E437F2FD2C7434CC762BE23A38 /* NSData+Hashing.m in Sources */,
-				4BAD38A9B013C1D3B243C7AB273B3E79 /* NSFileManager+Hashing.m in Sources */,
-				596411FC40FA4818B453825A1157C46F /* NSString+Hashing.m in Sources */,
-				A716AA919DEEC7BC8D368A9C1AB00919 /* Observable+Ext.swift in Sources */,
-				A9C4E32258D2C47CAA58836E13C0B3F5 /* OESQLiteDatabase.m in Sources */,
-				0FE980E57DFE56171732C9732D546B25 /* Package.swift in Sources */,
-				1FA742DA338821B6B7755E824D8B7EBF /* PackageResult.swift in Sources */,
-				2E00D34B1CFDD50CD3423FB379FFA265 /* PlistDataModels.swift in Sources */,
-				690C567149470733E9E73E676D302F97 /* Protocols.swift in Sources */,
-				B40C089F3575DC854016CAD0473ABB1C /* PVAppConstants.swift in Sources */,
-				271AECB750F846A0D318E88DF6074DEB /* PVBIOS.swift in Sources */,
-				9AC27EA9A5E8369B301E9F2BEDD10A86 /* PVCore.swift in Sources */,
-				844F4508C97D3900ECCA30BD6596883A /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
-				1E0409C201299EC31582A9FC032669B8 /* PVEmulatorConfiguration.swift in Sources */,
-				E46DB0781AFFB55E34C3BAC1F0CB007B /* PVFile.swift in Sources */,
-				CF817A24F25ED57C8D65C310A16F378F /* PVGame+BoxArt.swift in Sources */,
-				C3E48D1499B9215BA6F07B9D421A3670 /* PVGame+Spotlight.swift in Sources */,
-				74D66D0C4AE980D0CFF9C3DAAF85DA4D /* PVGame.swift in Sources */,
-				4830E63D88D3F0D426FE870A4929AA39 /* PVGameLibrary+Migration.swift in Sources */,
-				427870881CB36F78D7BB9DA922D71545 /* PVGameLibrary.swift in Sources */,
-				0DF017060EA6598DE4169E0EC612FA6A /* PVImageFile.swift in Sources */,
-				054FBA869429A79E11ED679D83A9DEC6 /* PVLibrary-iOS-dummy.m in Sources */,
-				FD1C764160E15786BF9EE95813ABFD3E /* PVLibrary.swift in Sources */,
-				EB3C6D2F716678DFACDA997C4824ADA6 /* PVMediaCache.swift in Sources */,
-				7D7E77D0A9AD5EA37042248D994D2E29 /* PVObject.swift in Sources */,
-				FAECF1FF7A7F8A6469AE5292BBBD04CD /* PVRecentGame.swift in Sources */,
-				8BF01A27C12171D117C64C2392EC7946 /* PVSaveState.swift in Sources */,
-				8EDA5F2679B64C6560E27BC84E66110B /* PVSystem.swift in Sources */,
-				6901E72207AA5887B0149B3DEABE937B /* Realm+Ext.swift in Sources */,
-				6A08F0E60AF923DEA1C5CD8114660870 /* RealmRepresentable.swift in Sources */,
-				4815CFC934E67B4E45348277A44DFBBF /* Repository.swift in Sources */,
-				6388BC4F9E12F6EA17171368F2CA2900 /* RomDatabase.swift in Sources */,
-				23A2A9647B5B5011866290E5E7ED465F /* RunLoopThreadScheduler.swift in Sources */,
-				EFD3F1835C780BD7FE015CD5BEBF1D7F /* SavePackage.swift in Sources */,
-				BC5715D901D644EF1E306774B4B16AF3 /* SaveState.swift in Sources */,
-				A6130DB34C692AB6E1A58827E294490D /* System.swift in Sources */,
-				34D370F8BEF491773AFD23B89226CCEE /* SystemProtocol.swift in Sources */,
-				B57039956C869B80ACCB12933506DD41 /* Time Utilities.swift in Sources */,
-				789C3F186A81EC4340DD8DD50711724B /* UIImage+Scaling.m in Sources */,
-				F29DA2E854B357D544F199D3CF3C8D04 /* UTI.swift in Sources */,
+				3E5DA847EE6EFE8AE4355E9C1D75FEBB /* PVLibraryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		042A19675A2BB5625464E25B1D9E5B18 /* PBXTargetDependency */ = {
+		00DCF9108346458A19D8012C6DB9A124 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "SQLite.swift-iOS";
-			targetProxy = 2A1F0E0303C670039E593F208C6E516F /* PBXContainerItemProxy */;
+			name = "RxRealm-tvOS";
+			targetProxy = 3571DF25A1CE69C1E2817718109C9197 /* PBXContainerItemProxy */;
 		};
-		44B4EA5C67071C1EB7C54C213449A8D5 /* PBXTargetDependency */ = {
+		1005AE4A04615B5473D18DDFBBF7254F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "LzmaSDK-ObjC-iOS";
-			targetProxy = 709BE4B383FA9FEC7938A16DC73F622E /* PBXContainerItemProxy */;
+			name = "PVSupport-iOS";
+			targetProxy = 4EE228525E58F0DF6E38CA9E2286182D /* PBXContainerItemProxy */;
 		};
-		51EB6A751E80C866D9790D57643937A7 /* PBXTargetDependency */ = {
+		15DB308A2408B73B5639D3810CCA141E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RealmSwift-tvOS";
+			targetProxy = 7981BE3A70028D46E87B789450BC5739 /* PBXContainerItemProxy */;
+		};
+		1956DD60A4CB0B5AA415EF01C9D9D971 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SSZipArchive-tvOS";
+			targetProxy = EEB5FC54A62B5881FC949506F8B4CB26 /* PBXContainerItemProxy */;
+		};
+		1B03846CF5C6C896C7A4B2538B8C8554 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVSupport-tvOS";
-			targetProxy = B3270F00B18502719E4DEFCC07AD0850 /* PBXContainerItemProxy */;
+			targetProxy = 119FC4C7FE6B3F3041CF16572B6C9DE9 /* PBXContainerItemProxy */;
 		};
-		5D2C2FB7BDE98299729DD1123BB99A5E /* PBXTargetDependency */ = {
+		1BB6002C80240CBB31CA107D081CF3D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "RealmSwift-iOS";
-			targetProxy = 0B1DAEED0F16AED7D0F751497FAF1ECC /* PBXContainerItemProxy */;
+			name = "SWCompression-iOS";
+			targetProxy = 8697E5BFE42F27CC8BA98A8AACF381BE /* PBXContainerItemProxy */;
 		};
-		629CFEEAFECA5C260A598F4A76332257 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RxSwift-tvOS";
-			targetProxy = 4211A4D57FB255681D56597E3E647C49 /* PBXContainerItemProxy */;
-		};
-		7AAE6E0CDE7B51F64C7D59348806C6DD /* PBXTargetDependency */ = {
+		1BCA8AE79037231AF6215815413F1865 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVLibrary-tvOS";
 			target = A965087799233BFFE565E513D2CAC008 /* PVLibrary-tvOS */;
-			targetProxy = 9EE1FC3D5E1E44129AF76AE29AD01CE4 /* PBXContainerItemProxy */;
+			targetProxy = D6029FD63968B00AE1A5F19FC2179766 /* PBXContainerItemProxy */;
 		};
-		8C5EDEFAA6F46556022BB05C65B60A6E /* PBXTargetDependency */ = {
+		20EB4960E111436548AA574FFFF77B73 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxCocoa-iOS";
+			targetProxy = FDB12D2F38E6CBA7409C629FE74A186A /* PBXContainerItemProxy */;
+		};
+		22E0D4D2FF68DE929C8E58BE7C2CDE50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-iOS";
+			targetProxy = 008FC9E535825AEC7C87B1339B39C4B5 /* PBXContainerItemProxy */;
+		};
+		4623DB88CED2126ED99DE145854282A6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxRealm-iOS";
+			targetProxy = AF16221D9D9A06342CA746D094C7DEC9 /* PBXContainerItemProxy */;
+		};
+		55763992CA21F07A19658BFCCF9F4755 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "SQLite.swift-tvOS";
-			targetProxy = 140D13B7A1CC0101DA818239D8DB1372 /* PBXContainerItemProxy */;
+			targetProxy = D4F5D2C925711C03D2A98ABA58005C2E /* PBXContainerItemProxy */;
 		};
-		A3B251A7260BDDE6F7123CCDD4EE972B /* PBXTargetDependency */ = {
+		5A2F39E8FDB642A0EC733455A00132EA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "RealmSwift-tvOS";
-			targetProxy = 21EF96D942232C68B4AE21E28CDA4377 /* PBXContainerItemProxy */;
+			name = "RealmSwift-iOS";
+			targetProxy = FE69D9CED8CF067E12F42F8CA93B070D /* PBXContainerItemProxy */;
 		};
-		B491CD936C31AA105CAE3517B0955285 /* PBXTargetDependency */ = {
+		8378D47DAEF7BDBBE320AA80A8317BF0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SWCompression-tvOS";
+			targetProxy = 902773815D0A661508763B9D28A165A6 /* PBXContainerItemProxy */;
+		};
+		875DE1E1D758B186111AD291B6DCA7CC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "LzmaSDK-ObjC-iOS";
+			targetProxy = 09C993FFEBBC074A7170F4F5EAFA5F7D /* PBXContainerItemProxy */;
+		};
+		90606A2F8EA68D0A53B1F1180DABEEDF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SSZipArchive-iOS";
+			targetProxy = 510FD0989AE9081FEB1BA5FE8B4C6BAF /* PBXContainerItemProxy */;
+		};
+		BDB72AEF22EDEEB6AF423F8DB079B3CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-tvOS";
+			targetProxy = 8F421C4A350712D9E59CEB95DCA560F1 /* PBXContainerItemProxy */;
+		};
+		C85E1BDD43D6F92B30591BB93CBC1D23 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxCocoa-tvOS";
+			targetProxy = 0EB3BDAE34637D3B52E74D9F78FB733C /* PBXContainerItemProxy */;
+		};
+		CDA500C6220A9B72342F327F6E250EC4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Realm-tvOS";
+			targetProxy = B15E0C7DD11541142AD278D215CF3D8F /* PBXContainerItemProxy */;
+		};
+		D6B111513D8686387FEBEB5D402BC986 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Realm-iOS";
+			targetProxy = 3D4156018EFC70BA01A27A656A0A8A46 /* PBXContainerItemProxy */;
+		};
+		DB166D1DB64C130C076A0E29908AAAAB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SQLite.swift-iOS";
+			targetProxy = 456013999F6B772A404CF2A5719C4E1E /* PBXContainerItemProxy */;
+		};
+		E6D0B1C8128BFC336AD6EECC53A01368 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVLibrary-iOS";
 			target = 092614E117CBAD12432CE71E038C9F80 /* PVLibrary-iOS */;
-			targetProxy = 3426D65400D4C7FA2C3A522743F8A38A /* PBXContainerItemProxy */;
+			targetProxy = E9BAF14137D0947CD0B3D82253C5452D /* PBXContainerItemProxy */;
 		};
-		CA262D2749F8E9924172B41B912BD5D1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "ZipArchive-tvOS";
-			targetProxy = 1A1BAE52D64726A84E072C3A3D460469 /* PBXContainerItemProxy */;
-		};
-		E62A27AF053B5D929A819EFE1BA6C830 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "PVSupport-iOS";
-			targetProxy = 22B6BC1A8922E210190EB2193B069F93 /* PBXContainerItemProxy */;
-		};
-		EAD9EEFF3B08434A57F8DBD14CE57EC1 /* PBXTargetDependency */ = {
+		FE894245119ECDFD8D7320E20097E7E9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "LzmaSDK-ObjC-tvOS";
-			targetProxy = C5AD1928869A979FB76AF57B1143C4B1 /* PBXContainerItemProxy */;
-		};
-		F1E255CD721591FCE55C2A359707CC4B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "ZipArchive-iOS";
-			targetProxy = EC5C159B3A55D3DEEED6427E2FEAA6E6 /* PBXContainerItemProxy */;
-		};
-		F915345C6B0D713D2D4987FD3B3173AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RxSwift-iOS";
-			targetProxy = 1CE04294DFFB5224C0EACE0E68D2C8E0 /* PBXContainerItemProxy */;
+			targetProxy = CF50122ECB2E95C5F8457ABC8734E7B1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		05026499B278FB3568C6480D70B03038 /* Archive */ = {
+		0A2F0EBCA40E603B0CD0CB4C0F17C2A0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8855BF8D0B0AF08900AD34AB12F8E2F1 /* PVLibrary-tvOS.unit-pvlibrarytests.release.xcconfig */;
+			baseConfigurationReference = 44D1C9B7F5923E8758283CB95BA8F376 /* PVLibrary-iOS.unit-pvlibrarytests.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist";
-				PRODUCT_NAME = "PVLibrary-tvOS-Unit-PVLibraryTests";
-				SDKROOT = appletvos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Archive;
-		};
-		0DB512B662E5D338492B3153F77FCC28 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BBFEC8CFF2C403130CA52FDAFEA0EEFA /* PVLibrary-iOS.unit-pvlibrarytests.debug.xcconfig */;
-			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
@@ -1255,19 +1379,66 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lswiftSwiftOnoneSupport",
-				);
 				PRODUCT_NAME = "PVLibrary-iOS-Unit-PVLibraryTests";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.1;
+				VALIDATE_PRODUCT = YES;
 			};
-			name = Debug;
+			name = Release;
+		};
+		0D102A315DC5DEEA84EF4DF8ECB4589A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA8F5296E9619A581445603CC1B82D7F /* PVLibrary-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVLibrary;
+				PRODUCT_NAME = PVLibrary;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
 		};
 		0F2D9904435F0F77BBAA15462883F5C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1334,10 +1505,101 @@
 			};
 			name = Debug;
 		};
-		1D56E23A7180C669617749CAB7413E3A /* Archive */ = {
+		18A113868D30A250E00609BEC50D18C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 48ACC49286294DA9512E5D42F0ABD806 /* PVLibrary-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVLibrary;
+				PRODUCT_NAME = PVLibrary;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		26A74AB30DCC48F71B8565C8393EBC29 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 03C335A94FDCE794BD587EFBB0F88679 /* PVLibrary-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVLibrary;
+				PRODUCT_NAME = PVLibrary;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		31D8D1A6CF042AD18A33DDC933908CE0 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44D1C9B7F5923E8758283CB95BA8F376 /* PVLibrary-iOS.unit-pvlibrarytests.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
@@ -1345,7 +1607,13 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = "PVLibrary-iOS-Unit-PVLibraryTests";
@@ -1356,10 +1624,40 @@
 			};
 			name = Archive;
 		};
-		255EC4CA50BF9C39A40614A3F49F7E5B /* Archive */ = {
+		5C5E047254312F75291FFB94ABD47694 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8855BF8D0B0AF08900AD34AB12F8E2F1 /* PVLibrary-tvOS.unit-pvlibrarytests.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist";
+				PRODUCT_NAME = "PVLibrary-tvOS-Unit-PVLibraryTests";
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		62FC328C07FD5275040C78CC2E1B1EFE /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8F5296E9619A581445603CC1B82D7F /* PVLibrary-tvOS.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1369,7 +1667,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1391,137 +1695,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Archive;
-		};
-		2E6E66197EAFD237668F718E27617338 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 603DB1BC862A9CE93A19449E7A38C35D /* PVLibrary-tvOS.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS.modulemap";
-				PRODUCT_MODULE_NAME = PVLibrary;
-				PRODUCT_NAME = PVLibrary;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		31471981BD4796D83935EF7F6676546E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 48ACC49286294DA9512E5D42F0ABD806 /* PVLibrary-iOS.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS.modulemap";
-				PRODUCT_MODULE_NAME = PVLibrary;
-				PRODUCT_NAME = PVLibrary;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		5C559D8AD11482718A3092E668C1DA56 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 15BBE7D546A2F8445CB20F518742DD8C /* PVLibrary-tvOS.unit-pvlibrarytests.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lswiftSwiftOnoneSupport",
-				);
-				PRODUCT_NAME = "PVLibrary-tvOS-Unit-PVLibraryTests";
-				SDKROOT = appletvos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Debug;
-		};
-		68C0BA6F2E72712E45D874FF3305EF35 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03C335A94FDCE794BD587EFBB0F88679 /* PVLibrary-iOS.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS.modulemap";
-				PRODUCT_MODULE_NAME = PVLibrary;
-				PRODUCT_NAME = PVLibrary;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
 		};
 		6984D664733C66C5F5F48B89F0A57773 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1584,10 +1757,43 @@
 			};
 			name = Release;
 		};
-		7F6DF8717D50540FDC2D27AF9E0FD372 /* Release */ = {
+		6B2D5BBAD02B0C7088FD64D60934AB57 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44D1C9B7F5923E8758283CB95BA8F376 /* PVLibrary-iOS.unit-pvlibrarytests.release.xcconfig */;
+			baseConfigurationReference = 15BBE7D546A2F8445CB20F518742DD8C /* PVLibrary-tvOS.unit-pvlibrarytests.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lswiftSwiftOnoneSupport",
+				);
+				PRODUCT_NAME = "PVLibrary-tvOS-Unit-PVLibraryTests";
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		7F30807B38E2A01CE1B88580609200FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BBFEC8CFF2C403130CA52FDAFEA0EEFA /* PVLibrary-iOS.unit-pvlibrarytests.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
@@ -1595,27 +1801,44 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lswiftSwiftOnoneSupport",
+				);
 				PRODUCT_NAME = "PVLibrary-iOS-Unit-PVLibraryTests";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.1;
-				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = Debug;
 		};
-		8AD7E73AEFF601A9B3768A527076F6E1 /* Release */ = {
+		9C0A194A1EEAF39DD57B1863B48A596C /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8855BF8D0B0AF08900AD34AB12F8E2F1 /* PVLibrary-tvOS.unit-pvlibrarytests.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-Info.plist";
 				PRODUCT_NAME = "PVLibrary-tvOS-Unit-PVLibraryTests";
 				SDKROOT = appletvos;
@@ -1623,42 +1846,6 @@
 				SWIFT_VERSION = 5.1;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		9A8617053A2035E48593555F8C968500 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CA8F5296E9619A581445603CC1B82D7F /* PVLibrary-tvOS.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS.modulemap";
-				PRODUCT_MODULE_NAME = PVLibrary;
-				PRODUCT_NAME = PVLibrary;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -1723,10 +1910,55 @@
 			};
 			name = Archive;
 		};
-		F61295656DAA7FB5E1FCE6B56112AC91 /* Archive */ = {
+		B27600DDD174FBBC06EE9F181D8C9F09 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 603DB1BC862A9CE93A19449E7A38C35D /* PVLibrary-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVLibrary;
+				PRODUCT_NAME = PVLibrary;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		C88C264791430D6AF3DFAF10CF1C1DA4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 03C335A94FDCE794BD587EFBB0F88679 /* PVLibrary-iOS.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1737,7 +1969,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1758,47 +1996,27 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Archive;
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4540289AC7FE572153CC81B788ED71DD /* Build configuration list for PBXNativeTarget "PVLibrary-iOS-Unit-PVLibraryTests" */ = {
+		1536F8954A0914A0472741844DEDBFF9 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS-Unit-PVLibraryTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D56E23A7180C669617749CAB7413E3A /* Archive */,
-				0DB512B662E5D338492B3153F77FCC28 /* Debug */,
-				7F6DF8717D50540FDC2D27AF9E0FD372 /* Release */,
+				5C5E047254312F75291FFB94ABD47694 /* Archive */,
+				6B2D5BBAD02B0C7088FD64D60934AB57 /* Debug */,
+				9C0A194A1EEAF39DD57B1863B48A596C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6867C3DECAB27F0E73E2C517DB22FB0F /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */ = {
+		225000E679ECBA464839E425BE4FB390 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F61295656DAA7FB5E1FCE6B56112AC91 /* Archive */,
-				31471981BD4796D83935EF7F6676546E /* Debug */,
-				68C0BA6F2E72712E45D874FF3305EF35 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		71110765A8BBFBB4037F56B52B3AFD81 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				255EC4CA50BF9C39A40614A3F49F7E5B /* Archive */,
-				2E6E66197EAFD237668F718E27617338 /* Debug */,
-				9A8617053A2035E48593555F8C968500 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		98FBA30CDD7E20D3904605364C202651 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS-Unit-PVLibraryTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				05026499B278FB3568C6480D70B03038 /* Archive */,
-				5C559D8AD11482718A3092E668C1DA56 /* Debug */,
-				8AD7E73AEFF601A9B3768A527076F6E1 /* Release */,
+				62FC328C07FD5275040C78CC2E1B1EFE /* Archive */,
+				B27600DDD174FBBC06EE9F181D8C9F09 /* Debug */,
+				0D102A315DC5DEEA84EF4DF8ECB4589A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1809,6 +2027,26 @@
 				ADF22D2A3FEE2F5F973C47FA5AAF14AA /* Archive */,
 				0F2D9904435F0F77BBAA15462883F5C5 /* Debug */,
 				6984D664733C66C5F5F48B89F0A57773 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9FFA4866E87A13F6BA6178974279639 /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26A74AB30DCC48F71B8565C8393EBC29 /* Archive */,
+				18A113868D30A250E00609BEC50D18C1 /* Debug */,
+				C88C264791430D6AF3DFAF10CF1C1DA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1B04D78720D33CF2D91AF31E587BAFA /* Build configuration list for PBXNativeTarget "PVLibrary-iOS-Unit-PVLibraryTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31D8D1A6CF042AD18A33DDC933908CE0 /* Archive */,
+				7F30807B38E2A01CE1B88580609200FC /* Debug */,
+				0A2F0EBCA40E603B0CD0CB4C0F17C2A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

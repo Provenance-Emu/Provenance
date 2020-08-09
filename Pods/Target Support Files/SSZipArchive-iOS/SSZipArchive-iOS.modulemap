@@ -1,0 +1,6 @@
+framework module SSZipArchive {
+  umbrella header "SSZipArchive-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
