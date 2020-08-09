@@ -58,7 +58,7 @@ steps:
   displayName: Rome download
 
 - script: |
-    bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
+    bundle exec fastlane carthage_bootstrap platform:$(carthage-platform) configuration:'Debug'
   displayName: Carthage bootstrap
 
 - script: |
