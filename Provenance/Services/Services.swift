@@ -23,7 +23,6 @@ struct ServicesOptions: OptionSet {
 
     static let all: ServicesOptions = [.iOS, .tvOS, .officialBuilds, .unofficialBuilds, .debugBuilds, .releaseBuilds]
 
-    static let hockeyAppOnly: ServicesOptions = all.subtracting([.unofficialBuilds, .debugBuilds])
     static let iOSOnly: ServicesOptions = all.subtracting(.tvOS)
 
     static var isOfficialBuild: Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.provenance")
