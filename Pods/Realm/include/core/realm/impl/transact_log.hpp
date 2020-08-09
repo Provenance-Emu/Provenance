@@ -365,8 +365,6 @@ public:
     virtual void create_object(const Table*, ObjKey);
     virtual void create_object_with_primary_key(const Table*, GlobalKey, Mixed);
     virtual void remove_object(const Table*, ObjKey);
-    /// \param prior_num_rows The number of rows in the table prior to the
-    /// modification.
     virtual void set_link_type(const Table*, ColKey col_key, LinkType);
     virtual void clear_table(const Table*, size_t prior_num_rows);
 

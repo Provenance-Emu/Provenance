@@ -13,15 +13,13 @@
 //   to endorse or promote products derived from this software without specific
 //   prior written permission of Deusty, LLC.
 
-#import <CocoaLumberjack/DDFileLogger.h>
-
-#import "DDFileLogger+Internal.h"
-
-#import <sys/xattr.h>
-
 #if !__has_feature(objc_arc)
 #error This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
 #endif
+
+#import <sys/xattr.h>
+
+#import "DDFileLogger+Internal.h"
 
 // We probably shouldn't be using DDLog() statements within the DDLog implementation.
 // But we still want to leave our log statements for any future debugging,
@@ -74,7 +72,6 @@ NSTimeInterval     const kDDRollingLeeway              = 1.0;              // 1s
 @synthesize logFilesDiskQuota = _logFilesDiskQuota;
 
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey {
-
     if ([theKey isEqualToString:@"maximumNumberOfLogFiles"] || [theKey isEqualToString:@"logFilesDiskQuota"]) {
         return NO;
     } else {
@@ -93,8 +90,8 @@ NSTimeInterval     const kDDRollingLeeway              = 1.0;              // 1s
 
         _fileDateFormatter = [[NSDateFormatter alloc] init];
         [_fileDateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
-        [_fileDateFormatter setDateFormat: @"yyyy'-'MM'-'dd'--'HH'-'mm'-'ss'-'SSS'"];
         [_fileDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        [_fileDateFormatter setDateFormat: @"yyyy'-'MM'-'dd'--'HH'-'mm'-'ss'-'SSS'"];
 
         if (aLogsDirectory.length > 0) {
             _logsDirectory = [aLogsDirectory copy];
@@ -133,7 +130,7 @@ NSTimeInterval     const kDDRollingLeeway              = 1.0;              // 1s
 #endif
 
 - (void)dealloc {
-    // try-catch because the observer might be removed or never added. In this case, removeObserver throws and exception
+    // try-catch because the observer might be removed or never added. In this case, removeObserver throws an exception
     @try {
         [self removeObserver:self forKeyPath:NSStringFromSelector(@selector(maximumNumberOfLogFiles))];
         [self removeObserver:self forKeyPath:NSStringFromSelector(@selector(logFilesDiskQuota))];
@@ -581,6 +578,8 @@ NSTimeInterval     const kDDRollingLeeway              = 1.0;              // 1s
         } else {
             _dateFormatter = [[NSDateFormatter alloc] init];
             [_dateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4]; // 10.4+ style
+            [_dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
+            [_dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
             [_dateFormatter setDateFormat:@"yyyy/MM/dd HH:mm:ss:SSS"];
         }
     }
@@ -837,7 +836,11 @@ NSTimeInterval     const kDDRollingLeeway              = 1.0;              // 1s
     dispatch_time_t fireTime = dispatch_time(DISPATCH_TIME_NOW, delay);
 
     dispatch_source_set_timer(_rollingTimer, fireTime, DISPATCH_TIME_FOREVER, (uint64_t)kDDRollingLeeway * NSEC_PER_SEC);
-    dispatch_resume(_rollingTimer);
+
+    if (@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *))
+        dispatch_activate(_rollingTimer);
+    else
+        dispatch_resume(_rollingTimer);
 }
 
 - (void)rollLogFile {
@@ -1103,7 +1106,10 @@ NSTimeInterval     const kDDRollingLeeway              = 1.0;              // 1s
     });
 #endif
 
-    dispatch_resume(_currentLogFileVnode);
+    if (@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *))
+        dispatch_activate(_currentLogFileVnode);
+    else
+        dispatch_resume(_currentLogFileVnode);
 }
 
 - (NSFileHandle *)lt_currentLogFileHandle {

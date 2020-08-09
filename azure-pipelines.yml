@@ -10,23 +10,63 @@ variables:
   scheme: 'Provenance'
   sdk: 'iphonesimulator'
   configuration: 'Debug'
-  carthage-platform: 'iOS'
+  platform: 'iOS'
+  simulators: 'iPhone 11'
+  BUNDLE_PATH: $(Pipeline.Workspace)/.bundle
 
 steps:
+
+- checkout: self # self represents the repo where the initial Pipelines YAML file was found
+  clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+  submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
+  path: string  # path to check out source code, relative to the agent's build directory (e.g. \_work\1); defaults to a directory called `s`
+  persistCredentials: true  # if 'true', leave the OAuth token in the Git config after the initial fetch; defaults to false
+
+- task: UseRubyVersion@0
+  displayName: 'Use Ruby >= 2.5.1'
+  inputs:
+    versionSpec: '>= 2.5.1'
+
 - task: Cache@2
   inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved'
-    path: Carthage/Build
-  displayName: Carthage cache
-- script: carthage bootstrap --platform $(carthage-platform) --project-directory ./ --cache-builds
-  displayName: Carthage bootstrap
+    key: 'gems | "$(Agent.OS)"'
+    restoreKeys: | 
+      gems | "$(Agent.OS)"
+      gems
+    path: $(BUNDLE_PATH)
+  displayName: Cache gems
+- script: |
+    bundle config set without 'documentation test'
+    bundle install --jobs=8
+  displayName: 'Install Gems'
+
+- task: Cache@2
+  inputs:
+    key: 'pods | "$(Agent.OS)" | Podfile.lock'
+    path: 'Pods'
+    cacheHitVar: 'PODS_CACHE_RESTORED'
+  displayName: CocoaPods cache
+
+- task: Cache@2
+  inputs:
+    key: 'swiftc --version'
+    path: 'build'
+  displayName: XCode cache
+
+- task: CocoaPods@0
+  displayName: 'pod install using the CocoaPods task with defaults'
+  condition: ne(variables.PODS_CACHE_RESTORED, 'true')
+
 - task: Xcode@5
   inputs:
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: false
+    configuration: '$(configuration)'
   displayName: Building project
+
 - task: Xcode@5
   inputs:
     actions: 'test'
@@ -34,6 +74,7 @@ steps:
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
     packageApp: false
+    configuration: '$(configuration)'
     destinationPlatformOption: iOS
-    destinationSimulators: iPhone 8
+    destinationSimulators: iPhone 11
   displayName: Running tests

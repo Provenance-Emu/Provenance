@@ -1,0 +1,4 @@
+---
+BUNDLE_BIN: "bin"
+BUNDLE_JOBS: "8"
+BUNDLE_WITHOUT: "documentation:test"

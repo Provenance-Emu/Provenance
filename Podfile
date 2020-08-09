@@ -4,14 +4,17 @@ isCI = false
 
 source 'https://cdn.cocoapods.org/'
 
+plugin 'cocoapods-binary'
+plugin 'cocoapods-githooks'
+
 use_frameworks!
 inhibit_all_warnings!
+# all_binary!
 
 workspace 'Provenance.xcworkspace'
 project 'Provenance.xcodeproj'
 
-plugin 'cocoapods-githooks'
-plugin 'cocoapods-check'
+# plugin 'cocoapods-check'
 
 install!  'cocoapods',
           :generate_multiple_pod_projects => true,
@@ -28,6 +31,7 @@ def pvlibrary
   options = {
     :path => './',
     :inhibit_warnings => false,
+    :binary => false,
     :project_name => 'PVLibrary'
     # :appspecs => appspecs,
     # :subspecs => subspecs,
@@ -41,6 +45,7 @@ def pvsupport
   options = {
     :path => './',
     :inhibit_warnings => false,
+    :binary => false,
     :project_name => 'PVSupport'
     # :appspecs => appspecs,
     # :subspecs => subspecs,
@@ -59,16 +64,19 @@ def cores
     :path => './',
     :inhibit_warnings => false,
     :project_name => 'ProvenanceCores',
+    :binary => false,
     :subspecs => subspecs
   }
 
   pod 'ProvenanceCores', options
 end
 
-def deps_app
+def deps_all
   pvsupport
   pvlibrary
+end
 
+def deps_app
   # Rx
   pod 'RxSwift'
   pod 'RxRealm'
@@ -76,12 +84,20 @@ def deps_app
   cores
 end
 
+deps_all
+
 abstract_target 'ProvenanceApps' do
   deps_app
 
   # iOS
   target 'Provenance' do
     platform :ios, '10.0'
+
+
+    # https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/ios#31-integration-via-cocoapods
+    pod 'AppCenter/Analytics'
+    pod 'AppCenter/Distribute'
+    pod 'AppCenter/Crashes'
 
     pod 'XLActionController',
         :git => 'https://github.com/Puasonych/XLActionController.git',
@@ -96,17 +112,9 @@ end
 
 target 'Spotlight' do
   platform :ios, '10.0'
-
-  pvsupport
-  pvlibrary
 end
 
 target 'TopShelf' do
   platform :tvos, '10.0'
-
-  pvsupport
-  pvlibrary
-
-  pod ' '
   pod 'CocoaLumberjack/Swift'
 end

@@ -18,14 +18,12 @@ Pod::Spec.new do |s|
     'James Addyman' => 'james@provenance-emu.com',
     'Joseph Mattiello' => 'joe@provenance-emu.com'
   }
-
-  s.source = {
+  s.source           = {
     :git => 'https://github.com/Provenance/Provenance.git',
     :tag => s.version.to_s
   }
 
   s.cocoapods_version = '>= 1.8.0'
-  s.requires_arc = true
 
   s.swift_versions = ['5.0', '5.1']
   s.platform = :ios, '10.3'
@@ -44,34 +42,13 @@ Pod::Spec.new do |s|
   s.dependency 'RealmSwift'
   s.dependency 'SQLite.swift'
   s.dependency 'RxSwift'
-  s.dependency 'CocoaLumberjack/Swift'
-  s.dependency 'LzmaSDK-ObjC' # Needs to be our version in the Podfile override with shttps://github.com/Provenance-Emu/LzmaSDKObjC.git
-  s.dependency 'PVSupport'
 
-  # s.compiler_flags = '-DLZMASDKOBJC=1', '-DLZMASDKOBJC_OMIT_UNUSED_CODE=1'
-  s.libraries = 'z', 'stdc++', 'xml2'
+  @sources_root = 'PVLibrary'
+  @sources_lzmasdkobjc = "#{@sources_root}/LzmaSDKObjC/**/*.{c,cpp,m,mm}"
+  @sources_common = "#{@sources_root}/PVLibrary/**/*.{swift,m}"
 
-  s.pod_target_xcconfig = {
-    'CLANG_CXX_LANGUAGE_STANDARD' => 'compiler-default',
-    'CLANG_CXX_LIBRARY' => 'libc++',
-    'OTHER_LDFLAGS' => '$(inherited) -ObjC',
-    'HEADER_SEARCH_PATHS' => '$(inherited) "${DT_TOOLCHAIN_DIR}/usr/include" /usr/include/libxml2'
-  }
-
-  s.xcconfig = {
-    'OTHER_LDFLAGS' => '$(inherited) -ObjC',
-    'HEADER_SEARCH_PATHS' => '$(inherited) "${DT_TOOLCHAIN_DIR}/usr/include" /usr/include/libxml2'
-  }
-
-  @sources_root = 'PVLibrary/Sources'
-  @sources_common = "#{@sources_root}/**/*.{swift,h,m}"
-  @headers_common = "#{@sources_root}/**/*.h"
-
-  s.public_header_files = [
-    @headers_common
-  ]
-
-  s.source_files = [
-    @sources_common
+  s.source_files       = [
+    @sources_common,
+    @sources_lzmasdkobjc
   ]
 end

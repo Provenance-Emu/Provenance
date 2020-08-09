@@ -25,8 +25,8 @@ namespace realm {
 namespace util {
 
 /// The digest functions calculate the message digest of the input in \param
-/// in_buffer of size \param in_buffer_size. The digest is placed in \param
-/// out_buffer. The caller must guarantee that the output buffer is large
+/// in_buffer of size \param in_buffer_size . The digest is placed in \param
+/// out_buffer . The caller must guarantee that the output buffer is large
 /// enough to contain the digest.
 ///
 /// The functions throw if the underlying platform dependent implementations

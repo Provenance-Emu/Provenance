@@ -35,33 +35,34 @@ Pod::Spec.new do |s|
   s.frameworks = 'Foundation'
 
   s.module_name = 'ProvenanceCores'
-  # s.header_dir = 'ProvenanceCores'
+  s.header_dir = 'ProvenanceCores'
 
-  # s.default_subspecs = 'Atari800s'
+  s.default_subspecs = 'Atari800'
 
   @cores_source_root = 'Cores'
 
   # s.subspec 'Cores' do |sp|
     s.dependency 'PVSupport'
     s.dependency 'PVLibrary'
-
+    
     s.frameworks = 'Foundation', 'OpenGLES', 'UIKit', 'CoreGraphics', 'AudioToolbox'
     s.libraries = 'z', 'edit'
     s.pod_target_xcconfig = {
       'OTHER_LDFLAGS' => '$(inherited) -ObjC'
     }
 
-    # # Atari800
+    # Atari800
     s.subspec 'Atari800' do |core|
-      core.frameworks = 'Foundation'
-
-      core.source_files = "#{@cores_source_root}/Atari800/**/*.{swift,m,mm,c,cpp}"
-
-      core.pod_target_xcconfig = {
-        'OTHER_LDFLAGS' => '$(inherited) -ObjC',
-        'CORE_ATARI800_SUBSPEC_INCLUDED' => '-D\'CORE_ATARI800_SUBSPEC_INCLUDED\'',
-        'OTHER_SWIFT_FLAGS' => '$(CORE_ATARI800_SUBSPEC_INCLUDED)'
-      }
+    # core.frameworks = 'CoreGraphics'
+    # core.weak_frameworks = 'AdSupport'
+    
+    core.source_files = "#{@cores_source_root}/Atari800/**/*.{swift,m,mm,c,cpp}"
+    
+    core.pod_target_xcconfig = {
+      'OTHER_LDFLAGS' => '$(inherited) -ObjC',
+      'CORE_ATARI800_SUBSPEC_INCLUDED' => '-D\'CORE_ATARI800_SUBSPEC_INCLUDED\'',
+      'OTHER_SWIFT_FLAGS' => '$(CORE_ATARI800_SUBSPEC_INCLUDED)'    
+    }
     end
   # end
 end

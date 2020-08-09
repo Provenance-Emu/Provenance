@@ -181,13 +181,21 @@ void ResultsNotifier::do_prepare_handover(Transaction& sg)
 bool ResultsNotifier::prepare_to_deliver()
 {
     auto lock = lock_target();
-    if (!get_realm()) {
+    auto realm = get_realm();
+    if (!realm) {
         m_handover_tv.reset();
         m_delivered_tv.reset();
         return false;
     }
-    if (!m_handover_tv)
+    if (!m_handover_tv) {
+        bool transaction_is_stale = m_delivered_transaction &&
+            (!realm->is_in_read_transaction() || realm->read_transaction_version() > m_delivered_transaction->get_version_of_current_transaction());
+        if (transaction_is_stale) {
+            m_delivered_tv.reset();
+            m_delivered_transaction.reset();
+        }
         return true;
+    }
 
     m_results_were_used = !m_delivered_tv;
     m_delivered_tv.reset();

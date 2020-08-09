@@ -7,22 +7,18 @@ gem 'dotenv'
 
 # Cocoapods
 gem 'cocoapods', '~> 1.9'
-# gem 'cocoapods-binary'
+gem 'cocoapods-binary'
 gem 'cocoapods-check'
 # gem 'cocoapods-generate'
 gem 'cocoapods-githooks'      # Sync .git-hooks across team members at `pod install` time
 # gem 'cocoapods-keys'          # Makes Obj-C obfuscated file of secret keys
 # gem 'cocoapods-packager'      # Generate a framework or static library from a podspec. https://github.com/CocoaPods/cocoapods-packager
-# gem 'cocoapods-repo-update'   # Fixes issues with CI not updating specs
+#gem 'cocoapods-repo-update'   # Fixes issues with CI not updating specs
 
 # Fastlane
 gem 'fastlane'
 gem 'net-ssh'
 gem "net-scp"
-
-group :ci do
-  gem 'travis'
-end
 
 group :documentation do
   gem 'jazzy'
