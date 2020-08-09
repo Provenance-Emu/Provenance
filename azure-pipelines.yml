@@ -10,7 +10,8 @@ variables:
   scheme: 'Provenance'
   sdk: 'iphonesimulator'
   configuration: 'Debug'
-  carthage-platform: 'iOS'
+  platform: 'iOS'
+  simulators: 'iPhone 11'
   BUNDLE_PATH: $(Pipeline.Workspace)/.bundle
 
 steps:
@@ -41,35 +42,20 @@ steps:
 
 - task: Cache@2
   inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
-    path: Carthage/Build
-  displayName: Carthage cache
-
-- task: Cache@2
-  inputs:
-    key: 'Romefile'
-    path: $(HOME)/Library/Caches/Rome
-  displayName: Rome cache
-
-- script: |
-    brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
-    brew install tmspzz/homebrew-tap/rome 2>/dev/null || true
-    bundle exec fastlane rome_download platform:$(carthage-platform)
-  displayName: Rome download
-
-- script: |
-    bundle exec fastlane carthage_bootstrap platform:$(carthage-platform) configuration:'Debug'
-  displayName: Carthage bootstrap
-
-- script: |
-    bundle exec fastlane rome_upload platform:$(carthage-platform)
-  displayName: Rome upload
+    key: 'pods | "$(Agent.OS)" | Podfile.lock'
+    path: 'Pods'
+    cacheHitVar: 'PODS_CACHE_RESTORED'
+  displayName: CocoaPods cache
 
 - task: Cache@2
   inputs:
     key: 'swiftc --version'
-    path: build
+    path: 'build'
   displayName: XCode cache
+
+- task: CocoaPods@0
+  displayName: 'pod install using the CocoaPods task with defaults'
+  condition: ne(variables.PODS_CACHE_RESTORED, 'true')
 
 - task: Xcode@5
   inputs:
@@ -78,6 +64,7 @@ steps:
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: false
+    configuration: '$(configuration)'
   displayName: Building project
 
 - task: Xcode@5
@@ -87,6 +74,7 @@ steps:
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '11' # Options: 8, 9, default, specifyPath
     packageApp: false
+    configuration: '$(configuration)'
     destinationPlatformOption: iOS
-    destinationSimulators: iPhone 8
+    destinationSimulators: iPhone 11
   displayName: Running tests
