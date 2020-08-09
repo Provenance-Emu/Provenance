@@ -88,3 +88,4 @@ xcodebuild.log
 xcodebuild-ios.json
 .build
 /ScreenKit.json
+/bin
