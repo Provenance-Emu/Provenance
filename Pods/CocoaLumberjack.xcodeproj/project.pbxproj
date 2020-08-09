@@ -92,12 +92,12 @@
 		07E90AF51440BFD6BE981A90C0699BB8 /* DDContextFilterLogFormatter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DDContextFilterLogFormatter.m; sourceTree = "<group>"; };
 		0A61912AFCE35931D99E4C2D58CC1073 /* DDASLLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDASLLogger.m; path = Sources/CocoaLumberjack/DDASLLogger.m; sourceTree = "<group>"; };
 		0B0C25B9B274B4B1FAA135EDA1F11FD1 /* DDTTYLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DDTTYLogger.h; sourceTree = "<group>"; };
-		0EB6E67161DF6EC715B4BA05A749032D /* CocoaLumberjack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CocoaLumberjack.framework; path = "CocoaLumberjack-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0EB6E67161DF6EC715B4BA05A749032D /* CocoaLumberjack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CocoaLumberjack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16748CE788BADC68A4FD0D8A603F368D /* DDContextFilterLogFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DDContextFilterLogFormatter.h; sourceTree = "<group>"; };
 		1797BC1C6AFE6AAD0CA3C7D2C260EA0F /* DDLog.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DDLog.h; sourceTree = "<group>"; };
 		1C331EFD1EBC748F25AC5C68A8CBD383 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		20493305D25B3E8DE1E1A5B5F83CB6C7 /* CocoaLumberjack-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "CocoaLumberjack-iOS-Info.plist"; sourceTree = "<group>"; };
-		24E65FB1D2099D28A656A62E11D21BE2 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CocoaLumberjack.framework; path = "CocoaLumberjack-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		24E65FB1D2099D28A656A62E11D21BE2 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CocoaLumberjack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		24ECEDF8A9AB22714C7475FCEA11296E /* DDFileLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DDFileLogger.h; sourceTree = "<group>"; };
 		258E86444BC9C19571955CA9B8877482 /* CocoaLumberjack-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "CocoaLumberjack-tvOS-Info.plist"; path = "../CocoaLumberjack-tvOS/CocoaLumberjack-tvOS-Info.plist"; sourceTree = "<group>"; };
 		25F89BB0E2BF716A38617A263874B84D /* DDLog.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DDLog.h; sourceTree = "<group>"; };
@@ -199,7 +199,6 @@
 				C4BED629CDBB0158CB7E5A9B06936158 /* Support Files */,
 				7470E12C0CD43B6E1261DD2893810D37 /* Swift */,
 			);
-			name = CocoaLumberjack;
 			path = CocoaLumberjack;
 			sourceTree = "<group>";
 		};
@@ -209,7 +208,6 @@
 				5E4AAB181D6CE872E8536EF853A1FA80 /* SwiftLogLevel.h */,
 				EF1436BBB96F60FAE3DB77017D68E692 /* CocoaLumberjackSwiftSupport */,
 			);
-			name = include;
 			path = include;
 			sourceTree = "<group>";
 		};
@@ -326,7 +324,6 @@
 				55764E092501CAA48E0ED1B606DBD509 /* DDOSLogger.h */,
 				302F3E269CBBCC1E1206F0D78152096B /* DDTTYLogger.h */,
 			);
-			name = CocoaLumberjack;
 			path = CocoaLumberjack;
 			sourceTree = "<group>";
 		};
@@ -382,7 +379,6 @@
 			children = (
 				02087E8F181C38FE8A6B13918D3CAA0B /* SwiftLogLevel.h */,
 			);
-			name = CocoaLumberjackSwiftSupport;
 			path = CocoaLumberjackSwiftSupport;
 			sourceTree = "<group>";
 		};
@@ -413,42 +409,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B5BDDF6AE11011179C52505244F297A /* CLIColor.h in Headers */,
-				3B5BDDF6AE11011179C52505244F297A /* CLIColor.h in Headers */,
 				33A8BD9C521B1EBF14BCAD08A4C720DF /* CocoaLumberjack-iOS-umbrella.h in Headers */,
 				89AA24CC4A0607E010CF1AC1862C1C23 /* CocoaLumberjack.h in Headers */,
 				DB96AAA39F2D617567B95EE7B333BE70 /* DDAbstractDatabaseLogger.h in Headers */,
-				DB96AAA39F2D617567B95EE7B333BE70 /* DDAbstractDatabaseLogger.h in Headers */,
-				F690BF2146EDB81954AF032D5B54286A /* DDASLLogCapture.h in Headers */,
 				F690BF2146EDB81954AF032D5B54286A /* DDASLLogCapture.h in Headers */,
 				6DE3E51DF9ED0739E44ACDF62BA39823 /* DDASLLogger.h in Headers */,
-				6DE3E51DF9ED0739E44ACDF62BA39823 /* DDASLLogger.h in Headers */,
-				77791F0856FE83293C79267438D2C022 /* DDAssertMacros.h in Headers */,
 				77791F0856FE83293C79267438D2C022 /* DDAssertMacros.h in Headers */,
 				144D45D42A93BBCA7FE8357CB84769BC /* DDContextFilterLogFormatter.h in Headers */,
-				144D45D42A93BBCA7FE8357CB84769BC /* DDContextFilterLogFormatter.h in Headers */,
 				227CAE3C4D0ACD51AD8EFE515AEE994D /* DDDispatchQueueLogFormatter.h in Headers */,
-				227CAE3C4D0ACD51AD8EFE515AEE994D /* DDDispatchQueueLogFormatter.h in Headers */,
-				F7539C2C192C5C5065BB03F9D360289A /* DDFileLogger+Buffering.h in Headers */,
 				F7539C2C192C5C5065BB03F9D360289A /* DDFileLogger+Buffering.h in Headers */,
 				D5DE96CF83057F7B230697501F234313 /* DDFileLogger+Internal.h in Headers */,
 				534CA7EFEC9CAAD37E44C44FB52E34B3 /* DDFileLogger.h in Headers */,
-				534CA7EFEC9CAAD37E44C44FB52E34B3 /* DDFileLogger.h in Headers */,
 				DC2F525AA42A8BFAA2D585BD63EBCACC /* DDLegacyMacros.h in Headers */,
 				926765713EF49AB2FF78C7CDFE472985 /* DDLog+LOGV.h in Headers */,
-				926765713EF49AB2FF78C7CDFE472985 /* DDLog+LOGV.h in Headers */,
-				20BC1355963EFC9653B2EBA0C1B5112D /* DDLog.h in Headers */,
 				20BC1355963EFC9653B2EBA0C1B5112D /* DDLog.h in Headers */,
 				730EFFB7B705992CF6142B42DD0B4CD2 /* DDLoggerNames.h in Headers */,
-				730EFFB7B705992CF6142B42DD0B4CD2 /* DDLoggerNames.h in Headers */,
-				2D82B638055FE74F807B705F4B4DF29E /* DDLogMacros.h in Headers */,
 				2D82B638055FE74F807B705F4B4DF29E /* DDLogMacros.h in Headers */,
 				C255367B495342A8A60EF291BF68F1AB /* DDMultiFormatter.h in Headers */,
-				C255367B495342A8A60EF291BF68F1AB /* DDMultiFormatter.h in Headers */,
-				DCC43AEA153D499E4671161EAB1D8BCF /* DDOSLogger.h in Headers */,
 				DCC43AEA153D499E4671161EAB1D8BCF /* DDOSLogger.h in Headers */,
 				3933FB3D29363812BC2DBB3EE457FEDB /* DDTTYLogger.h in Headers */,
-				3933FB3D29363812BC2DBB3EE457FEDB /* DDTTYLogger.h in Headers */,
-				449F9439D762F192A5B36DADFB052549 /* SwiftLogLevel.h in Headers */,
 				449F9439D762F192A5B36DADFB052549 /* SwiftLogLevel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -458,42 +437,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88C0CCD3744B25980C429F0BA4FFC2 /* CLIColor.h in Headers */,
-				EB88C0CCD3744B25980C429F0BA4FFC2 /* CLIColor.h in Headers */,
 				8F28B0062039DBCDB64ED9F67A0BE291 /* CocoaLumberjack-tvOS-umbrella.h in Headers */,
 				99A1823D7E5F6F79F48278E67111A805 /* CocoaLumberjack.h in Headers */,
 				AC8D14C891BC790D310E430FD4BCB586 /* DDAbstractDatabaseLogger.h in Headers */,
-				AC8D14C891BC790D310E430FD4BCB586 /* DDAbstractDatabaseLogger.h in Headers */,
-				2DD661D29C3B35DE6F30B9A3F5732724 /* DDASLLogCapture.h in Headers */,
 				2DD661D29C3B35DE6F30B9A3F5732724 /* DDASLLogCapture.h in Headers */,
 				AC9B6565DF132F9AF9A5779ED90B40E7 /* DDASLLogger.h in Headers */,
-				AC9B6565DF132F9AF9A5779ED90B40E7 /* DDASLLogger.h in Headers */,
-				9020E2FB5599A39002B881EAA4EC0B10 /* DDAssertMacros.h in Headers */,
 				9020E2FB5599A39002B881EAA4EC0B10 /* DDAssertMacros.h in Headers */,
 				8CF1C47AA1BDBBD05B5DD0E197079E96 /* DDContextFilterLogFormatter.h in Headers */,
-				8CF1C47AA1BDBBD05B5DD0E197079E96 /* DDContextFilterLogFormatter.h in Headers */,
 				0AEBB4532A01DD5F3D58FDC0C508B9B9 /* DDDispatchQueueLogFormatter.h in Headers */,
-				0AEBB4532A01DD5F3D58FDC0C508B9B9 /* DDDispatchQueueLogFormatter.h in Headers */,
-				AD3F73B8D426CCE569B8B8515E1650CB /* DDFileLogger+Buffering.h in Headers */,
 				AD3F73B8D426CCE569B8B8515E1650CB /* DDFileLogger+Buffering.h in Headers */,
 				252A9BD5BDACA459989BDBA7A694EFC1 /* DDFileLogger+Internal.h in Headers */,
 				5459E5338F9DEACCE8569F46B2066748 /* DDFileLogger.h in Headers */,
-				5459E5338F9DEACCE8569F46B2066748 /* DDFileLogger.h in Headers */,
 				10AE6D54BC2C6D09FDF4F27265F2B446 /* DDLegacyMacros.h in Headers */,
 				D2907C6E39BFC166B004E5017D4AA951 /* DDLog+LOGV.h in Headers */,
-				D2907C6E39BFC166B004E5017D4AA951 /* DDLog+LOGV.h in Headers */,
-				26394F17A4BE20701A904B86683206CA /* DDLog.h in Headers */,
 				26394F17A4BE20701A904B86683206CA /* DDLog.h in Headers */,
 				15A07723B0FBE55412BC4D3B712DC54C /* DDLoggerNames.h in Headers */,
-				15A07723B0FBE55412BC4D3B712DC54C /* DDLoggerNames.h in Headers */,
-				C4008B8A712D3D8E8BE62D1F3B3BBB6E /* DDLogMacros.h in Headers */,
 				C4008B8A712D3D8E8BE62D1F3B3BBB6E /* DDLogMacros.h in Headers */,
 				A8DC7F247587C7C762FC0382A6E068B3 /* DDMultiFormatter.h in Headers */,
-				A8DC7F247587C7C762FC0382A6E068B3 /* DDMultiFormatter.h in Headers */,
-				C7A3B761735996489734922539214FBD /* DDOSLogger.h in Headers */,
 				C7A3B761735996489734922539214FBD /* DDOSLogger.h in Headers */,
 				E874C5FEEF6FB8A3B26B06771C9D135E /* DDTTYLogger.h in Headers */,
-				E874C5FEEF6FB8A3B26B06771C9D135E /* DDTTYLogger.h in Headers */,
-				F6021B276B73A2440CDCC292AE5C466D /* SwiftLogLevel.h in Headers */,
 				F6021B276B73A2440CDCC292AE5C466D /* SwiftLogLevel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -544,7 +506,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1150;
 			};
 			buildConfigurationList = E2E54F79B699FBD58D4FCBCE53F3F414 /* Build configuration list for PBXProject "CocoaLumberjack" */;
 			compatibilityVersion = "Xcode 10.0";
