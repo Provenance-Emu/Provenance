@@ -4,14 +4,17 @@ isCI = false
 
 source 'https://cdn.cocoapods.org/'
 
+plugin 'cocoapods-binary'
+plugin 'cocoapods-githooks'
+
 use_frameworks!
 inhibit_all_warnings!
+# all_binary!
 
 workspace 'Provenance.xcworkspace'
 project 'Provenance.xcodeproj'
 
-plugin 'cocoapods-githooks'
-plugin 'cocoapods-check'
+# plugin 'cocoapods-check'
 
 install!  'cocoapods',
           :generate_multiple_pod_projects => true,
@@ -28,6 +31,7 @@ def pvlibrary
   options = {
     :path => './',
     :inhibit_warnings => false,
+    :binary => false,
     :project_name => 'PVLibrary'
     # :appspecs => appspecs,
     # :subspecs => subspecs,
@@ -41,6 +45,7 @@ def pvsupport
   options = {
     :path => './',
     :inhibit_warnings => false,
+    :binary => false,
     :project_name => 'PVSupport'
     # :appspecs => appspecs,
     # :subspecs => subspecs,
@@ -59,6 +64,7 @@ def cores
     :path => './',
     :inhibit_warnings => false,
     :project_name => 'ProvenanceCores',
+    :binary => false,
     :subspecs => subspecs
   }
 

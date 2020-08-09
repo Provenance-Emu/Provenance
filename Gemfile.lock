@@ -61,6 +61,10 @@ GEM
       nap (~> 1.0)
       ruby-macho (~> 1.4)
       xcodeproj (>= 1.14.0, < 2.0)
+    cocoapods-binary (0.4.4)
+      cocoapods (>= 1.5.0, < 2.0)
+      fourflusher (~> 2.0)
+      xcpretty (~> 0.3.0)
     cocoapods-check (1.1.0)
       cocoapods (~> 1.0)
     cocoapods-core (1.9.3)
@@ -343,6 +347,7 @@ PLATFORMS
 
 DEPENDENCIES
   cocoapods (~> 1.9)
+  cocoapods-binary
   cocoapods-check
   cocoapods-githooks
   danger
