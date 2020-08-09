@@ -1,0 +1,65 @@
+{
+  "name": "ProvenanceCores",
+  "version": "1.5",
+  "summary": "Provenance Emulator Cores",
+  "description": "ProvenanceCores is the iOS library for the NewsCorp ProvenanceCores platform.",
+  "homepage": "https://github.com/Provenance/Provenance",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0"
+  },
+  "frameworks": [
+    "Foundation",
+    "OpenGLES",
+    "UIKit",
+    "CoreGraphics",
+    "AudioToolbox"
+  ],
+  "module_name": "ProvenanceCores",
+  "header_dir": "ProvenanceCores",
+  "default_subspecs": "Atari800",
+  "dependencies": {
+    "PVSupport": [
+
+    ],
+    "PVLibrary": [
+
+    ]
+  },
+  "libraries": [
+    "z",
+    "edit"
+  ],
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "$(inherited) -ObjC"
+  },
+  "subspecs": [
+    {
+      "name": "Atari800",
+      "source_files": "Cores/Atari800/**/*.{swift,m,mm,c,cpp}",
+      "pod_target_xcconfig": {
+        "OTHER_LDFLAGS": "$(inherited) -ObjC",
+        "CORE_ATARI800_SUBSPEC_INCLUDED": "-D'CORE_ATARI800_SUBSPEC_INCLUDED'",
+        "OTHER_SWIFT_FLAGS": "$(CORE_ATARI800_SUBSPEC_INCLUDED)"
+      }
+    }
+  ],
+  "swift_version": "5.1"
+}

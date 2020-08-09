@@ -1,0 +1,54 @@
+# :frozen_string_literal => true
+
+# Be sure to run `pod lib lint PVLibrary.podspec' to ensure this is a
+# valid spec before submitting.
+
+Pod::Spec.new do |s|
+  s.name             = 'PVLibrary'
+  s.version          = '1.5.0'
+  s.summary          = 'Provenance ROM library framework'
+
+  s.description      = <<-DESC
+  PVLibrary is a iOS/tvOS library for the Provenance library platform.
+  DESC
+
+  s.homepage = 'https://github.com/Provenance/Provenance'
+  s.license = { :type => 'Provenance License', :file => 'LICENSE.md' }
+  s.author  = {
+    'James Addyman' => 'james@provenance-emu.com',
+    'Joseph Mattiello' => 'joe@provenance-emu.com'
+  }
+  s.source           = {
+    :git => 'https://github.com/Provenance/Provenance.git',
+    :tag => s.version.to_s
+  }
+
+  s.cocoapods_version = '>= 1.8.0'
+
+  s.swift_versions = ['5.0', '5.1']
+  s.platform = :ios, '10.3'
+
+  s.ios.deployment_target = '10.0'
+  s.tvos.deployment_target = '10.0'
+
+  s.frameworks = 'CoreGraphic'
+  s.frameworks = 'CoreServices'
+  s.frameworks = 'Foundation'
+
+  s.module_name = 'PVLibrary'
+  s.header_dir = 'PVLibrary'
+
+  s.dependency 'ZipArchive'
+  s.dependency 'RealmSwift'
+  s.dependency 'SQLite.swift'
+  s.dependency 'RxSwift'
+
+  @sources_root = 'PVLibrary'
+  @sources_lzmasdkobjc = "#{@sources_root}/LzmaSDKObjC/**/*.{c,cpp,m,mm}"
+  @sources_common = "#{@sources_root}/PVLibrary/**/*.{swift,m}"
+
+  s.source_files       = [
+    @sources_common,
+    @sources_lzmasdkobjc
+  ]
+end

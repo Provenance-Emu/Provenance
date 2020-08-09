@@ -1049,8 +1049,8 @@
 		B3579D052106B11D00DDEBD6 = {
 			isa = PBXGroup;
 			children = (
-				B3579D112106B11D00DDEBD6 /* PVLibrary */,
-				B3C04B622107867200E7AF79 /* PVLibraryTests */,
+				B3579D112106B11D00DDEBD6 /* Sources */,
+				B3C04B622107867200E7AF79 /* Tests */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
 			);
@@ -1066,7 +1066,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
+		B3579D112106B11D00DDEBD6 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				B3579D322106B4D700DDEBD6 /* Importer */,
@@ -1085,7 +1085,7 @@
 				B3579D122106B11D00DDEBD6 /* PVLibrary.h */,
 				B3579D132106B11D00DDEBD6 /* Info.plist */,
 			);
-			path = PVLibrary;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		B3579D1D2106B4D600DDEBD6 /* Database */ = {
@@ -1711,13 +1711,13 @@
 			path = iOS;
 			sourceTree = "<group>";
 		};
-		B3C04B622107867200E7AF79 /* PVLibraryTests */ = {
+		B3C04B622107867200E7AF79 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				B3C04B632107867200E7AF79 /* PVLibraryTests.swift */,
 				B3C04B652107867200E7AF79 /* Info.plist */,
 			);
-			path = PVLibraryTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
