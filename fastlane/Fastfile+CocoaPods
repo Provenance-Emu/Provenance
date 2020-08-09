@@ -1,15 +1,41 @@
-desc 'Build cocoapods only'
-lane :build_pods do
-  xcodebuild(
-    :project => File.expand_path('../Pods/Pods.xcodeproj'),
-    :scheme => 'Pods',
-    :configuration => 'Release',
-    :destination => 'generic/platform=iOS'
+desc 'CocoaPods install'
+lane :pod_install do |options|
+  clean_install = options.fetch(:clean_install, false)
+  silent = options.fetch(:silent, false)
+
+  cocoapods(
+    clean_install: clean_install,
+    silent: clean_install,
   )
 end
 
+desc 'Build cocoapods only'
+lane :pod_build do |options|
+
+  configuration = options.fetch(:configuration, 'Release')
+  platforms = options.fetch(:platforms, 'iOS,tvOS').split(',')
+  Scheme = Struct.new(:scheme, :platform)
+
+  schemes = [
+    Scheme.new("Pods-Spotlight", "iOS"),
+    Scheme.new("Pods-ProvenanceApp-Provenance", "iOS"),
+    Scheme.new("Pods-TopShelf", "tvOS"),
+    Scheme.new("Pods-ProvenanceApp-ProvenanceTV", "tvOS"),
+].select { |scheme| platforms.include?(scheme.platform)}
+
+
+  schemes.each do |scheme|
+    xcodebuild(
+      :project => File.expand_path('../Pods/Pods.xcodeproj'),
+      :scheme => scheme.scheme,
+      :configuration => configuration,
+      :destination => 'generic/platform=' + scheme.platform
+    )
+  end
+end
+
 desc 'Lane to run install cocoapods in new checkout for iOS only'
-lane :build_app do
+lane :pod_build_app do
   cache_folder = File.expand_path('../build/Release-iphoneos')
   gym(
     project: 'App.xcodeproj',

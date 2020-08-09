@@ -41,57 +41,26 @@ Provenace Team: Push a new alpha build to Hockeyapp
 fastlane ios userbuild
 ```
 User Builds
-### ios carthage_bootstrap_ios
+### ios pod_install
 ```
-fastlane ios carthage_bootstrap_ios
+fastlane ios pod_install
 ```
-Lane to run bootstrap carthage in new checkout for iOS only
-### ios carthage_bootstrap_tvos
+CocoaPods install
+### ios pod_build
 ```
-fastlane ios carthage_bootstrap_tvos
+fastlane ios pod_build
 ```
-Lane to run bootstrap carthage in new checkout for tvOS only
-### ios carthage_bootstrap
+Build cocoapods only
+### ios pod_build_app
 ```
-fastlane ios carthage_bootstrap
+fastlane ios pod_build_app
 ```
-Lane to run bootstrap carthage in new checkout
-
-Option: `platform` tvOS,iOS
-### ios carthage_build
+Lane to run install cocoapods in new checkout for iOS only
+### ios patch_app_project_for_pods_cache
 ```
-fastlane ios carthage_build
+fastlane ios patch_app_project_for_pods_cache
 ```
-Lane to run build all carthage dependencies
-
-Option: `platform` tvOS,iOS
-### ios carthage_build_ios
-```
-fastlane ios carthage_build_ios
-```
-Lane to run build all carthage dependencies - iOS
-### ios carthage_build_tvos
-```
-fastlane ios carthage_build_tvos
-```
-Lane to run build all carthage dependencies - tvOS
-### ios carthage_update
-```
-fastlane ios carthage_update
-```
-Lane to update all carthage dependencies to latest versions
-
-Option: `platform` tvOS,iOS
-### ios carthage_update_ios
-```
-fastlane ios carthage_update_ios
-```
-Lane to update all carthage dependencies to latest versions for iOS only
-### ios carthage_update_tvos
-```
-fastlane ios carthage_update_tvos
-```
-Lane to update all carthage dependencies to latest versions for tvOS only
+Patches the cocoapods run script for caching
 ### ios certificates_download
 ```
 fastlane ios certificates_download
