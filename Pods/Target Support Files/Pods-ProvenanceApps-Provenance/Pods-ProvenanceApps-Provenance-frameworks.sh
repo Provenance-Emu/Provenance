@@ -199,7 +199,6 @@ fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
@@ -213,7 +212,6 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
@@ -227,7 +225,6 @@ fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"

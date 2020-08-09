@@ -65,16 +65,20 @@ def cores
   pod 'ProvenanceCores', options
 end
 
-def deps_app
+def deps_all
   pvsupport
   pvlibrary
+end
 
+def deps_app
   # Rx
   pod 'RxSwift'
   pod 'RxRealm'
 
   cores
 end
+
+deps_all
 
 abstract_target 'ProvenanceApps' do
   deps_app
@@ -102,16 +106,9 @@ end
 
 target 'Spotlight' do
   platform :ios, '10.0'
-
-  pvsupport
-  pvlibrary
 end
 
 target 'TopShelf' do
   platform :tvos, '10.0'
-
-  pvsupport
-  pvlibrary
-
   pod 'CocoaLumberjack/Swift'
 end

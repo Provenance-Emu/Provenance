@@ -7,132 +7,126 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0258143DE06E7D21264085AAE51A3FB4 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F989BFB73B0A9C38614762DE90C0F6 /* PViCadeController.swift */; };
-		0463AC28A7ADA813A999B2AC72EA3166 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5770D950F3765B14F6CF6F3D1E721918 /* PViCadeReader.swift */; };
-		07B090FA189DF07AA8DA704B8B79530F /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD36FECFED78C4F6712BBBA9758BC5C /* PVCocoaLumberJackLogging.m */; };
-		08535C1565B660136A0A129829D8EC14 /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1CBC6528FBA9BE871DB046DBE2E96B /* RealTimeThread.m */; };
-		0970DDB3EFD303AFBB2A0DB5950526DA /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D3B3197F91D5C80F3C637C15DF0A90 /* PViCade8BitdoController.swift */; };
-		0FA76F27FBF80B798B5D1A478C9A06A8 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9F0B5AF839CB74863EBE01B937004E /* OERingBuffer.m */; };
-		10585804F72340F167525FBF06F5E174 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927CF40C481CA04B57D75FEF15AFDA86 /* Controls.swift */; };
-		11435A1FEF4B93C9E7868EF2A2D80280 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBCE55EA20EA0137F6BACCCDF5023A0 /* DiscSwappable.swift */; };
-		1551A8811B97DD076EC5137D69A1AD34 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 699E599B39E2B13405BC650F3B7D869A /* PVLogging.m */; };
-		184AE1DEEE5FDC84CDC6D072914F7CA4 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 699E599B39E2B13405BC650F3B7D869A /* PVLogging.m */; };
-		18FF25F4E668CD74227F5C2866C7FD97 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD23A10C742F287F65771FB68AF1C0 /* PViCadeMocuteController.swift */; };
-		1E4738D9BDDAB2F10C71B90AEAA6A6A4 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E880EF8A8B4DC2811A78807CA4A2C8D /* NSLogger.framework */; };
-		21A2BF6616D943B682A1B99C733C581E /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2B3527B931D8DF1DA26F5AC1052A6 /* PVGameControllerUtilities.m */; };
-		22CF17979FB7C1E676732E9FC3133CE0 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2B3527B931D8DF1DA26F5AC1052A6 /* PVGameControllerUtilities.m */; };
-		24C2CD53C268E1484D565EE775950368 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B042E79DB44370250D57CC4C9F50387A /* CoreOptions.swift */; };
-		24E4E80C5615B8C89D3BCBF8A187BE16 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2387868D8D0E6383E466D70308BFD46 /* iCadeReaderView.swift */; };
-		2B66F4042B92606F6C96338A3B83B24B /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6313A1B2635233A3D25745E7D9EE155 /* UIDeviceExtension.swift */; };
-		2C4FD77A533196DA33419247E7F384D6 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927CF40C481CA04B57D75FEF15AFDA86 /* Controls.swift */; };
-		3036FEA819700E02BCD40A84DCCA690F /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = F3274F58858372F94080C3A28350FA0D /* OEGameAudio.m */; };
-		3359F4EF05CAE301AF941E34B7D6DE82 /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46168127FAA7F28DD4646A88E6D7A4EB /* PVEmulatorCore.swift */; };
-		33F62553C4008DEDFF3B9BC2D25A91E7 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = F3274F58858372F94080C3A28350FA0D /* OEGameAudio.m */; };
-		357D5787AF3C6657FEF8A89B16D3E5C1 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8597171794531A903B17E4C51BF3AEF /* ArchiveSupport.swift */; };
-		37B07422F8007911F49219DFF367E2C8 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC4341AA4B29AD7EFD926A94EDB3D5 /* PViCadeGamepadButtonInput.swift */; };
-		382D1EBD027A0EFD822ECB337CED69B7 /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7A270516A7DAC99DE57EC2AF22CB1 /* iCadeControllerSetting.swift */; };
-		397EE3043D1C8E2B30D81784E4D92FC7 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD36FECFED78C4F6712BBBA9758BC5C /* PVCocoaLumberJackLogging.m */; };
-		3A826648A43B3A9F92AAFEF392ED9600 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D3B3197F91D5C80F3C637C15DF0A90 /* PViCade8BitdoController.swift */; };
-		3AD4874803AB5C85726D9A7944138962 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F989BFB73B0A9C38614762DE90C0F6 /* PViCadeController.swift */; };
-		3D28896C2A0D488FA3EA4EA152A122CA /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C0F7A55B0F48C7155F82787B7D5895 /* CocoaLumberExtensions.swift */; };
-		420FDEB0A0B04C732E5D72E53FA8BF6A /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8597171794531A903B17E4C51BF3AEF /* ArchiveSupport.swift */; };
-		4B3622D487A03730B84A89A13665A7FB /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42350E091AA1847D06EEC714B658D30F /* CocoaLumberjack.framework */; };
-		51A6BA2A7C157267D263862FFFC4B29F /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7A270516A7DAC99DE57EC2AF22CB1 /* iCadeControllerSetting.swift */; };
-		57532DA2AF9E6D9760A4F29538981F3A /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2E8AF75195234337C7E499A4E3D36A /* PViCadeInputAxis.swift */; };
-		597365441F5BBD94BDB45B2DE73A3D81 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6DB0A0C961A367AC260130D916F899 /* PVLogEntry.m */; };
-		5BD4394B9DCAB45D89CB4CBC7C49EC80 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BED6625AE78F3DBE8A05D7F9CD8BCE6 /* PViCadeGamepadDirectionPad.swift */; };
-		5DF4579931BC9AB656F1C21AD818C4DE /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1CBC6528FBA9BE871DB046DBE2E96B /* RealTimeThread.m */; };
-		5DFFE7C61656E6B78F66FAE28BF5C567 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD9490871349D3478E7C58CF82918E6 /* PVLibrary.framework */; };
-		63939312F8CE33A6B09434639D6BE50B /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46168127FAA7F28DD4646A88E6D7A4EB /* PVEmulatorCore.swift */; };
-		65D464CBD6FE2ED5F227DC2850E00011 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9F0B5AF839CB74863EBE01B937004E /* OERingBuffer.m */; };
-		6815121BD3F20D957E18D5C90395AE0A /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1B3FF663D09A397E451C922E6D5476 /* SortOption.swift */; };
-		6911FA3286BA79FE22B2FCB4BB3EA3BB /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = FE5D546C831FEC24EBD838AE9357EBAA /* PVEmulatorCore.m */; };
-		6A2BD5742964A00C21162F6B5DC8BD42 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26AE0E8C8D53A97B01BB6BFB34D6C8 /* iCadeState.swift */; };
-		6D8B25A23B4B3C93C38622F1020A9623 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135F06E508E1771F163B9B12BD0306E2 /* PViCadeGamepad.swift */; };
-		6DA08C4BEDA82216D9D2816F50FE97E2 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E880EF8A8B4DC2811A78807CA4A2C8D /* NSLogger.framework */; };
-		6F51C61D01476E716137707E38F173F1 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D9905F359D1B58C099525B0CEF87DB /* SaveStateSupport.swift */; };
-		70246A55BA10D02FCDB1375D72CD871B /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBCE55EA20EA0137F6BACCCDF5023A0 /* DiscSwappable.swift */; };
-		7693154473EC394687A1603BD09005FB /* PVSupport-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C8CC2FAB28FA6DDE15F1D2512E74EF45 /* PVSupport-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		780762BE302E375DFA1C4DC9548F065E /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6DB0A0C961A367AC260130D916F899 /* PVLogEntry.m */; };
-		7900562F790AFD9CE8B623854B1C6BAB /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2387868D8D0E6383E466D70308BFD46 /* iCadeReaderView.swift */; };
-		87022393D5FD4A19DFC900F16BBE22F9 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135F06E508E1771F163B9B12BD0306E2 /* PViCadeGamepad.swift */; };
-		89104BB237A9C98B67D7C72DA049A5DB /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42350E091AA1847D06EEC714B658D30F /* CocoaLumberjack.framework */; };
-		8AE5CEF7218CC7FA3FD6232EC2C983AC /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C0F7A55B0F48C7155F82787B7D5895 /* CocoaLumberExtensions.swift */; };
-		8DD94B4BFEC3FCFBDF004053C6FB810D /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A5EC2CFE95D38FD1E70E8912CC23F40 /* PVProvenanceLogging.m */; };
-		8F06E392C34A5AEC6652798A379D15FC /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 208484A55F10292B6CCA9E7DB2DA573C /* XCDLumberjackNSLogger.m */; };
-		9389EE6A82C3A9C3082A2AFAF27C2861 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D9905F359D1B58C099525B0CEF87DB /* SaveStateSupport.swift */; };
-		941B8C466AF7DE20E078002E0321DB6C /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4303C42C94AEE5AC193F70959C99689 /* PViCadeSteelSeriesController.swift */; };
-		97FA61D6D1987C2748C00DF28B421075 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC4341AA4B29AD7EFD926A94EDB3D5 /* PViCadeGamepadButtonInput.swift */; };
-		9ADA88474F0456DA8D932270065FB537 /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299A8E7F93B5A6CA07083D8C0BE08C3C /* PVSettingsModel.swift */; };
-		9D2EAE1FF60ECB250B05DE73CFF14281 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1923B3D26E39653173879FAB2470A952 /* Foundation.framework */; };
-		B406035ACBD8E251D5E485B316863AE3 /* PVSupport-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7F5FE3576EC096C804482FDED5A404 /* PVSupport-iOS-dummy.m */; };
-		B40F053AA07DAA91F73875144C810A36 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 208484A55F10292B6CCA9E7DB2DA573C /* XCDLumberjackNSLogger.m */; };
-		B60858B54B23E632C73E6120EA5C6A21 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6313A1B2635233A3D25745E7D9EE155 /* UIDeviceExtension.swift */; };
-		C3C19326BDBDA474DC8640F34FEF22EB /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AE6B18AD78822144DDDFF1719FD822D /* NSObject+PVAbstractAdditions.m */; };
-		C552264711A66450307FA0154043A901 /* PVSupport-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B960A30765BE9B5DB7CEAC5136359AB /* PVSupport-tvOS-dummy.m */; };
-		C632E5C127D2D617565A447FBC61038E /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1B3FF663D09A397E451C922E6D5476 /* SortOption.swift */; };
-		C647B9A7C6745E0E493517730248DA93 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26AE0E8C8D53A97B01BB6BFB34D6C8 /* iCadeState.swift */; };
-		C868E735275423994499B47DC1D8739E /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4303C42C94AEE5AC193F70959C99689 /* PViCadeSteelSeriesController.swift */; };
-		C9EB2A548CB3A15F910E43BD2B10503A /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BED6625AE78F3DBE8A05D7F9CD8BCE6 /* PViCadeGamepadDirectionPad.swift */; };
-		CA4836AAF109E64E0E6EFD124A4D4816 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5770D950F3765B14F6CF6F3D1E721918 /* PViCadeReader.swift */; };
-		CA493035B2BE223BA6F1F743B3DD5DBE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299A8E7F93B5A6CA07083D8C0BE08C3C /* PVSettingsModel.swift */; };
-		CE6A1BB344A4A23B834B61A20CF4DD8C /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2E8AF75195234337C7E499A4E3D36A /* PViCadeInputAxis.swift */; };
-		CE818B977C4461B96C36344299A67582 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEA78601D2A722B4E0EFE4871A400A /* CoreActions.swift */; };
-		D158FE571CCC0F7DF113B5A5C6F8B179 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B16BDD2F8E73027333EC4D8C3F39F37E /* NSFileManager+OEHashingAdditions.m */; };
-		DC631391ED251ABB47080A39F57B702E /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD23A10C742F287F65771FB68AF1C0 /* PViCadeMocuteController.swift */; };
-		DE7454446AB2FA641F1B876814E0FFDE /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = FE5D546C831FEC24EBD838AE9357EBAA /* PVEmulatorCore.m */; };
-		E0C3F3E44FAD7CC6404D0FE0C9BBCDBD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC06B6EC6D920CB9F4F38462837FD000 /* Foundation.framework */; };
-		E79B6C929162EC7686BE35F873B9F2B0 /* PVSupport-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E2D8DC19C33F11F2EE6AEF32F29F7FF9 /* PVSupport-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EA09B415ECE2E38BEF2919E9AF4C03C6 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD9490871349D3478E7C58CF82918E6 /* PVLibrary.framework */; };
-		EE704C38ABB6FC9F60588D9A31A48F2C /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B042E79DB44370250D57CC4C9F50387A /* CoreOptions.swift */; };
-		F118E4775DF35B3BB44D1FB64061AF67 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A5EC2CFE95D38FD1E70E8912CC23F40 /* PVProvenanceLogging.m */; };
-		F3CE3D1F009A569602FB4F7977092C97 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B16BDD2F8E73027333EC4D8C3F39F37E /* NSFileManager+OEHashingAdditions.m */; };
-		F424E3CF223E96124928E497893270B4 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AE6B18AD78822144DDDFF1719FD822D /* NSObject+PVAbstractAdditions.m */; };
-		F45A5D71125897606CAC17312E9DF321 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEA78601D2A722B4E0EFE4871A400A /* CoreActions.swift */; };
+		012F9CADFE515D9BAD431ED564E79062 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5770D950F3765B14F6CF6F3D1E721918 /* PViCadeReader.swift */; };
+		03E5A7D403CDE5BC1A98ABF7B0C5529E /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7A270516A7DAC99DE57EC2AF22CB1 /* iCadeControllerSetting.swift */; };
+		090FF44A7D68C5ADBD3611FB6C258951 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9F0B5AF839CB74863EBE01B937004E /* OERingBuffer.m */; };
+		0CDC493C4E178640DD9E8B4D79D9BAD2 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D9905F359D1B58C099525B0CEF87DB /* SaveStateSupport.swift */; };
+		17D170EAA4AF9B8D161E9B8DC5849CE7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D9905F359D1B58C099525B0CEF87DB /* SaveStateSupport.swift */; };
+		192082DE75925ECF17BF094B1A6E94D2 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26AE0E8C8D53A97B01BB6BFB34D6C8 /* iCadeState.swift */; };
+		1C24F1B5274809DE694DE15CD0624F73 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6DB0A0C961A367AC260130D916F899 /* PVLogEntry.m */; };
+		1CA22E304401A8B237ABC3594D91A36F /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4303C42C94AEE5AC193F70959C99689 /* PViCadeSteelSeriesController.swift */; };
+		248B0368E7C08FBD8E9C9F80341BE086 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6313A1B2635233A3D25745E7D9EE155 /* UIDeviceExtension.swift */; };
+		2594949157B050776BDDBE40F82F0983 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 208484A55F10292B6CCA9E7DB2DA573C /* XCDLumberjackNSLogger.m */; };
+		2EB971D1487D937EBC6BF554FD300BA8 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BED6625AE78F3DBE8A05D7F9CD8BCE6 /* PViCadeGamepadDirectionPad.swift */; };
+		34ECD571433A42A4338B4A98F2711418 /* PVSupport-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B960A30765BE9B5DB7CEAC5136359AB /* PVSupport-tvOS-dummy.m */; };
+		38E4FEE25339F4720578028B95C1CCBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3116B9F4283A59FA5961B6804D81F7FF /* Foundation.framework */; };
+		39F2B8111F278A1A3D0BFD29A548E272 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B16BDD2F8E73027333EC4D8C3F39F37E /* NSFileManager+OEHashingAdditions.m */; };
+		3A5B5D35698F82CB288BEF4ADD836CD9 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 699E599B39E2B13405BC650F3B7D869A /* PVLogging.m */; };
+		3B1B559EF50B91345ABB729FFB56407E /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBCE55EA20EA0137F6BACCCDF5023A0 /* DiscSwappable.swift */; };
+		45A59E29D6FBF4FA4EBD5F0D8F15613F /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = FE5D546C831FEC24EBD838AE9357EBAA /* PVEmulatorCore.m */; };
+		46BE19133018856396E6F5B29D091B4D /* PVSupport-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C8CC2FAB28FA6DDE15F1D2512E74EF45 /* PVSupport-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		49C5F34417C31C6389B230BFA36C3891 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2387868D8D0E6383E466D70308BFD46 /* iCadeReaderView.swift */; };
+		4C81AFBA30A6C618CB899C7237084CDA /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46168127FAA7F28DD4646A88E6D7A4EB /* PVEmulatorCore.swift */; };
+		4D02D201B31212A1063961D9D68823D5 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD36FECFED78C4F6712BBBA9758BC5C /* PVCocoaLumberJackLogging.m */; };
+		4DBA36B7F66C3EB771FA284A5DFD6D8E /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4303C42C94AEE5AC193F70959C99689 /* PViCadeSteelSeriesController.swift */; };
+		4EFAB058B33C64C3B5DFD059F2B28659 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A5EC2CFE95D38FD1E70E8912CC23F40 /* PVProvenanceLogging.m */; };
+		513D73175E781C3C5DDA73CE31362419 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2B3527B931D8DF1DA26F5AC1052A6 /* PVGameControllerUtilities.m */; };
+		551E37CEBC33835E99AE8AAE0E68A3FE /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26AE0E8C8D53A97B01BB6BFB34D6C8 /* iCadeState.swift */; };
+		5DE5C92A3B1DA89E636A312609E141C5 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AE6B18AD78822144DDDFF1719FD822D /* NSObject+PVAbstractAdditions.m */; };
+		5FA5776660816AF1EEC4FB7F6779855E /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6DB0A0C961A367AC260130D916F899 /* PVLogEntry.m */; };
+		630BEE6DA21D54DA3F4C069481B8318E /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 699E599B39E2B13405BC650F3B7D869A /* PVLogging.m */; };
+		68A9E8C084838566FFB07D2C3C5E74B4 /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1CBC6528FBA9BE871DB046DBE2E96B /* RealTimeThread.m */; };
+		6CD32C4A4A7D9E1636E62BC005AAC430 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B042E79DB44370250D57CC4C9F50387A /* CoreOptions.swift */; };
+		6F8B07DA595D777CF7D2FF4FC09BAF28 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEA78601D2A722B4E0EFE4871A400A /* CoreActions.swift */; };
+		70B95FDB3C92C807F96D5965076C62ED /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299A8E7F93B5A6CA07083D8C0BE08C3C /* PVSettingsModel.swift */; };
+		77FCBDCFD1D9255E8540B79826C08D09 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2E8AF75195234337C7E499A4E3D36A /* PViCadeInputAxis.swift */; };
+		7858EC77D226E36F0BF6DAEE7F692300 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD23A10C742F287F65771FB68AF1C0 /* PViCadeMocuteController.swift */; };
+		7B4DB8E83D3F2328C6E56BB9F7475AC0 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1B3FF663D09A397E451C922E6D5476 /* SortOption.swift */; };
+		7C55BEBBB7E17A8775910A4501DBCB0A /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927CF40C481CA04B57D75FEF15AFDA86 /* Controls.swift */; };
+		7D7925352EF81EEF4D3940EA193D77A1 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C0F7A55B0F48C7155F82787B7D5895 /* CocoaLumberExtensions.swift */; };
+		7ECC0B21F9AC93A2990850472AB95AD5 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135F06E508E1771F163B9B12BD0306E2 /* PViCadeGamepad.swift */; };
+		81BE362935A5539A598B6B05520E51E5 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC4341AA4B29AD7EFD926A94EDB3D5 /* PViCadeGamepadButtonInput.swift */; };
+		855C6DFE8670B94973AD079D44D8719C /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7A270516A7DAC99DE57EC2AF22CB1 /* iCadeControllerSetting.swift */; };
+		8CFEA19D660142C1187C9E377095AD8A /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D3B3197F91D5C80F3C637C15DF0A90 /* PViCade8BitdoController.swift */; };
+		90D166603E5BED7D4D3BC6BC1DAC2E81 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2B3527B931D8DF1DA26F5AC1052A6 /* PVGameControllerUtilities.m */; };
+		971B51A2DBD711A4D5D7F9A832460BA8 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC4341AA4B29AD7EFD926A94EDB3D5 /* PViCadeGamepadButtonInput.swift */; };
+		998EF63C07C03D7C8D4D9AAE95C7B2F8 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F989BFB73B0A9C38614762DE90C0F6 /* PViCadeController.swift */; };
+		A213755F7355A090A41BF149AA2EC9DB /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8597171794531A903B17E4C51BF3AEF /* ArchiveSupport.swift */; };
+		A476990806C1D00E8033293B62E7BAFD /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A5EC2CFE95D38FD1E70E8912CC23F40 /* PVProvenanceLogging.m */; };
+		ACAF8CBC9EF0945E6FD006CAC7647123 /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299A8E7F93B5A6CA07083D8C0BE08C3C /* PVSettingsModel.swift */; };
+		AE75FB3EFE96F4DDCDD299E924507AD0 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBCE55EA20EA0137F6BACCCDF5023A0 /* DiscSwappable.swift */; };
+		B0E340222FEE273899C290DCF8DE68C9 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6313A1B2635233A3D25745E7D9EE155 /* UIDeviceExtension.swift */; };
+		B2A18D24347526B27BF3131526EE7262 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AE6B18AD78822144DDDFF1719FD822D /* NSObject+PVAbstractAdditions.m */; };
+		B92A1623E0BB14D5A066707EBF5FB678 /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1CBC6528FBA9BE871DB046DBE2E96B /* RealTimeThread.m */; };
+		C10507C9CEFE3329DF5E22E7F45FA9DD /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D3B3197F91D5C80F3C637C15DF0A90 /* PViCade8BitdoController.swift */; };
+		C1886ED1D34D87E15D9E2F3650C62463 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 208484A55F10292B6CCA9E7DB2DA573C /* XCDLumberjackNSLogger.m */; };
+		C2AB632C21A00C84591B1C0D9F0C0952 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEA78601D2A722B4E0EFE4871A400A /* CoreActions.swift */; };
+		CBC898BB3A6DD2E5E460D3CA5A529D60 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = F3274F58858372F94080C3A28350FA0D /* OEGameAudio.m */; };
+		CC244E72E0C79EDF4146700BD45EC24F /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD36FECFED78C4F6712BBBA9758BC5C /* PVCocoaLumberJackLogging.m */; };
+		D36A1B6B6F19184F02036CDF9290F427 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = FE5D546C831FEC24EBD838AE9357EBAA /* PVEmulatorCore.m */; };
+		D4CD78AA79F5396801DF533E733473A4 /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46168127FAA7F28DD4646A88E6D7A4EB /* PVEmulatorCore.swift */; };
+		DB97D9B1356B9D9A8D697D4E4A025C01 /* PVSupport-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7F5FE3576EC096C804482FDED5A404 /* PVSupport-iOS-dummy.m */; };
+		DE01EEEAECE45CDD7CAD0307ECDA7554 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2E8AF75195234337C7E499A4E3D36A /* PViCadeInputAxis.swift */; };
+		E0546CC2646EC0712C6BBCE1F5EAB22A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F11361E88F7DEC4F37CC3DBA749B9B /* Foundation.framework */; };
+		E09B9E7F74D46E46064D84EDC2211B47 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F989BFB73B0A9C38614762DE90C0F6 /* PViCadeController.swift */; };
+		E8838777D1871880F1CF27F7A8A1F88E /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2387868D8D0E6383E466D70308BFD46 /* iCadeReaderView.swift */; };
+		EA094C8BB981419391FCBEECB4EBB471 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1B3FF663D09A397E451C922E6D5476 /* SortOption.swift */; };
+		EDDB25E02C016FA590C9ED933D867C6B /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BED6625AE78F3DBE8A05D7F9CD8BCE6 /* PViCadeGamepadDirectionPad.swift */; };
+		F24A85F7F06D59386CDF5CAAF9A6D7B0 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C0F7A55B0F48C7155F82787B7D5895 /* CocoaLumberExtensions.swift */; };
+		F4C587A2ABB48F06D3415B3A84758752 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8597171794531A903B17E4C51BF3AEF /* ArchiveSupport.swift */; };
+		F968F2D15A336E4DBAB041738F16B01E /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135F06E508E1771F163B9B12BD0306E2 /* PViCadeGamepad.swift */; };
+		F96C0B0853F75490063D69557DFE004C /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927CF40C481CA04B57D75FEF15AFDA86 /* Controls.swift */; };
+		FA997BF28E0631529D80AF34B0410339 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B16BDD2F8E73027333EC4D8C3F39F37E /* NSFileManager+OEHashingAdditions.m */; };
+		FA9FB43F904319B1EC9AA1F89F2275BA /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9F0B5AF839CB74863EBE01B937004E /* OERingBuffer.m */; };
+		FC2553CCE7EB588336FCF87B198E9170 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD23A10C742F287F65771FB68AF1C0 /* PViCadeMocuteController.swift */; };
+		FC34D6C8A5B7C13D21EB40A5712072F9 /* PVSupport-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E2D8DC19C33F11F2EE6AEF32F29F7FF9 /* PVSupport-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDF497F73DF475BB733338228CB25608 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5770D950F3765B14F6CF6F3D1E721918 /* PViCadeReader.swift */; };
+		FE01CCC15BD4FCB8B98CE98F83AAF0D3 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B042E79DB44370250D57CC4C9F50387A /* CoreOptions.swift */; };
+		FEE7DAE596A75F3A869F770798594BB7 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = F3274F58858372F94080C3A28350FA0D /* OEGameAudio.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		351CBB48D5659F192FB6EC2ABBAA2DE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 96DBE680BC2B1D3534433499F4881B15 /* NSLogger.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D1BA572B95863E617C4885F346F6852B;
-			remoteInfo = "NSLogger-tvOS";
-		};
-		570A71129DEF3BF4134D66541BCCE90B /* PBXContainerItemProxy */ = {
+		241132ED3F90209F0A761242CD96B9C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C418DC67858EAEB693283DB37029468B /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
 			remoteInfo = "PVLibrary-iOS";
 		};
-		A7123941110881AF374342FF41DCA0FC /* PBXContainerItemProxy */ = {
+		256E75EE5FF7B1053F73CE06454CFBC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = C418DC67858EAEB693283DB37029468B /* PVLibrary.xcodeproj */;
+			containerPortal = 96DBE680BC2B1D3534433499F4881B15 /* NSLogger.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
-			remoteInfo = "PVLibrary-tvOS";
+			remoteGlobalIDString = D1BA572B95863E617C4885F346F6852B;
+			remoteInfo = "NSLogger-tvOS";
 		};
-		D1B31290C4E196D37812624862E17326 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 04ACBF30D8AD61B5F032172D56677AEE /* CocoaLumberjack.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D467EB41941C8E87B0C3C274B81240A0;
-			remoteInfo = "CocoaLumberjack-iOS";
-		};
-		E8CBA50DE6FD47BBDC99279D74C2DCA4 /* PBXContainerItemProxy */ = {
+		81FEA49D28AA48B0778B9879E6CDADDA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 04ACBF30D8AD61B5F032172D56677AEE /* CocoaLumberjack.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = F1C3709674F31A707E80AE3A8CBEEECF;
 			remoteInfo = "CocoaLumberjack-tvOS";
 		};
-		F368FC0FD91BB2E60DD684FDB1A63D2F /* PBXContainerItemProxy */ = {
+		94413631F240AFC63A61BD533C72B069 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 96DBE680BC2B1D3534433499F4881B15 /* NSLogger.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 9A078F6194581499B61D5F459A7B3555;
 			remoteInfo = "NSLogger-iOS";
+		};
+		D015F8D8B013650968D259D8FF1B1CF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C418DC67858EAEB693283DB37029468B /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
+			remoteInfo = "PVLibrary-tvOS";
+		};
+		FECDDFE300504810FF93997CF9C54050 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04ACBF30D8AD61B5F032172D56677AEE /* CocoaLumberjack.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D467EB41941C8E87B0C3C274B81240A0;
+			remoteInfo = "CocoaLumberjack-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -141,16 +135,14 @@
 		07529314A0A49524B5E7AF7CC60DC122 /* PVSupport-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PVSupport-iOS-Info.plist"; sourceTree = "<group>"; };
 		09E7A270516A7DAC99DE57EC2AF22CB1 /* iCadeControllerSetting.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = iCadeControllerSetting.swift; sourceTree = "<group>"; };
 		135F06E508E1771F163B9B12BD0306E2 /* PViCadeGamepad.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PViCadeGamepad.swift; sourceTree = "<group>"; };
-		1923B3D26E39653173879FAB2470A952 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		1D998286283A4D925643B427E9A52286 /* PVSupport-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVSupport-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		208484A55F10292B6CCA9E7DB2DA573C /* XCDLumberjackNSLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = XCDLumberjackNSLogger.m; sourceTree = "<group>"; };
 		299A8E7F93B5A6CA07083D8C0BE08C3C /* PVSettingsModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
 		2B960A30765BE9B5DB7CEAC5136359AB /* PVSupport-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "PVSupport-tvOS-dummy.m"; path = "../PVSupport-tvOS/PVSupport-tvOS-dummy.m"; sourceTree = "<group>"; };
 		2D4470B65D23F0FCE515AAA09D624005 /* PVSupport-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVSupport-tvOS.release.xcconfig"; path = "../PVSupport-tvOS/PVSupport-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		2E1CBC6528FBA9BE871DB046DBE2E96B /* RealTimeThread.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RealTimeThread.m; sourceTree = "<group>"; };
+		3116B9F4283A59FA5961B6804D81F7FF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		3CFD23A10C742F287F65771FB68AF1C0 /* PViCadeMocuteController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PViCadeMocuteController.swift; sourceTree = "<group>"; };
-		3FD9490871349D3478E7C58CF82918E6 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		42350E091AA1847D06EEC714B658D30F /* CocoaLumberjack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CocoaLumberjack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46168127FAA7F28DD4646A88E6D7A4EB /* PVEmulatorCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		4C2E8AF75195234337C7E499A4E3D36A /* PViCadeInputAxis.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PViCadeInputAxis.swift; sourceTree = "<group>"; };
 		4C6DB0A0C961A367AC260130D916F899 /* PVLogEntry.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PVLogEntry.m; sourceTree = "<group>"; };
@@ -165,8 +157,8 @@
 		7AFC4341AA4B29AD7EFD926A94EDB3D5 /* PViCadeGamepadButtonInput.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadButtonInput.swift; sourceTree = "<group>"; };
 		7FD36FECFED78C4F6712BBBA9758BC5C /* PVCocoaLumberJackLogging.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PVCocoaLumberJackLogging.m; sourceTree = "<group>"; };
 		80EFEBBE1BA7885815791DF2C6E11CA2 /* PVSupport-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVSupport-tvOS.debug.xcconfig"; path = "../PVSupport-tvOS/PVSupport-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		83F11361E88F7DEC4F37CC3DBA749B9B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		8E24A40EEAAE38548B583E9AA34E6424 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVSupport.framework; path = "PVSupport-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E880EF8A8B4DC2811A78807CA4A2C8D /* NSLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NSLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F43A6276CBEDA6FCC697E31258A11D6 /* PVSupport.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PVSupport.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		927CF40C481CA04B57D75FEF15AFDA86 /* Controls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
 		96DBE680BC2B1D3534433499F4881B15 /* NSLogger */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NSLogger; path = NSLogger.xcodeproj; sourceTree = "<group>"; };
@@ -177,7 +169,6 @@
 		A23F554B31395EE4B9D1606EFA500B0B /* PVSupport-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVSupport-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		A4303C42C94AEE5AC193F70959C99689 /* PViCadeSteelSeriesController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PViCadeSteelSeriesController.swift; sourceTree = "<group>"; };
 		A52C06F86B5B307AE594F56A330078A5 /* PVSupport-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "PVSupport-tvOS.modulemap"; path = "../PVSupport-tvOS/PVSupport-tvOS.modulemap"; sourceTree = "<group>"; };
-		AC06B6EC6D920CB9F4F38462837FD000 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B042E79DB44370250D57CC4C9F50387A /* CoreOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B16BDD2F8E73027333EC4D8C3F39F37E /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
 		B2626D5128922DD9A6B50F8EDBC8CA34 /* PVSupport-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "PVSupport-tvOS-Info.plist"; path = "../PVSupport-tvOS/PVSupport-tvOS-Info.plist"; sourceTree = "<group>"; };
@@ -201,39 +192,25 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		11044C018E8703266847345069C0F1FA /* Frameworks */ = {
+		7D0265F5E2B9DD6B690D323458952000 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B3622D487A03730B84A89A13665A7FB /* CocoaLumberjack.framework in Frameworks */,
-				9D2EAE1FF60ECB250B05DE73CFF14281 /* Foundation.framework in Frameworks */,
-				6DA08C4BEDA82216D9D2816F50FE97E2 /* NSLogger.framework in Frameworks */,
-				5DFFE7C61656E6B78F66FAE28BF5C567 /* PVLibrary.framework in Frameworks */,
+				E0546CC2646EC0712C6BBCE1F5EAB22A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E99561BD42F4DF8E12A23AD6A9445BB /* Frameworks */ = {
+		F665825F97C56B50945AF9F2EA099771 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				89104BB237A9C98B67D7C72DA049A5DB /* CocoaLumberjack.framework in Frameworks */,
-				E0C3F3E44FAD7CC6404D0FE0C9BBCDBD /* Foundation.framework in Frameworks */,
-				1E4738D9BDDAB2F10C71B90AEAA6A6A4 /* NSLogger.framework in Frameworks */,
-				EA09B415ECE2E38BEF2919E9AF4C03C6 /* PVLibrary.framework in Frameworks */,
+				38E4FEE25339F4720578028B95C1CCBC /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		021CDA3EBE71C830C655828112B965F0 /* tvOS */ = {
-			isa = PBXGroup;
-			children = (
-				AC06B6EC6D920CB9F4F38462837FD000 /* Foundation.framework */,
-			);
-			name = tvOS;
-			sourceTree = "<group>";
-		};
 		132E416C82625C1CBA561C013026C2CF /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -302,7 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				371B9F3ED381E8064676D80A942AFD2A /* Dependencies */,
-				C1E17663571C1934209D57088DF9D050 /* Frameworks */,
+				C77C9E4DE695249877D6605B5766703A /* Frameworks */,
 				E03A6627AFF87A98B607233946F63F77 /* Products */,
 				4155458068C4FE5A3EE70AA5E1CFCBCD /* PVSupport */,
 			);
@@ -338,6 +315,14 @@
 				C418DC67858EAEB693283DB37029468B /* PVLibrary */,
 			);
 			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		3D7BC8D1C61E6996E0FD8DBCCC800747 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				83F11361E88F7DEC4F37CC3DBA749B9B /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		4155458068C4FE5A3EE70AA5E1CFCBCD /* PVSupport */ = {
@@ -380,6 +365,14 @@
 			path = PVSupport/Sources/DebugUtils;
 			sourceTree = "<group>";
 		};
+		7CE9493C643B328B5B065D34C5DB8DB5 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				3116B9F4283A59FA5961B6804D81F7FF /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
 		879E387A9B22E888CC2177A843D6027B /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -412,14 +405,11 @@
 			path = PVSupport/Sources/EmulatorCore;
 			sourceTree = "<group>";
 		};
-		C1E17663571C1934209D57088DF9D050 /* Frameworks */ = {
+		C77C9E4DE695249877D6605B5766703A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				42350E091AA1847D06EEC714B658D30F /* CocoaLumberjack.framework */,
-				8E880EF8A8B4DC2811A78807CA4A2C8D /* NSLogger.framework */,
-				3FD9490871349D3478E7C58CF82918E6 /* PVLibrary.framework */,
-				E69676F82132F187376772131BD6347C /* iOS */,
-				021CDA3EBE71C830C655828112B965F0 /* tvOS */,
+				3D7BC8D1C61E6996E0FD8DBCCC800747 /* iOS */,
+				7CE9493C643B328B5B065D34C5DB8DB5 /* tvOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -450,30 +440,22 @@
 			path = iCade;
 			sourceTree = "<group>";
 		};
-		E69676F82132F187376772131BD6347C /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				1923B3D26E39653173879FAB2470A952 /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		A75929853515F72C4608A2DA2B8C7E48 /* Headers */ = {
+		31111962982113D4F9FD2178C3112EC0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7693154473EC394687A1603BD09005FB /* PVSupport-iOS-umbrella.h in Headers */,
+				46BE19133018856396E6F5B29D091B4D /* PVSupport-iOS-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		ECEAA524EBC6F3FC377DD835EF1CD851 /* Headers */ = {
+		42BE322285698A700477055C292F8641 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E79B6C929162EC7686BE35F873B9F2B0 /* PVSupport-tvOS-umbrella.h in Headers */,
+				FC34D6C8A5B7C13D21EB40A5712072F9 /* PVSupport-tvOS-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,19 +464,19 @@
 /* Begin PBXNativeTarget section */
 		892759CB3C4AE29E4211DCE9F85D78C4 /* PVSupport-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B9BAC5FDDECDF9BB86588462B5DDAD98 /* Build configuration list for PBXNativeTarget "PVSupport-iOS" */;
+			buildConfigurationList = DC4A9A4DCF3D3424E067835709DB7DF3 /* Build configuration list for PBXNativeTarget "PVSupport-iOS" */;
 			buildPhases = (
-				A75929853515F72C4608A2DA2B8C7E48 /* Headers */,
-				DC82DFD8525F07A39BF7D204232167CF /* Sources */,
-				11044C018E8703266847345069C0F1FA /* Frameworks */,
-				9ED4EB96C809B75E5C21AFDA9F6D5AEA /* Resources */,
+				31111962982113D4F9FD2178C3112EC0 /* Headers */,
+				B408DB00D80FE40018CF4133E9D8C719 /* Sources */,
+				7D0265F5E2B9DD6B690D323458952000 /* Frameworks */,
+				721017532A84B2EEB11C0C736663F982 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2FF16AE92D66D54928E2042BB85FF069 /* PBXTargetDependency */,
-				B9E85CE3FCFC47C8DC50847AC766984B /* PBXTargetDependency */,
-				9EA2046D7B108F1D6C4BE61FA8568110 /* PBXTargetDependency */,
+				A7935D3A5348EABB92D9401FBFCD7213 /* PBXTargetDependency */,
+				F2B26869808A0564D4AE3145A9B14353 /* PBXTargetDependency */,
+				6F472E420AE0194DD124AB5CC69F56B2 /* PBXTargetDependency */,
 			);
 			name = "PVSupport-iOS";
 			productName = "PVSupport-iOS";
@@ -503,19 +485,19 @@
 		};
 		FA74D2F9316EB40AC6EF9A615B3A9AEE /* PVSupport-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ED5BEA83892B4FB0CF1AA08E5409B904 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */;
+			buildConfigurationList = 211472EAED8C0505AE475BA3D5B00C63 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */;
 			buildPhases = (
-				ECEAA524EBC6F3FC377DD835EF1CD851 /* Headers */,
-				44437F4FA30D65558A3C8DACA7CFB95F /* Sources */,
-				2E99561BD42F4DF8E12A23AD6A9445BB /* Frameworks */,
-				938F1DB388546C5F5FA427BFC90D9431 /* Resources */,
+				42BE322285698A700477055C292F8641 /* Headers */,
+				261DDEF10404286A6C03A2084D48EC0E /* Sources */,
+				F665825F97C56B50945AF9F2EA099771 /* Frameworks */,
+				234A79FF92855964A4DCCCA2B614D99F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				178DDEC5EAAAD2BFB34F7872E8C163C9 /* PBXTargetDependency */,
-				FDFFB77EAD8C96FC86C76DEA6A2AE7F5 /* PBXTargetDependency */,
-				8D961211EB06BE275538629583E8699E /* PBXTargetDependency */,
+				F4A9B282A154D6079DEAE897383A966A /* PBXTargetDependency */,
+				03DEE96EC87CDC5984C31F423D638675 /* PBXTargetDependency */,
+				D1E36096016A7A50267FFF24030870E5 /* PBXTargetDependency */,
 			);
 			name = "PVSupport-tvOS";
 			productName = "PVSupport-tvOS";
@@ -562,14 +544,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		938F1DB388546C5F5FA427BFC90D9431 /* Resources */ = {
+		234A79FF92855964A4DCCCA2B614D99F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9ED4EB96C809B75E5C21AFDA9F6D5AEA /* Resources */ = {
+		721017532A84B2EEB11C0C736663F982 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -579,128 +561,164 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		44437F4FA30D65558A3C8DACA7CFB95F /* Sources */ = {
+		261DDEF10404286A6C03A2084D48EC0E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				420FDEB0A0B04C732E5D72E53FA8BF6A /* ArchiveSupport.swift in Sources */,
-				8AE5CEF7218CC7FA3FD6232EC2C983AC /* CocoaLumberExtensions.swift in Sources */,
-				10585804F72340F167525FBF06F5E174 /* Controls.swift in Sources */,
-				CE818B977C4461B96C36344299A67582 /* CoreActions.swift in Sources */,
-				EE704C38ABB6FC9F60588D9A31A48F2C /* CoreOptions.swift in Sources */,
-				70246A55BA10D02FCDB1375D72CD871B /* DiscSwappable.swift in Sources */,
-				382D1EBD027A0EFD822ECB337CED69B7 /* iCadeControllerSetting.swift in Sources */,
-				7900562F790AFD9CE8B623854B1C6BAB /* iCadeReaderView.swift in Sources */,
-				6A2BD5742964A00C21162F6B5DC8BD42 /* iCadeState.swift in Sources */,
-				D158FE571CCC0F7DF113B5A5C6F8B179 /* NSFileManager+OEHashingAdditions.m in Sources */,
-				C3C19326BDBDA474DC8640F34FEF22EB /* NSObject+PVAbstractAdditions.m in Sources */,
-				3036FEA819700E02BCD40A84DCCA690F /* OEGameAudio.m in Sources */,
-				0FA76F27FBF80B798B5D1A478C9A06A8 /* OERingBuffer.m in Sources */,
-				07B090FA189DF07AA8DA704B8B79530F /* PVCocoaLumberJackLogging.m in Sources */,
-				6911FA3286BA79FE22B2FCB4BB3EA3BB /* PVEmulatorCore.m in Sources */,
-				63939312F8CE33A6B09434639D6BE50B /* PVEmulatorCore.swift in Sources */,
-				22CF17979FB7C1E676732E9FC3133CE0 /* PVGameControllerUtilities.m in Sources */,
-				3A826648A43B3A9F92AAFEF392ED9600 /* PViCade8BitdoController.swift in Sources */,
-				3AD4874803AB5C85726D9A7944138962 /* PViCadeController.swift in Sources */,
-				6D8B25A23B4B3C93C38622F1020A9623 /* PViCadeGamepad.swift in Sources */,
-				97FA61D6D1987C2748C00DF28B421075 /* PViCadeGamepadButtonInput.swift in Sources */,
-				5BD4394B9DCAB45D89CB4CBC7C49EC80 /* PViCadeGamepadDirectionPad.swift in Sources */,
-				CE6A1BB344A4A23B834B61A20CF4DD8C /* PViCadeInputAxis.swift in Sources */,
-				DC631391ED251ABB47080A39F57B702E /* PViCadeMocuteController.swift in Sources */,
-				CA4836AAF109E64E0E6EFD124A4D4816 /* PViCadeReader.swift in Sources */,
-				C868E735275423994499B47DC1D8739E /* PViCadeSteelSeriesController.swift in Sources */,
-				597365441F5BBD94BDB45B2DE73A3D81 /* PVLogEntry.m in Sources */,
-				184AE1DEEE5FDC84CDC6D072914F7CA4 /* PVLogging.m in Sources */,
-				8DD94B4BFEC3FCFBDF004053C6FB810D /* PVProvenanceLogging.m in Sources */,
-				CA493035B2BE223BA6F1F743B3DD5DBE /* PVSettingsModel.swift in Sources */,
-				C552264711A66450307FA0154043A901 /* PVSupport-tvOS-dummy.m in Sources */,
-				08535C1565B660136A0A129829D8EC14 /* RealTimeThread.m in Sources */,
-				6F51C61D01476E716137707E38F173F1 /* SaveStateSupport.swift in Sources */,
-				C632E5C127D2D617565A447FBC61038E /* SortOption.swift in Sources */,
-				B60858B54B23E632C73E6120EA5C6A21 /* UIDeviceExtension.swift in Sources */,
-				B40F053AA07DAA91F73875144C810A36 /* XCDLumberjackNSLogger.m in Sources */,
+				F4C587A2ABB48F06D3415B3A84758752 /* ArchiveSupport.swift in Sources */,
+				7D7925352EF81EEF4D3940EA193D77A1 /* CocoaLumberExtensions.swift in Sources */,
+				7C55BEBBB7E17A8775910A4501DBCB0A /* Controls.swift in Sources */,
+				6F8B07DA595D777CF7D2FF4FC09BAF28 /* CoreActions.swift in Sources */,
+				FE01CCC15BD4FCB8B98CE98F83AAF0D3 /* CoreOptions.swift in Sources */,
+				3B1B559EF50B91345ABB729FFB56407E /* DiscSwappable.swift in Sources */,
+				03E5A7D403CDE5BC1A98ABF7B0C5529E /* iCadeControllerSetting.swift in Sources */,
+				49C5F34417C31C6389B230BFA36C3891 /* iCadeReaderView.swift in Sources */,
+				551E37CEBC33835E99AE8AAE0E68A3FE /* iCadeState.swift in Sources */,
+				FA997BF28E0631529D80AF34B0410339 /* NSFileManager+OEHashingAdditions.m in Sources */,
+				B2A18D24347526B27BF3131526EE7262 /* NSObject+PVAbstractAdditions.m in Sources */,
+				FEE7DAE596A75F3A869F770798594BB7 /* OEGameAudio.m in Sources */,
+				FA9FB43F904319B1EC9AA1F89F2275BA /* OERingBuffer.m in Sources */,
+				CC244E72E0C79EDF4146700BD45EC24F /* PVCocoaLumberJackLogging.m in Sources */,
+				45A59E29D6FBF4FA4EBD5F0D8F15613F /* PVEmulatorCore.m in Sources */,
+				4C81AFBA30A6C618CB899C7237084CDA /* PVEmulatorCore.swift in Sources */,
+				90D166603E5BED7D4D3BC6BC1DAC2E81 /* PVGameControllerUtilities.m in Sources */,
+				8CFEA19D660142C1187C9E377095AD8A /* PViCade8BitdoController.swift in Sources */,
+				998EF63C07C03D7C8D4D9AAE95C7B2F8 /* PViCadeController.swift in Sources */,
+				7ECC0B21F9AC93A2990850472AB95AD5 /* PViCadeGamepad.swift in Sources */,
+				971B51A2DBD711A4D5D7F9A832460BA8 /* PViCadeGamepadButtonInput.swift in Sources */,
+				EDDB25E02C016FA590C9ED933D867C6B /* PViCadeGamepadDirectionPad.swift in Sources */,
+				DE01EEEAECE45CDD7CAD0307ECDA7554 /* PViCadeInputAxis.swift in Sources */,
+				7858EC77D226E36F0BF6DAEE7F692300 /* PViCadeMocuteController.swift in Sources */,
+				012F9CADFE515D9BAD431ED564E79062 /* PViCadeReader.swift in Sources */,
+				1CA22E304401A8B237ABC3594D91A36F /* PViCadeSteelSeriesController.swift in Sources */,
+				5FA5776660816AF1EEC4FB7F6779855E /* PVLogEntry.m in Sources */,
+				3A5B5D35698F82CB288BEF4ADD836CD9 /* PVLogging.m in Sources */,
+				A476990806C1D00E8033293B62E7BAFD /* PVProvenanceLogging.m in Sources */,
+				70B95FDB3C92C807F96D5965076C62ED /* PVSettingsModel.swift in Sources */,
+				34ECD571433A42A4338B4A98F2711418 /* PVSupport-tvOS-dummy.m in Sources */,
+				B92A1623E0BB14D5A066707EBF5FB678 /* RealTimeThread.m in Sources */,
+				17D170EAA4AF9B8D161E9B8DC5849CE7 /* SaveStateSupport.swift in Sources */,
+				EA094C8BB981419391FCBEECB4EBB471 /* SortOption.swift in Sources */,
+				B0E340222FEE273899C290DCF8DE68C9 /* UIDeviceExtension.swift in Sources */,
+				C1886ED1D34D87E15D9E2F3650C62463 /* XCDLumberjackNSLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DC82DFD8525F07A39BF7D204232167CF /* Sources */ = {
+		B408DB00D80FE40018CF4133E9D8C719 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				357D5787AF3C6657FEF8A89B16D3E5C1 /* ArchiveSupport.swift in Sources */,
-				3D28896C2A0D488FA3EA4EA152A122CA /* CocoaLumberExtensions.swift in Sources */,
-				2C4FD77A533196DA33419247E7F384D6 /* Controls.swift in Sources */,
-				F45A5D71125897606CAC17312E9DF321 /* CoreActions.swift in Sources */,
-				24C2CD53C268E1484D565EE775950368 /* CoreOptions.swift in Sources */,
-				11435A1FEF4B93C9E7868EF2A2D80280 /* DiscSwappable.swift in Sources */,
-				51A6BA2A7C157267D263862FFFC4B29F /* iCadeControllerSetting.swift in Sources */,
-				24E4E80C5615B8C89D3BCBF8A187BE16 /* iCadeReaderView.swift in Sources */,
-				C647B9A7C6745E0E493517730248DA93 /* iCadeState.swift in Sources */,
-				F3CE3D1F009A569602FB4F7977092C97 /* NSFileManager+OEHashingAdditions.m in Sources */,
-				F424E3CF223E96124928E497893270B4 /* NSObject+PVAbstractAdditions.m in Sources */,
-				33F62553C4008DEDFF3B9BC2D25A91E7 /* OEGameAudio.m in Sources */,
-				65D464CBD6FE2ED5F227DC2850E00011 /* OERingBuffer.m in Sources */,
-				397EE3043D1C8E2B30D81784E4D92FC7 /* PVCocoaLumberJackLogging.m in Sources */,
-				DE7454446AB2FA641F1B876814E0FFDE /* PVEmulatorCore.m in Sources */,
-				3359F4EF05CAE301AF941E34B7D6DE82 /* PVEmulatorCore.swift in Sources */,
-				21A2BF6616D943B682A1B99C733C581E /* PVGameControllerUtilities.m in Sources */,
-				0970DDB3EFD303AFBB2A0DB5950526DA /* PViCade8BitdoController.swift in Sources */,
-				0258143DE06E7D21264085AAE51A3FB4 /* PViCadeController.swift in Sources */,
-				87022393D5FD4A19DFC900F16BBE22F9 /* PViCadeGamepad.swift in Sources */,
-				37B07422F8007911F49219DFF367E2C8 /* PViCadeGamepadButtonInput.swift in Sources */,
-				C9EB2A548CB3A15F910E43BD2B10503A /* PViCadeGamepadDirectionPad.swift in Sources */,
-				57532DA2AF9E6D9760A4F29538981F3A /* PViCadeInputAxis.swift in Sources */,
-				18FF25F4E668CD74227F5C2866C7FD97 /* PViCadeMocuteController.swift in Sources */,
-				0463AC28A7ADA813A999B2AC72EA3166 /* PViCadeReader.swift in Sources */,
-				941B8C466AF7DE20E078002E0321DB6C /* PViCadeSteelSeriesController.swift in Sources */,
-				780762BE302E375DFA1C4DC9548F065E /* PVLogEntry.m in Sources */,
-				1551A8811B97DD076EC5137D69A1AD34 /* PVLogging.m in Sources */,
-				F118E4775DF35B3BB44D1FB64061AF67 /* PVProvenanceLogging.m in Sources */,
-				9ADA88474F0456DA8D932270065FB537 /* PVSettingsModel.swift in Sources */,
-				B406035ACBD8E251D5E485B316863AE3 /* PVSupport-iOS-dummy.m in Sources */,
-				5DF4579931BC9AB656F1C21AD818C4DE /* RealTimeThread.m in Sources */,
-				9389EE6A82C3A9C3082A2AFAF27C2861 /* SaveStateSupport.swift in Sources */,
-				6815121BD3F20D957E18D5C90395AE0A /* SortOption.swift in Sources */,
-				2B66F4042B92606F6C96338A3B83B24B /* UIDeviceExtension.swift in Sources */,
-				8F06E392C34A5AEC6652798A379D15FC /* XCDLumberjackNSLogger.m in Sources */,
+				A213755F7355A090A41BF149AA2EC9DB /* ArchiveSupport.swift in Sources */,
+				F24A85F7F06D59386CDF5CAAF9A6D7B0 /* CocoaLumberExtensions.swift in Sources */,
+				F96C0B0853F75490063D69557DFE004C /* Controls.swift in Sources */,
+				C2AB632C21A00C84591B1C0D9F0C0952 /* CoreActions.swift in Sources */,
+				6CD32C4A4A7D9E1636E62BC005AAC430 /* CoreOptions.swift in Sources */,
+				AE75FB3EFE96F4DDCDD299E924507AD0 /* DiscSwappable.swift in Sources */,
+				855C6DFE8670B94973AD079D44D8719C /* iCadeControllerSetting.swift in Sources */,
+				E8838777D1871880F1CF27F7A8A1F88E /* iCadeReaderView.swift in Sources */,
+				192082DE75925ECF17BF094B1A6E94D2 /* iCadeState.swift in Sources */,
+				39F2B8111F278A1A3D0BFD29A548E272 /* NSFileManager+OEHashingAdditions.m in Sources */,
+				5DE5C92A3B1DA89E636A312609E141C5 /* NSObject+PVAbstractAdditions.m in Sources */,
+				CBC898BB3A6DD2E5E460D3CA5A529D60 /* OEGameAudio.m in Sources */,
+				090FF44A7D68C5ADBD3611FB6C258951 /* OERingBuffer.m in Sources */,
+				4D02D201B31212A1063961D9D68823D5 /* PVCocoaLumberJackLogging.m in Sources */,
+				D36A1B6B6F19184F02036CDF9290F427 /* PVEmulatorCore.m in Sources */,
+				D4CD78AA79F5396801DF533E733473A4 /* PVEmulatorCore.swift in Sources */,
+				513D73175E781C3C5DDA73CE31362419 /* PVGameControllerUtilities.m in Sources */,
+				C10507C9CEFE3329DF5E22E7F45FA9DD /* PViCade8BitdoController.swift in Sources */,
+				E09B9E7F74D46E46064D84EDC2211B47 /* PViCadeController.swift in Sources */,
+				F968F2D15A336E4DBAB041738F16B01E /* PViCadeGamepad.swift in Sources */,
+				81BE362935A5539A598B6B05520E51E5 /* PViCadeGamepadButtonInput.swift in Sources */,
+				2EB971D1487D937EBC6BF554FD300BA8 /* PViCadeGamepadDirectionPad.swift in Sources */,
+				77FCBDCFD1D9255E8540B79826C08D09 /* PViCadeInputAxis.swift in Sources */,
+				FC2553CCE7EB588336FCF87B198E9170 /* PViCadeMocuteController.swift in Sources */,
+				FDF497F73DF475BB733338228CB25608 /* PViCadeReader.swift in Sources */,
+				4DBA36B7F66C3EB771FA284A5DFD6D8E /* PViCadeSteelSeriesController.swift in Sources */,
+				1C24F1B5274809DE694DE15CD0624F73 /* PVLogEntry.m in Sources */,
+				630BEE6DA21D54DA3F4C069481B8318E /* PVLogging.m in Sources */,
+				4EFAB058B33C64C3B5DFD059F2B28659 /* PVProvenanceLogging.m in Sources */,
+				ACAF8CBC9EF0945E6FD006CAC7647123 /* PVSettingsModel.swift in Sources */,
+				DB97D9B1356B9D9A8D697D4E4A025C01 /* PVSupport-iOS-dummy.m in Sources */,
+				68A9E8C084838566FFB07D2C3C5E74B4 /* RealTimeThread.m in Sources */,
+				0CDC493C4E178640DD9E8B4D79D9BAD2 /* SaveStateSupport.swift in Sources */,
+				7B4DB8E83D3F2328C6E56BB9F7475AC0 /* SortOption.swift in Sources */,
+				248B0368E7C08FBD8E9C9F80341BE086 /* UIDeviceExtension.swift in Sources */,
+				2594949157B050776BDDBE40F82F0983 /* XCDLumberjackNSLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		178DDEC5EAAAD2BFB34F7872E8C163C9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "CocoaLumberjack-tvOS";
-			targetProxy = E8CBA50DE6FD47BBDC99279D74C2DCA4 /* PBXContainerItemProxy */;
-		};
-		2FF16AE92D66D54928E2042BB85FF069 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "CocoaLumberjack-iOS";
-			targetProxy = D1B31290C4E196D37812624862E17326 /* PBXContainerItemProxy */;
-		};
-		8D961211EB06BE275538629583E8699E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "PVLibrary-tvOS";
-			targetProxy = A7123941110881AF374342FF41DCA0FC /* PBXContainerItemProxy */;
-		};
-		9EA2046D7B108F1D6C4BE61FA8568110 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "PVLibrary-iOS";
-			targetProxy = 570A71129DEF3BF4134D66541BCCE90B /* PBXContainerItemProxy */;
-		};
-		B9E85CE3FCFC47C8DC50847AC766984B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "NSLogger-iOS";
-			targetProxy = F368FC0FD91BB2E60DD684FDB1A63D2F /* PBXContainerItemProxy */;
-		};
-		FDFFB77EAD8C96FC86C76DEA6A2AE7F5 /* PBXTargetDependency */ = {
+		03DEE96EC87CDC5984C31F423D638675 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "NSLogger-tvOS";
-			targetProxy = 351CBB48D5659F192FB6EC2ABBAA2DE9 /* PBXContainerItemProxy */;
+			targetProxy = 256E75EE5FF7B1053F73CE06454CFBC7 /* PBXContainerItemProxy */;
+		};
+		6F472E420AE0194DD124AB5CC69F56B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-iOS";
+			targetProxy = 241132ED3F90209F0A761242CD96B9C0 /* PBXContainerItemProxy */;
+		};
+		A7935D3A5348EABB92D9401FBFCD7213 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "CocoaLumberjack-iOS";
+			targetProxy = FECDDFE300504810FF93997CF9C54050 /* PBXContainerItemProxy */;
+		};
+		D1E36096016A7A50267FFF24030870E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-tvOS";
+			targetProxy = D015F8D8B013650968D259D8FF1B1CF6 /* PBXContainerItemProxy */;
+		};
+		F2B26869808A0564D4AE3145A9B14353 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "NSLogger-iOS";
+			targetProxy = 94413631F240AFC63A61BD533C72B069 /* PBXContainerItemProxy */;
+		};
+		F4A9B282A154D6079DEAE897383A966A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "CocoaLumberjack-tvOS";
+			targetProxy = 81FEA49D28AA48B0778B9879E6CDADDA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		087F15F1FD8F9FADBCC195A6F7CF5BB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A23F554B31395EE4B9D1606EFA500B0B /* PVSupport-iOS.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVSupport;
+				PRODUCT_NAME = PVSupport;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		123B4DA5A1EC50AB6F310FB30042D54E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -827,115 +845,7 @@
 			};
 			name = Archive;
 		};
-		8462C0FCA8BB349EF7459BEA839A6CA1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 80EFEBBE1BA7885815791DF2C6E11CA2 /* PVSupport-tvOS.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS.modulemap";
-				PRODUCT_MODULE_NAME = PVSupport;
-				PRODUCT_NAME = PVSupport;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B0CE1DDE8453FA118C23DD4F6C7BF760 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1D998286283A4D925643B427E9A52286 /* PVSupport-iOS.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS.modulemap";
-				PRODUCT_MODULE_NAME = PVSupport;
-				PRODUCT_NAME = PVSupport;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B9637E6CEB4CB089A62F6A00D99479D3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A23F554B31395EE4B9D1606EFA500B0B /* PVSupport-iOS.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS.modulemap";
-				PRODUCT_MODULE_NAME = PVSupport;
-				PRODUCT_NAME = PVSupport;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		C50602844865B27B8CD8D21170118F29 /* Release */ = {
+		53F4DF846326CA56C2D89C37A6C9A3ED /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D4470B65D23F0FCE515AAA09D624005 /* PVSupport-tvOS.release.xcconfig */;
 			buildSettings = {
@@ -969,7 +879,42 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Archive;
+		};
+		C02E142DDE5D843BC96B9225355A4F0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80EFEBBE1BA7885815791DF2C6E11CA2 /* PVSupport-tvOS.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVSupport;
+				PRODUCT_NAME = PVSupport;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
 		};
 		CD1435C9434CF0ADD17CC22B7CBCD53F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1032,7 +977,7 @@
 			};
 			name = Release;
 		};
-		D2B84B41863662ED21CD79B599DB96E4 /* Archive */ = {
+		EE5263DCF7C7D412B505D6450D6E77A9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D4470B65D23F0FCE515AAA09D624005 /* PVSupport-tvOS.release.xcconfig */;
 			buildSettings = {
@@ -1066,9 +1011,46 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
+			name = Release;
+		};
+		F6EB1E391FE16EA1A77373E0F72A3092 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1D998286283A4D925643B427E9A52286 /* PVSupport-iOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVSupport;
+				PRODUCT_NAME = PVSupport;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
 			name = Archive;
 		};
-		DA948023032E112004604FF93E45B8F1 /* Release */ = {
+		FDD7345C36C24F3B9D7AFB875791AF49 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1D998286283A4D925643B427E9A52286 /* PVSupport-iOS.release.xcconfig */;
 			buildSettings = {
@@ -1118,22 +1100,22 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B9BAC5FDDECDF9BB86588462B5DDAD98 /* Build configuration list for PBXNativeTarget "PVSupport-iOS" */ = {
+		211472EAED8C0505AE475BA3D5B00C63 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B0CE1DDE8453FA118C23DD4F6C7BF760 /* Archive */,
-				B9637E6CEB4CB089A62F6A00D99479D3 /* Debug */,
-				DA948023032E112004604FF93E45B8F1 /* Release */,
+				53F4DF846326CA56C2D89C37A6C9A3ED /* Archive */,
+				C02E142DDE5D843BC96B9225355A4F0A /* Debug */,
+				EE5263DCF7C7D412B505D6450D6E77A9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ED5BEA83892B4FB0CF1AA08E5409B904 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */ = {
+		DC4A9A4DCF3D3424E067835709DB7DF3 /* Build configuration list for PBXNativeTarget "PVSupport-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D2B84B41863662ED21CD79B599DB96E4 /* Archive */,
-				8462C0FCA8BB349EF7459BEA839A6CA1 /* Debug */,
-				C50602844865B27B8CD8D21170118F29 /* Release */,
+				F6EB1E391FE16EA1A77373E0F72A3092 /* Archive */,
+				087F15F1FD8F9FADBCC195A6F7CF5BB4 /* Debug */,
+				FDD7345C36C24F3B9D7AFB875791AF49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
