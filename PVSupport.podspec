@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
     'James Addyman' => 'james@provenance-emu.com',
     'Joseph Mattiello' => 'joe@provenance-emu.com'
   }
-  s.source           = {
+  s.source = {
     :git => 'https://github.com/Provenance/Provenance.git',
     :tag => s.version.to_s
   }
@@ -27,6 +27,7 @@ Pod::Spec.new do |s|
 
   s.swift_versions = ['5.0', '5.1']
   s.platform = :ios, '10.3'
+  s.requires_arc = true
 
   s.ios.deployment_target = '10.0'
   s.tvos.deployment_target = '10.0'
@@ -40,12 +41,36 @@ Pod::Spec.new do |s|
   # s.dependency 'CocoaLumberjack'
   s.dependency 'CocoaLumberjack/Swift'
   s.dependency 'NSLogger'
-  s.dependency 'PVLibrary'
+  # s.dependency 'PVLibrary'
+
+  s.libraries = 'z', 'stdc++', 'xml2'
+
+  s.pod_target_xcconfig = {
+    'CLANG_CXX_LANGUAGE_STANDARD' => 'compiler-default',
+    'CLANG_CXX_LIBRARY' => 'libc++',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC',
+    'HEADER_SEARCH_PATHS' => '$(inherited) "${DT_TOOLCHAIN_DIR}/usr/include" /usr/include/libxml2'
+  }
+
+  s.xcconfig = {
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC',
+    'HEADER_SEARCH_PATHS' => '$(inherited) "${DT_TOOLCHAIN_DIR}/usr/include" /usr/include/libxml2'
+  }
 
   @sources_root = 'PVSupport/Sources'
-  @sources_common = "#{@sources_root}/**/*.{swift,m}"
+  @sources_common = "#{@sources_root}/**/*.{swift,h,m}"
+  @headers_common = "#{@sources_root}/**/*.{h}"
 
-  s.source_files       = [
-    @sources_common,
+  s.public_header_files = [
+    @headers_common
+  ]
+
+  s.private_header_files = [
+
+  ]
+
+
+  s.source_files = [
+    @sources_common
   ]
 end

@@ -22,11 +22,11 @@ FOUNDATION_EXPORT const unsigned char PVLibraryVersionString[];
 #import <PVLibrary/UIImage+Scaling.h>
 #import <PVLibrary/NSFileManager+Hashing.h>
 
-#import <PVLibrary/LzmaSDKObjCReader.h>
-#import <PVLibrary/LzmaSDKObjCTypes.h>
-#import <PVLibrary/LzmaSDKObjCItem.h>
-#import <PVLibrary/LzmaSDKObjCMutableItem.h>
-#import <PVLibrary/LzmaSDKObjCExtern.h>
-#import <PVLibrary/LzmaSDKObjCWriter.h>
-#import <PVLibrary/LzmaSDKObjCBufferProcessor.h>
-#import <PVLibrary/LzmaSDKObjC.h>
+//#import <PVLibrary/LzmaSDKObjCReader.h>
+//#import <PVLibrary/LzmaSDKObjCTypes.h>
+//#import <PVLibrary/LzmaSDKObjCItem.h>
+//#import <PVLibrary/LzmaSDKObjCMutableItem.h>
+//#import <PVLibrary/LzmaSDKObjCExtern.h>
+//#import <PVLibrary/LzmaSDKObjCWriter.h>
+//#import <PVLibrary/LzmaSDKObjCBufferProcessor.h>
+//#import <PVLibrary/LzmaSDKObjC.h>
