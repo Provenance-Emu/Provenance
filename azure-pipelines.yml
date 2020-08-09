@@ -41,20 +41,22 @@ steps:
 
 - task: Cache@2
   inputs:
+    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
+    path: Carthage/Build
+  displayName: Carthage cache
+
+- task: Cache@2
+  inputs:
     key: 'Romefile'
     path: $(HOME)/Library/Caches/Rome
   displayName: Rome cache
+
 - script: |
     brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
     brew install tmspzz/homebrew-tap/rome 2>/dev/null || true
     bundle exec fastlane rome_download platform:$(carthage-platform)
   displayName: Rome download
 
-- task: Cache@2
-  inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
-    path: Carthage/Build
-  displayName: Carthage cache
 - script: |
     bundle exec fastlane carthage_bootstrap platform:$(carthage-platform)
   displayName: Carthage bootstrap
