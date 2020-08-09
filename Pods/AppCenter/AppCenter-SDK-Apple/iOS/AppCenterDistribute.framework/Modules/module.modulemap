@@ -1,0 +1,10 @@
+framework module AppCenterDistribute {
+  umbrella header "AppCenterDistribute.h"
+  
+  export *
+  module * { export * }
+  
+  link framework "Foundation"
+  link framework "SafariServices"
+  link framework "UIKit"
+}

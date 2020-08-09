@@ -168,13 +168,14 @@ public:
     /// _impl::History::update_early_from_top_ref() was called during the
     /// transition from a read transaction to the current write transaction.
     ///
-    /// \return prepare_commit() returns the version of the new snapshot
-    /// produced by the transaction.
-    ///
     /// \throw Interrupted Thrown by initiate_transact() and prepare_commit() if
     /// a blocking operation was interrupted.
 
     void initiate_transact(Group& group, version_type current_version, bool history_updated);
+    /// \param current_version The version of the snapshot that the current
+    /// transaction is based on.
+    /// \return prepare_commit() returns the version of the new snapshot
+    /// produced by the transaction.
     version_type prepare_commit(version_type current_version);
     void finalize_commit() noexcept;
     void abort_transact() noexcept;

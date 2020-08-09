@@ -73,11 +73,6 @@ def deps_app
   pod 'RxSwift'
   pod 'RxRealm'
 
-  # https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/ios#31-integration-via-cocoapods
-  pod 'AppCenter/Analytics'
-  pod 'AppCenter/Crashes'
-  pod 'AppCenter/Distribute'
-
   cores
 end
 
@@ -87,6 +82,12 @@ abstract_target 'ProvenanceApps' do
   # iOS
   target 'Provenance' do
     platform :ios, '10.0'
+
+
+    # https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/ios#31-integration-via-cocoapods
+    pod 'AppCenter/Analytics'
+    pod 'AppCenter/Distribute'
+    pod 'AppCenter/Crashes'
 
     pod 'XLActionController',
         :git => 'https://github.com/Puasonych/XLActionController.git',

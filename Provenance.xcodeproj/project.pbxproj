@@ -1795,6 +1795,7 @@
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
 				08D8432816F423A53F9EFB60 /* [CP] Embed Pods Frameworks */,
+				6EC10725E657EEC5F9B1D839 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2103,6 +2104,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6EC10725E657EEC5F9B1D839 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */ = {
@@ -2698,7 +2716,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A87F0C354B0B7CA31E871EBA /* Pods-ProvenanceApps-Provenance.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -2747,7 +2764,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8E083B80733F57903597F0FB /* Pods-ProvenanceApps-Provenance.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -2794,7 +2810,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F188626BF1DD37CC86D0894E /* Pods-ProvenanceApps-ProvenanceTV.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -2852,7 +2867,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 20955583A1B3EA2DB4BB9362 /* Pods-ProvenanceApps-ProvenanceTV.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -2907,7 +2921,6 @@
 		1AD9AA3E1ACC988F00EC87A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2968,7 +2981,6 @@
 		1AD9AA3F1ACC988F00EC87A0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3076,7 +3088,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5CBADD9F3C0ED0321CA4D97D /* Pods-ProvenanceApps-Provenance.archive.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -3123,7 +3134,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40C501E06153A1519B016F2B /* Pods-ProvenanceApps-ProvenanceTV.archive.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -3180,7 +3190,6 @@
 		B3721CEE21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;

@@ -1,0 +1,633 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		74D9B37793CAF89586DB464F87F5D691 /* AppCenter */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3555AC7D4730DED956AD794F7ADCD7A3 /* Build configuration list for PBXAggregateTarget "AppCenter" */;
+			buildPhases = (
+			);
+			dependencies = (
+				AC3BE940564EB261772157E44A30CBBB /* PBXTargetDependency */,
+			);
+			name = AppCenter;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		022652636BB096BA724D836C0D5A6FB7 /* zh-Hant.lproj in Resources */ = {isa = PBXBuildFile; fileRef = DA67A81A2A8B377F0A2C0746C11E13C1 /* zh-Hant.lproj */; };
+		0EAF9564F471387C3D8948E3E15A1349 /* tr.lproj in Resources */ = {isa = PBXBuildFile; fileRef = F90323265CF80BAB344D88375EC3D45E /* tr.lproj */; };
+		4D00A926DC2E83E7925AD8132543F82E /* en.lproj in Resources */ = {isa = PBXBuildFile; fileRef = ED679B7F818EE5FDD459CED4B2B431E9 /* en.lproj */; };
+		64E40F3DFE1AF4909DD85286093A7E48 /* es.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 69AE759EA62CEAD9FFC78E015C35F02F /* es.lproj */; };
+		69869C9BC2F8E65F0E61F0D06E797E3D /* fr.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 98F78A6482CD8E9247E021E7476E54A3 /* fr.lproj */; };
+		71BF12A9D7C47E07E0B33951E79A4B78 /* ja.lproj in Resources */ = {isa = PBXBuildFile; fileRef = B5C8E1F70CFD84352E665D29262D782A /* ja.lproj */; };
+		73B437C44679C76DC91A6812DFE408E1 /* pl.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 3F93DAD6A606BDAB40BEC3AE1E602C6A /* pl.lproj */; };
+		7AE50A04920FE9672DE294EEB2203416 /* zh-Hans.lproj in Resources */ = {isa = PBXBuildFile; fileRef = E18AAFE603F3C21D8CB1FDBF4E98615F /* zh-Hans.lproj */; };
+		8A499AFBBE59F3FE1D64E70D8609F32C /* ko.lproj in Resources */ = {isa = PBXBuildFile; fileRef = AFC0708BCFC6B73D60CD1BB1B456058B /* ko.lproj */; };
+		8EDA2F8870357207C726FF99568648C1 /* it.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 32CEC88EFB653FF2847AEE97CE3D0D82 /* it.lproj */; };
+		B3E8BA25B0BF8CA796C85BD2E754E5E3 /* cs.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 5196D4956AA5EDA4F90DF798D2393052 /* cs.lproj */; };
+		BDC981BCA335BAF9AAAA5021BA8FCF89 /* ru.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 60629B87541A3A9B2E4003C4495E4B38 /* ru.lproj */; };
+		CD9A828C2286C3AB85694D241C485BB0 /* pt.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 7379B61745B24D2CB4CC52BAA999A577 /* pt.lproj */; };
+		F099C1727A815D93ADD2D8F80842F6EC /* de.lproj in Resources */ = {isa = PBXBuildFile; fileRef = D3275AB078C3F1171C8FB83BCC182B5C /* de.lproj */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0E4CCEC0F17AF2B32B683E394A8B8ACF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1FB8163E453E27D9D5F291758BE58A73 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 889945D2BA0CDFA459788CFBD9263A20;
+			remoteInfo = "AppCenter-AppCenterDistributeResources";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0799E6B75CBD2A29A2C7C76FB452B431 /* AppCenterCrashes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterCrashes.framework; path = "AppCenter-SDK-Apple/iOS/AppCenterCrashes.framework"; sourceTree = "<group>"; };
+		19D186F396C3E91716BC51A330F5FDBE /* AppCenterDistributeResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = AppCenterDistributeResources.bundle; path = "AppCenter-AppCenterDistributeResources.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E791B93E3AA716823642D3BCB4FBCA0 /* AppCenter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = AppCenter.release.xcconfig; sourceTree = "<group>"; };
+		32CEC88EFB653FF2847AEE97CE3D0D82 /* it.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = it.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/it.lproj"; sourceTree = "<group>"; };
+		3F93DAD6A606BDAB40BEC3AE1E602C6A /* pl.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = pl.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/pl.lproj"; sourceTree = "<group>"; };
+		493E1F0D87A500B3CC358E1174F5ECCC /* AppCenter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = AppCenter.debug.xcconfig; sourceTree = "<group>"; };
+		5196D4956AA5EDA4F90DF798D2393052 /* cs.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = cs.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/cs.lproj"; sourceTree = "<group>"; };
+		59F8E5E48BFC42ED908DA9BD7B545CD1 /* AppCenterAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterAnalytics.framework; path = "AppCenter-SDK-Apple/iOS/AppCenterAnalytics.framework"; sourceTree = "<group>"; };
+		60629B87541A3A9B2E4003C4495E4B38 /* ru.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = ru.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/ru.lproj"; sourceTree = "<group>"; };
+		69AE759EA62CEAD9FFC78E015C35F02F /* es.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = es.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/es.lproj"; sourceTree = "<group>"; };
+		7379B61745B24D2CB4CC52BAA999A577 /* pt.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = pt.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/pt.lproj"; sourceTree = "<group>"; };
+		7C97330083BD5D4B142524A7491FCA2B /* ResourceBundle-AppCenterDistributeResources-AppCenter-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-AppCenterDistributeResources-AppCenter-Info.plist"; sourceTree = "<group>"; };
+		939889E7150F4105194B002B00A50700 /* AppCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenter.framework; path = "AppCenter-SDK-Apple/iOS/AppCenter.framework"; sourceTree = "<group>"; };
+		98F78A6482CD8E9247E021E7476E54A3 /* fr.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = fr.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/fr.lproj"; sourceTree = "<group>"; };
+		A6E40FBBE60D806FF1A23BDFB18EC27F /* AppCenterDistribute.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppCenterDistribute.framework; path = "AppCenter-SDK-Apple/iOS/AppCenterDistribute.framework"; sourceTree = "<group>"; };
+		AFC0708BCFC6B73D60CD1BB1B456058B /* ko.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = ko.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/ko.lproj"; sourceTree = "<group>"; };
+		B5C8E1F70CFD84352E665D29262D782A /* ja.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = ja.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/ja.lproj"; sourceTree = "<group>"; };
+		D3275AB078C3F1171C8FB83BCC182B5C /* de.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = de.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/de.lproj"; sourceTree = "<group>"; };
+		DA67A81A2A8B377F0A2C0746C11E13C1 /* zh-Hant.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = "zh-Hant.lproj"; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/zh-Hant.lproj"; sourceTree = "<group>"; };
+		E18AAFE603F3C21D8CB1FDBF4E98615F /* zh-Hans.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = "zh-Hans.lproj"; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/zh-Hans.lproj"; sourceTree = "<group>"; };
+		ED679B7F818EE5FDD459CED4B2B431E9 /* en.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = en.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/en.lproj"; sourceTree = "<group>"; };
+		F90323265CF80BAB344D88375EC3D45E /* tr.lproj */ = {isa = PBXFileReference; includeInIndex = 1; name = tr.lproj; path = "AppCenter-SDK-Apple/iOS/AppCenterDistributeResources.bundle/tr.lproj"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B9025238E02F346A4F4DBA7682C7DC5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1FF7CFD3E5B8DBFB2BA6C6EEBA08673F = {
+			isa = PBXGroup;
+			children = (
+				274FA0ABAB26CC8DD59004E5319E72A0 /* AppCenter */,
+				49D725D13EC6212C8C2F1DABE0012D50 /* Frameworks */,
+				E432347D3650A575ECEAD3D82BD48E19 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		274FA0ABAB26CC8DD59004E5319E72A0 /* AppCenter */ = {
+			isa = PBXGroup;
+			children = (
+				E4C2C6558D55314222D212526640DA22 /* Analytics */,
+				B9951FB587284C4E39489907DEE461A1 /* Core */,
+				D703099615B5414024B12ACE99BB2080 /* Crashes */,
+				4A8A0A519EADE89E225D03EE20DF3373 /* Distribute */,
+				8C9CF25B8CA68093314E88336C31E079 /* Support Files */,
+			);
+			name = AppCenter;
+			path = AppCenter;
+			sourceTree = "<group>";
+		};
+		38C1C7F9445132E6181F5971686800F0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5196D4956AA5EDA4F90DF798D2393052 /* cs.lproj */,
+				D3275AB078C3F1171C8FB83BCC182B5C /* de.lproj */,
+				ED679B7F818EE5FDD459CED4B2B431E9 /* en.lproj */,
+				69AE759EA62CEAD9FFC78E015C35F02F /* es.lproj */,
+				98F78A6482CD8E9247E021E7476E54A3 /* fr.lproj */,
+				32CEC88EFB653FF2847AEE97CE3D0D82 /* it.lproj */,
+				B5C8E1F70CFD84352E665D29262D782A /* ja.lproj */,
+				AFC0708BCFC6B73D60CD1BB1B456058B /* ko.lproj */,
+				3F93DAD6A606BDAB40BEC3AE1E602C6A /* pl.lproj */,
+				7379B61745B24D2CB4CC52BAA999A577 /* pt.lproj */,
+				60629B87541A3A9B2E4003C4495E4B38 /* ru.lproj */,
+				F90323265CF80BAB344D88375EC3D45E /* tr.lproj */,
+				E18AAFE603F3C21D8CB1FDBF4E98615F /* zh-Hans.lproj */,
+				DA67A81A2A8B377F0A2C0746C11E13C1 /* zh-Hant.lproj */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		49D725D13EC6212C8C2F1DABE0012D50 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4A8A0A519EADE89E225D03EE20DF3373 /* Distribute */ = {
+			isa = PBXGroup;
+			children = (
+				8D18C1FD979115929811100B6B8A9455 /* Frameworks */,
+				38C1C7F9445132E6181F5971686800F0 /* Resources */,
+			);
+			name = Distribute;
+			sourceTree = "<group>";
+		};
+		757B35AF754F7A977BDE75E4C7C45B32 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59F8E5E48BFC42ED908DA9BD7B545CD1 /* AppCenterAnalytics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8C9CF25B8CA68093314E88336C31E079 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				493E1F0D87A500B3CC358E1174F5ECCC /* AppCenter.debug.xcconfig */,
+				2E791B93E3AA716823642D3BCB4FBCA0 /* AppCenter.release.xcconfig */,
+				7C97330083BD5D4B142524A7491FCA2B /* ResourceBundle-AppCenterDistributeResources-AppCenter-Info.plist */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/AppCenter";
+			sourceTree = "<group>";
+		};
+		8D18C1FD979115929811100B6B8A9455 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A6E40FBBE60D806FF1A23BDFB18EC27F /* AppCenterDistribute.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B9951FB587284C4E39489907DEE461A1 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				D87E33A7382E276BF30E3994646E0CCD /* Frameworks */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		BF6A71D7127153276D7E09B1B50C639D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0799E6B75CBD2A29A2C7C76FB452B431 /* AppCenterCrashes.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D703099615B5414024B12ACE99BB2080 /* Crashes */ = {
+			isa = PBXGroup;
+			children = (
+				BF6A71D7127153276D7E09B1B50C639D /* Frameworks */,
+			);
+			name = Crashes;
+			sourceTree = "<group>";
+		};
+		D87E33A7382E276BF30E3994646E0CCD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				939889E7150F4105194B002B00A50700 /* AppCenter.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E432347D3650A575ECEAD3D82BD48E19 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				19D186F396C3E91716BC51A330F5FDBE /* AppCenterDistributeResources.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E4C2C6558D55314222D212526640DA22 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				757B35AF754F7A977BDE75E4C7C45B32 /* Frameworks */,
+			);
+			name = Analytics;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		889945D2BA0CDFA459788CFBD9263A20 /* AppCenter-AppCenterDistributeResources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0ACEFE43D98D17993FEFFB8EBC33469E /* Build configuration list for PBXNativeTarget "AppCenter-AppCenterDistributeResources" */;
+			buildPhases = (
+				E872C930B22862EA65FDBC40475C8D38 /* Sources */,
+				B9025238E02F346A4F4DBA7682C7DC5C /* Frameworks */,
+				4B8B9E725450803B5EF4D967379EAE90 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AppCenter-AppCenterDistributeResources";
+			productName = "AppCenter-AppCenterDistributeResources";
+			productReference = 19D186F396C3E91716BC51A330F5FDBE /* AppCenterDistributeResources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1FB8163E453E27D9D5F291758BE58A73 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 5385E4184C73973108E02E0648850350 /* Build configuration list for PBXProject "AppCenter" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1FF7CFD3E5B8DBFB2BA6C6EEBA08673F;
+			productRefGroup = E432347D3650A575ECEAD3D82BD48E19 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				74D9B37793CAF89586DB464F87F5D691 /* AppCenter */,
+				889945D2BA0CDFA459788CFBD9263A20 /* AppCenter-AppCenterDistributeResources */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4B8B9E725450803B5EF4D967379EAE90 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3E8BA25B0BF8CA796C85BD2E754E5E3 /* cs.lproj in Resources */,
+				F099C1727A815D93ADD2D8F80842F6EC /* de.lproj in Resources */,
+				4D00A926DC2E83E7925AD8132543F82E /* en.lproj in Resources */,
+				64E40F3DFE1AF4909DD85286093A7E48 /* es.lproj in Resources */,
+				69869C9BC2F8E65F0E61F0D06E797E3D /* fr.lproj in Resources */,
+				8EDA2F8870357207C726FF99568648C1 /* it.lproj in Resources */,
+				71BF12A9D7C47E07E0B33951E79A4B78 /* ja.lproj in Resources */,
+				8A499AFBBE59F3FE1D64E70D8609F32C /* ko.lproj in Resources */,
+				73B437C44679C76DC91A6812DFE408E1 /* pl.lproj in Resources */,
+				CD9A828C2286C3AB85694D241C485BB0 /* pt.lproj in Resources */,
+				BDC981BCA335BAF9AAAA5021BA8FCF89 /* ru.lproj in Resources */,
+				0EAF9564F471387C3D8948E3E15A1349 /* tr.lproj in Resources */,
+				7AE50A04920FE9672DE294EEB2203416 /* zh-Hans.lproj in Resources */,
+				022652636BB096BA724D836C0D5A6FB7 /* zh-Hant.lproj in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E872C930B22862EA65FDBC40475C8D38 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AC3BE940564EB261772157E44A30CBBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "AppCenter-AppCenterDistributeResources";
+			target = 889945D2BA0CDFA459788CFBD9263A20 /* AppCenter-AppCenterDistributeResources */;
+			targetProxy = 0E4CCEC0F17AF2B32B683E394A8B8ACF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		086E635D15C9515FB73FF87541A83EDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 493E1F0D87A500B3CC358E1174F5ECCC /* AppCenter.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/AppCenter";
+				IBSC_MODULE = AppCenter;
+				INFOPLIST_FILE = "Target Support Files/AppCenter/ResourceBundle-AppCenterDistributeResources-AppCenter-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = AppCenterDistributeResources;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		2101847EDF098F681BC4BAB0C8324366 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		62B040DD2DEC37581C728C6EF62DA2D1 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E791B93E3AA716823642D3BCB4FBCA0 /* AppCenter.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		7DBBC6394A3B76B4DD22FFE31D6CA79E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E791B93E3AA716823642D3BCB4FBCA0 /* AppCenter.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/AppCenter";
+				IBSC_MODULE = AppCenter;
+				INFOPLIST_FILE = "Target Support Files/AppCenter/ResourceBundle-AppCenterDistributeResources-AppCenter-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = AppCenterDistributeResources;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		9E1C055A1CA692FB7779EA101C3240FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 493E1F0D87A500B3CC358E1174F5ECCC /* AppCenter.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BB27CC4D2028B1A949C001F39B9F4A49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		D23FF3AB41F3A3895819997CE5B03DDE /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E791B93E3AA716823642D3BCB4FBCA0 /* AppCenter.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/AppCenter";
+				IBSC_MODULE = AppCenter;
+				INFOPLIST_FILE = "Target Support Files/AppCenter/ResourceBundle-AppCenterDistributeResources-AppCenter-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = AppCenterDistributeResources;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Archive;
+		};
+		EE1D1F26E2BDE9C737D2056745978C92 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E791B93E3AA716823642D3BCB4FBCA0 /* AppCenter.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FBDF84E273EDB8D0446589CC791CF3F5 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Archive;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0ACEFE43D98D17993FEFFB8EBC33469E /* Build configuration list for PBXNativeTarget "AppCenter-AppCenterDistributeResources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D23FF3AB41F3A3895819997CE5B03DDE /* Archive */,
+				086E635D15C9515FB73FF87541A83EDB /* Debug */,
+				7DBBC6394A3B76B4DD22FFE31D6CA79E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3555AC7D4730DED956AD794F7ADCD7A3 /* Build configuration list for PBXAggregateTarget "AppCenter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				62B040DD2DEC37581C728C6EF62DA2D1 /* Archive */,
+				9E1C055A1CA692FB7779EA101C3240FF /* Debug */,
+				EE1D1F26E2BDE9C737D2056745978C92 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5385E4184C73973108E02E0648850350 /* Build configuration list for PBXProject "AppCenter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBDF84E273EDB8D0446589CC791CF3F5 /* Archive */,
+				2101847EDF098F681BC4BAB0C8324366 /* Debug */,
+				BB27CC4D2028B1A949C001F39B9F4A49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1FB8163E453E27D9D5F291758BE58A73 /* Project object */;
+}

@@ -170,7 +170,6 @@ private:
 
     /// Search only a range of the free list for a block as big as the
     /// specified size. Return a pair with index and size of the found chunk.
-    /// \param found indicates whether a suitable block was found.
     FreeListElement search_free_space_in_part_of_freelist(size_t size);
 
     /// Extend the file to ensure that a chunk of free space of the
