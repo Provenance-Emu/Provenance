@@ -13,10 +13,10 @@
 			buildPhases = (
 			);
 			dependencies = (
-				2E8CB82C944099510EE8C3F8773B9F3D /* PBXTargetDependency */,
-				DD6F797C90625616465DFAD5E32CBD14 /* PBXTargetDependency */,
-				0A0FF3119ECBBB4CD57A00C9BC1DE74F /* PBXTargetDependency */,
-				F94CA76E552F1BE1DB94E7027480F3CB /* PBXTargetDependency */,
+				BD8D990CCC94B4EA71A0DDA8B88F469F /* PBXTargetDependency */,
+				149C0A94878845733B169EBD929634CE /* PBXTargetDependency */,
+				EF2E12C04AA05C3ADC2DAB56AF824219 /* PBXTargetDependency */,
+				09C4EF3AAB88EF7B5D7FCCA7B24B259B /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-iOS";
 		};
@@ -26,71 +26,71 @@
 			buildPhases = (
 			);
 			dependencies = (
-				75E8220C26A2D85A47E938012C66982E /* PBXTargetDependency */,
-				7F7090A327AC86A419A357891C2E0C72 /* PBXTargetDependency */,
-				32579336DF85AE13C0D5D41DCB2AA64C /* PBXTargetDependency */,
-				3C88BA2595127598D53E1EA44E30079F /* PBXTargetDependency */,
+				F9A0AEA81ABF79C599DD6F6431029B07 /* PBXTargetDependency */,
+				835595D6EDB0055D5B35D55059DA59E8 /* PBXTargetDependency */,
+				18432448826824F7F9EF563DA9A61F9B /* PBXTargetDependency */,
+				7C449BB2815A1E62B6BFF721947F4146 /* PBXTargetDependency */,
 			);
 			name = "PVLibrary-tvOS";
 		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXContainerItemProxy section */
-		07C4B913E85F266B30E6234FF1B5D816 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5C7F421A4374723B77C70EFD84891F22 /* ZipArchive.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8C7E2F3FAAC142C9D7983A77ADF1CC12;
-			remoteInfo = "ZipArchive-iOS";
-		};
-		241C69A01FF79768CD110FD57A3E1D34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 774690BF48E7A7463C0C9120BC89A2C6 /* RxSwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2B4DC59739E6A2FEA529728FB1146453;
-			remoteInfo = "RxSwift-tvOS";
-		};
-		3B2D93BF3B6C74407884920FF6AFC7E5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C229B14C1E512BF0132A3165ECBA8F0 /* SQLite.swift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BDF878B196F96293FBCB88F0320176DA;
-			remoteInfo = "SQLite.swift-tvOS";
-		};
-		3D3E08042AFFC69F59A05487E401ED42 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6350400A93CB322A261EBB68B1D32AD0 /* RealmSwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D4944F1478B34E109711C982D2C6C460;
-			remoteInfo = "RealmSwift-iOS";
-		};
-		41DCCE8E16279BB6612D179E7E7A5E04 /* PBXContainerItemProxy */ = {
+		02ACE10DB89D4944446236C70E550894 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 774690BF48E7A7463C0C9120BC89A2C6 /* RxSwift.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = A8D89AD6E813D43721E0B30A19DCA863;
 			remoteInfo = "RxSwift-iOS";
 		};
-		5C0578656E19DAA98B347800E72F5F12 /* PBXContainerItemProxy */ = {
+		06E2FC6356D058FD4C660C80AFB92A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8C229B14C1E512BF0132A3165ECBA8F0 /* SQLite.swift.xcodeproj */;
+			containerPortal = 6350400A93CB322A261EBB68B1D32AD0 /* RealmSwift.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = AF79E706BFD97C419C4CA68DBC7C9C39;
-			remoteInfo = "SQLite.swift-iOS";
+			remoteGlobalIDString = D4944F1478B34E109711C982D2C6C460;
+			remoteInfo = "RealmSwift-iOS";
 		};
-		AC03A7CAA2C3EF8213FC2962E628153D /* PBXContainerItemProxy */ = {
+		3EAF05DC57481E544B834EC4ED2F89EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6350400A93CB322A261EBB68B1D32AD0 /* RealmSwift.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 9EE1DAD3F2FAC73CA4856B7C2F044551;
 			remoteInfo = "RealmSwift-tvOS";
 		};
-		AC0BB887DF8CD8760F19528BFCC9C601 /* PBXContainerItemProxy */ = {
+		4E74F043B30349A1711A584028891284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 774690BF48E7A7463C0C9120BC89A2C6 /* RxSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2B4DC59739E6A2FEA529728FB1146453;
+			remoteInfo = "RxSwift-tvOS";
+		};
+		A19D1BB6ED48D00DABF0B9A5190B08F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C229B14C1E512BF0132A3165ECBA8F0 /* SQLite.swift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BDF878B196F96293FBCB88F0320176DA;
+			remoteInfo = "SQLite.swift-tvOS";
+		};
+		B34E2B6B4E156D0014359E96CA7CA949 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C229B14C1E512BF0132A3165ECBA8F0 /* SQLite.swift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = AF79E706BFD97C419C4CA68DBC7C9C39;
+			remoteInfo = "SQLite.swift-iOS";
+		};
+		EA3E7D3D9F167642EBE31FABAF6C4F01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5C7F421A4374723B77C70EFD84891F22 /* ZipArchive.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 1308AE69082A08C9F09D2F377FB3187A;
 			remoteInfo = "ZipArchive-tvOS";
+		};
+		F03B6C2EEB16DD4E40097022962B1A72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5C7F421A4374723B77C70EFD84891F22 /* ZipArchive.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C7E2F3FAAC142C9D7983A77ADF1CC12;
+			remoteInfo = "ZipArchive-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -217,45 +217,45 @@
 /* End PBXProject section */
 
 /* Begin PBXTargetDependency section */
-		0A0FF3119ECBBB4CD57A00C9BC1DE74F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SQLite.swift-iOS";
-			targetProxy = 5C0578656E19DAA98B347800E72F5F12 /* PBXContainerItemProxy */;
-		};
-		2E8CB82C944099510EE8C3F8773B9F3D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RealmSwift-iOS";
-			targetProxy = 3D3E08042AFFC69F59A05487E401ED42 /* PBXContainerItemProxy */;
-		};
-		32579336DF85AE13C0D5D41DCB2AA64C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SQLite.swift-tvOS";
-			targetProxy = 3B2D93BF3B6C74407884920FF6AFC7E5 /* PBXContainerItemProxy */;
-		};
-		3C88BA2595127598D53E1EA44E30079F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "ZipArchive-tvOS";
-			targetProxy = AC0BB887DF8CD8760F19528BFCC9C601 /* PBXContainerItemProxy */;
-		};
-		75E8220C26A2D85A47E938012C66982E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RealmSwift-tvOS";
-			targetProxy = AC03A7CAA2C3EF8213FC2962E628153D /* PBXContainerItemProxy */;
-		};
-		7F7090A327AC86A419A357891C2E0C72 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RxSwift-tvOS";
-			targetProxy = 241C69A01FF79768CD110FD57A3E1D34 /* PBXContainerItemProxy */;
-		};
-		DD6F797C90625616465DFAD5E32CBD14 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RxSwift-iOS";
-			targetProxy = 41DCCE8E16279BB6612D179E7E7A5E04 /* PBXContainerItemProxy */;
-		};
-		F94CA76E552F1BE1DB94E7027480F3CB /* PBXTargetDependency */ = {
+		09C4EF3AAB88EF7B5D7FCCA7B24B259B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "ZipArchive-iOS";
-			targetProxy = 07C4B913E85F266B30E6234FF1B5D816 /* PBXContainerItemProxy */;
+			targetProxy = F03B6C2EEB16DD4E40097022962B1A72 /* PBXContainerItemProxy */;
+		};
+		149C0A94878845733B169EBD929634CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-iOS";
+			targetProxy = 02ACE10DB89D4944446236C70E550894 /* PBXContainerItemProxy */;
+		};
+		18432448826824F7F9EF563DA9A61F9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SQLite.swift-tvOS";
+			targetProxy = A19D1BB6ED48D00DABF0B9A5190B08F0 /* PBXContainerItemProxy */;
+		};
+		7C449BB2815A1E62B6BFF721947F4146 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ZipArchive-tvOS";
+			targetProxy = EA3E7D3D9F167642EBE31FABAF6C4F01 /* PBXContainerItemProxy */;
+		};
+		835595D6EDB0055D5B35D55059DA59E8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-tvOS";
+			targetProxy = 4E74F043B30349A1711A584028891284 /* PBXContainerItemProxy */;
+		};
+		BD8D990CCC94B4EA71A0DDA8B88F469F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RealmSwift-iOS";
+			targetProxy = 06E2FC6356D058FD4C660C80AFB92A17 /* PBXContainerItemProxy */;
+		};
+		EF2E12C04AA05C3ADC2DAB56AF824219 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SQLite.swift-iOS";
+			targetProxy = B34E2B6B4E156D0014359E96CA7CA949 /* PBXContainerItemProxy */;
+		};
+		F9A0AEA81ABF79C599DD6F6431029B07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RealmSwift-tvOS";
+			targetProxy = 3EAF05DC57481E544B834EC4ED2F89EF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
