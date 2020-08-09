@@ -77,6 +77,17 @@ private let OFF_STATES_FR: [Character] = "ecwatrfn,pgv".map { $0 }
 private let ON_STATES_DE: [Character] = "wdxazhujikol".map { $0 }
 private let OFF_STATES_DE: [Character] = "ecyqtrfnmpgv".map { $0 }
 
+open class Application {
+  static var shared: UIApplication {
+    let sharedSelector = NSSelectorFromString("sharedApplication")
+    guard UIApplication.responds(to: sharedSelector) else {
+      fatalError("[Extensions cannot access Application]")
+    }
+    let shared = UIApplication.perform(sharedSelector)
+    return shared?.takeUnretainedValue() as! UIApplication
+  }
+}
+
 public final class iCadeReaderView: UIView {
     #if os(tvOS)
         private let _inputView = UIInputView(frame: CGRect.zero)
@@ -96,7 +107,7 @@ public final class iCadeReaderView: UIView {
 
         didSet {
             if active {
-                if UIApplication.shared.applicationState == .active {
+                if Application.shared.applicationState == .active {
                     becomeFirstResponder()
                 }
             } else {
