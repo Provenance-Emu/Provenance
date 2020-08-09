@@ -7,184 +7,186 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01B64F9F9C26133B04A5333C2A0B6142 /* pokey.c in Sources */ = {isa = PBXBuildFile; fileRef = 09BFFED703AC2D2E7E830339FFE2F0EF /* pokey.c */; };
-		03288B9E9AAFD1D057CF841FE26154EF /* voicebox.c in Sources */ = {isa = PBXBuildFile; fileRef = D7FAAAFB0D8E8245D04DFD79A9D4A545 /* voicebox.c */; };
-		044FF661D1DA57F4564A17EBAE5580B0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5345CAC8D546F10008C24633126EED6 /* UIKit.framework */; };
-		05CE088D8B1851F0AC2CFCC2298C467C /* colours_pal.c in Sources */ = {isa = PBXBuildFile; fileRef = 87425963D0C85D223C5046EA8BF03F80 /* colours_pal.c */; };
-		05FE33B5DB904DFCB6566BF38A3BD2E0 /* pbi_bb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4101BC6B1B5F84B3DF01ED09808B8941 /* pbi_bb.c */; };
-		072E361E3CD7444EBDC4D9FDE02C5398 /* xep80.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F4364D15A09494557BBC2BAC8BE147 /* xep80.c */; };
-		094C492D4C915A27B20E91DAD6289359 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = E17275CB8FEE9D61202B233A962AD7D5 /* sound.c */; };
-		0951F2596CD4BFE28B729B6D11B218CD /* gtia.c in Sources */ = {isa = PBXBuildFile; fileRef = AB459584C05E4C7EB1F987229DAB64FA /* gtia.c */; };
-		09831C68902B261CC1FBD8427C2A85A7 /* cartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = C4031CB159D7A1BD4D3726F3D2F0AD2A /* cartridge.c */; };
-		09FBB8CB1292EF8C0E2CFB60096FE94E /* colours_pal.c in Sources */ = {isa = PBXBuildFile; fileRef = 87425963D0C85D223C5046EA8BF03F80 /* colours_pal.c */; };
-		0A49309539AD62A79EDA3EAB170E72EC /* emuos.c in Sources */ = {isa = PBXBuildFile; fileRef = 31DC9CF3CADBDC76138D32267162E633 /* emuos.c */; };
-		0C8B1FFE7DC316F16AE460969DD76A5E /* screen.c in Sources */ = {isa = PBXBuildFile; fileRef = AA434F9E4113A130DF5109E9DE78EDD8 /* screen.c */; };
-		0DAF55E992E1C2C5E69E449DC9A9CE33 /* ProvenanceCores-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A9CC9EA0715D8E8B31DE28F8CCFBB2 /* ProvenanceCores-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		105BAC5F6604397BA3BCFBFFE6C22B41 /* devices.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E88B1C40F92098ADAA90684195417D /* devices.c */; };
-		124D7814779B3778634D814DA995D39A /* pbi_mio.c in Sources */ = {isa = PBXBuildFile; fileRef = 320726258C755DFF9C78DBEBA5712FE2 /* pbi_mio.c */; };
-		130C8394415CB9601D87DF592B7D8155 /* pbi_proto80.c in Sources */ = {isa = PBXBuildFile; fileRef = C5D223269E6549B4470826F447C89BA2 /* pbi_proto80.c */; };
-		140800CB02B65DD80EEA5079039B034C /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E9245C2818F1DC4B9EEDF3E3AB2CCE0 /* input.c */; };
-		14FCAF495F3D5DC95C30D0757DC77999 /* pbi.c in Sources */ = {isa = PBXBuildFile; fileRef = 18010683818C458EFBDEEF9B8BAABD6A /* pbi.c */; };
-		17CB613C356C2649F49F34BFBC22A077 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FEA03CA70490DFF8FFF03F275E5E69B /* rtime.c */; };
-		18BDBD6C26942ECBB100B229B293516F /* mzpokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 57582DCADFFAD28FC62F0FD58DA3F724 /* mzpokeysnd.c */; };
-		1A75D089CA7BF5895AF5C761D4E1AC53 /* colours_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A33CCBF39F97FAD2DB66ABFD95129D /* colours_ntsc.c */; };
-		2021C5C5E3E1A62BD486E68F2B4FC053 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F842CB1AF7D56D59A54E46FB1ACF499F /* UIKit.framework */; };
-		2134AB8F4FEA600DA75E9D85F8355194 /* pbi_scsi.c in Sources */ = {isa = PBXBuildFile; fileRef = 227B892042ECD9407EAD308C2DE6A6E8 /* pbi_scsi.c */; };
-		21AC37A11E9BE1F8F6146FEB2552593B /* cycle_map.c in Sources */ = {isa = PBXBuildFile; fileRef = A78F58F371AAD6BF30115464EB319970 /* cycle_map.c */; };
-		22C3E934AE5AFA77D2201E11D1C3CD4F /* xep80.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F4364D15A09494557BBC2BAC8BE147 /* xep80.c */; };
-		264B7ECE832CCE3A4153068AEAC120A6 /* atari.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CF7BF534AE72F88AE91BDC63C0FEF54 /* atari.c */; };
-		2664571FE55B224972E53BA51B494EB6 /* colours_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A33CCBF39F97FAD2DB66ABFD95129D /* colours_ntsc.c */; };
-		26C304FC4DE15FD50EBDFB4052B99C19 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC4871D82521EC47329A8D1EBD4A9B46 /* OpenGLES.framework */; };
-		27DA3E77EA219C2422F433CE937ECFEB /* sound_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = B0ED7427930CDA085AE0757791307167 /* sound_falcon.c */; };
-		2AF753F7A5A5C02B890E3F52186C531B /* sndsave.c in Sources */ = {isa = PBXBuildFile; fileRef = 1011829D88907D2A732CFE58D6A4411C /* sndsave.c */; };
-		2E192F3257B6DB8D79746D6953608AFF /* sound_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = B0ED7427930CDA085AE0757791307167 /* sound_falcon.c */; };
-		2E4434B9B5450CB48E972B741297B8D3 /* xep80_fonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 109A0B99F10DAAFE3C473AA9CF80C0B0 /* xep80_fonts.c */; };
-		311AEA3CCE0C14B565B1EF55AE304C6D /* cycle_map.c in Sources */ = {isa = PBXBuildFile; fileRef = A78F58F371AAD6BF30115464EB319970 /* cycle_map.c */; };
-		3186ECC9F80554C691017693E2072FD9 /* esc.c in Sources */ = {isa = PBXBuildFile; fileRef = 083F596E7DBB4F68AEFD00831D9BE044 /* esc.c */; };
-		31AB86DF9D381745BE0A5029403E1662 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 258AA209F11D378BEFEBE993E156C9A5 /* crc32.c */; };
-		394636DD24539A991A2BB32302A52077 /* emuos.c in Sources */ = {isa = PBXBuildFile; fileRef = 31DC9CF3CADBDC76138D32267162E633 /* emuos.c */; };
-		39585065A704C8A6E0BB0604625CB0AE /* artifact.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D80025A699BA7AFA7517FEC465BE96 /* artifact.c */; };
-		40583789B0A636960742CA647915006A /* cassette.c in Sources */ = {isa = PBXBuildFile; fileRef = 3916A6C3EC29EFF15C500AB99C30C9F1 /* cassette.c */; };
-		43880543C6985C0D4F0D3D7990439BA0 /* atari_curses.c in Sources */ = {isa = PBXBuildFile; fileRef = 26142B668ACC4AE66DC31982F4B05700 /* atari_curses.c */; };
-		472B43983F48BE748EB31EDCB2FD0957 /* filter_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = C831C9664D020424C77C873BEA62C2BF /* filter_ntsc.c */; };
-		4AEC7B02EE75FBF407F004EDDE9CDED3 /* sysrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 72780B869F8E55ECE3903042CCC4EC29 /* sysrom.c */; };
-		4C65AB92F765631644942DF3E7069945 /* antic.c in Sources */ = {isa = PBXBuildFile; fileRef = C2256DB67E8BAE2149D40A6EF6D3C585 /* antic.c */; };
-		4E13004B5D4526DE36565261544E8ACC /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 258AA209F11D378BEFEBE993E156C9A5 /* crc32.c */; };
-		4EC55DFA0003BCA0CEA8F25EEBE3958B /* ProvenanceCores-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7728999FE62A867E376E651B20F816D4 /* ProvenanceCores-iOS-dummy.m */; };
-		5322F611C4D2A299493EC966DB6CA91D /* esc.c in Sources */ = {isa = PBXBuildFile; fileRef = 083F596E7DBB4F68AEFD00831D9BE044 /* esc.c */; };
-		5589BC37BF4368953D33C43BCA191C3E /* pbi.c in Sources */ = {isa = PBXBuildFile; fileRef = 18010683818C458EFBDEEF9B8BAABD6A /* pbi.c */; };
-		56EB71FED32E569191A086A782FE2324 /* cfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 3591520E9BE98BC558E37B6990747D02 /* cfg.c */; };
-		57355D1D9BBFBF09DF3EF088D932A7C1 /* pbi_proto80.c in Sources */ = {isa = PBXBuildFile; fileRef = C5D223269E6549B4470826F447C89BA2 /* pbi_proto80.c */; };
-		57681EA0DC517B6805ED889A2EBC6C5F /* videomode.c in Sources */ = {isa = PBXBuildFile; fileRef = EDAAD3A2406848E3AA12A4AF38DFFBED /* videomode.c */; };
-		591C47CAE2A5485BCA118B89CD4666B9 /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = 612A5F114EE61890DFBD4BD21AED923F /* monitor.c */; };
-		5C80789EEC53E1CE336DB0334B6B3CF0 /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CC8CBCD40BED9A22BA13AE2D9410A83 /* ATR800GameCore.m */; };
-		5DDDEC979B45C0FC3D4454B24973893C /* cartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = C4031CB159D7A1BD4D3726F3D2F0AD2A /* cartridge.c */; };
-		5F757F449185D08E62622BCBAD671081 /* votrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 18F45AD12F9FB81C07682A91A8F1C0F5 /* votrax.c */; };
-		60E8AABED98B601092908381EF0EC6A8 /* atari_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = B590B08539E684AF9FA958561B678029 /* atari_basic.c */; };
-		61B78937DE019B462282C46A85932EB4 /* mkimg.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F51B036862623DEA21B46DE4AD4316D /* mkimg.c */; };
-		627D1FF89A46B38DC4A07D7AF4E21032 /* pokey.c in Sources */ = {isa = PBXBuildFile; fileRef = 09BFFED703AC2D2E7E830339FFE2F0EF /* pokey.c */; };
-		628F0909FD00DA2737164FC2DAECC151 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE03FD3053F2313B31BE072A2F07503A /* Foundation.framework */; };
-		62BB89B055A31ED44ED1511BD1E12AE4 /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 59EBD5E0175B4628698073F947A6A8AA /* ui.c */; };
-		64370A7DCB88147788C3BEF58596F652 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DDA6F716E652F79D217F16116CF320C /* AudioToolbox.framework */; };
-		64B8D763A1A32AE68A1525D58F5F2E14 /* antic.c in Sources */ = {isa = PBXBuildFile; fileRef = C2256DB67E8BAE2149D40A6EF6D3C585 /* antic.c */; };
-		66D3D4CED3B811A6C78030D60A5082E0 /* colours.c in Sources */ = {isa = PBXBuildFile; fileRef = C6207FD0838E0A51D65C5F93133E6F7E /* colours.c */; };
-		6D6B0DFBF8FD5D1C2619BD41A5859F14 /* binload.c in Sources */ = {isa = PBXBuildFile; fileRef = D5817E8CDB87E0BECF1B99C88F89D0C3 /* binload.c */; };
-		6E3DA05F9C9AB72AF76A16CEC1D6E06A /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E8B68CB56C92F812222A232CB5A74C8 /* ide.c */; };
-		71E344E85B9E39517BAFAEC93020E14D /* votrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 18F45AD12F9FB81C07682A91A8F1C0F5 /* votrax.c */; };
-		73DA65B5A35950E54D26CFB21D684A68 /* pokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = D4B70E50001A67F784F27B97F798686D /* pokeysnd.c */; };
-		75286B158B677E07F86F09C4E9E59623 /* ProvenanceCores-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 35888A1BDCFDFB865767F6C3015AA34D /* ProvenanceCores-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		75DC28E38C271E57D243A0717E04BD75 /* votraxsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B795DCEB9B2A005FBE7005EB2522C1EC /* votraxsnd.c */; };
-		76253F79FA301063FE5DDCBD6B657A38 /* afile.c in Sources */ = {isa = PBXBuildFile; fileRef = 61E70A16004C92847A54BAE31912F076 /* afile.c */; };
-		78171E8D0ACC6EFE4FEFE195AEC4F509 /* img_tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 28790C03ED45B8E72F376589CC36852A /* img_tape.c */; };
-		7A4D326BA193AAB17C8C284AF7D4D46A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8160A53B2FA1C97050179AE1D7159425 /* CoreGraphics.framework */; };
-		7AFA68B7B85113C10BB2039B55A5B9BA /* atari_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = B590B08539E684AF9FA958561B678029 /* atari_basic.c */; };
-		7D38192DFE8ED93587B6C3A3EF85E0AD /* ProvenanceCores-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F45885AE7ACDC0E2FD31DFA870BF0A6F /* ProvenanceCores-tvOS-dummy.m */; };
-		80B71C3E6CC424CA52B8CE031473EB58 /* atari_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C56D768D80CBD7376B067BE14CB0ECB /* atari_falcon.c */; };
-		832F2D992C57B0FB95FEDFEC03F96883 /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E8B68CB56C92F812222A232CB5A74C8 /* ide.c */; };
-		83E955B79B8EC05A5A92EF1071EF6FC2 /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = 612A5F114EE61890DFBD4BD21AED923F /* monitor.c */; };
-		880B5F043D3228B31E2B777D2C376198 /* mzpokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 57582DCADFFAD28FC62F0FD58DA3F724 /* mzpokeysnd.c */; };
-		8A58ADCA896B22C3E6E28B6F45679AA9 /* remez.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C77B68C490E10263DAB5B04EDAFAC24 /* remez.c */; };
-		8BC52DAE9A91FEB14CF006EA6BE10B7B /* mkimg.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F51B036862623DEA21B46DE4AD4316D /* mkimg.c */; };
-		8CAA25491B79CEBF7E0F340CDB4C819F /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = E17275CB8FEE9D61202B233A962AD7D5 /* sound.c */; };
-		8D339B1E5437BB5460814C844CE5D8E8 /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = A4B431047A812AC8BD98F0910B6B0EB7 /* sio.c */; };
-		903451D5117AF6D5BAF6F33CC635788D /* atari_x11.c in Sources */ = {isa = PBXBuildFile; fileRef = 21CCF449A818D8EE5F23CF1279EC4EC6 /* atari_x11.c */; };
-		90D09D42C6AABA288FCE9A6DEAFAD3B3 /* pia.c in Sources */ = {isa = PBXBuildFile; fileRef = 24D04C34F25A097F72155A9AFE7C3EAE /* pia.c */; };
-		93FAF7D805F24F0F86ADCFFFB95AF043 /* sndsave.c in Sources */ = {isa = PBXBuildFile; fileRef = 1011829D88907D2A732CFE58D6A4411C /* sndsave.c */; };
-		9401AF263D7AE43FA25F4966A2E055A5 /* screen.c in Sources */ = {isa = PBXBuildFile; fileRef = AA434F9E4113A130DF5109E9DE78EDD8 /* screen.c */; };
-		9544E512393354E93E1BDAC873B826EC /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CC8CBCD40BED9A22BA13AE2D9410A83 /* ATR800GameCore.m */; };
-		96AF00B54885F98F0A8BAC295AD022B0 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = C63111EAB22D3B6F46D3D7FC3A9CDCF2 /* memory.c */; };
-		980F5543EBF582AEAA476443B7D501E7 /* gtia.c in Sources */ = {isa = PBXBuildFile; fileRef = AB459584C05E4C7EB1F987229DAB64FA /* gtia.c */; };
-		98218B6E3628B9A533D7938C547BEDC6 /* pbi_mio.c in Sources */ = {isa = PBXBuildFile; fileRef = 320726258C755DFF9C78DBEBA5712FE2 /* pbi_mio.c */; };
-		9FC957ECF8EDA9B0A7DACF0A802CD66A /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 76553124A411E19ED8AF61806D9A38E8 /* log.c */; };
-		A17449AB38790BD3DE89CC40177066F8 /* xep80_fonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 109A0B99F10DAAFE3C473AA9CF80C0B0 /* xep80_fonts.c */; };
-		A3602C35BB96158667861750CBF21709 /* rdevice.c in Sources */ = {isa = PBXBuildFile; fileRef = C27222267F9FF913F1905AD3556AD3A3 /* rdevice.c */; };
-		A47E059B8CD62DA409526D1B0755A1EE /* cassette.c in Sources */ = {isa = PBXBuildFile; fileRef = 3916A6C3EC29EFF15C500AB99C30C9F1 /* cassette.c */; };
-		A6EC0661B4A3A5935A11BE988F829D73 /* ui_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CDEE159BE443C085C9245066D8FE3BE /* ui_basic.c */; };
-		A9DC8EEC91246A69AFB8C08C382467BB /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = A4B431047A812AC8BD98F0910B6B0EB7 /* sio.c */; };
-		AAEFF95FC9B07E38CE0070321BECD35A /* voicebox.c in Sources */ = {isa = PBXBuildFile; fileRef = D7FAAAFB0D8E8245D04DFD79A9D4A545 /* voicebox.c */; };
-		AB123E1015EEF495178F801878B8D009 /* binload.c in Sources */ = {isa = PBXBuildFile; fileRef = D5817E8CDB87E0BECF1B99C88F89D0C3 /* binload.c */; };
-		AB60B07CDAB5C1434525482E45A8E6CF /* colours_external.c in Sources */ = {isa = PBXBuildFile; fileRef = BEFB59533DFDC2EBCE955E826E5DE836 /* colours_external.c */; };
-		ACC101833467F6125E26A3F3835F35C7 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7CD6ADA57E48DA32F686C8961A38D1B /* PVSupport.framework */; };
-		ACD0B47AB1813093798FE9C677256546 /* pbi_xld.c in Sources */ = {isa = PBXBuildFile; fileRef = 338DD7D6563FEC3D3EA39E77EE197B9D /* pbi_xld.c */; };
-		ADDA0740D0F5B827C578C917635EAC71 /* artifact.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D80025A699BA7AFA7517FEC465BE96 /* artifact.c */; };
-		AE408440B73AFBA082C389CA5AE26D3F /* votraxsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B795DCEB9B2A005FBE7005EB2522C1EC /* votraxsnd.c */; };
-		AE4F4624579D5BA19D3E850E995DC66D /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C2C5C884E3633B0D5A32E5860158A9D /* cpu.c */; };
-		AF16380C666BC31D08C1A5E27F331756 /* pbi_scsi.c in Sources */ = {isa = PBXBuildFile; fileRef = 227B892042ECD9407EAD308C2DE6A6E8 /* pbi_scsi.c */; };
-		AF6C62EF8EEC3B6E68102ADA00EB0808 /* cfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 3591520E9BE98BC558E37B6990747D02 /* cfg.c */; };
-		B031031BF003DB76EAB31CD1BA723828 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7CD6ADA57E48DA32F686C8961A38D1B /* PVSupport.framework */; };
-		B0385D0E9126A9F827597018EE72F679 /* remez.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C77B68C490E10263DAB5B04EDAFAC24 /* remez.c */; };
-		B0B3FDD78290A19E5F330F5A4936F39D /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FEA03CA70490DFF8FFF03F275E5E69B /* rtime.c */; };
-		B4BCF9AED3FA8D6430F19A8521DC526E /* compfile.c in Sources */ = {isa = PBXBuildFile; fileRef = E0D6FD85DF20863ACF089BCF32B2D2BD /* compfile.c */; };
-		B56A7988E3E062FCEB6119F636FBBA10 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = C63111EAB22D3B6F46D3D7FC3A9CDCF2 /* memory.c */; };
-		B6B6689AA79FC2478102B873243DEC78 /* videomode.c in Sources */ = {isa = PBXBuildFile; fileRef = EDAAD3A2406848E3AA12A4AF38DFFBED /* videomode.c */; };
-		BE33C8F163B1D66199AD0A6529BE6033 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 89BE6B02E2BF3C5E65965E7E0A639812 /* util.c */; };
-		C08AA96A286A1D77812AE27D62ADC771 /* sound_oss.c in Sources */ = {isa = PBXBuildFile; fileRef = 2790255F08A14BC9ACB0CD0E92130439 /* sound_oss.c */; };
-		C35B00206C0CF2CEFFCFD73926596A6B /* sysrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 72780B869F8E55ECE3903042CCC4EC29 /* sysrom.c */; };
-		C5D4173EB33F37CDA65B587A3C7ECA99 /* statesav.c in Sources */ = {isa = PBXBuildFile; fileRef = C3BDCA5D8D19F3C64F1F88FB878545CC /* statesav.c */; };
-		C66A88C7F7F3D865E03732792D220BAF /* atari_ps2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EEAF1D1C0274C559D77EE293030BB77 /* atari_ps2.c */; };
-		C889ED6A172C08AB9733B5C5EE59D2D6 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C2C5C884E3633B0D5A32E5860158A9D /* cpu.c */; };
-		C930F04123C8F31CFBBDA7896FB0D00D /* pbi_xld.c in Sources */ = {isa = PBXBuildFile; fileRef = 338DD7D6563FEC3D3EA39E77EE197B9D /* pbi_xld.c */; };
-		C951FA457D8720B3B25F73E49EBCCFFD /* colours_external.c in Sources */ = {isa = PBXBuildFile; fileRef = BEFB59533DFDC2EBCE955E826E5DE836 /* colours_external.c */; };
-		C9F23D7139EAED37CC85B264F999950A /* pokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = D4B70E50001A67F784F27B97F798686D /* pokeysnd.c */; };
-		CA33357B63AFFE02C3721D7F4A5EEA5C /* rdevice.c in Sources */ = {isa = PBXBuildFile; fileRef = C27222267F9FF913F1905AD3556AD3A3 /* rdevice.c */; };
-		CBBF80BCC31C1087ADFD5E296C2CF0FF /* joycfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7BDB2A6CC082EF466354C7A8280371A8 /* joycfg.c */; };
-		CE3565791580475E7B4CB34A815845AE /* atari.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CF7BF534AE72F88AE91BDC63C0FEF54 /* atari.c */; };
-		D020A9DC4B3FE89E30AFB6E3F101C628 /* compfile.c in Sources */ = {isa = PBXBuildFile; fileRef = E0D6FD85DF20863ACF089BCF32B2D2BD /* compfile.c */; };
-		D0C8E4F2904EE87DCF33D50E5C3EA5C2 /* atari_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C56D768D80CBD7376B067BE14CB0ECB /* atari_falcon.c */; };
-		D15BD5DBF7DAEA3AEAEACF7AF99A0EF2 /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 59EBD5E0175B4628698073F947A6A8AA /* ui.c */; };
-		D1A6DA53E0AF7C344EE2D8B43753E41F /* pbi_bb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4101BC6B1B5F84B3DF01ED09808B8941 /* pbi_bb.c */; };
-		D1B216F918410D73A9ACF6B67C550D1F /* statesav.c in Sources */ = {isa = PBXBuildFile; fileRef = C3BDCA5D8D19F3C64F1F88FB878545CC /* statesav.c */; };
-		D3F8A84E7CB99A2678A39C1B75348DDD /* pia.c in Sources */ = {isa = PBXBuildFile; fileRef = 24D04C34F25A097F72155A9AFE7C3EAE /* pia.c */; };
-		D4855373431D817AF7C7E86F7F97231D /* atari_curses.c in Sources */ = {isa = PBXBuildFile; fileRef = 26142B668ACC4AE66DC31982F4B05700 /* atari_curses.c */; };
-		DB839659FEE999476D7BBF285C7C2BBA /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 89BE6B02E2BF3C5E65965E7E0A639812 /* util.c */; };
-		DBAE1F4DBD33911B057829673B31100B /* colours.c in Sources */ = {isa = PBXBuildFile; fileRef = C6207FD0838E0A51D65C5F93133E6F7E /* colours.c */; };
-		DEE40672AAEEC7FD64BF7B7DD9A40080 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E9245C2818F1DC4B9EEDF3E3AB2CCE0 /* input.c */; };
-		DFFA44029A7E95B2B33632D28A17F4ED /* atari_x11.c in Sources */ = {isa = PBXBuildFile; fileRef = 21CCF449A818D8EE5F23CF1279EC4EC6 /* atari_x11.c */; };
-		E3522171631B0406882581540AF17A4F /* af80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E565B82FC5BFB8B38887A06D637D5E2 /* af80.c */; };
-		E601B41D5BFF8344388662726FED0A5E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAEEBB7761048D1BFEE4220B98F25525 /* AudioToolbox.framework */; };
-		E80A02DB9BE64E9F97AD6AD788AF8EEA /* joycfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7BDB2A6CC082EF466354C7A8280371A8 /* joycfg.c */; };
-		EA7376C1BAAC406FB933985EF1BF94E1 /* devices.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E88B1C40F92098ADAA90684195417D /* devices.c */; };
-		ECAE56E5AD09A2895D124DF5A77A8D0B /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9054F02C2BD26CD5CDF5EA0A6FA682E /* OpenGLES.framework */; };
-		EF4764F326849648F9C08AD30DA81979 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 76553124A411E19ED8AF61806D9A38E8 /* log.c */; };
-		F0506662845243B1B65BCB879212A943 /* filter_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = C831C9664D020424C77C873BEA62C2BF /* filter_ntsc.c */; };
-		F1CBF333EB1FAFDD13FCAA66D74A1D7E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0F0DB86680845EFCBE993A89CF5F6FE /* CoreGraphics.framework */; };
-		F292B2585B8869ACF6E1C5BD1ED3EE3E /* img_tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 28790C03ED45B8E72F376589CC36852A /* img_tape.c */; };
-		F48F0F8803A6537B7F62A3A7223D5AB7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7DBA9FE935C9D06DFC8F815F31EBB5 /* Foundation.framework */; };
-		F4A7048555FCDC3DA0B6DC462B550FD5 /* af80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E565B82FC5BFB8B38887A06D637D5E2 /* af80.c */; };
-		F4C9CC22639EED3A9A187C67E1E2EBE6 /* sound_oss.c in Sources */ = {isa = PBXBuildFile; fileRef = 2790255F08A14BC9ACB0CD0E92130439 /* sound_oss.c */; };
-		FCA40C8AF60A260E9FFD464666A956D6 /* ui_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CDEE159BE443C085C9245066D8FE3BE /* ui_basic.c */; };
-		FF5C0ED15CFA2E698C3ECBB68C5F6159 /* afile.c in Sources */ = {isa = PBXBuildFile; fileRef = 61E70A16004C92847A54BAE31912F076 /* afile.c */; };
-		FF7E07A5F1603A348AA06C6C12396743 /* atari_ps2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EEAF1D1C0274C559D77EE293030BB77 /* atari_ps2.c */; };
+		0081163C6C66E7B8FB343C1FC4BDE66F /* sndsave.c in Sources */ = {isa = PBXBuildFile; fileRef = 1011829D88907D2A732CFE58D6A4411C /* sndsave.c */; };
+		0449D8CCABE58C9DA5B7599EE56BD39A /* pia.c in Sources */ = {isa = PBXBuildFile; fileRef = 24D04C34F25A097F72155A9AFE7C3EAE /* pia.c */; };
+		06E46E32E1F18360192EB516C5752ED3 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C83E8B5B6084F4AD56B0C5A3D91ABB01 /* PVSupport.framework */; };
+		0C8A9A8A5CEF5B2780D862B28FA2102C /* ui_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CDEE159BE443C085C9245066D8FE3BE /* ui_basic.c */; };
+		0C912A1AD27C81587E7FAC5C07559FB1 /* af80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E565B82FC5BFB8B38887A06D637D5E2 /* af80.c */; };
+		0CE36CC29BC0EC1138FDF9D9C0AB9D1C /* mzpokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 57582DCADFFAD28FC62F0FD58DA3F724 /* mzpokeysnd.c */; };
+		0D1CDCF24F03C9786B1BC7B2E83649DF /* colours_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A33CCBF39F97FAD2DB66ABFD95129D /* colours_ntsc.c */; };
+		119F35450C4A21C38B573821DB3F2C02 /* videomode.c in Sources */ = {isa = PBXBuildFile; fileRef = EDAAD3A2406848E3AA12A4AF38DFFBED /* videomode.c */; };
+		120425E3303801FADB2D10278FC60A30 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3712E232ADE80C4F47F213C27121D99 /* CoreGraphics.framework */; };
+		16D2A10B4DD5E18FC16EFE33E6DDE56B /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CC8CBCD40BED9A22BA13AE2D9410A83 /* ATR800GameCore.m */; };
+		199B67C2DDC5A3C30DD11E53E2ECD74E /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E8B68CB56C92F812222A232CB5A74C8 /* ide.c */; };
+		1A9F4A94EC09E5D4CCE10C35635D1FF9 /* atari_curses.c in Sources */ = {isa = PBXBuildFile; fileRef = 26142B668ACC4AE66DC31982F4B05700 /* atari_curses.c */; };
+		1FA2CB7E98EBD9D90E75F5B0D9C9B572 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B535B4C5AEF07EAD919F13DF68DE512 /* PVLibrary.framework */; };
+		1FA5AA66A9A3A81EC412B612F0E5395A /* ProvenanceCores-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 35888A1BDCFDFB865767F6C3015AA34D /* ProvenanceCores-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2061B7628A1A272840D325A7600C7378 /* sndsave.c in Sources */ = {isa = PBXBuildFile; fileRef = 1011829D88907D2A732CFE58D6A4411C /* sndsave.c */; };
+		216CE04BEDEB03EB793C95C58C07E677 /* sound_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = B0ED7427930CDA085AE0757791307167 /* sound_falcon.c */; };
+		21E75DF525543FF726FB9D7FC58DC20D /* joycfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7BDB2A6CC082EF466354C7A8280371A8 /* joycfg.c */; };
+		241AD1D059082AEF694B581B32208CA7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B42229AE1B2A43514499CAF11C9CB2F3 /* OpenGLES.framework */; };
+		242788A5984DE62A47EE00E539BF05C7 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 76553124A411E19ED8AF61806D9A38E8 /* log.c */; };
+		243183576FAA77A31D6A5C48DD7A8F28 /* img_tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 28790C03ED45B8E72F376589CC36852A /* img_tape.c */; };
+		26D0AF68F4A41C637E66868A0FD36B77 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C2C5C884E3633B0D5A32E5860158A9D /* cpu.c */; };
+		27011A686C013F2150B7CE7939C205B3 /* ProvenanceCores-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F45885AE7ACDC0E2FD31DFA870BF0A6F /* ProvenanceCores-tvOS-dummy.m */; };
+		27C4ABB7DE9BA0BEDF35BAB7C630BF88 /* voicebox.c in Sources */ = {isa = PBXBuildFile; fileRef = D7FAAAFB0D8E8245D04DFD79A9D4A545 /* voicebox.c */; };
+		28B762C904B21BA897C6498C98CFA9C0 /* pbi_bb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4101BC6B1B5F84B3DF01ED09808B8941 /* pbi_bb.c */; };
+		29356E636E604479F8BF2EDBF0CDAD47 /* sysrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 72780B869F8E55ECE3903042CCC4EC29 /* sysrom.c */; };
+		2A046CFA9138246E3F0B8D08B07C062E /* videomode.c in Sources */ = {isa = PBXBuildFile; fileRef = EDAAD3A2406848E3AA12A4AF38DFFBED /* videomode.c */; };
+		2E10313D951328F742C8199B8A477198 /* remez.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C77B68C490E10263DAB5B04EDAFAC24 /* remez.c */; };
+		2EB50F3F78C4DD6822AAE1A84ECC1C9D /* devices.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E88B1C40F92098ADAA90684195417D /* devices.c */; };
+		31121A16FFC5BD91AEF84ACDDCD5CDC8 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FEA03CA70490DFF8FFF03F275E5E69B /* rtime.c */; };
+		31AB04B088C9D6FE1777A637320B1710 /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 59EBD5E0175B4628698073F947A6A8AA /* ui.c */; };
+		34C8F3ABC820FCF6C53BF4715DFFC790 /* ui_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CDEE159BE443C085C9245066D8FE3BE /* ui_basic.c */; };
+		34E9A1716A5FF572DAE92A6F8B1BEC02 /* screen.c in Sources */ = {isa = PBXBuildFile; fileRef = AA434F9E4113A130DF5109E9DE78EDD8 /* screen.c */; };
+		369036083EAD343A8E6450A18A0F5693 /* pbi_bb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4101BC6B1B5F84B3DF01ED09808B8941 /* pbi_bb.c */; };
+		3749E8F2B2FB29A4C744A6CCECA4626D /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 89BE6B02E2BF3C5E65965E7E0A639812 /* util.c */; };
+		377D0EE1608C062C2232F01DEA3ACFCC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C83E8B5B6084F4AD56B0C5A3D91ABB01 /* PVSupport.framework */; };
+		3D2BBA813910A81DDE7AEFF3B1A81A2F /* cartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = C4031CB159D7A1BD4D3726F3D2F0AD2A /* cartridge.c */; };
+		3DB3250968403E64A2BB3D385A0067F0 /* afile.c in Sources */ = {isa = PBXBuildFile; fileRef = 61E70A16004C92847A54BAE31912F076 /* afile.c */; };
+		3F9E1CD541542914ABDBED1BE4C65AF6 /* pbi_mio.c in Sources */ = {isa = PBXBuildFile; fileRef = 320726258C755DFF9C78DBEBA5712FE2 /* pbi_mio.c */; };
+		413D9F4DC8F22177456FE292083F5482 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A57F5D63F0865F2557F960D894C183B /* UIKit.framework */; };
+		41AD29246F9150CCD5E1E90F5BBF1858 /* pokey.c in Sources */ = {isa = PBXBuildFile; fileRef = 09BFFED703AC2D2E7E830339FFE2F0EF /* pokey.c */; };
+		42725F80435263541C6842F48456D741 /* esc.c in Sources */ = {isa = PBXBuildFile; fileRef = 083F596E7DBB4F68AEFD00831D9BE044 /* esc.c */; };
+		4355C9A84A3F5FCF28C6E0C94AEE7F65 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C04B2248C1157DC83131DCB2BAE7386 /* OpenGLES.framework */; };
+		45A58A2B877101F6C1E92EBCA2551B17 /* pbi_proto80.c in Sources */ = {isa = PBXBuildFile; fileRef = C5D223269E6549B4470826F447C89BA2 /* pbi_proto80.c */; };
+		45B072A87973A946EB83E125CE6BB029 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = E17275CB8FEE9D61202B233A962AD7D5 /* sound.c */; };
+		4CF02DE268407BE9F5587EFC1E50D584 /* xep80_fonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 109A0B99F10DAAFE3C473AA9CF80C0B0 /* xep80_fonts.c */; };
+		4D1830CE88C41579DE4DCE2CBB9E6838 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B535B4C5AEF07EAD919F13DF68DE512 /* PVLibrary.framework */; };
+		4EA9376738A18A3CE8FFC0D7ACEFC27C /* voicebox.c in Sources */ = {isa = PBXBuildFile; fileRef = D7FAAAFB0D8E8245D04DFD79A9D4A545 /* voicebox.c */; };
+		4F6B66816C623AD9300A5DB0E89B887B /* esc.c in Sources */ = {isa = PBXBuildFile; fileRef = 083F596E7DBB4F68AEFD00831D9BE044 /* esc.c */; };
+		50C8607601E5DEDE545C5571214CBD9F /* cassette.c in Sources */ = {isa = PBXBuildFile; fileRef = 3916A6C3EC29EFF15C500AB99C30C9F1 /* cassette.c */; };
+		541B0A87D4827CC05B0AF06BB5394515 /* colours_external.c in Sources */ = {isa = PBXBuildFile; fileRef = BEFB59533DFDC2EBCE955E826E5DE836 /* colours_external.c */; };
+		54A77509E52DE9A124C5DB86A466E1B4 /* colours_pal.c in Sources */ = {isa = PBXBuildFile; fileRef = 87425963D0C85D223C5046EA8BF03F80 /* colours_pal.c */; };
+		596D6434627E92D5E326775EFACE8176 /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E8B68CB56C92F812222A232CB5A74C8 /* ide.c */; };
+		5AF6107E8E01DD6FE23AE2B837C4C93F /* sound_oss.c in Sources */ = {isa = PBXBuildFile; fileRef = 2790255F08A14BC9ACB0CD0E92130439 /* sound_oss.c */; };
+		5CF6B1677B6A0BFAD3C9C3C8D21FB9E1 /* atari_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = B590B08539E684AF9FA958561B678029 /* atari_basic.c */; };
+		5EBFA8035E531B7589F270A74F061BE8 /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = A4B431047A812AC8BD98F0910B6B0EB7 /* sio.c */; };
+		5F1A6FDF655BEC643DAD241F67DB7A21 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 258AA209F11D378BEFEBE993E156C9A5 /* crc32.c */; };
+		61C5F9145E3C5EFD76F7DCABD1321330 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = C63111EAB22D3B6F46D3D7FC3A9CDCF2 /* memory.c */; };
+		62204D14EDE3E0F2A3DFC472DA0A12FF /* emuos.c in Sources */ = {isa = PBXBuildFile; fileRef = 31DC9CF3CADBDC76138D32267162E633 /* emuos.c */; };
+		6273012A1D399130A9DB20432E212CE1 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 89BE6B02E2BF3C5E65965E7E0A639812 /* util.c */; };
+		635F3F226C3CE8037EE35B4836965645 /* colours.c in Sources */ = {isa = PBXBuildFile; fileRef = C6207FD0838E0A51D65C5F93133E6F7E /* colours.c */; };
+		664402D590799562B19C233E4F802CDD /* af80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E565B82FC5BFB8B38887A06D637D5E2 /* af80.c */; };
+		66B41B08010B9364D150CA30D8C7C9F7 /* cartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = C4031CB159D7A1BD4D3726F3D2F0AD2A /* cartridge.c */; };
+		66BCB21D0FF5A90AEC3F07AF246996D3 /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = 612A5F114EE61890DFBD4BD21AED923F /* monitor.c */; };
+		698691F438EC61801909A3B883423193 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E9245C2818F1DC4B9EEDF3E3AB2CCE0 /* input.c */; };
+		6B1086D7A01748F12B971A6C86FCEF7D /* pbi_mio.c in Sources */ = {isa = PBXBuildFile; fileRef = 320726258C755DFF9C78DBEBA5712FE2 /* pbi_mio.c */; };
+		7578E27BCB704CEF8F3661E3BD809EE8 /* statesav.c in Sources */ = {isa = PBXBuildFile; fileRef = C3BDCA5D8D19F3C64F1F88FB878545CC /* statesav.c */; };
+		764566DD27522A9AFE5739F8002A21DC /* screen.c in Sources */ = {isa = PBXBuildFile; fileRef = AA434F9E4113A130DF5109E9DE78EDD8 /* screen.c */; };
+		77AB83DB5F86591007FB6D6E07CC2100 /* votraxsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B795DCEB9B2A005FBE7005EB2522C1EC /* votraxsnd.c */; };
+		77B0124AC7E3A9A063A9DDC8E88A062F /* votrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 18F45AD12F9FB81C07682A91A8F1C0F5 /* votrax.c */; };
+		7A38203253F1F4B3800DE49F6C183321 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3271D1A5A16144407A0618147909DFE5 /* Foundation.framework */; };
+		7AA409BA426E929071942F09F8191E37 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D545F02B4FA8A916A9BB7BFD33E155A /* Foundation.framework */; };
+		7D1B3E345F618936F709F3C761DE55A4 /* ProvenanceCores-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A9CC9EA0715D8E8B31DE28F8CCFBB2 /* ProvenanceCores-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7DE6F81325631A443642F13BDE68662D /* xep80.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F4364D15A09494557BBC2BAC8BE147 /* xep80.c */; };
+		80204766C9EDB254FDC78384C929EAD6 /* binload.c in Sources */ = {isa = PBXBuildFile; fileRef = D5817E8CDB87E0BECF1B99C88F89D0C3 /* binload.c */; };
+		81924C1C2228C85627C766733554FC8C /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = A4B431047A812AC8BD98F0910B6B0EB7 /* sio.c */; };
+		81EE1A040CFEC7797711C165A8DCDBAD /* pbi.c in Sources */ = {isa = PBXBuildFile; fileRef = 18010683818C458EFBDEEF9B8BAABD6A /* pbi.c */; };
+		83264B2BBF0AD4AE1D9AEC5AB47E7D7D /* gtia.c in Sources */ = {isa = PBXBuildFile; fileRef = AB459584C05E4C7EB1F987229DAB64FA /* gtia.c */; };
+		859AE19FE0F7D55845537613882E9838 /* votrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 18F45AD12F9FB81C07682A91A8F1C0F5 /* votrax.c */; };
+		8826CF4A5B77C9B0248452DF049BAC8A /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = E17275CB8FEE9D61202B233A962AD7D5 /* sound.c */; };
+		8A463C15206A1076FD12C8CE423EAADF /* atari.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CF7BF534AE72F88AE91BDC63C0FEF54 /* atari.c */; };
+		8CC82AC1F4B3C2D9A4A0ECCB4A7F6B58 /* pokey.c in Sources */ = {isa = PBXBuildFile; fileRef = 09BFFED703AC2D2E7E830339FFE2F0EF /* pokey.c */; };
+		8CF26101D83D3DDB875AEB13EC569E02 /* colours_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A33CCBF39F97FAD2DB66ABFD95129D /* colours_ntsc.c */; };
+		8DC2BF8299B789315EAC08FF1485B353 /* xep80.c in Sources */ = {isa = PBXBuildFile; fileRef = F6F4364D15A09494557BBC2BAC8BE147 /* xep80.c */; };
+		90607D8AA090D1C72843B86FF2D06BDB /* emuos.c in Sources */ = {isa = PBXBuildFile; fileRef = 31DC9CF3CADBDC76138D32267162E633 /* emuos.c */; };
+		93E1813C8BAC6AB644DD4116DF4017A4 /* sound_oss.c in Sources */ = {isa = PBXBuildFile; fileRef = 2790255F08A14BC9ACB0CD0E92130439 /* sound_oss.c */; };
+		94CC59C9189F3E50C17FBD1155D6C875 /* mzpokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 57582DCADFFAD28FC62F0FD58DA3F724 /* mzpokeysnd.c */; };
+		95CCADF30C880043C5510EFD7F021FEA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD8440A93B5B5F58D2873318B9F05673 /* UIKit.framework */; };
+		96D3A3B59B2E6BD2B4E756801221F274 /* atari_x11.c in Sources */ = {isa = PBXBuildFile; fileRef = 21CCF449A818D8EE5F23CF1279EC4EC6 /* atari_x11.c */; };
+		9A12A4D6829595521116B8027E9487E7 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B83B17C258D9A0B293B32FB1B8450F /* AudioToolbox.framework */; };
+		9B6828BBF2FF902C1B7786807199954C /* remez.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C77B68C490E10263DAB5B04EDAFAC24 /* remez.c */; };
+		9BB2A7FD0477DB581322F53CD7B1C015 /* filter_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = C831C9664D020424C77C873BEA62C2BF /* filter_ntsc.c */; };
+		9CC334D9DDCCE23E8B6B75DFF247C705 /* pia.c in Sources */ = {isa = PBXBuildFile; fileRef = 24D04C34F25A097F72155A9AFE7C3EAE /* pia.c */; };
+		9D5988617341BE6482F0820F81BB232E /* antic.c in Sources */ = {isa = PBXBuildFile; fileRef = C2256DB67E8BAE2149D40A6EF6D3C585 /* antic.c */; };
+		9EF4B7B887024AD80058BDA6DCD88860 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 641F520AA6554936FA56ADDA98D08F24 /* AudioToolbox.framework */; };
+		A28F08FBC02117E2244494676BE529CB /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 76553124A411E19ED8AF61806D9A38E8 /* log.c */; };
+		A45692039C05249B55A7E12848C35042 /* cfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 3591520E9BE98BC558E37B6990747D02 /* cfg.c */; };
+		A531E4A6F2A234DD02BC13F0E5189906 /* binload.c in Sources */ = {isa = PBXBuildFile; fileRef = D5817E8CDB87E0BECF1B99C88F89D0C3 /* binload.c */; };
+		A5639FD513FA07B026AC8E8914641F28 /* pokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = D4B70E50001A67F784F27B97F798686D /* pokeysnd.c */; };
+		A9C0C128BFAC1B9FE95A2AE0975403E1 /* atari.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CF7BF534AE72F88AE91BDC63C0FEF54 /* atari.c */; };
+		AE2E5B55CF18FB87E1465AB63C1B09B6 /* rdevice.c in Sources */ = {isa = PBXBuildFile; fileRef = C27222267F9FF913F1905AD3556AD3A3 /* rdevice.c */; };
+		AF90A3C3D0B21ECC6153590C68AE5916 /* afile.c in Sources */ = {isa = PBXBuildFile; fileRef = 61E70A16004C92847A54BAE31912F076 /* afile.c */; };
+		AFF08B537ABA13E39729AC8C4B413DC9 /* colours.c in Sources */ = {isa = PBXBuildFile; fileRef = C6207FD0838E0A51D65C5F93133E6F7E /* colours.c */; };
+		AFF22F267C826EB533E47020397606B6 /* pbi.c in Sources */ = {isa = PBXBuildFile; fileRef = 18010683818C458EFBDEEF9B8BAABD6A /* pbi.c */; };
+		B0F1FBC0C042FF782F929B1A65EE82AB /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = C63111EAB22D3B6F46D3D7FC3A9CDCF2 /* memory.c */; };
+		B23ADF07A71E17A0A3970C88B111F4FC /* atari_ps2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EEAF1D1C0274C559D77EE293030BB77 /* atari_ps2.c */; };
+		B268C8A44945C49FF8365C75EF4ACB89 /* filter_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = C831C9664D020424C77C873BEA62C2BF /* filter_ntsc.c */; };
+		B5F3AF5B0A679815C8777722A710894A /* compfile.c in Sources */ = {isa = PBXBuildFile; fileRef = E0D6FD85DF20863ACF089BCF32B2D2BD /* compfile.c */; };
+		B65B396F7140425007DC0BEDE435012F /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FEA03CA70490DFF8FFF03F275E5E69B /* rtime.c */; };
+		B7EC25D46B269328FDD97FE4A23A6E52 /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 59EBD5E0175B4628698073F947A6A8AA /* ui.c */; };
+		B8B92531E3602B67AB585D9227043C4C /* colours_external.c in Sources */ = {isa = PBXBuildFile; fileRef = BEFB59533DFDC2EBCE955E826E5DE836 /* colours_external.c */; };
+		BC36F5AC0CC07BECDB6B676D2C1F759E /* pbi_proto80.c in Sources */ = {isa = PBXBuildFile; fileRef = C5D223269E6549B4470826F447C89BA2 /* pbi_proto80.c */; };
+		BF876822F52660692C638FB7A1203A5A /* pbi_scsi.c in Sources */ = {isa = PBXBuildFile; fileRef = 227B892042ECD9407EAD308C2DE6A6E8 /* pbi_scsi.c */; };
+		C1103F8153FAAF784526817E4B7250F5 /* pbi_scsi.c in Sources */ = {isa = PBXBuildFile; fileRef = 227B892042ECD9407EAD308C2DE6A6E8 /* pbi_scsi.c */; };
+		C32137FF2407B8493C0821F904625DC7 /* atari_ps2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EEAF1D1C0274C559D77EE293030BB77 /* atari_ps2.c */; };
+		C512D3926C9D798578720B2B6530E0B5 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 258AA209F11D378BEFEBE993E156C9A5 /* crc32.c */; };
+		C5DFD8EEFC87F0236D5E0A65340DB60B /* statesav.c in Sources */ = {isa = PBXBuildFile; fileRef = C3BDCA5D8D19F3C64F1F88FB878545CC /* statesav.c */; };
+		C61F057D2AFCCFEB7A2FE9E9DA4DC860 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B430ABE9828311EEE59DB09E3678B6 /* CoreGraphics.framework */; };
+		C87FECC295758EBD36B7EBDD632615E4 /* cycle_map.c in Sources */ = {isa = PBXBuildFile; fileRef = A78F58F371AAD6BF30115464EB319970 /* cycle_map.c */; };
+		CA522AE73915CF41F8CCCB9745B7BAEA /* joycfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7BDB2A6CC082EF466354C7A8280371A8 /* joycfg.c */; };
+		CA9CAE378F16AE9BCB68A9ECB28510BB /* cfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 3591520E9BE98BC558E37B6990747D02 /* cfg.c */; };
+		CB629BB616DDB3A65D3D22390594C5BE /* ProvenanceCores-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7728999FE62A867E376E651B20F816D4 /* ProvenanceCores-iOS-dummy.m */; };
+		CBACC306D605F5C9E64CF87311AC3F05 /* cassette.c in Sources */ = {isa = PBXBuildFile; fileRef = 3916A6C3EC29EFF15C500AB99C30C9F1 /* cassette.c */; };
+		CD0D66EA971A204C1EBF041DF269324A /* atari_curses.c in Sources */ = {isa = PBXBuildFile; fileRef = 26142B668ACC4AE66DC31982F4B05700 /* atari_curses.c */; };
+		CDCCCE9A872CD695CDD74B30A6A417D9 /* img_tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 28790C03ED45B8E72F376589CC36852A /* img_tape.c */; };
+		D2DF481D885E3C49C74144172422EEEB /* colours_pal.c in Sources */ = {isa = PBXBuildFile; fileRef = 87425963D0C85D223C5046EA8BF03F80 /* colours_pal.c */; };
+		D694BEF6DD916BBE2FA57B8F74C0AB34 /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = 612A5F114EE61890DFBD4BD21AED923F /* monitor.c */; };
+		D69FAF6EB15A9E5BF277EE0259538BA0 /* atari_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C56D768D80CBD7376B067BE14CB0ECB /* atari_falcon.c */; };
+		D72DA22C01DF15D741D9413B6578508D /* devices.c in Sources */ = {isa = PBXBuildFile; fileRef = 01E88B1C40F92098ADAA90684195417D /* devices.c */; };
+		D7975B49919A39FF98F677025635EF8C /* cycle_map.c in Sources */ = {isa = PBXBuildFile; fileRef = A78F58F371AAD6BF30115464EB319970 /* cycle_map.c */; };
+		D8A88683810E9BEC8A68376E8B4C762D /* pokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = D4B70E50001A67F784F27B97F798686D /* pokeysnd.c */; };
+		DB433C1CF0F7EF1B73901C2FDB0D3A16 /* sysrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 72780B869F8E55ECE3903042CCC4EC29 /* sysrom.c */; };
+		DC3C9A0ABCE4D81C435659A6747BD111 /* mkimg.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F51B036862623DEA21B46DE4AD4316D /* mkimg.c */; };
+		E090AEB9805F0207F89397CCA60B427E /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E9245C2818F1DC4B9EEDF3E3AB2CCE0 /* input.c */; };
+		E262434FD129F653DA7212C1D672E32F /* sound_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = B0ED7427930CDA085AE0757791307167 /* sound_falcon.c */; };
+		E365A40B1AA7615B83F7EA651B517B1B /* atari_x11.c in Sources */ = {isa = PBXBuildFile; fileRef = 21CCF449A818D8EE5F23CF1279EC4EC6 /* atari_x11.c */; };
+		E4C04AF3838F65FBD54BBF73F0FA1DA5 /* artifact.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D80025A699BA7AFA7517FEC465BE96 /* artifact.c */; };
+		E730F04743E270252073BFCF89E3DD1B /* mkimg.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F51B036862623DEA21B46DE4AD4316D /* mkimg.c */; };
+		E8D80BDEBDA721A18D4B843790C04B2E /* gtia.c in Sources */ = {isa = PBXBuildFile; fileRef = AB459584C05E4C7EB1F987229DAB64FA /* gtia.c */; };
+		EAD4F905B0022345944ECDEC7973E58B /* pbi_xld.c in Sources */ = {isa = PBXBuildFile; fileRef = 338DD7D6563FEC3D3EA39E77EE197B9D /* pbi_xld.c */; };
+		EB7B0D9B995A82E3DD48CE1D67F28459 /* atari_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = B590B08539E684AF9FA958561B678029 /* atari_basic.c */; };
+		F15E4D6F023F6C70B9AA79A210CDC62F /* atari_falcon.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C56D768D80CBD7376B067BE14CB0ECB /* atari_falcon.c */; };
+		F17EF21F278A11B9DBB20B21C46DA940 /* rdevice.c in Sources */ = {isa = PBXBuildFile; fileRef = C27222267F9FF913F1905AD3556AD3A3 /* rdevice.c */; };
+		F3C8E3A80796A3B3245C81653A8EDD6A /* xep80_fonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 109A0B99F10DAAFE3C473AA9CF80C0B0 /* xep80_fonts.c */; };
+		F71B8720AFBCAAC0D479839B6894A5AB /* votraxsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B795DCEB9B2A005FBE7005EB2522C1EC /* votraxsnd.c */; };
+		F7D6CB09710C5B3F6F536DBC766A93DC /* antic.c in Sources */ = {isa = PBXBuildFile; fileRef = C2256DB67E8BAE2149D40A6EF6D3C585 /* antic.c */; };
+		FA24842FF0233516342FFC09156C3255 /* compfile.c in Sources */ = {isa = PBXBuildFile; fileRef = E0D6FD85DF20863ACF089BCF32B2D2BD /* compfile.c */; };
+		FABE4F6D6C28CC606098E96C6F078B2C /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C2C5C884E3633B0D5A32E5860158A9D /* cpu.c */; };
+		FC182958B47E80B7EDC07354E0C96AF4 /* pbi_xld.c in Sources */ = {isa = PBXBuildFile; fileRef = 338DD7D6563FEC3D3EA39E77EE197B9D /* pbi_xld.c */; };
+		FCEA4EE02C0F9BDF5C83BE43A30793E6 /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CC8CBCD40BED9A22BA13AE2D9410A83 /* ATR800GameCore.m */; };
+		FF00AAC1FABDDD74B4D49BED26FFB3DC /* artifact.c in Sources */ = {isa = PBXBuildFile; fileRef = 33D80025A699BA7AFA7517FEC465BE96 /* artifact.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		34CEF7FF09DABC0CD61F416C428CF66B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
-			remoteInfo = "PVLibrary-iOS";
-		};
-		798DA245EEC7D7E38302111D636297D2 /* PBXContainerItemProxy */ = {
+		571AE34A6BB02AD3BC286E2E13E1DD96 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B4A2A6C7085EE5F51FF1EDBDEAE20F7F /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
 			remoteInfo = "PVSupport-iOS";
 		};
-		84EBFEF6CE43476E1F8A5F1A4EBC55E9 /* PBXContainerItemProxy */ = {
+		608F61F34807C76017D379786964537A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
 			remoteInfo = "PVLibrary-tvOS";
 		};
-		F9B78D08DB167C196BD52A032B298078 /* PBXContainerItemProxy */ = {
+		80E58D6287A5FE0B4BA5DB1AD75A9439 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B4A2A6C7085EE5F51FF1EDBDEAE20F7F /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
 			remoteInfo = "PVSupport-tvOS";
+		};
+		B3F258EB54A75E0D4A3BC29CA262849C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
+			remoteInfo = "PVLibrary-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -211,17 +213,21 @@
 		26142B668ACC4AE66DC31982F4B05700 /* atari_curses.c */ = {isa = PBXFileReference; includeInIndex = 1; path = atari_curses.c; sourceTree = "<group>"; };
 		2790255F08A14BC9ACB0CD0E92130439 /* sound_oss.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sound_oss.c; sourceTree = "<group>"; };
 		28790C03ED45B8E72F376589CC36852A /* img_tape.c */ = {isa = PBXFileReference; includeInIndex = 1; path = img_tape.c; sourceTree = "<group>"; };
+		2B535B4C5AEF07EAD919F13DF68DE512 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CF7BF534AE72F88AE91BDC63C0FEF54 /* atari.c */ = {isa = PBXFileReference; includeInIndex = 1; path = atari.c; sourceTree = "<group>"; };
 		31DC9CF3CADBDC76138D32267162E633 /* emuos.c */ = {isa = PBXFileReference; includeInIndex = 1; path = emuos.c; sourceTree = "<group>"; };
 		320726258C755DFF9C78DBEBA5712FE2 /* pbi_mio.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi_mio.c; sourceTree = "<group>"; };
+		3271D1A5A16144407A0618147909DFE5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		32FA5A52C3AE98B39E274508C5B1060C /* ProvenanceCores.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = ProvenanceCores.framework; path = "ProvenanceCores-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		338DD7D6563FEC3D3EA39E77EE197B9D /* pbi_xld.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi_xld.c; sourceTree = "<group>"; };
 		33D80025A699BA7AFA7517FEC465BE96 /* artifact.c */ = {isa = PBXFileReference; includeInIndex = 1; path = artifact.c; sourceTree = "<group>"; };
 		35888A1BDCFDFB865767F6C3015AA34D /* ProvenanceCores-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "ProvenanceCores-tvOS-umbrella.h"; path = "../ProvenanceCores-tvOS/ProvenanceCores-tvOS-umbrella.h"; sourceTree = "<group>"; };
 		3591520E9BE98BC558E37B6990747D02 /* cfg.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cfg.c; sourceTree = "<group>"; };
 		3916A6C3EC29EFF15C500AB99C30C9F1 /* cassette.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cassette.c; sourceTree = "<group>"; };
+		3D545F02B4FA8A916A9BB7BFD33E155A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		4101BC6B1B5F84B3DF01ED09808B8941 /* pbi_bb.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi_bb.c; sourceTree = "<group>"; };
 		41A9CC9EA0715D8E8B31DE28F8CCFBB2 /* ProvenanceCores-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ProvenanceCores-iOS-umbrella.h"; sourceTree = "<group>"; };
+		54B430ABE9828311EEE59DB09E3678B6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		57582DCADFFAD28FC62F0FD58DA3F724 /* mzpokeysnd.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mzpokeysnd.c; sourceTree = "<group>"; };
 		59EBD5E0175B4628698073F947A6A8AA /* ui.c */ = {isa = PBXFileReference; includeInIndex = 1; path = ui.c; sourceTree = "<group>"; };
 		5C56D768D80CBD7376B067BE14CB0ECB /* atari_falcon.c */ = {isa = PBXFileReference; includeInIndex = 1; path = atari_falcon.c; sourceTree = "<group>"; };
@@ -231,30 +237,32 @@
 		6186069879B4B3B338E5032CA4A03B6A /* ProvenanceCores.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = ProvenanceCores.framework; path = "ProvenanceCores-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		61E70A16004C92847A54BAE31912F076 /* afile.c */ = {isa = PBXFileReference; includeInIndex = 1; path = afile.c; sourceTree = "<group>"; };
 		625AD29E88C069ACA7EEFA6E7DADEA1E /* ProvenanceCores-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "ProvenanceCores-tvOS-Info.plist"; path = "../ProvenanceCores-tvOS/ProvenanceCores-tvOS-Info.plist"; sourceTree = "<group>"; };
+		641F520AA6554936FA56ADDA98D08F24 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		64A33CCBF39F97FAD2DB66ABFD95129D /* colours_ntsc.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours_ntsc.c; sourceTree = "<group>"; };
+		6A57F5D63F0865F2557F960D894C183B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		6C2C5C884E3633B0D5A32E5860158A9D /* cpu.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cpu.c; sourceTree = "<group>"; };
-		6DDA6F716E652F79D217F16116CF320C /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		6FEA03CA70490DFF8FFF03F275E5E69B /* rtime.c */ = {isa = PBXFileReference; includeInIndex = 1; path = rtime.c; sourceTree = "<group>"; };
+		70B83B17C258D9A0B293B32FB1B8450F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		72780B869F8E55ECE3903042CCC4EC29 /* sysrom.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sysrom.c; sourceTree = "<group>"; };
 		760E2A6F53C5F67A943CC2087B51B93A /* ProvenanceCores-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "ProvenanceCores-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		76553124A411E19ED8AF61806D9A38E8 /* log.c */ = {isa = PBXFileReference; includeInIndex = 1; path = log.c; sourceTree = "<group>"; };
 		7728999FE62A867E376E651B20F816D4 /* ProvenanceCores-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ProvenanceCores-iOS-dummy.m"; sourceTree = "<group>"; };
 		7BDB2A6CC082EF466354C7A8280371A8 /* joycfg.c */ = {isa = PBXFileReference; includeInIndex = 1; path = joycfg.c; sourceTree = "<group>"; };
-		8160A53B2FA1C97050179AE1D7159425 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		87425963D0C85D223C5046EA8BF03F80 /* colours_pal.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours_pal.c; sourceTree = "<group>"; };
 		89BE6B02E2BF3C5E65965E7E0A639812 /* util.c */ = {isa = PBXFileReference; includeInIndex = 1; path = util.c; sourceTree = "<group>"; };
+		8C04B2248C1157DC83131DCB2BAE7386 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		8C77B68C490E10263DAB5B04EDAFAC24 /* remez.c */ = {isa = PBXFileReference; includeInIndex = 1; path = remez.c; sourceTree = "<group>"; };
 		9CC8CBCD40BED9A22BA13AE2D9410A83 /* ATR800GameCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ATR800GameCore.m; sourceTree = "<group>"; };
 		A4B431047A812AC8BD98F0910B6B0EB7 /* sio.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sio.c; sourceTree = "<group>"; };
 		A78F58F371AAD6BF30115464EB319970 /* cycle_map.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cycle_map.c; sourceTree = "<group>"; };
-		A9054F02C2BD26CD5CDF5EA0A6FA682E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		AA434F9E4113A130DF5109E9DE78EDD8 /* screen.c */ = {isa = PBXFileReference; includeInIndex = 1; path = screen.c; sourceTree = "<group>"; };
 		AB459584C05E4C7EB1F987229DAB64FA /* gtia.c */ = {isa = PBXFileReference; includeInIndex = 1; path = gtia.c; sourceTree = "<group>"; };
+		AD8440A93B5B5F58D2873318B9F05673 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B0ED7427930CDA085AE0757791307167 /* sound_falcon.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sound_falcon.c; sourceTree = "<group>"; };
+		B42229AE1B2A43514499CAF11C9CB2F3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B4A2A6C7085EE5F51FF1EDBDEAE20F7F /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
 		B590B08539E684AF9FA958561B678029 /* atari_basic.c */ = {isa = PBXFileReference; includeInIndex = 1; path = atari_basic.c; sourceTree = "<group>"; };
 		B795DCEB9B2A005FBE7005EB2522C1EC /* votraxsnd.c */ = {isa = PBXFileReference; includeInIndex = 1; path = votraxsnd.c; sourceTree = "<group>"; };
-		BC4871D82521EC47329A8D1EBD4A9B46 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		BD9A4A0C58221147F644C7C2A728D32C /* ProvenanceCores-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "ProvenanceCores-tvOS.release.xcconfig"; path = "../ProvenanceCores-tvOS/ProvenanceCores-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		BEFB59533DFDC2EBCE955E826E5DE836 /* colours_external.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours_external.c; sourceTree = "<group>"; };
 		C2256DB67E8BAE2149D40A6EF6D3C585 /* antic.c */ = {isa = PBXFileReference; includeInIndex = 1; path = antic.c; sourceTree = "<group>"; };
@@ -266,51 +274,48 @@
 		C6207FD0838E0A51D65C5F93133E6F7E /* colours.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours.c; sourceTree = "<group>"; };
 		C63111EAB22D3B6F46D3D7FC3A9CDCF2 /* memory.c */ = {isa = PBXFileReference; includeInIndex = 1; path = memory.c; sourceTree = "<group>"; };
 		C831C9664D020424C77C873BEA62C2BF /* filter_ntsc.c */ = {isa = PBXFileReference; includeInIndex = 1; path = filter_ntsc.c; sourceTree = "<group>"; };
+		C83E8B5B6084F4AD56B0C5A3D91ABB01 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B70E50001A67F784F27B97F798686D /* pokeysnd.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pokeysnd.c; sourceTree = "<group>"; };
-		D5345CAC8D546F10008C24633126EED6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		D5817E8CDB87E0BECF1B99C88F89D0C3 /* binload.c */ = {isa = PBXFileReference; includeInIndex = 1; path = binload.c; sourceTree = "<group>"; };
 		D7FAAAFB0D8E8245D04DFD79A9D4A545 /* voicebox.c */ = {isa = PBXFileReference; includeInIndex = 1; path = voicebox.c; sourceTree = "<group>"; };
 		D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVLibrary; path = PVLibrary.xcodeproj; sourceTree = "<group>"; };
 		DA0FC8D41B5B7261A4605AF8E164683A /* ProvenanceCores-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "ProvenanceCores-tvOS.modulemap"; path = "../ProvenanceCores-tvOS/ProvenanceCores-tvOS.modulemap"; sourceTree = "<group>"; };
 		DF31DA8988F1CA3D9D82F29AD8B63D86 /* ProvenanceCores-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "ProvenanceCores-tvOS-prefix.pch"; path = "../ProvenanceCores-tvOS/ProvenanceCores-tvOS-prefix.pch"; sourceTree = "<group>"; };
 		E0D6FD85DF20863ACF089BCF32B2D2BD /* compfile.c */ = {isa = PBXFileReference; includeInIndex = 1; path = compfile.c; sourceTree = "<group>"; };
-		E0F0DB86680845EFCBE993A89CF5F6FE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		E17275CB8FEE9D61202B233A962AD7D5 /* sound.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sound.c; sourceTree = "<group>"; };
-		E7CD6ADA57E48DA32F686C8961A38D1B /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3712E232ADE80C4F47F213C27121D99 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		EDAAD3A2406848E3AA12A4AF38DFFBED /* videomode.c */ = {isa = PBXFileReference; includeInIndex = 1; path = videomode.c; sourceTree = "<group>"; };
-		EE03FD3053F2313B31BE072A2F07503A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		EE7DBA9FE935C9D06DFC8F815F31EBB5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		F45885AE7ACDC0E2FD31DFA870BF0A6F /* ProvenanceCores-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "ProvenanceCores-tvOS-dummy.m"; path = "../ProvenanceCores-tvOS/ProvenanceCores-tvOS-dummy.m"; sourceTree = "<group>"; };
 		F6F4364D15A09494557BBC2BAC8BE147 /* xep80.c */ = {isa = PBXFileReference; includeInIndex = 1; path = xep80.c; sourceTree = "<group>"; };
-		F842CB1AF7D56D59A54E46FB1ACF499F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		FAEEBB7761048D1BFEE4220B98F25525 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		FB46D3343C6C86A672875275EEC6D5EA /* ProvenanceCores-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ProvenanceCores-iOS-prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		34E79F186332891ECB2EB88913C06B49 /* Frameworks */ = {
+		395835789B0BDA3EFD4AD8D5EC2DEC70 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64370A7DCB88147788C3BEF58596F652 /* AudioToolbox.framework in Frameworks */,
-				F1CBF333EB1FAFDD13FCAA66D74A1D7E /* CoreGraphics.framework in Frameworks */,
-				F48F0F8803A6537B7F62A3A7223D5AB7 /* Foundation.framework in Frameworks */,
-				ECAE56E5AD09A2895D124DF5A77A8D0B /* OpenGLES.framework in Frameworks */,
-				ACC101833467F6125E26A3F3835F35C7 /* PVSupport.framework in Frameworks */,
-				2021C5C5E3E1A62BD486E68F2B4FC053 /* UIKit.framework in Frameworks */,
+				9A12A4D6829595521116B8027E9487E7 /* AudioToolbox.framework in Frameworks */,
+				C61F057D2AFCCFEB7A2FE9E9DA4DC860 /* CoreGraphics.framework in Frameworks */,
+				7A38203253F1F4B3800DE49F6C183321 /* Foundation.framework in Frameworks */,
+				4355C9A84A3F5FCF28C6E0C94AEE7F65 /* OpenGLES.framework in Frameworks */,
+				4D1830CE88C41579DE4DCE2CBB9E6838 /* PVLibrary.framework in Frameworks */,
+				06E46E32E1F18360192EB516C5752ED3 /* PVSupport.framework in Frameworks */,
+				413D9F4DC8F22177456FE292083F5482 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DCC98882342C3D5BAF246C8A78578076 /* Frameworks */ = {
+		3C330C0708BFA054F3DAF14163FBD894 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E601B41D5BFF8344388662726FED0A5E /* AudioToolbox.framework in Frameworks */,
-				7A4D326BA193AAB17C8C284AF7D4D46A /* CoreGraphics.framework in Frameworks */,
-				628F0909FD00DA2737164FC2DAECC151 /* Foundation.framework in Frameworks */,
-				26C304FC4DE15FD50EBDFB4052B99C19 /* OpenGLES.framework in Frameworks */,
-				B031031BF003DB76EAB31CD1BA723828 /* PVSupport.framework in Frameworks */,
-				044FF661D1DA57F4564A17EBAE5580B0 /* UIKit.framework in Frameworks */,
+				9EF4B7B887024AD80058BDA6DCD88860 /* AudioToolbox.framework in Frameworks */,
+				120425E3303801FADB2D10278FC60A30 /* CoreGraphics.framework in Frameworks */,
+				7AA409BA426E929071942F09F8191E37 /* Foundation.framework in Frameworks */,
+				241AD1D059082AEF694B581B32208CA7 /* OpenGLES.framework in Frameworks */,
+				1FA2CB7E98EBD9D90E75F5B0D9C9B572 /* PVLibrary.framework in Frameworks */,
+				377D0EE1608C062C2232F01DEA3ACFCC /* PVSupport.framework in Frameworks */,
+				95CCADF30C880043C5510EFD7F021FEA /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +340,18 @@
 			name = Atari800;
 			sourceTree = "<group>";
 		};
+		2E3AD2973F099C13AEA9026B9FE0558E /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70B83B17C258D9A0B293B32FB1B8450F /* AudioToolbox.framework */,
+				54B430ABE9828311EEE59DB09E3678B6 /* CoreGraphics.framework */,
+				3271D1A5A16144407A0618147909DFE5 /* Foundation.framework */,
+				8C04B2248C1157DC83131DCB2BAE7386 /* OpenGLES.framework */,
+				6A57F5D63F0865F2557F960D894C183B /* UIKit.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
 		34E14A753A94B9B1E2C24BD7988947BD /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -342,6 +359,29 @@
 			);
 			name = Source;
 			path = Source;
+			sourceTree = "<group>";
+		};
+		40A7EB30A8DC204CCECA90AEBF0BC9D7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B535B4C5AEF07EAD919F13DF68DE512 /* PVLibrary.framework */,
+				C83E8B5B6084F4AD56B0C5A3D91ABB01 /* PVSupport.framework */,
+				4151AA293644C9EC57DF75C329AFFF12 /* iOS */,
+				2E3AD2973F099C13AEA9026B9FE0558E /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4151AA293644C9EC57DF75C329AFFF12 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				641F520AA6554936FA56ADDA98D08F24 /* AudioToolbox.framework */,
+				E3712E232ADE80C4F47F213C27121D99 /* CoreGraphics.framework */,
+				3D545F02B4FA8A916A9BB7BFD33E155A /* Foundation.framework */,
+				B42229AE1B2A43514499CAF11C9CB2F3 /* OpenGLES.framework */,
+				AD8440A93B5B5F58D2873318B9F05673 /* UIKit.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		7254A7E6D0DE77DF1B32CBE7BA541293 /* atari800-src */ = {
@@ -417,18 +457,6 @@
 			path = "Cores/Atari800/atari800-src";
 			sourceTree = "<group>";
 		};
-		75BD47BABA77DC7BDC307921EA4FE618 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				6DDA6F716E652F79D217F16116CF320C /* AudioToolbox.framework */,
-				E0F0DB86680845EFCBE993A89CF5F6FE /* CoreGraphics.framework */,
-				EE7DBA9FE935C9D06DFC8F815F31EBB5 /* Foundation.framework */,
-				A9054F02C2BD26CD5CDF5EA0A6FA682E /* OpenGLES.framework */,
-				F842CB1AF7D56D59A54E46FB1ACF499F /* UIKit.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
 		8B705C6CA8094F1B6ABC978216DA455E /* Atari800Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -473,7 +501,7 @@
 			isa = PBXGroup;
 			children = (
 				CB8271D8B24E1D05E3F1D1CDB08C6C9C /* Dependencies */,
-				FC9FF235743ED07F30AA9B840A1A0401 /* Frameworks */,
+				40A7EB30A8DC204CCECA90AEBF0BC9D7 /* Frameworks */,
 				0763F172F0B9762F436D1A9FF0B7E442 /* Products */,
 				EE780032C9AC293343EB78F22F5F0E22 /* ProvenanceCores */,
 			);
@@ -498,44 +526,22 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		FB4C0EB1014AEAAD9884619D022D1C7E /* tvOS */ = {
-			isa = PBXGroup;
-			children = (
-				FAEEBB7761048D1BFEE4220B98F25525 /* AudioToolbox.framework */,
-				8160A53B2FA1C97050179AE1D7159425 /* CoreGraphics.framework */,
-				EE03FD3053F2313B31BE072A2F07503A /* Foundation.framework */,
-				BC4871D82521EC47329A8D1EBD4A9B46 /* OpenGLES.framework */,
-				D5345CAC8D546F10008C24633126EED6 /* UIKit.framework */,
-			);
-			name = tvOS;
-			sourceTree = "<group>";
-		};
-		FC9FF235743ED07F30AA9B840A1A0401 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				E7CD6ADA57E48DA32F686C8961A38D1B /* PVSupport.framework */,
-				75BD47BABA77DC7BDC307921EA4FE618 /* iOS */,
-				FB4C0EB1014AEAAD9884619D022D1C7E /* tvOS */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		46E809B0A45BE7147F285986EB89D1AD /* Headers */ = {
+		31EDDDC24BEA91DD6536E46ED1537816 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0DAF55E992E1C2C5E69E449DC9A9CE33 /* ProvenanceCores-iOS-umbrella.h in Headers */,
+				1FA5AA66A9A3A81EC412B612F0E5395A /* ProvenanceCores-tvOS-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5538384524B434E2BCB541DAD8ECAA20 /* Headers */ = {
+		F8B34744DDBC386359BA9EF83E5F2334 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75286B158B677E07F86F09C4E9E59623 /* ProvenanceCores-tvOS-umbrella.h in Headers */,
+				7D1B3E345F618936F709F3C761DE55A4 /* ProvenanceCores-iOS-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,18 +550,18 @@
 /* Begin PBXNativeTarget section */
 		44CFEDD92613C5D7703BC4E639958900 /* ProvenanceCores-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 76E03AAE95FACA4AF6B7E9EF084764DC /* Build configuration list for PBXNativeTarget "ProvenanceCores-iOS" */;
+			buildConfigurationList = E035E610E0E1CBDB133CD238B28EDBA3 /* Build configuration list for PBXNativeTarget "ProvenanceCores-iOS" */;
 			buildPhases = (
-				46E809B0A45BE7147F285986EB89D1AD /* Headers */,
-				A2984CDB05C493AEF1EBE389018CFA8B /* Sources */,
-				34E79F186332891ECB2EB88913C06B49 /* Frameworks */,
-				1DBF6622DDE212DE36D0483F782D195A /* Resources */,
+				F8B34744DDBC386359BA9EF83E5F2334 /* Headers */,
+				3A55739A7D3541D26AA7F815A7823316 /* Sources */,
+				3C330C0708BFA054F3DAF14163FBD894 /* Frameworks */,
+				E23317FF08E6A04E699648F71D9BAECB /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				AF2BAD61FD82987B2F2A2ABD5B51A80D /* PBXTargetDependency */,
-				70B8E1A94EA1BDED6E081E033B1FFBAB /* PBXTargetDependency */,
+				271907936692A5CEE54FD79C09C540C2 /* PBXTargetDependency */,
+				8BFA82D56466536444DFF4D5BA059969 /* PBXTargetDependency */,
 			);
 			name = "ProvenanceCores-iOS";
 			productName = "ProvenanceCores-iOS";
@@ -564,18 +570,18 @@
 		};
 		C114276A017628F062097417BB811A1D /* ProvenanceCores-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BF3048D12B6E42DCCEB00F8499164E36 /* Build configuration list for PBXNativeTarget "ProvenanceCores-tvOS" */;
+			buildConfigurationList = 5FB9AC84C0A97916B9953A5F8A50967A /* Build configuration list for PBXNativeTarget "ProvenanceCores-tvOS" */;
 			buildPhases = (
-				5538384524B434E2BCB541DAD8ECAA20 /* Headers */,
-				48035025EF308C0177E9F9757E33BB90 /* Sources */,
-				DCC98882342C3D5BAF246C8A78578076 /* Frameworks */,
-				87099E7B98A3065B2BDF671F0156AF93 /* Resources */,
+				31EDDDC24BEA91DD6536E46ED1537816 /* Headers */,
+				8A5AAA5955E44CCEE8A5CABD40F6374C /* Sources */,
+				395835789B0BDA3EFD4AD8D5EC2DEC70 /* Frameworks */,
+				D79E1BD5316F549D06B42A7300F83749 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				DFBCD7F45694EEC0B0325C1D408BD7F9 /* PBXTargetDependency */,
-				C6AA3311A695F846C6BD2811C3579D4A /* PBXTargetDependency */,
+				7BC03CAC717786823B33C7CA5AEC0002 /* PBXTargetDependency */,
+				09A89A7F9B88C55F799E1B54D377D1A5 /* PBXTargetDependency */,
 			);
 			name = "ProvenanceCores-tvOS";
 			productName = "ProvenanceCores-tvOS";
@@ -619,14 +625,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1DBF6622DDE212DE36D0483F782D195A /* Resources */ = {
+		D79E1BD5316F549D06B42A7300F83749 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		87099E7B98A3065B2BDF671F0156AF93 /* Resources */ = {
+		E23317FF08E6A04E699648F71D9BAECB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -636,176 +642,176 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		48035025EF308C0177E9F9757E33BB90 /* Sources */ = {
+		3A55739A7D3541D26AA7F815A7823316 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3522171631B0406882581540AF17A4F /* af80.c in Sources */,
-				FF5C0ED15CFA2E698C3ECBB68C5F6159 /* afile.c in Sources */,
-				4C65AB92F765631644942DF3E7069945 /* antic.c in Sources */,
-				ADDA0740D0F5B827C578C917635EAC71 /* artifact.c in Sources */,
-				CE3565791580475E7B4CB34A815845AE /* atari.c in Sources */,
-				60E8AABED98B601092908381EF0EC6A8 /* atari_basic.c in Sources */,
-				43880543C6985C0D4F0D3D7990439BA0 /* atari_curses.c in Sources */,
-				80B71C3E6CC424CA52B8CE031473EB58 /* atari_falcon.c in Sources */,
-				C66A88C7F7F3D865E03732792D220BAF /* atari_ps2.c in Sources */,
-				DFFA44029A7E95B2B33632D28A17F4ED /* atari_x11.c in Sources */,
-				5C80789EEC53E1CE336DB0334B6B3CF0 /* ATR800GameCore.m in Sources */,
-				AB123E1015EEF495178F801878B8D009 /* binload.c in Sources */,
-				5DDDEC979B45C0FC3D4454B24973893C /* cartridge.c in Sources */,
-				40583789B0A636960742CA647915006A /* cassette.c in Sources */,
-				56EB71FED32E569191A086A782FE2324 /* cfg.c in Sources */,
-				66D3D4CED3B811A6C78030D60A5082E0 /* colours.c in Sources */,
-				AB60B07CDAB5C1434525482E45A8E6CF /* colours_external.c in Sources */,
-				1A75D089CA7BF5895AF5C761D4E1AC53 /* colours_ntsc.c in Sources */,
-				09FBB8CB1292EF8C0E2CFB60096FE94E /* colours_pal.c in Sources */,
-				B4BCF9AED3FA8D6430F19A8521DC526E /* compfile.c in Sources */,
-				C889ED6A172C08AB9733B5C5EE59D2D6 /* cpu.c in Sources */,
-				4E13004B5D4526DE36565261544E8ACC /* crc32.c in Sources */,
-				21AC37A11E9BE1F8F6146FEB2552593B /* cycle_map.c in Sources */,
-				105BAC5F6604397BA3BCFBFFE6C22B41 /* devices.c in Sources */,
-				394636DD24539A991A2BB32302A52077 /* emuos.c in Sources */,
-				3186ECC9F80554C691017693E2072FD9 /* esc.c in Sources */,
-				F0506662845243B1B65BCB879212A943 /* filter_ntsc.c in Sources */,
-				0951F2596CD4BFE28B729B6D11B218CD /* gtia.c in Sources */,
-				832F2D992C57B0FB95FEDFEC03F96883 /* ide.c in Sources */,
-				F292B2585B8869ACF6E1C5BD1ED3EE3E /* img_tape.c in Sources */,
-				DEE40672AAEEC7FD64BF7B7DD9A40080 /* input.c in Sources */,
-				E80A02DB9BE64E9F97AD6AD788AF8EEA /* joycfg.c in Sources */,
-				9FC957ECF8EDA9B0A7DACF0A802CD66A /* log.c in Sources */,
-				B56A7988E3E062FCEB6119F636FBBA10 /* memory.c in Sources */,
-				61B78937DE019B462282C46A85932EB4 /* mkimg.c in Sources */,
-				591C47CAE2A5485BCA118B89CD4666B9 /* monitor.c in Sources */,
-				880B5F043D3228B31E2B777D2C376198 /* mzpokeysnd.c in Sources */,
-				14FCAF495F3D5DC95C30D0757DC77999 /* pbi.c in Sources */,
-				05FE33B5DB904DFCB6566BF38A3BD2E0 /* pbi_bb.c in Sources */,
-				124D7814779B3778634D814DA995D39A /* pbi_mio.c in Sources */,
-				57355D1D9BBFBF09DF3EF088D932A7C1 /* pbi_proto80.c in Sources */,
-				AF16380C666BC31D08C1A5E27F331756 /* pbi_scsi.c in Sources */,
-				C930F04123C8F31CFBBDA7896FB0D00D /* pbi_xld.c in Sources */,
-				D3F8A84E7CB99A2678A39C1B75348DDD /* pia.c in Sources */,
-				627D1FF89A46B38DC4A07D7AF4E21032 /* pokey.c in Sources */,
-				73DA65B5A35950E54D26CFB21D684A68 /* pokeysnd.c in Sources */,
-				7D38192DFE8ED93587B6C3A3EF85E0AD /* ProvenanceCores-tvOS-dummy.m in Sources */,
-				A3602C35BB96158667861750CBF21709 /* rdevice.c in Sources */,
-				8A58ADCA896B22C3E6E28B6F45679AA9 /* remez.c in Sources */,
-				B0B3FDD78290A19E5F330F5A4936F39D /* rtime.c in Sources */,
-				0C8B1FFE7DC316F16AE460969DD76A5E /* screen.c in Sources */,
-				A9DC8EEC91246A69AFB8C08C382467BB /* sio.c in Sources */,
-				2AF753F7A5A5C02B890E3F52186C531B /* sndsave.c in Sources */,
-				094C492D4C915A27B20E91DAD6289359 /* sound.c in Sources */,
-				27DA3E77EA219C2422F433CE937ECFEB /* sound_falcon.c in Sources */,
-				C08AA96A286A1D77812AE27D62ADC771 /* sound_oss.c in Sources */,
-				C5D4173EB33F37CDA65B587A3C7ECA99 /* statesav.c in Sources */,
-				4AEC7B02EE75FBF407F004EDDE9CDED3 /* sysrom.c in Sources */,
-				62BB89B055A31ED44ED1511BD1E12AE4 /* ui.c in Sources */,
-				A6EC0661B4A3A5935A11BE988F829D73 /* ui_basic.c in Sources */,
-				DB839659FEE999476D7BBF285C7C2BBA /* util.c in Sources */,
-				B6B6689AA79FC2478102B873243DEC78 /* videomode.c in Sources */,
-				03288B9E9AAFD1D057CF841FE26154EF /* voicebox.c in Sources */,
-				71E344E85B9E39517BAFAEC93020E14D /* votrax.c in Sources */,
-				AE408440B73AFBA082C389CA5AE26D3F /* votraxsnd.c in Sources */,
-				22C3E934AE5AFA77D2201E11D1C3CD4F /* xep80.c in Sources */,
-				2E4434B9B5450CB48E972B741297B8D3 /* xep80_fonts.c in Sources */,
+				664402D590799562B19C233E4F802CDD /* af80.c in Sources */,
+				AF90A3C3D0B21ECC6153590C68AE5916 /* afile.c in Sources */,
+				9D5988617341BE6482F0820F81BB232E /* antic.c in Sources */,
+				E4C04AF3838F65FBD54BBF73F0FA1DA5 /* artifact.c in Sources */,
+				A9C0C128BFAC1B9FE95A2AE0975403E1 /* atari.c in Sources */,
+				5CF6B1677B6A0BFAD3C9C3C8D21FB9E1 /* atari_basic.c in Sources */,
+				CD0D66EA971A204C1EBF041DF269324A /* atari_curses.c in Sources */,
+				D69FAF6EB15A9E5BF277EE0259538BA0 /* atari_falcon.c in Sources */,
+				B23ADF07A71E17A0A3970C88B111F4FC /* atari_ps2.c in Sources */,
+				E365A40B1AA7615B83F7EA651B517B1B /* atari_x11.c in Sources */,
+				16D2A10B4DD5E18FC16EFE33E6DDE56B /* ATR800GameCore.m in Sources */,
+				A531E4A6F2A234DD02BC13F0E5189906 /* binload.c in Sources */,
+				3D2BBA813910A81DDE7AEFF3B1A81A2F /* cartridge.c in Sources */,
+				CBACC306D605F5C9E64CF87311AC3F05 /* cassette.c in Sources */,
+				CA9CAE378F16AE9BCB68A9ECB28510BB /* cfg.c in Sources */,
+				AFF08B537ABA13E39729AC8C4B413DC9 /* colours.c in Sources */,
+				B8B92531E3602B67AB585D9227043C4C /* colours_external.c in Sources */,
+				8CF26101D83D3DDB875AEB13EC569E02 /* colours_ntsc.c in Sources */,
+				54A77509E52DE9A124C5DB86A466E1B4 /* colours_pal.c in Sources */,
+				B5F3AF5B0A679815C8777722A710894A /* compfile.c in Sources */,
+				FABE4F6D6C28CC606098E96C6F078B2C /* cpu.c in Sources */,
+				5F1A6FDF655BEC643DAD241F67DB7A21 /* crc32.c in Sources */,
+				D7975B49919A39FF98F677025635EF8C /* cycle_map.c in Sources */,
+				D72DA22C01DF15D741D9413B6578508D /* devices.c in Sources */,
+				62204D14EDE3E0F2A3DFC472DA0A12FF /* emuos.c in Sources */,
+				4F6B66816C623AD9300A5DB0E89B887B /* esc.c in Sources */,
+				B268C8A44945C49FF8365C75EF4ACB89 /* filter_ntsc.c in Sources */,
+				E8D80BDEBDA721A18D4B843790C04B2E /* gtia.c in Sources */,
+				199B67C2DDC5A3C30DD11E53E2ECD74E /* ide.c in Sources */,
+				CDCCCE9A872CD695CDD74B30A6A417D9 /* img_tape.c in Sources */,
+				698691F438EC61801909A3B883423193 /* input.c in Sources */,
+				21E75DF525543FF726FB9D7FC58DC20D /* joycfg.c in Sources */,
+				A28F08FBC02117E2244494676BE529CB /* log.c in Sources */,
+				B0F1FBC0C042FF782F929B1A65EE82AB /* memory.c in Sources */,
+				E730F04743E270252073BFCF89E3DD1B /* mkimg.c in Sources */,
+				D694BEF6DD916BBE2FA57B8F74C0AB34 /* monitor.c in Sources */,
+				94CC59C9189F3E50C17FBD1155D6C875 /* mzpokeysnd.c in Sources */,
+				AFF22F267C826EB533E47020397606B6 /* pbi.c in Sources */,
+				28B762C904B21BA897C6498C98CFA9C0 /* pbi_bb.c in Sources */,
+				6B1086D7A01748F12B971A6C86FCEF7D /* pbi_mio.c in Sources */,
+				45A58A2B877101F6C1E92EBCA2551B17 /* pbi_proto80.c in Sources */,
+				BF876822F52660692C638FB7A1203A5A /* pbi_scsi.c in Sources */,
+				FC182958B47E80B7EDC07354E0C96AF4 /* pbi_xld.c in Sources */,
+				9CC334D9DDCCE23E8B6B75DFF247C705 /* pia.c in Sources */,
+				41AD29246F9150CCD5E1E90F5BBF1858 /* pokey.c in Sources */,
+				A5639FD513FA07B026AC8E8914641F28 /* pokeysnd.c in Sources */,
+				CB629BB616DDB3A65D3D22390594C5BE /* ProvenanceCores-iOS-dummy.m in Sources */,
+				AE2E5B55CF18FB87E1465AB63C1B09B6 /* rdevice.c in Sources */,
+				9B6828BBF2FF902C1B7786807199954C /* remez.c in Sources */,
+				B65B396F7140425007DC0BEDE435012F /* rtime.c in Sources */,
+				764566DD27522A9AFE5739F8002A21DC /* screen.c in Sources */,
+				5EBFA8035E531B7589F270A74F061BE8 /* sio.c in Sources */,
+				0081163C6C66E7B8FB343C1FC4BDE66F /* sndsave.c in Sources */,
+				45B072A87973A946EB83E125CE6BB029 /* sound.c in Sources */,
+				E262434FD129F653DA7212C1D672E32F /* sound_falcon.c in Sources */,
+				5AF6107E8E01DD6FE23AE2B837C4C93F /* sound_oss.c in Sources */,
+				C5DFD8EEFC87F0236D5E0A65340DB60B /* statesav.c in Sources */,
+				29356E636E604479F8BF2EDBF0CDAD47 /* sysrom.c in Sources */,
+				31AB04B088C9D6FE1777A637320B1710 /* ui.c in Sources */,
+				34C8F3ABC820FCF6C53BF4715DFFC790 /* ui_basic.c in Sources */,
+				6273012A1D399130A9DB20432E212CE1 /* util.c in Sources */,
+				2A046CFA9138246E3F0B8D08B07C062E /* videomode.c in Sources */,
+				4EA9376738A18A3CE8FFC0D7ACEFC27C /* voicebox.c in Sources */,
+				859AE19FE0F7D55845537613882E9838 /* votrax.c in Sources */,
+				77AB83DB5F86591007FB6D6E07CC2100 /* votraxsnd.c in Sources */,
+				7DE6F81325631A443642F13BDE68662D /* xep80.c in Sources */,
+				F3C8E3A80796A3B3245C81653A8EDD6A /* xep80_fonts.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A2984CDB05C493AEF1EBE389018CFA8B /* Sources */ = {
+		8A5AAA5955E44CCEE8A5CABD40F6374C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4A7048555FCDC3DA0B6DC462B550FD5 /* af80.c in Sources */,
-				76253F79FA301063FE5DDCBD6B657A38 /* afile.c in Sources */,
-				64B8D763A1A32AE68A1525D58F5F2E14 /* antic.c in Sources */,
-				39585065A704C8A6E0BB0604625CB0AE /* artifact.c in Sources */,
-				264B7ECE832CCE3A4153068AEAC120A6 /* atari.c in Sources */,
-				7AFA68B7B85113C10BB2039B55A5B9BA /* atari_basic.c in Sources */,
-				D4855373431D817AF7C7E86F7F97231D /* atari_curses.c in Sources */,
-				D0C8E4F2904EE87DCF33D50E5C3EA5C2 /* atari_falcon.c in Sources */,
-				FF7E07A5F1603A348AA06C6C12396743 /* atari_ps2.c in Sources */,
-				903451D5117AF6D5BAF6F33CC635788D /* atari_x11.c in Sources */,
-				9544E512393354E93E1BDAC873B826EC /* ATR800GameCore.m in Sources */,
-				6D6B0DFBF8FD5D1C2619BD41A5859F14 /* binload.c in Sources */,
-				09831C68902B261CC1FBD8427C2A85A7 /* cartridge.c in Sources */,
-				A47E059B8CD62DA409526D1B0755A1EE /* cassette.c in Sources */,
-				AF6C62EF8EEC3B6E68102ADA00EB0808 /* cfg.c in Sources */,
-				DBAE1F4DBD33911B057829673B31100B /* colours.c in Sources */,
-				C951FA457D8720B3B25F73E49EBCCFFD /* colours_external.c in Sources */,
-				2664571FE55B224972E53BA51B494EB6 /* colours_ntsc.c in Sources */,
-				05CE088D8B1851F0AC2CFCC2298C467C /* colours_pal.c in Sources */,
-				D020A9DC4B3FE89E30AFB6E3F101C628 /* compfile.c in Sources */,
-				AE4F4624579D5BA19D3E850E995DC66D /* cpu.c in Sources */,
-				31AB86DF9D381745BE0A5029403E1662 /* crc32.c in Sources */,
-				311AEA3CCE0C14B565B1EF55AE304C6D /* cycle_map.c in Sources */,
-				EA7376C1BAAC406FB933985EF1BF94E1 /* devices.c in Sources */,
-				0A49309539AD62A79EDA3EAB170E72EC /* emuos.c in Sources */,
-				5322F611C4D2A299493EC966DB6CA91D /* esc.c in Sources */,
-				472B43983F48BE748EB31EDCB2FD0957 /* filter_ntsc.c in Sources */,
-				980F5543EBF582AEAA476443B7D501E7 /* gtia.c in Sources */,
-				6E3DA05F9C9AB72AF76A16CEC1D6E06A /* ide.c in Sources */,
-				78171E8D0ACC6EFE4FEFE195AEC4F509 /* img_tape.c in Sources */,
-				140800CB02B65DD80EEA5079039B034C /* input.c in Sources */,
-				CBBF80BCC31C1087ADFD5E296C2CF0FF /* joycfg.c in Sources */,
-				EF4764F326849648F9C08AD30DA81979 /* log.c in Sources */,
-				96AF00B54885F98F0A8BAC295AD022B0 /* memory.c in Sources */,
-				8BC52DAE9A91FEB14CF006EA6BE10B7B /* mkimg.c in Sources */,
-				83E955B79B8EC05A5A92EF1071EF6FC2 /* monitor.c in Sources */,
-				18BDBD6C26942ECBB100B229B293516F /* mzpokeysnd.c in Sources */,
-				5589BC37BF4368953D33C43BCA191C3E /* pbi.c in Sources */,
-				D1A6DA53E0AF7C344EE2D8B43753E41F /* pbi_bb.c in Sources */,
-				98218B6E3628B9A533D7938C547BEDC6 /* pbi_mio.c in Sources */,
-				130C8394415CB9601D87DF592B7D8155 /* pbi_proto80.c in Sources */,
-				2134AB8F4FEA600DA75E9D85F8355194 /* pbi_scsi.c in Sources */,
-				ACD0B47AB1813093798FE9C677256546 /* pbi_xld.c in Sources */,
-				90D09D42C6AABA288FCE9A6DEAFAD3B3 /* pia.c in Sources */,
-				01B64F9F9C26133B04A5333C2A0B6142 /* pokey.c in Sources */,
-				C9F23D7139EAED37CC85B264F999950A /* pokeysnd.c in Sources */,
-				4EC55DFA0003BCA0CEA8F25EEBE3958B /* ProvenanceCores-iOS-dummy.m in Sources */,
-				CA33357B63AFFE02C3721D7F4A5EEA5C /* rdevice.c in Sources */,
-				B0385D0E9126A9F827597018EE72F679 /* remez.c in Sources */,
-				17CB613C356C2649F49F34BFBC22A077 /* rtime.c in Sources */,
-				9401AF263D7AE43FA25F4966A2E055A5 /* screen.c in Sources */,
-				8D339B1E5437BB5460814C844CE5D8E8 /* sio.c in Sources */,
-				93FAF7D805F24F0F86ADCFFFB95AF043 /* sndsave.c in Sources */,
-				8CAA25491B79CEBF7E0F340CDB4C819F /* sound.c in Sources */,
-				2E192F3257B6DB8D79746D6953608AFF /* sound_falcon.c in Sources */,
-				F4C9CC22639EED3A9A187C67E1E2EBE6 /* sound_oss.c in Sources */,
-				D1B216F918410D73A9ACF6B67C550D1F /* statesav.c in Sources */,
-				C35B00206C0CF2CEFFCFD73926596A6B /* sysrom.c in Sources */,
-				D15BD5DBF7DAEA3AEAEACF7AF99A0EF2 /* ui.c in Sources */,
-				FCA40C8AF60A260E9FFD464666A956D6 /* ui_basic.c in Sources */,
-				BE33C8F163B1D66199AD0A6529BE6033 /* util.c in Sources */,
-				57681EA0DC517B6805ED889A2EBC6C5F /* videomode.c in Sources */,
-				AAEFF95FC9B07E38CE0070321BECD35A /* voicebox.c in Sources */,
-				5F757F449185D08E62622BCBAD671081 /* votrax.c in Sources */,
-				75DC28E38C271E57D243A0717E04BD75 /* votraxsnd.c in Sources */,
-				072E361E3CD7444EBDC4D9FDE02C5398 /* xep80.c in Sources */,
-				A17449AB38790BD3DE89CC40177066F8 /* xep80_fonts.c in Sources */,
+				0C912A1AD27C81587E7FAC5C07559FB1 /* af80.c in Sources */,
+				3DB3250968403E64A2BB3D385A0067F0 /* afile.c in Sources */,
+				F7D6CB09710C5B3F6F536DBC766A93DC /* antic.c in Sources */,
+				FF00AAC1FABDDD74B4D49BED26FFB3DC /* artifact.c in Sources */,
+				8A463C15206A1076FD12C8CE423EAADF /* atari.c in Sources */,
+				EB7B0D9B995A82E3DD48CE1D67F28459 /* atari_basic.c in Sources */,
+				1A9F4A94EC09E5D4CCE10C35635D1FF9 /* atari_curses.c in Sources */,
+				F15E4D6F023F6C70B9AA79A210CDC62F /* atari_falcon.c in Sources */,
+				C32137FF2407B8493C0821F904625DC7 /* atari_ps2.c in Sources */,
+				96D3A3B59B2E6BD2B4E756801221F274 /* atari_x11.c in Sources */,
+				FCEA4EE02C0F9BDF5C83BE43A30793E6 /* ATR800GameCore.m in Sources */,
+				80204766C9EDB254FDC78384C929EAD6 /* binload.c in Sources */,
+				66B41B08010B9364D150CA30D8C7C9F7 /* cartridge.c in Sources */,
+				50C8607601E5DEDE545C5571214CBD9F /* cassette.c in Sources */,
+				A45692039C05249B55A7E12848C35042 /* cfg.c in Sources */,
+				635F3F226C3CE8037EE35B4836965645 /* colours.c in Sources */,
+				541B0A87D4827CC05B0AF06BB5394515 /* colours_external.c in Sources */,
+				0D1CDCF24F03C9786B1BC7B2E83649DF /* colours_ntsc.c in Sources */,
+				D2DF481D885E3C49C74144172422EEEB /* colours_pal.c in Sources */,
+				FA24842FF0233516342FFC09156C3255 /* compfile.c in Sources */,
+				26D0AF68F4A41C637E66868A0FD36B77 /* cpu.c in Sources */,
+				C512D3926C9D798578720B2B6530E0B5 /* crc32.c in Sources */,
+				C87FECC295758EBD36B7EBDD632615E4 /* cycle_map.c in Sources */,
+				2EB50F3F78C4DD6822AAE1A84ECC1C9D /* devices.c in Sources */,
+				90607D8AA090D1C72843B86FF2D06BDB /* emuos.c in Sources */,
+				42725F80435263541C6842F48456D741 /* esc.c in Sources */,
+				9BB2A7FD0477DB581322F53CD7B1C015 /* filter_ntsc.c in Sources */,
+				83264B2BBF0AD4AE1D9AEC5AB47E7D7D /* gtia.c in Sources */,
+				596D6434627E92D5E326775EFACE8176 /* ide.c in Sources */,
+				243183576FAA77A31D6A5C48DD7A8F28 /* img_tape.c in Sources */,
+				E090AEB9805F0207F89397CCA60B427E /* input.c in Sources */,
+				CA522AE73915CF41F8CCCB9745B7BAEA /* joycfg.c in Sources */,
+				242788A5984DE62A47EE00E539BF05C7 /* log.c in Sources */,
+				61C5F9145E3C5EFD76F7DCABD1321330 /* memory.c in Sources */,
+				DC3C9A0ABCE4D81C435659A6747BD111 /* mkimg.c in Sources */,
+				66BCB21D0FF5A90AEC3F07AF246996D3 /* monitor.c in Sources */,
+				0CE36CC29BC0EC1138FDF9D9C0AB9D1C /* mzpokeysnd.c in Sources */,
+				81EE1A040CFEC7797711C165A8DCDBAD /* pbi.c in Sources */,
+				369036083EAD343A8E6450A18A0F5693 /* pbi_bb.c in Sources */,
+				3F9E1CD541542914ABDBED1BE4C65AF6 /* pbi_mio.c in Sources */,
+				BC36F5AC0CC07BECDB6B676D2C1F759E /* pbi_proto80.c in Sources */,
+				C1103F8153FAAF784526817E4B7250F5 /* pbi_scsi.c in Sources */,
+				EAD4F905B0022345944ECDEC7973E58B /* pbi_xld.c in Sources */,
+				0449D8CCABE58C9DA5B7599EE56BD39A /* pia.c in Sources */,
+				8CC82AC1F4B3C2D9A4A0ECCB4A7F6B58 /* pokey.c in Sources */,
+				D8A88683810E9BEC8A68376E8B4C762D /* pokeysnd.c in Sources */,
+				27011A686C013F2150B7CE7939C205B3 /* ProvenanceCores-tvOS-dummy.m in Sources */,
+				F17EF21F278A11B9DBB20B21C46DA940 /* rdevice.c in Sources */,
+				2E10313D951328F742C8199B8A477198 /* remez.c in Sources */,
+				31121A16FFC5BD91AEF84ACDDCD5CDC8 /* rtime.c in Sources */,
+				34E9A1716A5FF572DAE92A6F8B1BEC02 /* screen.c in Sources */,
+				81924C1C2228C85627C766733554FC8C /* sio.c in Sources */,
+				2061B7628A1A272840D325A7600C7378 /* sndsave.c in Sources */,
+				8826CF4A5B77C9B0248452DF049BAC8A /* sound.c in Sources */,
+				216CE04BEDEB03EB793C95C58C07E677 /* sound_falcon.c in Sources */,
+				93E1813C8BAC6AB644DD4116DF4017A4 /* sound_oss.c in Sources */,
+				7578E27BCB704CEF8F3661E3BD809EE8 /* statesav.c in Sources */,
+				DB433C1CF0F7EF1B73901C2FDB0D3A16 /* sysrom.c in Sources */,
+				B7EC25D46B269328FDD97FE4A23A6E52 /* ui.c in Sources */,
+				0C8A9A8A5CEF5B2780D862B28FA2102C /* ui_basic.c in Sources */,
+				3749E8F2B2FB29A4C744A6CCECA4626D /* util.c in Sources */,
+				119F35450C4A21C38B573821DB3F2C02 /* videomode.c in Sources */,
+				27C4ABB7DE9BA0BEDF35BAB7C630BF88 /* voicebox.c in Sources */,
+				77B0124AC7E3A9A063A9DDC8E88A062F /* votrax.c in Sources */,
+				F71B8720AFBCAAC0D479839B6894A5AB /* votraxsnd.c in Sources */,
+				8DC2BF8299B789315EAC08FF1485B353 /* xep80.c in Sources */,
+				4CF02DE268407BE9F5587EFC1E50D584 /* xep80_fonts.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		70B8E1A94EA1BDED6E081E033B1FFBAB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "PVSupport-iOS";
-			targetProxy = 798DA245EEC7D7E38302111D636297D2 /* PBXContainerItemProxy */;
-		};
-		AF2BAD61FD82987B2F2A2ABD5B51A80D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "PVLibrary-iOS";
-			targetProxy = 34CEF7FF09DABC0CD61F416C428CF66B /* PBXContainerItemProxy */;
-		};
-		C6AA3311A695F846C6BD2811C3579D4A /* PBXTargetDependency */ = {
+		09A89A7F9B88C55F799E1B54D377D1A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVSupport-tvOS";
-			targetProxy = F9B78D08DB167C196BD52A032B298078 /* PBXContainerItemProxy */;
+			targetProxy = 80E58D6287A5FE0B4BA5DB1AD75A9439 /* PBXContainerItemProxy */;
 		};
-		DFBCD7F45694EEC0B0325C1D408BD7F9 /* PBXTargetDependency */ = {
+		271907936692A5CEE54FD79C09C540C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-iOS";
+			targetProxy = B3F258EB54A75E0D4A3BC29CA262849C /* PBXContainerItemProxy */;
+		};
+		7BC03CAC717786823B33C7CA5AEC0002 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVLibrary-tvOS";
-			targetProxy = 84EBFEF6CE43476E1F8A5F1A4EBC55E9 /* PBXContainerItemProxy */;
+			targetProxy = 608F61F34807C76017D379786964537A /* PBXContainerItemProxy */;
+		};
+		8BFA82D56466536444DFF4D5BA059969 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-iOS";
+			targetProxy = 571AE34A6BB02AD3BC286E2E13E1DD96 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -875,9 +881,9 @@
 			};
 			name = Debug;
 		};
-		4677195419B99CB090320D38FB411F25 /* Debug */ = {
+		2E8D184DD8AB4E0436487191DD104301 /* Archive */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1DB08007F46FC54A9E0EB031CD211BB1 /* ProvenanceCores-tvOS.debug.xcconfig */;
+			baseConfigurationReference = BD9A4A0C58221147F644C7C2A728D32C /* ProvenanceCores-tvOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -905,10 +911,11 @@
 				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Archive;
 		};
 		5863BA47BD34B620DEF890E39EC36F05 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -971,7 +978,44 @@
 			};
 			name = Release;
 		};
-		5901233EE35592A5DF85CC92845BD835 /* Debug */ = {
+		68347DF01FE6D2DA3001888B89F1B61D /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AADB4175D52FFCE78D7C56DEF0B1AAF /* ProvenanceCores-iOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ProvenanceCores-iOS/ProvenanceCores-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ProvenanceCores-iOS/ProvenanceCores-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ProvenanceCores-iOS/ProvenanceCores-iOS.modulemap";
+				PRODUCT_MODULE_NAME = ProvenanceCores;
+				PRODUCT_NAME = ProvenanceCores;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		7FA85A61BB874D48E73A914A61C27F7D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 760E2A6F53C5F67A943CC2087B51B93A /* ProvenanceCores-iOS.debug.xcconfig */;
 			buildSettings = {
@@ -1007,7 +1051,42 @@
 			};
 			name = Debug;
 		};
-		711057381681C00D0119141CD985C0C1 /* Archive */ = {
+		A464F8BB98D8B92DFA476636E21E4E86 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1DB08007F46FC54A9E0EB031CD211BB1 /* ProvenanceCores-tvOS.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/ProvenanceCores-tvOS/ProvenanceCores-tvOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ProvenanceCores-tvOS/ProvenanceCores-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/ProvenanceCores-tvOS/ProvenanceCores-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = ProvenanceCores;
+				PRODUCT_NAME = ProvenanceCores;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CB274B03B62BEB77E336046C8955378E /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1AADB4175D52FFCE78D7C56DEF0B1AAF /* ProvenanceCores-iOS.release.xcconfig */;
 			buildSettings = {
@@ -1038,49 +1117,13 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		A199A4657FCF026580EC646EDFBE5F33 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD9A4A0C58221147F644C7C2A728D32C /* ProvenanceCores-tvOS.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/ProvenanceCores-tvOS/ProvenanceCores-tvOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/ProvenanceCores-tvOS/ProvenanceCores-tvOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/ProvenanceCores-tvOS/ProvenanceCores-tvOS.modulemap";
-				PRODUCT_MODULE_NAME = ProvenanceCores;
-				PRODUCT_NAME = ProvenanceCores;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
-		D93D5C232145A410C21A1E6B19DC68E7 /* Archive */ = {
+		DAE96B4B8B32C08B169CFA6BAA37136C /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BD9A4A0C58221147F644C7C2A728D32C /* ProvenanceCores-tvOS.release.xcconfig */;
 			buildSettings = {
@@ -1110,43 +1153,6 @@
 				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		D9D7CC4A9D0356E3EB6058FD45E22E5E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AADB4175D52FFCE78D7C56DEF0B1AAF /* ProvenanceCores-iOS.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/ProvenanceCores-iOS/ProvenanceCores-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/ProvenanceCores-iOS/ProvenanceCores-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/ProvenanceCores-iOS/ProvenanceCores-iOS.modulemap";
-				PRODUCT_MODULE_NAME = ProvenanceCores;
-				PRODUCT_NAME = ProvenanceCores;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1217,22 +1223,12 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		76E03AAE95FACA4AF6B7E9EF084764DC /* Build configuration list for PBXNativeTarget "ProvenanceCores-iOS" */ = {
+		5FB9AC84C0A97916B9953A5F8A50967A /* Build configuration list for PBXNativeTarget "ProvenanceCores-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				711057381681C00D0119141CD985C0C1 /* Archive */,
-				5901233EE35592A5DF85CC92845BD835 /* Debug */,
-				D9D7CC4A9D0356E3EB6058FD45E22E5E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BF3048D12B6E42DCCEB00F8499164E36 /* Build configuration list for PBXNativeTarget "ProvenanceCores-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D93D5C232145A410C21A1E6B19DC68E7 /* Archive */,
-				4677195419B99CB090320D38FB411F25 /* Debug */,
-				A199A4657FCF026580EC646EDFBE5F33 /* Release */,
+				2E8D184DD8AB4E0436487191DD104301 /* Archive */,
+				A464F8BB98D8B92DFA476636E21E4E86 /* Debug */,
+				DAE96B4B8B32C08B169CFA6BAA37136C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1243,6 +1239,16 @@
 				DE6C5D5169DC97784D9A11B307FD2DEA /* Archive */,
 				16E0C59AF6EFC9AAAF16452B9E4BC72B /* Debug */,
 				5863BA47BD34B620DEF890E39EC36F05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E035E610E0E1CBDB133CD238B28EDBA3 /* Build configuration list for PBXNativeTarget "ProvenanceCores-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68347DF01FE6D2DA3001888B89F1B61D /* Archive */,
+				7FA85A61BB874D48E73A914A61C27F7D /* Debug */,
+				CB274B03B62BEB77E336046C8955378E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

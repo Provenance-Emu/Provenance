@@ -39,8 +39,34 @@
 
     ]
   },
+  "public_header_files": [
+    "PVSupport/Sources/DebugUtils/DebugUtils.h",
+    "PVSupport/Sources/PVSupport/NSFileManager+OEHashingAdditions.h",
+    "PVSupport/Sources/PVSupport/NSObject+PVAbbstractAdditions.h",
+    "PVSupport/Sources/PVSupport/PVGameControllerUtilities.h",
+    "PVSupport/Sources/Audio/OEGameAudio.h",
+    "PVSupport/Sources/Audio/OEGeometry.h",
+    "PVSupport/Sources/Audio/OERingBuffer.h",
+    "PVSupport/Sources/Audio/TPCircularBuffer.h",
+    "PVSupport/Sources/EmulatorCore/PVEmulatorCore.h",
+    "PVSupport/Sources/Controller/*.h",
+    "PVSupport/Sources/Logging/PV*.h"
+  ],
+  "private_header_files": [
+    "PVSupport/Sources/Audio/CARingBuffer/*.h",
+    "PVSupport/Sources/Threads/RealTimeThreads.h",
+    "PVSupport/Sources/Logging/XCDLumberjackNSLogger.h"
+  ],
   "source_files": [
-    "PVSupport/Sources/**/*.{swift,m}"
+    "PVSupport/Sources/**/*.{swift,h,m,mm}"
+  ],
+  "testspecs": [
+    {
+      "name": "PVSupportTests",
+      "test_type": "unit",
+      "requires_app_host": false,
+      "source_files": "PVLibrary/Tests/**/*.swift"
+    }
   ],
   "swift_version": "5.1"
 }

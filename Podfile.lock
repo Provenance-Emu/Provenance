@@ -20,7 +20,16 @@ PODS:
     - RxSwift
     - SQLite.swift
     - ZipArchive
+  - PVLibrary/PVLibraryTests (1.5.0):
+    - RealmSwift
+    - RxSwift
+    - SQLite.swift
+    - ZipArchive
   - PVSupport (1.5.0):
+    - CocoaLumberjack/Swift
+    - NSLogger
+    - PVLibrary
+  - PVSupport/PVSupportTests (1.5.0):
     - CocoaLumberjack/Swift
     - NSLogger
     - PVLibrary
@@ -48,13 +57,15 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift
   - ProvenanceCores/Atari800 (from `./`)
   - PVLibrary (from `./`)
+  - PVLibrary/PVLibraryTests (from `./`)
   - PVSupport (from `./`)
+  - PVSupport/PVSupportTests (from `./`)
   - RxRealm
   - RxSwift
   - XLActionController (from `https://github.com/Puasonych/XLActionController.git`, branch `update-for-xcode-11`)
 
 SPEC REPOS:
-  https://cdn.cocoapods.org/:
+  trunk:
     - AppCenter
     - CocoaLumberjack
     - NSLogger
@@ -86,8 +97,8 @@ SPEC CHECKSUMS:
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
   ProvenanceCores: 37501e0d124226c7b23ad0a5edcc023a2961a416
-  PVLibrary: 665f300186226493f444e7f24c1d0d8bfdefbdd9
-  PVSupport: 0bc2652e09d230271ff14d5b0df9a62a45bb069d
+  PVLibrary: 1b1f0f0629f0713d7d03b6950b64f345affecf44
+  PVSupport: 22c5a68d6c4d1d65a567e03f9d8b9b44552f479b
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
   RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
   RxRealm: 50e5fe5c1f22518205afbb313fbc5580d73bc586
@@ -96,6 +107,6 @@ SPEC CHECKSUMS:
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
   ZipArchive: e25a4373192673e3229ac8d6e9f64a3e5713c966
 
-PODFILE CHECKSUM: f0724c5c40417adf1e20c2dc141fef795697a360
+PODFILE CHECKSUM: b840c8536850ef283632a4c860be0bebf5972714
 
 COCOAPODS: 1.9.3

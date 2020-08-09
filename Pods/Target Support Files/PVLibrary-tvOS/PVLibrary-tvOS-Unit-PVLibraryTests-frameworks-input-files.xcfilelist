@@ -1,0 +1,7 @@
+${PODS_ROOT}/Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-frameworks.sh
+${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework
+${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework
+${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework
+${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework
+${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework

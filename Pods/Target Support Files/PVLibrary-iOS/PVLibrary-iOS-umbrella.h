@@ -10,6 +10,12 @@
 #endif
 #endif
 
+#import "OESQLiteDatabase.h"
+#import "NSData+Hashing.h"
+#import "NSFileManager+Hashing.h"
+#import "NSString+Hashing.h"
+#import "UIImage+Scaling.h"
+#import "PVLibrary.h"
 
 FOUNDATION_EXPORT double PVLibraryVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVLibraryVersionString[];

@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
     'James Addyman' => 'james@provenance-emu.com',
     'Joseph Mattiello' => 'joe@provenance-emu.com'
   }
-  s.source           = {
+  s.source = {
     :git => 'https://github.com/Provenance/Provenance.git',
     :tag => s.version.to_s
   }
@@ -43,9 +43,35 @@ Pod::Spec.new do |s|
   s.dependency 'PVLibrary'
 
   @sources_root = 'PVSupport/Sources'
-  @sources_common = "#{@sources_root}/**/*.{swift,m}"
+  @sources_common = "#{@sources_root}/**/*.{swift,h,m,mm}"
 
-  s.source_files       = [
-    @sources_common,
+  s.public_header_files = %w[
+    DebugUtils/DebugUtils.h
+    PVSupport/NSFileManager+OEHashingAdditions.h
+    PVSupport/NSObject+PVAbbstractAdditions.h
+    PVSupport/PVGameControllerUtilities.h
+    Audio/OEGameAudio.h
+    Audio/OEGeometry.h
+    Audio/OERingBuffer.h
+    Audio/TPCircularBuffer.h
+    EmulatorCore/PVEmulatorCore.h
+    Controller/*.h
+    Logging/PV*.h
+  ].map { |file| "#{@sources_root}/#{file}" }
+
+  s.private_header_files = %w[
+    Audio/CARingBuffer/*.h
+    Threads/RealTimeThreads.h
+    Logging/XCDLumberjackNSLogger.h
+  ].map { |file| "#{@sources_root}/#{file}" }
+
+  s.source_files = [
+    @sources_common
   ]
+
+  s.test_spec 'PVSupportTests' do |test_spec|
+    test_spec.requires_app_host = false
+    # test_spec.test_type = :ui
+    test_spec.source_files = 'PVLibrary/Tests/**/*.swift'
+  end
 end

@@ -1,0 +1,7 @@
+${PODS_ROOT}/Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-frameworks.sh
+${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework
+${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework
+${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework
+${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework
+${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework

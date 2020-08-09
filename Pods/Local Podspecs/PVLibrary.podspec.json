@@ -42,9 +42,17 @@
 
     ]
   },
+  "public_header_files": "PVLibrary/Sources/**/*.{h}",
   "source_files": [
-    "PVLibrary/PVLibrary/**/*.{swift,m}",
-    "PVLibrary/LzmaSDKObjC/**/*.{c,cpp,m,mm}"
+    "PVLibrary/Sources/**/*.{swift,h,m,mm}"
+  ],
+  "testspecs": [
+    {
+      "name": "PVLibraryTests",
+      "test_type": "unit",
+      "requires_app_host": false,
+      "source_files": "PVLibrary/Tests/**/*.swift"
+    }
   ],
   "swift_version": "5.1"
 }

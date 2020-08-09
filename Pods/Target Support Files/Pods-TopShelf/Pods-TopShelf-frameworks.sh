@@ -214,6 +214,7 @@ fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
@@ -224,6 +225,7 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
@@ -234,6 +236,7 @@ fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"

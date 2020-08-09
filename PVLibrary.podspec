@@ -43,12 +43,21 @@ Pod::Spec.new do |s|
   s.dependency 'SQLite.swift'
   s.dependency 'RxSwift'
 
-  @sources_root = 'PVLibrary'
-  @sources_lzmasdkobjc = "#{@sources_root}/LzmaSDKObjC/**/*.{c,cpp,m,mm}"
-  @sources_common = "#{@sources_root}/PVLibrary/**/*.{swift,m}"
+  @sources_root = 'PVLibrary/Sources'
+  @tests_root = 'PVLibrary/Tests'
 
-  s.source_files       = [
-    @sources_common,
-    @sources_lzmasdkobjc
+  s.public_header_files = "#{@sources_root}/**/*.{h}"
+  # s.private_header_files = "#{@sources_root}/**/*.{h}"
+
+  @sources_common = "#{@sources_root}/**/*.{swift,h,m,mm}"
+
+  s.source_files = [
+    @sources_common
   ]
+
+  s.test_spec 'PVLibraryTests' do |test_spec|
+    test_spec.requires_app_host = false
+    # test_spec.test_type = :ui
+    test_spec.source_files = 'PVLibrary/Tests/**/*.swift'
+  end
 end
