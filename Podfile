@@ -73,6 +73,11 @@ def deps_app
   pod 'RxSwift'
   pod 'RxRealm'
 
+  # https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/ios#31-integration-via-cocoapods
+  pod 'AppCenter/Analytics'
+  pod 'AppCenter/Crashes'
+  pod 'AppCenter/Distribute'
+
   cores
 end
 
@@ -107,6 +112,5 @@ target 'TopShelf' do
   pvsupport
   pvlibrary
 
-  pod ' '
   pod 'CocoaLumberjack/Swift'
 end
