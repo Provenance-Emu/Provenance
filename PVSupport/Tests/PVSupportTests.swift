@@ -6,6 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
+@testable import PVSupport
 import XCTest
 
 class PVSupportTests: XCTestCase {

@@ -160,33 +160,33 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		571AE34A6BB02AD3BC286E2E13E1DD96 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B4A2A6C7085EE5F51FF1EDBDEAE20F7F /* PVSupport.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
-			remoteInfo = "PVSupport-iOS";
-		};
-		608F61F34807C76017D379786964537A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
-			remoteInfo = "PVLibrary-tvOS";
-		};
-		80E58D6287A5FE0B4BA5DB1AD75A9439 /* PBXContainerItemProxy */ = {
+		87E7FE507C6CC6B24077EFF529B1B747 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B4A2A6C7085EE5F51FF1EDBDEAE20F7F /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
 			remoteInfo = "PVSupport-tvOS";
 		};
-		B3F258EB54A75E0D4A3BC29CA262849C /* PBXContainerItemProxy */ = {
+		99C8A117D448420D57D16E246D83A0A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4A2A6C7085EE5F51FF1EDBDEAE20F7F /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
+			remoteInfo = "PVSupport-iOS";
+		};
+		A34B895284EC09400C76252E40027281 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
 			remoteInfo = "PVLibrary-iOS";
+		};
+		B2DD7B6E667F1E6ECF0D77C684699B13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8A2C9D66520C18340F8A9BA6D537734 /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
+			remoteInfo = "PVLibrary-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -560,8 +560,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				271907936692A5CEE54FD79C09C540C2 /* PBXTargetDependency */,
-				8BFA82D56466536444DFF4D5BA059969 /* PBXTargetDependency */,
+				22D1E17E8377470A44DB3148A3F1488C /* PBXTargetDependency */,
+				B3082D8119A7378E96E9A36DCFA6E794 /* PBXTargetDependency */,
 			);
 			name = "ProvenanceCores-iOS";
 			productName = "ProvenanceCores-iOS";
@@ -580,8 +580,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				7BC03CAC717786823B33C7CA5AEC0002 /* PBXTargetDependency */,
-				09A89A7F9B88C55F799E1B54D377D1A5 /* PBXTargetDependency */,
+				40E542CDF7894B075A6C41CCCF66008C /* PBXTargetDependency */,
+				E476750DD32D2CC23BA41220A4ED2C81 /* PBXTargetDependency */,
 			);
 			name = "ProvenanceCores-tvOS";
 			productName = "ProvenanceCores-tvOS";
@@ -793,25 +793,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		09A89A7F9B88C55F799E1B54D377D1A5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "PVSupport-tvOS";
-			targetProxy = 80E58D6287A5FE0B4BA5DB1AD75A9439 /* PBXContainerItemProxy */;
-		};
-		271907936692A5CEE54FD79C09C540C2 /* PBXTargetDependency */ = {
+		22D1E17E8377470A44DB3148A3F1488C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVLibrary-iOS";
-			targetProxy = B3F258EB54A75E0D4A3BC29CA262849C /* PBXContainerItemProxy */;
+			targetProxy = A34B895284EC09400C76252E40027281 /* PBXContainerItemProxy */;
 		};
-		7BC03CAC717786823B33C7CA5AEC0002 /* PBXTargetDependency */ = {
+		40E542CDF7894B075A6C41CCCF66008C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVLibrary-tvOS";
-			targetProxy = 608F61F34807C76017D379786964537A /* PBXContainerItemProxy */;
+			targetProxy = B2DD7B6E667F1E6ECF0D77C684699B13 /* PBXContainerItemProxy */;
 		};
-		8BFA82D56466536444DFF4D5BA059969 /* PBXTargetDependency */ = {
+		B3082D8119A7378E96E9A36DCFA6E794 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVSupport-iOS";
-			targetProxy = 571AE34A6BB02AD3BC286E2E13E1DD96 /* PBXContainerItemProxy */;
+			targetProxy = 99C8A117D448420D57D16E246D83A0A5 /* PBXContainerItemProxy */;
+		};
+		E476750DD32D2CC23BA41220A4ED2C81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-tvOS";
+			targetProxy = 87E7FE507C6CC6B24077EFF529B1B747 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

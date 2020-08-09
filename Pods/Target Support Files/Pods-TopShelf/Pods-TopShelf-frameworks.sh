@@ -213,6 +213,7 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
@@ -224,6 +225,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
@@ -235,6 +237,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"

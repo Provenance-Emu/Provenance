@@ -213,27 +213,39 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-tvOS/ZipArchive.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

@@ -1,9 +1,9 @@
 APPLICATION_EXTENSION_API_ONLY = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/PVLibrary-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/Realm-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RealmSwift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RxSwift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/ZipArchive-iOS"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/LzmaSDK-ObjC-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/NSLogger-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/PVLibrary-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/PVSupport-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/Realm-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RealmSwift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RxSwift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/ZipArchive-iOS"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
 LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Realm/core"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"sqlite3" -l"z" -framework "Foundation" -framework "PVLibrary" -framework "Realm" -framework "RealmSwift" -framework "RxSwift" -framework "SQLite" -framework "Security" -framework "ZipArchive"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"sqlite3" -l"z" -framework "CFNetwork" -framework "CocoaLumberjack" -framework "Foundation" -framework "LzmaSDK_ObjC" -framework "NSLogger" -framework "PVLibrary" -framework "PVSupport" -framework "Realm" -framework "RealmSwift" -framework "RxSwift" -framework "SQLite" -framework "Security" -framework "SystemConfiguration" -framework "UIKit" -framework "ZipArchive"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

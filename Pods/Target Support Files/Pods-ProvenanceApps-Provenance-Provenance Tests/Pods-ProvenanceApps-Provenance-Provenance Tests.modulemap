@@ -1,6 +1,0 @@
-framework module Pods_ProvenanceApps_Provenance_Provenance_Tests {
-  umbrella header "Pods-ProvenanceApps-Provenance-Provenance Tests-umbrella.h"
-
-  export *
-  module * { export * }
-}

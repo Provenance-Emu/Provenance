@@ -1,0 +1,6 @@
+framework module LzmaSDK_ObjC {
+  umbrella header "LzmaSDK-ObjC-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

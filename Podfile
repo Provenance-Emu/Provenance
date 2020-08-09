@@ -29,6 +29,10 @@ install!  'cocoapods',
           preserve_pod_file_structure: true
 
 def pvlibrary
+  pod 'LzmaSDK-ObjC',
+      git: 'https://github.com/Provenance-Emu/LzmaSDKObjC.git',
+      branch: 'master'
+
   options = {
     path: './',
     inhibit_warnings: false,
@@ -102,6 +106,7 @@ abstract_target 'ProvenanceApps' do
         branch: 'update-for-xcode-11'
 
     target 'Provenance Tests' do
+      inherit! :search_paths
       # RxTest and RxBlocking make the most sense in the context of unit/integration tests
       # pod 'RxBlocking', '~> 5'
       # pod 'RxTest', '~> 5'

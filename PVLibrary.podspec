@@ -13,14 +13,14 @@ Pod::Spec.new do |s|
   DESC
 
   s.homepage = 'https://github.com/Provenance/Provenance'
-  s.license = { :type => 'Provenance License', :file => 'LICENSE.md' }
+  s.license = { type: 'Provenance License', file: 'LICENSE.md' }
   s.author  = {
     'James Addyman' => 'james@provenance-emu.com',
     'Joseph Mattiello' => 'joe@provenance-emu.com'
   }
-  s.source           = {
-    :git => 'https://github.com/Provenance/Provenance.git',
-    :tag => s.version.to_s
+  s.source = {
+    git: 'https://github.com/Provenance/Provenance.git',
+    tag: s.version.to_s
   }
 
   s.cocoapods_version = '>= 1.8.0'
@@ -30,6 +30,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '10.0'
   s.tvos.deployment_target = '10.0'
+  s.osx.deployment_target = '10.15'
 
   s.frameworks = 'CoreGraphic'
   s.frameworks = 'CoreServices'
@@ -38,10 +39,12 @@ Pod::Spec.new do |s|
   s.module_name = 'PVLibrary'
   s.header_dir = 'PVLibrary'
 
-  s.dependency 'ZipArchive'
+  s.dependency 'LzmaSDK-ObjC'
+  s.dependency 'PVSupport'
   s.dependency 'RealmSwift'
-  s.dependency 'SQLite.swift'
   s.dependency 'RxSwift'
+  s.dependency 'SQLite.swift'
+  s.dependency 'ZipArchive'
 
   @sources_root = 'PVLibrary/Sources'
   @tests_root = 'PVLibrary/Tests'
@@ -49,7 +52,7 @@ Pod::Spec.new do |s|
   s.public_header_files = "#{@sources_root}/**/*.{h}"
   # s.private_header_files = "#{@sources_root}/**/*.{h}"
 
-  @sources_common = "#{@sources_root}/**/*.{swift,h,m,mm}"
+  @sources_common = "#{@sources_root}/**/*.{swift,h,m,mm,c}"
 
   s.source_files = [
     @sources_common

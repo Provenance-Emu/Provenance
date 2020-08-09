@@ -213,27 +213,39 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ZipArchive-iOS/ZipArchive.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

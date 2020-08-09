@@ -13,14 +13,14 @@ Pod::Spec.new do |s|
   DESC
 
   s.homepage = 'https://github.com/Provenance/Provenance'
-  s.license = { :type => 'Provenance License', :file => 'LICENSE.md' }
+  s.license = { type: 'Provenance License', file: 'LICENSE.md' }
   s.author  = {
     'James Addyman' => 'james@provenance-emu.com',
     'Joseph Mattiello' => 'joe@provenance-emu.com'
   }
   s.source = {
-    :git => 'https://github.com/Provenance/Provenance.git',
-    :tag => s.version.to_s
+    git: 'https://github.com/Provenance/Provenance.git',
+    tag: s.version.to_s
   }
 
   s.cocoapods_version = '>= 1.8.0'
@@ -30,6 +30,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '10.0'
   s.tvos.deployment_target = '10.0'
+  s.osx.deployment_target = '10.15'
 
   s.frameworks = 'GameController'
   s.frameworks = 'Foundation'
@@ -37,32 +38,26 @@ Pod::Spec.new do |s|
   s.module_name = 'PVSupport'
   s.header_dir = 'PVSupport'
 
-  # s.dependency 'CocoaLumberjack'
   s.dependency 'CocoaLumberjack/Swift'
   s.dependency 'NSLogger'
-  s.dependency 'PVLibrary'
 
   @sources_root = 'PVSupport/Sources'
-  @sources_common = "#{@sources_root}/**/*.{swift,h,m,mm}"
+  @sources_common = "#{@sources_root}/**/*.{swift,h,m,mm,c}"
 
   s.public_header_files = %w[
-    DebugUtils/DebugUtils.h
-    PVSupport/NSFileManager+OEHashingAdditions.h
-    PVSupport/NSObject+PVAbbstractAdditions.h
-    PVSupport/PVGameControllerUtilities.h
-    Audio/OEGameAudio.h
-    Audio/OEGeometry.h
-    Audio/OERingBuffer.h
-    Audio/TPCircularBuffer.h
-    EmulatorCore/PVEmulatorCore.h
+    PVSupport.h
+    Audio/*.h
     Controller/*.h
+    DebugUtils/*.h
+    EmulatorCore/*.h
+    Extensions/*.h
     Logging/PV*.h
   ].map { |file| "#{@sources_root}/#{file}" }
 
   s.private_header_files = %w[
     Audio/CARingBuffer/*.h
-    Threads/RealTimeThreads.h
     Logging/XCDLumberjackNSLogger.h
+    Threads/*.h
   ].map { |file| "#{@sources_root}/#{file}" }
 
   s.source_files = [
@@ -72,6 +67,6 @@ Pod::Spec.new do |s|
   s.test_spec 'PVSupportTests' do |test_spec|
     test_spec.requires_app_host = false
     # test_spec.test_type = :ui
-    test_spec.source_files = 'PVLibrary/Tests/**/*.swift'
+    test_spec.source_files = 'PVSupport/Tests/**/*.swift'
   end
 end

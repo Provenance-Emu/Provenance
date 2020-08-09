@@ -213,6 +213,7 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
@@ -227,6 +228,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"
@@ -241,6 +243,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework"

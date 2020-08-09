@@ -9,6 +9,7 @@ PODS:
   - CocoaLumberjack/Core (3.6.2)
   - CocoaLumberjack/Swift (3.6.2):
     - CocoaLumberjack/Core
+  - LzmaSDK-ObjC (2.1.1)
   - NSLogger (1.9.7):
     - NSLogger/ObjC (= 1.9.7)
   - NSLogger/ObjC (1.9.7)
@@ -16,11 +17,15 @@ PODS:
     - PVLibrary
     - PVSupport
   - PVLibrary (1.5.0):
+    - LzmaSDK-ObjC
+    - PVSupport
     - RealmSwift
     - RxSwift
     - SQLite.swift
     - ZipArchive
   - PVLibrary/PVLibraryTests (1.5.0):
+    - LzmaSDK-ObjC
+    - PVSupport
     - RealmSwift
     - RxSwift
     - SQLite.swift
@@ -28,11 +33,9 @@ PODS:
   - PVSupport (1.5.0):
     - CocoaLumberjack/Swift
     - NSLogger
-    - PVLibrary
   - PVSupport/PVSupportTests (1.5.0):
     - CocoaLumberjack/Swift
     - NSLogger
-    - PVLibrary
   - Realm (5.3.3):
     - Realm/Headers (= 5.3.3)
   - Realm/Headers (5.3.3)
@@ -55,6 +58,7 @@ DEPENDENCIES:
   - AppCenter/Crashes
   - AppCenter/Distribute
   - CocoaLumberjack/Swift
+  - LzmaSDK-ObjC (from `https://github.com/Provenance-Emu/LzmaSDKObjC.git`, branch `master`)
   - ProvenanceCores/Atari800 (from `./`)
   - PVLibrary (from `./`)
   - PVLibrary/PVLibraryTests (from `./`)
@@ -77,6 +81,9 @@ SPEC REPOS:
     - ZipArchive
 
 EXTERNAL SOURCES:
+  LzmaSDK-ObjC:
+    :branch: master
+    :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
   ProvenanceCores:
     :path: "./"
   PVLibrary:
@@ -88,6 +95,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/Puasonych/XLActionController.git
 
 CHECKOUT OPTIONS:
+  LzmaSDK-ObjC:
+    :commit: 3004f1ec21e44a9eaf40e630fda1365063c9fb8e
+    :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
   XLActionController:
     :commit: 29fe09f0ebb655b4941ca2392c59ee28e192ad84
     :git: https://github.com/Puasonych/XLActionController.git
@@ -95,10 +105,11 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
+  LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
   ProvenanceCores: 37501e0d124226c7b23ad0a5edcc023a2961a416
-  PVLibrary: 1b1f0f0629f0713d7d03b6950b64f345affecf44
-  PVSupport: 22c5a68d6c4d1d65a567e03f9d8b9b44552f479b
+  PVLibrary: 5b6accac6a583aaee07b73b01fd69e75951760fc
+  PVSupport: 9a5947abe96af73e150aa3c6a16ebf29eb70b3b5
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
   RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
   RxRealm: 50e5fe5c1f22518205afbb313fbc5580d73bc586
@@ -107,6 +118,6 @@ SPEC CHECKSUMS:
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
   ZipArchive: e25a4373192673e3229ac8d6e9f64a3e5713c966
 
-PODFILE CHECKSUM: b840c8536850ef283632a4c860be0bebf5972714
+PODFILE CHECKSUM: c70a9ec49d930596a7646026f38ba580d5887113
 
 COCOAPODS: 1.9.3

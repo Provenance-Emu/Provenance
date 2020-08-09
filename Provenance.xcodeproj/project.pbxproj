@@ -42,7 +42,6 @@
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
-		122384F685762DAA46872B72 /* Pods_ProvenanceApps_Provenance_Provenance_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BA1E34DF30A56E5B06413F1 /* Pods_ProvenanceApps_Provenance_Provenance_Tests.framework */; };
 		14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; };
 		14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
@@ -410,6 +409,7 @@
 		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		C08C7E6A7A1B85C936FAFD9F /* Pods_Provenance_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C03AD70B98A678A39E32E15 /* Pods_Provenance_Tests.framework */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
@@ -653,9 +653,9 @@
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		4F8B7AEAAC1DBE7104149303 /* Pods-TopShelf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopShelf.release.xcconfig"; path = "Target Support Files/Pods-TopShelf/Pods-TopShelf.release.xcconfig"; sourceTree = "<group>"; };
 		5CBADD9F3C0ED0321CA4D97D /* Pods-ProvenanceApps-Provenance.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance.archive.xcconfig"; sourceTree = "<group>"; };
-		6BA1E34DF30A56E5B06413F1 /* Pods_ProvenanceApps_Provenance_Provenance_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProvenanceApps_Provenance_Provenance_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		77452D7662DA0B7A9A240B58 /* Pods-TopShelf.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopShelf.archive.xcconfig"; path = "Target Support Files/Pods-TopShelf/Pods-TopShelf.archive.xcconfig"; sourceTree = "<group>"; };
+		7C03AD70B98A678A39E32E15 /* Pods_Provenance_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Provenance_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E083B80733F57903597F0FB /* Pods-ProvenanceApps-Provenance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance.release.xcconfig"; sourceTree = "<group>"; };
 		A24A1B41BB02443CDDF85F5F /* Pods_TopShelf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TopShelf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A87F0C354B0B7CA31E871EBA /* Pods-ProvenanceApps-Provenance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance.debug.xcconfig"; sourceTree = "<group>"; };
@@ -892,9 +892,12 @@
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
 		C13CC82823CABE2800463EDD /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		C438AB7D8252240202E58E28 /* Pods-Provenance Tests.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provenance Tests.archive.xcconfig"; path = "Target Support Files/Pods-Provenance Tests/Pods-Provenance Tests.archive.xcconfig"; sourceTree = "<group>"; };
 		C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCControllerExtensions.swift; sourceTree = "<group>"; };
 		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
+		CFDB6115688716041CADA700 /* Pods-Provenance Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provenance Tests.release.xcconfig"; path = "Target Support Files/Pods-Provenance Tests/Pods-Provenance Tests.release.xcconfig"; sourceTree = "<group>"; };
+		D2D93C98EEA2A66B756AAA38 /* Pods-Provenance Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provenance Tests.debug.xcconfig"; path = "Target Support Files/Pods-Provenance Tests/Pods-Provenance Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		D3ADBC693A11AB81C8EB16E6 /* Pods-Spotlight.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spotlight.release.xcconfig"; path = "Target Support Files/Pods-Spotlight/Pods-Spotlight.release.xcconfig"; sourceTree = "<group>"; };
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1005,7 +1008,7 @@
 			files = (
 				B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */,
 				B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */,
-				122384F685762DAA46872B72 /* Pods_ProvenanceApps_Provenance_Provenance_Tests.framework in Frameworks */,
+				C08C7E6A7A1B85C936FAFD9F /* Pods_Provenance_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1139,7 +1142,7 @@
 				AB989D5B8F0C86C4989925B9 /* Pods_ProvenanceApps_ProvenanceTV.framework */,
 				EF08A8E4D1DEF46350D91D99 /* Pods_Spotlight.framework */,
 				A24A1B41BB02443CDDF85F5F /* Pods_TopShelf.framework */,
-				6BA1E34DF30A56E5B06413F1 /* Pods_ProvenanceApps_Provenance_Provenance_Tests.framework */,
+				7C03AD70B98A678A39E32E15 /* Pods_Provenance_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1421,6 +1424,9 @@
 				215D8493A19C0440F4442942 /* Pods-ProvenanceApps-Provenance-Provenance Tests.debug.xcconfig */,
 				E27399A1F96D4F0484EF57BE /* Pods-ProvenanceApps-Provenance-Provenance Tests.release.xcconfig */,
 				16BFA5F57DF8F674F33C9BE9 /* Pods-ProvenanceApps-Provenance-Provenance Tests.archive.xcconfig */,
+				D2D93C98EEA2A66B756AAA38 /* Pods-Provenance Tests.debug.xcconfig */,
+				CFDB6115688716041CADA700 /* Pods-Provenance Tests.release.xcconfig */,
+				C438AB7D8252240202E58E28 /* Pods-Provenance Tests.archive.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1851,8 +1857,6 @@
 				1AD9AA321ACC988F00EC87A0 /* Frameworks */,
 				1AD9AA331ACC988F00EC87A0 /* Resources */,
 				6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */,
-				9A9511C99597531DBF4F3BCF /* [CP] Embed Pods Frameworks */,
-				ED58D297418F4651919CD9D9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2194,28 +2198,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ProvenanceApps-Provenance-Provenance Tests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Provenance Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9A9511C99597531DBF4F3BCF /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A84BED96649A7D74694C4D66 /* [CP] Embed Pods Frameworks */ = {
@@ -2314,23 +2301,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		ED58D297418F4651919CD9D9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -2720,6 +2690,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -2773,6 +2744,7 @@
 					"$(inherited)",
 					"-DNS_BLOCK_ASSERTIONS=1",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -2979,7 +2951,7 @@
 		};
 		1AD9AA3E1ACC988F00EC87A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 215D8493A19C0440F4442942 /* Pods-ProvenanceApps-Provenance-Provenance Tests.debug.xcconfig */;
+			baseConfigurationReference = D2D93C98EEA2A66B756AAA38 /* Pods-Provenance Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -3040,7 +3012,7 @@
 		};
 		1AD9AA3F1ACC988F00EC87A0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E27399A1F96D4F0484EF57BE /* Pods-ProvenanceApps-Provenance-Provenance Tests.release.xcconfig */;
+			baseConfigurationReference = CFDB6115688716041CADA700 /* Pods-Provenance Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -3137,6 +3109,7 @@
 					"$(inherited)",
 					"-DNS_BLOCK_ASSERTIONS=1",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -3246,7 +3219,7 @@
 		};
 		B3721CEE21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 16BFA5F57DF8F674F33C9BE9 /* Pods-ProvenanceApps-Provenance-Provenance Tests.archive.xcconfig */;
+			baseConfigurationReference = C438AB7D8252240202E58E28 /* Pods-Provenance Tests.archive.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
