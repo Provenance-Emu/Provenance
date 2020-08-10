@@ -15,7 +15,15 @@ PODS:
   - NSLogger (1.9.7):
     - NSLogger/ObjC (= 1.9.7)
   - NSLogger/ObjC (1.9.7)
+  - ProvenanceCores (1.5):
+    - ProvenanceCores/Atari800 (= 1.5)
+    - ProvenanceCores/PokeMini (= 1.5)
+    - PVLibrary
+    - PVSupport
   - ProvenanceCores/Atari800 (1.5):
+    - PVLibrary
+    - PVSupport
+  - ProvenanceCores/PokeMini (1.5):
     - PVLibrary
     - PVSupport
   - PVLibrary (1.5.0):
@@ -128,7 +136,7 @@ DEPENDENCIES:
   - AppCenter/Distribute
   - CocoaLumberjack/Swift
   - LzmaSDK-ObjC (from `https://github.com/Provenance-Emu/LzmaSDKObjC.git`, branch `master`)
-  - ProvenanceCores/Atari800 (from `./`)
+  - ProvenanceCores (from `./`)
   - PVLibrary (from `./`)
   - PVLibrary/PVLibraryTests (from `./`)
   - PVSupport (from `./`)
@@ -199,7 +207,7 @@ SPEC CHECKSUMS:
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
-  ProvenanceCores: 7cdb69473330dcc13e92f08b4b373fb94a02a407
+  ProvenanceCores: 10912c318e4d0a2b208dde5565326fc85d6d45ba
   PVLibrary: 87261233d65b82b40b73ce8bf6e02692964e9690
   PVSupport: 3690c1820cf39170d0e6ebcc3809b9f8271fcda9
   QuickTableViewController: 92005c22d3ef77e5b264aee0d8027de0f63cabbf
@@ -219,6 +227,6 @@ SPEC CHECKSUMS:
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: 601b616fac7b3a90df3e586613f7f21e73b43692
+PODFILE CHECKSUM: fd35d35e0cd3063f3d14c8850517ee62c3d02fa3
 
 COCOAPODS: 1.9.3

@@ -61,6 +61,7 @@ end
 def cores
   subspecs = %w[
     Atari800
+    PokeMini
   ]
 
   options = {
@@ -68,7 +69,7 @@ def cores
     inhibit_warnings: false,
     project_name: 'ProvenanceCores',
     binary: false,
-    subspecs: subspecs
+    # subspecs: subspecs
   }
 
   pod 'ProvenanceCores', options
