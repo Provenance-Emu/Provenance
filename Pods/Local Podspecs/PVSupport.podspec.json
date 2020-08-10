@@ -58,6 +58,12 @@
   "source_files": [
     "PVSupport/Sources/**/*.{swift,h,m,mm,c}"
   ],
+  "info_plist": {
+    "CFBundleIdentifier": "com.provenance-emu.PVSupport"
+  },
+  "pod_target_xcconfig": {
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVSupport"
+  },
   "testspecs": [
     {
       "name": "PVSupportTests",

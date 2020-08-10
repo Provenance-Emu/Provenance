@@ -63,6 +63,9 @@ Pod::Spec.new do |s|
     @sources_common
   ]
 
+  s.info_plist = { 'CFBundleIdentifier' => 'com.provenance-emu.PVSupport' }
+  s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVSupport' }
+
   s.test_spec 'PVSupportTests' do |test_spec|
     test_spec.requires_app_host = false
     # test_spec.test_type = :ui

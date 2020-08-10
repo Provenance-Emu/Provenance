@@ -27,6 +27,7 @@
 #import "ATR800GameCore.h"
 
 @import PVSupport;
+@import Foundation;
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
 #import <OpenGLES/ES3/gl.h>
@@ -356,6 +357,7 @@ __weak static ATR800GameCore * _currentCore;
 #pragma mark - Save States
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
     NSAssert(NO, @"Shouldn't be here since we overload the async version");
+    return false;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
@@ -379,6 +381,7 @@ __weak static ATR800GameCore * _currentCore;
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
     NSAssert(NO, @"Shouldn't be here since we overload the async version");
+    return false;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block

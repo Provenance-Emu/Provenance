@@ -69,8 +69,14 @@
   "source_files": [
     "PVLibrary/Sources/**/*.{swift,h,m,mm,c}"
   ],
+  "resources": [
+    "PVLibrary/Sources/Resources/*.*"
+  ],
   "pod_target_xcconfig": {
-    "OTHER_LDFLAGS": "-lObjC"
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVLibrary"
+  },
+  "info_plist": {
+    "CFBundleIdentifier": "com.provenance-emu.PVLibrary"
   },
   "testspecs": [
     {

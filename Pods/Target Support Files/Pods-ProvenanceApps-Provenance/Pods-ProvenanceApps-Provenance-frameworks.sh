@@ -227,7 +227,14 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Differentiator-iOS/Differentiator.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QuickTableViewController-iOS/QuickTableViewController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ReachabilitySwift-iOS/Reachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxDataSources-iOS/RxDataSources.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxGesture/RxGesture.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxReachability-iOS/RxReachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SteamController-iOS/SteamController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -246,7 +253,14 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Differentiator-iOS/Differentiator.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QuickTableViewController-iOS/QuickTableViewController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ReachabilitySwift-iOS/Reachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxDataSources-iOS/RxDataSources.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxGesture/RxGesture.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxReachability-iOS/RxReachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SteamController-iOS/SteamController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
@@ -265,7 +279,14 @@ if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Differentiator-iOS/Differentiator.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-iOS/ProvenanceCores.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QuickTableViewController-iOS/QuickTableViewController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ReachabilitySwift-iOS/Reachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxDataSources-iOS/RxDataSources.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxGesture/RxGesture.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxReachability-iOS/RxReachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SteamController-iOS/SteamController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

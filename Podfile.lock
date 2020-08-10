@@ -10,6 +10,7 @@ PODS:
   - CocoaLumberjack/Core (3.6.2)
   - CocoaLumberjack/Swift (3.6.2):
     - CocoaLumberjack/Core
+  - Differentiator (4.0.1)
   - LzmaSDK-ObjC (2.1.1)
   - NSLogger (1.9.7):
     - NSLogger/ObjC (= 1.9.7)
@@ -45,6 +46,8 @@ PODS:
   - PVSupport/PVSupportTests (1.5.0):
     - CocoaLumberjack/Swift
     - NSLogger
+  - QuickTableViewController (1.2.4)
+  - ReachabilitySwift (5.0.0)
   - Realm (5.3.3):
     - Realm/Headers (= 5.3.3)
   - Realm/Headers (5.3.3)
@@ -52,6 +55,17 @@ PODS:
     - Realm (= 5.3.3)
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxDataSources (4.0.1):
+    - Differentiator (~> 4.0)
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
+  - RxGesture (3.0.2):
+    - RxCocoa (~> 5.1)
+    - RxSwift (~> 5.1)
+  - RxReachability (1.1.0):
+    - ReachabilitySwift (~> 5.0)
+    - RxCocoa (~> 5)
     - RxSwift (~> 5)
   - RxRealm (3.1.0):
     - RealmSwift (~> 5.2)
@@ -63,6 +77,9 @@ PODS:
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
   - SSZipArchive (2.2.3)
+  - SteamController (1.2):
+    - SteamController/default (= 1.2)
+  - SteamController/default (1.2)
   - SWCompression (4.5.5):
     - BitByteData (~> 1.4.3)
     - SWCompression/BZip2 (= 4.5.5)
@@ -116,8 +133,13 @@ DEPENDENCIES:
   - PVLibrary/PVLibraryTests (from `./`)
   - PVSupport (from `./`)
   - PVSupport/PVSupportTests (from `./`)
+  - QuickTableViewController
+  - RxDataSources
+  - RxGesture
+  - RxReachability (from `https://github.com/RxSwiftCommunity/RxReachability.git`, tag `1.1.0`)
   - RxRealm
   - RxSwift
+  - SteamController
   - XLActionController (from `https://github.com/Puasonych/XLActionController.git`, branch `update-for-xcode-11`)
 
 SPEC REPOS:
@@ -125,15 +147,21 @@ SPEC REPOS:
     - AppCenter
     - BitByteData
     - CocoaLumberjack
+    - Differentiator
     - NSLogger
+    - QuickTableViewController
+    - ReachabilitySwift
     - Realm
     - RealmSwift
     - RxCocoa
+    - RxDataSources
+    - RxGesture
     - RxRealm
     - RxRelay
     - RxSwift
     - SQLite.swift
     - SSZipArchive
+    - SteamController
     - SWCompression
 
 EXTERNAL SOURCES:
@@ -146,6 +174,9 @@ EXTERNAL SOURCES:
     :path: "./"
   PVSupport:
     :path: "./"
+  RxReachability:
+    :git: https://github.com/RxSwiftCommunity/RxReachability.git
+    :tag: 1.1.0
   XLActionController:
     :branch: update-for-xcode-11
     :git: https://github.com/Puasonych/XLActionController.git
@@ -154,6 +185,9 @@ CHECKOUT OPTIONS:
   LzmaSDK-ObjC:
     :commit: 3004f1ec21e44a9eaf40e630fda1365063c9fb8e
     :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
+  RxReachability:
+    :git: https://github.com/RxSwiftCommunity/RxReachability.git
+    :tag: 1.1.0
   XLActionController:
     :commit: 29fe09f0ebb655b4941ca2392c59ee28e192ad84
     :git: https://github.com/Puasonych/XLActionController.git
@@ -162,22 +196,29 @@ SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
   BitByteData: 36729e2125ec321935754f9feb1f4b297e00b501
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
+  Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
-  ProvenanceCores: 37501e0d124226c7b23ad0a5edcc023a2961a416
-  PVLibrary: b8baaaf9a9a5b7df6892592cad9a0077be25b4ff
-  PVSupport: 11ffedd95e9e5a2110083390aed605e65aef926b
+  ProvenanceCores: 7cdb69473330dcc13e92f08b4b373fb94a02a407
+  PVLibrary: 87261233d65b82b40b73ce8bf6e02692964e9690
+  PVSupport: 3690c1820cf39170d0e6ebcc3809b9f8271fcda9
+  QuickTableViewController: 92005c22d3ef77e5b264aee0d8027de0f63cabbf
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
   RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
+  RxGesture: d6bd7447ca3a596c7a9702a6a2b6a2bb5d8bae54
+  RxReachability: 3da1c23ba6d93dabc004290cda61dd9e7884422d
   RxRealm: 50e5fe5c1f22518205afbb313fbc5580d73bc586
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
+  SteamController: 914378f736ee64e388c4bf5225c75054f53a4f28
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: 46747a084e9275467bc382dcfe1cbffafd552455
+PODFILE CHECKSUM: 601b616fac7b3a90df3e586613f7f21e73b43692
 
 COCOAPODS: 1.9.3

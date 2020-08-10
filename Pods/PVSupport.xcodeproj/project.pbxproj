@@ -1094,6 +1094,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7299FA84C6444EE24890F828EEA4DDA4 /* PVSupport-iOS.unit-pvsupporttests.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
@@ -1101,7 +1103,13 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Unit-PVSupportTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Unit-PVSupportTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = "PVSupport-iOS-Unit-PVSupportTests";
@@ -1116,6 +1124,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B82A08517327F32F1517D29C3FE465F /* PVSupport-iOS.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1126,7 +1136,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1214,12 +1230,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1102EEBF0716EB68BA82B39632F68737 /* PVSupport-tvOS.unit-pvsupporttests.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Unit-PVSupportTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Unit-PVSupportTests-Info.plist";
 				PRODUCT_NAME = "PVSupport-tvOS-Unit-PVSupportTests";
 				SDKROOT = appletvos;
@@ -1234,6 +1258,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B82A08517327F32F1517D29C3FE465F /* PVSupport-iOS.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1244,7 +1270,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1271,6 +1303,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7299FA84C6444EE24890F828EEA4DDA4 /* PVSupport-iOS.unit-pvsupporttests.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
@@ -1278,7 +1312,13 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Unit-PVSupportTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Unit-PVSupportTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = "PVSupport-iOS-Unit-PVSupportTests";
@@ -1293,6 +1333,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7326CAD0FDD03BCD4DAF14CAA3B4EA25 /* PVSupport-tvOS.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1302,7 +1344,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1329,6 +1377,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0C3EC6C4F31D86AEC5EA5421FE138A2B /* PVSupport-iOS.unit-pvsupporttests.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
@@ -1336,7 +1386,13 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Unit-PVSupportTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Unit-PVSupportTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				OTHER_LDFLAGS = (
@@ -1354,12 +1410,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8E94B4D4B35CBD87D6FFAAC7A99D73C6 /* PVSupport-tvOS.unit-pvsupporttests.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Unit-PVSupportTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Unit-PVSupportTests-Info.plist";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1377,6 +1441,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6C24462ABC8E5318A5345FD88AB14E81 /* PVSupport-iOS.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1387,7 +1453,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-iOS/PVSupport-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-iOS/PVSupport-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1413,6 +1485,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8BDDA53749CA8FD5B5EF96AD062F2B15 /* PVSupport-tvOS.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1422,7 +1496,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1509,6 +1589,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7326CAD0FDD03BCD4DAF14CAA3B4EA25 /* PVSupport-tvOS.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1518,7 +1600,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1545,12 +1633,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1102EEBF0716EB68BA82B39632F68737 /* PVSupport-tvOS.unit-pvsupporttests.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Unit-PVSupportTests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
 				INFOPLIST_FILE = "Target Support Files/PVSupport-tvOS/PVSupport-tvOS-Unit-PVSupportTests-Info.plist";
 				PRODUCT_NAME = "PVSupport-tvOS-Unit-PVSupportTests";
 				SDKROOT = appletvos;

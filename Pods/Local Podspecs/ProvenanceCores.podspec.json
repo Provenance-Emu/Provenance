@@ -43,22 +43,105 @@
 
     ]
   },
-  "libraries": [
-    "z",
-    "edit"
-  ],
   "pod_target_xcconfig": {
     "OTHER_LDFLAGS": "$(inherited) -ObjC"
   },
   "subspecs": [
     {
       "name": "Atari800",
-      "source_files": "Cores/Atari800/**/*.{swift,m,mm,c,cpp}",
+      "source_files": [
+        "Cores/Atari800/atari800-src/rtime.c",
+        "Cores/Atari800/atari800-src/ide.c",
+        "Cores/Atari800/atari800-src/crc32.c",
+        "Cores/Atari800/atari800-src/cycle_map.c",
+        "Cores/Atari800/atari800-src/colours_pal.c",
+        "Cores/Atari800/atari800-src/pbi_mio.c",
+        "Cores/Atari800/atari800-src/log.c",
+        "Cores/Atari800/atari800-src/afile.c",
+        "Cores/Atari800/atari800-src/img_tape.c",
+        "Cores/Atari800/atari800-src/pokeysnd.c",
+        "Cores/Atari800/atari800-src/util.c",
+        "Cores/Atari800/atari800-src/colours_external.c",
+        "Cores/Atari800/atari800-src/pbi_scsi.c",
+        "Cores/Atari800/atari800-src/artifact.c",
+        "Cores/Atari800/atari800-src/ui_basic.c",
+        "Cores/Atari800/atari800-src/pbi_bb.c",
+        "Cores/Atari800/atari800-src/binload.c",
+        "Cores/Atari800/atari800-src/colours.c",
+        "Cores/Atari800/atari800-src/statesav.c",
+        "Cores/Atari800/atari800-src/cartridge.c",
+        "Cores/Atari800/atari800-src/memory.c",
+        "Cores/Atari800/atari800-src/mzpokeysnd.c",
+        "Cores/Atari800/atari800-src/sio.c",
+        "Cores/Atari800/atari800-src/pbi.c",
+        "Cores/Atari800/atari800-src/monitor.c",
+        "Cores/Atari800/atari800-src/pokey.c",
+        "Cores/Atari800/atari800-src/esc.c",
+        "Cores/Atari800/atari800-src/compfile.c",
+        "Cores/Atari800/atari800-src/pia.c",
+        "Cores/Atari800/atari800-src/remez.c",
+        "Cores/Atari800/atari800-src/cassette.c",
+        "Cores/Atari800/atari800-src/cfg.c",
+        "Cores/Atari800/atari800-src/sndsave.c",
+        "Cores/Atari800/atari800-src/antic.c",
+        "Cores/Atari800/atari800-src/atari.c",
+        "Cores/Atari800/atari800-src/screen.c",
+        "Cores/Atari800/atari800-src/sysrom.c",
+        "Cores/Atari800/atari800-src/colours_ntsc.c",
+        "Cores/Atari800/atari800-src/emuos.c",
+        "Cores/Atari800/atari800-src/devices.c",
+        "Cores/Atari800/atari800-src/input.c",
+        "Cores/Atari800/atari800-src/sound.c",
+        "Cores/Atari800/atari800-src/cpu.c",
+        "Cores/Atari800/atari800-src/gtia.c",
+        "Cores/Atari800/atari800-src/afile.h",
+        "Cores/Atari800/atari800-src/akey.h",
+        "Cores/Atari800/atari800-src/antic.h",
+        "Cores/Atari800/atari800-src/atari.h",
+        "Cores/Atari800/atari800-src/cartridge.h",
+        "Cores/Atari800/atari800-src/cassette.h",
+        "Cores/Atari800/atari800-src/cfg.h",
+        "Cores/Atari800/atari800-src/colours.h",
+        "Cores/Atari800/atari800-src/colours_ntsc.h",
+        "Cores/Atari800/atari800-src/config.h",
+        "Cores/Atari800/atari800-src/devices.h",
+        "Cores/Atari800/atari800-src/gtia.h",
+        "Cores/Atari800/atari800-src/ide.h",
+        "Cores/Atari800/atari800-src/input.h",
+        "Cores/Atari800/atari800-src/memory.h",
+        "Cores/Atari800/atari800-src/pbi.h",
+        "Cores/Atari800/atari800-src/pia.h",
+        "Cores/Atari800/atari800-src/platform.h",
+        "Cores/Atari800/atari800-src/pokey.h",
+        "Cores/Atari800/atari800-src/pokeysnd.h",
+        "Cores/Atari800/atari800-src/rtime.h",
+        "Cores/Atari800/atari800-src/sio.h",
+        "Cores/Atari800/atari800-src/sound.h",
+        "Cores/Atari800/atari800-src/statesav.h",
+        "Cores/Atari800/atari800-src/sysrom.h",
+        "Cores/Atari800/atari800-src/ui.h",
+        "Cores/Atari800/**/*.{swift,m,mm}"
+      ],
+      "public_header_files": [
+        "Cores/Atari800/atari800-src/platform.h",
+        "Cores/Atari800/PVAtari800/PVAtari800.h",
+        "Cores/Atari800/Atari800Core/Source/ATR800GameCore.h"
+      ],
+      "libraries": [
+        "z",
+        "edit"
+      ],
       "pod_target_xcconfig": {
         "OTHER_LDFLAGS": "$(inherited) -ObjC",
         "CORE_ATARI800_SUBSPEC_INCLUDED": "-D'CORE_ATARI800_SUBSPEC_INCLUDED'",
-        "OTHER_SWIFT_FLAGS": "$(CORE_ATARI800_SUBSPEC_INCLUDED)"
-      }
+        "OTHER_SWIFT_FLAGS": "$(CORE_ATARI800_SUBSPEC_INCLUDED)",
+        "GCC_C_LANGUAGE_STANDARD": "gnu99",
+        "CLANG_CXX_LANGUAGE_STANDARD": "gnu++0x",
+        "CLANG_CXX_LIBRARY": "libc++"
+      },
+      "resources": [
+        "Cores/Atari800/PVAtari800/Core.plist"
+      ]
     }
   ],
   "swift_version": "5.1"

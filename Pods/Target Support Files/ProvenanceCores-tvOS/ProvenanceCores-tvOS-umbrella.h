@@ -10,6 +10,9 @@
 #endif
 #endif
 
+#import "platform.h"
+#import "PVAtari800.h"
+#import "ATR800GameCore.h"
 
 FOUNDATION_EXPORT double ProvenanceCoresVersionNumber;
 FOUNDATION_EXPORT const unsigned char ProvenanceCoresVersionString[];

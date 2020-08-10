@@ -1,0 +1,813 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07040E950CBE3AD1AB11C5E399E4982C /* SteamControllerExtendedGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 6911A60856B8E56F6BFC3B8087011CD2 /* SteamControllerExtendedGamepad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A1C17568DF88E635EEA3B9633BD6EF6 /* SteamController-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 30976E286ED0655E05F7E9DDDBF9F5BB /* SteamController-iOS-dummy.m */; };
+		1D60C38D601A62180E7B7C7C9D12058C /* SteamController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16AE9E6753F4EC14C3FF7ED86B24CC /* SteamController.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		55C76E82B3E68A7BCA63E9F46E673233 /* SteamControllerInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEB94EAA9EC1A8BCA87007382D8C63E /* SteamControllerInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		576720D6EABF35CEE01CC658A8FC16D2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE1F0CF26FB64AAA2900D147CCCC88FE /* Foundation.framework */; };
+		590526DEEA08CF28BABD7A3DC519EDA4 /* SteamControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D207CE3AFFBF69DB33E8BCC0E7C60C0 /* SteamControllerManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		5A68C06BEC749DB3784DC101EAD10381 /* SteamControllerExtendedGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = 62F31CFCBDF384E6CF07733B37360496 /* SteamControllerExtendedGamepad.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		618AF65FBEAA30C221E2AD88D9DE3079 /* SteamController-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE81AD1EF97DC20E38924F3502913F6 /* SteamController-tvOS-dummy.m */; };
+		6E9764CDC5E8FB5AE3F78CAB5E3D35A4 /* SteamController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC61F903C67353FC617DDBC44A299D9 /* SteamController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73A836027F6A5ED3B77748DA27CA8859 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5E57830874F8184C73338423A8282FF /* CoreBluetooth.framework */; };
+		74BAE5A5EA51E59E517DD788D42DE183 /* SteamControllerExtendedGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 6911A60856B8E56F6BFC3B8087011CD2 /* SteamControllerExtendedGamepad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8599F21DAEDDC34F49A7F96F4FE47523 /* SteamControllerInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEB94EAA9EC1A8BCA87007382D8C63E /* SteamControllerInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		86D36EB361F648B7FF8BE52CBE2D74AA /* SteamControllerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 94539D6E9FF2B3CF31585E2825EAFDEC /* SteamControllerManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9B6126EFAC1D27D1CF99365140BA591C /* SteamControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D207CE3AFFBF69DB33E8BCC0E7C60C0 /* SteamControllerManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		A56C20C22738D37987C9B57D4A402510 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 183C1FA3F2128484BD97F6AC8301BF18 /* Foundation.framework */; };
+		A650F10D4EDFB12FD67C344EDD35CBB2 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FE6E23F5C84E5199507FFE4298E929C /* GameController.framework */; };
+		AA3E4497EC79721F325E4BD89F5D6B32 /* SteamControllerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 94539D6E9FF2B3CF31585E2825EAFDEC /* SteamControllerManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AA683A75FF8AB8878ECE01D83AA30CA0 /* SteamController-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BD3BFF096E8474006B5877FBDE3C029 /* SteamController-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B10433769110DBF314D28D55536277B2 /* SteamControllerInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E7B13BE2252FE73A7FE84D371F5F33C /* SteamControllerInput.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		B3388424C7C1330FCD90F2CD34347528 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26D89DAE13EFD45259BC4EE7A348128 /* GameController.framework */; };
+		B80CFD04D32C174CD9333BEF555C9C8E /* SteamControllerInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E7B13BE2252FE73A7FE84D371F5F33C /* SteamControllerInput.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		BDE5D9BE59182994024EA31AE58540A9 /* SteamController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC61F903C67353FC617DDBC44A299D9 /* SteamController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9A0228825E1F9B7435691D19B32507C /* SteamControllerExtendedGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = 62F31CFCBDF384E6CF07733B37360496 /* SteamControllerExtendedGamepad.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		CFD4DD45B216E8786CBFBB6FA7725DA8 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BF1F100A3DEA72415F10EB49AD292 /* CoreBluetooth.framework */; };
+		FCFA777622DAF533DFB543E1C730ACD2 /* SteamController-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 11ED23F779932E0FA927FEEEAF743760 /* SteamController-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FFD2BC6301A95BC7121BC9991443311E /* SteamController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16AE9E6753F4EC14C3FF7ED86B24CC /* SteamController.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0C53C7F9E1215ECE98F1E4433889692B /* SteamController-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "SteamController-iOS.modulemap"; sourceTree = "<group>"; };
+		0C76578825DCAD5987A89E88DDDFE3A4 /* SteamController-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "SteamController-tvOS.release.xcconfig"; path = "../SteamController-tvOS/SteamController-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		11ED23F779932E0FA927FEEEAF743760 /* SteamController-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SteamController-iOS-umbrella.h"; sourceTree = "<group>"; };
+		183C1FA3F2128484BD97F6AC8301BF18 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		1E7B13BE2252FE73A7FE84D371F5F33C /* SteamControllerInput.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SteamControllerInput.m; path = SteamController/SteamControllerInput.m; sourceTree = "<group>"; };
+		30976E286ED0655E05F7E9DDDBF9F5BB /* SteamController-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SteamController-iOS-dummy.m"; sourceTree = "<group>"; };
+		30DED0A335E9D871E0BEB9F82E00FDF6 /* SteamController-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SteamController-iOS-prefix.pch"; sourceTree = "<group>"; };
+		3FE6E23F5C84E5199507FFE4298E929C /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		48C934A70DB2180C9A8DA679569125AA /* SteamController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SteamController.framework; path = "SteamController-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BD3BFF096E8474006B5877FBDE3C029 /* SteamController-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SteamController-tvOS-umbrella.h"; path = "../SteamController-tvOS/SteamController-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		594BF1F100A3DEA72415F10EB49AD292 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
+		5EE81AD1EF97DC20E38924F3502913F6 /* SteamController-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "SteamController-tvOS-dummy.m"; path = "../SteamController-tvOS/SteamController-tvOS-dummy.m"; sourceTree = "<group>"; };
+		62F31CFCBDF384E6CF07733B37360496 /* SteamControllerExtendedGamepad.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SteamControllerExtendedGamepad.m; path = SteamController/SteamControllerExtendedGamepad.m; sourceTree = "<group>"; };
+		653F9A2B6EC2C4B5CEDDFC7956A55A7D /* SteamController-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SteamController-iOS-Info.plist"; sourceTree = "<group>"; };
+		6911A60856B8E56F6BFC3B8087011CD2 /* SteamControllerExtendedGamepad.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SteamControllerExtendedGamepad.h; path = SteamController/SteamControllerExtendedGamepad.h; sourceTree = "<group>"; };
+		73E447D158AD208E0A366E181C25E544 /* SteamController-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "SteamController-tvOS.debug.xcconfig"; path = "../SteamController-tvOS/SteamController-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		73EB2F65E7121812B7B84D481EBCA622 /* SteamController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SteamController.framework; path = "SteamController-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D16AE9E6753F4EC14C3FF7ED86B24CC /* SteamController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SteamController.m; path = SteamController/SteamController.m; sourceTree = "<group>"; };
+		8971D7872D5150C9F69201D9123E537B /* SteamController-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SteamController-tvOS-prefix.pch"; path = "../SteamController-tvOS/SteamController-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		94539D6E9FF2B3CF31585E2825EAFDEC /* SteamControllerManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SteamControllerManager.h; path = SteamController/SteamControllerManager.h; sourceTree = "<group>"; };
+		9AC61F903C67353FC617DDBC44A299D9 /* SteamController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SteamController.h; path = SteamController/SteamController.h; sourceTree = "<group>"; };
+		9D207CE3AFFBF69DB33E8BCC0E7C60C0 /* SteamControllerManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SteamControllerManager.m; path = SteamController/SteamControllerManager.m; sourceTree = "<group>"; };
+		9D3F2251FAAF84DDEEDD14D5E1BFD422 /* SteamController-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "SteamController-tvOS.modulemap"; path = "../SteamController-tvOS/SteamController-tvOS.modulemap"; sourceTree = "<group>"; };
+		C2C8D542D040F6400B12515825C90D91 /* SteamController-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "SteamController-tvOS-Info.plist"; path = "../SteamController-tvOS/SteamController-tvOS-Info.plist"; sourceTree = "<group>"; };
+		C5E57830874F8184C73338423A8282FF /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
+		CDEB94EAA9EC1A8BCA87007382D8C63E /* SteamControllerInput.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SteamControllerInput.h; path = SteamController/SteamControllerInput.h; sourceTree = "<group>"; };
+		D26D89DAE13EFD45259BC4EE7A348128 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		DE1F0CF26FB64AAA2900D147CCCC88FE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		EFDA6DC6C09C6E619806779F72408E8B /* SteamController-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "SteamController-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		F6443607BF0B38A256FC5E7C8E9B64C3 /* SteamController-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "SteamController-iOS.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		86BD302D53351760AC2407D29717D71C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				73A836027F6A5ED3B77748DA27CA8859 /* CoreBluetooth.framework in Frameworks */,
+				576720D6EABF35CEE01CC658A8FC16D2 /* Foundation.framework in Frameworks */,
+				A650F10D4EDFB12FD67C344EDD35CBB2 /* GameController.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9CC13E2A8CFE0E7371DB7DB74913D356 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD4DD45B216E8786CBFBB6FA7725DA8 /* CoreBluetooth.framework in Frameworks */,
+				A56C20C22738D37987C9B57D4A402510 /* Foundation.framework in Frameworks */,
+				B3388424C7C1330FCD90F2CD34347528 /* GameController.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3A338D83FC84D4123FD44E9B9712B07F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				65809EE684486DBA8B5739E2B828CA7D /* iOS */,
+				4EB9274739A3A190A73FFB1747BC26B1 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3EB85BCEA69F6EC8E52E24729D1488E5 /* default */ = {
+			isa = PBXGroup;
+			children = (
+				9AC61F903C67353FC617DDBC44A299D9 /* SteamController.h */,
+				7D16AE9E6753F4EC14C3FF7ED86B24CC /* SteamController.m */,
+				6911A60856B8E56F6BFC3B8087011CD2 /* SteamControllerExtendedGamepad.h */,
+				62F31CFCBDF384E6CF07733B37360496 /* SteamControllerExtendedGamepad.m */,
+				CDEB94EAA9EC1A8BCA87007382D8C63E /* SteamControllerInput.h */,
+				1E7B13BE2252FE73A7FE84D371F5F33C /* SteamControllerInput.m */,
+				94539D6E9FF2B3CF31585E2825EAFDEC /* SteamControllerManager.h */,
+				9D207CE3AFFBF69DB33E8BCC0E7C60C0 /* SteamControllerManager.m */,
+			);
+			name = default;
+			sourceTree = "<group>";
+		};
+		4187903FB4074AA407761EF72E3904DF /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				0C53C7F9E1215ECE98F1E4433889692B /* SteamController-iOS.modulemap */,
+				30976E286ED0655E05F7E9DDDBF9F5BB /* SteamController-iOS-dummy.m */,
+				653F9A2B6EC2C4B5CEDDFC7956A55A7D /* SteamController-iOS-Info.plist */,
+				30DED0A335E9D871E0BEB9F82E00FDF6 /* SteamController-iOS-prefix.pch */,
+				11ED23F779932E0FA927FEEEAF743760 /* SteamController-iOS-umbrella.h */,
+				EFDA6DC6C09C6E619806779F72408E8B /* SteamController-iOS.debug.xcconfig */,
+				F6443607BF0B38A256FC5E7C8E9B64C3 /* SteamController-iOS.release.xcconfig */,
+				9D3F2251FAAF84DDEEDD14D5E1BFD422 /* SteamController-tvOS.modulemap */,
+				5EE81AD1EF97DC20E38924F3502913F6 /* SteamController-tvOS-dummy.m */,
+				C2C8D542D040F6400B12515825C90D91 /* SteamController-tvOS-Info.plist */,
+				8971D7872D5150C9F69201D9123E537B /* SteamController-tvOS-prefix.pch */,
+				4BD3BFF096E8474006B5877FBDE3C029 /* SteamController-tvOS-umbrella.h */,
+				73E447D158AD208E0A366E181C25E544 /* SteamController-tvOS.debug.xcconfig */,
+				0C76578825DCAD5987A89E88DDDFE3A4 /* SteamController-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/SteamController-iOS";
+			sourceTree = "<group>";
+		};
+		4EB9274739A3A190A73FFB1747BC26B1 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				594BF1F100A3DEA72415F10EB49AD292 /* CoreBluetooth.framework */,
+				183C1FA3F2128484BD97F6AC8301BF18 /* Foundation.framework */,
+				D26D89DAE13EFD45259BC4EE7A348128 /* GameController.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		65809EE684486DBA8B5739E2B828CA7D /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				C5E57830874F8184C73338423A8282FF /* CoreBluetooth.framework */,
+				DE1F0CF26FB64AAA2900D147CCCC88FE /* Foundation.framework */,
+				3FE6E23F5C84E5199507FFE4298E929C /* GameController.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		75A555ECBB2A8125E811F61D69D1121C = {
+			isa = PBXGroup;
+			children = (
+				3A338D83FC84D4123FD44E9B9712B07F /* Frameworks */,
+				BAFCB035AA448E554A8CE659FDE522A6 /* Products */,
+				E68059B663C841E936AEE1E371191867 /* SteamController */,
+			);
+			sourceTree = "<group>";
+		};
+		BAFCB035AA448E554A8CE659FDE522A6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				73EB2F65E7121812B7B84D481EBCA622 /* SteamController.framework */,
+				48C934A70DB2180C9A8DA679569125AA /* SteamController.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E68059B663C841E936AEE1E371191867 /* SteamController */ = {
+			isa = PBXGroup;
+			children = (
+				3EB85BCEA69F6EC8E52E24729D1488E5 /* default */,
+				4187903FB4074AA407761EF72E3904DF /* Support Files */,
+			);
+			name = SteamController;
+			path = SteamController;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		38C1CEB3D10F71D2906507D5D46D9669 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCFA777622DAF533DFB543E1C730ACD2 /* SteamController-iOS-umbrella.h in Headers */,
+				6E9764CDC5E8FB5AE3F78CAB5E3D35A4 /* SteamController.h in Headers */,
+				74BAE5A5EA51E59E517DD788D42DE183 /* SteamControllerExtendedGamepad.h in Headers */,
+				55C76E82B3E68A7BCA63E9F46E673233 /* SteamControllerInput.h in Headers */,
+				AA3E4497EC79721F325E4BD89F5D6B32 /* SteamControllerManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5ECABFEB50A26114C81F0C843517A537 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA683A75FF8AB8878ECE01D83AA30CA0 /* SteamController-tvOS-umbrella.h in Headers */,
+				BDE5D9BE59182994024EA31AE58540A9 /* SteamController.h in Headers */,
+				07040E950CBE3AD1AB11C5E399E4982C /* SteamControllerExtendedGamepad.h in Headers */,
+				8599F21DAEDDC34F49A7F96F4FE47523 /* SteamControllerInput.h in Headers */,
+				86D36EB361F648B7FF8BE52CBE2D74AA /* SteamControllerManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		3F0158D4D28A3FF6F5D14C1A98D95787 /* SteamController-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8230328FBE17E44AB23AFF0524AFCF19 /* Build configuration list for PBXNativeTarget "SteamController-tvOS" */;
+			buildPhases = (
+				5ECABFEB50A26114C81F0C843517A537 /* Headers */,
+				FCAEE244DE85E9C8F0D505A7820B303D /* Sources */,
+				9CC13E2A8CFE0E7371DB7DB74913D356 /* Frameworks */,
+				F3D368CB186C6B5CAA984626ED370517 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SteamController-tvOS";
+			productName = "SteamController-tvOS";
+			productReference = 48C934A70DB2180C9A8DA679569125AA /* SteamController.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D4EF3C4C7C6938F2AE468CC36461CF1B /* SteamController-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 78B9E6EE6838B0B06FA19D3964C09E2C /* Build configuration list for PBXNativeTarget "SteamController-iOS" */;
+			buildPhases = (
+				38C1CEB3D10F71D2906507D5D46D9669 /* Headers */,
+				359140A6EFCB8EE057DCA20181E6B55C /* Sources */,
+				86BD302D53351760AC2407D29717D71C /* Frameworks */,
+				13D9541445E8C0483CF4ECB4D2BA4D62 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SteamController-iOS";
+			productName = "SteamController-iOS";
+			productReference = 73EB2F65E7121812B7B84D481EBCA622 /* SteamController.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2E9BA8F6533F28A009EE6403852BD181 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 739CFF75DE03F2C4541A7A9A1815EDBA /* Build configuration list for PBXProject "SteamController" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 75A555ECBB2A8125E811F61D69D1121C;
+			productRefGroup = BAFCB035AA448E554A8CE659FDE522A6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D4EF3C4C7C6938F2AE468CC36461CF1B /* SteamController-iOS */,
+				3F0158D4D28A3FF6F5D14C1A98D95787 /* SteamController-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13D9541445E8C0483CF4ECB4D2BA4D62 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3D368CB186C6B5CAA984626ED370517 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		359140A6EFCB8EE057DCA20181E6B55C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A1C17568DF88E635EEA3B9633BD6EF6 /* SteamController-iOS-dummy.m in Sources */,
+				FFD2BC6301A95BC7121BC9991443311E /* SteamController.m in Sources */,
+				5A68C06BEC749DB3784DC101EAD10381 /* SteamControllerExtendedGamepad.m in Sources */,
+				B10433769110DBF314D28D55536277B2 /* SteamControllerInput.m in Sources */,
+				9B6126EFAC1D27D1CF99365140BA591C /* SteamControllerManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCAEE244DE85E9C8F0D505A7820B303D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				618AF65FBEAA30C221E2AD88D9DE3079 /* SteamController-tvOS-dummy.m in Sources */,
+				1D60C38D601A62180E7B7C7C9D12058C /* SteamController.m in Sources */,
+				C9A0228825E1F9B7435691D19B32507C /* SteamControllerExtendedGamepad.m in Sources */,
+				B80CFD04D32C174CD9333BEF555C9C8E /* SteamControllerInput.m in Sources */,
+				590526DEEA08CF28BABD7A3DC519EDA4 /* SteamControllerManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		040043207FC6D7A8E0FC8BB4A64976A9 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C76578825DCAD5987A89E88DDDFE3A4 /* SteamController-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SteamController-tvOS/SteamController-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SteamController-tvOS/SteamController-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SteamController-tvOS/SteamController-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = SteamController;
+				PRODUCT_NAME = SteamController;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		058A31AB9F7ABA3A8FBFF0018825C961 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Archive;
+		};
+		07B9C6BC045F300ACA43BBEE1A70C292 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		3F2FFED053D60B2CA3EA7265B3B14BC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		4D05AC669B92D2FC70E49517D92CF276 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EFDA6DC6C09C6E619806779F72408E8B /* SteamController-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SteamController-iOS/SteamController-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SteamController-iOS/SteamController-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SteamController-iOS/SteamController-iOS.modulemap";
+				PRODUCT_MODULE_NAME = SteamController;
+				PRODUCT_NAME = SteamController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		50B980EE9281D762BC7ABCD9AA8C1FA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C76578825DCAD5987A89E88DDDFE3A4 /* SteamController-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SteamController-tvOS/SteamController-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SteamController-tvOS/SteamController-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SteamController-tvOS/SteamController-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = SteamController;
+				PRODUCT_NAME = SteamController;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		5805D9DF63A99EA03E330D9A79D2336D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6443607BF0B38A256FC5E7C8E9B64C3 /* SteamController-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SteamController-iOS/SteamController-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SteamController-iOS/SteamController-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SteamController-iOS/SteamController-iOS.modulemap";
+				PRODUCT_MODULE_NAME = SteamController;
+				PRODUCT_NAME = SteamController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		BDA59D0E724BF3337A7F93F1CC87622F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 73E447D158AD208E0A366E181C25E544 /* SteamController-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SteamController-tvOS/SteamController-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SteamController-tvOS/SteamController-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SteamController-tvOS/SteamController-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = SteamController;
+				PRODUCT_NAME = SteamController;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E36533616CF5B6CB33FC956C442B0D35 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6443607BF0B38A256FC5E7C8E9B64C3 /* SteamController-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SteamController-iOS/SteamController-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SteamController-iOS/SteamController-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SteamController-iOS/SteamController-iOS.modulemap";
+				PRODUCT_MODULE_NAME = SteamController;
+				PRODUCT_NAME = SteamController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		739CFF75DE03F2C4541A7A9A1815EDBA /* Build configuration list for PBXProject "SteamController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				058A31AB9F7ABA3A8FBFF0018825C961 /* Archive */,
+				3F2FFED053D60B2CA3EA7265B3B14BC5 /* Debug */,
+				07B9C6BC045F300ACA43BBEE1A70C292 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		78B9E6EE6838B0B06FA19D3964C09E2C /* Build configuration list for PBXNativeTarget "SteamController-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E36533616CF5B6CB33FC956C442B0D35 /* Archive */,
+				4D05AC669B92D2FC70E49517D92CF276 /* Debug */,
+				5805D9DF63A99EA03E330D9A79D2336D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8230328FBE17E44AB23AFF0524AFCF19 /* Build configuration list for PBXNativeTarget "SteamController-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				040043207FC6D7A8E0FC8BB4A64976A9 /* Archive */,
+				BDA59D0E724BF3337A7F93F1CC87622F /* Debug */,
+				50B980EE9281D762BC7ABCD9AA8C1FA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2E9BA8F6533F28A009EE6403852BD181 /* Project object */;
+}

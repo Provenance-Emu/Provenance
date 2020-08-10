@@ -146,8 +146,13 @@ public final class GameImporter {
             }
         #endif
 
-        let bundle = Bundle(identifier: "com.provenance-emu.PVLibrary")!
-        PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+        guard
+            let bundle = Bundle(identifier: "com.provenance-emu.PVLibrary"),
+            let systemsPlist = bundle.url(forResource: "systems", withExtension: "plist") else {
+                fatalError("Missing systems.plist from PVLibrary.framework")
+        }
+
+        PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlist])
         PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 

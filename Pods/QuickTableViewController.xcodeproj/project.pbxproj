@@ -1,0 +1,849 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0439B360B55178FD080361BC415241DE /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5E0A0DAB978371C1735CC18E5B728B /* QuickTableViewController.swift */; };
+		0469B2D4586E161DC4277764B1C76C2A /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80AB9EF8AB97723F9605D899DDE0A1CD /* Icon.swift */; };
+		0A3C1CA28F2FF7401AF191FC5E63335E /* QuickTableViewController-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CE1CF508BEBB47FEFCD9CA73F7E7ADA /* QuickTableViewController-tvOS-dummy.m */; };
+		112E9FA9146F9F14CF727ACF8428554F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4429EDC32F8592481704E479A43B2B /* Foundation.framework */; };
+		21BCDAAD3225780126E02F0E777F010A /* NavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAE96A31BA473403ECBEAE6C1C4845 /* NavigationRow.swift */; };
+		25BAF71CEEA43721107EF35A718DBB8A /* TapActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCE8D3E839F8C23DF7650C853972BF5 /* TapActionCell.swift */; };
+		2B00A8F5447895C5E8F2635224198151 /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE38905242F52D9B40DD05F001E46D /* Reusable.swift */; };
+		3B1D1A97E548800823DE48C7CBE02DB8 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA317375A73721C484D20602C37D1287 /* SwitchCell.swift */; };
+		3CEA9B49F61EA12301482A54C2465A2D /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5057F389EA911F2FBF1BC8E3B1DA51F /* Configurable.swift */; };
+		45AFC9B282BF34381AB16EF20558F6F8 /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5057F389EA911F2FBF1BC8E3B1DA51F /* Configurable.swift */; };
+		55B00FAB5F1B962D690EE71855131634 /* SwitchRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80300B34D901D9E0314B9DF721BF54ED /* SwitchRow.swift */; };
+		5668DEE0C6B3BA26FC3483A45D244258 /* QuickTableViewController-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E441B2FC95CF5761DF598B201EF888 /* QuickTableViewController-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		57411DB739362F5198EA664778D8EF2F /* DetailText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC71421A0EEC89F68C37433D4AEB971 /* DetailText.swift */; };
+		5C1CC179FF2D5D9A1ED72295AC6F6F15 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D5B22FDF203B9AEAE4FC19F4E62F /* Section.swift */; };
+		5D3DD5E5EE2C64F019A46854458E312D /* DetailText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC71421A0EEC89F68C37433D4AEB971 /* DetailText.swift */; };
+		67855980073C5FDBA0F009D7369E94E6 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D5B22FDF203B9AEAE4FC19F4E62F /* Section.swift */; };
+		6A965FAC4F841422665DBA8FBAE3A888 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAF892D9FDCADFAAD2C4BD6DD342FC7 /* Deprecated.swift */; };
+		6ADC562548BFE989AF280A22ABBE4B1D /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAF892D9FDCADFAAD2C4BD6DD342FC7 /* Deprecated.swift */; };
+		6F4C0C9A9DF3988919E06AA54F3F8FB0 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80AB9EF8AB97723F9605D899DDE0A1CD /* Icon.swift */; };
+		718251360A4B866DFB6D98DE2C024893 /* RowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0681E8E6303FD43FD8F6FC363F00C5BD /* RowStyle.swift */; };
+		72A5754321CF884A2EAC98E8AC721157 /* Subtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A2BE31F6345BC4CB6AB2D6B2E3B6A4 /* Subtitle.swift */; };
+		7560AF3FE21957A67E85E3F73FE9888A /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE38905242F52D9B40DD05F001E46D /* Reusable.swift */; };
+		76FB003F850D365A3CB6CEC28F61B3F4 /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B84060B6D119C6BF4B582D5EA0C923 /* RowCompatible.swift */; };
+		786944BA0A7ED3EEF27944BA9DABA4C3 /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24DDBF16A82921F221B3C02755BE371 /* RadioSection.swift */; };
+		7ADAF678B12A404BEA672CDFF2CCAB3C /* NavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAE96A31BA473403ECBEAE6C1C4845 /* NavigationRow.swift */; };
+		A0AD330160283D16373AD62CAE2578FE /* QuickTableViewController-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 606B8D25BC6D00C3B2DF25894C666DEB /* QuickTableViewController-iOS-dummy.m */; };
+		A0E1FC651DB19F67B89820F52D119B95 /* TapActionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E206E9348585ACA1C5B392559E7482D /* TapActionRow.swift */; };
+		B35F12A44CC4DE5E42E35D1F2532DFA3 /* TapActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCE8D3E839F8C23DF7650C853972BF5 /* TapActionCell.swift */; };
+		B64C9FE266DFE458F23E5280D243988F /* OptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F80F1158995EEAF781D64D12FE8657 /* OptionRow.swift */; };
+		B922CC4001BE5CA4CB273303DD03E730 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E348798E2947AC79EECAE73FA55CA67 /* Foundation.framework */; };
+		CD3274AA85D31DADA0A5D66C7A7764FA /* SwitchRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80300B34D901D9E0314B9DF721BF54ED /* SwitchRow.swift */; };
+		CE6C77EC4E0696DF758663D6B9D57072 /* OptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F80F1158995EEAF781D64D12FE8657 /* OptionRow.swift */; };
+		D14AA4A1737AB4D70A00E355EBB2B049 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA317375A73721C484D20602C37D1287 /* SwitchCell.swift */; };
+		D865949BBFC397632FEE21FDB842B742 /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24DDBF16A82921F221B3C02755BE371 /* RadioSection.swift */; };
+		DC3119B003CA23750142A3EF53D6A21B /* QuickTableViewController-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0906DAEED737A394F8B922808BDAC1D4 /* QuickTableViewController-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DEA568A430CEE81DD071F694EA6AF115 /* RowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0681E8E6303FD43FD8F6FC363F00C5BD /* RowStyle.swift */; };
+		E07206D3E833D1DE392CF3695AB6D36D /* Subtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A2BE31F6345BC4CB6AB2D6B2E3B6A4 /* Subtitle.swift */; };
+		E508AB18EF823A339E8D4176BF5C2D7D /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5E0A0DAB978371C1735CC18E5B728B /* QuickTableViewController.swift */; };
+		E65B1C5DEB31C7260A568DC0ED7F3F29 /* TapActionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E206E9348585ACA1C5B392559E7482D /* TapActionRow.swift */; };
+		ED9B884992AC640C0C413D7430ACD216 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719F9C62D36674EF84D2A7C561AA02A1 /* Row.swift */; };
+		EEF9AFD01BD8ED7955D3813298E1C142 /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B84060B6D119C6BF4B582D5EA0C923 /* RowCompatible.swift */; };
+		F4D70954337FDF9CCE50E80385C25F92 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719F9C62D36674EF84D2A7C561AA02A1 /* Row.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0681E8E6303FD43FD8F6FC363F00C5BD /* RowStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RowStyle.swift; path = Source/Protocol/RowStyle.swift; sourceTree = "<group>"; };
+		0906DAEED737A394F8B922808BDAC1D4 /* QuickTableViewController-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "QuickTableViewController-iOS-umbrella.h"; sourceTree = "<group>"; };
+		0DAF892D9FDCADFAAD2C4BD6DD342FC7 /* Deprecated.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Deprecated.swift; path = Source/Model/Deprecated.swift; sourceTree = "<group>"; };
+		0E348798E2947AC79EECAE73FA55CA67 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2CE1CF508BEBB47FEFCD9CA73F7E7ADA /* QuickTableViewController-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "QuickTableViewController-tvOS-dummy.m"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS-dummy.m"; sourceTree = "<group>"; };
+		2E206E9348585ACA1C5B392559E7482D /* TapActionRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TapActionRow.swift; path = Source/Rows/TapActionRow.swift; sourceTree = "<group>"; };
+		345363CD7D3EB75EA9A6E780AF60F465 /* QuickTableViewController-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "QuickTableViewController-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		3EC24932BFD69ED84DB4126406F379DA /* QuickTableViewController-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "QuickTableViewController-tvOS.release.xcconfig"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		3FBAE96A31BA473403ECBEAE6C1C4845 /* NavigationRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NavigationRow.swift; path = Source/Rows/NavigationRow.swift; sourceTree = "<group>"; };
+		40BE38905242F52D9B40DD05F001E46D /* Reusable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Reusable.swift; path = Source/Protocol/Reusable.swift; sourceTree = "<group>"; };
+		41F80F1158995EEAF781D64D12FE8657 /* OptionRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OptionRow.swift; path = Source/Rows/OptionRow.swift; sourceTree = "<group>"; };
+		44A2BE31F6345BC4CB6AB2D6B2E3B6A4 /* Subtitle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Subtitle.swift; path = Source/Model/Subtitle.swift; sourceTree = "<group>"; };
+		454477C53BAC7D8FEE08D68D783C2A85 /* QuickTableViewController-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "QuickTableViewController-iOS-prefix.pch"; sourceTree = "<group>"; };
+		4DABF8EF16110A2B012B7CBE65522D17 /* QuickTableViewController-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "QuickTableViewController-tvOS-Info.plist"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS-Info.plist"; sourceTree = "<group>"; };
+		5C4429EDC32F8592481704E479A43B2B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		606B8D25BC6D00C3B2DF25894C666DEB /* QuickTableViewController-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "QuickTableViewController-iOS-dummy.m"; sourceTree = "<group>"; };
+		60B84060B6D119C6BF4B582D5EA0C923 /* RowCompatible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RowCompatible.swift; path = Source/Protocol/RowCompatible.swift; sourceTree = "<group>"; };
+		719F9C62D36674EF84D2A7C561AA02A1 /* Row.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Row.swift; path = Source/Protocol/Row.swift; sourceTree = "<group>"; };
+		79E441B2FC95CF5761DF598B201EF888 /* QuickTableViewController-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "QuickTableViewController-tvOS-umbrella.h"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		80300B34D901D9E0314B9DF721BF54ED /* SwitchRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SwitchRow.swift; path = Source/Rows/SwitchRow.swift; sourceTree = "<group>"; };
+		80AB9EF8AB97723F9605D899DDE0A1CD /* Icon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Icon.swift; path = Source/Model/Icon.swift; sourceTree = "<group>"; };
+		8628A927D8DB65C440FFEF39092DD044 /* QuickTableViewController-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "QuickTableViewController-iOS-Info.plist"; sourceTree = "<group>"; };
+		86F9572D31739A2146C7525E0CC7B53D /* QuickTableViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = QuickTableViewController.framework; path = "QuickTableViewController-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AC71421A0EEC89F68C37433D4AEB971 /* DetailText.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DetailText.swift; path = Source/Model/DetailText.swift; sourceTree = "<group>"; };
+		8E1C3DB52C4B1065EFA62FED6B11DC55 /* QuickTableViewController-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "QuickTableViewController-tvOS-prefix.pch"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		9716EC14B700BBCF07E0767135739EBA /* QuickTableViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = QuickTableViewController.framework; path = "QuickTableViewController-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9787D5B22FDF203B9AEAE4FC19F4E62F /* Section.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Section.swift; path = Source/Model/Section.swift; sourceTree = "<group>"; };
+		AA317375A73721C484D20602C37D1287 /* SwitchCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SwitchCell.swift; path = Source/Views/SwitchCell.swift; sourceTree = "<group>"; };
+		AC5E0A0DAB978371C1735CC18E5B728B /* QuickTableViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = QuickTableViewController.swift; path = Source/QuickTableViewController.swift; sourceTree = "<group>"; };
+		AE2A1469BAF8743266B4F73F3C823811 /* QuickTableViewController-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "QuickTableViewController-tvOS.modulemap"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS.modulemap"; sourceTree = "<group>"; };
+		C24DDBF16A82921F221B3C02755BE371 /* RadioSection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RadioSection.swift; path = Source/Model/RadioSection.swift; sourceTree = "<group>"; };
+		D4734D838CF6F6DD116470078BBD7759 /* QuickTableViewController-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "QuickTableViewController-tvOS.debug.xcconfig"; path = "../QuickTableViewController-tvOS/QuickTableViewController-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		D5EB933130D2A767116A76FBF37749CF /* QuickTableViewController-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "QuickTableViewController-iOS.modulemap"; sourceTree = "<group>"; };
+		DDCE8D3E839F8C23DF7650C853972BF5 /* TapActionCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TapActionCell.swift; path = Source/Views/TapActionCell.swift; sourceTree = "<group>"; };
+		E5057F389EA911F2FBF1BC8E3B1DA51F /* Configurable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Configurable.swift; path = Source/Protocol/Configurable.swift; sourceTree = "<group>"; };
+		F86E7388D040FCC70344139EBA754C0F /* QuickTableViewController-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "QuickTableViewController-iOS.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		526440641082B1DF888DDAC0625E59A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				112E9FA9146F9F14CF727ACF8428554F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A307F693E76C52B968F1C6E4AE48972 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B922CC4001BE5CA4CB273303DD03E730 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		022C271A9BD681B7A9C45C7F5673EC86 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1CEC5EBF74CC8EB8755A50A08F41C5F1 /* iOS */,
+				05DC86B87237619E7108AF4283A2615A /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		05DC86B87237619E7108AF4283A2615A /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				0E348798E2947AC79EECAE73FA55CA67 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		1AC1E3E8068EEA2340271383DFC704D5 = {
+			isa = PBXGroup;
+			children = (
+				022C271A9BD681B7A9C45C7F5673EC86 /* Frameworks */,
+				C4FEBA4E258F1CF855335A7523B4B8C9 /* Products */,
+				6FB7A07158DFD6B1A511D72DDE8D22F1 /* QuickTableViewController */,
+			);
+			sourceTree = "<group>";
+		};
+		1CEC5EBF74CC8EB8755A50A08F41C5F1 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				5C4429EDC32F8592481704E479A43B2B /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		6FB7A07158DFD6B1A511D72DDE8D22F1 /* QuickTableViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E5057F389EA911F2FBF1BC8E3B1DA51F /* Configurable.swift */,
+				0DAF892D9FDCADFAAD2C4BD6DD342FC7 /* Deprecated.swift */,
+				8AC71421A0EEC89F68C37433D4AEB971 /* DetailText.swift */,
+				80AB9EF8AB97723F9605D899DDE0A1CD /* Icon.swift */,
+				3FBAE96A31BA473403ECBEAE6C1C4845 /* NavigationRow.swift */,
+				41F80F1158995EEAF781D64D12FE8657 /* OptionRow.swift */,
+				AC5E0A0DAB978371C1735CC18E5B728B /* QuickTableViewController.swift */,
+				C24DDBF16A82921F221B3C02755BE371 /* RadioSection.swift */,
+				40BE38905242F52D9B40DD05F001E46D /* Reusable.swift */,
+				719F9C62D36674EF84D2A7C561AA02A1 /* Row.swift */,
+				60B84060B6D119C6BF4B582D5EA0C923 /* RowCompatible.swift */,
+				0681E8E6303FD43FD8F6FC363F00C5BD /* RowStyle.swift */,
+				9787D5B22FDF203B9AEAE4FC19F4E62F /* Section.swift */,
+				44A2BE31F6345BC4CB6AB2D6B2E3B6A4 /* Subtitle.swift */,
+				AA317375A73721C484D20602C37D1287 /* SwitchCell.swift */,
+				80300B34D901D9E0314B9DF721BF54ED /* SwitchRow.swift */,
+				DDCE8D3E839F8C23DF7650C853972BF5 /* TapActionCell.swift */,
+				2E206E9348585ACA1C5B392559E7482D /* TapActionRow.swift */,
+				93302E7F00658FA3B44360AA01C2BC77 /* Support Files */,
+			);
+			name = QuickTableViewController;
+			path = QuickTableViewController;
+			sourceTree = "<group>";
+		};
+		93302E7F00658FA3B44360AA01C2BC77 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D5EB933130D2A767116A76FBF37749CF /* QuickTableViewController-iOS.modulemap */,
+				606B8D25BC6D00C3B2DF25894C666DEB /* QuickTableViewController-iOS-dummy.m */,
+				8628A927D8DB65C440FFEF39092DD044 /* QuickTableViewController-iOS-Info.plist */,
+				454477C53BAC7D8FEE08D68D783C2A85 /* QuickTableViewController-iOS-prefix.pch */,
+				0906DAEED737A394F8B922808BDAC1D4 /* QuickTableViewController-iOS-umbrella.h */,
+				345363CD7D3EB75EA9A6E780AF60F465 /* QuickTableViewController-iOS.debug.xcconfig */,
+				F86E7388D040FCC70344139EBA754C0F /* QuickTableViewController-iOS.release.xcconfig */,
+				AE2A1469BAF8743266B4F73F3C823811 /* QuickTableViewController-tvOS.modulemap */,
+				2CE1CF508BEBB47FEFCD9CA73F7E7ADA /* QuickTableViewController-tvOS-dummy.m */,
+				4DABF8EF16110A2B012B7CBE65522D17 /* QuickTableViewController-tvOS-Info.plist */,
+				8E1C3DB52C4B1065EFA62FED6B11DC55 /* QuickTableViewController-tvOS-prefix.pch */,
+				79E441B2FC95CF5761DF598B201EF888 /* QuickTableViewController-tvOS-umbrella.h */,
+				D4734D838CF6F6DD116470078BBD7759 /* QuickTableViewController-tvOS.debug.xcconfig */,
+				3EC24932BFD69ED84DB4126406F379DA /* QuickTableViewController-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/QuickTableViewController-iOS";
+			sourceTree = "<group>";
+		};
+		C4FEBA4E258F1CF855335A7523B4B8C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				86F9572D31739A2146C7525E0CC7B53D /* QuickTableViewController.framework */,
+				9716EC14B700BBCF07E0767135739EBA /* QuickTableViewController.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		45F56051D66618D8A1E4780896F939F5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC3119B003CA23750142A3EF53D6A21B /* QuickTableViewController-iOS-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59962DBD42A7AF6F24B8A9B0DF1FF49C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5668DEE0C6B3BA26FC3483A45D244258 /* QuickTableViewController-tvOS-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		199B9BF304C76E06D021FCDDE5D6B8E3 /* QuickTableViewController-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4668F2BCB613B135A7DB272D0D673310 /* Build configuration list for PBXNativeTarget "QuickTableViewController-tvOS" */;
+			buildPhases = (
+				59962DBD42A7AF6F24B8A9B0DF1FF49C /* Headers */,
+				70EE3ECE02EDE4A758FB1F8F95831EE7 /* Sources */,
+				6A307F693E76C52B968F1C6E4AE48972 /* Frameworks */,
+				A8C1324344AA29EF2FCAF4978A052A9C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "QuickTableViewController-tvOS";
+			productName = "QuickTableViewController-tvOS";
+			productReference = 9716EC14B700BBCF07E0767135739EBA /* QuickTableViewController.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		229E1E0C0969A1FC2541EE9C02AFDD4B /* QuickTableViewController-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2710BF721946A03D1A99B47BA720C7BA /* Build configuration list for PBXNativeTarget "QuickTableViewController-iOS" */;
+			buildPhases = (
+				45F56051D66618D8A1E4780896F939F5 /* Headers */,
+				262CF37F398814CD1B7B2D13C5BFCDE7 /* Sources */,
+				526440641082B1DF888DDAC0625E59A4 /* Frameworks */,
+				A6BDAD644B5A154A83A44D6180E635BA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "QuickTableViewController-iOS";
+			productName = "QuickTableViewController-iOS";
+			productReference = 86F9572D31739A2146C7525E0CC7B53D /* QuickTableViewController.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9476826CEB9D163EE73A2F102A9AB6CC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 141BF5921A4A63B1958CC5A60F497353 /* Build configuration list for PBXProject "QuickTableViewController" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1AC1E3E8068EEA2340271383DFC704D5;
+			productRefGroup = C4FEBA4E258F1CF855335A7523B4B8C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				229E1E0C0969A1FC2541EE9C02AFDD4B /* QuickTableViewController-iOS */,
+				199B9BF304C76E06D021FCDDE5D6B8E3 /* QuickTableViewController-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A6BDAD644B5A154A83A44D6180E635BA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A8C1324344AA29EF2FCAF4978A052A9C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		262CF37F398814CD1B7B2D13C5BFCDE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CEA9B49F61EA12301482A54C2465A2D /* Configurable.swift in Sources */,
+				6A965FAC4F841422665DBA8FBAE3A888 /* Deprecated.swift in Sources */,
+				5D3DD5E5EE2C64F019A46854458E312D /* DetailText.swift in Sources */,
+				0469B2D4586E161DC4277764B1C76C2A /* Icon.swift in Sources */,
+				21BCDAAD3225780126E02F0E777F010A /* NavigationRow.swift in Sources */,
+				CE6C77EC4E0696DF758663D6B9D57072 /* OptionRow.swift in Sources */,
+				A0AD330160283D16373AD62CAE2578FE /* QuickTableViewController-iOS-dummy.m in Sources */,
+				E508AB18EF823A339E8D4176BF5C2D7D /* QuickTableViewController.swift in Sources */,
+				786944BA0A7ED3EEF27944BA9DABA4C3 /* RadioSection.swift in Sources */,
+				7560AF3FE21957A67E85E3F73FE9888A /* Reusable.swift in Sources */,
+				F4D70954337FDF9CCE50E80385C25F92 /* Row.swift in Sources */,
+				EEF9AFD01BD8ED7955D3813298E1C142 /* RowCompatible.swift in Sources */,
+				718251360A4B866DFB6D98DE2C024893 /* RowStyle.swift in Sources */,
+				67855980073C5FDBA0F009D7369E94E6 /* Section.swift in Sources */,
+				E07206D3E833D1DE392CF3695AB6D36D /* Subtitle.swift in Sources */,
+				3B1D1A97E548800823DE48C7CBE02DB8 /* SwitchCell.swift in Sources */,
+				55B00FAB5F1B962D690EE71855131634 /* SwitchRow.swift in Sources */,
+				25BAF71CEEA43721107EF35A718DBB8A /* TapActionCell.swift in Sources */,
+				A0E1FC651DB19F67B89820F52D119B95 /* TapActionRow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70EE3ECE02EDE4A758FB1F8F95831EE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45AFC9B282BF34381AB16EF20558F6F8 /* Configurable.swift in Sources */,
+				6ADC562548BFE989AF280A22ABBE4B1D /* Deprecated.swift in Sources */,
+				57411DB739362F5198EA664778D8EF2F /* DetailText.swift in Sources */,
+				6F4C0C9A9DF3988919E06AA54F3F8FB0 /* Icon.swift in Sources */,
+				7ADAF678B12A404BEA672CDFF2CCAB3C /* NavigationRow.swift in Sources */,
+				B64C9FE266DFE458F23E5280D243988F /* OptionRow.swift in Sources */,
+				0A3C1CA28F2FF7401AF191FC5E63335E /* QuickTableViewController-tvOS-dummy.m in Sources */,
+				0439B360B55178FD080361BC415241DE /* QuickTableViewController.swift in Sources */,
+				D865949BBFC397632FEE21FDB842B742 /* RadioSection.swift in Sources */,
+				2B00A8F5447895C5E8F2635224198151 /* Reusable.swift in Sources */,
+				ED9B884992AC640C0C413D7430ACD216 /* Row.swift in Sources */,
+				76FB003F850D365A3CB6CEC28F61B3F4 /* RowCompatible.swift in Sources */,
+				DEA568A430CEE81DD071F694EA6AF115 /* RowStyle.swift in Sources */,
+				5C1CC179FF2D5D9A1ED72295AC6F6F15 /* Section.swift in Sources */,
+				72A5754321CF884A2EAC98E8AC721157 /* Subtitle.swift in Sources */,
+				D14AA4A1737AB4D70A00E355EBB2B049 /* SwitchCell.swift in Sources */,
+				CD3274AA85D31DADA0A5D66C7A7764FA /* SwitchRow.swift in Sources */,
+				B35F12A44CC4DE5E42E35D1F2532DFA3 /* TapActionCell.swift in Sources */,
+				E65B1C5DEB31C7260A568DC0ED7F3F29 /* TapActionRow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		21AF9D21442E7DD212B2B675BF27DC34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F86E7388D040FCC70344139EBA754C0F /* QuickTableViewController-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS.modulemap";
+				PRODUCT_MODULE_NAME = QuickTableViewController;
+				PRODUCT_NAME = QuickTableViewController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		3AEFA6B7505F3D7650147E7B039A7C64 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Archive;
+		};
+		4FA50B9541F53F01EA5A416A204151AC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3EC24932BFD69ED84DB4126406F379DA /* QuickTableViewController-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = QuickTableViewController;
+				PRODUCT_NAME = QuickTableViewController;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		666872D9186B8B9CC5F0AEF815151787 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 345363CD7D3EB75EA9A6E780AF60F465 /* QuickTableViewController-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS.modulemap";
+				PRODUCT_MODULE_NAME = QuickTableViewController;
+				PRODUCT_NAME = QuickTableViewController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		896C5FDE4C27CD083AE77760DB37F7CD /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F86E7388D040FCC70344139EBA754C0F /* QuickTableViewController-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/QuickTableViewController-iOS/QuickTableViewController-iOS.modulemap";
+				PRODUCT_MODULE_NAME = QuickTableViewController;
+				PRODUCT_NAME = QuickTableViewController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		8A203BF0D9025E86A6477ADEDC1B32F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		B93768D10286203A102DC7B5A9ACA834 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D4734D838CF6F6DD116470078BBD7759 /* QuickTableViewController-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = QuickTableViewController;
+				PRODUCT_NAME = QuickTableViewController;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		BA1DADBD0049269228460F44482835B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3EC24932BFD69ED84DB4126406F379DA /* QuickTableViewController-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/QuickTableViewController-tvOS/QuickTableViewController-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = QuickTableViewController;
+				PRODUCT_NAME = QuickTableViewController;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		BAE7B92C065A7E5E072836AE546D2EEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		141BF5921A4A63B1958CC5A60F497353 /* Build configuration list for PBXProject "QuickTableViewController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEFA6B7505F3D7650147E7B039A7C64 /* Archive */,
+				8A203BF0D9025E86A6477ADEDC1B32F2 /* Debug */,
+				BAE7B92C065A7E5E072836AE546D2EEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2710BF721946A03D1A99B47BA720C7BA /* Build configuration list for PBXNativeTarget "QuickTableViewController-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				896C5FDE4C27CD083AE77760DB37F7CD /* Archive */,
+				666872D9186B8B9CC5F0AEF815151787 /* Debug */,
+				21AF9D21442E7DD212B2B675BF27DC34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4668F2BCB613B135A7DB272D0D673310 /* Build configuration list for PBXNativeTarget "QuickTableViewController-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FA50B9541F53F01EA5A416A204151AC /* Archive */,
+				B93768D10286203A102DC7B5A9ACA834 /* Debug */,
+				BA1DADBD0049269228460F44482835B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9476826CEB9D163EE73A2F102A9AB6CC /* Project object */;
+}

@@ -1,0 +1,6 @@
+framework module QuickTableViewController {
+  umbrella header "QuickTableViewController-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

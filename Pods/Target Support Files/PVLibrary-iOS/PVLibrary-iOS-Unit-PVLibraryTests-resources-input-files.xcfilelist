@@ -1,0 +1,3 @@
+${PODS_ROOT}/Target Support Files/PVLibrary-iOS/PVLibrary-iOS-Unit-PVLibraryTests-resources.sh
+${PODS_ROOT}/../PVLibrary/Sources/Resources/openvgdb.sqlite
+${PODS_ROOT}/../PVLibrary/Sources/Resources/systems.plist

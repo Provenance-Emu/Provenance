@@ -1,0 +1,6 @@
+framework module Reachability {
+  umbrella header "ReachabilitySwift-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

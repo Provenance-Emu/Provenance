@@ -1,0 +1,6 @@
+framework module RxDataSources {
+  umbrella header "RxDataSources-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

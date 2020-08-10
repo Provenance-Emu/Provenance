@@ -1,0 +1,868 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		199DC2B313A263A6709701292EEDEAE6 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31A4CCEBD408F355C3C55DCF42F2C41C /* Reachability.framework */; };
+		44D6C6A448EECECBEB8E1479F0170DA6 /* RxReachability-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 02A2989B6080D059D1ECF6D06C41C6A8 /* RxReachability-iOS-dummy.m */; };
+		4BDF879ECB4BE1E8993F4712B5F17076 /* RxReachability-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E4712E5F66AF9FCF2F2FD8132E773337 /* RxReachability-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4EBBBDA7337FD75C3D07C3804CD0ABA7 /* ObservableType+Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F91B5572E74410D34297F71868161AB /* ObservableType+Reachability.swift */; };
+		58057C1259BC7587D55A0A2E2AF86A98 /* ObservableType+Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F91B5572E74410D34297F71868161AB /* ObservableType+Reachability.swift */; };
+		69210A1CFA87C505F85730E2999E62D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 440BA5B4F64DBE3F3C898A34A3501F96 /* Foundation.framework */; };
+		A7D323FDB5181FF5BF64A3D91246147A /* Reachability+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B090D13E85CF3D6B6D6E7AEE8062ACB /* Reachability+Rx.swift */; };
+		ADA0DD068C5B713479DFBE8845369E51 /* Reachability+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B090D13E85CF3D6B6D6E7AEE8062ACB /* Reachability+Rx.swift */; };
+		CD4AFE565BBA3BA9F55B72384A41CFD3 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31A4CCEBD408F355C3C55DCF42F2C41C /* Reachability.framework */; };
+		CFF69B7FD1F48A3B170C57DF2C64C843 /* RxReachability-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F765A7AB6BFEAECA7A8236C2A7A134 /* RxReachability-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EE2C59C1918E1C6DD93E59A2706B0719 /* RxReachability-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CA65197A66462D522C19DE47EA8639D9 /* RxReachability-tvOS-dummy.m */; };
+		EFA0DC9231CBFB4753933FA2A91C1706 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA70830A5A2A0A8AEBDBD2B4A24A85F /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3432CF9A783C6B60A8330EF1A0047E59 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD98E1DD0A5E47ECEA249887C1ED1D03 /* ReachabilitySwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BBD49F22A6965EE30DD91CC7CEE5E68E;
+			remoteInfo = "ReachabilitySwift-tvOS";
+		};
+		3CA2AF26869FDC16DE4F9FF21FE80D31 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD98E1DD0A5E47ECEA249887C1ED1D03 /* ReachabilitySwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2447EB1FE9BA61BAF193C1400191B13D;
+			remoteInfo = "ReachabilitySwift-iOS";
+		};
+		6701E4D1C3B4B4686712AB07FB2E90E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6B66EB4760F7203A87D14D6200DD8EAD /* RxCocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 66079BBD0D3ADFE73390F28ED07289C9;
+			remoteInfo = "RxCocoa-tvOS";
+		};
+		9CA7C1C530458FBD55098C3B38631E88 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 02C61A5756AD978FB71970C1593733C4 /* RxSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2B4DC59739E6A2FEA529728FB1146453;
+			remoteInfo = "RxSwift-tvOS";
+		};
+		E76FDEB3B3FA7DD9B9C1779E0E9A43BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6B66EB4760F7203A87D14D6200DD8EAD /* RxCocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DB765C963AAFF5C61FA1D944105D582C;
+			remoteInfo = "RxCocoa-iOS";
+		};
+		E922D6662953A03014AD2A209177980F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 02C61A5756AD978FB71970C1593733C4 /* RxSwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A8D89AD6E813D43721E0B30A19DCA863;
+			remoteInfo = "RxSwift-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02A2989B6080D059D1ECF6D06C41C6A8 /* RxReachability-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "RxReachability-iOS-dummy.m"; sourceTree = "<group>"; };
+		02C61A5756AD978FB71970C1593733C4 /* RxSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxSwift; path = RxSwift.xcodeproj; sourceTree = "<group>"; };
+		082D4EB94234C4541BD3056D0250E704 /* RxReachability-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "RxReachability-tvOS.debug.xcconfig"; path = "../RxReachability-tvOS/RxReachability-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		13244425921AA192A1F7EE3F2F0FFD6F /* RxReachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = RxReachability.framework; path = "RxReachability-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A67FC8ED362F0133650486BB23B5CA8 /* RxReachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = RxReachability.framework; path = "RxReachability-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AA70830A5A2A0A8AEBDBD2B4A24A85F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		20346C323C887FBE88900631DC84FEF6 /* RxReachability-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "RxReachability-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		245E15A932517F9AB21421A0412FAB88 /* RxReachability-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "RxReachability-tvOS.modulemap"; path = "../RxReachability-tvOS/RxReachability-tvOS.modulemap"; sourceTree = "<group>"; };
+		31A4CCEBD408F355C3C55DCF42F2C41C /* Reachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B090D13E85CF3D6B6D6E7AEE8062ACB /* Reachability+Rx.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Reachability+Rx.swift"; path = "RxReachability/Sources/Reachability+Rx.swift"; sourceTree = "<group>"; };
+		3F6BA64B503A8CDD6317AB0ECEF2B252 /* RxReachability-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "RxReachability-tvOS.release.xcconfig"; path = "../RxReachability-tvOS/RxReachability-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		3F8845E4E80DEC0A52E68BC04AB1C6F1 /* RxReachability-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "RxReachability-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		440BA5B4F64DBE3F3C898A34A3501F96 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		6152904F2742075B75007E551CDC460E /* RxReachability-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "RxReachability-tvOS-Info.plist"; path = "../RxReachability-tvOS/RxReachability-tvOS-Info.plist"; sourceTree = "<group>"; };
+		67079091F2DB2AEE61D15C92A36C9BDD /* RxReachability-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "RxReachability-iOS.modulemap"; sourceTree = "<group>"; };
+		6B66EB4760F7203A87D14D6200DD8EAD /* RxCocoa */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxCocoa; path = RxCocoa.xcodeproj; sourceTree = "<group>"; };
+		77AC28C3627A5899C34673F4C5F09CFC /* RxReachability-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "RxReachability-iOS-Info.plist"; sourceTree = "<group>"; };
+		8F91B5572E74410D34297F71868161AB /* ObservableType+Reachability.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ObservableType+Reachability.swift"; path = "RxReachability/Sources/ObservableType+Reachability.swift"; sourceTree = "<group>"; };
+		C5F765A7AB6BFEAECA7A8236C2A7A134 /* RxReachability-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "RxReachability-tvOS-umbrella.h"; path = "../RxReachability-tvOS/RxReachability-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		CA65197A66462D522C19DE47EA8639D9 /* RxReachability-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "RxReachability-tvOS-dummy.m"; path = "../RxReachability-tvOS/RxReachability-tvOS-dummy.m"; sourceTree = "<group>"; };
+		CD98E1DD0A5E47ECEA249887C1ED1D03 /* ReachabilitySwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReachabilitySwift; path = ReachabilitySwift.xcodeproj; sourceTree = "<group>"; };
+		DAA222519761D641912CF92DDFC07831 /* RxReachability-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "RxReachability-tvOS-prefix.pch"; path = "../RxReachability-tvOS/RxReachability-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		E4712E5F66AF9FCF2F2FD8132E773337 /* RxReachability-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RxReachability-iOS-umbrella.h"; sourceTree = "<group>"; };
+		E92EA62130807F4054AD2B55532CA65C /* RxReachability-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RxReachability-iOS-prefix.pch"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		15E2D5A8748459E3277A30C900861C69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69210A1CFA87C505F85730E2999E62D7 /* Foundation.framework in Frameworks */,
+				199DC2B313A263A6709701292EEDEAE6 /* Reachability.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7C4E832AE91BC73D219F374D12682A51 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFA0DC9231CBFB4753933FA2A91C1706 /* Foundation.framework in Frameworks */,
+				CD4AFE565BBA3BA9F55B72384A41CFD3 /* Reachability.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		020F3F100585F2BC462D5B7549BAE85C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				31A4CCEBD408F355C3C55DCF42F2C41C /* Reachability.framework */,
+				4DB35A1D751B6FB834AF18EFE6295B53 /* iOS */,
+				707A04E5D09A4A739F489FC65ABE3086 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4DB35A1D751B6FB834AF18EFE6295B53 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				1AA70830A5A2A0A8AEBDBD2B4A24A85F /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		5B77104D67897E07A641C861694473EB /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				CD98E1DD0A5E47ECEA249887C1ED1D03 /* ReachabilitySwift */,
+				6B66EB4760F7203A87D14D6200DD8EAD /* RxCocoa */,
+				02C61A5756AD978FB71970C1593733C4 /* RxSwift */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		5E3D8C4C5C79DF187E821DA94F27F40D = {
+			isa = PBXGroup;
+			children = (
+				5B77104D67897E07A641C861694473EB /* Dependencies */,
+				020F3F100585F2BC462D5B7549BAE85C /* Frameworks */,
+				D23D8DE9227928E6E4FA83E26F438EB7 /* Products */,
+				946D228649471A440F8332078769C4D3 /* RxReachability */,
+			);
+			sourceTree = "<group>";
+		};
+		707A04E5D09A4A739F489FC65ABE3086 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				440BA5B4F64DBE3F3C898A34A3501F96 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		946D228649471A440F8332078769C4D3 /* RxReachability */ = {
+			isa = PBXGroup;
+			children = (
+				8F91B5572E74410D34297F71868161AB /* ObservableType+Reachability.swift */,
+				3B090D13E85CF3D6B6D6E7AEE8062ACB /* Reachability+Rx.swift */,
+				CDB98F17AA2477137DC81E8C74124A8E /* Support Files */,
+			);
+			name = RxReachability;
+			path = RxReachability;
+			sourceTree = "<group>";
+		};
+		CDB98F17AA2477137DC81E8C74124A8E /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				67079091F2DB2AEE61D15C92A36C9BDD /* RxReachability-iOS.modulemap */,
+				02A2989B6080D059D1ECF6D06C41C6A8 /* RxReachability-iOS-dummy.m */,
+				77AC28C3627A5899C34673F4C5F09CFC /* RxReachability-iOS-Info.plist */,
+				E92EA62130807F4054AD2B55532CA65C /* RxReachability-iOS-prefix.pch */,
+				E4712E5F66AF9FCF2F2FD8132E773337 /* RxReachability-iOS-umbrella.h */,
+				20346C323C887FBE88900631DC84FEF6 /* RxReachability-iOS.debug.xcconfig */,
+				3F8845E4E80DEC0A52E68BC04AB1C6F1 /* RxReachability-iOS.release.xcconfig */,
+				245E15A932517F9AB21421A0412FAB88 /* RxReachability-tvOS.modulemap */,
+				CA65197A66462D522C19DE47EA8639D9 /* RxReachability-tvOS-dummy.m */,
+				6152904F2742075B75007E551CDC460E /* RxReachability-tvOS-Info.plist */,
+				DAA222519761D641912CF92DDFC07831 /* RxReachability-tvOS-prefix.pch */,
+				C5F765A7AB6BFEAECA7A8236C2A7A134 /* RxReachability-tvOS-umbrella.h */,
+				082D4EB94234C4541BD3056D0250E704 /* RxReachability-tvOS.debug.xcconfig */,
+				3F6BA64B503A8CDD6317AB0ECEF2B252 /* RxReachability-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/RxReachability-iOS";
+			sourceTree = "<group>";
+		};
+		D23D8DE9227928E6E4FA83E26F438EB7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A67FC8ED362F0133650486BB23B5CA8 /* RxReachability.framework */,
+				13244425921AA192A1F7EE3F2F0FFD6F /* RxReachability.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CDEE5FF6C6B2D87ED85180CB44688940 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFF69B7FD1F48A3B170C57DF2C64C843 /* RxReachability-tvOS-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F653A314552A9FCE0A78B1C7098B1C22 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BDF879ECB4BE1E8993F4712B5F17076 /* RxReachability-iOS-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		A75C873A2381436AC04E5E6E40146270 /* RxReachability-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC8A2E555B9C7039F407A1807B11FD66 /* Build configuration list for PBXNativeTarget "RxReachability-tvOS" */;
+			buildPhases = (
+				CDEE5FF6C6B2D87ED85180CB44688940 /* Headers */,
+				8891F152FBD4F01E73C4681D1051F060 /* Sources */,
+				15E2D5A8748459E3277A30C900861C69 /* Frameworks */,
+				273E847F82869948A0D609EE19916FA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C93D10731729C71D0DBE65D5AAF16352 /* PBXTargetDependency */,
+				A1785E2FEB4FF86C6EE6844436D7165B /* PBXTargetDependency */,
+				CA19B9485E9705FDA9E2C332CF939738 /* PBXTargetDependency */,
+			);
+			name = "RxReachability-tvOS";
+			productName = "RxReachability-tvOS";
+			productReference = 13244425921AA192A1F7EE3F2F0FFD6F /* RxReachability.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B70A3EB47BB052E9CAC9C498FC81BA3A /* RxReachability-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A55FB012DB8BA3327A0E313BA90935B0 /* Build configuration list for PBXNativeTarget "RxReachability-iOS" */;
+			buildPhases = (
+				F653A314552A9FCE0A78B1C7098B1C22 /* Headers */,
+				EBD52CC2D5F2B46284A0A0DA1A59B137 /* Sources */,
+				7C4E832AE91BC73D219F374D12682A51 /* Frameworks */,
+				8825FF93A2E2C4034C588DEBBD9D2F99 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B8BBE1D14E7C5B34F187AE264FFD4E33 /* PBXTargetDependency */,
+				A3D393BB51ACD4B77628DC87678A4BD4 /* PBXTargetDependency */,
+				B740E19B249A333FAF06982E70EB1C3F /* PBXTargetDependency */,
+			);
+			name = "RxReachability-iOS";
+			productName = "RxReachability-iOS";
+			productReference = 1A67FC8ED362F0133650486BB23B5CA8 /* RxReachability.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		85B7797E74688A22ECBC1D97FCD50FBD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = AF3007B58740D3FDFCBE1E88B48E6AB1 /* Build configuration list for PBXProject "RxReachability" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5E3D8C4C5C79DF187E821DA94F27F40D;
+			productRefGroup = D23D8DE9227928E6E4FA83E26F438EB7 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProjectRef = CD98E1DD0A5E47ECEA249887C1ED1D03 /* ReachabilitySwift */;
+				},
+				{
+					ProjectRef = 02C61A5756AD978FB71970C1593733C4 /* RxSwift */;
+				},
+				{
+					ProjectRef = 6B66EB4760F7203A87D14D6200DD8EAD /* RxCocoa */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				B70A3EB47BB052E9CAC9C498FC81BA3A /* RxReachability-iOS */,
+				A75C873A2381436AC04E5E6E40146270 /* RxReachability-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		273E847F82869948A0D609EE19916FA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8825FF93A2E2C4034C588DEBBD9D2F99 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8891F152FBD4F01E73C4681D1051F060 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				58057C1259BC7587D55A0A2E2AF86A98 /* ObservableType+Reachability.swift in Sources */,
+				ADA0DD068C5B713479DFBE8845369E51 /* Reachability+Rx.swift in Sources */,
+				EE2C59C1918E1C6DD93E59A2706B0719 /* RxReachability-tvOS-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EBD52CC2D5F2B46284A0A0DA1A59B137 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4EBBBDA7337FD75C3D07C3804CD0ABA7 /* ObservableType+Reachability.swift in Sources */,
+				A7D323FDB5181FF5BF64A3D91246147A /* Reachability+Rx.swift in Sources */,
+				44D6C6A448EECECBEB8E1479F0170DA6 /* RxReachability-iOS-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1785E2FEB4FF86C6EE6844436D7165B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxCocoa-tvOS";
+			targetProxy = 6701E4D1C3B4B4686712AB07FB2E90E7 /* PBXContainerItemProxy */;
+		};
+		A3D393BB51ACD4B77628DC87678A4BD4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxCocoa-iOS";
+			targetProxy = E76FDEB3B3FA7DD9B9C1779E0E9A43BB /* PBXContainerItemProxy */;
+		};
+		B740E19B249A333FAF06982E70EB1C3F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-iOS";
+			targetProxy = E922D6662953A03014AD2A209177980F /* PBXContainerItemProxy */;
+		};
+		B8BBE1D14E7C5B34F187AE264FFD4E33 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ReachabilitySwift-iOS";
+			targetProxy = 3CA2AF26869FDC16DE4F9FF21FE80D31 /* PBXContainerItemProxy */;
+		};
+		C93D10731729C71D0DBE65D5AAF16352 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ReachabilitySwift-tvOS";
+			targetProxy = 3432CF9A783C6B60A8330EF1A0047E59 /* PBXContainerItemProxy */;
+		};
+		CA19B9485E9705FDA9E2C332CF939738 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxSwift-tvOS";
+			targetProxy = 9CA7C1C530458FBD55098C3B38631E88 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		010F1A4F327EE8AC8668A8985892F435 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		291EC70DDA116F3E5C89E119CB79B383 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 20346C323C887FBE88900631DC84FEF6 /* RxReachability-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/RxReachability-iOS/RxReachability-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/RxReachability-iOS/RxReachability-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxReachability-iOS/RxReachability-iOS.modulemap";
+				PRODUCT_MODULE_NAME = RxReachability;
+				PRODUCT_NAME = RxReachability;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		34080F9BE68A1AFD666C64DBD9818C75 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Archive;
+		};
+		713EB0C230FEB8B8C0141E1384225F85 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F6BA64B503A8CDD6317AB0ECEF2B252 /* RxReachability-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = RxReachability;
+				PRODUCT_NAME = RxReachability;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		7BCA5EB8454F1758F84B6131C24EACA9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 082D4EB94234C4541BD3056D0250E704 /* RxReachability-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = RxReachability;
+				PRODUCT_NAME = RxReachability;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7EDCF2122423DFECF5B384EE3FEAC338 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		8046583EACDA6856784318AA9469AC0B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F8845E4E80DEC0A52E68BC04AB1C6F1 /* RxReachability-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/RxReachability-iOS/RxReachability-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/RxReachability-iOS/RxReachability-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxReachability-iOS/RxReachability-iOS.modulemap";
+				PRODUCT_MODULE_NAME = RxReachability;
+				PRODUCT_NAME = RxReachability;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		BE2A9C67A2ECCB0EB3E35FC00BB1E4C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F6BA64B503A8CDD6317AB0ECEF2B252 /* RxReachability-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxReachability-tvOS/RxReachability-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = RxReachability;
+				PRODUCT_NAME = RxReachability;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E39CEEF94E5A539A9E48E3CFE5D71C17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F8845E4E80DEC0A52E68BC04AB1C6F1 /* RxReachability-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/RxReachability-iOS/RxReachability-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/RxReachability-iOS/RxReachability-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/RxReachability-iOS/RxReachability-iOS.modulemap";
+				PRODUCT_MODULE_NAME = RxReachability;
+				PRODUCT_NAME = RxReachability;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A55FB012DB8BA3327A0E313BA90935B0 /* Build configuration list for PBXNativeTarget "RxReachability-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8046583EACDA6856784318AA9469AC0B /* Archive */,
+				291EC70DDA116F3E5C89E119CB79B383 /* Debug */,
+				E39CEEF94E5A539A9E48E3CFE5D71C17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AF3007B58740D3FDFCBE1E88B48E6AB1 /* Build configuration list for PBXProject "RxReachability" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34080F9BE68A1AFD666C64DBD9818C75 /* Archive */,
+				7EDCF2122423DFECF5B384EE3FEAC338 /* Debug */,
+				010F1A4F327EE8AC8668A8985892F435 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DC8A2E555B9C7039F407A1807B11FD66 /* Build configuration list for PBXNativeTarget "RxReachability-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				713EB0C230FEB8B8C0141E1384225F85 /* Archive */,
+				7BCA5EB8454F1758F84B6131C24EACA9 /* Debug */,
+				BE2A9C67A2ECCB0EB3E35FC00BB1E4C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 85B7797E74688A22ECBC1D97FCD50FBD /* Project object */;
+}

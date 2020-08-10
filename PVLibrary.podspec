@@ -60,6 +60,10 @@ Pod::Spec.new do |s|
     @sources_common
   ]
 
+  s.resources = [
+    "#{@sources_root}/Resources/*.*"
+  ]
+
   s.test_spec 'PVLibraryTests' do |test_spec|
     test_spec.requires_app_host = false
     # test_spec.test_type = :ui
@@ -67,4 +71,6 @@ Pod::Spec.new do |s|
   end
 
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
+  s.info_plist = { 'CFBundleIdentifier' => 'com.provenance-emu.PVLibrary' }
+  s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVLibrary' }
 end

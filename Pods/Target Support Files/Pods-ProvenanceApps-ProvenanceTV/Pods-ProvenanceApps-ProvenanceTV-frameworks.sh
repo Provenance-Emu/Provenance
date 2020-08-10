@@ -227,7 +227,13 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Differentiator-tvOS/Differentiator.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-tvOS/ProvenanceCores.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QuickTableViewController-tvOS/QuickTableViewController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ReachabilitySwift-tvOS/Reachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxDataSources-tvOS/RxDataSources.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxReachability-tvOS/RxReachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SteamController-tvOS/SteamController.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-tvOS/BitByteData.framework"
@@ -245,7 +251,13 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Differentiator-tvOS/Differentiator.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-tvOS/ProvenanceCores.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QuickTableViewController-tvOS/QuickTableViewController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ReachabilitySwift-tvOS/Reachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxDataSources-tvOS/RxDataSources.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxReachability-tvOS/RxReachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SteamController-tvOS/SteamController.framework"
 fi
 if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BitByteData-tvOS/BitByteData.framework"
@@ -263,7 +275,13 @@ if [[ "$CONFIGURATION" == "Archive" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Differentiator-tvOS/Differentiator.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ProvenanceCores-tvOS/ProvenanceCores.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QuickTableViewController-tvOS/QuickTableViewController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ReachabilitySwift-tvOS/Reachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxDataSources-tvOS/RxDataSources.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RxReachability-tvOS/RxReachability.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SteamController-tvOS/SteamController.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

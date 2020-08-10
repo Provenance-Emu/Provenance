@@ -84,6 +84,11 @@ def deps_app
   pod 'RxSwift'
   pod 'RxRealm'
 
+  pod 'QuickTableViewController'
+  pod 'RxDataSources'
+  pod 'RxReachability', git: 'https://github.com/RxSwiftCommunity/RxReachability.git', tag: '1.1.0'
+  pod 'SteamController'
+
   cores
 end
 
@@ -100,6 +105,8 @@ abstract_target 'ProvenanceApps' do
     pod 'AppCenter/Analytics'
     pod 'AppCenter/Distribute'
     pod 'AppCenter/Crashes'
+
+    pod 'RxGesture'
 
     pod 'XLActionController',
         git: 'https://github.com/Puasonych/XLActionController.git',
