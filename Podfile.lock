@@ -6,6 +6,9 @@ PODS:
     - AppCenter/Core
   - AppCenter/Distribute (3.3.2):
     - AppCenter/Core
+  - Atari800 (1.5):
+    - PVLibrary (~> 1.5)
+    - PVSupport (~> 1.5)
   - BitByteData (1.4.3)
   - CocoaLumberjack/Core (3.6.2)
   - CocoaLumberjack/Swift (3.6.2):
@@ -15,21 +18,12 @@ PODS:
   - NSLogger (1.9.7):
     - NSLogger/ObjC (= 1.9.7)
   - NSLogger/ObjC (1.9.7)
-  - ProvenanceCores (1.5):
-    - ProvenanceCores/Atari800 (= 1.5)
-    - ProvenanceCores/PokeMini (= 1.5)
-    - PVLibrary
-    - PVSupport
-  - ProvenanceCores/Atari800 (1.5):
-    - PVLibrary
-    - PVSupport
-  - ProvenanceCores/PokeMini (1.5):
+  - PokeMini (1.5):
     - PVLibrary
     - PVSupport
   - PVLibrary (1.5.0):
     - LzmaSDK-ObjC
     - PVSupport
-    - Realm
     - RealmSwift
     - RxCocoa
     - RxRealm
@@ -40,7 +34,6 @@ PODS:
   - PVLibrary/PVLibraryTests (1.5.0):
     - LzmaSDK-ObjC
     - PVSupport
-    - Realm
     - RealmSwift
     - RxCocoa
     - RxRealm
@@ -134,9 +127,10 @@ DEPENDENCIES:
   - AppCenter/Analytics
   - AppCenter/Crashes
   - AppCenter/Distribute
+  - Atari800 (from `./Cores/Atari800`)
   - CocoaLumberjack/Swift
   - LzmaSDK-ObjC (from `https://github.com/Provenance-Emu/LzmaSDKObjC.git`, branch `master`)
-  - ProvenanceCores (from `./`)
+  - PokeMini (from `./Cores/PokeMini`)
   - PVLibrary (from `./`)
   - PVLibrary/PVLibraryTests (from `./`)
   - PVSupport (from `./`)
@@ -173,11 +167,13 @@ SPEC REPOS:
     - SWCompression
 
 EXTERNAL SOURCES:
+  Atari800:
+    :path: "./Cores/Atari800"
   LzmaSDK-ObjC:
     :branch: master
     :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
-  ProvenanceCores:
-    :path: "./"
+  PokeMini:
+    :path: "./Cores/PokeMini"
   PVLibrary:
     :path: "./"
   PVSupport:
@@ -202,14 +198,15 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
+  Atari800: aea86a26e4be06c59fda2897aad704f0bf76d11f
   BitByteData: 36729e2125ec321935754f9feb1f4b297e00b501
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
-  ProvenanceCores: 10912c318e4d0a2b208dde5565326fc85d6d45ba
-  PVLibrary: 87261233d65b82b40b73ce8bf6e02692964e9690
-  PVSupport: 3690c1820cf39170d0e6ebcc3809b9f8271fcda9
+  PokeMini: 790c46b2f3d938ba471039a35f4b10aa731ac65d
+  PVLibrary: b6cd924d12cc5c22e4f9df355b0c1d7426db59e5
+  PVSupport: 2a6a6baa01326a422f38b83bd6659b8ad2cfa451
   QuickTableViewController: 92005c22d3ef77e5b264aee0d8027de0f63cabbf
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
@@ -227,6 +224,6 @@ SPEC CHECKSUMS:
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: fd35d35e0cd3063f3d14c8850517ee62c3d02fa3
+PODFILE CHECKSUM: 165297dbd1737d1a14b69c6fa7a7525743b92f30
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0.beta.1

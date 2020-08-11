@@ -2,11 +2,11 @@
 
 source 'https://rubygems.org'
 
-# Ruby 
+# Ruby
 gem 'dotenv'
 
 # Cocoapods
-gem 'cocoapods', '~> 1.9'
+gem 'cocoapods', '~> 1.10.0.beta.1'
 gem 'cocoapods-binary'
 gem 'cocoapods-check'
 # gem 'cocoapods-generate'

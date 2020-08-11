@@ -37,7 +37,7 @@
     "LzmaSDK-ObjC": [
 
     ],
-    "Realm": [
+    "PVSupport": [
 
     ],
     "RealmSwift": [
@@ -55,13 +55,10 @@
     "SQLite.swift": [
 
     ],
-    "SWCompression": [
-
-    ],
     "SSZipArchive": [
 
     ],
-    "PVSupport": [
+    "SWCompression": [
 
     ]
   },
@@ -74,9 +71,6 @@
   ],
   "pod_target_xcconfig": {
     "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVLibrary"
-  },
-  "info_plist": {
-    "CFBundleIdentifier": "com.provenance-emu.PVLibrary"
   },
   "testspecs": [
     {

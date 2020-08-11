@@ -14,8 +14,9 @@ ${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework
 ${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework
 ${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework
 ${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework
+${BUILT_PRODUCTS_DIR}/Atari800-tvOS/Atari800.framework
 ${BUILT_PRODUCTS_DIR}/Differentiator-tvOS/Differentiator.framework
-${BUILT_PRODUCTS_DIR}/ProvenanceCores-tvOS/ProvenanceCores.framework
+${BUILT_PRODUCTS_DIR}/PokeMini-tvOS/PokeMini.framework
 ${BUILT_PRODUCTS_DIR}/QuickTableViewController-tvOS/QuickTableViewController.framework
 ${BUILT_PRODUCTS_DIR}/ReachabilitySwift-tvOS/Reachability.framework
 ${BUILT_PRODUCTS_DIR}/RxDataSources-tvOS/RxDataSources.framework

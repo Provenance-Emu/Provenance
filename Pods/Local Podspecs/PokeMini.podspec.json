@@ -1,0 +1,125 @@
+{
+  "name": "PokeMini",
+  "version": "1.5",
+  "summary": "PokeMini Provenance Emulator Core",
+  "description": "PokeMini is the iOS library for the NewsCorp PokeMini platform.",
+  "homepage": "https://provenance-emu.com",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0"
+  },
+  "frameworks": [
+    "AudioToolbox",
+    "Foundation",
+    "OpenGLES"
+  ],
+  "module_name": "PokeMini",
+  "header_dir": "PokeMini",
+  "dependencies": {
+    "PVSupport": [
+
+    ],
+    "PVLibrary": [
+
+    ]
+  },
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "$(inherited) -ObjC",
+    "GCC_C_LANGUAGE_STANDARD": "gnu99"
+  },
+  "source_files": [
+    "Sources/PokeMini-libretro/source/CommandLine.c",
+    "Sources/PokeMini-libretro/source/freebios.c",
+    "Sources/PokeMini-libretro/source/Hardware.c",
+    "Sources/PokeMini-libretro/source/Joystick.c",
+    "Sources/PokeMini-libretro/source/MinxAudio.c",
+    "Sources/PokeMini-libretro/source/MinxColorPRC.c",
+    "Sources/PokeMini-libretro/source/MinxCPU_CE.c",
+    "Sources/PokeMini-libretro/source/MinxCPU_CF.c",
+    "Sources/PokeMini-libretro/source/MinxCPU_SP.c",
+    "Sources/PokeMini-libretro/source/MinxCPU_XX.c",
+    "Sources/PokeMini-libretro/source/MinxCPU.c",
+    "Sources/PokeMini-libretro/source/MinxIO.c",
+    "Sources/PokeMini-libretro/source/MinxIRQ.c",
+    "Sources/PokeMini-libretro/source/MinxLCD.c",
+    "Sources/PokeMini-libretro/source/MinxPRC.c",
+    "Sources/PokeMini-libretro/source/MinxTimers.c",
+    "Sources/PokeMini-libretro/source/Missing.c",
+    "Sources/PokeMini-libretro/source/Multicart.c",
+    "Sources/PokeMini-libretro/source/NoUI.c",
+    "Sources/PokeMini-libretro/source/PMCommon.c",
+    "Sources/PokeMini-libretro/source/PokeMini_BG2.c",
+    "Sources/PokeMini-libretro/source/PokeMini_BG3.c",
+    "Sources/PokeMini-libretro/source/PokeMini_BG4.c",
+    "Sources/PokeMini-libretro/source/PokeMini_BG5.c",
+    "Sources/PokeMini-libretro/source/PokeMini_BG6.c",
+    "Sources/PokeMini-libretro/source/PokeMini_ColorPal.c",
+    "Sources/PokeMini-libretro/source/PokeMini_Font12.c",
+    "Sources/PokeMini-libretro/source/PokeMini_Icons12.c",
+    "Sources/PokeMini-libretro/source/PokeMini.c",
+    "Sources/PokeMini-libretro/source/Video_x1.c",
+    "Sources/PokeMini-libretro/source/Video_x2.c",
+    "Sources/PokeMini-libretro/source/Video_x3.c",
+    "Sources/PokeMini-libretro/source/Video_x4.c",
+    "Sources/PokeMini-libretro/source/Video_x5.c",
+    "Sources/PokeMini-libretro/source/Video_x6.c",
+    "Sources/PokeMini-libretro/source/Video.c",
+    "Sources/PokeMini-libretro/source/CommandLine.h",
+    "Sources/PokeMini-libretro/source/Endianess.h",
+    "Sources/PokeMini-libretro/source/Hardware.h",
+    "Sources/PokeMini-libretro/source/IOMap.h",
+    "Sources/PokeMini-libretro/source/Joystick.h",
+    "Sources/PokeMini-libretro/source/Keyboard.h",
+    "Sources/PokeMini-libretro/source/MinxAudio.h",
+    "Sources/PokeMini-libretro/source/MinxColorPRC.h",
+    "Sources/PokeMini-libretro/source/MinxCPU_noBranch.h",
+    "Sources/PokeMini-libretro/source/MinxCPU.h",
+    "Sources/PokeMini-libretro/source/MinxIO.h",
+    "Sources/PokeMini-libretro/source/MinxIRQ.h",
+    "Sources/PokeMini-libretro/source/MinxLCD.h",
+    "Sources/PokeMini-libretro/source/MinxPRC.h",
+    "Sources/PokeMini-libretro/source/MinxTimers.h",
+    "Sources/PokeMini-libretro/source/Missing.h",
+    "Sources/PokeMini-libretro/source/Multicart.h",
+    "Sources/PokeMini-libretro/source/PMCommon.h",
+    "Sources/PokeMini-libretro/source/PokeMini_Version.h",
+    "Sources/PokeMini-libretro/source/PokeMini.h",
+    "Sources/PokeMini-libretro/source/UI.h",
+    "Sources/PokeMini-libretro/source/Video_x1.h",
+    "Sources/PokeMini-libretro/source/Video_x2.h",
+    "Sources/PokeMini-libretro/source/Video_x3.h",
+    "Sources/PokeMini-libretro/source/Video_x4.h",
+    "Sources/PokeMini-libretro/source/Video_x5.h",
+    "Sources/PokeMini-libretro/source/Video_x6.h",
+    "Sources/PokeMini-libretro/source/Video.h",
+    "Sources/PokeMini-libretro/{resource,freebios}/**/*.{h,c}",
+    "Sources/PokeMini-libretro/libretro/libretro-common/include/**/*.{h}",
+    "Sources/**/*.{swift,m,mm}"
+  ],
+  "public_header_files": [
+    "Sources/PokeMini.h",
+    "Sources/PVPokeMiniEmulatorCore.h"
+  ],
+  "private_header_files": "Sources/PokeMini-libretro/libretro/libretro-common/include/**/*.h",
+  "resources": [
+    "Resources/**/*.*"
+  ],
+  "swift_version": "5.1"
+}

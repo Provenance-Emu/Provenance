@@ -38,15 +38,14 @@ Pod::Spec.new do |s|
   s.header_dir = 'PVLibrary'
 
   s.dependency 'LzmaSDK-ObjC'
-  s.dependency 'Realm'
+  s.dependency 'PVSupport'
   s.dependency 'RealmSwift'
   s.dependency 'RxCocoa'
   s.dependency 'RxRealm'
   s.dependency 'RxSwift'
   s.dependency 'SQLite.swift'
-  s.dependency 'SWCompression'
   s.dependency 'SSZipArchive'
-  s.dependency 'PVSupport'
+  s.dependency 'SWCompression'
 
   @sources_root = 'PVLibrary/Sources'
   @tests_root = 'PVLibrary/Tests'
@@ -71,6 +70,5 @@ Pod::Spec.new do |s|
   end
 
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
-  s.info_plist = { 'CFBundleIdentifier' => 'com.provenance-emu.PVLibrary' }
   s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVLibrary' }
 end

@@ -892,6 +892,40 @@ SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
+			<string>
+#### Provenance License
+
+&lt;sub&gt;Copyright © 2016, James Addyman (JamSoft). All rights reserved.&lt;/sub&gt;&lt;br&gt;
+
+&lt;sub&gt;**Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:**&lt;br&gt; 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.&lt;/sub&gt;&lt;br&gt;
+
+&lt;SUB&gt; THIS SOFTWARE IS PROVIDED BY JAMES ADDYMAN (JAMSOFT) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMES ADDYMAN (JAMSOFT) OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ONANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. &lt;/SUB&gt;&lt;BR&gt;
+
+&lt;sub&gt; The views and conclusions contained in the software and documentation are those of the
+authors and should not be interpreted as representing official policies, either expressed
+or implied, of James Addyman (JamSoft).&lt;/sub&gt;
+
+
+#### OpenEmu License
+
+&lt;sub&gt;Copyright © 2016, OpenEmu Team&lt;/sub&gt;&lt;br&gt;
+
+&lt;sub&gt;**Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:**&lt;br&gt; 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the OpenEmu Team nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.&lt;/sub&gt;&lt;br&gt;
+
+&lt;SUB&gt; THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL OpenEmu Team BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&lt;SUB&gt;&lt;BR&gt;
+</string>
+			<key>License</key>
+			<string>Provenance License</string>
+			<key>Title</key>
+			<string>Atari800</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
 			<string>MIT License
 
 Copyright (c) 2017 RxSwift Community
@@ -951,7 +985,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 			<key>License</key>
 			<string>Provenance License</string>
 			<key>Title</key>
-			<string>ProvenanceCores</string>
+			<string>PokeMini</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

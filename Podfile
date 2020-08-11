@@ -25,8 +25,7 @@ install!  'cocoapods',
           incremental_installation: true,
           share_schemes_for_development_pods: true,
           deterministic_uuids: true,
-          lock_pod_sources: lock_pod_sources,
-          preserve_pod_file_structure: false
+          lock_pod_sources: lock_pod_sources
 
 def pvlibrary
   pod 'LzmaSDK-ObjC',
@@ -59,20 +58,21 @@ def pvsupport
 end
 
 def cores
-  subspecs = %w[
+  cores = %w[
     Atari800
     PokeMini
   ]
 
-  options = {
-    path: './',
-    inhibit_warnings: false,
-    project_name: 'ProvenanceCores',
-    binary: false,
-    # subspecs: subspecs
-  }
+  cores.each { |core|
+    options = {
+      path: './Cores/' + core,
+      inhibit_warnings: false,
+      project_name: 'Cores',
+      binary: false
+    }
 
-  pod 'ProvenanceCores', options
+    pod core, options
+  }
 end
 
 def deps_all
@@ -81,6 +81,7 @@ def deps_all
 end
 
 def deps_app
+
   # Rx
   pod 'RxSwift'
   pod 'RxRealm'

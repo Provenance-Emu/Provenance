@@ -11,10 +11,9 @@
 #endif
 
 #import "platform.h"
-#import "PVAtari800.h"
 #import "ATR800GameCore.h"
-#import "PVPokeMiniEmulatorCore.h"
+#import "PVAtari800.h"
 
-FOUNDATION_EXPORT double ProvenanceCoresVersionNumber;
-FOUNDATION_EXPORT const unsigned char ProvenanceCoresVersionString[];
+FOUNDATION_EXPORT double Atari800VersionNumber;
+FOUNDATION_EXPORT const unsigned char Atari800VersionString[];
 

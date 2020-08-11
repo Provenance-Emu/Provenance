@@ -1,6 +1,0 @@
-framework module ProvenanceCores {
-  umbrella header "ProvenanceCores-tvOS-umbrella.h"
-
-  export *
-  module * { export * }
-}
