@@ -1,14 +1,17 @@
 APPLICATION_EXTENSION_API_ONLY = YES
+CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
 FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/BitByteData-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/LzmaSDK-ObjC-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/NSLogger-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/PVLibrary-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/PVSupport-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/Realm-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RealmSwift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RxCocoa-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RxRealm-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RxRelay-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/RxSwift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/SSZipArchive-iOS" "${PODS_CONFIGURATION_BUILD_DIR}/SWCompression-iOS"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
 LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Realm/core"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"iconv" -l"sqlite3" -l"z" -framework "AVFoundation" -framework "BitByteData" -framework "CFNetwork" -framework "CocoaLumberjack" -framework "CoreGraphics" -framework "CoreServices" -framework "Foundation" -framework "GameController" -framework "LzmaSDK_ObjC" -framework "NSLogger" -framework "PVLibrary" -framework "PVSupport" -framework "Realm" -framework "RealmSwift" -framework "RxCocoa" -framework "RxRealm" -framework "RxRelay" -framework "RxSwift" -framework "SQLite" -framework "SSZipArchive" -framework "SWCompression" -framework "Security" -framework "SystemConfiguration" -framework "UIKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"ObjC" -l"c++" -l"iconv" -l"sqlite3" -l"z" -framework "AVFoundation" -framework "BitByteData" -framework "CFNetwork" -framework "CocoaLumberjack" -framework "CoreGraphics" -framework "CoreServices" -framework "Foundation" -framework "GameController" -framework "LzmaSDK_ObjC" -framework "NSLogger" -framework "PVLibrary" -framework "PVSupport" -framework "Realm" -framework "RealmSwift" -framework "RxCocoa" -framework "RxRealm" -framework "RxRelay" -framework "RxSwift" -framework "SQLite" -framework "SSZipArchive" -framework "SWCompression" -framework "Security" -framework "SystemConfiguration" -framework "UIKit"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
+OTHER_SWIFT_FLAGS[config=Debug] = -DDEBUG
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_ROOT = ${SRCROOT}
 PODS_TARGET_SRCROOT = ${PODS_ROOT}/..
+PODS_XCFRAMEWORKS_BUILD_DIR = $(PODS_CONFIGURATION_BUILD_DIR)/XCFrameworkIntermediates
 PRODUCT_BUNDLE_IDENTIFIER = com.provenance-emu.PVLibrary
 SKIP_INSTALL = YES
 USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES

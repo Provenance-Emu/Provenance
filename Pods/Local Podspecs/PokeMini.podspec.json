@@ -42,7 +42,13 @@
   },
   "pod_target_xcconfig": {
     "OTHER_LDFLAGS": "$(inherited) -ObjC",
-    "GCC_C_LANGUAGE_STANDARD": "gnu99"
+    "CORE_POKEMINI_SUBSPEC_INCLUDED": "-D'CORE_POKEMINI_SUBSPEC_INCLUDED'",
+    "OTHER_SWIFT_FLAGS": "$(inherited) $(CORE_POKEMINI_SUBSPEC_INCLUDED)",
+    "GCC_C_LANGUAGE_STANDARD": "gnu99",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++0x",
+    "CLANG_CXX_LIBRARY": "libc++",
+    "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) NO_ZIP=1",
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVPokeMini"
   },
   "source_files": [
     "Sources/PokeMini-libretro/source/CommandLine.c",
@@ -117,9 +123,14 @@
     "Sources/PokeMini.h",
     "Sources/PVPokeMiniEmulatorCore.h"
   ],
+  "preserve_paths": "Sources/PokeMini-libretro/libretro/libretro-common/include",
   "private_header_files": "Sources/PokeMini-libretro/libretro/libretro-common/include/**/*.h",
   "resources": [
     "Resources/**/*.*"
   ],
+  "xcconfig": {
+    "HEADER_SEARCH_PATHS": "$(inherited) \"${SRCROOT}/Sources/PokeMini-libretro/libretro/libretro-common/include\""
+  },
+  "compiler_flags": "-DCORE_POKEMINI_SUBSPEC_INCLUDED",
   "swift_version": "5.1"
 }

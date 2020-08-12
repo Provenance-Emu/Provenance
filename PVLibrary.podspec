@@ -37,8 +37,8 @@ Pod::Spec.new do |s|
   s.module_name = 'PVLibrary'
   s.header_dir = 'PVLibrary'
 
-  s.dependency 'LzmaSDK-ObjC'
   s.dependency 'PVSupport'
+  s.dependency 'LzmaSDK-ObjC'
   s.dependency 'RealmSwift'
   s.dependency 'RxCocoa'
   s.dependency 'RxRealm'
@@ -63,12 +63,15 @@ Pod::Spec.new do |s|
     "#{@sources_root}/Resources/*.*"
   ]
 
+  s.pod_target_xcconfig = { 
+    'OTHER_LDFLAGS' => '-lObjC',
+    'OTHER_SWIFT_FLAGS[config=Debug]' => '-DDEBUG',
+    'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVLibrary'
+  }
+
   s.test_spec 'PVLibraryTests' do |test_spec|
     test_spec.requires_app_host = false
     # test_spec.test_type = :ui
     test_spec.source_files = 'PVLibrary/Tests/**/*.swift'
   end
-
-  s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
-  s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVLibrary' }
 end

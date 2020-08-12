@@ -32,6 +32,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		016B333969C75BDDCFA5775C /* Pods_ProvenanceApps_ProvenanceTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F56382761D5A99637479BA1 /* Pods_ProvenanceApps_ProvenanceTV.framework */; };
 		111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
@@ -105,13 +106,11 @@
 		1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
-		1EE91E77B04838EB3DDF9797 /* Pods_Spotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF08A8E4D1DEF46350D91D99 /* Pods_Spotlight.framework */; };
 		1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		2882D23621DEBB6700AA0B5D /* SteamController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2882D23521DEBB6700AA0B5D /* SteamController.framework */; };
-		323EB514ADC8652773FD8211 /* Pods_TopShelf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24A1B41BB02443CDDF85F5F /* Pods_TopShelf.framework */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
 		378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
@@ -129,9 +128,8 @@
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		54E3DFD3693DAF0B63EF2F7F /* Pods_ProvenanceApps_ProvenanceTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB989D5B8F0C86C4989925B9 /* Pods_ProvenanceApps_ProvenanceTV.framework */; };
-		6CEF73702CF929495923F575 /* Pods_ProvenanceApps_Provenance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABDC17B2C37CDE41B5F5946E /* Pods_ProvenanceApps_Provenance.framework */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
+		AE647153F0F41CD0CA40D352 /* Pods_ProvenanceApps_Provenance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26D71AA9B57D5FC5A0E6112F /* Pods_ProvenanceApps_Provenance.framework */; };
 		B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; };
 		B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
@@ -407,6 +405,7 @@
 		B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
+		B513EFB90C295281A954B48C /* Pods_TopShelf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FE7DA3DAE77774CDDBF0CD1 /* Pods_TopShelf.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C08C7E6A7A1B85C936FAFD9F /* Pods_Provenance_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C03AD70B98A678A39E32E15 /* Pods_Provenance_Tests.framework */; };
@@ -415,6 +414,7 @@
 		C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
+		D75C8667699F70DB5E1D5892 /* Pods_Spotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A4D863E112876F06FECAD59 /* Pods_Spotlight.framework */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
 		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
@@ -548,7 +548,6 @@
 		1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryUpdatesController.swift; sourceTree = "<group>"; };
 		11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVTVTabBarController.swift; sourceTree = "<group>"; };
 		11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISearchController+Rx.swift"; sourceTree = "<group>"; };
-		14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16BFA5F57DF8F674F33C9BE9 /* Pods-ProvenanceApps-Provenance-Provenance Tests.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance-Provenance Tests.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests.archive.xcconfig"; sourceTree = "<group>"; };
 		1A0938B917CD45D400029021 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = SOURCE_ROOT; };
@@ -608,12 +607,15 @@
 		1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLicensesViewController.swift; sourceTree = "<group>"; };
 		1F8D52471D91993000C29F90 /* licenses.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = licenses.html; sourceTree = "<group>"; };
 		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
+		2017494A7F10A8F63DAEEB35 /* Pods-Provenance.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provenance.archive.xcconfig"; path = "Target Support Files/Pods-Provenance/Pods-Provenance.archive.xcconfig"; sourceTree = "<group>"; };
 		20955583A1B3EA2DB4BB9362 /* Pods-ProvenanceApps-ProvenanceTV.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-ProvenanceTV.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-ProvenanceTV/Pods-ProvenanceApps-ProvenanceTV.release.xcconfig"; sourceTree = "<group>"; };
 		215D8493A19C0440F4442942 /* Pods-ProvenanceApps-Provenance-Provenance Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance-Provenance Tests.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
+		26D71AA9B57D5FC5A0E6112F /* Pods_ProvenanceApps_Provenance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProvenanceApps_Provenance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2882D23321DEBB4600AA0B5D /* SteamController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SteamController.framework; path = Carthage/Build/iOS/SteamController.framework; sourceTree = "<group>"; };
 		2882D23521DEBB6700AA0B5D /* SteamController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SteamController.framework; path = Carthage/Build/tvOS/SteamController.framework; sourceTree = "<group>"; };
+		2A4D863E112876F06FECAD59 /* Pods_Spotlight.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spotlight.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
 		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
 		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
@@ -648,19 +650,25 @@
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
 		38D9B29471F7201E6C8CEA11 /* Pods-Spotlight.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spotlight.archive.xcconfig"; path = "Target Support Files/Pods-Spotlight/Pods-Spotlight.archive.xcconfig"; sourceTree = "<group>"; };
+		3D934E6A68A457A1BC1EC451 /* Pods-ProvenanceApps-Spotlight.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Spotlight.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Spotlight/Pods-ProvenanceApps-Spotlight.release.xcconfig"; sourceTree = "<group>"; };
+		3F56382761D5A99637479BA1 /* Pods_ProvenanceApps_ProvenanceTV.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProvenanceApps_ProvenanceTV.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FE7DA3DAE77774CDDBF0CD1 /* Pods_TopShelf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TopShelf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		40C501E06153A1519B016F2B /* Pods-ProvenanceApps-ProvenanceTV.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-ProvenanceTV.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-ProvenanceTV/Pods-ProvenanceApps-ProvenanceTV.archive.xcconfig"; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		4F8B7AEAAC1DBE7104149303 /* Pods-TopShelf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopShelf.release.xcconfig"; path = "Target Support Files/Pods-TopShelf/Pods-TopShelf.release.xcconfig"; sourceTree = "<group>"; };
+		521E65AD18970D3978087679 /* Pods-Provenance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provenance.release.xcconfig"; path = "Target Support Files/Pods-Provenance/Pods-Provenance.release.xcconfig"; sourceTree = "<group>"; };
 		5CBADD9F3C0ED0321CA4D97D /* Pods-ProvenanceApps-Provenance.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance.archive.xcconfig"; sourceTree = "<group>"; };
+		5EE721F6DE4090DE46DE791D /* Pods-Provenance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provenance.debug.xcconfig"; path = "Target Support Files/Pods-Provenance/Pods-Provenance.debug.xcconfig"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		77452D7662DA0B7A9A240B58 /* Pods-TopShelf.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopShelf.archive.xcconfig"; path = "Target Support Files/Pods-TopShelf/Pods-TopShelf.archive.xcconfig"; sourceTree = "<group>"; };
+		798ADACB0DC092B62CCE1700 /* Pods-ProvenanceTV.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceTV.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceTV/Pods-ProvenanceTV.release.xcconfig"; sourceTree = "<group>"; };
 		7C03AD70B98A678A39E32E15 /* Pods_Provenance_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Provenance_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FF94B591B8DE6DC511618EB /* Pods-ProvenanceApps-Spotlight.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Spotlight.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Spotlight/Pods-ProvenanceApps-Spotlight.archive.xcconfig"; sourceTree = "<group>"; };
 		8E083B80733F57903597F0FB /* Pods-ProvenanceApps-Provenance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance.release.xcconfig"; sourceTree = "<group>"; };
-		A24A1B41BB02443CDDF85F5F /* Pods_TopShelf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TopShelf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F8DE95D368C6F11FE9C0386 /* Pods-ProvenanceApps-TopShelf.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-TopShelf.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-TopShelf/Pods-ProvenanceApps-TopShelf.archive.xcconfig"; sourceTree = "<group>"; };
+		A586DAD34FFF4ED933843259 /* Pods-ProvenanceTV.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceTV.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceTV/Pods-ProvenanceTV.debug.xcconfig"; sourceTree = "<group>"; };
 		A87F0C354B0B7CA31E871EBA /* Pods-ProvenanceApps-Provenance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance/Pods-ProvenanceApps-Provenance.debug.xcconfig"; sourceTree = "<group>"; };
-		AB989D5B8F0C86C4989925B9 /* Pods_ProvenanceApps_ProvenanceTV.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProvenanceApps_ProvenanceTV.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ABDC17B2C37CDE41B5F5946E /* Pods_ProvenanceApps_Provenance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProvenanceApps_Provenance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30670E220C29FDE002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
@@ -670,6 +678,7 @@
 		B316B4DE219269C600693472 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4E1219269D800693472 /* PVYabause-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVYabause-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31EF0DB24DF8FB7003F8FB1 /* PVAppDelegate-MicrosoftAppCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate-MicrosoftAppCenter.swift"; sourceTree = "<group>"; };
+		B321420E8F3CBECAE01FA9F5 /* Pods-ProvenanceApps-TopShelf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-TopShelf.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-TopShelf/Pods-ProvenanceApps-TopShelf.release.xcconfig"; sourceTree = "<group>"; };
 		B324C2F421919394009F4EDC /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B324C2F521919394009F4EDC /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = Carthage/Build/tvOS/RxRealm.framework; sourceTree = "<group>"; };
 		B324C2FC21919568009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -732,7 +741,6 @@
 		B369B0D9219EA29A0064EDCA /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/tvOS/Crashlytics.framework; sourceTree = "<group>"; };
 		B369B0E621A458940064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
 		B369B0E821A4589E0064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
-		B369B0EA21A458F60064EDCA /* xcfilelists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = xcfilelists; path = Carthage/xcfilelists; sourceTree = "<group>"; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B374932B2175667D00C65DD1 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
@@ -825,6 +833,8 @@
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		B3C90D0224E385960008C78A /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVTGBDual.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gcrkfgyuuvvemnccvllndtbqximi/Build/Products/Debug-iphoneos/PVTGBDual.framework"; sourceTree = "<group>"; };
+		B3C90D0324E3859B0008C78A /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVTGBDual.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gcrkfgyuuvvemnccvllndtbqximi/Build/Products/Debug-iphoneos/PVTGBDual.framework"; sourceTree = "<group>"; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -848,12 +858,6 @@
 		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3DE5B0121B102F10066069E /* ProvenanceShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProvenanceShared.h; sourceTree = "<group>"; };
-		B3DE5B0221B102F10066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3DE5B0E21B102F20066069E /* ProvenanceSharedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceSharedTests.swift; sourceTree = "<group>"; };
-		B3DE5B1021B102F20066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3DE5B2521B110A80066069E /* ProvenanceShared_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProvenanceShared_tvOS.h; sourceTree = "<group>"; };
-		B3DE5B2621B110A90066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3DE5B3021B110C20066069E /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DE5B3221B110C70066069E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
@@ -902,8 +906,10 @@
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
+		E10BF33B21E4FB235F50610F /* Pods-ProvenanceApps-Spotlight.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Spotlight.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Spotlight/Pods-ProvenanceApps-Spotlight.debug.xcconfig"; sourceTree = "<group>"; };
 		E27399A1F96D4F0484EF57BE /* Pods-ProvenanceApps-Provenance-Provenance Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-Provenance-Provenance Tests.release.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests.release.xcconfig"; sourceTree = "<group>"; };
-		EF08A8E4D1DEF46350D91D99 /* Pods_Spotlight.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spotlight.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E51C1C696D956038CFF30DDB /* Pods-ProvenanceTV.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceTV.archive.xcconfig"; path = "Target Support Files/Pods-ProvenanceTV/Pods-ProvenanceTV.archive.xcconfig"; sourceTree = "<group>"; };
+		E851293BA72F37F6896AA1A5 /* Pods-ProvenanceApps-TopShelf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-TopShelf.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-TopShelf/Pods-ProvenanceApps-TopShelf.debug.xcconfig"; sourceTree = "<group>"; };
 		F188626BF1DD37CC86D0894E /* Pods-ProvenanceApps-ProvenanceTV.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProvenanceApps-ProvenanceTV.debug.xcconfig"; path = "Target Support Files/Pods-ProvenanceApps-ProvenanceTV/Pods-ProvenanceApps-ProvenanceTV.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -931,7 +937,7 @@
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
-				6CEF73702CF929495923F575 /* Pods_ProvenanceApps_Provenance.framework in Frameworks */,
+				AE647153F0F41CD0CA40D352 /* Pods_ProvenanceApps_Provenance.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -998,7 +1004,7 @@
 				B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */,
 				B316B4D22192652000693472 /* PVReicast.framework in Frameworks */,
 				B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */,
-				54E3DFD3693DAF0B63EF2F7F /* Pods_ProvenanceApps_ProvenanceTV.framework in Frameworks */,
+				016B333969C75BDDCFA5775C /* Pods_ProvenanceApps_ProvenanceTV.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1017,7 +1023,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */,
-				1EE91E77B04838EB3DDF9797 /* Pods_Spotlight.framework in Frameworks */,
+				D75C8667699F70DB5E1D5892 /* Pods_Spotlight.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1027,7 +1033,7 @@
 			files = (
 				B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */,
 				B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */,
-				323EB514ADC8652773FD8211 /* Pods_TopShelf.framework in Frameworks */,
+				B513EFB90C295281A954B48C /* Pods_TopShelf.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1084,17 +1090,12 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
-				B369B0EA21A458F60064EDCA /* xcfilelists */,
 				B3E0A580215647BD004B4322 /* Scripts */,
-				B3DE5B0021B102F10066069E /* ProvenanceShared */,
-				B3DE5B0D21B102F20066069E /* ProvenanceSharedTests */,
-				B3DE5B2421B110A80066069E /* ProvenanceShared-tvOS */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
@@ -1117,6 +1118,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C90D0224E385960008C78A /* PVTGBDual.framework */,
 				C13CC82823CABE2800463EDD /* Photos.framework */,
 				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
 				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
@@ -1138,11 +1140,11 @@
 				B3589E35219E954D001C5E12 /* Fabric.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
-				ABDC17B2C37CDE41B5F5946E /* Pods_ProvenanceApps_Provenance.framework */,
-				AB989D5B8F0C86C4989925B9 /* Pods_ProvenanceApps_ProvenanceTV.framework */,
-				EF08A8E4D1DEF46350D91D99 /* Pods_Spotlight.framework */,
-				A24A1B41BB02443CDDF85F5F /* Pods_TopShelf.framework */,
 				7C03AD70B98A678A39E32E15 /* Pods_Provenance_Tests.framework */,
+				2A4D863E112876F06FECAD59 /* Pods_Spotlight.framework */,
+				3FE7DA3DAE77774CDDBF0CD1 /* Pods_TopShelf.framework */,
+				26D71AA9B57D5FC5A0E6112F /* Pods_ProvenanceApps_Provenance.framework */,
+				3F56382761D5A99637479BA1 /* Pods_ProvenanceApps_ProvenanceTV.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1283,6 +1285,7 @@
 		1A4DF9F91C0E411500DDBC20 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				B3C90D0324E3859B0008C78A /* PVTGBDual.framework */,
 				1180B3172492A93F00636C8A /* CoreServices.framework */,
 				B316B4DE219269C600693472 /* PVYabause.framework */,
 				423BB97A17DD35B10048F457 /* AssetsLibrary.framework */,
@@ -1427,6 +1430,18 @@
 				D2D93C98EEA2A66B756AAA38 /* Pods-Provenance Tests.debug.xcconfig */,
 				CFDB6115688716041CADA700 /* Pods-Provenance Tests.release.xcconfig */,
 				C438AB7D8252240202E58E28 /* Pods-Provenance Tests.archive.xcconfig */,
+				E10BF33B21E4FB235F50610F /* Pods-ProvenanceApps-Spotlight.debug.xcconfig */,
+				3D934E6A68A457A1BC1EC451 /* Pods-ProvenanceApps-Spotlight.release.xcconfig */,
+				7FF94B591B8DE6DC511618EB /* Pods-ProvenanceApps-Spotlight.archive.xcconfig */,
+				E851293BA72F37F6896AA1A5 /* Pods-ProvenanceApps-TopShelf.debug.xcconfig */,
+				B321420E8F3CBECAE01FA9F5 /* Pods-ProvenanceApps-TopShelf.release.xcconfig */,
+				8F8DE95D368C6F11FE9C0386 /* Pods-ProvenanceApps-TopShelf.archive.xcconfig */,
+				5EE721F6DE4090DE46DE791D /* Pods-Provenance.debug.xcconfig */,
+				521E65AD18970D3978087679 /* Pods-Provenance.release.xcconfig */,
+				2017494A7F10A8F63DAEEB35 /* Pods-Provenance.archive.xcconfig */,
+				A586DAD34FFF4ED933843259 /* Pods-ProvenanceTV.debug.xcconfig */,
+				798ADACB0DC092B62CCE1700 /* Pods-ProvenanceTV.release.xcconfig */,
+				E51C1C696D956038CFF30DDB /* Pods-ProvenanceTV.archive.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1721,33 +1736,6 @@
 				B383F3BE219BBD8700DB6926 /* LogViewable.swift */,
 			);
 			path = Utilities;
-			sourceTree = "<group>";
-		};
-		B3DE5B0021B102F10066069E /* ProvenanceShared */ = {
-			isa = PBXGroup;
-			children = (
-				B3DE5B0121B102F10066069E /* ProvenanceShared.h */,
-				B3DE5B0221B102F10066069E /* Info.plist */,
-			);
-			path = ProvenanceShared;
-			sourceTree = "<group>";
-		};
-		B3DE5B0D21B102F20066069E /* ProvenanceSharedTests */ = {
-			isa = PBXGroup;
-			children = (
-				B3DE5B0E21B102F20066069E /* ProvenanceSharedTests.swift */,
-				B3DE5B1021B102F20066069E /* Info.plist */,
-			);
-			path = ProvenanceSharedTests;
-			sourceTree = "<group>";
-		};
-		B3DE5B2421B110A80066069E /* ProvenanceShared-tvOS */ = {
-			isa = PBXGroup;
-			children = (
-				B3DE5B2521B110A80066069E /* ProvenanceShared_tvOS.h */,
-				B3DE5B2621B110A90066069E /* Info.plist */,
-			);
-			path = "ProvenanceShared-tvOS";
 			sourceTree = "<group>";
 		};
 		B3E21D6C203211BE009939D3 /* Spotlight */ = {

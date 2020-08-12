@@ -1,16 +1,16 @@
 ${PODS_ROOT}/Target Support Files/PVLibrary-tvOS/PVLibrary-tvOS-Unit-PVLibraryTests-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/PVLibrary-tvOS/PVLibrary.framework
+${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework
+${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework
+${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework
 ${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-tvOS/LzmaSDK_ObjC.framework
-${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework
 ${BUILT_PRODUCTS_DIR}/RealmSwift-tvOS/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/Realm-tvOS/Realm.framework
 ${BUILT_PRODUCTS_DIR}/RxCocoa-tvOS/RxCocoa.framework
 ${BUILT_PRODUCTS_DIR}/RxSwift-tvOS/RxSwift.framework
 ${BUILT_PRODUCTS_DIR}/RxRelay-tvOS/RxRelay.framework
 ${BUILT_PRODUCTS_DIR}/RxRealm-tvOS/RxRealm.framework
 ${BUILT_PRODUCTS_DIR}/SQLite.swift-tvOS/SQLite.framework
+${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework
 ${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework
 ${BUILT_PRODUCTS_DIR}/BitByteData-tvOS/BitByteData.framework
-${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework
-${BUILT_PRODUCTS_DIR}/PVSupport-tvOS/PVSupport.framework
-${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework
-${BUILT_PRODUCTS_DIR}/NSLogger-tvOS/NSLogger.framework

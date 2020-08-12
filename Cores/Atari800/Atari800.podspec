@@ -132,10 +132,12 @@ Pod::Spec.new do |s|
     PVAtari800.h
   ].map { |file| "Sources/#{file}" }
 
-  s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVAtari800' }
   s.resources = [
     'Resources/**/*.*'
   ]
+
+  s.compiler_flags = '-DCORE_ATARI800_SUBSPEC_INCLUDED'
+  s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVAtari800' }
 
   s.pod_target_xcconfig = {
     'OTHER_LDFLAGS' => '$(inherited) -ObjC',

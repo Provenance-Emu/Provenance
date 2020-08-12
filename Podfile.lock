@@ -145,7 +145,7 @@ DEPENDENCIES:
   - XLActionController (from `https://github.com/Puasonych/XLActionController.git`, branch `update-for-xcode-11`)
 
 SPEC REPOS:
-  trunk:
+  https://cdn.cocoapods.org/:
     - AppCenter
     - BitByteData
     - CocoaLumberjack
@@ -198,15 +198,15 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
-  Atari800: aea86a26e4be06c59fda2897aad704f0bf76d11f
+  Atari800: d7947475fd38611bb82971ed243830f613a5916b
   BitByteData: 36729e2125ec321935754f9feb1f4b297e00b501
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
-  PokeMini: 790c46b2f3d938ba471039a35f4b10aa731ac65d
-  PVLibrary: b6cd924d12cc5c22e4f9df355b0c1d7426db59e5
-  PVSupport: 2a6a6baa01326a422f38b83bd6659b8ad2cfa451
+  PokeMini: 9004458942fd58c29af6327ced889ff5a3e6a81d
+  PVLibrary: 1ecb5f88b6dbeee9498ac3bbb15a629f757e9d24
+  PVSupport: 42d22347a47a6d6a9e789989bad9885fc0415203
   QuickTableViewController: 92005c22d3ef77e5b264aee0d8027de0f63cabbf
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
@@ -224,6 +224,6 @@ SPEC CHECKSUMS:
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: 165297dbd1737d1a14b69c6fa7a7525743b92f30
+PODFILE CHECKSUM: da8dbafc6dcef415210931dc96523715445c4ffe
 
 COCOAPODS: 1.10.0.beta.1

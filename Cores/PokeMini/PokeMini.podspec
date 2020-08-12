@@ -124,23 +124,24 @@ Pod::Spec.new do |s|
         PVPokeMiniEmulatorCore.h
     ].map { |file| "Sources/#{file}" }
 
-    # s.preserve_path = "Sources/PokeMini-libretro/libretro/libretro-common/include"
+    s.preserve_path = "Sources/PokeMini-libretro/libretro/libretro-common/include"
 
     s.private_header_files = "Sources/PokeMini-libretro/libretro/libretro-common/include/**/*.h"
     s.resources = [
         "Resources/**/*.*"
     ]
 
-    # s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(inherited) "${SRCROOT}/Sources/PokeMini-libretro/libretro/libretro-common/include"' }
+    s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(inherited) "${SRCROOT}/Sources/PokeMini-libretro/libretro/libretro-common/include"' }
+    s.compiler_flags = '-DCORE_POKEMINI_SUBSPEC_INCLUDED'
 
-    # s.pod_target_xcconfig = {
-    #     'OTHER_LDFLAGS' => '$(inherited) -ObjC',
-    #     'CORE_POKEMINI_SUBSPEC_INCLUDED' => '-D\'CORE_POKEMINI_SUBSPEC_INCLUDED\'',
-    #     'OTHER_SWIFT_FLAGS' => '$(inherited) $(CORE_POKEMINI_SUBSPEC_INCLUDED)',
-    #     'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
-    #     'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++0x',
-    #     'CLANG_CXX_LIBRARY' => 'libc++',
-    #     'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) NO_ZIP=1',
-    #     'PRODUCT_BUNDLE_IDENTIFIER' => 'com.provenance-emu.PVPokeMini'
-    # }
+    s.pod_target_xcconfig = {
+        'OTHER_LDFLAGS' => '$(inherited) -ObjC',
+        'CORE_POKEMINI_SUBSPEC_INCLUDED' => '-D\'CORE_POKEMINI_SUBSPEC_INCLUDED\'',
+        'OTHER_SWIFT_FLAGS' => '$(inherited) $(CORE_POKEMINI_SUBSPEC_INCLUDED)',
+        'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
+        'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++0x',
+        'CLANG_CXX_LIBRARY' => 'libc++',
+        'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) NO_ZIP=1',
+        'PRODUCT_BUNDLE_IDENTIFIER' => 'com.provenance-emu.PVPokeMini'
+    }
 end
