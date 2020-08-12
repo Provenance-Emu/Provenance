@@ -145,7 +145,7 @@ DEPENDENCIES:
   - XLActionController (from `https://github.com/Puasonych/XLActionController.git`, branch `update-for-xcode-11`)
 
 SPEC REPOS:
-  https://cdn.cocoapods.org/:
+  trunk:
     - AppCenter
     - BitByteData
     - CocoaLumberjack
