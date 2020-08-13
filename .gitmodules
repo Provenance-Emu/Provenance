@@ -19,9 +19,12 @@
 [submodule "Cores/Reicast/reicast-emulator"]
 	path = Cores/Reicast/reicast-emulator
 	url = https://github.com/JoeMatt/reicast-emulator.git
-[submodule "Cores/PokeMini/PokeMini-libretro"]
-	path = Cores/PokeMini/PokeMini-libretro
-	url = https://github.com/libretro/PokeMini.git
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
+[submodule "Cores/Atari800/Sources/upstream"]
+	path = Cores/Atari800/Sources/upstream
+	url = https://github.com/atari800/atari800.git
+[submodule "Cores/PokeMini/Sources/upstream"]
+	path = Cores/PokeMini/Sources/upstream
+	url = https://github.com/libretro/PokeMini.git

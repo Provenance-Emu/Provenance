@@ -65,6 +65,7 @@ int UI_is_active = FALSE;
 int UI_alt_function = -1;
 int UI_n_atari_files_dir = 0;
 int UI_n_saved_files_dir = 0;
+int UI_show_hidden_files = 0;
 char UI_atari_files_dir[UI_MAX_DIRECTORIES][FILENAME_MAX];
 char UI_saved_files_dir[UI_MAX_DIRECTORIES][FILENAME_MAX];
 
@@ -902,10 +903,17 @@ int UI_SelectCartType(int k)
 
 void UI_Run(void)
 {
+    DLOG();
+}
+
+int UI_Initialise(int *argc, char *argv[]) {
+    DLOG();
+    return TRUE;
 }
 
 int PLATFORM_Initialise(int *argc, char *argv[])
 {
+    DLOG();
     Sound_Initialise(argc, argv);
 
     if (Sound_enabled) {
@@ -929,6 +937,7 @@ int PLATFORM_Initialise(int *argc, char *argv[])
 
 int PLATFORM_Exit(int run_monitor)
 {
+    DLOG(@"%i", run_monitor);
     Sound_Exit();
 
     return FALSE;
@@ -936,6 +945,7 @@ int PLATFORM_Exit(int run_monitor)
 
 int PLATFORM_PORT(int num)
 {
+    DLOG(@"%i", run_monitor);
     if(num < 4 && num >= 0) {
         ATR5200ControllerState state = [_currentCore controllerStateForPlayer:num];
         if(state.up == 1 && state.left == 1) {
@@ -969,6 +979,7 @@ int PLATFORM_PORT(int num)
 
 int PLATFORM_TRIG(int num)
 {
+    DLOG(@"%i", run_monitor);
     ATR5200ControllerState state = [_currentCore controllerStateForPlayer:num];
 
     return state.fire == 1 ? 0 : 1;
@@ -976,32 +987,34 @@ int PLATFORM_TRIG(int num)
 
 int PLATFORM_Keyboard(void)
 {
+    DLOG();
     return 0;
 }
 
 void PLATFORM_DisplayScreen(void)
 {
+    DLOG();
 }
 
 int PLATFORM_SoundSetup(Sound_setup_t *setup)
 {
     int buffer_samples;
 
-    if (setup->frag_frames == 0) {
+    if (setup->buffer_frames == 0) {
         /* Set frag_frames automatically. */
-        unsigned int val = setup->frag_frames = setup->freq / 50;
+        unsigned int val = setup->buffer_frames = setup->freq / 50;
         unsigned int pow_val = 1;
         while (val >>= 1)
             pow_val <<= 1;
-        if (pow_val < setup->frag_frames)
+        if (pow_val < setup->buffer_frames)
             pow_val <<= 1;
-        setup->frag_frames = pow_val;
+        setup->buffer_frames = pow_val;
     }
 
     setup->sample_size = 2;
 
-    buffer_samples = setup->frag_frames * setup->channels;
-    setup->frag_frames = buffer_samples / setup->channels;
+    buffer_samples = setup->buffer_frames * setup->channels;
+    setup->buffer_frames = buffer_samples / setup->channels;
 
     return TRUE;
 }

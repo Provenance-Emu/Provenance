@@ -1,0 +1,82 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Test, lint pod and Build carthage."
+  lane :test do
+    test_lib
+    pod_lint
+  end
+
+  desc "Deploy to cocoapods and carthage"
+  lane :deploy do
+    deploy_pod
+  end
+
+  desc "Carthage archive"
+  lane :archive do
+    carthage_build
+    carthage_archive
+  end
+
+  desc "Cocoapods lint the pod for all platforms"
+  private_lane :pod_lint do
+    pod_lib_lint
+  end
+
+  desc "Run the tests"
+  private_lane :test_lib do  
+    scan(workspace: "RxReachability.xcworkspace",
+         scheme: "RxReachability-Example"
+        )
+  end
+
+  desc "Run cocoapods"
+  private_lane :pod_install do
+    cocoapods(podfile: "Podfile",
+              silent: true
+      )
+  end
+
+  desc "Carthage Build"
+  private_lane :carthage_build do
+    carthage(
+      command: "build",
+      use_ssh: false,
+      use_submodules: false,
+      use_binaries: true,
+      no_build: false,
+      no_skip_current: true,
+      verbose: false,
+      platform: "all",
+      configuration: "Release",
+      cache_builds: false,
+      toolchain: "com.apple.dt.toolchain.Swift_4",
+      new_resolver: false,
+      log_path: "carthage.log"
+    )
+  end
+
+  desc "Carthage Archive"
+  private_lane :carthage_archive do
+    carthage(command: "archive")
+  end
+
+  desc "Deploy to cocoapods"
+  private_lane :deploy_pod do
+    pod_push
+  end
+end

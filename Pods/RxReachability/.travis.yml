@@ -1,0 +1,23 @@
+osx_image: xcode10.2
+language: objective-c
+
+notifications:
+  email:
+    - bm.oliveira.dev@gmail.com
+
+# Ensure that fastlane is at the latest version
+before_install:
+- brew update
+- brew outdated carthage || brew upgrade carthage
+- bundle install
+- bundle exec pod install --repo-update
+
+jobs:
+  include:
+    - stage: test
+      script: 
+        - bundle exec fastlane test
+    - stage: deploy
+      if: tag IS present
+      script: 
+        - bundle exec fastlane deploy

@@ -47,79 +47,83 @@ Pod::Spec.new do |s|
   }
 
   upstream_sources = %w[
-    rtime.c
-    ide.c
-    crc32.c
-    cycle_map.c
-    colours_pal.c
-    pbi_mio.c
-    log.c
     afile.c
-    img_tape.c
-    pokeysnd.c
-    util.c
-    colours_external.c
-    pbi_scsi.c
-    artifact.c
-    ui_basic.c
-    pbi_bb.c
-    binload.c
-    colours.c
-    statesav.c
-    cartridge.c
-    memory.c
-    mzpokeysnd.c
-    sio.c
-    pbi.c
-    monitor.c
-    pokey.c
-    esc.c
-    compfile.c
-    pia.c
-    remez.c
-    cassette.c
-    cfg.c
-    sndsave.c
-    antic.c
-    atari.c
-    screen.c
-    sysrom.c
-    colours_ntsc.c
-    emuos.c
-    devices.c
-    input.c
-    sound.c
-    cpu.c
-    gtia.c
     afile.h
     akey.h
+    antic.c
     antic.h
+    artifact.c
+    atari.c
     atari.h
+    binload.c
+    cartridge.c
     cartridge.h
+    cartridge_info.c
+    cartridge_info.h
+    cassette.c
     cassette.h
+    cfg.c
     cfg.h
-    colours.h
+    colours_external.c
+    colours_ntsc.c
     colours_ntsc.h
+    colours_pal.c
+    colours.c
+    colours.h
+    compfile.c
     config.h
+    cpu.c
+    crc32.c
+    cycle_map.c
+    devices.c
     devices.h
+    emuos.c
+    esc.c
+    gtia.c
     gtia.h
+    ide.c
     ide.h
+    img_tape.c
+    input.c
     input.h
+    log.c
+    memory.c
     memory.h
+    monitor.c
+    mzpokeysnd.c
+    pbi_bb.c
+    pbi_mio.c
+    pbi_scsi.c
+    pbi.c
     pbi.h
+    pia.c
     pia.h
     platform.h
+    pokey.c
     pokey.h
+    pokeysnd.c
     pokeysnd.h
+    remez.c
+    rtime.c
     rtime.h
+    screen.c
+    sio.c
     sio.h
+    sndsave.c
+    sound.c
     sound.h
+    statesav.c
     statesav.h
+    sysrom.c
     sysrom.h
+    ui_basic.c
     ui.h
-  ].map { |file| "Sources/atari800-src/#{file}" }
+    util.c
+    roms/*.{h,c}
+  ].map { |file| "Sources/upstream/src/#{file}" }
 
   core_sources = %w[
+    config.h
     PVAtari800.h
     ATR800GameCore/**/*.{swift,h,m,mm}
   ].map { |file| "Sources/#{file}" }
@@ -127,16 +131,20 @@ Pod::Spec.new do |s|
   s.source_files = upstream_sources + core_sources
 
   s.public_header_files = %w[
-    atari800-src/platform.h
     ATR800GameCore/ATR800GameCore.h
     PVAtari800.h
+  ].map { |file| "Sources/#{file}" }
+
+  s.private_header_files = %w[
+    upstream/src/platform.h
+    config.h
   ].map { |file| "Sources/#{file}" }
 
   s.resources = [
     'Resources/**/*.*'
   ]
 
-  s.compiler_flags = '-DCORE_ATARI800_SUBSPEC_INCLUDED'
+  s.compiler_flags = '-DCORE_ATARI800_SUBSPEC_INCLUDED', '-DGWINSZ_IN_SYS_IOCTL'
   s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVAtari800' }
 
   s.pod_target_xcconfig = {

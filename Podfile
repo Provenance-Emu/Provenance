@@ -1,7 +1,7 @@
 # frozen_string_literal true
 
 is_ci = false
-clean = true
+clean = false
 lock_pod_sources = !is_ci
 
 source 'https://cdn.cocoapods.org/'
@@ -22,7 +22,7 @@ install!  'cocoapods',
           generate_multiple_pod_projects: true,
           clean: clean,
           deduplicate_targets: true,
-          incremental_installation: false,
+          incremental_installation: true,
           share_schemes_for_development_pods: true,
           deterministic_uuids: true,
           lock_pod_sources: lock_pod_sources
@@ -58,9 +58,9 @@ def pvsupport
 end
 
 def cores
-  cores = %w[
-    Atari800
-    PokeMini
+  cores = [
+    "Atari800",
+    "PokeMini"
   ]
 
   cores.each { |core|
@@ -78,16 +78,16 @@ end
 def deps_all
   pvsupport
   pvlibrary
-
-  # Rx
-  pod 'RxSwift'
-  pod 'RxRealm'
-  pod 'RxDataSources'
-  pod 'RxReachability', git: 'https://github.com/RxSwiftCommunity/RxReachability.git', tag: '1.1.0'
 end
 
 def deps_app
+  # Rx
+  pod 'RxSwift'
+  pod 'RxRealm'
+
   pod 'QuickTableViewController'
+  pod 'RxDataSources'
+  pod 'RxReachability', git: 'https://github.com/RxSwiftCommunity/RxReachability.git', tag: '1.1.0'
   pod 'SteamController'
 
   cores
@@ -96,7 +96,6 @@ end
 deps_all
 
 abstract_target 'ProvenanceApps' do
-
   deps_app
 
   # iOS
@@ -130,13 +129,12 @@ end
 
 target 'Spotlight' do
   platform :ios, '10.0'
-end 
-
+end
 
 target 'TopShelf' do
   platform :tvos, '10.0'
   pod 'CocoaLumberjack/Swift'
-end  
+end
 
 #post_install do |installer|
 #  installer.generated_aggregate_targets.each do |project|
@@ -159,17 +157,17 @@ end
 #  end
 #end
 
-# post_install do |installer|
-#   installer.generated_projects.each do |project|
-#     project.targets.each do |target|
-#       target.build_configurations.each do |config|
-#         config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
-#         config.build_settings['ENABLE_BITCODE'] = 'NO'
-#         config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
-#         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-#         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC=1'
-#         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC_OMIT_UNUSED_CODE=1'
-#       end
-#     end
-#   end
-# end
+post_install do |installer|
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+        config.build_settings['ENABLE_BITCODE'] = 'NO'
+        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC=1'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'LZMASDKOBJC_OMIT_UNUSED_CODE=1'
+      end
+    end
+  end
+end

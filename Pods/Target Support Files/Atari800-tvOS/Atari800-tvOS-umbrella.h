@@ -10,7 +10,6 @@
 #endif
 #endif
 
-#import "platform.h"
 #import "ATR800GameCore.h"
 #import "PVAtari800.h"
 

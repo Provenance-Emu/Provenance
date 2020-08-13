@@ -1,0 +1,6 @@
+${PODS_ROOT}/Target Support Files/Pods-RxReachability-Example/Pods-RxReachability-Example-frameworks.sh
+${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework
+${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework
+${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework
+${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework
+${BUILT_PRODUCTS_DIR}/RxReachability/RxReachability.framework

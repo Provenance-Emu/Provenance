@@ -46,93 +46,86 @@ Pod::Spec.new do |s|
 
     upstream_sources = %w[
         CommandLine.c
+        CommandLine.h
+        Endianess.h
         freebios.c
         Hardware.c
+        Hardware.h
+        IOMap.h
         Joystick.c
+        Joystick.h
+        Keyboard.h
         MinxAudio.c
+        MinxAudio.h
         MinxColorPRC.c
+        MinxColorPRC.h
         MinxCPU_CE.c
         MinxCPU_CF.c
+        MinxCPU_noBranch.h
         MinxCPU_SP.c
         MinxCPU_XX.c
         MinxCPU.c
-        MinxIO.c
-        MinxIRQ.c
-        MinxLCD.c
-        MinxPRC.c
-        MinxTimers.c
-        Missing.c
-        Multicart.c
-        NoUI.c
-        PMCommon.c
-        PokeMini_BG2.c
-        PokeMini_BG3.c
-        PokeMini_BG4.c
-        PokeMini_BG5.c
-        PokeMini_BG6.c
-        PokeMini_ColorPal.c
-        PokeMini_Font12.c
-        PokeMini_Icons12.c
-        PokeMini.c
-        Video_x1.c
-        Video_x2.c
-        Video_x3.c
-        Video_x4.c
-        Video_x5.c
-        Video_x6.c
-        Video.c
-        CommandLine.h
-        Endianess.h
-        Hardware.h
-        IOMap.h
-        Joystick.h
-        Keyboard.h
-        MinxAudio.h
-        MinxColorPRC.h
-        MinxCPU_noBranch.h
         MinxCPU.h
+        MinxIO.c
         MinxIO.h
+        MinxIRQ.c
         MinxIRQ.h
+        MinxLCD.c
         MinxLCD.h
+        MinxPRC.c
         MinxPRC.h
+        MinxTimers.c
         MinxTimers.h
+        Missing.c
         Missing.h
+        Multicart.c
         Multicart.h
+        PMCommon.c
         PMCommon.h
-        PokeMini_Version.h
+        PokeMini.c
         PokeMini.h
         UI.h
+        Video_x1.c
         Video_x1.h
+        Video_x2.c
         Video_x2.h
+        Video_x3.c
         Video_x3.h
+        Video_x4.c
         Video_x4.h
+        Video_x5.c
         Video_x5.h
+        Video_x6.c
         Video_x6.h
+        Video.c
         Video.h
-    ].map { |file| "Sources/PokeMini-libretro/source/#{file}" } +
-        ['Sources/PokeMini-libretro/{resource,freebios}/**/*.{h,c}'] +
-        ['Sources/PokeMini-libretro/libretro/libretro-common/include/**/*.{h}']
+    ].map { |file| "Sources/upstream/source/#{file}" } +
+    %w[
+        freebios/**/*.{h,c}
+        resource/**/*.{h,c}
+        libretro/libretro-common/streams/*.c
+    ].map { |file| "Sources/upstream/#{file}" }
 
-    core_sources = %w[
-        **/*.{swift,m,mm}
-    ].map { |file| "Sources/#{file}" }
+    core_sources = [
+        'Sources/*.{swift,h,m,mm,c}'
+    ]
 
     s.source_files = upstream_sources + core_sources
 
     s.public_header_files = %w[
-        PokeMini.h
+        PVPokeMini.h
         PVPokeMiniEmulatorCore.h
     ].map { |file| "Sources/#{file}" }
 
-    s.preserve_path = "Sources/PokeMini-libretro/libretro/libretro-common/include"
+    s.header_mappings_dir = 'Sources/upstream/libretro/libretro-common/include/'
 
-    s.private_header_files = "Sources/PokeMini-libretro/libretro/libretro-common/include/**/*.h"
+    s.private_header_files = "Sources/upstream/libretro/libretro-common/include/**/*.h"
     s.resources = [
         "Resources/**/*.*"
     ]
 
-    s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(inherited) "${SRCROOT}/Sources/PokeMini-libretro/libretro/libretro-common/include"' }
-    s.compiler_flags = '-DCORE_POKEMINI_SUBSPEC_INCLUDED'
+    s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(inherited) "${PODS_TARGET_SRCROOT}/Sources/upstream/libretro/libretro-common/include"' }
+    s.compiler_flags = '-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS'
 
     s.pod_target_xcconfig = {
         'OTHER_LDFLAGS' => '$(inherited) -ObjC',
@@ -141,7 +134,7 @@ Pod::Spec.new do |s|
         'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
         'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++0x',
         'CLANG_CXX_LIBRARY' => 'libc++',
-        'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) NO_ZIP=1',
+        'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) NO_ZIP=1 IOS=1',
         'PRODUCT_BUNDLE_IDENTIFIER' => 'com.provenance-emu.PVPokeMini'
     }
 end

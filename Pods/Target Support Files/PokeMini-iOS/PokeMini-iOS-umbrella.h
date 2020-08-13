@@ -10,7 +10,8 @@
 #endif
 #endif
 
-#import "PVPokeMiniEmulatorCore.h"
+#import "../../../../PVPokeMini.h"
+#import "../../../../PVPokeMiniEmulatorCore.h"
 
 FOUNDATION_EXPORT double PokeMiniVersionNumber;
 FOUNDATION_EXPORT const unsigned char PokeMiniVersionString[];
