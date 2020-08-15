@@ -1,0 +1,6 @@
+framework module PVGambatte {
+  umbrella header "PVGambatte-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

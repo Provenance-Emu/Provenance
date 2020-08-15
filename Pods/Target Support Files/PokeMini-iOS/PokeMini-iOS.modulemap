@@ -1,6 +1,0 @@
-framework module PokeMini {
-  umbrella header "PokeMini-iOS-umbrella.h"
-
-  export *
-  module * { export * }
-}

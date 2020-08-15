@@ -64,7 +64,7 @@ Pod::Spec.new do |s|
   ]
 
   s.pod_target_xcconfig = { 
-    'OTHER_LDFLAGS' => '-lObjC' ,
+    'OTHER_LDFLAGS' => '-lObjC',
     'OTHER_SWIFT_FLAGS[config=Debug]' => '-DDEBUG',
     'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVSupport'
   }

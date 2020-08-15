@@ -6,9 +6,6 @@ PODS:
     - AppCenter/Core
   - AppCenter/Distribute (3.3.2):
     - AppCenter/Core
-  - Atari800 (1.5):
-    - PVLibrary (~> 1.5)
-    - PVSupport (~> 1.5)
   - BitByteData (1.4.3)
   - CocoaLumberjack/Core (3.6.2)
   - CocoaLumberjack/Swift (3.6.2):
@@ -18,9 +15,11 @@ PODS:
   - NSLogger (1.9.7):
     - NSLogger/ObjC (= 1.9.7)
   - NSLogger/ObjC (1.9.7)
-  - PokeMini (1.5):
-    - PVLibrary
-    - PVSupport
+  - PVAtari800 (1.5):
+    - PVLibrary (~> 1.5)
+    - PVSupport (~> 1.5)
+  - PVGambatte (1.5):
+    - PVSupport (~> 1.5)
   - PVLibrary (1.5.0):
     - LzmaSDK-ObjC
     - PVSupport
@@ -41,6 +40,9 @@ PODS:
     - SQLite.swift
     - SSZipArchive
     - SWCompression
+  - PVPokeMini (1.5):
+    - PVLibrary
+    - PVSupport
   - PVSupport (1.5.0):
     - CocoaLumberjack/Swift
     - NSLogger
@@ -127,12 +129,13 @@ DEPENDENCIES:
   - AppCenter/Analytics
   - AppCenter/Crashes
   - AppCenter/Distribute
-  - Atari800 (from `./Cores/Atari800`)
   - CocoaLumberjack/Swift
   - LzmaSDK-ObjC (from `https://github.com/Provenance-Emu/LzmaSDKObjC.git`, branch `master`)
-  - PokeMini (from `./Cores/PokeMini`)
+  - PVAtari800 (from `./Cores/Atari800`)
+  - PVGambatte (from `./Cores/Gambatte`)
   - PVLibrary (from `./`)
   - PVLibrary/PVLibraryTests (from `./`)
+  - PVPokeMini (from `./Cores/PokeMini`)
   - PVSupport (from `./`)
   - PVSupport/PVSupportTests (from `./`)
   - QuickTableViewController
@@ -167,15 +170,17 @@ SPEC REPOS:
     - SWCompression
 
 EXTERNAL SOURCES:
-  Atari800:
-    :path: "./Cores/Atari800"
   LzmaSDK-ObjC:
     :branch: master
     :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
-  PokeMini:
-    :path: "./Cores/PokeMini"
+  PVAtari800:
+    :path: "./Cores/Atari800"
+  PVGambatte:
+    :path: "./Cores/Gambatte"
   PVLibrary:
     :path: "./"
+  PVPokeMini:
+    :path: "./Cores/PokeMini"
   PVSupport:
     :path: "./"
   RxReachability:
@@ -198,14 +203,15 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
-  Atari800: a3bcdcbee0ee85eac30296e246aa5ec05bedf751
   BitByteData: 36729e2125ec321935754f9feb1f4b297e00b501
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
-  PokeMini: 4cc901be8cf5842d46e480d829af076f3e83174b
+  PVAtari800: f427dbf21c75ee4710da74fe3bb0725c878dd575
+  PVGambatte: 3f1f064976213e2f38e041c35002e3e75507bd75
   PVLibrary: 1ecb5f88b6dbeee9498ac3bbb15a629f757e9d24
+  PVPokeMini: bca4db3d3ddcecea0e611827823a290a69d52dc1
   PVSupport: 42d22347a47a6d6a9e789989bad9885fc0415203
   QuickTableViewController: 92005c22d3ef77e5b264aee0d8027de0f63cabbf
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
@@ -224,6 +230,6 @@ SPEC CHECKSUMS:
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: 337548bf6a655382cea912b23a142cd5851105c8
+PODFILE CHECKSUM: 2db61a3cf7f5a46fdc904daae860912ec8012e36
 
 COCOAPODS: 1.10.0.beta.2

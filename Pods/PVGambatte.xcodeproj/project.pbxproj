@@ -1,0 +1,1617 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0505804B74ACE2648F8EAEBCD3EB1805 /* static_output_tester.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EAB23DA78269B0796F5DDA77C897DBB /* static_output_tester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08B652466942397F140B2406E5ACCB66 /* resamplerinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149D60515DD4E6CB59C38B58FBF140E4 /* resamplerinfo.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		08DA7719DBECF9D9EF23DEDEF4E0CC3E /* cic2.h in Headers */ = {isa = PBXBuildFile; fileRef = 70C92156AAC82B7451E0BD20AA4C5810 /* cic2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08EB78A3131F4942620038F9C96FA887 /* state_osd_elements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A019AA3E83BADFFC38938D41920DB94C /* state_osd_elements.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		0A26D47DB9DCCB3F74F352C9EA733599 /* video.h in Headers */ = {isa = PBXBuildFile; fileRef = B8430F5C3A720E2BD0EC02853D03810D /* video.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0CCE21275B99AE34D0856CAAD585E8A3 /* PVGambatteEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C84B01493FAA7845C15DD12F1FE0AC0 /* PVGambatteEmulatorCore.swift */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		1055F8C3E6F6B83CC9E4DD5788732337 /* next_m0_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CCA94CBC567F8D1B6A9CAC716AFDFD /* next_m0_time.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		116BC189BEFFE3569BCB26BDAD16960A /* adaptivesleep.h in Headers */ = {isa = PBXBuildFile; fileRef = B70CEE9E6935D52718AC956A72CB240B /* adaptivesleep.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		12EFD9D3D5B693C2240A3D22342D8CA4 /* chainresampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3D4520358A314C1FC03DDD1AD9B1C2F /* chainresampler.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		131A8181119AA7DAB9955E9DB1E2DD98 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C2B64A3BCB5A8B88B8E0E3915609A83 /* memory.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		13E5C5A613E6066038A49942D986336C /* gambatte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439BEEDD8F29AC43884CF86B275EBA37 /* gambatte.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		14747A502AE92CC650D2D165158674B5 /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA14BBC2088DC79006EEBFC1326354A9 /* initstate.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		14D9E4C6D4822F3C2C8E8DD0DE8AB0BE /* cic2.h in Headers */ = {isa = PBXBuildFile; fileRef = 70C92156AAC82B7451E0BD20AA4C5810 /* cic2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		163178A2E35F031B92CAA3A7A8D520DA /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE63925D1C096573CE3B07140A7CDCB8 /* rtc.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		166827164F80900D3418BB5664A8578D /* insertion_sort.h in Headers */ = {isa = PBXBuildFile; fileRef = 3972386FBED8D5609DF272F39E878C6E /* insertion_sort.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		16AA48E1F704C0B0B32CB6260DA5B34E /* PVGambatteEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C84B01493FAA7845C15DD12F1FE0AC0 /* PVGambatteEmulatorCore.swift */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		176F2DCBC4217E839C890610CA694B82 /* gambatte.h in Headers */ = {isa = PBXBuildFile; fileRef = C40567C4D169764BB21E8EFB2A07086B /* gambatte.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		188E98DFD19BACE5415551639BC196B5 /* channel3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE8FB7774686666655BF9E58526D20 /* channel3.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		1909BB596BE0C298AF4AFDDB924D2DB5 /* blackmansinc.h in Headers */ = {isa = PBXBuildFile; fileRef = DC6BA24DBD7FCBE41111C3F414F22C96 /* blackmansinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1943EB392E816752F6FEEC69D15A6DD9 /* hammingsinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AFB3EF72F3C226297FEBF81DD73052F /* hammingsinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B67B3EBBB549C72182F7A8D9089909E /* scoped_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA859AB85D59C9B84BF89A19D9D8381 /* scoped_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1E0FC0BF769D4B30DA69181843CC5DA7 /* savestate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E4FF6D0CFB553D49A920469539BAB0 /* savestate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1F9B287D1DECD9D201C16F9CFA02FF4E /* interruptrequester.h in Headers */ = {isa = PBXBuildFile; fileRef = D11178B7399297EA24D588E306C89391 /* interruptrequester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		200CE0762710B7EFA3F80828DF5F7677 /* length_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10EB127A30C153817EB5A5B01548FD3 /* length_counter.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		20BD644BBD4189A84C96368D65252ADD /* memptrs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4A884BDE29EA55AB9C5CE5F6C6BDCD9 /* memptrs.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		21FFE79BB0DCA19426464BBCC13DCDBE /* statesaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45CBBAA75DC6BCBC4A1B1AD51394248A /* statesaver.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		22C2B4D06E4F37E20E57617D54AF4B45 /* i0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4728076164BA225080C8FBF52D8B4911 /* i0.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		23B4947C76A8FECA4B6DFF31F4641346 /* cartridge.h in Headers */ = {isa = PBXBuildFile; fileRef = E63CE6AFC9A3C1217C9DA4FD7E484B70 /* cartridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		246AABEAC7D09BC4629EC368AE8583D3 /* u48div.h in Headers */ = {isa = PBXBuildFile; fileRef = 072DBF8A52D2D7B8F4304286828EA669 /* u48div.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26CF6F126740541A84F5B6410DB66824 /* skipsched.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E5E9383CA81A8D48B55C435920519B /* skipsched.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2879AA28B4C8BE59A156173F6A8C85FE /* kaiser70sinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F49069EDE96661FC3EF85084132AF /* kaiser70sinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		28F1145F311B2CA66FAA51167D677F1F /* kaiser50sinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 198C95E2C866DE293CC337669061B613 /* kaiser50sinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		292FF40765F5B063638D481A13B13297 /* sound_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBDE24A5B7D40E2C696EFF945A1339F /* sound_unit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		29AA60B8AC8A9C484A29BF4E5DADB8CF /* memptrs.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F81AFC5256BAD3C01DDB5E406E210E3 /* memptrs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2B855AB4F76C8164FFC27D98240FB135 /* transfer_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 855895C058F6721577CCC19E59D6B31F /* transfer_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2C127FB0D08BF5012F612EE86C357A32 /* minkeeper.h in Headers */ = {isa = PBXBuildFile; fileRef = 565E936388B071527AA8ED416F1D79CE /* minkeeper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2F555228C2C5AF7A2085EA7BC0DC7F70 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5485CA4EF370CABB13E28E9F7C591068 /* sound.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		30329158F4F874BD1B4EB15B73A5B0C0 /* linint.h in Headers */ = {isa = PBXBuildFile; fileRef = D9E5FB9A220393AFCAA507C1AB13156C /* linint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		30E3907816CBC5E8DD080E2A8C8B16EA /* gambatte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439BEEDD8F29AC43884CF86B275EBA37 /* gambatte.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		32D16C4BFFCF95991A0D6FF14FBE2E15 /* tima.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A170A37C239C8E31994ACB7C0CD3A9 /* tima.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3328D47592B46E01D48B360010BABC81 /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BE6B985D40A8637506670CAC40F307D /* interrupter.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		337AE87E93FCA04FAB980B505E0EE947 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1786A980CF91BCA3727A7AD7DD2F6FA /* cpu.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		33C5D5C6BD30CD79CED2D4EB4AA4B1DB /* osd_element.h in Headers */ = {isa = PBXBuildFile; fileRef = 629C3D9BF739476A07EE1478B935B503 /* osd_element.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37BD91511D188DC43AE4699AF5973045 /* envelope_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D367440CA6D949D4A82ABD2A7FBD4927 /* envelope_unit.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		37E0A57685660F9AC33A913CB279A748 /* kaiser70sinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F49069EDE96661FC3EF85084132AF /* kaiser70sinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		385F4830AC4A9FE00A1AD5356720B542 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5A09BE1F27763B1BE8FA469575060A9 /* OpenGLES.framework */; };
+		3A06B56ED77FBEB2C4DEEF31DD60FE95 /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F120C649DD96A1BA755EDCE40C53E66 /* ppu.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		3EF0B376B4076269134FE456B56379F6 /* insertion_sort.h in Headers */ = {isa = PBXBuildFile; fileRef = 3972386FBED8D5609DF272F39E878C6E /* insertion_sort.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3FE474AA9982532A0317A088F61EDAD4 /* rateest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C837C86978EFE09DCA01A5749BB81BD /* rateest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		42CADC0E3A2625FF26217654546B26BF /* usec.h in Headers */ = {isa = PBXBuildFile; fileRef = 06F44BC2AA16E9AA45DCA0F9DE3796B6 /* usec.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		43F9E3FAD3119B9271A5FC774B1A474C /* lyc_irq.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4B1648F94A4DE5BFCA38EE7DA5DAB5 /* lyc_irq.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		441499D70A5585DD992A80C16C26B658 /* gbcpalettes.h in Headers */ = {isa = PBXBuildFile; fileRef = A3F2F622E14EB8E0FBBBCFDB0C1933C3 /* gbcpalettes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		443F7933DE98A302BBC7B27FA3D720EB /* chainresampler.h in Headers */ = {isa = PBXBuildFile; fileRef = B0359984927C184C795C622E3A3160D9 /* chainresampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		446274325F73A8DC9CA27428F8112A49 /* pakinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D90A16F2FCF4D35AAEC835B9CB1F30 /* pakinfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462755C26B376E675A8818CC40F2F0E7 /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BE6B985D40A8637506670CAC40F307D /* interrupter.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		466948BC37111234354A0232DE2B4CF9 /* skipsched.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E5E9383CA81A8D48B55C435920519B /* skipsched.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46A6C6A392FB4DAB1A979F8D6495CF13 /* gbint.h in Headers */ = {isa = PBXBuildFile; fileRef = 96D1E41573E4FF4DCDC1038890B7F28E /* gbint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46AA0D341AB2ED78AEC67A1E5FF88FC9 /* bitmap_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB9BB31A0ACA08639451126EA568AAD9 /* bitmap_font.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		46D029B84FAD4F3B0BAF2498077276C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB74B8D187B45FFB697ED0B3654B8C3 /* Foundation.framework */; };
+		491346D3E404957830F45AFC9229B170 /* channel2.h in Headers */ = {isa = PBXBuildFile; fileRef = A686A279ECC01240ACDFD1D4D0DDE990 /* channel2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4A054C56A2E0EC022F4FA49AE9C80F61 /* array.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD7AEA37377BFB5927900EA8A0B8AFE /* array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4A7957D30DB026E83D443AD14A8BA2F2 /* gbint.h in Headers */ = {isa = PBXBuildFile; fileRef = 96D1E41573E4FF4DCDC1038890B7F28E /* gbint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4B51542CCC4983CD69921FE061D860EE /* i0.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2E250A2601640EE826584D14FF95B3 /* i0.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4C6B10917288E3CCF5FC9600AD50134E /* sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 187FB4F918B992520FFC54EE7D58C28E /* sound.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4DB746CB7E846D2D2EB1D363C3D9B26D /* envelope_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D367440CA6D949D4A82ABD2A7FBD4927 /* envelope_unit.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		4FDAA207C29CF73EB8C2CADB561BDA5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C080BA3A326EAD789BA110FE4B13881 /* Foundation.framework */; };
+		51EDCAC3D4394984D215ECE2425AE4D5 /* defined_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E3CE359E76FBA2A9251DB7D90CA6B3 /* defined_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		522576554B2F43784DBEE580B4FEFCA5 /* next_m0_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CCA94CBC567F8D1B6A9CAC716AFDFD /* next_m0_time.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		52307C79FA3FA0BE27DAC59DEF4C6B61 /* channel3.h in Headers */ = {isa = PBXBuildFile; fileRef = 900B54A07D6491EA3D544BC99EE75028 /* channel3.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		524EC0C4A4ABADC753865D7E1C456F5E /* ringbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AC2F5A0F5E02C0353620B7995035272 /* ringbuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		526E2DA7E96B5FE821FC7AE9F849D80E /* duty_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B85F13490F701ABFDDC3E431DD85BD9 /* duty_unit.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		534338F10C421E5CE854EFC05E806F17 /* cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 054DD03443C12F3A401BA78B5FF4A25D /* cpu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53DDDF2AE0010E72CDB3593DA0F14922 /* PVGambatteEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B32C2AB462A2F9CE83695415236CC749 /* PVGambatteEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54DE51DA5203EF890F13CF1DB9F8781E /* channel1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 943BD71BB402D50DDE6AF8318133A58B /* channel1.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		5676D856FD664E9B5E9BCA69E2FDFC72 /* linint.h in Headers */ = {isa = PBXBuildFile; fileRef = D9E5FB9A220393AFCAA507C1AB13156C /* linint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5721998F1DF27ED02F163A2180A222F4 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B731EF392522FA8C7294B777CE71E31 /* video.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		57BD860BB98EA01D31F98DFA090CA2C2 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C696BA78737A2EB39A5EBC43671AEA96 /* file.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		58F1B4E6D0336133854C843115DED032 /* gbcpalettes.h in Headers */ = {isa = PBXBuildFile; fileRef = A3F2F622E14EB8E0FBBBCFDB0C1933C3 /* gbcpalettes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CF706E354851F4B76DD3CD12F9842C9 /* hammingsinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AFB3EF72F3C226297FEBF81DD73052F /* hammingsinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5E17263E81596ABF70107A91A1AA7898 /* interrupter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F091A442E4142F615863A1048CF0721 /* interrupter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5E94D8D3EA6EDA1893A2278D5CBD1A3B /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1786A980CF91BCA3727A7AD7DD2F6FA /* cpu.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		5EC134E83A3692770C6F83BB39ECF12F /* polyphasefir.h in Headers */ = {isa = PBXBuildFile; fileRef = 24EE64B7956300B41B4B3157ACA238D9 /* polyphasefir.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		60390013415E9A18F9E41AA3A687DA24 /* duty_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B85F13490F701ABFDDC3E431DD85BD9 /* duty_unit.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		6150700ACAD7D8D88E1F8B93A40DC4D0 /* channel4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96B78B02F2530A1E40BF8406B4AA34EF /* channel4.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		6261D95A57650AD682799FAC4350A366 /* next_m0_time.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4FEB85C14F83681F35A7BD9E89108A /* next_m0_time.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		63C46C648C2A63B6683E6C5A05A87A1D /* PVGambatte-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E3B09CFB5A1B5650F04C6294CDC5B /* PVGambatte-iOS-dummy.m */; };
+		63EC1F65F21F8A6701640F9AC00040D7 /* i0.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2E250A2601640EE826584D14FF95B3 /* i0.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		64ACFD0A67C2E30896540CF4FEDC5C34 /* inputgetter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9947A0A14D9C9B8D7448AAC69FC1288C /* inputgetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		654EB7186CE38ADA590E7F90B7E95148 /* loadres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA7C3983914B82EF6CB8386E9980D066 /* loadres.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		69928FD97D9AF790CC3B5AF2820D11CC /* kaiser50sinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 198C95E2C866DE293CC337669061B613 /* kaiser50sinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6A23EFFFB5B127FE8F1F229CBABC4506 /* upsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = B3332FE7A72F2DD0B9EF818E975C6F65 /* upsampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6A36A697338B143819A1BCB0A145CEFE /* counterdef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F306781EF4F2B56C34B35842110481A /* counterdef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6D48875ED3BE6CFC5884132C9011CD62 /* channel1.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C29F7917987084F2D58CB18802C2F3E /* channel1.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6D605E5967DF290168AF613A2479721F /* sprite_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F77D306CEC617DF4CFF65A2C5DFB7C6 /* sprite_mapper.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		6DECA850FE4C4B9F7C10E5BE60DFF548 /* channel4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96B78B02F2530A1E40BF8406B4AA34EF /* channel4.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		6F34215CE6FE3722F0F484A6A3212DD2 /* state_osd_elements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A019AA3E83BADFFC38938D41920DB94C /* state_osd_elements.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		6F91A9E7F2A249B4BF7030615BCD086F /* kaiser50sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D40304924FF9F3995017EB268F4022A /* kaiser50sinc.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		70910CD1C0AB9049360F1998A4458F70 /* sprite_mapper.h in Headers */ = {isa = PBXBuildFile; fileRef = AE58B7C541AF956C8AC4322F56223E80 /* sprite_mapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		759FAAB5262BA3393A48B1417B1C44E4 /* initstate.h in Headers */ = {isa = PBXBuildFile; fileRef = C134222EBE7008F455857A4B7CF41197 /* initstate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		769E75BEDC6732439C5ED7F76B18FA87 /* rshift16_round.h in Headers */ = {isa = PBXBuildFile; fileRef = FB3AACC71ACC47721864F82908418A82 /* rshift16_round.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7713928048059657C08407FF60B64355 /* PVGambatteEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B32C2AB462A2F9CE83695415236CC749 /* PVGambatteEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		784849ACBC768FB236373EBCFAD6D7A7 /* ringbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AC2F5A0F5E02C0353620B7995035272 /* ringbuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		784CDAF895A16F7C2A66A031D9D11EE0 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C2B64A3BCB5A8B88B8E0E3915609A83 /* memory.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		785EE18C534B4424FC590AF929775CA2 /* PVGambatte-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A325A47C75E6E81A6FE907FA5CBB048 /* PVGambatte-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		79C05745BB64CB8DA21EA5E5C1838B24 /* channel4.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE2810CAFE01CBB5530AB29DD148E72 /* channel4.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A379C0C90FA418307C5E8195AFC8DD9 /* scoped_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA859AB85D59C9B84BF89A19D9D8381 /* scoped_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7AF11DA319E0D0B7F2541E0BB54AD002 /* osd_element.h in Headers */ = {isa = PBXBuildFile; fileRef = 629C3D9BF739476A07EE1478B935B503 /* osd_element.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B5C2B0E486F7CF75FBB86ABE9F3BF00 /* ly_counter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B97878C8212E87EBD108B896AC91403 /* ly_counter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7DDFDB90F13EF4D05EE66C7207899032 /* uncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 770FF38130341C51F13D79557A993DB0 /* uncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E9F59DBFD56A6FAB7127BDBB2139CF1 /* pakinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E3D373F04E4B65BDF8BE2C7297A1C99 /* pakinfo.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		7F6949632A334D61BE537D5C73680979 /* ppu.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FCAB24A4722C6064E3DAF72C2A4B75 /* ppu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		823F8ECC5FDD3A22ED92503A357272A5 /* defined_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E3CE359E76FBA2A9251DB7D90CA6B3 /* defined_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		82E55CD7847DC4E5DCBF8200CD695E41 /* sprite_mapper.h in Headers */ = {isa = PBXBuildFile; fileRef = AE58B7C541AF956C8AC4322F56223E80 /* sprite_mapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83356052280E067A11943E9552AC7127 /* upsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = B3332FE7A72F2DD0B9EF818E975C6F65 /* upsampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		837CB447A2843AE5B2BCD215BFAE11A3 /* statesaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 697C10EBF0E9C050ED53D669A658C63D /* statesaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8390385A932CF72E54886446062066A9 /* channel2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DBB265045191A97FE8CF8789594BE5D /* channel2.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		8530781012A76FFC65C67210A4D67AA6 /* cartridge.h in Headers */ = {isa = PBXBuildFile; fileRef = E63CE6AFC9A3C1217C9DA4FD7E484B70 /* cartridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8652E3CF64B6BA49004ECBB4848193CE /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1FBA515AE2D9ECE82017BC36EDAB47B /* makesinckernel.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		869DC18BC296AF7B4D74ECE7D9CEE79B /* channel1.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C29F7917987084F2D58CB18802C2F3E /* channel1.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86A91219EA85A7FB7861D4D674D6509F /* bitmap_font.h in Headers */ = {isa = PBXBuildFile; fileRef = F1EB6F192E605F565BC83CD17E1B8CAE /* bitmap_font.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		87668FEB80FAA2A0C819E2D62A775EB0 /* interruptrequester.h in Headers */ = {isa = PBXBuildFile; fileRef = D11178B7399297EA24D588E306C89391 /* interruptrequester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		88F46CD08CC9F694F89DC2E7191851D1 /* interruptrequester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B1AA523F5244BCD1B47FC8F9B11C256 /* interruptrequester.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		8D87F0BC1B05C6E1E806BCF41BE1DE69 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DAF6D119725000F9CBA2CE933CD90E /* memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8F37EB671915D99B55B10AA6D6109FD4 /* state_osd_elements.h in Headers */ = {isa = PBXBuildFile; fileRef = E6C39B673966736368629ED7DE274DD5 /* state_osd_elements.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8F8CD336889F42C550DC0ABA5CC6CDA9 /* statesaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 697C10EBF0E9C050ED53D669A658C63D /* statesaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		910EB9B98EAB74BCF14353402CB9B0CC /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F120C649DD96A1BA755EDCE40C53E66 /* ppu.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		911A8DAE3F9739C410A2DBCD60D6EC3C /* initstate.h in Headers */ = {isa = PBXBuildFile; fileRef = C134222EBE7008F455857A4B7CF41197 /* initstate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9177F4E7F773768EC45B263E97784FDE /* makesinckernel.h in Headers */ = {isa = PBXBuildFile; fileRef = E66CB2F6B32A0F455C56F6F86194417A /* makesinckernel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		91A8058CC549B2B76B3093B7B046B4D8 /* sprite_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F77D306CEC617DF4CFF65A2C5DFB7C6 /* sprite_mapper.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		91F30F72DC28D7D670812AA195E3DF91 /* sound_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBDE24A5B7D40E2C696EFF945A1339F /* sound_unit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9238179E9F14D945667BC2482A957549 /* channel3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE8FB7774686666655BF9E58526D20 /* channel3.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		925BAFF794E65DFCDAE037591A07F55C /* interruptrequester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B1AA523F5244BCD1B47FC8F9B11C256 /* interruptrequester.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		9413E9DA900246F9BC207E1E76581D11 /* length_counter.h in Headers */ = {isa = PBXBuildFile; fileRef = 697875BF1158ADA9CCB4378364EA7BE2 /* length_counter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9598783300A38C1AFE42E86018A635E3 /* lyc_irq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE9B3AD375C1B6E09F8F6D861E0D4683 /* lyc_irq.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		96242CD3C48C083859E0FE8065539F26 /* makesinckernel.h in Headers */ = {isa = PBXBuildFile; fileRef = E66CB2F6B32A0F455C56F6F86194417A /* makesinckernel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		974AD7405EC950FD3940F2D622F87313 /* cic4.h in Headers */ = {isa = PBXBuildFile; fileRef = 298FB9197837A8A63985C801AD4043DD /* cic4.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97838E139664D496C86933A85E13425E /* envelope_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 175DE9A48938FD33D9436C64F2455ACD /* envelope_unit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		994FF221C6B670AC5C7978FF1D9517FB /* rectsinc.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A75DCBAF8A2F89CF102E462C49D8B9 /* rectsinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9ADEEBED1A870045AB94F0B68E5015A0 /* length_counter.h in Headers */ = {isa = PBXBuildFile; fileRef = 697875BF1158ADA9CCB4378364EA7BE2 /* length_counter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B5E3CFD7A2184977EAC5A95437BE6CA /* i0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4728076164BA225080C8FBF52D8B4911 /* i0.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		9BD5C760C5F24191C871BA87F8B0926A /* uncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 770FF38130341C51F13D79557A993DB0 /* uncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9BFA8E304E38C4B6FC1D3575D623620D /* sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 187FB4F918B992520FFC54EE7D58C28E /* sound.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9CED8960CAEF22F3FE31B8C949C25A59 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BF292EE7CCAA14ACF80F527877FC5D /* CoreOptions.swift */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		9D962828E6AF9581F33D677819796CB0 /* inputgetter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9947A0A14D9C9B8D7448AAC69FC1288C /* inputgetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9E0BCD377559B3E0659B19B435D2E6FA /* subresampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 60960FB4BF80CB02ADBE4C64B02099CB /* subresampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9F1DB4B15ADDD97C102E2DFD91A9F55E /* adaptivesleep.h in Headers */ = {isa = PBXBuildFile; fileRef = B70CEE9E6935D52718AC956A72CB240B /* adaptivesleep.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A19A00B438D8DDBED87E5FD12FD5394B /* transfer_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 855895C058F6721577CCC19E59D6B31F /* transfer_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A3C504EF8ABBDD22F391C8F13B7AFC87 /* envelope_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 175DE9A48938FD33D9436C64F2455ACD /* envelope_unit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A4F4634A17C713C287E08EF39D27D3E6 /* lcddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C081B025A04408127ED211A2746594 /* lcddef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A52346467EF01899A737C4741C1DB043 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C696BA78737A2EB39A5EBC43671AEA96 /* file.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		A57040BF7FC584667A2789AA019D889C /* gb240p.gb in Resources */ = {isa = PBXBuildFile; fileRef = 43CFD30F4BF34E9D57260B5F705E8BF8 /* gb240p.gb */; };
+		A60402169B3279A4A05B75C91D9275A3 /* loadres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA7C3983914B82EF6CB8386E9980D066 /* loadres.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		A6FCE1F491C9B2D72612ACE5F07C4D97 /* chainresampler.h in Headers */ = {isa = PBXBuildFile; fileRef = B0359984927C184C795C622E3A3160D9 /* chainresampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8717433AB46EF608EB15CF0CF8A821F /* rectsinc.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A75DCBAF8A2F89CF102E462C49D8B9 /* rectsinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A886C3833A4E9D6B5CECD5546A71E4E4 /* next_m0_time.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4FEB85C14F83681F35A7BD9E89108A /* next_m0_time.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8B733A25356C780D6F39C3FF966C746 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DAF6D119725000F9CBA2CE933CD90E /* memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A98CCBB878839A5A5EF000F766ADF7F7 /* resamplerinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149D60515DD4E6CB59C38B58FBF140E4 /* resamplerinfo.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		ABEE099F91E6A1169FE0B187BC2287E6 /* cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 054DD03443C12F3A401BA78B5FF4A25D /* cpu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AE6D2F6186D7B0F575F0E2B7FD7D39C3 /* gambatte.h in Headers */ = {isa = PBXBuildFile; fileRef = C40567C4D169764BB21E8EFB2A07086B /* gambatte.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AF1AE9D30466EDAB815E6A2011C89123 /* duty_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1430E943D4FB4D0F7AF04F53304C67 /* duty_unit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AF2D8953A1C433818BC55B1E63156991 /* pakinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E3D373F04E4B65BDF8BE2C7297A1C99 /* pakinfo.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		AF8682FE961D899C0481FA6CF33B6EEC /* ppu.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FCAB24A4722C6064E3DAF72C2A4B75 /* ppu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B006C99325400CD6B2123D6EC1481039 /* channel1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 943BD71BB402D50DDE6AF8318133A58B /* channel1.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		B0DD77603575189356820E090190559E /* rshift16_round.h in Headers */ = {isa = PBXBuildFile; fileRef = FB3AACC71ACC47721864F82908418A82 /* rshift16_round.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B1A15F88E8A31A78451D29C32DF9A9EB /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B731EF392522FA8C7294B777CE71E31 /* video.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		B308FEAD9437D6A332347D655917EB81 /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1FBA515AE2D9ECE82017BC36EDAB47B /* makesinckernel.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		B342F67F4D2D6CC08B8B6C2AB283DD2E /* rtc.h in Headers */ = {isa = PBXBuildFile; fileRef = EFC7F6564A24F3F1EC211D785A83EF69 /* rtc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B490126286CA8CE6EAA71B011C9910A4 /* u48div.h in Headers */ = {isa = PBXBuildFile; fileRef = 072DBF8A52D2D7B8F4304286828EA669 /* u48div.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B5455D32D6B6B570465BB2A79B99E637 /* usec.h in Headers */ = {isa = PBXBuildFile; fileRef = 06F44BC2AA16E9AA45DCA0F9DE3796B6 /* usec.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B629994972675639EB23FD6D59A1572C /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FF48A2273705A1C0566A2F6C189EEAA /* file.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B79EFE114D4012F5E5476E7E3BF853C6 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BF292EE7CCAA14ACF80F527877FC5D /* CoreOptions.swift */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		B8545D87FAF3F0EE54D02F04D626A9D1 /* statesaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45CBBAA75DC6BCBC4A1B1AD51394248A /* statesaver.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		B8A1B14C5DF3665103D032D4DFE02D52 /* bitmap_font.h in Headers */ = {isa = PBXBuildFile; fileRef = F1EB6F192E605F565BC83CD17E1B8CAE /* bitmap_font.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BB67C2C07936E86AA4B252C53A193A11 /* tima.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B1988095BB16F6C256F2BA11C3F9C62 /* tima.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		BCFA0C86FE9809472EB0F1D7FF82E619 /* length_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10EB127A30C153817EB5A5B01548FD3 /* length_counter.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		BE637E703A44DF31FB825B7A0D992AA3 /* chainresampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3D4520358A314C1FC03DDD1AD9B1C2F /* chainresampler.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		BE9400CFC1F3CF7ABB5B696B57D188F7 /* master_disabler.h in Headers */ = {isa = PBXBuildFile; fileRef = C15FC3997E741D6F96336D6307F5ABCC /* master_disabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BEE2D4D2E4C2D2778C69F26E6F9BC29F /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5485CA4EF370CABB13E28E9F7C591068 /* sound.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		C0F3240387EA7201871F7BC8F0573C69 /* subresampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 60960FB4BF80CB02ADBE4C64B02099CB /* subresampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C1D560C46036E728467CAD0A1EBB12F7 /* pakinfo_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3874CF91196BFE16C6F40B23F8BFA6ED /* pakinfo_internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C3F046D79F135F1ED180151E1072EAAE /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4BCE3306CC160D7BBD8B3F61C7F9A5DD /* Core.plist */; };
+		C3F2DA1B7A68513AC869E6EB772FE2FF /* interrupter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F091A442E4142F615863A1048CF0721 /* interrupter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C51E2727158F472840FAB50FAC0BFE3E /* ly_counter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B97878C8212E87EBD108B896AC91403 /* ly_counter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C5B6A34BB5D993E71D9AD0516FB7473F /* channel4.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE2810CAFE01CBB5530AB29DD148E72 /* channel4.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C843AA850B9072799F4B8541871F08D7 /* bitmap_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB9BB31A0ACA08639451126EA568AAD9 /* bitmap_font.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		C85E173FEE49616FCF81E5D475487534 /* master_disabler.h in Headers */ = {isa = PBXBuildFile; fileRef = C15FC3997E741D6F96336D6307F5ABCC /* master_disabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C9BD1798AB3796429380E2EA103FAA4B /* cic3.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FEEF28AAF9B79F3898EEE7080F6B0F /* cic3.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD30821C730CDB7036DEC3720573AAAF /* PVGambatteEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 97F61469C81FDE3B0D770D60A91846ED /* PVGambatteEmulatorCore.mm */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		CFC3E3605F82BA63A3915C3658D499ED /* pakinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D90A16F2FCF4D35AAEC835B9CB1F30 /* pakinfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D01920F539EBFBCDED2060B66DD2A503 /* memptrs.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F81AFC5256BAD3C01DDB5E406E210E3 /* memptrs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D04AFE1616FD8121A8508087C92B4AF4 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FF48A2273705A1C0566A2F6C189EEAA /* file.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D08A68BBF9014379FD851ED9EF5A252D /* video.h in Headers */ = {isa = PBXBuildFile; fileRef = B8430F5C3A720E2BD0EC02853D03810D /* video.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D0F562964C3AF5BAF197AFFA43E30E6D /* lyc_irq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE9B3AD375C1B6E09F8F6D861E0D4683 /* lyc_irq.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		D136CA40A98F095A2328E85F03B70A7A /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4BCE3306CC160D7BBD8B3F61C7F9A5DD /* Core.plist */; };
+		D13915AD43FDD09143CD92B0511F2002 /* minkeeper.h in Headers */ = {isa = PBXBuildFile; fileRef = 565E936388B071527AA8ED416F1D79CE /* minkeeper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D25B433E98E4F014440593558531CA1E /* PVGambatte-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D11031032FD0AA25DF469E7453523D4 /* PVGambatte-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27CD1D935AA2EAD53D5D15FC85BC9C8 /* u48div.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4417A62A6C42448BC044D05149F1F5 /* u48div.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		D288F2E2E46542BDF6D5160522A676FE /* lcddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C081B025A04408127ED211A2746594 /* lcddef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D3716414CC726C19BB813AE944E15896 /* kaiser50sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D40304924FF9F3995017EB268F4022A /* kaiser50sinc.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		D6149B49003E5E3ACFD2DF042DBD771B /* kaiser70sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 35DEC5483C6E5DBFF24D3BFC777AF48A /* kaiser70sinc.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		D8BFB4FF462227C58469C999FCB90123 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FD3D8377BBF2028E9455AEC1A9E2174 /* OpenGLES.framework */; };
+		DC772CF1700B53BED16A77DD5DB20770 /* memptrs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4A884BDE29EA55AB9C5CE5F6C6BDCD9 /* memptrs.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		DCC873437E838B27AB26FA806867D8BF /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE63925D1C096573CE3B07140A7CDCB8 /* rtc.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		DDA2701F72BE5F8D774C99714FA96A0A /* rateest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C837C86978EFE09DCA01A5749BB81BD /* rateest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DDAC43CBDB90B01F5475DCCEE00281CD /* channel2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DBB265045191A97FE8CF8789594BE5D /* channel2.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		DE48C16AC841FF5FCCAE2A7C97D3676B /* polyphasefir.h in Headers */ = {isa = PBXBuildFile; fileRef = 24EE64B7956300B41B4B3157ACA238D9 /* polyphasefir.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1613D7AFA797CEFD4C4A913E20ECBD8 /* counterdef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F306781EF4F2B56C34B35842110481A /* counterdef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1926DB79488D3BFBA867CFB5B94D813 /* tima.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B1988095BB16F6C256F2BA11C3F9C62 /* tima.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		E19F46BF9E6F46C6AFA45D406BA160E8 /* ly_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0FB7A78185D5A26188A845309B253DE /* ly_counter.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		E29DA17C26DCFE17DF8E80BC1290C77C /* u48div.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4417A62A6C42448BC044D05149F1F5 /* u48div.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		E2A47F7B68113A988F77AA94830F4256 /* channel2.h in Headers */ = {isa = PBXBuildFile; fileRef = A686A279ECC01240ACDFD1D4D0DDE990 /* channel2.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E47F1DBAD0177DE4FD129823786C3595 /* cic3.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FEEF28AAF9B79F3898EEE7080F6B0F /* cic3.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4ABB8447CB579659A02D102E6F55223 /* PVGambatteEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 97F61469C81FDE3B0D770D60A91846ED /* PVGambatteEmulatorCore.mm */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		E6A33E6781662644C18067C46A79F3FE /* kaiser70sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 35DEC5483C6E5DBFF24D3BFC777AF48A /* kaiser70sinc.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		E6DCC48355FE8C3713DB9C31E4E56514 /* lyc_irq.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4B1648F94A4DE5BFCA38EE7DA5DAB5 /* lyc_irq.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E7EEE1B9D4B01E344D50E230BD53A033 /* gb240p.gb in Resources */ = {isa = PBXBuildFile; fileRef = 43CFD30F4BF34E9D57260B5F705E8BF8 /* gb240p.gb */; };
+		E91B0C42F4A5A905E2B13C8ED9AD9012 /* loadres.h in Headers */ = {isa = PBXBuildFile; fileRef = D6424E7A50D67ABBFE1FF4A610F747CF /* loadres.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EB359D12F08BC818CC4A9FED07680725 /* m0_irq.h in Headers */ = {isa = PBXBuildFile; fileRef = 040BD32A5FBBD3C4F2FA8E94FA44AD26 /* m0_irq.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EB57D15C8BE41CCA5F74C3B133005D27 /* state_osd_elements.h in Headers */ = {isa = PBXBuildFile; fileRef = E6C39B673966736368629ED7DE274DD5 /* state_osd_elements.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F014133039C541643E1EB99CB317F8AF /* loadres.h in Headers */ = {isa = PBXBuildFile; fileRef = D6424E7A50D67ABBFE1FF4A610F747CF /* loadres.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F110DB9A4F9A0FD280D902183F780637 /* tima.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A170A37C239C8E31994ACB7C0CD3A9 /* tima.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F112077D068FB1EB0F837AE0A85E7B52 /* cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AF3C62C73E685D0D5E48F3651FB7E /* cartridge.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		F19F33F68BF6F4AF52E7EC11D2D76569 /* channel3.h in Headers */ = {isa = PBXBuildFile; fileRef = 900B54A07D6491EA3D544BC99EE75028 /* channel3.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F200B151DB3CC2BD532C94E1889B6807 /* blackmansinc.h in Headers */ = {isa = PBXBuildFile; fileRef = DC6BA24DBD7FCBE41111C3F414F22C96 /* blackmansinc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F3B5B24AE78358138337D038BB9A661A /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA14BBC2088DC79006EEBFC1326354A9 /* initstate.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		F54EC3297CBF8E6EB3BCE1C12F563C09 /* cic4.h in Headers */ = {isa = PBXBuildFile; fileRef = 298FB9197837A8A63985C801AD4043DD /* cic4.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F5648FCFFE1E686A06D75549252BFA13 /* array.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD7AEA37377BFB5927900EA8A0B8AFE /* array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F59844EADD4332D7647070F4C39203D7 /* rtc.h in Headers */ = {isa = PBXBuildFile; fileRef = EFC7F6564A24F3F1EC211D785A83EF69 /* rtc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F5D8D44E4370176DC57EAED9CB68B6DE /* PVGambatte-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B1393DDCD28833287D724E6594502FB0 /* PVGambatte-tvOS-dummy.m */; };
+		F770EDC10CBC744A86E993E8311A1A10 /* cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AF3C62C73E685D0D5E48F3651FB7E /* cartridge.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+		F812C96970934420E106F276601874FC /* duty_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1430E943D4FB4D0F7AF04F53304C67 /* duty_unit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FB56EF8ECBF2CFD74ED152E7ED0274A8 /* savestate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E4FF6D0CFB553D49A920469539BAB0 /* savestate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD1F533667093AF611207FB8B16805FA /* pakinfo_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3874CF91196BFE16C6F40B23F8BFA6ED /* pakinfo_internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD32149A318F2161ACC34D71A39EAF3A /* m0_irq.h in Headers */ = {isa = PBXBuildFile; fileRef = 040BD32A5FBBD3C4F2FA8E94FA44AD26 /* m0_irq.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE04178150978E8E5CF08A9CCEC021D6 /* static_output_tester.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EAB23DA78269B0796F5DDA77C897DBB /* static_output_tester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF711CC1638451986123EF50BD054BE9 /* ly_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0FB7A78185D5A26188A845309B253DE /* ly_counter.cpp */; settings = {COMPILER_FLAGS = "-DCORE_GAMBATTE_SUBSPEC_INCLUDED -DHAVE_STDINT_H"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1CDDC8EA8076BFA52E94B7443A30B9A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56F57040693CBB5C25270C8456CCC2B2 /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
+			remoteInfo = "PVSupport-tvOS";
+		};
+		B043A10854AC8CC335C2D27EC3310A6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56F57040693CBB5C25270C8456CCC2B2 /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
+			remoteInfo = "PVSupport-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0226D1E1C55E7EC47D891986FA6E06E3 /* PVGambatte-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVGambatte-tvOS.debug.xcconfig"; path = "../PVGambatte-tvOS/PVGambatte-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		040BD32A5FBBD3C4F2FA8E94FA44AD26 /* m0_irq.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = m0_irq.h; sourceTree = "<group>"; };
+		054DD03443C12F3A401BA78B5FF4A25D /* cpu.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cpu.h; sourceTree = "<group>"; };
+		06F44BC2AA16E9AA45DCA0F9DE3796B6 /* usec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = usec.h; sourceTree = "<group>"; };
+		072DBF8A52D2D7B8F4304286828EA669 /* u48div.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = u48div.h; sourceTree = "<group>"; };
+		0928F9A1C86630C1331608B31AFB391B /* PVGambatte-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVGambatte-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		094B347D391FDF32B699181D944EBAA5 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		0B0E3B09CFB5A1B5650F04C6294CDC5B /* PVGambatte-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PVGambatte-iOS-dummy.m"; sourceTree = "<group>"; };
+		0B4AF3C62C73E685D0D5E48F3651FB7E /* cartridge.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = cartridge.cpp; sourceTree = "<group>"; };
+		0E3D373F04E4B65BDF8BE2C7297A1C99 /* pakinfo.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = pakinfo.cpp; sourceTree = "<group>"; };
+		1340CF0E8C8407C627E4CD2821E8FCF2 /* PVGambatte.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PVGambatte.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		149D60515DD4E6CB59C38B58FBF140E4 /* resamplerinfo.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = resamplerinfo.cpp; sourceTree = "<group>"; };
+		14CCA94CBC567F8D1B6A9CAC716AFDFD /* next_m0_time.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = next_m0_time.cpp; sourceTree = "<group>"; };
+		175DE9A48938FD33D9436C64F2455ACD /* envelope_unit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = envelope_unit.h; sourceTree = "<group>"; };
+		187FB4F918B992520FFC54EE7D58C28E /* sound.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
+		198C95E2C866DE293CC337669061B613 /* kaiser50sinc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = kaiser50sinc.h; sourceTree = "<group>"; };
+		1B1988095BB16F6C256F2BA11C3F9C62 /* tima.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = tima.cpp; sourceTree = "<group>"; };
+		1B731EF392522FA8C7294B777CE71E31 /* video.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = video.cpp; sourceTree = "<group>"; };
+		1C837C86978EFE09DCA01A5749BB81BD /* rateest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = rateest.h; sourceTree = "<group>"; };
+		1D11031032FD0AA25DF469E7453523D4 /* PVGambatte-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PVGambatte-tvOS-umbrella.h"; path = "../PVGambatte-tvOS/PVGambatte-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		1EAB23DA78269B0796F5DDA77C897DBB /* static_output_tester.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = static_output_tester.h; sourceTree = "<group>"; };
+		24EE64B7956300B41B4B3157ACA238D9 /* polyphasefir.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = polyphasefir.h; sourceTree = "<group>"; };
+		26C081B025A04408127ED211A2746594 /* lcddef.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = lcddef.h; sourceTree = "<group>"; };
+		298FB9197837A8A63985C801AD4043DD /* cic4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cic4.h; sourceTree = "<group>"; };
+		2A325A47C75E6E81A6FE907FA5CBB048 /* PVGambatte-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PVGambatte-iOS-umbrella.h"; sourceTree = "<group>"; };
+		2B1AA523F5244BCD1B47FC8F9B11C256 /* interruptrequester.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = interruptrequester.cpp; sourceTree = "<group>"; };
+		2DBDE24A5B7D40E2C696EFF945A1339F /* sound_unit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sound_unit.h; sourceTree = "<group>"; };
+		2DE2810CAFE01CBB5530AB29DD148E72 /* channel4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = channel4.h; sourceTree = "<group>"; };
+		2F091A442E4142F615863A1048CF0721 /* interrupter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = interrupter.h; sourceTree = "<group>"; };
+		2FD3D8377BBF2028E9455AEC1A9E2174 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		35BF292EE7CCAA14ACF80F527877FC5D /* CoreOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
+		35DEC5483C6E5DBFF24D3BFC777AF48A /* kaiser70sinc.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = kaiser70sinc.cpp; sourceTree = "<group>"; };
+		3874CF91196BFE16C6F40B23F8BFA6ED /* pakinfo_internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = pakinfo_internal.h; sourceTree = "<group>"; };
+		3972386FBED8D5609DF272F39E878C6E /* insertion_sort.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = insertion_sort.h; sourceTree = "<group>"; };
+		3B6FC1C53954CF9F6095EF15E5AF43D1 /* PVGambatte-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PVGambatte-iOS-prefix.pch"; sourceTree = "<group>"; };
+		3C080BA3A326EAD789BA110FE4B13881 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		3C2B64A3BCB5A8B88B8E0E3915609A83 /* memory.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = memory.cpp; sourceTree = "<group>"; };
+		3DBB265045191A97FE8CF8789594BE5D /* channel2.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = channel2.cpp; sourceTree = "<group>"; };
+		439BEEDD8F29AC43884CF86B275EBA37 /* gambatte.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = gambatte.cpp; sourceTree = "<group>"; };
+		43CFD30F4BF34E9D57260B5F705E8BF8 /* gb240p.gb */ = {isa = PBXFileReference; includeInIndex = 1; name = gb240p.gb; path = Resources/gb240p.gb; sourceTree = "<group>"; };
+		43E3CE359E76FBA2A9251DB7D90CA6B3 /* defined_ptr.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = defined_ptr.h; sourceTree = "<group>"; };
+		44861617C91BDA1ABB519D7708A43579 /* PVGambatte-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVGambatte-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		44E4FF6D0CFB553D49A920469539BAB0 /* savestate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = savestate.h; sourceTree = "<group>"; };
+		45CBBAA75DC6BCBC4A1B1AD51394248A /* statesaver.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = statesaver.cpp; sourceTree = "<group>"; };
+		4728076164BA225080C8FBF52D8B4911 /* i0.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = i0.cpp; sourceTree = "<group>"; };
+		4BCE3306CC160D7BBD8B3F61C7F9A5DD /* Core.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Core.plist; path = Resources/Core.plist; sourceTree = "<group>"; };
+		4C29F7917987084F2D58CB18802C2F3E /* channel1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = channel1.h; sourceTree = "<group>"; };
+		4C84B01493FAA7845C15DD12F1FE0AC0 /* PVGambatteEmulatorCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PVGambatteEmulatorCore.swift; sourceTree = "<group>"; };
+		4F4B1648F94A4DE5BFCA38EE7DA5DAB5 /* lyc_irq.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = lyc_irq.h; sourceTree = "<group>"; };
+		4F77D306CEC617DF4CFF65A2C5DFB7C6 /* sprite_mapper.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = sprite_mapper.cpp; sourceTree = "<group>"; };
+		5485CA4EF370CABB13E28E9F7C591068 /* sound.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = sound.cpp; sourceTree = "<group>"; };
+		565E936388B071527AA8ED416F1D79CE /* minkeeper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = minkeeper.h; sourceTree = "<group>"; };
+		56F57040693CBB5C25270C8456CCC2B2 /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
+		57DE2BE21FE59B085E60F21A67A38A32 /* PVGambatte-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "PVGambatte-tvOS.modulemap"; path = "../PVGambatte-tvOS/PVGambatte-tvOS.modulemap"; sourceTree = "<group>"; };
+		59B87198D4735972473B7A4ADA4C29D3 /* PVGambatte-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "PVGambatte-tvOS-Info.plist"; path = "../PVGambatte-tvOS/PVGambatte-tvOS-Info.plist"; sourceTree = "<group>"; };
+		5D40304924FF9F3995017EB268F4022A /* kaiser50sinc.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = kaiser50sinc.cpp; sourceTree = "<group>"; };
+		60960FB4BF80CB02ADBE4C64B02099CB /* subresampler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = subresampler.h; sourceTree = "<group>"; };
+		61D90A16F2FCF4D35AAEC835B9CB1F30 /* pakinfo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = pakinfo.h; sourceTree = "<group>"; };
+		629C3D9BF739476A07EE1478B935B503 /* osd_element.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = osd_element.h; sourceTree = "<group>"; };
+		697875BF1158ADA9CCB4378364EA7BE2 /* length_counter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = length_counter.h; sourceTree = "<group>"; };
+		697C10EBF0E9C050ED53D669A658C63D /* statesaver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = statesaver.h; sourceTree = "<group>"; };
+		6B4F49069EDE96661FC3EF85084132AF /* kaiser70sinc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = kaiser70sinc.h; sourceTree = "<group>"; };
+		6C1323D4F3A14E0C5DDDD79C97F0787D /* PVGambatte.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVGambatte.framework; path = "PVGambatte-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6FEE8FB7774686666655BF9E58526D20 /* channel3.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = channel3.cpp; sourceTree = "<group>"; };
+		70C92156AAC82B7451E0BD20AA4C5810 /* cic2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cic2.h; sourceTree = "<group>"; };
+		770FF38130341C51F13D79557A993DB0 /* uncopyable.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = uncopyable.h; sourceTree = "<group>"; };
+		7AA859AB85D59C9B84BF89A19D9D8381 /* scoped_ptr.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = scoped_ptr.h; sourceTree = "<group>"; };
+		7AC2F5A0F5E02C0353620B7995035272 /* ringbuffer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ringbuffer.h; sourceTree = "<group>"; };
+		7BE6B985D40A8637506670CAC40F307D /* interrupter.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = interrupter.cpp; sourceTree = "<group>"; };
+		7E4FEB85C14F83681F35A7BD9E89108A /* next_m0_time.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = next_m0_time.h; sourceTree = "<group>"; };
+		7F120C649DD96A1BA755EDCE40C53E66 /* ppu.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = ppu.cpp; sourceTree = "<group>"; };
+		7F306781EF4F2B56C34B35842110481A /* counterdef.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = counterdef.h; sourceTree = "<group>"; };
+		84FCAB24A4722C6064E3DAF72C2A4B75 /* ppu.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ppu.h; sourceTree = "<group>"; };
+		855895C058F6721577CCC19E59D6B31F /* transfer_ptr.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = transfer_ptr.h; sourceTree = "<group>"; };
+		8AFB3EF72F3C226297FEBF81DD73052F /* hammingsinc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = hammingsinc.h; sourceTree = "<group>"; };
+		8B85F13490F701ABFDDC3E431DD85BD9 /* duty_unit.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = duty_unit.cpp; sourceTree = "<group>"; };
+		8F03F8BBC878FA3C6ACDA57A2BCB96C6 /* PVGambatte-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PVGambatte-tvOS-prefix.pch"; path = "../PVGambatte-tvOS/PVGambatte-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		900B54A07D6491EA3D544BC99EE75028 /* channel3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = channel3.h; sourceTree = "<group>"; };
+		93DAF6D119725000F9CBA2CE933CD90E /* memory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		943BD71BB402D50DDE6AF8318133A58B /* channel1.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = channel1.cpp; sourceTree = "<group>"; };
+		96A170A37C239C8E31994ACB7C0CD3A9 /* tima.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = tima.h; sourceTree = "<group>"; };
+		96B78B02F2530A1E40BF8406B4AA34EF /* channel4.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = channel4.cpp; sourceTree = "<group>"; };
+		96D1E41573E4FF4DCDC1038890B7F28E /* gbint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = gbint.h; sourceTree = "<group>"; };
+		97F61469C81FDE3B0D770D60A91846ED /* PVGambatteEmulatorCore.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = PVGambatteEmulatorCore.mm; sourceTree = "<group>"; };
+		9947A0A14D9C9B8D7448AAC69FC1288C /* inputgetter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = inputgetter.h; sourceTree = "<group>"; };
+		9B97878C8212E87EBD108B896AC91403 /* ly_counter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ly_counter.h; sourceTree = "<group>"; };
+		9F81AFC5256BAD3C01DDB5E406E210E3 /* memptrs.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = memptrs.h; sourceTree = "<group>"; };
+		9FF48A2273705A1C0566A2F6C189EEAA /* file.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		A019AA3E83BADFFC38938D41920DB94C /* state_osd_elements.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = state_osd_elements.cpp; sourceTree = "<group>"; };
+		A0FB7A78185D5A26188A845309B253DE /* ly_counter.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = ly_counter.cpp; sourceTree = "<group>"; };
+		A3F2F622E14EB8E0FBBBCFDB0C1933C3 /* gbcpalettes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = gbcpalettes.h; sourceTree = "<group>"; };
+		A686A279ECC01240ACDFD1D4D0DDE990 /* channel2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = channel2.h; sourceTree = "<group>"; };
+		AD2E250A2601640EE826584D14FF95B3 /* i0.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = i0.h; sourceTree = "<group>"; };
+		AE58B7C541AF956C8AC4322F56223E80 /* sprite_mapper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sprite_mapper.h; sourceTree = "<group>"; };
+		B0359984927C184C795C622E3A3160D9 /* chainresampler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = chainresampler.h; sourceTree = "<group>"; };
+		B1393DDCD28833287D724E6594502FB0 /* PVGambatte-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "PVGambatte-tvOS-dummy.m"; path = "../PVGambatte-tvOS/PVGambatte-tvOS-dummy.m"; sourceTree = "<group>"; };
+		B1786A980CF91BCA3727A7AD7DD2F6FA /* cpu.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = cpu.cpp; sourceTree = "<group>"; };
+		B1FBA515AE2D9ECE82017BC36EDAB47B /* makesinckernel.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = makesinckernel.cpp; sourceTree = "<group>"; };
+		B2A75DCBAF8A2F89CF102E462C49D8B9 /* rectsinc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = rectsinc.h; sourceTree = "<group>"; };
+		B32C2AB462A2F9CE83695415236CC749 /* PVGambatteEmulatorCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PVGambatteEmulatorCore.h; sourceTree = "<group>"; };
+		B3332FE7A72F2DD0B9EF818E975C6F65 /* upsampler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = upsampler.h; sourceTree = "<group>"; };
+		B70CEE9E6935D52718AC956A72CB240B /* adaptivesleep.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = adaptivesleep.h; sourceTree = "<group>"; };
+		B8430F5C3A720E2BD0EC02853D03810D /* video.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
+		BA5F00CCB815DA571EA413B46754807F /* LICENSE.md */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.md; sourceTree = "<group>"; };
+		C134222EBE7008F455857A4B7CF41197 /* initstate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = initstate.h; sourceTree = "<group>"; };
+		C15FC3997E741D6F96336D6307F5ABCC /* master_disabler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = master_disabler.h; sourceTree = "<group>"; };
+		C17EBFCD46721A6209DB5EEF400A0873 /* PVGambatte-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PVGambatte-iOS-Info.plist"; sourceTree = "<group>"; };
+		C3D4520358A314C1FC03DDD1AD9B1C2F /* chainresampler.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = chainresampler.cpp; sourceTree = "<group>"; };
+		C40567C4D169764BB21E8EFB2A07086B /* gambatte.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = gambatte.h; sourceTree = "<group>"; };
+		C4A884BDE29EA55AB9C5CE5F6C6BDCD9 /* memptrs.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = memptrs.cpp; sourceTree = "<group>"; };
+		C696BA78737A2EB39A5EBC43671AEA96 /* file.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = file.cpp; sourceTree = "<group>"; };
+		C9E5E9383CA81A8D48B55C435920519B /* skipsched.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = skipsched.h; sourceTree = "<group>"; };
+		CF1430E943D4FB4D0F7AF04F53304C67 /* duty_unit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = duty_unit.h; sourceTree = "<group>"; };
+		D10EB127A30C153817EB5A5B01548FD3 /* length_counter.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = length_counter.cpp; sourceTree = "<group>"; };
+		D11178B7399297EA24D588E306C89391 /* interruptrequester.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = interruptrequester.h; sourceTree = "<group>"; };
+		D367440CA6D949D4A82ABD2A7FBD4927 /* envelope_unit.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = envelope_unit.cpp; sourceTree = "<group>"; };
+		D6424E7A50D67ABBFE1FF4A610F747CF /* loadres.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = loadres.h; sourceTree = "<group>"; };
+		D989E56D81121C4E5C382CA9D1E31A17 /* PVGambatte.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVGambatte.framework; path = "PVGambatte-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9CA2B45FCB15C48742F5B83D3607AB4 /* PVGambatte-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "PVGambatte-iOS.modulemap"; sourceTree = "<group>"; };
+		D9E5FB9A220393AFCAA507C1AB13156C /* linint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = linint.h; sourceTree = "<group>"; };
+		DA14BBC2088DC79006EEBFC1326354A9 /* initstate.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = initstate.cpp; sourceTree = "<group>"; };
+		DC6BA24DBD7FCBE41111C3F414F22C96 /* blackmansinc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = blackmansinc.h; sourceTree = "<group>"; };
+		DDB74B8D187B45FFB697ED0B3654B8C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		DDD7AEA37377BFB5927900EA8A0B8AFE /* array.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
+		DE4417A62A6C42448BC044D05149F1F5 /* u48div.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = u48div.cpp; sourceTree = "<group>"; };
+		DE63925D1C096573CE3B07140A7CDCB8 /* rtc.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = rtc.cpp; sourceTree = "<group>"; };
+		DE9B3AD375C1B6E09F8F6D861E0D4683 /* lyc_irq.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = lyc_irq.cpp; sourceTree = "<group>"; };
+		E63CE6AFC9A3C1217C9DA4FD7E484B70 /* cartridge.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cartridge.h; sourceTree = "<group>"; };
+		E66CB2F6B32A0F455C56F6F86194417A /* makesinckernel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = makesinckernel.h; sourceTree = "<group>"; };
+		E6C39B673966736368629ED7DE274DD5 /* state_osd_elements.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = state_osd_elements.h; sourceTree = "<group>"; };
+		EA7C3983914B82EF6CB8386E9980D066 /* loadres.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = loadres.cpp; sourceTree = "<group>"; };
+		EB9BB31A0ACA08639451126EA568AAD9 /* bitmap_font.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = bitmap_font.cpp; sourceTree = "<group>"; };
+		EEADC80801585D33322CA9F67579F4CE /* PVGambatte-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVGambatte-tvOS.release.xcconfig"; path = "../PVGambatte-tvOS/PVGambatte-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		EFC7F6564A24F3F1EC211D785A83EF69 /* rtc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = rtc.h; sourceTree = "<group>"; };
+		F1EB6F192E605F565BC83CD17E1B8CAE /* bitmap_font.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = bitmap_font.h; sourceTree = "<group>"; };
+		F3FEEF28AAF9B79F3898EEE7080F6B0F /* cic3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cic3.h; sourceTree = "<group>"; };
+		F5A09BE1F27763B1BE8FA469575060A9 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		FB3AACC71ACC47721864F82908418A82 /* rshift16_round.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = rshift16_round.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B688E8C24650E6977CA157A0342CD8C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4FDAA207C29CF73EB8C2CADB561BDA5C /* Foundation.framework in Frameworks */,
+				D8BFB4FF462227C58469C999FCB90123 /* OpenGLES.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F93AD39E7768E5CB67E296D1809FF5B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				46D029B84FAD4F3B0BAF2498077276C8 /* Foundation.framework in Frameworks */,
+				385F4830AC4A9FE00A1AD5356720B542 /* OpenGLES.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01936068202B036AFCD3351CE516D327 /* upstream */ = {
+			isa = PBXGroup;
+			children = (
+				EF444237E0B1E4C6C19027F74384AE59 /* common */,
+				B7B7FC4CDFA943FC1AD3718BDAC295B6 /* libgambatte */,
+			);
+			name = upstream;
+			path = Sources/upstream;
+			sourceTree = "<group>";
+		};
+		08297728420C2B57D83B625699546FA5 /* resample */ = {
+			isa = PBXGroup;
+			children = (
+				4911809650E7BDE6C377DBC257566AAB /* src */,
+			);
+			name = resample;
+			path = resample;
+			sourceTree = "<group>";
+		};
+		0A88A8021354B6B09DF432E3E9DB08A8 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				56F57040693CBB5C25270C8456CCC2B2 /* PVSupport */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		2F8A80FEBEB4E60E2A8F896C4E6BDAC0 /* mem */ = {
+			isa = PBXGroup;
+			children = (
+				0B4AF3C62C73E685D0D5E48F3651FB7E /* cartridge.cpp */,
+				E63CE6AFC9A3C1217C9DA4FD7E484B70 /* cartridge.h */,
+				C4A884BDE29EA55AB9C5CE5F6C6BDCD9 /* memptrs.cpp */,
+				9F81AFC5256BAD3C01DDB5E406E210E3 /* memptrs.h */,
+				0E3D373F04E4B65BDF8BE2C7297A1C99 /* pakinfo.cpp */,
+				3874CF91196BFE16C6F40B23F8BFA6ED /* pakinfo_internal.h */,
+				DE63925D1C096573CE3B07140A7CDCB8 /* rtc.cpp */,
+				EFC7F6564A24F3F1EC211D785A83EF69 /* rtc.h */,
+			);
+			name = mem;
+			path = mem;
+			sourceTree = "<group>";
+		};
+		3477A070ED5A69F1C2F4CAB3DA59EEB5 /* PVGambatte */ = {
+			isa = PBXGroup;
+			children = (
+				A3F2F622E14EB8E0FBBBCFDB0C1933C3 /* gbcpalettes.h */,
+			);
+			name = PVGambatte;
+			path = Sources/PVGambatte;
+			sourceTree = "<group>";
+		};
+		392AFFD779CE5D0ADCEBEF7F0E50ED30 /* PVGambatte */ = {
+			isa = PBXGroup;
+			children = (
+				4BCE3306CC160D7BBD8B3F61C7F9A5DD /* Core.plist */,
+				43CFD30F4BF34E9D57260B5F705E8BF8 /* gb240p.gb */,
+				9FAA25392474AB55A0F2A161E7B04288 /* Pod */,
+				3477A070ED5A69F1C2F4CAB3DA59EEB5 /* PVGambatte */,
+				965F32D893BCE147B9A7248A5A3B918F /* PVGambatteEmulatorCore */,
+				F2725F5F1E6959834E3BBBC36977E202 /* Support Files */,
+				01936068202B036AFCD3351CE516D327 /* upstream */,
+			);
+			name = PVGambatte;
+			path = ../Cores/Gambatte;
+			sourceTree = "<group>";
+		};
+		3A0B08AB300E0047557294E27567F5B7 /* file */ = {
+			isa = PBXGroup;
+			children = (
+				C696BA78737A2EB39A5EBC43671AEA96 /* file.cpp */,
+				9FF48A2273705A1C0566A2F6C189EEAA /* file.h */,
+			);
+			name = file;
+			path = file;
+			sourceTree = "<group>";
+		};
+		4911809650E7BDE6C377DBC257566AAB /* src */ = {
+			isa = PBXGroup;
+			children = (
+				DC6BA24DBD7FCBE41111C3F414F22C96 /* blackmansinc.h */,
+				C3D4520358A314C1FC03DDD1AD9B1C2F /* chainresampler.cpp */,
+				B0359984927C184C795C622E3A3160D9 /* chainresampler.h */,
+				70C92156AAC82B7451E0BD20AA4C5810 /* cic2.h */,
+				F3FEEF28AAF9B79F3898EEE7080F6B0F /* cic3.h */,
+				298FB9197837A8A63985C801AD4043DD /* cic4.h */,
+				8AFB3EF72F3C226297FEBF81DD73052F /* hammingsinc.h */,
+				4728076164BA225080C8FBF52D8B4911 /* i0.cpp */,
+				AD2E250A2601640EE826584D14FF95B3 /* i0.h */,
+				5D40304924FF9F3995017EB268F4022A /* kaiser50sinc.cpp */,
+				198C95E2C866DE293CC337669061B613 /* kaiser50sinc.h */,
+				35DEC5483C6E5DBFF24D3BFC777AF48A /* kaiser70sinc.cpp */,
+				6B4F49069EDE96661FC3EF85084132AF /* kaiser70sinc.h */,
+				D9E5FB9A220393AFCAA507C1AB13156C /* linint.h */,
+				B1FBA515AE2D9ECE82017BC36EDAB47B /* makesinckernel.cpp */,
+				E66CB2F6B32A0F455C56F6F86194417A /* makesinckernel.h */,
+				24EE64B7956300B41B4B3157ACA238D9 /* polyphasefir.h */,
+				B2A75DCBAF8A2F89CF102E462C49D8B9 /* rectsinc.h */,
+				149D60515DD4E6CB59C38B58FBF140E4 /* resamplerinfo.cpp */,
+				FB3AACC71ACC47721864F82908418A82 /* rshift16_round.h */,
+				60960FB4BF80CB02ADBE4C64B02099CB /* subresampler.h */,
+				DE4417A62A6C42448BC044D05149F1F5 /* u48div.cpp */,
+				072DBF8A52D2D7B8F4304286828EA669 /* u48div.h */,
+				B3332FE7A72F2DD0B9EF818E975C6F65 /* upsampler.h */,
+			);
+			name = src;
+			path = src;
+			sourceTree = "<group>";
+		};
+		4985BA55604D193BD59C31281ECD7C8A /* sound */ = {
+			isa = PBXGroup;
+			children = (
+				943BD71BB402D50DDE6AF8318133A58B /* channel1.cpp */,
+				4C29F7917987084F2D58CB18802C2F3E /* channel1.h */,
+				3DBB265045191A97FE8CF8789594BE5D /* channel2.cpp */,
+				A686A279ECC01240ACDFD1D4D0DDE990 /* channel2.h */,
+				6FEE8FB7774686666655BF9E58526D20 /* channel3.cpp */,
+				900B54A07D6491EA3D544BC99EE75028 /* channel3.h */,
+				96B78B02F2530A1E40BF8406B4AA34EF /* channel4.cpp */,
+				2DE2810CAFE01CBB5530AB29DD148E72 /* channel4.h */,
+				8B85F13490F701ABFDDC3E431DD85BD9 /* duty_unit.cpp */,
+				CF1430E943D4FB4D0F7AF04F53304C67 /* duty_unit.h */,
+				D367440CA6D949D4A82ABD2A7FBD4927 /* envelope_unit.cpp */,
+				175DE9A48938FD33D9436C64F2455ACD /* envelope_unit.h */,
+				D10EB127A30C153817EB5A5B01548FD3 /* length_counter.cpp */,
+				697875BF1158ADA9CCB4378364EA7BE2 /* length_counter.h */,
+				C15FC3997E741D6F96336D6307F5ABCC /* master_disabler.h */,
+				2DBDE24A5B7D40E2C696EFF945A1339F /* sound_unit.h */,
+				1EAB23DA78269B0796F5DDA77C897DBB /* static_output_tester.h */,
+			);
+			name = sound;
+			path = sound;
+			sourceTree = "<group>";
+		};
+		5679D6BD803082CA8E870158548FC608 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				3C080BA3A326EAD789BA110FE4B13881 /* Foundation.framework */,
+				2FD3D8377BBF2028E9455AEC1A9E2174 /* OpenGLES.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		5D22468396703836DF186AA71D8D882A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5679D6BD803082CA8E870158548FC608 /* iOS */,
+				796C7766A7D262C174E3F29D9F10D87A /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		796C7766A7D262C174E3F29D9F10D87A /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				DDB74B8D187B45FFB697ED0B3654B8C3 /* Foundation.framework */,
+				F5A09BE1F27763B1BE8FA469575060A9 /* OpenGLES.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		8C1DBD62F5782D0FB2DC65E239F0E49D = {
+			isa = PBXGroup;
+			children = (
+				0A88A8021354B6B09DF432E3E9DB08A8 /* Dependencies */,
+				5D22468396703836DF186AA71D8D882A /* Frameworks */,
+				90154733E07B643BEA40A9BB854CD18B /* Products */,
+				392AFFD779CE5D0ADCEBEF7F0E50ED30 /* PVGambatte */,
+			);
+			sourceTree = "<group>";
+		};
+		8CA80BCD774C9544CC054260961FDAFE /* include */ = {
+			isa = PBXGroup;
+			children = (
+				C40567C4D169764BB21E8EFB2A07086B /* gambatte.h */,
+				96D1E41573E4FF4DCDC1038890B7F28E /* gbint.h */,
+				9947A0A14D9C9B8D7448AAC69FC1288C /* inputgetter.h */,
+				D6424E7A50D67ABBFE1FF4A610F747CF /* loadres.h */,
+				61D90A16F2FCF4D35AAEC835B9CB1F30 /* pakinfo.h */,
+			);
+			name = include;
+			path = include;
+			sourceTree = "<group>";
+		};
+		90154733E07B643BEA40A9BB854CD18B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D989E56D81121C4E5C382CA9D1E31A17 /* PVGambatte.framework */,
+				6C1323D4F3A14E0C5DDDD79C97F0787D /* PVGambatte.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		965F32D893BCE147B9A7248A5A3B918F /* PVGambatteEmulatorCore */ = {
+			isa = PBXGroup;
+			children = (
+				35BF292EE7CCAA14ACF80F527877FC5D /* CoreOptions.swift */,
+				B32C2AB462A2F9CE83695415236CC749 /* PVGambatteEmulatorCore.h */,
+				97F61469C81FDE3B0D770D60A91846ED /* PVGambatteEmulatorCore.mm */,
+				4C84B01493FAA7845C15DD12F1FE0AC0 /* PVGambatteEmulatorCore.swift */,
+			);
+			name = PVGambatteEmulatorCore;
+			path = Sources/PVGambatteEmulatorCore;
+			sourceTree = "<group>";
+		};
+		9FAA25392474AB55A0F2A161E7B04288 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				BA5F00CCB815DA571EA413B46754807F /* LICENSE.md */,
+				1340CF0E8C8407C627E4CD2821E8FCF2 /* PVGambatte.podspec */,
+				094B347D391FDF32B699181D944EBAA5 /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		B7B7FC4CDFA943FC1AD3718BDAC295B6 /* libgambatte */ = {
+			isa = PBXGroup;
+			children = (
+				8CA80BCD774C9544CC054260961FDAFE /* include */,
+				CDFEAE7AA98BF04CECA9EBF9775FB928 /* src */,
+			);
+			name = libgambatte;
+			path = libgambatte;
+			sourceTree = "<group>";
+		};
+		CDFEAE7AA98BF04CECA9EBF9775FB928 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				EB9BB31A0ACA08639451126EA568AAD9 /* bitmap_font.cpp */,
+				F1EB6F192E605F565BC83CD17E1B8CAE /* bitmap_font.h */,
+				7F306781EF4F2B56C34B35842110481A /* counterdef.h */,
+				B1786A980CF91BCA3727A7AD7DD2F6FA /* cpu.cpp */,
+				054DD03443C12F3A401BA78B5FF4A25D /* cpu.h */,
+				439BEEDD8F29AC43884CF86B275EBA37 /* gambatte.cpp */,
+				DA14BBC2088DC79006EEBFC1326354A9 /* initstate.cpp */,
+				C134222EBE7008F455857A4B7CF41197 /* initstate.h */,
+				3972386FBED8D5609DF272F39E878C6E /* insertion_sort.h */,
+				7BE6B985D40A8637506670CAC40F307D /* interrupter.cpp */,
+				2F091A442E4142F615863A1048CF0721 /* interrupter.h */,
+				2B1AA523F5244BCD1B47FC8F9B11C256 /* interruptrequester.cpp */,
+				D11178B7399297EA24D588E306C89391 /* interruptrequester.h */,
+				EA7C3983914B82EF6CB8386E9980D066 /* loadres.cpp */,
+				3C2B64A3BCB5A8B88B8E0E3915609A83 /* memory.cpp */,
+				93DAF6D119725000F9CBA2CE933CD90E /* memory.h */,
+				565E936388B071527AA8ED416F1D79CE /* minkeeper.h */,
+				629C3D9BF739476A07EE1478B935B503 /* osd_element.h */,
+				44E4FF6D0CFB553D49A920469539BAB0 /* savestate.h */,
+				5485CA4EF370CABB13E28E9F7C591068 /* sound.cpp */,
+				187FB4F918B992520FFC54EE7D58C28E /* sound.h */,
+				A019AA3E83BADFFC38938D41920DB94C /* state_osd_elements.cpp */,
+				E6C39B673966736368629ED7DE274DD5 /* state_osd_elements.h */,
+				45CBBAA75DC6BCBC4A1B1AD51394248A /* statesaver.cpp */,
+				697C10EBF0E9C050ED53D669A658C63D /* statesaver.h */,
+				1B1988095BB16F6C256F2BA11C3F9C62 /* tima.cpp */,
+				96A170A37C239C8E31994ACB7C0CD3A9 /* tima.h */,
+				1B731EF392522FA8C7294B777CE71E31 /* video.cpp */,
+				B8430F5C3A720E2BD0EC02853D03810D /* video.h */,
+				3A0B08AB300E0047557294E27567F5B7 /* file */,
+				2F8A80FEBEB4E60E2A8F896C4E6BDAC0 /* mem */,
+				4985BA55604D193BD59C31281ECD7C8A /* sound */,
+				E93A787B96B07DAF31399FD19773666F /* video */,
+			);
+			name = src;
+			path = src;
+			sourceTree = "<group>";
+		};
+		E93A787B96B07DAF31399FD19773666F /* video */ = {
+			isa = PBXGroup;
+			children = (
+				26C081B025A04408127ED211A2746594 /* lcddef.h */,
+				A0FB7A78185D5A26188A845309B253DE /* ly_counter.cpp */,
+				9B97878C8212E87EBD108B896AC91403 /* ly_counter.h */,
+				DE9B3AD375C1B6E09F8F6D861E0D4683 /* lyc_irq.cpp */,
+				4F4B1648F94A4DE5BFCA38EE7DA5DAB5 /* lyc_irq.h */,
+				040BD32A5FBBD3C4F2FA8E94FA44AD26 /* m0_irq.h */,
+				14CCA94CBC567F8D1B6A9CAC716AFDFD /* next_m0_time.cpp */,
+				7E4FEB85C14F83681F35A7BD9E89108A /* next_m0_time.h */,
+				7F120C649DD96A1BA755EDCE40C53E66 /* ppu.cpp */,
+				84FCAB24A4722C6064E3DAF72C2A4B75 /* ppu.h */,
+				4F77D306CEC617DF4CFF65A2C5DFB7C6 /* sprite_mapper.cpp */,
+				AE58B7C541AF956C8AC4322F56223E80 /* sprite_mapper.h */,
+			);
+			name = video;
+			path = video;
+			sourceTree = "<group>";
+		};
+		EF444237E0B1E4C6C19027F74384AE59 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				B70CEE9E6935D52718AC956A72CB240B /* adaptivesleep.h */,
+				DDD7AEA37377BFB5927900EA8A0B8AFE /* array.h */,
+				43E3CE359E76FBA2A9251DB7D90CA6B3 /* defined_ptr.h */,
+				1C837C86978EFE09DCA01A5749BB81BD /* rateest.h */,
+				7AC2F5A0F5E02C0353620B7995035272 /* ringbuffer.h */,
+				7AA859AB85D59C9B84BF89A19D9D8381 /* scoped_ptr.h */,
+				C9E5E9383CA81A8D48B55C435920519B /* skipsched.h */,
+				855895C058F6721577CCC19E59D6B31F /* transfer_ptr.h */,
+				770FF38130341C51F13D79557A993DB0 /* uncopyable.h */,
+				06F44BC2AA16E9AA45DCA0F9DE3796B6 /* usec.h */,
+				08297728420C2B57D83B625699546FA5 /* resample */,
+			);
+			name = common;
+			path = common;
+			sourceTree = "<group>";
+		};
+		F2725F5F1E6959834E3BBBC36977E202 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D9CA2B45FCB15C48742F5B83D3607AB4 /* PVGambatte-iOS.modulemap */,
+				0B0E3B09CFB5A1B5650F04C6294CDC5B /* PVGambatte-iOS-dummy.m */,
+				C17EBFCD46721A6209DB5EEF400A0873 /* PVGambatte-iOS-Info.plist */,
+				3B6FC1C53954CF9F6095EF15E5AF43D1 /* PVGambatte-iOS-prefix.pch */,
+				2A325A47C75E6E81A6FE907FA5CBB048 /* PVGambatte-iOS-umbrella.h */,
+				44861617C91BDA1ABB519D7708A43579 /* PVGambatte-iOS.debug.xcconfig */,
+				0928F9A1C86630C1331608B31AFB391B /* PVGambatte-iOS.release.xcconfig */,
+				57DE2BE21FE59B085E60F21A67A38A32 /* PVGambatte-tvOS.modulemap */,
+				B1393DDCD28833287D724E6594502FB0 /* PVGambatte-tvOS-dummy.m */,
+				59B87198D4735972473B7A4ADA4C29D3 /* PVGambatte-tvOS-Info.plist */,
+				8F03F8BBC878FA3C6ACDA57A2BCB96C6 /* PVGambatte-tvOS-prefix.pch */,
+				1D11031032FD0AA25DF469E7453523D4 /* PVGambatte-tvOS-umbrella.h */,
+				0226D1E1C55E7EC47D891986FA6E06E3 /* PVGambatte-tvOS.debug.xcconfig */,
+				EEADC80801585D33322CA9F67579F4CE /* PVGambatte-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../../Pods/Target Support Files/PVGambatte-iOS";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		B5F6E5D9DC65C5FD5B241B558FDD6BD8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				116BC189BEFFE3569BCB26BDAD16960A /* adaptivesleep.h in Headers */,
+				4A054C56A2E0EC022F4FA49AE9C80F61 /* array.h in Headers */,
+				86A91219EA85A7FB7861D4D674D6509F /* bitmap_font.h in Headers */,
+				1909BB596BE0C298AF4AFDDB924D2DB5 /* blackmansinc.h in Headers */,
+				8530781012A76FFC65C67210A4D67AA6 /* cartridge.h in Headers */,
+				A6FCE1F491C9B2D72612ACE5F07C4D97 /* chainresampler.h in Headers */,
+				6D48875ED3BE6CFC5884132C9011CD62 /* channel1.h in Headers */,
+				E2A47F7B68113A988F77AA94830F4256 /* channel2.h in Headers */,
+				F19F33F68BF6F4AF52E7EC11D2D76569 /* channel3.h in Headers */,
+				79C05745BB64CB8DA21EA5E5C1838B24 /* channel4.h in Headers */,
+				14D9E4C6D4822F3C2C8E8DD0DE8AB0BE /* cic2.h in Headers */,
+				E47F1DBAD0177DE4FD129823786C3595 /* cic3.h in Headers */,
+				974AD7405EC950FD3940F2D622F87313 /* cic4.h in Headers */,
+				6A36A697338B143819A1BCB0A145CEFE /* counterdef.h in Headers */,
+				534338F10C421E5CE854EFC05E806F17 /* cpu.h in Headers */,
+				823F8ECC5FDD3A22ED92503A357272A5 /* defined_ptr.h in Headers */,
+				AF1AE9D30466EDAB815E6A2011C89123 /* duty_unit.h in Headers */,
+				97838E139664D496C86933A85E13425E /* envelope_unit.h in Headers */,
+				D04AFE1616FD8121A8508087C92B4AF4 /* file.h in Headers */,
+				176F2DCBC4217E839C890610CA694B82 /* gambatte.h in Headers */,
+				441499D70A5585DD992A80C16C26B658 /* gbcpalettes.h in Headers */,
+				46A6C6A392FB4DAB1A979F8D6495CF13 /* gbint.h in Headers */,
+				1943EB392E816752F6FEEC69D15A6DD9 /* hammingsinc.h in Headers */,
+				4B51542CCC4983CD69921FE061D860EE /* i0.h in Headers */,
+				911A8DAE3F9739C410A2DBCD60D6EC3C /* initstate.h in Headers */,
+				9D962828E6AF9581F33D677819796CB0 /* inputgetter.h in Headers */,
+				3EF0B376B4076269134FE456B56379F6 /* insertion_sort.h in Headers */,
+				5E17263E81596ABF70107A91A1AA7898 /* interrupter.h in Headers */,
+				87668FEB80FAA2A0C819E2D62A775EB0 /* interruptrequester.h in Headers */,
+				69928FD97D9AF790CC3B5AF2820D11CC /* kaiser50sinc.h in Headers */,
+				2879AA28B4C8BE59A156173F6A8C85FE /* kaiser70sinc.h in Headers */,
+				A4F4634A17C713C287E08EF39D27D3E6 /* lcddef.h in Headers */,
+				9413E9DA900246F9BC207E1E76581D11 /* length_counter.h in Headers */,
+				30329158F4F874BD1B4EB15B73A5B0C0 /* linint.h in Headers */,
+				E91B0C42F4A5A905E2B13C8ED9AD9012 /* loadres.h in Headers */,
+				C51E2727158F472840FAB50FAC0BFE3E /* ly_counter.h in Headers */,
+				43F9E3FAD3119B9271A5FC774B1A474C /* lyc_irq.h in Headers */,
+				FD32149A318F2161ACC34D71A39EAF3A /* m0_irq.h in Headers */,
+				9177F4E7F773768EC45B263E97784FDE /* makesinckernel.h in Headers */,
+				C85E173FEE49616FCF81E5D475487534 /* master_disabler.h in Headers */,
+				A8B733A25356C780D6F39C3FF966C746 /* memory.h in Headers */,
+				29AA60B8AC8A9C484A29BF4E5DADB8CF /* memptrs.h in Headers */,
+				D13915AD43FDD09143CD92B0511F2002 /* minkeeper.h in Headers */,
+				A886C3833A4E9D6B5CECD5546A71E4E4 /* next_m0_time.h in Headers */,
+				33C5D5C6BD30CD79CED2D4EB4AA4B1DB /* osd_element.h in Headers */,
+				CFC3E3605F82BA63A3915C3658D499ED /* pakinfo.h in Headers */,
+				C1D560C46036E728467CAD0A1EBB12F7 /* pakinfo_internal.h in Headers */,
+				5EC134E83A3692770C6F83BB39ECF12F /* polyphasefir.h in Headers */,
+				7F6949632A334D61BE537D5C73680979 /* ppu.h in Headers */,
+				D25B433E98E4F014440593558531CA1E /* PVGambatte-tvOS-umbrella.h in Headers */,
+				53DDDF2AE0010E72CDB3593DA0F14922 /* PVGambatteEmulatorCore.h in Headers */,
+				DDA2701F72BE5F8D774C99714FA96A0A /* rateest.h in Headers */,
+				A8717433AB46EF608EB15CF0CF8A821F /* rectsinc.h in Headers */,
+				784849ACBC768FB236373EBCFAD6D7A7 /* ringbuffer.h in Headers */,
+				B0DD77603575189356820E090190559E /* rshift16_round.h in Headers */,
+				F59844EADD4332D7647070F4C39203D7 /* rtc.h in Headers */,
+				1E0FC0BF769D4B30DA69181843CC5DA7 /* savestate.h in Headers */,
+				7A379C0C90FA418307C5E8195AFC8DD9 /* scoped_ptr.h in Headers */,
+				26CF6F126740541A84F5B6410DB66824 /* skipsched.h in Headers */,
+				9BFA8E304E38C4B6FC1D3575D623620D /* sound.h in Headers */,
+				292FF40765F5B063638D481A13B13297 /* sound_unit.h in Headers */,
+				82E55CD7847DC4E5DCBF8200CD695E41 /* sprite_mapper.h in Headers */,
+				EB57D15C8BE41CCA5F74C3B133005D27 /* state_osd_elements.h in Headers */,
+				8F8CD336889F42C550DC0ABA5CC6CDA9 /* statesaver.h in Headers */,
+				FE04178150978E8E5CF08A9CCEC021D6 /* static_output_tester.h in Headers */,
+				9E0BCD377559B3E0659B19B435D2E6FA /* subresampler.h in Headers */,
+				32D16C4BFFCF95991A0D6FF14FBE2E15 /* tima.h in Headers */,
+				A19A00B438D8DDBED87E5FD12FD5394B /* transfer_ptr.h in Headers */,
+				B490126286CA8CE6EAA71B011C9910A4 /* u48div.h in Headers */,
+				7DDFDB90F13EF4D05EE66C7207899032 /* uncopyable.h in Headers */,
+				6A23EFFFB5B127FE8F1F229CBABC4506 /* upsampler.h in Headers */,
+				42CADC0E3A2625FF26217654546B26BF /* usec.h in Headers */,
+				D08A68BBF9014379FD851ED9EF5A252D /* video.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA3524F93CD5973DF58F01B4CDCEEC43 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F1DB4B15ADDD97C102E2DFD91A9F55E /* adaptivesleep.h in Headers */,
+				F5648FCFFE1E686A06D75549252BFA13 /* array.h in Headers */,
+				B8A1B14C5DF3665103D032D4DFE02D52 /* bitmap_font.h in Headers */,
+				F200B151DB3CC2BD532C94E1889B6807 /* blackmansinc.h in Headers */,
+				23B4947C76A8FECA4B6DFF31F4641346 /* cartridge.h in Headers */,
+				443F7933DE98A302BBC7B27FA3D720EB /* chainresampler.h in Headers */,
+				869DC18BC296AF7B4D74ECE7D9CEE79B /* channel1.h in Headers */,
+				491346D3E404957830F45AFC9229B170 /* channel2.h in Headers */,
+				52307C79FA3FA0BE27DAC59DEF4C6B61 /* channel3.h in Headers */,
+				C5B6A34BB5D993E71D9AD0516FB7473F /* channel4.h in Headers */,
+				08DA7719DBECF9D9EF23DEDEF4E0CC3E /* cic2.h in Headers */,
+				C9BD1798AB3796429380E2EA103FAA4B /* cic3.h in Headers */,
+				F54EC3297CBF8E6EB3BCE1C12F563C09 /* cic4.h in Headers */,
+				E1613D7AFA797CEFD4C4A913E20ECBD8 /* counterdef.h in Headers */,
+				ABEE099F91E6A1169FE0B187BC2287E6 /* cpu.h in Headers */,
+				51EDCAC3D4394984D215ECE2425AE4D5 /* defined_ptr.h in Headers */,
+				F812C96970934420E106F276601874FC /* duty_unit.h in Headers */,
+				A3C504EF8ABBDD22F391C8F13B7AFC87 /* envelope_unit.h in Headers */,
+				B629994972675639EB23FD6D59A1572C /* file.h in Headers */,
+				AE6D2F6186D7B0F575F0E2B7FD7D39C3 /* gambatte.h in Headers */,
+				58F1B4E6D0336133854C843115DED032 /* gbcpalettes.h in Headers */,
+				4A7957D30DB026E83D443AD14A8BA2F2 /* gbint.h in Headers */,
+				5CF706E354851F4B76DD3CD12F9842C9 /* hammingsinc.h in Headers */,
+				63EC1F65F21F8A6701640F9AC00040D7 /* i0.h in Headers */,
+				759FAAB5262BA3393A48B1417B1C44E4 /* initstate.h in Headers */,
+				64ACFD0A67C2E30896540CF4FEDC5C34 /* inputgetter.h in Headers */,
+				166827164F80900D3418BB5664A8578D /* insertion_sort.h in Headers */,
+				C3F2DA1B7A68513AC869E6EB772FE2FF /* interrupter.h in Headers */,
+				1F9B287D1DECD9D201C16F9CFA02FF4E /* interruptrequester.h in Headers */,
+				28F1145F311B2CA66FAA51167D677F1F /* kaiser50sinc.h in Headers */,
+				37E0A57685660F9AC33A913CB279A748 /* kaiser70sinc.h in Headers */,
+				D288F2E2E46542BDF6D5160522A676FE /* lcddef.h in Headers */,
+				9ADEEBED1A870045AB94F0B68E5015A0 /* length_counter.h in Headers */,
+				5676D856FD664E9B5E9BCA69E2FDFC72 /* linint.h in Headers */,
+				F014133039C541643E1EB99CB317F8AF /* loadres.h in Headers */,
+				7B5C2B0E486F7CF75FBB86ABE9F3BF00 /* ly_counter.h in Headers */,
+				E6DCC48355FE8C3713DB9C31E4E56514 /* lyc_irq.h in Headers */,
+				EB359D12F08BC818CC4A9FED07680725 /* m0_irq.h in Headers */,
+				96242CD3C48C083859E0FE8065539F26 /* makesinckernel.h in Headers */,
+				BE9400CFC1F3CF7ABB5B696B57D188F7 /* master_disabler.h in Headers */,
+				8D87F0BC1B05C6E1E806BCF41BE1DE69 /* memory.h in Headers */,
+				D01920F539EBFBCDED2060B66DD2A503 /* memptrs.h in Headers */,
+				2C127FB0D08BF5012F612EE86C357A32 /* minkeeper.h in Headers */,
+				6261D95A57650AD682799FAC4350A366 /* next_m0_time.h in Headers */,
+				7AF11DA319E0D0B7F2541E0BB54AD002 /* osd_element.h in Headers */,
+				446274325F73A8DC9CA27428F8112A49 /* pakinfo.h in Headers */,
+				FD1F533667093AF611207FB8B16805FA /* pakinfo_internal.h in Headers */,
+				DE48C16AC841FF5FCCAE2A7C97D3676B /* polyphasefir.h in Headers */,
+				AF8682FE961D899C0481FA6CF33B6EEC /* ppu.h in Headers */,
+				785EE18C534B4424FC590AF929775CA2 /* PVGambatte-iOS-umbrella.h in Headers */,
+				7713928048059657C08407FF60B64355 /* PVGambatteEmulatorCore.h in Headers */,
+				3FE474AA9982532A0317A088F61EDAD4 /* rateest.h in Headers */,
+				994FF221C6B670AC5C7978FF1D9517FB /* rectsinc.h in Headers */,
+				524EC0C4A4ABADC753865D7E1C456F5E /* ringbuffer.h in Headers */,
+				769E75BEDC6732439C5ED7F76B18FA87 /* rshift16_round.h in Headers */,
+				B342F67F4D2D6CC08B8B6C2AB283DD2E /* rtc.h in Headers */,
+				FB56EF8ECBF2CFD74ED152E7ED0274A8 /* savestate.h in Headers */,
+				1B67B3EBBB549C72182F7A8D9089909E /* scoped_ptr.h in Headers */,
+				466948BC37111234354A0232DE2B4CF9 /* skipsched.h in Headers */,
+				4C6B10917288E3CCF5FC9600AD50134E /* sound.h in Headers */,
+				91F30F72DC28D7D670812AA195E3DF91 /* sound_unit.h in Headers */,
+				70910CD1C0AB9049360F1998A4458F70 /* sprite_mapper.h in Headers */,
+				8F37EB671915D99B55B10AA6D6109FD4 /* state_osd_elements.h in Headers */,
+				837CB447A2843AE5B2BCD215BFAE11A3 /* statesaver.h in Headers */,
+				0505804B74ACE2648F8EAEBCD3EB1805 /* static_output_tester.h in Headers */,
+				C0F3240387EA7201871F7BC8F0573C69 /* subresampler.h in Headers */,
+				F110DB9A4F9A0FD280D902183F780637 /* tima.h in Headers */,
+				2B855AB4F76C8164FFC27D98240FB135 /* transfer_ptr.h in Headers */,
+				246AABEAC7D09BC4629EC368AE8583D3 /* u48div.h in Headers */,
+				9BD5C760C5F24191C871BA87F8B0926A /* uncopyable.h in Headers */,
+				83356052280E067A11943E9552AC7127 /* upsampler.h in Headers */,
+				B5455D32D6B6B570465BB2A79B99E637 /* usec.h in Headers */,
+				0A26D47DB9DCCB3F74F352C9EA733599 /* video.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C7FE7B0310E43201195309AC6050F075 /* PVGambatte-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F33C6360E9F27E58359540C453B7510B /* Build configuration list for PBXNativeTarget "PVGambatte-tvOS" */;
+			buildPhases = (
+				B5F6E5D9DC65C5FD5B241B558FDD6BD8 /* Headers */,
+				10544C8545AD7C624AC4D50BD9A4B6EC /* Sources */,
+				F93AD39E7768E5CB67E296D1809FF5B5 /* Frameworks */,
+				D723988BDDA9191BEB2AB47A2318D3DF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B6EB01578B7252A09CE670F6F481213D /* PBXTargetDependency */,
+			);
+			name = "PVGambatte-tvOS";
+			productName = "PVGambatte-tvOS";
+			productReference = 6C1323D4F3A14E0C5DDDD79C97F0787D /* PVGambatte.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		DA08CA1B97E9AB5648E00A11E8FEEDEE /* PVGambatte-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 029F912E75F6562A2B93FC2488F8FC6F /* Build configuration list for PBXNativeTarget "PVGambatte-iOS" */;
+			buildPhases = (
+				DA3524F93CD5973DF58F01B4CDCEEC43 /* Headers */,
+				B9881B0E6E1DEF0FEF4D4A8FA84501C9 /* Sources */,
+				B688E8C24650E6977CA157A0342CD8C5 /* Frameworks */,
+				75A05C64CBEADD8E2F2AEC11FCBC6117 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7BEAB7BDE7D04052E4302CEAD32E6BEA /* PBXTargetDependency */,
+			);
+			name = "PVGambatte-iOS";
+			productName = "PVGambatte-iOS";
+			productReference = D989E56D81121C4E5C382CA9D1E31A17 /* PVGambatte.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AB5FFF604E668D33E9F9ECE6DE4D8422 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = B8FCE329FB57F9D34BC6D2D6661AEBC0 /* Build configuration list for PBXProject "PVGambatte" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8C1DBD62F5782D0FB2DC65E239F0E49D;
+			productRefGroup = 90154733E07B643BEA40A9BB854CD18B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProjectRef = 56F57040693CBB5C25270C8456CCC2B2 /* PVSupport */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				DA08CA1B97E9AB5648E00A11E8FEEDEE /* PVGambatte-iOS */,
+				C7FE7B0310E43201195309AC6050F075 /* PVGambatte-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		75A05C64CBEADD8E2F2AEC11FCBC6117 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3F046D79F135F1ED180151E1072EAAE /* Core.plist in Resources */,
+				A57040BF7FC584667A2789AA019D889C /* gb240p.gb in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D723988BDDA9191BEB2AB47A2318D3DF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D136CA40A98F095A2328E85F03B70A7A /* Core.plist in Resources */,
+				E7EEE1B9D4B01E344D50E230BD53A033 /* gb240p.gb in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		10544C8545AD7C624AC4D50BD9A4B6EC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				46AA0D341AB2ED78AEC67A1E5FF88FC9 /* bitmap_font.cpp in Sources */,
+				F770EDC10CBC744A86E993E8311A1A10 /* cartridge.cpp in Sources */,
+				BE637E703A44DF31FB825B7A0D992AA3 /* chainresampler.cpp in Sources */,
+				54DE51DA5203EF890F13CF1DB9F8781E /* channel1.cpp in Sources */,
+				8390385A932CF72E54886446062066A9 /* channel2.cpp in Sources */,
+				188E98DFD19BACE5415551639BC196B5 /* channel3.cpp in Sources */,
+				6150700ACAD7D8D88E1F8B93A40DC4D0 /* channel4.cpp in Sources */,
+				B79EFE114D4012F5E5476E7E3BF853C6 /* CoreOptions.swift in Sources */,
+				337AE87E93FCA04FAB980B505E0EE947 /* cpu.cpp in Sources */,
+				60390013415E9A18F9E41AA3A687DA24 /* duty_unit.cpp in Sources */,
+				37BD91511D188DC43AE4699AF5973045 /* envelope_unit.cpp in Sources */,
+				A52346467EF01899A737C4741C1DB043 /* file.cpp in Sources */,
+				30E3907816CBC5E8DD080E2A8C8B16EA /* gambatte.cpp in Sources */,
+				9B5E3CFD7A2184977EAC5A95437BE6CA /* i0.cpp in Sources */,
+				F3B5B24AE78358138337D038BB9A661A /* initstate.cpp in Sources */,
+				462755C26B376E675A8818CC40F2F0E7 /* interrupter.cpp in Sources */,
+				88F46CD08CC9F694F89DC2E7191851D1 /* interruptrequester.cpp in Sources */,
+				6F91A9E7F2A249B4BF7030615BCD086F /* kaiser50sinc.cpp in Sources */,
+				E6A33E6781662644C18067C46A79F3FE /* kaiser70sinc.cpp in Sources */,
+				BCFA0C86FE9809472EB0F1D7FF82E619 /* length_counter.cpp in Sources */,
+				654EB7186CE38ADA590E7F90B7E95148 /* loadres.cpp in Sources */,
+				E19F46BF9E6F46C6AFA45D406BA160E8 /* ly_counter.cpp in Sources */,
+				9598783300A38C1AFE42E86018A635E3 /* lyc_irq.cpp in Sources */,
+				B308FEAD9437D6A332347D655917EB81 /* makesinckernel.cpp in Sources */,
+				784CDAF895A16F7C2A66A031D9D11EE0 /* memory.cpp in Sources */,
+				20BD644BBD4189A84C96368D65252ADD /* memptrs.cpp in Sources */,
+				522576554B2F43784DBEE580B4FEFCA5 /* next_m0_time.cpp in Sources */,
+				AF2D8953A1C433818BC55B1E63156991 /* pakinfo.cpp in Sources */,
+				910EB9B98EAB74BCF14353402CB9B0CC /* ppu.cpp in Sources */,
+				F5D8D44E4370176DC57EAED9CB68B6DE /* PVGambatte-tvOS-dummy.m in Sources */,
+				E4ABB8447CB579659A02D102E6F55223 /* PVGambatteEmulatorCore.mm in Sources */,
+				0CCE21275B99AE34D0856CAAD585E8A3 /* PVGambatteEmulatorCore.swift in Sources */,
+				A98CCBB878839A5A5EF000F766ADF7F7 /* resamplerinfo.cpp in Sources */,
+				DCC873437E838B27AB26FA806867D8BF /* rtc.cpp in Sources */,
+				BEE2D4D2E4C2D2778C69F26E6F9BC29F /* sound.cpp in Sources */,
+				6D605E5967DF290168AF613A2479721F /* sprite_mapper.cpp in Sources */,
+				6F34215CE6FE3722F0F484A6A3212DD2 /* state_osd_elements.cpp in Sources */,
+				B8545D87FAF3F0EE54D02F04D626A9D1 /* statesaver.cpp in Sources */,
+				BB67C2C07936E86AA4B252C53A193A11 /* tima.cpp in Sources */,
+				D27CD1D935AA2EAD53D5D15FC85BC9C8 /* u48div.cpp in Sources */,
+				5721998F1DF27ED02F163A2180A222F4 /* video.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B9881B0E6E1DEF0FEF4D4A8FA84501C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C843AA850B9072799F4B8541871F08D7 /* bitmap_font.cpp in Sources */,
+				F112077D068FB1EB0F837AE0A85E7B52 /* cartridge.cpp in Sources */,
+				12EFD9D3D5B693C2240A3D22342D8CA4 /* chainresampler.cpp in Sources */,
+				B006C99325400CD6B2123D6EC1481039 /* channel1.cpp in Sources */,
+				DDAC43CBDB90B01F5475DCCEE00281CD /* channel2.cpp in Sources */,
+				9238179E9F14D945667BC2482A957549 /* channel3.cpp in Sources */,
+				6DECA850FE4C4B9F7C10E5BE60DFF548 /* channel4.cpp in Sources */,
+				9CED8960CAEF22F3FE31B8C949C25A59 /* CoreOptions.swift in Sources */,
+				5E94D8D3EA6EDA1893A2278D5CBD1A3B /* cpu.cpp in Sources */,
+				526E2DA7E96B5FE821FC7AE9F849D80E /* duty_unit.cpp in Sources */,
+				4DB746CB7E846D2D2EB1D363C3D9B26D /* envelope_unit.cpp in Sources */,
+				57BD860BB98EA01D31F98DFA090CA2C2 /* file.cpp in Sources */,
+				13E5C5A613E6066038A49942D986336C /* gambatte.cpp in Sources */,
+				22C2B4D06E4F37E20E57617D54AF4B45 /* i0.cpp in Sources */,
+				14747A502AE92CC650D2D165158674B5 /* initstate.cpp in Sources */,
+				3328D47592B46E01D48B360010BABC81 /* interrupter.cpp in Sources */,
+				925BAFF794E65DFCDAE037591A07F55C /* interruptrequester.cpp in Sources */,
+				D3716414CC726C19BB813AE944E15896 /* kaiser50sinc.cpp in Sources */,
+				D6149B49003E5E3ACFD2DF042DBD771B /* kaiser70sinc.cpp in Sources */,
+				200CE0762710B7EFA3F80828DF5F7677 /* length_counter.cpp in Sources */,
+				A60402169B3279A4A05B75C91D9275A3 /* loadres.cpp in Sources */,
+				FF711CC1638451986123EF50BD054BE9 /* ly_counter.cpp in Sources */,
+				D0F562964C3AF5BAF197AFFA43E30E6D /* lyc_irq.cpp in Sources */,
+				8652E3CF64B6BA49004ECBB4848193CE /* makesinckernel.cpp in Sources */,
+				131A8181119AA7DAB9955E9DB1E2DD98 /* memory.cpp in Sources */,
+				DC772CF1700B53BED16A77DD5DB20770 /* memptrs.cpp in Sources */,
+				1055F8C3E6F6B83CC9E4DD5788732337 /* next_m0_time.cpp in Sources */,
+				7E9F59DBFD56A6FAB7127BDBB2139CF1 /* pakinfo.cpp in Sources */,
+				3A06B56ED77FBEB2C4DEEF31DD60FE95 /* ppu.cpp in Sources */,
+				63C46C648C2A63B6683E6C5A05A87A1D /* PVGambatte-iOS-dummy.m in Sources */,
+				CD30821C730CDB7036DEC3720573AAAF /* PVGambatteEmulatorCore.mm in Sources */,
+				16AA48E1F704C0B0B32CB6260DA5B34E /* PVGambatteEmulatorCore.swift in Sources */,
+				08B652466942397F140B2406E5ACCB66 /* resamplerinfo.cpp in Sources */,
+				163178A2E35F031B92CAA3A7A8D520DA /* rtc.cpp in Sources */,
+				2F555228C2C5AF7A2085EA7BC0DC7F70 /* sound.cpp in Sources */,
+				91A8058CC549B2B76B3093B7B046B4D8 /* sprite_mapper.cpp in Sources */,
+				08EB78A3131F4942620038F9C96FA887 /* state_osd_elements.cpp in Sources */,
+				21FFE79BB0DCA19426464BBCC13DCDBE /* statesaver.cpp in Sources */,
+				E1926DB79488D3BFBA867CFB5B94D813 /* tima.cpp in Sources */,
+				E29DA17C26DCFE17DF8E80BC1290C77C /* u48div.cpp in Sources */,
+				B1A15F88E8A31A78451D29C32DF9A9EB /* video.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7BEAB7BDE7D04052E4302CEAD32E6BEA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-iOS";
+			targetProxy = B043A10854AC8CC335C2D27EC3310A6F /* PBXContainerItemProxy */;
+		};
+		B6EB01578B7252A09CE670F6F481213D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-tvOS";
+			targetProxy = A1CDDC8EA8076BFA52E94B7443A30B9A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1E6C07DE25D26A06B2AD282FEF669321 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0226D1E1C55E7EC47D891986FA6E06E3 /* PVGambatte-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVGambatte;
+				PRODUCT_NAME = PVGambatte;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		2646C6558F5A48115D6371E997C614CF /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928F9A1C86630C1331608B31AFB391B /* PVGambatte-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVGambatte;
+				PRODUCT_NAME = PVGambatte;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		38F5DA05B54BACD1A73E80912D7BD853 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Archive;
+		};
+		5E0A9DA3EE9E1F8ED0EEF97D7219F915 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0928F9A1C86630C1331608B31AFB391B /* PVGambatte-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVGambatte;
+				PRODUCT_NAME = PVGambatte;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		66B98D12C47EB44B1EAEB9BD6511705C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EEADC80801585D33322CA9F67579F4CE /* PVGambatte-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVGambatte;
+				PRODUCT_NAME = PVGambatte;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		72D002E1E8B9C0ADEE1B4CF8F63F5582 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44861617C91BDA1ABB519D7708A43579 /* PVGambatte-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVGambatte-iOS/PVGambatte-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVGambatte;
+				PRODUCT_NAME = PVGambatte;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		80FD38D565962F68C54D21F86063E492 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EEADC80801585D33322CA9F67579F4CE /* PVGambatte-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVGambatte-tvOS/PVGambatte-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVGambatte;
+				PRODUCT_NAME = PVGambatte;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		AC9CD2939B7A88634DE8599A5EBD0D8F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		DF805478AA23451E15E62D99DBCE2D13 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		029F912E75F6562A2B93FC2488F8FC6F /* Build configuration list for PBXNativeTarget "PVGambatte-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2646C6558F5A48115D6371E997C614CF /* Archive */,
+				72D002E1E8B9C0ADEE1B4CF8F63F5582 /* Debug */,
+				5E0A9DA3EE9E1F8ED0EEF97D7219F915 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B8FCE329FB57F9D34BC6D2D6661AEBC0 /* Build configuration list for PBXProject "PVGambatte" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38F5DA05B54BACD1A73E80912D7BD853 /* Archive */,
+				AC9CD2939B7A88634DE8599A5EBD0D8F /* Debug */,
+				DF805478AA23451E15E62D99DBCE2D13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F33C6360E9F27E58359540C453B7510B /* Build configuration list for PBXNativeTarget "PVGambatte-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80FD38D565962F68C54D21F86063E492 /* Archive */,
+				1E6C07DE25D26A06B2AD282FEF669321 /* Debug */,
+				66B98D12C47EB44B1EAEB9BD6511705C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AB5FFF604E668D33E9F9ECE6DE4D8422 /* Project object */;
+}

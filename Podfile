@@ -61,6 +61,7 @@ def cores
   cores = [
     "Atari800",
     # "FCEU",
+    # "Gambatte",
     "PokeMini"
   ]
 
@@ -71,7 +72,7 @@ def cores
       binary: false
     }
 
-    pod core, options
+    pod "PV#{core}", options
   }
 end
 

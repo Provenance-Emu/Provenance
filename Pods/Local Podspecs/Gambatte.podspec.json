@@ -1,0 +1,111 @@
+{
+  "name": "Gambatte",
+  "version": "1.5",
+  "summary": "Gambatte Provenance Emulator Cores",
+  "description": "Gambatte is the iOS framework for the Provenance Gambatte emulator core.\nUpsream core https://github.com/sinamas/gambatte",
+  "homepage": "https://provenance-emu.com",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0"
+  },
+  "module_name": "PVGambatte",
+  "header_dir": "PVGambatte",
+  "frameworks": [
+    "Foundation",
+    "OpenGLES"
+  ],
+  "libraries": "c++",
+  "dependencies": {
+    "PVSupport": [
+      "~> 1.5"
+    ]
+  },
+  "public_header_files": [
+    "Sources/PVGambatteEmulatorCore/*.h"
+  ],
+  "private_header_files": [
+    "Sources/PVGambatte/*.h",
+    "Sources/upstream/common/resample/src/*.h",
+    "Sources/upstream/common/*.h",
+    "Sources/upstream/libgambatte/include/gambatte.h",
+    "Sources/upstream/libgambatte/include/gbint.h",
+    "Sources/upstream/libgambatte/include/inputgetter.h",
+    "Sources/upstream/libgambatte/include/loadres.h",
+    "Sources/upstream/libgambatte/include/pakinfo.h",
+    "Sources/upstream/libgambatte/src/*.h",
+    "Sources/upstream/libgambatte/src/file/file.h",
+    "Sources/upstream/libgambatte/src/mem/*.h",
+    "Sources/upstream/libgambatte/src/sound/*.h",
+    "Sources/upstream/libgambatte/src/video/*.h"
+  ],
+  "source_files": [
+    "Sources/upstream/common/resample/src/*.{h,cpp}",
+    "Sources/upstream/libgambatte/src/*.{cpp}",
+    "Sources/upstream/libgambatte/src/file/file.{h,cpp}",
+    "Sources/upstream/libgambatte/src/mem/*.{h,cpp}",
+    "Sources/upstream/libgambatte/src/sound/*.{h,cpp}",
+    "Sources/upstream/libgambatte/src/video/*.{h,cpp}",
+    "Sources/PVGambatteEmulatorCore/*.{h,m,mm,swift}",
+    "Sources/PVGambatteEmulatorCore/*.h",
+    "Sources/upstream/common/resample/src/*.h",
+    "Sources/upstream/common/*.h",
+    "Sources/upstream/libgambatte/include/gambatte.h",
+    "Sources/upstream/libgambatte/include/gbint.h",
+    "Sources/upstream/libgambatte/include/inputgetter.h",
+    "Sources/upstream/libgambatte/include/loadres.h",
+    "Sources/upstream/libgambatte/include/pakinfo.h",
+    "Sources/upstream/libgambatte/src/*.h",
+    "Sources/upstream/libgambatte/src/file/file.h",
+    "Sources/upstream/libgambatte/src/mem/*.h",
+    "Sources/upstream/libgambatte/src/sound/*.h",
+    "Sources/upstream/libgambatte/src/video/*.h"
+  ],
+  "preserve_paths": [
+    "Sources/upstream/libgambatte/src/file/",
+    "Sources/upstream/libgambatte/include/"
+  ],
+  "resources": [
+    "Resources/**/*.*"
+  ],
+  "compiler_flags": [
+    "-DCORE_GAMBATTE_SUBSPEC_INCLUDED",
+    "-DHAVE_STDINT_H"
+  ],
+  "pod_target_xcconfig": {
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVGambatte",
+    "CORE_GAMBATTE_SUBSPEC_INCLUDED": "-D'CORE_GAMBATTE_SUBSPEC_INCLUDED'",
+    "OTHER_SWIFT_FLAGS": "$(CORE_GAMBATTE_SUBSPEC_INCLUDED)",
+    "GCC_C_LANGUAGE_STANDARD": "c99",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++11",
+    "CLANG_CXX_LIBRARY": "libc++"
+  },
+  "testspecs": [
+    {
+      "name": "GambatteTests",
+      "test_type": "unit",
+      "requires_app_host": false,
+      "resources": [
+        "Resources/**/*.*"
+      ],
+      "source_files": "Tests/**/*.swift"
+    }
+  ],
+  "swift_version": "5.1"
+}

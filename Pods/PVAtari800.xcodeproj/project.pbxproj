@@ -1,0 +1,1391 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01229EA068AFBF8834D7C13E420B0191 /* altirra_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = D86E43F7425CF8704A9DFC7CC1512A40 /* altirra_basic.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		02C2F8FC06B017F17A9FCE2C8A299A5F /* artifact.c in Sources */ = {isa = PBXBuildFile; fileRef = AC7EDB55FD1D028D8435FA785A6730E2 /* artifact.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		0317F0329CEC9D279C4756FF6735D5D7 /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFFD84C1C54E13A5CF57195DD7EA82B /* platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0582DA7C925572626466DB640C6AFAF6 /* remez.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C07D45A75AA27EA55296921DA3BA1F6 /* remez.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		059B4BC51D021EF8266273BF3DBAADCC /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = D1FFA127350631AA2544EA701845B06E /* memory.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		07E6FEA738E061FC90FCD507C428BECE /* statesav.c in Sources */ = {isa = PBXBuildFile; fileRef = 389B16B88F449DE6EA8479A46FD75FC2 /* statesav.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		0A1BA46560759FE4D8432C8EE94DDCD6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92FF5B38D32D59F30DC92494C1C3541 /* Foundation.framework */; };
+		0A80352183A16B415C82A5E5F85F86A1 /* afile.c in Sources */ = {isa = PBXBuildFile; fileRef = C484E0E2BEC8E751FD25F1CA1BFD167B /* afile.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		0F2A68D9A0C4DC6ECC5D00EAD879C6ED /* cartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 311C0938C4C7BE8E17741BE56B4B178B /* cartridge.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		1065904D19C970435D923DC412A02E39 /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 7AC2345C9CED15C72AFA59BC227B7163 /* ide.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		13B96934271243B665C65968D25BA7A1 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = E767F29FB0DC5BC47DCDEA08843A2054 /* crc32.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		162585C14E359599774A94EF54155548 /* pbi_bb.c in Sources */ = {isa = PBXBuildFile; fileRef = 35301DA32C1ED0E182384CCFC7EBCB1D /* pbi_bb.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		1C1049AC6DBDC92591B115E64A0508BA /* cassette.c in Sources */ = {isa = PBXBuildFile; fileRef = 23FD66DB7BC6D9C81F6E02C942F0A215 /* cassette.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		1C9C583FFF57FFF3D3C75782D83136DF /* devices.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A4D53656235D948F1345DC4C3D5456 /* devices.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		1CC5DA288D8739224C1AB7CDAC60753B /* pokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = CAB35F2D99FB18B9C5F568F4CF964E71 /* pokeysnd.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		1E0964A608117A26BF3671F8DF088DE8 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C5FDD22B0408A0898A3D8F58664177 /* util.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		1FCA7AC1E5B0F7E93E6B3019F0342CBB /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B29858EEA7C2A348726FF40C4F5E8C /* sound.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		204419196D188238F61231F50F375453 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0464B0DA6C4DAC9F5C0B46A4FED28137 /* Core.plist */; };
+		2717DEF9648777B6217850AF2F373A90 /* screen.c in Sources */ = {isa = PBXBuildFile; fileRef = 04886BC8745F56575DADA3E32B94F827 /* screen.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		2732B790C2088A71DFE4168EB17AEF74 /* pbi_mio.c in Sources */ = {isa = PBXBuildFile; fileRef = 54112F243CF195EA4B8EACAC897D5494 /* pbi_mio.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		28A4D2A992338178BF9B54B2370E87B3 /* input.h in Headers */ = {isa = PBXBuildFile; fileRef = 4792D5B89C1B5A96E2F1D84F951767B1 /* input.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		291BE7C12FABF0D7A619A30DEFA87406 /* ide.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A8EB09A77B802E692C789E058154CC0 /* ide.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2930B9F08FB8F9D91CA31B9BF06508FE /* sysrom.h in Headers */ = {isa = PBXBuildFile; fileRef = D84BEA63292B31F0B0561C34CD0EFC85 /* sysrom.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2A1DBDAB30224957DE6034CA6864AA8D /* afile.c in Sources */ = {isa = PBXBuildFile; fileRef = C484E0E2BEC8E751FD25F1CA1BFD167B /* afile.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		2AB1BED5CAC3F8F6DF04CCEBB62498B3 /* pokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = CAB35F2D99FB18B9C5F568F4CF964E71 /* pokeysnd.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		2CA240EB27BE0DD66D6C4CBD95E85176 /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = C4F0898F4C68BBA6CBD60C61316327B2 /* monitor.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		2D9D99ACEBB4A6CB4E474EA7156CD714 /* altirra_5200_os.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B5E036FA4C355B80A6D003C95244B3 /* altirra_5200_os.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		2EC69CFBC58322ABBA27B7C66B26C1B0 /* esc.c in Sources */ = {isa = PBXBuildFile; fileRef = 40671C943957B19807AE9CD017046034 /* esc.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		305B715060D9280905D7BAC73DD01E59 /* atari.c in Sources */ = {isa = PBXBuildFile; fileRef = D17DE9A31262EAAE07D9278966AB33DF /* atari.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		33F2DE21D806A30EA96B7658E4BBD932 /* antic.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6095528F89772AD586E14A48B94E67 /* antic.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		39FE8D3FDCFEFEB70DC70D01A8E5B8B3 /* gtia.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D6E2D7C55C82BF31546CA40AF0701D2 /* gtia.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		3AA10C91516EE2005CEF14CFEC95DBA3 /* pia.h in Headers */ = {isa = PBXBuildFile; fileRef = 94A85271C62F84A7641D7BFC7512A8A8 /* pia.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3B5B4D5E66B8FF1D3FA9DE1E6472BC96 /* pokeysnd.h in Headers */ = {isa = PBXBuildFile; fileRef = 55C271C71E5B6DF5C85D389DB192570E /* pokeysnd.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		42E090844580CAD4B8E5B247F37AA3AC /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D8AAD7A1822AE5762EDEC6C150DBAF /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		430D4AEB640DD4EF522B2E511B9C13B0 /* artifact.c in Sources */ = {isa = PBXBuildFile; fileRef = AC7EDB55FD1D028D8435FA785A6730E2 /* artifact.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		43A105A6B0486B04FECC09FBF391A8FE /* colours_pal.c in Sources */ = {isa = PBXBuildFile; fileRef = CA2D3C025ADCFE3413BF06D392AB16E5 /* colours_pal.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		44D8A7A46795AFE5662CDBCFCD8F524F /* altirraos_800.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BD001288E7CD19F2121066F4D0113D /* altirraos_800.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		45DBF3DB4DC9CB8ED73C1246B1182BC2 /* rtime.h in Headers */ = {isa = PBXBuildFile; fileRef = F4343439E87478BC817810FD4C4FF2FB /* rtime.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		45F713DC2A230E61F479F7747D668222 /* antic.c in Sources */ = {isa = PBXBuildFile; fileRef = 4E12CB9EB15D64B0C47ED1C03CAF1ED7 /* antic.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		4646D9435A54BEB60229D1860741A5B5 /* colours.h in Headers */ = {isa = PBXBuildFile; fileRef = BC58AEADDE5D256B9E48304AEABB810C /* colours.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		46EBB50E2400D1EE3DA8C76D0E9C8541 /* cartridge_info.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1EEB70E919056FD189DA6863D97355 /* cartridge_info.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		47836A4603379EAE038EEC08B730FB16 /* sio.h in Headers */ = {isa = PBXBuildFile; fileRef = 531CB40B35F70EEBBC99B839A5B8C8C3 /* sio.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		47EA1795177F531277C89C3D1FDAD101 /* cartridge_info.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1EEB70E919056FD189DA6863D97355 /* cartridge_info.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		489EC8DECAE75EE833E67CF69A7ACDB8 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = A0C27749D5B44C5DEB6DC10098A04B33 /* cpu.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		4C665239D5B9C741A886AC8ADD0A7A23 /* mzpokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B152E56974E12212EDB4897F249EB69 /* mzpokeysnd.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		4DC8A0D0AD7C61C154A48CA7B35ECDCA /* pokey.h in Headers */ = {isa = PBXBuildFile; fileRef = 02B89C1AC04020517ECED95E30FEE32C /* pokey.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4E4C54720D2648AA1FFA27C7C48CBCBB /* PVAtari800-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DF8EC89CE250855081D1022343E7DEFC /* PVAtari800-iOS-dummy.m */; };
+		4E77112D920D5ECBF4B101DAF8B54DCC /* pbi_scsi.c in Sources */ = {isa = PBXBuildFile; fileRef = 54D1E31F0B65E7927655061B585DCC4E /* pbi_scsi.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		505684B01B2450C75EB400266C5D8F31 /* sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACCC4369A8706B74557814AD5B8800D /* sound.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		511CEFC019768961878FD9D6A1C693BA /* cartridge.h in Headers */ = {isa = PBXBuildFile; fileRef = CBFBE82E5520C0E966D98651E2B35AE0 /* cartridge.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		512CDBD5F8E6EF1B857F0D9C9F2EA622 /* altirraos_800.c in Sources */ = {isa = PBXBuildFile; fileRef = 0EBB9409A7226369D575D9EEB45C7007 /* altirraos_800.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		52767EA1E7A59FAB37454296DFED410A /* statesav.h in Headers */ = {isa = PBXBuildFile; fileRef = ECFB259A277C16AAEC66468D037C02D4 /* statesav.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		52BD9FA30EFD265E08742DEDAAAC6F1A /* pbi_mio.c in Sources */ = {isa = PBXBuildFile; fileRef = 54112F243CF195EA4B8EACAC897D5494 /* pbi_mio.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		53DA5CA295D6D3BC0927D3DBADD2F61D /* cfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CEC0C97DD63EBD3024A8613FEB50F68 /* cfg.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		53ED0F3258A428F0D49CAB73E439812E /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = C4F0898F4C68BBA6CBD60C61316327B2 /* monitor.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		5576BDA9DAFAD5C469FC12EBE95B2DD7 /* pokeysnd.h in Headers */ = {isa = PBXBuildFile; fileRef = 55C271C71E5B6DF5C85D389DB192570E /* pokeysnd.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		58CDB6F2856F58615590DBA928705515 /* akey.h in Headers */ = {isa = PBXBuildFile; fileRef = 22609C20A14DADB99B6137B2BAEFEEB0 /* akey.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5A34488C4BFD4DC9B2A470FDFA896161 /* rtime.h in Headers */ = {isa = PBXBuildFile; fileRef = F4343439E87478BC817810FD4C4FF2FB /* rtime.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5A91B562A30913D47526070FF870CD53 /* compfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 025FADE370E8412C53E9F55CECED6DD3 /* compfile.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		5A952636A00C9689FAE853E411F1186B /* altirraos_800.c in Sources */ = {isa = PBXBuildFile; fileRef = 0EBB9409A7226369D575D9EEB45C7007 /* altirraos_800.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		5AE7763749B140FE1A8E207AD80BD850 /* cassette.h in Headers */ = {isa = PBXBuildFile; fileRef = 8159EDAA4392418E301C80AEDCA776C8 /* cassette.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5C2EC409316E2FE3478E40975C319181 /* colours.c in Sources */ = {isa = PBXBuildFile; fileRef = D793778053831265122AAD5F5654C7DD /* colours.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		5D722E45E57C5A85EF51B2906B90CBC1 /* colours_ntsc.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DE8FFF3365B95D01B362799A9B153D8 /* colours_ntsc.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		60357E0B0B92278C9E9689A94E798249 /* img_tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F2B635E48CD3FEE303510366C2A6822 /* img_tape.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		618143EA2BF8C63777437287D3AD11ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4F27093732EB215975EFD1DD7C539ED8 /* InfoPlist.strings */; };
+		619D370D530A6EBC9840D1E0AE792D12 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 00FA5EF24D3EB81CA526BD4DC2BCB5F7 /* log.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		62AC26C9BAEACB7148654B4759BB4C42 /* altirra_5200_os.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D77F5E2DE77D81655E726BF3EF2987 /* altirra_5200_os.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		63034B8C36EED747189D24CE3E054EC1 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0464B0DA6C4DAC9F5C0B46A4FED28137 /* Core.plist */; };
+		64068DB9A0D4510E96DE36EE1011B0DF /* atari.h in Headers */ = {isa = PBXBuildFile; fileRef = B05D65E5AE1CA2036B58DC32E10AE6B0 /* atari.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		6412A36B9CB5A324268AB32BB041394C /* altirra_basic.h in Headers */ = {isa = PBXBuildFile; fileRef = F9FF849E33310A8914D132DF930FF50A /* altirra_basic.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		65339A368EB1D98A2F4F05FDBB999C8E /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 39BB4EF52591A05F59B803E55F24006F /* memory.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		665853C7F0D6CC5BA66A491D341F46B3 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C5FDD22B0408A0898A3D8F58664177 /* util.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		66AA18211F0C6F3D0A301992D1E45C8C /* mzpokeysnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B152E56974E12212EDB4897F249EB69 /* mzpokeysnd.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		68940B60C5810DF09D64FD4785564269 /* statesav.h in Headers */ = {isa = PBXBuildFile; fileRef = ECFB259A277C16AAEC66468D037C02D4 /* statesav.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		69F6B5B39CA81C347D418AF898885393 /* afile.h in Headers */ = {isa = PBXBuildFile; fileRef = 09B7E14D89F4CDF185DEE6B64F8E7AF4 /* afile.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		6A23CA487EC48C155894769A0E831872 /* colours_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CBE8CF3B29EE88071F9737DFDB02AB9 /* colours_ntsc.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		6B14F1480085CD4245FA2E9F892FF726 /* binload.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DB877068638102BC58976AF88E32EF3 /* binload.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		6CF02EDF00204563B01E6F66EEC42BB7 /* compfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 025FADE370E8412C53E9F55CECED6DD3 /* compfile.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		6F6FF31E7F6FF952B0FD84C640B4F8FC /* altirraos_xl.h in Headers */ = {isa = PBXBuildFile; fileRef = F83E36CD2EA6424F093C2434671C5A0D /* altirraos_xl.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		6FB39FDBB7CEFD86E4DB0648E384828E /* remez.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C07D45A75AA27EA55296921DA3BA1F6 /* remez.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		6FCC41202FBE6AEB7B94777EACB6719D /* gtia.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E53351EBEF717D69F82EB236B493E0 /* gtia.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		70CF100A5A4D4977343D9EDE7ABBB6C8 /* statesav.c in Sources */ = {isa = PBXBuildFile; fileRef = 389B16B88F449DE6EA8479A46FD75FC2 /* statesav.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		70E0D8554EF9A4461DD8C12D93DC3146 /* sndsave.c in Sources */ = {isa = PBXBuildFile; fileRef = F055D3E0B56FFDDB50C7E7402D03CA97 /* sndsave.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		731C409F51D8DFF84AA783763AD144CA /* PVAtari800.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07DF896C293D89CB3101A8603AB83B /* PVAtari800.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7557EF47FB840895BD26AA71F9B38A1E /* sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACCC4369A8706B74557814AD5B8800D /* sound.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		7752682AB517CCF87477455B53FA7F95 /* atari.h in Headers */ = {isa = PBXBuildFile; fileRef = B05D65E5AE1CA2036B58DC32E10AE6B0 /* atari.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		7D16808F252AFA4792632FCB4CC8FF34 /* colours.c in Sources */ = {isa = PBXBuildFile; fileRef = D793778053831265122AAD5F5654C7DD /* colours.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		7E30C3EEEDA0FD2CA7BBC45C667DAE12 /* cartridge_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 9335795E6482699B9C4FC29B4C2E0326 /* cartridge_info.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		7E50D62E14285F41250F2C33628D4EBC /* PVAtari800.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07DF896C293D89CB3101A8603AB83B /* PVAtari800.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7EB627375C986941BAA9D29412F21F71 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BCD92BC17817B025E64F46479DE01C5 /* rtime.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		7EBABA82A97F880C0440DDFA3176EA10 /* pokey.c in Sources */ = {isa = PBXBuildFile; fileRef = C933C9E17B2F93790A60F3225B13A05D /* pokey.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		818E8A3429D5C598A23642EDFD9A7C4C /* pokey.h in Headers */ = {isa = PBXBuildFile; fileRef = 02B89C1AC04020517ECED95E30FEE32C /* pokey.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8221D7A2123C7650A5A460526A611660 /* altirra_basic.h in Headers */ = {isa = PBXBuildFile; fileRef = F9FF849E33310A8914D132DF930FF50A /* altirra_basic.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		837088630EC137B26DA6DC316416E074 /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFFD84C1C54E13A5CF57195DD7EA82B /* platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		87D3C711FD7A1AA4FD9E448259C21FA7 /* pbi.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A2E5FAB9E2E41C3D808DB29BA61975 /* pbi.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		88747CF8885689A20C8C5D706B62418F /* cfg.c in Sources */ = {isa = PBXBuildFile; fileRef = B113D15236EC07F5BC14E66AD8A4BFA9 /* cfg.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		8C12A9E6684FD8FD76B06F67CEDAB915 /* PVAtari800-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1C365E450652A014864CD758CA0359 /* PVAtari800-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8C70351BCE621C3515B64FADE15CC620 /* sio.h in Headers */ = {isa = PBXBuildFile; fileRef = 531CB40B35F70EEBBC99B839A5B8C8C3 /* sio.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8E2DDA48DE5AF70323EA619C836DAE50 /* screen.c in Sources */ = {isa = PBXBuildFile; fileRef = 04886BC8745F56575DADA3E32B94F827 /* screen.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		92BFCB12DC4824AD7CED918BFA26124E /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E58E1700077F16C0CCEC62FA6A46230 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		92FAF1708E8E4CF6041E68D489B847B2 /* afile.h in Headers */ = {isa = PBXBuildFile; fileRef = 09B7E14D89F4CDF185DEE6B64F8E7AF4 /* afile.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		969CC3B40B00E413AA9DFE487EC0226C /* pbi_scsi.c in Sources */ = {isa = PBXBuildFile; fileRef = 54D1E31F0B65E7927655061B585DCC4E /* pbi_scsi.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		970703F638240280C5CD0314CA6A2175 /* colours_external.c in Sources */ = {isa = PBXBuildFile; fileRef = A76F32CE8500106C9BEA7D22DFA59D87 /* colours_external.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		A0B1C0750E24E92B0E5B7EFBBBD6DFD0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3370E696BA0AC2A213041D253B2270F /* Foundation.framework */; };
+		A2CF6503456CDDE1B8BCCD6C17235B27 /* sysrom.h in Headers */ = {isa = PBXBuildFile; fileRef = D84BEA63292B31F0B0561C34CD0EFC85 /* sysrom.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A462BAC92986D94104FC29E362B6E902 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = D1FFA127350631AA2544EA701845B06E /* memory.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A5F6CC31C643BEDA2F568C5AB7012880 /* ui_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D29434FF847A7DB0E332122B634C3AC /* ui_basic.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		A629447EA511AAD8CA3361D4B4D460C6 /* antic.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6095528F89772AD586E14A48B94E67 /* antic.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A7B20F25AC8B454235D5A144387AA31B /* akey.h in Headers */ = {isa = PBXBuildFile; fileRef = 22609C20A14DADB99B6137B2BAEFEEB0 /* akey.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A7D5AE0000A3F3B6C2CD70BBEE1D223B /* altirra_5200_os.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D77F5E2DE77D81655E726BF3EF2987 /* altirra_5200_os.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A975362F95D14413C3A8A644D97D286A /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 4458CBDAB57DE4E1157A089E111A35C6 /* input.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		AA4F307E7C9E9C64700007D1EE74DF62 /* PVAtari800-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A09E527F808CD6F62830AE29B2D5B0 /* PVAtari800-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		ACA78C00320C997E4237A9A8F7D8294C /* pbi.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A2E5FAB9E2E41C3D808DB29BA61975 /* pbi.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		AE555ABDA4104F9600FBF0604B14F30C /* altirraos_xl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5391EA60A49A860BD5B5F96CB4041D3A /* altirraos_xl.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		AEC8877A4C3FEE87378B70EF3485D866 /* altirra_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = D86E43F7425CF8704A9DFC7CC1512A40 /* altirra_basic.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		B0422D278048600504E41486098D0CD8 /* img_tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F2B635E48CD3FEE303510366C2A6822 /* img_tape.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		B268477A804589A4B24674CF5623D4C8 /* devices.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A4D53656235D948F1345DC4C3D5456 /* devices.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B2DF195C7AD4D56AE9B75CC535B417DA /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = DECA51A19749BB7284C7BA764FCD995F /* sio.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		B651DAB56EA1250A30023F110A346C8B /* input.h in Headers */ = {isa = PBXBuildFile; fileRef = 4792D5B89C1B5A96E2F1D84F951767B1 /* input.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B717E22DB87C1BF25D0BD37C3800E67D /* cartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 311C0938C4C7BE8E17741BE56B4B178B /* cartridge.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		B72E3FE886FC158D37CDEC103875BA45 /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C75695D24E73802571A7A3712CC03E0 /* ATR800GameCore.m */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		B7B7ED180EA476897C5F14405A539B84 /* cfg.c in Sources */ = {isa = PBXBuildFile; fileRef = B113D15236EC07F5BC14E66AD8A4BFA9 /* cfg.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		B7CF3D559550A1880357A11B4C772684 /* altirraos_xl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5391EA60A49A860BD5B5F96CB4041D3A /* altirraos_xl.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		BA711788D08AC78D75C9B3A2E97D0CD2 /* pbi.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E08E0658B43F2BEAEB7159F56523E /* pbi.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		BC12F7D6023E6012DA036E5E08D2A44E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4F27093732EB215975EFD1DD7C539ED8 /* InfoPlist.strings */; };
+		BCDE5A6B88DA83910715D56BEB9CA5FA /* pia.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A331CC9430E8CF81EC75D9A0C836E01 /* pia.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		BCF7162D73661A567587E4650081C94C /* colours_external.c in Sources */ = {isa = PBXBuildFile; fileRef = A76F32CE8500106C9BEA7D22DFA59D87 /* colours_external.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		BDDE06A9F8BB2B0D439BF464BE35090B /* PVAtari800-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = EB33B2465EE3AF6B988C5BA5E238E3B6 /* PVAtari800-tvOS-dummy.m */; };
+		BDED827F28C1E647D9EB76E4861AF7B6 /* altirraos_xl.h in Headers */ = {isa = PBXBuildFile; fileRef = F83E36CD2EA6424F093C2434671C5A0D /* altirraos_xl.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		BF272BA9F5A23661EB96274164358478 /* colours_ntsc.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DE8FFF3365B95D01B362799A9B153D8 /* colours_ntsc.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C19670FB01BAEEE63E83FE10CC95B062 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 00FA5EF24D3EB81CA526BD4DC2BCB5F7 /* log.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		C1D4E2C86EC719C7435A8362FA2B2E26 /* atari.c in Sources */ = {isa = PBXBuildFile; fileRef = D17DE9A31262EAAE07D9278966AB33DF /* atari.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		C36F7F3E602FC6F7E8FFFCC7011646CB /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 7AC2345C9CED15C72AFA59BC227B7163 /* ide.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		C38E01C46593CA37C2DEE5CA20D97182 /* sndsave.c in Sources */ = {isa = PBXBuildFile; fileRef = F055D3E0B56FFDDB50C7E7402D03CA97 /* sndsave.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		C632CED3EA3C8BE956EC668A47272446 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D8AAD7A1822AE5762EDEC6C150DBAF /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C75AE3B06D740DCCFF4C509318A203C4 /* cassette.h in Headers */ = {isa = PBXBuildFile; fileRef = 8159EDAA4392418E301C80AEDCA776C8 /* cassette.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C9E0477DB030A224EF59915D9661C09F /* pbi.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E08E0658B43F2BEAEB7159F56523E /* pbi.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		CAF4C4AC7DF3AF4B56ED6487DBC4308F /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = DECA51A19749BB7284C7BA764FCD995F /* sio.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		CB2B9071F11453711FA8D6E3D5938E7D /* cfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CEC0C97DD63EBD3024A8613FEB50F68 /* cfg.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		CBB81D3FB15EAF4A1EDA71C91802AA53 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BCD92BC17817B025E64F46479DE01C5 /* rtime.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		CCC667ADBC459E3D2A7D8D2A69A57EAA /* pokey.c in Sources */ = {isa = PBXBuildFile; fileRef = C933C9E17B2F93790A60F3225B13A05D /* pokey.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		D3444590D47EB62B2A1D311227520098 /* colours_pal.c in Sources */ = {isa = PBXBuildFile; fileRef = CA2D3C025ADCFE3413BF06D392AB16E5 /* colours_pal.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		D3FA88B8D1F5806665D76C776D7DFCF4 /* cycle_map.c in Sources */ = {isa = PBXBuildFile; fileRef = A53D26759A344FAE7701BE10D36C8F99 /* cycle_map.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		D4BEE92C0AD987AAB8E736DCDC084332 /* ATR800GameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C75695D24E73802571A7A3712CC03E0 /* ATR800GameCore.m */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		D820085E4504DA47CB9630452EC9E8B6 /* ide.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A8EB09A77B802E692C789E058154CC0 /* ide.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D8AB5215601BC921C00B9739C613F55C /* cartridge_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 9335795E6482699B9C4FC29B4C2E0326 /* cartridge_info.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		D988D07B6678D9930DBF15337D8466AD /* pia.h in Headers */ = {isa = PBXBuildFile; fileRef = 94A85271C62F84A7641D7BFC7512A8A8 /* pia.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		DB2DF4F6CEE90BCD0DFA7F666E174278 /* colours_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CBE8CF3B29EE88071F9737DFDB02AB9 /* colours_ntsc.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		DC8F85861D2F6B4107562D7702ECBB31 /* binload.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DB877068638102BC58976AF88E32EF3 /* binload.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		DD8CC7BCA2F461D61FE396189F0BDB3A /* colours.h in Headers */ = {isa = PBXBuildFile; fileRef = BC58AEADDE5D256B9E48304AEABB810C /* colours.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		DDEBC0FF2D679839AC52BB95E8667A91 /* sysrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DB5CED23EE5D0433B896541B0DE9D52 /* sysrom.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		DF5E19976EEEE1A686E9586FD593A2C8 /* gtia.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D6E2D7C55C82BF31546CA40AF0701D2 /* gtia.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		E076E2E70D98A7533BA1C80D097CDE19 /* gtia.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E53351EBEF717D69F82EB236B493E0 /* gtia.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		E1F0B7060AB9BACEBF45A38DA66330CB /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 39BB4EF52591A05F59B803E55F24006F /* memory.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		E37BE54EB33EBE68C37CF569691F83CD /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = E767F29FB0DC5BC47DCDEA08843A2054 /* crc32.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		E55C0FE5C0254870964174B4C195F2C2 /* cartridge.h in Headers */ = {isa = PBXBuildFile; fileRef = CBFBE82E5520C0E966D98651E2B35AE0 /* cartridge.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		E57215C2F84F35B0A4E8D7403F2CB9D0 /* pbi_bb.c in Sources */ = {isa = PBXBuildFile; fileRef = 35301DA32C1ED0E182384CCFC7EBCB1D /* pbi_bb.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		E681CA758C04A424D2E3CFA561B1820A /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 4458CBDAB57DE4E1157A089E111A35C6 /* input.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		E7098F1FB65DABA74031D0D3C91EC866 /* sysrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DB5CED23EE5D0433B896541B0DE9D52 /* sysrom.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		E99B8F7CB3E1FA9A2A3A2B01E680B8B1 /* pia.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A331CC9430E8CF81EC75D9A0C836E01 /* pia.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		EAA9C91C7B1EBC9E5C5E3DF24EE97E66 /* devices.c in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF383BC9339B8ED6CB9539C7162E6A /* devices.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		EC83E7E051537F9301D04DD3D56005EE /* ui.h in Headers */ = {isa = PBXBuildFile; fileRef = F3ECCBA0602635DB80DA8D869A5818E0 /* ui.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		ED7153BC08EB9FCB8BF07C1BDC1FAC75 /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E58E1700077F16C0CCEC62FA6A46230 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EE54782B4980DE788EDBFFD08DE9A51A /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B29858EEA7C2A348726FF40C4F5E8C /* sound.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		EEE7F835E2BF4A72C000F28AF947B06D /* antic.c in Sources */ = {isa = PBXBuildFile; fileRef = 4E12CB9EB15D64B0C47ED1C03CAF1ED7 /* antic.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		F0682E2514F2E8EF242509B2C4983444 /* esc.c in Sources */ = {isa = PBXBuildFile; fileRef = 40671C943957B19807AE9CD017046034 /* esc.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		F89E141A9E5A39136DA47BD2FF9B3290 /* altirra_5200_os.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B5E036FA4C355B80A6D003C95244B3 /* altirra_5200_os.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		FA6849E4E079080C6BFE9A62A787E321 /* cycle_map.c in Sources */ = {isa = PBXBuildFile; fileRef = A53D26759A344FAE7701BE10D36C8F99 /* cycle_map.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		FB3C8F549A0A42974CDDDA2DE670B043 /* altirraos_800.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BD001288E7CD19F2121066F4D0113D /* altirraos_800.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		FB9EF9380791D408F68CB2AA209E2D5C /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = A0C27749D5B44C5DEB6DC10098A04B33 /* cpu.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		FCDC0D92055C8598E5A9847EF68D8420 /* ui.h in Headers */ = {isa = PBXBuildFile; fileRef = F3ECCBA0602635DB80DA8D869A5818E0 /* ui.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		FD55BC6E478F0DD92D07F84FA2F8A7C4 /* ui_basic.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D29434FF847A7DB0E332122B634C3AC /* ui_basic.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		FE232BE1218FEE7109983E76424A739B /* cassette.c in Sources */ = {isa = PBXBuildFile; fileRef = 23FD66DB7BC6D9C81F6E02C942F0A215 /* cassette.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+		FF1CAC151905B46EE00F93EA195096B6 /* devices.c in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF383BC9339B8ED6CB9539C7162E6A /* devices.c */; settings = {COMPILER_FLAGS = "-DCORE_ATARI800_SUBSPEC_INCLUDED -DGWINSZ_IN_SYS_IOCTL"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0A11FBE19BCED4EDF3503CE5931351E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4FCEEF24C26E837A796E11E74A13C07E /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
+			remoteInfo = "PVLibrary-iOS";
+		};
+		971460F504E6BF901F76A192DDD88DD5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4FCEEF24C26E837A796E11E74A13C07E /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
+			remoteInfo = "PVLibrary-tvOS";
+		};
+		998ADCE79C8C466FC4CF18D82BD31362 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F83017AA395AD8FA923959C3BB6D0AF /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
+			remoteInfo = "PVSupport-tvOS";
+		};
+		D978FEBC69BB5C93FCA3A274BC742285 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F83017AA395AD8FA923959C3BB6D0AF /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
+			remoteInfo = "PVSupport-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00FA5EF24D3EB81CA526BD4DC2BCB5F7 /* log.c */ = {isa = PBXFileReference; includeInIndex = 1; path = log.c; sourceTree = "<group>"; };
+		025FADE370E8412C53E9F55CECED6DD3 /* compfile.c */ = {isa = PBXFileReference; includeInIndex = 1; path = compfile.c; sourceTree = "<group>"; };
+		02B89C1AC04020517ECED95E30FEE32C /* pokey.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = pokey.h; sourceTree = "<group>"; };
+		02F98241D5BF3E954612A526CF6AF9E4 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVAtari800.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0464B0DA6C4DAC9F5C0B46A4FED28137 /* Core.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Core.plist; path = Resources/Core.plist; sourceTree = "<group>"; };
+		04886BC8745F56575DADA3E32B94F827 /* screen.c */ = {isa = PBXFileReference; includeInIndex = 1; path = screen.c; sourceTree = "<group>"; };
+		09B7E14D89F4CDF185DEE6B64F8E7AF4 /* afile.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = afile.h; sourceTree = "<group>"; };
+		0EBB9409A7226369D575D9EEB45C7007 /* altirraos_800.c */ = {isa = PBXFileReference; includeInIndex = 1; path = altirraos_800.c; sourceTree = "<group>"; };
+		0F83017AA395AD8FA923959C3BB6D0AF /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
+		19BD001288E7CD19F2121066F4D0113D /* altirraos_800.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = altirraos_800.h; sourceTree = "<group>"; };
+		1ACCC4369A8706B74557814AD5B8800D /* sound.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
+		22609C20A14DADB99B6137B2BAEFEEB0 /* akey.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = akey.h; sourceTree = "<group>"; };
+		23C328F3D87D94AA7DB7B0E5B61918B8 /* PVAtari800.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PVAtari800.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		23FD66DB7BC6D9C81F6E02C942F0A215 /* cassette.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cassette.c; sourceTree = "<group>"; };
+		29AA4A40D815998933A89BF20DB44F11 /* PVAtari800-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PVAtari800-iOS-Info.plist"; sourceTree = "<group>"; };
+		2A8EB09A77B802E692C789E058154CC0 /* ide.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ide.h; sourceTree = "<group>"; };
+		2D29434FF847A7DB0E332122B634C3AC /* ui_basic.c */ = {isa = PBXFileReference; includeInIndex = 1; path = ui_basic.c; sourceTree = "<group>"; };
+		2D7DCB299AB8CBC52D0611D11600509F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		311C0938C4C7BE8E17741BE56B4B178B /* cartridge.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cartridge.c; sourceTree = "<group>"; };
+		3499F68C9430A987F6F5DC397D177B7F /* PVAtari800-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "PVAtari800-iOS.modulemap"; sourceTree = "<group>"; };
+		35301DA32C1ED0E182384CCFC7EBCB1D /* pbi_bb.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi_bb.c; sourceTree = "<group>"; };
+		37B29858EEA7C2A348726FF40C4F5E8C /* sound.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sound.c; sourceTree = "<group>"; };
+		389B16B88F449DE6EA8479A46FD75FC2 /* statesav.c */ = {isa = PBXFileReference; includeInIndex = 1; path = statesav.c; sourceTree = "<group>"; };
+		39BB4EF52591A05F59B803E55F24006F /* memory.c */ = {isa = PBXFileReference; includeInIndex = 1; path = memory.c; sourceTree = "<group>"; };
+		3C07D45A75AA27EA55296921DA3BA1F6 /* remez.c */ = {isa = PBXFileReference; includeInIndex = 1; path = remez.c; sourceTree = "<group>"; };
+		3CBE8CF3B29EE88071F9737DFDB02AB9 /* colours_ntsc.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours_ntsc.c; sourceTree = "<group>"; };
+		3DB877068638102BC58976AF88E32EF3 /* binload.c */ = {isa = PBXFileReference; includeInIndex = 1; path = binload.c; sourceTree = "<group>"; };
+		3F88A356CA14070FC1744CE5A9C3BA3E /* PVAtari800-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVAtari800-tvOS.release.xcconfig"; path = "../PVAtari800-tvOS/PVAtari800-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		3FF9BD20B65FD6F55861521FAB27975B /* PVAtari800-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "PVAtari800-tvOS-Info.plist"; path = "../PVAtari800-tvOS/PVAtari800-tvOS-Info.plist"; sourceTree = "<group>"; };
+		40671C943957B19807AE9CD017046034 /* esc.c */ = {isa = PBXFileReference; includeInIndex = 1; path = esc.c; sourceTree = "<group>"; };
+		4458CBDAB57DE4E1157A089E111A35C6 /* input.c */ = {isa = PBXFileReference; includeInIndex = 1; path = input.c; sourceTree = "<group>"; };
+		46D77F5E2DE77D81655E726BF3EF2987 /* altirra_5200_os.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = altirra_5200_os.h; sourceTree = "<group>"; };
+		4792D5B89C1B5A96E2F1D84F951767B1 /* input.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = input.h; sourceTree = "<group>"; };
+		4BDE6B5ED4341964A41D8D0834E5AAB6 /* PVAtari800-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PVAtari800-tvOS.debug.xcconfig"; path = "../PVAtari800-tvOS/PVAtari800-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		4C75695D24E73802571A7A3712CC03E0 /* ATR800GameCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ATR800GameCore.m; sourceTree = "<group>"; };
+		4E12CB9EB15D64B0C47ED1C03CAF1ED7 /* antic.c */ = {isa = PBXFileReference; includeInIndex = 1; path = antic.c; sourceTree = "<group>"; };
+		4E7120E95D407BE717D75FCB15400A3C /* LICENSE.md */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.md; sourceTree = "<group>"; };
+		4EBF383BC9339B8ED6CB9539C7162E6A /* devices.c */ = {isa = PBXFileReference; includeInIndex = 1; path = devices.c; sourceTree = "<group>"; };
+		4FCEEF24C26E837A796E11E74A13C07E /* PVLibrary */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVLibrary; path = PVLibrary.xcodeproj; sourceTree = "<group>"; };
+		50C5FDD22B0408A0898A3D8F58664177 /* util.c */ = {isa = PBXFileReference; includeInIndex = 1; path = util.c; sourceTree = "<group>"; };
+		531CB40B35F70EEBBC99B839A5B8C8C3 /* sio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sio.h; sourceTree = "<group>"; };
+		5391EA60A49A860BD5B5F96CB4041D3A /* altirraos_xl.c */ = {isa = PBXFileReference; includeInIndex = 1; path = altirraos_xl.c; sourceTree = "<group>"; };
+		53D8AAD7A1822AE5762EDEC6C150DBAF /* config.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = config.h; path = Sources/config.h; sourceTree = "<group>"; };
+		54112F243CF195EA4B8EACAC897D5494 /* pbi_mio.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi_mio.c; sourceTree = "<group>"; };
+		54D1E31F0B65E7927655061B585DCC4E /* pbi_scsi.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi_scsi.c; sourceTree = "<group>"; };
+		55C271C71E5B6DF5C85D389DB192570E /* pokeysnd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = pokeysnd.h; sourceTree = "<group>"; };
+		5A331CC9430E8CF81EC75D9A0C836E01 /* pia.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pia.c; sourceTree = "<group>"; };
+		5B152E56974E12212EDB4897F249EB69 /* mzpokeysnd.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mzpokeysnd.c; sourceTree = "<group>"; };
+		5CEC0C97DD63EBD3024A8613FEB50F68 /* cfg.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cfg.h; sourceTree = "<group>"; };
+		5E58E1700077F16C0CCEC62FA6A46230 /* ATR800GameCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ATR800GameCore.h; sourceTree = "<group>"; };
+		6D0E08E0658B43F2BEAEB7159F56523E /* pbi.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pbi.c; sourceTree = "<group>"; };
+		6DB5CED23EE5D0433B896541B0DE9D52 /* sysrom.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sysrom.c; sourceTree = "<group>"; };
+		7AC2345C9CED15C72AFA59BC227B7163 /* ide.c */ = {isa = PBXFileReference; includeInIndex = 1; path = ide.c; sourceTree = "<group>"; };
+		7F2B635E48CD3FEE303510366C2A6822 /* img_tape.c */ = {isa = PBXFileReference; includeInIndex = 1; path = img_tape.c; sourceTree = "<group>"; };
+		8159EDAA4392418E301C80AEDCA776C8 /* cassette.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cassette.h; sourceTree = "<group>"; };
+		81A09E527F808CD6F62830AE29B2D5B0 /* PVAtari800-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PVAtari800-tvOS-umbrella.h"; path = "../PVAtari800-tvOS/PVAtari800-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		81A2E5FAB9E2E41C3D808DB29BA61975 /* pbi.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = pbi.h; sourceTree = "<group>"; };
+		83B5E036FA4C355B80A6D003C95244B3 /* altirra_5200_os.c */ = {isa = PBXFileReference; includeInIndex = 1; path = altirra_5200_os.c; sourceTree = "<group>"; };
+		8BCD92BC17817B025E64F46479DE01C5 /* rtime.c */ = {isa = PBXFileReference; includeInIndex = 1; path = rtime.c; sourceTree = "<group>"; };
+		8D6E2D7C55C82BF31546CA40AF0701D2 /* gtia.c */ = {isa = PBXFileReference; includeInIndex = 1; path = gtia.c; sourceTree = "<group>"; };
+		928E69C6A405E7484F34634FC4FD2517 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PVAtari800.framework; path = "PVAtari800-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9335795E6482699B9C4FC29B4C2E0326 /* cartridge_info.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cartridge_info.c; sourceTree = "<group>"; };
+		94A85271C62F84A7641D7BFC7512A8A8 /* pia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = pia.h; sourceTree = "<group>"; };
+		9CB9F74E5713274D1B70EA0AF480EA82 /* PVAtari800-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVAtari800-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		9DE8FFF3365B95D01B362799A9B153D8 /* colours_ntsc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = colours_ntsc.h; sourceTree = "<group>"; };
+		9EA46E124CE8738526EC584808436F1B /* PVAtari800-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PVAtari800-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		A0C27749D5B44C5DEB6DC10098A04B33 /* cpu.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cpu.c; sourceTree = "<group>"; };
+		A53D26759A344FAE7701BE10D36C8F99 /* cycle_map.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cycle_map.c; sourceTree = "<group>"; };
+		A76F32CE8500106C9BEA7D22DFA59D87 /* colours_external.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours_external.c; sourceTree = "<group>"; };
+		A7E53351EBEF717D69F82EB236B493E0 /* gtia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = gtia.h; sourceTree = "<group>"; };
+		AA1C365E450652A014864CD758CA0359 /* PVAtari800-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PVAtari800-iOS-umbrella.h"; sourceTree = "<group>"; };
+		AA413AA949B24DAE78CB4EE1A5EF65EC /* PVAtari800-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PVAtari800-tvOS-prefix.pch"; path = "../PVAtari800-tvOS/PVAtari800-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		AAFFD84C1C54E13A5CF57195DD7EA82B /* platform.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
+		AC7EDB55FD1D028D8435FA785A6730E2 /* artifact.c */ = {isa = PBXFileReference; includeInIndex = 1; path = artifact.c; sourceTree = "<group>"; };
+		B05D65E5AE1CA2036B58DC32E10AE6B0 /* atari.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = atari.h; sourceTree = "<group>"; };
+		B113D15236EC07F5BC14E66AD8A4BFA9 /* cfg.c */ = {isa = PBXFileReference; includeInIndex = 1; path = cfg.c; sourceTree = "<group>"; };
+		B92FF5B38D32D59F30DC92494C1C3541 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		BC1EEB70E919056FD189DA6863D97355 /* cartridge_info.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cartridge_info.h; sourceTree = "<group>"; };
+		BC58AEADDE5D256B9E48304AEABB810C /* colours.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = colours.h; sourceTree = "<group>"; };
+		BE6095528F89772AD586E14A48B94E67 /* antic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = antic.h; sourceTree = "<group>"; };
+		C14EFF7CA15397059F49A060761BEE21 /* PVAtari800-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PVAtari800-iOS-prefix.pch"; sourceTree = "<group>"; };
+		C3D7BF48D00D75142C013B12AE480B05 /* PVAtari800-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "PVAtari800-tvOS.modulemap"; path = "../PVAtari800-tvOS/PVAtari800-tvOS.modulemap"; sourceTree = "<group>"; };
+		C484E0E2BEC8E751FD25F1CA1BFD167B /* afile.c */ = {isa = PBXFileReference; includeInIndex = 1; path = afile.c; sourceTree = "<group>"; };
+		C4F0898F4C68BBA6CBD60C61316327B2 /* monitor.c */ = {isa = PBXFileReference; includeInIndex = 1; path = monitor.c; sourceTree = "<group>"; };
+		C933C9E17B2F93790A60F3225B13A05D /* pokey.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pokey.c; sourceTree = "<group>"; };
+		CA2D3C025ADCFE3413BF06D392AB16E5 /* colours_pal.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours_pal.c; sourceTree = "<group>"; };
+		CAB35F2D99FB18B9C5F568F4CF964E71 /* pokeysnd.c */ = {isa = PBXFileReference; includeInIndex = 1; path = pokeysnd.c; sourceTree = "<group>"; };
+		CBFBE82E5520C0E966D98651E2B35AE0 /* cartridge.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cartridge.h; sourceTree = "<group>"; };
+		D17DE9A31262EAAE07D9278966AB33DF /* atari.c */ = {isa = PBXFileReference; includeInIndex = 1; path = atari.c; sourceTree = "<group>"; };
+		D1FFA127350631AA2544EA701845B06E /* memory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		D793778053831265122AAD5F5654C7DD /* colours.c */ = {isa = PBXFileReference; includeInIndex = 1; path = colours.c; sourceTree = "<group>"; };
+		D84BEA63292B31F0B0561C34CD0EFC85 /* sysrom.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sysrom.h; sourceTree = "<group>"; };
+		D86E43F7425CF8704A9DFC7CC1512A40 /* altirra_basic.c */ = {isa = PBXFileReference; includeInIndex = 1; path = altirra_basic.c; sourceTree = "<group>"; };
+		D8A4D53656235D948F1345DC4C3D5456 /* devices.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = devices.h; sourceTree = "<group>"; };
+		DECA51A19749BB7284C7BA764FCD995F /* sio.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sio.c; sourceTree = "<group>"; };
+		DF8EC89CE250855081D1022343E7DEFC /* PVAtari800-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PVAtari800-iOS-dummy.m"; sourceTree = "<group>"; };
+		E767F29FB0DC5BC47DCDEA08843A2054 /* crc32.c */ = {isa = PBXFileReference; includeInIndex = 1; path = crc32.c; sourceTree = "<group>"; };
+		EB33B2465EE3AF6B988C5BA5E238E3B6 /* PVAtari800-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "PVAtari800-tvOS-dummy.m"; path = "../PVAtari800-tvOS/PVAtari800-tvOS-dummy.m"; sourceTree = "<group>"; };
+		ECFB259A277C16AAEC66468D037C02D4 /* statesav.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = statesav.h; sourceTree = "<group>"; };
+		ED07DF896C293D89CB3101A8603AB83B /* PVAtari800.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PVAtari800.h; path = Sources/PVAtari800.h; sourceTree = "<group>"; };
+		F055D3E0B56FFDDB50C7E7402D03CA97 /* sndsave.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sndsave.c; sourceTree = "<group>"; };
+		F3370E696BA0AC2A213041D253B2270F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		F3ECCBA0602635DB80DA8D869A5818E0 /* ui.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		F4343439E87478BC817810FD4C4FF2FB /* rtime.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = rtime.h; sourceTree = "<group>"; };
+		F6D1643D8F1E38A67F74BE9D08470E1E /* InfoPlist.strings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F83E36CD2EA6424F093C2434671C5A0D /* altirraos_xl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = altirraos_xl.h; sourceTree = "<group>"; };
+		F9FF849E33310A8914D132DF930FF50A /* altirra_basic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = altirra_basic.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2E6729F0E3CEB1B0CED350C1E39FBBF4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0B1C0750E24E92B0E5B7EFBBBD6DFD0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF9048A8D36282A85E77618911BEDB72 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1BA46560759FE4D8432C8EE94DDCD6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		013531A86FDF425241B27F8DEFAF12A6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				062602E14C6B8D3C45E248D842807BFC /* iOS */,
+				2DA9EBCADEE4843903D095CAC269D4C4 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		062602E14C6B8D3C45E248D842807BFC /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				F3370E696BA0AC2A213041D253B2270F /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		0FA196C846E1CA465474F5F90DD0615B /* src */ = {
+			isa = PBXGroup;
+			children = (
+				C484E0E2BEC8E751FD25F1CA1BFD167B /* afile.c */,
+				09B7E14D89F4CDF185DEE6B64F8E7AF4 /* afile.h */,
+				22609C20A14DADB99B6137B2BAEFEEB0 /* akey.h */,
+				4E12CB9EB15D64B0C47ED1C03CAF1ED7 /* antic.c */,
+				BE6095528F89772AD586E14A48B94E67 /* antic.h */,
+				AC7EDB55FD1D028D8435FA785A6730E2 /* artifact.c */,
+				D17DE9A31262EAAE07D9278966AB33DF /* atari.c */,
+				B05D65E5AE1CA2036B58DC32E10AE6B0 /* atari.h */,
+				3DB877068638102BC58976AF88E32EF3 /* binload.c */,
+				311C0938C4C7BE8E17741BE56B4B178B /* cartridge.c */,
+				CBFBE82E5520C0E966D98651E2B35AE0 /* cartridge.h */,
+				9335795E6482699B9C4FC29B4C2E0326 /* cartridge_info.c */,
+				BC1EEB70E919056FD189DA6863D97355 /* cartridge_info.h */,
+				23FD66DB7BC6D9C81F6E02C942F0A215 /* cassette.c */,
+				8159EDAA4392418E301C80AEDCA776C8 /* cassette.h */,
+				B113D15236EC07F5BC14E66AD8A4BFA9 /* cfg.c */,
+				5CEC0C97DD63EBD3024A8613FEB50F68 /* cfg.h */,
+				D793778053831265122AAD5F5654C7DD /* colours.c */,
+				BC58AEADDE5D256B9E48304AEABB810C /* colours.h */,
+				A76F32CE8500106C9BEA7D22DFA59D87 /* colours_external.c */,
+				3CBE8CF3B29EE88071F9737DFDB02AB9 /* colours_ntsc.c */,
+				9DE8FFF3365B95D01B362799A9B153D8 /* colours_ntsc.h */,
+				CA2D3C025ADCFE3413BF06D392AB16E5 /* colours_pal.c */,
+				025FADE370E8412C53E9F55CECED6DD3 /* compfile.c */,
+				A0C27749D5B44C5DEB6DC10098A04B33 /* cpu.c */,
+				E767F29FB0DC5BC47DCDEA08843A2054 /* crc32.c */,
+				A53D26759A344FAE7701BE10D36C8F99 /* cycle_map.c */,
+				4EBF383BC9339B8ED6CB9539C7162E6A /* devices.c */,
+				D8A4D53656235D948F1345DC4C3D5456 /* devices.h */,
+				40671C943957B19807AE9CD017046034 /* esc.c */,
+				8D6E2D7C55C82BF31546CA40AF0701D2 /* gtia.c */,
+				A7E53351EBEF717D69F82EB236B493E0 /* gtia.h */,
+				7AC2345C9CED15C72AFA59BC227B7163 /* ide.c */,
+				2A8EB09A77B802E692C789E058154CC0 /* ide.h */,
+				7F2B635E48CD3FEE303510366C2A6822 /* img_tape.c */,
+				4458CBDAB57DE4E1157A089E111A35C6 /* input.c */,
+				4792D5B89C1B5A96E2F1D84F951767B1 /* input.h */,
+				00FA5EF24D3EB81CA526BD4DC2BCB5F7 /* log.c */,
+				39BB4EF52591A05F59B803E55F24006F /* memory.c */,
+				D1FFA127350631AA2544EA701845B06E /* memory.h */,
+				C4F0898F4C68BBA6CBD60C61316327B2 /* monitor.c */,
+				5B152E56974E12212EDB4897F249EB69 /* mzpokeysnd.c */,
+				6D0E08E0658B43F2BEAEB7159F56523E /* pbi.c */,
+				81A2E5FAB9E2E41C3D808DB29BA61975 /* pbi.h */,
+				35301DA32C1ED0E182384CCFC7EBCB1D /* pbi_bb.c */,
+				54112F243CF195EA4B8EACAC897D5494 /* pbi_mio.c */,
+				54D1E31F0B65E7927655061B585DCC4E /* pbi_scsi.c */,
+				5A331CC9430E8CF81EC75D9A0C836E01 /* pia.c */,
+				94A85271C62F84A7641D7BFC7512A8A8 /* pia.h */,
+				AAFFD84C1C54E13A5CF57195DD7EA82B /* platform.h */,
+				C933C9E17B2F93790A60F3225B13A05D /* pokey.c */,
+				02B89C1AC04020517ECED95E30FEE32C /* pokey.h */,
+				CAB35F2D99FB18B9C5F568F4CF964E71 /* pokeysnd.c */,
+				55C271C71E5B6DF5C85D389DB192570E /* pokeysnd.h */,
+				3C07D45A75AA27EA55296921DA3BA1F6 /* remez.c */,
+				8BCD92BC17817B025E64F46479DE01C5 /* rtime.c */,
+				F4343439E87478BC817810FD4C4FF2FB /* rtime.h */,
+				04886BC8745F56575DADA3E32B94F827 /* screen.c */,
+				DECA51A19749BB7284C7BA764FCD995F /* sio.c */,
+				531CB40B35F70EEBBC99B839A5B8C8C3 /* sio.h */,
+				F055D3E0B56FFDDB50C7E7402D03CA97 /* sndsave.c */,
+				37B29858EEA7C2A348726FF40C4F5E8C /* sound.c */,
+				1ACCC4369A8706B74557814AD5B8800D /* sound.h */,
+				389B16B88F449DE6EA8479A46FD75FC2 /* statesav.c */,
+				ECFB259A277C16AAEC66468D037C02D4 /* statesav.h */,
+				6DB5CED23EE5D0433B896541B0DE9D52 /* sysrom.c */,
+				D84BEA63292B31F0B0561C34CD0EFC85 /* sysrom.h */,
+				F3ECCBA0602635DB80DA8D869A5818E0 /* ui.h */,
+				2D29434FF847A7DB0E332122B634C3AC /* ui_basic.c */,
+				50C5FDD22B0408A0898A3D8F58664177 /* util.c */,
+				13988C0FC965EDEBCBEF064CDC655C3A /* roms */,
+			);
+			name = src;
+			path = src;
+			sourceTree = "<group>";
+		};
+		13988C0FC965EDEBCBEF064CDC655C3A /* roms */ = {
+			isa = PBXGroup;
+			children = (
+				83B5E036FA4C355B80A6D003C95244B3 /* altirra_5200_os.c */,
+				46D77F5E2DE77D81655E726BF3EF2987 /* altirra_5200_os.h */,
+				D86E43F7425CF8704A9DFC7CC1512A40 /* altirra_basic.c */,
+				F9FF849E33310A8914D132DF930FF50A /* altirra_basic.h */,
+				0EBB9409A7226369D575D9EEB45C7007 /* altirraos_800.c */,
+				19BD001288E7CD19F2121066F4D0113D /* altirraos_800.h */,
+				5391EA60A49A860BD5B5F96CB4041D3A /* altirraos_xl.c */,
+				F83E36CD2EA6424F093C2434671C5A0D /* altirraos_xl.h */,
+			);
+			name = roms;
+			path = roms;
+			sourceTree = "<group>";
+		};
+		173B831EC82F228410BF657E4635776D /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				3499F68C9430A987F6F5DC397D177B7F /* PVAtari800-iOS.modulemap */,
+				DF8EC89CE250855081D1022343E7DEFC /* PVAtari800-iOS-dummy.m */,
+				29AA4A40D815998933A89BF20DB44F11 /* PVAtari800-iOS-Info.plist */,
+				C14EFF7CA15397059F49A060761BEE21 /* PVAtari800-iOS-prefix.pch */,
+				AA1C365E450652A014864CD758CA0359 /* PVAtari800-iOS-umbrella.h */,
+				9CB9F74E5713274D1B70EA0AF480EA82 /* PVAtari800-iOS.debug.xcconfig */,
+				9EA46E124CE8738526EC584808436F1B /* PVAtari800-iOS.release.xcconfig */,
+				C3D7BF48D00D75142C013B12AE480B05 /* PVAtari800-tvOS.modulemap */,
+				EB33B2465EE3AF6B988C5BA5E238E3B6 /* PVAtari800-tvOS-dummy.m */,
+				3FF9BD20B65FD6F55861521FAB27975B /* PVAtari800-tvOS-Info.plist */,
+				AA413AA949B24DAE78CB4EE1A5EF65EC /* PVAtari800-tvOS-prefix.pch */,
+				81A09E527F808CD6F62830AE29B2D5B0 /* PVAtari800-tvOS-umbrella.h */,
+				4BDE6B5ED4341964A41D8D0834E5AAB6 /* PVAtari800-tvOS.debug.xcconfig */,
+				3F88A356CA14070FC1744CE5A9C3BA3E /* PVAtari800-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../../Pods/Target Support Files/PVAtari800-iOS";
+			sourceTree = "<group>";
+		};
+		1E3F43B3BFBE5B823DE562DF381CDC75 /* ATR800GameCore */ = {
+			isa = PBXGroup;
+			children = (
+				5E58E1700077F16C0CCEC62FA6A46230 /* ATR800GameCore.h */,
+				4C75695D24E73802571A7A3712CC03E0 /* ATR800GameCore.m */,
+			);
+			name = ATR800GameCore;
+			path = Sources/ATR800GameCore;
+			sourceTree = "<group>";
+		};
+		2DA9EBCADEE4843903D095CAC269D4C4 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				B92FF5B38D32D59F30DC92494C1C3541 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		36CFCEABF671B3AAD731619388E911EB /* PVAtari800 */ = {
+			isa = PBXGroup;
+			children = (
+				53D8AAD7A1822AE5762EDEC6C150DBAF /* config.h */,
+				0464B0DA6C4DAC9F5C0B46A4FED28137 /* Core.plist */,
+				4F27093732EB215975EFD1DD7C539ED8 /* InfoPlist.strings */,
+				ED07DF896C293D89CB3101A8603AB83B /* PVAtari800.h */,
+				1E3F43B3BFBE5B823DE562DF381CDC75 /* ATR800GameCore */,
+				AFE45C5E5433C2EB97FEAC601D58301B /* Pod */,
+				173B831EC82F228410BF657E4635776D /* Support Files */,
+				3996AFDA16A6D06E3365EA7A7D0E3FEC /* upstream */,
+			);
+			name = PVAtari800;
+			path = ../Cores/Atari800;
+			sourceTree = "<group>";
+		};
+		3996AFDA16A6D06E3365EA7A7D0E3FEC /* upstream */ = {
+			isa = PBXGroup;
+			children = (
+				0FA196C846E1CA465474F5F90DD0615B /* src */,
+			);
+			name = upstream;
+			path = Sources/upstream;
+			sourceTree = "<group>";
+		};
+		63C1EFA0D40F447C5A2F195E0992827B = {
+			isa = PBXGroup;
+			children = (
+				902CA05A9EC9ECD1B2A7A5554C2BFCDC /* Dependencies */,
+				013531A86FDF425241B27F8DEFAF12A6 /* Frameworks */,
+				C7BFC2557610950583A32FB0053BFC60 /* Products */,
+				36CFCEABF671B3AAD731619388E911EB /* PVAtari800 */,
+			);
+			sourceTree = "<group>";
+		};
+		902CA05A9EC9ECD1B2A7A5554C2BFCDC /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				4FCEEF24C26E837A796E11E74A13C07E /* PVLibrary */,
+				0F83017AA395AD8FA923959C3BB6D0AF /* PVSupport */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		AFE45C5E5433C2EB97FEAC601D58301B /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				4E7120E95D407BE717D75FCB15400A3C /* LICENSE.md */,
+				23C328F3D87D94AA7DB7B0E5B61918B8 /* PVAtari800.podspec */,
+				2D7DCB299AB8CBC52D0611D11600509F /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		C7BFC2557610950583A32FB0053BFC60 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				928E69C6A405E7484F34634FC4FD2517 /* PVAtari800.framework */,
+				02F98241D5BF3E954612A526CF6AF9E4 /* PVAtari800.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		237DFA25A90606E374B1F80DFEB625E6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FAF1708E8E4CF6041E68D489B847B2 /* afile.h in Headers */,
+				58CDB6F2856F58615590DBA928705515 /* akey.h in Headers */,
+				A7D5AE0000A3F3B6C2CD70BBEE1D223B /* altirra_5200_os.h in Headers */,
+				6412A36B9CB5A324268AB32BB041394C /* altirra_basic.h in Headers */,
+				FB3C8F549A0A42974CDDDA2DE670B043 /* altirraos_800.h in Headers */,
+				BDED827F28C1E647D9EB76E4861AF7B6 /* altirraos_xl.h in Headers */,
+				A629447EA511AAD8CA3361D4B4D460C6 /* antic.h in Headers */,
+				64068DB9A0D4510E96DE36EE1011B0DF /* atari.h in Headers */,
+				92BFCB12DC4824AD7CED918BFA26124E /* ATR800GameCore.h in Headers */,
+				E55C0FE5C0254870964174B4C195F2C2 /* cartridge.h in Headers */,
+				46EBB50E2400D1EE3DA8C76D0E9C8541 /* cartridge_info.h in Headers */,
+				5AE7763749B140FE1A8E207AD80BD850 /* cassette.h in Headers */,
+				CB2B9071F11453711FA8D6E3D5938E7D /* cfg.h in Headers */,
+				4646D9435A54BEB60229D1860741A5B5 /* colours.h in Headers */,
+				5D722E45E57C5A85EF51B2906B90CBC1 /* colours_ntsc.h in Headers */,
+				C632CED3EA3C8BE956EC668A47272446 /* config.h in Headers */,
+				B268477A804589A4B24674CF5623D4C8 /* devices.h in Headers */,
+				6FCC41202FBE6AEB7B94777EACB6719D /* gtia.h in Headers */,
+				291BE7C12FABF0D7A619A30DEFA87406 /* ide.h in Headers */,
+				28A4D2A992338178BF9B54B2370E87B3 /* input.h in Headers */,
+				A462BAC92986D94104FC29E362B6E902 /* memory.h in Headers */,
+				87D3C711FD7A1AA4FD9E448259C21FA7 /* pbi.h in Headers */,
+				3AA10C91516EE2005CEF14CFEC95DBA3 /* pia.h in Headers */,
+				837088630EC137B26DA6DC316416E074 /* platform.h in Headers */,
+				818E8A3429D5C598A23642EDFD9A7C4C /* pokey.h in Headers */,
+				5576BDA9DAFAD5C469FC12EBE95B2DD7 /* pokeysnd.h in Headers */,
+				8C12A9E6684FD8FD76B06F67CEDAB915 /* PVAtari800-iOS-umbrella.h in Headers */,
+				7E50D62E14285F41250F2C33628D4EBC /* PVAtari800.h in Headers */,
+				5A34488C4BFD4DC9B2A470FDFA896161 /* rtime.h in Headers */,
+				8C70351BCE621C3515B64FADE15CC620 /* sio.h in Headers */,
+				505684B01B2450C75EB400266C5D8F31 /* sound.h in Headers */,
+				68940B60C5810DF09D64FD4785564269 /* statesav.h in Headers */,
+				2930B9F08FB8F9D91CA31B9BF06508FE /* sysrom.h in Headers */,
+				EC83E7E051537F9301D04DD3D56005EE /* ui.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4D18588AD35B5E21708897599FDEDE7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69F6B5B39CA81C347D418AF898885393 /* afile.h in Headers */,
+				A7B20F25AC8B454235D5A144387AA31B /* akey.h in Headers */,
+				62AC26C9BAEACB7148654B4759BB4C42 /* altirra_5200_os.h in Headers */,
+				8221D7A2123C7650A5A460526A611660 /* altirra_basic.h in Headers */,
+				44D8A7A46795AFE5662CDBCFCD8F524F /* altirraos_800.h in Headers */,
+				6F6FF31E7F6FF952B0FD84C640B4F8FC /* altirraos_xl.h in Headers */,
+				33F2DE21D806A30EA96B7658E4BBD932 /* antic.h in Headers */,
+				7752682AB517CCF87477455B53FA7F95 /* atari.h in Headers */,
+				ED7153BC08EB9FCB8BF07C1BDC1FAC75 /* ATR800GameCore.h in Headers */,
+				511CEFC019768961878FD9D6A1C693BA /* cartridge.h in Headers */,
+				47EA1795177F531277C89C3D1FDAD101 /* cartridge_info.h in Headers */,
+				C75AE3B06D740DCCFF4C509318A203C4 /* cassette.h in Headers */,
+				53DA5CA295D6D3BC0927D3DBADD2F61D /* cfg.h in Headers */,
+				DD8CC7BCA2F461D61FE396189F0BDB3A /* colours.h in Headers */,
+				BF272BA9F5A23661EB96274164358478 /* colours_ntsc.h in Headers */,
+				42E090844580CAD4B8E5B247F37AA3AC /* config.h in Headers */,
+				1C9C583FFF57FFF3D3C75782D83136DF /* devices.h in Headers */,
+				E076E2E70D98A7533BA1C80D097CDE19 /* gtia.h in Headers */,
+				D820085E4504DA47CB9630452EC9E8B6 /* ide.h in Headers */,
+				B651DAB56EA1250A30023F110A346C8B /* input.h in Headers */,
+				059B4BC51D021EF8266273BF3DBAADCC /* memory.h in Headers */,
+				ACA78C00320C997E4237A9A8F7D8294C /* pbi.h in Headers */,
+				D988D07B6678D9930DBF15337D8466AD /* pia.h in Headers */,
+				0317F0329CEC9D279C4756FF6735D5D7 /* platform.h in Headers */,
+				4DC8A0D0AD7C61C154A48CA7B35ECDCA /* pokey.h in Headers */,
+				3B5B4D5E66B8FF1D3FA9DE1E6472BC96 /* pokeysnd.h in Headers */,
+				AA4F307E7C9E9C64700007D1EE74DF62 /* PVAtari800-tvOS-umbrella.h in Headers */,
+				731C409F51D8DFF84AA783763AD144CA /* PVAtari800.h in Headers */,
+				45DBF3DB4DC9CB8ED73C1246B1182BC2 /* rtime.h in Headers */,
+				47836A4603379EAE038EEC08B730FB16 /* sio.h in Headers */,
+				7557EF47FB840895BD26AA71F9B38A1E /* sound.h in Headers */,
+				52767EA1E7A59FAB37454296DFED410A /* statesav.h in Headers */,
+				A2CF6503456CDDE1B8BCCD6C17235B27 /* sysrom.h in Headers */,
+				FCDC0D92055C8598E5A9847EF68D8420 /* ui.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0968C39A0A97C6CDED94052AC8977C05 /* PVAtari800-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C95DD4B3C3B125C9228B8AAF0C0F024D /* Build configuration list for PBXNativeTarget "PVAtari800-tvOS" */;
+			buildPhases = (
+				B4D18588AD35B5E21708897599FDEDE7 /* Headers */,
+				106AD682E6D5C474ACDF767231D40C4B /* Sources */,
+				CF9048A8D36282A85E77618911BEDB72 /* Frameworks */,
+				EE0926CE3F35426F63E10169F7449FBD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5D4BB2EE5C14676E4C15C9EB443007BD /* PBXTargetDependency */,
+				B7F1A8FE9E8E3AB770675D7BDF9602BF /* PBXTargetDependency */,
+			);
+			name = "PVAtari800-tvOS";
+			productName = "PVAtari800-tvOS";
+			productReference = 02F98241D5BF3E954612A526CF6AF9E4 /* PVAtari800.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		FD2B58736172FE618CCA98FA21205496 /* PVAtari800-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E11B42AFD5429B4ACC39F05464FB555 /* Build configuration list for PBXNativeTarget "PVAtari800-iOS" */;
+			buildPhases = (
+				237DFA25A90606E374B1F80DFEB625E6 /* Headers */,
+				94BF6AB02CF63CA79C9B3CDD5BFCBDD7 /* Sources */,
+				2E6729F0E3CEB1B0CED350C1E39FBBF4 /* Frameworks */,
+				1AB7EA4EC4C53CD9A512D14682271DC1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6631CAACE70125B8952281A62E1C69E2 /* PBXTargetDependency */,
+				30253FFAB19FF10CF1D37050991453E5 /* PBXTargetDependency */,
+			);
+			name = "PVAtari800-iOS";
+			productName = "PVAtari800-iOS";
+			productReference = 928E69C6A405E7484F34634FC4FD2517 /* PVAtari800.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		97401092A3DB5B41D0893D5FB80253CA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 84FBD063C11A5DA5A7D35C1B128FADFC /* Build configuration list for PBXProject "PVAtari800" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 63C1EFA0D40F447C5A2F195E0992827B;
+			productRefGroup = C7BFC2557610950583A32FB0053BFC60 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProjectRef = 0F83017AA395AD8FA923959C3BB6D0AF /* PVSupport */;
+				},
+				{
+					ProjectRef = 4FCEEF24C26E837A796E11E74A13C07E /* PVLibrary */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				FD2B58736172FE618CCA98FA21205496 /* PVAtari800-iOS */,
+				0968C39A0A97C6CDED94052AC8977C05 /* PVAtari800-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1AB7EA4EC4C53CD9A512D14682271DC1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63034B8C36EED747189D24CE3E054EC1 /* Core.plist in Resources */,
+				618143EA2BF8C63777437287D3AD11ED /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE0926CE3F35426F63E10169F7449FBD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				204419196D188238F61231F50F375453 /* Core.plist in Resources */,
+				BC12F7D6023E6012DA036E5E08D2A44E /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		106AD682E6D5C474ACDF767231D40C4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A1DBDAB30224957DE6034CA6864AA8D /* afile.c in Sources */,
+				F89E141A9E5A39136DA47BD2FF9B3290 /* altirra_5200_os.c in Sources */,
+				AEC8877A4C3FEE87378B70EF3485D866 /* altirra_basic.c in Sources */,
+				512CDBD5F8E6EF1B857F0D9C9F2EA622 /* altirraos_800.c in Sources */,
+				B7CF3D559550A1880357A11B4C772684 /* altirraos_xl.c in Sources */,
+				EEE7F835E2BF4A72C000F28AF947B06D /* antic.c in Sources */,
+				02C2F8FC06B017F17A9FCE2C8A299A5F /* artifact.c in Sources */,
+				C1D4E2C86EC719C7435A8362FA2B2E26 /* atari.c in Sources */,
+				D4BEE92C0AD987AAB8E736DCDC084332 /* ATR800GameCore.m in Sources */,
+				DC8F85861D2F6B4107562D7702ECBB31 /* binload.c in Sources */,
+				B717E22DB87C1BF25D0BD37C3800E67D /* cartridge.c in Sources */,
+				7E30C3EEEDA0FD2CA7BBC45C667DAE12 /* cartridge_info.c in Sources */,
+				FE232BE1218FEE7109983E76424A739B /* cassette.c in Sources */,
+				B7B7ED180EA476897C5F14405A539B84 /* cfg.c in Sources */,
+				7D16808F252AFA4792632FCB4CC8FF34 /* colours.c in Sources */,
+				970703F638240280C5CD0314CA6A2175 /* colours_external.c in Sources */,
+				DB2DF4F6CEE90BCD0DFA7F666E174278 /* colours_ntsc.c in Sources */,
+				43A105A6B0486B04FECC09FBF391A8FE /* colours_pal.c in Sources */,
+				5A91B562A30913D47526070FF870CD53 /* compfile.c in Sources */,
+				FB9EF9380791D408F68CB2AA209E2D5C /* cpu.c in Sources */,
+				E37BE54EB33EBE68C37CF569691F83CD /* crc32.c in Sources */,
+				D3FA88B8D1F5806665D76C776D7DFCF4 /* cycle_map.c in Sources */,
+				EAA9C91C7B1EBC9E5C5E3DF24EE97E66 /* devices.c in Sources */,
+				2EC69CFBC58322ABBA27B7C66B26C1B0 /* esc.c in Sources */,
+				DF5E19976EEEE1A686E9586FD593A2C8 /* gtia.c in Sources */,
+				1065904D19C970435D923DC412A02E39 /* ide.c in Sources */,
+				60357E0B0B92278C9E9689A94E798249 /* img_tape.c in Sources */,
+				A975362F95D14413C3A8A644D97D286A /* input.c in Sources */,
+				C19670FB01BAEEE63E83FE10CC95B062 /* log.c in Sources */,
+				65339A368EB1D98A2F4F05FDBB999C8E /* memory.c in Sources */,
+				53ED0F3258A428F0D49CAB73E439812E /* monitor.c in Sources */,
+				4C665239D5B9C741A886AC8ADD0A7A23 /* mzpokeysnd.c in Sources */,
+				C9E0477DB030A224EF59915D9661C09F /* pbi.c in Sources */,
+				162585C14E359599774A94EF54155548 /* pbi_bb.c in Sources */,
+				52BD9FA30EFD265E08742DEDAAAC6F1A /* pbi_mio.c in Sources */,
+				4E77112D920D5ECBF4B101DAF8B54DCC /* pbi_scsi.c in Sources */,
+				E99B8F7CB3E1FA9A2A3A2B01E680B8B1 /* pia.c in Sources */,
+				7EBABA82A97F880C0440DDFA3176EA10 /* pokey.c in Sources */,
+				1CC5DA288D8739224C1AB7CDAC60753B /* pokeysnd.c in Sources */,
+				BDDE06A9F8BB2B0D439BF464BE35090B /* PVAtari800-tvOS-dummy.m in Sources */,
+				0582DA7C925572626466DB640C6AFAF6 /* remez.c in Sources */,
+				CBB81D3FB15EAF4A1EDA71C91802AA53 /* rtime.c in Sources */,
+				2717DEF9648777B6217850AF2F373A90 /* screen.c in Sources */,
+				B2DF195C7AD4D56AE9B75CC535B417DA /* sio.c in Sources */,
+				70E0D8554EF9A4461DD8C12D93DC3146 /* sndsave.c in Sources */,
+				EE54782B4980DE788EDBFFD08DE9A51A /* sound.c in Sources */,
+				07E6FEA738E061FC90FCD507C428BECE /* statesav.c in Sources */,
+				E7098F1FB65DABA74031D0D3C91EC866 /* sysrom.c in Sources */,
+				A5F6CC31C643BEDA2F568C5AB7012880 /* ui_basic.c in Sources */,
+				1E0964A608117A26BF3671F8DF088DE8 /* util.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		94BF6AB02CF63CA79C9B3CDD5BFCBDD7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A80352183A16B415C82A5E5F85F86A1 /* afile.c in Sources */,
+				2D9D99ACEBB4A6CB4E474EA7156CD714 /* altirra_5200_os.c in Sources */,
+				01229EA068AFBF8834D7C13E420B0191 /* altirra_basic.c in Sources */,
+				5A952636A00C9689FAE853E411F1186B /* altirraos_800.c in Sources */,
+				AE555ABDA4104F9600FBF0604B14F30C /* altirraos_xl.c in Sources */,
+				45F713DC2A230E61F479F7747D668222 /* antic.c in Sources */,
+				430D4AEB640DD4EF522B2E511B9C13B0 /* artifact.c in Sources */,
+				305B715060D9280905D7BAC73DD01E59 /* atari.c in Sources */,
+				B72E3FE886FC158D37CDEC103875BA45 /* ATR800GameCore.m in Sources */,
+				6B14F1480085CD4245FA2E9F892FF726 /* binload.c in Sources */,
+				0F2A68D9A0C4DC6ECC5D00EAD879C6ED /* cartridge.c in Sources */,
+				D8AB5215601BC921C00B9739C613F55C /* cartridge_info.c in Sources */,
+				1C1049AC6DBDC92591B115E64A0508BA /* cassette.c in Sources */,
+				88747CF8885689A20C8C5D706B62418F /* cfg.c in Sources */,
+				5C2EC409316E2FE3478E40975C319181 /* colours.c in Sources */,
+				BCF7162D73661A567587E4650081C94C /* colours_external.c in Sources */,
+				6A23CA487EC48C155894769A0E831872 /* colours_ntsc.c in Sources */,
+				D3444590D47EB62B2A1D311227520098 /* colours_pal.c in Sources */,
+				6CF02EDF00204563B01E6F66EEC42BB7 /* compfile.c in Sources */,
+				489EC8DECAE75EE833E67CF69A7ACDB8 /* cpu.c in Sources */,
+				13B96934271243B665C65968D25BA7A1 /* crc32.c in Sources */,
+				FA6849E4E079080C6BFE9A62A787E321 /* cycle_map.c in Sources */,
+				FF1CAC151905B46EE00F93EA195096B6 /* devices.c in Sources */,
+				F0682E2514F2E8EF242509B2C4983444 /* esc.c in Sources */,
+				39FE8D3FDCFEFEB70DC70D01A8E5B8B3 /* gtia.c in Sources */,
+				C36F7F3E602FC6F7E8FFFCC7011646CB /* ide.c in Sources */,
+				B0422D278048600504E41486098D0CD8 /* img_tape.c in Sources */,
+				E681CA758C04A424D2E3CFA561B1820A /* input.c in Sources */,
+				619D370D530A6EBC9840D1E0AE792D12 /* log.c in Sources */,
+				E1F0B7060AB9BACEBF45A38DA66330CB /* memory.c in Sources */,
+				2CA240EB27BE0DD66D6C4CBD95E85176 /* monitor.c in Sources */,
+				66AA18211F0C6F3D0A301992D1E45C8C /* mzpokeysnd.c in Sources */,
+				BA711788D08AC78D75C9B3A2E97D0CD2 /* pbi.c in Sources */,
+				E57215C2F84F35B0A4E8D7403F2CB9D0 /* pbi_bb.c in Sources */,
+				2732B790C2088A71DFE4168EB17AEF74 /* pbi_mio.c in Sources */,
+				969CC3B40B00E413AA9DFE487EC0226C /* pbi_scsi.c in Sources */,
+				BCDE5A6B88DA83910715D56BEB9CA5FA /* pia.c in Sources */,
+				CCC667ADBC459E3D2A7D8D2A69A57EAA /* pokey.c in Sources */,
+				2AB1BED5CAC3F8F6DF04CCEBB62498B3 /* pokeysnd.c in Sources */,
+				4E4C54720D2648AA1FFA27C7C48CBCBB /* PVAtari800-iOS-dummy.m in Sources */,
+				6FB39FDBB7CEFD86E4DB0648E384828E /* remez.c in Sources */,
+				7EB627375C986941BAA9D29412F21F71 /* rtime.c in Sources */,
+				8E2DDA48DE5AF70323EA619C836DAE50 /* screen.c in Sources */,
+				CAF4C4AC7DF3AF4B56ED6487DBC4308F /* sio.c in Sources */,
+				C38E01C46593CA37C2DEE5CA20D97182 /* sndsave.c in Sources */,
+				1FCA7AC1E5B0F7E93E6B3019F0342CBB /* sound.c in Sources */,
+				70CF100A5A4D4977343D9EDE7ABBB6C8 /* statesav.c in Sources */,
+				DDEBC0FF2D679839AC52BB95E8667A91 /* sysrom.c in Sources */,
+				FD55BC6E478F0DD92D07F84FA2F8A7C4 /* ui_basic.c in Sources */,
+				665853C7F0D6CC5BA66A491D341F46B3 /* util.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		30253FFAB19FF10CF1D37050991453E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-iOS";
+			targetProxy = D978FEBC69BB5C93FCA3A274BC742285 /* PBXContainerItemProxy */;
+		};
+		5D4BB2EE5C14676E4C15C9EB443007BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-tvOS";
+			targetProxy = 971460F504E6BF901F76A192DDD88DD5 /* PBXContainerItemProxy */;
+		};
+		6631CAACE70125B8952281A62E1C69E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-iOS";
+			targetProxy = 0A11FBE19BCED4EDF3503CE5931351E5 /* PBXContainerItemProxy */;
+		};
+		B7F1A8FE9E8E3AB770675D7BDF9602BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-tvOS";
+			targetProxy = 998ADCE79C8C466FC4CF18D82BD31362 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4F27093732EB215975EFD1DD7C539ED8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F6D1643D8F1E38A67F74BE9D08470E1E /* InfoPlist.strings */,
+			);
+			name = InfoPlist.strings;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		09DB9F36EC366B81131519EE7C5C699F /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9EA46E124CE8738526EC584808436F1B /* PVAtari800-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = PVAtari800;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		195588E83D802C510361ED59EAA3076A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9EA46E124CE8738526EC584808436F1B /* PVAtari800-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = PVAtari800;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		276A5C4056C0771954C60F1D7C7DBE5A /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Archive;
+		};
+		30C939F9B666CFE10DB0F39F81F5C2B2 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F88A356CA14070FC1744CE5A9C3BA3E /* PVAtari800-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = PVAtari800;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		3BD8638509687F67358376383DD5DC26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		6BC4D1EEB71CE3AECCDB5820AC9DA306 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		6FBEB52D80B398C9F9DB7A988009F60F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9CB9F74E5713274D1B70EA0AF480EA82 /* PVAtari800-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVAtari800-iOS/PVAtari800-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = PVAtari800;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		A397B296911C1DA4BB11CA4D3B3BFA02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F88A356CA14070FC1744CE5A9C3BA3E /* PVAtari800-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = PVAtari800;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B801649E24D860CB7DD1D22380C7FB7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4BDE6B5ED4341964A41D8D0834E5AAB6 /* PVAtari800-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PVAtari800-tvOS/PVAtari800-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = PVAtari800;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5E11B42AFD5429B4ACC39F05464FB555 /* Build configuration list for PBXNativeTarget "PVAtari800-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09DB9F36EC366B81131519EE7C5C699F /* Archive */,
+				6FBEB52D80B398C9F9DB7A988009F60F /* Debug */,
+				195588E83D802C510361ED59EAA3076A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84FBD063C11A5DA5A7D35C1B128FADFC /* Build configuration list for PBXProject "PVAtari800" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				276A5C4056C0771954C60F1D7C7DBE5A /* Archive */,
+				3BD8638509687F67358376383DD5DC26 /* Debug */,
+				6BC4D1EEB71CE3AECCDB5820AC9DA306 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C95DD4B3C3B125C9228B8AAF0C0F024D /* Build configuration list for PBXNativeTarget "PVAtari800-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30C939F9B666CFE10DB0F39F81F5C2B2 /* Archive */,
+				B801649E24D860CB7DD1D22380C7FB7F /* Debug */,
+				A397B296911C1DA4BB11CA4D3B3BFA02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 97401092A3DB5B41D0893D5FB80253CA /* Project object */;
+}
