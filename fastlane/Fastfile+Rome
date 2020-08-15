@@ -12,8 +12,6 @@ HAS_ROME=command?("rome")
 DIRECTORY="carthage"
 CACHE_PREFIX="#{SWIFT_VERSION}"
 # provenance-public AWS user
-ENV["AWS_ACCESS_KEY_ID"] = "AKIAUSTWGKVGXWRBPEX2"
-ENV["AWS_SECRET_ACCESS_KEY"] = "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"
 # ENV["AWS_ENDPOINT"] = "http://provenance-emu.com:9002"
 ENV["AWS_REGION"] = "us-east-2"
 
