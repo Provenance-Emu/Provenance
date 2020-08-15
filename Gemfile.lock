@@ -42,11 +42,10 @@ GEM
       cork
       nap
       open4 (~> 1.3)
-    cocoapods (1.10.0.beta.1)
-      activesupport (> 5)
+    cocoapods (1.10.0.beta.2)
       addressable (~> 2.6)
       claide (>= 1.0.2, < 2.0)
-      cocoapods-core (= 1.10.0.beta.1)
+      cocoapods-core (= 1.10.0.beta.2)
       cocoapods-deintegrate (>= 1.0.3, < 2.0)
       cocoapods-downloader (>= 1.4.0, < 2.0)
       cocoapods-plugins (>= 1.0.0, < 2.0)
@@ -67,7 +66,7 @@ GEM
       xcpretty (~> 0.3.0)
     cocoapods-check (1.1.0)
       cocoapods (~> 1.0)
-    cocoapods-core (1.10.0.beta.1)
+    cocoapods-core (1.10.0.beta.2)
       activesupport (> 5.0, < 6)
       addressable (~> 2.6)
       algoliasearch (~> 1.0)
@@ -324,7 +323,7 @@ GEM
     word_wrap (1.0.0)
     xcinvoke (0.3.0)
       liferaft (~> 0.0.6)
-    xcodeproj (1.17.1)
+    xcodeproj (1.18.0)
       CFPropertyList (>= 2.3.3, < 4.0)
       atomos (~> 0.1.3)
       claide (>= 1.0.2, < 2.0)
@@ -347,7 +346,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cocoapods (~> 1.10.0.beta.1)
+  cocoapods (~> 1.10.0.beta.2)
   cocoapods-binary
   cocoapods-check
   cocoapods-githooks

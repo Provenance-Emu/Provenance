@@ -60,6 +60,7 @@ end
 def cores
   cores = [
     "Atari800",
+    "FCEU",
     "PokeMini"
   ]
 

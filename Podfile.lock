@@ -14,6 +14,9 @@ PODS:
   - CocoaLumberjack/Swift (3.6.2):
     - CocoaLumberjack/Core
   - Differentiator (4.0.1)
+  - FCEU (1.5):
+    - PVLibrary (~> 1.5)
+    - PVSupport (~> 1.5)
   - LzmaSDK-ObjC (2.1.1)
   - NSLogger (1.9.7):
     - NSLogger/ObjC (= 1.9.7)
@@ -129,6 +132,7 @@ DEPENDENCIES:
   - AppCenter/Distribute
   - Atari800 (from `./Cores/Atari800`)
   - CocoaLumberjack/Swift
+  - FCEU (from `./Cores/FCEU`)
   - LzmaSDK-ObjC (from `https://github.com/Provenance-Emu/LzmaSDKObjC.git`, branch `master`)
   - PokeMini (from `./Cores/PokeMini`)
   - PVLibrary (from `./`)
@@ -169,6 +173,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Atari800:
     :path: "./Cores/Atari800"
+  FCEU:
+    :path: "./Cores/FCEU"
   LzmaSDK-ObjC:
     :branch: master
     :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
@@ -198,13 +204,14 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppCenter: aba7de06e4c2184f90dc84f7866bd07f82427d69
-  Atari800: df19eff329fdc920211313b542519f52b98989d3
+  Atari800: a3bcdcbee0ee85eac30296e246aa5ec05bedf751
   BitByteData: 36729e2125ec321935754f9feb1f4b297e00b501
   CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
+  FCEU: 69891fbba6de20ac62ff9984ee815f151ba8af60
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
-  PokeMini: 4cc901be8cf5842d46e480d829af076f3e83174b
+  PokeMini: 9149d98492331861a358e65a1a86c4856c5d58fd
   PVLibrary: 1ecb5f88b6dbeee9498ac3bbb15a629f757e9d24
   PVSupport: 42d22347a47a6d6a9e789989bad9885fc0415203
   QuickTableViewController: 92005c22d3ef77e5b264aee0d8027de0f63cabbf
@@ -224,6 +231,6 @@ SPEC CHECKSUMS:
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: e7c01ca821985231d9d3d72c48d5e85a3ca934ed
+PODFILE CHECKSUM: e3e85069271b857c73bef3a69746b0b0ad466d27
 
-COCOAPODS: 1.10.0.beta.1
+COCOAPODS: 1.10.0.beta.2
