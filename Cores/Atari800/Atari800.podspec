@@ -32,19 +32,14 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
   s.tvos.deployment_target = '10.0'
 
-  s.module_name = 'Atari800'
-  s.header_dir = 'Atari800'
+  s.module_name = 'PVAtari800'
+  s.header_dir = 'PVAtari800'
 
   s.frameworks = 'Foundation'
   s.libraries = 'z', 'edit'
 
   s.dependency 'PVSupport', '~> 1.5'
   s.dependency 'PVLibrary', '~> 1.5'
-
-  s.pod_target_xcconfig = {
-    'OTHER_LDFLAGS' => '$(inherited) -ObjC',
-    'GCC_C_LANGUAGE_STANDARD' => 'gnu99'
-  }
 
   upstream_sources = %w[
     afile.c
@@ -145,9 +140,9 @@ Pod::Spec.new do |s|
   ]
 
   s.compiler_flags = '-DCORE_ATARI800_SUBSPEC_INCLUDED', '-DGWINSZ_IN_SYS_IOCTL'
-  s.pod_target_xcconfig = { 'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVAtari800' }
 
   s.pod_target_xcconfig = {
+    'PRODUCT_BUNDLE_IDENTIFIER': 'com.provenance-emu.PVAtari800',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC',
     'CORE_ATARI800_SUBSPEC_INCLUDED' => '-D\'CORE_ATARI800_SUBSPEC_INCLUDED\'',
     'OTHER_SWIFT_FLAGS' => '$(CORE_ATARI800_SUBSPEC_INCLUDED)',
