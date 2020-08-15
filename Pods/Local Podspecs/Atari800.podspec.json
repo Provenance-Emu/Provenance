@@ -25,8 +25,8 @@
     "ios": "10.0",
     "tvos": "10.0"
   },
-  "module_name": "Atari800",
-  "header_dir": "Atari800",
+  "module_name": "PVAtari800",
+  "header_dir": "PVAtari800",
   "frameworks": "Foundation",
   "libraries": [
     "z",
@@ -39,14 +39,6 @@
     "PVLibrary": [
       "~> 1.5"
     ]
-  },
-  "pod_target_xcconfig": {
-    "OTHER_LDFLAGS": "$(inherited) -ObjC",
-    "CORE_ATARI800_SUBSPEC_INCLUDED": "-D'CORE_ATARI800_SUBSPEC_INCLUDED'",
-    "OTHER_SWIFT_FLAGS": "$(CORE_ATARI800_SUBSPEC_INCLUDED)",
-    "GCC_C_LANGUAGE_STANDARD": "gnu99",
-    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++0x",
-    "CLANG_CXX_LIBRARY": "libc++"
   },
   "source_files": [
     "Sources/upstream/src/afile.c",
@@ -141,5 +133,14 @@
     "-DCORE_ATARI800_SUBSPEC_INCLUDED",
     "-DGWINSZ_IN_SYS_IOCTL"
   ],
+  "pod_target_xcconfig": {
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVAtari800",
+    "OTHER_LDFLAGS": "$(inherited) -ObjC",
+    "CORE_ATARI800_SUBSPEC_INCLUDED": "-D'CORE_ATARI800_SUBSPEC_INCLUDED'",
+    "OTHER_SWIFT_FLAGS": "$(CORE_ATARI800_SUBSPEC_INCLUDED)",
+    "GCC_C_LANGUAGE_STANDARD": "gnu99",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++0x",
+    "CLANG_CXX_LIBRARY": "libc++"
+  },
   "swift_version": "5.1"
 }

@@ -1,4 +1,4 @@
-framework module Atari800 {
+framework module PVAtari800 {
   umbrella header "Atari800-iOS-umbrella.h"
 
   export *

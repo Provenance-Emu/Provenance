@@ -1,0 +1,1441 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01330937A4DD309F2D4F13EA479FA806 /* memory_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = FC47E3FF960BBE3E93FB2F2A4CCFFE96 /* memory_stream.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		02383BC027B1369A308DAAA18F2E6833 /* UI.h in Headers */ = {isa = PBXBuildFile; fileRef = 795337897A51D8B605E334ACAFC7E3C4 /* UI.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		05722DCEEE58AC74DCB39827BDDE7C86 /* PokeMini_ColorPal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EFD73CBFB106D0D0616C43997AC4962 /* PokeMini_ColorPal.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		05B63E57191B196E0607E282C4363746 /* PokeMini_BG4.h in Headers */ = {isa = PBXBuildFile; fileRef = F9B7B41EEB85C874D28C5DFC901ED90A /* PokeMini_BG4.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		07F9BE2EC2830B7EE7424E4EB52B5930 /* IOMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1861DCF9614E3742F2A7FCEEB105A7CD /* IOMap.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		089293A11D889D8F8E353B0390405BFD /* Missing.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B001A47F933AD7171F670C7FC3321A1 /* Missing.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		0AEF207F2418B89A1FE4FB61003BB562 /* Hardware.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E3AE656C498BDD38DEFA19DEBC3599 /* Hardware.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		0D15962943E01B006FC8D1F6D2F48FE8 /* Video_x2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F796AFBD7D96D2233106B1FC5B67B5C /* Video_x2.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		0F74AD21D92825A42A0815111A0A2C07 /* Video_x1.c in Sources */ = {isa = PBXBuildFile; fileRef = 3254A89ECD4FDBAAC414E0B3F079155D /* Video_x1.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		10798261767039A05F4359496ABFF6A6 /* Joystick.c in Sources */ = {isa = PBXBuildFile; fileRef = 7B643FAC56294CBF278986099E45B1B7 /* Joystick.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		1148D5FBD5148D170C7E17C26560566C /* MinxColorPRC.c in Sources */ = {isa = PBXBuildFile; fileRef = ADE914B3AA67A03303A54C54FBFE4ACE /* MinxColorPRC.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		12B53656B6F3984BBC61A5DF17AC5B81 /* PokeMini_BG4.c in Sources */ = {isa = PBXBuildFile; fileRef = 38147991E88F71D295BFD3BD4EBD2AF6 /* PokeMini_BG4.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		12FDBF52DD3E7E7DBA2034DE70308318 /* MinxLCD.h in Headers */ = {isa = PBXBuildFile; fileRef = C14E57ECCB0D3ED4D6BA3659F6F06E80 /* MinxLCD.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		14CCD77CD5F3C53AB9D51C7F6A40331B /* PokeMini_BG2.c in Sources */ = {isa = PBXBuildFile; fileRef = CE627CCEC03E744178149024F169972D /* PokeMini_BG2.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		169417A57C4CC8C3D3F139BD6C90A1AC /* MinxAudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 00AA1CD1086FAA46BF1287A4CCD3B785 /* MinxAudio.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		17993B82B01AB3F0DE3320BA1943FB17 /* Video_x2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F796AFBD7D96D2233106B1FC5B67B5C /* Video_x2.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		1821F682BD7DAA080E4E95B0F1C95C21 /* PokeMini-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 40B6DC36EED6887DADA9836FC08EDA34 /* PokeMini-tvOS-dummy.m */; };
+		1AAB7FBAFF847FB2BCC3B389A320414E /* MinxTimers.c in Sources */ = {isa = PBXBuildFile; fileRef = 75BF54B56B3FBC07B73BB1E7CD714FBF /* MinxTimers.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		1B09E14F26BC28FA33600A111EDE71EB /* MinxColorPRC.h in Headers */ = {isa = PBXBuildFile; fileRef = D9CCEE72EB06BE7CBAEB6C807BD3E73B /* MinxColorPRC.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		1BBE43EFA2B3967CEE1669663E6CDDDB /* MinxIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A04904BE211200DAB5BF644B0ED9DED /* MinxIO.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		1E509FA1A569EAF454B4200A11C3C0D8 /* PokeMini_BG5.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D3A2F42AD9775EC2AD42408E8D2B684 /* PokeMini_BG5.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		1E9D18D759F43A8901A36E589993AC7F /* PokeMini_ColorPal.c in Sources */ = {isa = PBXBuildFile; fileRef = A62EE85A076C265401C5884ED6AD5B1D /* PokeMini_ColorPal.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		20268FA0F3260FB9F5FB45C64CF01DB6 /* MinxPRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 771D206C0E318BE8A0DA4136C5A3D63D /* MinxPRC.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		20A929039219711A4272DD9C632615F5 /* MinxIRQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FEE29E52C0D879154E54C8B31DC41F7 /* MinxIRQ.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		270BDC6503727D10EBB0468FD1188E2B /* Hardware.c in Sources */ = {isa = PBXBuildFile; fileRef = 406AF90571BBDCF2E69CACF4A7E169E1 /* Hardware.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		28479A14941D9EB000377E693B9D407C /* Video.h in Headers */ = {isa = PBXBuildFile; fileRef = FAD81A118545062718BF2000236E4A82 /* Video.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2A466503BE6A5E177B6BA53C862888D9 /* Hardware.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E3AE656C498BDD38DEFA19DEBC3599 /* Hardware.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2A7A853A48D66E181895510C543CB699 /* MinxIRQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FEE29E52C0D879154E54C8B31DC41F7 /* MinxIRQ.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		2B2481616FF8DEF0EC5FDBBBD5B8D5BA /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3777B8A48F64E5A4B3FD4C7D6628D26 /* AudioToolbox.framework */; };
+		2CB4ECCA457674A33D238C8D46487ADE /* Video_x4.c in Sources */ = {isa = PBXBuildFile; fileRef = AB65900788966183076D5C7FE8361013 /* Video_x4.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		2F9DD326895F637F2BD4E8911D3DF97A /* PMCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 373EB58723EA55A0CB386FAE6ACDD7B9 /* PMCommon.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3198162CCDFF9DCC01240F02982575EC /* MinxCPU_XX.c in Sources */ = {isa = PBXBuildFile; fileRef = D364F9F12BB1157C8B7AE33083CAE209 /* MinxCPU_XX.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		32AF00FA0E97AA06152D75E0D4BD62D3 /* MinxAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = D740295D426F05BC4E2F60A70F7B1CA6 /* MinxAudio.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		33B5A8833B280183BB46437A8D57DBA4 /* Missing.h in Headers */ = {isa = PBXBuildFile; fileRef = A37E1823BA1CD26D90BD52F4A3FFEC7C /* Missing.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		33FDD71F30D2598B88E0FC1CC9972E8E /* Video_x5.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB0D7A1D48F65D1FD24AA9B11BDF506 /* Video_x5.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		359D848B4E3CCD88749DC19BABACAFAA /* PVPokeMiniEmulatorCore.h in Copy ../../../.. Public Headers */ = {isa = PBXBuildFile; fileRef = E1A52C5F0F582643AE8364CDDAE2405E /* PVPokeMiniEmulatorCore.h */; };
+		35E03E4766DBEDBC9E9E08E71D6A0582 /* PokeMini_BG4.c in Sources */ = {isa = PBXBuildFile; fileRef = 38147991E88F71D295BFD3BD4EBD2AF6 /* PokeMini_BG4.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		362CCBC3EE8397E36AB259E8E7D58AC7 /* Video_x2.c in Sources */ = {isa = PBXBuildFile; fileRef = ED2DF99B3F529E3FB87C51BC6EF27CA6 /* Video_x2.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		3A817E640D86E6FFDF1BBBA3CDC395DD /* Multicart.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AED67CFC6834D11E999BFD16E9B8019 /* Multicart.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3F83773F3C9F3F8F6834301D05FB5CA9 /* PokeMini_Icons12.c in Sources */ = {isa = PBXBuildFile; fileRef = 21FD1D0699BA96DCF4D649D8A96F6A91 /* PokeMini_Icons12.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		41227C1F5F40E39C68093DAE3A9F2300 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = 16931BEA33F08ABD0BC6E6541CE5F2D9 /* PVPokeMini.h */; };
+		41A27E48A7A8948E4D51CBBC4D089C2F /* MinxCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = D32678390B9C15EE373CBB99A4DDB0C6 /* MinxCPU.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		43B7A8CCE4CF58CA3D81096F33CAF47A /* Multicart.c in Sources */ = {isa = PBXBuildFile; fileRef = 268984803F189F65C0B17F4C3A872649 /* Multicart.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		4454C617591704BDE6152D5915BFF31A /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = 16931BEA33F08ABD0BC6E6541CE5F2D9 /* PVPokeMini.h */; };
+		458F3492905075DF71D462C268E0D872 /* MinxCPU.c in Sources */ = {isa = PBXBuildFile; fileRef = 916639C8014B98BFFCBFA91799B440A6 /* MinxCPU.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		462826519C737E3B3E2D6FD05103E79C /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 444174F7137E74E27452B5896672F59F /* OpenGLES.framework */; };
+		4735D9DDF8AFEA899070514478D8ED35 /* MinxCPU_XX.c in Sources */ = {isa = PBXBuildFile; fileRef = D364F9F12BB1157C8B7AE33083CAE209 /* MinxCPU_XX.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		47C869D80F57EE84192DA15B7A6A660C /* MinxAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = D740295D426F05BC4E2F60A70F7B1CA6 /* MinxAudio.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		48315949695AF814405BE460E6DF47CD /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47F564C2773D4C604977A39CD839DF8 /* PVSupport.framework */; };
+		4943ED9DD1A876A3EE001EB2ACF09296 /* MinxColorPRC.c in Sources */ = {isa = PBXBuildFile; fileRef = ADE914B3AA67A03303A54C54FBFE4ACE /* MinxColorPRC.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		496BE63CF920E611EB06F36AC6FCC754 /* PokeMini_BG6.c in Sources */ = {isa = PBXBuildFile; fileRef = 94D96907C672EB7905E000C970FD02F4 /* PokeMini_BG6.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		4A3896ADE0FE0EF8B8F6C62EF79212E8 /* PokeMini_Icons12.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7A10F54FBEC11086EEF8397082FB50 /* PokeMini_Icons12.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4A75360543F373722ECB63DD7E19268F /* freebios.c in Sources */ = {isa = PBXBuildFile; fileRef = B152E91546DE1DCE34A0D018AE9EDF05 /* freebios.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		4CC7C79ED4C43CDCDAC4BD3E405A5B3A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A30BB619D1357659BF818DF6F74E78F7 /* InfoPlist.strings */; };
+		4CF918150DA7985B10443D1DCC0563C0 /* PokeMini_BG2.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E6C4691C3B09001391DBDD3243BF11 /* PokeMini_BG2.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4D08FF36E15413B0511395A9887F7C1C /* Video_x3.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D0D8738CFD09E59637BC69935F6C8F /* Video_x3.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		500CD77A9CBF6FA5188B2C971F9BF288 /* PokeMini_BG6.h in Headers */ = {isa = PBXBuildFile; fileRef = 12DE2F02743F9A17CFDB9B29FB48D6D2 /* PokeMini_BG6.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		52277400AD503688CED6BF484250E4BC /* PokeMini_BG5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F1DC49C5D1933A2E1E39432716D00 /* PokeMini_BG5.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		52AACE8C220B6D1E99A5C4887BFAA524 /* Video_x6.c in Sources */ = {isa = PBXBuildFile; fileRef = 73C481EE789B08214C89712EA160EA93 /* Video_x6.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		5688ADFAEF0415B0AB309C478B183A73 /* Video_x4.h in Headers */ = {isa = PBXBuildFile; fileRef = A23A42018E14A5ADA6C089E58924C210 /* Video_x4.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		58F146D4E661518E7F2467C9097E74FF /* freebios.h in Headers */ = {isa = PBXBuildFile; fileRef = A5486FCF7F7242C9F9254CD936A95D14 /* freebios.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5910A0E7788E1264FA6A316FB327FB62 /* MinxCPU_SP.c in Sources */ = {isa = PBXBuildFile; fileRef = 10CF49DB7D885B356018E21E8003A15E /* MinxCPU_SP.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		598301D85158D5D43F6293344F90F893 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D996C7F40C30F2B11010224E4BB076F8 /* Foundation.framework */; };
+		5A1CA943729425DC1DF67DAF15E37AA8 /* Endianess.h in Headers */ = {isa = PBXBuildFile; fileRef = 25D51660122024D79251CCE67683CC70 /* Endianess.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5A2CEFECE19566808559283DDF01F12E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A30BB619D1357659BF818DF6F74E78F7 /* InfoPlist.strings */; };
+		5B34D96933F60C8CE10421F700447D92 /* PokeMini_Font12.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B69669411B2059E835A63A657F585D /* PokeMini_Font12.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		5FE2B59CA98E584513DF7E6B3E7B8FB5 /* MinxIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A04904BE211200DAB5BF644B0ED9DED /* MinxIO.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		6070A59B09D43963E1719A731C4728E7 /* MinxTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2ACCF4F56959D12937DFA487A723155 /* MinxTimers.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		65642CD8732FC537366148AC688DE239 /* Multicart.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AED67CFC6834D11E999BFD16E9B8019 /* Multicart.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		66AA93AF960408EBBA4D1E1A4C35C5D5 /* PokeMini_ColorPal.c in Sources */ = {isa = PBXBuildFile; fileRef = A62EE85A076C265401C5884ED6AD5B1D /* PokeMini_ColorPal.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		6950F9A856058C1D1E0FA95C13BD35D8 /* PokeMini-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 840256FEF6FF88470761EBBC3C261F0B /* PokeMini-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		69C92508F290788271E0B156F1F4F2E5 /* MinxCPU_SP.c in Sources */ = {isa = PBXBuildFile; fileRef = 10CF49DB7D885B356018E21E8003A15E /* MinxCPU_SP.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		6B42479A900DA314112EBA7170DB2352 /* PVPokeMini.h in Copy ../../../.. Public Headers */ = {isa = PBXBuildFile; fileRef = 16931BEA33F08ABD0BC6E6541CE5F2D9 /* PVPokeMini.h */; };
+		6E3F736966A44126B87DB93161D0D217 /* Video_x1.c in Sources */ = {isa = PBXBuildFile; fileRef = 3254A89ECD4FDBAAC414E0B3F079155D /* Video_x1.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		6FFA6C16ADEC44F775092510135C8FA2 /* CommandLine.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FA2828679FBD10F182F974C563C28 /* CommandLine.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		713984181CE910AB25104A7B509B153F /* MinxCPU_noBranch.h in Headers */ = {isa = PBXBuildFile; fileRef = B60DFE9C8937CEE2C6F438763C337027 /* MinxCPU_noBranch.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		713F319F9EA982EC3A0688CE2C7F62E8 /* Endianess.h in Headers */ = {isa = PBXBuildFile; fileRef = 25D51660122024D79251CCE67683CC70 /* Endianess.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		71CC2C39156855453055560B5BD2CCE9 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = BC660E39126A7E676FFD8FAD555C130A /* CommandLine.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		7388CA8D2ADD4D65D24334D4A044DAA1 /* Joystick.h in Headers */ = {isa = PBXBuildFile; fileRef = A83972743C8E5179E5E540EA0892CC3A /* Joystick.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		74E425D8D860944F50950E49151DEDD3 /* Missing.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B001A47F933AD7171F670C7FC3321A1 /* Missing.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		75BDBBBAFA3E3E60FB419DBB1E2B6857 /* freebios.h in Headers */ = {isa = PBXBuildFile; fileRef = A5486FCF7F7242C9F9254CD936A95D14 /* freebios.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		776A541C196FEA3FD8AB5F5C61058E2B /* PVPokeMini.h in Copy ../../../.. Public Headers */ = {isa = PBXBuildFile; fileRef = 16931BEA33F08ABD0BC6E6541CE5F2D9 /* PVPokeMini.h */; };
+		7A16E869B588F196653309E4C0C58CCD /* PokeMini_BG5.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D3A2F42AD9775EC2AD42408E8D2B684 /* PokeMini_BG5.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		7A7F22A4B67A453FF8341EED1651F580 /* Video_x4.c in Sources */ = {isa = PBXBuildFile; fileRef = AB65900788966183076D5C7FE8361013 /* Video_x4.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		7D099970C769C2DBF0CD6385DC940A6D /* PokeMini_BG5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F1DC49C5D1933A2E1E39432716D00 /* PokeMini_BG5.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		7D0F44CCE20E003785CB0454BDBF3045 /* PokeMini.c in Sources */ = {isa = PBXBuildFile; fileRef = 35E9EE3F36724E425071C0F9645ECE8D /* PokeMini.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		7DC9C98AB891613BDAD3EE673A0554A3 /* PokeMini_Font12.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B69669411B2059E835A63A657F585D /* PokeMini_Font12.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		80D8CC2B2448D6296105D6BAEB3CE4C8 /* PokeMini_BG6.h in Headers */ = {isa = PBXBuildFile; fileRef = 12DE2F02743F9A17CFDB9B29FB48D6D2 /* PokeMini_BG6.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		80EDCA35ACA592F6CB218AA0587F83B7 /* PokeMini-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DF8012087F82DDB269292A51D5E9B101 /* PokeMini-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8647FC15E18C76F074134ABFF6CEADE6 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 57CB7FDDC3DEBE69E4655091738853A9 /* Core.plist */; };
+		8671B1F4A557E3446C6B5ACFCA3B199C /* PVPokeMiniEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B0AF96D9743FC1609BBB1EE1187448D /* PVPokeMiniEmulatorCore.m */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		86B7E968746CF6F97CF976F68C3F212F /* Video_x3.c in Sources */ = {isa = PBXBuildFile; fileRef = 7AA58EFFD94182BF4F4A9A50A6D65835 /* Video_x3.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		87544DD5E00E7A0462C23CB890B65436 /* freebios.c in Sources */ = {isa = PBXBuildFile; fileRef = B152E91546DE1DCE34A0D018AE9EDF05 /* freebios.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		87D166548994C2D54E9128ED82012C6F /* Video_x5.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E9A2F75B84C344ED9CB497A4EBC3BF /* Video_x5.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		89630CF6E8C6530F7A1FCA1530842C0C /* PokeMini_BG2.c in Sources */ = {isa = PBXBuildFile; fileRef = CE627CCEC03E744178149024F169972D /* PokeMini_BG2.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		8C23CA5CF68F32A4C4D6B4AAB66AA7D2 /* Video_x5.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E9A2F75B84C344ED9CB497A4EBC3BF /* Video_x5.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8CB37CB3550A2283DDE39B447F212C46 /* MinxLCD.h in Headers */ = {isa = PBXBuildFile; fileRef = C14E57ECCB0D3ED4D6BA3659F6F06E80 /* MinxLCD.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8CE7C66769812743ED55A712CE55AE95 /* UI.h in Headers */ = {isa = PBXBuildFile; fileRef = 795337897A51D8B605E334ACAFC7E3C4 /* UI.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8D4B4840851F5ADD7131FE429620F262 /* MinxCPU_noBranch.h in Headers */ = {isa = PBXBuildFile; fileRef = B60DFE9C8937CEE2C6F438763C337027 /* MinxCPU_noBranch.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8D84F445F16F3C1ABA4C4C4FC31DF339 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B47F564C2773D4C604977A39CD839DF8 /* PVSupport.framework */; };
+		8EAA110396A25F236A91C8BEA8EB221D /* Video_x6.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D848529D6055CC93269E3ED6A18EA5 /* Video_x6.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8F786AB088561F2C22DB37DD0EB42124 /* PokeMini-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = BF96F04E38AFA06AAEDC58931D0B8C67 /* PokeMini-iOS-dummy.m */; };
+		8FB0DA0B169734E4E6F084F5CA0E1C18 /* PokeMini_ColorPal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EFD73CBFB106D0D0616C43997AC4962 /* PokeMini_ColorPal.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		90A667DCAA06B9E12760708F56DAA703 /* PMCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 373EB58723EA55A0CB386FAE6ACDD7B9 /* PMCommon.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		918E34A6991F4D5CDDC20245288C8EAF /* Keyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E31DBD9B1E9DA88711C58C49E6A6811 /* Keyboard.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		924770D3CCD8EB295BF2A5C3D6D8154F /* MinxTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2ACCF4F56959D12937DFA487A723155 /* MinxTimers.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		930F63D834197B7088004E176A01E40E /* Video_x1.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F6DB19542EECD2E502A4C966ABD50E0 /* Video_x1.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		93566FE34EFA0398B1B078B5E07BA8FA /* Joystick.c in Sources */ = {isa = PBXBuildFile; fileRef = 7B643FAC56294CBF278986099E45B1B7 /* Joystick.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		95ADBA55F7E03E9D6E2335916735D437 /* Video_x3.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D0D8738CFD09E59637BC69935F6C8F /* Video_x3.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		97075F31C0D067941552953BF8AE133E /* MinxAudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 00AA1CD1086FAA46BF1287A4CCD3B785 /* MinxAudio.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		970EB7FD7D854C01909D1DA192B8C3B2 /* memory_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = FC47E3FF960BBE3E93FB2F2A4CCFFE96 /* memory_stream.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		9839C8E74AF4DEC6403F873CB0F9FBDF /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 57CB7FDDC3DEBE69E4655091738853A9 /* Core.plist */; };
+		988495B0E1EC00AFA6228FF1FEF6CAED /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A52C5F0F582643AE8364CDDAE2405E /* PVPokeMiniEmulatorCore.h */; };
+		9886245424C1196643DEB119CB4229C6 /* PokeMini_BG2.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E6C4691C3B09001391DBDD3243BF11 /* PokeMini_BG2.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		99699528511ECAC740D673148CBDA68D /* PokeMini_Font12.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F5567150CCE2051EBA4A5E96099C1A8 /* PokeMini_Font12.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		99C3CF6B05B12D9A580573A8CBB3974C /* MinxCPU_CE.c in Sources */ = {isa = PBXBuildFile; fileRef = B6E08EDF01AC309AD022A61A042C88B5 /* MinxCPU_CE.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		9E0B80DEBCC1CB37E593EFE085C9D766 /* PokeMini_Icons12.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7A10F54FBEC11086EEF8397082FB50 /* PokeMini_Icons12.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		ABC6378933C494BBDF8F0A130603D609 /* PokeMini_BG3.c in Sources */ = {isa = PBXBuildFile; fileRef = A355F8BD18EAF104BD452CF0E14D2127 /* PokeMini_BG3.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B0D192BB7812F8CB5AB27C2ED73A6B28 /* Video_x6.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D848529D6055CC93269E3ED6A18EA5 /* Video_x6.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B0FF7EBA346109A86F35726AA717F56A /* MinxIO.h in Headers */ = {isa = PBXBuildFile; fileRef = E43FC83622AB64C677D087F80D2B4AF6 /* MinxIO.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B2442CA701C790031D43A3A72B201E14 /* IOMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1861DCF9614E3742F2A7FCEEB105A7CD /* IOMap.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B30B29A1B46793C699AB8DB5536B5317 /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A52C5F0F582643AE8364CDDAE2405E /* PVPokeMiniEmulatorCore.h */; };
+		B337976147D96C2E85A7D80411CBBFC8 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37815160E5428EFCB86ECA5B366ACBDE /* PVLibrary.framework */; };
+		B39601F49BDA78BE10DA1AD83A15AEE4 /* NoUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 018039157793EB14757C0F798B52F218 /* NoUI.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B47DA6AF0BDFF373E227F4225A2CAFC0 /* PVPokeMiniEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B0AF96D9743FC1609BBB1EE1187448D /* PVPokeMiniEmulatorCore.m */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B5A7E7387CF0470D980EF4EC88EB8B0F /* MinxLCD.c in Sources */ = {isa = PBXBuildFile; fileRef = 605B66A20E7484DAF9DDDFF9C56BECE7 /* MinxLCD.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B669138F33F14F42E69C6DE39F22B5DD /* Video.c in Sources */ = {isa = PBXBuildFile; fileRef = E6D90B8053263B53A5A4F820CD32027B /* Video.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B6D55ED0FDD79F1EFA7F36FFBA5349C0 /* PokeMini_BG4.h in Headers */ = {isa = PBXBuildFile; fileRef = F9B7B41EEB85C874D28C5DFC901ED90A /* PokeMini_BG4.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B7790A7CA7F475CF762E69A297AB6579 /* PokeMini_Icons12.c in Sources */ = {isa = PBXBuildFile; fileRef = 21FD1D0699BA96DCF4D649D8A96F6A91 /* PokeMini_Icons12.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B88AE8B9C6A6499EB407241859DFE8C3 /* MinxPRC.c in Sources */ = {isa = PBXBuildFile; fileRef = C18EB8C671FAACAABDCA6B9B1A6AAE31 /* MinxPRC.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		B9EA2775143AC360A7B8F4B750B6772A /* Video_x6.c in Sources */ = {isa = PBXBuildFile; fileRef = 73C481EE789B08214C89712EA160EA93 /* Video_x6.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		BB7A5D9F940CC75ED4961F4F6E21BAAD /* PokeMini_BG6.c in Sources */ = {isa = PBXBuildFile; fileRef = 94D96907C672EB7905E000C970FD02F4 /* PokeMini_BG6.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		BB9311666B1EA3E6F0F52AF5A38A3CE5 /* MinxTimers.c in Sources */ = {isa = PBXBuildFile; fileRef = 75BF54B56B3FBC07B73BB1E7CD714FBF /* MinxTimers.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		BC4160A4F7CE48D5F10A042EF061C8E3 /* CommandLine.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FA2828679FBD10F182F974C563C28 /* CommandLine.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		BE75D8089D398A582B0FCFAD848A175D /* MinxPRC.c in Sources */ = {isa = PBXBuildFile; fileRef = C18EB8C671FAACAABDCA6B9B1A6AAE31 /* MinxPRC.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		BF577C536365FAB50A0DDEB3C72AB88C /* Missing.h in Headers */ = {isa = PBXBuildFile; fileRef = A37E1823BA1CD26D90BD52F4A3FFEC7C /* Missing.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		BFC4786BE1A3A09BAC9CAAAE10461F5E /* MinxIO.h in Headers */ = {isa = PBXBuildFile; fileRef = E43FC83622AB64C677D087F80D2B4AF6 /* MinxIO.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C10D6755D3D7E8F169D52E387635BC5B /* PokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = 1246ECF58C0A117BA844813F5FFA9896 /* PokeMini.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C5DE38CB2D766B7BAF4F348726BDC3D5 /* PokeMini.c in Sources */ = {isa = PBXBuildFile; fileRef = 35E9EE3F36724E425071C0F9645ECE8D /* PokeMini.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		C8E94E3C0E165E51935CB3388F5CF86F /* PokeMini_BG3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3308475795F542A5CBAFD06B237DB566 /* PokeMini_BG3.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C94BDF2CE8182C5ED473FA781A4EB31A /* PVPokeMiniEmulatorCore.h in Copy ../../../.. Public Headers */ = {isa = PBXBuildFile; fileRef = E1A52C5F0F582643AE8364CDDAE2405E /* PVPokeMiniEmulatorCore.h */; };
+		CA496F3E63A6DE9699F058388D3AC65F /* MinxCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = D32678390B9C15EE373CBB99A4DDB0C6 /* MinxCPU.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		CB57FE8E4F8C4153E774DE6B8A8CE42A /* Video.c in Sources */ = {isa = PBXBuildFile; fileRef = E6D90B8053263B53A5A4F820CD32027B /* Video.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		D1FFA36D27731B096E9C33F33720B39C /* PokeMini_BG3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3308475795F542A5CBAFD06B237DB566 /* PokeMini_BG3.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D2152EE4034AF268326774D2672A85C3 /* MinxCPU_CE.c in Sources */ = {isa = PBXBuildFile; fileRef = B6E08EDF01AC309AD022A61A042C88B5 /* MinxCPU_CE.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		D262239F93A311AA2BC6679826C7BCDE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9F90758F9A20182FA9B350220710E24 /* OpenGLES.framework */; };
+		D264AA8D409AE3FA6F714EFD39A20FCB /* PokeMini_BG3.c in Sources */ = {isa = PBXBuildFile; fileRef = A355F8BD18EAF104BD452CF0E14D2127 /* PokeMini_BG3.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		D47362FCC1A89BD435AD211C9839B2D0 /* MinxCPU_CF.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A3F76416442715CF2F20B4ADB5CF217 /* MinxCPU_CF.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		D498DAB411335595AD6F2A93A2243A67 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37815160E5428EFCB86ECA5B366ACBDE /* PVLibrary.framework */; };
+		D50C800A8B3E5D3E29212D9F8F448E9D /* Keyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E31DBD9B1E9DA88711C58C49E6A6811 /* Keyboard.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D556CAC48A638B24A87353D50E70653C /* Video_x1.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F6DB19542EECD2E502A4C966ABD50E0 /* Video_x1.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D8B39B4AFB9A1B09B17775A5D1D41142 /* Video_x3.c in Sources */ = {isa = PBXBuildFile; fileRef = 7AA58EFFD94182BF4F4A9A50A6D65835 /* Video_x3.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		D95947381ACBC7904CF820C88A523837 /* MinxCPU_CF.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A3F76416442715CF2F20B4ADB5CF217 /* MinxCPU_CF.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		DA9ED458A79D6B66F536206AF98E9472 /* Video_x4.h in Headers */ = {isa = PBXBuildFile; fileRef = A23A42018E14A5ADA6C089E58924C210 /* Video_x4.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		DB446EA629E988E59A95A5E48B7706BF /* MinxPRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 771D206C0E318BE8A0DA4136C5A3D63D /* MinxPRC.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		DBDA7D8B2B15B9C3F6E08C78F95FE6BF /* Video_x2.c in Sources */ = {isa = PBXBuildFile; fileRef = ED2DF99B3F529E3FB87C51BC6EF27CA6 /* Video_x2.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		E12201B793C58EEA633CE6A3372664B0 /* Video.h in Headers */ = {isa = PBXBuildFile; fileRef = FAD81A118545062718BF2000236E4A82 /* Video.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		E51C783E7E3FE4206713DAAE3641DBB3 /* Hardware.c in Sources */ = {isa = PBXBuildFile; fileRef = 406AF90571BBDCF2E69CACF4A7E169E1 /* Hardware.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		E6C88895FD6548E9A44A0C42AB0B8448 /* NoUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 018039157793EB14757C0F798B52F218 /* NoUI.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		E8CCBD826218CF57B631F274B49AB772 /* PokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = 1246ECF58C0A117BA844813F5FFA9896 /* PokeMini.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		E99299DC6728A91320059DAC0D709458 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = BC660E39126A7E676FFD8FAD555C130A /* CommandLine.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		EA1A6578651F2757691658B78C2B73E6 /* PMCommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 416AFCB84C79E068A6D53AE07F64E90A /* PMCommon.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		EACC4FD30FF356490C126CA996064E6B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B967D76A3FD4CF5FE7B8B6A10469E0 /* AudioToolbox.framework */; };
+		EC29B759B39248CFF53A5CFB98E6027C /* MinxIRQ.h in Headers */ = {isa = PBXBuildFile; fileRef = BB583BCA1B28053799DA9E77588D2F5C /* MinxIRQ.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		ECB0500F0DDDFD3D51BA8B7A7D882BE8 /* PokeMini_Font12.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F5567150CCE2051EBA4A5E96099C1A8 /* PokeMini_Font12.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F06830F459FF80089B329B7C2A64D3AD /* Joystick.h in Headers */ = {isa = PBXBuildFile; fileRef = A83972743C8E5179E5E540EA0892CC3A /* Joystick.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F07BDAA0D750500667205C11579B7204 /* MinxCPU.c in Sources */ = {isa = PBXBuildFile; fileRef = 916639C8014B98BFFCBFA91799B440A6 /* MinxCPU.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		F1C8BB5BBB16839990A7728727103A99 /* MinxColorPRC.h in Headers */ = {isa = PBXBuildFile; fileRef = D9CCEE72EB06BE7CBAEB6C807BD3E73B /* MinxColorPRC.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F1F9BC92B0B31968A926ED6D8666AEE0 /* PMCommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 416AFCB84C79E068A6D53AE07F64E90A /* PMCommon.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		F4BE8223B6FD29B2C7502C3D69FADC2C /* Video_x5.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB0D7A1D48F65D1FD24AA9B11BDF506 /* Video_x5.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		F4CBA6D97A79ED806AB6969CE15D32D1 /* MinxLCD.c in Sources */ = {isa = PBXBuildFile; fileRef = 605B66A20E7484DAF9DDDFF9C56BECE7 /* MinxLCD.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+		F595075EB156D8850CC0850C58E378F8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AC4915C2835D563E5A829A8F5FDCD6E /* Foundation.framework */; };
+		FBB1A023E552958B16FD1E224C74B3AA /* MinxIRQ.h in Headers */ = {isa = PBXBuildFile; fileRef = BB583BCA1B28053799DA9E77588D2F5C /* MinxIRQ.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		FBEF22029F58122C30FFECDDDD1261C1 /* Multicart.c in Sources */ = {isa = PBXBuildFile; fileRef = 268984803F189F65C0B17F4C3A872649 /* Multicart.c */; settings = {COMPILER_FLAGS = "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		247900729212C5687C3869AD9442FE01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA16D805DD735500530D24AA113B5EE5 /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
+			remoteInfo = "PVSupport-iOS";
+		};
+		596D0B6AA319993F05A5FE300EA46ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA16D805DD735500530D24AA113B5EE5 /* PVSupport.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
+			remoteInfo = "PVSupport-tvOS";
+		};
+		5E87B46D052083D1FC781A9D94502945 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D155EA7D18CD77E991E46AD9923D5ED0 /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
+			remoteInfo = "PVLibrary-tvOS";
+		};
+		F01C9F0935D3F955B56E1DD822E7F570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D155EA7D18CD77E991E46AD9923D5ED0 /* PVLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
+			remoteInfo = "PVLibrary-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56A565B2C12873692BA30F300CF6898B /* Copy ../../../.. Public Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PUBLIC_HEADERS_FOLDER_PATH)/../../../..";
+			dstSubfolderSpec = 16;
+			files = (
+				6B42479A900DA314112EBA7170DB2352 /* PVPokeMini.h in Copy ../../../.. Public Headers */,
+				C94BDF2CE8182C5ED473FA781A4EB31A /* PVPokeMiniEmulatorCore.h in Copy ../../../.. Public Headers */,
+			);
+			name = "Copy ../../../.. Public Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9DBE1638943D1F7CB858592CC4528E2B /* Copy ../../../.. Public Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PUBLIC_HEADERS_FOLDER_PATH)/../../../..";
+			dstSubfolderSpec = 16;
+			files = (
+				776A541C196FEA3FD8AB5F5C61058E2B /* PVPokeMini.h in Copy ../../../.. Public Headers */,
+				359D848B4E3CCD88749DC19BABACAFAA /* PVPokeMiniEmulatorCore.h in Copy ../../../.. Public Headers */,
+			);
+			name = "Copy ../../../.. Public Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		00AA1CD1086FAA46BF1287A4CCD3B785 /* MinxAudio.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxAudio.c; sourceTree = "<group>"; };
+		018039157793EB14757C0F798B52F218 /* NoUI.c */ = {isa = PBXFileReference; includeInIndex = 1; name = NoUI.c; path = Sources/NoUI.c; sourceTree = "<group>"; };
+		0A04904BE211200DAB5BF644B0ED9DED /* MinxIO.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxIO.c; sourceTree = "<group>"; };
+		10CF49DB7D885B356018E21E8003A15E /* MinxCPU_SP.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxCPU_SP.c; sourceTree = "<group>"; };
+		1246ECF58C0A117BA844813F5FFA9896 /* PokeMini.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini.h; sourceTree = "<group>"; };
+		12DE2F02743F9A17CFDB9B29FB48D6D2 /* PokeMini_BG6.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_BG6.h; sourceTree = "<group>"; };
+		16931BEA33F08ABD0BC6E6541CE5F2D9 /* PVPokeMini.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PVPokeMini.h; path = Sources/PVPokeMini.h; sourceTree = "<group>"; };
+		1861DCF9614E3742F2A7FCEEB105A7CD /* IOMap.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = IOMap.h; sourceTree = "<group>"; };
+		21D848529D6055CC93269E3ED6A18EA5 /* Video_x6.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video_x6.h; sourceTree = "<group>"; };
+		21FD1D0699BA96DCF4D649D8A96F6A91 /* PokeMini_Icons12.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_Icons12.c; sourceTree = "<group>"; };
+		22B967D76A3FD4CF5FE7B8B6A10469E0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		25D51660122024D79251CCE67683CC70 /* Endianess.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Endianess.h; sourceTree = "<group>"; };
+		266FA1C60D2BD8FCB77CC5559AD6EADD /* PokeMini.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PokeMini.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		268984803F189F65C0B17F4C3A872649 /* Multicart.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Multicart.c; sourceTree = "<group>"; };
+		2A3F76416442715CF2F20B4ADB5CF217 /* MinxCPU_CF.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxCPU_CF.c; sourceTree = "<group>"; };
+		2AC4915C2835D563E5A829A8F5FDCD6E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2DB0D7A1D48F65D1FD24AA9B11BDF506 /* Video_x5.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video_x5.c; sourceTree = "<group>"; };
+		2E422ADDD26EF06DAB8BE1BD5559AC63 /* InfoPlist.strings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		305C504B2AFC0680303010FB76A70454 /* PokeMini-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PokeMini-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		3254A89ECD4FDBAAC414E0B3F079155D /* Video_x1.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video_x1.c; sourceTree = "<group>"; };
+		32E9A2F75B84C344ED9CB497A4EBC3BF /* Video_x5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video_x5.h; sourceTree = "<group>"; };
+		3308475795F542A5CBAFD06B237DB566 /* PokeMini_BG3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_BG3.h; sourceTree = "<group>"; };
+		354375915C0BDEDBD2AF82CB86182A6A /* PokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PokeMini.framework; path = "PokeMini-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		35E9EE3F36724E425071C0F9645ECE8D /* PokeMini.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini.c; sourceTree = "<group>"; };
+		373EB58723EA55A0CB386FAE6ACDD7B9 /* PMCommon.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PMCommon.h; sourceTree = "<group>"; };
+		37815160E5428EFCB86ECA5B366ACBDE /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		379534B035D4823CB22FBCDF324F1EEA /* PokeMini-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PokeMini-tvOS.debug.xcconfig"; path = "../PokeMini-tvOS/PokeMini-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		38147991E88F71D295BFD3BD4EBD2AF6 /* PokeMini_BG4.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_BG4.c; sourceTree = "<group>"; };
+		3B4FA2828679FBD10F182F974C563C28 /* CommandLine.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CommandLine.c; sourceTree = "<group>"; };
+		3F796AFBD7D96D2233106B1FC5B67B5C /* Video_x2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video_x2.h; sourceTree = "<group>"; };
+		406AF90571BBDCF2E69CACF4A7E169E1 /* Hardware.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Hardware.c; sourceTree = "<group>"; };
+		40B6DC36EED6887DADA9836FC08EDA34 /* PokeMini-tvOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "PokeMini-tvOS-dummy.m"; path = "../PokeMini-tvOS/PokeMini-tvOS-dummy.m"; sourceTree = "<group>"; };
+		416AFCB84C79E068A6D53AE07F64E90A /* PMCommon.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PMCommon.c; sourceTree = "<group>"; };
+		41A71F2E0960C9E4C989B12B7A11152D /* PokeMini-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PokeMini-tvOS-prefix.pch"; path = "../PokeMini-tvOS/PokeMini-tvOS-prefix.pch"; sourceTree = "<group>"; };
+		444174F7137E74E27452B5896672F59F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		4B001A47F933AD7171F670C7FC3321A1 /* Missing.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Missing.c; sourceTree = "<group>"; };
+		4B8F1DC49C5D1933A2E1E39432716D00 /* PokeMini_BG5.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_BG5.c; sourceTree = "<group>"; };
+		4BA2FB9D5B9A4369306F24C4C2A0DE63 /* PokeMini-iOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PokeMini-iOS-Info.plist"; sourceTree = "<group>"; };
+		4E31DBD9B1E9DA88711C58C49E6A6811 /* Keyboard.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
+		57CB7FDDC3DEBE69E4655091738853A9 /* Core.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Core.plist; path = Resources/Core.plist; sourceTree = "<group>"; };
+		5FEE29E52C0D879154E54C8B31DC41F7 /* MinxIRQ.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxIRQ.c; sourceTree = "<group>"; };
+		605B66A20E7484DAF9DDDFF9C56BECE7 /* MinxLCD.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxLCD.c; sourceTree = "<group>"; };
+		6AED67CFC6834D11E999BFD16E9B8019 /* Multicart.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Multicart.h; sourceTree = "<group>"; };
+		6D3A2F42AD9775EC2AD42408E8D2B684 /* PokeMini_BG5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_BG5.h; sourceTree = "<group>"; };
+		6D849E1C072873A1CC953FCB741384D7 /* PokeMini-tvOS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "PokeMini-tvOS-Info.plist"; path = "../PokeMini-tvOS/PokeMini-tvOS-Info.plist"; sourceTree = "<group>"; };
+		7293CEC849E3F663E89F0468E96A6811 /* PokeMini-tvOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "PokeMini-tvOS.modulemap"; path = "../PokeMini-tvOS/PokeMini-tvOS.modulemap"; sourceTree = "<group>"; };
+		73C481EE789B08214C89712EA160EA93 /* Video_x6.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video_x6.c; sourceTree = "<group>"; };
+		75BF54B56B3FBC07B73BB1E7CD714FBF /* MinxTimers.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxTimers.c; sourceTree = "<group>"; };
+		771D206C0E318BE8A0DA4136C5A3D63D /* MinxPRC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxPRC.h; sourceTree = "<group>"; };
+		795337897A51D8B605E334ACAFC7E3C4 /* UI.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = UI.h; sourceTree = "<group>"; };
+		7AA58EFFD94182BF4F4A9A50A6D65835 /* Video_x3.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video_x3.c; sourceTree = "<group>"; };
+		7B0AF96D9743FC1609BBB1EE1187448D /* PVPokeMiniEmulatorCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PVPokeMiniEmulatorCore.m; path = Sources/PVPokeMiniEmulatorCore.m; sourceTree = "<group>"; };
+		7B643FAC56294CBF278986099E45B1B7 /* Joystick.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Joystick.c; sourceTree = "<group>"; };
+		7CA7790ECD53A7C6B53A45DDC9D53AE1 /* PokeMini-iOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PokeMini-iOS-prefix.pch"; sourceTree = "<group>"; };
+		7EFD73CBFB106D0D0616C43997AC4962 /* PokeMini_ColorPal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_ColorPal.h; sourceTree = "<group>"; };
+		840256FEF6FF88470761EBBC3C261F0B /* PokeMini-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PokeMini-iOS-umbrella.h"; sourceTree = "<group>"; };
+		84B69669411B2059E835A63A657F585D /* PokeMini_Font12.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_Font12.c; sourceTree = "<group>"; };
+		916639C8014B98BFFCBFA91799B440A6 /* MinxCPU.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxCPU.c; sourceTree = "<group>"; };
+		932AC15E392184A14285E9DEACD83E4C /* PokeMini-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "PokeMini-iOS.modulemap"; sourceTree = "<group>"; };
+		94D96907C672EB7905E000C970FD02F4 /* PokeMini_BG6.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_BG6.c; sourceTree = "<group>"; };
+		97E6C4691C3B09001391DBDD3243BF11 /* PokeMini_BG2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_BG2.h; sourceTree = "<group>"; };
+		9F5567150CCE2051EBA4A5E96099C1A8 /* PokeMini_Font12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_Font12.h; sourceTree = "<group>"; };
+		9F6DB19542EECD2E502A4C966ABD50E0 /* Video_x1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video_x1.h; sourceTree = "<group>"; };
+		A23A42018E14A5ADA6C089E58924C210 /* Video_x4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video_x4.h; sourceTree = "<group>"; };
+		A355F8BD18EAF104BD452CF0E14D2127 /* PokeMini_BG3.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_BG3.c; sourceTree = "<group>"; };
+		A37E1823BA1CD26D90BD52F4A3FFEC7C /* Missing.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Missing.h; sourceTree = "<group>"; };
+		A5486FCF7F7242C9F9254CD936A95D14 /* freebios.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = freebios.h; sourceTree = "<group>"; };
+		A62EE85A076C265401C5884ED6AD5B1D /* PokeMini_ColorPal.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_ColorPal.c; sourceTree = "<group>"; };
+		A83972743C8E5179E5E540EA0892CC3A /* Joystick.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Joystick.h; sourceTree = "<group>"; };
+		AB65900788966183076D5C7FE8361013 /* Video_x4.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video_x4.c; sourceTree = "<group>"; };
+		ADE914B3AA67A03303A54C54FBFE4ACE /* MinxColorPRC.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxColorPRC.c; sourceTree = "<group>"; };
+		B152E91546DE1DCE34A0D018AE9EDF05 /* freebios.c */ = {isa = PBXFileReference; includeInIndex = 1; path = freebios.c; sourceTree = "<group>"; };
+		B3777B8A48F64E5A4B3FD4C7D6628D26 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B47F564C2773D4C604977A39CD839DF8 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B60DFE9C8937CEE2C6F438763C337027 /* MinxCPU_noBranch.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxCPU_noBranch.h; sourceTree = "<group>"; };
+		B6E08EDF01AC309AD022A61A042C88B5 /* MinxCPU_CE.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxCPU_CE.c; sourceTree = "<group>"; };
+		B9F90758F9A20182FA9B350220710E24 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		BB583BCA1B28053799DA9E77588D2F5C /* MinxIRQ.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxIRQ.h; sourceTree = "<group>"; };
+		BC660E39126A7E676FFD8FAD555C130A /* CommandLine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
+		BF96F04E38AFA06AAEDC58931D0B8C67 /* PokeMini-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PokeMini-iOS-dummy.m"; sourceTree = "<group>"; };
+		C14E57ECCB0D3ED4D6BA3659F6F06E80 /* MinxLCD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxLCD.h; sourceTree = "<group>"; };
+		C18EB8C671FAACAABDCA6B9B1A6AAE31 /* MinxPRC.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxPRC.c; sourceTree = "<group>"; };
+		C20C5556FD4E45A5603C2FD34DF5EA15 /* PokeMini-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "PokeMini-tvOS.release.xcconfig"; path = "../PokeMini-tvOS/PokeMini-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		C3E3AE656C498BDD38DEFA19DEBC3599 /* Hardware.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Hardware.h; sourceTree = "<group>"; };
+		CA16D805DD735500530D24AA113B5EE5 /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
+		CC7A10F54FBEC11086EEF8397082FB50 /* PokeMini_Icons12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_Icons12.h; sourceTree = "<group>"; };
+		CE627CCEC03E744178149024F169972D /* PokeMini_BG2.c */ = {isa = PBXFileReference; includeInIndex = 1; path = PokeMini_BG2.c; sourceTree = "<group>"; };
+		D155EA7D18CD77E991E46AD9923D5ED0 /* PVLibrary */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVLibrary; path = PVLibrary.xcodeproj; sourceTree = "<group>"; };
+		D32678390B9C15EE373CBB99A4DDB0C6 /* MinxCPU.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxCPU.h; sourceTree = "<group>"; };
+		D364F9F12BB1157C8B7AE33083CAE209 /* MinxCPU_XX.c */ = {isa = PBXFileReference; includeInIndex = 1; path = MinxCPU_XX.c; sourceTree = "<group>"; };
+		D6D0D8738CFD09E59637BC69935F6C8F /* Video_x3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video_x3.h; sourceTree = "<group>"; };
+		D740295D426F05BC4E2F60A70F7B1CA6 /* MinxAudio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxAudio.h; sourceTree = "<group>"; };
+		D996C7F40C30F2B11010224E4BB076F8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		D9CCEE72EB06BE7CBAEB6C807BD3E73B /* MinxColorPRC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxColorPRC.h; sourceTree = "<group>"; };
+		DB1538196420A3867F2F00578D980A4A /* PokeMini-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PokeMini-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		DC122B70BB9351672DA5A010B20CE233 /* PokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PokeMini.framework; path = "PokeMini-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF8012087F82DDB269292A51D5E9B101 /* PokeMini-tvOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "PokeMini-tvOS-umbrella.h"; path = "../PokeMini-tvOS/PokeMini-tvOS-umbrella.h"; sourceTree = "<group>"; };
+		E1A52C5F0F582643AE8364CDDAE2405E /* PVPokeMiniEmulatorCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PVPokeMiniEmulatorCore.h; path = Sources/PVPokeMiniEmulatorCore.h; sourceTree = "<group>"; };
+		E2ACCF4F56959D12937DFA487A723155 /* MinxTimers.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxTimers.h; sourceTree = "<group>"; };
+		E43FC83622AB64C677D087F80D2B4AF6 /* MinxIO.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MinxIO.h; sourceTree = "<group>"; };
+		E6D90B8053263B53A5A4F820CD32027B /* Video.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video.c; sourceTree = "<group>"; };
+		ED2DF99B3F529E3FB87C51BC6EF27CA6 /* Video_x2.c */ = {isa = PBXFileReference; includeInIndex = 1; path = Video_x2.c; sourceTree = "<group>"; };
+		EE128F5001D43A50E28108FC20948BDC /* LICENSE.md */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.md; sourceTree = "<group>"; };
+		F9B7B41EEB85C874D28C5DFC901ED90A /* PokeMini_BG4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PokeMini_BG4.h; sourceTree = "<group>"; };
+		FAD81A118545062718BF2000236E4A82 /* Video.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Video.h; sourceTree = "<group>"; };
+		FC47E3FF960BBE3E93FB2F2A4CCFFE96 /* memory_stream.c */ = {isa = PBXFileReference; includeInIndex = 1; path = memory_stream.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0CA140EBE5F2784586DA1ED06BA37BAC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B2481616FF8DEF0EC5FDBBBD5B8D5BA /* AudioToolbox.framework in Frameworks */,
+				598301D85158D5D43F6293344F90F893 /* Foundation.framework in Frameworks */,
+				462826519C737E3B3E2D6FD05103E79C /* OpenGLES.framework in Frameworks */,
+				B337976147D96C2E85A7D80411CBBFC8 /* PVLibrary.framework in Frameworks */,
+				8D84F445F16F3C1ABA4C4C4FC31DF339 /* PVSupport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C576CE6C9E3E6C92BDC51ECD2BF54246 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EACC4FD30FF356490C126CA996064E6B /* AudioToolbox.framework in Frameworks */,
+				F595075EB156D8850CC0850C58E378F8 /* Foundation.framework in Frameworks */,
+				D262239F93A311AA2BC6679826C7BCDE /* OpenGLES.framework in Frameworks */,
+				D498DAB411335595AD6F2A93A2243A67 /* PVLibrary.framework in Frameworks */,
+				48315949695AF814405BE460E6DF47CD /* PVSupport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0296E1E9977FEB1EBE5571143339C6E4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				37815160E5428EFCB86ECA5B366ACBDE /* PVLibrary.framework */,
+				B47F564C2773D4C604977A39CD839DF8 /* PVSupport.framework */,
+				500868D254615A1C68F4529BE45D6E40 /* iOS */,
+				05607AE2640ABCA7D3247A3EBEA981B6 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		05607AE2640ABCA7D3247A3EBEA981B6 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				22B967D76A3FD4CF5FE7B8B6A10469E0 /* AudioToolbox.framework */,
+				2AC4915C2835D563E5A829A8F5FDCD6E /* Foundation.framework */,
+				B9F90758F9A20182FA9B350220710E24 /* OpenGLES.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		0C2A373906F69628C6A161EAFB786BBA /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				EE128F5001D43A50E28108FC20948BDC /* LICENSE.md */,
+				266FA1C60D2BD8FCB77CC5559AD6EADD /* PokeMini.podspec */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		0F32EA55537BBB987693893B0A2D653A /* freebios */ = {
+			isa = PBXGroup;
+			children = (
+				B152E91546DE1DCE34A0D018AE9EDF05 /* freebios.c */,
+				A5486FCF7F7242C9F9254CD936A95D14 /* freebios.h */,
+			);
+			name = freebios;
+			path = freebios;
+			sourceTree = "<group>";
+		};
+		1076707E3EEFFC427D907D1F0670334A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				354375915C0BDEDBD2AF82CB86182A6A /* PokeMini.framework */,
+				DC122B70BB9351672DA5A010B20CE233 /* PokeMini.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2ABDE8F26F1D4C90F80F271EA71C1254 /* upstream */ = {
+			isa = PBXGroup;
+			children = (
+				0F32EA55537BBB987693893B0A2D653A /* freebios */,
+				73E62EE37377C1DCEED47CFF7830A356 /* libretro */,
+				594EC4620CA455C1DFB07F85C6502109 /* resource */,
+				7201105936243F7ADE2961E4D31B0F53 /* source */,
+			);
+			name = upstream;
+			path = Sources/upstream;
+			sourceTree = "<group>";
+		};
+		46FA5933D55631F95930CA7DFEEC162D /* PokeMini */ = {
+			isa = PBXGroup;
+			children = (
+				57CB7FDDC3DEBE69E4655091738853A9 /* Core.plist */,
+				A30BB619D1357659BF818DF6F74E78F7 /* InfoPlist.strings */,
+				018039157793EB14757C0F798B52F218 /* NoUI.c */,
+				16931BEA33F08ABD0BC6E6541CE5F2D9 /* PVPokeMini.h */,
+				E1A52C5F0F582643AE8364CDDAE2405E /* PVPokeMiniEmulatorCore.h */,
+				7B0AF96D9743FC1609BBB1EE1187448D /* PVPokeMiniEmulatorCore.m */,
+				0C2A373906F69628C6A161EAFB786BBA /* Pod */,
+				F513203A8975C81A517701D944C7B922 /* Support Files */,
+				2ABDE8F26F1D4C90F80F271EA71C1254 /* upstream */,
+			);
+			name = PokeMini;
+			path = ../Cores/PokeMini;
+			sourceTree = "<group>";
+		};
+		500868D254615A1C68F4529BE45D6E40 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3777B8A48F64E5A4B3FD4C7D6628D26 /* AudioToolbox.framework */,
+				D996C7F40C30F2B11010224E4BB076F8 /* Foundation.framework */,
+				444174F7137E74E27452B5896672F59F /* OpenGLES.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		594EC4620CA455C1DFB07F85C6502109 /* resource */ = {
+			isa = PBXGroup;
+			children = (
+				CE627CCEC03E744178149024F169972D /* PokeMini_BG2.c */,
+				97E6C4691C3B09001391DBDD3243BF11 /* PokeMini_BG2.h */,
+				A355F8BD18EAF104BD452CF0E14D2127 /* PokeMini_BG3.c */,
+				3308475795F542A5CBAFD06B237DB566 /* PokeMini_BG3.h */,
+				38147991E88F71D295BFD3BD4EBD2AF6 /* PokeMini_BG4.c */,
+				F9B7B41EEB85C874D28C5DFC901ED90A /* PokeMini_BG4.h */,
+				4B8F1DC49C5D1933A2E1E39432716D00 /* PokeMini_BG5.c */,
+				6D3A2F42AD9775EC2AD42408E8D2B684 /* PokeMini_BG5.h */,
+				94D96907C672EB7905E000C970FD02F4 /* PokeMini_BG6.c */,
+				12DE2F02743F9A17CFDB9B29FB48D6D2 /* PokeMini_BG6.h */,
+				A62EE85A076C265401C5884ED6AD5B1D /* PokeMini_ColorPal.c */,
+				7EFD73CBFB106D0D0616C43997AC4962 /* PokeMini_ColorPal.h */,
+				84B69669411B2059E835A63A657F585D /* PokeMini_Font12.c */,
+				9F5567150CCE2051EBA4A5E96099C1A8 /* PokeMini_Font12.h */,
+				21FD1D0699BA96DCF4D649D8A96F6A91 /* PokeMini_Icons12.c */,
+				CC7A10F54FBEC11086EEF8397082FB50 /* PokeMini_Icons12.h */,
+			);
+			name = resource;
+			path = resource;
+			sourceTree = "<group>";
+		};
+		59AB0A639C651350662706CE798B4EC9 /* streams */ = {
+			isa = PBXGroup;
+			children = (
+				FC47E3FF960BBE3E93FB2F2A4CCFFE96 /* memory_stream.c */,
+			);
+			name = streams;
+			path = streams;
+			sourceTree = "<group>";
+		};
+		7201105936243F7ADE2961E4D31B0F53 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				3B4FA2828679FBD10F182F974C563C28 /* CommandLine.c */,
+				BC660E39126A7E676FFD8FAD555C130A /* CommandLine.h */,
+				25D51660122024D79251CCE67683CC70 /* Endianess.h */,
+				406AF90571BBDCF2E69CACF4A7E169E1 /* Hardware.c */,
+				C3E3AE656C498BDD38DEFA19DEBC3599 /* Hardware.h */,
+				1861DCF9614E3742F2A7FCEEB105A7CD /* IOMap.h */,
+				7B643FAC56294CBF278986099E45B1B7 /* Joystick.c */,
+				A83972743C8E5179E5E540EA0892CC3A /* Joystick.h */,
+				4E31DBD9B1E9DA88711C58C49E6A6811 /* Keyboard.h */,
+				00AA1CD1086FAA46BF1287A4CCD3B785 /* MinxAudio.c */,
+				D740295D426F05BC4E2F60A70F7B1CA6 /* MinxAudio.h */,
+				ADE914B3AA67A03303A54C54FBFE4ACE /* MinxColorPRC.c */,
+				D9CCEE72EB06BE7CBAEB6C807BD3E73B /* MinxColorPRC.h */,
+				916639C8014B98BFFCBFA91799B440A6 /* MinxCPU.c */,
+				D32678390B9C15EE373CBB99A4DDB0C6 /* MinxCPU.h */,
+				B6E08EDF01AC309AD022A61A042C88B5 /* MinxCPU_CE.c */,
+				2A3F76416442715CF2F20B4ADB5CF217 /* MinxCPU_CF.c */,
+				B60DFE9C8937CEE2C6F438763C337027 /* MinxCPU_noBranch.h */,
+				10CF49DB7D885B356018E21E8003A15E /* MinxCPU_SP.c */,
+				D364F9F12BB1157C8B7AE33083CAE209 /* MinxCPU_XX.c */,
+				0A04904BE211200DAB5BF644B0ED9DED /* MinxIO.c */,
+				E43FC83622AB64C677D087F80D2B4AF6 /* MinxIO.h */,
+				5FEE29E52C0D879154E54C8B31DC41F7 /* MinxIRQ.c */,
+				BB583BCA1B28053799DA9E77588D2F5C /* MinxIRQ.h */,
+				605B66A20E7484DAF9DDDFF9C56BECE7 /* MinxLCD.c */,
+				C14E57ECCB0D3ED4D6BA3659F6F06E80 /* MinxLCD.h */,
+				C18EB8C671FAACAABDCA6B9B1A6AAE31 /* MinxPRC.c */,
+				771D206C0E318BE8A0DA4136C5A3D63D /* MinxPRC.h */,
+				75BF54B56B3FBC07B73BB1E7CD714FBF /* MinxTimers.c */,
+				E2ACCF4F56959D12937DFA487A723155 /* MinxTimers.h */,
+				4B001A47F933AD7171F670C7FC3321A1 /* Missing.c */,
+				A37E1823BA1CD26D90BD52F4A3FFEC7C /* Missing.h */,
+				268984803F189F65C0B17F4C3A872649 /* Multicart.c */,
+				6AED67CFC6834D11E999BFD16E9B8019 /* Multicart.h */,
+				416AFCB84C79E068A6D53AE07F64E90A /* PMCommon.c */,
+				373EB58723EA55A0CB386FAE6ACDD7B9 /* PMCommon.h */,
+				35E9EE3F36724E425071C0F9645ECE8D /* PokeMini.c */,
+				1246ECF58C0A117BA844813F5FFA9896 /* PokeMini.h */,
+				795337897A51D8B605E334ACAFC7E3C4 /* UI.h */,
+				E6D90B8053263B53A5A4F820CD32027B /* Video.c */,
+				FAD81A118545062718BF2000236E4A82 /* Video.h */,
+				3254A89ECD4FDBAAC414E0B3F079155D /* Video_x1.c */,
+				9F6DB19542EECD2E502A4C966ABD50E0 /* Video_x1.h */,
+				ED2DF99B3F529E3FB87C51BC6EF27CA6 /* Video_x2.c */,
+				3F796AFBD7D96D2233106B1FC5B67B5C /* Video_x2.h */,
+				7AA58EFFD94182BF4F4A9A50A6D65835 /* Video_x3.c */,
+				D6D0D8738CFD09E59637BC69935F6C8F /* Video_x3.h */,
+				AB65900788966183076D5C7FE8361013 /* Video_x4.c */,
+				A23A42018E14A5ADA6C089E58924C210 /* Video_x4.h */,
+				2DB0D7A1D48F65D1FD24AA9B11BDF506 /* Video_x5.c */,
+				32E9A2F75B84C344ED9CB497A4EBC3BF /* Video_x5.h */,
+				73C481EE789B08214C89712EA160EA93 /* Video_x6.c */,
+				21D848529D6055CC93269E3ED6A18EA5 /* Video_x6.h */,
+			);
+			name = source;
+			path = source;
+			sourceTree = "<group>";
+		};
+		73E62EE37377C1DCEED47CFF7830A356 /* libretro */ = {
+			isa = PBXGroup;
+			children = (
+				FFF858F25C25DDAD214BA3DF2F03B0D2 /* libretro-common */,
+			);
+			name = libretro;
+			path = libretro;
+			sourceTree = "<group>";
+		};
+		956631EB441C2FF294B4792476894EE4 = {
+			isa = PBXGroup;
+			children = (
+				D118A0220721E3AC6155E28AD5BC0209 /* Dependencies */,
+				0296E1E9977FEB1EBE5571143339C6E4 /* Frameworks */,
+				46FA5933D55631F95930CA7DFEEC162D /* PokeMini */,
+				1076707E3EEFFC427D907D1F0670334A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D118A0220721E3AC6155E28AD5BC0209 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				D155EA7D18CD77E991E46AD9923D5ED0 /* PVLibrary */,
+				CA16D805DD735500530D24AA113B5EE5 /* PVSupport */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		F513203A8975C81A517701D944C7B922 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				932AC15E392184A14285E9DEACD83E4C /* PokeMini-iOS.modulemap */,
+				BF96F04E38AFA06AAEDC58931D0B8C67 /* PokeMini-iOS-dummy.m */,
+				4BA2FB9D5B9A4369306F24C4C2A0DE63 /* PokeMini-iOS-Info.plist */,
+				7CA7790ECD53A7C6B53A45DDC9D53AE1 /* PokeMini-iOS-prefix.pch */,
+				840256FEF6FF88470761EBBC3C261F0B /* PokeMini-iOS-umbrella.h */,
+				305C504B2AFC0680303010FB76A70454 /* PokeMini-iOS.debug.xcconfig */,
+				DB1538196420A3867F2F00578D980A4A /* PokeMini-iOS.release.xcconfig */,
+				7293CEC849E3F663E89F0468E96A6811 /* PokeMini-tvOS.modulemap */,
+				40B6DC36EED6887DADA9836FC08EDA34 /* PokeMini-tvOS-dummy.m */,
+				6D849E1C072873A1CC953FCB741384D7 /* PokeMini-tvOS-Info.plist */,
+				41A71F2E0960C9E4C989B12B7A11152D /* PokeMini-tvOS-prefix.pch */,
+				DF8012087F82DDB269292A51D5E9B101 /* PokeMini-tvOS-umbrella.h */,
+				379534B035D4823CB22FBCDF324F1EEA /* PokeMini-tvOS.debug.xcconfig */,
+				C20C5556FD4E45A5603C2FD34DF5EA15 /* PokeMini-tvOS.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../../Pods/Target Support Files/PokeMini-iOS";
+			sourceTree = "<group>";
+		};
+		FFF858F25C25DDAD214BA3DF2F03B0D2 /* libretro-common */ = {
+			isa = PBXGroup;
+			children = (
+				59AB0A639C651350662706CE798B4EC9 /* streams */,
+			);
+			name = "libretro-common";
+			path = "libretro-common";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		597B6CD714876B672297CF7717B61443 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E99299DC6728A91320059DAC0D709458 /* CommandLine.h in Headers */,
+				713F319F9EA982EC3A0688CE2C7F62E8 /* Endianess.h in Headers */,
+				58F146D4E661518E7F2467C9097E74FF /* freebios.h in Headers */,
+				0AEF207F2418B89A1FE4FB61003BB562 /* Hardware.h in Headers */,
+				B2442CA701C790031D43A3A72B201E14 /* IOMap.h in Headers */,
+				F06830F459FF80089B329B7C2A64D3AD /* Joystick.h in Headers */,
+				D50C800A8B3E5D3E29212D9F8F448E9D /* Keyboard.h in Headers */,
+				32AF00FA0E97AA06152D75E0D4BD62D3 /* MinxAudio.h in Headers */,
+				1B09E14F26BC28FA33600A111EDE71EB /* MinxColorPRC.h in Headers */,
+				CA496F3E63A6DE9699F058388D3AC65F /* MinxCPU.h in Headers */,
+				8D4B4840851F5ADD7131FE429620F262 /* MinxCPU_noBranch.h in Headers */,
+				B0FF7EBA346109A86F35726AA717F56A /* MinxIO.h in Headers */,
+				FBB1A023E552958B16FD1E224C74B3AA /* MinxIRQ.h in Headers */,
+				8CB37CB3550A2283DDE39B447F212C46 /* MinxLCD.h in Headers */,
+				20268FA0F3260FB9F5FB45C64CF01DB6 /* MinxPRC.h in Headers */,
+				6070A59B09D43963E1719A731C4728E7 /* MinxTimers.h in Headers */,
+				33B5A8833B280183BB46437A8D57DBA4 /* Missing.h in Headers */,
+				3A817E640D86E6FFDF1BBBA3CDC395DD /* Multicart.h in Headers */,
+				2F9DD326895F637F2BD4E8911D3DF97A /* PMCommon.h in Headers */,
+				6950F9A856058C1D1E0FA95C13BD35D8 /* PokeMini-iOS-umbrella.h in Headers */,
+				E8CCBD826218CF57B631F274B49AB772 /* PokeMini.h in Headers */,
+				9886245424C1196643DEB119CB4229C6 /* PokeMini_BG2.h in Headers */,
+				D1FFA36D27731B096E9C33F33720B39C /* PokeMini_BG3.h in Headers */,
+				05B63E57191B196E0607E282C4363746 /* PokeMini_BG4.h in Headers */,
+				1E509FA1A569EAF454B4200A11C3C0D8 /* PokeMini_BG5.h in Headers */,
+				500CD77A9CBF6FA5188B2C971F9BF288 /* PokeMini_BG6.h in Headers */,
+				05722DCEEE58AC74DCB39827BDDE7C86 /* PokeMini_ColorPal.h in Headers */,
+				99699528511ECAC740D673148CBDA68D /* PokeMini_Font12.h in Headers */,
+				9E0B80DEBCC1CB37E593EFE085C9D766 /* PokeMini_Icons12.h in Headers */,
+				4454C617591704BDE6152D5915BFF31A /* PVPokeMini.h in Headers */,
+				B30B29A1B46793C699AB8DB5536B5317 /* PVPokeMiniEmulatorCore.h in Headers */,
+				02383BC027B1369A308DAAA18F2E6833 /* UI.h in Headers */,
+				28479A14941D9EB000377E693B9D407C /* Video.h in Headers */,
+				930F63D834197B7088004E176A01E40E /* Video_x1.h in Headers */,
+				0D15962943E01B006FC8D1F6D2F48FE8 /* Video_x2.h in Headers */,
+				4D08FF36E15413B0511395A9887F7C1C /* Video_x3.h in Headers */,
+				DA9ED458A79D6B66F536206AF98E9472 /* Video_x4.h in Headers */,
+				87D166548994C2D54E9128ED82012C6F /* Video_x5.h in Headers */,
+				8EAA110396A25F236A91C8BEA8EB221D /* Video_x6.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E056AFBE7B1D5483FDF925E131DC0EA3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71CC2C39156855453055560B5BD2CCE9 /* CommandLine.h in Headers */,
+				5A1CA943729425DC1DF67DAF15E37AA8 /* Endianess.h in Headers */,
+				75BDBBBAFA3E3E60FB419DBB1E2B6857 /* freebios.h in Headers */,
+				2A466503BE6A5E177B6BA53C862888D9 /* Hardware.h in Headers */,
+				07F9BE2EC2830B7EE7424E4EB52B5930 /* IOMap.h in Headers */,
+				7388CA8D2ADD4D65D24334D4A044DAA1 /* Joystick.h in Headers */,
+				918E34A6991F4D5CDDC20245288C8EAF /* Keyboard.h in Headers */,
+				47C869D80F57EE84192DA15B7A6A660C /* MinxAudio.h in Headers */,
+				F1C8BB5BBB16839990A7728727103A99 /* MinxColorPRC.h in Headers */,
+				41A27E48A7A8948E4D51CBBC4D089C2F /* MinxCPU.h in Headers */,
+				713984181CE910AB25104A7B509B153F /* MinxCPU_noBranch.h in Headers */,
+				BFC4786BE1A3A09BAC9CAAAE10461F5E /* MinxIO.h in Headers */,
+				EC29B759B39248CFF53A5CFB98E6027C /* MinxIRQ.h in Headers */,
+				12FDBF52DD3E7E7DBA2034DE70308318 /* MinxLCD.h in Headers */,
+				DB446EA629E988E59A95A5E48B7706BF /* MinxPRC.h in Headers */,
+				924770D3CCD8EB295BF2A5C3D6D8154F /* MinxTimers.h in Headers */,
+				BF577C536365FAB50A0DDEB3C72AB88C /* Missing.h in Headers */,
+				65642CD8732FC537366148AC688DE239 /* Multicart.h in Headers */,
+				90A667DCAA06B9E12760708F56DAA703 /* PMCommon.h in Headers */,
+				80EDCA35ACA592F6CB218AA0587F83B7 /* PokeMini-tvOS-umbrella.h in Headers */,
+				C10D6755D3D7E8F169D52E387635BC5B /* PokeMini.h in Headers */,
+				4CF918150DA7985B10443D1DCC0563C0 /* PokeMini_BG2.h in Headers */,
+				C8E94E3C0E165E51935CB3388F5CF86F /* PokeMini_BG3.h in Headers */,
+				B6D55ED0FDD79F1EFA7F36FFBA5349C0 /* PokeMini_BG4.h in Headers */,
+				7A16E869B588F196653309E4C0C58CCD /* PokeMini_BG5.h in Headers */,
+				80D8CC2B2448D6296105D6BAEB3CE4C8 /* PokeMini_BG6.h in Headers */,
+				8FB0DA0B169734E4E6F084F5CA0E1C18 /* PokeMini_ColorPal.h in Headers */,
+				ECB0500F0DDDFD3D51BA8B7A7D882BE8 /* PokeMini_Font12.h in Headers */,
+				4A3896ADE0FE0EF8B8F6C62EF79212E8 /* PokeMini_Icons12.h in Headers */,
+				41227C1F5F40E39C68093DAE3A9F2300 /* PVPokeMini.h in Headers */,
+				988495B0E1EC00AFA6228FF1FEF6CAED /* PVPokeMiniEmulatorCore.h in Headers */,
+				8CE7C66769812743ED55A712CE55AE95 /* UI.h in Headers */,
+				E12201B793C58EEA633CE6A3372664B0 /* Video.h in Headers */,
+				D556CAC48A638B24A87353D50E70653C /* Video_x1.h in Headers */,
+				17993B82B01AB3F0DE3320BA1943FB17 /* Video_x2.h in Headers */,
+				95ADBA55F7E03E9D6E2335916735D437 /* Video_x3.h in Headers */,
+				5688ADFAEF0415B0AB309C478B183A73 /* Video_x4.h in Headers */,
+				8C23CA5CF68F32A4C4D6B4AAB66AA7D2 /* Video_x5.h in Headers */,
+				B0D192BB7812F8CB5AB27C2ED73A6B28 /* Video_x6.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		BB2CBE89AA3FA4AAA471A6688647D1F9 /* PokeMini-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B71FA4649A527D27E85DA0D69C09DE35 /* Build configuration list for PBXNativeTarget "PokeMini-tvOS" */;
+			buildPhases = (
+				E056AFBE7B1D5483FDF925E131DC0EA3 /* Headers */,
+				56A565B2C12873692BA30F300CF6898B /* Copy ../../../.. Public Headers */,
+				20D80C42B05296ED6A99E5016DCBF14D /* Sources */,
+				C576CE6C9E3E6C92BDC51ECD2BF54246 /* Frameworks */,
+				7439F60D113E4AB59989159118E96FB3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3F0848B92021F7FD80AE6F21A52B505B /* PBXTargetDependency */,
+				13D899B5B206AED1741DA4FEF5661C58 /* PBXTargetDependency */,
+			);
+			name = "PokeMini-tvOS";
+			productName = "PokeMini-tvOS";
+			productReference = DC122B70BB9351672DA5A010B20CE233 /* PokeMini.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		DC4315048EA3A88086725C7A29F572CD /* PokeMini-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9B551D04842742C5338CB645EEC9AFF /* Build configuration list for PBXNativeTarget "PokeMini-iOS" */;
+			buildPhases = (
+				597B6CD714876B672297CF7717B61443 /* Headers */,
+				9DBE1638943D1F7CB858592CC4528E2B /* Copy ../../../.. Public Headers */,
+				83A6A5D63B00B567B6418447DF3C049C /* Sources */,
+				0CA140EBE5F2784586DA1ED06BA37BAC /* Frameworks */,
+				69EA6965F00464E528469B7D3D8BABA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7264D946AE67782DEED29F56B92B59E3 /* PBXTargetDependency */,
+				2E104B61A52DBA7D87BB9EDFC9B46966 /* PBXTargetDependency */,
+			);
+			name = "PokeMini-iOS";
+			productName = "PokeMini-iOS";
+			productReference = 354375915C0BDEDBD2AF82CB86182A6A /* PokeMini.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C3EE469A24AF24E9E0C49C14802FEF60 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 7D7C3C424F990DFE2F421BAA0919CE84 /* Build configuration list for PBXProject "PokeMini" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 956631EB441C2FF294B4792476894EE4;
+			productRefGroup = 1076707E3EEFFC427D907D1F0670334A /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProjectRef = CA16D805DD735500530D24AA113B5EE5 /* PVSupport */;
+				},
+				{
+					ProjectRef = D155EA7D18CD77E991E46AD9923D5ED0 /* PVLibrary */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				DC4315048EA3A88086725C7A29F572CD /* PokeMini-iOS */,
+				BB2CBE89AA3FA4AAA471A6688647D1F9 /* PokeMini-tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		69EA6965F00464E528469B7D3D8BABA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9839C8E74AF4DEC6403F873CB0F9FBDF /* Core.plist in Resources */,
+				4CC7C79ED4C43CDCDAC4BD3E405A5B3A /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7439F60D113E4AB59989159118E96FB3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8647FC15E18C76F074134ABFF6CEADE6 /* Core.plist in Resources */,
+				5A2CEFECE19566808559283DDF01F12E /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		20D80C42B05296ED6A99E5016DCBF14D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FFA6C16ADEC44F775092510135C8FA2 /* CommandLine.c in Sources */,
+				87544DD5E00E7A0462C23CB890B65436 /* freebios.c in Sources */,
+				E51C783E7E3FE4206713DAAE3641DBB3 /* Hardware.c in Sources */,
+				93566FE34EFA0398B1B078B5E07BA8FA /* Joystick.c in Sources */,
+				970EB7FD7D854C01909D1DA192B8C3B2 /* memory_stream.c in Sources */,
+				169417A57C4CC8C3D3F139BD6C90A1AC /* MinxAudio.c in Sources */,
+				4943ED9DD1A876A3EE001EB2ACF09296 /* MinxColorPRC.c in Sources */,
+				F07BDAA0D750500667205C11579B7204 /* MinxCPU.c in Sources */,
+				99C3CF6B05B12D9A580573A8CBB3974C /* MinxCPU_CE.c in Sources */,
+				D47362FCC1A89BD435AD211C9839B2D0 /* MinxCPU_CF.c in Sources */,
+				69C92508F290788271E0B156F1F4F2E5 /* MinxCPU_SP.c in Sources */,
+				3198162CCDFF9DCC01240F02982575EC /* MinxCPU_XX.c in Sources */,
+				5FE2B59CA98E584513DF7E6B3E7B8FB5 /* MinxIO.c in Sources */,
+				2A7A853A48D66E181895510C543CB699 /* MinxIRQ.c in Sources */,
+				F4CBA6D97A79ED806AB6969CE15D32D1 /* MinxLCD.c in Sources */,
+				B88AE8B9C6A6499EB407241859DFE8C3 /* MinxPRC.c in Sources */,
+				1AAB7FBAFF847FB2BCC3B389A320414E /* MinxTimers.c in Sources */,
+				089293A11D889D8F8E353B0390405BFD /* Missing.c in Sources */,
+				43B7A8CCE4CF58CA3D81096F33CAF47A /* Multicart.c in Sources */,
+				B39601F49BDA78BE10DA1AD83A15AEE4 /* NoUI.c in Sources */,
+				F1F9BC92B0B31968A926ED6D8666AEE0 /* PMCommon.c in Sources */,
+				1821F682BD7DAA080E4E95B0F1C95C21 /* PokeMini-tvOS-dummy.m in Sources */,
+				7D0F44CCE20E003785CB0454BDBF3045 /* PokeMini.c in Sources */,
+				89630CF6E8C6530F7A1FCA1530842C0C /* PokeMini_BG2.c in Sources */,
+				D264AA8D409AE3FA6F714EFD39A20FCB /* PokeMini_BG3.c in Sources */,
+				35E03E4766DBEDBC9E9E08E71D6A0582 /* PokeMini_BG4.c in Sources */,
+				7D099970C769C2DBF0CD6385DC940A6D /* PokeMini_BG5.c in Sources */,
+				BB7A5D9F940CC75ED4961F4F6E21BAAD /* PokeMini_BG6.c in Sources */,
+				1E9D18D759F43A8901A36E589993AC7F /* PokeMini_ColorPal.c in Sources */,
+				7DC9C98AB891613BDAD3EE673A0554A3 /* PokeMini_Font12.c in Sources */,
+				B7790A7CA7F475CF762E69A297AB6579 /* PokeMini_Icons12.c in Sources */,
+				8671B1F4A557E3446C6B5ACFCA3B199C /* PVPokeMiniEmulatorCore.m in Sources */,
+				CB57FE8E4F8C4153E774DE6B8A8CE42A /* Video.c in Sources */,
+				6E3F736966A44126B87DB93161D0D217 /* Video_x1.c in Sources */,
+				DBDA7D8B2B15B9C3F6E08C78F95FE6BF /* Video_x2.c in Sources */,
+				86B7E968746CF6F97CF976F68C3F212F /* Video_x3.c in Sources */,
+				7A7F22A4B67A453FF8341EED1651F580 /* Video_x4.c in Sources */,
+				33FDD71F30D2598B88E0FC1CC9972E8E /* Video_x5.c in Sources */,
+				B9EA2775143AC360A7B8F4B750B6772A /* Video_x6.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83A6A5D63B00B567B6418447DF3C049C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC4160A4F7CE48D5F10A042EF061C8E3 /* CommandLine.c in Sources */,
+				4A75360543F373722ECB63DD7E19268F /* freebios.c in Sources */,
+				270BDC6503727D10EBB0468FD1188E2B /* Hardware.c in Sources */,
+				10798261767039A05F4359496ABFF6A6 /* Joystick.c in Sources */,
+				01330937A4DD309F2D4F13EA479FA806 /* memory_stream.c in Sources */,
+				97075F31C0D067941552953BF8AE133E /* MinxAudio.c in Sources */,
+				1148D5FBD5148D170C7E17C26560566C /* MinxColorPRC.c in Sources */,
+				458F3492905075DF71D462C268E0D872 /* MinxCPU.c in Sources */,
+				D2152EE4034AF268326774D2672A85C3 /* MinxCPU_CE.c in Sources */,
+				D95947381ACBC7904CF820C88A523837 /* MinxCPU_CF.c in Sources */,
+				5910A0E7788E1264FA6A316FB327FB62 /* MinxCPU_SP.c in Sources */,
+				4735D9DDF8AFEA899070514478D8ED35 /* MinxCPU_XX.c in Sources */,
+				1BBE43EFA2B3967CEE1669663E6CDDDB /* MinxIO.c in Sources */,
+				20A929039219711A4272DD9C632615F5 /* MinxIRQ.c in Sources */,
+				B5A7E7387CF0470D980EF4EC88EB8B0F /* MinxLCD.c in Sources */,
+				BE75D8089D398A582B0FCFAD848A175D /* MinxPRC.c in Sources */,
+				BB9311666B1EA3E6F0F52AF5A38A3CE5 /* MinxTimers.c in Sources */,
+				74E425D8D860944F50950E49151DEDD3 /* Missing.c in Sources */,
+				FBEF22029F58122C30FFECDDDD1261C1 /* Multicart.c in Sources */,
+				E6C88895FD6548E9A44A0C42AB0B8448 /* NoUI.c in Sources */,
+				EA1A6578651F2757691658B78C2B73E6 /* PMCommon.c in Sources */,
+				8F786AB088561F2C22DB37DD0EB42124 /* PokeMini-iOS-dummy.m in Sources */,
+				C5DE38CB2D766B7BAF4F348726BDC3D5 /* PokeMini.c in Sources */,
+				14CCD77CD5F3C53AB9D51C7F6A40331B /* PokeMini_BG2.c in Sources */,
+				ABC6378933C494BBDF8F0A130603D609 /* PokeMini_BG3.c in Sources */,
+				12B53656B6F3984BBC61A5DF17AC5B81 /* PokeMini_BG4.c in Sources */,
+				52277400AD503688CED6BF484250E4BC /* PokeMini_BG5.c in Sources */,
+				496BE63CF920E611EB06F36AC6FCC754 /* PokeMini_BG6.c in Sources */,
+				66AA93AF960408EBBA4D1E1A4C35C5D5 /* PokeMini_ColorPal.c in Sources */,
+				5B34D96933F60C8CE10421F700447D92 /* PokeMini_Font12.c in Sources */,
+				3F83773F3C9F3F8F6834301D05FB5CA9 /* PokeMini_Icons12.c in Sources */,
+				B47DA6AF0BDFF373E227F4225A2CAFC0 /* PVPokeMiniEmulatorCore.m in Sources */,
+				B669138F33F14F42E69C6DE39F22B5DD /* Video.c in Sources */,
+				0F74AD21D92825A42A0815111A0A2C07 /* Video_x1.c in Sources */,
+				362CCBC3EE8397E36AB259E8E7D58AC7 /* Video_x2.c in Sources */,
+				D8B39B4AFB9A1B09B17775A5D1D41142 /* Video_x3.c in Sources */,
+				2CB4ECCA457674A33D238C8D46487ADE /* Video_x4.c in Sources */,
+				F4BE8223B6FD29B2C7502C3D69FADC2C /* Video_x5.c in Sources */,
+				52AACE8C220B6D1E99A5C4887BFAA524 /* Video_x6.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		13D899B5B206AED1741DA4FEF5661C58 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-tvOS";
+			targetProxy = 596D0B6AA319993F05A5FE300EA46ACB /* PBXContainerItemProxy */;
+		};
+		2E104B61A52DBA7D87BB9EDFC9B46966 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVSupport-iOS";
+			targetProxy = 247900729212C5687C3869AD9442FE01 /* PBXContainerItemProxy */;
+		};
+		3F0848B92021F7FD80AE6F21A52B505B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-tvOS";
+			targetProxy = 5E87B46D052083D1FC781A9D94502945 /* PBXContainerItemProxy */;
+		};
+		7264D946AE67782DEED29F56B92B59E3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PVLibrary-iOS";
+			targetProxy = F01C9F0935D3F955B56E1DD822E7F570 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A30BB619D1357659BF818DF6F74E78F7 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2E422ADDD26EF06DAB8BE1BD5559AC63 /* InfoPlist.strings */,
+			);
+			name = InfoPlist.strings;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1A7FFCC48B78988854C164254B0201C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 305C504B2AFC0680303010FB76A70454 /* PokeMini-iOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PokeMini-iOS/PokeMini-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PokeMini-iOS/PokeMini-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PokeMini-iOS/PokeMini-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PokeMini;
+				PRODUCT_NAME = PokeMini;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		6F91D911653E1DD70D27722776E30CD2 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DB1538196420A3867F2F00578D980A4A /* PokeMini-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PokeMini-iOS/PokeMini-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PokeMini-iOS/PokeMini-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PokeMini-iOS/PokeMini-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PokeMini;
+				PRODUCT_NAME = PokeMini;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		702DCD4CA780814941AD5AF2BB8AD69D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DB1538196420A3867F2F00578D980A4A /* PokeMini-iOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PokeMini-iOS/PokeMini-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PokeMini-iOS/PokeMini-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PokeMini-iOS/PokeMini-iOS.modulemap";
+				PRODUCT_MODULE_NAME = PokeMini;
+				PRODUCT_NAME = PokeMini;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		71EF830BB69D56B08B88B6A097C3D8CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		B6013FD3B1CDC712AE9B4CF6121F8881 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C20C5556FD4E45A5603C2FD34DF5EA15 /* PokeMini-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PokeMini;
+				PRODUCT_NAME = PokeMini;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		C086BC9AC449DED145DF1860F2586E48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C20C5556FD4E45A5603C2FD34DF5EA15 /* PokeMini-tvOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PokeMini;
+				PRODUCT_NAME = PokeMini;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E042D7D4ECE7CD9490DE4D36F0A2CE8E /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_ARCHIVE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Archive;
+		};
+		E62BC066702B1260D35D9756F5743A1D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		EA59BB638B86A155448CBF1D8D164813 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 379534B035D4823CB22FBCDF324F1EEA /* PokeMini-tvOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PokeMini-tvOS/PokeMini-tvOS.modulemap";
+				PRODUCT_MODULE_NAME = PokeMini;
+				PRODUCT_NAME = PokeMini;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D7C3C424F990DFE2F421BAA0919CE84 /* Build configuration list for PBXProject "PokeMini" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E042D7D4ECE7CD9490DE4D36F0A2CE8E /* Archive */,
+				71EF830BB69D56B08B88B6A097C3D8CA /* Debug */,
+				E62BC066702B1260D35D9756F5743A1D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B71FA4649A527D27E85DA0D69C09DE35 /* Build configuration list for PBXNativeTarget "PokeMini-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B6013FD3B1CDC712AE9B4CF6121F8881 /* Archive */,
+				EA59BB638B86A155448CBF1D8D164813 /* Debug */,
+				C086BC9AC449DED145DF1860F2586E48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9B551D04842742C5338CB645EEC9AFF /* Build configuration list for PBXNativeTarget "PokeMini-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F91D911653E1DD70D27722776E30CD2 /* Archive */,
+				1A7FFCC48B78988854C164254B0201C8 /* Debug */,
+				702DCD4CA780814941AD5AF2BB8AD69D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C3EE469A24AF24E9E0C49C14802FEF60 /* Project object */;
+}

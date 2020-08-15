@@ -1,4 +1,4 @@
-framework module Atari800 {
+framework module PVAtari800 {
   umbrella header "Atari800-tvOS-umbrella.h"
 
   export *

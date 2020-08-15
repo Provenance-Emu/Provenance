@@ -60,6 +60,13 @@
 			remoteGlobalIDString = 9EE1DAD3F2FAC73CA4856B7C2F044551;
 			remoteInfo = "RealmSwift-tvOS";
 		};
+		09EC7C41640A3469CAE4BAB8283859C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C1B8CD0135CC05B95ACE932F0CF780E7 /* PokeMini.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BB2CBE89AA3FA4AAA471A6688647D1F9;
+			remoteInfo = "PokeMini-tvOS";
+		};
 		09FAE38578833078E8AB975DD9DDAFFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 88BD4B9C0F8C4F1CCC732E1176BC68ED /* RxCocoa.xcodeproj */;
@@ -88,6 +95,13 @@
 			remoteGlobalIDString = 66079BBD0D3ADFE73390F28ED07289C9;
 			remoteInfo = "RxCocoa-tvOS";
 		};
+		23A576E480866BDE00B1FE1505414B21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C78BBFB068AAAD667AAAC6F93FEACA13 /* Atari800.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 643D579280BB2A39E920C2DE632CFB63;
+			remoteInfo = "Atari800-tvOS";
+		};
 		26718CC32CB32C2A91FD7BB446D5F880 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8062DB3938C4170569F07342987224AB /* RxRelay.xcodeproj */;
@@ -97,17 +111,10 @@
 		};
 		27BC61ADB0B4DEBFDB31E3461EB03F8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport.xcodeproj */;
+			containerPortal = 0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
 			remoteInfo = "PVSupport-iOS";
-		};
-		27D55899881EBA35D9F2C4EDC92B72C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D3E1699A4EEA556A7C27C445C6E81174 /* Cores.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BFD079754BFD71A87A4A16133792B213;
-			remoteInfo = "PokeMini-tvOS";
 		};
 		2E7A5923ADEE9199B732DE74D88A1938 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -115,13 +122,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6282122FD5ABDC34E6F303B2C1581A35;
 			remoteInfo = "Realm-iOS";
-		};
-		312B8EBEEB127A2B8EA946AA32EBEFF5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7AAC1E2634C192B741D8B85A80A04761 /* RxReachability.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A75C873A2381436AC04E5E6E40146270;
-			remoteInfo = "RxReachability-tvOS";
 		};
 		316FFB9502EA746EBBFC476FE3373934 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -137,6 +137,20 @@
 			remoteGlobalIDString = BFAA16E7CFB98ABF9404AF74D2384C2E;
 			remoteInfo = "RxRelay-iOS";
 		};
+		34BBEF65710AF4DE4BFDB3671B9AD28F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8D7C283356782C693BE9EE18CBE4BD5 /* QuickTableViewController.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 229E1E0C0969A1FC2541EE9C02AFDD4B;
+			remoteInfo = "QuickTableViewController-iOS";
+		};
+		379A9F4A59D78AF51195205D9EDCA1F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26213A8B69BA16E7D1F81A285A0B9891 /* ReachabilitySwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BBD49F22A6965EE30DD91CC7CEE5E68E;
+			remoteInfo = "ReachabilitySwift-tvOS";
+		};
 		38EE503F9F161FD1D6FAE6EA0A0741CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E13FCB1CE6E2C641DCF4D81C3836AEB3 /* BitByteData.xcodeproj */;
@@ -150,13 +164,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = D052D2949D48D25DD6FCF5D10D15B163;
 			remoteInfo = "Realm-tvOS";
-		};
-		3BCC5EDDEF1AAEE204750851F3EBDE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 26213A8B69BA16E7D1F81A285A0B9891 /* ReachabilitySwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2447EB1FE9BA61BAF193C1400191B13D;
-			remoteInfo = "ReachabilitySwift-iOS";
 		};
 		3F90870B882CC14EC54BA3900283B16C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -174,17 +181,17 @@
 		};
 		41D494FF89CCFA1FA6A9BC745CB08C5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport.xcodeproj */;
+			containerPortal = 0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
 			remoteInfo = "PVSupport-tvOS";
 		};
-		458148A1146FCC69E845459678D75282 /* PBXContainerItemProxy */ = {
+		425656742D9A8048F4F2BEF2CBD20547 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 71EFE1A74B7734E4A9552D57F076281E /* RxDataSources.xcodeproj */;
+			containerPortal = 7AAC1E2634C192B741D8B85A80A04761 /* RxReachability.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B22167B54299C2C06A62C8576A67AB94;
-			remoteInfo = "RxDataSources-tvOS";
+			remoteGlobalIDString = B70A3EB47BB052E9CAC9C498FC81BA3A;
+			remoteInfo = "RxReachability-iOS";
 		};
 		4E20C49FFF2C0CA62FD15913C467E8E4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -192,6 +199,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D4944F1478B34E109711C982D2C6C460;
 			remoteInfo = "RealmSwift-iOS";
+		};
+		51827E2329AA3E4492E07ECFC3DBCDC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C1B8CD0135CC05B95ACE932F0CF780E7 /* PokeMini.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DC4315048EA3A88086725C7A29F572CD;
+			remoteInfo = "PokeMini-iOS";
 		};
 		54534E40159CF95BCDF9E8A86B8DDA62 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -228,6 +242,13 @@
 			remoteGlobalIDString = D052D2949D48D25DD6FCF5D10D15B163;
 			remoteInfo = "Realm-tvOS";
 		};
+		611AF056FF235831DB12EF977BB0BF64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8D7C283356782C693BE9EE18CBE4BD5 /* QuickTableViewController.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 199B9BF304C76E06D021FCDDE5D6B8E3;
+			remoteInfo = "QuickTableViewController-tvOS";
+		};
 		62C758338F5BA51D802E251ED52163C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9ECD98600E289C452B72D5B02DAE4B12 /* SWCompression.xcodeproj */;
@@ -241,6 +262,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D1BA572B95863E617C4885F346F6852B;
 			remoteInfo = "NSLogger-tvOS";
+		};
+		65E9FFD85019EE9180FC88F603F676C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 71EFE1A74B7734E4A9552D57F076281E /* RxDataSources.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B22167B54299C2C06A62C8576A67AB94;
+			remoteInfo = "RxDataSources-tvOS";
 		};
 		6B9FCC6961A66EA6021D50990FF033C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -277,6 +305,13 @@
 			remoteGlobalIDString = C6CFACCC72832AEFC5AAB005796B6B58;
 			remoteInfo = "BitByteData-iOS";
 		};
+		7FDEDC7C70876C37BED866FC35F5D9DF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D401DA095FF870990FFD40025C9F956 /* RxGesture.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 761EDC2D01B03DA09BA153A91621384F;
+			remoteInfo = RxGesture;
+		};
 		812F9F8F786B653599D094524D9667A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 35732D1E09CECD1F0ECB9D705BB4EA35 /* RxSwift.xcodeproj */;
@@ -291,23 +326,23 @@
 			remoteGlobalIDString = B25BC0E7735D33B159B7BFA4E2A33FCA;
 			remoteInfo = "BitByteData-tvOS";
 		};
-		855DBED89831A3CB7FBB6C024E522042 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D3E1699A4EEA556A7C27C445C6E81174 /* Cores.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 1831ED5E6A2FB58CB126CA0A07E49148;
-			remoteInfo = "Atari800-iOS";
-		};
-		8A53D8B7D402E0C31C8141E16F8CDA56 /* PBXContainerItemProxy */ = {
+		8594029BF887AABACD4CE909C6B9CBB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD0CFF1B132D566E123DCD6245BC9670 /* XLActionController.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 5BEE24A7FEA6356CDFE07A443B8CBEE2;
 			remoteInfo = XLActionController;
 		};
+		8CFE12183566A2EAA83BE53DA494220E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7AAC1E2634C192B741D8B85A80A04761 /* RxReachability.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A75C873A2381436AC04E5E6E40146270;
+			remoteInfo = "RxReachability-tvOS";
+		};
 		90E1404A4C2E9ECFD72C3054BE1DB888 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary.xcodeproj */;
+			containerPortal = B63450DAF9B77DA269FD971782950ECB /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
 			remoteInfo = "PVLibrary-iOS";
@@ -319,12 +354,12 @@
 			remoteGlobalIDString = BC7B9AFD90F64CAE0FDE1DB8D1742F7C;
 			remoteInfo = "SWCompression-tvOS";
 		};
-		9562101BC04259C3B596C61A716E1683 /* PBXContainerItemProxy */ = {
+		97038CC6B3BF617AE1607DF2182B0266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = E8D7C283356782C693BE9EE18CBE4BD5 /* QuickTableViewController.xcodeproj */;
+			containerPortal = C78BBFB068AAAD667AAAC6F93FEACA13 /* Atari800.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 229E1E0C0969A1FC2541EE9C02AFDD4B;
-			remoteInfo = "QuickTableViewController-iOS";
+			remoteGlobalIDString = 9ACCCF91F3E7F68E09093A3320F00540;
+			remoteInfo = "Atari800-iOS";
 		};
 		9EDD31B0878EEAEE63310893894D6767 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -342,17 +377,10 @@
 		};
 		9FBE116CBF1D4AB9741A7C426C577753 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary.xcodeproj */;
+			containerPortal = B63450DAF9B77DA269FD971782950ECB /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
 			remoteInfo = "PVLibrary-tvOS";
-		};
-		A185C8F7F054B6EC5EED5A4C9DFB54DF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 036F76571B5CC3FE45D292D89E3E9B54 /* SteamController.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3F0158D4D28A3FF6F5D14C1A98D95787;
-			remoteInfo = "SteamController-tvOS";
 		};
 		A2FB1DFEE5E4BC03CDDB34C8BB0745D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -384,38 +412,31 @@
 		};
 		B529F326EF343487BFE484158E26BF76 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport.xcodeproj */;
+			containerPortal = 0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = FA74D2F9316EB40AC6EF9A615B3A9AEE;
 			remoteInfo = "PVSupport-tvOS";
 		};
+		B728029E01505D4ED04D84A63C117AB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26213A8B69BA16E7D1F81A285A0B9891 /* ReachabilitySwift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2447EB1FE9BA61BAF193C1400191B13D;
+			remoteInfo = "ReachabilitySwift-iOS";
+		};
 		B9344CB03644095B18EEFA1DDD8C3776 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport.xcodeproj */;
+			containerPortal = 0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 892759CB3C4AE29E4211DCE9F85D78C4;
 			remoteInfo = "PVSupport-iOS";
 		};
-		B9EA59DEEB0B719C5D18A1F32D315390 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7AAC1E2634C192B741D8B85A80A04761 /* RxReachability.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B70A3EB47BB052E9CAC9C498FC81BA3A;
-			remoteInfo = "RxReachability-iOS";
-		};
 		C11C5F503027B397DB2B29D5A5FBFA7D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary.xcodeproj */;
+			containerPortal = B63450DAF9B77DA269FD971782950ECB /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = A965087799233BFFE565E513D2CAC008;
 			remoteInfo = "PVLibrary-tvOS";
-		};
-		C249FF16ABBFF0AB602AE792DD7F552C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 26213A8B69BA16E7D1F81A285A0B9891 /* ReachabilitySwift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BBD49F22A6965EE30DD91CC7CEE5E68E;
-			remoteInfo = "ReachabilitySwift-tvOS";
 		};
 		C7FE545FF371D022537B97B6A2067879 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -438,6 +459,20 @@
 			remoteGlobalIDString = D4944F1478B34E109711C982D2C6C460;
 			remoteInfo = "RealmSwift-iOS";
 		};
+		D2114C90A2F4462F3AD20CA602CFFBD3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 036F76571B5CC3FE45D292D89E3E9B54 /* SteamController.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D4EF3C4C7C6938F2AE468CC36461CF1B;
+			remoteInfo = "SteamController-iOS";
+		};
+		D3419BE3212239E38DBBC5C5C1CFDA84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 036F76571B5CC3FE45D292D89E3E9B54 /* SteamController.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3F0158D4D28A3FF6F5D14C1A98D95787;
+			remoteInfo = "SteamController-tvOS";
+		};
 		D4393962D3B90AD2A9373648E729BEFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A64B6C231C8B381452B3ADF6A9363D5 /* RxRealm.xcodeproj */;
@@ -452,19 +487,12 @@
 			remoteGlobalIDString = 6282122FD5ABDC34E6F303B2C1581A35;
 			remoteInfo = "Realm-iOS";
 		};
-		D531CB905938589AB2A527ED11D3CC7A /* PBXContainerItemProxy */ = {
+		D6CE972501809CF9A1072438369550EA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D3E1699A4EEA556A7C27C445C6E81174 /* Cores.xcodeproj */;
+			containerPortal = 71EFE1A74B7734E4A9552D57F076281E /* RxDataSources.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C68B06F312E7A54CD0FEF3AFC83681E3;
-			remoteInfo = "Atari800-tvOS";
-		};
-		D7D2569C8C94DDAD7921DCAB4E746D5E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D3E1699A4EEA556A7C27C445C6E81174 /* Cores.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A520169CDA91092720A013D2B38BFE4B;
-			remoteInfo = "PokeMini-iOS";
+			remoteGlobalIDString = EB22F881C56604676E83A56BD1AA4A58;
+			remoteInfo = "RxDataSources-iOS";
 		};
 		D860BDCB9C1820FD04FB409AE4505E44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -487,33 +515,12 @@
 			remoteGlobalIDString = AF79E706BFD97C419C4CA68DBC7C9C39;
 			remoteInfo = "SQLite.swift-iOS";
 		};
-		DCADC63AEC16DD57F45878E74EC29DBE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 71EFE1A74B7734E4A9552D57F076281E /* RxDataSources.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = EB22F881C56604676E83A56BD1AA4A58;
-			remoteInfo = "RxDataSources-iOS";
-		};
-		DEC980DA295B399F8D5FB533BE2DB12C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 036F76571B5CC3FE45D292D89E3E9B54 /* SteamController.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D4EF3C4C7C6938F2AE468CC36461CF1B;
-			remoteInfo = "SteamController-iOS";
-		};
 		E42EC69EA0ED199A81565C46F385ACA0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 58CA27E57BAE62B5894CFB193EAC2129 /* SSZipArchive.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = F899FAD52B9972F00228A7DAA0BF60F2;
 			remoteInfo = "SSZipArchive-tvOS";
-		};
-		E553F0D1598BE128799DA4E1024908DA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8D7C283356782C693BE9EE18CBE4BD5 /* QuickTableViewController.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 199B9BF304C76E06D021FCDDE5D6B8E3;
-			remoteInfo = "QuickTableViewController-tvOS";
 		};
 		E57965DFD73B5E114A918B2C6F238130 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -524,17 +531,10 @@
 		};
 		E89FFE74751453DCCA01EB92F5C45F40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary.xcodeproj */;
+			containerPortal = B63450DAF9B77DA269FD971782950ECB /* PVLibrary.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 092614E117CBAD12432CE71E038C9F80;
 			remoteInfo = "PVLibrary-iOS";
-		};
-		F22D2FC7E1D0493F97EAE20D7FD99F06 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8D401DA095FF870990FFD40025C9F956 /* RxGesture.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 761EDC2D01B03DA09BA153A91621384F;
-			remoteInfo = RxGesture;
 		};
 		F2DC218B37FA08A50A4DBBE348E62150 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -595,7 +595,7 @@
 		09B06DB4DC5A377E3E094C0842F5CADE /* Pods-TopShelf.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TopShelf.archive.xcconfig"; sourceTree = "<group>"; };
 		0B74F4461C94179994274D9AD4E25754 /* Pods-ProvenanceApps-Provenance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ProvenanceApps-Provenance.debug.xcconfig"; sourceTree = "<group>"; };
 		0CFAE2E7C0E9356BDAFCD8D9F09B004F /* Pods-ProvenanceApps-ProvenanceTV-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-ProvenanceApps-ProvenanceTV-umbrella.h"; sourceTree = "<group>"; };
-		18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVLibrary; path = PVLibrary.xcodeproj; sourceTree = "<group>"; };
+		0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
 		1A64B6C231C8B381452B3ADF6A9363D5 /* RxRealm */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxRealm; path = RxRealm.xcodeproj; sourceTree = "<group>"; };
 		26213A8B69BA16E7D1F81A285A0B9891 /* ReachabilitySwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReachabilitySwift; path = ReachabilitySwift.xcodeproj; sourceTree = "<group>"; };
 		2DB6F3317BA350096162C032F924C6C5 /* Pods-Spotlight.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Spotlight.debug.xcconfig"; sourceTree = "<group>"; };
@@ -603,7 +603,6 @@
 		35732D1E09CECD1F0ECB9D705BB4EA35 /* RxSwift */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxSwift; path = RxSwift.xcodeproj; sourceTree = "<group>"; };
 		3FE3264D0C637F96B531F715B4DBEA3B /* Pods-ProvenanceApps-ProvenanceTV.archive.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ProvenanceApps-ProvenanceTV.archive.xcconfig"; sourceTree = "<group>"; };
 		439BA3B3FC10184E4004D43A355B5228 /* Realm */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Realm; path = Realm.xcodeproj; sourceTree = "<group>"; };
-		4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVSupport; path = PVSupport.xcodeproj; sourceTree = "<group>"; };
 		472F502DE28FC942761E69165057B420 /* LzmaSDK-ObjC */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "LzmaSDK-ObjC"; path = "LzmaSDK-ObjC.xcodeproj"; sourceTree = "<group>"; };
 		49F8C8ECC3E4906D556BA8163CCCACCE /* Pods-Spotlight-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Spotlight-Info.plist"; sourceTree = "<group>"; };
 		532978B078B86F7F8F1A18A589B50126 /* Pods-TopShelf-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TopShelf-Info.plist"; sourceTree = "<group>"; };
@@ -644,15 +643,17 @@
 		AFEDC2CFD6BBD921EDD3D561BA3F8314 /* Pods-Provenance Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Provenance Tests-dummy.m"; sourceTree = "<group>"; };
 		AFF19E3F27350E6A4CB161B67A2AD198 /* Pods-Spotlight.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Spotlight.release.xcconfig"; sourceTree = "<group>"; };
 		AFFB84AC6F77108F26D71FB235DDF15C /* Pods-ProvenanceApps-ProvenanceTV-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-ProvenanceApps-ProvenanceTV-acknowledgements.plist"; sourceTree = "<group>"; };
+		B63450DAF9B77DA269FD971782950ECB /* PVLibrary */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVLibrary; path = PVLibrary.xcodeproj; sourceTree = "<group>"; };
 		B712C7D27EB7CD8F8A18A3EDE52765C0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B72DA0856BD7D250F2BD6771F6D4F49B /* Pods-TopShelf-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-TopShelf-acknowledgements.markdown"; sourceTree = "<group>"; };
+		C1B8CD0135CC05B95ACE932F0CF780E7 /* PokeMini */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PokeMini; path = PokeMini.xcodeproj; sourceTree = "<group>"; };
 		C34A9B7128EBA0253E6F5DE0B244BFB4 /* Pods-ProvenanceApps-ProvenanceTV.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-ProvenanceApps-ProvenanceTV.modulemap"; sourceTree = "<group>"; };
+		C78BBFB068AAAD667AAAC6F93FEACA13 /* Atari800 */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Atari800; path = Atari800.xcodeproj; sourceTree = "<group>"; };
 		CC4A85F5A482B91CB5872735A7F67736 /* Pods-TopShelf-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TopShelf-acknowledgements.plist"; sourceTree = "<group>"; };
 		CCEF41710C000723309AD1B5CD6B37AB /* Pods-ProvenanceApps-ProvenanceTV.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ProvenanceApps-ProvenanceTV.debug.xcconfig"; sourceTree = "<group>"; };
 		CD0CFF1B132D566E123DCD6245BC9670 /* XLActionController */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = XLActionController; path = XLActionController.xcodeproj; sourceTree = "<group>"; };
 		CF77C0C16DE6EC75CAE7FC8285A60310 /* Pods-Provenance Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Provenance Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		D3B5A4243CC8F6AE58AD19F8841830C5 /* Pods-TopShelf-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-TopShelf-dummy.m"; sourceTree = "<group>"; };
-		D3E1699A4EEA556A7C27C445C6E81174 /* Cores */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cores; path = Cores.xcodeproj; sourceTree = "<group>"; };
 		D467C2658539ABBF2689AF932522522D /* Pods_TopShelf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_TopShelf.framework; path = "Pods-TopShelf.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D666D790E558F01E60AA1AEAAAC716F9 /* Pods-Provenance Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Provenance Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		D90EAECABAF0C29BEED065593289A6C8 /* CocoaLumberjack */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaLumberjack; path = CocoaLumberjack.xcodeproj; sourceTree = "<group>"; };
@@ -752,16 +753,6 @@
 			path = "Target Support Files/Pods-ProvenanceApps-Provenance";
 			sourceTree = "<group>";
 		};
-		511138E8D227E01B0B7E058918FBA2C9 /* Development Pods */ = {
-			isa = PBXGroup;
-			children = (
-				D3E1699A4EEA556A7C27C445C6E81174 /* Cores */,
-				18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary */,
-				4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport */,
-			);
-			name = "Development Pods";
-			sourceTree = "<group>";
-		};
 		5195A75F58B77EF28317698C35B86739 /* Pods-TopShelf */ = {
 			isa = PBXGroup;
 			children = (
@@ -823,6 +814,17 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
+		B5136692B55ECF6EE849D53FB0C45611 /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C78BBFB068AAAD667AAAC6F93FEACA13 /* Atari800 */,
+				C1B8CD0135CC05B95ACE932F0CF780E7 /* PokeMini */,
+				B63450DAF9B77DA269FD971782950ECB /* PVLibrary */,
+				0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
 		BD555298408C5E764BE84C33644C906E /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -856,7 +858,7 @@
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
-				511138E8D227E01B0B7E058918FBA2C9 /* Development Pods */,
+				B5136692B55ECF6EE849D53FB0C45611 /* Development Pods */,
 				8910DE18F4068EE7F2F8E36E5101A369 /* Frameworks */,
 				FE4895C2F1BC224F5F0902E63498FE30 /* Pods */,
 				BD555298408C5E764BE84C33644C906E /* Products */,
@@ -997,7 +999,7 @@
 			);
 			dependencies = (
 				96D3F592338517F782E3303AA9E04E31 /* PBXTargetDependency */,
-				10907A51783506CDAB06F576E0D2EC25 /* PBXTargetDependency */,
+				8F53F28C619B7C63FF418FE0FBB1C876 /* PBXTargetDependency */,
 				DCFD388D0839E732888599703F4A6B95 /* PBXTargetDependency */,
 				D57196D422E04AB49DC8B0CD441FE231 /* PBXTargetDependency */,
 				86B47310306D5F0AE92C8BEECA1F3862 /* PBXTargetDependency */,
@@ -1005,23 +1007,23 @@
 				87D9253271803BA1BFE838AC517C5784 /* PBXTargetDependency */,
 				F8361311392D63679BBADFBF5F3EF76B /* PBXTargetDependency */,
 				B64873A3EBC3A050AAE79C0E47D698B6 /* PBXTargetDependency */,
-				507701857B77C134749EF66F93DC3741 /* PBXTargetDependency */,
-				C7BAC3AED8A8996BA2A7A01FA778C4A4 /* PBXTargetDependency */,
-				26A005651EDDCB235F266EA39069B886 /* PBXTargetDependency */,
+				24993F2595B89C9549E06C34D1D86B79 /* PBXTargetDependency */,
+				B0F775A89E9BF3507CC008FBC5CE70E2 /* PBXTargetDependency */,
+				7FA604DFB01A20E600ED2F1287DCBFC5 /* PBXTargetDependency */,
 				1E05A726544702ACDEF45C85A3737E37 /* PBXTargetDependency */,
 				8354775360785DC1576FC5D7A65B5080 /* PBXTargetDependency */,
 				3FE5C0A36DD1F325F14550E868563D07 /* PBXTargetDependency */,
-				5D4B6432B365DFEEBA3B2868B9756240 /* PBXTargetDependency */,
-				4DF6B37E207CA342F78F73EBEC59DB7C /* PBXTargetDependency */,
-				AD5D8B1A0CCDDB095F3BEC7AC1AF8953 /* PBXTargetDependency */,
+				BB0A5B74AAF20D2789DFD4B0AC489C9F /* PBXTargetDependency */,
+				B5EC2263C75137859B7EB227C2FD2EE8 /* PBXTargetDependency */,
+				D80C278B569005630448963BA72C5224 /* PBXTargetDependency */,
 				6F26F1236029F68CC01DAAE3E9019FF5 /* PBXTargetDependency */,
 				72ECD11B6F75A5D5CB19346A93A54D56 /* PBXTargetDependency */,
 				35F2D4DAE0A989F739E4F064CF41FCF5 /* PBXTargetDependency */,
 				F543EC4246502962658DF60768ECF2F7 /* PBXTargetDependency */,
 				4E960293DAE9A4401925CF9050EA0F15 /* PBXTargetDependency */,
 				5FDB1A49F1D0050E4754BB0636B604EB /* PBXTargetDependency */,
-				8D0D87A1E12BC961DB2EB2E0B1F0CFE9 /* PBXTargetDependency */,
-				7F14577BD9798482C48C74F2A8E4D37B /* PBXTargetDependency */,
+				9793309C749D6A2F9CFCB228EA608B1A /* PBXTargetDependency */,
+				031768D643651F5A28AE8ADDF5824038 /* PBXTargetDependency */,
 			);
 			name = "Pods-ProvenanceApps-Provenance";
 			productName = "Pods-ProvenanceApps-Provenance";
@@ -1040,7 +1042,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				59C13BA4D49809D03FF677D98596530A /* PBXTargetDependency */,
+				3120E898AF989C4979A97AC3707C9911 /* PBXTargetDependency */,
 				C9D0F166C4DEB0C436DC075C14A97C35 /* PBXTargetDependency */,
 				5901C603C8F7D9520209DDBE4B3621BB /* PBXTargetDependency */,
 				6946B0295FE1CD9C976813B299C19B30 /* PBXTargetDependency */,
@@ -1048,21 +1050,21 @@
 				348F457875CED436BB6EBE672597FDA8 /* PBXTargetDependency */,
 				F788D50980CEF58BF5BE54076A73B3A6 /* PBXTargetDependency */,
 				B4A47187793C800D8AF87F0784B0A5AF /* PBXTargetDependency */,
-				A85F07382F9857F001C39452B03BC391 /* PBXTargetDependency */,
-				954733956FC17CF2C5F35F86596F35E0 /* PBXTargetDependency */,
-				D669F396B4A5A86664B8E0C033665689 /* PBXTargetDependency */,
+				47660ADB39B2276150D2726B37AA1EF5 /* PBXTargetDependency */,
+				4EB6AFC02197F70A7B5CF58120BEDFBE /* PBXTargetDependency */,
+				A613C96A029FD721D8592FFF2D337D12 /* PBXTargetDependency */,
 				525F0E9627CBA0F6AC6C5D593600CDD8 /* PBXTargetDependency */,
 				003BA2EAB7E2A491D0E47CE77067CA39 /* PBXTargetDependency */,
 				03962A34187FE1DBC8425665B465CE46 /* PBXTargetDependency */,
-				994130B45593C2D89BDD7267088C73F8 /* PBXTargetDependency */,
-				3BFFA5F74DB6996BB8E6C329F27BFB26 /* PBXTargetDependency */,
+				6D32CC219E08B21531062A3809FEE03B /* PBXTargetDependency */,
+				D6D0F14E783721B080EBB51600507202 /* PBXTargetDependency */,
 				3D81C5E9ECFDDC269A6ADEBD0D8DA790 /* PBXTargetDependency */,
 				2C8801B31EC2BF5FBE03A712EFE970A9 /* PBXTargetDependency */,
 				D7C0AEAB47F2648B1B9997404C3488E6 /* PBXTargetDependency */,
 				4D1F24F03D715C5827F8D5B3DEEBCFB1 /* PBXTargetDependency */,
 				D8D79C3D062B5CA1791221E563249FE1 /* PBXTargetDependency */,
 				CB9C21A5D5C3E8F926AADD407EA9FB21 /* PBXTargetDependency */,
-				5CC8950627213E5D7368DC504C3257B5 /* PBXTargetDependency */,
+				8D3423FA57AD70C9079411EFEF022097 /* PBXTargetDependency */,
 			);
 			name = "Pods-ProvenanceApps-ProvenanceTV";
 			productName = "Pods-ProvenanceApps-ProvenanceTV";
@@ -1143,7 +1145,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProjectRef = D3E1699A4EEA556A7C27C445C6E81174 /* Cores */;
+					ProjectRef = C78BBFB068AAAD667AAAC6F93FEACA13 /* Atari800 */;
 				},
 				{
 					ProjectRef = E13FCB1CE6E2C641DCF4D81C3836AEB3 /* BitByteData */;
@@ -1158,10 +1160,10 @@
 					ProjectRef = E6EDD823454B825FD4AD1E16AE28D5B5 /* NSLogger */;
 				},
 				{
-					ProjectRef = 18D4BCA04FB4CE4FDEFDEAFD9A638691 /* PVLibrary */;
+					ProjectRef = B63450DAF9B77DA269FD971782950ECB /* PVLibrary */;
 				},
 				{
-					ProjectRef = 4474B5E64BD3BF683C7A18042C2D31BF /* PVSupport */;
+					ProjectRef = 0E25407DE4827E4FCE3917BCA0308C39 /* PVSupport */;
 				},
 				{
 					ProjectRef = 439BA3B3FC10184E4004D43A355B5228 /* Realm */;
@@ -1195,6 +1197,9 @@
 				},
 				{
 					ProjectRef = 65E9A5E36EF0331A9F47B3C0E690EE1C /* Differentiator */;
+				},
+				{
+					ProjectRef = C1B8CD0135CC05B95ACE932F0CF780E7 /* PokeMini */;
 				},
 				{
 					ProjectRef = E8D7C283356782C693BE9EE18CBE4BD5 /* QuickTableViewController */;
@@ -1316,6 +1321,11 @@
 			name = "RealmSwift-tvOS";
 			targetProxy = E57965DFD73B5E114A918B2C6F238130 /* PBXContainerItemProxy */;
 		};
+		031768D643651F5A28AE8ADDF5824038 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = XLActionController;
+			targetProxy = 8594029BF887AABACD4CE909C6B9CBB3 /* PBXContainerItemProxy */;
+		};
 		03962A34187FE1DBC8425665B465CE46 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "RxCocoa-tvOS";
@@ -1335,11 +1345,6 @@
 			isa = PBXTargetDependency;
 			name = "RxSwift-tvOS";
 			targetProxy = F5DB632E415D42D4088D6741E3D26DD7 /* PBXContainerItemProxy */;
-		};
-		10907A51783506CDAB06F576E0D2EC25 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Atari800-iOS";
-			targetProxy = 855DBED89831A3CB7FBB6C024E522042 /* PBXContainerItemProxy */;
 		};
 		1A21C7F8AF7FA157B76B82A427B21C7D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1361,10 +1366,10 @@
 			name = "Realm-iOS";
 			targetProxy = 2E7A5923ADEE9199B732DE74D88A1938 /* PBXContainerItemProxy */;
 		};
-		26A005651EDDCB235F266EA39069B886 /* PBXTargetDependency */ = {
+		24993F2595B89C9549E06C34D1D86B79 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "ReachabilitySwift-iOS";
-			targetProxy = 3BCC5EDDEF1AAEE204750851F3EBDE2C /* PBXContainerItemProxy */;
+			name = "PokeMini-iOS";
+			targetProxy = 51827E2329AA3E4492E07ECFC3DBCDC9 /* PBXContainerItemProxy */;
 		};
 		2C8801B31EC2BF5FBE03A712EFE970A9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1375,6 +1380,11 @@
 			isa = PBXTargetDependency;
 			name = "SQLite.swift-iOS";
 			targetProxy = 0492EA126E4E222D9EEE9B15149DBE7D /* PBXContainerItemProxy */;
+		};
+		3120E898AF989C4979A97AC3707C9911 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Atari800-tvOS";
+			targetProxy = 23A576E480866BDE00B1FE1505414B21 /* PBXContainerItemProxy */;
 		};
 		348F457875CED436BB6EBE672597FDA8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1390,11 +1400,6 @@
 			isa = PBXTargetDependency;
 			name = "RxSwift-iOS";
 			targetProxy = A8D573594C7AC28D856104D0D935F358 /* PBXContainerItemProxy */;
-		};
-		3BFFA5F74DB6996BB8E6C329F27BFB26 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RxReachability-tvOS";
-			targetProxy = 312B8EBEEB127A2B8EA946AA32EBEFF5 /* PBXContainerItemProxy */;
 		};
 		3D81C5E9ECFDDC269A6ADEBD0D8DA790 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1416,6 +1421,11 @@
 			name = "SWCompression-iOS";
 			targetProxy = 62C758338F5BA51D802E251ED52163C0 /* PBXContainerItemProxy */;
 		};
+		47660ADB39B2276150D2726B37AA1EF5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "PokeMini-tvOS";
+			targetProxy = 09EC7C41640A3469CAE4BAB8283859C8 /* PBXContainerItemProxy */;
+		};
 		479F9AC56DDE58E5F8556E97CF32B428 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "LzmaSDK-ObjC-iOS";
@@ -1431,20 +1441,15 @@
 			name = "SQLite.swift-tvOS";
 			targetProxy = 04D703715613FF742D90B64F982A66DA /* PBXContainerItemProxy */;
 		};
-		4DF6B37E207CA342F78F73EBEC59DB7C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RxGesture;
-			targetProxy = F22D2FC7E1D0493F97EAE20D7FD99F06 /* PBXContainerItemProxy */;
-		};
 		4E960293DAE9A4401925CF9050EA0F15 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "SSZipArchive-iOS";
 			targetProxy = 6EA546B15A54B88BE6707523A1F74595 /* PBXContainerItemProxy */;
 		};
-		507701857B77C134749EF66F93DC3741 /* PBXTargetDependency */ = {
+		4EB6AFC02197F70A7B5CF58120BEDFBE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "PokeMini-iOS";
-			targetProxy = D7D2569C8C94DDAD7921DCAB4E746D5E /* PBXContainerItemProxy */;
+			name = "QuickTableViewController-tvOS";
+			targetProxy = 611AF056FF235831DB12EF977BB0BF64 /* PBXContainerItemProxy */;
 		};
 		525F0E9627CBA0F6AC6C5D593600CDD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1461,21 +1466,6 @@
 			name = "CocoaLumberjack-tvOS";
 			targetProxy = FC82A85CA585014F712E88A2F2B4B8A6 /* PBXContainerItemProxy */;
 		};
-		59C13BA4D49809D03FF677D98596530A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Atari800-tvOS";
-			targetProxy = D531CB905938589AB2A527ED11D3CC7A /* PBXContainerItemProxy */;
-		};
-		5CC8950627213E5D7368DC504C3257B5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SteamController-tvOS";
-			targetProxy = A185C8F7F054B6EC5EED5A4C9DFB54DF /* PBXContainerItemProxy */;
-		};
-		5D4B6432B365DFEEBA3B2868B9756240 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RxDataSources-iOS";
-			targetProxy = DCADC63AEC16DD57F45878E74EC29DBE /* PBXContainerItemProxy */;
-		};
 		5FDB1A49F1D0050E4754BB0636B604EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "SWCompression-iOS";
@@ -1485,6 +1475,11 @@
 			isa = PBXTargetDependency;
 			name = "Differentiator-tvOS";
 			targetProxy = 159C3A25CED613ACED064834130F9624 /* PBXContainerItemProxy */;
+		};
+		6D32CC219E08B21531062A3809FEE03B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxDataSources-tvOS";
+			targetProxy = 65E9FFD85019EE9180FC88F603F676C0 /* PBXContainerItemProxy */;
 		};
 		6F26F1236029F68CC01DAAE3E9019FF5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1522,10 +1517,10 @@
 			name = "Realm-tvOS";
 			targetProxy = 6005308CF3CDBB14DF1F1A9B6A33049A /* PBXContainerItemProxy */;
 		};
-		7F14577BD9798482C48C74F2A8E4D37B /* PBXTargetDependency */ = {
+		7FA604DFB01A20E600ED2F1287DCBFC5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = XLActionController;
-			targetProxy = 8A53D8B7D402E0C31C8141E16F8CDA56 /* PBXContainerItemProxy */;
+			name = "ReachabilitySwift-iOS";
+			targetProxy = B728029E01505D4ED04D84A63C117AB2 /* PBXContainerItemProxy */;
 		};
 		81B04F916A2D6205D9A716ABDACE537A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1547,35 +1542,35 @@
 			name = "NSLogger-iOS";
 			targetProxy = 9EDD31B0878EEAEE63310893894D6767 /* PBXContainerItemProxy */;
 		};
-		8D0D87A1E12BC961DB2EB2E0B1F0CFE9 /* PBXTargetDependency */ = {
+		8D3423FA57AD70C9079411EFEF022097 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "SteamController-iOS";
-			targetProxy = DEC980DA295B399F8D5FB533BE2DB12C /* PBXContainerItemProxy */;
+			name = "SteamController-tvOS";
+			targetProxy = D3419BE3212239E38DBBC5C5C1CFDA84 /* PBXContainerItemProxy */;
 		};
 		8F41A7C8C27E9B68B4882DD510279270 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "CocoaLumberjack-tvOS";
 			targetProxy = 736A6F1BA0C650D06B1DF286D6B8D096 /* PBXContainerItemProxy */;
 		};
+		8F53F28C619B7C63FF418FE0FBB1C876 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Atari800-iOS";
+			targetProxy = 97038CC6B3BF617AE1607DF2182B0266 /* PBXContainerItemProxy */;
+		};
 		94071AEAB1E0EABD61B3E2701C4D18CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "RealmSwift-iOS";
 			targetProxy = 4E20C49FFF2C0CA62FD15913C467E8E4 /* PBXContainerItemProxy */;
-		};
-		954733956FC17CF2C5F35F86596F35E0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "QuickTableViewController-tvOS";
-			targetProxy = E553F0D1598BE128799DA4E1024908DA /* PBXContainerItemProxy */;
 		};
 		96D3F592338517F782E3303AA9E04E31 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AppCenter;
 			targetProxy = 316FFB9502EA746EBBFC476FE3373934 /* PBXContainerItemProxy */;
 		};
-		994130B45593C2D89BDD7267088C73F8 /* PBXTargetDependency */ = {
+		9793309C749D6A2F9CFCB228EA608B1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "RxDataSources-tvOS";
-			targetProxy = 458148A1146FCC69E845459678D75282 /* PBXContainerItemProxy */;
+			name = "SteamController-iOS";
+			targetProxy = D2114C90A2F4462F3AD20CA602CFFBD3 /* PBXContainerItemProxy */;
 		};
 		9AF4170EF569AA7EFC186F4FDEA5C071 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1587,20 +1582,20 @@
 			name = "PVLibrary-iOS";
 			targetProxy = E89FFE74751453DCCA01EB92F5C45F40 /* PBXContainerItemProxy */;
 		};
-		A85F07382F9857F001C39452B03BC391 /* PBXTargetDependency */ = {
+		A613C96A029FD721D8592FFF2D337D12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "PokeMini-tvOS";
-			targetProxy = 27D55899881EBA35D9F2C4EDC92B72C9 /* PBXContainerItemProxy */;
+			name = "ReachabilitySwift-tvOS";
+			targetProxy = 379A9F4A59D78AF51195205D9EDCA1F4 /* PBXContainerItemProxy */;
 		};
 		A9624070B8252B8EC887F8B627D61540 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "RxCocoa-tvOS";
 			targetProxy = 580214C1D66DD89CEB0C73D8457C97BB /* PBXContainerItemProxy */;
 		};
-		AD5D8B1A0CCDDB095F3BEC7AC1AF8953 /* PBXTargetDependency */ = {
+		B0F775A89E9BF3507CC008FBC5CE70E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "RxReachability-iOS";
-			targetProxy = B9EA59DEEB0B719C5D18A1F32D315390 /* PBXContainerItemProxy */;
+			name = "QuickTableViewController-iOS";
+			targetProxy = 34BBEF65710AF4DE4BFDB3671B9AD28F /* PBXContainerItemProxy */;
 		};
 		B3510851A9D4531F78667C31C2611662 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1612,10 +1607,20 @@
 			name = "PVSupport-tvOS";
 			targetProxy = 41D494FF89CCFA1FA6A9BC745CB08C5B /* PBXContainerItemProxy */;
 		};
+		B5EC2263C75137859B7EB227C2FD2EE8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RxGesture;
+			targetProxy = 7FDEDC7C70876C37BED866FC35F5D9DF /* PBXContainerItemProxy */;
+		};
 		B64873A3EBC3A050AAE79C0E47D698B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "PVSupport-iOS";
 			targetProxy = B9344CB03644095B18EEFA1DDD8C3776 /* PBXContainerItemProxy */;
+		};
+		BB0A5B74AAF20D2789DFD4B0AC489C9F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxDataSources-iOS";
+			targetProxy = D6CE972501809CF9A1072438369550EA /* PBXContainerItemProxy */;
 		};
 		BC6719AD69B9080BC8787266A791AE1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1626,11 +1631,6 @@
 			isa = PBXTargetDependency;
 			name = "RxCocoa-iOS";
 			targetProxy = 09FAE38578833078E8AB975DD9DDAFFF /* PBXContainerItemProxy */;
-		};
-		C7BAC3AED8A8996BA2A7A01FA778C4A4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "QuickTableViewController-iOS";
-			targetProxy = 9562101BC04259C3B596C61A716E1683 /* PBXContainerItemProxy */;
 		};
 		C85633CCF32109FEF9CE6CC0D11E70F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1652,15 +1652,20 @@
 			name = "CocoaLumberjack-iOS";
 			targetProxy = B11292998072CD6EABE0454CECD9DDC9 /* PBXContainerItemProxy */;
 		};
-		D669F396B4A5A86664B8E0C033665689 /* PBXTargetDependency */ = {
+		D6D0F14E783721B080EBB51600507202 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "ReachabilitySwift-tvOS";
-			targetProxy = C249FF16ABBFF0AB602AE792DD7F552C /* PBXContainerItemProxy */;
+			name = "RxReachability-tvOS";
+			targetProxy = 8CFE12183566A2EAA83BE53DA494220E /* PBXContainerItemProxy */;
 		};
 		D7C0AEAB47F2648B1B9997404C3488E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "RxSwift-tvOS";
 			targetProxy = 812F9F8F786B653599D094524D9667A5 /* PBXContainerItemProxy */;
+		};
+		D80C278B569005630448963BA72C5224 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RxReachability-iOS";
+			targetProxy = 425656742D9A8048F4F2BEF2CBD20547 /* PBXContainerItemProxy */;
 		};
 		D8D79C3D062B5CA1791221E563249FE1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

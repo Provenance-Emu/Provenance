@@ -24,6 +24,7 @@ Pod::Spec.new do |s|
     :tag => s.version.to_s
   }
 
+  s.requires_arc = true
   s.cocoapods_version = '>= 1.8.0'
 
   s.swift_versions = ['5.0', '5.1']
@@ -76,8 +77,7 @@ Pod::Spec.new do |s|
     boards/*
     input/*
     utils/*
-    lua/src/*
-  ].map { |file| "Sources/upstream/src/#{file}.{h,hpp,cpp,c}" }
+  ].map { |file| "Sources/upstream/#{file}.{h,hpp,cpp,c}" }
 
   core_sources = %w[
     PVFCEU/**/*.{m,mm,swift}
@@ -87,8 +87,8 @@ Pod::Spec.new do |s|
 
   s.source_files = upstream_sources + core_sources
 
-  s.preserve_path = 'Sources/upstream/src/'
-  s.header_mappings_dir = 'Sources/upstream/src/'
+  # s.preserve_path = 'Sources/upstream/'
+  # s.header_mappings_dir = 'Sources/upstream/'
 
   s.public_header_files = %w[
     PVFCEU.h
@@ -98,9 +98,9 @@ Pod::Spec.new do |s|
   # s.private_header_files = %w[
   #   PVFCEU/PVFCEU+Swift.h
   #   PVFCEU/PVFCEUEmulatorCore+Controls/PVFCEUEmulatorCore+Controls.h
-  #   upstream/src/ppu.h
-  #   upstream/src/*.h
-  #   upstream/src/utils/**/*.h
+  #   upstream/ppu.h
+  #   upstream/*.h
+  #   upstream/utils/**/*.h
   # ].map { |file| "Sources/#{file}" }
 
   s.resources = [

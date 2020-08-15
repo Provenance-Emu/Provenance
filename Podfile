@@ -60,7 +60,7 @@ end
 def cores
   cores = [
     "Atari800",
-    "FCEU",
+    # "FCEU",
     "PokeMini"
   ]
 
@@ -68,7 +68,6 @@ def cores
     options = {
       path: './Cores/' + core,
       inhibit_warnings: false,
-      project_name: 'Cores',
       binary: false
     }
 

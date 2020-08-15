@@ -14,7 +14,7 @@ ${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework
 ${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework
 ${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework
 ${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework
-${BUILT_PRODUCTS_DIR}/Atari800-iOS/Atari800.framework
+${BUILT_PRODUCTS_DIR}/Atari800-iOS/PVAtari800.framework
 ${BUILT_PRODUCTS_DIR}/Differentiator-iOS/Differentiator.framework
 ${BUILT_PRODUCTS_DIR}/PokeMini-iOS/PokeMini.framework
 ${BUILT_PRODUCTS_DIR}/QuickTableViewController-iOS/QuickTableViewController.framework

@@ -13,6 +13,6 @@
 #import "ATR800GameCore.h"
 #import "PVAtari800.h"
 
-FOUNDATION_EXPORT double Atari800VersionNumber;
-FOUNDATION_EXPORT const unsigned char Atari800VersionString[];
+FOUNDATION_EXPORT double PVAtari800VersionNumber;
+FOUNDATION_EXPORT const unsigned char PVAtari800VersionString[];
 
