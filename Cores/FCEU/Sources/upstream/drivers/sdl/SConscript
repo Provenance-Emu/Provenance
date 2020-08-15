@@ -1,0 +1,28 @@
+# Fix compliation error about 'XKeysymToString' by linking X11 explicitly
+# Thanks Antonio Ospite!
+Import('env')
+config_string = 'pkg-config --cflags --libs x11'
+env.ParseConfig(config_string)
+Export('env')
+
+source_list = Split(
+    """
+    input.cpp
+    config.cpp
+    sdl.cpp
+    sdl-joystick.cpp
+    sdl-sound.cpp
+    sdl-throttle.cpp
+    sdl-video.cpp
+    unix-netplay.cpp
+    """)
+
+Import('env')
+if 'GL' in env['LIBS']:
+  source_list.append('sdl-opengl.cpp')
+
+if env['GTK'] or env['GTK3']:
+  source_list.append('gui.cpp')
+
+source_list = ['drivers/sdl/' + source for source in source_list]
+Return('source_list')

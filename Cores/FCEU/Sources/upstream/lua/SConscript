@@ -1,0 +1,8 @@
+import glob                                                                                   
+source_list = glob.glob('src/*.c')
+source_list.remove('src/lua.c')
+source_list.remove('src/luac.c')
+
+for x in range(len(source_list)):
+  source_list[x] = 'lua/' + source_list[x]
+Return('source_list')

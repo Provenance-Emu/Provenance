@@ -1,0 +1,42 @@
+import glob
+file_list = glob.glob('*.cpp')
+file_list.remove('lua-engine.cpp') # use logic below for this
+
+subdirs = Split("""
+boards
+drivers/common
+fir
+input
+utils
+""")
+#palettes
+
+Import('env')
+Export('env')
+
+if env['LUA']:
+  file_list.append('lua-engine.cpp')
+  if env['SYSTEM_LUA'] == 0:
+    subdirs.append('lua')
+
+if env['CREATE_AVI']:
+  subdirs.append('drivers/videolog')
+  
+
+
+for dir in subdirs:
+  subdir_files = SConscript('%s/SConscript' % dir)
+  file_list.append(subdir_files)
+if env['PLATFORM'] == 'win32':
+  platform_files = SConscript('drivers/win/SConscript')
+else:
+  platform_files = SConscript('drivers/sdl/SConscript')
+file_list.append(platform_files)
+
+print env['LINKFLAGS']
+
+if env['PLATFORM'] == 'win32':
+  fceux = env.Program('fceux.exe', file_list)
+else:
+  fceux = env.Program('fceux', file_list)
+Return('fceux')

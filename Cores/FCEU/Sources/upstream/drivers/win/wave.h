@@ -1,0 +1,2 @@
+bool CreateSoundSave();
+int CloseWave();

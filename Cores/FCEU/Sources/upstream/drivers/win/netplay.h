@@ -1,0 +1,1 @@
+extern CFGSTRUCT NetplayConfig[];
