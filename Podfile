@@ -115,7 +115,7 @@ abstract_target 'ProvenanceApps' do
         branch: 'update-for-xcode-11'
 
     target 'Provenance Tests' do
-      inherit! :search_paths
+      # inherit! :search_paths
       # RxTest and RxBlocking make the most sense in the context of unit/integration tests
       # pod 'RxBlocking', '~> 5'
       # pod 'RxTest', '~> 5'
