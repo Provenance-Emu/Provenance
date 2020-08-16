@@ -2,7 +2,7 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#import <PVLibrary/LzmaSDKObjCReader.h>
+#import <LzmaSDK_ObjC/LzmaSDKObjCReader.h>
 #import "PVLogViewController.h"
 //#import "Provenance/Version.h"
 #import <Realm/Realm.h>

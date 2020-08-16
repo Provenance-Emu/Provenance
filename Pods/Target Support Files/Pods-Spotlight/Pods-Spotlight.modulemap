@@ -1,0 +1,6 @@
+framework module Pods_Spotlight {
+  umbrella header "Pods-Spotlight-umbrella.h"
+
+  export *
+  module * { export * }
+}

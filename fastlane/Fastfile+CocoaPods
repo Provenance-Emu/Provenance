@@ -1,0 +1,82 @@
+desc 'CocoaPods install'
+lane :pod_install do |options|
+  clean_install = options.fetch(:clean_install, false)
+  silent = options.fetch(:silent, false)
+
+  cocoapods(
+    clean_install: clean_install,
+    silent: clean_install,
+  )
+end
+
+desc 'Build cocoapods only'
+lane :pod_build do |options|
+
+  configuration = options.fetch(:configuration, 'Release')
+  platforms = options.fetch(:platforms, 'iOS,tvOS').split(',')
+  Scheme = Struct.new(:scheme, :platform)
+
+  schemes = [
+    Scheme.new("Pods-Spotlight", "iOS"),
+    Scheme.new("Pods-ProvenanceApp-Provenance", "iOS"),
+    Scheme.new("Pods-TopShelf", "tvOS"),
+    Scheme.new("Pods-ProvenanceApp-ProvenanceTV", "tvOS"),
+].select { |scheme| platforms.include?(scheme.platform)}
+
+
+  schemes.each do |scheme|
+    xcodebuild(
+      :project => File.expand_path('../Pods/Pods.xcodeproj'),
+      :scheme => scheme.scheme,
+      :configuration => configuration,
+      :destination => 'generic/platform=' + scheme.platform
+    )
+  end
+end
+
+desc 'Lane to run install cocoapods in new checkout for iOS only'
+lane :pod_build_app do
+  cache_folder = File.expand_path('../build/Release-iphoneos')
+  gym(
+    project: 'App.xcodeproj',
+    scheme: 'App',
+    configuration: 'Release',
+    destination: 'generic/platform=iOS',
+    xcargs: [
+      "PODS_CONFIGURATION_BUILD_DIR=#{cache_folder}",
+      "FRAMEWORK_SEARCH_PATHS='$(inherited) #{cache_folder}'"
+    ].join(" ")
+  )
+end
+
+desc 'Patches the cocoapods run script for caching'
+lane :patch_app_project_for_pods_cache do
+      
+  fastlane_require 'xcodeproj'
+  project = Xcodeproj::Project.open("../Scoop.xcodeproj")
+  target = project.targets.select { |target| target.name == 'App' }.first
+  phase = target.shell_script_build_phases.select { |phase| phase.name.include?('Embed Pods Frameworks') }.first
+  
+  prefix = [
+    'if [ -z "${FAKE_BUILT_PRODUCTS_DIR}" ]; then',
+    '  built_products_dir=$BUILT_PRODUCTS_DIR',
+    'else',
+    '  built_products_dir=$FAKE_BUILT_PRODUCTS_DIR',
+    'fi'
+  ].join("\n")
+  
+  phase.shell_script = [
+    prefix,
+    "BUILT_PRODUCTS_DIR=$built_products_dir #{phase.shell_script}"
+  ].join("\n")
+  
+  project.save()
+end
+
+private_lane :pods_cache_s3_key do
+  podfile_path = File.expand_path('../Podfile')
+  podfile_sha1 = sh("shasum '#{podfile_path}'").split("  ")[0].strip
+  configuration = 'release' # Adjust depending on what you build the cache for
+  xcode_version = sh("xcodebuild -version | grep 'Build version' | awk '{ print $3 }'").strip
+  "s3://cache.provenance/cache/pods_#{configuration}_#{podfile_sha1}_xcode-#{xcode_version}.zip"
+end

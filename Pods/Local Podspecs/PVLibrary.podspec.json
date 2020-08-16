@@ -1,0 +1,86 @@
+{
+  "name": "PVLibrary",
+  "version": "1.5.0",
+  "summary": "Provenance ROM library framework",
+  "description": "PVLibrary is a iOS/tvOS library for the Provenance library platform.",
+  "homepage": "https://github.com/Provenance/Provenance",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5.0"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0",
+    "osx": "10.15"
+  },
+  "frameworks": [
+    "CoreGraphics",
+    "CoreServices",
+    "Foundation"
+  ],
+  "module_name": "PVLibrary",
+  "header_dir": "PVLibrary",
+  "dependencies": {
+    "PVSupport": [
+
+    ],
+    "LzmaSDK-ObjC": [
+
+    ],
+    "RealmSwift": [
+
+    ],
+    "RxCocoa": [
+
+    ],
+    "RxRealm": [
+
+    ],
+    "RxSwift": [
+
+    ],
+    "SQLite.swift": [
+
+    ],
+    "SSZipArchive": [
+
+    ],
+    "SWCompression": [
+
+    ]
+  },
+  "public_header_files": "PVLibrary/Sources/**/*.{h}",
+  "source_files": [
+    "PVLibrary/Sources/**/*.{swift,h,m,mm,c}"
+  ],
+  "resources": [
+    "PVLibrary/Sources/Resources/*.*"
+  ],
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "-lObjC",
+    "OTHER_SWIFT_FLAGS[config=Debug]": "-DDEBUG",
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVLibrary"
+  },
+  "testspecs": [
+    {
+      "name": "PVLibraryTests",
+      "test_type": "unit",
+      "requires_app_host": false,
+      "source_files": "PVLibrary/Tests/**/*.swift"
+    }
+  ],
+  "swift_version": "5.1"
+}

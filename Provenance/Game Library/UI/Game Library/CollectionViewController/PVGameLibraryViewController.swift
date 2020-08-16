@@ -22,6 +22,9 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 import UIKit
+#if canImport(RxGesture)
+    import RxGesture
+#endif
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"

@@ -74,11 +74,9 @@ setup: \
 	check_for_ruby \
 	check_for_homebrew \
 	update_homebrew \
-	install_carthage \
 	install_bundler_gem \
 	install_ruby_gems \
-	install_carthage_dependencies_ios \
-  install_carthage_dependencies_tvos
+	pod_install
 
 pull_request: \
 	test \
@@ -128,32 +126,15 @@ install_ruby_gems:
 
 	bundle install
 
-install_carthage:
-	$(info Installing Carthage…)
+pod_install:
+	$(info Installing CocoaPods dependencies...)
 
-	brew unlink carthage || true
-	brew install carthage
-	brew link --overwrite carthage
+	bundle exec fastlane pod_install
 
-install_carthage_dependencies_ios:
-	$(info Installing Carthage dependencies for iOS…)
+pod_update:
+	$(info Updating CocoaPods dependencies...)
 
-	bundle exec fastlane carthage_bootstrap_ios
-
-install_carthage_dependencies_tvos:
-	$(info Installing Carthage dependencies for tvOS…)
-
-	bundle exec fastlane carthage_bootstrap_tvos
-
-update_carthage_dependencies_ios:
-	$(info Updating Carthage dependencies for iOS…)
-
-	bundle exec fastlane carthage_update_ios
-
-update_carthage_dependencies_tvos:
-	$(info Updating Carthage dependencies for tvOS…)
-
-	bundle exec fastlane carthage_update_tvos
+	bundle exec pod update
 
 pull:
 	$(info Pulling new commits…)
@@ -165,7 +146,7 @@ pull:
 ## -- Source Code Tasks --
 
 ## Pull upstream and update 3rd party frameworks
-update: pull submodules install_ruby_gems update_carthage_dependencies_ios update_carthage_dependencies_tvos
+update: pull submodules install_ruby_gems pod_update
 
 submodules:
 	$(info Updating submodules…)
@@ -198,11 +179,6 @@ developer_tvos:
 
 	bundle exec fastlane build_developer scheme:ProvenanceTV-Release
 
-## Make a .zip package of frameworks
-package:
-	carthage build --no-skip-current
-	carthage archive PMS-UI PMSInterface
-
 ## Update & build for iOS
 ios: | update developer_ios
 
@@ -222,16 +198,3 @@ release: | _var_VERSION
 	package
 	make --no-print-directory _tag VERSION=$(VERSION)
 	make --no-print-directory _push VERSION=$(VERSION)
-
-## Clear carthage caches. Helps with carthage update issues
-carthage_clean:
-	$(info Deleting Carthage caches…)
-
-	rm -rf ~/Library/Caches/org.carthage.CarthageKit/dependencies/
-
-hockey:
-	git stash push
-	git pull
-	git submodule update --init --recursive
-	bundle install
-	bundle exec fastlane travis_ios

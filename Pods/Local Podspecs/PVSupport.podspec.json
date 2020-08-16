@@ -1,0 +1,75 @@
+{
+  "name": "PVSupport",
+  "version": "1.5.0",
+  "summary": "Provenance support framework",
+  "description": "PVSupport is a iOS/tvOS library for the Provenance platform.",
+  "homepage": "https://github.com/Provenance/Provenance",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5.0"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0",
+    "osx": "10.15"
+  },
+  "frameworks": [
+    "AVFoundation",
+    "Foundation",
+    "GameController"
+  ],
+  "module_name": "PVSupport",
+  "header_dir": "PVSupport",
+  "dependencies": {
+    "CocoaLumberjack/Swift": [
+
+    ],
+    "NSLogger": [
+
+    ]
+  },
+  "public_header_files": [
+    "PVSupport/Sources/PVSupport.h",
+    "PVSupport/Sources/Audio/*.h",
+    "PVSupport/Sources/Controller/*.h",
+    "PVSupport/Sources/DebugUtils/*.h",
+    "PVSupport/Sources/EmulatorCore/*.h",
+    "PVSupport/Sources/Extensions/*.h",
+    "PVSupport/Sources/Logging/PV*.h"
+  ],
+  "private_header_files": [
+    "PVSupport/Sources/Audio/CARingBuffer/*.h",
+    "PVSupport/Sources/Logging/XCDLumberjackNSLogger.h",
+    "PVSupport/Sources/Threads/*.h"
+  ],
+  "source_files": [
+    "PVSupport/Sources/**/*.{swift,h,m,mm,c}"
+  ],
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "-lObjC",
+    "OTHER_SWIFT_FLAGS[config=Debug]": "-DDEBUG",
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVSupport"
+  },
+  "testspecs": [
+    {
+      "name": "PVSupportTests",
+      "test_type": "unit",
+      "requires_app_host": false,
+      "source_files": "PVSupport/Tests/**/*.swift"
+    }
+  ],
+  "swift_version": "5.1"
+}

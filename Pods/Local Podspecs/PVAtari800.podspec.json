@@ -1,0 +1,146 @@
+{
+  "name": "PVAtari800",
+  "version": "1.5",
+  "summary": "Atari800 Provenance Emulator Cores",
+  "description": "Atari800 is the iOS framework for the Provenance Atari800 emulator core.\nUpsream core http://sourceforge.net/projects/atari800/",
+  "homepage": "https://provenance-emu.com",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0"
+  },
+  "module_name": "PVAtari800",
+  "header_dir": "PVAtari800",
+  "frameworks": "Foundation",
+  "libraries": [
+    "z",
+    "edit"
+  ],
+  "dependencies": {
+    "PVSupport": [
+      "~> 1.5"
+    ],
+    "PVLibrary": [
+      "~> 1.5"
+    ]
+  },
+  "source_files": [
+    "Sources/upstream/src/afile.c",
+    "Sources/upstream/src/afile.h",
+    "Sources/upstream/src/akey.h",
+    "Sources/upstream/src/antic.c",
+    "Sources/upstream/src/antic.h",
+    "Sources/upstream/src/artifact.c",
+    "Sources/upstream/src/atari.c",
+    "Sources/upstream/src/atari.h",
+    "Sources/upstream/src/binload.c",
+    "Sources/upstream/src/cartridge.c",
+    "Sources/upstream/src/cartridge.h",
+    "Sources/upstream/src/cartridge_info.c",
+    "Sources/upstream/src/cartridge_info.h",
+    "Sources/upstream/src/cassette.c",
+    "Sources/upstream/src/cassette.h",
+    "Sources/upstream/src/cfg.c",
+    "Sources/upstream/src/cfg.h",
+    "Sources/upstream/src/colours_external.c",
+    "Sources/upstream/src/colours_ntsc.c",
+    "Sources/upstream/src/colours_ntsc.h",
+    "Sources/upstream/src/colours_pal.c",
+    "Sources/upstream/src/colours.c",
+    "Sources/upstream/src/colours.h",
+    "Sources/upstream/src/compfile.c",
+    "Sources/upstream/src/config.h",
+    "Sources/upstream/src/cpu.c",
+    "Sources/upstream/src/crc32.c",
+    "Sources/upstream/src/cycle_map.c",
+    "Sources/upstream/src/devices.c",
+    "Sources/upstream/src/devices.h",
+    "Sources/upstream/src/emuos.c",
+    "Sources/upstream/src/esc.c",
+    "Sources/upstream/src/gtia.c",
+    "Sources/upstream/src/gtia.h",
+    "Sources/upstream/src/ide.c",
+    "Sources/upstream/src/ide.h",
+    "Sources/upstream/src/img_tape.c",
+    "Sources/upstream/src/input.c",
+    "Sources/upstream/src/input.h",
+    "Sources/upstream/src/log.c",
+    "Sources/upstream/src/memory.c",
+    "Sources/upstream/src/memory.h",
+    "Sources/upstream/src/monitor.c",
+    "Sources/upstream/src/mzpokeysnd.c",
+    "Sources/upstream/src/pbi_bb.c",
+    "Sources/upstream/src/pbi_mio.c",
+    "Sources/upstream/src/pbi_scsi.c",
+    "Sources/upstream/src/pbi.c",
+    "Sources/upstream/src/pbi.h",
+    "Sources/upstream/src/pia.c",
+    "Sources/upstream/src/pia.h",
+    "Sources/upstream/src/platform.h",
+    "Sources/upstream/src/pokey.c",
+    "Sources/upstream/src/pokey.h",
+    "Sources/upstream/src/pokeysnd.c",
+    "Sources/upstream/src/pokeysnd.h",
+    "Sources/upstream/src/remez.c",
+    "Sources/upstream/src/rtime.c",
+    "Sources/upstream/src/rtime.h",
+    "Sources/upstream/src/screen.c",
+    "Sources/upstream/src/sio.c",
+    "Sources/upstream/src/sio.h",
+    "Sources/upstream/src/sndsave.c",
+    "Sources/upstream/src/sound.c",
+    "Sources/upstream/src/sound.h",
+    "Sources/upstream/src/statesav.c",
+    "Sources/upstream/src/statesav.h",
+    "Sources/upstream/src/sysrom.c",
+    "Sources/upstream/src/sysrom.h",
+    "Sources/upstream/src/ui_basic.c",
+    "Sources/upstream/src/ui.h",
+    "Sources/upstream/src/util.c",
+    "Sources/upstream/src/roms/*.{h,c}",
+    "Sources/config.h",
+    "Sources/PVAtari800.h",
+    "Sources/ATR800GameCore/**/*.{swift,h,m,mm}"
+  ],
+  "public_header_files": [
+    "Sources/ATR800GameCore/ATR800GameCore.h",
+    "Sources/PVAtari800.h"
+  ],
+  "private_header_files": [
+    "Sources/upstream/src/platform.h",
+    "Sources/config.h"
+  ],
+  "resources": [
+    "Resources/**/*.*"
+  ],
+  "compiler_flags": [
+    "-DCORE_ATARI800_SUBSPEC_INCLUDED",
+    "-DGWINSZ_IN_SYS_IOCTL"
+  ],
+  "pod_target_xcconfig": {
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVAtari800",
+    "OTHER_LDFLAGS": "$(inherited) -ObjC",
+    "CORE_ATARI800_SUBSPEC_INCLUDED": "-D'CORE_ATARI800_SUBSPEC_INCLUDED'",
+    "OTHER_SWIFT_FLAGS": "$(CORE_ATARI800_SUBSPEC_INCLUDED)",
+    "GCC_C_LANGUAGE_STANDARD": "gnu99",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++0x",
+    "CLANG_CXX_LIBRARY": "libc++"
+  },
+  "swift_version": "5.1"
+}

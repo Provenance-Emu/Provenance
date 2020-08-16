@@ -50,7 +50,7 @@ FASTLANE_GIT_PATH = 'Fastlane'
 # Multiple conditions can be used to select the latest version within constraints.
 # eg; [">= 1.1.0", "< 2.0.0"] 
 FASTLANE_GIT_VERSION = [">= 1.0.0", "< 2.0.0"]
-IMPORTS = ["Build", "Carthage", "Certs", "Rome", "Publish", "CI", "Badge", "Testing", "Install", "Enviroment"]
+IMPORTS = ["Build", "CocoaPods", "Certs", "Rome", "Publish", "CI", "Badge", "Testing", "Install", "Enviroment"]
 FASTLANE_IMPORT_LOCAL = true
 
 platform :ios do

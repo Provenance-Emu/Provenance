@@ -1,0 +1,105 @@
+{
+  "name": "FCEU",
+  "version": "1.5",
+  "summary": "FCEU Provenance Emulator Cores",
+  "description": "FCEU is the iOS framework for the Provenance FCEU emulator core.\nUpsream core https://github.com/TASVideos/fceux/",
+  "homepage": "https://provenance-emu.com",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5"
+  },
+  "requires_arc": true,
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0"
+  },
+  "module_name": "PVFCEU",
+  "header_dir": "PVFCEU",
+  "frameworks": [
+    "Foundation",
+    "OpenGLES",
+    "libz"
+  ],
+  "libraries": "z",
+  "dependencies": {
+    "PVSupport": [
+      "~> 1.5"
+    ],
+    "PVLibrary": [
+      "~> 1.5"
+    ]
+  },
+  "source_files": [
+    "Sources/upstream/asm.{h,hpp,cpp,c}",
+    "Sources/upstream/cart.{h,hpp,cpp,c}",
+    "Sources/upstream/cheat.{h,hpp,cpp,c}",
+    "Sources/upstream/conddebug.{h,hpp,cpp,c}",
+    "Sources/upstream/config.{h,hpp,cpp,c}",
+    "Sources/upstream/driver.{h,hpp,cpp,c}",
+    "Sources/upstream/debug.{h,hpp,cpp,c}",
+    "Sources/upstream/drawing.{h,hpp,cpp,c}",
+    "Sources/upstream/emufile.{h,hpp,cpp,c}",
+    "Sources/upstream/fceu.{h,hpp,cpp,c}",
+    "Sources/upstream/fds.{h,hpp,cpp,c}",
+    "Sources/upstream/file.{h,hpp,cpp,c}",
+    "Sources/upstream/filter.{h,hpp,cpp,c}",
+    "Sources/upstream/ines.{h,hpp,cpp,c}",
+    "Sources/upstream/input.{h,hpp,cpp,c}",
+    "Sources/upstream/lua-engines.{h,hpp,cpp,c}",
+    "Sources/upstream/movie.{h,hpp,cpp,c}",
+    "Sources/upstream/netplay.{h,hpp,cpp,c}",
+    "Sources/upstream/nsf.{h,hpp,cpp,c}",
+    "Sources/upstream/oldmovie.{h,hpp,cpp,c}",
+    "Sources/upstream/palette.{h,hpp,cpp,c}",
+    "Sources/upstream/ppu.{h,hpp,cpp,c}",
+    "Sources/upstream/sound.{h,hpp,cpp,c}",
+    "Sources/upstream/state.{h,hpp,cpp,c}",
+    "Sources/upstream/types.{h,hpp,cpp,c}",
+    "Sources/upstream/unif.{h,hpp,cpp,c}",
+    "Sources/upstream/video.{h,hpp,cpp,c}",
+    "Sources/upstream/vsuni.{h,hpp,cpp,c}",
+    "Sources/upstream/wave.{h,hpp,cpp,c}",
+    "Sources/upstream/x6502.{h,hpp,cpp,c}",
+    "Sources/upstream/drivers/common/*.{h,hpp,cpp,c}",
+    "Sources/upstream/boards/*.{h,hpp,cpp,c}",
+    "Sources/upstream/input/*.{h,hpp,cpp,c}",
+    "Sources/upstream/utils/*.{h,hpp,cpp,c}",
+    "Sources/PVFCEU/**/*.{m,mm,swift}",
+    "Sources/PVFCEU/PVFCEU.h",
+    "Sources/PVFCEU/PVFCEUEmulatorCore/PVFCEUEmulatorCore.h"
+  ],
+  "public_header_files": [
+    "Sources/PVFCEU/PVFCEU.h",
+    "Sources/PVFCEU/PVFCEUEmulatorCore/PVFCEUEmulatorCore.h"
+  ],
+  "resources": [
+    "Resources/**/*.*"
+  ],
+  "compiler_flags": [
+    "-DCORE_FCEUX_SUBSPEC_INCLUDED",
+    "-DHAVE_ASPRINTF",
+    "-DPSS_STYLE=1",
+    "-DLSB_FIRST",
+    "-Wno-write-strings"
+  ],
+  "pod_target_xcconfig": {
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.FCEU",
+    "OTHER_LDFLAGS": "$(inherited) -ObjC",
+    "CORE_FCEU_SUBSPEC_INCLUDED": "-D'CORE_FCEU_SUBSPEC_INCLUDED'",
+    "OTHER_SWIFT_FLAGS": "$(CORE_FCEU_SUBSPEC_INCLUDED)"
+  },
+  "swift_version": "5.1"
+}

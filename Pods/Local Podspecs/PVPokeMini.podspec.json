@@ -1,0 +1,127 @@
+{
+  "name": "PVPokeMini",
+  "version": "1.5",
+  "summary": "PokeMini Provenance Emulator Core",
+  "description": "PokeMini is the iOS library for the NewsCorp PokeMini platform.",
+  "homepage": "https://provenance-emu.com",
+  "license": {
+    "type": "Provenance License",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "James Addyman": "james@provenance-emu.com",
+    "Joseph Mattiello": "joe@provenance-emu.com"
+  },
+  "source": {
+    "git": "https://github.com/Provenance/Provenance.git",
+    "tag": "1.5"
+  },
+  "cocoapods_version": ">= 1.8.0",
+  "swift_versions": [
+    "5.0",
+    "5.1"
+  ],
+  "platforms": {
+    "ios": "10.0",
+    "tvos": "10.0"
+  },
+  "frameworks": [
+    "AudioToolbox",
+    "Foundation",
+    "OpenGLES"
+  ],
+  "module_name": "PVPokeMini",
+  "header_dir": "PVPokeMini",
+  "dependencies": {
+    "PVSupport": [
+
+    ],
+    "PVLibrary": [
+
+    ]
+  },
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "$(inherited) -ObjC",
+    "CORE_POKEMINI_SUBSPEC_INCLUDED": "-D'CORE_POKEMINI_SUBSPEC_INCLUDED'",
+    "OTHER_SWIFT_FLAGS": "$(inherited) $(CORE_POKEMINI_SUBSPEC_INCLUDED)",
+    "GCC_C_LANGUAGE_STANDARD": "gnu99",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++0x",
+    "CLANG_CXX_LIBRARY": "libc++",
+    "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) NO_ZIP=1 IOS=1",
+    "PRODUCT_BUNDLE_IDENTIFIER": "com.provenance-emu.PVPokeMini"
+  },
+  "source_files": [
+    "Sources/upstream/source/CommandLine.c",
+    "Sources/upstream/source/CommandLine.h",
+    "Sources/upstream/source/Endianess.h",
+    "Sources/upstream/source/freebios.c",
+    "Sources/upstream/source/Hardware.c",
+    "Sources/upstream/source/Hardware.h",
+    "Sources/upstream/source/IOMap.h",
+    "Sources/upstream/source/Joystick.c",
+    "Sources/upstream/source/Joystick.h",
+    "Sources/upstream/source/Keyboard.h",
+    "Sources/upstream/source/MinxAudio.c",
+    "Sources/upstream/source/MinxAudio.h",
+    "Sources/upstream/source/MinxColorPRC.c",
+    "Sources/upstream/source/MinxColorPRC.h",
+    "Sources/upstream/source/MinxCPU_CE.c",
+    "Sources/upstream/source/MinxCPU_CF.c",
+    "Sources/upstream/source/MinxCPU_noBranch.h",
+    "Sources/upstream/source/MinxCPU_SP.c",
+    "Sources/upstream/source/MinxCPU_XX.c",
+    "Sources/upstream/source/MinxCPU.c",
+    "Sources/upstream/source/MinxCPU.h",
+    "Sources/upstream/source/MinxIO.c",
+    "Sources/upstream/source/MinxIO.h",
+    "Sources/upstream/source/MinxIRQ.c",
+    "Sources/upstream/source/MinxIRQ.h",
+    "Sources/upstream/source/MinxLCD.c",
+    "Sources/upstream/source/MinxLCD.h",
+    "Sources/upstream/source/MinxPRC.c",
+    "Sources/upstream/source/MinxPRC.h",
+    "Sources/upstream/source/MinxTimers.c",
+    "Sources/upstream/source/MinxTimers.h",
+    "Sources/upstream/source/Missing.c",
+    "Sources/upstream/source/Missing.h",
+    "Sources/upstream/source/Multicart.c",
+    "Sources/upstream/source/Multicart.h",
+    "Sources/upstream/source/PMCommon.c",
+    "Sources/upstream/source/PMCommon.h",
+    "Sources/upstream/source/PokeMini.c",
+    "Sources/upstream/source/PokeMini.h",
+    "Sources/upstream/source/UI.h",
+    "Sources/upstream/source/Video_x1.c",
+    "Sources/upstream/source/Video_x1.h",
+    "Sources/upstream/source/Video_x2.c",
+    "Sources/upstream/source/Video_x2.h",
+    "Sources/upstream/source/Video_x3.c",
+    "Sources/upstream/source/Video_x3.h",
+    "Sources/upstream/source/Video_x4.c",
+    "Sources/upstream/source/Video_x4.h",
+    "Sources/upstream/source/Video_x5.c",
+    "Sources/upstream/source/Video_x5.h",
+    "Sources/upstream/source/Video_x6.c",
+    "Sources/upstream/source/Video_x6.h",
+    "Sources/upstream/source/Video.c",
+    "Sources/upstream/source/Video.h",
+    "Sources/upstream/freebios/**/*.{h,c}",
+    "Sources/upstream/resource/**/*.{h,c}",
+    "Sources/upstream/libretro/libretro-common/streams/*.c",
+    "Sources/*.{swift,h,m,mm,c}"
+  ],
+  "public_header_files": [
+    "Sources/PVPokeMini.h",
+    "Sources/PVPokeMiniEmulatorCore.h"
+  ],
+  "header_mappings_dir": "Sources/upstream/libretro/libretro-common/include/",
+  "private_header_files": "Sources/upstream/libretro/libretro-common/include/**/*.h",
+  "resources": [
+    "Resources/**/*.*"
+  ],
+  "xcconfig": {
+    "HEADER_SEARCH_PATHS": "$(inherited) \"${PODS_TARGET_SRCROOT}/Sources/upstream/libretro/libretro-common/include\""
+  },
+  "compiler_flags": "-DCORE_POKEMINI_SUBSPEC_INCLUDED -DIOS",
+  "swift_version": "5.1"
+}

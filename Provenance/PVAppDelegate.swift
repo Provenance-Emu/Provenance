@@ -6,7 +6,7 @@
 //
 
 let TEST_THEMES = false
-import CocoaLumberjackSwift
+import CocoaLumberjack.Swift
 import CoreSpotlight
 import PVLibrary
 import PVSupport

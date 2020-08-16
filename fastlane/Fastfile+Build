@@ -252,8 +252,7 @@ private_lane :pre_build do
     pre_build_user
   end
 
-  rome_download
-  carthage_bootstrap_ios
+  pod_install
 end
 
 private_lane :pre_build_user do
@@ -299,11 +298,7 @@ lane :userbuild do
 
   UI.message 'Getting 3rd party dependencies.'
 
-  if which_app == 'tvOS'
-    carthage_bootstrap_tvOS
-  else
-    carthage_bootstrap_ios
-  end
+  pod_install
 
   # Git git commit count
   commits = number_of_commits(all: true).to_s

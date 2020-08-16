@@ -1,0 +1,6 @@
+framework module XLActionController {
+  umbrella header "XLActionController-umbrella.h"
+
+  export *
+  module * { export * }
+}

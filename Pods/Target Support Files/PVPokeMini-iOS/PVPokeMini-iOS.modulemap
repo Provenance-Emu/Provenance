@@ -1,0 +1,6 @@
+framework module PVPokeMini {
+  umbrella header "PVPokeMini-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

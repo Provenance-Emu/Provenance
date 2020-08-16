@@ -10,7 +10,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import UIKit
-import ZipArchive
+import SSZipArchive
 
 public func PVMaxRecentsCount() -> Int {
     #if os(tvOS)

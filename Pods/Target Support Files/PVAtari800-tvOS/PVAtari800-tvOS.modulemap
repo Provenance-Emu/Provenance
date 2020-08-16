@@ -1,0 +1,6 @@
+framework module PVAtari800 {
+  umbrella header "PVAtari800-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

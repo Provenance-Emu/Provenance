@@ -1,0 +1,6 @@
+framework module PVPokeMini {
+  umbrella header "PVPokeMini-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

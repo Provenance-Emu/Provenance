@@ -1,0 +1,6 @@
+framework module Differentiator {
+  umbrella header "Differentiator-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

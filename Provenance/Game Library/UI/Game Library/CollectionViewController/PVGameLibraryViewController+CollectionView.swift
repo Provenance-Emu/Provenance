@@ -11,9 +11,6 @@ import PVLibrary
 import PVSupport
 import RxCocoa
 import RxSwift
-#if canImport(RxGesture)
-    import RxGesture
-#endif
 
 // tvOS
 let tvOSCellUnit: CGFloat = 256.0

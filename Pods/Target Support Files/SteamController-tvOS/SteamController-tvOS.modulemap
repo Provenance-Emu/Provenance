@@ -1,0 +1,6 @@
+framework module SteamController {
+  umbrella header "SteamController-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

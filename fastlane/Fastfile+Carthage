@@ -1,6 +1,6 @@
 desc 'Lane to run bootstrap carthage in new checkout for iOS only'
 lane :carthage_bootstrap_ios do |options|
-  
+
   use_binaries = options.fetch(:use_binaries, true)
   use_ssh = options.fetch(:use_ssh, false)
   use_rome = options.fetch(:use_rome, true)

@@ -1,0 +1,6 @@
+framework module BitByteData {
+  umbrella header "BitByteData-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,26 @@
+${PODS_ROOT}/Target Support Files/Pods-ProvenanceApps-Provenance-Provenance Tests/Pods-ProvenanceApps-Provenance-Provenance Tests-frameworks.sh
+${BUILT_PRODUCTS_DIR}/BitByteData-iOS/BitByteData.framework
+${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework
+${BUILT_PRODUCTS_DIR}/LzmaSDK-ObjC-iOS/LzmaSDK_ObjC.framework
+${BUILT_PRODUCTS_DIR}/NSLogger-iOS/NSLogger.framework
+${BUILT_PRODUCTS_DIR}/PVLibrary-iOS/PVLibrary.framework
+${BUILT_PRODUCTS_DIR}/PVSupport-iOS/PVSupport.framework
+${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework
+${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/RxCocoa-iOS/RxCocoa.framework
+${BUILT_PRODUCTS_DIR}/RxRealm-iOS/RxRealm.framework
+${BUILT_PRODUCTS_DIR}/RxRelay-iOS/RxRelay.framework
+${BUILT_PRODUCTS_DIR}/RxSwift-iOS/RxSwift.framework
+${BUILT_PRODUCTS_DIR}/SQLite.swift-iOS/SQLite.framework
+${BUILT_PRODUCTS_DIR}/SSZipArchive-iOS/SSZipArchive.framework
+${BUILT_PRODUCTS_DIR}/SWCompression-iOS/SWCompression.framework
+${BUILT_PRODUCTS_DIR}/Differentiator-iOS/Differentiator.framework
+${BUILT_PRODUCTS_DIR}/PVAtari800-iOS/PVAtari800.framework
+${BUILT_PRODUCTS_DIR}/PVPokeMini-iOS/PVPokeMini.framework
+${BUILT_PRODUCTS_DIR}/QuickTableViewController-iOS/QuickTableViewController.framework
+${BUILT_PRODUCTS_DIR}/ReachabilitySwift-iOS/Reachability.framework
+${BUILT_PRODUCTS_DIR}/RxDataSources-iOS/RxDataSources.framework
+${BUILT_PRODUCTS_DIR}/RxGesture/RxGesture.framework
+${BUILT_PRODUCTS_DIR}/RxReachability-iOS/RxReachability.framework
+${BUILT_PRODUCTS_DIR}/SteamController-iOS/SteamController.framework
+${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework
