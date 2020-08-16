@@ -6,8 +6,8 @@ lock_pod_sources = !is_ci
 
 source 'https://cdn.cocoapods.org/'
 
-plugin 'cocoapods-binary'
-plugin 'cocoapods-githooks'
+# plugin 'cocoapods-binary'
+# plugin 'cocoapods-githooks'
 
 use_frameworks!
 inhibit_all_warnings!

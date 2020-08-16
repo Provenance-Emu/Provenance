@@ -16,7 +16,6 @@ ${BUILT_PRODUCTS_DIR}/SSZipArchive-tvOS/SSZipArchive.framework
 ${BUILT_PRODUCTS_DIR}/SWCompression-tvOS/SWCompression.framework
 ${BUILT_PRODUCTS_DIR}/Differentiator-tvOS/Differentiator.framework
 ${BUILT_PRODUCTS_DIR}/PVAtari800-tvOS/PVAtari800.framework
-${BUILT_PRODUCTS_DIR}/PVGambatte-tvOS/PVGambatte.framework
 ${BUILT_PRODUCTS_DIR}/PVPokeMini-tvOS/PVPokeMini.framework
 ${BUILT_PRODUCTS_DIR}/QuickTableViewController-tvOS/QuickTableViewController.framework
 ${BUILT_PRODUCTS_DIR}/ReachabilitySwift-tvOS/Reachability.framework

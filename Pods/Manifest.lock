@@ -18,8 +18,6 @@ PODS:
   - PVAtari800 (1.5):
     - PVLibrary (~> 1.5)
     - PVSupport (~> 1.5)
-  - PVGambatte (1.5):
-    - PVSupport (~> 1.5)
   - PVLibrary (1.5.0):
     - LzmaSDK-ObjC
     - PVSupport
@@ -132,7 +130,6 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift
   - LzmaSDK-ObjC (from `https://github.com/Provenance-Emu/LzmaSDKObjC.git`, branch `master`)
   - PVAtari800 (from `./Cores/Atari800`)
-  - PVGambatte (from `./Cores/Gambatte`)
   - PVLibrary (from `./`)
   - PVLibrary/PVLibraryTests (from `./`)
   - PVPokeMini (from `./Cores/PokeMini`)
@@ -174,14 +171,16 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/Provenance-Emu/LzmaSDKObjC.git
   PVAtari800:
+    :binary: false
     :path: "./Cores/Atari800"
-  PVGambatte:
-    :path: "./Cores/Gambatte"
   PVLibrary:
+    :binary: false
     :path: "./"
   PVPokeMini:
+    :binary: false
     :path: "./Cores/PokeMini"
   PVSupport:
+    :binary: false
     :path: "./"
   RxReachability:
     :git: https://github.com/RxSwiftCommunity/RxReachability.git
@@ -209,7 +208,6 @@ SPEC CHECKSUMS:
   LzmaSDK-ObjC: 7d55bc412e0d72279f69ea1a5c358554f955ead8
   NSLogger: cf3013a4fba189f631f07e6c3d5b8ce2b209654b
   PVAtari800: f427dbf21c75ee4710da74fe3bb0725c878dd575
-  PVGambatte: 3f1f064976213e2f38e041c35002e3e75507bd75
   PVLibrary: 1ecb5f88b6dbeee9498ac3bbb15a629f757e9d24
   PVPokeMini: bca4db3d3ddcecea0e611827823a290a69d52dc1
   PVSupport: 42d22347a47a6d6a9e789989bad9885fc0415203
@@ -230,6 +228,6 @@ SPEC CHECKSUMS:
   SWCompression: 2fdd928b49441e69ec87ee61530282dd11fa9c59
   XLActionController: 43ee1da8641fb4b6891f89cc3c6c73041cdd0062
 
-PODFILE CHECKSUM: 2db61a3cf7f5a46fdc904daae860912ec8012e36
+PODFILE CHECKSUM: 09dfd96bc85e6d1bb9cd0441476e4326ea2a432f
 
 COCOAPODS: 1.10.0.beta.2
