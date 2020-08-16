@@ -40,22 +40,22 @@ steps:
     bundle install --jobs=8
   displayName: 'Install Gems'
 
-- task: Cache@2
-  inputs:
-    key: 'pods | "$(Agent.OS)" | Podfile.lock'
-    path: 'Pods'
-    cacheHitVar: 'PODS_CACHE_RESTORED'
-  displayName: CocoaPods cache
+# - task: Cache@2
+#   inputs:
+#     key: 'pods | "$(Agent.OS)" | Podfile.lock'
+#     path: 'Pods'
+#     cacheHitVar: 'PODS_CACHE_RESTORED'
+#   displayName: CocoaPods cache
 
-- task: Cache@2
-  inputs:
-    key: 'swiftc --version'
-    path: 'build'
-  displayName: XCode cache
+# - task: Cache@2
+#   inputs:
+#     key: 'swiftc --version'
+#     path: 'build'
+#   displayName: XCode cache
 
 - task: CocoaPods@0
   displayName: 'pod install using the CocoaPods task with defaults'
-  condition: ne(variables.PODS_CACHE_RESTORED, 'true')
+  # condition: ne(variables.PODS_CACHE_RESTORED, 'true')
 
 - task: Xcode@5
   inputs:
