@@ -300,7 +300,6 @@
 		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
 		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
-		B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -842,7 +841,6 @@
 		B378225621D32B0B0077E86F /* SliderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRow.swift; sourceTree = "<group>"; };
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
 		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
-		B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectorViewController.swift; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
@@ -1196,7 +1194,6 @@
 				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
 				B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */,
 				B378225021D32A6B0077E86F /* SettingsTableView.swift */,
-				B378225D21D34A030077E86F /* ThemeSelectorViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2549,7 +2546,6 @@
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
-				B378225E21D34A030077E86F /* ThemeSelectorViewController.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
