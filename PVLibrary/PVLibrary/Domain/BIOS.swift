@@ -176,7 +176,7 @@ public struct BIOSStatus: Codable {
 
 public extension BIOSStatus {
     init<T: BIOSFileProvider>(withBios bios: T) {
-        available = !(bios.fileInfo?.online ?? false)
+        available = bios.fileInfo != nil
         if available {
             let md5Match = bios.fileInfo?.md5?.uppercased() == bios.expectedMD5.uppercased()
             let sizeMatch = bios.fileInfo?.size == UInt64(bios.expectedSize)

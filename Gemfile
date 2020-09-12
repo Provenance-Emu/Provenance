@@ -10,10 +10,6 @@ gem 'fastlane'
 gem 'net-ssh'
 gem "net-scp"
 
-group :ci do
-  gem 'travis'
-end
-
 group :documentation do
   gem 'jazzy'
 end

@@ -8,11 +8,7 @@
 
 import Foundation
 
-#if os(iOS) || os(watchOS) || os(tvOS)
-    import MobileCoreServices
-#elseif os(macOS)
-    import CoreServices
-#endif
+import CoreServices
 
 public extension UTI {
     static let rom = UTI(rawValue: "com.provenance.rom")
@@ -374,7 +370,6 @@ public extension UTI {
     static let assemblyLanguageSource = UTI(rawValue: kUTTypeAssemblyLanguageSource as String)
     static let cSource = UTI(rawValue: kUTTypeCSource as String)
     static let objectiveCSource = UTI(rawValue: kUTTypeObjectiveCSource as String)
-    @available(OSX 10.11, iOS 9.0, *)
     static let swiftSource = UTI(rawValue: kUTTypeSwiftSource as String)
     static let cPlusPlusSource = UTI(rawValue: kUTTypeCPlusPlusSource as String)
     static let objectiveCPlusPlusSource = UTI(rawValue: kUTTypeObjectiveCPlusPlusSource as String)
@@ -413,10 +408,7 @@ public extension UTI {
     static let ico = UTI(rawValue: kUTTypeICO as String)
     static let rawImage = UTI(rawValue: kUTTypeRawImage as String)
     static let scalableVectorGraphics = UTI(rawValue: kUTTypeScalableVectorGraphics as String)
-    @available(tvOSApplicationExtension 9.1, *)
-    @available(OSX 10.12, iOS 9.1, watchOS 2.1, *)
     static let livePhoto = UTI(rawValue: kUTTypeLivePhoto as String)
-    @available(OSX 10.12, iOS 9.1, *)
     static let audiovisualContent = UTI(rawValue: kUTTypeAudiovisualContent as String)
     static let movie = UTI(rawValue: kUTTypeMovie as String)
     static let video = UTI(rawValue: kUTTypeVideo as String)

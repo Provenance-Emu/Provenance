@@ -37,7 +37,6 @@ struct PVGameLibraryUpdatesController {
     // TODO: Would be nice to inject the DirectoryWatcher as well
     init(gameImporter: GameImporter, importPath: URL = PVEmulatorConfiguration.Paths.romsImportPath, scheduler: SchedulerType = MainScheduler.asyncInstance) {
         self.gameImporter = gameImporter
-        #warning("FIXME: Why do we need Reactive here?")
         self.gameImporterEvents = Reactive(gameImporter).events.share()
 
         let directoryWatcher = RxDirectoryWatcher(directory: importPath)

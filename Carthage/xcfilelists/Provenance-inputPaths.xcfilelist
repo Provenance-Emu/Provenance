@@ -1,7 +1,11 @@
+$(SRCROOT)/Carthage/Build/iOS/AppCenter.framework
+$(SRCROOT)/Carthage/Build/iOS/AppCenterAnalytics.framework
+$(SRCROOT)/Carthage/Build/iOS/AppCenterCrashes.framework
+$(SRCROOT)/Carthage/Build/iOS/AppCenterDistribute.framework
+$(SRCROOT)/Carthage/Build/iOS/AppCenterPush.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/Differentiator.framework
-$(SRCROOT)/Carthage/Build/iOS/HockeySDK.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLogger.framework
 $(SRCROOT)/Carthage/Build/iOS/NSLoggerSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/QuickTableViewController.framework
@@ -16,6 +20,5 @@ $(SRCROOT)/Carthage/Build/iOS/RxRelay.framework
 $(SRCROOT)/Carthage/Build/iOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
 $(SRCROOT)/Carthage/Build/iOS/SteamController.framework
-$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework
 $(SRCROOT)/Carthage/Build/iOS/XLActionController.framework
 $(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework

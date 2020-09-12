@@ -1,6 +1,6 @@
 cache:
   local: ~/Library/Caches/Rome/
-  s3Bucket: carthage
+  s3Bucket: cache.provenance
 currentMap:
 - PVLibrary:
     - name: PVLibrary
