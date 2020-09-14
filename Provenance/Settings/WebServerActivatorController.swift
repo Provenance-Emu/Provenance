@@ -28,7 +28,7 @@ protocol WebServerActivatorController: class {
             Upload/Download files at:
 
             \(webServerAddress)  ᵂᵉᵇᵁᴵ
-            \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+            \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
             """
             return message
         }

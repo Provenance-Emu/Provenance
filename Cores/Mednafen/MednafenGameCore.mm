@@ -253,8 +253,10 @@ static void mednafen_init(MednafenGameCore* current)
 //	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
 //												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
 //												 // Enable this option to reduce whining noise during ADPCM playback.
-//    MDFNI_SetSetting("pce.slstart", "4"); // PCE: First rendered scanline 4 default
-//    MDFNI_SetSetting("pce.slend", "235"); // PCE: Last rendered scanline 235 default, 239max
+    Mednafen::MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
+    Mednafen::MDFNI_SetSetting("pce.slend", "241"); // PCE: Last rendered scanline 235 default, 241 max
+    Mednafen::MDFNI_SetSetting("pce.h_overscan", "1"); // PCE: Show horizontal overscan are, default 0. Needed for correctly displaying the system aspect ratio.
+    Mednafen::MDFNI_SetSetting("pce.resamp_quality", "5"); // PCE: Audio resampler quality, default 3 Higher values correspond to better SNR and better preservation of higher frequencies("brightness"), at the cost of increased computational complexity and a negligible increase in latency. Higher values will also slightly increase the probability of sample clipping(relevant if Mednafen's volume control settings are set too high), due to increased (time-domain) ringing.
 
 	// PCE_Fast settings
 
