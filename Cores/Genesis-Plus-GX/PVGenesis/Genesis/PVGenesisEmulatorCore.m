@@ -409,7 +409,7 @@ static bool environment_callback(unsigned cmd, void *data)
     {
         return CGSizeMake(256 * (8.0/7.0), 192);
     }else {
-        return CGSizeMake(4, 3);
+        return CGSizeMake(_videoWidth, _videoHeight);;
     }
 }
 
