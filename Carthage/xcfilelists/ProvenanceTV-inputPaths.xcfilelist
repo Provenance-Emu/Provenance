@@ -1,8 +1,6 @@
 $(SRCROOT)/Carthage/Build/tvOS/AppCenter.framework
 $(SRCROOT)/Carthage/Build/tvOS/AppCenterAnalytics.framework
 $(SRCROOT)/Carthage/Build/tvOS/AppCenterCrashes.framework
-$(SRCROOT)/Carthage/Build/tvOS/AppCenterDistribute.framework
-$(SRCROOT)/Carthage/Build/tvOS/AppCenterPush.framework
 $(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/tvOS/Differentiator.framework
