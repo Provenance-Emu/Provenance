@@ -818,7 +818,7 @@
 		<string>17</string>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>pce</string>
+			<string>sgx</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
