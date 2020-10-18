@@ -33,28 +33,13 @@ public enum RelativeRoot: Int {
         case .caches:
             return RelativeRoot.cachesDirectory
         case .iCloud:
-            return RelativeRoot.iCloudDocumentsDirectory ?? RelativeRoot.documentsDirectory
+            return RelativeRoot.iCloudDocumentsDirectory ?? Self.platformDefault.directoryURL
         }
     }
 
     func createRelativePath(fromURL url: URL) -> String {
-        let searchString: String
-        switch self {
-        case .documents:
-            searchString = "Documents/"
-        case .caches:
-            searchString = "Caches/"
-        case .iCloud:
-            searchString = "Documents/"
-        }
-
-        let path = url.path
-        guard let range = path.range(of: searchString) else {
-            return path
-        }
-
-        let suffixPath = String(path.suffix(from: range.upperBound))
-        return suffixPath
+        // We need the dropFirst to remove the leading /
+        return String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
     }
 
     func appendingPath(_ path: String) -> URL {
