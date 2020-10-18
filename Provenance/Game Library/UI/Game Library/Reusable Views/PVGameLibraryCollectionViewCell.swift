@@ -776,7 +776,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #if os(iOS)
             let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
         #else
-            let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
+            let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #endif
         if text == "" {
             return UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: NSAttributedString(string: ""))
@@ -788,7 +788,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #if os(iOS)
             let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
         #else
-            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
+            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 60.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
         #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
