@@ -88,7 +88,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             let item: Section.Item = try! collectionView.rx.model(at: IndexPath(item: 0, section: section))
             switch item {
             case .game:
-                return 88
+                return 44
             case .saves, .favorites, .recents:
                 return 0
             }
