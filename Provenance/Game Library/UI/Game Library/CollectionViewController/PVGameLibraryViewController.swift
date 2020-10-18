@@ -1239,7 +1239,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
             dismiss(animated: true) { () -> Void in }
             let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
-            if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.5) {
+            if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.85) {
                 let hash = (imageData as NSData).md5Hash
 
                 do {
