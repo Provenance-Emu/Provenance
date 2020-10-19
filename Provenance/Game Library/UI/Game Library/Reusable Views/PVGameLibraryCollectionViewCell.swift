@@ -952,7 +952,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     if PVSettingsModel.shared.showGameTitles {
                         let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
 
-                        let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 48
+                        let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 36
                         self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
                         self.titleLabel.alpha = 1.0
                     }
