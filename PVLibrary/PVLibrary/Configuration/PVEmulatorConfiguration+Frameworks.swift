@@ -109,7 +109,11 @@ public extension PVEmulatorConfiguration {
         pvSystem.bit = Int(system.PVBit) ?? 0
         pvSystem.releaseYear = Int(system.PVReleaseYear)!
         pvSystem.name = system.PVSystemName
-        pvSystem.shortName = system.PVSystemShortName
+        #if os(tvOS)    // Show full system names on tvOS
+            pvSystem.shortName = system.PVSystemName
+        #else           // And short names on iOS???
+            pvSystem.shortName = system.PVSystemShortName
+        #endif
         pvSystem.shortNameAlt = system.PVSystemShortNameAlt
         pvSystem.controllerLayout = system.PVControlLayout
         pvSystem.portableSystem = system.PVPortable ?? false
