@@ -26,15 +26,13 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
-#import <PVSNES/PVSNES-Swift.h>
 
-@interface PVSNESEmulatorCore (ObjC)
-// : PVEmulatorCore <PVSNESSystemResponderClient>
+@interface PVSNESEmulatorCore : PVEmulatorCore <PVSNESSystemResponderClient>
 
 - (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
-- (void)swapBuffers;
+- (void)flipBuffers;
 
 @end

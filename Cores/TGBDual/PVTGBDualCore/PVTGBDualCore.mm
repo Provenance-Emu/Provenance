@@ -108,8 +108,8 @@ static __weak PVTGBDualCore *_current;
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format TGBDual supports."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -231,7 +231,7 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
         {
-            NSString *appSupportPath = current.biosPath;
+            NSString *appSupportPath = current.BIOSPath;
             
             *(const char **)data = [appSupportPath UTF8String];
             NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);

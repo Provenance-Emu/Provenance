@@ -15,4 +15,4 @@ FOUNDATION_EXPORT double PVFCEUVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVFCEUVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVFCEU/PublicHeader.h>
-//#import <PVFCEU/PVFCEUEmulatorCore.h>
+#import <PVFCEU/PVFCEUEmulatorCore.h>

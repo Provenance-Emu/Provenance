@@ -11,8 +11,6 @@
 #import "PVReicast+AudioTypes.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-#import <PVReicast/PVReicast-Swift.h>
-
 
 #pragma mark - Core Audio Setup -
 

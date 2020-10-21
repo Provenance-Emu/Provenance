@@ -21,7 +21,7 @@ binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
 
 # PVSupport
 github "fpillet/NSLogger" "v1.9.7"
-github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
+github "CocoaLumberjack/CocoaLumberjack" ~> 3.5
 github "radex/SwiftyUserDefaults" "3.0.1"
 github "ashleymills/Reachability.swift"
 
@@ -30,8 +30,9 @@ github "ZipArchive/ZipArchive" ~> 2.1.4
 github "weichsel/ZIPFoundation" ~> 0.9.8
 #github "tsolomko/SWCompression" ~> 4.5
 github "realm/realm-cocoa"
+# github "realm/realm-cocoa" "tg/xcode-10.2"
 github "stephencelis/SQLite.swift" ~> 0.11.5
 
 # Rx
-github "ReactiveX/RxSwift" ~> 4.4.1
+github "ReactiveX/RxSwift" ~> 4.4
 github "RxSwiftCommunity/RxRealm"

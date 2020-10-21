@@ -340,15 +340,15 @@ extension PVAppDelegate {
 extension PVAppDelegate: BITHockeyManagerDelegate {
     func getLogFilesContentWithMaxSize(_ maxSize: Int) -> String {
         var description = ""
-        if let sortedLogFileInfos = fileLogger.logFileManager.sortedLogFileInfos {
-            for logFile in sortedLogFileInfos {
-                if let logData = FileManager.default.contents(atPath: logFile.filePath) {
-                    if !logData.isEmpty {
-                        description.append(String(data: logData, encoding: String.Encoding.utf8)!)
-                    }
+        let sortedLogFileInfos = fileLogger.logFileManager.sortedLogFileInfos
+        for logFile in sortedLogFileInfos {
+            if let logData = FileManager.default.contents(atPath: logFile.filePath) {
+                if !logData.isEmpty {
+                    description.append(String(data: logData, encoding: String.Encoding.utf8)!)
                 }
             }
         }
+
         if description.count > maxSize {
             let index = description.index(description.startIndex, offsetBy: description.count - maxSize - 1)
             description = String(description.suffix(from: index))

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
 #define TGBDUAL_PITCH_SHIFT  1

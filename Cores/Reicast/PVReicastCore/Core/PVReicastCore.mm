@@ -8,6 +8,13 @@
 
 #import "PVReicastCore.h"
 #import "PVReicastCore+Controls.h"
+#import "PVReicastCore+Audio.h"
+#import "PVReicastCore+Video.h"
+
+#import "PVReicast+Audio.h"
+
+#import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
 
 // Reicast imports
 #include "types.h"
@@ -19,18 +26,14 @@
 #include "hw/maple/maple_if.h"
 #include "hw/maple/maple_cfg.h"
 
-#import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
-#import <PVReicast/PVReicast-Swift.h>
-
-#define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
-#define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
-
 __weak PVReicastCore *_current = 0;
 
-@interface PVReicastCore(ObjC) <PVDreamcastSystemResponderClient>
+@interface PVReicastCore() {
+
+}
+
 @property(nonatomic, strong, nullable) NSString *diskPath;
+
 @end
 
 // Reicast function declerations
@@ -51,11 +54,34 @@ volatile bool has_init = false;
 
 #pragma mark - PVReicastCore Begin
 
-@implementation PVReicastCore(ObjC)
+@implementation PVReicastCore {
+	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
+	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
+    dispatch_semaphore_t coreWaitForExitSemaphore;
+
+	NSMutableDictionary *_callbackHandlers;
+}
 
 - (instancetype)init {
 	if (self = [super init]) {
-    }
+		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
+		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
+        coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
+
+		_videoWidth  = screen_width = 640;
+		_videoHeight = screen_height = 480;
+		_videoBitDepth = 32; // ignored
+		videoDepthBitDepth = 0; // TODO
+
+		sampleRate = 44100;
+
+		isNTSC = YES;
+
+		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+
+		_callbackQueue = dispatch_queue_create("org.openemu.Reicast.CallbackHandlerQueue", queueAttributes);
+		_callbackHandlers = [[NSMutableDictionary alloc] init];
+	}
 
 	_current = self;
 	return self;
@@ -102,8 +128,8 @@ volatile bool has_init = false;
 //								   NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
 //								   };
 //
-//		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-//												code:EmulatorCoreErrorCodeCouldNotLoadRom
+//		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+//												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
 //											userInfo:userInfo];
 //
 //		*error = newError;
@@ -147,7 +173,7 @@ LIST_OF_VARIABLES
 - (void)copyShadersIfMissing {
 
 	NSArray *shaders = @[@"Shader.vsh",@"Shader.fsh"];
-	NSString *destinationFolder = self.biosPath;
+	NSString *destinationFolder = self.BIOSPath;
 	NSFileManager *fm = [NSFileManager defaultManager];
 
 	for (NSString* shader in shaders) {
@@ -168,7 +194,7 @@ LIST_OF_VARIABLES
     NSString *cfg = @"emu.cfg";
 
 //    Whcih one is it again?
-    NSString *destinationFolder = self.biosPath;
+    NSString *destinationFolder = self.BIOSPath;
 //    NSString *destinationFolder = self.diskPath;
 
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -201,7 +227,7 @@ LIST_OF_VARIABLES
 		// Core returns
 
 		// Unlock rendering thread
-		dispatch_semaphore_signal(self.coreWaitToEndFrameSemaphore);
+		dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
 
 		[super stopEmulation];
 	}
@@ -218,15 +244,15 @@ LIST_OF_VARIABLES
         CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
 
         while (!has_init) {}
-        while ( !self.shouldStop )
+        while ( !shouldStop )
         {
             [self.frontBufferCondition lock];
-            while (!self.shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
+            while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
 
             CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
             CFTimeInterval deltaTime = now - lastTime;
-            while ( !self.shouldStop && !rend_single_frame() ) {}
+            while ( !shouldStop && !rend_single_frame() ) {}
             [self swapBuffers];
             lastTime = now;
         }
@@ -257,13 +283,13 @@ LIST_OF_VARIABLES
 	int argc = Args[2]? 3:1;
 
     // Set directories
-	set_user_config_dir(self.biosPath.UTF8String);
-    set_user_data_dir(self.biosPath.UTF8String);
+	set_user_config_dir(self.BIOSPath.UTF8String);
+    set_user_data_dir(self.BIOSPath.UTF8String);
     // Shouuld be this, but it looks for BIOS there too and  have to copy BIOS into battery saves dir of every game then
         //    set_user_data_dir(self.batterySavesPath.UTF8String);
 
-    add_system_data_dir(self.biosPath.UTF8String);
-    add_system_config_dir(self.biosPath.UTF8String);
+    add_system_data_dir(self.BIOSPath.UTF8String);
+    add_system_config_dir(self.BIOSPath.UTF8String);
 
     NSString *systemPath = [self.diskPath stringByDeletingLastPathComponent];
 
@@ -282,7 +308,7 @@ LIST_OF_VARIABLES
 
 	reicast_main(argc, Args);
     
-    dispatch_semaphore_signal(self.coreWaitForExitSemaphore);
+    dispatch_semaphore_signal(coreWaitForExitSemaphore);
 }
 
 int reicast_main(int argc, wchar* argv[]) {
@@ -314,7 +340,7 @@ int reicast_main(int argc, wchar* argv[]) {
 	if (flag)
 	{
         dc_stop();
-		dispatch_semaphore_signal(self.mupenWaitToBeginFrameSemaphore);
+		dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 		[self.frontBufferCondition lock];
 		[self.frontBufferCondition signal];
 		[self.frontBufferCondition unlock];
@@ -328,9 +354,9 @@ int reicast_main(int argc, wchar* argv[]) {
 
 	// TODO: Call reicast stop command here
 	dc_term();
-    self.shouldStop = YES;
-	dispatch_semaphore_signal(self.mupenWaitToBeginFrameSemaphore);
-    dispatch_semaphore_wait(self.coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
+    self->shouldStop = YES;
+	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 	[self.frontBufferCondition lock];
 	[self.frontBufferCondition signal];
 	[self.frontBufferCondition unlock];
@@ -341,7 +367,7 @@ int reicast_main(int argc, wchar* argv[]) {
 - (void)resetEmulation {
 	// TODO: Call reicast reset command here
 	plugins_Reset(true);
-	dispatch_semaphore_signal(self.mupenWaitToBeginFrameSemaphore);
+	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 	[self.frontBufferCondition lock];
 	[self.frontBufferCondition signal];
 	[self.frontBufferCondition unlock];

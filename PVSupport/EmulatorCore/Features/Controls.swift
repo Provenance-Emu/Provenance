@@ -11,18 +11,19 @@ import Foundation
 @objc public protocol ResponderClient: class {}
 
 @objc public protocol ButtonResponder {
-//    func didPush(_ button: Int, forPlayer player: Int)
-//    func didRelease(_ button: Int, forPlayer player: Int)
+    func didPush(_ button: Int, forPlayer player: Int)
+    func didRelease(_ button: Int, forPlayer player: Int)
 }
 
 @objc public protocol JoystickResponder {
     func didMoveJoystick(_ button: Int, withValue value: CGFloat, forPlayer player: Int)
 }
 
-//@objc extension EmulatorCore: ResponderClient {}
+@objc extension PVEmulatorCore: ResponderClient {}
 
 // MARK: - Sega 32X
-@objc public enum PVSega32XButton: Int, CaseIterable {
+
+@objc public enum PVSega32XButton: Int {
     case up
     case down
     case left
@@ -46,7 +47,8 @@ import Foundation
 }
 
 // MARK: - N64
-@objc public enum PVN64Button: Int, CaseIterable {
+
+@objc public enum PVN64Button: Int {
     // D-Pad
     case dPadUp
     case dPadDown
@@ -82,7 +84,8 @@ import Foundation
 }
 
 // MARK: - Atari 2600
-@objc public enum PV2600Button: Int, CaseIterable {
+
+@objc public enum PV2600Button: Int {
     case up
     case down
     case left
@@ -105,7 +108,8 @@ import Foundation
 }
 
 // MARK: - NES
-@objc public enum PVNESButton: Int, CaseIterable {
+
+@objc public enum PVNESButton: Int {
     case up
     case down
     case left
@@ -125,7 +129,8 @@ import Foundation
 }
 
 // MARK: - Game Boy
-@objc public enum PVGBButton: Int, CaseIterable {
+
+@objc public enum PVGBButton: Int {
     case up
     case down
     case left
@@ -145,7 +150,8 @@ import Foundation
 }
 
 // MARK: - Pokemon Mini
-@objc public enum PVPMButton: Int, CaseIterable {
+
+@objc public enum PVPMButton: Int {
     case menu
     case a
     case b
@@ -166,7 +172,8 @@ import Foundation
 }
 
 // MARK: - SNES
-@objc public enum PVSNESButton: Int, CaseIterable {
+
+@objc public enum PVSNESButton: Int {
     case up
     case down
     case left
@@ -190,7 +197,8 @@ import Foundation
 }
 
 // MARK: - Atari 7800
-@objc public enum PV7800Button: Int, CaseIterable {
+
+@objc public enum PV7800Button: Int {
     case up
     case down
     case left
@@ -217,7 +225,8 @@ import Foundation
 }
 
 // MARK: - Genesis
-@objc public enum PVGenesisButton: Int, CaseIterable {
+
+@objc public enum PVGenesisButton: Int {
     case b = 0
     case a
     case mode
@@ -241,7 +250,8 @@ import Foundation
 }
 
 // MARK: - Deamcast
-@objc public enum PVDreamcastButton: Int, CaseIterable {
+
+@objc public enum PVDreamcastButton: Int {
     case up
     case down
     case left
@@ -272,7 +282,8 @@ import Foundation
 }
 
 // MARK: - Master System
-@objc public enum PVMasterSystemButton: Int, CaseIterable {
+
+@objc public enum PVMasterSystemButton: Int {
     case b = 0
     case c
     case start
@@ -291,7 +302,8 @@ import Foundation
 }
 
 // MARK: - SG1000
-@objc public enum PVSG1000Button: Int, CaseIterable {
+
+@objc public enum PVSG1000Button: Int {
     case b = 0
     case c
     case start
@@ -310,7 +322,8 @@ import Foundation
 }
 
 // MARK: - Game Boy Advanced
-@objc public enum PVGBAButton: Int, CaseIterable {
+
+@objc public enum PVGBAButton: Int {
     case up
     case down
     case left
@@ -332,7 +345,8 @@ import Foundation
 }
 
 // MARK: - Atari 5200
-@objc public enum PV5200Button: Int, CaseIterable {
+
+@objc public enum PV5200Button: Int {
     case up
     case down
     case left
@@ -364,7 +378,7 @@ import Foundation
     func didRelease(_ button: PV5200Button, forPlayer player: Int)
 }
 
-@objc public enum PVA8Button: Int, CaseIterable {
+@objc public enum PVA8Button: Int {
     case up
     case down
     case left
@@ -387,7 +401,7 @@ import Foundation
 
 // MARK: - PSX
 
-@objc public enum PVPSXButton: Int, CaseIterable {
+@objc public enum PVPSXButton: Int {
     case up
     case down
     case left
@@ -429,7 +443,7 @@ import Foundation
 
 // MARK: - WonderSwan
 
-@objc public enum PVWSButton: Int, CaseIterable {
+@objc public enum PVWSButton: Int {
     case x1
     // Up
     case x3
@@ -458,7 +472,7 @@ import Foundation
 
 // MARK: - VirtualBoy
 
-@objc public enum PVVBButton: Int, CaseIterable {
+@objc public enum PVVBButton: Int {
     case leftUp
     case leftDown
     case leftLeft
@@ -484,7 +498,8 @@ import Foundation
 }
 
 // MARK: - PCE
-@objc public enum PVPCEButton: Int, CaseIterable {
+
+@objc public enum PVPCEButton: Int {
     case up
     case down
     case left
@@ -509,7 +524,8 @@ import Foundation
 }
 
 // MARK: - PCE FX
-@objc public enum PVPCFXButton: Int, CaseIterable {
+
+@objc public enum PVPCFXButton: Int {
     case up
     case down
     case left
@@ -534,7 +550,8 @@ import Foundation
 }
 
 // MARK: - PCE CD
-@objc public enum PVPCECDButton: Int, CaseIterable {
+
+@objc public enum PVPCECDButton: Int {
     case up
     case down
     case left
@@ -559,7 +576,8 @@ import Foundation
 }
 
 // MARK: - Atari Lynx
-@objc public enum PVLynxButton: Int, CaseIterable {
+
+@objc public enum PVLynxButton: Int {
     case up
     case down
     case left
@@ -579,7 +597,8 @@ import Foundation
 }
 
 // MARK: - Neo Geo Pocket + Color
-@objc public enum PVNGPButton: Int, CaseIterable {
+
+@objc public enum PVNGPButton: Int {
     case up
     case down
     case left
@@ -598,7 +617,8 @@ import Foundation
 }
 
 // MARK: - Atari Jaguar
-@objc public enum PVJaguarButton : Int, CaseIterable {
+
+@objc public enum PVJaguarButton: Int {
     case up
     case down
     case left
@@ -641,7 +661,8 @@ import Foundation
 }
 
 // MARK: - Sega Saturn
-@objc public enum PVSaturnButton : Int, CaseIterable {
+
+@objc public enum PVSaturnButton: Int {
     case up
     case down
     case left

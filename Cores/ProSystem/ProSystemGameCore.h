@@ -25,9 +25,9 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//@import Foundation;
-//@import PVSupport.PVEmulatorCore;
-//
-//__attribute__((visibility("default")))
-//@interface PVProSystemGameCore : PVEmulatorCore
-//@end
+#import <Foundation/Foundation.h>
+#import <PVSupport/PVEmulatorCore.h>
+
+__attribute__((visibility("default")))
+@interface PVProSystemGameCore : PVEmulatorCore
+@end

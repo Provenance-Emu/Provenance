@@ -39,19 +39,20 @@ gambatte::GB gb;
 Resampler *resampler;
 uint32_t gb_pad[PVGBButtonCount];
 
-@interface PVGBEmulatorCore (ObjC)
-@property (nonatomic, assign) uint32_t *videoBuffer;
-@property (nonatomic, assign) uint32_t *inSoundBuffer;
-@property (nonatomic, assign) int16_t *outSoundBuffer;
-@property (nonatomic, assign) double sampleRate;
-@property (nonatomic, assign) GBPalette displayMode;
-
+@interface PVGBEmulatorCore ()
+{
+    uint32_t *videoBuffer;
+    uint32_t *inSoundBuffer;
+    int16_t *outSoundBuffer;
+    double sampleRate;
+    GBPalette displayMode;
+}
 - (void)outputAudio:(unsigned)frames;
 - (void)applyCheat:(NSString *)code;
 - (void)loadPalette;
 @end
 
-@implementation PVGBEmulatorCore(ObjC)
+@implementation PVGBEmulatorCore
 
 static __weak PVGBEmulatorCore *_current;
 
@@ -74,10 +75,10 @@ public:
 {
     if((self = [super init]))
     {
-        self.videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
-        self.inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
-        self.outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
-        self.displayMode = GBPalettePeaSoupGreen;
+        videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
+        inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
+        outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
+        displayMode = GBPalettePeaSoupGreen;
     }
 
 	_current = self;
@@ -87,9 +88,9 @@ public:
 
 - (void)dealloc
 {
-    free(self.videoBuffer);
-    free(self.inSoundBuffer);
-    free(self.outSoundBuffer);
+    free(videoBuffer);
+    free(inSoundBuffer);
+    free(outSoundBuffer);
 }
 
 # pragma mark - Execution
@@ -117,7 +118,7 @@ public:
     resampler->exactRatio(mul, div);
 
     double outSampleRate = inSampleRate * mul / div;
-    self.sampleRate = outSampleRate; // 47994.326636
+    sampleRate = outSampleRate; // 47994.326636
 
     if (gb.load([path UTF8String]) != 0) {
         if (error) {
@@ -127,8 +128,8 @@ public:
                                        NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format Gambatte supports."
                                        };
 
-            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                    code:EmulatorCoreErrorCodeCouldNotLoadRom
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                                 userInfo:userInfo];
 
             *error = newError;
@@ -158,7 +159,7 @@ public:
 {
     size_t samples = 2064;
 
-    while (gb.runFor(self.videoBuffer, 160, self.inSoundBuffer, samples) == -1)
+    while (gb.runFor(videoBuffer, 160, inSoundBuffer, samples) == -1)
     {
         [self outputAudio:samples];
     }
@@ -192,7 +193,7 @@ public:
 
 - (const void *)videoBuffer
 {
-    return self.videoBuffer;
+    return videoBuffer;
 }
 
 - (CGRect)screenRect
@@ -230,7 +231,7 @@ public:
 
 - (double)audioSampleRate
 {
-    return self.sampleRate;
+    return sampleRate;
 }
 
 - (NSUInteger)channelCount
@@ -252,8 +253,8 @@ public:
                                            NSLocalizedRecoverySuggestionErrorKey: @""
                                            };
 
-                NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                        code:EmulatorCoreErrorCodeCouldNotSaveState
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                                     userInfo:userInfo];
 
                 *error = newError;
@@ -275,8 +276,8 @@ public:
                                            NSLocalizedRecoverySuggestionErrorKey: @""
                                            };
 
-                NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                        code:EmulatorCoreErrorCodeCouldNotLoadSaveState
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                     userInfo:userInfo];
 
                 *error = newError;
@@ -395,7 +396,7 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
 
 # pragma mark - Display Mode
 - (GBPalette)currentDisplayMode {
-	return self.displayMode;
+	return displayMode;
 }
 
 - (void)changeDisplayMode:(GBPalette)displayMode
@@ -405,7 +406,7 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
     }
 
     unsigned short *gbc_bios_palette = NULL;
-	self.displayMode = displayMode;
+	self->displayMode = displayMode;
     switch (displayMode)
     {
         case GBPalettePeaSoupGreen:
@@ -514,10 +515,10 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
     if (!frames)
         return;
 
-    size_t len = resampler->resample(self.outSoundBuffer, reinterpret_cast<const int16_t *>(self.inSoundBuffer), frames);
+    size_t len = resampler->resample(outSoundBuffer, reinterpret_cast<const int16_t *>(inSoundBuffer), frames);
 
     if (len)
-        [[self ringBufferAtIndex:0] write:self.outSoundBuffer maxLength:len << 2];
+        [[self ringBufferAtIndex:0] write:outSoundBuffer maxLength:len << 2];
 }
 
 - (void)applyCheat:(NSString *)code

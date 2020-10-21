@@ -26,41 +26,42 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport-Swift.h>
-#import <PVMednafen/PVMednafen-Swift.h>
+#import <PVSupport/PVEmulatorCore.h>
 
-//@class OERingBuffer;
-//
-//typedef NS_ENUM(NSInteger, MednaSystem) {
-//    MednaSystemGB,
-//    MednaSystemGBA,
-//    MednaSystemGG,
-//    MednaSystemLynx,
-//    MednaSystemMD,
-//    MednaSystemNES,
-//    MednaSystemNeoGeo,
-//    MednaSystemPCE,
-//    MednaSystemPCFX,
-//    MednaSystemSMS,
-//    MednaSystemSNES,
-//    MednaSystemPSX,
-//    MednaSystemVirtualBoy,
-//    MednaSystemWonderSwan
-//};
-//
-//__attribute__((visibility("default")))
-//@interface MednafenGameCore : PVEmulatorCore
-//
-//@property (nonatomic) BOOL isStartPressed;
-//@property (nonatomic) BOOL isSelectPressed;
-//@property (nonatomic) BOOL isAnalogModePressed;
-//
-//@end
-//
+@class OERingBuffer;
+
+typedef NS_ENUM(NSInteger, MednaSystem) {
+	MednaSystemGB,
+	MednaSystemGBA,
+	MednaSystemGG,
+    MednaSystemLynx,
+	MednaSystemMD,
+	MednaSystemNES,
+    MednaSystemNeoGeo,
+    MednaSystemPCE,
+    MednaSystemPCFX,
+	MednaSystemSMS,
+	MednaSystemSNES,
+    MednaSystemPSX,
+    MednaSystemVirtualBoy,
+    MednaSystemWonderSwan
+};
+
+__attribute__((visibility("default")))
+@interface MednafenGameCore : PVEmulatorCore
+
+@property (nonatomic) BOOL isStartPressed;
+@property (nonatomic) BOOL isSelectPressed;
+@property (nonatomic) BOOL isAnalogModePressed;
+@property (nonatomic) BOOL isL3Pressed;
+@property (nonatomic) BOOL isR3Pressed;
+
+@end
+
 // for Swift
-@interface MednafenGameCore() {
-//@property (nonatomic, assign) MednaSystem systemType;
-//@property (nonatomic, assign) NSUInteger maxDiscs;
+@interface MednafenGameCore()
+@property (nonatomic, assign) MednaSystem systemType;
+@property (nonatomic, assign) NSUInteger maxDiscs;
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 -(void)changeDisplayMode;
 @end

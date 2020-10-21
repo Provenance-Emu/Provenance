@@ -54,6 +54,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; };
+		14C4C1A021EBADC90055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; };
 		14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
@@ -183,7 +185,6 @@
 		B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; };
 		B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C320219197FF009F4EDC /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E420C29FE6002ECE63 /* HockeySDK.framework */; };
-		B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B324C5F82191FDAA009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; };
 		B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
 		B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6072191FF9A009F4EDC /* PVAtari800.framework */; };
@@ -215,6 +216,7 @@
 		B33468D620AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* RealmCollectinViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B346B09F2246EBCE006CB759 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B346B09E2246EBCE006CB759 /* PVLibrary.framework */; };
 		B349AE5C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE661E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B349AE8C1E9ABCF900ACD416 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -643,6 +645,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				14C4C1A021EBADC90055C6DC /* PVTGBDual.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */,
 				B324C6202192057E009F4EDC /* PVFCEU.framework in Embed Frameworks */,
@@ -694,6 +697,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A0938B917CD45D400029021 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = SOURCE_ROOT; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewController.swift; sourceTree = "<group>"; };
@@ -832,6 +836,7 @@
 		B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCollectinViewCell.swift; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
+		B346B09E2246EBCE006CB759 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
 		B3532C3B21A9AC93006CDA0F /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		B3532C3E21A9B681006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
@@ -1106,6 +1111,7 @@
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
+				14C4C19F21EBADC90055C6DC /* PVTGBDual.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
@@ -1231,7 +1237,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */,
+				B346B09F2246EBCE006CB759 /* PVLibrary.framework in Frameworks */,
 				B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */,
 				B3B104EE218F7D6A00210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B104EF218F7D6A00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
@@ -1304,6 +1310,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				14C4C19E21EBADC90055C6DC /* PVTGBDual.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
@@ -1338,6 +1345,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B346B09E2246EBCE006CB759 /* PVLibrary.framework */,
 				B3CDEED821D4D84E000C55F7 /* BitByteData.framework */,
 				B3CDEED421D4D50F000C55F7 /* FBLPromises.framework */,
 				B3CDEED621D4D517000C55F7 /* FBLPromises.framework */,
@@ -2295,6 +2303,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);

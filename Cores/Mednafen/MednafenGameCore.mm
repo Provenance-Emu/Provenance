@@ -35,16 +35,14 @@
 #include <mednafen/MemoryStream.h>
 #pragma clang diagnostic pop
 
+#import "MednafenGameCore.h"
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
 #import <UIKit/UIKit.h>
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/PVSupport.h>
 #import <PVSupport/PVSupport-Swift.h>
-#import <PVMednafen/PVMednafen-Swift.h>
-#import "MednafenGameCore.h"
 
 
 #define USE_PCE_FAST 1
@@ -129,7 +127,8 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore (){
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
+{
     uint32_t *inputBuffer[8];
     int16 axis[8];
     int videoWidth, videoHeight;
@@ -143,15 +142,14 @@ namespace MDFN_IEN_VB
     NSTimeInterval mednafenCoreTiming;
     OEIntSize mednafenCoreAspect;
 
-    EmulateSpecStruct spec;
+	EmulateSpecStruct spec;
 }
 
-@interface MednafenGameCore (ObjC) <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 @end
 
 static __weak MednafenGameCore *_current;
 
-@implementation MednafenGameCore (ObjC)
+@implementation MednafenGameCore
 
 -(uint32_t*) getInputBuffer:(int)bufferId
 {
@@ -161,7 +159,7 @@ static __weak MednafenGameCore *_current;
 static void mednafen_init(MednafenGameCore* current)
 {
     NSString* batterySavesDirectory = current.batterySavesPath;
-    NSString* biosPath = current.biosPath;
+    NSString* biosPath = current.BIOSPath;
 
 	MDFNI_InitializeModules();
 
@@ -272,7 +270,7 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
 	MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
 
-//	NSString *cfgPath = [[current biosPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
+//	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
 //	MDFN_SaveSettings(cfgPath.UTF8String);
 }
 
@@ -587,8 +585,8 @@ static void emulation_run(BOOL skipFrame) {
                                        NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednafen ROM format."
                                        };
 
-            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                    code:EmulatorCoreErrorCodeCouldNotLoadRom
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                                 userInfo:userInfo];
 
             *error = newError;
@@ -688,8 +686,8 @@ static void emulation_run(BOOL skipFrame) {
                                            NSLocalizedRecoverySuggestionErrorKey: message
                                            };
 
-                NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                        code:EmulatorCoreErrorCodeMissingM3U
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeMissingM3U
                                                     userInfo:userInfo];
 
                 *error = newError;
@@ -984,8 +982,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                                            NSLocalizedRecoverySuggestionErrorKey: @""
                                            };
 
-                NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                        code:EmulatorCoreErrorCodeCouldNotSaveState
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                                     userInfo:userInfo];
 
                 *error = newError;
@@ -1000,8 +998,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                                        NSLocalizedRecoverySuggestionErrorKey: @""
                                        };
 
-            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                    code:EmulatorCoreErrorCodeCouldNotSaveState
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                                 userInfo:userInfo];
 
             *error = newError;
@@ -1021,8 +1019,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                                            NSLocalizedRecoverySuggestionErrorKey: @""
                                            };
 
-                NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                        code:EmulatorCoreErrorCodeCouldNotLoadSaveState
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                     userInfo:userInfo];
 
                 *error = newError;
@@ -1037,8 +1035,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                                        NSLocalizedRecoverySuggestionErrorKey: @""
                                        };
 
-            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                    code:EmulatorCoreErrorCodeCouldNotLoadSaveState
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                 userInfo:userInfo];
 
             *error = newError;

@@ -27,9 +27,9 @@
 #import "OEGameAudio.h"
 #import "TPCircularBuffer.h"
 #import "OERingBuffer.h"
+#import "PVEmulatorCore.h"
 #import "DebugUtils.h"
 #import "PVLogging.h"
-#import <PVSupport/PVSupport-Swift.h>
 
 @import AVFoundation;
 
@@ -128,7 +128,7 @@ OSStatus RenderCallback(void                       *in,
 }
 
 // Designated Initializer
-- (id)initWithCore:(NSObject<EmulatorCore> *)core
+- (id)initWithCore:(PVEmulatorCore *)core
 {
     self = [super init];
     if(self != nil)

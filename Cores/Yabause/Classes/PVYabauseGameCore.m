@@ -29,24 +29,44 @@
 
 @import OpenGLES.ES2;
 @import PVSupport;
-#import <PVSupport/PVSupport-Swift.h>
-#import <PVYabause/PVYabause-Swift.h>
+
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
-@import Yabause;
+#include "vdp1.h"
+#include "vdp2.h"
+//#include "scsp.h"
+#include "peripheral.h"
+#include "cdbase.h"
+#include "yabause.h"
+#include "yui.h"
+//#include "m68kc68k.h"
+#include "cs0.h"
+#include "m68kcore.h"
+//#include "permacjoy.h"
+#include "vidogl.h"
+#include "vidsoft.h"
 
+#define USE_THREADS 0
+
+// ToDo: Fix
+#define SAMPLERATE 44100
+#define SAMPLEFRAME SAMPLERATE / 60
+
+#define HIRES_WIDTH     356
+#define HIRES_HEIGHT    256
 
 u32 *videoBuffer = NULL;
 
+int width;
+int height;
+
 yabauseinit_struct yinit;
-PerPad_struct *c1, *c2 = NULL;
+static PerPad_struct *c1, *c2 = NULL;
 BOOL firstRun = YES;
 
 // Global variables because the callbacks need to access them...
 static OERingBuffer *ringBuffer;
-
-PVYabauseGameCore * __weak _current;
 
 #pragma mark -
 #pragma mark OpenEmu SNDCORE for Yabause
@@ -57,12 +77,6 @@ PVYabauseGameCore * __weak _current;
 #endif
 
 #define BUFFER_LEN 65536
-
-@interface PVYabauseGameCore()
-- (void)initYabauseWithCDCore:(int)cdcore;
-- (void)setupEmulation;
-- (void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
-@end
 
 static int SNDOEInit(void)
 {
@@ -195,7 +209,17 @@ VideoInterface_struct *VIDCoreList[] = {
 #pragma mark -
 #pragma mark OE Core Implementation
 
-@implementation PVYabauseGameCore (ObjC)
+@interface PVYabauseGameCore ()
+{
+    NSLock  *videoLock;
+    
+    BOOL    paused;
+    NSString *filename;
+}
+
+@end
+
+@implementation PVYabauseGameCore
 
 - (id)init
 {
@@ -203,27 +227,145 @@ VideoInterface_struct *VIDCoreList[] = {
     self = [super init];
     if(self != nil)
     {
-        videoBuffer = (u32 *)calloc(sizeof(u32), PVYabauseGameCore.HIRES_WIDTH * PVYabauseGameCore.HIRES_HEIGHT);
+        filename = [[NSString alloc] init];
+        videoLock = [[NSLock alloc] init];
+        videoBuffer = (u32 *)calloc(sizeof(u32), HIRES_WIDTH * HIRES_HEIGHT);
         ringBuffer = [self ringBufferAtIndex:0];
-        _current = self;
     }
     return self;
 }
 
 - (void)setupEmulation
 {
-    self.width = PVYabauseGameCore.HIRES_WIDTH;
-    self.height = PVYabauseGameCore.HIRES_HEIGHT;
+    width = HIRES_WIDTH;
+    height = HIRES_HEIGHT;
     
     PerPortReset();
     c1 = PerPadAdd(&PORTDATA1);
     c2 = PerPadAdd(&PORTDATA2);
 }
 
+- (void)resetEmulation
+{
+    firstRun = YES;
+    YabauseResetButton();
+}
+
+- (void)stopEmulation
+{
+    firstRun = YES;
+    [super stopEmulation];
+}
+
 - (void)dealloc
 {
     YabauseDeInit();
     free(videoBuffer);
+}
+
+- (void)initYabauseWithCDCore:(int)cdcore
+{
+	NSString *extension = filename.pathExtension;
+	NSArray <NSString*>* romExtensions = @[@"cue", @"ccd", @"mds", @"iso"];
+    if ([romExtensions containsObject:extension]) {
+		yinit.cdcoretype = CDCORE_ISO;
+        yinit.cdpath = [filename UTF8String];
+        
+        // Get a BIOS
+		// sega_101.bin mpr-17933.bin saturn_bios.bin
+		NSString *bios = [[self BIOSPath] stringByAppendingPathComponent:@"saturn_bios.bin"];
+
+		ILOG(@"Loading ROM. Will try to setup Saturn BIOS at path: %@", bios);
+
+        // If a "Saturn EU.bin" BIOS exists, use it otherwise emulate BIOS
+		if ([[NSFileManager defaultManager] fileExistsAtPath:bios]) {
+			ILOG(@"BIOS found : %@", bios);
+            yinit.biospath = [bios UTF8String];
+		} else {
+			WLOG(@"No BIOS found");
+			yinit.biospath = NULL;
+		}
+    } else
+    {
+        // Assume we've a BIOS file and we want to run it
+        yinit.cdcoretype = CDCORE_DUMMY;
+        yinit.biospath = [filename UTF8String];
+    }
+    
+    yinit.percoretype = PERCORE_DEFAULT;
+    yinit.sh2coretype = SH2CORE_INTERPRETER;
+    
+#ifdef HAVE_LIBGL
+    yinit.vidcoretype = VIDCORE_OGL;
+#else
+    yinit.vidcoretype = VIDCORE_SOFT;
+#endif
+
+	yinit.sndcoretype = SNDCORE_OE;
+//	yinit.m68kcoretype = M68KCORE_MUSASHI;
+	yinit.m68kcoretype = M68KCORE_C68K;
+#if 1
+	yinit.carttype = CART_DRAM32MBIT; //4MB RAM Expansion Cart
+#else
+	yinit.carttype = CART_NONE;
+#endif
+	yinit.regionid = REGION_AUTODETECT;
+	yinit.buppath = NULL;
+	yinit.mpegpath = NULL;
+	yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
+	yinit.frameskip = true;
+	yinit.clocksync = 0;
+	yinit.basetime = 0;
+#if USE_THREADS
+    yinit.usethreads      = 1;
+    yinit.numthreads      = 2;
+#else
+    yinit.usethreads = 0;
+#endif
+
+	// Take care of the Battery Save file to make Save State happy
+	NSString *path = filename;
+	NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
+
+	NSString *batterySavesDirectory = [self batterySavesPath];
+
+	if([batterySavesDirectory length] != 0)
+	{
+		[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+		NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+
+		if([filePath length] > 0) {
+			DLOG(@"BRAM: %@", filePath);
+			char *_bramFile;
+			const char *tmp = [filePath UTF8String];
+
+			_bramFile = (char *)malloc(strlen(tmp) + 1);
+			strcpy(_bramFile, tmp);
+			yinit.buppath = _bramFile;
+		}
+	}
+}
+
+- (void)startYabauseEmulation
+{
+    YabauseInit(&yinit);
+    YabauseSetDecilineMode(1);
+    OSDChangeCore(OSDCORE_DUMMY);
+}
+
+- (CGSize)bufferSize
+{
+    return CGSizeMake(HIRES_WIDTH, HIRES_HEIGHT);
+}
+
+- (CGSize)aspectSize
+{
+    return CGSizeMake(width, height);
+}
+
+- (CGRect)screenRect
+{
+    return CGRectMake(0, 0, width, height);
 }
 
 - (const void *)videoBuffer
@@ -233,9 +375,10 @@ VideoInterface_struct *VIDCoreList[] = {
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-    self.filename = [path copy];
+    filename = [path copy];
 	DLOG(@"Saturn - %@", filename);
     [self setupEmulation];
+//    [self executeFrame];
     return YES;
 }
 
@@ -253,8 +396,8 @@ VideoInterface_struct *VIDCoreList[] = {
 //                               NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
 //                               };
 //
-//    NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-//                                            code:EmulatorCoreErrorCodeCouldNotSaveState
+//    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+//                                            code:PVEmulatorCoreErrorCodeCouldNotSaveState
 //                                        userInfo:userInfo];
 //
 //    *error = newError;
@@ -391,12 +534,41 @@ VideoInterface_struct *VIDCoreList[] = {
         firstRun = NO;
     }
     else {
-        [self.videoLock lock];
+        [videoLock lock];
         ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
         YabauseExec();
         ScspMuteAudio(SCSP_MUTE_SYSTEM);
-        [self.videoLock unlock];
+        [videoLock unlock];
     }
+}
+
+//- (BOOL)isDoubleBuffered {
+//	return YES;
+//}
+
+- (GLenum)pixelFormat
+{
+    return GL_RGBA;
+}
+
+- (GLenum)internalPixelFormat
+{
+    return GL_RGBA;
+}
+
+- (GLenum)pixelType
+{
+    return GL_UNSIGNED_BYTE;
+}
+
+- (double)audioSampleRate
+{
+    return SAMPLERATE;
+}
+
+- (NSUInteger)channelCount
+{
+    return 2;
 }
 
 #pragma mark -
@@ -410,25 +582,27 @@ void YuiErrorMsg(const char *string)
 void YuiSwapBuffers(void)
 {
     updateCurrentResolution();
-    for (int i = 0; i < _current.height; i++) {
-        memcpy(videoBuffer + i*PVYabauseGameCore.HIRES_WIDTH, dispbuffer + i*_current.width, sizeof(u32) * _current.width);
+    for (int i = 0; i < height; i++) {
+        memcpy(videoBuffer + i*HIRES_WIDTH, dispbuffer + i*width, sizeof(u32) * width);
     }
 }
 
 #pragma mark -
 #pragma mark Helpers
 
-void updateCurrentResolution(void) {
-    int current_width = PVYabauseGameCore.HIRES_WIDTH;
-    int current_height = PVYabauseGameCore.HIRES_HEIGHT;
+void updateCurrentResolution(void)
+{
+    int current_width = HIRES_WIDTH;
+    int current_height = HIRES_HEIGHT;
     
     // Avoid calling GetGlSize if Dummy/id=0 is selected
-    if (VIDCore && VIDCore->id) {
+    if (VIDCore && VIDCore->id)
+    {
         VIDCore->GetGlSize(&current_width,&current_height);
     }
 	
-    _current.width = current_width;
-    _current.height = current_height;
+    width = current_width;
+    height = current_height;
 }
 
 @end

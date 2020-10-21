@@ -26,10 +26,8 @@
  */
 
 #import "PVSNESEmulatorCore.h"
-#import <PVSNES/PVSNES-Swift.h>
 #import <PVSupport/OERingBuffer.h>
-#import <AVFoundation/AVFoundation.h>
-//#import <PVSupport/PVGameControllerUtilities.h>
+#import <PVSupport/PVGameControllerUtilities.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
 
@@ -54,12 +52,14 @@
 
 static __weak PVSNESEmulatorCore *_current;
 
-@interface PVSNESEmulatorCore (ObjC)
+@interface PVSNESEmulatorCore () {
 
-@property (assign) UInt16 *soundBuffer;
-@property (assign) unsigned char *videoBufferX;
-@property (assign) unsigned char *videoBufferA;
-@property (assign) unsigned char *videoBufferB;
+@public
+    UInt16        *soundBuffer;
+    unsigned char *videoBuffer;
+    unsigned char *videoBufferA;
+    unsigned char *videoBufferB;
+}
 
 @end
 
@@ -73,14 +73,14 @@ bool8 S9xDeinitUpdate(int width, int height)
 
 NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", @"X", @"Y", @"L", @"R", @"Start", @"Select", nil };
 
-@implementation PVSNESEmulatorCore (ObjC)
+@implementation PVSNESEmulatorCore
 
 - (id)init
 {
 	if ((self = [super init]))
 	{
-		self.soundBuffer = (UInt16 *)malloc(SIZESOUNDBUFFER * sizeof(UInt16));
-		memset(self.soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
+		soundBuffer = (UInt16 *)malloc(SIZESOUNDBUFFER * sizeof(UInt16));
+		memset(soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
         _current = self;
 	}
 	
@@ -89,13 +89,13 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)dealloc
 {
-    free(self.videoBufferA);
-    self.videoBufferA = NULL;
-    free(self.videoBufferB);
-    self.videoBufferB = NULL;
-    self.videoBufferX = NULL;
-    free(self.soundBuffer);
-    self.soundBuffer = NULL;
+    free(videoBufferA);
+    videoBufferA = NULL;
+    free(videoBufferB);
+    videoBufferB = NULL;
+    videoBuffer = NULL;
+    free(soundBuffer);
+    soundBuffer = NULL;
 }
 
 #pragma mark Exectuion
@@ -174,27 +174,27 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 	GFX.Pitch = 512 * 2;
 	//GFX.PPL = SNES_WIDTH;
 
-    if (self.videoBufferA)
+    if (videoBufferA)
     {
-        free(self.videoBufferA);
+        free(videoBufferA);
     }
     
-    if (self.videoBufferB)
+    if (videoBufferB)
     {
-        free(self.videoBufferB);
+        free(videoBufferB);
     }
 
-    self.videoBufferX = NULL;
+    videoBuffer = NULL;
 
 #if 0
-	self.videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-	self.videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
+	videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
+	videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
 #else
-    self.videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
-    self.videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+    videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+    videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
 #endif
 
-	GFX.Screen = (short unsigned int *)self.videoBufferA;
+	GFX.Screen = (short unsigned int *)videoBufferA;
 
     S9xUnmapAllControls();
     [self mapButtons];
@@ -212,8 +212,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 								   NSLocalizedRecoverySuggestionErrorKey: @"Unknown reason."
 								   };
 
-		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-												code:EmulatorCoreErrorCodeCouldNotStart
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotStart
 											userInfo:userInfo];
 		*error = newError;
 
@@ -234,8 +234,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 								   NSLocalizedRecoverySuggestionErrorKey: @"Unknown reason."
 								   };
 
-		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-												code:EmulatorCoreErrorCodeCouldNotStart
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotStart
 											userInfo:userInfo];
 		*error = newError;
 
@@ -713,8 +713,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
                                NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format Snes9x supports."
                                };
     
-    NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                            code:EmulatorCoreErrorCodeCouldNotLoadRom
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                         userInfo:userInfo];
     
     *error = newError;
@@ -740,20 +740,21 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)swapBuffers
 {
-    if (GFX.Screen == (short unsigned int *)self.videoBufferA)
+    if (GFX.Screen == (short unsigned int *)videoBufferA)
     {
-        self.videoBufferX = self.videoBufferA;
-        GFX.Screen = (short unsigned int *)self.videoBufferB;
+        videoBuffer = videoBufferA;
+        GFX.Screen = (short unsigned int *)videoBufferB;
     }
     else
     {
-        self.videoBufferX = self.videoBufferB;
-        GFX.Screen = (short unsigned int *)self.videoBufferA;
+        videoBuffer = videoBufferB;
+        GFX.Screen = (short unsigned int *)videoBufferA;
     }
 }
 
-- (const void *)videoBuffer {
-    return self.videoBuffer;
+- (const void *)videoBuffer
+{
+    return videoBuffer;
 }
 
 - (CGRect)screenRect
@@ -817,8 +818,8 @@ static void FinalizeSamplesAudioCallback(void *)
     
     S9xFinalizeSamples();
     int samples = S9xGetSampleCount();
-    S9xMixSamples((uint8_t*)strongCurrent.soundBuffer, samples);
-    [[strongCurrent ringBufferAtIndex:0] write:strongCurrent.soundBuffer maxLength:samples * 2];
+    S9xMixSamples((uint8_t*)strongCurrent->soundBuffer, samples);
+    [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer maxLength:samples * 2];
 }
 
 - (double)audioSampleRate
@@ -920,7 +921,7 @@ static void FinalizeSamplesAudioCallback(void *)
         {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             PVControllerAxisDirection axisDirection = [PVGameControllerUtilities axisDirectionForThumbstick:gamepad.leftThumbstick];
 
             BOOL upPressed = dpad.up.pressed || axisDirection == PVControllerAxisDirectionUp || axisDirection == PVControllerAxisDirectionUpLeft || axisDirection == PVControllerAxisDirectionUpRight;

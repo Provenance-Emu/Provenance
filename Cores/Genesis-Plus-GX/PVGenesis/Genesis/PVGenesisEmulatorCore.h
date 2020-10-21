@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-@import Foundation;
-@import PVSupport.PVEmulatorCore;
-
+#import <Foundation/Foundation.h>
+#import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 @interface PVGenesisEmulatorCore : PVEmulatorCore <PVGenesisSystemResponderClient>
 

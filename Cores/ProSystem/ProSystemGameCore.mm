@@ -25,16 +25,12 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#import "ProSystemGameCore.h"
-#import <UIKit/UIKit.h>
-#import <GameController/GameController.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
-#import <ProSystem/ProSystem-Swift.h>
+#import "ProSystemGameCore.h"
 
 #import <PVSupport/OERingBuffer.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 #include "ProSystem.h"
 #include "Database.h"
@@ -56,16 +52,39 @@
 - (void)leftMouseDownAtPoint:(CGPoint)point;
 - (void)leftMouseUp;
 @end
-//
 
-@interface PVProSystemGameCore (ObjC)
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error;
+@interface PVProSystemGameCore () <PV7800SystemResponderClient> {
+    uint32_t *_videoBuffer;
+    uint32_t _displayPalette[256];
+    uint8_t  *_soundBuffer;
+    uint8_t _inputState[17];
+    int _videoWidth, _videoHeight;
+    BOOL _isLightgunEnabled;
+}
+
 - (void)setPalette32;
 @end
 
-@implementation PVProSystemGameCore (ObjC)
+@implementation PVProSystemGameCore
 
+- (instancetype)init {
+    if((self = [super init])) {
+        _videoBuffer = (uint32_t *)malloc(VIDEO_WIDTH * VIDEO_HEIGHT * 4);
+        _soundBuffer = (uint8_t *) malloc(8192);
+    }
 
+    return self;
+}
+
+- (void)dealloc {
+    free(_videoBuffer);
+    free(_soundBuffer);
+}
+
+// TODO: Make me work
+-(NSString*)biosDirectoryPath {
+    return [self BIOSPath];
+}
 
 #pragma mark - Execution
 
@@ -129,8 +148,8 @@
                                NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format ProSystem supports."
                                };
     
-    NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                            code:EmulatorCoreErrorCodeCouldNotLoadRom
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                         userInfo:userInfo];
     
     *error = newError;
@@ -191,35 +210,35 @@
     return CGSizeMake(maria_visibleArea.GetLength(), maria_visibleArea.GetHeight());
 }
 
-//- (CGSize)bufferSize {
-//    return CGSizeMake(VIDEO_WIDTH, VIDEO_HEIGHT);
-//}
-//
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
-//
-//#pragma mark - Audio
-//
-//- (double)audioSampleRate {
-//    return 48000;
-//}
-//
-//- (NSUInteger)channelCount {
-//    return 1;
-//}
-//
-//- (NSUInteger)audioBitDepth {
-//    return 8;
-//}
+- (CGSize)bufferSize {
+    return CGSizeMake(VIDEO_WIDTH, VIDEO_HEIGHT);
+}
+
+- (GLenum)pixelFormat {
+    return GL_BGRA;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_BYTE;
+}
+
+- (GLenum)internalPixelFormat {
+    return GL_RGBA;
+}
+
+#pragma mark - Audio
+
+- (double)audioSampleRate {
+    return 48000;
+}
+
+- (NSUInteger)channelCount {
+    return 1;
+}
+
+- (NSUInteger)audioBitDepth {
+    return 8;
+}
 
 #pragma mark - Save States
 
@@ -232,8 +251,8 @@
 								   NSLocalizedRecoverySuggestionErrorKey: @""
 								   };
 
-		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-												code:EmulatorCoreErrorCodeCouldNotSaveState
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotSaveState
 											userInfo:userInfo];
 
 		*error = newError;
@@ -250,8 +269,8 @@
 								   NSLocalizedRecoverySuggestionErrorKey: @""
 								   };
 
-		NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-												code:EmulatorCoreErrorCodeCouldNotLoadSaveState
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotLoadState
 											userInfo:userInfo];
 
 		*error = newError;
@@ -267,7 +286,7 @@
         return [NSData dataWithBytesNoCopy:bytes length:length freeWhenDone:YES];
 
     if(outError) {
-        *outError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
+        *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
             NSLocalizedDescriptionKey : @"Save state data could not be written",
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
@@ -280,7 +299,7 @@
     size_t serial_size = cartridge_type == CARTRIDGE_TYPE_SUPERCART_RAM ? 32837 : 16453;
     if(serial_size != [state length]) {
         if(outError) {
-            *outError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
                 NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The save state does not have the right size, %ld expected, got: %ld.", serial_size, [state length]]
             }];
@@ -294,7 +313,7 @@
     }
     
     if(outError) {
-        *outError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain code:EmulatorCoreErrorCodeCouldNotLoadSaveState userInfo:@{
+        *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
             NSLocalizedDescriptionKey : @"The save state data could not be read"
         }];
     }
@@ -326,123 +345,123 @@
 // | 15       | Console      | Left Difficulty
 // | 16       | Console      | Right Difficulty
 // +----------+--------------+-------------------------------------------------
-//typedef NS_ENUM(NSInteger, PV7800MFiButton) {
-//    PV7800MFiButtonJoy1Right,
-//    PV7800MFiButtonJoy1Left,
-//    PV7800MFiButtonJoy1Down,
-//    PV7800MFiButtonJoy1Up,
-//    PV7800MFiButtonJoy1Button1,
-//    PV7800MFiButtonJoy1Button2,
-//    PV7800MFiButtonJoy2Right,
-//    PV7800MFiButtonJoy2Left,
-//    PV7800MFiButtonJoy2Down,
-//    PV7800MFiButtonJoy2Up,
-//    PV7800MFiButtonJoy2Button1,
-//    PV7800MFiButtonJoy2Button2,
-//    PV7800MFiButtonConsoleReset,
-//    PV7800MFiButtonConsoleSelect,
-//    PV7800MFiButtonConsolePause,
-//    PV7800MFiButtonConsoleLeftDifficulty,
-//    PV7800MFiButtonConsoleRightDifficulty
-//};
+typedef NS_ENUM(NSInteger, PV7800MFiButton) {
+    PV7800MFiButtonJoy1Right,
+    PV7800MFiButtonJoy1Left,
+    PV7800MFiButtonJoy1Down,
+    PV7800MFiButtonJoy1Up,
+    PV7800MFiButtonJoy1Button1,
+    PV7800MFiButtonJoy1Button2,
+    PV7800MFiButtonJoy2Right,
+    PV7800MFiButtonJoy2Left,
+    PV7800MFiButtonJoy2Down,
+    PV7800MFiButtonJoy2Up,
+    PV7800MFiButtonJoy2Button1,
+    PV7800MFiButtonJoy2Button2,
+    PV7800MFiButtonConsoleReset,
+    PV7800MFiButtonConsoleSelect,
+    PV7800MFiButtonConsolePause,
+    PV7800MFiButtonConsoleLeftDifficulty,
+    PV7800MFiButtonConsoleRightDifficulty
+};
 
-//const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 15, 16};
-//
-//#pragma mark Input
-//- (void)pollControllers {
-//    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
-//        GCController *controller = nil;
-//
-//        if (self.controller1 && playerIndex == 0) {
-//            controller = self.controller1;
-//        }
-//        else if (self.controller2 && playerIndex == 1)
-//        {
-//            controller = self.controller2;
-//        }
-//
-//        int playerInputOffset = playerIndex * 6;
-//
-//        if ([controller extendedGamepad]) {
-//            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
-//            GCControllerDirectionPad *dpad = [gamepad dpad];
-//
-//                // Up
-//            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset] = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
-//                // Down
-//            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset] = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
-//                // Left
-//            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset] = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
-//                // Right
-//            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
-//
-//                // Button 1
-//            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
-//                // Button 2
-//            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
-//
-//                // Reset
-//            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.rightShoulder.isPressed);
-//                // Select
-//            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.leftShoulder.isPressed);
-//                // Pause - Opting out of system pause…
-////            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
-//
-//                // TO DO: Move Difficulty options these to Menu
-//                // Left Difficulty
-////            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.leftTrigger.isPressed);
-//                // Right Difficulty
-////            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.rightTrigger.isPressed);
-//
-//        } else if ([controller gamepad]) {
-//            GCGamepad *gamepad = [controller gamepad];
-//            GCControllerDirectionPad *dpad = [gamepad dpad];
-//
-//                // Up
-//            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset] = (dpad.up.isPressed);
-//                // Down
-//            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset] = (dpad.down.isPressed);
-//                // Left
-//            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset] = (dpad.left.isPressed);
-//                // Right
-//            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed);
-//
-//                // Button 1
-//            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
-//                // Button 2
-//            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
-//
-//                // Reset
-//            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.rightShoulder.isPressed);
-//                // Select
-//            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.leftShoulder.isPressed);
-//
-//                // Pause
-////            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
-//
-//                // TO DO: Move Difficulty options these to Menu
-//                // Left Difficulty
-////            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.buttonX.isPressed);
-//                // Right Difficulty
-////            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.buttonY.isPressed);
-//
-//        }
-//#if TARGET_OS_TV
-//        else if ([controller microGamepad]) {
-//            GCMicroGamepad *gamepad = [controller microGamepad];
-//            GCControllerDirectionPad *dpad = [gamepad dpad];
-//
-//            _inputState[PV7800MFiButtonJoy1Up]    = dpad.up.value > 0.5;
-//            _inputState[PV7800MFiButtonJoy1Down]  = dpad.down.value > 0.5;
-//            _inputState[PV7800MFiButtonJoy1Left]  = dpad.left.value > 0.5;
-//            _inputState[PV7800MFiButtonJoy1Right] = dpad.right.value > 0.5;
-//
-//            _inputState[PV7800MFiButtonJoy1Button1] = gamepad.buttonX.isPressed;
-//            _inputState[PV7800MFiButtonJoy1Button2] = gamepad.buttonA.isPressed;
-//        }
-//#endif
-//    }
-//}
+const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 15, 16};
+
+#pragma mark Input
+- (void)pollControllers {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0) {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        int playerInputOffset = playerIndex * 6;
+
+        if ([controller extendedGamepad]) {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+                // Up
+            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset] = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
+                // Down
+            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset] = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
+                // Left
+            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset] = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
+                // Right
+            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
+            
+                // Button 1
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
+                // Button 2
+            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
+           
+                // Reset
+            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.rightShoulder.isPressed);
+                // Select
+            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.leftShoulder.isPressed);
+                // Pause - Opting out of system pause…
+//            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
+                                                                           
+                // TO DO: Move Difficulty options these to Menu
+                // Left Difficulty
+//            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.leftTrigger.isPressed);
+                // Right Difficulty
+//            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.rightTrigger.isPressed);
+
+        } else if ([controller gamepad]) {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+                // Up
+            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset] = (dpad.up.isPressed);
+                // Down
+            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset] = (dpad.down.isPressed);
+                // Left
+            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset] = (dpad.left.isPressed);
+                // Right
+            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed);
+            
+                // Button 1
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
+                // Button 2
+            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
+            
+                // Reset
+            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.rightShoulder.isPressed);
+                // Select
+            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.leftShoulder.isPressed);
+                                                                           
+                // Pause
+//            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
+                                                                           
+                // TO DO: Move Difficulty options these to Menu
+                // Left Difficulty
+//            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.buttonX.isPressed);
+                // Right Difficulty
+//            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.buttonY.isPressed);
+            
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            _inputState[PV7800MFiButtonJoy1Up]    = dpad.up.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Down]  = dpad.down.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Left]  = dpad.left.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Right] = dpad.right.value > 0.5;
+            
+            _inputState[PV7800MFiButtonJoy1Button1] = gamepad.buttonX.isPressed;
+            _inputState[PV7800MFiButtonJoy1Button2] = gamepad.buttonA.isPressed;
+        }
+#endif
+    }
+}
 
 
 #pragma mark - Misc Helper Methods
@@ -459,66 +478,66 @@
 @end
 
 @implementation PVProSystemGameCore (PV7800SystemResponderClient)
-//- (void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
-//    int playerShift = player == 0 ? 0 : 6;
-//
-//    switch(button)
-//    {
-//            // Controller buttons P1 + P2
-//        case PV7800ButtonUp:
-//            //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
-//            //            break;
-//        case PV7800ButtonDown:
-//        case PV7800ButtonLeft:
-//        case PV7800ButtonRight:
-//        case PV7800ButtonFire1:
-//        case PV7800ButtonFire2:
-//            _inputState[ProSystemMap[button + playerShift]] = 1;
-//            break;
-//            // Console buttons
-//        case PV7800ButtonSelect:
-//        case PV7800ButtonPause:
-//        case PV7800ButtonReset:
-//            _inputState[ProSystemMap[button + 6]] = 1;
-//            break;
-//            // Difficulty switches
-//        case PV7800ButtonLeftDiff:
-//        case PV7800ButtonRightDiff:
-//            _inputState[ProSystemMap[button + 6]] ^= (1 << 0);
-//            break;
-//
-//        default:
-//            break;
-//    }
-//}
-//
-//- (void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
-//    int playerShift = player == 0 ? 0 : 6;
-//
-//    switch(button)
-//    {
-//            // Controller buttons P1 + P2
-//        case PV7800ButtonUp:
-//            //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
-//            //            break;
-//        case PV7800ButtonDown:
-//        case PV7800ButtonLeft:
-//        case PV7800ButtonRight:
-//        case PV7800ButtonFire1:
-//        case PV7800ButtonFire2:
-//            _inputState[ProSystemMap[button + playerShift]] = 0;
-//            break;
-//            // Console buttons
-//        case PV7800ButtonSelect:
-//        case PV7800ButtonPause:
-//        case PV7800ButtonReset:
-//            _inputState[ProSystemMap[button + 6]] = 0;
-//            break;
-//
-//        default:
-//            break;
-//    }
-//}
+- (void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
+    int playerShift = player == 0 ? 0 : 6;
+    
+    switch(button)
+    {
+            // Controller buttons P1 + P2
+        case PV7800ButtonUp:
+            //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
+            //            break;
+        case PV7800ButtonDown:
+        case PV7800ButtonLeft:
+        case PV7800ButtonRight:
+        case PV7800ButtonFire1:
+        case PV7800ButtonFire2:
+            _inputState[ProSystemMap[button + playerShift]] = 1;
+            break;
+            // Console buttons
+        case PV7800ButtonSelect:
+        case PV7800ButtonPause:
+        case PV7800ButtonReset:
+            _inputState[ProSystemMap[button + 6]] = 1;
+            break;
+            // Difficulty switches
+        case PV7800ButtonLeftDiff:
+        case PV7800ButtonRightDiff:
+            _inputState[ProSystemMap[button + 6]] ^= (1 << 0);
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
+    int playerShift = player == 0 ? 0 : 6;
+    
+    switch(button)
+    {
+            // Controller buttons P1 + P2
+        case PV7800ButtonUp:
+            //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
+            //            break;
+        case PV7800ButtonDown:
+        case PV7800ButtonLeft:
+        case PV7800ButtonRight:
+        case PV7800ButtonFire1:
+        case PV7800ButtonFire2:
+            _inputState[ProSystemMap[button + playerShift]] = 0;
+            break;
+            // Console buttons
+        case PV7800ButtonSelect:
+        case PV7800ButtonPause:
+        case PV7800ButtonReset:
+            _inputState[ProSystemMap[button + 6]] = 0;
+            break;
+            
+        default:
+            break;
+    }
+}
 
 - (void)mouseMovedAtPoint:(CGPoint)aPoint {
     if(_isLightgunEnabled) {
@@ -541,17 +560,17 @@
     }
 }
 
-//- (void)leftMouseDownAtPoint:(CGPoint)aPoint {
-//    if(_isLightgunEnabled) {
-//        [self mouseMovedAtPoint:aPoint];
-//        
-//        _inputState[3] = 0;
-//    }
-//}
-//
-//- (void)leftMouseUp {
-//    if(_isLightgunEnabled) {
-//        _inputState[3] = 1;
-//    }
-//}
+- (void)leftMouseDownAtPoint:(CGPoint)aPoint {
+    if(_isLightgunEnabled) {
+        [self mouseMovedAtPoint:aPoint];
+        
+        _inputState[3] = 0;
+    }
+}
+
+- (void)leftMouseUp {
+    if(_isLightgunEnabled) {
+        _inputState[3] = 1;
+    }
+}
 @end

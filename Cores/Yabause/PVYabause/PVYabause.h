@@ -6,8 +6,7 @@
 //
 //
 
-#import <Foundation/Foundation.h>
-@import PVSupport;
+#import <UIKit/UIKit.h>
 
 //! Project version number for PVYabause.
 FOUNDATION_EXPORT double PVYabauseVersionNumber;
@@ -16,4 +15,4 @@ FOUNDATION_EXPORT double PVYabauseVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVYabauseVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVYabause/PublicHeader.h>
-//#import <PVYabause/PVYabauseGameCore.h>
+#import <PVYabause/PVYaubaseGameCore.h>

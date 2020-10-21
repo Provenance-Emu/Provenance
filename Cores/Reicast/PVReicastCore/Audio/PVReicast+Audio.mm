@@ -9,7 +9,6 @@
 #import "PVReicast+Audio.h"
 #import "PVReicast+CoreAudio.h"
 #import "PVReicast+AudioTypes.h"
-#import <PVReicast/PVReicast-Swift.h>
 
 #import <PVSupport/PVSupport.h>
 

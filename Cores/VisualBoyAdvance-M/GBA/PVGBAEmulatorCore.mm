@@ -95,8 +95,8 @@ static __weak PVGBAEmulatorCore *_current;
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -121,7 +121,7 @@ static __weak PVGBAEmulatorCore *_current;
 
     // Check if BIOS file even exists
     NSString *romFolder = [path stringByDeletingLastPathComponent];
-    NSString *biosPath = [self.biosPath stringByAppendingPathComponent:@"GBA.BIOS"];
+    NSString *biosPath = [self.BIOSPath stringByAppendingPathComponent:@"GBA.BIOS"];
     if ([[NSFileManager defaultManager] fileExistsAtPath:biosPath]) {
         ILOG(@"BIOS found at %@. Will use.", biosPath);
         _useBIOS = YES;
@@ -133,8 +133,8 @@ static __weak PVGBAEmulatorCore *_current;
                                        NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
                                        };
             
-            NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                    code:EmulatorCoreErrorCodeCouldNotLoadRom
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                                 userInfo:userInfo];
             
             *error = newError;
@@ -265,8 +265,7 @@ static __weak PVGBAEmulatorCore *_current;
 
 - (double)audioSampleRate
 {
-    return 32768;
-//    return soundGetSampleRate();
+    return soundGetSampleRate();
 }
 
 - (NSUInteger)channelCount
@@ -287,8 +286,8 @@ static __weak PVGBAEmulatorCore *_current;
 									   NSLocalizedRecoverySuggestionErrorKey: @""
 									   };
 
-			NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-													code:EmulatorCoreErrorCodeCouldNotSaveState
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotSaveState
 												userInfo:userInfo];
 
 			*error = newError;
@@ -308,8 +307,8 @@ static __weak PVGBAEmulatorCore *_current;
 									   NSLocalizedRecoverySuggestionErrorKey: @""
 									   };
 
-			NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-													code:EmulatorCoreErrorCodeCouldNotLoadSaveState
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
 												userInfo:userInfo];
 
 			*error = newError;

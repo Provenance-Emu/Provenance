@@ -24,14 +24,20 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import <PVFCEU/PVFCEU.h>
-//#import <PVFCEU/PVFCEU-Swift.h>
+#import "PVFCEUEmulatorCore.h"
 #import <PVSupport/PVSupport-Swift.h>
-
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-@import FCEU;
+#include "FCEU/fceu.h"
+#include "FCEU/driver.h"
+#include "FCEU/input.h"
+#include "FCEU/sound.h"
+#include "FCEU/movie.h"
+#include "FCEU/palette.h"
+#include "FCEU/state.h"
+#include "FCEU/emufile.h"
+#include "zlib.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
@@ -51,7 +57,7 @@ static uint32_t palette[256];
 
 @end
 
-@implementation PVFCEUEmulatorCore ()
+@implementation PVFCEUEmulatorCore
 
 static __weak PVFCEUEmulatorCore *_current;
 
@@ -106,7 +112,7 @@ static __weak PVFCEUEmulatorCore *_current;
     [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     //FCEUI_SetBaseDirectory([[self biosDirectoryPath] UTF8String]); unused for now
     FCEUI_SetDirOverride(FCEUIOD_NV, strdup([[batterySavesDirectory path] UTF8String]));
-    FCEUI_SetDirOverride(FCEUIOD_FDSROM, strdup([[self biosPath] UTF8String]));
+    FCEUI_SetDirOverride(FCEUIOD_FDSROM, strdup([[self BIOSPath] UTF8String]));
 
     FCEUI_SetSoundVolume(256);
     FCEUI_Sound(48000);
@@ -121,8 +127,8 @@ static __weak PVFCEUEmulatorCore *_current;
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported FCEUI ROM format."
                                    };
         
-        NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-                                                code:EmulatorCoreErrorCodeCouldNotLoadRom
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
         
         *error = newError;
@@ -258,8 +264,8 @@ static __weak PVFCEUEmulatorCore *_current;
 									   NSLocalizedRecoverySuggestionErrorKey: @""
 									   };
 
-			NSError *newError = [NSError errorWithDomain:EmulatorCoreErrorCodeDomain
-													code:EmulatorCoreErrorCodeCouldNotLoadSaveState
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
 												userInfo:userInfo];
 
 			*error = newError;
