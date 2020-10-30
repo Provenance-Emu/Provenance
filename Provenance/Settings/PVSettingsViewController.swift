@@ -220,12 +220,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
 
-        // Beta options
+         // Beta options
+        #if os(iOS)
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
-
+            
             PVSettingsSwitchRow(text: "iCloud Sync",
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
@@ -242,6 +243,21 @@ final class PVSettingsViewController: PVQuickTableViewController {
 //                                detailText: .subtitle("Cores that are in development"),
 //                                key: \PVSettingsModel.debugOptions.unsupportedCores)
         ]
+        #else
+         let betaRows: [TableRow] = [
+             PVSettingsSwitchRow(text: "iCloud Sync",
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
+                                key: \PVSettingsModel.debugOptions.iCloudSync),
+
+             PVSettingsSwitchRow(text: "Multi-threaded GL",
+                                detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
+
+             PVSettingsSwitchRow(text: "4X Multisampling GL",
+                                detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+                                key: \PVSettingsModel.debugOptions.multiSampling)
+                ]
+        #endif
 
         let betaSection = Section(
             title: "Beta Features",
