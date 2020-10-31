@@ -77,6 +77,8 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
                 let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
                 let (action, selected) = UIAlertAction.createReactive(title: "Toggle Favorite", style: .default)
                 actionSheet.addAction(action)
+                let (cancel) = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                actionSheet.addAction(cancel)
                 self.present(actionSheet, animated: true)
                 return selected.map { _ in game }
             })
