@@ -39,7 +39,6 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             #if os(tvOS)
                 titleLabel.text = viewModel.title
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 36)
-                titleLabel.backgroundColor = UIColor(white: 0.0, alpha: 0.75)
             #else
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -55,9 +54,22 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         super.init(frame: frame)
         #if os(tvOS)
             titleLabel.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
-            titleLabel.textAlignment = .left
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
-            titleLabel.textColor = colorForText
+        
+        // add in separator for tvOS too, clean up if statements later and make this generic
+            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
+            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+            bottomSeparator.autoresizingMask = .flexibleWidth
+
+            addSubview(bottomSeparator)
+
+        // Style
+            backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            titleLabel.textAlignment = .left
+            titleLabel.backgroundColor = .clear
+            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
+            clipsToBounds = false
+        
         #else
             let labelHeight: CGFloat = 20.0
             let labelBottomMargin: CGFloat = 5.0
