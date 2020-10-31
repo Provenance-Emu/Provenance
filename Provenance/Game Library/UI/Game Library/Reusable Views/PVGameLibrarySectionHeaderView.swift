@@ -51,7 +51,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
         super.init(frame: frame)
         #if os(tvOS)
-            titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
+            titleLabel.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
             titleLabel.textAlignment = .left
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
             titleLabel.textColor = colorForText
