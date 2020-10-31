@@ -26,6 +26,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         iv.contentMode = .scaleAspectFit
         #if os(iOS)
             iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+        #else
+            iv.tintColor = .darkGray
         #endif
         return iv
     }()
@@ -36,7 +38,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         didSet {
             #if os(tvOS)
                 titleLabel.text = viewModel.title
-                titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 36)
+                titleLabel.backgroundColor = UIColor(white: 0.0, alpha: 0.75)
             #else
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
