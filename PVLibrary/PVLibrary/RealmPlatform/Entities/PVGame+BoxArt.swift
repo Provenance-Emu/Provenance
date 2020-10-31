@@ -14,11 +14,14 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case square = 1.0
     case wide = 1.45
     case tall = 0.7
+    case pce = 0.84
 }
 
 public extension PVGame {
     var boxartAspectRatio: PVGameBoxArtAspectRatio {
         switch system.enumValue {
+        case .PCE:
+            return .pce
         case .SNES, .N64:
             return .wide
         case .NES, .Genesis, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor:
