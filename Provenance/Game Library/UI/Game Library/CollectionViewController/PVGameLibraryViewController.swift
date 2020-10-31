@@ -27,8 +27,8 @@ let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
-let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateColletionCell"
-let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedColletionCell"
+let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateCollectionCell"
+let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCell"
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
