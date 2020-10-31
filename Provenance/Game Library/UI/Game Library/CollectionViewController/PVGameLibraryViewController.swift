@@ -406,7 +406,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
             collectionView.remembersLastFocusedIndexPath = false
             collectionView.clipsToBounds = false
-            collectionView.backgroundColor = .black
+            collectionView.backgroundColor = .init(white: 0.075, alpha: 1.0) 
         #else
             collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
             searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
