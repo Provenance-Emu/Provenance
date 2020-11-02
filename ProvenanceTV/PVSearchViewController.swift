@@ -32,7 +32,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
     init(gameLibrary: PVGameLibrary) {
         self.gameLibrary = gameLibrary
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.sectionInset = .init(top: 20, left: 0, bottom: 20, right: 0)
+        flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         super.init(collectionViewLayout: flowLayout)
     }
 
