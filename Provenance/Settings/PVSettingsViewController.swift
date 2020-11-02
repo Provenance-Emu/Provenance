@@ -43,6 +43,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
         generateTableViewViewModels()
         tableView.reloadData()
 
+        #if os(tvOS)
+            tableView.backgroundColor = .black
+        #endif
+        
         conflictsController.conflicts
             .bind(onNext: {
                 self.numberOfConflicts = $0.count
