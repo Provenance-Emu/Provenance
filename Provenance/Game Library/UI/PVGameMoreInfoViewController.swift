@@ -648,7 +648,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             let submittedValue = textField?.text
 
             if submittedValue == nil || submittedValue!.isEmpty {
-                let errAlert = UIAlertController(title: "Invalid Value", message: "\(title) cannot be empty", preferredStyle: .alert)
+                let errAlert = UIAlertController(title: "Invalid Value", message: "\(title) cannot be empty.", preferredStyle: .alert)
                 errAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 self.present(errAlert, animated: true, completion: nil)
             } else if submittedValue != currentValue, let newValue = submittedValue {
