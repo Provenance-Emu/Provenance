@@ -77,6 +77,10 @@ final class PVAppearanceViewController: UITableViewController {
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: "appearanceCell")
         }
+        #if os(tvOS)
+            self.tableView.backgroundColor = .black
+            self.tableView.mask = nil;
+        #endif
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 cell?.textLabel?.text = "Show Game Titles"
