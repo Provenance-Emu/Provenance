@@ -403,7 +403,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
         #if os(tvOS)
-            collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 0)
+            collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
             collectionView.remembersLastFocusedIndexPath = false
             collectionView.clipsToBounds = false
             collectionView.backgroundColor = .black 
