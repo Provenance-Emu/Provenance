@@ -19,6 +19,7 @@ extension PVSearchViewController {
         let searchController = UISearchController(searchResultsController: searchViewController)
         searchViewController.searchController = searchController
         let searchContainerController = UISearchContainerViewController(searchController: searchController)
+        searchController.view.backgroundColor = .black
         searchContainerController.title = "Search"
         return UINavigationController(rootViewController: searchContainerController)
     }
@@ -46,6 +47,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
             collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         #else
             collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            collectionView?.backgroundColor = .black
         #endif
         collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 
