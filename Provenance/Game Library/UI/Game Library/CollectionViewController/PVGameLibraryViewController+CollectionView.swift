@@ -109,7 +109,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         #if os(tvOS)
-            return UIEdgeInsets(top: 15, left: 10, bottom: 5, right: 10)
+            return UIEdgeInsets(top: 20, left: 20, bottom: 30, right: 20)
         #else
         let item: Section.Item? = firstModel(in: collectionView, at: section)
         switch item {
