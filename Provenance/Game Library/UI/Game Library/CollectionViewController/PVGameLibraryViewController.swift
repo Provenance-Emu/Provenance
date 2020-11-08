@@ -1072,7 +1072,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             .subscribe(onCompleted: {
                 self.collectionView?.reloadData()
             }, onError: { error in
-                ELOG("Failed to toggle Favourite for game \(game.title)")
+                ELOG("Failed to toggle Favorite for game \(game.title)")
             })
             .disposed(by: disposeBag)
     }
