@@ -392,8 +392,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         didSet {
             #if os(tvOS)
                 // The label's alpha will get set to 1 on focus
-                titleLabel.alpha = 0
-                titleLabel.textColor = UIColor.white
+                titleLabel.alpha = 1
+                titleLabel.textColor = UIColor.darkGray
                 titleLabel.layer.masksToBounds = false
                 if #available(tvOS 10.0, *) {
                     titleLabel.adjustsFontForContentSizeCategory = true
@@ -953,6 +953,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                         let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
 
                         let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 36
+                        self.titleLabel.textColor = UIColor.white
                         self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
                         self.titleLabel.alpha = 1.0
                     }
@@ -960,7 +961,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 } else {
                     //				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
                     self.titleLabel.transform = .identity
-                    self.titleLabel.alpha = 0.0
+                    self.titleLabel.textColor = UIColor.darkGray
+                    //self.titleLabel.alpha = 0.0
                     if PVSettingsModel.shared.showGameBadges {
                         if #available(tvOS 11, *) {} else {
                             if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.alpha = 1.0 }
