@@ -806,7 +806,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 imageView?.layer.shouldRasterize = false
             } else {
                 imageView?.layer.shouldRasterize = true
-                imageView?.layer.rasterizationScale = UIScreen.main.scale
+                #if os(tvOS)
+                    imageView?.layer.rasterizationScale = 2.0
+                #else
+                    imageView?.layer.rasterizationScale = UIScreen.main.scale
+                #endif
             }
         } get {
             return imageView?.image
