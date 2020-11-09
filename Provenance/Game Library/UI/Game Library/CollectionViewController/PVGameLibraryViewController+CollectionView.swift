@@ -16,7 +16,7 @@ import RxSwift
 #endif
 
 // tvOS
-let tvOSCellUnit: CGFloat = 256.0
+let tvOSCellUnit: CGFloat = 224.0 // org 256.0 = 6,  base subtract 32 for 1 more column. 224= 7, 192 = 8
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
@@ -71,12 +71,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             case .saves:
                 // TODO: Multirow?
                 let numberOfRows: CGFloat = 1.0
-                let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 4
+                let width = viewWidth //- collectionView.contentInset.left - collectionView.contentInset.right / 4
                 let height = tvOSCellUnit * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             case .favorites, .recents:
                 let numberOfRows: CGFloat = 1.0
-                let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right / 5
+                let width = viewWidth //- collectionView.contentInset.left - collectionView.contentInset.right / 5
                 let height: CGFloat = tvOSCellUnit * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             }
@@ -88,7 +88,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             let item: Section.Item = try! collectionView.rx.model(at: IndexPath(item: 0, section: section))
             switch item {
             case .game:
-                return 44
+                return 40
             case .saves, .favorites, .recents:
                 return 0
             }
@@ -109,7 +109,17 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         #if os(tvOS)
-            return UIEdgeInsets(top: 20, left: 20, bottom: 30, right: 20)
+            let item: Section.Item? = firstModel(in: collectionView, at: section)
+            switch item {
+            case .none:
+                return .zero
+            case .some(.game):
+                return .init(top: 20, left: 20, bottom: 25, right: 20)
+            case .saves:
+                return .init(top: -20, left: 30, bottom: 45, right: 30)
+            case .favorites, .recents:
+                return .init(top: 20, left: 20, bottom: 20, right: 20)
+            }
         #else
         let item: Section.Item? = firstModel(in: collectionView, at: section)
         switch item {
