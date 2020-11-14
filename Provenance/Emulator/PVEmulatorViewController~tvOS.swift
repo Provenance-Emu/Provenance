@@ -145,7 +145,6 @@ extension PVEmulatorViewController {
             let moreInfoViewContrller = sb.instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController
             moreInfoViewContrller?.game = self.game
             moreInfoViewContrller?.showsPlayButton = false
-            moreInfoViewContrller?.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideModeInfo))
             let newNav = UINavigationController(rootViewController: moreInfoViewContrller ?? UIViewController())
             self.present(newNav, animated: true) { () -> Void in }
             self.isShowingMenu = false
