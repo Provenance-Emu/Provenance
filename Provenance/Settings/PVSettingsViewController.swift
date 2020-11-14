@@ -45,6 +45,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         #if os(tvOS)
             tableView.backgroundColor = .black
+            splitViewController?.view.backgroundColor = .black
         #endif
         
         conflictsController.conflicts
