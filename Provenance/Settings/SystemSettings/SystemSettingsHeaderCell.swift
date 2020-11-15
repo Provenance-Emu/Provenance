@@ -19,8 +19,8 @@ public final class SystemSettingsHeaderCell: SystemSettingsCell {
         #else
         backgroundView?.backgroundColor = UIColor.clear
             if #available(tvOS 10.0, *) {
-                textLabel?.textColor = .white //needs pr
-                detailTextLabel?.textColor = .lightGray //needs pr
+                textLabel?.textColor = .white
+                detailTextLabel?.textColor = .lightGray
                 textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
             }
