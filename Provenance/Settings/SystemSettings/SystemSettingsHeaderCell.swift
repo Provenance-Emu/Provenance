@@ -15,13 +15,15 @@ public final class SystemSettingsHeaderCell: SystemSettingsCell {
             backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
             textLabel?.textColor = Theme.currentTheme.settingsHeaderText
             detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
+            textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
         #else
-            backgroundView?.backgroundColor = UIColor.clear
+        backgroundView?.backgroundColor = UIColor.clear
             if #available(tvOS 10.0, *) {
-                self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-                self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
+                textLabel?.textColor = .white //needs pr
+                detailTextLabel?.textColor = .lightGray //needs pr
+                textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
             }
         #endif
-        textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
     }
 }
