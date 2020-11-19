@@ -85,7 +85,7 @@ steps:
     actions: 'test'
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     packageApp: false
     destinationPlatformOption: iOS
     destinationSimulators: iPhone 8
