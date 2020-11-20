@@ -58,7 +58,7 @@ steps:
   displayName: Rome download
 
 - script: |
-    ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug
+    ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug --cache-builds
   displayName: Carthage bootstrap
 
 - script: |
@@ -78,6 +78,8 @@ steps:
     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: false
+    destinationPlatformOption: iOS
+    destinationSimulators: iPhone 8
   displayName: Building project
 
 - task: Xcode@5
