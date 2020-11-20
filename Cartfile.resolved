@@ -1,4 +1,4 @@
-github "CocoaLumberjack/CocoaLumberjack" "3.6.2"
+github "CocoaLumberjack/CocoaLumberjack" "3.7.0"
 github "Puasonych/XLActionController" "29fe09f0ebb655b4941ca2392c59ee28e192ad84"
 github "ReactiveX/RxSwift" "5.1.1"
 github "RxSwiftCommunity/RxDataSources" "4.0.1"
