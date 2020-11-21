@@ -863,13 +863,11 @@
 		B3AF6FCA21916106000FA7F9 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3AF6FCB21916106000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = tvOS/RxBlocking.framework; sourceTree = "<group>"; };
 		B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = tvOS/QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = tvOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B3AF6FCE21916106000FA7F9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = tvOS/RxSwift.framework; sourceTree = "<group>"; };
 		B3AF6FD021916106000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = tvOS/SQLite.framework; sourceTree = "<group>"; };
 		B3AF6FF621916978000FA7F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = iOS/SQLite.framework; sourceTree = "<group>"; };
 		B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = iOS/QuickTableViewController.framework; sourceTree = "<group>"; };
 		B3AF6FF821916978000FA7F9 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3AF6FF921916978000FA7F9 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = iOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B3AF6FFA21916978000FA7F9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		B3AF6FFB21916978000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = iOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
@@ -1647,7 +1645,6 @@
 				11D381FB247D9A82005594A2 /* RxRealm.framework */,
 				B3AF700421916979000FA7F9 /* CocoaLumberjack.framework */,
 				B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */,
-				B3AF6FF921916978000FA7F9 /* HockeySDK.framework */,
 				B3AF6FFB21916978000FA7F9 /* NSLogger.framework */,
 				B3AF6FF821916978000FA7F9 /* NSLoggerSwift.framework */,
 				B3AF6FF721916978000FA7F9 /* QuickTableViewController.framework */,
@@ -1670,7 +1667,6 @@
 			children = (
 				B3AF6FCA21916106000FA7F9 /* CocoaLumberjack.framework */,
 				B3AF6FC621916105000FA7F9 /* CocoaLumberjackSwift.framework */,
-				B3AF6FCD21916106000FA7F9 /* HockeySDK.framework */,
 				B3AF6FC421916105000FA7F9 /* NSLogger.framework */,
 				B3AF6FC221916105000FA7F9 /* NSLoggerSwift.framework */,
 				B3AF6FCC21916106000FA7F9 /* QuickTableViewController.framework */,

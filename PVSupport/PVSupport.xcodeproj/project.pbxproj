@@ -216,7 +216,6 @@
 		B3721CFE2191338300433E4C /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3721D002191338300433E4C /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
-		B3721D012191338300433E4C /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		B3721D022191338300433E4C /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
 		B3721D032191338300433E4C /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLogger.framework; sourceTree = "<group>"; };
 		B3721D042191338300433E4C /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
@@ -250,7 +249,6 @@
 		B3B105072191854900210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		B3B105082191854900210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SQLite.framework; sourceTree = "<group>"; };
 		B3B105092191854A00210C39 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
-		B3B1050A2191854A00210C39 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B3B1050D2191854A00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
@@ -462,7 +460,6 @@
 			children = (
 				B3721CFA2191338300433E4C /* CocoaLumberjack.framework */,
 				B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */,
-				B3721D012191338300433E4C /* HockeySDK.framework */,
 				B3721D032191338300433E4C /* NSLogger.framework */,
 				B3721CF92191338200433E4C /* NSLoggerSwift.framework */,
 				B3721CFC2191338300433E4C /* QuickTableViewController.framework */,
@@ -483,7 +480,6 @@
 			children = (
 				B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */,
 				B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */,
-				B3B1050A2191854A00210C39 /* HockeySDK.framework */,
 				B3B105002191854900210C39 /* NSLogger.framework */,
 				B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */,
 				B3B105042191854900210C39 /* QuickTableViewController.framework */,

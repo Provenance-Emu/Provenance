@@ -760,8 +760,6 @@
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B30670E220C29FDE002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
-		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1366,7 +1364,6 @@
 				B3AF705921916F2F000FA7F9 /* Foundation.framework */,
 				B3AF70652191733D000FA7F9 /* GameController.framework */,
 				B324C307219195A8009F4EDC /* GLKit.framework */,
-				B30670E420C29FE6002ECE63 /* HockeySDK.framework */,
 				B324C61A219203AF009F4EDC /* libc++.tbd */,
 				B324C618219203A5009F4EDC /* libsqlite3.tbd */,
 				B324C6162192038C009F4EDC /* libxml2.tbd */,
@@ -1437,7 +1434,6 @@
 				1A3D409917B2DCE4004DFFFC /* Foundation.framework */,
 				B32D8F811EA7FDBE00175FBF /* GameController.framework */,
 				1ADDA5B317B30CD7008A7ADD /* GLKit.framework */,
-				B30670E220C29FDE002ECE63 /* HockeySDK.framework */,
 				1A2B0E8D1AD18961005FB77C /* libc++.dylib */,
 				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,

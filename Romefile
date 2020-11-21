@@ -78,12 +78,6 @@ repositoryMap:
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
-- HockeySDK-iOS:
-  - name: HockeySDK
-    platforms: [iOS]
-- HockeySDK-tvOS:
-  - name: HockeySDK
-    platforms: [tvOS]
 - realm-cocoa:
   - name: Realm
     platforms: [iOS,tvOS]
