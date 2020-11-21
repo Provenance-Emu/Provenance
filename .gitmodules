@@ -64,9 +64,6 @@
 [submodule "Carthage/Checkouts/QuickTableViewController"]
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git
-[submodule "Carthage/Checkouts/XLActionController"]
-	url = https://github.com/Puasonych/XLActionController.git
-	path = Carthage/Checkouts/XLActionController
 [submodule "Carthage/Checkouts/ZipArchive"]
 	path = Carthage/Checkouts/ZipArchive
 	url = https://github.com/ZipArchive/ZipArchive.git

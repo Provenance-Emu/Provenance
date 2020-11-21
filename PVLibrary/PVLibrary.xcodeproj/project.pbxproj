@@ -874,7 +874,6 @@
 		B3AF6FFB21916978000FA7F9 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = iOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3AF6FFD21916978000FA7F9 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = iOS/RxTest.framework; sourceTree = "<group>"; };
-		B3AF6FFF21916978000FA7F9 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = iOS/XLActionController.framework; sourceTree = "<group>"; };
 		B3AF700121916978000FA7F9 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3AF700221916978000FA7F9 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = iOS/Realm.framework; sourceTree = "<group>"; };
 		B3AF700321916978000FA7F9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = iOS/RxBlocking.framework; sourceTree = "<group>"; };
@@ -1661,7 +1660,6 @@
 				B3AF6FFD21916978000FA7F9 /* RxTest.framework */,
 				B3AF6FF621916978000FA7F9 /* SQLite.framework */,
 				B3AF6FFC21916978000FA7F9 /* SwiftyUserDefaults.framework */,
-				B3AF6FFF21916978000FA7F9 /* XLActionController.framework */,
 				B3AF700721916979000FA7F9 /* ZipArchive.framework */,
 			);
 			name = iOS;

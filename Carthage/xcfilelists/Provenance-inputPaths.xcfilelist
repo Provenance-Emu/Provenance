@@ -20,5 +20,4 @@ $(SRCROOT)/Carthage/Build/iOS/RxRelay.framework
 $(SRCROOT)/Carthage/Build/iOS/RxSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/SQLite.framework
 $(SRCROOT)/Carthage/Build/iOS/SteamController.framework
-$(SRCROOT)/Carthage/Build/iOS/XLActionController.framework
 $(SRCROOT)/Carthage/Build/iOS/ZipArchive.framework

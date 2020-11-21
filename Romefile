@@ -84,9 +84,6 @@ repositoryMap:
 - HockeySDK-tvOS:
   - name: HockeySDK
     platforms: [tvOS]
-- XLActionController:
-  - name: XLActionController
-    platforms: [iOS]
 - realm-cocoa:
   - name: Realm
     platforms: [iOS,tvOS]
