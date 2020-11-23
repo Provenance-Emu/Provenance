@@ -24,6 +24,8 @@ steps:
     path: Carthage/Build
   displayName: Carthage cache
 
+- script: sudo xcode-select -s "/Applications/Xcode_12.2.app"
+
 - script: |
     ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug --cache-builds
   displayName: Carthage bootstrap
