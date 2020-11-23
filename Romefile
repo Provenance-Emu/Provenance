@@ -104,9 +104,6 @@ repositoryMap:
     platforms: [iOS,tvOS]
   - name: NSLoggerSwift
     platforms: [iOS,tvOS]
-- RxGesture:
-  - name: RxGesture
-    platforms: [iOS]
 - Reachability.swift:
   - name: Reachability
     platforms: [iOS,tvOS]

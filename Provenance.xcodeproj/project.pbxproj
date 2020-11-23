@@ -477,7 +477,6 @@
 		B3F43DDE2169D42500CDD40A /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
 		B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
-		B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */; };
 		B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */; };
 		B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */; };
 		B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */; };
@@ -971,7 +970,6 @@
 		B3F43DD82169B94E00CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SaveStates.storyboard; sourceTree = "<group>"; };
 		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
-		B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
 		B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/iOS/RxDataSources.framework; sourceTree = "<group>"; };
 		B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differentiator.framework; path = Carthage/Build/iOS/Differentiator.framework; sourceTree = "<group>"; };
 		B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/tvOS/RxDataSources.framework; sourceTree = "<group>"; };
@@ -1014,7 +1012,6 @@
 				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
 				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
 				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
 				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
@@ -1264,7 +1261,6 @@
 				B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */,
 				B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */,
 				B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */,
-				B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */,
 				B369B0E621A458940064EDCA /* Reachability.framework */,
 				B369B0E821A4589E0064EDCA /* Reachability.framework */,
 				B369B0D9219EA29A0064EDCA /* Crashlytics.framework */,
