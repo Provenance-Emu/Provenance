@@ -311,22 +311,21 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     return false
                 }()
                 header.viewModel = .init(title: section.header, collapsable: section.collapsable != nil, collapsed: collapsed)
-                #if canImport(RxGesture)
-                if let collapsable = section.collapsable {
-                    header.collapseImageView.rx.tapGesture()
-                        .when(.recognized)
-                        .withLatestFrom(self.collapsedSystems)
-                        .map({ (collapsedSystems: Set<String>) in
-                            switch collapsable {
-                            case .collapsed(let token):
-                                return collapsedSystems.subtracting([token])
-                            case .notCollapsed(let token):
-                                return collapsedSystems.union([token])
-                            }
-                        })
-                        .bind(to: self.collapsedSystems)
-                        .disposed(by: header.disposeBag)
-                }
+                #if os(iOS)
+                header.collapseButton.rx.tap
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsable {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
                 #endif
                 return header
             case UICollectionView.elementKindSectionFooter:
