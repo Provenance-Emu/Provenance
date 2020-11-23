@@ -24,6 +24,7 @@ steps:
     path: Carthage/Build
   displayName: Carthage cache
 
+# This seems to be needed to force carthage to use the same version of XCode as the build/run steps
 - script: sudo xcode-select -s "/Applications/Xcode_12.2.app"
 
 - script: |
