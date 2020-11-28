@@ -11,33 +11,12 @@ variables:
   sdk: 'iphonesimulator'
   configuration: 'Debug'
   carthage-platform: 'iOS'
-  BUNDLE_PATH: $(Pipeline.Workspace)/.bundle
 
 steps:
 
 - checkout: self # self represents the repo where the initial Pipelines YAML file was found
   clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
   submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
-  path: string  # path to check out source code, relative to the agent's build directory (e.g. \_work\1); defaults to a directory called `s`
-  persistCredentials: true  # if 'true', leave the OAuth token in the Git config after the initial fetch; defaults to false
-
-- task: UseRubyVersion@0
-  displayName: 'Use Ruby >= 2.5.1'
-  inputs:
-    versionSpec: '>= 2.5.1'
-
-- task: Cache@2
-  inputs:
-    key: 'gems | "$(Agent.OS)"'
-    restoreKeys: | 
-      gems | "$(Agent.OS)"
-      gems
-    path: $(BUNDLE_PATH)
-  displayName: Cache gems
-- script: |
-    bundle config set without 'documentation test'
-    bundle install --jobs=8
-  displayName: 'Install Gems'
 
 - task: Cache@2
   inputs:
@@ -45,39 +24,22 @@ steps:
     path: Carthage/Build
   displayName: Carthage cache
 
-- task: Cache@2
-  inputs:
-    key: 'Romefile'
-    path: $(HOME)/Library/Caches/Rome
-  displayName: Rome cache
+# This seems to be needed to force carthage to use the same version of XCode as the build/run steps
+- script: sudo xcode-select -s "/Applications/Xcode_12.2.app"
 
 - script: |
-    brew tap tmspzz/tap https://github.com/tmspzz/homebrew-tap.git
-    brew install tmspzz/homebrew-tap/rome 2>/dev/null || true
-    bundle exec fastlane rome_download platform:$(carthage-platform)
-  displayName: Rome download
-
-- script: |
-    bundle exec fastlane carthage_bootstrap platform:$(carthage-platform) configuration:'Debug'
+    ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug --cache-builds
   displayName: Carthage bootstrap
-
-- script: |
-    bundle exec fastlane rome_upload platform:$(carthage-platform)
-  displayName: Rome upload
-
-- task: Cache@2
-  inputs:
-    key: 'swiftc --version'
-    path: build
-  displayName: XCode cache
 
 - task: Xcode@5
   inputs:
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: false
+    destinationPlatformOption: iOS
+    destinationSimulators: iPhone 8
   displayName: Building project
 
 - task: Xcode@5
@@ -85,7 +47,7 @@ steps:
     actions: 'test'
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '11' # Options: 8, 9, default, specifyPath
+    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     packageApp: false
     destinationPlatformOption: iOS
     destinationSimulators: iPhone 8
