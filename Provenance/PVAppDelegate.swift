@@ -28,7 +28,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
         setDefaultsFromSettingsBundle()
-        _initAppCenter()
 
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
