@@ -812,6 +812,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 }, onError: { error in
                     ELOG(error.localizedDescription)
                 }, onCompleted: {
+                    hud.hide(true)
                     UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
                 })
                 .disposed(by: disposeBag)
