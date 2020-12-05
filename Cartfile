@@ -1,10 +1,6 @@
 # App
-# github "xmartlabs/XLActionController" ~> 5.0.0
-github "Puasonych/XLActionController" "update-for-xcode-11"
-
 github "bcylin/QuickTableViewController"
 github "RxSwiftCommunity/RxDataSources"
-github "RxSwiftCommunity/RxGesture"
 github "zydeco/SteamController"
 
 # Microsoft AppCenter

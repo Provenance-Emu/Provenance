@@ -31,15 +31,6 @@
 [submodule "Carthage/Checkouts/RxSwift"]
 	path = Carthage/Checkouts/RxSwift
 	url = https://github.com/ReactiveX/RxSwift.git
-[submodule "Carthage/Checkouts/RxGesture"]
-	path = Carthage/Checkouts/RxGesture
-	url = https://github.com/RxSwiftCommunity/RxGesture.git
-[submodule "Carthage/Checkouts/HockeySDK-iOS"]
-	url = https://github.com/nsoperations/HockeySDK-iOS.git
-	path = Carthage/Checkouts/HockeySDK-iOS
-[submodule "Carthage/Checkouts/HockeySDK-tvOS"]
-	url = https://github.com/bitstadium/HockeySDK-tvOS.git
-	path = Carthage/Checkouts/HockeySDK-tvOS
 [submodule "Carthage/Checkouts/Reachability.swift"]
 	path = Carthage/Checkouts/Reachability.swift
 	url = https://github.com/ashleymills/Reachability.swift.git
@@ -64,9 +55,6 @@
 [submodule "Carthage/Checkouts/QuickTableViewController"]
 	path = Carthage/Checkouts/QuickTableViewController
 	url = https://github.com/bcylin/QuickTableViewController.git
-[submodule "Carthage/Checkouts/XLActionController"]
-	url = https://github.com/Puasonych/XLActionController.git
-	path = Carthage/Checkouts/XLActionController
 [submodule "Carthage/Checkouts/ZipArchive"]
 	path = Carthage/Checkouts/ZipArchive
 	url = https://github.com/ZipArchive/ZipArchive.git
