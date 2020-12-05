@@ -36,15 +36,6 @@ public extension PVEmulatorConfiguration {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
-        // Remove all existing cores first incase things have been updated
-        //		if !database.realm.isInWriteTransaction {
-        //			try! database.writeTransaction {
-        //				try! database.deleteAll(PVCore.self)
-        //			}
-        //		} else {
-        //			try! database.deleteAll(PVCore.self)
-        //		}
-
         plists.forEach { plist in
             do {
                 let data = try Data(contentsOf: plist)

@@ -181,7 +181,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleCacheEmptied(_:)), name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArchiveInflationFailed(_:)), name: NSNotification.Name.PVArchiveInflationFailed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
@@ -863,26 +862,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let alert = UIAlertController(title: "Failed to extract archive", message: "There was a problem extracting the archive. Perhaps the download was corrupt? Try downloading it again.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true) { () -> Void in }
-    }
-
-    @objc func handleRefreshLibrary(_: Notification) {
-//        let config = PVEmulatorConfiguration.
-//        let documentsPath: String = config.documentsPath
-//        let romPaths = database.all(PVGame.self).map { (game) -> String in
-//            let path: String = URL(fileURLWithPath: documentsPath).appendingPathComponent(game.romPath).path
-//            return path
-//        }
-
-        let database = RomDatabase.sharedInstance
-        do {
-            try database.deleteAll()
-        } catch {
-            ELOG("Failed to delete all objects. \(error.localizedDescription)")
-        }
-
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
-        }
     }
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {

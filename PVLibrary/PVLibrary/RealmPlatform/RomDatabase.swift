@@ -374,16 +374,9 @@ public extension RomDatabase {
         }
     }
 
-    @objc
     func deleteAll() throws {
         try writeTransaction {
             realm.deleteAll()
-        }
-    }
-
-    func deleteAll<T: Object>(_ type: T.Type) throws {
-        try writeTransaction {
-            realm.delete(realm.objects(type))
         }
     }
 
