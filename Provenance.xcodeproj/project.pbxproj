@@ -368,7 +368,6 @@
 		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
 		B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
 		B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046A218F20FD00210C39 /* NSLogger.framework */; };
-		B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046C218F20FD00210C39 /* XLActionController.framework */; };
 		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
 		B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
@@ -478,7 +477,6 @@
 		B3F43DDE2169D42500CDD40A /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
 		B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
-		B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */; };
 		B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */; };
 		B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */; };
 		B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */; };
@@ -761,8 +759,6 @@
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B30670E220C29FDE002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
-		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -899,7 +895,6 @@
 		B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3B10469218F20FD00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/iOS/RxAtomic.framework; sourceTree = "<group>"; };
 		B3B1046A218F20FD00210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3B1046C218F20FD00210C39 /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLActionController.framework; path = Carthage/Build/iOS/XLActionController.framework; sourceTree = "<group>"; };
 		B3B1046D218F20FE00210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		B3B1046E218F20FE00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/iOS/RxBlocking.framework; sourceTree = "<group>"; };
 		B3B1046F218F20FE00210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
@@ -975,7 +970,6 @@
 		B3F43DD82169B94E00CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SaveStates.storyboard; sourceTree = "<group>"; };
 		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
-		B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
 		B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/iOS/RxDataSources.framework; sourceTree = "<group>"; };
 		B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differentiator.framework; path = Carthage/Build/iOS/Differentiator.framework; sourceTree = "<group>"; };
 		B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/tvOS/RxDataSources.framework; sourceTree = "<group>"; };
@@ -1018,7 +1012,6 @@
 				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
 				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B3F5A92321A68BDB000BB0A5 /* RxGesture.framework in Frameworks */,
 				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
 				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
@@ -1026,7 +1019,6 @@
 				B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */,
 				B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */,
 				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
-				B3B1047D218F20FE00210C39 /* XLActionController.framework in Frameworks */,
 				B339B8A524DE142A00FEF8C8 /* AppCenterCrashes.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
@@ -1269,7 +1261,6 @@
 				B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */,
 				B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */,
 				B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */,
-				B3F5A92021A68BDA000BB0A5 /* RxGesture.framework */,
 				B369B0E621A458940064EDCA /* Reachability.framework */,
 				B369B0E821A4589E0064EDCA /* Reachability.framework */,
 				B369B0D9219EA29A0064EDCA /* Crashlytics.framework */,
@@ -1369,7 +1360,6 @@
 				B3AF705921916F2F000FA7F9 /* Foundation.framework */,
 				B3AF70652191733D000FA7F9 /* GameController.framework */,
 				B324C307219195A8009F4EDC /* GLKit.framework */,
-				B30670E420C29FE6002ECE63 /* HockeySDK.framework */,
 				B324C61A219203AF009F4EDC /* libc++.tbd */,
 				B324C618219203A5009F4EDC /* libsqlite3.tbd */,
 				B324C6162192038C009F4EDC /* libxml2.tbd */,
@@ -1440,7 +1430,6 @@
 				1A3D409917B2DCE4004DFFFC /* Foundation.framework */,
 				B32D8F811EA7FDBE00175FBF /* GameController.framework */,
 				1ADDA5B317B30CD7008A7ADD /* GLKit.framework */,
-				B30670E220C29FDE002ECE63 /* HockeySDK.framework */,
 				1A2B0E8D1AD18961005FB77C /* libc++.dylib */,
 				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
@@ -1480,7 +1469,6 @@
 				B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */,
 				1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */,
 				1A3D409717B2DCE4004DFFFC /* UIKit.framework */,
-				B3B1046C218F20FD00210C39 /* XLActionController.framework */,
 				B3B1046F218F20FE00210C39 /* ZipArchive.framework */,
 			);
 			name = iOS;

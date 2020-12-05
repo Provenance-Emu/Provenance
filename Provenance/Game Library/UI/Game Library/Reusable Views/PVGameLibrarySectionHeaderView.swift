@@ -20,14 +20,15 @@ internal struct GameLibrarySectionViewModel {
 
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    var collapseImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "chevron_down"))
-        iv.clipsToBounds = true
-        iv.contentMode = .scaleAspectFit
+    let collapseButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "chevron_down"), for: .normal)
+        button.clipsToBounds = true
         #if os(iOS)
-            iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+            button.tintColor = Theme.currentTheme.gameLibraryHeaderText
         #endif
-        return iv
+        button.contentMode = .scaleAspectFit
+        return button
     }()
 
     var disposeBag = DisposeBag()
@@ -41,8 +42,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
             #endif
-            collapseImageView.isHidden = !viewModel.collapsable
-            collapseImageView.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
+            collapseButton.isHidden = !viewModel.collapsable
+            collapseButton.imageView?.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
             setNeedsDisplay()
         }
     }
@@ -87,12 +88,12 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.autoresizingMask = .flexibleWidth
         addSubview(titleLabel)
 
-        addSubview(collapseImageView)
-        collapseImageView.translatesAutoresizingMaskIntoConstraints = false
-        collapseImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        addSubview(collapseButton)
+        collapseButton.translatesAutoresizingMaskIntoConstraints = false
+        collapseButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseButton.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
 
         isOpaque = true
     }
