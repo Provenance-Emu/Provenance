@@ -8,25 +8,24 @@
 let TEST_THEMES = false
 import CocoaLumberjackSwift
 import CoreSpotlight
-import Crashlytics
-import Fabric
-import HockeySDK
 import PVLibrary
 import PVSupport
 import RealmSwift
+import RxSwift
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var shortcutItemGame: PVGame?
     var fileLogger: DDFileLogger = DDFileLogger()
+    let disposeBag = DisposeBag()
 
     #if os(iOS)
         var _logViewController: PVLogViewController?
     #endif
 
-    func application(_: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
         setDefaultsFromSettingsBundle()
 
@@ -39,12 +38,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
-        #if targetEnvironment(simulator)
-        #else
-            _initHockeyApp()
-            _initCrashlytics()
-        #endif
 
         do {
             try RomDatabase.initDefaultDatabase()
@@ -63,26 +56,31 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
+        let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
+
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                    shortcutItemGame = matchedGame
-                }
+            // Setup shortcuts
+            Observable.combineLatest(
+                gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
+                gameLibrary.recents.mapMany { $0.game.asShortcut(isFavorite: false) }
+            ) { $0 + $1 }
+                .bind(onNext: { shortcuts in
+                    application.shortcutItems = shortcuts
+                })
+                .disposed(by: disposeBag)
+
+            // Handle if started from shortcut
+            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+                shortcutItemGame = matchedGame
             }
         #endif
 
         #if os(tvOS)
             if let tabBarController = window?.rootViewController as? UITabBarController {
-                let flowLayout = UICollectionViewFlowLayout()
-                flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-                let searchViewController = PVSearchViewController(collectionViewLayout: flowLayout)
-                let searchController = UISearchController(searchResultsController: searchViewController)
-                searchController.searchResultsUpdater = searchViewController
-                let searchContainerController = UISearchContainerViewController(searchController: searchController)
-                searchContainerController.title = "Search"
-                let navController = UINavigationController(rootViewController: searchContainerController)
+                let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
+
                 var viewControllers = tabBarController.viewControllers!
-                viewControllers.insert(navController, at: 1)
+                viewControllers.insert(searchNavigationController, at: 1)
                 tabBarController.viewControllers = viewControllers
             }
         #else
@@ -91,10 +89,34 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             Theme.currentTheme = Theme.darkTheme
         #endif
 
+        // Setup importing/updating library
+        let gameImporter = GameImporter.shared
+        let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+        #if os(iOS)
+            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
+        #endif
+
+        #if os(iOS)
+        let rootNavigation = window!.rootViewController as! UINavigationController
+        #else
+        let tabBarController = window!.rootViewController as! UITabBarController
+        let rootNavigation = tabBarController.viewControllers![0] as! UINavigationController
+        let settingsVC = ((tabBarController.viewControllers![2] as! PVTVSplitViewController).viewControllers[1] as! UINavigationController).topViewController as! PVSettingsViewController
+        settingsVC.conflictsController = libraryUpdatesController
+        #endif
+        let gameLibraryViewController = rootNavigation.viewControllers[0] as! PVGameLibraryViewController
+
+        // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
+        gameLibraryViewController.updatesController = libraryUpdatesController
+        gameLibraryViewController.gameImporter = gameImporter
+        gameLibraryViewController.gameLibrary = gameLibrary
+
         startOptionalWebDavServer()
 
         let database = RomDatabase.sharedInstance
         database.refresh()
+
+        SteamControllerManager.listenForConnections()
 
         return true
     }
@@ -114,15 +136,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 // Doesn't seem we need access in dev builds?
                 _ = url.startAccessingSecurityScopedResource()
 
-                if #available(iOS 9.0, *) {
-                    if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
-                        try FileManager.default.copyItem(at: url, to: destinationPath)
-                    } else {
-                        try FileManager.default.moveItem(at: url, to: destinationPath)
-                    }
-                } else {
-                    // Fallback on earlier versions
+                if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
                     try FileManager.default.copyItem(at: url, to: destinationPath)
+                } else {
+                    try FileManager.default.moveItem(at: url, to: destinationPath)
                 }
             } catch {
                 ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
@@ -136,10 +153,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 return false
             }
 
-            if #available(iOS 9.0, *) {
-                let sendingAppID = options[.sourceApplication]
-                ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
-            }
+            let sendingAppID = options[.sourceApplication]
+            ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
 
             if components.host == "open" {
                 guard let queryItems = components.queryItems, !queryItems.isEmpty else {
@@ -199,7 +214,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     #if os(iOS)
-        @available(iOS 9.0, *)
         func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
             if shortcutItem.type == "kRecentGameShortcut", let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
@@ -213,15 +227,13 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // Spotlight search click-through
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                if userActivity.activityType == CSSearchableItemActionType {
-                    if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String, let md5Value = md5.components(separatedBy: ".").last, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                        // Comes in a format of "com....md5"
-                        shortcutItemGame = matchedGame
-                        return true
-                    } else {
-                        WLOG("Spotlight activity didn't contain the MD5 I was looking for")
-                    }
+            if userActivity.activityType == CSSearchableItemActionType {
+                if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String, let md5Value = md5.components(separatedBy: ".").last, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+                    // Comes in a format of "com....md5"
+                    shortcutItemGame = matchedGame
+                    return true
+                } else {
+                    WLOG("Spotlight activity didn't contain the MD5 I was looking for")
                 }
             }
         #endif
@@ -235,9 +247,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_: UIApplication) {}
 
-    func applicationDidBecomeActive(_: UIApplication) {
-        SteamControllerManager.shared().scanForControllers()
-    }
+    func applicationDidBecomeActive(_: UIApplication) {}
 
     func applicationWillTerminate(_: UIApplication) {}
 
@@ -276,45 +286,7 @@ extension PVAppDelegate {
             window?.addLogViewerGesture()
         #endif
 
-        DDTTYLogger.sharedInstance.colorsEnabled = true
-        DDTTYLogger.sharedInstance.logFormatter = PVTTYFormatter()
-    }
-
-    func _initHockeyApp() {
-        #if os(tvOS)
-            BITHockeyManager.shared().configure(withIdentifier: "613008343753414d93a7202324461575", delegate: self)
-        #else
-            BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
-        #endif
-
-        #if DEBUG
-            BITHockeyManager.shared().isMetricsManagerDisabled = true
-        #endif
-
-        let masterBranch = kGITBranch.lowercased() == "master"
-        let developBranch = kGITBranch.lowercased() == "develop"
-        let travisBuild = ["jmattiello", "travis"].contains(builtByUser)
-        let masterOrDevelopBranch = masterBranch || developBranch
-//        let feedbackEnabled = masterOrDevelopBranch && travisBuild
-
-        #if os(iOS)
-            BITHockeyManager.shared().isFeedbackManagerDisabled = !masterOrDevelopBranch
-            BITHockeyManager.shared().isStoreUpdateManagerEnabled = false
-        #endif
-
-        BITHockeyManager.shared().isUpdateManagerDisabled = !masterBranch && travisBuild
-
-//        if !UserDefaults.standard.bool(forKey: "hockeyAppEnabled") {
-//            BITHockeyManager.shared().isUpdateManagerDisabled = true
-//        }
-
-        BITHockeyManager.shared().logLevel = BITLogLevel.warning
-        BITHockeyManager.shared().start()
-        BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
-    }
-
-    func _initCrashlytics() {
-        Fabric.with([Answers.self, Crashlytics.self])
+        DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
     }
 
     func setDefaultsFromSettingsBundle() {
@@ -337,64 +309,12 @@ extension PVAppDelegate {
     }
 }
 
-extension PVAppDelegate: BITHockeyManagerDelegate {
-    func getLogFilesContentWithMaxSize(_ maxSize: Int) -> String {
-        var description = ""
-        fileLogger.logFileManager.sortedLogFileInfos.forEach { logFile in
-            if let logData = FileManager.default.contents(atPath: logFile.filePath) {
-                if !logData.isEmpty {
-                    description.append(String(data: logData, encoding: String.Encoding.utf8)!)
-                }
-            }
-        }
-        if description.count > maxSize {
-            let index = description.index(description.startIndex, offsetBy: description.count - maxSize - 1)
-            description = String(description.suffix(from: index))
-        }
-        return description
-    }
-
-    func applicationLog(for _: BITCrashManager!) -> String! {
-        let description = getLogFilesContentWithMaxSize(5000) // 5000 bytes should be enough!
-        if description.isEmpty {
-            return nil
-        } else {
-            return description
-        }
+#if os(iOS)
+@available(iOS 9.0, *)
+extension PVGame {
+    func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
+        let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)
+        return UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: systemIdentifier), icon: icon, userInfo: ["PVGameHash": md5Hash as NSSecureCoding])
     }
 }
-
-#if os(tvOS)
-    class PVTVTabBarController: UITabBarController {
-        // MARK: - Keyboard actions
-
-        public override var keyCommands: [UIKeyCommand]? {
-            var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
-
-            let findCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(PVTVTabBarController.searchAction), discoverabilityTitle: "Find …")
-            sectionCommands.append(findCommand)
-
-            let settingsCommand = UIKeyCommand(input: ",", modifierFlags: [.command], action: #selector(PVTVTabBarController.settingsAction), discoverabilityTitle: "Settings")
-            sectionCommands.append(settingsCommand)
-
-            return sectionCommands
-        }
-
-        @objc
-        func settingsAction() {
-            selectedIndex = max(0, (viewControllers?.count ?? 1) - 1)
-        }
-
-        @objc
-        func searchAction() {
-            if let navVC = selectedViewController as? UINavigationController, let searchVC = navVC.viewControllers.first as? UISearchContainerViewController {
-                // Reselect the search bar
-                searchVC.searchController.searchBar.becomeFirstResponder()
-                searchVC.searchController.searchBar.setNeedsFocusUpdate()
-                searchVC.searchController.searchBar.updateFocusIfNeeded()
-            } else {
-                selectedIndex = 1
-            }
-        }
-    }
 #endif

@@ -4,73 +4,51 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
 pool:
-  vmImage: 'macOS-10.13'
+  vmImage: 'macOS-latest'
 
 variables:
-  scheme: 'Provenance-Release'
-  sdk: 'iphoneos'
-  configuration: 'Release'
-  target: 'Provenance'
+  scheme: 'Provenance'
+  sdk: 'iphonesimulator'
+  configuration: 'Debug'
+  carthage-platform: 'iOS'
 
 steps:
+
+- checkout: self # self represents the repo where the initial Pipelines YAML file was found
+  clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+  submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
+
+- task: Cache@2
+  inputs:
+    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
+    path: Carthage/Build
+  displayName: Carthage cache
+
+# This seems to be needed to force carthage to use the same version of XCode as the build/run steps
+- script: sudo xcode-select -s "/Applications/Xcode_12.2.app"
+
+- script: |
+    ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug --cache-builds
+  displayName: Carthage bootstrap
+
 - task: Xcode@5
   inputs:
-    actions: 'build'
-    sdk: '$(sdk)'
     scheme: '$(scheme)'
-    configuration: '$(configuration)'
-    target:  '$(target)'
     xcWorkspacePath: 'Provenance.xcworkspace'
+    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-    xcodeVersion: '10' # Options: 8, 9, default, specifyPath
-    destinationPlatformOption: 'iOS'
-    destinationTypeOption: 'devices' # Optional. Options: simulators, devices
-    packageApp: true
-    #signingOption: 'nosign' # Optional. Options: nosign, default, manual, auto
-    #signingIdentity: # Optional
-    #provisioningProfileUuid: # Optional
-    #provisioningProfileName: # Optional
-    #teamId: # Optional
-    # Additional options https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/xcode?view=vsts
+    packageApp: false
+    destinationPlatformOption: iOS
+    destinationSimulators: iPhone 8
+  displayName: Building project
 
-# Install Apple Certificate
-# Install an Apple certificate required to build on a macOS agent
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-apple-certificate?view=vsts
-# - task: InstallAppleCertificate@2
-#   inputs:
-    # certSecureFile: 
-    #certPwd: # Optional
-    #keychain: 'temp' # Options: default, temp, custom
-    #keychainPassword: # Required when keychain == Custom || Keychain == Default
-    #customKeychainPath: # Required when keychain == Custom
-    #deleteCert: # Optional
-    #deleteCustomKeychain: # Optional
-    #signingIdentity: # Optional
-
-# Install Apple Provisioning Profile
-# Install an Apple provisioning profile required to build on a macOS agent
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-apple-provisioning-profile?view=vsts
-# - task: InstallAppleProvisioningProfile@1
-  # inputs:
-    #provisioningProfileLocation: 'secureFiles' # Options: secureFiles, sourceRepository
-    #provProfileSecureFile: # Required when provisioningProfileLocation == SecureFiles
-    #provProfileSourceRepository: # Required when provisioningProfileLocation == SourceRepository
-    #removeProfile: # Optional
-
-# App Center Distribute
-# Distribute app builds to testers and users via App Center
-# - task: AppCenterDistribute@1
-#   inputs:
-#     serverEndpoint: 
-#     appSlug: 
-#     appFile: 
-    #symbolsOption: 'Apple' # Optional. Options: apple
-    #symbolsPath: # Optional
-    #symbolsPdbFiles: '**/*.pdb' # Optional
-    #symbolsDsymFiles: # Optional
-    #symbolsMappingTxtFile: # Optional
-    #symbolsIncludeParentDirectory: # Optional
-    #releaseNotesOption: 'input' # Options: input, file
-    #releaseNotesInput: # Required when releaseNotesOption == Input
-    #releaseNotesFile: # Required when releaseNotesOption == File
-    #distributionGroupId: # Optional
+- task: Xcode@5
+  inputs:
+    actions: 'test'
+    scheme: '$(scheme)'
+    xcWorkspacePath: 'Provenance.xcworkspace'
+    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
+    packageApp: false
+    destinationPlatformOption: iOS
+    destinationSimulators: iPhone 8
+  displayName: Running tests

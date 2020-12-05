@@ -194,7 +194,7 @@ public final class Theme {
         }
 
         // Settings
-        appearance(in: [SettingsTableView.self]) {
+        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, SettingsTableView.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
             UITableViewCell.appearance {
                 $0.backgroundColor = theme.settingsCellBackground
                 $0.textLabel?.backgroundColor = theme.settingsCellBackground
@@ -223,16 +223,6 @@ public final class Theme {
             UILabel.appearance {
                 $0.textColor = theme.settingsCellText
             }
-        }
-
-        appearance(in: [UITableViewHeaderFooterView.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsHeaderText
-            }
-        }
-
-        UITableViewHeaderFooterView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
         }
 
         let selectedView = UIView()

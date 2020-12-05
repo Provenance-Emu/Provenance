@@ -16,6 +16,7 @@ import QuickTableViewController
 import Reachability
 import RealmSwift
 import UIKit
+import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -31,12 +32,24 @@ class PVQuickTableViewController: QuickTableViewController {
 
 final class PVSettingsViewController: PVQuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
-    let reachability: Reachability = Reachability()!
+    let reachability: Reachability = try! Reachability()
+    var conflictsController: ConflictsController!
+    private var numberOfConflicts = 0
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
+
+        conflictsController.conflicts
+            .bind(onNext: {
+                self.numberOfConflicts = $0.count
+                self.generateTableViewViewModels()
+                self.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
 
         #if os(iOS)
             navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
@@ -46,6 +59,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        splitViewController?.title = "Settings"
         do {
             try reachability.startNotifier()
         } catch {
@@ -76,9 +90,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // -- Core Options
         let realm = try! Realm()
-        let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).compactMap { pvcore in
+        let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).sorted(byKeyPath: "identifier").compactMap { pvcore in
             guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
-                DLOG("Class <\(pvcore.principleClass)> does not impliment CoreOptional")
+                DLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
                 return nil
             }
 
@@ -137,7 +151,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             })
         ])
 
-        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check wiki for Controls per systems")
+        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
 
         // Game Library
 
@@ -160,8 +174,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
                     if PVSettingsModel.shared.webDavAlwaysOn {
-                        let subTitleText = "\nWebDav: \(PVWebServer.shared.webDavURLString)"
-
+                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
                         let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
                         let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
                         cell.detailTextLabel?.attributedText = subTitleAttrString
@@ -174,7 +187,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             libraryRows.append(webServerAlwaysOn)
         #endif
 
-        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about Importing ROMs.")
+        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about importing ROMs.")
 
         // Game Library 2
         let library2Rows: [TableRow] = [
@@ -198,20 +211,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
             ),
             NavigationRow<SystemSettingsCell>(
                 text: "Manage Conflicts",
-                detailText: .subtitle("Manually resolve conflicted imports"),
+                detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
                 icon: nil,
-                customization: { cell, _ in
-                    let baseTitle = "Manually resolve conflicted imports"
-                    let detailText: String
-                    if let count = GameImporter.shared.conflictedFiles?.count, count > 0 {
-                        detailText = baseTitle + ": \(count) detected"
-                    } else {
-                        detailText = baseTitle + ": None detected"
-                    }
-
-                    cell.detailTextLabel?.text = detailText
-                },
-                action: { [weak self] _ in self?.manageConflictsAction() }
+                action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
             ),
             SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
         ]
@@ -221,11 +223,11 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Beta options
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
 
             PVSettingsSwitchRow(text: "iCloud Sync",
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
 
             PVSettingsSwitchRow(text: "Multi-threaded GL",
@@ -336,10 +338,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let debugSection = Section(title: "Debug", rows: debugRows)
 
         // Set table data
-        #if os(tvOS)
-            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
-        #else
-            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection, debugSection]
+        tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
+        #if os(iOS)
+            tableContents.append(debugSection)
         #endif
     }
 
@@ -379,7 +380,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
@@ -388,8 +389,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
     }
 
     func manageConflictsAction() {
-        let gameImporter = GameImporter.shared
-        let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
+        let conflictViewController = PVConflictViewController(conflictsController: conflictsController)
         navigationController?.pushViewController(conflictViewController, animated: true)
     }
 
@@ -407,7 +407,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     @IBAction func help(_: Any) {
         #if canImport(SafariServices)
-            let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki")!)
+            let webVC = WebkitViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)
             navigationController?.pushViewController(webVC, animated: true)
         #endif
     }

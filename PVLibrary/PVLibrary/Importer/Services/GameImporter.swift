@@ -198,14 +198,9 @@ public final class GameImporter {
     public func importFiles(atPaths paths: [URL]) -> [URL] {
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
-            if #available(iOS 9.0, *) {
-                if url.hasDirectoryPath {
-                    return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                } else {
-                    return [url]
-                }
+            if url.hasDirectoryPath {
+                return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             } else {
-                // Fallback on earlier versions
                 return [url]
             }
         }.joined().map { $0 }
@@ -649,14 +644,9 @@ public extension GameImporter {
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
-            if #available(iOS 9.0, *) {
-                if url.hasDirectoryPath {
-                    return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                } else {
-                    return [url]
-                }
+            if url.hasDirectoryPath {
+                return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             } else {
-                // Fallback on earlier versions
                 return [url]
             }
         }.joined().map { $0 }
@@ -676,11 +666,7 @@ public extension GameImporter {
         let fileExtensionLower = urlPath.pathExtension.lowercased()
 
         let isDirectory: Bool
-        if #available(iOS 9.0, *) {
-            isDirectory = path.hasDirectoryPath
-        } else {
-            isDirectory = (try? path.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
-        }
+        isDirectory = path.hasDirectoryPath
         if path.lastPathComponent.hasPrefix(".") {
             VLOG("Skipping file with . as first character or it's a directory")
             return
@@ -961,7 +947,9 @@ public extension GameImporter {
                 }
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
-                    game.gameDescription = gameDescription
+                    let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
+                    let htmlDecodedGameDescription = try! NSMutableAttributedString(data: gameDescription.data(using: .utf8)!, options: options, documentAttributes: nil)
+                    game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
                 }
 
                 if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {

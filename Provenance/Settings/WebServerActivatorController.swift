@@ -20,38 +20,33 @@ protocol WebServerActivatorController: class {
 
     extension WebServerActivatorController where Self: UIViewController & SFSafariViewControllerDelegate {
         // Show "Web Server Active" alert view
-        func showServerActiveAlert() {
+        var webServerAlertMessage: String {
+            let webServerAddress: String = PVWebServer.shared.urlString
+            let webDavAddress: String = PVWebServer.shared.webDavURLString
             let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
+            Read about how to import ROMs on the Provenance wiki at:
+            https://wiki.provenance-emu.com
+            
+            Upload/Download files to your device at:
+            
+            \(webServerAddress)  ᵂᵉᵇᵁᴵ
+            \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+            """
+            return message
+        }
 
-            """
-            let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-            let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
-            ipField.backgroundColor = UIColor.clear
-            ipField.textAlignment = .center
-            ipField.font = UIFont.systemFont(ofSize: 13)
-            ipField.textColor = UIColor.gray
-            let ipFieldText = """
-            WebUI: \(PVWebServer.shared.urlString)
-            WebDav: \(PVWebServer.shared.webDavURLString)
-            """
-            ipField.text = ipFieldText
-            ipField.isUserInteractionEnabled = false
-            alert.view.addSubview(ipField)
+        func showServerActiveAlert() {
+            let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                 PVWebServer.shared.stopServers()
             }))
-            if #available(iOS 9.0, *) {
-                let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-                alert.addAction(viewAction)
-            }
+            let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.showServer()
+            })
+            alert.addAction(viewAction)
             present(alert, animated: true) { () -> Void in }
         }
 
-        @available(iOS 9.0, *)
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
             let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
@@ -73,12 +68,13 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let webServerAddress: String = PVWebServer.shared.urlString
         let webDavAddress: String = PVWebServer.shared.webDavURLString
         let message = """
-        Read Importing ROMs wiki…
-        Upload/Download files at:
-
+        Read about how to import ROMs on the Provenance wiki at:
+        https://wiki.provenance-emu.com
+            
+        Upload/Download files to your device at:
+           
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
-
         """
         return message
     }
@@ -86,7 +82,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
     func showServerActiveAlert() {
         // Start Webserver
         // Check to see if we are connected to WiFi. Cannot continue otherwise.
-        let reachability = Reachability()!
+        let reachability = try! Reachability()
 
         do {
             try reachability.startNotifier()
@@ -103,12 +99,10 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     PVWebServer.shared.stopServers()
                 }))
                 #if os(iOS)
-                    if #available(iOS 9.0, *) {
-                        let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                            self.showServer()
-                        })
-                        alert.addAction(viewAction)
-                    }
+                    let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                        self.showServer()
+                    })
+                    alert.addAction(viewAction)
                 #endif
                 present(alert, animated: true) { () -> Void in
                     alert.message = self.webServerAlertMessage

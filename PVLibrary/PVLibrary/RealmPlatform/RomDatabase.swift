@@ -364,13 +364,13 @@ public extension RomDatabase {
     @objc
     func add(_ object: Object, update: Bool = false) throws {
         try writeTransaction {
-            realm.add(object, update: update)
+            realm.add(object, update: update ? .all : .error)
         }
     }
 
     func add<T: Object>(objects: [T], update: Bool = false) throws {
         try writeTransaction {
-            realm.add(objects, update: update)
+            realm.add(objects, update: update ? .all : .error)
         }
     }
 
@@ -452,9 +452,7 @@ public extension RomDatabase {
 
         // Delete from Spotlight search
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                deleteFromSpotlight(game: game)
-            }
+            deleteFromSpotlight(game: game)
         #endif
 
         do {
@@ -514,7 +512,6 @@ public extension RomDatabase {
 #if os(iOS)
     import CoreSpotlight
 
-    @available(iOS 9.0, *)
     extension RomDatabase {
         private func deleteFromSpotlight(game: PVGame) {
             CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in

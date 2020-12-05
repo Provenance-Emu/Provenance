@@ -70,7 +70,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     
     dispatch_apply(height, the_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = strongCurrent->videoBuffer + y * 320;
+        uint16_t *dst = strongCurrent->videoBuffer + y * 720;
         
         memcpy(dst, src, sizeof(uint16_t)*width);
     });
@@ -150,8 +150,8 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (id)init {
 	if ((self = [super init])) {
-		videoBufferA = malloc(320 * 480 * 2);
-        videoBufferB = malloc(320 * 480 * 2);
+	videoBufferA = malloc(720 * 576 * 2);
+        videoBufferB = malloc(720 * 576 * 2);
 	}
 	
 	_current = self;
@@ -260,8 +260,8 @@ static bool environment_callback(unsigned cmd, void *data)
     videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
     videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
 #else
-    videoBufferA = (unsigned char *)malloc(320 * 480 * 2);
-    videoBufferB = (unsigned char *)malloc(320 * 480 * 2);
+    videoBufferA = (unsigned char *)malloc(720 * 576 * 2);
+    videoBufferB = (unsigned char *)malloc(720 * 576 * 2);
 #endif
     
     bitmap.data = (short unsigned int *)videoBufferA;
@@ -409,13 +409,13 @@ static bool environment_callback(unsigned cmd, void *data)
     {
         return CGSizeMake(256 * (8.0/7.0), 192);
     }else {
-        return CGSizeMake(4, 3);
+        return CGSizeMake(_videoWidth, _videoHeight);;
     }
 }
 
 - (CGSize)bufferSize
 {
-	return CGSizeMake(320, 480);
+	return CGSizeMake(720, 576);
 }
 
 - (GLenum)pixelFormat

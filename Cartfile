@@ -1,43 +1,23 @@
 # App
-#github "bitstadium/HockeySDK-iOS" "5.1.4"
-github "nsoperations/HockeySDK-iOS" "bugfix/xcode_10_2"
-github "bitstadium/HockeySDK-tvOS" "5.1.0"
-
-# github "xmartlabs/XLActionController" ~> 5.0.0
-github "Puasonych/XLActionController" "update-for-xcode-11"
-
 github "bcylin/QuickTableViewController"
 github "RxSwiftCommunity/RxDataSources"
-github "RxSwiftCommunity/RxGesture"
-#github "google/promises"
 github "zydeco/SteamController"
 
-# Crashlytics - Static Libs
-# iOS
-# binary "https://building42.github.io/Specs/Carthage/iOS/Answers.json"
-binary "https://building42.github.io/Specs/Carthage/iOS/Crashlytics.json"
-binary "https://building42.github.io/Specs/Carthage/iOS/Fabric.json"
-#binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAnalyticsBinary.json"
-
-
-# tvOS
-# binary "https://building42.github.io/Specs/Carthage/tvOS/Answers.json"
-binary "https://building42.github.io/Specs/Carthage/tvOS/Crashlytics.json"
-binary "https://building42.github.io/Specs/Carthage/tvOS/Fabric.json"
+# Microsoft AppCenter
+github "microsoft/appcenter-sdk-apple"
 
 # PVSupport
 github "fpillet/NSLogger"
 github "CocoaLumberjack/CocoaLumberjack"
-github "radex/SwiftyUserDefaults"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
 github "ZipArchive/ZipArchive"
-github "weichsel/ZIPFoundation"
 #github "tsolomko/SWCompression"
 github "realm/realm-cocoa"
 github "stephencelis/SQLite.swift"
 
 # Rx
 github "ReactiveX/RxSwift"
-github "RxSwiftCommunity/RxRealm"
+# Contains a fix for tvOS building with XCode 11.5+
+github "cheif/RxRealm" "a6fa47c1ba721b19a7c6da0d629bf7f0d7271d06"

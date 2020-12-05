@@ -271,7 +271,7 @@ public:
 		if (!success) {
             if (error) {
                 NSDictionary *userInfo = @{
-                                           NSLocalizedDescriptionKey: @"Failed to save state.",
+                                           NSLocalizedDescriptionKey: @"Failed to load state.",
                                            NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
                                            NSLocalizedRecoverySuggestionErrorKey: @""
                                            };

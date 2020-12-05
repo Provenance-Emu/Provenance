@@ -1,6 +1,6 @@
 cache:
   local: ~/Library/Caches/Rome/
-  s3Bucket: carthage
+  s3Bucket: cache.provenance
 currentMap:
 - PVLibrary:
     - name: PVLibrary
@@ -78,18 +78,6 @@ repositoryMap:
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
-- HockeySDK-iOS:
-  - name: HockeySDK
-    platforms: [iOS]
-- HockeySDK-tvOS:
-  - name: HockeySDK
-    platforms: [tvOS]
-- XLActionController:
-  - name: XLActionController
-    platforms: [iOS]
-- ZIPFoundation:
-  - name: ZIPFoundation
-    platforms: [iOS,tvOS]
 - realm-cocoa:
   - name: Realm
     platforms: [iOS,tvOS]
@@ -116,9 +104,6 @@ repositoryMap:
     platforms: [iOS,tvOS]
   - name: NSLoggerSwift
     platforms: [iOS,tvOS]
-- RxGesture:
-  - name: RxGesture
-    platforms: [iOS]
 - Reachability.swift:
   - name: Reachability
     platforms: [iOS,tvOS]

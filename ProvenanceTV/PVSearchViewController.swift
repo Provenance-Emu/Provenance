@@ -9,119 +9,105 @@
 
 import PVLibrary
 import PVSupport
-import RealmSwift
+import RxSwift
+import RxDataSources
 import UIKit
 
-final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
-    var mustRefreshDataSource: Bool = false
+extension PVSearchViewController {
+    static func createEmbeddedInNavigationController(gameLibrary: PVGameLibrary) -> UINavigationController {
+        let searchViewController = PVSearchViewController(gameLibrary: gameLibrary)
+        let searchController = UISearchController(searchResultsController: searchViewController)
+        searchViewController.searchController = searchController
+        let searchContainerController = UISearchContainerViewController(searchController: searchController)
+        searchContainerController.title = "Search"
+        return UINavigationController(rootViewController: searchContainerController)
+    }
+}
 
-    var searchResults: Results<PVGame>?
+final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
+    private let gameLibrary: PVGameLibrary
+    fileprivate var searchController: UISearchController!
+    private let disposeBag = DisposeBag()
+
+    init(gameLibrary: PVGameLibrary) {
+        self.gameLibrary = gameLibrary
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = .init(top: 20, left: 0, bottom: 20, right: 0)
+        super.init(collectionViewLayout: flowLayout)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        RomDatabase.sharedInstance.refresh()
-        (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            #if os(iOS)
-                collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #else
-                collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            #endif
-        } else {
-            collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        }
+        #if os(iOS)
+            collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #else
+            collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        #endif
         collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVSearchViewController.longPressRecognized(_:)))
-        collectionView?.addGestureRecognizer(longPressRecognizer)
-    }
+        let sections: Observable<[Section]> = searchController
+            .rx.searchText
+            .compactMap { $0 }
+            .flatMap { self.gameLibrary.search(for: $0) }
+            .map { games in [Section(items: games)] }
 
-    override func numberOfSections(in _: UICollectionView) -> Int {
-        return 1
-    }
-
-    override func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return searchResults?.count ?? 0
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
-
-        if let game = searchResults?[indexPath.item] {
+        let dataSource = RxCollectionViewSectionedReloadDataSource<Section>(configureCell: { _, collectionView, indexPath, game -> UICollectionViewCell in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
             cell.game = game
+            cell.setNeedsLayout()
+            return cell
+        })
+
+        sections.bind(to: collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+        collectionView.rx.modelSelected(PVGame.self)
+            .bind(onNext: { self.load($0, sender: self.collectionView, core: nil) })
+            .disposed(by: disposeBag)
+
+        let longPressRecognizer = UILongPressGestureRecognizer()
+        collectionView.addGestureRecognizer(longPressRecognizer)
+        longPressRecognizer.rx.event
+            .filter { $0.state == .began }
+            .compactMap { self.collectionView.indexPathForItem(at: $0.location(in: self.collectionView) ) }
+            .map { try self.collectionView.rx.model(at: $0) }
+            .flatMapLatest({ (game: PVGame) -> Observable<PVGame> in
+                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                let (action, selected) = UIAlertAction.createReactive(title: "Toggle Favorite", style: .default)
+                actionSheet.addAction(action)
+                self.present(actionSheet, animated: true)
+                return selected.map { _ in game }
+            })
+            .flatMapLatest({ game in
+                self.gameLibrary.toggleFavorite(for: game)
+                    .catchError { _ in
+                        ELOG("Failed to toggle Favourite for game \(game.title)")
+                        return .never()
+                }
+            })
+            .subscribe()
+            .disposed(by: self.disposeBag)
+    }
+
+    private struct Section: SectionModelType {
+        let items: [PVGame]
+
+        init(items: [PVGame]) {
+            self.items = items
         }
-        cell.setNeedsLayout()
-        return cell
-    }
 
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let game = searchResults?[indexPath.item] {
-            load(game, sender: collectionView, core: nil)
-        }
-    }
-
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return CGSize(width: 250, height: 360)
-    }
-
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
-        return 88
-    }
-
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt _: Int) -> CGFloat {
-        return 30
-    }
-
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt _: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 40, left: 40, bottom: 120, right: 40)
-    }
-
-    @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
-        guard let collectionView = collectionView else {
-            return
-        }
-
-        if recognizer.state == .began, let indexPath = collectionView.indexPathForItem(at: recognizer.location(in: collectionView)), let game = searchResults?[indexPath.item] {
-            let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-            //			actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            //				self.moreInfo(for: game)
-            //			}))
-
-            actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.toggleFavorite(for: game)
-            }))
-
-            //			actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            //				self.renameGame(game)
-            //			}))
-
-            present(actionSheet, animated: true, completion: nil)
+        init(original: PVSearchViewController.Section, items: [PVGame]) {
+            self.init(items: items)
         }
     }
 }
 
-extension PVSearchViewController {
-    func toggleFavorite(for game: PVGame) {
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                game.isFavorite = !game.isFavorite
-            }
-
-            register3DTouchShortcuts()
-        } catch {
-            ELOG("Failed to toggle Favourite for game \(game.title)")
-        }
-    }
-}
-
-extension PVSearchViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        let searchText = searchController.searchBar.text ?? ""
-
-        let sorted = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
-        searchResults = sorted
-        collectionView?.reloadData()
+private extension UIAlertAction {
+    static func createReactive(title: String?, style: Style) -> (UIAlertAction, Observable<Void>) {
+        let didSelect = PublishSubject<UIAlertAction>()
+        let action = UIAlertAction(title: title, style: style, handler: didSelect.onNext)
+        return (action, didSelect.map { _ in})
     }
 }

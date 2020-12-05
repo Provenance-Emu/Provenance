@@ -34,16 +34,6 @@ import UIKit
             }
         }
 
-        // view{load,willAppear,didAppear} had GFX glitches. This seems to render accuratly before animation and after
-        // Remove this method if you don't want ALL your UIAlertController's to look the same
-        open override func viewDidLayoutSubviews() {
-            super.viewDidLayoutSubviews()
-            setDefaultOverrides()
-            if let popoverPresentationController = popoverPresentationController {
-                popoverPresentationController.backgroundColor = .clear
-            }
-        }
-
         open override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             setDefaultOverrides()
@@ -82,6 +72,8 @@ import UIKit
             #endif
 
             // TODO: Could do the same for 'destructive' types
+
+            view.tintColor = settings.textColor
 
             AlertContentViews.forEach {
 //                print("AlertContentSubview \(String(describing: $0))")

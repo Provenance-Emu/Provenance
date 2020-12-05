@@ -13,6 +13,7 @@ class PVLibraryTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         try! RomDatabase.initDefaultDatabase()
     }
 

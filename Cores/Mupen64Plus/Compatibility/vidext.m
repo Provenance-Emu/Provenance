@@ -104,7 +104,7 @@ EXPORT m64p_error CALL VidExt_SetCaption(const char *Title)
 
 EXPORT m64p_error CALL VidExt_ToggleFullScreen(void)
 {
-	DLOG(@"VidExt_ToggleFullScreen - Unimplimented");
+	DLOG(@"VidExt_ToggleFullScreen - Unimplemented");
     return M64ERR_UNSUPPORTED;
 }
 
@@ -115,7 +115,7 @@ EXPORT void * CALL VidExt_GL_GetProcAddress(const char* Proc)
 
 EXPORT m64p_error CALL VidExt_GL_SetAttribute(m64p_GLattr Attr, int Value)
 {
-	DLOG(@"Set: %i, Value: %i -- Unimplimented.", Attr, Value);
+	DLOG(@"Set: %i, Value: %i -- Unimplemented.", Attr, Value);
     // TODO configure MSAA here, whatever else is possible
     return M64ERR_UNSUPPORTED;
 }

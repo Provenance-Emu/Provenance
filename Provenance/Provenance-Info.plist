@@ -75,27 +75,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2770</string>
-	<key>Fabric</key>
-	<dict>
-		<key>APIKey</key>
-		<string>9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87</string>
-		<key>Kits</key>
-		<array>
-			<dict>
-				<key>KitInfo</key>
-				<dict/>
-				<key>KitName</key>
-				<string>Crashlytics</string>
-			</dict>
-			<dict>
-				<key>KitInfo</key>
-				<dict/>
-				<key>KitName</key>
-				<string>Answers</string>
-			</dict>
-		</array>
-	</dict>
+	<string>2775</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>

@@ -6,7 +6,6 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import Crashlytics
 import PVLibrary
 import PVSupport
 import RealmSwift
@@ -37,7 +36,6 @@ public protocol GameLaunchingViewController: class {
     func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
     func openSaveState(_ saveState: PVSaveState)
     func updateRecentGames(_ game: PVGame)
-    func register3DTouchShortcuts()
     func presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
@@ -238,27 +236,25 @@ public enum GameLaunchingError: Error {
             textField.superview?.backgroundColor = textField.backgroundColor
 
             // Fix the switches frame from being below center
-            if #available(iOS 9.0, *) {
-                if !didSetConstraints, let switchControl = switchControl {
-                    switchControl.constraints.forEach {
-                        if $0.firstAttribute == .height {
-                            switchControl.removeConstraint($0)
-                        }
+            if !didSetConstraints, let switchControl = switchControl {
+                switchControl.constraints.forEach {
+                    if $0.firstAttribute == .height {
+                        switchControl.removeConstraint($0)
                     }
-
-                    switchControl.heightAnchor.constraint(equalTo: textField.heightAnchor, constant: -4).isActive = true
-                    let centerAnchor = switchControl.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0)
-                    centerAnchor.priority = .defaultHigh + 1
-                    centerAnchor.isActive = true
-
-                    textField.constraints.forEach {
-                        if $0.firstAttribute == .height {
-                            $0.constant += 20
-                        }
-                    }
-
-                    didSetConstraints = true
                 }
+
+                switchControl.heightAnchor.constraint(equalTo: textField.heightAnchor, constant: -4).isActive = true
+                let centerAnchor = switchControl.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0)
+                centerAnchor.priority = .defaultHigh + 1
+                centerAnchor.isActive = true
+
+                textField.constraints.forEach {
+                    if $0.firstAttribute == .height {
+                        $0.constant += 20
+                    }
+                }
+
+                didSetConstraints = true
             }
 
             return false
@@ -534,7 +530,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             #if os(iOS)
                 let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                    UIApplication.shared.openURL(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!)
+                    UIApplication.shared.open(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!, options: [:], completionHandler: nil)
                 })
                 displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
             #else
@@ -572,30 +568,20 @@ extension GameLaunchingViewController where Self: UIViewController {
     private func presentEMUVC(_ emulatorViewController: PVEmulatorViewController, withGame game: PVGame, loadingSaveState saveState: PVSaveState? = nil) {
         // Present the emulator VC
         emulatorViewController.modalTransitionStyle = .crossDissolve
-        emulatorViewController.glViewController.view.isHidden = saveState != nil
+        emulatorViewController.modalPresentationStyle = .fullScreen
 
         present(emulatorViewController, animated: true) { () -> Void in
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {
                 emulatorViewController.glViewController.view.isHidden = true
-                if #available(iOS 10.0, tvOS 10.0, *) {
-                    _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { timer in
-                        if !emulatorViewController.core.isEmulationPaused {
-                            timer.invalidate()
-                            self.openSaveState(saveState)
-                            emulatorViewController.glViewController.view.isHidden = false
-                        }
-                    })
-                } else {
-                    // Fallback on earlier versions
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                        guard let `self` = self else { return }
-
+                _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { timer in
+                    if !emulatorViewController.core.isEmulationPaused {
+                        timer.invalidate()
                         self.openSaveState(saveState)
                         emulatorViewController.glViewController.view.isHidden = false
-                    })
-                }
+                    }
+                })
             }
         }
 
@@ -755,8 +741,6 @@ extension GameLaunchingViewController where Self: UIViewController {
                 ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
             }
         }
-
-        register3DTouchShortcuts()
     }
 
     func openSaveState(_ saveState: PVSaveState) {
@@ -782,46 +766,6 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
         } else {
             presentWarning("No core loaded")
-        }
-    }
-
-    func register3DTouchShortcuts() {
-        if #available(iOS 9.0, *) {
-            #if os(iOS)
-                // Add 3D touch shortcuts to recent games
-                var shortcuts = [UIApplicationShortcutItem]()
-
-                let database = RomDatabase.sharedInstance
-
-                let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
-                for game in favorites {
-                    let icon: UIApplicationShortcutIcon?
-                    if #available(iOS 9.1, *) {
-                        icon = UIApplicationShortcutIcon(type: .favorite)
-                    } else {
-                        icon = UIApplicationShortcutIcon(type: .play)
-                    }
-
-                    let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
-                    shortcuts.append(shortcut)
-                }
-
-                let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-
-                for recentGame in sortedRecents {
-                    if let game = recentGame.game {
-                        let icon: UIApplicationShortcutIcon?
-                        icon = UIApplicationShortcutIcon(type: .play)
-
-                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash as NSSecureCoding])
-                        shortcuts.append(shortcut)
-                    }
-                }
-
-                UIApplication.shared.shortcutItems = shortcuts
-            #endif
-        } else {
-            // Fallback on earlier versions
         }
     }
 }

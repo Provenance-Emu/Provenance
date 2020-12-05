@@ -8,6 +8,6 @@
 
 ### What are the relevant tickets
 
-### Screenshots (if appropriate)
+### Screenshots (important for UI changes)
 
 ### Questions

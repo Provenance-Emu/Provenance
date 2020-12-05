@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 
 import CoreSpotlight
-import MobileCoreServices
+import CoreServices
 // import UIKit
 
 public extension PVGame {
@@ -19,7 +19,6 @@ public extension PVGame {
     }
 
     #if os(iOS)
-        @available(iOS 9.0, *)
     var spotlightContentSet: CSSearchableItemAttributeSet {
             let systemName = self.systemName
 
@@ -93,17 +92,15 @@ public extension PVGame {
         activity.title = title
         activity.userInfo = ["md5": md5Hash]
 
-        if #available(iOS 9.0, tvOS 10.0, *) {
-            activity.requiredUserInfoKeys = ["md5"]
-            activity.isEligibleForSearch = true
-            activity.isEligibleForHandoff = false
+        activity.requiredUserInfoKeys = ["md5"]
+        activity.isEligibleForSearch = true
+        activity.isEligibleForHandoff = false
 
-            #if os(iOS)
-                activity.contentAttributeSet = spotlightContentSet
-            #endif
-            activity.requiredUserInfoKeys = ["md5"]
-            //            activity.expirationDate       =
-        }
+        #if os(iOS)
+            activity.contentAttributeSet = spotlightContentSet
+        #endif
+        activity.requiredUserInfoKeys = ["md5"]
+        //            activity.expirationDate       =
 
         return activity
     }

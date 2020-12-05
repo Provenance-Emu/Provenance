@@ -18,7 +18,8 @@ public extension PVEmulatorConfiguration {
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
-        let classList = objc_copyClassList(&count)!
+        let classListPointer = objc_copyClassList(&count)!
+        let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
             if let classInfo = ClassInfo(classList[i], withSuperclass: "PVEmulatorCore"),
@@ -51,6 +52,7 @@ public extension PVEmulatorConfiguration {
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
 
                 let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
+                database.refresh()
                 try newCore.add(update: true)
             } catch {
                 // Handle error
@@ -72,6 +74,7 @@ public extension PVEmulatorConfiguration {
                 systems?.forEach { system in
                     if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
                         do {
+                            database.refresh()
                             try database.writeTransaction {
                                 setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
                                 VLOG("Updated system for id \(system.PVSystemIdentifier)")
@@ -84,6 +87,7 @@ public extension PVEmulatorConfiguration {
                         newSystem.identifier = system.PVSystemIdentifier
                         setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
                         do {
+                            database.refresh()
                             try database.add(newSystem, update: true)
                             DLOG("Added new system for id \(system.PVSystemIdentifier)")
                         } catch {
@@ -139,6 +143,7 @@ public extension PVEmulatorConfiguration {
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)
                 } else {
+                    database.refresh()
                     try! database.add(newBIOS)
                 }
             }
