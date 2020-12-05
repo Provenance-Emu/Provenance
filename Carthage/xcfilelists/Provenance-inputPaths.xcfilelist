@@ -1,8 +1,3 @@
-$(SRCROOT)/Carthage/Build/iOS/AppCenter.framework
-$(SRCROOT)/Carthage/Build/iOS/AppCenterAnalytics.framework
-$(SRCROOT)/Carthage/Build/iOS/AppCenterCrashes.framework
-$(SRCROOT)/Carthage/Build/iOS/AppCenterDistribute.framework
-$(SRCROOT)/Carthage/Build/iOS/AppCenterPush.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/iOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/iOS/Differentiator.framework
