@@ -782,7 +782,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             // show alert view
             showServerActiveAlert()
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
@@ -945,7 +945,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: { (_: UIAlertAction) -> Void in
             let md5URL = "provenance://open?md5=\(game.md5Hash)"
             UIPasteboard.general.string = md5URL
-            let alert = UIAlertController(title: nil, message: "URL copied to clipboard", preferredStyle: .alert)
+            let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
             self.present(alert, animated: true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                 alert.dismiss(animated: true, completion: nil)
@@ -1065,7 +1065,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     func renameGame(_ game: PVGame) {
-        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title):", preferredStyle: .alert)
         alert.addTextField(configurationHandler: { (_ textField: UITextField) -> Void in
             textField.placeholder = game.title
             textField.text = game.title

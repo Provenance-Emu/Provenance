@@ -397,7 +397,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let cores = system.cores
 
-        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game", preferredStyle: .actionSheet)
+        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game.", preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
             coreChoiceAlert.popoverPresentationController?.sourceView = senderView
             coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
