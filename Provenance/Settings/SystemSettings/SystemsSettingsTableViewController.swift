@@ -105,7 +105,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                                                                     action: { _ in
                                                                         #if os(iOS)
                                                                             UIPasteboard.general.string = bios.expectedMD5.uppercased()
-                                                                            let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard", preferredStyle: .alert)
+                                                                            let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard.", preferredStyle: .alert)
                                                                             self.present(alert, animated: true)
                                                                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                                                                 alert.dismiss(animated: true, completion: nil)
