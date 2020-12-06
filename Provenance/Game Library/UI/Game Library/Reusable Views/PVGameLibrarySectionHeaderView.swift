@@ -20,16 +20,17 @@ internal struct GameLibrarySectionViewModel {
 
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    var collapseImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "chevron_down"))
-        iv.clipsToBounds = true
-        iv.contentMode = .scaleAspectFit
+    let collapseButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "chevron_down"), for: .normal)
+        button.clipsToBounds = true
         #if os(iOS)
-            iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+            button.tintColor = Theme.currentTheme.gameLibraryHeaderText
         #else
-            iv.tintColor = .darkGray
+            button.tintColor = .darkGray
         #endif
-        return iv
+        button.contentMode = .scaleAspectFit
+        return button
     }()
 
     var disposeBag = DisposeBag()
