@@ -392,8 +392,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         didSet {
             #if os(tvOS)
                 // The label's alpha will get set to 1 on focus
-                titleLabel.alpha = 0
-                titleLabel.textColor = UIColor.white
+                titleLabel.alpha = 1
+                titleLabel.textColor = UIColor.darkGray
                 titleLabel.layer.masksToBounds = false
                 if #available(tvOS 10.0, *) {
                     titleLabel.adjustsFontForContentSizeCategory = true
@@ -776,7 +776,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #if os(iOS)
             let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
         #else
-            let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
+            let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #endif
         if text == "" {
             return UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: NSAttributedString(string: ""))
@@ -788,7 +788,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #if os(iOS)
             let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
         #else
-            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
+            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 60.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
         #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
@@ -806,7 +806,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 imageView?.layer.shouldRasterize = false
             } else {
                 imageView?.layer.shouldRasterize = true
-                imageView?.layer.rasterizationScale = UIScreen.main.scale
+                #if os(tvOS)
+                    imageView?.layer.rasterizationScale = 2.0
+                #else
+                    imageView?.layer.rasterizationScale = UIScreen.main.scale
+                #endif
             }
         } get {
             return imageView?.image
@@ -952,7 +956,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     if PVSettingsModel.shared.showGameTitles {
                         let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
 
-                        let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 48
+                        let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 36
+                        self.titleLabel.textColor = UIColor.white
                         self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
                         self.titleLabel.alpha = 1.0
                     }
@@ -960,7 +965,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 } else {
                     //				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
                     self.titleLabel.transform = .identity
-                    self.titleLabel.alpha = 0.0
+                    self.titleLabel.textColor = UIColor.darkGray
+                    //self.titleLabel.alpha = 0.0
                     if PVSettingsModel.shared.showGameBadges {
                         if #available(tvOS 11, *) {} else {
                             if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.alpha = 1.0 }
