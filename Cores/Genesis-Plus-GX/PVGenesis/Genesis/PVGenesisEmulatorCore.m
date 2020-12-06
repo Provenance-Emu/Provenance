@@ -384,7 +384,7 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 -(BOOL)isDoubleBuffered {
-    return NO;
+    return YES;
 }
 
 - (CGRect)screenRect
