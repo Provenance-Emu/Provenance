@@ -11,9 +11,6 @@ import PVLibrary
 import PVSupport
 import RxCocoa
 import RxSwift
-#if canImport(RxGesture)
-    import RxGesture
-#endif
 
 // tvOS
 let tvOSCellUnit: CGFloat = 224.0 // org 256.0 = 6,  base subtract 32 for 1 more column. 224= 7, 192 = 8

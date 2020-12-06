@@ -48,15 +48,21 @@ public struct PVGameLibrary {
             .flatMapLatest({ systems -> Observable<[System]> in
                 // Here we actualy observe on the games for each system, since we want to update this when games are added or removed from a system
                 Observable.combineLatest(systems.map({ (pvSystem: PVSystem) -> Observable<System> in
+                    // We read all the values from the realm-object here, and not in the `Observable.collection` below
+                    // Not doing this makes the game crash when using refreshGameLibrary, since the pvSystem goes out of scope inside the closure, and thus we crash
+                    let identifier = pvSystem.identifier
+                    let manufacturer = pvSystem.manufacturer
+                    let shortName = pvSystem.shortName
+                    let isBeta = betaIDs.contains(pvSystem.enumValue)
                     let sortedGames = pvSystem.games.sorted(by: sortOptions)
                     return Observable.collection(from: sortedGames)
                         .mapMany { $0 }
                         .map({ games in
                             System(
-                                identifier: pvSystem.identifier,
-                                manufacturer: pvSystem.manufacturer,
-                                shortName: pvSystem.shortName,
-                                isBeta: betaIDs.contains(pvSystem.enumValue),
+                                identifier: identifier,
+                                manufacturer: manufacturer,
+                                shortName: shortName,
+                                isBeta: isBeta,
                                 sortedGames: games
                             )
                         })
@@ -85,6 +91,20 @@ public struct PVGameLibrary {
         public let shortName: String
         public let isBeta: Bool
         public let sortedGames: [PVGame]
+    }
+
+    /// Clear the library
+    public func clearLibrary() -> Completable {
+        Completable.create { observer in
+            do {
+                try self.database.deleteAll()
+                observer(.completed)
+            } catch {
+                ELOG("Failed to delete all objects. \(error.localizedDescription)")
+                observer(.error(error))
+            }
+            return Disposables.create()
+        }
     }
 }
 

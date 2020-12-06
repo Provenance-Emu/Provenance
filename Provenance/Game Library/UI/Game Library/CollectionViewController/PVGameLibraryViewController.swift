@@ -181,7 +181,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleCacheEmptied(_:)), name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArchiveInflationFailed(_:)), name: NSNotification.Name.PVArchiveInflationFailed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
@@ -311,22 +310,21 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     return false
                 }()
                 header.viewModel = .init(title: section.header, collapsable: section.collapsable != nil, collapsed: collapsed)
-                #if canImport(RxGesture)
-                if let collapsable = section.collapsable {
-                    header.collapseImageView.rx.tapGesture()
-                        .when(.recognized)
-                        .withLatestFrom(self.collapsedSystems)
-                        .map({ (collapsedSystems: Set<String>) in
-                            switch collapsable {
-                            case .collapsed(let token):
-                                return collapsedSystems.subtracting([token])
-                            case .notCollapsed(let token):
-                                return collapsedSystems.union([token])
-                            }
-                        })
-                        .bind(to: self.collapsedSystems)
-                        .disposed(by: header.disposeBag)
-                }
+                #if os(iOS)
+                header.collapseButton.rx.tap
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsable {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
                 #endif
                 return header
             case UICollectionView.elementKindSectionFooter:
@@ -813,6 +811,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 }, onError: { error in
                     ELOG(error.localizedDescription)
                 }, onCompleted: {
+                    hud.hide(true)
                     UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
                 })
                 .disposed(by: disposeBag)
@@ -864,26 +863,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let alert = UIAlertController(title: "Failed to extract archive", message: "There was a problem extracting the archive. Perhaps the download was corrupt? Try downloading it again.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true) { () -> Void in }
-    }
-
-    @objc func handleRefreshLibrary(_: Notification) {
-//        let config = PVEmulatorConfiguration.
-//        let documentsPath: String = config.documentsPath
-//        let romPaths = database.all(PVGame.self).map { (game) -> String in
-//            let path: String = URL(fileURLWithPath: documentsPath).appendingPathComponent(game.romPath).path
-//            return path
-//        }
-
-        let database = RomDatabase.sharedInstance
-        do {
-            try database.deleteAll()
-        } catch {
-            ELOG("Failed to delete all objects. \(error.localizedDescription)")
-        }
-
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
-        }
     }
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {

@@ -43,8 +43,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
             #endif
-            collapseImageView.isHidden = !viewModel.collapsable
-            collapseImageView.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
+            collapseButton.isHidden = !viewModel.collapsable
+            collapseButton.imageView?.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
             setNeedsDisplay()
         }
     }
@@ -102,12 +102,12 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.autoresizingMask = .flexibleWidth
         addSubview(titleLabel)
 
-        addSubview(collapseImageView)
-        collapseImageView.translatesAutoresizingMaskIntoConstraints = false
-        collapseImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        addSubview(collapseButton)
+        collapseButton.translatesAutoresizingMaskIntoConstraints = false
+        collapseButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseButton.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
 
         isOpaque = true
     }

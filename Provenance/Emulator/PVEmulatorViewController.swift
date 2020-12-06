@@ -13,10 +13,6 @@ import QuartzCore
 import RealmSwift
 import UIKit
 
-#if os(iOS)
-    import XLActionController
-#endif
-
 private weak var staticSelf: PVEmulatorViewController?
 
 func uncaughtExceptionHandler(exception _: NSException?) {
@@ -548,17 +544,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     func hideMenu() {
         enableContorllerInput(false)
-        #if os(iOS)
-            if presentedViewController is EmulatorActionController {
-                dismiss(animated: true) { () -> Void in }
-                isShowingMenu = false
-            }
-        #elseif os(tvOS)
-            if presentedViewController is UIAlertController {
-                dismiss(animated: true) { () -> Void in }
-                isShowingMenu = false
-            }
-        #endif
+        if presentedViewController is UIAlertController {
+            dismiss(animated: true) { () -> Void in }
+            isShowingMenu = false
+        }
         updateLastPlayedTime()
         core.setPauseEmulation(false)
     }
