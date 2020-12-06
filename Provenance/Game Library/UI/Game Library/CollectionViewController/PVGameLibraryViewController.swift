@@ -27,8 +27,8 @@ let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
-let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateColletionCell"
-let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedColletionCell"
+let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateCollectionCell"
+let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCell"
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
@@ -401,9 +401,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
         #if os(tvOS)
-            collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+            collectionView.contentInset = UIEdgeInsets(top: 0, left: 80, bottom: 40, right: 80)
             collectionView.remembersLastFocusedIndexPath = false
             collectionView.clipsToBounds = false
+            collectionView.backgroundColor = .black 
         #else
             collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
             searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
@@ -1050,7 +1051,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             .subscribe(onCompleted: {
                 self.collectionView?.reloadData()
             }, onError: { error in
-                ELOG("Failed to toggle Favourite for game \(game.title)")
+                ELOG("Failed to toggle Favorite for game \(game.title)")
             })
             .disposed(by: disposeBag)
     }
@@ -1198,7 +1199,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 90)
+            return CGSize(width: view.bounds.size.width, height: 60)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif
@@ -1218,7 +1219,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
             dismiss(animated: true) { () -> Void in }
             let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
-            if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.5) {
+            if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.85) {
                 let hash = (imageData as NSData).md5Hash
 
                 do {

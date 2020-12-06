@@ -26,6 +26,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         button.clipsToBounds = true
         #if os(iOS)
             button.tintColor = Theme.currentTheme.gameLibraryHeaderText
+        #else
+            button.tintColor = .darkGray
         #endif
         button.contentMode = .scaleAspectFit
         return button
@@ -37,7 +39,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         didSet {
             #if os(tvOS)
                 titleLabel.text = viewModel.title
-                titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 36)
             #else
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -52,10 +54,23 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
         super.init(frame: frame)
         #if os(tvOS)
-            titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
-            titleLabel.textAlignment = .left
+            titleLabel.frame = CGRect(x: 14, y: 0, width: bounds.size.width, height: bounds.size.height)
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
-            titleLabel.textColor = colorForText
+        
+        // add in separator for tvOS too, clean up if statements later and make this generic
+            let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height, width: bounds.size.width + 200.0, height: 1.0))
+            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+            bottomSeparator.autoresizingMask = .flexibleWidth
+
+            addSubview(bottomSeparator)
+
+        // Style
+            backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            titleLabel.textAlignment = .left
+            titleLabel.backgroundColor = .clear
+            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
+            clipsToBounds = false
+        
         #else
             let labelHeight: CGFloat = 20.0
             let labelBottomMargin: CGFloat = 5.0

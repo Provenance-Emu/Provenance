@@ -691,7 +691,6 @@
 		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+FrameAdditions.swift"; sourceTree = "<group>"; };
 		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsViewController.swift; sourceTree = "<group>"; };
 		1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Provenance.storyboard; sourceTree = "<group>"; };
-		1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVTVSettingsViewController.swift; sourceTree = "<group>"; };
 		1AD481B41BA350A400FDA50A /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD481C21BA350A400FDA50A /* TVAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TVAssets.xcassets; sourceTree = "<group>"; };
 		1AD481C41BA350A400FDA50A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1468,7 +1467,6 @@
 				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
 				11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
-				1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481C41BA350A400FDA50A /* Info.plist */,
