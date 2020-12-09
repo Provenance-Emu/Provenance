@@ -395,9 +395,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 titleLabel.alpha = 1
                 titleLabel.textColor = UIColor.darkGray
                 titleLabel.layer.masksToBounds = false
-                if #available(tvOS 10.0, *) {
-                    titleLabel.adjustsFontForContentSizeCategory = true
-                }
+                titleLabel.adjustsFontForContentSizeCategory = true
                 titleLabel.adjustsFontSizeToFitWidth = true
             #endif
         }

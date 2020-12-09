@@ -123,10 +123,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         }
 
         var colorForText: UIColor {
-            if #available(tvOS 10.0, *) {
-                if traitCollection.userInterfaceStyle == .dark {
-                    return UIColor.lightGray
-                }
+            if traitCollection.userInterfaceStyle == .dark {
+                return UIColor.lightGray
             }
 
             return UIColor.darkGray
