@@ -45,7 +45,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         #if os(tvOS)
             tableView.backgroundColor = .black
-            tableView.rowHeight = 60
+            tableView.rowHeight = 80
             splitViewController?.view.backgroundColor = .black
             tableView.sectionHeaderHeight = 0
             tableView.sectionFooterHeight = 0
