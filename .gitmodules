@@ -40,9 +40,6 @@
 [submodule "Carthage/Checkouts/SwiftyUserDefaults"]
 	url = https://github.com/radex/SwiftyUserDefaults.git
 	path = Carthage/Checkouts/SwiftyUserDefaults
-[submodule "Carthage/Checkouts/NSLogger"]
-	path = Carthage/Checkouts/NSLogger
-	url = https://github.com/fpillet/NSLogger.git
 [submodule "Carthage/Checkouts/SQLite.swift"]
 	url = https://github.com/stephencelis/SQLite.swift.git
 	path = Carthage/Checkouts/SQLite.swift

@@ -99,11 +99,6 @@ repositoryMap:
     platforms: [iOS,tvOS]
   - name: CocoaLumberjackSwift
     platforms: [iOS,tvOS]
-- NSLogger:
-  - name: NSLogger
-    platforms: [iOS,tvOS]
-  - name: NSLoggerSwift
-    platforms: [iOS,tvOS]
 - Reachability.swift:
   - name: Reachability
     platforms: [iOS,tvOS]

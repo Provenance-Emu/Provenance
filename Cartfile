@@ -4,7 +4,6 @@ github "RxSwiftCommunity/RxDataSources"
 github "zydeco/SteamController"
 
 # PVSupport
-github "fpillet/NSLogger"
 github "CocoaLumberjack/CocoaLumberjack"
 github "ashleymills/Reachability.swift"
 

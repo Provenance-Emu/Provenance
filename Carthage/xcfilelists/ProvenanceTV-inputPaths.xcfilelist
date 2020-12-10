@@ -1,8 +1,6 @@
 $(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjack.framework
 $(SRCROOT)/Carthage/Build/tvOS/CocoaLumberjackSwift.framework
 $(SRCROOT)/Carthage/Build/tvOS/Differentiator.framework
-$(SRCROOT)/Carthage/Build/tvOS/NSLogger.framework
-$(SRCROOT)/Carthage/Build/tvOS/NSLoggerSwift.framework
 $(SRCROOT)/Carthage/Build/tvOS/QuickTableViewController.framework
 $(SRCROOT)/Carthage/Build/tvOS/Reachability.framework
 $(SRCROOT)/Carthage/Build/tvOS/Realm.framework

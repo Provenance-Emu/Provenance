@@ -345,7 +345,6 @@
 		B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10464218F20FC00210C39 /* RxRealm.framework */; };
 		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
 		B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
-		B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046A218F20FD00210C39 /* NSLogger.framework */; };
 		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
 		B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
 		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
@@ -354,7 +353,6 @@
 		B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048E218F212700210C39 /* RxSwift.framework */; };
 		B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10490218F212700210C39 /* RxCocoa.framework */; };
 		B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10495218F212800210C39 /* QuickTableViewController.framework */; };
-		B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10497218F212800210C39 /* NSLogger.framework */; };
 		B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B3B104BE218F2EAA00210C39 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
@@ -854,14 +852,12 @@
 		B3AF701B21916E38000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AF705921916F2F000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF70652191733D000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
-		B3B10462218F20FC00210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B3B10463218F20FC00210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B3B10464218F20FC00210C39 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRealm.framework; path = Carthage/Build/iOS/RxRealm.framework; sourceTree = "<group>"; };
 		B3B10465218F20FD00210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
 		B3B10467218F20FD00210C39 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B3B10468218F20FD00210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3B10469218F20FD00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/iOS/RxAtomic.framework; sourceTree = "<group>"; };
-		B3B1046A218F20FD00210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3B1046D218F20FE00210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		B3B1046E218F20FE00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/iOS/RxBlocking.framework; sourceTree = "<group>"; };
 		B3B1046F218F20FE00210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
@@ -878,8 +874,6 @@
 		B3B10491218F212700210C39 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = Carthage/Build/tvOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3B10492218F212700210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/tvOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		B3B10495218F212800210C39 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTableViewController.framework; path = Carthage/Build/tvOS/QuickTableViewController.framework; sourceTree = "<group>"; };
-		B3B10496218F212800210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3B10497218F212800210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/tvOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -973,7 +967,6 @@
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
 				B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3B1047B218F20FE00210C39 /* NSLogger.framework in Frameworks */,
 				B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */,
 				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
 				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
@@ -1063,7 +1056,6 @@
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
-				B3B104AA218F212800210C39 /* NSLogger.framework in Frameworks */,
 				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
 				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
 				B3B1049D218F212800210C39 /* Realm.framework in Frameworks */,
@@ -1317,8 +1309,6 @@
 				B324C618219203A5009F4EDC /* libsqlite3.tbd */,
 				B324C6162192038C009F4EDC /* libxml2.tbd */,
 				B324C61421920384009F4EDC /* libz.tbd */,
-				B3B10497218F212800210C39 /* NSLogger.framework */,
-				B3B10496218F212800210C39 /* NSLoggerSwift.framework */,
 				B324C305219195A0009F4EDC /* OpenGLES.framework */,
 				B324C31D219197D7009F4EDC /* PicoDrive.framework */,
 				B324C61021920037009F4EDC /* ProSystem.framework */,
@@ -1383,8 +1373,6 @@
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
 				1A4869D717C8D54D0019F6D2 /* libxml2.dylib */,
 				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
-				B3B1046A218F20FD00210C39 /* NSLogger.framework */,
-				B3B10462218F20FC00210C39 /* NSLoggerSwift.framework */,
 				1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */,
 				B3AD689A1D6EA6180021B949 /* PicoDrive.framework */,
 				B354693B1DECDA710018B6F3 /* PVAtari800.framework */,
