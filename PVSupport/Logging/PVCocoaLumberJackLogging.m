@@ -8,14 +8,6 @@
 
 #import "PVCocoaLumberJackLogging.h"
 @import CocoaLumberjack;
-@import NSLogger;
-#import "XCDLumberjackNSLogger.h"
-
-//#import "DDFileLogger.h"
-//#import "DDTTYLogger.h"
-//#import "DDASLLogger.h"
-//#import "DMLogFormatter.h"
-//#import "KFLogFormatter.h"
 
 @interface PVCocoaLumberJackLogging   ()
 @property (nonatomic, strong) DDFileLogger *fileLogger;
@@ -27,19 +19,13 @@
 {
     self = [super init];
     if (self) {
-
-//        NSObject<DDLogFormatter> *kfFormatter = [KFLogFormatter new];
-
-            // - Start Cocoa lumber jack
-            // https://github.com/CocoaLumberjack/CocoaLumberjack/wiki/GettingStarted
-
             // Only log to console if we're running non-appstore build
             // For speed. File logging only is the fastest (async flushing)
 #ifdef DEBUG
             // Always enable for debug builds
-        [self initDebugLogging];
+        [DDLog addLogger:[DDOSLogger sharedInstance] withLevel:DDLogLevelDebug];
 #else
-		[self initReleaseLogging];
+        [DDLog addLogger:[DDOSLogger sharedInstance] withLevel:DDLogLevelWarning];
 #endif
 
 		[self initFileLogger];
@@ -49,20 +35,6 @@
 }
 
 - (void)initFileLogger {
-
-	// File logger
-//	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES); // cache area (not backed up)
-//	NSString *logPath = [paths[0] stringByAppendingPathComponent:@"/Logs"];
-//
-//	[[NSFileManager defaultManager] createDirectoryAtPath:logPath
-//							  withIntermediateDirectories:TRUE
-//											   attributes:nil
-//													error:nil];
-//
-//
-//	DDLogFileManagerDefault *logFileManager = [[DDLogFileManagerDefault alloc] initWithLogsDirectory:logPath];
-//
-//	_fileLogger = [[DDFileLogger alloc] initWithLogFileManager:logFileManager];
 	_fileLogger = [[DDFileLogger alloc] init];
 	_fileLogger.rollingFrequency = 60 * 60 * 24; // 24 hour rolling
 	_fileLogger.doNotReuseLogFiles = YES;
@@ -71,26 +43,6 @@
 	//        [_fileLogger setLogFormatter:kfFormatter];
 
 	[DDLog addLogger:_fileLogger];
-}
-
-- (void)initDebugLogging {
-//    NSObject<DDLogFormatter> *dmFormatter = [DMLogFormatter new];
-
-        // Apple system Logger - Console.app
-//    [DDLog addLogger:[DDASLLogger sharedInstance]];
-
-        // TTY Logger - The Debug console output
-    [DDLog addLogger:[DDOSLogger sharedInstance] withLevel:DDLogLevelDebug];
-
-        // NSLogger binding - network logging
-        // https://cocoapods.org/?q=XCDLumberjackNSLogger
-    [DDLog addLogger:[XCDLumberjackNSLogger new]];
-}
-
-- (void)initReleaseLogging {
-	// TTY Logger - The Debug console output
-	// Release uses only extreme levels
-	[DDLog addLogger:[DDOSLogger sharedInstance] withLevel:DDLogLevelWarning];
 }
 
 - (NSArray*)logFilePaths {
@@ -104,24 +56,6 @@
 - (void)flushLogs {
     [DDLog  flushLog];
 }
-
-//- (void) logToFile:(NSString *)inString, ... {
-//    va_list args;
-//	va_start(args, inString);
-////    NSString *expString = [[NSString alloc] initWithFormat:inString arguments:args];
-//
-//        // DDLog takes care of logging to file if a file logger is setup
-//    [DDLog log:LOG_ASYNC_INFO
-//         level:LOG_LEVEL_DEF
-//          flag:LOG_FLAG_INFO
-//       context:0
-//          file:nil
-//      function:nil
-//          line:0
-//           tag:nil
-//        format:inString, args];
-//	va_end(args);
-//}
 
 @end
 
