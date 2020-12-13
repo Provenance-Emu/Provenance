@@ -77,6 +77,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, copy, nullable) NSString* romSerial;
 @property (nonatomic, assign) BOOL supportsSaveStates;
 @property (nonatomic, readonly) BOOL supportsRumble;
+@property (nonatomic, assign) BOOL supportsCheats;
 
 @property (atomic, assign) BOOL shouldResyncTime;
 
@@ -152,7 +153,15 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)saveStateToFileAtPath:(NSString * _Nonnull)fileName
             completionHandler:(nonnull SaveStateCompletion)block;
 - (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
-              completionHandler:(nonnull SaveStateCompletion)block;
+            completionHandler:(nonnull SaveStateCompletion)block;
+- (BOOL)setCheat:(NSString *_Nonnull)code
+            setType:(NSString *_Nonnull)type
+            setEnabled:(BOOL)enabled
+            error:(NSError * __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use setCheat:completionHandler: instead.");
+- (void)setCheat:(NSString *_Nonnull)code
+            setType:(NSString *_Nonnull)type
+            setEnabled:(BOOL)enabled
+            completionHandler:(nonnull SaveStateCompletion)block;
 
 - (void)rumble;
 @end

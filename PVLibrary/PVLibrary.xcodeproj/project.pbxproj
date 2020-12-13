@@ -414,6 +414,10 @@
 		B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
 		B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		CF17109D2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
+		CF17109E2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
+		CF1710A12585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
+		CF1710A22585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -883,6 +887,8 @@
 		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
+		CF1710A02585FA3F00258602 /* Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheats.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -953,6 +959,7 @@
 				B354E787219A76C80041F971 /* PlistDataModels.swift */,
 				B354E789219A76C80041F971 /* SaveState.swift */,
 				B354E7C8219A7E470041F971 /* System.swift */,
+				CF1710A02585FA3F00258602 /* Cheats.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -989,6 +996,7 @@
 				B3579D2E2106B4D700DDEBD6 /* PVGame+BoxArt.swift */,
 				B3579D2F2106B4D700DDEBD6 /* PVRecentGame.swift */,
 				B3579D312106B4D700DDEBD6 /* PVCore.swift */,
+				CF17109C2585F97000258602 /* PVCheats.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -1892,6 +1900,7 @@
 				B3AF47AA21071F43002211EE /* InOutTempBuffer.cpp in Sources */,
 				B3AF47B621071F76002211EE /* BcjCoder.cpp in Sources */,
 				B3AF47C621071F76002211EE /* PpmdRegister.cpp in Sources */,
+				CF17109D2585F97000258602 /* PVCheats.swift in Sources */,
 				B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */,
 				B3AF476021071E28002211EE /* LzmaSDKObjC.mm in Sources */,
 				B3274E742106BC1D00857F52 /* PVFile.swift in Sources */,
@@ -1917,6 +1926,7 @@
 				B3AF47B521071F76002211EE /* Bcj2Register.cpp in Sources */,
 				B3AF479221071EC1002211EE /* 7zEncode.cpp in Sources */,
 				B3067F662106B8690091437F /* UTI.swift in Sources */,
+				CF1710A12585FA3F00258602 /* Cheats.swift in Sources */,
 				B3AF477A21071E85002211EE /* Bra86.c in Sources */,
 				B3AF477921071E85002211EE /* Bra.c in Sources */,
 				B3AF476921071E28002211EE /* LzmaSDKObjCWriter.mm in Sources */,
@@ -2075,6 +2085,7 @@
 				B3C04AA221077B3100E7AF79 /* InOutTempBuffer.cpp in Sources */,
 				B3C04AA321077B3100E7AF79 /* BcjCoder.cpp in Sources */,
 				B3C04AA421077B3100E7AF79 /* PpmdRegister.cpp in Sources */,
+				CF17109E2585F97000258602 /* PVCheats.swift in Sources */,
 				B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */,
 				B3C04AA521077B3100E7AF79 /* LzmaSDKObjC.mm in Sources */,
 				B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */,
@@ -2100,6 +2111,7 @@
 				B3C04AB721077B3100E7AF79 /* Bcj2Register.cpp in Sources */,
 				B3C04AB821077B3100E7AF79 /* 7zEncode.cpp in Sources */,
 				B3C04AB921077B3100E7AF79 /* UTI.swift in Sources */,
+				CF1710A22585FA3F00258602 /* Cheats.swift in Sources */,
 				B3C04ABA21077B3100E7AF79 /* Bra86.c in Sources */,
 				B3C04ABB21077B3100E7AF79 /* Bra.c in Sources */,
 				B3C04ABC21077B3100E7AF79 /* LzmaSDKObjCWriter.mm in Sources */,

@@ -477,6 +477,12 @@
 		C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
+		CF17107125858B5400258602 /* PVEmulatorViewController+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */; };
+		CF1710842585912C00258602 /* PVCheatsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710832585912C00258602 /* PVCheatsHeaderView.swift */; };
+		CF1710942585917A00258602 /* PVCheatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710932585917A00258602 /* PVCheatsViewController.swift */; };
+		CF1710AC25860A4100258602 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF1710AB25860A4100258602 /* Cheats.storyboard */; };
+		CF1710B5258610DE00258602 /* PVCheatsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */; };
+		CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
 		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -953,6 +959,12 @@
 		C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCControllerExtensions.swift; sourceTree = "<group>"; };
 		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
+		CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Cheats.swift"; sourceTree = "<group>"; };
+		CF1710832585912C00258602 /* PVCheatsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsHeaderView.swift; sourceTree = "<group>"; };
+		CF1710932585917A00258602 /* PVCheatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsViewController.swift; sourceTree = "<group>"; };
+		CF1710AB25860A4100258602 /* Cheats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Cheats.storyboard; sourceTree = "<group>"; };
+		CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsInfoViewController.swift; sourceTree = "<group>"; };
+		CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsTableViewCell.swift; sourceTree = "<group>"; };
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
@@ -1130,6 +1142,7 @@
 				7556CF7919DC15C1007F8F97 /* Default.xib */,
 				B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */,
 				B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */,
+				CF1710AB25860A4100258602 /* Cheats.storyboard */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -1162,6 +1175,7 @@
 				B38A2A452102328600374CDD /* PVEmulatorViewController~iOS.swift */,
 				B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */,
 				B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */,
+				CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */,
 			);
 			path = Emulator;
 			sourceTree = "<group>";
@@ -1806,6 +1820,7 @@
 		B3E3B5D1202ED5D500A11871 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				CF17107925858FA800258602 /* Cheats */,
 				B3D5E2BC218EC5C20015C690 /* Game Library */,
 				B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */,
 				C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */,
@@ -1838,6 +1853,17 @@
 				BE9FDCBE1C210B9F0046DF0E /* Info.plist */,
 			);
 			path = TopShelf;
+			sourceTree = "<group>";
+		};
+		CF17107925858FA800258602 /* Cheats */ = {
+			isa = PBXGroup;
+			children = (
+				CF1710832585912C00258602 /* PVCheatsHeaderView.swift */,
+				CF1710932585917A00258602 /* PVCheatsViewController.swift */,
+				CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */,
+				CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */,
+			);
+			path = Cheats;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2077,6 +2103,7 @@
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
 				B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
+				CF1710AC25860A4100258602 /* Cheats.storyboard in Resources */,
 				B38973B420AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2444,8 +2471,10 @@
 				B3AB373B2187F569009D9244 /* PVPCEControllerViewController.swift in Sources */,
 				B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */,
 				B3AB373A2187F569009D9244 /* PVPCFXControllerViewController.swift in Sources */,
+				CF1710B5258610DE00258602 /* PVCheatsInfoViewController.swift in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
 				B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
+				CF1710842585912C00258602 /* PVCheatsHeaderView.swift in Sources */,
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */,
@@ -2471,6 +2500,7 @@
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
+				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
@@ -2515,6 +2545,7 @@
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
+				CF17107125858B5400258602 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
 				B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				B35E6C25207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
@@ -2532,6 +2563,7 @@
 				B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */,
+				CF1710942585917A00258602 /* PVCheatsViewController.swift in Sources */,
 				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
 				B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */,
 			);

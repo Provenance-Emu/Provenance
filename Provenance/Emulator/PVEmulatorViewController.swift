@@ -65,7 +65,9 @@ extension UIViewController {
     }
 }
 
-final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
+final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate,
+    PVCheatsViewControllerDelegate,
+    PVSaveStatesViewControllerDelegate {
     let core: PVEmulatorCore
     let game: PVGame
 

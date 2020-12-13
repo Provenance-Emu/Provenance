@@ -59,6 +59,7 @@ static __weak PVSNESEmulatorCore *_current;
     unsigned char *videoBuffer;
     unsigned char *videoBufferA;
     unsigned char *videoBufferB;
+    NSMutableDictionary *cheatList;
 }
 
 @end
@@ -82,7 +83,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		soundBuffer = (UInt16 *)malloc(SIZESOUNDBUFFER * sizeof(UInt16));
 		memset(soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
         _current = self;
-	}
+        cheatList = [[NSMutableDictionary alloc] init];
+    }
 	
 	return self;
 }
@@ -847,38 +849,51 @@ static void FinalizeSamplesAudioCallback(void *)
     }
 }
 
-#pragma mark - Cheats
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
+{
+    @synchronized(self) {
+        if (enabled)
+            cheatList[code] = @YES;
+        else
+            [cheatList removeObjectForKey:code];
+        NSLog(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
+        
 
-//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-//{
-//	if (enabled)
-//		cheatList[code] = @YES;
-//	else
-//		[cheatList removeObjectForKey:code];
-//
-//	S9xDeleteCheats();
-//
-//	NSArray *multipleCodes = [[NSArray alloc] init];
-//
-//	// Apply enabled cheats found in dictionary
-//	for (id key in cheatList)
-//	{
-//		if ([[cheatList valueForKey:key] isEqual:@YES])
-//		{
-//			// Handle multi-line cheats
-//			multipleCodes = [key componentsSeparatedByString:@"+"];
-//			for (NSString *singleCode in multipleCodes) {
-//				// Sanitize for PAR codes that might contain colons
-//				const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
-//
-//				S9xAddCheatGroup("Provenance", cheatCode);
-//				S9xEnableCheatGroup(Cheat.g.size () - 1);
-//			}
-//		}
-//	}
-//
-//	S9xCheatsEnable();
-//}
+        S9xDeleteCheats();
+
+        NSArray *multipleCodes = [[NSArray alloc] init];
+
+        // Apply enabled cheats found in dictionary
+        for (id key in cheatList)
+        {
+            if ([[cheatList valueForKey:key] isEqual:@YES])
+            {
+                // Handle multi-line cheats
+                multipleCodes = [key componentsSeparatedByString:@"+"];
+                NSLog(@"Multiple Codes %@", multipleCodes);
+                for (NSString *singleCode in multipleCodes) {
+                    // Sanitize for PAR codes that might contain colons
+                    const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
+                    if (singleCode != nil && singleCode.length > 0) {
+                        NSLog(@"Applying Code %@",singleCode);
+                        S9xAddCheatGroup("Provenance", cheatCode);
+                        S9xEnableCheatGroup(Cheat.g.size () - 1);
+                    }
+                }
+            }
+        }
+
+        S9xCheatsEnable();
+        
+        // if no error til this point, return true
+        return YES;
+    }
+}
+
+-(BOOL)supportsCheats {
+    return YES;
+}
+
 
 #pragma mark - Input
 
