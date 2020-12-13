@@ -105,7 +105,7 @@ extension PVEmulatorViewController {
 
         var imageFile: PVImageFile?
         if let screenshot = screenshot {
-            if let jpegData = screenshot.jpegData(compressionQuality: 0.5) {
+            if let jpegData = screenshot.jpegData(compressionQuality: 0.85) {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
                     try jpegData.write(to: imageURL)

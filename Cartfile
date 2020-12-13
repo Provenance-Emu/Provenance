@@ -1,23 +1,14 @@
 # App
-# github "xmartlabs/XLActionController" ~> 5.0.0
-github "Puasonych/XLActionController" "update-for-xcode-11"
-
 github "bcylin/QuickTableViewController"
 github "RxSwiftCommunity/RxDataSources"
-github "RxSwiftCommunity/RxGesture"
 github "zydeco/SteamController"
 
-# Microsoft AppCenter
-github "microsoft/appcenter-sdk-apple"
-
 # PVSupport
-github "fpillet/NSLogger"
 github "CocoaLumberjack/CocoaLumberjack"
 github "ashleymills/Reachability.swift"
 
 # PVLibrary
 github "ZipArchive/ZipArchive"
-#github "tsolomko/SWCompression"
 github "realm/realm-cocoa"
 github "stephencelis/SQLite.swift"
 

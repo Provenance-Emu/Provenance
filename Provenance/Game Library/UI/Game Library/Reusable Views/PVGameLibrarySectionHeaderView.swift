@@ -20,14 +20,17 @@ internal struct GameLibrarySectionViewModel {
 
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    var collapseImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "chevron_down"))
-        iv.clipsToBounds = true
-        iv.contentMode = .scaleAspectFit
+    let collapseButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "chevron_down"), for: .normal)
+        button.clipsToBounds = true
         #if os(iOS)
-            iv.tintColor = Theme.currentTheme.gameLibraryHeaderText
+            button.tintColor = Theme.currentTheme.gameLibraryHeaderText
+        #else
+            button.tintColor = .darkGray
         #endif
-        return iv
+        button.contentMode = .scaleAspectFit
+        return button
     }()
 
     var disposeBag = DisposeBag()
@@ -36,13 +39,13 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         didSet {
             #if os(tvOS)
                 titleLabel.text = viewModel.title
-                titleLabel.font = UIFont.boldSystemFont(ofSize: 42)
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 36)
             #else
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
             #endif
-            collapseImageView.isHidden = !viewModel.collapsable
-            collapseImageView.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
+            collapseButton.isHidden = !viewModel.collapsable
+            collapseButton.imageView?.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
             setNeedsDisplay()
         }
     }
@@ -51,10 +54,23 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
         super.init(frame: frame)
         #if os(tvOS)
-            titleLabel.frame = CGRect(x: 30, y: 0, width: bounds.size.width - 30, height: bounds.size.height)
-            titleLabel.textAlignment = .left
+            titleLabel.frame = CGRect(x: 14, y: 0, width: bounds.size.width, height: bounds.size.height)
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
-            titleLabel.textColor = colorForText
+        
+        // add in separator for tvOS too, clean up if statements later and make this generic
+            let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height, width: bounds.size.width + 200.0, height: 1.0))
+            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+            bottomSeparator.autoresizingMask = .flexibleWidth
+
+            addSubview(bottomSeparator)
+
+        // Style
+            backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            titleLabel.textAlignment = .left
+            titleLabel.backgroundColor = .clear
+            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
+            clipsToBounds = false
+        
         #else
             let labelHeight: CGFloat = 20.0
             let labelBottomMargin: CGFloat = 5.0
@@ -87,12 +103,12 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.autoresizingMask = .flexibleWidth
         addSubview(titleLabel)
 
-        addSubview(collapseImageView)
-        collapseImageView.translatesAutoresizingMaskIntoConstraints = false
-        collapseImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        collapseImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        collapseImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        addSubview(collapseButton)
+        collapseButton.translatesAutoresizingMaskIntoConstraints = false
+        collapseButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseButton.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        collapseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
 
         isOpaque = true
     }
@@ -107,10 +123,8 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         }
 
         var colorForText: UIColor {
-            if #available(tvOS 10.0, *) {
-                if traitCollection.userInterfaceStyle == .dark {
-                    return UIColor.lightGray
-                }
+            if traitCollection.userInterfaceStyle == .dark {
+                return UIColor.lightGray
             }
 
             return UIColor.darkGray

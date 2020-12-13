@@ -237,7 +237,7 @@ static void config_default(void)
    config.hot_swap       = 0;
 
    /* video options */
-   config.overscan = 0; /* 3 == FULL */
+   config.overscan = 0; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
    config.gg_extra = 0; /* 1 = show extended Game Gear screen (256x192) */
 #if defined(USE_NTSC)
    config.ntsc     = 1;

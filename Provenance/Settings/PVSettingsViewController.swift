@@ -43,6 +43,14 @@ final class PVSettingsViewController: PVQuickTableViewController {
         generateTableViewViewModels()
         tableView.reloadData()
 
+        #if os(tvOS)
+            tableView.backgroundColor = .black
+            tableView.rowHeight = 80
+            splitViewController?.view.backgroundColor = .black
+            tableView.sectionHeaderHeight = 0
+            tableView.sectionFooterHeight = 0
+        #endif
+        
         conflictsController.conflicts
             .bind(onNext: {
                 self.numberOfConflicts = $0.count
@@ -92,7 +100,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let realm = try! Realm()
         let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).sorted(byKeyPath: "identifier").compactMap { pvcore in
             guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
-                DLOG("Class <\(pvcore.principleClass)> does not impliment CoreOptional")
+                DLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
                 return nil
             }
 
@@ -106,12 +114,33 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let coreOptionsSection = Section(title: "Core Options", rows: cores)
 
         // -- Section : Saves
+        #if os(iOS)
         let saveRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave),
             PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
             PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
             PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
         ]
+        #else
+        let saveRows: [TableRow] = [
+            PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    }),
+            PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    }),
+            PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    }),
+            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    })
+        ]
+        #endif
 
         let savesSection = Section(title: "Saves", rows: saveRows)
 
@@ -120,16 +149,35 @@ final class PVSettingsViewController: PVQuickTableViewController {
         #if os(iOS)
             avRows.append(contentsOf: [PVSettingsSwitchRow(text: "Volume HUD", key: \PVSettingsModel.volumeHUD)])
             avRows.append(PVSettingsSliderRow(text: "Volume", detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
-        #endif
-
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
             PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
         ])
-
-        let avSection = Section(title: "Audio/Video", rows: avRows)
+        #else
+        avRows.append(contentsOf: [
+            PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                })
+        ]
+        )
+        #endif
+        
+        let avSection = Section(title: "Video Options", rows: avRows)
 
         // -- Section : Controler
 
@@ -173,10 +221,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular) // needs pr
                     if PVSettingsModel.shared.webDavAlwaysOn {
                         let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
-                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
+                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
                         let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
+                        //cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular) // needs pr
                         cell.detailTextLabel?.attributedText = subTitleAttrString
                     } else {
                         cell.detailTextLabel?.text = nil
@@ -220,12 +270,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
 
-        // Beta options
+         // Beta options
+        #if os(iOS)
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
-
+            
             PVSettingsSwitchRow(text: "iCloud Sync",
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
@@ -242,6 +293,36 @@ final class PVSettingsViewController: PVQuickTableViewController {
 //                                detailText: .subtitle("Cores that are in development"),
 //                                key: \PVSettingsModel.debugOptions.unsupportedCores)
         ]
+        #else
+         let betaRows: [TableRow] = [
+             PVSettingsSwitchRow(text: "iCloud Sync",
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
+                                key: \PVSettingsModel.debugOptions.iCloudSync,
+                                    customization: { cell, _ in
+                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular) // needs pr
+                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular) // needs pr
+                            }
+            ),
+
+             PVSettingsSwitchRow(text: "Multi-threaded GL",
+                                detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.debugOptions.multiThreadedGL,
+                                    customization: { cell, _ in
+                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular) // needs pr
+                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular) // needs pr
+                            }
+            ),
+
+             PVSettingsSwitchRow(text: "4X Multisampling GL",
+                                detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+                                key: \PVSettingsModel.debugOptions.multiSampling,
+                                    customization: { cell, _ in
+                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular) // needs pr
+                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular) // needs pr
+                                }
+            ),
+                ]
+        #endif
 
         let betaSection = Section(
             title: "Beta Features",
@@ -353,7 +434,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 showServerActiveAlert()
             } else {
                 // Display error
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }

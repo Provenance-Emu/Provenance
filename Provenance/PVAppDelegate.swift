@@ -28,7 +28,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
         setDefaultsFromSettingsBundle()
-        _initAppCenter()
 
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
@@ -96,6 +95,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #if os(iOS)
             libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
         #endif
+
+        // Handle refreshing library
+        NotificationCenter.default.rx.notification(.PVRefreshLibrary)
+            .flatMapLatest { _ in
+                // Clear the database, then the user has to restart to re-scan
+                gameLibrary.clearLibrary()
+            }
+            .subscribe().disposed(by: disposeBag)
 
         #if os(iOS)
         let rootNavigation = window!.rootViewController as! UINavigationController

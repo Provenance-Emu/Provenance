@@ -78,15 +78,6 @@ repositoryMap:
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
-- HockeySDK-iOS:
-  - name: HockeySDK
-    platforms: [iOS]
-- HockeySDK-tvOS:
-  - name: HockeySDK
-    platforms: [tvOS]
-- XLActionController:
-  - name: XLActionController
-    platforms: [iOS]
 - realm-cocoa:
   - name: Realm
     platforms: [iOS,tvOS]
@@ -108,14 +99,6 @@ repositoryMap:
     platforms: [iOS,tvOS]
   - name: CocoaLumberjackSwift
     platforms: [iOS,tvOS]
-- NSLogger:
-  - name: NSLogger
-    platforms: [iOS,tvOS]
-  - name: NSLoggerSwift
-    platforms: [iOS,tvOS]
-- RxGesture:
-  - name: RxGesture
-    platforms: [iOS]
 - Reachability.swift:
   - name: Reachability
     platforms: [iOS,tvOS]
