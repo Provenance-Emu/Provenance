@@ -18,10 +18,25 @@ internal struct GameLibrarySectionViewModel {
 //    }
 }
 
+class CollapseButton: UIButton {
+    override var canBecomeFocused: Bool {
+        return true
+    }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        if isFocused {
+            backgroundColor = .lightGray
+        } else {
+            backgroundColor = .none
+        }
+    }
+}
+
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    let collapseButton: UIButton = {
-        let button = UIButton()
+    let collapseButton: CollapseButton = {
+        let button = CollapseButton()
+
         button.setImage(UIImage(named: "chevron_down"), for: .normal)
         button.clipsToBounds = true
         #if os(iOS)
@@ -48,6 +63,12 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             collapseButton.imageView?.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
             setNeedsDisplay()
         }
+    }
+
+    var myPreferredFocusedView: UIView?
+
+    override var preferredFocusedView: UIView? {
+         return myPreferredFocusedView
     }
 
     override init(frame: CGRect) {
@@ -128,6 +149,20 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             }
 
             return UIColor.darkGray
+        }
+
+        override var canBecomeFocused: Bool {
+            return true
+        }
+
+        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            if isFocused {
+                myPreferredFocusedView = collapseButton
+                setNeedsFocusUpdate()
+                updateFocusIfNeeded()
+            } else {
+                backgroundColor = .none
+            }
         }
     #endif
     override func prepareForReuse() {

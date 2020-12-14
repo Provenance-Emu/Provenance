@@ -326,6 +326,22 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     .bind(to: self.collapsedSystems)
                     .disposed(by: header.disposeBag)
                 #endif
+                #if os(tvOS)
+                header.collapseButton.rx.primaryAction
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsable {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
+                #endif
                 return header
             case UICollectionView.elementKindSectionFooter:
                 return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryFooterViewIdentifier, for: indexPath)
