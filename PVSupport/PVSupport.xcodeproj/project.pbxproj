@@ -133,6 +133,8 @@
 		B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
+		CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
+		CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -253,6 +255,7 @@
 		B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorCore.m; sourceTree = "<group>"; };
 		B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameControllerUtilities.h; sourceTree = "<group>"; };
 		B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameControllerUtilities.m; sourceTree = "<group>"; };
+		CF87D332258AB6B300838AF8 /* GameWithCheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWithCheat.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -549,6 +552,7 @@
 				B3CDEEC121D4C454000C55F7 /* Controls.swift */,
 				B3CDEEC421D4C490000C55F7 /* CoreActions.swift */,
 				B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */,
+				CF87D332258AB6B300838AF8 /* GameWithCheat.swift */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -768,6 +772,7 @@
 				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */,
+				CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
@@ -812,6 +817,7 @@
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
+				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,

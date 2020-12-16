@@ -36,74 +36,64 @@ public enum CheatsResult {
 public typealias CheatsCompletion = (CheatsResult) -> Void
 public typealias NoCheatCompletion = CheatsCompletion
 
-extension PVEmulatorViewController {
+extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     
     func setCheatState(code: String, type: String, enabled: Bool, completion: @escaping CheatsCompletion) {
-        guard core.supportsCheats else {
+        if let gameWithCheat = core as? GameWithCheat {
+            let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
+
+            let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
+            let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
+            
+            // convert space to +
+            var regex = try! NSRegularExpression(pattern: "[^a-fA-F0-9-:+]+|[G-Z\\s]+", options: NSRegularExpression.Options.caseInsensitive)
+            var range = NSMakeRange(0, code.count)
+            var modString = regex.stringByReplacingMatches(in: code, options: [], range: range, withTemplate: "+")
+            // clean + at front and back of code
+            regex = try! NSRegularExpression(pattern: "^[+]+|:|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
+            range = NSMakeRange(0, modString.count)
+            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
+            NSLog("Formatted CheatCode \(modString)");
+
+            if (gameWithCheat.setCheat(code: modString, type:type, enabled:enabled))
+            {
+                DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
+                let realm = try! Realm()
+                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
+                    completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
+                    return
+                }
+
+                do {
+                    var cheatsState: PVCheats!
+
+                    try realm.write {
+                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: type, enabled: enabled, file: saveFile)
+                        realm.add(cheatsState)
+                    }
+
+                    LibrarySerializer.storeMetadata(cheatsState, completion: { result in
+                        switch result {
+                        case let .success(url):
+                            ILOG("Serialzed cheats state metadata to (\(url.path))")
+                        case let .error(error):
+                            ELOG("Failed to serialize cheats metadata. \(error)")
+                        }
+                    })
+                } catch {
+                    completion(.error(.realmWriteError(error)))
+                    return
+                }
+                // All done successfully
+                completion(.success)
+            }
+        } else {
             WLOG("Core \(core.description) doesn't support cheats states.")
             completion(.error(.cheatsUnsupportedByCore))
             return
         }
-                
-        let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
-
-        let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
-        let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
-        
-        // convert space to +
-        var regex = try! NSRegularExpression(pattern: "[^a-fA-F0-9-:+]+|[G-Z\\s]+", options: NSRegularExpression.Options.caseInsensitive)
-        var range = NSMakeRange(0, code.count)
-        var modString = regex.stringByReplacingMatches(in: code, options: [], range: range, withTemplate: "+")
-        // clean + at front and back of code
-        regex = try! NSRegularExpression(pattern: "^[+]+|:|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
-        range = NSMakeRange(0, modString.count)
-        modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
-        NSLog("Formatted CheatCode \(modString)");
-
-        core.setCheat(modString, setType:type, setEnabled:enabled) { result, error in
-            guard result else {
-                completion(.error(.coreCheatsError(error)))
-                return
-            }
-
-            DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
-            let realm = try! Realm()
-            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
-                completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
-                return
-            }
-
-            do {
-                var cheatsState: PVCheats!
-
-                try realm.write {
-                    cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: type, enabled: enabled, file: saveFile)
-                    realm.add(cheatsState)
-                }
-
-                LibrarySerializer.storeMetadata(cheatsState, completion: { result in
-                    switch result {
-                    case let .success(url):
-                        ILOG("Serialzed cheats state metadata to (\(url.path))")
-                    case let .error(error):
-                        ELOG("Failed to serialize cheats metadata. \(error)")
-                    }
-                })
-            } catch {
-                completion(.error(.realmWriteError(error)))
-                return
-            }
-
-           
-            // All done successfully
-            completion(.success)
-        }
     }
-}
-
-// MARK: - Cheats states UI
-
-extension PVEmulatorViewController {
+    
     func cheatsViewControllerDone(_: PVCheatsViewController) {
         dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
@@ -126,14 +116,16 @@ extension PVEmulatorViewController {
     
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats,
         completion: @escaping CheatsCompletion) {
-        core.setCheat(cheat.code, setType:cheat.type, setEnabled:cheat.enabled) { result, error in
-            guard result else {
-                completion(.error(.coreCheatsError(error)))
-                return
-            }
+        if let gameWithCheat = core as? GameWithCheat {
+            if (gameWithCheat.setCheat(code: cheat.code, type:cheat.type, enabled:cheat.enabled)) {
 
-            NSLog("Succeeded applying cheat: \(cheat.code) \(cheat.type) \(cheat.enabled)")
-            completion(.success)
+                NSLog("Succeeded applying cheat: \(cheat.code) \(cheat.type) \(cheat.enabled)")
+                completion(.success)
+            }
+        } else {
+            WLOG("Core \(core.description) doesn't support cheats states.")
+            completion(.error(.cheatsUnsupportedByCore))
+            return
         }
     }
 

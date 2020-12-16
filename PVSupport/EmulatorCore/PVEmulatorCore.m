@@ -577,33 +577,4 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return YES;
 }
 
--(BOOL)supportsCheats {
-    return NO;
-}
-
-#pragma mark - Cheats
-
-- (BOOL)setCheat:(NSString *)code
-         setType:(NSString *)type
-      setEnabled:(BOOL)enabled
-           error:(NSError *__autoreleasing *)error {
-    
-    NSString *message = [NSString stringWithFormat:@"Failed to apply cheat: %@", code];
-    *error = [self createError:message];
-
-    [self doesNotImplementSelector:_cmd];
-    return NO;
-}
-
-// Over load to support async
-- (void)setCheat:(NSString *)code
-         setType:(NSString *)type
-      setEnabled:(BOOL)enabled
-completionHandler:(void (^)(BOOL, NSError *))block {
-    NSError *error;
-    BOOL success = [self setCheat:code setType:type setEnabled:enabled error:&error];
-
-    block(success, error);
-}
-
 @end
