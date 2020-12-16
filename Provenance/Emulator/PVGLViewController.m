@@ -490,10 +490,10 @@ struct RenderSettings {
     void (^renderBlock)(void) = ^()
     {
         MAKESTRONG(self);
-#if DEBUG
+
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-#endif
+
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
