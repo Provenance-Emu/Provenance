@@ -37,14 +37,13 @@ final class PVCheatsViewController: UITableViewController {
     var screenshot: UIImage?
 
     var coreID: String?
-
+        
     private var enabledCheats: Results<PVCheats>!
     private var disabledCheats: Results<PVCheats>!
     private var allCheats: Results<PVCheats>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         title = "Cheat Codes"
 
         if let coreID = coreID {
@@ -54,8 +53,22 @@ final class PVCheatsViewController: UITableViewController {
             allCheats = cheats.sorted(byKeyPath: "date", ascending: false)
         }
         
+        var isFirstLoad: Bool=true;
+
+        if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
+            isFirstLoad=emulatorViewController.getIsFirstLoad()
+        }
+        
+            
         for cheat in allCheats {
             NSLog("Cheat Found \(cheat.code) \(cheat.type)")
+            // start disabled to prevent bad cheat code from crashing the game all the time
+            if (isFirstLoad) {
+                let realm = try! Realm()
+                realm.beginWrite();
+                cheat.enabled = false;
+                try! realm.commitWrite();
+            }
             delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
                 in
                 switch result {
@@ -69,6 +82,9 @@ final class PVCheatsViewController: UITableViewController {
         }
         
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
+        tableView.dataSource = self
+        tableView.delegate = self
+
         tableView?.addGestureRecognizer(longPressRecognizer)
         
         self.tableView.reloadData()
@@ -82,7 +98,9 @@ final class PVCheatsViewController: UITableViewController {
             emulatorViewController.core.setPauseEmulation(false)
             emulatorViewController.isShowingMenu = false
             emulatorViewController.enableContorllerInput(false)
+            emulatorViewController.setIsFirstLoad(isFirstLoad: false)
         }
+    
     }
 
     @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
@@ -166,7 +184,12 @@ final class PVCheatsViewController: UITableViewController {
         let cheat:PVCheats = allCheats[indexPath.row];
         cell.codeText.text=cheat.code;
         cell.typeText.text=cheat.type;
+        #if os(iOS)
         cell.enableSwitch.isOn=cheat.enabled;
+        #endif
+        #if os(tvOS)
+        cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
+        #endif
         cell.delegate=delegate;
         cell.cheat=cheat;
         
@@ -176,4 +199,28 @@ final class PVCheatsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return CGFloat(80)
     }
+    
+    #if os(tvOS)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cheat:PVCheats = allCheats[indexPath.row];
+        
+        let realm = try! Realm()
+        realm.beginWrite();
+        cheat.enabled = !(cheat.enabled);
+        try! realm.commitWrite();
+        delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
+            in
+            switch result {
+            case .success:
+                break
+            case let .error(error):
+                let reason = (error as NSError).localizedFailureReason ?? ""
+                NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
+            }
+            
+        }
+        self.tableView.reloadData()
+        self.tableView.layoutIfNeeded()
+    }
+    #endif
 }

@@ -890,10 +890,6 @@ static void FinalizeSamplesAudioCallback(void *)
     }
 }
 
--(BOOL)supportsCheats {
-    return YES;
-}
-
 
 #pragma mark - Input
 

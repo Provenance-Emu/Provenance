@@ -37,13 +37,20 @@ public typealias CheatsCompletion = (CheatsResult) -> Void
 public typealias NoCheatCompletion = CheatsCompletion
 
 extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
+    struct CheatLoadState {
+        static var isFirstLoad:Bool = true
+    }
     
+    func getIsFirstLoad() -> Bool {
+        return CheatLoadState.isFirstLoad
+    }
+    func setIsFirstLoad(isFirstLoad:Bool) {
+        CheatLoadState.isFirstLoad=isFirstLoad
+    }
+
     func setCheatState(code: String, type: String, enabled: Bool, completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
-            let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
-
-            let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
-            let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
+           
             
             // convert space to +
             var regex = try! NSRegularExpression(pattern: "[^a-fA-F0-9-:+]+|[G-Z\\s]+", options: NSRegularExpression.Options.caseInsensitive)
@@ -65,6 +72,10 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 }
 
                 do {
+                    let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
+
+                    let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
+                    let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
                     var cheatsState: PVCheats!
 
                     try realm.write {
@@ -143,7 +154,6 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             cheatsViewController.delegate = self
             cheatsViewController.coreID = core.coreIdentifier
         }
-
         cheatsNavController.modalPresentationStyle = .overCurrentContext
 
         #if os(iOS)

@@ -15,16 +15,32 @@ final class PVCheatsTableViewCell: UITableViewCell {
 
     public var cheat: PVCheats!
     
+    #if os(iOS)
     @IBOutlet public var
         enableSwitch: UISwitch!
-    @IBOutlet public var typeText: UILabel!
-    @IBOutlet public var codeText: UILabel!
+    #endif
     
+    #if os(tvOS)
+    @IBOutlet public var enabledText: UILabel!
+    #endif
+    
+    @IBOutlet public var codeText: UILabel!
+    @IBOutlet public var typeText: UILabel!
+
     @IBAction func toggleSwitch(_ sender: Any) {
+        #if os(iOS)
+        toggle(enabled: enableSwitch.isOn)
+        #endif
+    }
+    
+    func toggle(enabled:Bool) {
         let realm = try! Realm()
         realm.beginWrite();
-        cheat.enabled = enableSwitch.isOn;
+        cheat.enabled = enabled;
         try! realm.commitWrite();
+        #if os(tvOS)
+        enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
+        #endif
         delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
             in
             switch result {

@@ -483,6 +483,12 @@
 		CF1710AC25860A4100258602 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF1710AB25860A4100258602 /* Cheats.storyboard */; };
 		CF1710B5258610DE00258602 /* PVCheatsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */; };
 		CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
+		CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */; };
+		CF87D486258ADDD100838AF8 /* PVCheatsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710832585912C00258602 /* PVCheatsHeaderView.swift */; };
+		CF87D487258ADDD100838AF8 /* PVCheatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710932585917A00258602 /* PVCheatsViewController.swift */; };
+		CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */; };
+		CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
+		CF87D4B0258ADFDE00838AF8 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF87D4AF258ADFDE00838AF8 /* Cheats.storyboard */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
 		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -965,6 +971,7 @@
 		CF1710AB25860A4100258602 /* Cheats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Cheats.storyboard; sourceTree = "<group>"; };
 		CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsInfoViewController.swift; sourceTree = "<group>"; };
 		CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsTableViewCell.swift; sourceTree = "<group>"; };
+		CF87D4AF258ADFDE00838AF8 /* Cheats.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Cheats.storyboard; sourceTree = "<group>"; };
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
@@ -1655,6 +1662,7 @@
 				B35D667E21814EAB0005A992 /* Provenance.storyboard */,
 				B35D667F21814EAB0005A992 /* Settings.storyboard */,
 				B35D668021814EAB0005A992 /* SaveStates.storyboard */,
+				CF87D4AF258ADFDE00838AF8 /* Cheats.storyboard */,
 			);
 			path = "Story Boards";
 			sourceTree = "<group>";
@@ -2116,6 +2124,7 @@
 				B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
 				B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
+				CF87D4B0258ADFDE00838AF8 /* Cheats.storyboard in Resources */,
 				B35D668121814EAB0005A992 /* Provenance.storyboard in Resources */,
 				B35D668321814EAB0005A992 /* SaveStates.storyboard in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
@@ -2573,6 +2582,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF87D486258ADDD100838AF8 /* PVCheatsHeaderView.swift in Sources */,
+				CF87D487258ADDD100838AF8 /* PVCheatsViewController.swift in Sources */,
+				CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */,
+				CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */,
+				CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B3B104D1218F2EF400210C39 /* PVSaturnControllerViewController.swift in Sources */,
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
