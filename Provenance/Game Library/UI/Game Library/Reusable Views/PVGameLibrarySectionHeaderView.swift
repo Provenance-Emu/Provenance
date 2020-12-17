@@ -25,9 +25,15 @@ class CollapseButton: UIButton {
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         if isFocused {
-            backgroundColor = .lightGray
+            UIView.animate(withDuration: 0.1, animations: {
+                self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                self.tintColor = .white
+            })
         } else {
-            backgroundColor = .none
+            UIView.animate(withDuration: 0.1, animations: {
+                self.transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.tintColor = .darkGray
+            })
         }
     }
 }
@@ -156,12 +162,17 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         }
 
         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            UIView.transition(with: titleLabel, duration: 0.1, options: .transitionCrossDissolve, animations: {
+              self.titleLabel.textColor = .white
+            }, completion: nil)
+
             if isFocused {
                 myPreferredFocusedView = collapseButton
                 setNeedsFocusUpdate()
-                updateFocusIfNeeded()
             } else {
-                backgroundColor = .none
+                if !collapseButton.isFocused {
+                    titleLabel.textColor = colorForText
+                }
             }
         }
     #endif
