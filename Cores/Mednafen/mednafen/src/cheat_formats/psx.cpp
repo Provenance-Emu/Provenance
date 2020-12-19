@@ -89,7 +89,7 @@ static bool DecodeGS(const std::string& cheat_string, MemoryPatch* patch)
   patch->addr = cl >> 16;
   return(false);
  }
-
+    
  switch(code_type)
  {
   default:

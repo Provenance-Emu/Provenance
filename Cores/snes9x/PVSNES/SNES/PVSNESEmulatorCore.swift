@@ -21,4 +21,9 @@ extension PVSNESEmulatorCore: GameWithCheat {
             return false
         }
     }
+    
+    public func supportsCheatCode() -> Bool
+    {
+        return true
+    }
 }
