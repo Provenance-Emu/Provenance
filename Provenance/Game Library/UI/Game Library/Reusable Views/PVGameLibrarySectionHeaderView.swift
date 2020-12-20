@@ -18,30 +18,10 @@ internal struct GameLibrarySectionViewModel {
 //    }
 }
 
-class CollapseButton: UIButton {
-    override var canBecomeFocused: Bool {
-        return true
-    }
-
-    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        if isFocused {
-            UIView.animate(withDuration: 0.1, animations: {
-                self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-                self.tintColor = .white
-            })
-        } else {
-            UIView.animate(withDuration: 0.1, animations: {
-                self.transform = CGAffineTransform(scaleX: 1, y: 1)
-                self.tintColor = .darkGray
-            })
-        }
-    }
-}
-
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    let collapseButton: CollapseButton = {
-        let button = CollapseButton()
+    let collapseButton: UIButton = {
+        let button = UIButton()
 
         button.setImage(UIImage(named: "chevron_down"), for: .normal)
         button.clipsToBounds = true
@@ -69,12 +49,6 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             collapseButton.imageView?.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
             setNeedsDisplay()
         }
-    }
-
-    var myPreferredFocusedView: UIView?
-
-    override var preferredFocusedView: UIView? {
-         return myPreferredFocusedView
     }
 
     override init(frame: CGRect) {
@@ -164,28 +138,30 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             return false
         }
 
-        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-            guard let button = presses.first?.type else { return }
-
-            switch button {
-            case .rightArrow:
-                myPreferredFocusedView = collapseButton
-                setNeedsFocusUpdate()
-            case .leftArrow:
-                myPreferredFocusedView = self
-                setNeedsFocusUpdate()
-            default:
-                super.pressesEnded(presses, with: event)
+        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            if isFocused {
+                UIView.transition(with: titleLabel, duration: 0.1, options: .transitionCrossDissolve, animations: {
+                  self.titleLabel.textColor = .white
+                }, completion: nil)
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.collapseButton.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    self.collapseButton.tintColor = .white
+                })
+            } else {
+                titleLabel.textColor = colorForText
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.collapseButton.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    self.collapseButton.tintColor = .darkGray
+                })
             }
         }
 
-        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-            UIView.transition(with: titleLabel, duration: 0.1, options: .transitionCrossDissolve, animations: {
-              self.titleLabel.textColor = .white
-            }, completion: nil)
-
-            if !isFocused && !collapseButton.isFocused {
-                titleLabel.textColor = colorForText
+        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            super.pressesBegan(presses, with: event)
+            if presses.contains(where: { (press) -> Bool in
+                press.type == .select
+            }) {
+                collapseButton.sendActions(for: .touchUpInside)
             }
         }
     #endif

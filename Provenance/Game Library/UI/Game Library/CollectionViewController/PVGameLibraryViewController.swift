@@ -341,6 +341,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     })
                     .bind(to: self.collapsedSystems)
                     .disposed(by: header.disposeBag)
+                    header.updateFocusIfNeeded()
                 #endif
                 return header
             case UICollectionView.elementKindSectionFooter:
