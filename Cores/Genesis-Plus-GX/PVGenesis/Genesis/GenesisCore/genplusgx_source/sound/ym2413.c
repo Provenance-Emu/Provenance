@@ -1658,14 +1658,14 @@ void YM2413Write(unsigned int a, unsigned int v)
   }
   else
   {
-    /* latched bit (Master System specific) */
+    /* bit 0 enable/disable FM output (Master System / Mark-III FM adapter specific) */
     ym2413.status = v & 0x01;
   }
 }
 
-unsigned int YM2413Read(unsigned int a)
+unsigned int YM2413Read(void)
 {
-  /* D0=latched bit, D1-D2 need to be zero (Master System specific) */
+  /* bit 0 returns latched FM enable status, bits 1-2 return zero (Master System / Mark-III FM adapter specific) */
   return 0xF8 | ym2413.status;
 }
 

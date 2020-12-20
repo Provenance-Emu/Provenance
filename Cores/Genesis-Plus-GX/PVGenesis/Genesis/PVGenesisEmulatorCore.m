@@ -70,7 +70,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     
     dispatch_apply(height, the_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = strongCurrent->videoBuffer + y * 320;
+        uint16_t *dst = strongCurrent->videoBuffer + y * 720;
         
         memcpy(dst, src, sizeof(uint16_t)*width);
     });
@@ -150,8 +150,8 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (id)init {
 	if ((self = [super init])) {
-		videoBufferA = malloc(320 * 480 * 2);
-        videoBufferB = malloc(320 * 480 * 2);
+	videoBufferA = malloc(720 * 576 * 2);
+        videoBufferB = malloc(720 * 576 * 2);
 	}
 	
 	_current = self;
@@ -194,24 +194,36 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (void)executeFrame {
-    [self executeFrameSkippingFrame:false];
-}
-
-- (void)executeFrameSkippingFrame:(BOOL)skip {
     int aud;
     
-    int skipI = skip ? 1 : 0;
-    
     if (system_hw == SYSTEM_MCD)
-        system_frame_scd(skipI);
+        system_frame_scd(0);
     else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-        system_frame_gen(skipI);
+        system_frame_gen(0);
     else
-        system_frame_sms(skipI);
+        system_frame_sms(0);
     
     video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
     
     aud = audio_update(soundbuffer) << 1;
+    audio_batch_callback(soundbuffer, aud >> 1);
+}
+
+- (void)executeFrameSkippingFrame:(BOOL)skip {
+    //int aud;
+    
+//    int skipI = skip ? 1 : 0;
+    
+    if (system_hw == SYSTEM_MCD)
+        system_frame_scd(0);
+    else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
+        system_frame_gen(0);
+    else
+        system_frame_sms(0);
+    
+    video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
+    
+    int aud = audio_update(soundbuffer) << 1;
     audio_batch_callback(soundbuffer, aud >> 1);
 }
 
@@ -256,17 +268,11 @@ static bool environment_callback(unsigned cmd, void *data)
     
     videoBuffer = NULL;
     
-#if 0
-    videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-    videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-#else
-    videoBufferA = (unsigned char *)malloc(320 * 480 * 2);
-    videoBufferB = (unsigned char *)malloc(320 * 480 * 2);
-#endif
+    videoBufferA = (unsigned char *)malloc(720 * 576 * 2);
+    videoBufferB = (unsigned char *)malloc(720 * 576 * 2);
     
     bitmap.data = (short unsigned int *)videoBufferA;
     videoBuffer = videoBufferB;
-    
     
     retro_set_environment(environment_callback);
 	retro_init();
@@ -384,12 +390,12 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 -(BOOL)isDoubleBuffered {
-    return NO;
+    return YES;
 }
 
 - (CGRect)screenRect
 {
-    if([[self systemIdentifier] isEqualToString:@"com.openemu.gamegear"])
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"])
     {
         return CGRectMake(0, 0, 160, 144);
     }
@@ -408,14 +414,16 @@ static bool environment_callback(unsigned cmd, void *data)
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"])
     {
         return CGSizeMake(256 * (8.0/7.0), 192);
-    }else {
-        return CGSizeMake(_videoWidth, _videoHeight);;
+    }
+    else // is Genesis/Megadrive
+    {
+        return CGSizeMake(_videoWidth, _videoHeight);
     }
 }
 
 - (CGSize)bufferSize
 {
-	return CGSizeMake(320, 480);
+	return CGSizeMake(720, 576);
 }
 
 - (GLenum)pixelFormat
@@ -435,7 +443,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (NSTimeInterval)frameInterval
 {
-	return _frameInterval ? _frameInterval : 59.92;
+    return _frameInterval; // ? _frameInterval : 59.92;
 }
 
 #pragma mark - Audio

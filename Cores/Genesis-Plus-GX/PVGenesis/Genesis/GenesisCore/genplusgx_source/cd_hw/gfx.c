@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  CD graphics processor
  *
- *  Copyright (C) 2012  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2012-2019  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -47,10 +47,10 @@ void word_ram_0_dma_w(unsigned int words)
 
   /* CDC buffer source address */
   uint16 src_index = cdc.dac.w & 0x3ffe;
-  
+
   /* WORD-RAM destination address*/
   uint32 dst_index = (scd.regs[0x0a>>1].w << 3) & 0x1fffe;
-  
+
   /* update DMA destination address */
   scd.regs[0x0a>>1].w += (words >> 2);
 
@@ -60,13 +60,8 @@ void word_ram_0_dma_w(unsigned int words)
   /* DMA transfer */
   while (words--)
   {
-    /* read 16-bit word from CDC buffer */
-    data = *(uint16 *)(cdc.ram + src_index);
-
-#ifdef LSB_FIRST
-    /* source data is stored in big endian format */
-    data = ((data >> 8) | (data << 8)) & 0xffff;
-#endif
+    /* read 16-bit word from CDC RAM buffer (big-endian format) */
+    data = READ_WORD(cdc.ram, src_index);
 
     /* write 16-bit word to WORD-RAM */
     *(uint16 *)(scd.word_ram[0] + dst_index) = data ;
@@ -85,10 +80,10 @@ void word_ram_1_dma_w(unsigned int words)
 
   /* CDC buffer source address */
   uint16 src_index = cdc.dac.w & 0x3ffe;
-  
+
   /* WORD-RAM destination address*/
   uint32 dst_index = ((scd.regs[0x0a>>1].w << 3) & 0x1fffe);
-  
+
   /* update DMA destination address */
   scd.regs[0x0a>>1].w += (words >> 2);
 
@@ -98,13 +93,8 @@ void word_ram_1_dma_w(unsigned int words)
   /* DMA transfer */
   while (words--)
   {
-    /* read 16-bit word from CDC buffer */
-    data = *(uint16 *)(cdc.ram + src_index);
-
-#ifdef LSB_FIRST
-    /* source data is stored in big endian format */
-    data = ((data >> 8) | (data << 8)) & 0xffff;
-#endif
+    /* read 16-bit word from CDC RAM buffer (big-endian format) */
+    data = READ_WORD(cdc.ram, src_index);
 
     /* write 16-bit word to WORD-RAM */
     *(uint16 *)(scd.word_ram[1] + dst_index) = data ;
@@ -123,10 +113,10 @@ void word_ram_2M_dma_w(unsigned int words)
 
   /* CDC buffer source address */
   uint16 src_index = cdc.dac.w & 0x3ffe;
-  
+
   /* WORD-RAM destination address*/
   uint32 dst_index = (scd.regs[0x0a>>1].w << 3) & 0x3fffe;
-  
+
   /* update DMA destination address */
   scd.regs[0x0a>>1].w += (words >> 2);
 
@@ -136,13 +126,8 @@ void word_ram_2M_dma_w(unsigned int words)
   /* DMA transfer */
   while (words--)
   {
-    /* read 16-bit word from CDC buffer */
-    data = *(uint16 *)(cdc.ram + src_index);
-
-#ifdef LSB_FIRST
-    /* source data is stored in big endian format */
-    data = ((data >> 8) | (data << 8)) & 0xffff;
-#endif
+    /* read 16-bit word from CDC RAM buffer (big-endian format) */
+    data = READ_WORD(cdc.ram, src_index);
 
     /* write 16-bit word to WORD-RAM */
     *(uint16 *)(scd.word_ram_2M + dst_index) = data ;
@@ -692,6 +677,19 @@ void gfx_update(int cycles)
       /* end of graphics operation */
       scd.regs[0x58>>1].byte.h = 0;
  
+      /* SUB-CPU idle on register $58 polling ? */
+      if (s68k.stopped & (1<<0x08))
+      {
+        /* sync SUB-CPU with GFX chip */
+        s68k.cycles = scd.cycles;
+
+        /* restart SUB-CPU */
+        s68k.stopped = 0;
+#ifdef LOG_SCD
+        error("s68k started from %d cycles\n", s68k.cycles);
+#endif
+      }
+
       /* level 1 interrupt enabled ? */
       if (scd.regs[0x32>>1].byte.l & 0x02)
       {

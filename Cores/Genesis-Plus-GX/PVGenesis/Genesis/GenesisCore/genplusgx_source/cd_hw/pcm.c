@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  PCM sound chip (315-5476A) (RF5C164 compatible)
  *
- *  Copyright (C) 2012  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2012-2016  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -41,19 +41,11 @@
 
 #define pcm scd.pcm_hw
 
-static blip_t* blip[2];
-
-void pcm_init(blip_t* left, blip_t* right)
+void pcm_init(double clock, int samplerate)
 {
-  /* number of SCD master clocks run per second */
-  double mclk = snd.frame_rate ? (SCYCLES_PER_LINE * (vdp_pal ? 313 : 262) * snd.frame_rate) : SCD_CLOCK;
-
-  /* PCM chips is running at original rate and is synchronized with SUB-CPU  */
+  /* PCM chip is running at original rate and is synchronized with SUB-CPU  */
   /* Chip output is resampled to desired rate using Blip Buffer. */
-  blip[0] = left;
-  blip[1] = right;
-  blip_set_rates(left, mclk / PCM_SCYCLES_RATIO, snd.sample_rate);
-  blip_set_rates(right, mclk / PCM_SCYCLES_RATIO, snd.sample_rate);
+  blip_set_rates(snd.blips[1], clock / PCM_SCYCLES_RATIO, samplerate);
 }
 
 void pcm_reset(void)
@@ -78,8 +70,7 @@ void pcm_reset(void)
   pcm.cycles = 0;
 
   /* clear blip buffers */
-  blip_clear(blip[0]);
-  blip_clear(blip[1]);
+  blip_clear(snd.blips[1]);
 }
 
 int pcm_context_save(uint8 *state)
@@ -124,6 +115,11 @@ void pcm_run(unsigned int length)
 #ifdef LOG_PCM
   error("[%d][%d]run %d PCM samples (from %d)\n", v_counter, s68k.cycles, length, pcm.cycles);
 #endif
+
+  /* previous audio outputs */
+  int prev_l = pcm.out[0];
+  int prev_r = pcm.out[1];
+
   /* check if PCM chip is running */
   if (pcm.enabled)
   {
@@ -187,41 +183,29 @@ void pcm_run(unsigned int length)
       if (r < -32768) r = -32768;
       else if (r > 32767) r = 32767;
 
-      /* check if PCM left output changed */
-      if (pcm.out[0] != l)
-      {
-        blip_add_delta_fast(blip[0], i, l-pcm.out[0]);
-        pcm.out[0] = l;
-      }
-
-      /* check if PCM right output changed */
-      if (pcm.out[1] != r)
-      {
-        blip_add_delta_fast(blip[1], i, r-pcm.out[1]);
-        pcm.out[1] = r;
-      }
+      /* update Blip Buffer */
+      blip_add_delta_fast(snd.blips[1], i, l-prev_l, r-prev_r);
+      prev_l = l;
+      prev_r = r;
     }
+
+    /* save last audio outputs */
+    pcm.out[0] = prev_l;
+    pcm.out[1] = prev_r;
   }
   else
   {
-    /* check if PCM left output changed */
-    if (pcm.out[0])
+    /* check if PCM output was not muted */
+    if (prev_l | prev_r)
     {
-      blip_add_delta_fast(blip[0], 0, -pcm.out[0]);
+      blip_add_delta_fast(snd.blips[1], 0, -prev_l, -prev_r);
       pcm.out[0] = 0;
-    }
-
-    /* check if PCM right output changed */
-    if (pcm.out[1])
-    {
-      blip_add_delta_fast(blip[1], 0, -pcm.out[1]);
       pcm.out[1] = 0;
     }
   }
 
   /* end of blip buffer frame */
-  blip_end_frame(blip[0], length);
-  blip_end_frame(blip[1], length);
+  blip_end_frame(snd.blips[1], length);
 
   /* update PCM master clock counter */
   pcm.cycles += length * PCM_SCYCLES_RATIO;
@@ -230,7 +214,7 @@ void pcm_run(unsigned int length)
 void pcm_update(unsigned int samples)
 {
   /* get number of internal clocks (samples) needed */
-  unsigned int clocks = blip_clocks_needed(blip[0], samples);
+  unsigned int clocks = blip_clocks_needed(snd.blips[1], samples);
 
   /* run PCM chip */
   if (clocks > 0)
