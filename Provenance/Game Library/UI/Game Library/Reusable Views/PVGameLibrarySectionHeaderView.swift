@@ -158,7 +158,10 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         }
 
         override var canBecomeFocused: Bool {
-            return true
+            if !collapseButton.isHidden {
+                return true
+            }
+            return false
         }
 
         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
