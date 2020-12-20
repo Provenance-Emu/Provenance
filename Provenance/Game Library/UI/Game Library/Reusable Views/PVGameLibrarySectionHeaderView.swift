@@ -164,18 +164,28 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             return false
         }
 
+        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            guard let button = presses.first?.type else { return }
+
+            switch button {
+            case .rightArrow:
+                myPreferredFocusedView = collapseButton
+                setNeedsFocusUpdate()
+            case .leftArrow:
+                myPreferredFocusedView = self
+                setNeedsFocusUpdate()
+            default:
+                super.pressesEnded(presses, with: event)
+            }
+        }
+
         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
             UIView.transition(with: titleLabel, duration: 0.1, options: .transitionCrossDissolve, animations: {
               self.titleLabel.textColor = .white
             }, completion: nil)
 
-            if isFocused {
-                myPreferredFocusedView = collapseButton
-                setNeedsFocusUpdate()
-            } else {
-                if !collapseButton.isFocused {
-                    titleLabel.textColor = colorForText
-                }
+            if !isFocused && !collapseButton.isFocused {
+                titleLabel.textColor = colorForText
             }
         }
     #endif
