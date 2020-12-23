@@ -97,7 +97,7 @@ final class PVCheatsViewController: UITableViewController {
         if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
             emulatorViewController.core.setPauseEmulation(false)
             emulatorViewController.isShowingMenu = false
-            emulatorViewController.enableContorllerInput(false)
+            emulatorViewController.enableControllerInput(false)
             emulatorViewController.setIsFirstLoad(isFirstLoad: false)
         }
     

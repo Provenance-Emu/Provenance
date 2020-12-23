@@ -60,6 +60,10 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             regex = try! NSRegularExpression(pattern: "^[+]+|:|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
             range = NSMakeRange(0, modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
+            // clean +++
+            regex = try! NSRegularExpression(pattern: "[+]+", options: NSRegularExpression.Options.caseInsensitive)
+            range = NSMakeRange(0, modString.count)
+            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
             NSLog("Formatted CheatCode \(modString)");
 
             if (gameWithCheat.setCheat(code: modString, type:type, enabled:enabled))
@@ -109,7 +113,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
         isShowingMenu = false
-        enableContorllerInput(false)
+        enableControllerInput(false)
     }
 
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
