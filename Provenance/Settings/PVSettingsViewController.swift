@@ -151,6 +151,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             avRows.append(PVSettingsSliderRow(text: "Volume", detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
+            PVSettingsSwitchRow(text: "Integer Scaling", key: \PVSettingsModel.integerScaleEnabled),
             PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
             PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
@@ -158,6 +159,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
         #else
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "Integer Scaling", key: \PVSettingsModel.integerScaleEnabled,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),
