@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* smpc.cpp - SMPC Emulation
-**  Copyright (C) 2015-2017 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -153,6 +153,7 @@ static uint32 SMPC_ClockRatio;
 
 static bool SoundCPUOn;
 static bool SlaveSH2On;
+static int SlaveSH2Pending;
 static bool CDOn;
 
 static uint8 BusBuffer;
@@ -409,6 +410,8 @@ void SMPC_Init(const uint8 area_code_arg, const int32 master_clock_arg)
  MasterClock = master_clock_arg;
  SMPC_ClockRatio = 0;
 
+ SlaveSH2Pending = false;
+
  ResetButtonPhysStatus = false;
  ResetPending = false;
  vb = false;
@@ -427,27 +430,6 @@ void SMPC_Init(const uint8 area_code_arg, const int32 master_clock_arg)
  SMPC_SetRTC(NULL, 0);
 }
 
-bool SMPC_IsSlaveOn(void)
-{
- return SlaveSH2On;
-}
-
-static void SlaveOn(void)
-{
- SlaveSH2On = true;
- CPU[1].AdjustTS(SH7095_mem_timestamp, true);
- CPU[1].Reset(true);
- SS_SetEventNT(&events[SS_EVENT_SH2_S_DMA], SH7095_mem_timestamp + 1);
-}
-
-static void SlaveOff(void)
-{
- SlaveSH2On = false;
- CPU[1].Reset(true);
- CPU[1].AdjustTS(0x7FFFFFFF, true);
- SS_SetEventNT(&events[SS_EVENT_SH2_S_DMA], SS_EVENT_DISABLED_TS);
-}
-
 static void TurnSoundCPUOn(void)
 {
  SOUND_Reset68K();
@@ -464,7 +446,10 @@ static void TurnSoundCPUOff(void)
 
 void SMPC_Reset(bool powering_up)
 {
- SlaveOff();
+ SlaveSH2Pending = 0;
+ SlaveSH2On = false;
+ CPU[1].SetActive(SlaveSH2On);
+ //
  TurnSoundCPUOff();
  CDOn = true; // ? false;
 
@@ -546,6 +531,7 @@ void SMPC_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
   SFVAR(SoundCPUOn),
   SFVAR(SlaveSH2On),
+  SFVAR(SlaveSH2Pending),
   SFVAR(CDOn),
 
   SFVAR(BusBuffer),
@@ -607,6 +593,16 @@ void SMPC_StateAction(StateMem* sm, const unsigned load, const bool data_only)
  {
   JRS.CurPort &= 0x1;
   JRS.OWP &= 0x3F;
+
+  for(unsigned vp = 0; vp < 12; vp++)
+  {
+   IODevice* const p = VirtualPorts[vp];
+
+   if(load < 0x00102600 && p->NextEventTS >= 0x40000000)
+    p->NextEventTS = SS_EVENT_DISABLED_TS;
+   else
+    p->NextEventTS = std::max<sscpu_timestamp_t>(0, p->NextEventTS);
+  }
  }
 }
 
@@ -620,6 +616,18 @@ void SMPC_TransformInput(void)
   VirtualPorts[vp]->TransformInput(VirtualPortsDPtr[vp], gun_x_scale, gun_x_offs);
 }
 
+void SMPC_ProcessSlaveOffOn(void)
+{
+ if(SlaveSH2Pending)
+ {
+  SlaveSH2On = (SlaveSH2Pending > 0);
+  CPU[1].SetActive(SlaveSH2On);
+  SlaveSH2Pending = 0;
+  //
+  SS_DBGTI(SS_DBG_SMPC, "[SMPC]  Slave pending processed; SlaveSH2On=%d", SlaveSH2On);
+ }
+}
+
 int32 SMPC_StartFrame(EmulateSpecStruct* espec)
 {
  if(ResetPending)
@@ -630,9 +638,6 @@ int32 SMPC_StartFrame(EmulateSpecStruct* espec)
   CurrentClockDivisor = PendingClockDivisor;
   PendingClockDivisor = 0;
  }
-
- if(!SlaveSH2On)
-  CPU[1].AdjustTS(0x7FFFFFFF, true);
 
  SMPC_ClockRatio = (1ULL << 32) * 4000000 * CurrentClockDivisor / MasterClock;
  SOUND_SetClockRatio((1ULL << 32) * 11289600 * CurrentClockDivisor / MasterClock);
@@ -845,6 +850,17 @@ void SMPC_ResetTS(void)
 
  lastts = 0;
 }
+
+#define SMPC_WAIT_UNTIL_COND_SHORT(cond)  {				\
+			    case __COUNTER__:				\
+			    ClockCounter = 0; /* before if(), not after, otherwise the variable will overflow eventually. */	\
+			    if(!(cond))					\
+			    {						\
+			     SubPhase = __COUNTER__ - SubPhaseBias - 1;	\
+			     next_event_ts = timestamp + 8;		\
+			     goto Breakout;				\
+			    }						\
+			   }
 
 #define SMPC_WAIT_UNTIL_COND(cond)  {					\
 			    case __COUNTER__:				\
@@ -1062,16 +1078,6 @@ sscpu_timestamp_t SMPC_Update(sscpu_timestamp_t timestamp)
     {
 
     }
-    else if(ExecutingCommand == CMD_SSHON)
-    {
-     if(!SlaveSH2On)
-      SlaveOn();
-    }
-    else if(ExecutingCommand == CMD_SSHOFF)
-    {
-     if(SlaveSH2On)
-      SlaveOff();
-    }
     else if(ExecutingCommand == CMD_SNDON)
     {
      if(!SoundCPUOn)
@@ -1094,7 +1100,6 @@ sscpu_timestamp_t SMPC_Update(sscpu_timestamp_t timestamp)
     {
      ResetPending = true;
      SMPC_WAIT_UNTIL_COND(!ResetPending);
-
      // TODO/FIXME(unreachable currently?):
     }
     else if(ExecutingCommand == CMD_CKCHG352 || ExecutingCommand == CMD_CKCHG320)
@@ -1102,7 +1107,10 @@ sscpu_timestamp_t SMPC_Update(sscpu_timestamp_t timestamp)
      // Devour some time
 
      if(SlaveSH2On)
-      SlaveOff();
+     {
+      SlaveSH2Pending = -1;
+      SS_RequestEHLExit();
+     }
  
      if(SoundCPUOn)
       TurnSoundCPUOff();
@@ -1211,7 +1219,14 @@ sscpu_timestamp_t SMPC_Update(sscpu_timestamp_t timestamp)
 	 UpdateIOBus(JRS.CurPort, timestamp);									\
 	}
 
-      JR_WAIT(!vb);
+      JR_WAIT(!vb || (IREG[0] & 0x40));
+
+      if(IREG[0] & 0x40)
+      {
+       SS_DBGTI(SS_DBG_SMPC, "[SMPC] Break (early)");
+       goto AbortJR;
+      }
+
       JRS.NextContBit = true;
       if(SR & SR_NPE)
       {
@@ -1461,6 +1476,26 @@ sscpu_timestamp_t SMPC_Update(sscpu_timestamp_t timestamp)
     else if(ExecutingCommand == CMD_RESDISA)
     {
      ResetNMIEnable = false;
+    }
+    else if(ExecutingCommand == CMD_SSHON)
+    {
+     if(!SlaveSH2On)
+     {
+      SlaveSH2Pending = 1;
+      SS_RequestEHLExit();
+      SMPC_WAIT_UNTIL_COND_SHORT(!SlaveSH2Pending);
+      SS_DBGTI(SS_DBG_SMPC, "[SMPC]  SlaveSH2Pending wait loop end.");
+     }
+    }
+    else if(ExecutingCommand == CMD_SSHOFF)
+    {
+     if(SlaveSH2On)
+     {
+      SlaveSH2Pending = -1;
+      SS_RequestEHLExit();
+      SMPC_WAIT_UNTIL_COND_SHORT(!SlaveSH2Pending);
+      SS_DBGTI(SS_DBG_SMPC, "[SMPC]  SlaveSH2Pending wait loop end.");
+     }
     }
    }
 

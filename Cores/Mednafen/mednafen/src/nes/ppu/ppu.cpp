@@ -1037,47 +1037,47 @@ static void FetchSpriteData(void)
                  if(n == 0)
 		  sb=1;
 
-                  uint8 *C;
-                  int t;
-                  unsigned int vadr;
+                 uint8 *C;
+                 int t;
+                 unsigned int vadr;
 
-                  t = (int)scanline-(spr->y);
+                 t = (int)scanline-(spr->y);
 
-                  if (Sprite16)
-                   vadr = ((spr->no&1)<<12) + ((spr->no&0xFE)<<4);
-                  else
-                   vadr = (spr->no<<4)+vofs;
+                 if (Sprite16)
+                  vadr = ((spr->no&1)<<12) + ((spr->no&0xFE)<<4);
+                 else
+                  vadr = (spr->no<<4)+vofs;
 
-                  if (spr->atr&V_FLIP)
-                  {
+                 if (spr->atr&V_FLIP)
+                 {
                         vadr+=7;
                         vadr-=t;
                         vadr+=(P0&0x20)>>1;
                         vadr-=t&8;
-                  }
-                  else
-                  {
+                 }
+                 else
+                 {
                         vadr+=t;
                         vadr+=t&8;
-                  }
+                 }
 
-                  if(MMC5Hack && geniestage!=1 && Sprite16) C = MMC5SPRVRAMADR(vadr);
-                  else C = VRAMADR(vadr);
-                  dst->ca[0]=C[0];
+                 if(MMC5Hack && geniestage!=1 && Sprite16) C = MMC5SPRVRAMADR(vadr);
+                 else C = VRAMADR(vadr);
+                 dst->ca[0]=C[0];
 
-		  if(PPU_hook && ns < 8)
-		  {
-                   PPU_hook(0x2000);
-                   PPU_hook(vadr);
-                  }
+		 if(PPU_hook && ns < 8)
+		 {
+                  PPU_hook(0x2000);
+                  PPU_hook(vadr);
+                 }
 
-                  dst->ca[1]=C[8];
+                 dst->ca[1]=C[8];
 
-                  if(PPU_hook && ns<8)
-                   PPU_hook(vadr | 8);
+                 if(PPU_hook && ns<8)
+                  PPU_hook(vadr | 8);
 
-                  dst->x=spr->x;
-                  dst->atr=spr->atr;
+                 dst->x=spr->x;
+                 dst->atr=spr->atr;
 
                  ns++;
                 }
@@ -1722,61 +1722,52 @@ static void DoGfxDecode(void)
    neo_palette[x] = GfxDecode_Buf->format.MakeColor(x * 85, x * 85, x * 85, 0xFF);
  }
  else
+ {
   for(int x = 0; x < 4; x++)
    neo_palette[x] = CM.PALRAMLUTCache[PALRAMCache[pbn * 4 + x] & 0x3F] | GfxDecode_Buf->format.MakeColor(0, 0, 0, 0xFF);
+ }
 
-  for(int y = 0; y < GfxDecode_Buf->h; y++)
+ for(int y = 0; y < GfxDecode_Buf->h; y++)
+ {
+  for(int x = 0; x < GfxDecode_Buf->w; x+=8)
   {
-   for(int x = 0; x < GfxDecode_Buf->w; x+=8)
+   unsigned which_tile = (x / 8) + (GfxDecode_Scroll + (y / 8)) * (GfxDecode_Buf->w / 8);
+   unsigned tile_c = 0;
+
+   uint8 *cg_ptr;
+   uint8 cg[2];
+
+   if(MMC5Hack)
    {
-    unsigned which_tile = (x / 8) + (GfxDecode_Scroll + (y / 8)) * (GfxDecode_Buf->w / 8);
-    unsigned tile_c = 0;
-
-    uint8 *cg_ptr;
-    uint8 cg[2];
-
-    if(MMC5Hack)
+    if(GfxDecode_Layer) // Sprites
     {
-     if(GfxDecode_Layer) // Sprites
+     //which_tile &= 0x1FF;
+     cg_ptr = MMC5SPRVRAMADR(which_tile * 16);
+     tile_c = 0x200;
+    }
+    else
+    {
+     switch(MMC5HackCHRMode)
      {
-      //which_tile &= 0x1FF;
-      cg_ptr = MMC5SPRVRAMADR(which_tile * 16);
+      case 1: break;
+      default: //which_tile &= 0x1FF;
+		cg_ptr = MMC5BGVRAMADR(which_tile * 16);
+		tile_c = 0x200;
+		break;
+     }
+    }
+   }
+   else
+   {
+    if(GfxDecode_Layer) // Sprites
+    {
+     if(Sprite16)
+     {
       tile_c = 0x200;
      }
      else
      {
-      switch(MMC5HackCHRMode)
-      {
-       case 1: break;
-       default: //which_tile &= 0x1FF;
-                cg_ptr = MMC5BGVRAMADR(which_tile * 16);
-		tile_c = 0x200;
-		break;
-      }
-     }
-    }
-    else
-    {
-     if(GfxDecode_Layer) // Sprites
-     {
-      if(Sprite16)
-      {
-       tile_c = 0x200;
-      }
-      else
-      {
-       if(SpAdrHI)
-       {
-	which_tile += 0x100;
-	tile_c = 0x200;
-       }
-       else
-	tile_c = 0x100;
-      }
-     }
-     else // Background
-     {
-      if(BGAdrHI)
+      if(SpAdrHI)
       {
        which_tile += 0x100;
        tile_c = 0x200;
@@ -1784,30 +1775,41 @@ static void DoGfxDecode(void)
       else
        tile_c = 0x100;
      }
-
-     cg_ptr = VRAMADR(which_tile * 16);
     }
-
-    if(which_tile >= tile_c)
+    else // Background
     {
-     for(int sx = 0; sx < 8; sx++) target[x + sx] = GfxDecode_Buf->format.MakeColor(0, 0, 0, 0);
-     continue;
+     if(BGAdrHI)
+     {
+      which_tile += 0x100;
+      tile_c = 0x200;
+     }
+     else
+      tile_c = 0x100;
     }
 
-    cg[0] = cg_ptr[0 + (y & 0x7)];
-    cg[1] = cg_ptr[8 + (y & 0x7)];
-
-    for(int sx = 0; sx < 8; sx++)
-     target[x + sx] = neo_palette[((cg[0] >> (7-sx)) & 0x1) | (((cg[1] >> (7-sx)) & 0x1) << 1)];
-
-    target[x + GfxDecode_Buf->w*2 + 0] = target[x + GfxDecode_Buf->w*2 + 1] = target[x + GfxDecode_Buf->w*2 + 2] = target[x + GfxDecode_Buf->w*2 + 3] =
-    target[x + GfxDecode_Buf->w*2 + 4] = target[x + GfxDecode_Buf->w*2 + 5] = target[x + GfxDecode_Buf->w*2 + 6] = target[x + GfxDecode_Buf->w*2 + 7] = which_tile * 16;
-
-    target[x + GfxDecode_Buf->w*1 + 0]=target[x + GfxDecode_Buf->w*1 + 1]=target[x + GfxDecode_Buf->w*1 + 2]=target[x + GfxDecode_Buf->w*1 + 3] =
-    target[x + GfxDecode_Buf->w*1 + 4]=target[x + GfxDecode_Buf->w*1 + 5]=target[x + GfxDecode_Buf->w*1 + 6]=target[x + GfxDecode_Buf->w*1 + 7] = which_tile;
+    cg_ptr = VRAMADR(which_tile * 16);
    }
-   target += GfxDecode_Buf->w * 3;
+
+   if(which_tile >= tile_c)
+   {
+    for(int sx = 0; sx < 8; sx++) target[x + sx] = GfxDecode_Buf->format.MakeColor(0, 0, 0, 0);
+    continue;
+   }
+
+   cg[0] = cg_ptr[0 + (y & 0x7)];
+   cg[1] = cg_ptr[8 + (y & 0x7)];
+
+   for(int sx = 0; sx < 8; sx++)
+    target[x + sx] = neo_palette[((cg[0] >> (7-sx)) & 0x1) | (((cg[1] >> (7-sx)) & 0x1) << 1)];
+
+   target[x + GfxDecode_Buf->w*2 + 0] = target[x + GfxDecode_Buf->w*2 + 1] = target[x + GfxDecode_Buf->w*2 + 2] = target[x + GfxDecode_Buf->w*2 + 3] =
+   target[x + GfxDecode_Buf->w*2 + 4] = target[x + GfxDecode_Buf->w*2 + 5] = target[x + GfxDecode_Buf->w*2 + 6] = target[x + GfxDecode_Buf->w*2 + 7] = which_tile * 16;
+
+   target[x + GfxDecode_Buf->w*1 + 0]=target[x + GfxDecode_Buf->w*1 + 1]=target[x + GfxDecode_Buf->w*1 + 2]=target[x + GfxDecode_Buf->w*1 + 3] =
+   target[x + GfxDecode_Buf->w*1 + 4]=target[x + GfxDecode_Buf->w*1 + 5]=target[x + GfxDecode_Buf->w*1 + 6]=target[x + GfxDecode_Buf->w*1 + 7] = which_tile;
   }
+  target += GfxDecode_Buf->w * 3;
+ }
 }
 
 }

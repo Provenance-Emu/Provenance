@@ -55,7 +55,6 @@ enum
 };
 
 void SMPC_Init(const uint8 area_code, const int32 master_clock) MDFN_COLD;
-bool SMPC_IsSlaveOn(void);
 void SMPC_Reset(bool powering_up) MDFN_COLD;
 void SMPC_LoadNV(Stream* s) MDFN_COLD;
 void SMPC_SaveNV(Stream* s) MDFN_COLD;
@@ -69,6 +68,7 @@ uint8 SMPC_Read(const sscpu_timestamp_t timestamp, uint8 A) MDFN_HOT;
 sscpu_timestamp_t SMPC_Update(sscpu_timestamp_t timestamp);
 void SMPC_ResetTS(void);
 
+void SMPC_ProcessSlaveOffOn(void);
 int32 SMPC_StartFrame(EmulateSpecStruct* espec);
 void SMPC_EndFrame(EmulateSpecStruct* espec, sscpu_timestamp_t timestamp);
 void SMPC_TransformInput(void);

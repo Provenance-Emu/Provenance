@@ -499,6 +499,7 @@ static const RegGroupType CPURegsGroup =
 
 static DebuggerInfoStruct DBGInfo =
 {
+ true,
  "cp437",
  3,
  1,             // Instruction alignment(bytes)

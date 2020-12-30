@@ -387,7 +387,8 @@ static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
     
     static int16_t sound_buf[0x10000];
-	int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
+    int32 rects[game->fb_height];//int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
+    memset(rects, 0, game->fb_height*sizeof(int32));
     rects[0] = ~0;
 
 	current->spec = {0};
@@ -410,28 +411,38 @@ static void emulation_run(BOOL skipFrame) {
     // is up to date while respecting the current game speed setting
     [current setGameSpeed:[current gameSpeed]];
 
-    if(current->_systemType == MednaSystemPSX)
-    {
-        current->videoWidth = rects[current->spec.DisplayRect.y];
-        current->videoOffsetX = current->spec.DisplayRect.x;
-    }
-    else if(game->multires)
-    {
-        current->videoWidth = rects[current->spec.DisplayRect.y];
-        current->videoOffsetX = current->spec.DisplayRect.x;
-    }
-    else
-    {
-        current->videoWidth = current->spec.DisplayRect.w;
-        current->videoOffsetX = current->spec.DisplayRect.x;
-    }
-
-    current->videoHeight = current->spec.DisplayRect.h;
+    current->videoOffsetX = current->spec.DisplayRect.x;
     current->videoOffsetY = current->spec.DisplayRect.y;
+    if(game->multires) {
+        current->videoWidth = rects[current->spec.DisplayRect.y];
+    }
+    else {
+        current->videoWidth = current->spec.DisplayRect.w ?: rects[current->spec.DisplayRect.y];
+    }
+    current->videoHeight  = current->spec.DisplayRect.h;
+    
+//    if(current->_systemType == MednaSystemPSX)
+//    {
+//        current->videoWidth = rects[current->spec.DisplayRect.y];
+//        current->videoOffsetX = current->spec.DisplayRect.x;
+//    }
+//    else if(game->multires)
+//    {
+//        current->videoWidth = rects[current->spec.DisplayRect.y];
+//        current->videoOffsetX = current->spec.DisplayRect.x;
+//    }
+//    else
+//    {
+//        current->videoWidth = current->spec.DisplayRect.w;
+//        current->videoOffsetX = current->spec.DisplayRect.x;
+//    }
+//
+//    current->videoHeight = current->spec.DisplayRect.h;
+//    current->videoOffsetY = current->spec.DisplayRect.y;
 
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
 
-	delete[] rects;
+	//delete[] rects;
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
@@ -887,7 +898,7 @@ static void emulation_run(BOOL skipFrame) {
 
 - (NSTimeInterval)frameInterval
 {
-    return mednafenCoreTiming ?: 59.92;
+    return mednafenCoreTiming ?: 60;
 }
 
 # pragma mark - Video

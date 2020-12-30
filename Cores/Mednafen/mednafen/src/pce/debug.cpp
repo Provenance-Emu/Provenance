@@ -1094,6 +1094,7 @@ static void SetGraphicsDecode(MDFN_Surface *surface, int line, int which, int xs
 
 DebuggerInfoStruct PCEDBGInfo =
 {
+ false,
  "shift_jis",
  7,
  1,             // Instruction alignment(bytes)

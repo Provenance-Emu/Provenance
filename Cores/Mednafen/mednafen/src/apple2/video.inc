@@ -481,7 +481,7 @@ static NO_INLINE void Tick(void)
   if(text)
   {
    uint8 fd = FontData[((ram_data & 0x3F) << 3) | (VCounter & 0x7)];
-   bool invert = !(ram_data & 0x80) & (!(ram_data & 0x40) | !flashything);
+   bool invert = (!(ram_data & 0x80)) & (!(ram_data & 0x40) | !flashything);
 
    if(invert)
     fd ^= 0x7F;

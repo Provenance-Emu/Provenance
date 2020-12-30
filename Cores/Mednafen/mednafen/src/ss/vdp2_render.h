@@ -55,8 +55,8 @@ struct VDP2Rend_LIB
 VDP2Rend_LIB* VDP2REND_GetLIB(unsigned line);
 void VDP2REND_DrawLine(int vdp2_line, const uint32 crt_line, const bool field);
 
-void VDP2REND_Write8_DB(uint32 A, uint16 DB);
-void VDP2REND_Write16_DB(uint32 A, uint16 DB);
+void VDP2REND_Write8_DB(uint32 A, uint16 DB) MDFN_HOT;
+void VDP2REND_Write16_DB(uint32 A, uint16 DB) MDFN_HOT;
 
 }
 

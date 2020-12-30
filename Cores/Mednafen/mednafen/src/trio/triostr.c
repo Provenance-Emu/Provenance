@@ -160,7 +160,7 @@ struct _trio_string_t
  */
 
 #if !defined(TRIO_EMBED_STRING)
-static TRIO_CONST char rcsid[] = "@(#)$Id: triostr.c,v 1.36 2010/01/26 13:02:02 breese Exp $";
+//static TRIO_CONST char rcsid[] = "@(#)$Id: triostr.c,v 1.36 2010/01/26 13:02:02 breese Exp $";
 #endif
 
 /*************************************************************************

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AF2CF4C259CBB8E00E6A51F /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
+		0AF2CF85259CBB9D00E6A51F /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
 		11AFB2BE24880B99000A3922 /* ExtMemStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */; };
 		11AFB2BF24880B99000A3922 /* ExtMemStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */; };
 		11AFB2C024880B99000A3922 /* VirtualFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BB24880B98000A3922 /* VirtualFS.cpp */; };
@@ -9137,6 +9139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF2CF85259CBB9D00E6A51F /* superfx.cpp in Sources */,
 				B324C5502191AAD1009F4EDC /* input.cpp in Sources */,
 				11AFB31A24881207000A3922 /* sa1cpu.cpp in Sources */,
 				B324C5512191AAD1009F4EDC /* ppu.cpp in Sources */,
@@ -10178,6 +10181,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF2CF4C259CBB8E00E6A51F /* superfx.cpp in Sources */,
 				B3FBDFA9207FF5F200E661D1 /* input.cpp in Sources */,
 				11AFB31324881206000A3922 /* sa1cpu.cpp in Sources */,
 				B3FBDFA8207FF5F200E661D1 /* ppu.cpp in Sources */,
@@ -10531,9 +10535,9 @@
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10649,9 +10653,9 @@
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10703,9 +10707,9 @@
 					"-fjump-tables",
 					"-ftree-vectorize",
 					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"-DMEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"-DPSS_STYLE=1",
 					"-DMPC_FIXED_POINT",
 					"-DARCH_ARM",
@@ -11309,9 +11313,9 @@
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -11363,9 +11367,9 @@
 					"-fjump-tables",
 					"-ftree-vectorize",
 					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"-DMEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"-DPSS_STYLE=1",
 					"-DMPC_FIXED_POINT",
 					"-DARCH_ARM",
@@ -11444,7 +11448,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -11507,6 +11511,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15761,7 +15766,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15825,7 +15830,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15891,6 +15896,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15951,6 +15957,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";

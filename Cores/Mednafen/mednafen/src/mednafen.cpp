@@ -32,7 +32,7 @@
 
 #include <mednafen/NativeVFS.h>
 
-//#include <minilzo/minilzo.h>
+#include <minilzo/minilzo.h>
 
 #include <trio/trio.h>
 
@@ -1425,7 +1425,7 @@ bool MDFNI_InitializeModules(void)
   &EmulatedCDPlay,
   &EmulatedDEMO
  };
- static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102402, "Bad MEDNAFEN_VERSION_NUMERIC");
+    static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102601, "Bad MEDNAFEN_VERSION_NUMERIC");
 
  for(unsigned int i = 0; i < sizeof(InternalSystems) / sizeof(MDFNGI *); i++)
   AddSystem(InternalSystems[i]);
