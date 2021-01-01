@@ -356,12 +356,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if let aRecognizer = menuGestureRecognizer {
                 view.addGestureRecognizer(aRecognizer)
             }
-        #endif
-        GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
-            $0.controllerPausedHandler = { controller in
-                self.controllerPauseButtonPressed(controller)
+        #else
+            GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
+                $0.controllerPausedHandler = { controller in
+                    self.controllerPauseButtonPressed(controller)
+                }
             }
-        }
+        #endif
     }
 
     public override func viewDidAppear(_: Bool) {
