@@ -342,11 +342,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.outputDeviceID = 0
         gameAudio.start()
 
-        // stupid bug in tvOS 9.2
-        // the controller paused handler (if implemented) seems to cause a 'back' navigation action
-        // as well as calling the pause handler itself. Which breaks the menu functionality.
-        // But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
-        // Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
         #if os(tvOS)
             // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
             if menuGestureRecognizer == nil {
@@ -356,12 +351,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if let aRecognizer = menuGestureRecognizer {
                 view.addGestureRecognizer(aRecognizer)
             }
-        #endif
-        GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
-            $0.controllerPausedHandler = { controller in
-                self.controllerPauseButtonPressed(controller)
+        #else
+            GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
+                $0.controllerPausedHandler = { controller in
+                    self.controllerPauseButtonPressed(controller)
+                }
             }
-        }
+        #endif
     }
 
     public override func viewDidAppear(_: Bool) {
