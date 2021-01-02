@@ -254,6 +254,7 @@ extension MirroredSettings {
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
     public dynamic var nativeScaleEnabled = true
+    public dynamic var integerScaleEnabled = false
 
     public dynamic var showRecentSaveStates = true
     public dynamic var showGameBadges = true
