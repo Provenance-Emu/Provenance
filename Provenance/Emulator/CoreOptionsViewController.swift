@@ -110,6 +110,11 @@ final class CoreOptionsViewController: QuickTableViewController {
             return Section(title: $0.title, rows: rows)
         }
 
+        #if os(tvOS)
+            self.tableView.backgroundColor = .black
+            self.tableView.mask = nil;
+        #endif
+
         tableContents = sections
     }
 }

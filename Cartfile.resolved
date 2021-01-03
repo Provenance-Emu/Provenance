@@ -1,8 +1,6 @@
 github "CocoaLumberjack/CocoaLumberjack" "3.7.0"
-github "Puasonych/XLActionController" "29fe09f0ebb655b4941ca2392c59ee28e192ad84"
 github "ReactiveX/RxSwift" "5.1.1"
 github "RxSwiftCommunity/RxDataSources" "4.0.1"
-github "RxSwiftCommunity/RxGesture" "3.0.3"
 github "ZipArchive/ZipArchive" "v2.2.3"
 github "ashleymills/Reachability.swift" "v5.0.0"
 github "bcylin/QuickTableViewController" "v1.2.4"

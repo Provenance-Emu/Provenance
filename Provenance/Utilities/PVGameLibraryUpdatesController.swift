@@ -40,11 +40,11 @@ struct PVGameLibraryUpdatesController {
         self.gameImporterEvents = Reactive(gameImporter).events.share()
 
         let directoryWatcher = RxDirectoryWatcher(directory: importPath)
-        let directoryWatcherExtractedFiles = directoryWatcher.events.debug("🚨 directoryWatcher2").finishedExtracting(at: importPath)
+        let directoryWatcherExtractedFiles = directoryWatcher.events.finishedExtracting(at: importPath)
 
         let initialScan: Observable<[URL]> = gameImporterEvents
             .filter { $0 == .initialized }
-            .map { _ in try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])}
+            .map { _ in try FileManager.default.contentsOfDirectory(at: importPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])}
             .filter { !$0.isEmpty }
 
         let filesToImport = Observable.merge(initialScan, directoryWatcherExtractedFiles)

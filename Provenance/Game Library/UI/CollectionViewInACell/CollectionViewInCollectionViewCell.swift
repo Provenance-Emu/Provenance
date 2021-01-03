@@ -23,7 +23,7 @@ protocol SubCellItem {
 class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
     var minimumInteritemSpacing: CGFloat {
         #if os(tvOS)
-            return 50
+            return 16
         #else
             return 8.0
         #endif

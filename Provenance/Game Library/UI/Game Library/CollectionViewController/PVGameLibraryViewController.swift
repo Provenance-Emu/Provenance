@@ -27,8 +27,8 @@ let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
-let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateColletionCell"
-let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedColletionCell"
+let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateCollectionCell"
+let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCell"
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
@@ -181,7 +181,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleCacheEmptied(_:)), name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArchiveInflationFailed(_:)), name: NSNotification.Name.PVArchiveInflationFailed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
@@ -311,22 +310,38 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     return false
                 }()
                 header.viewModel = .init(title: section.header, collapsable: section.collapsable != nil, collapsed: collapsed)
-                #if canImport(RxGesture)
-                if let collapsable = section.collapsable {
-                    header.collapseImageView.rx.tapGesture()
-                        .when(.recognized)
-                        .withLatestFrom(self.collapsedSystems)
-                        .map({ (collapsedSystems: Set<String>) in
-                            switch collapsable {
-                            case .collapsed(let token):
-                                return collapsedSystems.subtracting([token])
-                            case .notCollapsed(let token):
-                                return collapsedSystems.union([token])
-                            }
-                        })
-                        .bind(to: self.collapsedSystems)
-                        .disposed(by: header.disposeBag)
-                }
+                #if os(iOS)
+                header.collapseButton.rx.tap
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsable {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
+                #endif
+                #if os(tvOS)
+                header.collapseButton.rx.primaryAction
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsable {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
+                    header.updateFocusIfNeeded()
                 #endif
                 return header
             case UICollectionView.elementKindSectionFooter:
@@ -403,9 +418,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
         #if os(tvOS)
-            collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+            collectionView.contentInset = UIEdgeInsets(top: 0, left: 80, bottom: 40, right: 80)
             collectionView.remembersLastFocusedIndexPath = false
             collectionView.clipsToBounds = false
+            collectionView.backgroundColor = .black 
         #else
             collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
             searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
@@ -783,7 +799,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             // show alert view
             showServerActiveAlert()
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
@@ -812,6 +828,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 }, onError: { error in
                     ELOG(error.localizedDescription)
                 }, onCompleted: {
+                    hud.hide(true)
                     UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
                 })
                 .disposed(by: disposeBag)
@@ -865,36 +882,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         present(alert, animated: true) { () -> Void in }
     }
 
-    @objc func handleRefreshLibrary(_: Notification) {
-//        let config = PVEmulatorConfiguration.
-//        let documentsPath: String = config.documentsPath
-//        let romPaths = database.all(PVGame.self).map { (game) -> String in
-//            let path: String = URL(fileURLWithPath: documentsPath).appendingPathComponent(game.romPath).path
-//            return path
-//        }
-
-        let database = RomDatabase.sharedInstance
-        do {
-            try database.deleteAll()
-        } catch {
-            ELOG("Failed to delete all objects. \(error.localizedDescription)")
-        }
-
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
-        }
-    }
-
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
         let actionSheet = contextMenu(for: item, cell: cell, point: point)
 
-        if traitCollection.userInterfaceIdiom == .pad {
-            actionSheet.popoverPresentationController?.sourceView = cell
-            actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-        }
-
-        present(actionSheet, animated: true)
+        presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
+                                                               sourceView: cell)
     }
 
     private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIAlertController {
@@ -913,7 +906,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
 
-    private func contextMenu(for game: PVGame, sender: Any?) -> UIAlertController {
+    private func contextMenu(for game: PVGame, sender: UIView) -> UIAlertController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         #if os(tvOS)
         actionSheet.message = "Options for \(game.title)"
@@ -965,16 +958,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: { (_: UIAlertAction) -> Void in
             let md5URL = "provenance://open?md5=\(game.md5Hash)"
             UIPasteboard.general.string = md5URL
-            let alert = UIAlertController(title: nil, message: "URL copied to clipboard", preferredStyle: .alert)
+            let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
             self.present(alert, animated: true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                 alert.dismiss(animated: true, completion: nil)
             })
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
-            self.chooseCustomArtwork(for: game)
-        }))
+        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default) { [self] _ in
+            self.chooseCustomArtwork(for: game, sourceView: sender)
+        })
 
         actionSheet.addAction(UIAlertAction(title: "Paste Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.pasteCustomArtwork(for: game)
@@ -1071,7 +1064,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             .subscribe(onCompleted: {
                 self.collectionView?.reloadData()
             }, onError: { error in
-                ELOG("Failed to toggle Favourite for game \(game.title)")
+                ELOG("Failed to toggle Favorite for game \(game.title)")
             })
             .disposed(by: disposeBag)
     }
@@ -1085,7 +1078,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     func renameGame(_ game: PVGame) {
-        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title):", preferredStyle: .alert)
         alert.addTextField(configurationHandler: { (_ textField: UITextField) -> Void in
             textField.placeholder = game.title
             textField.text = game.title
@@ -1110,7 +1103,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     #if os(iOS)
-        func chooseCustomArtwork(for game: PVGame) {
+    private func chooseCustomArtwork(for game: PVGame, sourceView: UIView) {
             weak var weakSelf: PVGameLibraryViewController? = self
             let imagePickerActionSheet = UIAlertController(title: "Choose Artwork", message: "Choose the location of the artwork.\n\nUse Latest Photo: Use the last image in the camera roll.\nTake Photo: Use the camera to take a photo.\nChoose Photo: Use the camera roll to choose an image.", preferredStyle: .actionSheet)
             
@@ -1171,10 +1164,20 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             imagePickerActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
                 imagePickerActionSheet.dismiss(animated: true, completion: nil)
             }))
-            present(imagePickerActionSheet, animated: true, completion: nil)
+        
+            presentActionSheetViewControllerForPopoverPresentation(imagePickerActionSheet, sourceView: sourceView)
+        }
+    
+        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIAlertController, sourceView: UIView) {
+            if traitCollection.userInterfaceIdiom == .pad {
+                alertController.popoverPresentationController?.sourceView = sourceView
+                alertController.popoverPresentationController?.sourceRect = sourceView.bounds
+            }
+            
+            present(alertController, animated: true)
         }
 
-        func pasteCustomArtwork(for game: PVGame) {
+        private func pasteCustomArtwork(for game: PVGame) {
             let pb = UIPasteboard.general
             var pastedImageMaybe: UIImage? = pb.image
 
@@ -1219,7 +1222,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 90)
+            return CGSize(width: view.bounds.size.width, height: 60)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif
@@ -1239,7 +1242,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
             dismiss(animated: true) { () -> Void in }
             let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
-            if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.5) {
+            if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.85) {
                 let hash = (imageData as NSData).md5Hash
 
                 do {

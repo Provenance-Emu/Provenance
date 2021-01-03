@@ -14,7 +14,7 @@ final class PViCadeControllerViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         #if os(tvOS)
-            tableView.backgroundColor = UIColor.clear
+            tableView.backgroundColor = UIColor.black
             tableView.backgroundView = nil
         #endif
     }

@@ -88,7 +88,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 - (NSError * _Nonnull)createError:(NSString * _Nonnull)message {
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: message,
-                               NSLocalizedFailureReasonErrorKey: @"Core does not impliment this method.",
+                               NSLocalizedFailureReasonErrorKey: @"Core does not implement this method.",
                                NSLocalizedRecoverySuggestionErrorKey: @"Write this method."
                                };
 

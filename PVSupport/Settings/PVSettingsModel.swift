@@ -230,7 +230,7 @@ extension MirroredSettings {
         @objc public dynamic var iCloudSync = false
 //        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
-        @objc public dynamic var multiThreadedGL = false
+        @objc public dynamic var multiThreadedGL = true
         @objc public dynamic var multiSampling = true
     }
 
@@ -254,6 +254,7 @@ extension MirroredSettings {
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
     public dynamic var nativeScaleEnabled = true
+    public dynamic var integerScaleEnabled = false
 
     public dynamic var showRecentSaveStates = true
     public dynamic var showGameBadges = true

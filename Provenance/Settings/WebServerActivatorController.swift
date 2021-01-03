@@ -24,11 +24,13 @@ protocol WebServerActivatorController: class {
             let webServerAddress: String = PVWebServer.shared.urlString
             let webDavAddress: String = PVWebServer.shared.webDavURLString
             let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
-
+            Read about how to import ROMs on the Provenance wiki at:
+            https://wiki.provenance-emu.com
+            
+            Upload/Download files to your device at:
+            
             \(webServerAddress)  ᵂᵉᵇᵁᴵ
-            \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
+            \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
             """
             return message
         }
@@ -66,11 +68,13 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let webServerAddress: String = PVWebServer.shared.urlString
         let webDavAddress: String = PVWebServer.shared.webDavURLString
         let message = """
-        Read Importing ROMs wiki…
-        Upload/Download files at:
-
+        Read about how to import ROMs on the Provenance wiki at:
+        https://wiki.provenance-emu.com
+            
+        Upload/Download files to your device at:
+           
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
-        \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+        \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
         """
         return message
     }
@@ -105,7 +109,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                 }
             } else {
                 // Display error
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }

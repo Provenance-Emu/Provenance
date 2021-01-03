@@ -19,6 +19,7 @@ extension PVSearchViewController {
         let searchController = UISearchController(searchResultsController: searchViewController)
         searchViewController.searchController = searchController
         let searchContainerController = UISearchContainerViewController(searchController: searchController)
+        searchController.view.backgroundColor = .black
         searchContainerController.title = "Search"
         return UINavigationController(rootViewController: searchContainerController)
     }
@@ -32,7 +33,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
     init(gameLibrary: PVGameLibrary) {
         self.gameLibrary = gameLibrary
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.sectionInset = .init(top: 20, left: 0, bottom: 20, right: 0)
+        flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         super.init(collectionViewLayout: flowLayout)
     }
 
@@ -46,6 +47,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
             collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         #else
             collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            collectionView?.backgroundColor = .black
         #endif
         collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 
@@ -77,6 +79,8 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
                 let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
                 let (action, selected) = UIAlertAction.createReactive(title: "Toggle Favorite", style: .default)
                 actionSheet.addAction(action)
+                let (cancel) = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                actionSheet.addAction(cancel)
                 self.present(actionSheet, animated: true)
                 return selected.map { _ in game }
             })

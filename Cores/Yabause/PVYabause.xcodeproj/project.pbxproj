@@ -159,7 +159,7 @@
 
 /* Begin PBXFileReference section */
 		3D62E059186FF54200EA37B2 /* PVYabause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause.h; sourceTree = "<group>"; };
-		946C18D51714A48600C64BF9 /* gen68k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gen68k; sourceTree = BUILT_PRODUCTS_DIR; };
+		946C18D51714A48600C64BF9 /* gen68k.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gen68k.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		946CA3BB18495D3400CCA369 /* japmodem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = japmodem.c; sourceTree = "<group>"; };
 		946CA3BC18495D3400CCA369 /* japmodem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = japmodem.h; sourceTree = "<group>"; };
 		B316B4EF21927BD600693472 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -378,7 +378,7 @@
 		EB3297111522671200307B0C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				946C18D51714A48600C64BF9 /* gen68k */,
+				946C18D51714A48600C64BF9 /* gen68k.app */,
 				B32775231E9C8444000FEC38 /* PVYabause.framework */,
 				B38DD45F218D5B0E00BF6C66 /* PVYabause-tvOS.framework */,
 			);
@@ -638,7 +638,7 @@
 			);
 			name = gen68k;
 			productName = gen68k;
-			productReference = 946C18D51714A48600C64BF9 /* gen68k */;
+			productReference = 946C18D51714A48600C64BF9 /* gen68k.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B32775221E9C8444000FEC38 /* PVYabause-iOS */ = {
@@ -918,7 +918,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -940,7 +940,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				GCC_PREPROCESSOR_DEFINITIONS = C68K_GEN;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1156,7 +1156,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				GCC_PREPROCESSOR_DEFINITIONS = C68K_GEN;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

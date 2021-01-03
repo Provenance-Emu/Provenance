@@ -54,17 +54,12 @@
 		B34AB5802106DC6100C45F09 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 		B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3532B3521A7B736006CDA0F /* PVSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3421A7B736006CDA0F /* PVSupportTests.swift */; };
 		B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */; };
 		B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532B5121A7CA58006CDA0F /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
 		B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
-		B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
-		B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CF92191338200433E4C /* NSLoggerSwift.framework */; };
 		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
@@ -99,16 +94,10 @@
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDC219161BC000FA7F9 /* Foundation.framework */; };
 		B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDE219161C0000FA7F9 /* GameController.framework */; };
-		B3AF700B21916B41000FA7F9 /* XCDLumberjackNSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF700921916B41000FA7F9 /* XCDLumberjackNSLogger.h */; };
-		B3AF700C21916B41000FA7F9 /* XCDLumberjackNSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF700921916B41000FA7F9 /* XCDLumberjackNSLogger.h */; };
-		B3AF700D21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */; };
-		B3AF700E21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */; };
 		B3B104F82191851900210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFA2191338300433E4C /* CocoaLumberjack.framework */; };
 		B3B104F92191851900210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */; };
-		B3B104FA2191851900210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3721D032191338300433E4C /* NSLogger.framework */; };
 		B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */; };
 		B3B105112191855200210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */; };
-		B3B105122191855200210C39 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B105002191854900210C39 /* NSLogger.framework */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
@@ -165,8 +154,6 @@
 			files = (
 				B3532B4D21A7C098006CDA0F /* CocoaLumberjack.framework in Carthage Copy */,
 				B3532B4E21A7C098006CDA0F /* CocoaLumberjackSwift.framework in Carthage Copy */,
-				B3532B4F21A7C098006CDA0F /* NSLogger.framework in Carthage Copy */,
-				B3532B5021A7C098006CDA0F /* NSLoggerSwift.framework in Carthage Copy */,
 			);
 			name = "Carthage Copy";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -202,13 +189,11 @@
 		B3447E85218B7E4B00557ACE /* CARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARingBuffer.h; sourceTree = "<group>"; };
 		B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
 		B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVSupportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3532B3421A7B736006CDA0F /* PVSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSupportTests.swift; sourceTree = "<group>"; };
 		B3532B3621A7B736006CDA0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSettingsTests.swift; sourceTree = "<group>"; };
 		B3532C3521A925C1006CDA0F /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3721CF82191338200433E4C /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
-		B3721CF92191338200433E4C /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B3721CFA2191338300433E4C /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3721CFB2191338300433E4C /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
 		B3721CFC2191338300433E4C /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickTableViewController.framework; sourceTree = "<group>"; };
@@ -216,11 +201,8 @@
 		B3721CFE2191338300433E4C /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3721D002191338300433E4C /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxCocoa.framework; sourceTree = "<group>"; };
-		B3721D012191338300433E4C /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		B3721D022191338300433E4C /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
-		B3721D032191338300433E4C /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLogger.framework; sourceTree = "<group>"; };
 		B3721D042191338300433E4C /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
-		B3721D062191338300433E4C /* XLActionController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XLActionController.framework; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadDirectionPad.swift; sourceTree = "<group>"; };
 		B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeControllerSetting.swift; sourceTree = "<group>"; };
@@ -238,12 +220,9 @@
 		B3AF6FD92191616C000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3AF6FDC219161BC000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FDE219161C0000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
-		B3AF700921916B41000FA7F9 /* XCDLumberjackNSLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCDLumberjackNSLogger.h; sourceTree = "<group>"; };
-		B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCDLumberjackNSLogger.m; sourceTree = "<group>"; };
 		B3B104FD2191854800210C39 /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZipArchive.framework; sourceTree = "<group>"; };
 		B3B104FE2191854800210C39 /* RxRealm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxRealm.framework; sourceTree = "<group>"; };
 		B3B104FF2191854800210C39 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftyUserDefaults.framework; sourceTree = "<group>"; };
-		B3B105002191854900210C39 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLogger.framework; sourceTree = "<group>"; };
 		B3B105012191854900210C39 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		B3B105022191854900210C39 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxSwift.framework; sourceTree = "<group>"; };
 		B3B105042191854900210C39 /* QuickTableViewController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickTableViewController.framework; sourceTree = "<group>"; };
@@ -251,9 +230,7 @@
 		B3B105072191854900210C39 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		B3B105082191854900210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SQLite.framework; sourceTree = "<group>"; };
 		B3B105092191854A00210C39 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxTest.framework; sourceTree = "<group>"; };
-		B3B1050A2191854A00210C39 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
-		B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLoggerSwift.framework; sourceTree = "<group>"; };
 		B3B1050D2191854A00210C39 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxAtomic.framework; sourceTree = "<group>"; };
 		B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3B1050F2191854A00210C39 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxBlocking.framework; sourceTree = "<group>"; };
@@ -286,8 +263,6 @@
 				B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */,
 				B3532B5121A7CA58006CDA0F /* CocoaLumberjack.framework in Frameworks */,
 				B3532B5221A7CA58006CDA0F /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3532B5321A7CA58006CDA0F /* NSLogger.framework in Frameworks */,
-				B3532B5421A7CA58006CDA0F /* NSLoggerSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +275,6 @@
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
 				B3B105102191855200210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B105112191855200210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3B105122191855200210C39 /* NSLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,7 +286,6 @@
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
 				B3B104F82191851900210C39 /* CocoaLumberjack.framework in Frameworks */,
 				B3B104F92191851900210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3B104FA2191851900210C39 /* NSLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,8 +383,6 @@
 		B302F89420B71C2300C5E502 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
-				B3AF700921916B41000FA7F9 /* XCDLumberjackNSLogger.h */,
-				B3AF700A21916B41000FA7F9 /* XCDLumberjackNSLogger.m */,
 				B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */,
 				B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */,
 				B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */,
@@ -451,7 +422,6 @@
 		B3532B3321A7B736006CDA0F /* PVSupportTests */ = {
 			isa = PBXGroup;
 			children = (
-				B3532B3421A7B736006CDA0F /* PVSupportTests.swift */,
 				B3532B3621A7B736006CDA0F /* Info.plist */,
 				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
 			);
@@ -463,9 +433,6 @@
 			children = (
 				B3721CFA2191338300433E4C /* CocoaLumberjack.framework */,
 				B3721CFF2191338300433E4C /* CocoaLumberjackSwift.framework */,
-				B3721D012191338300433E4C /* HockeySDK.framework */,
-				B3721D032191338300433E4C /* NSLogger.framework */,
-				B3721CF92191338200433E4C /* NSLoggerSwift.framework */,
 				B3721CFC2191338300433E4C /* QuickTableViewController.framework */,
 				B3721CFE2191338300433E4C /* Realm.framework */,
 				B3721D042191338300433E4C /* RxAtomic.framework */,
@@ -473,7 +440,6 @@
 				B3721D002191338300433E4C /* RxCocoa.framework */,
 				B3721D022191338300433E4C /* RxSwift.framework */,
 				B3721CFB2191338300433E4C /* RxTest.framework */,
-				B3721D062191338300433E4C /* XLActionController.framework */,
 				B3721CF82191338200433E4C /* ZipArchive.framework */,
 			);
 			name = "Carthage-iOS";
@@ -485,9 +451,6 @@
 			children = (
 				B3B1050E2191854A00210C39 /* CocoaLumberjack.framework */,
 				B3B1050B2191854A00210C39 /* CocoaLumberjackSwift.framework */,
-				B3B1050A2191854A00210C39 /* HockeySDK.framework */,
-				B3B105002191854900210C39 /* NSLogger.framework */,
-				B3B1050C2191854A00210C39 /* NSLoggerSwift.framework */,
 				B3B105042191854900210C39 /* QuickTableViewController.framework */,
 				B3B105072191854900210C39 /* Realm.framework */,
 				B3B105012191854900210C39 /* RealmSwift.framework */,
@@ -610,7 +573,6 @@
 				B3447E8F218B7E4B00557ACE /* CAAtomic.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* (null) in Headers */,
 				B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
-				B3AF700C21916B41000FA7F9 /* XCDLumberjackNSLogger.h in Headers */,
 				B302F8A720B73D6500C5E502 /* PVLogEntry.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
@@ -632,7 +594,6 @@
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
-				B3AF700B21916B41000FA7F9 /* XCDLumberjackNSLogger.h in Headers */,
 				B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */,
 				B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */,
 				B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */,
@@ -781,7 +742,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */,
-				B3532B3521A7B736006CDA0F /* PVSupportTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,7 +772,6 @@
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
-				B3AF700E21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
@@ -857,7 +816,6 @@
 				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
-				B3AF700D21916B41000FA7F9 /* XCDLumberjackNSLogger.m in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
 				B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
