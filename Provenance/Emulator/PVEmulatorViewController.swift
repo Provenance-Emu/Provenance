@@ -679,6 +679,20 @@ extension PVEmulatorViewController {
             }
         })
     }
+    
+    func controllerInputDetected(gamepad: GCExtendedGamepad, element: GCControllerElement) {
+        if (gamepad.rightThumbstick == element) {
+            ELOG("RightThumbstickXAxis: \(gamepad.rightThumbstick.xAxis.value)")
+            if(gamepad.rightThumbstick.xAxis.value > 0.1) {
+                self.core.gameSpeed = GameSpeed.fast;
+            } else if(gamepad.rightThumbstick.xAxis.value < -0.1) {
+                self.core.gameSpeed = GameSpeed.slow;
+            }
+            else {
+                self.core.gameSpeed = GameSpeed.normal;
+            }
+        }
+    }
 
     @objc func controllerDidConnect(_ note: Notification?) {
         let controller = note?.object as? GCController
@@ -690,6 +704,11 @@ extension PVEmulatorViewController {
             if controller?.vendorName != "Remote" {
                 controller?.controllerPausedHandler = { [unowned self] controller in
                     self.controllerPauseButtonPressed(controller)
+                }
+                
+                controller?.extendedGamepad?.valueChangedHandler = {
+                    (gamepad: GCExtendedGamepad, element: GCControllerElement) in self.controllerInputDetected(gamepad: gamepad, element: element)
+                    
                 }
             }
             #if os(iOS)
