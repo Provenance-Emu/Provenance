@@ -92,16 +92,9 @@ OSStatus RenderCallback(void                       *in,
     void *head = TPCircularBufferTail(context->buffer, &availableBytes);
     int bytesRequested = inNumberFrames * context->bytesPerSample * context->channelCount;
     availableBytes = MIN(availableBytes, bytesRequested);
-    int leftover = bytesRequested - availableBytes;
     char *outBuffer = ioData->mBuffers[0].mData;
 
-    if (leftover > 0 && context->bytesPerSample==2) {
-        // time stretch
-        // FIXME this works a lot better with a larger buffer
-        int framesRequested = inNumberFrames;
-        int framesAvailable = availableBytes / (context->bytesPerSample * context->channelCount);
-        StretchSamples((int16_t*)outBuffer, head, framesRequested, framesAvailable, context->channelCount);
-    } else if (availableBytes) {
+    if (availableBytes) {
         memcpy(outBuffer, head, availableBytes);
     } else {
         memset(outBuffer, 0, bytesRequested);

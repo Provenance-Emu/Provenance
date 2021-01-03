@@ -239,9 +239,8 @@ coreaudio_push6(void* frame, u32 samples, bool wait) {
         return 1;
     }
 
-    TPCircularBuffer buffer = rb->buffer;
     NSUInteger maxFillSize = clearedCounter > 4 ? samples * 8 : -1;
-    CALOG("used bytes: %lu", (unsigned long)buffer.fillCount);
+    CALOG("used bytes: %lu", (unsigned long)rb.usedBytes);
 #define notfull [rb write:(const unsigned char *)frame maxLength:samples * 4]
 
     while ([rb availableBytes] > maxFillSize && wait) {    }
@@ -251,7 +250,7 @@ coreaudio_push6(void* frame, u32 samples, bool wait) {
         //    dispatch_async(current->_callbackQueue, ^{
         //        [rb write:(const unsigned char *)frame maxLength:samples * 4];
         //    });
-    if (buffer.fillCount == 0) {
+    if (rb.usedBytes == 0) {
         clearedCounter++;
     }
 
