@@ -616,9 +616,9 @@ static void config_default(void)
    config.no_sprite_limit = 0;
 
    /* video options */
-   config.overscan = 0;
+   config.overscan = 0; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
    config.aspect_ratio = 0;
-   config.gg_extra = 0;
+   config.gg_extra = 0; /* 1 = show extended Game Gear screen (256x192) */
    config.ntsc     = 0;
    config.lcd      = 0;
    config.render   = 0;
