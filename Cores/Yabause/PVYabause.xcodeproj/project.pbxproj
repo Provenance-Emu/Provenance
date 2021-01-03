@@ -1000,6 +1000,7 @@
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				SDKROOT = iphoneos;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 			};
 			name = Archive;
 		};
@@ -1498,6 +1499,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 			};
 			name = Debug;
 		};
@@ -1554,6 +1556,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 			};
 			name = Release;
 		};
