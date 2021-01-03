@@ -233,7 +233,7 @@ struct RenderSettings {
 - (void) updatePreferredFPS {
     float preferredFPS = UIScreen.mainScreen.maximumFramesPerSecond; // self.emulatorCore.frameInterval;
 //    if (preferredFPS  < 10) {
-      WLOG(@"JJ Setting the preferred refresh rate frequency for the display to (%f)", preferredFPS);
+      WLOG(@"Setting the preferred refresh rate frequency for the display to (%f)", preferredFPS);
 //        preferredFPS = 60;
 //    }
 
