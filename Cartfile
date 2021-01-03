@@ -7,9 +7,6 @@ github "RxSwiftCommunity/RxDataSources"
 github "RxSwiftCommunity/RxGesture"
 github "zydeco/SteamController"
 
-# Microsoft AppCenter
-github "microsoft/appcenter-sdk-apple"
-
 # PVSupport
 github "fpillet/NSLogger"
 github "CocoaLumberjack/CocoaLumberjack"
