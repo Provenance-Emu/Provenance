@@ -884,11 +884,20 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
-        let actionSheet = contextMenu(for: item, cell: cell, point: point)
-
-        presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
+        #if os(iOS)
+            presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
                                                                sourceView: cell)
-    }
+        #else
+            let actionSheet = contextMenu(for: item, cell: cell, point: point)
+
+            if traitCollection.userInterfaceIdiom == .pad {
+                actionSheet.popoverPresentationController?.sourceView = cell
+                actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
+            }
+
+            present(actionSheet, animated: true)
+        #endif
+        }
 
     private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIAlertController {
         switch item {
