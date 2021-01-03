@@ -326,6 +326,23 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     .bind(to: self.collapsedSystems)
                     .disposed(by: header.disposeBag)
                 #endif
+                #if os(tvOS)
+                header.collapseButton.rx.primaryAction
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsable {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
+                    header.updateFocusIfNeeded()
+                #endif
                 return header
             case UICollectionView.elementKindSectionFooter:
                 return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryFooterViewIdentifier, for: indexPath)
@@ -869,12 +886,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let cell = collectionView!.cellForItem(at: indexPath)!
         let actionSheet = contextMenu(for: item, cell: cell, point: point)
 
-        if traitCollection.userInterfaceIdiom == .pad {
-            actionSheet.popoverPresentationController?.sourceView = cell
-            actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-        }
-
-        present(actionSheet, animated: true)
+        presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
+                                                               sourceView: cell)
     }
 
     private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIAlertController {
@@ -893,7 +906,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
 
-    private func contextMenu(for game: PVGame, sender: Any?) -> UIAlertController {
+    private func contextMenu(for game: PVGame, sender: UIView) -> UIAlertController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         #if os(tvOS)
         actionSheet.message = "Options for \(game.title)"
@@ -952,9 +965,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             })
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
-            self.chooseCustomArtwork(for: game)
-        }))
+        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default) { [self] _ in
+            self.chooseCustomArtwork(for: game, sourceView: sender)
+        })
 
         actionSheet.addAction(UIAlertAction(title: "Paste Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.pasteCustomArtwork(for: game)
@@ -1090,7 +1103,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     #if os(iOS)
-        func chooseCustomArtwork(for game: PVGame) {
+    private func chooseCustomArtwork(for game: PVGame, sourceView: UIView) {
             weak var weakSelf: PVGameLibraryViewController? = self
             let imagePickerActionSheet = UIAlertController(title: "Choose Artwork", message: "Choose the location of the artwork.\n\nUse Latest Photo: Use the last image in the camera roll.\nTake Photo: Use the camera to take a photo.\nChoose Photo: Use the camera roll to choose an image.", preferredStyle: .actionSheet)
             
@@ -1151,10 +1164,20 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             imagePickerActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
                 imagePickerActionSheet.dismiss(animated: true, completion: nil)
             }))
-            present(imagePickerActionSheet, animated: true, completion: nil)
+        
+            presentActionSheetViewControllerForPopoverPresentation(imagePickerActionSheet, sourceView: sourceView)
+        }
+    
+        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIAlertController, sourceView: UIView) {
+            if traitCollection.userInterfaceIdiom == .pad {
+                alertController.popoverPresentationController?.sourceView = sourceView
+                alertController.popoverPresentationController?.sourceRect = sourceView.bounds
+            }
+            
+            present(alertController, animated: true)
         }
 
-        func pasteCustomArtwork(for game: PVGame) {
+        private func pasteCustomArtwork(for game: PVGame) {
             let pb = UIPasteboard.general
             var pastedImageMaybe: UIImage? = pb.image
 

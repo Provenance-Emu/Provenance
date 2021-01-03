@@ -22,6 +22,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
     let collapseButton: UIButton = {
         let button = UIButton()
+
         button.setImage(UIImage(named: "chevron_down"), for: .normal)
         button.clipsToBounds = true
         #if os(iOS)
@@ -128,6 +129,40 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             }
 
             return UIColor.darkGray
+        }
+
+        override var canBecomeFocused: Bool {
+            if !collapseButton.isHidden {
+                return true
+            }
+            return false
+        }
+
+        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+            if isFocused {
+                UIView.transition(with: titleLabel, duration: 0.1, options: .transitionCrossDissolve, animations: {
+                  self.titleLabel.textColor = .white
+                }, completion: nil)
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.collapseButton.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    self.collapseButton.tintColor = .white
+                })
+            } else {
+                titleLabel.textColor = colorForText
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.collapseButton.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    self.collapseButton.tintColor = .darkGray
+                })
+            }
+        }
+
+        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            super.pressesBegan(presses, with: event)
+            if presses.contains(where: { (press) -> Bool in
+                press.type == .select
+            }) {
+                collapseButton.sendActions(for: .touchUpInside)
+            }
         }
     #endif
     override func prepareForReuse() {
