@@ -249,6 +249,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             let drawTime =  self.glViewController.timeSinceLastDraw * 1000
             let fps = 1000 / drawTime
             self.fpsLabel.text = String ( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
+        
+        #if DEBUG
+            print("Preferred refresh rate frequency: \(self.glViewController.framesPerSecond)")
+        #endif
         })
     }
 
@@ -548,12 +552,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.setPauseEmulation(false)
     }
 
-    @objc func updateFPSLabel() {
-        #if DEBUG
-            print("FPS: \(glViewController.framesPerSecond)")
-        #endif
-        fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
-    }
+//    @objc func updateFPSLabel() {
+//        #if DEBUG
+//            print("FPS: \(glViewController.framesPerSecond)")
+//        #endif
+//        fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
+//    }
 
     func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
