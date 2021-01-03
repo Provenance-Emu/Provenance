@@ -13,7 +13,7 @@ import UIKit
 
 extension PVEmulatorViewController {
     @objc func showMenu(_: Any?) {
-        enableContorllerInput(true)
+        enableControllerInput(true)
         core.setPauseEmulation(true)
         isShowingMenu = true
         let actionsheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -27,7 +27,7 @@ extension PVEmulatorViewController {
                 NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.enableControllerInput(false)
             }))
         }
 
@@ -57,7 +57,7 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         self.controllerViewController?.releaseStart(forPlayer: 0)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
                 actionsheet.addAction(UIAlertAction(title: "P1 Select", style: .default, handler: { (_: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
@@ -66,7 +66,7 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         self.controllerViewController?.releaseSelect(forPlayer: 0)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
             }
             if player1.extendedGamepad != nil || wantsStartSelectInMenu {
@@ -77,7 +77,7 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         self.controllerViewController?.releaseAnalogMode(forPlayer: 0)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
             }
         }
@@ -90,7 +90,7 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: { () -> Void in
                         self.controllerViewController?.releaseStart(forPlayer: 1)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
                 actionsheet.addAction(UIAlertAction(title: "P2 Select", style: .default, handler: { (_: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
@@ -99,7 +99,7 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: { () -> Void in
                         self.controllerViewController?.releaseSelect(forPlayer: 1)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
                 actionsheet.addAction(UIAlertAction(title: "P2 Analog Mode", style: .default, handler: { (_: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
@@ -108,7 +108,7 @@ extension PVEmulatorViewController {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: { () -> Void in
                         self.controllerViewController?.releaseAnalogMode(forPlayer: 1)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
             }
         }
@@ -130,7 +130,7 @@ extension PVEmulatorViewController {
                             self.core.resetEmulation()
                         }
                         self.isShowingMenu = false
-                        self.enableContorllerInput(false)
+                        self.enableControllerInput(false)
                     })
                 }))
             }
@@ -148,7 +148,7 @@ extension PVEmulatorViewController {
             let newNav = UINavigationController(rootViewController: moreInfoViewContrller ?? UIViewController())
             self.present(newNav, animated: true) { () -> Void in }
             self.isShowingMenu = false
-            self.enableContorllerInput(false)
+            self.enableControllerInput(false)
         }))
         actionsheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
@@ -163,7 +163,7 @@ extension PVEmulatorViewController {
                 self.core.setPauseEmulation(false)
                 self.core.resetEmulation()
                 self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.enableControllerInput(false)
             }
 
             if PVSettingsModel.shared.autoSave, self.core.supportsSaveStates {
@@ -203,7 +203,7 @@ extension PVEmulatorViewController {
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { (_: UIAlertAction) -> Void in
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false
-            self.enableContorllerInput(false)
+            self.enableControllerInput(false)
         })
         actionsheet.addAction(resumeAction)
         actionsheet.preferredAction = resumeAction
