@@ -244,18 +244,21 @@ extension MirroredSettings {
     public dynamic var autoLoadSaves = false
 
     #if os(tvOS)
-    public dynamic var disableAutoLock = true
+        public dynamic var disableAutoLock = true
     #else
-    public dynamic var disableAutoLock = false
+        public dynamic var disableAutoLock = false
     #endif
 
     public dynamic var buttonVibration = true
 
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
-    public dynamic var nativeScaleEnabled = true
+    #if os(iOS)
+        public dynamic var nativeScaleEnabled = true
+    #else
+        public dynamic var nativeScaleEnabled = false
+    #endif
     public dynamic var integerScaleEnabled = false
-
     public dynamic var showRecentSaveStates = true
     public dynamic var showGameBadges = true
     public dynamic var showRecentGames = true
