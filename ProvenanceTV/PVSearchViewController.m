@@ -10,7 +10,6 @@
 #import "PVGame.h"
 #import "PVGameLibraryCollectionViewCell.h"
 #import "PVMediaCache.h"
-#import "PVEmulatorViewController.h"
 #import "PVAppConstants.h"
 #import "PVEmulatorConstants.h"
 #import "PVEmulatorConfiguration.h"

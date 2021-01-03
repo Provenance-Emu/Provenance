@@ -258,6 +258,7 @@ extension MirroredSettings {
     #else
         public dynamic var nativeScaleEnabled = false
     #endif
+    public dynamic var integerScaleEnabled = false
     public dynamic var showRecentSaveStates = true
     public dynamic var showGameBadges = true
     public dynamic var showRecentGames = true
