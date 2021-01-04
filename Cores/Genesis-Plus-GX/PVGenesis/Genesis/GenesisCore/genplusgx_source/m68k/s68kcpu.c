@@ -213,7 +213,7 @@ void s68k_update_irq(unsigned int mask)
   CPU_INT_LEVEL = mask << 8;
   
 #ifdef LOG_SCD
-  error("[%d][%d] IRQ Level = %d(0x%02x) (%x)\n", v_counter, s68k.cycles, CPU_INT_LEVEL>>8,FLAG_INT_MASK,s68k.pc);
+  error("[%d][%d] s68k IRQ Level = %d(0x%02x) (%x)\n", v_counter, s68k.cycles, CPU_INT_LEVEL>>8,FLAG_INT_MASK,s68k.pc);
 #endif
 }
 
@@ -257,12 +257,18 @@ void s68k_run(unsigned int cycles)
     REG_IR = m68ki_read_imm_16();
 
     /* Execute instruction */
-	m68ki_instruction_jump_table[REG_IR]();
+    m68ki_instruction_jump_table[REG_IR]();
     USE_CYCLES(CYC_INSTRUCTION[REG_IR]);
 
     /* Trace m68k_exception, if necessary */
     m68ki_exception_if_trace(); /* auto-disable (see m68kcpu.h) */
   }
+}
+
+
+int s68k_cycles(void)
+{
+  return CYC_INSTRUCTION[REG_IR];
 }
 
 void s68k_init(void)
@@ -276,6 +282,10 @@ void s68k_init(void)
     m68ki_build_opcode_table();
     emulation_initialized = 1;
   }
+#endif
+
+#ifdef M68K_OVERCLOCK_SHIFT
+  s68k.cycle_ratio = 1 << M68K_OVERCLOCK_SHIFT;
 #endif
 
 #if M68K_EMULATE_INT_ACK == OPT_ON

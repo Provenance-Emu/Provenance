@@ -2,10 +2,10 @@
  *  Genesis Plus
  *  Video Display Processor (68k & Z80 CPU interface)
  *
- *  Support for SG-1000, Master System (315-5124 & 315-5246), Game Gear & Mega Drive VDP
+ *  Support for SG-1000 (TMS99xx & 315-5066), Master System (315-5124 & 315-5246), Game Gear & Mega Drive VDP
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2017  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -46,7 +46,7 @@
 #define MARK_BG_DIRTY(addr)                         \
 {                                                   \
   name = (addr >> 5) & 0x7FF;                       \
-  if(bg_name_dirty[name] == 0)                      \
+  if (bg_name_dirty[name] == 0)                     \
   {                                                 \
     bg_name_list[bg_list_index++] = name;           \
   }                                                 \
@@ -54,15 +54,15 @@
 }
 
 /* VDP context */
-uint8 sat[0x400];     /* Internal copy of sprite attribute table */
-uint8 vram[0x10000];  /* Video RAM (64K x 8-bit) */
-uint8 cram[0x80];     /* On-chip color RAM (64 x 9-bit) */
-uint8 vsram[0x80];    /* On-chip vertical scroll RAM (40 x 11-bit) */
-uint8 reg[0x20];      /* Internal VDP registers (23 x 8-bit) */
-uint8 hint_pending;   /* 0= Line interrupt is pending */
-uint8 vint_pending;   /* 1= Frame interrupt is pending */
-uint16 status;        /* VDP status flags */
-uint32 dma_length;    /* DMA remaining length */
+uint8 ALIGNED_(4) sat[0x400];    /* Internal copy of sprite attribute table */
+uint8 ALIGNED_(4) vram[0x10000]; /* Video RAM (64K x 8-bit) */
+uint8 ALIGNED_(4) cram[0x80];    /* On-chip color RAM (64 x 9-bit) */
+uint8 ALIGNED_(4) vsram[0x80];   /* On-chip vertical scroll RAM (40 x 11-bit) */
+uint8 reg[0x20];                 /* Internal VDP registers (23 x 8-bit) */
+uint8 hint_pending;              /* 0= Line interrupt is pending */
+uint8 vint_pending;              /* 1= Frame interrupt is pending */
+uint16 status;                   /* VDP status flags */
+uint32 dma_length;               /* DMA remaining length */
 
 /* Global variables */
 uint16 ntab;                      /* Name table A base address */
@@ -82,11 +82,13 @@ uint8 odd_frame;                  /* 1: odd field, 0: even field */
 uint8 im2_flag;                   /* 1= Interlace mode 2 is being used */
 uint8 interlaced;                 /* 1: Interlaced mode 1 or 2 */
 uint8 vdp_pal;                    /* 1: PAL , 0: NTSC (default) */
+uint8 h_counter;                  /* Horizontal counter */
 uint16 v_counter;                 /* Vertical counter */
 uint16 vc_max;                    /* Vertical counter overflow value */
 uint16 lines_per_frame;           /* PAL: 313 lines, NTSC: 262 lines */
-int32 fifo_write_cnt;             /* VDP writes fifo count */
-uint32 fifo_lastwrite;            /* last VDP write cycle */
+uint16 max_sprite_pixels;         /* Max. sprites pixels per line (parsing & rendering) */
+int32 fifo_write_cnt;             /* VDP FIFO write count */
+uint32 fifo_slots;                /* VDP FIFO access slot count */
 uint32 hvc_latch;                 /* latched HV counter */
 const uint8 *hctab;               /* pointer to H Counter table */
 
@@ -123,7 +125,7 @@ static const uint8 shift_table[]        = { 6, 7, 0, 8 };
 static const uint8 col_mask_table[]     = { 0x0F, 0x1F, 0x0F, 0x3F };
 static const uint16 row_mask_table[]    = { 0x0FF, 0x1FF, 0x2FF, 0x3FF };
 
-static uint8 bordrr;          /* Border color index */
+static uint8 border;          /* Border color index */
 static uint8 pending;         /* Pending write flag */
 static uint8 code;            /* Code register */
 static uint8 dma_type;        /* DMA mode */
@@ -132,11 +134,14 @@ static uint16 addr_latch;     /* Latched A15, A14 of address */
 static uint16 sat_base_mask;  /* Base bits of SAT */
 static uint16 sat_addr_mask;  /* Index bits of SAT */
 static uint16 dma_src;        /* DMA source address */
-static uint16 dmafill;        /* DMA Fill setup */
 static uint32 dma_endCycles;  /* 68k cycles to DMA end */
-static uint32 fifo_latency;   /* CPU access latency */
+static int dmafill;           /* DMA Fill pending flag */
 static int cached_write;      /* 2nd part of 32-bit CTRL port write (Genesis mode) or LSB of CRAM data (Game Gear mode) */
-static uint16 fifo[4];        /* FIFO buffer */
+static uint16 fifo[4];        /* FIFO ring-buffer */
+static int fifo_idx;          /* FIFO write index */
+static int fifo_byte_access;  /* FIFO byte access flag */
+static uint32 fifo_cycles;    /* FIFO next access cycle */
+static int *fifo_timing;      /* FIFO slots timing table */
 
  /* set Z80 or 68k interrupt lines */
 static void (*set_irq_line)(unsigned int level);
@@ -152,12 +157,25 @@ static const uint16 vc_table[4][2] =
   {0x106, 0x10A}  /* Mode 5 (240 lines) */
 };
 
+/* FIFO access slots timings */
+static const int fifo_timing_h32[16+4] = 
+{
+  230, 510, 810, 970, 1130, 1450, 1610, 1770, 2090, 2250, 2410, 2730, 2890, 3050, 3350, 3370,
+  MCYCLES_PER_LINE + 230, MCYCLES_PER_LINE + 510, MCYCLES_PER_LINE + 810, MCYCLES_PER_LINE + 970, 
+};
+
+static const int fifo_timing_h40[18+4] = 
+{
+  352, 820, 948, 1076, 1332, 1460, 1588, 1844, 1972, 2100, 2356, 2484, 2612, 2868, 2996, 3124, 3364, 3380,
+  MCYCLES_PER_LINE + 352, MCYCLES_PER_LINE + 820, MCYCLES_PER_LINE + 948, MCYCLES_PER_LINE + 1076, 
+};
+
 /* DMA Timings (number of access slots per line) */
 static const uint8 dma_timing[2][2] =
 {
 /* H32, H40 */
   {16 , 18},  /* active display */
-  {167, 205}  /* blank display */
+  {166, 204}  /* blank display */
 };
 
 /* DMA processing functions (set by VDP register 23 high nibble) */
@@ -176,6 +194,26 @@ static void (*const dma_func[16])(unsigned int length) =
   vdp_dma_copy,vdp_dma_copy,vdp_dma_copy,vdp_dma_copy
 };
 
+/* BG rendering functions */
+static void (*const render_bg_modes[16])(int line) =
+{
+  render_bg_m0,   /* Graphics I */
+  render_bg_m2,   /* Graphics II */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_m3,   /* Multicolor */
+  render_bg_m3x,  /* Multicolor (Extended PG) */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_m1,   /* Text */
+  render_bg_m1x,  /* Text (Extended PG) */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_inv,  /* Invalid (1+3) */
+  render_bg_inv,  /* Invalid (1+2+3) */
+  render_bg_m4,   /* Mode 4 */
+  render_bg_m4,   /* Mode 4 */
+};
 
 /*--------------------------------------------------------------------------*/
 /* Init, reset, context functions                                           */
@@ -215,7 +253,7 @@ void vdp_reset(void)
   addr_latch      = 0;
   code            = 0;
   pending         = 0;
-  bordrr          = 0;
+  border          = 0;
   hint_pending    = 0;
   vint_pending    = 0;
   dmafill         = 0;
@@ -227,8 +265,11 @@ void vdp_reset(void)
   im2_flag        = 0;
   interlaced      = 0;
   fifo_write_cnt  = 0;
-  fifo_lastwrite  = 0;
-  cached_write   = -1;
+  fifo_cycles     = 0;
+  fifo_slots      = 0;
+  fifo_idx        = 0;
+  cached_write    = -1;
+  fifo_byte_access = 1;
 
   ntab = 0;
   ntbb = 0;
@@ -250,17 +291,8 @@ void vdp_reset(void)
   memset ((char *) bg_name_dirty, 0, sizeof (bg_name_dirty));
   memset ((char *) bg_name_list, 0, sizeof (bg_name_list));
 
-  /* default HVC */
-  hvc_latch = 0x10000;
-  hctab = cycle2hc32;
-  vc_max = vc_table[0][vdp_pal];
-  v_counter = lines_per_frame - 1;
-
   /* default Window clipping */
   window_clip(0,0);
-
-  /* default FIFO timings */
-  fifo_latency = 214;
 
   /* reset VDP status (FIFO empty flag is set) */
   if (system_hw & SYSTEM_MD)
@@ -277,6 +309,19 @@ void vdp_reset(void)
   bitmap.viewport.h   = 192;
   bitmap.viewport.ow  = 256;
   bitmap.viewport.oh  = 192;
+
+  /* default HVC */
+  hvc_latch = 0x10000;
+  hctab = cycle2hc32;
+  vc_max = vc_table[0][vdp_pal];
+  v_counter = bitmap.viewport.h;
+  h_counter = 0xff;
+
+  /* default sprite pixel width */
+  max_sprite_pixels = 256;
+
+  /* default FIFO access slots timings */
+  fifo_timing = (int *)fifo_timing_h32;
 
   /* default overscan area */
   if ((system_hw == SYSTEM_GG) && !config.gg_extra)
@@ -308,16 +353,17 @@ void vdp_reset(void)
     parse_satb = parse_satb_m4;
   }
 
-  /* 68k bus access mode (Mode 4 by default) */
+  /* default 68k bus interface (Mega Drive VDP only) */
   vdp_68k_data_w = vdp_68k_data_w_m4;
   vdp_68k_data_r = vdp_68k_data_r_m4;
 
-  /* Z80 bus access mode */
+  /* default Z80 bus interface */
   switch (system_hw)
   {
     case SYSTEM_SG:
+    case SYSTEM_SGII:
     {
-      /* SG-1000 port access */
+      /* SG-1000 (TMS99xx) or SG-1000 II (315-5066) VDP */
       vdp_z80_data_w = vdp_z80_data_w_sg;
       vdp_z80_data_r = vdp_z80_data_r_m4;
       break;
@@ -325,7 +371,7 @@ void vdp_reset(void)
 
     case SYSTEM_GG:
     {
-      /* Game Gear port access */
+      /* Game Gear VDP */
       vdp_z80_data_w = vdp_z80_data_w_gg;
       vdp_z80_data_r = vdp_z80_data_r_m4;
       break;
@@ -336,7 +382,7 @@ void vdp_reset(void)
     case SYSTEM_SMS2:
     case SYSTEM_GGMS:
     {
-      /* Master System port access */
+      /* Master System or Game Gear (in MS compatibility mode) VDP  */
       vdp_z80_data_w = vdp_z80_data_w_ms;
       vdp_z80_data_r = vdp_z80_data_r_m4;
       break;
@@ -344,27 +390,20 @@ void vdp_reset(void)
 
     default:
     {
-      /* Genesis port access */
+      /* Mega Drive VDP (in MS compatibility mode) */
       vdp_z80_data_w = vdp_z80_data_w_m4;
       vdp_z80_data_r = vdp_z80_data_r_m4;
       break;
     }
   }
 
-  /* SG-1000 specific */
-  if (system_hw == SYSTEM_SG)
-  {
-    /* 16k address decoding by default (Magical Kid Wiz) */
-    vdp_reg_w(1, 0x80, 0);
-
-    /* no H-INT on TMS9918 */
-    vdp_reg_w(10, 0xFF, 0);
-  }
-
+  /* H-INT is disabled on startup (verified on VA4 MD1 with 315-5313 VDP) */
+  reg[10] = 0xFF;
+  
   /* Master System specific */
-  else if ((system_hw & SYSTEM_SMS) && (!(config.bios & 1) || !(system_bios & SYSTEM_SMS)))
+  if ((system_hw & SYSTEM_SMS) && (!(config.bios & 1) || !(system_bios & SYSTEM_SMS)))
   {
-    /* force registers initialization (only if Master System BIOS is disabled or not loaded) */
+    /* force registers initialization (normally done by BOOT ROM on all Master System models) */
     vdp_reg_w(0 , 0x36, 0);
     vdp_reg_w(1 , 0x80, 0);
     vdp_reg_w(2 , 0xFF, 0);
@@ -372,7 +411,6 @@ void vdp_reset(void)
     vdp_reg_w(4 , 0xFF, 0);
     vdp_reg_w(5 , 0xFF, 0);
     vdp_reg_w(6 , 0xFF, 0);
-    vdp_reg_w(10, 0xFF, 0);
 
     /* Mode 4 */
     render_bg = render_bg_m4;
@@ -383,10 +421,9 @@ void vdp_reset(void)
   /* Mega Drive specific */
   else if (((system_hw == SYSTEM_MD) || (system_hw == SYSTEM_MCD)) && (config.bios & 1) && !(system_bios & SYSTEM_MD))
   {
-    /* force registers initialization (only if TMSS model is emulated and BOOT ROM is not loaded) */
+    /* force registers initialization (normally done by BOOT ROM, only on Mega Drive model with TMSS) */
     vdp_reg_w(0 , 0x04, 0);
     vdp_reg_w(1 , 0x04, 0);
-    vdp_reg_w(10, 0xFF, 0);
     vdp_reg_w(12, 0x81, 0);
     vdp_reg_w(15, 0x02, 0);
   }
@@ -414,6 +451,9 @@ int vdp_context_save(uint8 *state)
   save_param(&pending, sizeof(pending));
   save_param(&status, sizeof(status));
   save_param(&dmafill, sizeof(dmafill));
+  save_param(&fifo_idx, sizeof(fifo_idx));
+  save_param(&fifo, sizeof(fifo));
+  save_param(&h_counter, sizeof(h_counter));
   save_param(&hint_pending, sizeof(hint_pending));
   save_param(&vint_pending, sizeof(vint_pending));
   save_param(&dma_length, sizeof(dma_length));
@@ -437,7 +477,7 @@ int vdp_context_load(uint8 *state)
   /* restore VDP registers */
   if (system_hw < SYSTEM_MD)
   {
-    if (system_hw > SYSTEM_SG)
+    if (system_hw >= SYSTEM_MARKIII)
     {
       for (i=0;i<0x10;i++) 
       {
@@ -448,12 +488,14 @@ int vdp_context_load(uint8 *state)
     }
     else
     {
+      /* TMS-99xx registers are updated directly to prevent spurious 4K->16K VRAM switching */
       for (i=0;i<0x08;i++) 
       {
-        pending = 1;
-        addr_latch = temp_reg[i];
-        vdp_tms_ctrl_w(0x80 | i);
+        reg[i] = temp_reg[i];
       }
+
+      /* Rendering mode */
+      render_bg = render_bg_modes[((reg[0] & 0x02) | (reg[1] & 0x18)) >> 1];
     }
   }
   else
@@ -470,17 +512,18 @@ int vdp_context_load(uint8 *state)
   load_param(&pending, sizeof(pending));
   load_param(&status, sizeof(status));
   load_param(&dmafill, sizeof(dmafill));
+  load_param(&fifo_idx, sizeof(fifo_idx));
+  load_param(&fifo, sizeof(fifo));
+  load_param(&h_counter, sizeof(h_counter));
   load_param(&hint_pending, sizeof(hint_pending));
   load_param(&vint_pending, sizeof(vint_pending));
   load_param(&dma_length, sizeof(dma_length));
   load_param(&dma_type, sizeof(dma_type));
   load_param(&dma_src, sizeof(dma_src));
-
   load_param(&cached_write, sizeof(cached_write));
 
-  /* restore FIFO timings */
-  fifo_latency = (reg[12] & 1) ? 190 : 214;
-  fifo_latency <<= ((code & 0x0F) < 0x03);
+  /* restore FIFO byte access flag */
+  fifo_byte_access = ((code & 0x0F) < 0x03);
 
   /* restore current NTSC/PAL mode */
   if (system_hw & SYSTEM_MD)
@@ -494,7 +537,7 @@ int vdp_context_load(uint8 *state)
     bg_list_index = 0x800;
 
     /* reinitialize palette */
-    color_update_m5(0, *(uint16 *)&cram[bordrr << 1]);
+    color_update_m5(0, *(uint16 *)&cram[border << 1]);
     for(i = 1; i < 0x40; i++)
     {
       color_update_m5(i, *(uint16 *)&cram[i << 1]);
@@ -510,10 +553,10 @@ int vdp_context_load(uint8 *state)
     {
       color_update_m4(i, *(uint16 *)&cram[i << 1]);
     }
-    color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (bordrr & 0x0F)) << 1]);
+    color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (border & 0x0F)) << 1]);
   }
 
-  /* invalidate cache */
+  /* invalidate tile cache */
   for (i=0;i<bg_list_index;i++) 
   {
     bg_name_list[i]=i;
@@ -525,28 +568,25 @@ int vdp_context_load(uint8 *state)
 
 
 /*--------------------------------------------------------------------------*/
-/* DMA update function                                                      */
+/* DMA update function (Mega Drive VDP only)                                */
 /*--------------------------------------------------------------------------*/
 
 void vdp_dma_update(unsigned int cycles)
 {
-  int dma_cycles, dma_bytes;
+  unsigned int dma_cycles, dma_bytes;
 
   /* DMA transfer rate (bytes per line) 
-
-     According to the manual, here's a table that describes the transfer
-   rates of each of the three DMA types:
 
       DMA Mode      Width       Display      Transfer Count
       -----------------------------------------------------
       68K > VDP     32-cell     Active       16
-                                Blanking     167
-                    40-cell     Active       18
-                                Blanking     205
-      VRAM Fill     32-cell     Active       15
                                 Blanking     166
-                    40-cell     Active       17
+                    40-cell     Active       18
                                 Blanking     204
+      VRAM Fill     32-cell     Active       15
+                                Blanking     165
+                    40-cell     Active       17
+                                Blanking     203
       VRAM Copy     32-cell     Active       8
                                 Blanking     83
                     40-cell     Active       9
@@ -570,7 +610,7 @@ void vdp_dma_update(unsigned int cycles)
     /* NOTE: DMA timings can not change during VBLANK because active display width cannot be modified. */
     /* Indeed, writing VDP registers during DMA is either impossible (when doing DMA from 68k bus, CPU */
     /* is locked) or will abort DMA operation (in case of DMA Fill or Copy). */
-    dma_cycles = (lines_per_frame * MCYCLES_PER_LINE) - cycles;
+    dma_cycles = ((lines_per_frame - bitmap.viewport.h - 1) * MCYCLES_PER_LINE) - cycles;
   }
   else
   {
@@ -582,7 +622,7 @@ void vdp_dma_update(unsigned int cycles)
   dma_bytes = (dma_cycles * rate) / MCYCLES_PER_LINE;
 
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] DMA type %d (%d access/line)(%d cycles left)-> %d access (%d remaining) (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE,dma_type, rate, dma_cycles, dma_bytes, dma_length, m68k_get_reg(M68K_REG_PC));
+  error("[%d(%d)][%d(%d)] DMA type %d (%d access/line)(%d cycles left)-> %d access (%d remaining) (%x)\n", v_counter, (v_counter + (cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE,dma_type, rate, dma_cycles, dma_bytes, dma_length, m68k_get_reg(M68K_REG_PC));
 #endif
 
   /* Check if DMA can be finished before the end of current line */
@@ -615,7 +655,7 @@ void vdp_dma_update(unsigned int cycles)
   }
 
   /* Process DMA */
-  if (dma_bytes > 0)
+  if (dma_bytes)
   {
     /* Update DMA length */
     dma_length -= dma_bytes;
@@ -626,7 +666,7 @@ void vdp_dma_update(unsigned int cycles)
     /* Check if DMA is finished */
     if (!dma_length)
     {
-      /* DMA source address registers are incremented during DMA */
+      /* DMA source address registers are incremented during DMA (even DMA Fill) */
       uint16 end = reg[21] + (reg[22] << 8) + reg[19] + (reg[20] << 8);
       reg[21] = end & 0xff;
       reg[22] = end >> 8;
@@ -707,17 +747,29 @@ void vdp_68k_ctrl_w(unsigned int data)
         {
           case 2:
           {
-            /* DMA Fill will be triggered by next DATA port write */
-            dmafill = 0x100;
+            /* DMA Fill */
+            dma_type = 2;
+
+            /* DMA is pending until next DATA port write */
+            dmafill = 1;
+
+            /* Set DMA Busy flag */
+            status |= 0x02;
+
+            /* DMA end cycle is not initialized yet (this prevents DMA Busy flag from being cleared on VDP status read) */
+            dma_endCycles = 0xffffffff;
             break;
           }
 
           case 3:
           {
+            /* DMA Copy */
+            dma_type = 3;
+
             /* DMA length */
             dma_length = (reg[20] << 8) | reg[19];
 
-            /* Zero DMA length */
+            /* Zero DMA length (pre-decrementing counter) */
             if (!dma_length)
             {
               dma_length = 0x10000;
@@ -726,18 +778,20 @@ void vdp_68k_ctrl_w(unsigned int data)
             /* DMA source address */
             dma_src = (reg[22] << 8) | reg[21];
 
-            /* trigger DMA copy */
-            dma_type = 3;
+            /* Trigger DMA */
             vdp_dma_update(m68k.cycles);
             break;
           }
 
           default:
           {
+            /* DMA from 68k bus */
+            dma_type = (code & 0x06) ? 0 : 1;
+
             /* DMA length */
             dma_length = (reg[20] << 8) | reg[19];
 
-            /* Zero DMA length */
+            /* Zero DMA length (pre-decrementing counter) */
             if (!dma_length)
             {
               dma_length = 0x10000;
@@ -756,8 +810,7 @@ void vdp_68k_ctrl_w(unsigned int data)
               dma_length--;
             }
 
-            /* trigger DMA from 68k bus */
-            dma_type = (code & 0x06) ? 0 : 1;
+            /* Trigger DMA */
             vdp_dma_update(m68k.cycles);
             break;
           }
@@ -769,20 +822,18 @@ void vdp_68k_ctrl_w(unsigned int data)
   /* 
      FIFO emulation (Chaos Engine/Soldier of Fortune, Double Clutch, Sol Deace) 
      --------------------------------------------------------------------------
+     Each VRAM access is byte wide, so one VRAM write (word) need two slot access.
 
-      CPU access per line is limited during active display:
-         H32: 16 access --> 3420/16 = ~214 Mcycles between access
-         H40: 18 access --> 3420/18 = ~190 Mcycles between access
-
-      This is an approximation: on real hardware, access slots are fixed.
-
-      Each VRAM access is byte wide, so one VRAM write (word) need twice cycles.
-
-      Note: Invalid code 0x02 (register write) apparently behaves the same as VRAM
-      access, although no data is written in this case (fixes Clue menu)
-  */
-  fifo_latency = (reg[12] & 1) ? 190 : 214;
-  fifo_latency <<= ((code & 0x0F) < 0x03);
+      NOTE: Invalid code 0x02 (register write) should not behave the same as VRAM
+      access, i.e data is ignored and only one access slot is used for each word, 
+      BUT a few games ("Clue", "Microcosm") which accidentally corrupt code value 
+      will have issues when emulating FIFO timings. They likely work fine on real
+      hardware because of periodical 68k wait-states which have been observed and
+      would naturaly add some delay between writes. Until those wait-states are
+      accurately measured and emulated, delay is forced when invalid code value
+      is being used.
+  */ 
+  fifo_byte_access = ((code & 0x0F) <= 0x02);
 }
 
 /* Mega Drive VDP control port specific (MS compatibility mode) */
@@ -860,17 +911,29 @@ void vdp_z80_ctrl_w(unsigned int data)
           {
             case 2:
             {
-              /* DMA Fill will be triggered by next write to DATA port */
-              dmafill = 0x100;
+              /* DMA Fill */
+              dma_type = 2;
+
+              /* DMA is pending until next DATA port write */
+              dmafill = 1;
+
+              /* Set DMA Busy flag */
+              status |= 0x02;
+
+              /* DMA end cycle is not initialized yet (this prevents DMA Busy flag from being cleared on VDP status read) */
+              dma_endCycles = 0xffffffff;
               break;
             }
 
             case 3:
             {
+              /* DMA copy */
+              dma_type = 3;
+
               /* DMA length */
               dma_length = (reg[20] << 8) | reg[19];
 
-              /* Zero DMA length */
+              /* Zero DMA length (pre-decrementing counter) */
               if (!dma_length)
               {
                 dma_length = 0x10000;
@@ -879,8 +942,7 @@ void vdp_z80_ctrl_w(unsigned int data)
               /* DMA source address */
               dma_src = (reg[22] << 8) | reg[21];
 
-              /* trigger DMA copy */
-              dma_type = 3;
+              /* Trigger DMA */
               vdp_dma_update(Z80.cycles);
               break;
             }
@@ -901,7 +963,7 @@ void vdp_z80_ctrl_w(unsigned int data)
 /* Master System & Game Gear VDP control port specific */
 void vdp_sms_ctrl_w(unsigned int data)
 {
-  if(pending == 0)
+  if (pending == 0)
   {
     /* Update address register LSB */
     addr = (addr & 0x3F00) | (data & 0xFF);
@@ -975,96 +1037,15 @@ void vdp_sms_ctrl_w(unsigned int data)
             vc_max = vc_table[0][vdp_pal];
           }
 
+          /* viewport changes should be applied on next frame */
           if (height != bitmap.viewport.h)
           {
-            if (status & 8)
-            {
-              /* viewport changes should be applied on next frame */
-              bitmap.viewport.changed |= 2;
-            }
-            else
-            {
-              /* update active display */
-              bitmap.viewport.h = height;
-
-              /* update vertical overscan */
-              if (config.overscan & 1)
-              {
-                bitmap.viewport.y = (240 + 48*vdp_pal - height) >> 1;
-              }
-              else
-              {
-                if ((system_hw == SYSTEM_GG) && !config.gg_extra)
-                {
-                  /* Display area reduced to 160x144 */
-                  bitmap.viewport.y = (144 - height) / 2;
-                }
-                else
-                {
-                  bitmap.viewport.y = 0;
-                }
-              }
-            }
+            bitmap.viewport.changed |= 2;
           }
         }
 
         /* Rendering mode */
-        switch (mode)
-        {
-          case 0x00: /* Graphics I */
-          {
-            render_bg = render_bg_m0;
-            break;
-          }
-
-          case 0x10: /* Text */
-          {
-            render_bg = render_bg_m1;
-           break;
-          }
-
-          case 0x02: /* Graphics II */
-          {
-            render_bg = render_bg_m2;
-            break;
-          }
-
-          case 0x12: /* Text (Extended PG) */
-          {
-            render_bg = render_bg_m1x;
-            break;
-          }
-
-          case 0x08: /* Multicolor */
-          {
-            render_bg = render_bg_m3;
-            break;
-          }
-
-          case 0x18: /* Invalid (1+3) */
-          {
-            render_bg = render_bg_inv;
-            break;
-          }
-
-          case 0x0A: /* Multicolor (Extended PG) */
-          {
-            render_bg = render_bg_m3x;
-            break;
-          }
-
-          case 0x1A: /* Invalid (1+2+3) */
-          {
-            render_bg = render_bg_inv;
-           break;
-          }
-
-          default: /* Mode 4 */
-          {
-            render_bg = render_bg_m4;
-            break;
-          }
-        }
+        render_bg = render_bg_modes[mode>>1];
 
         /* Mode switching */
         if (prev & 0x04)
@@ -1095,17 +1076,17 @@ void vdp_sms_ctrl_w(unsigned int data)
           {
             color_update_m4(i, *(uint16 *)&cram[i << 1]);
           }
-          color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (bordrr & 0x0F)) << 1]);
+          color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (border & 0x0F)) << 1]);
         }
       }
     }
   }
 }
 
-/* TMS9918 (SG-1000) VDP control port specific */
+/* SG-1000 VDP (TMS99xx) control port specific */
 void vdp_tms_ctrl_w(unsigned int data)
 {
-  if(pending == 0)
+  if (pending == 0)
   {
     /* Latch LSB */
     addr_latch = data;
@@ -1143,59 +1124,8 @@ void vdp_tms_ctrl_w(unsigned int data)
       /* Check VDP mode changes */
       if (data < 2)
       {
-        int mode = (reg[0] & 0x02) | (reg[1] & 0x18);
-
         /* Rendering mode */
-        switch (mode)
-        {
-          case 0x00: /* Graphics I */
-          {
-            render_bg = render_bg_m0;
-            break;
-          }
-
-          case 0x10: /* Text */
-          {
-            render_bg = render_bg_m1;
-            break;
-          }
-
-          case 0x02: /* Graphics II */
-          {
-            render_bg = render_bg_m2;
-            break;
-          }
-
-          case 0x12: /* Text (Extended PG) */
-          {
-            render_bg = render_bg_m1x;
-            break;
-          }
-
-          case 0x08: /* Multicolor */
-          {
-            render_bg = render_bg_m3;
-            break;
-          }
-
-          case 0x18: /* Invalid (1+3) */
-          {
-            render_bg = render_bg_inv;
-            break;
-          }
-
-          case 0x0A: /* Multicolor (Extended PG) */
-          {
-            render_bg = render_bg_m3x;
-            break;
-          }
-
-          case 0x1A: /* Invalid (1+2+3) */
-          {
-            render_bg = render_bg_inv;
-            break;
-          }
-        }
+        render_bg = render_bg_modes[((reg[0] & 0x02) | (reg[1] & 0x18)) >> 1];
       }
     }
   }
@@ -1221,13 +1151,24 @@ unsigned int vdp_68k_ctrl_r(unsigned int cycles)
 {
   unsigned int temp;
 
-  /* Update FIFO flags */
-  vdp_fifo_update(cycles);
+  /* Cycle-accurate VDP status read (adjust CPU time with current instruction execution time) */
+  cycles += m68k_cycles();
 
-  /* Update DMA Busy flag */
-  if ((status & 2) && !dma_length && (cycles >= dma_endCycles))
+  /* Update FIFO status flags if not empty */
+  if (fifo_write_cnt)
   {
-    status &= 0xFFFD;
+    vdp_fifo_update(cycles);
+  }
+
+  /* Check if DMA Busy flag is set */
+  if (status & 2)
+  {
+    /* Check if DMA is finished */
+    if (!dma_length && (cycles >= dma_endCycles))
+    {
+      /* Clear DMA Busy flag */
+      status &= 0xFFFD;
+    }
   }
 
   /* Return VDP status */
@@ -1239,21 +1180,32 @@ unsigned int vdp_68k_ctrl_r(unsigned int cycles)
   /* Clear SOVR & SCOL flags */
   status &= 0xFF9F;
 
-  /* Display OFF: VBLANK flag is set */
+  /* VBLANK flag is set when display is disabled */
   if (!(reg[1] & 0x40))
   {
     temp |= 0x08;
   }
 
-  /* HBLANK flag (Sonic 3 and Sonic 2 "VS Modes", Lemmings 2, Mega Turrican, V.R Troopers, Gouketsuji Ichizoku,...) */
-  /* NB: this is not 100% accurate and need to be verified on real hardware */
+  /* Cycle-accurate VINT flag (Ex-Mutants, Tyrant / Mega-Lo-Mania, Marvel Land) */
+  /* this allows VINT flag to be read just before vertical interrupt is being triggered */
+  if ((v_counter == bitmap.viewport.h) && (cycles >= (mcycles_vdp + 788)))
+  {
+    /* check Z80 interrupt state to assure VINT has not already been triggered (and flag cleared) */
+    if (Z80.irq_state != ASSERT_LINE)
+    {
+      temp |= 0x80;
+    }
+  }
+
+  /* Cycle-accurate HBLANK flag (Sonic 3 & Sonic 2 "VS Modes", Bugs Bunny Double Trouble, Lemmings 2, Mega Turrican, V.R Troopers, Gouketsuji Ichizoku,...) */
+  /* NB: this is not 100% accurate (see hvc.h for horizontal events timings in H32 and H40 mode) but is close enough to make no noticeable difference for games */
   if ((cycles % MCYCLES_PER_LINE) < 588)
   {
     temp |= 0x04;
   }
 
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] VDP 68k status read -> 0x%x (0x%x) (%x)\n", v_counter, cycles/MCYCLES_PER_LINE-1, cycles, cycles%MCYCLES_PER_LINE, temp, status, m68k_get_reg(M68K_REG_PC));
+  error("[%d(%d)][%d(%d)] VDP 68k status read -> 0x%x (0x%x) (%x)\n", v_counter, (v_counter + (cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, temp, status, m68k_get_reg(M68K_REG_PC));
 #endif
   return (temp);
 }
@@ -1262,28 +1214,43 @@ unsigned int vdp_z80_ctrl_r(unsigned int cycles)
 {
   unsigned int temp;
 
-  /* Cycle-accurate SOVR & VINT flags */
-  int line = (lines_per_frame + (cycles / MCYCLES_PER_LINE) - 1) % lines_per_frame;
-
-  /* Update DMA Busy flag (Mega Drive VDP specific) */
-  if ((system_hw & SYSTEM_MD) && (status & 2) && !dma_length && (cycles >= dma_endCycles))
+  /* Check if DMA busy flag is set (Mega Drive VDP specific) */
+  if (status & 2)
   {
-    status &= 0xFD;
+    /* Check if DMA is finished */
+    if (!dma_length && (cycles >= dma_endCycles))
+    {
+      /* Clear DMA Busy flag */
+      status &= 0xFD;
+    }
   }
 
   /* Check if we are already on next line */
-  if (line > v_counter)
+  if ((cycles - mcycles_vdp) >= MCYCLES_PER_LINE)
   {
-    v_counter = line;
-    if (line == (bitmap.viewport.h + 1))
+    /* check vertical position */
+    if (v_counter == bitmap.viewport.h)
     {
-      /* set VINT flag (immediately cleared after) */
+      /* update VCounter to indicate VINT flag has been cleared & VINT should not be triggered */
+      v_counter++;
+
+      /* cycle-accurate VINT flag (immediately cleared after being read) */
       status |= 0x80;
     }
-    else if ((line >= 0) && (line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special))
+    else
     {
-      /* Check sprites overflow & collision */
-      render_line(line);
+      /* update line counter */
+      int line = (v_counter + 1) % lines_per_frame;
+    
+      /* check if we are within active display range */
+      if ((line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special & HW_3D_GLASSES))
+      {
+        /* update VCounter to indicate next line has already been rendered */
+        v_counter = line;
+
+        /* render next line (cycle-accurate SCOL & SOVR flags) */
+        render_line(line);
+      }
     }
   }
 
@@ -1318,7 +1285,7 @@ unsigned int vdp_z80_ctrl_r(unsigned int cycles)
   }
 
   /* Cycle-accurate SCOL flag */
-  if ((temp & 0x20) && (line == (spr_col >> 8)))
+  if ((temp & 0x20) && (v_counter == (spr_col >> 8)))
   {
     if (system_hw & SYSTEM_MD)
     {
@@ -1348,7 +1315,7 @@ unsigned int vdp_z80_ctrl_r(unsigned int cycles)
   Z80.irq_state = CLEAR_LINE;
 
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] VDP Z80 status read -> 0x%x (0x%x) (%x)\n", v_counter, cycles/MCYCLES_PER_LINE-1, cycles, cycles%MCYCLES_PER_LINE, temp, status, Z80.pc.w.l);
+  error("[%d(%d)][%d(%d)] VDP Z80 status read -> 0x%x (0x%x) (%x)\n", v_counter, (v_counter + (cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, temp, status, Z80.pc.w.l);
 #endif
   return (temp);
 }
@@ -1365,31 +1332,35 @@ unsigned int vdp_hvc_r(unsigned int cycles)
   /* Check if HVC latch is enabled */
   if (data)
   {
-    /* Mode 5: HV-counters are frozen (cf. lightgun games, Sunset Riders logo) */
+    /* Mode 5: HV counters are frozen (cf. lightgun games, Sunset Riders logo) */
     if (reg[1] & 0x04)
     {
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] HVC latch read -> 0x%x (%x)\n", v_counter, (cycles/MCYCLES_PER_LINE-1)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, data & 0xffff, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] HVC latch read -> 0x%x (%x)\n", v_counter, (v_counter + (cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, data & 0xffff, m68k_get_reg(M68K_REG_PC));
 #endif
       /* return latched HVC value */
       return (data & 0xffff);
     }
     else
     {
-      /* Mode 4: by default, V-counter runs normally & H counter is frozen */
+      /* Mode 4: by default, VCounter runs normally & HCounter is frozen */
       data &= 0xff;
     }
   }
   else
   {
-    /* Cycle-accurate H-Counter (Striker, Mickey Mania, Skitchin, Road Rash I,II,III, Sonic 3D Blast...) */
+    /* Cycle-accurate HCounter (Striker, Mickey Mania, Skitchin, Road Rash I,II,III, Sonic 3D Blast...) */
     data = hctab[cycles % MCYCLES_PER_LINE];
   }
 
-  /* Cycle-accurate V-Counter (cycle counter starts from line -1) */
-  vc = (cycles / MCYCLES_PER_LINE) - 1;
+  /* Cycle-accurate VCounter */
+  vc = v_counter;
+  if ((cycles - mcycles_vdp) >= MCYCLES_PER_LINE)
+  {
+    vc = (vc + 1) % lines_per_frame;
+  }
 
-  /* V-Counter overflow */
+  /* VCounter overflow */
   if (vc > vc_max)
   {
     vc -= lines_per_frame;
@@ -1405,11 +1376,11 @@ unsigned int vdp_hvc_r(unsigned int cycles)
     vc = (vc & ~1) | ((vc >> 8) & 1);
   }
 
-  /* return H-Counter in LSB & V-Counter in MSB */
+  /* return HCounter in LSB & VCounter in MSB */
   data |= ((vc & 0xff) << 8);
   
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] HVC read -> 0x%x (%x)\n", v_counter, (cycles/MCYCLES_PER_LINE-1)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, data, m68k_get_reg(M68K_REG_PC));
+  error("[%d(%d)][%d(%d)] HVC read -> 0x%x (%x)\n", v_counter, (v_counter + (cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, data, m68k_get_reg(M68K_REG_PC));
 #endif
   return (data);
 }
@@ -1434,11 +1405,11 @@ void vdp_test_w(unsigned int data)
 int vdp_68k_irq_ack(int int_level)
 {
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] INT Level %d ack (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE,int_level, m68k_get_reg(M68K_REG_PC));
+  error("[%d(%d)][%d(%d)] INT Level %d ack (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE,int_level, m68k_get_reg(M68K_REG_PC));
 #endif
 
   /* VINT has higher priority (Fatal Rewind) */
-  if (vint_pending & reg[1])
+  if (reg[1] & vint_pending)
   {
 #ifdef LOGVDP
     error("---> VINT cleared\n");
@@ -1449,7 +1420,7 @@ int vdp_68k_irq_ack(int int_level)
     status &= ~0x80;
 
     /* Update IRQ status */
-    if (hint_pending & reg[0])
+    if (reg[0] & hint_pending)
     {
       m68k_set_irq(4);
     }
@@ -1482,7 +1453,7 @@ int vdp_68k_irq_ack(int int_level)
 static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
 {
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] VDP register %d write -> 0x%x (%x)\n", v_counter, cycles/MCYCLES_PER_LINE-1, cycles, cycles%MCYCLES_PER_LINE, r, d, m68k_get_reg(M68K_REG_PC));
+  error("[%d(%d)][%d(%d)] VDP register %d write -> 0x%x (%x)\n", v_counter, (v_counter + (cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, cycles, cycles%MCYCLES_PER_LINE, r, d, m68k_get_reg(M68K_REG_PC));
 #endif
 
   /* VDP registers #11 to #23 cannot be updated in Mode 4 (Captain Planet & Avengers, Bass Master Classic Pro Edition) */
@@ -1500,10 +1471,10 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
       reg[0] = d;
 
       /* Line Interrupt */
-      if ((r & 0x10) && hint_pending)
+      if (r & hint_pending)
       {
         /* Update IRQ status */
-        if (vint_pending & reg[1])
+        if (reg[1] & vint_pending)
         {
           set_irq_line(6);
         }
@@ -1528,7 +1499,7 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
           if (reg[1] & 0x04)
           {
             /* Mode 5 */
-            color_update_m5(0x00, *(uint16 *)&cram[bordrr << 1]);
+            color_update_m5(0x00, *(uint16 *)&cram[border << 1]);
             for (i = 1; i < 0x40; i++)
             {
               color_update_m5(i, *(uint16 *)&cram[i << 1]);
@@ -1541,7 +1512,7 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
             {
               color_update_m4(i, *(uint16 *)&cram[i << 1]);
             }
-            color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (bordrr & 0x0F)) << 1]);
+            color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (border & 0x0F)) << 1]);
           }
         }
       }
@@ -1577,25 +1548,63 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
       r = d ^ reg[1];
       reg[1] = d;
 
+      /* 4K/16K address decoding */
+      if (r & 0x80)
+      {
+        /* original TMS99xx hardware only (fixes Magical Kid Wiz) */
+        if (system_hw == SYSTEM_SG)
+        {
+          int i;
+          
+          /* make temporary copy of 16KB VRAM */
+          memcpy(vram + 0x4000, vram, 0x4000);
+
+          /* re-arrange 16KB VRAM address decoding */
+          if (d & 0x80)
+          {
+            /* 4K->16K address decoding */
+            for (i=0; i<0x4000; i+=2)
+            {
+              *(uint16 *)(vram + ((i & 0x203F) | ((i << 6) & 0x1000) | ((i >> 1) & 0xFC0))) = *(uint16 *)(vram + 0x4000 + i);
+            }
+          }
+          else
+          {
+            /* 16K->4K address decoding */
+            for (i=0; i<0x4000; i+=2)
+            {
+              *(uint16 *)(vram + ((i & 0x203F) | ((i >> 6) & 0x40) | ((i << 1) & 0x1F80))) = *(uint16 *)(vram + 0x4000 + i);
+            }
+          }
+        }
+      }
+
       /* Display status (modified during active display) */
       if ((r & 0x40) && (v_counter < bitmap.viewport.h))
       {
         /* Cycle offset vs HBLANK */
-        int offset = cycles - mcycles_vdp - 860;
-        if (offset <= 0)
+        int offset = cycles - mcycles_vdp;
+        if (offset <= 860)
         {
-          /* If display was disabled during HBLANK (Mickey Mania 3D level), sprite rendering is limited  */
-          if ((d & 0x40) && (object_count > 5) && (offset >= -500))
+          /* Sprite rendering is limited if display was disabled during HBLANK (Mickey Mania 3d level, Overdrive Demo) */
+          if (d & 0x40)
           {
-            object_count = 5;
+            /* NB: This is not 100% accurate. On real hardware, the maximal number of rendered sprites pixels */
+            /* for the current line (normally 256 or 320 pixels) but also the maximal number of pre-processed */
+            /* sprites for the next line (normally 64 or 80 sprites) are both reduced depending on the amount */
+            /* of cycles spent with display disabled. Here we only reduce them by a fixed amount when display */
+            /* has been reenabled after a specific point within HBLANK. */
+            if (offset > 360)
+            {
+              max_sprite_pixels = 128;
+            }
           }
 
           /* Redraw entire line (Legend of Galahad, Lemmings 2, Formula One, Kawasaki Super Bike, Deadly Moves,...) */
           render_line(v_counter);
 
-#ifdef LOGVDP
-          error("Line redrawn (%d sprites) \n",object_count);
-#endif
+          /* Restore default */
+          max_sprite_pixels = 256 + ((reg[12] & 1) << 6);
         }
         else if (system_hw & SYSTEM_MD)
         {
@@ -1603,20 +1612,17 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
           if (reg[12] & 1)
           {
             /* dot clock = MCLK / 8 */
-            offset = (offset / 8);
+            offset = ((offset - 860) / 8) + 16;
           }
           else
           {
             /* dot clock = MCLK / 10 */
-            offset = (offset / 10) + 16;
+            offset = ((offset - 860) / 10) + 16;
           }
 
           /* Line is partially blanked (Nigel Mansell's World Championship Racing , Ren & Stimpy Show, ...) */
           if (offset < bitmap.viewport.w)
           {
-#ifdef LOGVDP
-            error("Line %d redrawn from pixel %d\n",v_counter,offset);
-#endif
             if (d & 0x40)
             {
               render_line(v_counter);
@@ -1631,14 +1637,14 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
       }
 
       /* Frame Interrupt */
-      if ((r & 0x20) && vint_pending)
+      if (r & vint_pending)
       {
         /* Update IRQ status */
         if (d & 0x20) 
         {
           set_irq_line_delay(6);
         }
-        else if (hint_pending & reg[0])
+        else if (reg[0] & hint_pending)
         {
           set_irq_line(4);
         }
@@ -1657,17 +1663,8 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
           /* Mode 5 only */
           if (d & 0x04)
           {
-            if (status & 8)
-            {
-              /* Changes should be applied on next frame */
-              bitmap.viewport.changed |= 2;
-            }
-            else
-            {
-              /* Update active display height */
-              bitmap.viewport.h = 224 + ((d & 8) << 1);
-              bitmap.viewport.y = (config.overscan & 1) * (8 - (d & 8) + 24*vdp_pal);
-            }
+            /* Changes should be applied on next frame */
+            bitmap.viewport.changed |= 2;
 
             /* Update vertical counter max value */
             vc_max = vc_table[(d >> 2) & 3][vdp_pal];
@@ -1699,7 +1696,7 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
             }
 
             /* Reset color palette */
-            color_update_m5(0x00, *(uint16 *)&cram[bordrr << 1]);
+            color_update_m5(0x00, *(uint16 *)&cram[border << 1]);
             for (i = 1; i < 0x40; i++)
             {
               color_update_m5(i, *(uint16 *)&cram[i << 1]);
@@ -1710,19 +1707,6 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
             vdp_z80_data_w = vdp_z80_data_w_m5;
             vdp_68k_data_r = vdp_68k_data_r_m5;
             vdp_z80_data_r = vdp_z80_data_r_m5;
-
-            /* Change display height */
-            if (status & 8)
-            {
-              /* viewport changes should be applied on next frame */
-              bitmap.viewport.changed |= 2;
-            }
-            else
-            {
-              /* Update current frame active display height */
-              bitmap.viewport.h = 224 + ((d & 8) << 1);
-              bitmap.viewport.y = (config.overscan & 1) * (8 - (d & 8) + 24*vdp_pal);
-            }
 
             /* Clear HVC latched value */
             hvc_latch = 0;
@@ -1750,25 +1734,13 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
             {
               color_update_m4(i, *(uint16 *)&cram[i << 1]);
             }
-            color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (bordrr & 0x0F)) << 1]);
+            color_update_m4(0x40, *(uint16 *)&cram[(0x10 | (border & 0x0F)) << 1]);
 
             /* Mode 4 bus access */
             vdp_68k_data_w = vdp_68k_data_w_m4;
             vdp_z80_data_w = vdp_z80_data_w_m4;
             vdp_68k_data_r = vdp_68k_data_r_m4;
             vdp_z80_data_r = vdp_z80_data_r_m4;
-
-            if (status & 8)
-            {
-              /* viewport changes should be applied on next frame */
-              bitmap.viewport.changed |= 2;
-            }
-            else
-            {
-              /* Update current frame active display */
-              bitmap.viewport.h = 192;
-              bitmap.viewport.y = (config.overscan & 1) * 24 * (vdp_pal + 1);
-            }
 
             /* Latch current HVC */
             hvc_latch = vdp_hvc_r(cycles) | 0x10000;
@@ -1786,6 +1758,9 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
 
           /* Update vertical counter max value */
           vc_max = vc_table[(d >> 2) & 3][vdp_pal];
+
+          /* Display height change should be applied on next frame */
+          bitmap.viewport.changed |= 2; 
         }
         else
         {
@@ -1860,10 +1835,10 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
       /* Check if backdrop color changed */
       d &= 0x3F;
 
-      if (d != bordrr)
+      if (d != border)
       {
         /* Update backdrop color */
-        bordrr = d;
+        border = d;
 
         /* Reset palette entry */
         if (reg[1] & 4)
@@ -1889,21 +1864,28 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
 
     case 8:   /* Horizontal Scroll (Mode 4 only) */
     {
-      int line;
-      
-      /* Hscroll is latched at HCount 0xF3, HCount 0xF6 on MD */
+      /* H-Scroll is latched at HCount 0xF3, HCount 0xF6 on MD */
       /* Line starts at HCount 0xF4, HCount 0xF6 on MD */
       if (system_hw < SYSTEM_MD)
       {
         cycles = cycles + 15;
       }
 
-      /* Make sure Hscroll has not already been latched */
-      line = (lines_per_frame + (cycles / MCYCLES_PER_LINE) - 1) % lines_per_frame;
-      if ((line > v_counter) && (line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special))
+      /* Check if H-Scroll has already been latched */
+      if ((cycles - mcycles_vdp) >= MCYCLES_PER_LINE)
       {
-        v_counter = line;
-        render_line(line);
+        /* update line counter */
+        int line = (v_counter + 1) % lines_per_frame;
+
+        /* check if we are within active display range */
+        if ((line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special & HW_3D_GLASSES))
+        {
+          /* update VCounter to indicate next line has already been rendered */
+          v_counter = line;
+
+          /* render next line before updating H-Scroll */
+          render_line(line);
+        }
       }
 
       reg[8] = d;
@@ -1940,7 +1922,7 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
       {
         /* Reset color palette */
         int i;
-        color_update_m5(0x00, *(uint16 *)&cram[bordrr << 1]);
+        color_update_m5(0x00, *(uint16 *)&cram[border << 1]);
         for (i = 1; i < 0x40; i++)
         {
           color_update_m5(i, *(uint16 *)&cram[i << 1]);
@@ -1967,6 +1949,13 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
       /* Active display width */
       if (r & 0x01)
       {
+        /* FIFO access slots timings depend on active width */
+        if (fifo_slots)
+        {
+          /* Synchronize VDP FIFO */
+          vdp_fifo_update(cycles);
+        }
+
         if (d & 0x01)
         {
           /* Update display-dependant registers */
@@ -1981,8 +1970,11 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
           /* Update clipping */
           window_clip(reg[17], 1);
 
-          /* Update fifo timings */
-          fifo_latency = 190;
+          /* Update max sprite pixels per line*/
+          max_sprite_pixels = 320;
+
+          /* FIFO access slots timings */
+          fifo_timing = (int *)fifo_timing_h40;
         }
         else
         {
@@ -1998,34 +1990,37 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
           /* Update clipping */
           window_clip(reg[17], 0);
 
-          /* Update FIFO timings */
-          fifo_latency = 214;
+          /* Update max sprite pixels per line*/
+          max_sprite_pixels = 256;
+
+          /* FIFO access slots timings */
+          fifo_timing = (int *)fifo_timing_h32;
         }
 
-        /* Adjust FIFO timings for VRAM writes */
-        fifo_latency <<= ((code & 0x0F) < 0x03);
-
-        /* Active display width modified during HBLANK (Bugs Bunny Double Trouble) */
-        if ((v_counter < bitmap.viewport.h) && (cycles <= (mcycles_vdp + 860)))
+        /* Active screen width modified during VBLANK will be applied on upcoming frame */
+        if (v_counter >= bitmap.viewport.h)
         {
-          /* Update active display width */
-          bitmap.viewport.w = 256 + ((d & 1) << 6);
-
-          /* Redraw entire line */
-          render_line(v_counter);
+          bitmap.viewport.w = max_sprite_pixels;
         }
-        else if (v_counter == (lines_per_frame - 1))
+
+        /* Allow active screen width to be modified during first two lines (Bugs Bunny in Double Trouble) */
+        else if (v_counter <= 1)
         {
-          /* Update starting frame active display width */
-          bitmap.viewport.w = 256 + ((d & 1) << 6);
+          bitmap.viewport.w = max_sprite_pixels;
+
+          /* Redraw lines */
+          render_line(0);
+          if (v_counter)
+          {
+            render_line(1);
+          }
         }
         else
         {
-          /* Changes should be applied on next frame (Golden Axe III intro) */
-          /* NB: not 100% accurate but required since backend framebuffer width cannot be modified mid-frame. */
-          /* This would require a fixed framebuffer width (based on TV screen aspect ratio) and pixel scaling */
-          /* to be done during rendering (depending on active display pixel aspect ratio in H32 or H40 mode). */
-          /* Display is generally disabled when this is modified so it shouldn't be really noticeable anyway. */
+          /* Screen width changes during active display (Golden Axe 3 intro, Ultraverse Prime) */
+          /* should be applied on next frame since backend rendered framebuffer width is fixed */
+          /* and can not be modified mid-frame. This is not 100% accurate but games generally  */
+          /* do this when the screen is blanked so it is likely unnoticeable. */
           bitmap.viewport.changed |= 2;
         }
       }
@@ -2063,48 +2058,80 @@ static void vdp_reg_w(unsigned int r, unsigned int d, unsigned int cycles)
   }
 }
 
-
 /*--------------------------------------------------------------------------*/
-/* FIFO update function (Genesis mode only)                                 */
+/*  FIFO emulation (Mega Drive VDP specific)                                */
+/*  ----------------------------------------                                */
+/*                                                                          */
+/*  CPU access to VRAM, CRAM & VSRAM is limited during active display:      */
+/*    H32 mode -> 16 access per line                                        */
+/*    H40 mode -> 18 access per line                                        */
+/*                                                                          */
+/*  with fixed access slots timings detailled below.                        */
+/*                                                                          */
+/*  Each VRAM access is byte wide, so one VRAM write (word) need two slots. */
+/*                                                                          */
 /*--------------------------------------------------------------------------*/
 
 static void vdp_fifo_update(unsigned int cycles)
 {
-  if (fifo_write_cnt > 0)
+  int fifo_read_cnt, line_slots = 0;
+
+  /* number of access slots up to current line */
+  int total_slots = dma_timing[0][reg[12] & 1] * ((v_counter + 1) % lines_per_frame);
+
+  /* number of access slots within current line */
+  cycles -= mcycles_vdp;
+  while (fifo_timing[line_slots] <= cycles)
   {
-    /* Get number of FIFO reads */
-    int fifo_read = ((cycles - fifo_lastwrite) / fifo_latency);
+    line_slots++;
+  }
 
-    if (fifo_read > 0)
+  /* number of processed FIFO entries since last access (byte access needs two slots to process one FIFO word) */
+  fifo_read_cnt = (total_slots + line_slots - fifo_slots) >> fifo_byte_access;
+
+  if (fifo_read_cnt > 0)
+  {
+    /* process FIFO entries */
+    fifo_write_cnt -= fifo_read_cnt;
+
+    /* Clear FIFO full flag */
+    status &= 0xFEFF;
+
+    if (fifo_write_cnt <= 0)
     {
-      /* Process FIFO entries */
-      fifo_write_cnt -= fifo_read;
+      /* No more FIFO entries */
+      fifo_write_cnt = 0;
 
-      /* Clear FIFO full flag */
-      status &= 0xFEFF;
+      /* Set FIFO empty flag */
+      status |= 0x200;
 
-      /* Check remaining FIFO entries */
-      if (fifo_write_cnt <= 0)
-      {
-        /* Set FIFO empty flag */
-        status |= 0x200; 
-        fifo_write_cnt = 0;
-      }
-
-      /* Update FIFO cycle count */
-      fifo_lastwrite += (fifo_read * fifo_latency);
+      /* Reinitialize FIFO access slot counter */
+      fifo_slots = total_slots + line_slots;
+    }
+    else
+    {
+      /* Update FIFO access slot counter */
+      fifo_slots += (fifo_read_cnt << fifo_byte_access);
     }
   }
+
+  /* next FIFO update cycle */
+  fifo_cycles = mcycles_vdp + fifo_timing[fifo_slots - total_slots + fifo_byte_access];
 }
 
 
 /*--------------------------------------------------------------------------*/
 /* Internal 16-bit data bus access function (Mode 5 only)                   */
 /*--------------------------------------------------------------------------*/
-
 static void vdp_bus_w(unsigned int data)
 {
-  /* Check destination code */
+  /* write data to next FIFO entry */
+  fifo[fifo_idx] = data;
+
+  /* increment FIFO write pointer */
+  fifo_idx = (fifo_idx + 1) & 3;
+
+  /* Check destination code (CD0-CD3) */
   switch (code & 0x0F)
   {
     case 0x01:  /* VRAM */
@@ -2140,8 +2167,13 @@ static void vdp_bus_w(unsigned int data)
         MARK_BG_DIRTY (index);
       }
 
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_VRAM_W, 2, addr, data);
+#endif
+
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
@@ -2171,20 +2203,26 @@ static void vdp_bus_w(unsigned int data)
         }
 
         /* Update backdrop color */
-        if (index == bordrr)
+        if (index == border)
         {
           color_update_m5(0x00, data);
         }
 
         /* CRAM modified during HBLANK (Striker, Zero the Kamikaze, etc) */
-        if ((v_counter < bitmap.viewport.h) && (reg[1]& 0x40) && (m68k.cycles <= (mcycles_vdp + 860)))
+        if ((v_counter < bitmap.viewport.h) && (reg[1] & 0x40) && (m68k.cycles <= (mcycles_vdp + 860)))
         {
           /* Remap current line */
           remap_line(v_counter);
         }
       }
+
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_CRAM_W, 2, addr, data);
+#endif
+
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] CRAM 0x%x write -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] CRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
@@ -2197,22 +2235,30 @@ static void vdp_bus_w(unsigned int data)
       if (reg[11] & 0x04)
       {
         /* VSRAM writes during HBLANK (Adventures of Batman & Robin) */
-        if ((v_counter < bitmap.viewport.h) && (reg[1]& 0x40) && (m68k.cycles <= (mcycles_vdp + 860)))
+        if ((v_counter < bitmap.viewport.h) && (reg[1] & 0x40) && (m68k.cycles <= (mcycles_vdp + 860)))
         {
-          /* Remap current line */
+          /* Redraw entire line */
           render_line(v_counter);
         }
       }
+
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_VSRAM_W, 2, addr, data);
+#endif
+
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] VSRAM 0x%x write -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] VSRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
 
     default:
     {
+      /* add some delay until 68k periodical wait-states are accurately emulated ("Clue", "Microcosm") */
+      m68k.cycles += 2;
 #ifdef LOGERROR
-      error("[%d(%d)][%d(%d)] Invalid (%d) 0x%x write -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, code, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] Invalid (%d) 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, code, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
@@ -2224,7 +2270,7 @@ static void vdp_bus_w(unsigned int data)
 
 
 /*--------------------------------------------------------------------------*/
-/* 68k data port access functions (Genesis mode)                            */
+/* 68k bus interface (Mega Drive VDP only)                                     */
 /*--------------------------------------------------------------------------*/
 
 static void vdp_68k_data_w_m4(unsigned int data)
@@ -2252,9 +2298,11 @@ static void vdp_68k_data_w_m4(unsigned int data)
     }
     else
     {
-      /* CPU is halted until last FIFO entry has been processed (Chaos Engine, Soldiers of Fortune, Double Clutch) */
-      fifo_lastwrite += fifo_latency;
-      m68k.cycles = fifo_lastwrite;
+      /* CPU is halted until next FIFO entry processing */
+      m68k.cycles = fifo_cycles;
+
+      /* Update FIFO access slot counter */
+      fifo_slots += (fifo_byte_access + 1);
     }
   }
 
@@ -2280,7 +2328,7 @@ static void vdp_68k_data_w_m4(unsigned int data)
       color_update_m4(index, data);
 
       /* Update backdrop color */
-      if (index == (0x10 | (bordrr & 0x0F)))
+      if (index == (0x10 | (border & 0x0F)))
       {
         color_update_m4(0x40, data);
       }
@@ -2342,32 +2390,33 @@ static void vdp_68k_data_w_m5(unsigned int data)
     }
     else
     {
-      /* CPU is halted until last FIFO entry has been processed (Chaos Engine, Soldiers of Fortune, Double Clutch) */
-      fifo_lastwrite += fifo_latency;
-      m68k.cycles = fifo_lastwrite;
+      /* CPU is halted until next FIFO entry processing (Chaos Engine / Soldiers of Fortune, Double Clutch, Titan Overdrive Demo) */
+      m68k.cycles = fifo_cycles;
+
+      /* Update FIFO access slot counter */
+      fifo_slots += (fifo_byte_access + 1);
     }
   }
   
   /* Write data */
   vdp_bus_w(data);
 
-  /* DMA Fill */
-  if (dmafill & 0x100)
+  /* Check if DMA Fill is pending */
+  if (dmafill)
   {
-    /* Fill data = MSB (DMA fill flag is cleared) */
-    dmafill = data >> 8;
+    /* Clear DMA Fill pending flag */
+    dmafill = 0;
 
     /* DMA length */
     dma_length = (reg[20] << 8) | reg[19];
 
-    /* Zero DMA length */
+    /* Zero DMA length (pre-decrementing counter) */
     if (!dma_length)
     {
       dma_length = 0x10000;
     }
 
-    /* Process DMA Fill*/
-    dma_type = 2;
+    /* Trigger DMA */
     vdp_dma_update(m68k.cycles);
   }
 }
@@ -2394,60 +2443,100 @@ static unsigned int vdp_68k_data_r_m5(void)
   /* Clear pending flag */
   pending = 0;
 
-  switch (code & 0x0F)
+  /* Check destination code (CD0-CD3) & CD4 */
+  switch (code & 0x1F)
   {
-    case 0x00: /* VRAM */
+    case 0x00:
     {
-      /* Read data */
+      /* read two bytes from VRAM */
       data = *(uint16 *)&vram[addr & 0xFFFE];
 
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_VRAM_R, 2, addr, data);
+#endif
+
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] VRAM 0x%x read -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] VRAM 0x%x read -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
 
-    case 0x04: /* VSRAM */
+    case 0x04:
     {
-      /* Read data */
-      data = *(uint16 *)&vsram[addr & 0x7E];
+      /* VSRAM index */
+      int index = addr & 0x7E;
+
+      /* Check against VSRAM max size (80 x 11-bits) */
+      if (index >= 0x50)
+      {
+        /* Wrap to address 0 (TODO: check if still true with Genesis 3 model) */
+        index = 0;
+      }
+
+      /* Read 11-bit word from VSRAM */
+      data = *(uint16 *)&vsram[index] & 0x7FF;
+
+      /* Unused bits are set using data from next available FIFO entry */
+      data |= (fifo[fifo_idx] & ~0x7FF);
+
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_VSRAM_R, 2, addr, data);
+#endif
 
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] VSRAM 0x%x read -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] VSRAM 0x%x read -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
 
-    case 0x08: /* CRAM */
+    case 0x08:
     {
-      /* Read data */
+      /* Read 9-bit word from CRAM */
       data = *(uint16 *)&cram[addr & 0x7E];
 
       /* Unpack 9-bit CRAM data (BBBGGGRRR) to 16-bit bus data (BBB0GGG0RRR0) */
       data = ((data & 0x1C0) << 3) | ((data & 0x038) << 2) | ((data & 0x007) << 1);
 
+      /* Unused bits are set using data from next available FIFO entry */
+      data |= (fifo[fifo_idx] & ~0xEEE);
+
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_CRAM_R, 2, addr, data);
+#endif
+
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] CRAM 0x%x read -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] CRAM 0x%x read -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
 
-    case 0x0c: /* undocumented 8-bit VRAM read (cf. http://gendev.spritesmind.net/forum/viewtopic.php?t=790) */
+    case 0x0c: /* undocumented 8-bit VRAM read */
     {
-      /* Read data (MSB forced to zero) */
-      data = *(uint16 *)&vram[addr & 0xFFFE] & 0xff;
+      /* Read one byte from VRAM adjacent address */
+      data = READ_BYTE(vram, addr ^ 1);
+
+      /* Unused bits are set using data from next available FIFO entry */
+      data |= (fifo[fifo_idx] & ~0xFF);
+
+#ifdef HOOK_CPU
+      if (cpu_hook)
+        cpu_hook(HOOK_VRAM_R, 2, addr, data);
+#endif
 
 #ifdef LOGVDP
-      error("[%d(%d)][%d(%d)] 8-bit VRAM 0x%x read -> 0x%x (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] 8-bit VRAM 0x%x read -> 0x%x (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, addr, data, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
 
     default:
     {
-      /* Invalid code value */
+      /* Invalid code value (normally locks VDP, hard reset required) */
 #ifdef LOGERROR
-      error("[%d(%d)][%d(%d)] Invalid (%d) 0x%x read (%x)\n", v_counter, m68k.cycles/MCYCLES_PER_LINE-1, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, code, addr, m68k_get_reg(M68K_REG_PC));
+      error("[%d(%d)][%d(%d)] Invalid (%d) 0x%x read (%x)\n", v_counter, (v_counter + (m68k.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, m68k.cycles, m68k.cycles%MCYCLES_PER_LINE, code, addr, m68k_get_reg(M68K_REG_PC));
 #endif
       break;
     }
@@ -2462,7 +2551,7 @@ static unsigned int vdp_68k_data_r_m5(void)
 
 
 /*--------------------------------------------------------------------------*/
-/* Z80 data port access functions (Master System compatibility mode)        */
+/* Z80 bus interface (Mega Drive VDP in Master System compatibility mode)   */
 /*--------------------------------------------------------------------------*/
 
 static void vdp_z80_data_w_m4(unsigned int data)
@@ -2489,7 +2578,7 @@ static void vdp_z80_data_w_m4(unsigned int data)
       color_update_m4(index, data);
 
       /* Update backdrop color */
-      if (index == (0x10 | (bordrr & 0x0F)))
+      if (index == (0x10 | (border & 0x0F)))
       {
         color_update_m4(0x40, data);
       }
@@ -2522,7 +2611,11 @@ static void vdp_z80_data_w_m5(unsigned int data)
   /* Clear pending flag */
   pending = 0;
 
-  /* Check destination code */
+  /* Push byte into FIFO */
+  fifo[fifo_idx] = data << 8;
+  fifo_idx = (fifo_idx + 1) & 3;
+
+  /* Check destination code (CD0-CD3) */
   switch (code & 0x0F)
   {
     case 0x01:  /* VRAM */
@@ -2585,7 +2678,7 @@ static void vdp_z80_data_w_m5(unsigned int data)
         }
 
         /* Update backdrop color */
-        if (index == bordrr)
+        if (index == border)
         {
           color_update_m5(0x00, data);
         }
@@ -2604,23 +2697,22 @@ static void vdp_z80_data_w_m5(unsigned int data)
   /* Increment address register  */
   addr += reg[15];
 
-  /* DMA Fill */
-  if (dmafill & 0x100)
+  /* Check if DMA Fill is pending */
+  if (dmafill)
   {
-    /* Fill data (DMA fill flag is cleared) */
-    dmafill = data;
+    /* Clear DMA Fill pending flag */
+    dmafill = 0;
 
     /* DMA length */
     dma_length = (reg[20] << 8) | reg[19];
 
-    /* Zero DMA length */
+    /* Zero DMA length (pre-decrementing counter) */
     if (!dma_length)
     {
       dma_length = 0x10000;
     }
 
-    /* Process DMA Fill */
-    dma_type = 2;
+    /* Trigger DMA */
     vdp_dma_update(Z80.cycles);
   }
 }
@@ -2636,7 +2728,7 @@ static unsigned int vdp_z80_data_r_m4(void)
   /* Process next read */
   fifo[0] = vram[addr & 0x3FFF];
 
-  /* Increment address register (TODO: check how address is incremented in Mode 4) */
+  /* Increment address register (TODO: check how address is incremented with Mega Drive VDP in Mode 4) */
   addr += (reg[15] + 1);
 
   /* Return data */
@@ -2650,7 +2742,8 @@ static unsigned int vdp_z80_data_r_m5(void)
   /* Clear pending flag */
   pending = 0;
 
-  switch (code & 0x0F)
+  /* Check destination code (CD0-CD3) & CD4 */
+  switch (code & 0x1F)
   {
     case 0x00: /* VRAM */
     {
@@ -2694,7 +2787,7 @@ static unsigned int vdp_z80_data_r_m5(void)
 
 
 /*-----------------------------------------------------------------------------*/
-/* VDP specific data port access functions (Master System, Game Gear, SG-1000) */
+/* Z80 bus interface (Master System, Game Gear & SG-1000 VDP)                  */
 /*-----------------------------------------------------------------------------*/
 
 static void vdp_z80_data_w_ms(unsigned int data)
@@ -2706,12 +2799,21 @@ static void vdp_z80_data_w_ms(unsigned int data)
   {
     int index;
 
-    /* check if we are already on next line */
-    int line = (lines_per_frame + (Z80.cycles / MCYCLES_PER_LINE) - 1) % lines_per_frame;
-    if ((line > v_counter) && (line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special))
+    /* Check if we are already on next line */
+    if ((Z80.cycles - mcycles_vdp) >= MCYCLES_PER_LINE)
     {
-      v_counter = line;
-      render_line(line);
+      /* update line counter */
+      int line = (v_counter + 1) % lines_per_frame;
+
+      /* check if we are within active display range */
+      if ((line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special & HW_3D_GLASSES))
+      {
+        /* update VCounter to indicate next line has already been rendered */
+        v_counter = line;
+
+        /* render next line */
+        render_line(line);
+      }
     }
 
     /* VRAM address */
@@ -2726,7 +2828,7 @@ static void vdp_z80_data_w_ms(unsigned int data)
     }
 
 #ifdef LOGVDP
-    error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, Z80.cycles/MCYCLES_PER_LINE-1, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, index, data, Z80.pc.w.l);
+    error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (Z80.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, index, data, Z80.pc.w.l);
 #endif
   }
   else
@@ -2747,13 +2849,13 @@ static void vdp_z80_data_w_ms(unsigned int data)
       color_update_m4(index, data);
 
       /* Update backdrop color */
-      if (index == (0x10 | (bordrr & 0x0F)))
+      if (index == (0x10 | (border & 0x0F)))
       {
         color_update_m4(0x40, data);
       }
     }
 #ifdef LOGVDP
-    error("[%d(%d)][%d(%d)] CRAM 0x%x write -> 0x%x (%x)\n", v_counter, Z80.cycles/MCYCLES_PER_LINE-1, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, addr, data, Z80.pc.w.l);
+    error("[%d(%d)][%d(%d)] CRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (Z80.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, addr, data, Z80.pc.w.l);
 #endif
   }
 
@@ -2773,12 +2875,21 @@ static void vdp_z80_data_w_gg(unsigned int data)
   {
     int index;
 
-    /* check if we are already on next line*/
-    int line = (lines_per_frame + (Z80.cycles / MCYCLES_PER_LINE) - 1) % lines_per_frame;
-    if ((line > v_counter) && (line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special))
+    /* Check if we are already on next line */
+    if ((Z80.cycles - mcycles_vdp) >= MCYCLES_PER_LINE)
     {
-      v_counter = line;
-      render_line(line);
+      /* update line counter */
+      int line = (v_counter + 1) % lines_per_frame;
+
+      /* check if we are within active display range */
+      if ((line < bitmap.viewport.h) && !(work_ram[0x1ffb] & cart.special & HW_3D_GLASSES))
+      {
+        /* update VCounter to indicate next line has already been rendered */
+        v_counter = line;
+
+        /* render next line */
+        render_line(line);
+      }
     }
 
     /* VRAM address */
@@ -2792,7 +2903,7 @@ static void vdp_z80_data_w_gg(unsigned int data)
       MARK_BG_DIRTY(index);
     }
 #ifdef LOGVDP
-    error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, Z80.cycles/MCYCLES_PER_LINE-1, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, index, data, Z80.pc.w.l);
+    error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (Z80.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, index, data, Z80.pc.w.l);
 #endif
   }
   else
@@ -2818,7 +2929,7 @@ static void vdp_z80_data_w_gg(unsigned int data)
         color_update_m4(index, data);
 
         /* Update backdrop color */
-        if (index == (0x10 | (bordrr & 0x0F)))
+        if (index == (0x10 | (border & 0x0F)))
         {
           color_update_m4(0x40, data);
         }
@@ -2830,7 +2941,7 @@ static void vdp_z80_data_w_gg(unsigned int data)
       cached_write = data;
     }
 #ifdef LOGVDP
-    error("[%d(%d)][%d(%d)] CRAM 0x%x write -> 0x%x (%x)\n", v_counter, Z80.cycles/MCYCLES_PER_LINE-1, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, addr, data, Z80.pc.w.l);
+    error("[%d(%d)][%d(%d)] CRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (Z80.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, addr, data, Z80.pc.w.l);
 #endif
   }
 
@@ -2849,12 +2960,6 @@ static void vdp_z80_data_w_sg(unsigned int data)
   /* Clear pending flag */
   pending = 0;
 
-  /* 4K address decoding (cf. tms9918a.txt) */
-  if (!(reg[1] & 0x80))
-  {
-    index = (index & 0x203F) | ((index >> 6) & 0x40) | ((index << 1) & 0x1F80);
-  }
-
   /* VRAM write */
   vram[index] = data;
 
@@ -2862,12 +2967,12 @@ static void vdp_z80_data_w_sg(unsigned int data)
   addr++;
 
 #ifdef LOGVDP
-  error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, Z80.cycles/MCYCLES_PER_LINE-1, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, index, data, Z80.pc.w.l);
+  error("[%d(%d)][%d(%d)] VRAM 0x%x write -> 0x%x (%x)\n", v_counter, (v_counter + (Z80.cycles - mcycles_vdp)/MCYCLES_PER_LINE)%lines_per_frame, Z80.cycles, Z80.cycles%MCYCLES_PER_LINE, index, data, Z80.pc.w.l);
 #endif
 }
 
 /*--------------------------------------------------------------------------*/
-/* DMA operations                                                           */
+/* DMA operations (Mega Drive VDP only)                                     */
 /*--------------------------------------------------------------------------*/
 
 /* DMA from 68K bus: $000000-$7FFFFF (external area) */
@@ -2981,11 +3086,11 @@ static void vdp_dma_68k_io(unsigned int length)
   dma_src = (source >> 1) & 0xffff;
 }
 
-/*  VRAM Copy (TODO: check if CRAM or VSRAM copy is possible) */
+/*  VRAM Copy */
 static void vdp_dma_copy(unsigned int length)
 {
-  /* VRAM read/write operation only */
-  if ((code & 0x1E) == 0x10)
+  /* CD4 should be set (CD0-CD3 ignored) otherwise VDP locks (hard reset needed) */
+  if (code & 0x10)
   {
     int name;
     uint8 data;
@@ -2995,52 +3100,9 @@ static void vdp_dma_copy(unsigned int length)
 
     do
     {
-      /* Read byte from source address */
-      data = READ_BYTE(vram, source);
+      /* Read byte from adjacent VRAM source address */
+      data = READ_BYTE(vram, source ^ 1);
 
-      /* Intercept writes to Sprite Attribute Table */
-      if ((addr & sat_base_mask) == satb)
-      {
-        /* Update internal SAT */
-        WRITE_BYTE(sat, addr & sat_addr_mask, data);
-      }
-
-      /* Write byte to VRAM address */
-      WRITE_BYTE(vram, addr, data);
-
-      /* Update pattern cache */
-      MARK_BG_DIRTY(addr);
-
-      /* Increment source address */
-      source++;
-
-      /* Increment VRAM address */
-      addr += reg[15];
-    }
-    while (--length);
-
-    /* Update DMA source address */
-    dma_src = source;
-  }
-  else
-  {
-    /* DMA source & VRAM addresses are still incremented */
-    addr += reg[15] * length;
-    dma_src += length;
-  }
-}
-
-/* VRAM Fill (TODO: check if CRAM or VSRAM fill is possible) */
-static void vdp_dma_fill(unsigned int length)
-{
-  /* VRAM write operation only (Williams Greatest Hits after soft reset) */
-  if ((code & 0x1F) == 0x01)
-  {
-    int name;
-    uint8 data = dmafill;
-
-    do
-    {
       /* Intercept writes to Sprite Attribute Table */
       if ((addr & sat_base_mask) == satb)
       {
@@ -3048,20 +3110,126 @@ static void vdp_dma_fill(unsigned int length)
         WRITE_BYTE(sat, (addr & sat_addr_mask) ^ 1, data);
       }
 
-      /* Write byte to adjacent VRAM address */
+      /* Write byte to adjacent VRAM destination address */
       WRITE_BYTE(vram, addr ^ 1, data);
 
       /* Update pattern cache */
-      MARK_BG_DIRTY (addr);
+      MARK_BG_DIRTY(addr);
 
-      /* Increment VRAM address */
+      /* Increment VRAM source address */
+      source++;
+
+      /* Increment VRAM destination address */
       addr += reg[15];
     }
     while (--length);
+
+    /* Update DMA source address */
+    dma_src = source;
   }
-  else
+}
+
+/* DMA Fill */
+static void vdp_dma_fill(unsigned int length)
+{
+  /* Check destination code (CD0-CD3) */
+  switch (code & 0x0F)
   {
-    /* VRAM address is still incremented */
-    addr += reg[15] * length;
+    case 0x01:  /* VRAM */
+    {
+      int name;
+
+      /* Get source data from last written FIFO  entry */
+      uint8 data = fifo[(fifo_idx+3)&3] >> 8;
+
+      do
+      {
+        /* Intercept writes to Sprite Attribute Table */
+        if ((addr & sat_base_mask) == satb)
+        {
+          /* Update internal SAT */
+          WRITE_BYTE(sat, (addr & sat_addr_mask) ^ 1, data);
+        }
+
+        /* Write byte to adjacent VRAM address */
+        WRITE_BYTE(vram, addr ^ 1, data);
+
+        /* Update pattern cache */
+        MARK_BG_DIRTY (addr);
+
+        /* Increment VRAM address */
+        addr += reg[15];
+      }
+      while (--length);
+      break;
+    }
+
+    case 0x03:  /* CRAM */
+    {
+      /* Get source data from next available FIFO entry */
+      uint16 data = fifo[fifo_idx];
+
+      /* Pack 16-bit bus data (BBB0GGG0RRR0) to 9-bit CRAM data (BBBGGGRRR) */
+      data = ((data & 0xE00) >> 3) | ((data & 0x0E0) >> 2) | ((data & 0x00E) >> 1);
+
+      do
+      {
+        /* Pointer to CRAM 9-bit word */
+        uint16 *p = (uint16 *)&cram[addr & 0x7E];
+
+        /* Check if CRAM data is being modified */
+        if (data != *p)
+        {
+          /* CRAM index (64 words) */
+          int index = (addr >> 1) & 0x3F;
+
+          /* Write CRAM data */
+          *p = data;
+
+          /* Color entry 0 of each palette is never displayed (transparent pixel) */
+          if (index & 0x0F)
+          {
+            /* Update color palette */
+            color_update_m5(index, data);
+          }
+
+          /* Update backdrop color */
+          if (index == border)
+          {
+            color_update_m5(0x00, data);
+          }
+        }
+          
+        /* Increment CRAM address */
+        addr += reg[15];
+      }
+      while (--length);
+      break;
+    }
+
+    case 0x05:  /* VSRAM */
+    {
+      /* Get source data from next available FIFO entry */
+      uint16 data = fifo[fifo_idx];
+
+      do
+      {
+        /* Write VSRAM data */
+        *(uint16 *)&vsram[addr & 0x7E] = data;
+          
+        /* Increment VSRAM address */
+        addr += reg[15];
+      }
+      while (--length);
+      break;
+    }
+
+    default:
+    {
+      /* invalid destination does nothing (Williams Greatest Hits after soft reset) */
+
+      /* address is still incremented */
+      addr += reg[15] * length;
+    }
   }
 }

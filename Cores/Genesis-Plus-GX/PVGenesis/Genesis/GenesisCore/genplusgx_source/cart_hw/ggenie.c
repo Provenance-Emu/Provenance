@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  Game Genie Hardware emulation
  *
- *  Copyright (C) 2009-2011  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2009-2014  Eke-Eke (Genesis Plus GX)
  *
  *  Based on documentation from Charles McDonald
  *  (http://cgfm2.emuviews.com/txt/genie.txt)
@@ -58,44 +58,33 @@ static void ggenie_write_word(unsigned int address, unsigned int data);
 static void ggenie_write_regs(unsigned int offset, unsigned int data);
 
 void ggenie_init(void)
-{
-  int i;
-  FILE *f;
-  
+{  
   memset(&ggenie,0,sizeof(ggenie));
 
   /* Store Game Genie ROM (32k) above cartridge ROM + SRAM area */
   if (cart.romsize > 0x810000) return;
   ggenie.rom = cart.rom + 0x810000;
 
-  /* Open Game Genie ROM file */
-  f = fopen(GG_ROM,"rb");
-  if (f == NULL) return;
-
-  /* Load ROM */
-  for (i=0; i<0x8000; i+=0x1000)
+  /* Try to load Game Genie ROM file */
+  if (load_archive(GG_ROM, ggenie.rom, 0x8000, NULL) > 0)
   {
-    fread(ggenie.rom + i, 0x1000, 1, f);
-  }
-
-  /* Close ROM file */
-  fclose(f);
-
 #ifdef LSB_FIRST
-  for (i=0; i<0x8000; i+=2)
-  {
-    /* Byteswap ROM */
-    uint8 temp = ggenie.rom[i];
-    ggenie.rom[i] = ggenie.rom[i+1];
-    ggenie.rom[i+1] = temp;
-  }
+    int i;
+    for (i=0; i<0x8000; i+=2)
+    {
+      /* Byteswap ROM */
+      uint8 temp = ggenie.rom[i];
+      ggenie.rom[i] = ggenie.rom[i+1];
+      ggenie.rom[i+1] = temp;
+    }
 #endif
 
-  /* $0000-$7fff mirrored into $8000-$ffff */
-  memcpy(ggenie.rom + 0x8000, ggenie.rom, 0x8000);
+    /* $0000-$7fff mirrored into $8000-$ffff */
+    memcpy(ggenie.rom + 0x8000, ggenie.rom, 0x8000);
 
-  /* set flag */
-  ggenie.enabled = 1;
+    /* Game Genie hardware is enabled */
+    ggenie.enabled = 1;
+  }
 }
 
 void ggenie_shutdown(void)

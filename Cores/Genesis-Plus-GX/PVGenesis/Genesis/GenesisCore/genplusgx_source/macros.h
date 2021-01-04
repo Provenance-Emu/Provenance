@@ -39,11 +39,32 @@
 
 /* Set to your compiler's static inline keyword to enable it, or
  * set it to blank to disable it.
- * If you define INLINE in the makefile, it will override this value.
+ * If you define INLINE in makefile or osd.h, it will override this value.
  * NOTE: not enabling inline functions will SEVERELY slow down emulation.
  */
 #ifndef INLINE
 #define INLINE static __inline__
 #endif /* INLINE */
+
+/* Alignment macros for cross compiler compatibility */
+#if defined(_MSC_VER)
+#define ALIGNED_(x) __declspec(align(x))
+#elif defined(__GNUC__)
+#define ALIGNED_(x) __attribute__ ((aligned(x)))
+#endif
+
+/* Default CD image file access (read-only) functions */
+/* If you need to override default stdio.h functions with custom filesystem API,
+   redefine following macros in platform specific include file (osd.h) or Makefile
+*/
+#ifndef cdStream
+#define cdStream            FILE
+#define cdStreamOpen(fname) fopen(fname, "rb")
+#define cdStreamClose       fclose
+#define cdStreamRead        fread
+#define cdStreamSeek        fseek
+#define cdStreamTell        ftell
+#define cdStreamGets        fgets
+#endif
 
 #endif /* _MACROS_H_ */

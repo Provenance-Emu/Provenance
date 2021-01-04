@@ -7,8 +7,8 @@
 #include <math.h>
 
 #include "types.h"
-#include "macros.h"
 #include "osd.h"
+#include "macros.h"
 #include "loadrom.h"
 #include "m68k.h"
 #include "z80.h"
@@ -22,9 +22,15 @@
 #include "io_ctrl.h"
 #include "input.h"
 #include "sound.h"
-#include "sn76489.h"
+#include "psg.h"
 #include "ym2413.h"
 #include "ym2612.h"
+#ifdef HAVE_YM3438_CORE
+#include "ym3438.h"
+#endif
+#ifdef HAVE_OPLL_CORE
+#include "opll.h"
+#endif
 #include "sram.h"
 #include "ggenie.h"
 #include "areplay.h"

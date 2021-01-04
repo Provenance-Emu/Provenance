@@ -143,13 +143,15 @@ static void m68k_op_abcd_8_rr(void)
   uint src = DY;
   uint dst = *r_dst;
   uint res = LOW_NIBBLE(src) + LOW_NIBBLE(dst) + XFLAG_AS_1();
-
-  FLAG_V = ~res; /* Undefined V behavior */
+  uint corf = 0;
 
   if(res > 9)
-    res += 6;
+    corf = 6;
   res += HIGH_NIBBLE(src) + HIGH_NIBBLE(dst);
-  FLAG_X = FLAG_C = (res > 0x99) << 8;
+  FLAG_V = ~res; /* Undefined V behavior */
+
+  res += corf;
+  FLAG_X = FLAG_C = (res > 0x9f) << 8;
   if(FLAG_C)
     res -= 0xa0;
 
@@ -169,13 +171,15 @@ static void m68k_op_abcd_8_mm_ax7(void)
   uint ea  = EA_A7_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(src) + LOW_NIBBLE(dst) + XFLAG_AS_1();
-
-  FLAG_V = ~res; /* Undefined V behavior */
+  uint corf = 0;
 
   if(res > 9)
-    res += 6;
+    corf = 6;
   res += HIGH_NIBBLE(src) + HIGH_NIBBLE(dst);
-  FLAG_X = FLAG_C = (res > 0x99) << 8;
+  FLAG_V = ~res; /* Undefined V behavior */
+
+  res += corf;
+  FLAG_X = FLAG_C = (res > 0x9f) << 8;
   if(FLAG_C)
     res -= 0xa0;
 
@@ -195,13 +199,15 @@ static void m68k_op_abcd_8_mm_ay7(void)
   uint ea  = EA_AX_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(src) + LOW_NIBBLE(dst) + XFLAG_AS_1();
-
-  FLAG_V = ~res; /* Undefined V behavior */
+  uint corf = 0;
 
   if(res > 9)
-    res += 6;
+    corf = 6;
   res += HIGH_NIBBLE(src) + HIGH_NIBBLE(dst);
-  FLAG_X = FLAG_C = (res > 0x99) << 8;
+  FLAG_V = ~res; /* Undefined V behavior */
+
+  res += corf;
+  FLAG_X = FLAG_C = (res > 0x9f) << 8;
   if(FLAG_C)
     res -= 0xa0;
 
@@ -221,13 +227,15 @@ static void m68k_op_abcd_8_mm_axy7(void)
   uint ea  = EA_A7_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(src) + LOW_NIBBLE(dst) + XFLAG_AS_1();
-
-  FLAG_V = ~res; /* Undefined V behavior */
+  uint corf = 0;
 
   if(res > 9)
-    res += 6;
+    corf = 6;
   res += HIGH_NIBBLE(src) + HIGH_NIBBLE(dst);
-  FLAG_X = FLAG_C = (res > 0x99) << 8;
+  FLAG_V = ~res; /* Undefined V behavior */
+
+  res += corf;
+  FLAG_X = FLAG_C = (res > 0x9f) << 8;
   if(FLAG_C)
     res -= 0xa0;
 
@@ -247,13 +255,15 @@ static void m68k_op_abcd_8_mm(void)
   uint ea  = EA_AX_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(src) + LOW_NIBBLE(dst) + XFLAG_AS_1();
-
-  FLAG_V = ~res; /* Undefined V behavior */
+  uint corf = 0;
 
   if(res > 9)
-    res += 6;
+    corf = 6;
   res += HIGH_NIBBLE(src) + HIGH_NIBBLE(dst);
-  FLAG_X = FLAG_C = (res > 0x99) << 8;
+  FLAG_V = ~res; /* Undefined V behavior */
+
+  res += corf;
+  FLAG_X = FLAG_C = (res > 0x9f) << 8;
   if(FLAG_C)
     res -= 0xa0;
 
@@ -7220,15 +7230,15 @@ static void m68k_op_dbf_16(void)
   uint res = MASK_OUT_ABOVE_16(*r_dst - 1);
   *r_dst = MASK_OUT_BELOW_16(*r_dst) | res;
 
-  /* reset idle loop detection */
-  m68ki_cpu.poll.detected = 0;
-
   if(res != 0xffff)
   {
     uint offset = OPER_I_16();
     REG_PC -= 2;
     m68ki_branch_16(offset);
     USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+    /* reset idle loop detection */
+    m68ki_cpu.poll.detected = 0;
     return;
   }
   REG_PC += 2;
@@ -7250,6 +7260,9 @@ static void m68k_op_dbhi_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7274,6 +7287,9 @@ static void m68k_op_dbls_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7298,6 +7314,9 @@ static void m68k_op_dbcc_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7322,6 +7341,9 @@ static void m68k_op_dbcs_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7346,6 +7368,9 @@ static void m68k_op_dbne_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7370,6 +7395,9 @@ static void m68k_op_dbeq_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7394,6 +7422,9 @@ static void m68k_op_dbvc_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7418,6 +7449,9 @@ static void m68k_op_dbvs_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7442,6 +7476,9 @@ static void m68k_op_dbpl_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7466,6 +7503,9 @@ static void m68k_op_dbmi_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7490,6 +7530,9 @@ static void m68k_op_dbge_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7514,6 +7557,9 @@ static void m68k_op_dblt_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7538,6 +7584,9 @@ static void m68k_op_dbgt_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -7562,6 +7611,9 @@ static void m68k_op_dble_16(void)
       REG_PC -= 2;
       m68ki_branch_16(offset);
       USE_CYCLES(CYC_DBCC_F_NOEXP);
+
+      /* reset idle loop detection */
+      m68ki_cpu.poll.detected = 0;
       return;
     }
     REG_PC += 2;
@@ -8065,7 +8117,7 @@ static void m68k_op_divu_16_d(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8096,7 +8148,7 @@ static void m68k_op_divu_16_ai(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8127,7 +8179,7 @@ static void m68k_op_divu_16_pi(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 *10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8158,7 +8210,7 @@ static void m68k_op_divu_16_pd(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8189,7 +8241,7 @@ static void m68k_op_divu_16_di(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8220,7 +8272,7 @@ static void m68k_op_divu_16_ix(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8251,7 +8303,7 @@ static void m68k_op_divu_16_aw(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8282,7 +8334,7 @@ static void m68k_op_divu_16_al(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8313,7 +8365,7 @@ static void m68k_op_divu_16_pcdi(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8344,7 +8396,7 @@ static void m68k_op_divu_16_pcix(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -8375,7 +8427,7 @@ static void m68k_op_divu_16_i(void)
       *r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
       return;
     }
-    USE_CYCLES(7 * 10);
+    USE_CYCLES(MUL * 10);
     FLAG_V = VFLAG_SET;
     FLAG_N = NFLAG_SET; /* undocumented behavior (fixes Blood Shot on Genesis) */
     FLAG_C = CFLAG_CLEAR;
@@ -15803,33 +15855,34 @@ static void m68k_op_mulu_16_i(void)
 static void m68k_op_nbcd_8_d(void)
 {
   uint* r_dst = &DY;
-  uint dst = *r_dst;
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint dst = MASK_OUT_ABOVE_8(*r_dst);
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
     *r_dst = MASK_OUT_BELOW_8(*r_dst) | res;
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -15837,32 +15890,33 @@ static void m68k_op_nbcd_8_ai(void)
 {
   uint ea = EA_AY_AI_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -15870,32 +15924,33 @@ static void m68k_op_nbcd_8_pi(void)
 {
   uint ea = EA_AY_PI_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -15903,32 +15958,33 @@ static void m68k_op_nbcd_8_pi7(void)
 {
   uint ea = EA_A7_PI_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -15936,32 +15992,33 @@ static void m68k_op_nbcd_8_pd(void)
 {
   uint ea = EA_AY_PD_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -15969,32 +16026,33 @@ static void m68k_op_nbcd_8_pd7(void)
 {
   uint ea = EA_A7_PD_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -16002,32 +16060,33 @@ static void m68k_op_nbcd_8_di(void)
 {
   uint ea = EA_AY_DI_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -16035,32 +16094,33 @@ static void m68k_op_nbcd_8_ix(void)
 {
   uint ea = EA_AY_IX_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -16068,32 +16128,33 @@ static void m68k_op_nbcd_8_aw(void)
 {
   uint ea = EA_AW_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -16101,32 +16162,33 @@ static void m68k_op_nbcd_8_al(void)
 {
   uint ea = EA_AL_8();
   uint dst = m68ki_read_8(ea);
-  uint res = MASK_OUT_ABOVE_8(0x9a - dst - XFLAG_AS_1());
+  uint res = -dst - XFLAG_AS_1();
 
-  if(res != 0x9a)
+  if(res)
   {
-    FLAG_V = ~res; /* Undefined V behavior */
+    FLAG_V = res; /* Undefined V behavior */
 
-    if((res & 0x0f) == 0xa)
-      res = (res & 0xf0) + 0x10;
+    if(((res|dst) & 0x0f) == 0x0)
+      res = (res & 0xf0) + 6;
 
-    res = MASK_OUT_ABOVE_8(res);
+    res = MASK_OUT_ABOVE_8(res+0x9a);
 
-    FLAG_V &= res; /* Undefined V behavior part II */
+    FLAG_V &= ~res; /* Undefined V behavior part II */
 
-    m68ki_write_8(ea, MASK_OUT_ABOVE_8(res));
+    m68ki_write_8(ea, res);
 
     FLAG_Z |= res;
     FLAG_C = CFLAG_SET;
     FLAG_X = XFLAG_SET;
+    FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
   }
   else
   {
     FLAG_V = VFLAG_CLEAR;
     FLAG_C = CFLAG_CLEAR;
     FLAG_X = XFLAG_CLEAR;
+    FLAG_N = NFLAG_CLEAR;
   }
-  FLAG_N = NFLAG_8(res);  /* Undefined N behavior */
 }
 
 
@@ -19694,26 +19756,28 @@ static void m68k_op_sbcd_8_rr(void)
   uint src = DY;
   uint dst = *r_dst;
   uint res = LOW_NIBBLE(dst) - LOW_NIBBLE(src) - XFLAG_AS_1();
+  uint corf = 0;
 
-/* FLAG_V = ~res; */ /* Undefined V behavior */
-  FLAG_V = VFLAG_CLEAR;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to assume cleared. */
+  if(res > 0xf)
+    corf = 6;
 
-  if(res > 9)
-    res -= 6;
   res += HIGH_NIBBLE(dst) - HIGH_NIBBLE(src);
-  if(res > 0x99)
+  FLAG_V = res; /* Undefined V behavior */
+
+  if(res > 0xff)
   {
     res += 0xa0;
     FLAG_X = FLAG_C = CFLAG_SET;
-    FLAG_N = NFLAG_SET;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to follow carry. */
   }
+  else if(res < corf)
+    FLAG_X = FLAG_C = CFLAG_SET;
   else
-    FLAG_N = FLAG_X = FLAG_C = 0;
+    FLAG_X = FLAG_C = 0;
 
-  res = MASK_OUT_ABOVE_8(res);
+  res = MASK_OUT_ABOVE_8(res-corf);
 
-/* FLAG_V &= res; */ /* Undefined V behavior part II */
-/* FLAG_N = NFLAG_8(res); */ /* Undefined N behavior */
+  FLAG_V &= ~res; /* Undefined V behavior part II */
+  FLAG_N = NFLAG_8(res); /* Undefined N behavior */
   FLAG_Z |= res;
 
   *r_dst = MASK_OUT_BELOW_8(*r_dst) | res;
@@ -19726,26 +19790,27 @@ static void m68k_op_sbcd_8_mm_ax7(void)
   uint ea  = EA_A7_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(dst) - LOW_NIBBLE(src) - XFLAG_AS_1();
+  uint corf = 0;
 
-/* FLAG_V = ~res; */ /* Undefined V behavior */
-  FLAG_V = VFLAG_CLEAR;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to return zero. */
-
-  if(res > 9)
-    res -= 6;
+  if(res > 0xf)
+    corf = 6;
   res += HIGH_NIBBLE(dst) - HIGH_NIBBLE(src);
-  if(res > 0x99)
+  FLAG_V = res; /* Undefined V behavior */
+
+  if(res > 0xff)
   {
     res += 0xa0;
     FLAG_X = FLAG_C = CFLAG_SET;
-    FLAG_N = NFLAG_SET;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to follow carry. */
   }
+  else if(res < corf)
+    FLAG_X = FLAG_C = CFLAG_SET;
   else
-    FLAG_N = FLAG_X = FLAG_C = 0;
+    FLAG_X = FLAG_C = 0;
 
-  res = MASK_OUT_ABOVE_8(res);
+  res = MASK_OUT_ABOVE_8(res-corf);
 
-/* FLAG_V &= res; */ /* Undefined V behavior part II */
-/* FLAG_N = NFLAG_8(res); */ /* Undefined N behavior */
+  FLAG_V &= ~res; /* Undefined V behavior part II */
+  FLAG_N = NFLAG_8(res); /* Undefined N behavior */
   FLAG_Z |= res;
 
   m68ki_write_8(ea, res);
@@ -19758,26 +19823,27 @@ static void m68k_op_sbcd_8_mm_ay7(void)
   uint ea  = EA_AX_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(dst) - LOW_NIBBLE(src) - XFLAG_AS_1();
+  uint corf = 0;
 
-/* FLAG_V = ~res; */ /* Undefined V behavior */
-  FLAG_V = VFLAG_CLEAR;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to return zero. */
-
-  if(res > 9)
-    res -= 6;
+  if(res > 0xf)
+    corf = 6;
   res += HIGH_NIBBLE(dst) - HIGH_NIBBLE(src);
-  if(res > 0x99)
+  FLAG_V = res; /* Undefined V behavior */
+
+  if(res > 0xff)
   {
     res += 0xa0;
     FLAG_X = FLAG_C = CFLAG_SET;
-    FLAG_N = NFLAG_SET;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to follow carry. */
   }
+  else if(res < corf)
+    FLAG_X = FLAG_C = CFLAG_SET;
   else
-    FLAG_N = FLAG_X = FLAG_C = 0;
+    FLAG_X = FLAG_C = 0;
 
-  res = MASK_OUT_ABOVE_8(res);
+  res = MASK_OUT_ABOVE_8(res-corf);
 
-/* FLAG_V &= res; */ /* Undefined V behavior part II */
-/* FLAG_N = NFLAG_8(res); */ /* Undefined N behavior */
+  FLAG_V &= ~res; /* Undefined V behavior part II */
+  FLAG_N = NFLAG_8(res); /* Undefined N behavior */
   FLAG_Z |= res;
 
   m68ki_write_8(ea, res);
@@ -19790,26 +19856,27 @@ static void m68k_op_sbcd_8_mm_axy7(void)
   uint ea  = EA_A7_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(dst) - LOW_NIBBLE(src) - XFLAG_AS_1();
+  uint corf = 0;
 
-/* FLAG_V = ~res; */ /* Undefined V behavior */
-  FLAG_V = VFLAG_CLEAR;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to return zero. */
-
-  if(res > 9)
-    res -= 6;
+  if(res > 0xf)
+    corf = 6;
   res += HIGH_NIBBLE(dst) - HIGH_NIBBLE(src);
-  if(res > 0x99)
+  FLAG_V = res; /* Undefined V behavior */
+
+  if(res > 0xff)
   {
     res += 0xa0;
     FLAG_X = FLAG_C = CFLAG_SET;
-    FLAG_N = NFLAG_SET;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to follow carry. */
   }
+  else if(res < corf)
+    FLAG_X = FLAG_C = CFLAG_SET;
   else
-    FLAG_N = FLAG_X = FLAG_C = 0;
+    FLAG_X = FLAG_C = 0;
 
-  res = MASK_OUT_ABOVE_8(res);
+  res = MASK_OUT_ABOVE_8(res-corf);
 
-/* FLAG_V &= res; */ /* Undefined V behavior part II */
-/* FLAG_N = NFLAG_8(res); */ /* Undefined N behavior */
+  FLAG_V &= ~res; /* Undefined V behavior part II */
+  FLAG_N = NFLAG_8(res); /* Undefined N behavior */
   FLAG_Z |= res;
 
   m68ki_write_8(ea, res);
@@ -19822,26 +19889,27 @@ static void m68k_op_sbcd_8_mm(void)
   uint ea  = EA_AX_PD_8();
   uint dst = m68ki_read_8(ea);
   uint res = LOW_NIBBLE(dst) - LOW_NIBBLE(src) - XFLAG_AS_1();
+  uint corf = 0;
 
-/* FLAG_V = ~res; */ /* Undefined V behavior */
-  FLAG_V = VFLAG_CLEAR;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to return zero. */
-
-  if(res > 9)
-    res -= 6;
+  if(res > 0xf)
+    corf = 6;
   res += HIGH_NIBBLE(dst) - HIGH_NIBBLE(src);
-  if(res > 0x99)
+  FLAG_V = res; /* Undefined V behavior */
+
+  if(res > 0xff)
   {
     res += 0xa0;
     FLAG_X = FLAG_C = CFLAG_SET;
-    FLAG_N = NFLAG_SET;  /* Undefined in Motorola's M68000PM/AD rev.1 and safer to follow carry. */
   }
+  else if(res < corf)
+    FLAG_X = FLAG_C = CFLAG_SET;
   else
-    FLAG_N = FLAG_X = FLAG_C = 0;
+    FLAG_X = FLAG_C = 0;
 
-  res = MASK_OUT_ABOVE_8(res);
+  res = MASK_OUT_ABOVE_8(res-corf);
 
-/* FLAG_V &= res; */ /* Undefined V behavior part II */
-/* FLAG_N = NFLAG_8(res); */ /* Undefined N behavior */
+  FLAG_V &= ~res; /* Undefined V behavior part II */
+  FLAG_N = NFLAG_8(res); /* Undefined N behavior */
   FLAG_Z |= res;
 
   m68ki_write_8(ea, res);
@@ -20899,7 +20967,10 @@ static void m68k_op_stop(void)
     uint new_sr = OPER_I_16();
     CPU_STOPPED |= STOP_LEVEL_STOP;
     m68ki_set_sr(new_sr);
-    SET_CYCLES(m68ki_cpu.cycle_end - 4*MUL); 
+    if (CPU_STOPPED)
+    {
+      SET_CYCLES(m68ki_cpu.cycle_end - 4*MUL); 
+    }
     return;
   }
   m68ki_exception_privilege_violation();
@@ -23817,7 +23888,7 @@ static const opcode_handler_struct m68k_opcode_handler_table[] =
   {m68k_op_addq_8_di           , 0xf1f8, 0x5028, 16},
   {m68k_op_addq_8_ix           , 0xf1f8, 0x5030, 18},
   {m68k_op_addq_16_d           , 0xf1f8, 0x5040,  4},
-  {m68k_op_addq_16_a           , 0xf1f8, 0x5048,  4},
+  {m68k_op_addq_16_a           , 0xf1f8, 0x5048,  8}, /* see Yacht.txt */
   {m68k_op_addq_16_ai          , 0xf1f8, 0x5050, 12},
   {m68k_op_addq_16_pi          , 0xf1f8, 0x5058, 12},
   {m68k_op_addq_16_pd          , 0xf1f8, 0x5060, 14},
@@ -24167,7 +24238,7 @@ static const opcode_handler_struct m68k_opcode_handler_table[] =
   {m68k_op_btst_8_r_al         , 0xf1ff, 0x0139, 16},
   {m68k_op_btst_8_r_pcdi       , 0xf1ff, 0x013a, 12},
   {m68k_op_btst_8_r_pcix       , 0xf1ff, 0x013b, 14},
-  {m68k_op_btst_8_r_i          , 0xf1ff, 0x013c,  8},
+  {m68k_op_btst_8_r_i          , 0xf1ff, 0x013c, 10},
   {m68k_op_bchg_8_r_pi7        , 0xf1ff, 0x015f, 12},
   {m68k_op_bchg_8_r_pd7        , 0xf1ff, 0x0167, 14},
   {m68k_op_bchg_8_r_aw         , 0xf1ff, 0x0178, 16},
@@ -24527,7 +24598,7 @@ static const opcode_handler_struct m68k_opcode_handler_table[] =
   {m68k_op_andi_16_pd          , 0xfff8, 0x0260, 18},
   {m68k_op_andi_16_di          , 0xfff8, 0x0268, 20},
   {m68k_op_andi_16_ix          , 0xfff8, 0x0270, 22},
-  {m68k_op_andi_32_d           , 0xfff8, 0x0280, 14},
+  {m68k_op_andi_32_d           , 0xfff8, 0x0280, 16}, /* see Yacht.txt */
   {m68k_op_andi_32_ai          , 0xfff8, 0x0290, 28},
   {m68k_op_andi_32_pi          , 0xfff8, 0x0298, 28},
   {m68k_op_andi_32_pd          , 0xfff8, 0x02a0, 30},
@@ -24810,11 +24881,11 @@ static const opcode_handler_struct m68k_opcode_handler_table[] =
   {m68k_op_tst_32_di           , 0xfff8, 0x4aa8, 16},
   {m68k_op_tst_32_ix           , 0xfff8, 0x4ab0, 18},
   {m68k_op_tas_8_d             , 0xfff8, 0x4ac0,  4},
-  {m68k_op_tas_8_ai            , 0xfff8, 0x4ad0, 18},
-  {m68k_op_tas_8_pi            , 0xfff8, 0x4ad8, 18},
-  {m68k_op_tas_8_pd            , 0xfff8, 0x4ae0, 20},
-  {m68k_op_tas_8_di            , 0xfff8, 0x4ae8, 22},
-  {m68k_op_tas_8_ix            , 0xfff8, 0x4af0, 24},
+  {m68k_op_tas_8_ai            , 0xfff8, 0x4ad0, 14}, /* see Yacht.txt */
+  {m68k_op_tas_8_pi            , 0xfff8, 0x4ad8, 14}, /* see Yacht.txt */
+  {m68k_op_tas_8_pd            , 0xfff8, 0x4ae0, 16}, /* see Yacht.txt */
+  {m68k_op_tas_8_di            , 0xfff8, 0x4ae8, 18}, /* see Yacht.txt */
+  {m68k_op_tas_8_ix            , 0xfff8, 0x4af0, 20}, /* see Yacht.txt */
   {m68k_op_movem_16_er_ai      , 0xfff8, 0x4c90, 12},
   {m68k_op_movem_16_er_pi      , 0xfff8, 0x4c98, 12},
   {m68k_op_movem_16_er_di      , 0xfff8, 0x4ca8, 16},
@@ -25174,10 +25245,10 @@ static const opcode_handler_struct m68k_opcode_handler_table[] =
   {m68k_op_tst_16_al           , 0xffff, 0x4a79, 16},
   {m68k_op_tst_32_aw           , 0xffff, 0x4ab8, 16},
   {m68k_op_tst_32_al           , 0xffff, 0x4ab9, 20},
-  {m68k_op_tas_8_pi7           , 0xffff, 0x4adf, 18},
-  {m68k_op_tas_8_pd7           , 0xffff, 0x4ae7, 20},
-  {m68k_op_tas_8_aw            , 0xffff, 0x4af8, 22},
-  {m68k_op_tas_8_al            , 0xffff, 0x4af9, 26},
+  {m68k_op_tas_8_pi7           , 0xffff, 0x4adf, 14}, /* see Yacht.txt */
+  {m68k_op_tas_8_pd7           , 0xffff, 0x4ae7, 16}, /* see Yacht.txt */
+  {m68k_op_tas_8_aw            , 0xffff, 0x4af8, 18}, /* see Yacht.txt */
+  {m68k_op_tas_8_al            , 0xffff, 0x4af9, 22}, /* see Yacht.txt */
   {m68k_op_illegal             , 0xffff, 0x4afc,  4},
   {m68k_op_movem_16_er_aw      , 0xffff, 0x4cb8, 16},
   {m68k_op_movem_16_er_al      , 0xffff, 0x4cb9, 20},

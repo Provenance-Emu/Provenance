@@ -2,10 +2,10 @@
  *  Genesis Plus
  *  Virtual System emulation
  *
- *  Support for "Genesis", "Genesis + CD" & "Master System" modes
+ *  Support for 16-bit & 8-bit hardware modes
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2018  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -46,7 +46,8 @@
 
 /* Supported hardware models */
 #define SYSTEM_SG         0x10
-#define SYSTEM_MARKIII    0x11
+#define SYSTEM_SGII       0x11
+#define SYSTEM_MARKIII    0x12
 #define SYSTEM_SMS        0x20
 #define SYSTEM_SMS2       0x21
 #define SYSTEM_GG         0x40
@@ -64,8 +65,8 @@
 #define MCYCLES_PER_LINE  3420
 
 /* Horizontal timing offsets when running in Z80 mode */
-#define SMS_CYCLE_OFFSET  520 
-#define PBC_CYCLE_OFFSET  550 
+#define SMS_CYCLE_OFFSET  530 
+#define PBC_CYCLE_OFFSET  560 
 
 typedef struct
 {
@@ -90,7 +91,7 @@ typedef struct
   int sample_rate;      /* Output Sample rate (8000-48000) */
   double frame_rate;    /* Output Frame rate (usually 50 or 60 frames per second) */
   int enabled;          /* 1= sound emulation is enabled */
-  blip_t* blips[3][2];  /* Blip Buffer resampling */
+  blip_t* blips[3];     /* Blip Buffer resampling (stereo) */
 } t_snd;
 
 
@@ -105,6 +106,7 @@ extern uint32 system_clock;
 
 /* Function prototypes */
 extern int audio_init(int samplerate, double framerate);
+extern void audio_set_rate(int samplerate, double framerate);
 extern void audio_reset(void);
 extern void audio_shutdown(void);
 extern int audio_update(int16 *buffer);

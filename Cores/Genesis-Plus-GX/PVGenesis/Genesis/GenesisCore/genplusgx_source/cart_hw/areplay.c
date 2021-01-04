@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  Action Replay / Pro Action Replay emulation
  *
- *  Copyright (C) 2009-2011  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2009-2014  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -60,7 +60,6 @@ static void ar_write_ram_8(uint32 address, uint32 data);
 void areplay_init(void)
 {
   int size;
-  FILE *f;
   
   memset(&action_replay,0,sizeof(action_replay));
 
@@ -69,38 +68,33 @@ void areplay_init(void)
   action_replay.rom = cart.rom + 0x810000;
   action_replay.ram = cart.rom + 0x830000;
 
-  /* Open Action Replay ROM */
-  f = fopen(AR_ROM,"rb");
-  if (f == NULL) return;
-
-  /* ROM size */
-  fseek(f, 0, SEEK_END);
-  size = ftell(f);
-  fseek(f, 0, SEEK_SET);
+  /* try to load Action Replay ROM file */
+  size = load_archive(AR_ROM, action_replay.rom, 0x20000, NULL);
 
   /* detect Action Replay board type */
   switch (size)
   {
     case 0x8000:  
     {
-      /* normal Action Replay (32K) */
-      action_replay.enabled = TYPE_AR;
-  
-      /* internal registers mapped at $010000-$01ffff */
-      m68k.memory_map[0x01].write16 = ar_write_regs;
-      break;
+      if (!memcmp(action_replay.rom + 0x120, "ACTION REPLAY   ", 16))
+      {
+        /* normal Action Replay (32K) */
+        action_replay.enabled = TYPE_AR;
+    
+        /* internal registers mapped at $010000-$01ffff */
+        m68k.memory_map[0x01].write16 = ar_write_regs;
+        break;
+      }
     }
 
     case 0x10000:
     case 0x20000:
     {
-      /* read Stack Pointer */
-      uint8 sp[4];
-      fread(&sp, 4, 1, f);
-      fseek(f, 0, SEEK_SET);
+      /* Read stack pointer MSB */
+      uint8 sp = READ_BYTE(action_replay.rom, 0x01);
 
       /* Detect board version */
-      if (sp[1] == 0x42)
+      if ((sp == 0x42) && !memcmp(action_replay.rom + 0x120, "ACTION REPLAY 2 ", 16))
       {
         /* PRO Action Replay 1 (64/128K) */
         action_replay.enabled = TYPE_PRO1;
@@ -108,7 +102,7 @@ void areplay_init(void)
         /* internal registers mapped at $010000-$01ffff */
         m68k.memory_map[0x01].write16 = ar_write_regs;
       }
-      else if (sp[1] == 0x60)
+      else if ((sp == 0x60) && !memcmp(action_replay.rom + 0x3c6, "ACTION REPLAY II", 16))
       {
         /* PRO Action Replay 2 (64K) */
         action_replay.enabled = TYPE_PRO2;
@@ -120,11 +114,11 @@ void areplay_init(void)
       /* internal RAM (64k), mapped at $420000-$42ffff or $600000-$60ffff */
       if (action_replay.enabled)
       {
-        m68k.memory_map[sp[1]].base      = action_replay.ram;
-        m68k.memory_map[sp[1]].read8     = NULL;
-        m68k.memory_map[sp[1]].read16    = NULL;
-        m68k.memory_map[sp[1]].write8    = ar_write_ram_8;
-        m68k.memory_map[sp[1]].write16   = NULL;
+        m68k.memory_map[sp].base      = action_replay.ram;
+        m68k.memory_map[sp].read8     = NULL;
+        m68k.memory_map[sp].read16    = NULL;
+        m68k.memory_map[sp].write8    = ar_write_ram_8;
+        m68k.memory_map[sp].write16   = NULL;
       }
       break;
     }
@@ -135,16 +129,10 @@ void areplay_init(void)
     }
   }
 
+#ifdef LSB_FIRST
   if (action_replay.enabled)
   {
-    /* Load ROM */
-    int i = 0;
-    for (i=0; i<size; i+=0x1000)
-    {
-      fread(action_replay.rom + i, 0x1000, 1, f);
-    }
-
-#ifdef LSB_FIRST
+    int i;
     for (i= 0; i<size; i+=2)
     {
       /* Byteswap ROM */
@@ -152,11 +140,8 @@ void areplay_init(void)
       action_replay.rom[i] = action_replay.rom[i+1];
       action_replay.rom[i+1] = temp;
     }
-#endif
   }
-
-  /* Close ROM file */
-  fclose(f);
+#endif
 }
 
 void areplay_shutdown(void)
