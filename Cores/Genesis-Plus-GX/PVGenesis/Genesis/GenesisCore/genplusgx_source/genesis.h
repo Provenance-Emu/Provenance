@@ -4,8 +4,8 @@
  *
  *  Support for SG-1000, Mark-III, Master System, Game Gear, Mega Drive & Mega CD hardware
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -54,7 +54,11 @@ typedef union
 } external_t;
 
 /* Global variables */
+#ifdef USE_DYNAMIC_ALLOC
+extern external_t *ext;
+#else
 extern external_t ext;
+#endif
 extern uint8 boot_rom[0x800];
 extern uint8 work_ram[0x10000];
 extern uint8 zram[0x2000];

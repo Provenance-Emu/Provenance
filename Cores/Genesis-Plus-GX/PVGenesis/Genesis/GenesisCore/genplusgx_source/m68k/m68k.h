@@ -31,6 +31,8 @@
     - added proper cycle use on reset
     - added cycle accurate timings for MUL/DIV instructions (thanks to Jorge Cwik !) 
     - fixed undocumented flags for DIV instructions (Blood Shot)
+    - fixed undocumented behaviors for ABCD/SBCD/NBCD instructions (thanks to flamewing for his test ROM)
+    - improved auto-vectored interrupts acknowledge cycle timing accuracy
     - added MAIN-CPU & SUB-CPU support for Mega CD emulation
     
   */
@@ -41,6 +43,9 @@
 
 #include <setjmp.h>
 #include "macros.h"
+#ifdef HOOK_CPU
+#include "cpuhook.h"
+#endif
 
 /* ======================================================================== */
 /* ==================== ARCHITECTURE-DEPENDANT DEFINES ==================== */
@@ -266,6 +271,10 @@ typedef struct
 
   uint address_space;   /* Current FC code */
 
+#ifdef M68K_OVERCLOCK_SHIFT
+  int cycle_ratio;
+#endif
+
   /* Callbacks to host */
   int  (*int_ack_callback)(int int_line);           /* Interrupt Acknowledge */
   void (*reset_instr_callback)(void);               /* Called when a RESET instruction is encountered */
@@ -353,6 +362,10 @@ extern void s68k_pulse_reset(void);
 /* Run until given cycle count is reached */
 extern void m68k_run(unsigned int cycles);
 extern void s68k_run(unsigned int cycles);
+
+/* Get current instruction execution time */
+extern int m68k_cycles(void);
+extern int s68k_cycles(void);
 
 /* Set the IPL0-IPL2 pins on the CPU (IRQ).
  * A transition from < 7 to 7 will cause a non-maskable interrupt (NMI).

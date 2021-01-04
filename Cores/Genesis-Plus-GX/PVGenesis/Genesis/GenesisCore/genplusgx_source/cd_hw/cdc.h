@@ -1,8 +1,8 @@
 /***************************************************************************************
  *  Genesis Plus
- *  CD data controller (LC89510 compatible)
+ *  CD data controller (LC8951x compatible)
  *
- *  Copyright (C) 2012  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2012-2019  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -63,7 +63,7 @@ extern void cdc_reset(void);
 extern int cdc_context_save(uint8 *state);
 extern int cdc_context_load(uint8 *state);
 extern void cdc_dma_update(void);
-extern int cdc_decoder_update(uint32 header);
+extern void cdc_decoder_update(uint32 header);
 extern void cdc_reg_w(unsigned char data);
 extern unsigned char cdc_reg_r(void);
 extern unsigned short cdc_host_r(void);

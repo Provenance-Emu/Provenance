@@ -23,7 +23,7 @@
 #include "asm_arm.h"
 #include <stdlib.h> /* for abs() */
   
-#ifdef GEKKO
+#if defined(GEKKO) && !defined(__LIBRETRO__)
 #include <gctypes.h>
 #endif
   
@@ -37,21 +37,19 @@
 #include <sys/types.h>
 #endif
 
-#if BYTE_ORDER==LITTLE_ENDIAN
-union magic {
-  struct {
-    ogg_int32_t lo;
-    ogg_int32_t hi;
-  } halves;
-  ogg_int64_t whole;
-};
-#endif 
-
 #if BYTE_ORDER==BIG_ENDIAN
 union magic {
   struct {
     ogg_int32_t hi;
     ogg_int32_t lo;
+  } halves;
+  ogg_int64_t whole;
+};
+#elif BYTE_ORDER==LITTLE_ENDIAN
+union magic {
+  struct {
+    ogg_int32_t lo;
+    ogg_int32_t hi;
   } halves;
   ogg_int64_t whole;
 };

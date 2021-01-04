@@ -1,8 +1,8 @@
 /***************************************************************************************
  *  Genesis Plus
- *  XE-A1P analog controller support
+ *  XE-1AP analog controller support
  *
- *  Copyright (C) 2011-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2011-2015  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -36,14 +36,14 @@
  *
  ****************************************************************************************/
 
-#ifndef _XE_A1PH_
-#define _XE_A1PH_
+#ifndef _XE_1APH_
+#define _XE_1APH_
 
 /* Function prototypes */
-extern void xe_a1p_reset(int index);
-extern unsigned char xe_a1p_1_read(void);
-extern unsigned char xe_a1p_2_read(void);
-extern void xe_a1p_1_write(unsigned char data, unsigned char mask);
-extern void xe_a1p_2_write(unsigned char data, unsigned char mask);
+extern void xe_1ap_reset(int index);
+extern unsigned char xe_1ap_1_read(void);
+extern unsigned char xe_1ap_2_read(void);
+extern void xe_1ap_1_write(unsigned char data, unsigned char mask);
+extern void xe_1ap_2_write(unsigned char data, unsigned char mask);
 
 #endif

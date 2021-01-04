@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  Mega Drive cartridge hardware support
  *
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Most cartridge protections were initially documented by Haze
  *  (http://haze.mameworld.info/)
@@ -44,7 +44,11 @@
 #ifndef _MD_CART_H_
 #define _MD_CART_H_
 
+#ifdef USE_DYNAMIC_ALLOC
+#define cart ext->md_cart
+#else
 #define cart ext.md_cart
+#endif
 
 /* Lock-On cartridge type */
 #define TYPE_GG 0x01  /* Game Genie */
@@ -72,12 +76,12 @@ typedef struct
 /* Cartridge type */
 typedef struct
 {
+  uint8 *base;            /* ROM base (saved for OS/Cartridge ROM swap) */
+  uint32 romsize;         /* ROM size */
+  uint32 mask;            /* ROM mask */
+  uint8 special;          /* custom external hardware (Lock-On, J-Cart, 3-D glasses, Terebi Oekaki,...) */
+  cart_hw_t hw;           /* cartridge internal hardware */
   uint8 rom[MAXROMSIZE];  /* ROM area */
-  uint8 *base;    /* ROM base (saved for OS/Cartridge ROM swap) */
-  uint32 romsize; /* ROM size */
-  uint32 mask;    /* ROM mask */
-  uint8 special;  /* Lock-On, J-Cart or SMS 3-D glasses hardware */
-  cart_hw_t hw;   /* Extra mapping hardware */
 } md_cart_t;
 
 
