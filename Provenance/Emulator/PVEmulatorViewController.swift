@@ -516,7 +516,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.start()
     }
 
-    func enableContorllerInput(_ enabled: Bool) {
+    func enableControllerInput(_ enabled: Bool) {
         #if os(tvOS)
             controllerUserInteractionEnabled = enabled
         #else
@@ -539,7 +539,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
     func hideMenu() {
-        enableContorllerInput(false)
+        enableControllerInput(false)
         if presentedViewController is UIAlertController {
             dismiss(animated: true) { () -> Void in }
             isShowingMenu = false
@@ -609,7 +609,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.enableControllerInput(false)
             })
             actionSheet.addAction(action)
             if idx == self.core.gameSpeed.rawValue {
@@ -642,7 +642,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.stop()
 
         dismiss(animated: true, completion: completion)
-        enableContorllerInput(false)
+        enableControllerInput(false)
         updatePlayedDuration()
     }
 }
@@ -767,7 +767,7 @@ extension PVEmulatorViewController {
         guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {
             presentError("Internal error: No core found.")
             isShowingMenu = false
-            enableContorllerInput(false)
+            enableControllerInput(false)
             return
         }
 
@@ -776,7 +776,7 @@ extension PVEmulatorViewController {
             presentError("Game only supports 1 disc.")
             core.setPauseEmulation(false)
             isShowingMenu = false
-            enableContorllerInput(false)
+            enableControllerInput(false)
             return
         }
 
@@ -792,7 +792,7 @@ extension PVEmulatorViewController {
 
                 core.setPauseEmulation(false)
                 self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.enableControllerInput(false)
             }))
         }
 
@@ -800,7 +800,7 @@ extension PVEmulatorViewController {
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [unowned self] _ in
             core.setPauseEmulation(false)
             self.isShowingMenu = false
-            self.enableContorllerInput(false)
+            self.enableControllerInput(false)
         }))
 
         // Present
@@ -828,7 +828,7 @@ extension PVEmulatorViewController {
         presentedViewController?.dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
         isShowingMenu = false
-        enableContorllerInput(false)
+        enableControllerInput(false)
     }
 }
 

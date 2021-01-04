@@ -13,7 +13,7 @@ public struct Core: Codable {
     public let identifier: String
     public let principleClass: String
 //    public let systems: [System]
-    #warning("un-realm me")
+
     public var systems: [System] {
         let realm = try! Realm()
         let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
