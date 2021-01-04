@@ -687,11 +687,11 @@ extension PVEmulatorViewController {
             menuButton?.isHidden = true
             // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
             // Except for the Apple Remote, where it's handled in the menuGestureRecognizer
-            if controller?.vendorName != "Remote" {
-                controller?.controllerPausedHandler = { [unowned self] controller in
-                    self.controllerPauseButtonPressed(controller)
-                }
-            }
+//             if controller?.vendorName != "Remote" {
+//                 controller?.controllerPausedHandler = { [unowned self] controller in
+//                     self.controllerPauseButtonPressed(controller)
+//                 }
+//             }
             #if os(iOS)
                 if #available(iOS 11.0, *) {
                     setNeedsUpdateOfHomeIndicatorAutoHidden()
