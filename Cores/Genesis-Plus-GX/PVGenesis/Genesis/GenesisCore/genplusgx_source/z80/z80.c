@@ -38,6 +38,7 @@
  *    - Implemented cycle-accurate INI/IND (needed by SMS emulation)
  *    - Fixed Z80 reset
  *    - Made SZHVC_add & SZHVC_sub tables statically allocated
+ *    - Fixed compiler warning when BIG_SWITCH is defined
  *   Changes in 3.9:
  *    - Fixed cycle counts for LD IYL/IXL/IYH/IXH,n [Marshmellow]
  *    - Fixed X/Y flags in CCF/SCF/BIT, ZEXALL is happy now [hap]
@@ -200,6 +201,13 @@
 #define IFF1 Z80.iff1
 #define IFF2 Z80.iff2
 #define HALT Z80.halt
+
+#ifdef Z80_OVERCLOCK_SHIFT
+#define USE_CYCLES(A) Z80.cycles += ((A) * z80_cycle_ratio) >> Z80_OVERCLOCK_SHIFT
+UINT32 z80_cycle_ratio;
+#else
+#define USE_CYCLES(A) Z80.cycles += (A)
+#endif
 
 Z80_Regs Z80;
 
@@ -421,7 +429,9 @@ typedef void (*funcptr)(void);
   INLINE void prefix##_f0(void); INLINE void prefix##_f1(void); INLINE void prefix##_f2(void); INLINE void prefix##_f3(void); \
   INLINE void prefix##_f4(void); INLINE void prefix##_f5(void); INLINE void prefix##_f6(void); INLINE void prefix##_f7(void); \
   INLINE void prefix##_f8(void); INLINE void prefix##_f9(void); INLINE void prefix##_fa(void); INLINE void prefix##_fb(void); \
-  INLINE void prefix##_fc(void); INLINE void prefix##_fd(void); INLINE void prefix##_fe(void); INLINE void prefix##_ff(void); \
+  INLINE void prefix##_fc(void); INLINE void prefix##_fd(void); INLINE void prefix##_fe(void); INLINE void prefix##_ff(void);
+
+#define FUNCTABLE(tablename,prefix) \
 static const funcptr tablename[0x100] = {  \
   prefix##_00,prefix##_01,prefix##_02,prefix##_03,prefix##_04,prefix##_05,prefix##_06,prefix##_07, \
   prefix##_08,prefix##_09,prefix##_0a,prefix##_0b,prefix##_0c,prefix##_0d,prefix##_0e,prefix##_0f, \
@@ -457,12 +467,21 @@ static const funcptr tablename[0x100] = {  \
   prefix##_f8,prefix##_f9,prefix##_fa,prefix##_fb,prefix##_fc,prefix##_fd,prefix##_fe,prefix##_ff  \
 }
 
-PROTOTYPES(Z80op,op);
-PROTOTYPES(Z80cb,cb);
-PROTOTYPES(Z80dd,dd);
-PROTOTYPES(Z80ed,ed);
-PROTOTYPES(Z80fd,fd);
-PROTOTYPES(Z80xycb,xycb);
+PROTOTYPES(Z80op,op)
+PROTOTYPES(Z80cb,cb)
+PROTOTYPES(Z80dd,dd)
+PROTOTYPES(Z80ed,ed)
+PROTOTYPES(Z80fd,fd)
+PROTOTYPES(Z80xycb,xycb)
+
+#ifndef BIG_SWITCH
+FUNCTABLE(Z80op,op);
+#endif
+FUNCTABLE(Z80cb,cb);
+FUNCTABLE(Z80dd,dd);
+FUNCTABLE(Z80ed,ed);
+FUNCTABLE(Z80fd,fd);
+FUNCTABLE(Z80xycb,xycb);
 
 /****************************************************************************/
 /* Burn an odd amount of cycles, that is instructions taking something    */
@@ -473,7 +492,7 @@ INLINE void BURNODD(int cycles, int opcodes, int cyclesum)
   if( cycles > 0 )
   {
     R += (cycles / cyclesum) * opcodes;
-    Z80.cycles += (cycles / cyclesum) * cyclesum * 15;
+    USE_CYCLES((cycles / cyclesum) * cyclesum * 15);
   }
 }
 
@@ -485,7 +504,7 @@ INLINE void BURNODD(int cycles, int opcodes, int cyclesum)
 /***************************************************************
  * adjust cycle count by n T-states
  ***************************************************************/
-#define CC(prefix,opcode) Z80.cycles += cc[Z80_TABLE_##prefix][opcode]
+#define CC(prefix,opcode) USE_CYCLES(cc[Z80_TABLE_##prefix][opcode])
 
 /***************************************************************
  * execute an opcode
@@ -3228,7 +3247,7 @@ static void take_interrupt(void)
     PUSH( pc );
     PCD = 0x0038;
     /* RST $38 + 'interrupt latency' cycles */
-    Z80.cycles += cc[Z80_TABLE_op][0xff] + cc[Z80_TABLE_ex][0xff];
+    USE_CYCLES(cc[Z80_TABLE_op][0xff] + cc[Z80_TABLE_ex][0xff]);
   }
   else
   {
@@ -3243,7 +3262,7 @@ static void take_interrupt(void)
       RM16( irq_vector, &Z80.pc );
       LOG(("Z80 #%d IM2 [$%04x] = $%04x\n",cpu_getactivecpu() , irq_vector, PCD));
         /* CALL $xxxx + 'interrupt latency' cycles */
-      Z80.cycles += cc[Z80_TABLE_op][0xcd] + cc[Z80_TABLE_ex][0xff];
+      USE_CYCLES(cc[Z80_TABLE_op][0xcd] + cc[Z80_TABLE_ex][0xff]);
     }
     else
     {
@@ -3257,18 +3276,18 @@ static void take_interrupt(void)
         PUSH( pc );
         PCD = irq_vector & 0xffff;
            /* CALL $xxxx + 'interrupt latency' cycles */
-        Z80.cycles += cc[Z80_TABLE_op][0xcd] + cc[Z80_TABLE_ex][0xff];
+        USE_CYCLES(cc[Z80_TABLE_op][0xcd] + cc[Z80_TABLE_ex][0xff]);
           break;
         case 0xc30000:  /* jump */
         PCD = irq_vector & 0xffff;
           /* JP $xxxx + 2 cycles */
-        Z80.cycles += cc[Z80_TABLE_op][0xc3] + cc[Z80_TABLE_ex][0xff];
+        USE_CYCLES(cc[Z80_TABLE_op][0xc3] + cc[Z80_TABLE_ex][0xff]);
           break;
         default:    /* rst (or other opcodes?) */
         PUSH( pc );
         PCD = irq_vector & 0x0038;
           /* RST $xx + 2 cycles */
-        Z80.cycles += cc[Z80_TABLE_op][0xff] + cc[Z80_TABLE_ex][0xff];
+        USE_CYCLES(cc[Z80_TABLE_op][0xff] + cc[Z80_TABLE_ex][0xff]);
           break;
       }
     }
@@ -3358,6 +3377,9 @@ void z80_init(const void *config, int (*irqcallback)(int))
   memset(&Z80, 0, sizeof(Z80));
   Z80.daisy = config;
   Z80.irq_callback = irqcallback;
+#ifdef Z80_OVERCLOCK_SHIFT
+  z80_cycle_ratio = 1 << Z80_OVERCLOCK_SHIFT;
+#endif
 
   /* Clear registers values (NB: should be random on real hardware ?) */
   AF = BC = DE = HL = SP = IX = IY =0;
@@ -3449,7 +3471,7 @@ void z80_set_nmi_line(unsigned int state)
     PCD = 0x0066;
     WZ=PCD;
 
-    Z80.cycles += 11*15;
+    USE_CYCLES(11*15);
   }
 
   Z80.nmi_state = state;

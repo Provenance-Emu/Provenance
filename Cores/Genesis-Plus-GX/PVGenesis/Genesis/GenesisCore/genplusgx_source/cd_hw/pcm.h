@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  PCM sound chip (315-5476A) (RF5C164 compatible)
  *
- *  Copyright (C) 2012  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2012-2016  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -65,7 +65,7 @@ typedef struct
 } pcm_t;
 
 /* Function prototypes */
-extern void pcm_init(blip_t* left, blip_t* right);
+extern void pcm_init(double clock, int rate);
 extern void pcm_reset(void);
 extern int pcm_context_save(uint8 *state);
 extern int pcm_context_load(uint8 *state);

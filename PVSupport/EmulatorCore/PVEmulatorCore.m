@@ -18,8 +18,8 @@
 #include <mach/mach_time.h>
 #import <QuartzCore/QuartzCore.h>
 
-//#define PVTimestamp(x) (((double)mach_absolute_time(x)) * 1.0e-09  * timebase_ratio)
-#define PVTimestamp() CACurrentMediaTime()
+#define PVTimestamp(x) (((double)mach_absolute_time(x)) * 1.0e-09  * timebase_ratio)
+//#define PVTimestamp() CACurrentMediaTime()
 #define GetSecondsSince(x) (PVTimestamp() - x)
 
 static Class PVEmulatorCoreClass = Nil;

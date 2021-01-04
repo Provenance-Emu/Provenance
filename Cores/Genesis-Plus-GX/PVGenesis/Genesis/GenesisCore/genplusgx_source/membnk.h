@@ -2,8 +2,8 @@
  *  Genesis Plus
  *  Z80 bank access to 68k bus
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2012  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -49,10 +49,12 @@ extern void zbank_write_ctrl_io(unsigned int address, unsigned int data);
 extern unsigned int zbank_read_vdp(unsigned int address);
 extern void zbank_write_vdp(unsigned int address, unsigned int data);
 
-struct _zbank_memory_map
+typedef struct
 {
   unsigned int (*read)(unsigned int address);
   void (*write)(unsigned int address, unsigned int data);
-} zbank_memory_map[256];
+} t_zbank_memory_map;
+
+extern t_zbank_memory_map zbank_memory_map[256];
 
 #endif /* _MEMBNK_H_ */

@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  Savestate support
  *
- *  Copyright (C) 2007-2012  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2019  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -51,8 +51,8 @@ int state_load(unsigned char *state)
     return 0;
   }
 
-  /* version check (1.7.1 and above only) */
-  if ((version[11] < 0x31) || (version[13] < 0x37) || (version[15] < 0x31))
+  /* version check */
+  if ((version[11] < 0x31) || (version[13] < 0x37) || (version[15] < 0x35))
   {
     return 0;
   }
@@ -116,13 +116,11 @@ int state_load(unsigned char *state)
   bufferptr += sound_context_load(&state[bufferptr]);
   if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
   {
-    SN76489_Init(snd.blips[0][0], snd.blips[0][1], SN_INTEGRATED);
-    SN76489_Config(0, config.psg_preamp, config.psgBoostNoise, 0xff);
+    psg_config(0, config.psg_preamp, 0xff);
   }
   else
   {
-    SN76489_Init(snd.blips[0][0], snd.blips[0][1], (system_hw < SYSTEM_MARKIII) ? SN_DISCRETE : SN_INTEGRATED);
-    SN76489_Config(0, config.psg_preamp, config.psgBoostNoise, io_reg[6]);
+    psg_config(0, config.psg_preamp, io_reg[6]);
   }
 
   /* 68000 */
@@ -199,7 +197,7 @@ int state_save(unsigned char *state)
 
   /* version string */
   char version[16];
-  strncpy(version,STATE_VERSION,16);
+  memcpy(version,STATE_VERSION,16);
   save_param(version, 16);
 
   /* GENESIS */
@@ -262,8 +260,8 @@ int state_save(unsigned char *state)
   if (system_hw == SYSTEM_MCD)
   {
     /* CD hardware ID flag */
-    char id[5];
-    strncpy(id,"SCD!",4);
+    char id[4];
+    memcpy(id,"SCD!",4);
     save_param(id, 4);
 
     /* CD hardware */

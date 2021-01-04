@@ -1,8 +1,8 @@
 /****************************************************************************
  *  Genesis Plus
- *  I2C Serial EEPROM (24Cxx) support
+ *  I2C serial EEPROM (24Cxx) boards
  *
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2016  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -37,201 +37,245 @@
  ****************************************************************************************/
 
 #include "shared.h"
+#include "gamepad.h"
 
-#define GAME_CNT 28
-
-/* this defines the type of EEPROM inside the game cartridge as Backup RAM
+/* Some notes from 8BitWizard (http://gendev.spritesmind.net/forum/viewtopic.php?t=206):
  *
- * Here are some notes from 8BitWizard (http://www.spritesmind.net/_GenDev/forum):
- *
- * Mode 1 (7-bit) - the chip takes a single byte with a 7-bit memory address and a R/W bit (24C01)
+ * Mode 1 (7-bit) - the chip takes a single byte with a 7-bit memory address and a R/W bit (X24C01)
  * Mode 2 (8-bit) - the chip takes a 7-bit device address and R/W bit followed by an 8-bit memory address;
  * the device address may contain up to three more memory address bits (24C01 - 24C16).
  * You can also string eight 24C01, four 24C02, two 24C08, or various combinations, set their address config lines correctly,
  * and the result appears exactly the same as a 24C16
  * Mode 3 (16-bit) - the chip takes a 7-bit device address and R/W bit followed by a 16-bit memory address (24C32 and larger)
  *
- * Also, while most 24Cxx are addressed at 200000-2FFFFF, I have found two different ways of mapping the control lines. 
- * EA uses SDA on D7 (read/write) and SCL on D6 (write only), and I have found boards using different mapping (I think Accolade)
- * which uses D1-read=SDA, D0-write=SDA, D1-write=SCL. Accolade also has a custom-chip mapper which may even use a third method. 
  */
-
-typedef struct
-{
-  uint8 address_bits;     /* number of bits needed to address memory: 7, 8 or 16 */
-  uint16 size_mask;       /* depends on the max size of the memory (in bytes) */
-  uint16 pagewrite_mask;  /* depends on the maximal number of bytes that can be written in a single write cycle */
-  uint32 sda_in_adr;      /* 68000 memory address mapped to SDA_IN */
-  uint32 sda_out_adr;     /* 68000 memory address mapped to SDA_OUT */
-  uint32 scl_adr;         /* 68000 memory address mapped to SCL */
-  uint8 sda_in_bit;       /* bit offset for SDA_IN */
-  uint8 sda_out_bit;      /* bit offset for SDA_OUT */
-  uint8 scl_bit;          /* bit offset for SCL */
-} T_CONFIG_I2C;
 
 typedef enum
 {
   STAND_BY = 0,
   WAIT_STOP,
-  GET_SLAVE_ADR,
+  GET_DEVICE_ADR,
   GET_WORD_ADR_7BITS,
   GET_WORD_ADR_HIGH,
   GET_WORD_ADR_LOW,
   WRITE_DATA,
   READ_DATA
-} T_STATE_I2C;
+} T_I2C_STATE;
+
+typedef enum
+{
+  NO_EEPROM = -1,
+  EEPROM_X24C01,
+  EEPROM_X24C02,
+  EEPROM_24C01,
+  EEPROM_24C02,
+  EEPROM_24C04,
+  EEPROM_24C08,
+  EEPROM_24C16,
+  EEPROM_24C32,
+  EEPROM_24C64,
+  EEPROM_24C65,
+  EEPROM_24C128,
+  EEPROM_24C256,
+  EEPROM_24C512
+} T_I2C_TYPE;
 
 typedef struct
 {
-  uint8 sda;            /* current /SDA line state */
-  uint8 scl;            /* current /SCL line state */
-  uint8 old_sda;        /* previous /SDA line state */
-  uint8 old_scl;        /* previous /SCL line state */
-  uint8 cycles;         /* current operation cycle number (0-9) */
-  uint8 rw;             /* operation type (1:READ, 0:WRITE) */
-  uint16 slave_mask;    /* device address (shifted by the memory address width)*/
-  uint16 word_address;  /* memory address */
-  T_STATE_I2C state;    /* current operation state */
-  T_CONFIG_I2C config;  /* EEPROM characteristics for this game */
-} T_EEPROM_I2C;
+  uint8 address_bits;
+  uint16 size_mask;
+  uint16 pagewrite_mask;
+} T_I2C_SPEC;
 
-typedef struct
+static const T_I2C_SPEC i2c_specs[] =
 {
-  char game_id[16];
-  uint16 chk;
-  T_CONFIG_I2C config;
-} T_GAME_ENTRY;
-
-static const T_GAME_ENTRY database[GAME_CNT] = 
-{
-  /* ACCLAIM mappers */
-  /* 24C02 (old mapper) */
-  {{"T-081326"   }, 0,      {8,  0xFF,   0xFF,   0x200001, 0x200001, 0x200001, 0, 1, 1}},   /* NBA Jam (UE) */
-  {{"T-81033"    }, 0,      {8,  0xFF,   0xFF,   0x200001, 0x200001, 0x200001, 0, 1, 1}},   /* NBA Jam (J) */
-  /* 24C02 */
-  {{"T-081276"   }, 0,      {8,  0xFF,   0xFF,   0x200001, 0x200001, 0x200000, 0, 0, 0}},   /* NFL Quarterback Club */
-  /* 24C04 */
-  {{"T-81406"    }, 0,      {8,  0x1FF,  0x1FF,  0x200001, 0x200001, 0x200000, 0, 0, 0}},   /* NBA Jam TE */
-  /* 24C16 */
-  {{"T-081586"   }, 0,      {8,  0x7FF,  0x7FF,  0x200001, 0x200001, 0x200000, 0, 0, 0}},   /* NFL Quarterback Club '96 */
-  /* 24C65 */
-  {{"T-81576"    }, 0,      {16, 0x1FFF, 0x1FFF, 0x200001, 0x200001, 0x200000, 0, 0, 0}},   /* College Slam */
-  {{"T-81476"    }, 0,      {16, 0x1FFF, 0x1FFF, 0x200001, 0x200001, 0x200000, 0, 0, 0}},   /* Frank Thomas Big Hurt Baseball */
-
-  /* EA mapper (X24C01 only) */
-  {{"T-50176"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 7, 7, 6}},   /* Rings of Power */
-  {{"T-50396"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 7, 7, 6}},   /* NHLPA Hockey 93 */
-  {{"T-50446"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 7, 7, 6}},   /* John Madden Football 93 */
-  {{"T-50516"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 7, 7, 6}},   /* John Madden Football 93 (Championship Ed.) */
-  {{"T-50606"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 7, 7, 6}},   /* Bill Walsh College Football */
-
-  /* SEGA mapper (X24C01 only) */
-  {{"T-12046"    }, 0xAD23, {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Megaman - The Wily Wars */
-  {{"T-12053"    }, 0xEA80, {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Rockman Mega World [Alt] */
-  {{"MK-1215"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Evander 'Real Deal' Holyfield's Boxing */
-  {{"MK-1228"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Greatest Heavyweights of the Ring (U) */
-  {{"G-5538"     }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Greatest Heavyweights of the Ring (J) */
-  {{"PR-1993"    }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Greatest Heavyweights of the Ring (E) */
-  {{"G-4060"     }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Wonderboy in Monster World */
-  {{"00001211-00"}, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Sports Talk Baseball */
-  {{"00004076-00"}, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Honoo no Toukyuuji Dodge Danpei */
-  {{"G-4524"     }, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Ninja Burai Densetsu */
-  {{"00054503-00"}, 0,      {7,  0x7F,   0x7F,   0x200001, 0x200001, 0x200001, 0, 0, 1}},   /* Game Toshokan  */
-
-  /* CODEMASTERS mapper */
-  /* 24C08 */
-  {{"T-120106"   }, 0,      {8,  0x3FF, 0x3FF,   0x300000, 0x380001, 0x300000, 0, 7, 1}},   /* Brian Lara Cricket */
-  {{"00000000-00"}, 0xCEE0, {8,  0x3FF,  0x3FF,  0x300000, 0x380001, 0x300000, 0, 7, 1}},   /* Micro Machines Military */
-  /* 24C16 */
-  {{"T-120096"   }, 0,      {8,  0x7FF,  0x7FF,  0x300000, 0x380001, 0x300000, 0, 7, 1}},   /* Micro Machines 2 - Turbo Tournament */
-  {{"00000000-00"}, 0x2C41, {8,  0x7FF,  0x7FF,  0x300000, 0x380001, 0x300000, 0, 7, 1}},   /* Micro Machines Turbo Tournament 96 */
-  /* 24C65 */
-  {{"T-120146-50"}, 0,      {16, 0x1FFF, 0x1FFF, 0x300000, 0x380001, 0x300000, 0, 7, 1}}    /* Brian Lara Cricket 96, Shane Warne Cricket */
+  { 7 , 0x7F   , 0x03},
+  { 8 , 0xFF   , 0x03},
+  { 8 , 0x7F   , 0x07},
+  { 8 , 0xFF   , 0x07},
+  { 8 , 0x1FF  , 0x0F},
+  { 8 , 0x3FF  , 0x0F},
+  { 8 , 0x7FF  , 0x0F},
+  {16 , 0xFFF  , 0x1F},
+  {16 , 0x1FFF , 0x1F},
+  {16 , 0x1FFF , 0x3F},
+  {16 , 0x3FFF , 0x3F},
+  {16 , 0x7FFF , 0x3F},
+  {16 , 0xFFFF , 0x7F}
 };
 
-static T_EEPROM_I2C eeprom_i2c;
+typedef struct
+{
+  char id[16];
+  uint32 sp;
+  uint16 chk;
+  void (*mapper_init)(void);
+  T_I2C_TYPE eeprom_type;
+} T_I2C_GAME;
 
-static unsigned int eeprom_i2c_read_byte(unsigned int address);
-static unsigned int eeprom_i2c_read_word(unsigned int address);
-static void eeprom_i2c_write_byte(unsigned int address, unsigned int data);
-static void eeprom_i2c_write_word(unsigned int address, unsigned int data);
+static void mapper_i2c_ea_init(void);
+static void mapper_i2c_sega_init(void);
+static void mapper_i2c_acclaim_16M_init(void);
+static void mapper_i2c_acclaim_32M_init(void);
+static void mapper_i2c_jcart_init(void);
+
+static const T_I2C_GAME i2c_database[] = 
+{
+  {"T-50176"  , 0          , 0      , mapper_i2c_ea_init          , EEPROM_X24C01 }, /* Rings of Power */
+  {"T-50396"  , 0          , 0      , mapper_i2c_ea_init          , EEPROM_X24C01 }, /* NHLPA Hockey 93 */
+  {"T-50446"  , 0          , 0      , mapper_i2c_ea_init          , EEPROM_X24C01 }, /* John Madden Football 93 */
+  {"T-50516"  , 0          , 0      , mapper_i2c_ea_init          , EEPROM_X24C01 }, /* John Madden Football 93 (Championship Ed.) */
+  {"T-50606"  , 0          , 0      , mapper_i2c_ea_init          , EEPROM_X24C01 }, /* Bill Walsh College Football (warning: invalid SRAM header !) */
+  {" T-12046" , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Megaman - The Wily Wars (warning: SRAM hack exists !) */
+  {" T-12053" , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Rockman Mega World (warning: SRAM hack exists !) */
+  {"MK-1215"  , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Evander 'Real Deal' Holyfield's Boxing */
+  {"MK-1228"  , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Greatest Heavyweights of the Ring (U)(E) */
+  {"G-5538"   , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Greatest Heavyweights of the Ring (J) */
+  {"PR-1993"  , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Greatest Heavyweights of the Ring (Prototype) */
+  {" G-4060"  , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Wonderboy in Monster World (warning: SRAM hack exists !) */
+  {"00001211" , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Sports Talk Baseball */
+  {"00004076" , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Honoo no Toukyuuji Dodge Danpei */
+  {"G-4524"   , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Ninja Burai Densetsu */
+  {"00054503" , 0          , 0      , mapper_i2c_sega_init        , EEPROM_X24C01 }, /* Game Toshokan  */
+  {"T-81033"  , 0          , 0      , mapper_i2c_acclaim_16M_init , EEPROM_X24C02 }, /* NBA Jam (J) */
+  {"T-081326" , 0          , 0      , mapper_i2c_acclaim_16M_init , EEPROM_X24C02 }, /* NBA Jam (UE) */
+  {"T-081276" , 0          , 0      , mapper_i2c_acclaim_32M_init , EEPROM_24C02  }, /* NFL Quarterback Club */
+  {"T-81406"  , 0          , 0      , mapper_i2c_acclaim_32M_init , EEPROM_24C04  }, /* NBA Jam TE */
+  {"T-081586" , 0          , 0      , mapper_i2c_acclaim_32M_init , EEPROM_24C16  }, /* NFL Quarterback Club '96 */
+  {"T-81476"  , 0          , 0      , mapper_i2c_acclaim_32M_init , EEPROM_24C65  }, /* Frank Thomas Big Hurt Baseball */
+  {"T-81576"  , 0          , 0      , mapper_i2c_acclaim_32M_init , EEPROM_24C65  }, /* College Slam */
+  {"T-120106" , 0          , 0      , mapper_i2c_jcart_init       , EEPROM_24C08  }, /* Brian Lara Cricket */
+  {"00000000" , 0x444e4c44 , 0x168B , mapper_i2c_jcart_init       , EEPROM_24C08  }, /* Micro Machines Military */
+  {"00000000" , 0x444e4c44 , 0x165E , mapper_i2c_jcart_init       , EEPROM_24C16  }, /* Micro Machines Turbo Tournament 96 */
+  {"T-120096" , 0          , 0      , mapper_i2c_jcart_init       , EEPROM_24C16  }, /* Micro Machines 2 - Turbo Tournament */
+  {"T-120146" , 0          , 0      , mapper_i2c_jcart_init       , EEPROM_24C65  }, /* Brian Lara Cricket 96 / Shane Warne Cricket */
+  {"00000000" , 0xfffffffc , 0x168B , mapper_i2c_jcart_init       , NO_EEPROM     }, /* Super Skidmarks */
+  {"00000000" , 0xfffffffc , 0x165E , mapper_i2c_jcart_init       , NO_EEPROM     }, /* Pete Sampras Tennis (Prototype) */
+  {"T-120066" , 0          , 0      , mapper_i2c_jcart_init       , NO_EEPROM     }, /* Pete Sampras Tennis */
+  {"T-123456" , 0          , 0      , mapper_i2c_jcart_init       , NO_EEPROM     }, /* Pete Sampras Tennis 96 */
+  {"XXXXXXXX" , 0          , 0xDF39 , mapper_i2c_jcart_init       , NO_EEPROM     }, /* Pete Sampras Tennis 96 (Prototype ?) */
+};
+
+static struct
+{
+  uint8 sda;              /* current SDA line state */
+  uint8 scl;              /* current SCL line state */
+  uint8 old_sda;          /* previous SDA line state */
+  uint8 old_scl;          /* previous SCL line state */
+  uint8 cycles;           /* operation internal cycle (0-9) */
+  uint8 rw;               /* operation type (1:READ, 0:WRITE) */
+  uint16 device_address;  /* device address */
+  uint16 word_address;    /* memory address */
+  uint8 buffer;           /* write buffer */
+  T_I2C_STATE state;      /* current operation state */
+  T_I2C_SPEC spec;        /* EEPROM characteristics */
+  uint8 scl_in_bit;       /* SCL (write) bit position */
+  uint8 sda_in_bit;       /* SDA (write) bit position */
+  uint8 sda_out_bit;      /* SDA (read) bit position */
+} eeprom_i2c;
+
+
+/********************************************************************/
+/* I2C EEPROM mapper initialization                                 */
+/********************************************************************/
 
 void eeprom_i2c_init()
 {
-  int i = 0;
+  int i = sizeof(i2c_database) / sizeof(T_I2C_GAME) - 1;
 
-  /* initialize eeprom */
-  memset(&eeprom_i2c, 0, sizeof(T_EEPROM_I2C));
+  /* no serial EEPROM found by default */
+  sram.custom = 0;
+
+  /* initialize I2C EEPROM state */
+  memset(&eeprom_i2c, 0, sizeof(eeprom_i2c));
   eeprom_i2c.sda = eeprom_i2c.old_sda = 1;
   eeprom_i2c.scl = eeprom_i2c.old_scl = 1;
   eeprom_i2c.state = STAND_BY;
 
-  /* no eeprom by default */
-  sram.custom = 0;
-
-  /* look into game database */
-  while (i<GAME_CNT)
+  /* auto-detect games listed in database */
+  do
   {
-    if (strstr(rominfo.product,database[i].game_id) != NULL)
+    /* check game internal id code */
+    if (strstr(rominfo.product, i2c_database[i].id))
     {
-      /* additional check (Micro Machines, Rockman Mega World) */
-      if ((database[i].chk == 0x0000) || (database[i].chk == rominfo.realchecksum))
+      /* additional check for known SRAM-patched hacks */
+      if ((i2c_database[i].id[0] == ' ') && ((sram.end - sram.start) > 2))
       {
-        sram.custom = 1;
-        sram.on = 1;
-        memcpy(&eeprom_i2c.config, &database[i].config, sizeof(T_CONFIG_I2C));
-        i = GAME_CNT;
+        break;
+      }
+
+      /* additional check for Codemasters games */
+      if (((i2c_database[i].chk == 0) || (i2c_database[i].chk == rominfo.checksum)) &&
+          ((i2c_database[i].sp == 0) || (i2c_database[i].sp == READ_WORD_LONG(cart.rom, 0))))
+      {
+        /* additional check for J-CART games without serial EEPROM */
+        if (i2c_database[i].eeprom_type > NO_EEPROM)
+        {
+          /* get EEPROM characteristics */
+          memcpy(&eeprom_i2c.spec, &i2c_specs[i2c_database[i].eeprom_type], sizeof(T_I2C_SPEC));
+
+          /* serial EEPROM game found */
+          sram.on = sram.custom = 1;
+        }
+
+        /* initialize memory mapping */
+        i2c_database[i].mapper_init();
+        break;
       }
     }
-    i++;
   }
+  while (i--);
 
-  /* Game not found in database but ROM header indicates it uses serial EEPROM */
+  /* for games not present in database, check if ROM header indicates serial EEPROM is used */
   if (!sram.custom && sram.detected)
   {
     if ((READ_BYTE(cart.rom,0x1b2) == 0xe8) || ((sram.end - sram.start) < 2))
     {
-      /* set SEGA mapper as default */
+      /* serial EEPROM game found */
       sram.custom = 1;
-      memcpy(&eeprom_i2c.config, &database[9].config, sizeof(T_CONFIG_I2C));
-    }
-  }
 
-  /* initialize m68k bus handlers */
-  if (sram.custom)
-  {
-    m68k.memory_map[eeprom_i2c.config.sda_out_adr >> 16].read8   = eeprom_i2c_read_byte;
-    m68k.memory_map[eeprom_i2c.config.sda_out_adr >> 16].read16  = eeprom_i2c_read_word;
-    m68k.memory_map[eeprom_i2c.config.sda_in_adr >> 16].read8    = eeprom_i2c_read_byte;
-    m68k.memory_map[eeprom_i2c.config.sda_in_adr >> 16].read16   = eeprom_i2c_read_word;
-    m68k.memory_map[eeprom_i2c.config.scl_adr >> 16].write8      = eeprom_i2c_write_byte;
-    m68k.memory_map[eeprom_i2c.config.scl_adr >> 16].write16     = eeprom_i2c_write_word;
-    zbank_memory_map[eeprom_i2c.config.sda_out_adr >> 16].read   = eeprom_i2c_read_byte;
-    zbank_memory_map[eeprom_i2c.config.sda_in_adr >> 16].read    = eeprom_i2c_read_byte;
-    zbank_memory_map[eeprom_i2c.config.scl_adr >> 16].write      = eeprom_i2c_write_byte;
+      /* assume SEGA mapper as default */
+      memcpy(&eeprom_i2c.spec, &i2c_specs[EEPROM_X24C01], sizeof(T_I2C_SPEC));
+      mapper_i2c_sega_init();
+    }
   }
 }
 
+
+/********************************************************************/
+/* I2C EEPROM internal                                   			*/
+/********************************************************************/
+
 INLINE void Detect_START()
 {
+  /* detect SDA HIGH to LOW transition while SCL is held HIGH */
   if (eeprom_i2c.old_scl && eeprom_i2c.scl)
   {
     if (eeprom_i2c.old_sda && !eeprom_i2c.sda)
     {
+      /* initialize cycle counter */
       eeprom_i2c.cycles = 0;
-      eeprom_i2c.slave_mask = 0;
-      if (eeprom_i2c.config.address_bits == 7)
+
+      /* initialize sequence */
+      if (eeprom_i2c.spec.address_bits == 7)
       {
+        /* get Word Address */
         eeprom_i2c.word_address = 0;
         eeprom_i2c.state = GET_WORD_ADR_7BITS;
       }
-      else eeprom_i2c.state = GET_SLAVE_ADR;
+      else
+      {
+        /* get Device Address */
+        eeprom_i2c.device_address = 0;
+        eeprom_i2c.state = GET_DEVICE_ADR;
+      }
     }
   }
 }
 
 INLINE void Detect_STOP()
 {
+  /* detect SDA LOW to HIGH transition while SCL is held HIGH */
   if (eeprom_i2c.old_scl && eeprom_i2c.scl)
   {
     if (!eeprom_i2c.old_sda && eeprom_i2c.sda)
@@ -250,7 +294,6 @@ static void eeprom_i2c_update(void)
     case STAND_BY:
     {
       Detect_START();
-      Detect_STOP();
       break;
     }
 
@@ -261,7 +304,7 @@ static void eeprom_i2c_update(void)
       break;
     }
 
-    /* Get Word Address 7 bits: MODE-1 only (24C01)
+    /* Get Word Address (7-bit): Mode 1 (X24C01) only
      * and R/W bit
      */
     case GET_WORD_ADR_7BITS:
@@ -269,95 +312,99 @@ static void eeprom_i2c_update(void)
       Detect_START();
       Detect_STOP();
 
-      /* look for SCL LOW to HIGH transition */
-      if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
+      /* look for SCL HIGH to LOW transition */
+      if (eeprom_i2c.old_scl && !eeprom_i2c.scl)
       {
-        if (eeprom_i2c.cycles == 0) eeprom_i2c.cycles ++;
+        if (eeprom_i2c.cycles < 9)
+        {
+          /* increment cycle counter */
+          eeprom_i2c.cycles++;
+        }
+        else
+        {
+          /* next sequence */
+          eeprom_i2c.cycles = 1;
+          eeprom_i2c.state = eeprom_i2c.rw ? READ_DATA : WRITE_DATA;
+
+          /* clear write buffer */
+          eeprom_i2c.buffer = 0x00;
+        }
       }
 
-
-      /* look for SCL HIGH to LOW transition */
-      if (eeprom_i2c.old_scl && !eeprom_i2c.scl && (eeprom_i2c.cycles > 0))
+      /* look for SCL LOW to HIGH transition */
+      else if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
       {
         if (eeprom_i2c.cycles < 8)
         {
-          eeprom_i2c.word_address |= (eeprom_i2c.old_sda << (7 - eeprom_i2c.cycles));
+          /* latch Word Address bits 6-0 */
+          eeprom_i2c.word_address |= (eeprom_i2c.sda << (7 - eeprom_i2c.cycles));
         }
         else if (eeprom_i2c.cycles == 8)
         {
-          eeprom_i2c.rw = eeprom_i2c.old_sda;
+          /* latch R/W bit */
+          eeprom_i2c.rw = eeprom_i2c.sda;
         }
-        else
-        {  /* ACK CYCLE */
-          eeprom_i2c.cycles = 0;
-          eeprom_i2c.word_address &= eeprom_i2c.config.size_mask;
-          eeprom_i2c.state = eeprom_i2c.rw ? READ_DATA : WRITE_DATA;
-        }
-
-        eeprom_i2c.cycles ++;
       }
+
       break;
     }
 
-    /* Get Slave Address (3bits) : MODE-2 & MODE-3 only (24C01 - 24C512) (0-3bits, depending on the array size)
-     * or/and Word Address MSB: MODE-2 only (24C04 - 24C16) (0-3bits, depending on the array size)
+    /* Get Device Address (0-3 bits, depending on the array size) : Mode 2 & Mode 3 (24C01 - 24C512) only
+     * or/and Word Address MSB: Mode 2 only (24C04 - 24C16) (0-3 bits, depending on the array size)
      * and R/W bit
      */
-    case GET_SLAVE_ADR:
+    case GET_DEVICE_ADR:
     {
       Detect_START();
       Detect_STOP();
 
-      /* look for SCL LOW to HIGH transition */
-      if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
-      {
-        if (eeprom_i2c.cycles == 0) eeprom_i2c.cycles ++;
-      }
-
       /* look for SCL HIGH to LOW transition */
-      if (eeprom_i2c.old_scl && !eeprom_i2c.scl && (eeprom_i2c.cycles > 0))
+      if (eeprom_i2c.old_scl && !eeprom_i2c.scl)
       {
-        if ((eeprom_i2c.cycles > 4) && (eeprom_i2c.cycles <8))
+        if (eeprom_i2c.cycles < 9)
         {
-          if ((eeprom_i2c.config.address_bits == 16) ||
-            (eeprom_i2c.config.size_mask < (1 << (15 - eeprom_i2c.cycles))))
-          {
-            /* this is a SLAVE ADDRESS bit */
-            eeprom_i2c.slave_mask |= (eeprom_i2c.old_sda << (7 - eeprom_i2c.cycles));
-          }
-          else
-          {
-            /* this is a WORD ADDRESS high bit */
-            if (eeprom_i2c.old_sda) eeprom_i2c.word_address |= (1 << (15 - eeprom_i2c.cycles));
-            else eeprom_i2c.word_address &= ~(1 << (15 - eeprom_i2c.cycles));
-          }
+          /* increment cycle counter */
+          eeprom_i2c.cycles++;
         }
-        else if (eeprom_i2c.cycles == 8) eeprom_i2c.rw = eeprom_i2c.old_sda;
-        else if (eeprom_i2c.cycles > 8)
+        else
         {
-          /* ACK CYCLE */
-          eeprom_i2c.cycles = 0;
-          if (eeprom_i2c.config.address_bits == 16)
-          {
-            /* two ADDRESS bytes */
-            eeprom_i2c.state = eeprom_i2c.rw ? READ_DATA : GET_WORD_ADR_HIGH;
-            eeprom_i2c.slave_mask <<= 16;
-          }
-          else
-          {
-            /* one ADDRESS byte */
-            eeprom_i2c.state = eeprom_i2c.rw ? READ_DATA : GET_WORD_ADR_LOW;
-            eeprom_i2c.slave_mask <<= 8;
-          }
-        }
+          /* shift Device Address bits */
+          eeprom_i2c.device_address <<= eeprom_i2c.spec.address_bits;
 
-        eeprom_i2c.cycles ++;
+          /* next sequence */
+          eeprom_i2c.cycles = 1;
+          if (eeprom_i2c.rw)
+          {
+            eeprom_i2c.state = READ_DATA;
+          }
+          else
+          {
+            eeprom_i2c.word_address = 0;
+            eeprom_i2c.state = (eeprom_i2c.spec.address_bits == 16) ? GET_WORD_ADR_HIGH : GET_WORD_ADR_LOW;
+          }
+        }
       }
+
+      /* look for SCL LOW to HIGH transition */
+      else if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
+      {
+        if ((eeprom_i2c.cycles > 4) && (eeprom_i2c.cycles < 8))
+        {
+          /* latch Device Address bits */
+          eeprom_i2c.device_address |= (eeprom_i2c.sda << (7 - eeprom_i2c.cycles));
+        }
+        else if (eeprom_i2c.cycles == 8)
+        {
+          /* latch R/W bit */
+          eeprom_i2c.rw = eeprom_i2c.sda;
+        }
+      }
+
       break;
     }
 
-    /* Get Word Address MSB (4-8bits depending on the array size)
-     * MODE-3 only (24C32 - 24C512)
+    /* Get Word Address MSB (4-8 bits depending on the array size)
+     * Mode 3 only (24C32 - 24C512)
      */
     case GET_WORD_ADR_HIGH:
     {
@@ -369,27 +416,35 @@ static void eeprom_i2c_update(void)
       {
         if (eeprom_i2c.cycles < 9)
         {
-          if ((eeprom_i2c.config.size_mask + 1) < (1 << (17 - eeprom_i2c.cycles)))
-          {
-            /* ignored bit: slave mask should be right-shifted by one  */
-            eeprom_i2c.slave_mask >>= 1;
-          }
-          else
-          {
-            /* this is a WORD ADDRESS high bit */
-            if (eeprom_i2c.old_sda) eeprom_i2c.word_address |= (1 << (16 - eeprom_i2c.cycles));
-            else eeprom_i2c.word_address &= ~(1 << (16 - eeprom_i2c.cycles));
-          }
-
-          eeprom_i2c.cycles ++;
+          /* increment cycle counter */
+          eeprom_i2c.cycles++;
         }
         else
         {
-          /* ACK CYCLE */
+          /* next sequence */
           eeprom_i2c.cycles = 1;
           eeprom_i2c.state = GET_WORD_ADR_LOW;
         }
       }
+
+      /* look for SCL LOW to HIGH transition */
+      else if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
+      {
+        if (eeprom_i2c.cycles < 9)
+        {
+          if (eeprom_i2c.spec.size_mask  < (1 << (16 - eeprom_i2c.cycles)))
+          {
+            /* ignored bit: Device Address bits should be right-shifted */
+            eeprom_i2c.device_address >>= 1;
+          }
+          else
+          {
+            /* latch Word Address high bits */
+            eeprom_i2c.word_address |= (eeprom_i2c.sda << (16 - eeprom_i2c.cycles));
+          }
+        }
+      }  
+
       break;
     }
 
@@ -406,33 +461,43 @@ static void eeprom_i2c_update(void)
       {
         if (eeprom_i2c.cycles < 9)
         {
-          if ((eeprom_i2c.config.size_mask + 1) < (1 << (9 - eeprom_i2c.cycles)))
-          {
-            /* ignored bit (X24C01): slave mask should be right-shifted by one  */
-            eeprom_i2c.slave_mask >>= 1;
-          }
-          else
-          {
-            /* this is a WORD ADDRESS high bit */
-            if (eeprom_i2c.old_sda) eeprom_i2c.word_address |= (1 << (8 - eeprom_i2c.cycles));
-            else eeprom_i2c.word_address &= ~(1 << (8 - eeprom_i2c.cycles));
-          }
-
-          eeprom_i2c.cycles ++;
+          /* increment cycle counter */
+          eeprom_i2c.cycles++;
         }
         else
         {
-          /* ACK CYCLE */
+          /* next sequence */
           eeprom_i2c.cycles = 1;
-          eeprom_i2c.word_address &= eeprom_i2c.config.size_mask;
           eeprom_i2c.state = WRITE_DATA;
+
+          /* clear write buffer */
+          eeprom_i2c.buffer = 0x00;
         }
       }
+
+      /* look for SCL LOW to HIGH transition */
+      else if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
+      {
+        if (eeprom_i2c.cycles < 9)
+        {
+          if (eeprom_i2c.spec.size_mask < (1 << (8 - eeprom_i2c.cycles)))
+          {
+            /* ignored bit (24C01): Device Address bits should be right-shifted */
+            eeprom_i2c.device_address >>= 1;
+          }
+          else
+          {
+            /* latch Word Address low bits */
+            eeprom_i2c.word_address |= (eeprom_i2c.sda << (8 - eeprom_i2c.cycles));
+          }
+        }
+      }
+
       break;
     }
 
     /*
-     * Read Cycle
+     * Read Sequence
      */
     case READ_DATA:
     {
@@ -442,20 +507,42 @@ static void eeprom_i2c_update(void)
       /* look for SCL HIGH to LOW transition */
       if (eeprom_i2c.old_scl && !eeprom_i2c.scl)
       {
-        if (eeprom_i2c.cycles < 9) eeprom_i2c.cycles ++;
+        if (eeprom_i2c.cycles < 9)
+        {
+          /* increment cycle counter */
+          eeprom_i2c.cycles++;
+        }
         else
         {
+          /* next read sequence */
           eeprom_i2c.cycles = 1;
-
-          /* ACK not received */
-          if (eeprom_i2c.old_sda) eeprom_i2c.state = WAIT_STOP;
-         }
+        }
       }
+
+      /* look for SCL LOW to HIGH transition */
+      else if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
+      {
+        if (eeprom_i2c.cycles == 9)
+        {
+          /* check if ACK is received */
+          if (eeprom_i2c.sda)
+          {
+            /* end of read sequence */
+            eeprom_i2c.state = WAIT_STOP;
+          }
+          else
+          {
+            /* increment Word Address (roll up at maximum array size) */
+            eeprom_i2c.word_address = (eeprom_i2c.word_address + 1) & eeprom_i2c.spec.size_mask;
+          }
+        }
+      }
+
       break;
     }
 
     /*
-     * Write Cycle
+     * Write Sequence
      */
     case WRITE_DATA:
     {
@@ -467,155 +554,337 @@ static void eeprom_i2c_update(void)
       {
         if (eeprom_i2c.cycles < 9)
         {
-          /* Write DATA bits (max 64kBytes) */
-          uint16 sram_address = (eeprom_i2c.slave_mask | eeprom_i2c.word_address) & 0xFFFF;
-          if (eeprom_i2c.old_sda) sram.sram[sram_address] |= (1 << (8 - eeprom_i2c.cycles));
-          else sram.sram[sram_address] &= ~(1 << (8 - eeprom_i2c.cycles));
-
-          if (eeprom_i2c.cycles == 8) 
-          {
-            /* WORD ADDRESS is incremented (roll up at maximum pagesize) */
-            eeprom_i2c.word_address = (eeprom_i2c.word_address & (0xFFFF - eeprom_i2c.config.pagewrite_mask)) | 
-                                     ((eeprom_i2c.word_address + 1) & eeprom_i2c.config.pagewrite_mask);
-          }
-
-          eeprom_i2c.cycles ++;
+          /* increment cycle counter */
+          eeprom_i2c.cycles++;
         }
-        else eeprom_i2c.cycles = 1;  /* ACK cycle */
+        else
+        {
+          /* next write sequence */
+          eeprom_i2c.cycles = 1;
+        }
       }
+
+      /* look for SCL LOW to HIGH transition */
+      else if (!eeprom_i2c.old_scl && eeprom_i2c.scl)
+      {
+        if (eeprom_i2c.cycles < 9)
+        {
+          /* latch DATA bits 7-0 to write buffer */
+          eeprom_i2c.buffer |= (eeprom_i2c.sda << (8 - eeprom_i2c.cycles));
+        }
+        else
+        {
+          /* write back to memory array (max 64kB) */
+          sram.sram[(eeprom_i2c.device_address | eeprom_i2c.word_address) & 0xffff] = eeprom_i2c.buffer;
+          
+          /* clear write buffer */
+          eeprom_i2c.buffer = 0;
+
+          /* increment Word Address (roll over at maximum page size) */
+          eeprom_i2c.word_address = (eeprom_i2c.word_address & ~eeprom_i2c.spec.pagewrite_mask) | 
+                                    ((eeprom_i2c.word_address + 1) & eeprom_i2c.spec.pagewrite_mask);
+        }
+      }
+
       break;
     }
   }
 
+  /* save SCL & SDA previous state */
   eeprom_i2c.old_scl = eeprom_i2c.scl;
   eeprom_i2c.old_sda = eeprom_i2c.sda;
 }
 
-static unsigned char eeprom_i2c_out(void)
+static uint8 eeprom_i2c_out(void)
 {
-  uint8 sda_out = eeprom_i2c.sda;
-
-  /* EEPROM state */
-  switch (eeprom_i2c.state)
+  /* check EEPROM state */
+  if (eeprom_i2c.state == READ_DATA)
   {
-    case READ_DATA:
+    /* READ cycle */
+    if (eeprom_i2c.cycles < 9)
     {
-      if (eeprom_i2c.cycles < 9)
-      {
-        /* Return DATA bits (max 64kBytes) */
-        uint16 sram_address = (eeprom_i2c.slave_mask | eeprom_i2c.word_address) & 0xffff;
-        sda_out = (sram.sram[sram_address] >> (8 - eeprom_i2c.cycles)) & 1;
-
-        if (eeprom_i2c.cycles == 8)
-        {
-          /* WORD ADDRESS is incremented (roll up at maximum array size) */
-          eeprom_i2c.word_address ++;
-          eeprom_i2c.word_address &= eeprom_i2c.config.size_mask;
-        }
-      }
-      break;
-    }
-
-    case GET_WORD_ADR_7BITS:
-    case GET_SLAVE_ADR:
-    case GET_WORD_ADR_HIGH:
-    case GET_WORD_ADR_LOW:
-    case WRITE_DATA:
-    {
-      if (eeprom_i2c.cycles == 9) sda_out = 0;
-      break;
-    }
-
-    default:
-    {
-      break;
+      /* return memory array (max 64kB) DATA bits */
+      return ((sram.sram[(eeprom_i2c.device_address | eeprom_i2c.word_address) & 0xffff] >> (8 - eeprom_i2c.cycles)) & 1);
     }
   }
+  else if (eeprom_i2c.cycles == 9)
+  {
+    /* ACK cycle */
+    return 0;
+  }
 
-  return (sda_out << eeprom_i2c.config.sda_out_bit);
+  /* return latched /SDA input by default */
+  return eeprom_i2c.sda;
 }
 
-static unsigned int eeprom_i2c_read_byte(unsigned int address)
+
+/********************************************************************/
+/* Common I2C board memory mapping		                            */
+/********************************************************************/
+
+static uint32 mapper_i2c_generic_read8(uint32 address)
 {
-  if (address == eeprom_i2c.config.sda_out_adr)
+  /* only use D0-D7 */
+  if (address & 0x01)
   {
-    return eeprom_i2c_out();
+    return eeprom_i2c_out() << eeprom_i2c.sda_out_bit;
   }
 
-  return READ_BYTE(cart.rom, address);
+  return m68k_read_bus_8(address);
 }
 
-static unsigned int eeprom_i2c_read_word(unsigned int address)
+static uint32 mapper_i2c_generic_read16(uint32 address)
 {
-  if (address == eeprom_i2c.config.sda_out_adr)
-  {
-    return (eeprom_i2c_out() << 8);
-  }
-
-  if (address == (eeprom_i2c.config.sda_out_adr ^ 1))
-  {
-    return eeprom_i2c_out();
-  }
-
-  return *(uint16 *)(cart.rom + address);
+  return eeprom_i2c_out() << eeprom_i2c.sda_out_bit;
 }
 
-static void eeprom_i2c_write_byte(unsigned int address, unsigned int data)
+static void mapper_i2c_generic_write8(uint32 address, uint32 data)
 {
-  int do_update = 0;
-
-  if (address == eeprom_i2c.config.sda_in_adr)
+  /* only use /LWR */
+  if (address & 0x01)
   {
-    eeprom_i2c.sda = (data >> eeprom_i2c.config.sda_in_bit) & 1;
-    do_update = 1;
-  }
-
-  if (address == eeprom_i2c.config.scl_adr)
-  {
-    eeprom_i2c.scl = (data >> eeprom_i2c.config.scl_bit) & 1;
-    do_update = 1;
-  }
-
-  if (do_update)
-  {
+    eeprom_i2c.sda = (data >> eeprom_i2c.sda_in_bit) & 1;
+    eeprom_i2c.scl = (data >> eeprom_i2c.scl_in_bit) & 1;
     eeprom_i2c_update();
-    return;
   }
-
-  m68k_unused_8_w(address, data);
+  else
+  {
+    m68k_unused_8_w(address, data);
+  }
 }
 
-static void eeprom_i2c_write_word(unsigned int address, unsigned int data)
+static void mapper_i2c_generic_write16(uint32 address, uint32 data)
 {
-  int do_update = 0;
+  eeprom_i2c.sda = (data >> eeprom_i2c.sda_in_bit) & 1;
+  eeprom_i2c.scl = (data >> eeprom_i2c.scl_in_bit) & 1;
+  eeprom_i2c_update();
+}
 
-  if (address == eeprom_i2c.config.sda_in_adr)
-  {
-    eeprom_i2c.sda = (data >> (8 + eeprom_i2c.config.sda_in_bit)) & 1;
-    do_update = 1;
-  }
-  else if (address == (eeprom_i2c.config.sda_in_adr ^1))
-  {
-    eeprom_i2c.sda = (data >> eeprom_i2c.config.sda_in_bit) & 1;
-    do_update = 1;
-  }
 
-  if (address == eeprom_i2c.config.scl_adr)
-  {
-    eeprom_i2c.scl = (data >> (8 + eeprom_i2c.config.scl_bit)) & 1;
-    do_update = 1;
-  }
-  else if (address == (eeprom_i2c.config.scl_adr ^1))
-  {
-    eeprom_i2c.scl = (data >> eeprom_i2c.config.scl_bit) & 1;
-    do_update = 1;
-  }
+/********************************************************************/
+/* EA mapper (PWA P10003 & P10004 boards)                           */
+/********************************************************************/
 
-  if (do_update)
+static void mapper_i2c_ea_init(void)
+{
+  int i;
+
+  /* serial EEPROM (read/write) mapped to $200000-$3fffff */
+  for (i=0x20; i<0x40; i++)
   {
-    eeprom_i2c_update();
-    return;
+    m68k.memory_map[i].read8   = mapper_i2c_generic_read8;
+    m68k.memory_map[i].read16  = mapper_i2c_generic_read16;
+    m68k.memory_map[i].write8  = mapper_i2c_generic_write8;
+    m68k.memory_map[i].write16 = mapper_i2c_generic_write16;
+    zbank_memory_map[i].read   = mapper_i2c_generic_read8;
+    zbank_memory_map[i].write  = mapper_i2c_generic_write8;
   }
 
-  m68k_unused_16_w(address, data);
+  /* SCL (in) -> D6 */
+  /* SDA (in/out) -> D7 */
+  eeprom_i2c.scl_in_bit  = 6;
+  eeprom_i2c.sda_in_bit  = 7;
+  eeprom_i2c.sda_out_bit = 7;
+}
+
+
+/********************************************************************/
+/* SEGA mapper (171-5878, 171-6111, 171-6304 & 171-6584 boards)     */
+/********************************************************************/
+
+static void mapper_i2c_sega_init(void)
+{
+  int i;
+
+  /* serial EEPROM (read/write) mapped to $200000-$3fffff */
+  for (i=0x20; i<0x40; i++)
+  {
+    m68k.memory_map[i].read8   = mapper_i2c_generic_read8;
+    m68k.memory_map[i].read16  = mapper_i2c_generic_read16;
+    m68k.memory_map[i].write8  = mapper_i2c_generic_write8;
+    m68k.memory_map[i].write16 = mapper_i2c_generic_write16;
+    zbank_memory_map[i].read   = mapper_i2c_generic_read8;
+    zbank_memory_map[i].write  = mapper_i2c_generic_write8;
+  }
+
+  /* SCL (in) -> D1 */
+  /* SDA (in/out) -> D0 */
+  eeprom_i2c.scl_in_bit  = 1;
+  eeprom_i2c.sda_in_bit  = 0;
+  eeprom_i2c.sda_out_bit = 0;
+}
+
+
+/********************************************************************/
+/* ACCLAIM 16M mapper (P/N 670120 board)                            */
+/********************************************************************/
+
+static void mapper_i2c_acclaim_16M_init(void)
+{
+  int i;
+
+  /* serial EEPROM (read/write) mapped to $200000-$3fffff */
+  for (i=0x20; i<0x40; i++)
+  {
+    /* /LWR & /UWR are unused */
+    m68k.memory_map[i].read8   = mapper_i2c_generic_read8;
+    m68k.memory_map[i].read16  = mapper_i2c_generic_read16;
+    m68k.memory_map[i].write8  = mapper_i2c_generic_write16;
+    m68k.memory_map[i].write16 = mapper_i2c_generic_write16;
+    zbank_memory_map[i].read   = mapper_i2c_generic_read8;
+    zbank_memory_map[i].write  = mapper_i2c_generic_write16;
+  }
+
+  /* SCL (in) & SDA (out) -> D1 */
+  /* SDA (in) -> D0 */
+  eeprom_i2c.scl_in_bit  = 1;
+  eeprom_i2c.sda_in_bit  = 0;
+  eeprom_i2c.sda_out_bit = 1;
+}
+
+
+/********************************************************************/
+/* ACCLAIM 32M mapper (P/N 670125 & 670127 boards with LZ95A53 PAL) */
+/********************************************************************/
+
+static void mapper_acclaim_32M_write8(uint32 address, uint32 data)
+{
+  if (address & 0x01)
+  {
+    /* D0 goes to /SDA when only /LWR is asserted */
+    eeprom_i2c.sda = data & 1;
+  }
+  else
+  {
+    /* D0 goes to /SCL when only /UWR is asserted */
+    eeprom_i2c.scl = data & 1;
+  }
+
+  eeprom_i2c_update();
+} 
+
+static void mapper_acclaim_32M_write16(uint32 address, uint32 data)
+{
+  int i;
+  
+  /* custom bankshifting when both /LWR and /UWR are asserted */
+  if (data & 0x01)
+  {
+    /* cartridge ROM (read) mapped to $200000-$2fffff */
+    for (i=0x20; i<0x30; i++)
+    {
+      m68k.memory_map[i].read8   = NULL;
+      m68k.memory_map[i].read16  = NULL;
+      zbank_memory_map[i].read   = NULL;
+    }
+  }
+  else
+  {
+    /* serial EEPROM (read) mapped to $200000-$2fffff */
+    for (i=0x20; i<0x30; i++)
+    {
+      m68k.memory_map[i].read8   = mapper_i2c_generic_read8;
+      m68k.memory_map[i].read16  = mapper_i2c_generic_read16;
+      zbank_memory_map[i].read   = mapper_i2c_generic_read8;
+    }
+  }
+}
+
+static void mapper_i2c_acclaim_32M_init(void)
+{
+  int i;
+
+  /* custom LZ95A53 PAL (write) mapped to $200000-$2fffff */
+  for (i=0x20; i<0x30; i++)
+  {
+    m68k.memory_map[i].write8  = mapper_acclaim_32M_write8;
+    m68k.memory_map[i].write16 = mapper_acclaim_32M_write16;
+    zbank_memory_map[i].write  = mapper_acclaim_32M_write8;
+  }
+
+  /* SCL (in) & SDA (in/out) -> D0 */
+  eeprom_i2c.scl_in_bit  = 0;
+  eeprom_i2c.sda_in_bit  = 0;
+  eeprom_i2c.sda_out_bit = 0;
+
+  /* cartridge ROM mapping is reinitialized on reset */
+  cart.hw.bankshift = 1;
+}
+
+
+/********************************************************************/
+/* CODEMASTERS mapper (SRJCV2-1 & SRJCV2-2 boards with 16R4 PAL)    */
+/********************************************************************/
+
+static uint32 mapper_i2c_jcart_read8(uint32 address)
+{
+  /* only D7 used for /SDA */
+  if (address & 0x01)
+  {
+    return ((eeprom_i2c_out() << 7) | (jcart_read(address) & 0x7f));
+  }
+  
+  return (jcart_read(address) >> 8);
+}
+
+static uint32 mapper_i2c_jcart_read16(uint32 address)
+{
+  return ((eeprom_i2c_out() << 7) | jcart_read(address));
+}
+
+static void mapper_i2c_jcart_init(void)
+{
+  int i;
+
+ /* check if serial EEPROM is used (support for SRJCV1-1 & SRJCV1-2 boards with only J-CART) */
+  if (sram.custom)
+  {
+    /* serial EEPROM (write) mapped to $300000-$37ffff */
+    for (i=0x30; i<0x38; i++)
+    {
+      /* /LWR & /UWR are unused */
+      m68k.memory_map[i].write8  = mapper_i2c_generic_write16;
+      m68k.memory_map[i].write16 = mapper_i2c_generic_write16;
+      zbank_memory_map[i].write  = mapper_i2c_generic_write16;
+    }
+  }
+
+  /* check if J-CART is used (support for Brian Lara Cricket games without J-CART) */
+  if (strstr(rominfo.product,"T-120106") || strstr(rominfo.product,"T-120146"))
+  {
+    /* only serial EEPROM (read) mapped to $380000-$3fffff */
+    for (i=0x38; i<0x40; i++)
+    {
+      m68k.memory_map[i].read8   = mapper_i2c_generic_read8;
+      m68k.memory_map[i].read16  = mapper_i2c_generic_read16;
+      m68k.memory_map[i].write8  = m68k_unused_8_w;
+      m68k.memory_map[i].write16 = m68k_unused_16_w;
+      zbank_memory_map[i].read   = mapper_i2c_generic_read8;
+      zbank_memory_map[i].write  = m68k_unused_8_w;
+    }
+  }
+  else
+  {
+    /* enable J-CART controllers */
+    cart.special |= HW_J_CART;
+
+    /* serial EEPROM (read) & J-CART (read/write) mapped to $380000-$3fffff */
+    for (i=0x38; i<0x40; i++)
+    {
+      /* /LWR & /UWR are unused */
+      m68k.memory_map[i].read8   = mapper_i2c_jcart_read8;
+      m68k.memory_map[i].read16  = mapper_i2c_jcart_read16;
+      m68k.memory_map[i].write8  = jcart_write;
+      m68k.memory_map[i].write16 = jcart_write;
+      zbank_memory_map[i].read   = mapper_i2c_jcart_read8;
+      zbank_memory_map[i].write  = jcart_write;
+    }
+  }
+
+  /* SCL (in)  -> D1 */
+  /* SDA (in)  -> D0 */
+  /* SDA (out) -> D7 */
+  eeprom_i2c.scl_in_bit  = 1;
+  eeprom_i2c.sda_in_bit  = 0;
+  eeprom_i2c.sda_out_bit = 7;
 }

@@ -4,8 +4,8 @@
  *
  *  Support for SG-1000, Mark-III, Master System, Game Gear, Mega Drive & Mega CD hardware
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -41,7 +41,11 @@
 
 #include "shared.h"
 
-external_t ext;           /* External Hardware (Cartridge, CD unit, ...) */
+#ifdef USE_DYNAMIC_ALLOC
+external_t *ext;
+#else                     /* External Hardware (Cartridge, CD unit, ...) */
+external_t ext;
+#endif
 uint8 boot_rom[0x800];    /* Genesis BOOT ROM   */
 uint8 work_ram[0x10000];  /* 68K RAM  */
 uint8 zram[0x2000];       /* Z80 RAM  */
@@ -196,7 +200,7 @@ void gen_init(void)
         break;
       }
 
-      /* Master SYstem hardware */
+      /* Master System hardware */
       case SYSTEM_SMS:
       case SYSTEM_SMS2:
       {
@@ -215,6 +219,7 @@ void gen_init(void)
 
       /* SG-1000 hardware */
       case SYSTEM_SG:
+      case SYSTEM_SGII:
       {
         z80_writeport = z80_sg_port_w;
         z80_readport  = z80_sg_port_r;
@@ -229,37 +234,57 @@ void gen_reset(int hard_reset)
   /* System Reset */
   if (hard_reset)
   {
-    /* clear RAM (TODO: use random bit patterns for all systems, like on real hardware) */
+    /* On hard reset, 68k CPU always starts at the same point in VDP frame */
+    /* Tests performed on VA4 PAL MD1 showed that the first HVC value read */
+    /* with 'move.w #0x8104,0xC00004' , 'move.w 0xC00008,%d0' sequence was */
+    /* 0x9F21 in 60HZ mode (0x9F00 if Mode 5 is not enabled by first MOVE) */
+    /* 0x8421 in 50HZ mode (0x8400 if Mode 5 is not enabled by first MOVE) */
+    /* Same value is returned on every power ON, indicating VDP is always  */
+    /* starting at the same fixed point in frame (probably at the start of */
+    /* VSYNC and HSYNC) while 68k /VRES line remains asserted a fixed time */
+    /* after /SRES line has been released (13 msec approx). The difference */
+    /* between PAL & NTSC is caused by the top border area being 27 lines  */
+    /* larger in PAL mode than in NTSC mode. CPU cycle counter is adjusted */
+    /* to match these results (taking in account emulated frame is started */
+    /* on line 192 */
+    m68k.cycles = ((lines_per_frame - 192 + 159 - (27 * vdp_pal)) * MCYCLES_PER_LINE) + 1004;
+
+    /* clear RAM (on real hardware, RAM values are random / undetermined on Power ON) */
     memset(work_ram, 0x00, sizeof (work_ram));
     memset(zram, 0x00, sizeof (zram));
   }
   else
   {
+    /* when RESET button is pressed, 68k could be anywhere in VDP frame (Bonkers, Eternal Champions, X-Men 2) */
+    m68k.cycles = (uint32)((MCYCLES_PER_LINE * lines_per_frame) * ((double)rand() / (double)RAND_MAX));
+
     /* reset YM2612 (on hard reset, this is done by sound_reset) */
     fm_reset(0);
   }
 
-  /* 68k & Z80 could be anywhere in VDP frame (Bonkers, Eternal Champions, X-Men 2) */
-  m68k.cycles = Z80.cycles = (uint32)((MCYCLES_PER_LINE * lines_per_frame) * ((double)rand() / (double)RAND_MAX));
-
-  /* 68k cycles should be a multiple of 7 */
+  /* 68k M-cycles should be a multiple of 7 */
   m68k.cycles = (m68k.cycles / 7) * 7;
 
-  /* Z80 cycles should be a multiple of 15 */
-  Z80.cycles = (Z80.cycles / 15) * 15;
+  /* Z80 M-cycles should be a multiple of 15 */
+  Z80.cycles = (m68k.cycles / 15) * 15;
 
   /* 8-bit / 16-bit modes */
   if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
   {
     if (system_hw == SYSTEM_MCD)
     {
-      /* reset CD hardware */
-      scd_reset(1);
+      /* FRES is only asserted on Power ON */
+      if (hard_reset)
+      {
+        /* reset CD hardware */
+        scd_reset(1);
+      }
 
-      /* reset & halt SUB-CPU */
-      s68k.cycles = 0;
-      s68k_pulse_reset();
-      s68k_pulse_halt();
+      /* reset MD cartridge hardware (only when booting from cartridge) */
+      if (scd.cartridge.boot)
+      {
+        md_cart_reset(hard_reset);
+      }
     }
     else
     {
@@ -347,11 +372,15 @@ void gen_reset(int hard_reset)
       Z80.r = 4;
     }
 
-    /* Master System specific (when BIOS is disabled) */
-    else if ((system_hw & SYSTEM_SMS) && (!(config.bios & 1) || !(system_bios & SYSTEM_SMS)))
+    /* Master System & Game Gear specific */
+    else if (system_hw & (SYSTEM_SMS | SYSTEM_GG))
     {
-      /* usually done by BIOS & required by some SMS games that don't initialize SP */
-      Z80.sp.w.l = 0xDFFF;
+      /* check if BIOS is not being used */
+      if ((!(config.bios & 1) || !(system_bios & (SYSTEM_SMS | SYSTEM_GG))))
+      {
+        /* a few Master System (Ace of Aces, Shadow Dancer) & Game Gear (Ecco the Dolphin, Evander Holyfield Real Deal Boxing) games crash if SP is not properly initialized */
+        Z80.sp.w.l = 0xDFF0;
+      }
     }
   }
 }
@@ -453,8 +482,8 @@ void gen_zbusreq_w(unsigned int data, unsigned int cycles)
     /* check if Z80 is going to be restarted */
     if (zstate == 3)
     {
-      /* resynchronize with 68k */
-      Z80.cycles = cycles;
+      /* resynchronize with 68k (Z80 cycles should remain a multiple of 15 MClocks) */
+      Z80.cycles = ((cycles + 14) / 15) * 15;
 
       /* disable 68k access to Z80 bus */
       m68k.memory_map[0xa0].read8   = m68k_read_bus_8;
@@ -475,8 +504,8 @@ void gen_zreset_w(unsigned int data, unsigned int cycles)
     /* check if Z80 is going to be restarted */
     if (zstate == 0)
     {
-      /* resynchronize with 68k */
-      Z80.cycles = cycles;
+      /* resynchronize with 68k (Z80 cycles should remain a multiple of 15 MClocks) */
+      Z80.cycles = ((cycles + 14) / 15) * 15;
 
       /* reset Z80 & YM2612 */
       z80_reset();

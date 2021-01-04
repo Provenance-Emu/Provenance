@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  Backup RAM support
  *
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -37,7 +37,6 @@
  ****************************************************************************************/
 
 #include "shared.h"
-#include <zlib.h>
 
 T_SRAM sram;
 
@@ -69,7 +68,17 @@ void sram_init()
   sram.sram = cart.rom + 0x800000;
 
   /* initialize Backup RAM */
-  memset(sram.sram, 0xFF, 0x10000);
+  if (strstr(rominfo.international,"Sonic 1 Remastered"))
+  {
+    /* Sonic 1 Remastered hack crashes if backup RAM is not initialized to zero */
+    memset(sram.sram, 0x00, 0x10000);
+  }
+  else
+  {
+    /* by default, assume backup RAM is initialized to 0xFF (Micro Machines 2, Dino Dini Soccer)  */
+    memset(sram.sram, 0xFF, 0x10000);
+  }
+
   sram.crc = crc32(0, sram.sram, 0x10000);
 
   /* retrieve informations from header */
@@ -77,6 +86,9 @@ void sram_init()
   {
     /* backup RAM detected */
     sram.detected = 1;
+
+    /* enable backup RAM */
+    sram.on = 1;
 
     /* retrieve backup RAM start & end addresses */
     sram.start = READ_WORD_LONG(cart.rom, 0x1b4);
@@ -90,14 +102,18 @@ void sram_init()
       sram.end = 0x203fff;
     }
 
+    /* fixe games indicating internal RAM as volatile external RAM (Feng Kuang Tao Hua Yuan) */
+    else if (sram.start == 0xff0000)
+    {
+      /* backup RAM should be disabled */
+      sram.on = 0;
+    }
+
     /* fixe other bad header informations */
     else if ((sram.start > sram.end) || ((sram.end - sram.start) >= 0x10000))
     {
       sram.end = sram.start + 0xffff;
     }
-
-    /* enable backup RAM */
-    sram.on = 1;
   }
   else
   {
@@ -130,6 +146,13 @@ void sram_init()
       sram.on = 1;
       sram.start = 0x400001;
       sram.end = 0x40ffff;
+    }
+    else if ((rominfo.checksum == 0x0000) && (rominfo.realchecksum == 0x1f7f) && (READ_BYTE(cart.rom + 0x80000,0x1b0) == 0x52) && (READ_BYTE(cart.rom + 0x80000,0x1b1) == 0x41))
+    {
+      /* Radica - Sensible Soccer Plus edition (use bankswitching) */
+      sram.on = 1;
+      sram.start = 0x200001;
+      sram.end = 0x203fff;
     }
     else if ((strstr(rominfo.ROMType,"SF") != NULL) && (strstr(rominfo.product,"001") != NULL))
     {
@@ -198,8 +221,7 @@ unsigned int sram_read_byte(unsigned int address)
 
 unsigned int sram_read_word(unsigned int address)
 {
-  address &= 0xfffe;
-  return (sram.sram[address + 1] | (sram.sram[address] << 8));
+  return READ_WORD(sram.sram, address & 0xfffe);
 }
 
 void sram_write_byte(unsigned int address, unsigned int data)
@@ -209,7 +231,5 @@ void sram_write_byte(unsigned int address, unsigned int data)
 
 void sram_write_word(unsigned int address, unsigned int data)
 {
-  address &= 0xfffe;
-  sram.sram[address] = data >> 8;
-  sram.sram[address + 1] = data & 0xff;
+  WRITE_WORD(sram.sram, address & 0xfffe, data);
 }
