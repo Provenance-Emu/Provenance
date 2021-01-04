@@ -32,7 +32,7 @@
 
 #include <mednafen/NativeVFS.h>
 
-#include <minilzo/minilzo.h>
+//#include <minilzo/minilzo.h>
 
 #include <trio/trio.h>
 

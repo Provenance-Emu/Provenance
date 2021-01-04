@@ -65,7 +65,7 @@ namespace Mednafen
 {
 namespace MThreading
 {
-static __thread uintptr_t LocalThreadID = 0;
+static /*__thread*/ uintptr_t LocalThreadID = 0;
 
 static INLINE void TimeSpec_AddNanoseconds(struct timespec* ts, uint64 add_ns)
 {

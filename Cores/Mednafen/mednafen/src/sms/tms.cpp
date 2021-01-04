@@ -281,8 +281,8 @@ void make_tms_tables(void)
     {
         for(pg = 0; pg < 256; pg++)
         {
-            int l = (pg >> 4) & 0x0F;
-            int r = (pg >> 0) & 0x0F;
+            uint8 l = (pg >> 4) & 0x0F;
+            uint8 r = (pg >> 0) & 0x0F;
 
             /* If foreground is transparent, use background color */
             if(l == 0) l = bd;
@@ -291,7 +291,7 @@ void make_tms_tables(void)
             /* Unpack 2 nibbles across eight pixels */
             for(x = 0; x < 8; x++)
             {
-                int c = (x & 4) ? r : l;
+                uint8 c = (x & 4) ? r : l;
 
                 mc_lookup[bd][pg][x] = c;
             }
