@@ -498,6 +498,7 @@ static const RegGroupType NESPPURegsGroup =
 
 DebuggerInfoStruct NESDBGInfo =
 {
+ false,
  "cp437",
  3,
  1,             // Instruction alignment(bytes)

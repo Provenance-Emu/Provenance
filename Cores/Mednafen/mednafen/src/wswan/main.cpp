@@ -618,6 +618,7 @@ static const std::vector<InputPortInfoStruct> PortInfo =
 #ifdef WANT_DEBUGGER
 static DebuggerInfoStruct DBGInfo =
 {
+ false,
  "shift_jis",
  7 + 1 + 8,	// Fixme, probably not right...  maximum number of prefixes + 1 for opcode + 4 for operand(go with 8 to be safe)
  1,             // Instruction alignment(bytes)

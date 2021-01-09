@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* db.h:
-**  Copyright (C) 2016-2019 Mednafen Team
+**  Copyright (C) 2016-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -27,14 +27,16 @@ namespace MDFN_IEN_SS
 
 enum
 {
- CPUCACHE_EMUMODE_DATA_CB,
- CPUCACHE_EMUMODE_DATA,
- CPUCACHE_EMUMODE_FULL
+ CPUCACHE_EMUMODE_DATA_CB = 0,
+ CPUCACHE_EMUMODE_DATA = 1,
+ CPUCACHE_EMUMODE_FULL = 2,
+ CPUCACHE_EMUMODE__COUNT = 3,
 };
 
-void DB_Lookup(const char* path, const char* sgid, const uint8* fd_id, unsigned* const region, int* const cart_type, unsigned* const cpucache_emumode);
+void DB_Lookup(const char* path, const char* sgid, const char* sgname, const char* sgarea, const uint8* fd_id, unsigned* const region, int* const cart_type, unsigned* const cpucache_emumode);
 uint32 DB_LookupHH(const char* sgid, const uint8* fd_id);
 void DB_GetInternalDB(std::vector<GameDB_Database>* databases) MDFN_COLD;
+std::string DB_GetHHDescriptions(const uint32 hhv) MDFN_COLD;
 
 }
 

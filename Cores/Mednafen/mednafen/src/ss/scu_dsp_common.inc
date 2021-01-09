@@ -30,7 +30,7 @@
 // See loop in "SCU_UpdateDSP()" in scu.inc, and END/ENDI handling in scu_dsp_misc.cpp
 enum { DSP_EndCCSubVal = 1000000 };
 
-void DSP_Init(void);
+void DSP_Init(void) MDFN_COLD;
 void DSP_FinishPRAMDMA(void);
 
 union DSPR48

@@ -591,6 +591,7 @@ void DBG_Kill(void)
 
 DebuggerInfoStruct DBG_DBGInfo
 {
+ true,
  "cp437",
 
  4,
