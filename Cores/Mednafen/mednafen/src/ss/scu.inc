@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* scu.inc - SCU Emulation
-**  Copyright (C) 2015-2019 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -30,6 +30,15 @@
 // TODO: Test and improve emulation of DSP single-stepping.
 //
 // TODO: Running DMA forces DSP into full execution mode when single-stepping; test the exact semantics, and implement it.
+//
+// TODO: Better emulation of SH-2 CPU to SCU write timings:
+//		A-bus write buffer
+//
+//		Higher B-bus base overhead, unless the last read or write to the specific memory region(VDP1 VRAM, VDP1 FB, etc.) being accessed
+//		was in the same page; pages seem to be 512 bytes for VDP1 VRAM, maybe 32 bytes for FB RAM but probably more complex.
+//
+// TODO: SH-2 CPU read overhead when reading from VDP1 VRAM and VDP1 FB RAM should be significantly higher.
+//
 
 /*
  Notes(assuming NTSC, HRES=0, VRES=0, LSMD=0):
@@ -173,6 +182,8 @@ static void CheckDMAStart(DMALevelS* d);
 static void CheckDMASFByInt(unsigned int_which);
 static INLINE void CheckForceDMAFinish(void);
 
+static sscpu_timestamp_t BBus_SH2_WriteFinishTS;
+
 static uint32 IAsserted;
 static uint32 IPending;
 static uint32 IMask;
@@ -205,6 +216,9 @@ static INLINE void RecalcMasterIntOut(void)
   unsigned wi = MDFN_tzcount16(ipmd & 0xFFFF);
   unsigned we = MDFN_tzcount16(ipmd >> 16);
   unsigned olev, ovec, bpos;
+
+  //if((ipmd & 0x3) == 0x3 || ((ipmd & 0x81) == 0x81))
+  // printf("CONFLICT: 0x%08x 0x%08x\n", IPending, ipmd);
 
   olev = internal_tab[wi];
   ovec = 0x40 + wi;
@@ -398,6 +412,8 @@ static void SCU_AdjustTS(const int32 delta)
  if(DSP.T0_Until > 0x10000000)
   DSP.T0_Until = 0x10000000;
 
+ //DSP.LastTS = std::max<sscpu_timestamp_t>(-1000000, DSP.LastTS + delta);
+
  DSP.LastTS += delta;
  if(DSP.LastTS < 0)
  {
@@ -405,6 +421,10 @@ static void SCU_AdjustTS(const int32 delta)
   //printf("%d\n", DSP.LastTS);
   DSP.LastTS = 0;
  }
+ //
+ //
+ //
+ BBus_SH2_WriteFinishTS = std::max<sscpu_timestamp_t>(-1000000, BBus_SH2_WriteFinishTS + delta);
 }
 
 //
@@ -770,11 +790,24 @@ static INLINE void SCU_RegRW_DB(uint32 A, uint32* DB)
  }
 }
 
-
 template<typename T, bool IsWrite, bool SH32 = false>
 static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma_time_thing = NULL, int32* sh2_dma_time_thing = NULL)	// add to time_thing, subtract from dma_time_thing
 {
  static_assert(IsWrite || sizeof(T) == 2, "Wrong type.");
+
+ if(time_thing != NULL)
+ {
+  if(!SH32)
+  {
+   *time_thing = std::max<sscpu_timestamp_t>(*time_thing, BBus_SH2_WriteFinishTS);
+
+   if(IsWrite)
+   {
+    *time_thing += 2;
+    BBus_SH2_WriteFinishTS = *time_thing;
+   }
+  }
+ }
 
  //
  // VDP1
@@ -782,7 +815,7 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  if(A >= 0x05C00000 && A <= 0x05D7FFFF)
  {
   if(sh2_dma_time_thing != NULL)
-   *sh2_dma_time_thing -= IsWrite ? (SH32 ? 0 : 6) : 10;
+   *sh2_dma_time_thing += IsWrite ? (SH32 ? 0 : 6) : 10;
 
   if(dma_time_thing != NULL)
   {
@@ -804,12 +837,19 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
    }
   }
 
+  //if(IsWrite && (A & 0x100000) && SH32)
+  //{
+  // assert(0);
+  //}
+
   if(time_thing != NULL)
   {
    if(IsWrite)
-    *time_thing += SH32 ? 0 : 11;
+    BBus_SH2_WriteFinishTS += SH32 ? ((A & 0x100000) ? 0 : 1) : 9;
    else
+   {
     *time_thing += 14;
+   }
 
    CheckEventsByMemTS();
   }
@@ -818,6 +858,8 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
   {
    if(time_thing != NULL)
     VDP1::Write_CheckDrawSlowdown(A, *time_thing);
+   else if(sh2_dma_time_thing != NULL)
+    VDP1::Write_CheckDrawSlowdown(A, *sh2_dma_time_thing);
 
    if(sizeof(T) == 1)
     VDP1::Write8_DB(A, *DB);
@@ -828,6 +870,8 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
   {
    if(time_thing != NULL)
     VDP1::Read_CheckDrawSlowdown(A, *time_thing);
+   else if(sh2_dma_time_thing != NULL)
+    VDP1::Read_CheckDrawSlowdown(A, *sh2_dma_time_thing);
 
    *DB = VDP1::Read16_DB(A);
   }
@@ -841,7 +885,7 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  if(A >= 0x05E00000 && A <= 0x05FBFFFF)
  {
   if(sh2_dma_time_thing != NULL)
-   *sh2_dma_time_thing -= IsWrite ? (SH32 ? 0 : 5) : 10;
+   *sh2_dma_time_thing += IsWrite ? (SH32 ? 0 : 5) : 10;
 
   if(dma_time_thing != NULL)
   {
@@ -853,7 +897,7 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
   if(time_thing != NULL)
   {
    if(IsWrite)
-    *time_thing += SH32 ? 0 : 5;
+    BBus_SH2_WriteFinishTS += SH32 ? 1 : 3;
    else
     *time_thing += 20;
 
@@ -891,7 +935,7 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  if(A >= 0x05A00000 && A <= 0x05BFFFFF)
  {
   if(sh2_dma_time_thing != NULL)
-   *sh2_dma_time_thing -= 13;
+   *sh2_dma_time_thing += 13;
 
   if(dma_time_thing != NULL)
   {
@@ -901,7 +945,7 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
   if(time_thing != NULL)
   {
    if(IsWrite)
-    *time_thing += SH32 ? 13 : 19;
+    BBus_SH2_WriteFinishTS += SH32 ? 13 : 17;
    else
     *time_thing += 24;
   }
@@ -922,7 +966,7 @@ static INLINE void BBusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  //
  //
  if(sh2_dma_time_thing != NULL)
-  *sh2_dma_time_thing -= 1;
+  *sh2_dma_time_thing += 1;
 
  if(dma_time_thing != NULL)
   *dma_time_thing -= 1;
@@ -967,7 +1011,7 @@ static INLINE void ABusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
    // TODO: SCU seems to have its own internal write buffering...or something else complex going on, that complicates
    // getting the SH-2 DMA timing right. 
    if(sh2_dma_time_thing != NULL)
-    *sh2_dma_time_thing -= 1;
+    *sh2_dma_time_thing += 1;
 
    if(dma_time_thing != NULL)
    {
@@ -997,7 +1041,7 @@ static INLINE void ABusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  if(MDFN_UNLIKELY(A >= 0x05000000 && A <= 0x057FFFFF))
  {
   if(sh2_dma_time_thing != NULL)
-   *sh2_dma_time_thing -= 16;
+   *sh2_dma_time_thing += 16;
 
   if(dma_time_thing != NULL)
   {
@@ -1019,7 +1063,7 @@ static INLINE void ABusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  if(A >= 0x05800000 && A <= 0x058FFFFF)
  {
   if(sh2_dma_time_thing != NULL)
-   *sh2_dma_time_thing -= 8;
+   *sh2_dma_time_thing += 8;
 
   if(dma_time_thing != NULL)
   {
@@ -1065,7 +1109,7 @@ static INLINE void ABusRW_DB(uint32 A, uint16* DB, int32* time_thing, int32* dma
  }
 
  if(sh2_dma_time_thing != NULL)
-  *sh2_dma_time_thing -= 1;
+  *sh2_dma_time_thing += 1;
 
  if(dma_time_thing != NULL)
   *dma_time_thing -= 1;
@@ -1759,7 +1803,7 @@ static void DSP_Reset(bool powering_up)
   DSP.PRAMDMABuf[i] = 0;
 }
 
-void DSP_Init(void)
+MDFN_COLD void DSP_Init(void)
 {
  DSP.LastTS = 0;
 
@@ -1960,13 +2004,15 @@ MDFN_HIDE extern void (*const DSP_DMAFuncTable[2][8][8])(void) =
 //
 //
 
-static void SCU_Init(void)
+static MDFN_COLD void SCU_Init(void)
 {
  SCU_DMA_TimeCounter = 0;
  SCU_DMA_RunUntil = 0;
  IAsserted = 0;
  HB_FromVDP2 = false;
  VB_FromVDP2 = false;
+
+ BBus_SH2_WriteFinishTS = 0;
 
  DSP_Init();
 }
@@ -2115,6 +2161,8 @@ static MDFN_COLD void SCU_StateAction(StateMem* sm, const unsigned load, const b
   SFVAR(SCU_DMA_SDRAM_Slowdown_Counter),
   SFVAR(SCU_DMA_VDP1WriteIgnoreKludge),
 
+  SFVAR(BBus_SH2_WriteFinishTS),
+
   SFVAR(IAsserted),
   SFVAR(IPending),
   SFVAR(IMask),
@@ -2189,7 +2237,7 @@ static MDFN_COLD void SCU_StateAction(StateMem* sm, const unsigned load, const b
   {
    if(d.TableReadFunc == rftab[trb])
    {
-    DMALevel_ReadFunc[level] = trb;
+    DMALevel_TableReadFunc[level] = trb;
     break;
    }
   }
@@ -2282,7 +2330,7 @@ static MDFN_COLD void SCU_StateAction(StateMem* sm, const unsigned load, const b
 //
 //
 //
-uint32 SCU_DSP_PeekProgRAM(uint8 A)
+MDFN_COLD uint32 SCU_DSP_PeekProgRAM(uint8 A)
 {
  return DSP.ProgRAM[A] >> 32;
 }

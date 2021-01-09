@@ -27,7 +27,7 @@
 //
 // TODO: Fix instruction timings(currently execute too fast).
 //
-// TODO: Fix multiplication and division timing, and make sure flags are ok for divide by zero.
+// TODO: Fix division timing, and make sure flags are ok for divide by zero.
 //
 // FIXME: Handle NMI differently; how to test?  Maybe MOVEM to interrupt control registers...
 //
@@ -1123,6 +1123,11 @@ INLINE void M68K::MULU(HAM<T, SAM> &src, const unsigned dr)
  T const src_data = src.read();
  uint32 const result = (uint32)(uint16)D[dr] * (uint32)src_data;
 
+ timestamp += 34;
+
+ for(uint32 tmp = src_data; tmp; tmp &= tmp - 1)
+  timestamp += 2;
+
  CalcZN<uint32>(result);
  SetC(false);
  SetV(false);
@@ -1142,6 +1147,11 @@ INLINE void M68K::MULS(HAM<T, SAM> &src, const unsigned dr)
 
  T const src_data = src.read();
  uint32 const result = (int16)D[dr] * (int16)src_data;
+
+ timestamp += 34;
+
+ for(uint32 tmp = src_data << 1, i = 0; i < 16; tmp >>= 1, i++)
+  timestamp += (tmp ^ (tmp << 1)) & 2;
 
  CalcZN<uint32>(result);
  SetC(false);

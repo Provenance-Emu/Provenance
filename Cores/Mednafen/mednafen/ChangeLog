@@ -1,3 +1,161 @@
+-- 1.26.1: --
+
+November 8, 2020:
+	PSX: Fixed various inaccuracies in the SPU reverb emulation code.
+
+	PSX: Fixed quasi-benign dereferencing of a null pointer in the GPU code when playing a PSF.
+
+November 3, 2020:
+	SNES-Faust: Fixed a crash when an MSU1-enabled game tried to play MSU1 audio but no audio tracks existed.
+
+	SNES-Faust: Only create MSU1 multithreaded audio reader object if at least one audio track is available.
+
+November 2, 2020:
+	SNES-Faust: Fixed a design flaw in the MSU1 audio track loading code that broke loading of audio tracks when the game's filename included a "%" character.
+
+November 1, 2020:
+	SS: Fixed compilation errors after configuring with --disable-debugger.
+
+	SS: Fixed compilation errors with clang.
+
+-- 1.26.0-UNSTABLE: --
+
+October 26, 2020:
+	SS: Added "The Lost World: Jurassic Park" to the internal database of games to enable full cache emulation with, to fix most rock face graphical glitches.
+
+October 25, 2020:
+	SS: Added "Corpse Killer" to the internal database of games to enable full cache emulation with, to fix the glitchy rotation-zoom effect.
+
+October 24, 2020:
+	SS: Fixed major bug, existing since Saturn save state support was added, in the SCU save state code that caused wrong state to be saved(and later restored)
+	when an SCU DMA level in indirect mode was active.
+
+	SS: Added "Kaitei Daisensou"/"In the Hunt" to the internal database of games to enable SH-2 read/write VDP1 draw slowdown with, to fix FMV tearing.
+
+	SS: Added "Zero Divide" to the internal database of games to use the data cache read bypass kludge with, to fix a graphical glitch with character portraits.
+
+October 23, 2020:
+	SS: Made changes to prevent the CDB emulation from reporting PLAY status until the second sector is read after a seek completes; fixes game-breaking
+	problems in "Break Point", "DJ Wars", "Hop Step Idol", and "Tennis Arena".
+
+	SS: Fixed inaccuracies with how CDB playback buffer full auto-pause and resume works; fixes occasional hangs of finite duration in "Dragon Force II" and
+	"World Cup France '98: Road to Win" when trying to skip FMVs.
+
+October 22, 2020:
+	SS: Added "Mujintou Monogatari R: Futari no Love Love Island" to the internal database of games to use the data cache read bypass kludge with,
+	to fix glitches when character portrait graphics change.
+
+October 21, 2020:
+	SS: Added "Doraemon: Nobita to Fukkatsu no Hoshi" to the internal database of games to use the data cache read bypass kludge with,
+	to fix the blank Game Over screen.
+
+	SS: When a CDB 'Get CD Device Connection' command is issued very shortly after a 'Reset Selector' command, the 'Get CD Device Connection' command
+	will now be executed before the resetting effects of the 'Reset Selector' command occur.  Fixes startup hang in the USA version of "Independence Day".
+
+October 20, 2020:
+	SS: Slowed down emulated VDP1 pixel plotting performance by a bit less than 20%(10% in 8bpp mode); fixes prematurely cut-off voices in "Paneltia Story",
+	and reduces tearing in "Yu-No".
+
+October 18, 2020:
+	SS: Added "3D Baseball", "The Crow", "NBA Action", "NFL Quarterback Club 96", "Solar Eclipse", and "Titan Wars" to the internal database of games to
+	enable full cache emulation with, to fix minor FMV glitches.
+
+	SS: Added "Thunder Force Gold Pack 1" to the internal database of games to enable full cache emulation with, to fix the glitchy ship sprite in the ending
+	of "Thunder Force III".
+
+	SS: Added the Europe releases of "Virtua Cop" and "Virtua Cop 2" to the internal database of games to enable full cache emulation with, to fix
+	startup hangs.
+
+	SS: Added "Yu-No" to the internal database of games to enable full cache emulation with, to fix the problem of the intro FMV ending too soon.
+
+	SS: Added "Horror Tour" to the internal database of games to enable full cache emulation with, to fix graphical glitches on the save and load screens.
+
+	SS: Added "Falcom Classics II" to the internal database of games to enable SH-2 read/write VDP1 draw slowdown with, to fix tearing in the intro FMV of "Ys II".
+
+	SS: Added "Tokimeki Memorial: Forever With You" to the internal database of games to enable SH-2 read/write VDP1 draw slowdown with, to fix the glitchy
+	arm sprite in the Konami intro.
+
+	SS: Added "Virtua Fighter Kids" to the internal database of games to use the data cache read bypass kludge with, to fix a major FMV glitch.
+
+October 17, 2020:
+	SS: Made a very small SSE2-based optimization to the cache tag evaluation code.
+
+October 16, 2020:
+	SS: Removed incorrect write mirrors for the SH-2 CCR register; fixes FMV glitches in "NFL Quarterback Club 97".
+
+	SS: When full cache emulation is enabled(e.g. via database), alternate slave CPU and bus sharing emulation code will be used, to reduce
+	disproportionate sharing of the bus(it's still not perfect, however).
+
+	SS: SH-2 PC-relative MOV.W and MOV.L loads are now correctly treated as instruction fetches instead of data fetches with respect to the
+	OD/ID bits of CCR.
+
+	SS: The SH-2 WB/EX pipeline stall emulation logic is now always enabled, instead of only being enabled in full cache emulation mode as it was previously.
+
+October 12, 2020:
+	SS: Moved SH-2 cache entry invalid bit from bit31 of the internal combined tag variable to bit0, for slightly better code generation.
+
+October 11, 2020:
+	SS: Slave SH-2 on/off is now handled outside of the regular event handling system to prevent a crash under certain conditions.
+
+October 9, 2020:
+	SS: Extended the handling of VDP1 command execution slowdown on SH-2 CPU reads/writes to also include SH-2 DMA accesses.
+
+October 5, 2020:
+	SS: Bumped up minimum seek timing delay, to compensate for upcoming general CPU timing improvements in the games sensitive to seek timing.
+
+October 4, 2020:
+	SS: The SR value loaded with RTE is now properly masked.
+
+October 2, 2020:
+	SS: Allow the SMPC joystick reading process to be aborted earlier on, while still waiting for vblank to end; fixes another hang in "QuoVadis".
+
+	SS: Added "Wolf Fang SS: Kuuga 2001" to the internal database of games to enable SH-2 CPU read/write VDP1 draw slowdown with, to
+	fix glitchy graphics in the player's robot.
+
+	SS: Added "Mahjong Doukyuusei Special" to the internal database of games to use the data cache read bypass kludge with, to fix the missing
+	background graphics layer on disc 2.
+
+	SS: Added "Kidou Senkan Nadesico: Yappari Saigo wa Ai ga Katsu" to the internal database of games to use full cache emulation with, to fix a hang.
+
+	SS: Implemented emulation of the timing effects of the B-bus write buffer on SH-2 CPU writes; fixes hang in "QuoVadis".
+
+September 4, 2020:
+	SNES-Faust: Fixed bug in the multithreaded PPU renderer that could cause massive graphics corruption when a game interleaves reads and writes to
+	VRAM without resetting the VRAM address, like in "NBA Pro Basketball: Bulls vs Blazers".
+
+August 28, 2020:
+	SS: Delay CDB status position info update by about 44us after a seek request(via Play command, or otherwise); fixes missing graphics in
+	the intro of "Magical Drop 3".
+
+-- 1.25.0-UNSTABLE: --
+
+June 27, 2020:
+	SS: Implemented more accurate emulation of VDP1 drawing of excessively-large primitives.
+	It's not perfect, there's still something weird going on with antialiasing, and the effects on gradient shading
+	and texturing are not fully emulated, but it's enough to fix missing graphics in the attract mode of "Virtua Cop",
+	and a hang after defeating the final boss in "Rayman".
+
+	SS: Fixed an off-by-1 inaccuracy in the edge stepping code for sprites and polygons, with minor visible effects in
+	non-rectangular sprites/polygons.
+
+June 26, 2020:
+	SS, MD: Fixed/Implemented M68K MULU and MULS instruction timing.
+
+June 24, 2020:
+	SS: Added wait states to M68K writes; fixes hang in "Lunar" after the Meribia pub singer's singing, that was caused by a timer being
+	reloaded too quickly in an interrupt handler.
+
+June 13, 2020:
+	SS: Allow VDP1 primitive drawing code to be suspended(and later resumed) mid-drawing when it's consumed too much emulated time; fixes excessive CPU usage during
+	the FMV in "Dark Seed II".
+
+June 4, 2020:
+	SS: Added "Senken Kigyouden", "Xian Jian Qi Xia Zhuan", "Virtua Fighter", and "Virtua Fighter Remix" to the internal database of games to
+	enable full cache emulation with, to fix graphical glitches.
+
+May 17, 2020:
+	SS: Implemented more complete emulation of SCSP's buggy(inter-slot contamination) linear interpolation on FM carrier slots.
+
 -- 1.24.3: --
 
 May 1, 2020:

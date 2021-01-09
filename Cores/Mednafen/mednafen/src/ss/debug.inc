@@ -52,14 +52,17 @@ static struct DBGS
  uint32 CurPC[2];
 
  unsigned ActiveCPU;
+
+ sscpu_timestamp_t eff_ts;
+ bool inss;
 } DBG;
 
-static MDFN_NOWARN_UNUSED void DBG_Break(void)
+static MDFN_COLD MDFN_NOWARN_UNUSED void DBG_Break(void)
 {
  DBG.FoundBPoint = true;
 }
 
-static void DBG_CheckReadBP(unsigned len, uint32 addr)
+static MDFN_COLD void DBG_CheckReadBP(unsigned len, uint32 addr)
 {
  for(auto const& bp : DBG.BreakPointsRead)
  {
@@ -74,7 +77,7 @@ static void DBG_CheckReadBP(unsigned len, uint32 addr)
  }
 }
 
-static void DBG_CheckWriteBP(unsigned len, uint32 addr)
+static MDFN_COLD void DBG_CheckWriteBP(unsigned len, uint32 addr)
 {
  for(auto const& bp : DBG.BreakPointsWrite)
  {
@@ -92,6 +95,7 @@ static void DBG_CheckWriteBP(unsigned len, uint32 addr)
 enum
 {
  ASPACE_PHYSICAL = 0,
+ ASPACE_BACKUP,
  ASPACE_WORKRAML,
  ASPACE_WORKRAMH,
  ASPACE_SCSPRAM,
@@ -116,6 +120,11 @@ static MDFN_COLD void GetAddressSpaceBytes(const char *name, uint32 Address, uin
 	//TODO:
 	//Address &= 0x07FFFFFF;
 	//*Buffer = SH7095_BusPeek<uint8>(Address);
+	break;
+
+   case ASPACE_BACKUP:
+	Address &= 0x7FFF;
+	*Buffer = BackupRAM[Address];
 	break;
 
    case ASPACE_WORKRAML:
@@ -175,6 +184,12 @@ static MDFN_COLD void PutAddressSpaceBytes(const char *name, uint32 Address, uin
 	//*Buffer = SH7095_BusPoke<uint8>(Address, *Buffer);
 	break;
 
+   case ASPACE_BACKUP:
+	Address &= 0x7FFF;
+	BackupRAM[Address] = *Buffer;
+	BackupRAM_Dirty = true;
+	break;
+
    case ASPACE_WORKRAML:
 	Address &= 0xFFFFF;
 	ne16_wbo_be<uint8>(WorkRAML, Address, *Buffer);
@@ -216,7 +231,7 @@ static MDFN_COLD void PutAddressSpaceBytes(const char *name, uint32 Address, uin
 }
 
 
-static uint32 DBG_MemPeek(uint32 A, unsigned int bsize, bool hl, bool logical)
+static MDFN_COLD uint32 DBG_MemPeek(uint32 A, unsigned int bsize, bool hl, bool logical)
 {
 /*
  uint32 ret = 0;
@@ -255,13 +270,13 @@ static MDFN_COLD void DBG_AddBreakPoint(int type, unsigned int A1, unsigned int 
   DBG.BreakPointsPC.push_back(tmp);
 }
 
-static void DBG_SetCPUCallback(void (*callb)(uint32 PC, bool bpoint), bool continuous)
+static MDFN_COLD void DBG_SetCPUCallback(void (*callb)(uint32 PC, bool bpoint), bool continuous)
 {
  DBG.CPUHook = callb;
  DBG.CPUHookContinuous = continuous;
 }
 
-static void DBG_EnableBranchTrace(bool enable)
+static MDFN_COLD void DBG_EnableBranchTrace(bool enable)
 {
  if((DBG.BTEnabled ^ enable) & DBG.BTEnabled)
  {
@@ -273,7 +288,7 @@ static void DBG_EnableBranchTrace(bool enable)
  DBG.BTEnabled = enable;
 }
 
-static void DBG_AddBranchTrace(unsigned which, uint32 to, int exception, unsigned vecnum = 0)
+static MDFN_COLD void DBG_AddBranchTrace(unsigned which, uint32 to, int exception, unsigned vecnum = 0)
 {
  const uint32 from = DBG.CurPC[which];
  auto *prevbt = &DBG.BTEntries[which][(DBG.BTIndex[which] + DBGS::NUMBT - 1) % DBGS::NUMBT];
@@ -296,7 +311,7 @@ static void DBG_AddBranchTrace(unsigned which, uint32 to, int exception, unsigne
  }
 }
 
-static std::vector<BranchTraceResult> DBG_GetBranchTrace(void)
+static MDFN_COLD std::vector<BranchTraceResult> DBG_GetBranchTrace(void)
 {
  std::vector<BranchTraceResult> ret;
  BranchTraceResult tmp;
@@ -369,8 +384,18 @@ static std::vector<BranchTraceResult> DBG_GetBranchTrace(void)
  return(ret);
 }
 
+static INLINE void DBG_SetEffTS(const sscpu_timestamp_t eff_ts)
+{
+ DBG.eff_ts = eff_ts;
+}
+
+static INLINE bool DBG_InSlaveStep(void)
+{
+ return DBG.inss;
+}
+
 template<unsigned which>
-static void DBG_CPUHandler(const sscpu_timestamp_t timestamp)
+static MDFN_COLD void DBG_CPUHandler(void)
 {
  const uint32 PC = CPU[which].GetRegister(SH7095::GSREG_PC_ID, NULL, 0);
 
@@ -419,8 +444,10 @@ static void DBG_CPUHandler(const sscpu_timestamp_t timestamp)
 
  if(DBG.CPUHookContinuous && DBG.CPUHook)
  {
-  ForceEventUpdates(timestamp);
+  DBG.inss = which;
+  ForceEventUpdates(DBG.eff_ts);
   DBG.CPUHook(PC, DBG.FoundBPoint);
+  DBG.inss = false;
  }
 
  DBG.FoundBPoint = false;
@@ -431,18 +458,18 @@ static void DBG_CPUHandler(const sscpu_timestamp_t timestamp)
 }
 
 
-static bool DBG_NeedCPUHooks(void)
+static MDFN_COLD bool DBG_NeedCPUHooks(void)
 {
  return DBG.BTEnabled || DBG.CPUHook || DBG.BreakPointsPC.size() || DBG.BreakPointsRead.size() || DBG.BreakPointsWrite.size();
 }
 
 // TODO: Standard peek functions
-static INLINE uint16 DBG_DisPeek16(uint32 A)
+static MDFN_COLD uint16 DBG_DisPeek16(uint32 A)
 {
  return *(uint16*)(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS] + A);
 }
 
-static INLINE uint32 DBG_DisPeek32(uint32 A)
+static MDFN_COLD uint32 DBG_DisPeek32(uint32 A)
 {
  uint32 ret;
 
@@ -453,7 +480,7 @@ static INLINE uint32 DBG_DisPeek32(uint32 A)
  return ret;
 }
 
-static void DBG_Disassemble(uint32 &A, uint32 SpecialA, char *TextBuf)
+static MDFN_COLD void DBG_Disassemble(uint32 &A, uint32 SpecialA, char *TextBuf)
 {
  if(A & 0x1)
  {
@@ -607,10 +634,15 @@ static const RegType DBG_Regs_CPUE[] =
  { SH7095::GSREG_TOCR, "TOCR", "TOCR", 1 },
  { SH7095::GSREG_RWT, "RWT", "R/W Temp", 1 },
 
+ { 0, "-----------", "", 0xFFFF },
+
+ { SH7095::GSREG_CCR, "CCR", "Cache Control Register", 1 },
+ { SH7095::GSREG_SBYCR, "SBYCR", "Standby Control Register", 1 },
+
  { 0, "", "", 0 },
 };
 
-static uint32 DBG_GetRegister_CPU(const unsigned int id, char* special, const uint32 special_len)
+static MDFN_COLD uint32 DBG_GetRegister_CPU(const unsigned int id, char* special, const uint32 special_len)
 {
  return CPU[DBG.ActiveCPU].GetRegister(id, special, special_len);
 }
@@ -720,7 +752,7 @@ static const RegType DBG_Regs_SCU_CDB_VDP1[] =
  { 0, "", "", 0 },
 };
 
-static uint32 GetRegister(const unsigned id, char* const special, const uint32 special_len)
+static MDFN_COLD uint32 GetRegister(const unsigned id, char* const special, const uint32 special_len)
 {
  switch(id >> 16)
  {
@@ -734,7 +766,7 @@ static uint32 GetRegister(const unsigned id, char* const special, const uint32 s
  return 0;
 }
 
-static void SetRegister(const unsigned id, const uint32 value)
+static MDFN_COLD void SetRegister(const unsigned id, const uint32 value)
 {
  switch(id >> 16)
  {
@@ -835,8 +867,7 @@ static const RegGroupType DBG_RegGroup_VDP2_SCSP =
 //
 //
 //
-static void DBG_Init(void) MDFN_COLD;
-static void DBG_Init(void)
+static MDFN_COLD void DBG_Init(void)
 {
  DBG.ActiveCPU = 0;
  DBG.BTEnabled = false;
@@ -853,6 +884,9 @@ static void DBG_Init(void)
  DBG.CPUHookContinuous = false;
  DBG.FoundBPoint = false;
 
+ DBG.eff_ts = 0;
+ DBG.inss = false;
+
  MDFNDBG_AddRegGroup(&DBG_RegGroup_CPU);
  MDFNDBG_AddRegGroup(&DBG_RegGroup_CPUE);
  MDFNDBG_AddRegGroup(&DBG_RegGroup_SCU_CDB_VDP1);
@@ -867,14 +901,15 @@ static void DBG_Init(void)
 
  ASpace_Add(GetAddressSpaceBytes<ASPACE_DSPPROG>, PutAddressSpaceBytes<ASPACE_DSPPROG>, "dspprog", "DSP Program RAM", 10);
 
+ ASpace_Add(GetAddressSpaceBytes<ASPACE_BACKUP>, PutAddressSpaceBytes<ASPACE_BACKUP>, "backup", "Backup RAM", 15);
+
  ASpace_Add(GetAddressSpaceBytes<ASPACE_VDP1VRAM>, PutAddressSpaceBytes<ASPACE_VDP1VRAM>, "vdp1vram", "VDP1 VRAM", 19);
  ASpace_Add(GetAddressSpaceBytes<ASPACE_VDP1FB0>, PutAddressSpaceBytes<ASPACE_VDP1FB0>, "vdp1fb0",  "VDP1 FB0 RAM(raw, no 8bpp/rot addr bit swizzling)", 18);
  ASpace_Add(GetAddressSpaceBytes<ASPACE_VDP1FB1>, PutAddressSpaceBytes<ASPACE_VDP1FB1>, "vdp1fb1",  "VDP1 FB1 RAM(raw, no 8bpp/rot addr bit swizzling)", 18);
  ASpace_Add(GetAddressSpaceBytes<ASPACE_VDP2VRAM>, PutAddressSpaceBytes<ASPACE_VDP2VRAM>, "vdp2vram", "VDP2 VRAM", 19);
 }
 
-static void DBG_Kill(void) MDFN_COLD;
-static void DBG_Kill(void)
+static MDFN_COLD void DBG_Kill(void)
 {
  DBG.BreakPointsPC.clear();
  DBG.BreakPointsRead.clear();
@@ -883,6 +918,7 @@ static void DBG_Kill(void)
 
 static DebuggerInfoStruct DBGInfo
 {
+ false,
  "SJIS",
 
  2,
@@ -916,8 +952,9 @@ static DebuggerInfoStruct DBGInfo
  NULL,
 };
 #else
-template<unsigned which>
-static INLINE void DBG_CPUHandler(const sscpu_timestamp_t timestamp) { }
+static INLINE void DBG_SetEffTS(const sscpu_timestamp_t eff_ts) { }
+static INLINE bool DBG_InSlaveStep(void) { return false; }
+template<unsigned which> static INLINE void DBG_CPUHandler(void) { }
 static INLINE void DBG_AddBranchTrace(unsigned which, uint32 to, int exception, unsigned vecnum = 0) { }
 static INLINE bool DBG_NeedCPUHooks(void) { return false; } 
 static INLINE void DBG_Init(void) { }

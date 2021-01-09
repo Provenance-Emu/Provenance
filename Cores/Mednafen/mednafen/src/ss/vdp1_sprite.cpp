@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* vdp1_sprite.cpp - VDP1 Sprite Drawing Commands Emulation
-**  Copyright (C) 2015-2016 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -30,10 +30,10 @@ namespace MDFN_IEN_SS
 namespace VDP1
 {
 
-static int32 (*LineFuncTab[2][3][0x20][8 + 1])(void) =
+static int32 (*LineFuncTab[2][3][0x20][8 + 1])(bool* need_line_resume) =
 {
  #define LINEFN_BC(die, bpp8, b, c)	\
-	DrawLine<true, die, bpp8, c == 0x8, (bool)(b & 0x10), (b & 0x10) && (b & 0x08), (bool)(b & 0x04), (bool)(b & 0x02), (bool)(b & 0x01), true, (bool)(c & 0x4), (!bpp8) && (c & 0x2), (bool)(c & 0x1)>
+	DrawLine<true, true, die, bpp8, c == 0x8, (bool)(b & 0x10), (b & 0x10) && (b & 0x08), (bool)(b & 0x04), (bool)(b & 0x02), (bool)(b & 0x01), (bool)(c & 0x4), (!bpp8) && (c & 0x2), (bool)(c & 0x1)>
 
  #define LINEFN_B(die, bpp8, b)									\
 	{										\
@@ -72,22 +72,77 @@ static int32 (*LineFuncTab[2][3][0x20][8 + 1])(void) =
  #undef LINEFN_BC
 };
 
-/*
- Timing notes:
-	Timing is somewhat complex, and looks like the drawing of the lines of distorted sprites may be terminated
-	early in some conditions relating to clipping.
-
-	Drawing a 256x1 texture with a 255x1 rectangular distorted sprite takes about twice as much time(even with blending enabled, which is weird...) as drawing
-	it with a 256x1 or 257x1 rectangular distorted sprite.
-*/
 enum
 {
- FORMAT_NORMAL,
+ FORMAT_NORMAL = 0,
  FORMAT_SCALED,
  FORMAT_DISTORTED
 };
 
-template<unsigned format, bool gourauden>
+template<bool gourauden>
+static int32 SpriteResumeBase(const uint16* cmd_data)
+{
+ const uint16 mode = cmd_data[0x2];
+ auto* fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][(mode >> 6) & 0x1F][(mode & 0x8000) ? 8 : (mode & 0x7)];
+ LineData.tffn = TexFetchTab[(mode >> 3) & 0x1F];
+ //
+ //
+ //
+ EdgeStepper e[2] = { PrimData.e[0], PrimData.e[1] };
+ VileTex big_t = PrimData.big_t;
+ const uint32 tex_base = PrimData.tex_base;
+ int32 iter = PrimData.iter;
+ int32 ret = 0;
+ //
+ //
+ if(MDFN_UNLIKELY(PrimData.need_line_resume))
+ {
+  PrimData.need_line_resume = false;
+  goto ResumeLine;
+ }
+
+ if(iter >= 0)
+ {
+  do
+  {
+   e[0].GetVertex<gourauden>(&LineData.p[0]);
+   e[1].GetVertex<gourauden>(&LineData.p[1]);
+
+   LineData.tex_base = tex_base + big_t.PreStep();
+   //
+   if(!SetupDrawLine(&ret, true, true, mode) || !iter)
+   {
+    //
+    //printf("%d:%d -> %d:%d\n", lp[0].x, lp[0].y, lp[1].x, lp[1].y);
+    ResumeLine:;
+    ret += AdjustDrawTiming(fnptr(&PrimData.need_line_resume));
+    if(MDFN_UNLIKELY(PrimData.need_line_resume))
+     break;
+   }
+
+   e[0].Step<gourauden>();
+   e[1].Step<gourauden>();
+  } while(MDFN_LIKELY(--iter >= 0 && ret < VDP1_SuspendResumeThreshold));
+ }
+ //
+ //
+ PrimData.e[0] = e[0];
+ PrimData.e[1] = e[1];
+ PrimData.big_t = big_t;
+ PrimData.iter = iter;
+
+ return ret;
+}
+
+int32 RESUME_Sprite(const uint16* cmd_data)
+{
+ if(cmd_data[0x2] & 0x4) // gouraud
+  return SpriteResumeBase<true>(cmd_data);
+ else
+  return SpriteResumeBase<false>(cmd_data);
+}
+
+template<unsigned format>
 static INLINE int32 SpriteBase(const uint16* cmd_data)
 {
  const unsigned dir = (cmd_data[0] >> 4) & 0x3;
@@ -98,15 +153,9 @@ static INLINE int32 SpriteBase(const uint16* cmd_data)
  const uint32 h = cmd_data[0x5] & 0xFF;
  line_vertex p[4];
  int32 ret = 0;
- auto* fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][(mode >> 6) & 0x1F][(mode & 0x8000) ? 8 : (mode & 0x7)];
 
- LineSetup.color = cmd_data[0x3];
- LineSetup.PCD = mode & 0x0800;
- LineSetup.HSS = mode & 0x1000;
+ LineData.color = cmd_data[0x3];
 
- CheckUndefClipping();
-
- // FIXME: precision is probably not totally right.
  if(format == FORMAT_DISTORTED)
  {
   for(unsigned i = 0; i < 4; i++)
@@ -205,7 +254,7 @@ static INLINE int32 SpriteBase(const uint16* cmd_data)
   }
  }
 
- if(gourauden)
+ if(cmd_data[0x2] & 0x4) // gouraud
  {
   const uint16* gtb = &VRAM[cmd_data[0xE] << 2];
 
@@ -216,33 +265,29 @@ static INLINE int32 SpriteBase(const uint16* cmd_data)
  //
  //
  //
- VileTex big_t;
- int32 tex_base;
-
- LineSetup.tffn = TexFetchTab[(mode >> 3) & 0x1F];
-
+ // TODO: move?
  {
   const bool h_inv = dir & 1;
 
-  LineSetup.p[0 ^ h_inv].t = 0;
-  LineSetup.p[1 ^ h_inv].t = w ? (w - 1) : 0;
+  LineData.p[0 ^ h_inv].t = 0;
+  LineData.p[1 ^ h_inv].t = w ? (w - 1) : 0;
  }
 
  switch(cm)
  {
-  case 0: LineSetup.cb_or = color &~ 0xF;
+  case 0: LineData.cb_or = color &~ 0xF;
 	  break;
 
   case 1:
 	  for(unsigned i = 0; i < 16; i++)
-	   LineSetup.CLUT[i] = VRAM[((color &~ 0x3) << 2) | i];
+	   LineData.CLUT[i] = VRAM[((color &~ 0x3) << 2) | i];
 
 	  ret += 16;
 	  break;
 
-  case 2: LineSetup.cb_or = color &~ 0x3F; break;
-  case 3: LineSetup.cb_or = color &~ 0x7F; break;
-  case 4: LineSetup.cb_or = color &~ 0xFF; break;
+  case 2: LineData.cb_or = color &~ 0x3F; break;
+  case 3: LineData.cb_or = color &~ 0x7F; break;
+  case 4: LineData.cb_or = color &~ 0xFF; break;
   case 5: break;
   case 6: break;
   case 7: break;
@@ -250,17 +295,26 @@ static INLINE int32 SpriteBase(const uint16* cmd_data)
  //
  //
  //
- const int32 dmax = std::max<int32>(std::max<int32>(abs(p[3].x - p[0].x), abs(p[3].y - p[0].y)),
-				    std::max<int32>(abs(p[2].x - p[1].x), abs(p[2].y - p[1].y)));
- EdgeStepper<gourauden> e[2];
+ int32 dmax;
 
- e[0].Setup(p[0], p[3], dmax);
- e[1].Setup(p[1], p[2], dmax);
+ dmax = 		      abs(sign_x_to_s32(13, p[3].x - p[0].x));
+ dmax = std::max<int32>(dmax, abs(sign_x_to_s32(13, p[3].y - p[0].y)));
+ dmax = std::max<int32>(dmax, abs(sign_x_to_s32(13, p[2].x - p[1].x)));
+ dmax = std::max<int32>(dmax, abs(sign_x_to_s32(13, p[2].y - p[1].y)));
+ dmax &= 0xFFF;
 
- tex_base = cmd_data[0x4] << 2;
+ int32 tex_base = cmd_data[0x4] << 2;
+ const bool gourauden = (bool)(cmd_data[0x2] & 0x4);
  if(cm == 5) // RGB
   tex_base &= ~0x7;
 
+ PrimData.e[0].Setup(gourauden, p[0], p[3], dmax);
+ PrimData.e[1].Setup(gourauden, p[1], p[2], dmax);
+ PrimData.iter = dmax;
+ PrimData.tex_base = tex_base;
+ PrimData.need_line_resume = false;
+
+ //printf("0x%04x %u %d:%d %d:%d %d:%d %d:%d ---- %d %d\n", mode, format, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, p[3].x, p[3].y, w >> spr_w_shift_tab[cm], h);
  {
   const bool v_inv = dir & 2;
   int32 tv[2];
@@ -268,21 +322,7 @@ static INLINE int32 SpriteBase(const uint16* cmd_data)
   tv[0 ^ v_inv] = 0;
   tv[1 ^ v_inv] = h ? (h - 1) : 0;
 
-  big_t.Setup(dmax + 1, tv[0], tv[1], w >> spr_w_shift_tab[cm]);
- }
-
- for(int32 i = 0; i <= dmax; i++)
- {
-  e[0].GetVertex(&LineSetup.p[0]);
-  e[1].GetVertex(&LineSetup.p[1]);
-
-  LineSetup.tex_base = tex_base + big_t.PreStep();
-  //
-  //printf("%d:%d -> %d:%d\n", lp[0].x, lp[0].y, lp[1].x, lp[1].y);
-  ret += fnptr();
-  //
-  e[0].Step();
-  e[1].Step();
+  PrimData.big_t.Setup(dmax + 1, tv[0], tv[1], w >> spr_w_shift_tab[cm]);
  }
 
  return ret;
@@ -290,27 +330,17 @@ static INLINE int32 SpriteBase(const uint16* cmd_data)
 
 int32 CMD_DistortedSprite(const uint16* cmd_data)
 {
- if(cmd_data[0x2] & 0x4) // gouraud
-  return SpriteBase<FORMAT_DISTORTED, true>(cmd_data);
- else
-  return SpriteBase<FORMAT_DISTORTED, false>(cmd_data);
+ return SpriteBase<FORMAT_DISTORTED>(cmd_data);
 }
-
 
 int32 CMD_NormalSprite(const uint16* cmd_data)
 {
- if(cmd_data[0x2] & 0x4) // gouraud
-  return SpriteBase<FORMAT_NORMAL, true>(cmd_data);
- else
-  return SpriteBase<FORMAT_NORMAL, false>(cmd_data);
+ return SpriteBase<FORMAT_NORMAL>(cmd_data);
 }
 
 int32 CMD_ScaledSprite(const uint16* cmd_data)
 {
- if(cmd_data[0x2] & 0x4) // gouraud
-  return SpriteBase<FORMAT_SCALED, true>(cmd_data);
- else
-  return SpriteBase<FORMAT_SCALED, false>(cmd_data);
+ return SpriteBase<FORMAT_SCALED>(cmd_data);
 }
 
 

@@ -452,7 +452,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
 	break;
 
   case SPECIAL_CHIP_SUPERFX:
-//	CART_SuperFX_Init(master_clock, superfx_ocmultiplier, superfx_enable_icache);
+	CART_SuperFX_Init(master_clock, superfx_ocmultiplier, superfx_enable_icache);
 	break;
  }
  //

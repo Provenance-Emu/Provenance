@@ -99,7 +99,7 @@ keyboard 0x0 35
 0
 apple2.input.keyboard.twopiece.7
 MDFNSF_CAT_INPUT_MAPPING MDFNSF_SUPPRESS_DOC 
-apple2, Keyboard, Apple II/II+ 2-piece keyboard: 7\'
+apple2, Keyboard, Apple II/II+ 2-piece keyboard: 7
 
 MDFNST_STRING
 keyboard 0x0 36
