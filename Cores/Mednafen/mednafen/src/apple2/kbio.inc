@@ -447,7 +447,7 @@ static const IDIISG IODevice_Keyboard_Twopiece_IDII =
  /*   X8 */   IDIIS_Padding<1>(),
 
  /* Y4   */
- /*   X0 */ IDIIS_Button("7", "7'", -1),
+ /*   X0 */ IDIIS_Button("7", "7", -1),
  /*   X1 */ IDIIS_Button("t", "T", -1),
  /*   X2 */ IDIIS_Button("j", "J", -1),
  /*   X3 */ IDIIS_Button("b", "B", -1),

@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* sh7095.h:
-**  Copyright (C) 2015-2017 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -29,13 +29,16 @@ class SH7095 final
  SH7095(const char* const name_arg, const unsigned dma_event_id_arg, uint8 (*exivecfn_arg)(void)) MDFN_COLD;
  ~SH7095() MDFN_COLD;
 
- void Init(const bool CacheBypassHack) MDFN_COLD;
+ void Init(const bool EmulateICache, const bool CacheBypassHack) MDFN_COLD;
+ void SetDebugMode(const bool DebugMode) MDFN_COLD;
 
  void StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname) MDFN_COLD;
- void FixupICacheModeState(void) MDFN_COLD;
+ void StateAction_SlaveResume(StateMem* sm, const unsigned load, const bool data_only, const char* sname) MDFN_COLD;
+ void PostStateLoad(const unsigned state_version, const bool recorded_needicache, const bool needicache) MDFN_COLD;
 
  void ForceInternalEventUpdates(void);
- void AdjustTS(int32 delta, bool force_set = false);
+ void AdjustTS(int32 delta);
+ void SetActive(bool active);
 
  void TruePowerOn(void) MDFN_COLD;
  void Reset(bool power_on_reset, bool from_internal_wdt = false) MDFN_COLD;
@@ -61,8 +64,13 @@ class SH7095 final
   ExtHaltDMA = (ExtHaltDMA & ~2) | (state << 1);
  }
 
+ // When entering Step(), EmulateICache and DebugMode must match what was passed to Init() and SetDebugMode()
  template<unsigned which, bool EmulateICache, bool DebugMode>
  void Step(void);
+
+ // Slave only
+ NO_CLONE NO_INLINE void RunSlaveUntil(sscpu_timestamp_t bound_timestamp) MDFN_HOT;
+ NO_CLONE NO_INLINE void RunSlaveUntil_Debug(sscpu_timestamp_t bound_timestamp) MDFN_COLD;
 
  //private:
  uint32 R[16];
@@ -185,16 +193,21 @@ class SH7095 final
  //
  //
  uint32 IBuffer;
-
  uint32 (MDFN_FASTCALL *MRFPI[8])(uint32 A);
 
  uint8 (MDFN_FASTCALL *MRFP8[8])(uint32 A);
  uint16 (MDFN_FASTCALL *MRFP16[8])(uint32 A);
  uint32 (MDFN_FASTCALL *MRFP32[8])(uint32 A);
 
+ uint16 (MDFN_FASTCALL *MRFP16_I[8])(uint32 A);
+ uint32 (MDFN_FASTCALL *MRFP32_I[8])(uint32 A);
+
  void (MDFN_FASTCALL *MWFP8[8])(uint32 A, uint8);
  void (MDFN_FASTCALL *MWFP16[8])(uint32 A, uint16);
  void (MDFN_FASTCALL *MWFP32[8])(uint32 A, uint32);
+
+ void RecalcMRWFP_0(void);
+ void RecalcMRWFP_1_7(void);
 
  sscpu_timestamp_t WB_until[16];
 
@@ -203,15 +216,18 @@ class SH7095 final
  // Cache:
  //
  //
- struct
+ struct CacheEntry
  {
   // Rather than have separate validity bits, we're putting an INvalidity bit(invalid when =1)
-  // in the upper bit of the Tag variables.
+  // in the lower bit of the Tag variables.
   uint32 Tag[4];
-  uint8 LRU;
-  alignas(4) uint8 Data[4][16];
- } Cache[64];
+  uint8 Data[4][16];
+ };
+ alignas(16) CacheEntry Cache[64];
 
+ uint8 Cache_LRU[64];
+ int32 CCRC_Replace_OR[2];	// Cached cache var, calculated from the ID and OD bits of CCR in SetCCR()
+ uint8 CCRC_Replace_AND;	// Cached cache var, calculated from the TW bit of CCR in SetCCR()
  uint8 CCR;
 
  void SetCCR(uint8 V);
@@ -222,19 +238,97 @@ class SH7095 final
  enum { CCR_CP = 0x10 };	// Cache Purge
  enum { CCR_W0 = 0x40 };	//
  enum { CCR_W1 = 0x80 };	//
- void AssocPurge(const uint32 A);
+
+ void Cache_AssocPurge(const uint32 A);
+
+ int Cache_FindWay(CacheEntry* const cent, const uint32 ATM);
 
  template<typename T>
- void Write_UpdateCache(uint32 A, T V);
+ void Cache_WriteAddressArray(uint32 A, T V);
+
+ template<typename T>
+ void Cache_WriteDataArray(uint32 A, T V);
+
+ template<typename T>
+ T Cache_ReadAddressArray(uint32 A);
+
+ template<typename T>
+ T Cache_ReadDataArray(uint32 A);
+
+ template<typename T>
+ void Cache_CheckReadIncoherency(CacheEntry* cent, const int way, const uint32 A);
+
+ template<typename T>
+ void Cache_WriteUpdate(uint32 A, T V);
  //
  // End cache stuff
  //
 
  //
+ // Bus State Controller
+ //
+ struct
+ {
+  uint16 BCR1;
+  uint8 BCR2;
+  uint16 WCR;
+  uint16 MCR;
+
+  uint8 RTCSR;
+  uint8 RTCSRM;
+  uint8 RTCNT;
+  uint8 RTCOR;
+  //
+  //
+  //
+  sscpu_timestamp_t sdram_finish_time;
+  sscpu_timestamp_t last_mem_time;
+  uint32 last_mem_addr;
+  uint32 last_mem_type;
+ } BSC;
+
+ template<typename T>
+ void INLINE BSC_BusWrite(uint32 A, T V, const bool BurstHax, int32* SH2DMAHax);
+
+ template<typename T>
+ T INLINE BSC_BusRead(uint32 A, const bool BurstHax, int32* SH2DMAHax);
+
+ uint32 UCRead_IF_Kludge;
+
+ //
+ // Exit/Resume stuff for slave CPU with icache emulation(RunSlaveUntil())
+ //
+ const void* ResumePoint;
+ CacheEntry* Resume_cent;
+ uint32 Resume_instr;
+ int Resume_way_match;
+ uint32 Resume_uint8_A;
+ uint32 Resume_uint16_A;
+ uint32 Resume_uint32_A;
+ uint32 Resume_unmasked_A;
+ uint32 Resume_uint32_V;
+ uint16 Resume_uint16_V;
+ uint8 Resume_uint8_V;
+
+ int32 Resume_MAC_L_m0;
+ int32 Resume_MAC_L_m1;
+
+ int16 Resume_MAC_W_m0;
+ int16 Resume_MAC_W_m1;
+
+ uint32 Resume_ea;
+ uint32 Resume_new_PC;
+ uint32 Resume_new_SR;
+
+ uint8 Resume_ipr;
+ uint8 Resume_exnum;
+ uint8 Resume_vecnum;
+
+ //
  //
  // Interrupt controller registers and related state
  //
- // 
+ //
  void INTC_Reset(void) MDFN_COLD;
 
  bool NMILevel;
@@ -248,22 +342,6 @@ class SH7095 final
  uint16 VCRC;
  uint16 VCRD;
  uint16 ICR;
-
- //
- //
- //
- struct
- {
-  uint16 BCR1;
-  uint8 BCR2;
-  uint16 WCR;
-  uint16 MCR;
-
-  uint8 RTCSR;
-  uint8 RTCSRM;
-  uint8 RTCNT;
-  uint8 RTCOR;
- } BSC;
 
  //
  //
@@ -335,10 +413,8 @@ class SH7095 final
  void DMA_BusTimingKludge(void);
 
  const unsigned event_id_dma;
- sscpu_timestamp_t dma_lastts;	// External SH7095_mem_timestamp related.
-
- int32 DMA_ClockCounter;
- int32 DMA_SGCounter;	// When negative, smaller granularity scheduling for DMA_Update()
+ sscpu_timestamp_t DMA_Timestamp;
+ sscpu_timestamp_t DMA_SGEndTimestamp; // For smaller granularity scheduling for DMA_Update() after start of DMA.
  bool DMA_RoundRobinRockinBoppin;
 
  uint32 DMA_PenaltyKludgeAmount;
@@ -402,51 +478,26 @@ class SH7095 final
  uint8 GetPendingInt(uint8*);
  void RecalcPendingIntPEX(void);
 
- template<bool EmulateICache, bool DebugMode>
- INLINE void FetchIF(bool ForceIBufferFill);
+ template<bool EmulateICache, bool DebugMode, bool IntPreventNext>
+ INLINE void DoIDIF_INLINE(void);
 
- template<bool EmulateICache, bool DebugMode, bool DelaySlot, bool IntPreventNext, bool SkipFetchIF>
- void DoIDIF_Real(void);
+ template<bool SlavePenalty, typename T, bool BurstHax>
+ INLINE T ExtBusRead_INLINE(uint32 A);
 
- template<typename T, bool BurstHax>
- T ExtBusRead(uint32 A);
-
- template<typename T>
- void ExtBusWrite(uint32 A, T V);
+ template<bool SlavePenalty, typename T>
+ INLINE void ExtBusWrite_INLINE(uint32 A, T V);
 
  template<typename T>
- void OnChipRegWrite(uint32 A, uint32 V);
+ NO_INLINE void OnChipRegWrite(uint32 A, uint32 V) MDFN_HOT;
 
  template<typename T>
- T OnChipRegRead(uint32 A);
+ INLINE T OnChipRegRead_INLINE(uint32 A);
 
- template<typename T, unsigned region, bool CacheEnabled, bool TwoWayMode, bool IsInstr, bool CacheBypassHack>
- T MemReadRT(uint32 A);
+ template<unsigned which, int NeedSlaveCall, bool CacheBypassHack, typename T, unsigned region, bool CacheEnabled, int32 IsInstr>
+ INLINE T MemReadRT(uint32 A);
 
- template<typename T>
- T MemRead(uint32 A);
-
- template<typename T, unsigned region, bool CacheEnabled>
- void MemWriteRT(uint32 A, T V);
-
- template<typename T>
- void MemWrite(uint32 A, T V);
-
-
- template<unsigned which, bool EmulateICache, int DebugMode, bool delayed>
- INLINE void Branch(uint32 target);
-
- template<unsigned which, bool EmulateICache, int DebugMode, bool delayed>
- INLINE void CondRelBranch(bool cond, uint32 disp);
-
-
- template<unsigned which, bool EmulateICache, int DebugMode>
- INLINE void UCDelayBranch(uint32 target);
-
- template<unsigned which, bool EmulateICache, int DebugMode>
- INLINE void UCRelDelayBranch(uint32 disp);
-
-
+ template<unsigned which, int NeedSlaveCall, typename T, unsigned region, bool CacheEnabled>
+ INLINE void MemWriteRT(uint32 A, T V);
  //
  //
  //
@@ -544,6 +595,9 @@ class SH7095 final
   GSREG_TCR,
   GSREG_TOCR,
   GSREG_RWT,
+
+  GSREG_CCR,
+  GSREG_SBYCR
  };
 
  uint32 GetRegister(const unsigned id, char* const special, const uint32 special_len);
@@ -552,9 +606,24 @@ class SH7095 final
  void CheckRWBreakpoints(void (*MRead)(unsigned len, uint32 addr), void (*MWrite)(unsigned len, uint32 addr)) const;
  static void Disassemble(const uint16 instr, const uint32 PC, char* buffer, uint16 (*DisPeek16)(uint32), uint32 (*DisPeek32)(uint32));
  private:
- const char* const cpu_name;
  bool CBH_Setting;
+ bool EIC_Setting;
+ bool DM_Setting;
  uint32 PC_IF, PC_ID;	// Debug-related variables.
-};
+#ifdef MDFN_ENABLE_DEV_BUILD
+ void CheckDMARace(uint32 addr, uint32 size, bool write);
+ struct
+ {
+  uint32 rw[2][2];
+ } DMADebug[2];
+#endif
+ const char* const cpu_name;
+ const void*const* ResumeTableP[2];
 
+ template<typename T>
+ void DevBuild_ReadLog(uint32 A);
+
+ template<typename T>
+ void DevBuild_WriteLog(uint32 A, T V);
+};
 #endif

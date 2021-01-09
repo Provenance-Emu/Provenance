@@ -416,6 +416,7 @@ static void SetGraphicsDecode(MDFN_Surface *surface, int line, int which, int xs
 
 DebuggerInfoStruct PSX_DBGInfo =
 {
+ false,
  "shift_jis",
  4,		// Max instruction byte size
  4,             // Instruction alignment(bytes)

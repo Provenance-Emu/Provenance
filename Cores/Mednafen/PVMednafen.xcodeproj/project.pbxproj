@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AF2CF4C259CBB8E00E6A51F /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
+		0AF2CF85259CBB9D00E6A51F /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
 		11AFB2BE24880B99000A3922 /* ExtMemStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */; };
 		11AFB2BF24880B99000A3922 /* ExtMemStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */; };
 		11AFB2C024880B99000A3922 /* VirtualFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BB24880B98000A3922 /* VirtualFS.cpp */; };
@@ -9137,6 +9139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF2CF85259CBB9D00E6A51F /* superfx.cpp in Sources */,
 				B324C5502191AAD1009F4EDC /* input.cpp in Sources */,
 				11AFB31A24881207000A3922 /* sa1cpu.cpp in Sources */,
 				B324C5512191AAD1009F4EDC /* ppu.cpp in Sources */,
@@ -10178,6 +10181,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF2CF4C259CBB8E00E6A51F /* superfx.cpp in Sources */,
 				B3FBDFA9207FF5F200E661D1 /* input.cpp in Sources */,
 				11AFB31324881206000A3922 /* sa1cpu.cpp in Sources */,
 				B3FBDFA8207FF5F200E661D1 /* ppu.cpp in Sources */,
@@ -10524,16 +10528,15 @@
 					WANT_PCE_EMU,
 					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
-					WANT_SMS_EMU,
 					WANT_SNES_EMU,
 					WANT_SNES_FAUST_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10631,7 +10634,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
@@ -10642,16 +10645,15 @@
 					WANT_PCE_EMU,
 					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
-					WANT_SMS_EMU,
 					WANT_SNES_EMU,
 					WANT_SNES_FAUST_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10693,47 +10695,35 @@
 					"$(PROJECT_DIR)/libsndfile",
 					"\"$(SRCROOT)\"",
 				);
-				LLVM_LTO = YES;
+				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mfpu=neon",
-					"-fwrapv",
-					"-fprefetch-loop-arrays",
-					"-fjump-tables",
-					"-ftree-vectorize",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"-DHAVE_UNISTD_H",
+					"-DMEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102403",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-disable-lsr",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102601",
+					"-DHAVE_LROUND",
+					"-DHAVE_STDINT_H",
+					"-DHAVE_STDLIB_H",
+					"-DHAVE_SYS_PARAM_H",
+					"-DNDEBUG",
+					"-funroll-loops",
+					"-fPIC",
 					"-Wall",
-					"-Wshadow",
-					"-Wempty-body",
-					"-Wignored-qualifiers",
-					"-Wvla",
-					"-Wvariadic-macros",
-					"-Wdisabled-optimization",
-					"-mllvm",
-					"-disable-lsr",
-					"-mcmodel=small",
+					"-Wno-sign-compare",
+					"-Wno-unused-variable",
+					"-Wno-unused-function",
+					"-Wno-uninitialized",
+					"-Wno-strict-aliasing",
+					"-Wno-aggressive-loop-optimizations",
+					"-fno-fast-math",
+					"-fomit-frame-pointer",
+					"-fsigned-char",
+					"-DWANT_STEREO_SOUND",
+					"-DSTDC_HEADERS",
+					"-D__STDC_LIMIT_MACROS",
+					"-D__LIBRETRO__",
+					"-DINLINE=\"inline\"",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -11291,7 +11281,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
@@ -11302,16 +11292,15 @@
 					WANT_PCE_EMU,
 					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
-					WANT_SMS_EMU,
 					WANT_SNES_EMU,
 					WANT_SNES_FAUST_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102601",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -11353,47 +11342,35 @@
 					"$(PROJECT_DIR)/libsndfile",
 					"\"$(SRCROOT)\"",
 				);
-				LLVM_LTO = YES;
+				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mfpu=neon",
-					"-fwrapv",
-					"-fprefetch-loop-arrays",
-					"-fjump-tables",
-					"-ftree-vectorize",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"-DHAVE_UNISTD_H",
+					"-DMEDNAFEN_VERSION=\\\"1.26.1\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102403",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-disable-lsr",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102601",
+					"-DHAVE_LROUND",
+					"-DHAVE_STDINT_H",
+					"-DHAVE_STDLIB_H",
+					"-DHAVE_SYS_PARAM_H",
+					"-DNDEBUG",
+					"-funroll-loops",
+					"-fPIC",
 					"-Wall",
-					"-Wshadow",
-					"-Wempty-body",
-					"-Wignored-qualifiers",
-					"-Wvla",
-					"-Wvariadic-macros",
-					"-Wdisabled-optimization",
-					"-mllvm",
-					"-disable-lsr",
-					"-mcmodel=small",
+					"-Wno-sign-compare",
+					"-Wno-unused-variable",
+					"-Wno-unused-function",
+					"-Wno-uninitialized",
+					"-Wno-strict-aliasing",
+					"-Wno-aggressive-loop-optimizations",
+					"-fno-fast-math",
+					"-fomit-frame-pointer",
+					"-fsigned-char",
+					"-DWANT_STEREO_SOUND",
+					"-DSTDC_HEADERS",
+					"-D__STDC_LIMIT_MACROS",
+					"-D__LIBRETRO__",
+					"-DINLINE=\"inline\"",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -11444,7 +11421,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -11507,6 +11484,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15761,7 +15739,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15825,7 +15803,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15891,6 +15869,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15951,6 +15930,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";

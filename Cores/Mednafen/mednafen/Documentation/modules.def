@@ -1,4 +1,4 @@
-1.24.3
+1.26.1
 apple2
 Apple II/II+
 250
@@ -356,7 +356,7 @@ Tech Saturn 1997.6 (Japan)
 0
 1MiB Extended RAM
 Required by \"Groove on Fight\" demo.
-Super Real Mahjong P7 (Japan) (TODO: Test)
+Super Real Mahjong P7 (Japan)
 T-16509G
 0
 1MiB Extended RAM
@@ -453,8 +453,8 @@ Backup Memory
 Allows saving replay data.
 cachemode
 Cache Mode
-This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally due to the large increase in host CPU usage, along with the potential of causing games that fully utilize both SH-2 CPUs to run significantly slower than they should due to inadequate emulation of bus sharing/contention.
-54
+This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally primarily due to the large increase in host CPU usage.
+92
 Area 51 (USA)
 T-9705H
 0
@@ -475,6 +475,11 @@ T-30304G
 0
 Data only, with high-level bypass
 Fixes graphical glitches.
+Doraemon - Nobita to Fukkatsu no Hoshi (Japan)
+T-19801G
+0
+Data only, with high-level bypass
+Fixes blank Game Over screen.
 Dragon Force II (Japan)
 GS-9184
 0
@@ -520,6 +525,21 @@ GS-9055
 0
 Data only, with high-level bypass
 Fixes game crash when going to the world map.
+Mahjong Doukyuusei Special (Japan)
+T-25302G1
+0
+Data only, with high-level bypass
+Fixes missing background layer on disc 2.
+Mahjong Doukyuusei Special (Japan)
+T-25302G2
+0
+Data only, with high-level bypass
+Fixes missing background layer on disc 2.
+Mujintou Monogatari R - Futari no Love Love Island (Japan)
+T-28901G
+0
+Data only, with high-level bypass
+Fixes glitches when character graphics change.
 Ronde (Japan)
 T-14415G
 0
@@ -534,7 +554,7 @@ Segakore Sega Bible Mogitate SegaSaturn (Japan)
 610680501
 0
 Data only, with high-level bypass
-
+Fixes graphical glitch on the character select screen in the \"Zero Divide\" demo.
 Shunsai (Japan)
 T-18703G
 0
@@ -570,21 +590,26 @@ T-5001H
 0
 Data only, with high-level bypass
 Fixes hang during FMV.
-Thunder Force Gold Pack 1 (Japan)
-T-1807G
-0
-Data only, with high-level bypass
-Fixes explosion graphic glitches in \"Thunder Force III\".
 Thunder Force Gold Pack 2 (Japan)
 T-1808G
 0
 Data only, with high-level bypass
 Fixes hang when pausing the game under certain conditions in \"Thunder Force AC\".
-Virtua Fighter Kids (Java Tea Original)
-GS-9113
+Virtua Fighter Kids (Japan/Europe)
+GS-9079\nVF. KIDS
 0
 Data only, with high-level bypass
-Fixes malfunction of computer-controlled player.
+Fixes FMV glitches.
+Virtua Fighter Kids (Korea/Java Tea Original)
+GS-9113\nVF. KIDS
+0
+Data only, with high-level bypass
+Fixes FMV glitches and/or malfunction of computer-controlled player.
+Virtua Fighter Kids (USA)
+MK-81049\nVF. KIDS
+0
+Data only, with high-level bypass
+Fixes FMV glitches.
 Virtual Mahjong (Japan)
 T-2206G
 0
@@ -620,6 +645,21 @@ MK-81109
 0
 Data only, with high-level bypass
 Fixes severe gameplay logic glitches.
+Zero Divide - The Final Conflict (Japan)
+T-31601G
+0
+Data only, with high-level bypass
+Fixes graphical glitch on the character select screen.
+3D Baseball (USA)
+T-15906H
+0
+Full
+Fixes minor FMV glitches.
+3D Baseball - The Majors (Japan)
+T-18003G
+0
+Full
+Fixes minor FMV glitches.
 Albert Odyssey (Japan)
 T-1507G
 0
@@ -630,6 +670,31 @@ T-12705H
 0
 Full
 Fixes battle text truncation.
+Corpse Killer (USA)
+T-16201H
+0
+Full
+Fixes glitchy rotation-zoom effect.
+Crow, The (USA)
+T-8124H
+0
+Full
+Fixes minor FMV glitches.
+Crow, The (Europe)
+T-8124H-50
+0
+Full
+Fixes minor FMV glitches.
+Crow, The (Germany)
+T-8124H-18
+0
+Full
+Fixes minor FMV glitches.
+Dark Seed II (Japan)
+T-36101G
+0
+Full
+Fixes game hang.
 Die Hard Trilogy (Japan)
 GS-9123
 0
@@ -637,11 +702,6 @@ Full
 Fixes game hang.
 Die Hard Trilogy (Europe/USA)
 T-16103H
-0
-Full
-Fixes game hang.
-Digital Monster Version S (Japan)
-T-13331G
 0
 Full
 Fixes game hang.
@@ -665,11 +725,61 @@ T-15904H50
 0
 Full
 Fixes minor FMV glitches.
+Horror Tour (Japan)
+T-24301G
+0
+Full
+Fixes graphical glitches on the save and load screens.
+Irem Arcade Classics (Japan)
+T-22403G
+0
+Full
+Fixes hang when trying to start \"Zippy Race\".
+Kidou Senkan Nadesico - Yappari Saigo wa Ai ga Katsu
+GS-9142
+0
+Full
+Fixes game hang.
+The Lost World - Jurassic Park (Japan)
+GS-9162
+0
+Full
+Fixes most graphical glitches in rock faces.
+The Lost World - Jurassic Park (Europe/USA)
+MK-81065
+0
+Full
+Fixes most graphical glitches in rock faces.
 Lunar - Silver Star Story (Japan)
 T-27901G
 0
 Full
-Fixes FMV flickering with alternative BIOS.
+Fixes FMV flickering.
+NBA Action (USA)
+MK-81103
+0
+Full
+Fixes minor FMV glitches.
+NBA Action (Europe)
+MK81103-50
+0
+Full
+Fixes minor FMV glitches.
+NFL Quarterback Club 96 (Japan)
+T-8105G
+0
+Full
+Fixes minor FMV glitches.
+NFL Quarterback Club 96 (USA)
+T-8109H
+0
+Full
+Fixes minor FMV glitches.
+NFL Quarterback Club 96 (Europe)
+T-8109H-50
+0
+Full
+Fixes minor FMV glitches.
 Nobunaga no Yabou Shouseiroku (Japan)
 T-7664G
 0
@@ -685,6 +795,16 @@ T-25416H50
 0
 Full
 Fixes game hang.
+Senken Kigyouden (Japan)
+T-37401G
+0
+Full
+Fixes dialogue text truncation.
+Xian Jian Qi Xia Zhuan (Taiwan)
+T-37401H
+0
+Full
+Fixes dialogue text truncation.
 Slam 'n Jam 96 (Japan)
 T-159056
 0
@@ -715,6 +835,71 @@ T-8125H-50
 0
 Full
 Fixes game crash.
+Thunder Force Gold Pack 1 (Japan)
+T-1807G
+0
+Full
+Fixes explosion graphic glitches in \"Thunder Force III\".
+Titan Wars (Japan)
+T-15903G
+0
+Full
+Fixes minor FMV glitches.
+Solar Eclipse (USA)
+T-15911H
+0
+Full
+Fixes minor FMV glitches.
+Titan Wars (Europe)
+T-15911H50
+0
+Full
+Fixes minor FMV glitches.
+Virtua Cop (Europe)
+MK-81015\n\nE
+0
+Full
+Fixes game hang.
+Virtua Cop 2 (Europe)
+MK-81043\n\nE
+0
+Full
+Fixes game hang.
+Virtua Fighter (Japan)
+GS-9001
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter (USA)
+MK-81005
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter (Europe)
+MK_8100550
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (Japan)
+GS-9039
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (USA)
+MK-81023
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (Europe)
+MK-8102350
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (SegaNet)
+SG-7103
+0
+Full
+Fixes graphical glitches.
 Whizz (Japan)
 T-36102G
 0
@@ -725,10 +910,15 @@ T-9515H-50
 0
 Full
 Fixes quasi-random hangs during startup.
+Yu-No (Japan)
+T-28004G
+0
+Full
+Fixes FMV ending too soon.
 horriblehacks
 Horrible Hacks
-This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 CPU reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.
-18
+This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.
+30
 Fighters Megamix (Japan)
 GS-9126
 0
@@ -739,11 +929,6 @@ MK-81073
 0
 Disable slowing down of SH-2 CPU reads/writes during SH-2 DMA. 
 Fixes hang after watching or aborting FMV playback.
-Irem Arcade Classics (Japan)
-T-22403G
-0
-Disable slowing down of SH-2 CPU reads/writes during SH-2 DMA. 
-Fixes hang when trying to start \"Zippy Race\".
 Grandia (Japan)
 T-4507G
 0
@@ -752,63 +937,128 @@ Fixes hang at end of first disc.
 Albert Odyssey (Japan)
 T-1507G
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Partially fixes battle text truncation.
 Albert Odyssey (USA)
 T-12705H
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Partially fixes battle text truncation.
 All-Star Baseball 97 (USA)
 T-8150H
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes texture glitches.
 Arcade's Greatest Hits (USA)
 T-9703H
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes flickering credits text.
 Arcade's Greatest Hits - Atari Collection 1 (USA)
 T-9706H
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes flickering credits text.
 Burning Rangers Taikenban (Japan)
 6106856
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes flickering rescue text.
 Burning Rangers (Japan)
 GS-9174
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes flickering rescue text.
 Burning Rangers (Europe/USA)
 MK-81803
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes flickering rescue text.
+Falcom Classics II (Japan)
+T-31505G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes FMV tearing in \"Ys II\".
 Frank Thomas Big Hurt Baseball (Japan)
 T-8111G
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Reduces graphical glitches.
 Frank Thomas Big Hurt Baseball (USA)
 T-8138H
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Reduces graphical glitches.
+Tokimeki Memorial - Forever with You (Japan)
+T-9504G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes glitchy frames on the Konami intro arm sprite.
+Kaitei Daisensou (Japan)
+T-15006G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes FMV tearing.
+In The Hunt (Europe/USA)
+T-10001G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes FMV tearing.
+Virtua Fighter (Japan)
+GS-9001
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter (USA)
+MK-81005
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter (Europe)
+MK_8100550
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (Japan)
+GS-9039
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (USA)
+MK-81023
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (Europe)
+MK-8102350
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (SegaNet)
+SG-7103
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
 Whizz (Japan)
 T-36102G
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes major graphical issues during gameplay.
 Whizz (Europe)
 T-9515H-50
 0
-SH-2 CPU reads/writes from/to VDP1 slow down command execution. 
+SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes major graphical issues during gameplay.
+Wolf Fang SS - Kuuga 2001 (Japan)
+T-26105G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Yu-No (Japan)
+T-28004G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Reduces FMV tearing.
 Thunderhawk II (Japan)
 T-6006G
 0

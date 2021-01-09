@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* cdb.cpp - CD Block Emulation
-**  Copyright (C) 2016-2017 Mednafen Team
+**  Copyright (C) 2016-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,13 +19,79 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/*
+ Finicky games:
+	Astal
+		Play and Seek command nuances.
+
+	Batman Forever
+		Seek delay must be high enough, or glitchy batmobile.
+
+	BIOS CD-DA Player
+		Play and Seek command nuances.
+
+	Break Point
+		Aborts out to BIOS CD player screen if CDB ever reports
+		PLAY status for a 1-sector read.
+
+	DJ Wars
+		Same issue as Break Point.
+
+	Dragon Force II
+		When trying to skip an FMV, the game will hang until the initial
+		Play command completes if the CDB in in a PAUSE state due to
+		buffers being full, and the CDB fails to quickly go into BUSY
+		state(due to seek start) immediately after a Reset Selector
+		command frees up buffers.
+
+	Hop Step Idol
+		Similar issue to Break Point, but fails more spectacularly.
+
+	Independence Day (USA)
+		Issues 'Get CD Device Connection' command without waiting for
+		the previously-issued 'Reset Selector' command to completely
+		finish, expecting the returned value to not be the reset
+		value.
+
+	Jung Rhythm
+		Seek delay must be high enough, or will hang when trying to
+		retry a failed stage.
+
+	Magical Drop III
+		Needs resetting of 'is_cdrom' status bit to be delayed by a
+		few dozen microseconds after a seek start triggered by the
+		Play command.
+
+	NBA Action
+		Relies on seek to index 2+ functionality.
+
+	Steam Heart's
+		Play and Seek command nuances.  Music should resume where it
+		left off after pausing and unpausing in-game.
+
+	Tactics Ogre
+		If repeat handling is wrong, will hang when trying to resume
+		a suspended game.
+
+	Taito Chase H.Q.
+		Relies on seek to index 2+ functionality.
+
+	Tenchi Muyou! Ryououki Gokuraku
+		Quirks with running commands during an Init command software
+		reset.
+
+	Tennis Arena
+		Probably same issue as Break Point.
+
+	World Cup France '98
+		Same issues as Dragon Force II
+*/
+
 // TODO: Respect auth type with COMMAND_AUTH_DEVICE.
 
 // TODO: Test INIT 0x00 side effects(and see if it affects CD device connection)
 
 // TODO: edc_lec_check_and_correct
-
-// TODO: Proper seek delays(for "Gungriffon" FMV)
 
 // TODO: Some filesys commands(at least change dir, read file) seem to reset the saved command start and end positions(accessed via 0xFFFFFF to PLAY command) to something
 // akin to 0.
@@ -62,6 +128,8 @@ using namespace CDUtility;
 
 namespace MDFN_IEN_SS
 {
+
+static void CheckBufPauseResume(void);
 
 enum
 {
@@ -379,6 +447,7 @@ static uint16 Results[4];
 static bool CommandPending;
 static uint16 SWResetHIRQDeferred;
 static bool SWResetPending;
+static uint8 ResetSelPending;
 
 static uint8 CDDevConn;
 static uint8 LastBufDest;
@@ -498,7 +567,7 @@ enum
  DRIVEPHASE_STOPPED = 0,
  DRIVEPHASE_PLAY,
 
- DRIVEPHASE_SEEK_START,
+ DRIVEPHASE_SEEK_START3,
  DRIVEPHASE_SEEK,
  DRIVEPHASE_SCAN,
 
@@ -507,12 +576,19 @@ enum
  DRIVEPHASE_EJECTED_WAITING,
  DRIVEPHASE_STARTUP,
 
- DRIVEPHASE_RESETTING
+ DRIVEPHASE_RESETTING,
+
+ DRIVEPHASE_SEEK_START1,
+ DRIVEPHASE_SEEK_START2,
+
+ DRIVEPHASE_PAUSE
 };
 static int64 DriveCounter;
 static int64 PeriodicIdleCounter;
 enum : int64 { PeriodicIdleCounter_Reload = (int64)187065 << 32 };
 
+static int32 PauseCounter;
+static bool PlaySectorProcessed;
 static uint8 PlayRepeatCounter;
 static uint8 CurPlayRepeat;
 
@@ -893,6 +969,7 @@ enum : int { FLSPhaseBias = __COUNTER__ + 1 };
 	   Partition_UnlinkBuffer(FLS.pnum, bfi);			\
 	   memcpy(FLS.pbuf, &dptr[(dptr[15] == 0x2) ? 24 : 16], 2048);	\
 	   Buffer_Free(bfi);						\
+	   CheckBufPauseResume();						\
 	  }								
 
 #define FLS_READ(buffer, count)						\
@@ -1040,7 +1117,6 @@ static bool FLS_Run(void)
   // Pause
   //
   PlayEndIRQType = 0;
-  CurPlayStart = 0x800000;
   CurPlayEnd = 0x800000;
   CurPlayRepeat = 0;
   //
@@ -1282,6 +1358,7 @@ void CDB_Reset(bool powering_up)
   CommandPending = false;
   SWResetHIRQDeferred = 0;
   SWResetPending = false;
+  ResetSelPending = false;
 
   CDDevConn = 0;
   LastBufDest = 0;
@@ -1314,6 +1391,9 @@ void CDB_Reset(bool powering_up)
   DrivePhase = 0;
   DriveCounter = 0;
   PeriodicIdleCounter = 0;
+
+  PauseCounter = 0;
+  PlaySectorProcessed = false;
 
   PlayRepeatCounter = 0;
   CurPlayRepeat = 0;
@@ -1605,6 +1685,78 @@ static void BasicResults(uint32 res0, uint32 res1, uint32 res2, uint32 res3)
  SWResetHIRQDeferred = 0;
 }
 
+//
+// Should be closer to 600, but 500 is good enough for Magical Drop 3's intro, so
+// be more conservative to reduce the probability of breaking a game due
+// to CPU timing emulation deficiencies.
+//
+enum : int32 { SeekCPIUpdateDelay = 500 };
+
+static void SeekStart1(void)
+{
+ if(CurPlayStart & 0x800000)
+ {
+  int32 fad_target = CurPlayStart & 0x7FFFFF;
+  int32 tt = 1;
+
+  if(fad_target < 150)
+   fad_target = 150;
+  else if(fad_target >= (150 + (int32)toc.tracks[100].lba))
+   fad_target = 150 + toc.tracks[100].lba;
+
+  for(int32 track = 1; track <= 100; track++)
+  {
+   if(!toc.tracks[track].valid)
+    continue;
+
+   if(fad_target < (150 + (int32)toc.tracks[track].lba))
+    break;
+
+   tt = track;
+  }
+
+  CurPosInfo.tno = (tt == 100) ? 0xAA : tt;
+  CurPosInfo.idx = 1;
+  CurPosInfo.fad = fad_target;
+  CurPosInfo.rel_fad = fad_target - (150 + toc.tracks[tt].lba);
+  CurPosInfo.ctrl_adr = (toc.tracks[tt].control << 4) | (toc.tracks[tt].adr << 0);
+ }
+ else
+ {
+  int32 track_target = (CurPlayStart >> 8) & 0xFF;
+  int32 index_target = CurPlayStart & 0xFF;
+
+  if(track_target > toc.last_track)
+   track_target = toc.last_track;
+  else if(track_target < toc.first_track)
+   track_target = toc.first_track;
+
+  if(index_target < 1)
+   index_target = 1;
+  else if(index_target > 99)
+   index_target = 99;
+
+  CurPosInfo.tno = track_target;
+  CurPosInfo.idx = index_target;
+  CurPosInfo.fad = 150 + toc.tracks[track_target].lba;
+  CurPosInfo.rel_fad = 0;
+  CurPosInfo.ctrl_adr = (toc.tracks[track_target].control << 4) | (toc.tracks[track_target].adr << 0);
+ }
+}
+
+static void SeekStart2(int delay_sub = 0)
+{
+ CurPosInfo.status = STATUS_BUSY;
+ CurPosInfo.is_cdrom = false;
+ CurPosInfo.repcount = PlayRepeatCounter & 0xF;
+ DrivePhase = DRIVEPHASE_SEEK_START3;
+
+ Cur_CDIF->HintReadSector(CurPosInfo.fad);
+
+ DriveCounter = (int64)(256000 - delay_sub) << 32;
+ SeekIndexPhase = 0;
+}
+
 static void StartSeek(const uint32 cmd_target, const bool no_pickup_change = false)
 {
  if(!Cur_CDIF)
@@ -1623,66 +1775,68 @@ static void StartSeek(const uint32 cmd_target, const bool no_pickup_change = fal
    return;
   }
  }
- else if(cmd_target & 0x800000)
+
+ CurPosInfo.status = STATUS_BUSY;
+ DrivePhase = no_pickup_change ? DRIVEPHASE_SEEK_START2 : DRIVEPHASE_SEEK_START1;
+ PeriodicIdleCounter = PeriodicIdleCounter_Reload;
+ DriveCounter = (int64)SeekCPIUpdateDelay << 32;
+}
+
+static bool CheckEndMet(void)
+{
+ bool end_met = (CurPosInfo.tno == 0xAA);
+
+ if(CurPlayEnd != 0)
  {
-  int32 fad_target = cmd_target & 0x7FFFFF;
-  int32 tt = 1;
-
-  if(fad_target < 150)
-   fad_target = 150;
-  else if(fad_target >= (150 + (int32)toc.tracks[100].lba))
-   fad_target = 150 + toc.tracks[100].lba;
-
-  for(int32 track = 1; track <= 100; track++)
+  if(CurPlayEnd & 0x800000)
+   end_met |= (CurPosInfo.fad >= (CurPlayEnd & 0x7FFFFF));
+  else
   {
-   if(!toc.tracks[track].valid)
-    continue;
+   const unsigned end_track = std::min<unsigned>(toc.last_track, std::max<unsigned>(toc.first_track, (CurPlayEnd >> 8) & 0xFF));
+   const unsigned end_index = std::min<unsigned>(99, std::max<unsigned>(1, CurPlayEnd & 0xFF));
 
-   if(fad_target < (150 + (int32)toc.tracks[track].lba))
-    break;
-    
-   tt = track;
+   end_met |= (CurPosInfo.tno > end_track) || (CurPosInfo.tno == end_track && CurPosInfo.idx > end_index);
   }
+ }
 
-  CurPosInfo.tno = (tt == 100) ? 0xAA : tt;
-  CurPosInfo.idx = 1;
-  CurPosInfo.fad = fad_target;
-  CurPosInfo.rel_fad = fad_target - (150 + toc.tracks[tt].lba);
-  CurPosInfo.ctrl_adr = (toc.tracks[tt].control << 4) | (toc.tracks[tt].adr << 0);
+ //
+ // Steam Heart's, it's always Steam Heart's...
+ //
+ if(CurPlayStart & 0x800000)
+ {
+  end_met |= (CurPosInfo.fad < (CurPlayStart & 0x7FFFFF));
  }
  else
  {
-  int32 track_target = (cmd_target >> 8) & 0xFF;
-  int32 index_target = cmd_target & 0xFF;
+  const unsigned start_track = std::min<unsigned>(toc.last_track, std::max<unsigned>(toc.first_track, (CurPlayStart >> 8) & 0xFF));
+  //const unsigned start_index = std::min<unsigned>(99, std::max<unsigned>(1, CurPlayStart & 0xFF));
 
-  if(track_target > toc.last_track)
-   track_target = toc.last_track;
-  else if(track_target < toc.first_track)
-   track_target = toc.first_track;
-
-  if(index_target < 1)
-   index_target = 1;
-  else if(index_target > 99)
-   index_target = 99;
-
-  CurPosInfo.tno = track_target;
-  CurPosInfo.idx = index_target;
-  CurPosInfo.fad = 150 + toc.tracks[track_target].lba;
-  CurPosInfo.rel_fad = 0;
-  CurPosInfo.ctrl_adr = (toc.tracks[track_target].control << 4) | (toc.tracks[track_target].adr << 0);
+  end_met |= (CurPosInfo.tno < start_track); //|| (CurPosInfo.tno == start_track && CurPosInfo.idx < start_index);
  }
- //
- CurPosInfo.status = STATUS_BUSY;
- CurPosInfo.is_cdrom = false;
- CurPosInfo.repcount = PlayRepeatCounter & 0xF;
- DrivePhase = DRIVEPHASE_SEEK_START;
 
- Cur_CDIF->HintReadSector(CurPosInfo.fad);
+ return end_met;
+}
 
-// PlayEndIRQPending = false;
- PeriodicIdleCounter = PeriodicIdleCounter_Reload;
- DriveCounter = (int64)256000 << 32; //(int64)((44100 * 256) / 150) << 32;
- SeekIndexPhase = 0;
+static void CheckBufPauseResume(void)
+{
+ if(DrivePhase == DRIVEPHASE_PAUSE)
+ {
+  const bool end_met = CheckEndMet();
+
+  if(!end_met && FreeBufferCount)
+  {
+   SS_DBG(SS_DBG_CDB, "[CDB] Resuming from buffer full pause (fast path).\n");
+#if 0
+  CurPosInfo.status = STATUS_BUSY;
+#else
+   SecPreBuf_In = false;
+   CurPosInfo.status = STATUS_BUSY;
+   DrivePhase = DRIVEPHASE_SEEK_START2;
+   DriveCounter = (int64)SeekCPIUpdateDelay << 32;
+   PeriodicIdleCounter = PeriodicIdleCounter_Reload;
+#endif
+  }
+ }
 }
 
 static void Drive_Run(int64 clocks)
@@ -1752,7 +1906,14 @@ static void Drive_Run(int64 clocks)
 	DriveCounter += (int64)2000 << 32;
 	break;
 
-    case DRIVEPHASE_SEEK_START:
+    case DRIVEPHASE_SEEK_START1:
+	SeekStart1();
+	// no break
+    case DRIVEPHASE_SEEK_START2:
+	SeekStart2(SeekCPIUpdateDelay);
+	break;
+
+    case DRIVEPHASE_SEEK_START3:
 	//
 	// TODO: Motor spinup from stopped state time penalty?
 	//
@@ -1762,10 +1923,12 @@ static void Drive_Run(int64 clocks)
 
 	 fad_delta = CurPosInfo.fad - CurSector;
 
-	 seek_time = 6 * (44100 * 256) / 150;
+	 seek_time = 12 * (44100 * 256) / 150;
 	 seek_time += abs(fad_delta) * ((fad_delta < 0) ? 28 : 26);
 	 seek_time += (fad_delta < 0 || fad_delta >= 150) ? (44100 * 256) / 150 : 0;
 	 //seek_time += fabs(sqrt(CurSector) - sqrt(CurPosInfo.fad)) * 13000;
+
+	 //printf("%d %d\n", fad_delta, seek_time);
 
 	 CurPosInfo.status = STATUS_SEEK;
 	 DrivePhase = DRIVEPHASE_SEEK;
@@ -1836,6 +1999,7 @@ static void Drive_Run(int64 clocks)
 
 	  if(index_ok)
 	  {
+	   PlaySectorProcessed = false;
 	   DrivePhase = DRIVEPHASE_PLAY;
 	   DriveCounter += (int64)((44100 * 256) / ((SubQBuf_Safe[0] & 0x40) ? 150 : 75)) << 32;
 
@@ -1899,39 +2063,34 @@ static void Drive_Run(int64 clocks)
 
 	 if(!SecPreBuf_In)
 	 {
-	  CurPosInfo.status = STATUS_PLAY;
+	  PlaySectorProcessed = true;
+	  CurSector++;
 	 }
 	} // end if(SecPreBuf_In > 0)
-
+	// Fallthrough:
+    case DRIVEPHASE_PAUSE:
         PeriodicIdleCounter = 17712LL << 32;
-	if(DrivePhase == DRIVEPHASE_PLAY)
+
+	if(SecPreBuf_In)
 	{
-	 if(SecPreBuf_In)
-	 {
-	  // TODO: More accurate:
-	  CurPosInfo.status = STATUS_PAUSE;
+	 SS_DBG(SS_DBG_CDB, "[CDB] SecPreBuf_In=%d at sector read time(CurSector=%d, CurPosInfo.fad=%d).\n", CurSector, CurPosInfo.fad);
+	}
+	else
+	{
+	 Cur_CDIF->ReadRawSector(SecPreBuf, CurSector - 150);
+	 SecPreBuf_In = true;
 
-	  if(SecPreBuf_In > 0)
-	   SS_DBG(SS_DBG_CDB, "[CDB] SB Overflow\n");
-	 }
-	 else
+	 // TODO:(maybe pointless...)
+	 //if(SubQBuf_Safe[0] & 0x40)
+         // CurPosInfo.fad = SECTOR HEADER
+         //else
+	 // CurPosInfo.fad = SUBQ STUFF
+	 CurPosInfo.fad = CurSector;	
+	 if(DecodeSubQ(SecPreBuf + 2352))
 	 {
-	  Cur_CDIF->ReadRawSector(SecPreBuf, CurSector - 150);
-	  SecPreBuf_In = true;
-
-	  // TODO:(maybe pointless...)
-	  //if(SubQBuf_Safe[0] & 0x40)
-          // CurPosInfo.fad = SECTOR HEADER
-          //else
-	  // CurPosInfo.fad = SUBQ STUFF
-	  CurPosInfo.fad = CurSector;	
-	  if(DecodeSubQ(SecPreBuf + 2352))
-	  {
-	   CurPosInfo.rel_fad = (BCD_to_U8(SubQBuf[0x3]) * 60 + BCD_to_U8(SubQBuf[0x4])) * 75 + BCD_to_U8(SubQBuf[0x5]);
-	   CurPosInfo.tno = (SubQBuf[0x1] >= 0xA0) ? SubQBuf[0x1] : BCD_to_U8(SubQBuf[0x1]);
-	   CurPosInfo.idx = BCD_to_U8(SubQBuf[0x2]);
-	  }
-	  CurSector++;
+	  CurPosInfo.rel_fad = (BCD_to_U8(SubQBuf[0x3]) * 60 + BCD_to_U8(SubQBuf[0x4])) * 75 + BCD_to_U8(SubQBuf[0x5]);
+	  CurPosInfo.tno = (SubQBuf[0x1] >= 0xA0) ? SubQBuf[0x1] : BCD_to_U8(SubQBuf[0x1]);
+	  CurPosInfo.idx = BCD_to_U8(SubQBuf[0x2]);
 	 }
 	}
 
@@ -1947,62 +2106,56 @@ static void Drive_Run(int64 clocks)
    //
    //
    //
-   if(SecPreBuf_In && DrivePhase == DRIVEPHASE_PLAY)
+   if(SecPreBuf_In && (DrivePhase == DRIVEPHASE_PLAY || DrivePhase == DRIVEPHASE_PAUSE))
    {
-    bool end_met = (CurPosInfo.tno == 0xAA);
+    const bool end_met = CheckEndMet();
 
-    if(CurPlayEnd != 0)
+    if(DrivePhase == DRIVEPHASE_PAUSE)
     {
-     if(CurPlayEnd & 0x800000)
-      end_met |= (CurPosInfo.fad >= (CurPlayEnd & 0x7FFFFF));
-     else
+     SecPreBuf_In = false;
+
+     if(PauseCounter == 1)
      {
-      const unsigned end_track = std::min<unsigned>(toc.last_track, std::max<unsigned>(toc.first_track, (CurPlayEnd >> 8) & 0xFF));
-      const unsigned end_index = std::min<unsigned>(99, std::max<unsigned>(1, CurPlayEnd & 0xFF));
+      CurPosInfo.status = STATUS_PAUSE;
 
-      end_met |= (CurPosInfo.tno > end_track) || (CurPosInfo.tno == end_track && CurPosInfo.idx > end_index);
+      if(end_met && PlayEndIRQType)
+      {
+       // Don't generate IRQ if we've repeated and there hasn't been a non-end_met sector since.
+       if(!(PlayRepeatCounter & 0x80))
+        TriggerIRQ(PlayEndIRQType & 0xFFFF);	// May not be right for EFLS with Read File, maybe EFLS is only triggered after the buffer is written?
+       PlayEndIRQType = 0;
+      }
+      PauseCounter = -1;
      }
-    }
+     else if(PauseCounter == -1)
+     {
+      CurPosInfo.status = STATUS_PAUSE;
 
-    //
-    // Steam Heart's, it's always Steam Heart's...
-    //
-    if(CurPlayStart & 0x800000)
-    {
-     end_met |= (CurPosInfo.fad < (CurPlayStart & 0x7FFFFF));
+      if(!end_met && FreeBufferCount)
+      {
+       SS_DBG(SS_DBG_CDB, "[CDB] Resuming from buffer full pause.\n");
+       CurPosInfo.status = STATUS_BUSY;
+       DrivePhase = DRIVEPHASE_SEEK_START2;
+       DriveCounter = (int64)SeekCPIUpdateDelay << 32;
+      }
+     }
+     else
+      PauseCounter++;
     }
-    else
-    {
-     const unsigned start_track = std::min<unsigned>(toc.last_track, std::max<unsigned>(toc.first_track, (CurPlayStart >> 8) & 0xFF));
-     //const unsigned start_index = std::min<unsigned>(99, std::max<unsigned>(1, CurPlayStart & 0xFF));
-
-     end_met |= (CurPosInfo.tno < start_track); //|| (CurPosInfo.tno == start_track && CurPosInfo.idx < start_index);
-    }
-
-    if(end_met)
+    else if(end_met)
     {
      SecPreBuf_In = false;
      if(PlayRepeatCounter >= CurPlayRepeat)
      {
-      CurSector = CurPosInfo.fad;
-
       if(PlayEndIRQType)
-      {
-       CurPosInfo.status = STATUS_BUSY;
+       SS_DBG(SS_DBG_CDB, "[CDB] Starting play end pause.\n");
+      else
+       SS_DBG(SS_DBG_CDB, "[CDB] Starting pause.\n");
 
-       PlayEndIRQType += 1 << 30;	// Crappy delay so we're in STATUS_BUSY state long enough.
-
-       if((PlayEndIRQType >> 30) >= 3)
-       {
-	// Don't generate IRQ if we've repeated and there hasn't been a non-end_met sector since.
-        if(!(PlayRepeatCounter & 0x80))
-         TriggerIRQ(PlayEndIRQType & 0xFFFF);	// May not be right for EFLS with Read File, maybe EFLS is only triggered after the buffer is written?
-        PlayEndIRQType = 0;
-       }
-      }
-
-      if(!PlayEndIRQType)
-       CurPosInfo.status = STATUS_PAUSE;
+      CurSector = CurPosInfo.fad;
+      CurPosInfo.status = STATUS_BUSY;
+      DrivePhase = DRIVEPHASE_PAUSE;
+      PauseCounter = PlayEndIRQType ? 0 : 1;
      }
      else
      {
@@ -2011,11 +2164,28 @@ static void Drive_Run(int64 clocks)
 
       PlayRepeatCounter |= 0x80;
       //
-      StartSeek(PlayCmdStartPos);
+      SeekStart1();
+      SeekStart2();
      }
     }
+    else if((SubQBuf_Safe[0] & 0x40) && !FreeBufferCount)
+    {
+     SS_DBG(SS_DBG_CDB, "[CDB] Starting buffer full pause.\n");
+     SecPreBuf_In = false;
+     CurPosInfo.status = STATUS_BUSY;
+     DrivePhase = DRIVEPHASE_PAUSE;
+     PauseCounter = 0;
+    }
     else
+    {
      PlayRepeatCounter &= ~0x80;
+
+     if(PlaySectorProcessed)
+     {
+      CurPosInfo.status = STATUS_PLAY;
+      PlaySectorProcessed = false;
+     }
+    }
    }
    //
    //
@@ -2117,11 +2287,11 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
     {
      char cdet[128];
      GetCommandDetails(CTR.CD, cdet, sizeof(cdet));
-     SS_DBG(SS_DBG_CDB, "[CDB] Command: %s --- HIRQ=0x%04x, HIRQ_Mask=0x%04x\n", cdet, HIRQ, HIRQ_Mask);
+     SS_DBG(SS_DBG_CDB, "[CDB] Command: %s --- HIRQ=0x%04x, HIRQ_Mask=0x%04x --- %u\n", cdet, HIRQ, HIRQ_Mask, timestamp);
     }
     //
     //
-    CMD_EAT_CLOCKS(84);
+    CMD_EAT_CLOCKS(84); //90);
 
     //
     //
@@ -2296,6 +2466,9 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
         TriggerIRQ(HIRQ_EHST);
        }
       }
+      //
+      //
+      CheckBufPauseResume();
      }
      else
       BasicResults((MakeBaseStatus() << 8) | 0xFF, 0xFFFF, 0, 0);
@@ -2593,6 +2766,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CDStatusResults(true);
      else
      {
+      //CMD_EAT_CLOCKS(30);
       {
        const uint32 fad = ((CTR.CD[0] & 0xFF) << 16) | CTR.CD[1];
        const uint32 range = ((CTR.CD[2] & 0xFF) << 16) | CTR.CD[3];
@@ -2601,7 +2775,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
        CDStatusResults();
       }
-      CMD_EAT_CLOCKS(96);
+      CMD_EAT_CLOCKS(96); //211);
       TriggerIRQ(HIRQ_ESEL);
      }
      #undef fnum
@@ -2637,6 +2811,8 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CDStatusResults(true);
      else
      {
+      //CMD_EAT_CLOCKS(30);
+
       Filters[fnum].Channel = CTR.CD[0] & 0xFF;
       Filters[fnum].SubModeMask = CTR.CD[1] >> 8;
       Filters[fnum].CInfoMask = CTR.CD[1] & 0xFF;
@@ -2646,7 +2822,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
       CDStatusResults();
 
-      CMD_EAT_CLOCKS(96);
+      CMD_EAT_CLOCKS(96); //211);
       TriggerIRQ(HIRQ_ESEL);
      }
      #undef fnum
@@ -2681,6 +2857,8 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CDStatusResults(true);
      else
      {
+      //CMD_EAT_CLOCKS(30);
+
       Filters[fnum].Mode = CTR.CD[0] & 0xFF;
 
       if(CTR.CD[0] & 0x80)
@@ -2688,7 +2866,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
       CDStatusResults();
 
-      CMD_EAT_CLOCKS(96);
+      CMD_EAT_CLOCKS(96); //211);
       TriggerIRQ(HIRQ_ESEL);
      }
      #undef fnum
@@ -2722,6 +2900,8 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CDStatusResults(true);
      else
      {
+      //CMD_EAT_CLOCKS(41);
+
       if(fcflags & 0x1)
        Filter_SetTrueConn(fnum, tconn);
 
@@ -2730,7 +2910,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
       CDStatusResults();
 
-      CMD_EAT_CLOCKS(96);
+      CMD_EAT_CLOCKS(96); //192 + ((fcflags & 0x1) ? 167 : 0) + ((fcflags & 0x2) ? 198 : 0));
       TriggerIRQ(HIRQ_ESEL);
      }
      #undef fconn
@@ -2778,62 +2958,36 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       {
        Partition_Clear(pnum);
 
+       //CMD_EAT_CLOCKS(34);
+
        CDStatusResults();
        //
        //
        //
-       CMD_EAT_CLOCKS(150);
-       TriggerIRQ(HIRQ_ESEL);      
+       CMD_EAT_CLOCKS(150); //224);
+       TriggerIRQ(HIRQ_ESEL);
+       //
+       //
+       CheckBufPauseResume();
       }
      }
      else
      {
-      for(unsigned pnum = 0; pnum < 0x18; pnum++)
-      {
-       if(rflags & 0x04)	// Initialize all partition data
-       {
-	Partition_Clear(pnum);
-       }
-
-       // TODO: Initialize all partition output connectors.
-       //       Has to do with MPEG decoding, copy/move sector data
-       //       commands, and maybe some other commands too?
-       if(rflags & 0x08)
-       {
-
-       }
-
-       if(rflags & 0x10)	// Initialize all filter conditions
-       {
-	Filter_ResetCond(pnum);
-       }
-
-       if(rflags & 0x20)	// Initialize all filter input connectors
-       {
-	if(pnum == CDDevConn)
-	 CDDevConn = 0xFF;
-
-	if(Filters[pnum].FalseConn < 0x18)
-	 Filters[pnum].FalseConn = 0xFF;
-       }
-
-       if(rflags & 0x40) // Initialize all true output connectors
-       {
-	Filters[pnum].TrueConn = pnum;
-       }
-
-       if(rflags & 0x80) // Initialize all false output connectors
-       {
-	Filters[pnum].FalseConn = 0xFF;
-       }
-      }
       CDStatusResults();
       //
       //
       //
+      ResetSelPending = rflags;
+      //
       // TODO: Accurate timing(while not blocking other command execution and sector reading).
-      CMD_EAT_CLOCKS(300);
-      TriggerIRQ(HIRQ_ESEL);
+      CMD_EAT_CLOCKS((ResetSelPending & 0xAC) ? 400 : 300);
+
+      //
+      // Half-assed handling of goofy games(e.g. USA release of "Independence Day") that issue a Get CD Device Connection command
+      // before the Reset Selector command resets it.
+      //
+      if((ResetSelPending & 0x3C) > 0x20 && CommandPending && (CData[0] >> 8) == COMMAND_GET_CDDEVCONN)
+       continue;
      }
     }
     //
@@ -3136,6 +3290,9 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
         CMD_EAT_CLOCKS(485);
         TriggerIRQ(HIRQ_EHST);
+	//
+	//
+	CheckBufPauseResume();
        }
        else
        {
@@ -3547,6 +3704,58 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
      CommandPending = false;
     }
 
+    if(ResetSelPending)
+    {
+     const unsigned rflags = ResetSelPending;
+     ResetSelPending = false;
+
+     for(unsigned pnum = 0; pnum < 0x18; pnum++)
+     {
+      if(rflags & 0x04)	// Initialize all partition data
+      {
+       Partition_Clear(pnum);
+      }
+
+      // TODO: Initialize all partition output connectors.
+      //       Has to do with MPEG decoding, copy/move sector data
+      //       commands, and maybe some other commands too?
+      if(rflags & 0x08)
+      {
+
+      }
+
+      if(rflags & 0x10)	// Initialize all filter conditions
+      {
+       Filter_ResetCond(pnum);
+      }
+
+      if(rflags & 0x20)	// Initialize all filter input connectors
+      {
+       if(pnum == CDDevConn)
+	CDDevConn = 0xFF;
+
+       if(Filters[pnum].FalseConn < 0x18)
+        Filters[pnum].FalseConn = 0xFF;
+      }
+
+      if(rflags & 0x40) // Initialize all true output connectors
+      {
+       Filters[pnum].TrueConn = pnum;
+      }
+
+      if(rflags & 0x80) // Initialize all false output connectors
+      {
+       Filters[pnum].FalseConn = 0xFF;
+      }
+     }
+
+     TriggerIRQ(HIRQ_ESEL);
+     //
+     //
+     //
+     CheckBufPauseResume();
+    }
+
     if(SWResetPending)
     {
      SWResetPending = false;
@@ -3579,6 +3788,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
     CommandPending = false;
     SWResetPending = false;
     SWResetHIRQDeferred = 0;
+    ResetSelPending = false;
     ResultsRead = true;
 
     memset(&DT, 0, sizeof(DT));
@@ -3810,6 +4020,7 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
   SFVAR(CommandPending),
   SFVAR(SWResetHIRQDeferred),
   SFVAR(SWResetPending),
+  SFVAR(ResetSelPending),
 
   SFVAR(CDDevConn),
   SFVAR(LastBufDest),
@@ -3892,6 +4103,9 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
   SFVAR(DriveCounter),
   SFVAR(PeriodicIdleCounter),
+
+  SFVAR(PauseCounter),
+  SFVAR(PlaySectorProcessed),
 
   SFVAR(PlayRepeatCounter),
   SFVAR(CurPlayRepeat),
@@ -3979,6 +4193,25 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
  if(load)
  {
+  if(load < 0x00102600)
+  {
+   if(DrivePhase == DRIVEPHASE_PLAY && SecPreBuf_In)
+   {
+    //printf("CurSector--\n");
+    CurSector--;
+   }
+
+   if(CurPosInfo.status == STATUS_PAUSE && DrivePhase == DRIVEPHASE_PLAY)
+   {
+    //printf("Pause fixup.\n");
+    DrivePhase = DRIVEPHASE_PAUSE;
+    PauseCounter = -1;
+   }
+  }
+  //
+  //
+  //
+
   // FIXME: Sanitizing!
   //
   //

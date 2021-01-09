@@ -58,11 +58,7 @@ cothread_t co_create(unsigned int size, void (*coentry)(void)) {
     stack.ss_flags = 0;
     stack.ss_size = size;
     thread->stack = stack.ss_sp = malloc(size);
-#if TARGET_OS_TV
-      // Removing this code might completely break this core on tvOS but
-      // sigaltstack is unavialable, other option is to somehow remove SNES from
-      // Mednafen but only for tvOS
-    if(stack.ss_sp && !sigaltstack(&stack, &old_stack)) {
+    if(stack.ss_sp && !_sigaltstack(&stack, &old_stack)) {
       handler.sa_handler = springboard;
       handler.sa_flags = SA_ONSTACK;
       sigemptyset(&handler.sa_mask);
@@ -72,11 +68,11 @@ cothread_t co_create(unsigned int size, void (*coentry)(void)) {
         if(!raise(SIGUSR1)) {
           thread->coentry = coentry;
         }
-        sigaltstack(&old_stack, 0);
+        _sigaltstack(&old_stack, 0);
         sigaction(SIGUSR1, &old_handler, 0);
       }
     }
-#endif
+
     if(thread->coentry != coentry) {
       co_delete(thread);
       thread = 0;

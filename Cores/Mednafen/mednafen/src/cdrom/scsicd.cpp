@@ -22,6 +22,21 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/*
+ When changing CD read timing(throughput, and startup/seek delay), be sure to test:
+
+	4 in 1 Super CD (check for stuck note when starting "Gate of Thunder")
+	Downtown Nekketsu Monogatari (with text speed set to fast, quickly enter and exit store and listen to ADPCM playback for glitches)
+	Galaxy Fraulein Yuna HuVideo CD
+	It Came from the Desert
+	John Madden Duo Football
+	Kuusou Kagaku Sekai Gulliver Boy
+	Magical Fantasy Adventure: Popful Mail (third cutscene, check for glitches and hang)
+	Mirai Shonen Conan (check for hang after boat sinking cutscene)
+	Sherlock Holmes Consulting Detective
+
+*/
+
 #include <mednafen/mednafen.h>
 #include <mednafen/cdrom/CDInterface.h>
 #include <trio/trio.h>
@@ -1939,6 +1954,7 @@ static void DoREADBase(uint32 sa, uint32 sc)
   uint32 Offset = sa - toc.tracks[Track].lba; //Cur_CDIF->GetTrackStartPositionLBA(Track);
   SCSILog("SCSI", "Read: start=0x%08x(track=%d, offs=0x%08x), cnt=0x%08x", sa, Track, Offset, sc);
  }
+ //const uint32 PrevSectorAddr = SectorAddr;
 
  SectorAddr = sa;
  SectorCount = sc;
@@ -1947,6 +1963,8 @@ static void DoREADBase(uint32 sa, uint32 sc)
   Cur_CDIF->HintReadSector(sa);	//, sa + sc);
 
   CDReadTimer = (uint64)((WhichSystem == SCSICD_PCE) ? 8 : 1) * 2048 * System_Clock / CD_DATA_TRANSFER_RATE;
+  //printf("%d\n", SectorAddr - PrevSectorAddr);
+  //TODO?: CDReadTimer = (double)((WhichSystem == SCSICD_PCE) ? ((PrevSectorAddr == SectorAddr) ? 0.5 : 8) : 1) * 2048 * System_Clock / CD_DATA_TRANSFER_RATE;
  }
  else
  {

@@ -118,8 +118,9 @@ struct DGD_Source
 };
 #endif
 
-typedef struct
+struct DebuggerInfoStruct
 {
+ bool SuppressDoc;		// Suppress auto-generated documentation for this system's debugger.
  const char *DefaultCharEnc;	// Default(or most common) internal character encoding for text for the system.
 
  uint32 MaxInstructionSize;	// Maximum instruction size in bytes
@@ -180,7 +181,7 @@ typedef struct
  // Game emulation code shouldn't touch these directly.
  std::vector<AddressSpaceType> *AddressSpaces;
  std::vector<const RegGroupType*> *RegGroups;
-} DebuggerInfoStruct;
+};
 
 // ASpace_Add() functions return an ID that should be used with with MDFNDBG_ASpace_Read()
 // and ASpace_Write() functions.  The ID is guaranteed to be 0 for the first address space,

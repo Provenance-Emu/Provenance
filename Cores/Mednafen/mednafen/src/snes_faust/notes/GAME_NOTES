@@ -29,6 +29,11 @@ Super Metroid		- HTIME != 0
 Hook
 Tecmo Super Bowl II
 
+//
+// Attempts to write(non-HDMA) to VRAM during active display:
+//
+NBA Pro Basketball: Bulls vs Blazers
+Zen-Nihon Pro Wres
 
 //
 // Interlace:
