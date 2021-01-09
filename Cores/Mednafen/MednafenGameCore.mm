@@ -454,7 +454,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemLynx;
         
         mednafenCoreModule = @"lynx";
-        mednafenCoreAspect = OEIntSizeMake(80, 51);
+        //mednafenCoreAspect = OEIntSizeMake(80, 51);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -463,7 +463,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemNES;
 
 		mednafenCoreModule = @"nes";
-		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -476,7 +476,7 @@ static void emulation_run(BOOL skipFrame) {
 #else
 		mednafenCoreModule = @"snes";
 #endif
-		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -485,7 +485,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemGB;
 
 		mednafenCoreModule = @"gb";
-		mednafenCoreAspect = OEIntSizeMake(10, 9);
+		//mednafenCoreAspect = OEIntSizeMake(10, 9);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -494,7 +494,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemGBA;
 
 		mednafenCoreModule = @"gba";
-		mednafenCoreAspect = OEIntSizeMake(3, 2);
+		//mednafenCoreAspect = OEIntSizeMake(3, 2);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 44100;
 	}
@@ -503,7 +503,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemMD;
 
 		mednafenCoreModule = @"md";
-		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -512,8 +512,8 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemSMS;
 
 		mednafenCoreModule = @"sms";
-		mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 192);
-//		mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		//mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 192);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
@@ -521,7 +521,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemNeoGeo;
         
         mednafenCoreModule = @"ngp";
-        mednafenCoreAspect = OEIntSizeMake(20, 19);
+        //mednafenCoreAspect = OEIntSizeMake(20, 19);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
     }
@@ -534,7 +534,7 @@ static void emulation_run(BOOL skipFrame) {
 #else
 		mednafenCoreModule = @"pce";
 #endif
-        mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
+        //mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -543,7 +543,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemPCFX;
         
         mednafenCoreModule = @"pcfx";
-        mednafenCoreAspect = OEIntSizeMake(4, 3);
+        //mednafenCoreAspect = OEIntSizeMake(4, 3);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -553,7 +553,7 @@ static void emulation_run(BOOL skipFrame) {
         
         mednafenCoreModule = @"psx";
         // Note: OpenEmu sets this to 4:3, but it's demonstrably wrong. Tested and looked into it myself… the other emulators got this wrong, 3:2 was close, but it's actually 10:7 - Sev
-        mednafenCoreAspect = OEIntSizeMake(10, 7);
+        //mednafenCoreAspect = OEIntSizeMake(10, 7);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
     }
@@ -562,7 +562,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemVirtualBoy;
         
         mednafenCoreModule = @"vb";
-        mednafenCoreAspect = OEIntSizeMake(12, 7);
+        //mednafenCoreAspect = OEIntSizeMake(12, 7);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -571,7 +571,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemWonderSwan;
         
         mednafenCoreModule = @"wswan";
-        mednafenCoreAspect = OEIntSizeMake(14, 9);
+        //mednafenCoreAspect = OEIntSizeMake(14, 9);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -589,7 +589,7 @@ static void emulation_run(BOOL skipFrame) {
 
 	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
 	// is this correct for EU, JP, US? Still testing.
-//	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 
     if(!game) {
         if (error) {
