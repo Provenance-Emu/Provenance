@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* spu_reverb.inc:
-**  Copyright (C) 2011-2016 Mednafen Team
+**  Copyright (C) 2011-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -31,6 +31,13 @@ static INLINE int16 ReverbSat(int32 samp)
  return(samp);
 }
 
+static INLINE int16 ReverbNeg(int16 samp)
+{
+ if(samp == -32768)
+  return 0x7FFF;
+
+ return -samp;
+}
 
 INLINE uint32 PS_SPU::Get_Reverb_Offset(uint32 in_offset)
 {
@@ -54,7 +61,8 @@ int16 NO_INLINE PS_SPU::RD_RVB(uint16 raw_offs, int32 extra_offs)
 
 void NO_INLINE PS_SPU::WR_RVB(uint16 raw_offs, int16 sample)
 {
- WriteSPURAM(Get_Reverb_Offset(raw_offs << 2), sample);
+ if(SPUControl & 0x80)
+  WriteSPURAM(Get_Reverb_Offset(raw_offs << 2), sample);
 }
 
 //
@@ -140,77 +148,70 @@ INLINE void PS_SPU::RunReverb(const int32* in, int32* out)
   int32 downsampled[2];
 
   for(unsigned lr = 0; lr < 2; lr++)
-   downsampled[lr] = Reverb4422(&RDSB[lr][(RvbResPos - 39) & 0x3F]);
+   downsampled[lr] = Reverb4422(&RDSB[lr][(RvbResPos - 38) & 0x3F]);
 
   //
   // Run algorithm
-  ///
-  if(SPUControl & 0x80)
-  {
-   int16 IIR_INPUT_A0, IIR_INPUT_A1, IIR_INPUT_B0, IIR_INPUT_B1;
-   int16 IIR_A0, IIR_A1, IIR_B0, IIR_B1;
-   int16 ACC0, ACC1;
-   int16 FB_A0, FB_A1, FB_B0, FB_B1;
-
-   IIR_INPUT_A0 = ReverbSat(((RD_RVB(IIR_SRC_A0) * IIR_COEF) >> 15) + ((downsampled[0] * IN_COEF_L) >> 15));
-   IIR_INPUT_A1 = ReverbSat(((RD_RVB(IIR_SRC_A1) * IIR_COEF) >> 15) + ((downsampled[1] * IN_COEF_R) >> 15));
-   IIR_INPUT_B0 = ReverbSat(((RD_RVB(IIR_SRC_B0) * IIR_COEF) >> 15) + ((downsampled[0] * IN_COEF_L) >> 15));
-   IIR_INPUT_B1 = ReverbSat(((RD_RVB(IIR_SRC_B1) * IIR_COEF) >> 15) + ((downsampled[1] * IN_COEF_R) >> 15));
-
-   IIR_A0 = ReverbSat((((IIR_INPUT_A0 * IIR_ALPHA) >> 14) + (IIASM(IIR_ALPHA, RD_RVB(IIR_DEST_A0, -1)) >> 14)) >> 1);
-   IIR_A1 = ReverbSat((((IIR_INPUT_A1 * IIR_ALPHA) >> 14) + (IIASM(IIR_ALPHA, RD_RVB(IIR_DEST_A1, -1)) >> 14)) >> 1);
-   IIR_B0 = ReverbSat((((IIR_INPUT_B0 * IIR_ALPHA) >> 14) + (IIASM(IIR_ALPHA, RD_RVB(IIR_DEST_B0, -1)) >> 14)) >> 1);
-   IIR_B1 = ReverbSat((((IIR_INPUT_B1 * IIR_ALPHA) >> 14) + (IIASM(IIR_ALPHA, RD_RVB(IIR_DEST_B1, -1)) >> 14)) >> 1);
-
-   WR_RVB(IIR_DEST_A0, IIR_A0);
-   WR_RVB(IIR_DEST_A1, IIR_A1);
-   WR_RVB(IIR_DEST_B0, IIR_B0);
-   WR_RVB(IIR_DEST_B1, IIR_B1);
-
-   ACC0 = ReverbSat((((RD_RVB(ACC_SRC_A0) * ACC_COEF_A) >> 14) +
-	   	     ((RD_RVB(ACC_SRC_B0) * ACC_COEF_B) >> 14) +
-	   	     ((RD_RVB(ACC_SRC_C0) * ACC_COEF_C) >> 14) +
-	   	     ((RD_RVB(ACC_SRC_D0) * ACC_COEF_D) >> 14)) >> 1);
-
-   ACC1 = ReverbSat((((RD_RVB(ACC_SRC_A1) * ACC_COEF_A) >> 14) +
-	   	     ((RD_RVB(ACC_SRC_B1) * ACC_COEF_B) >> 14) +
-	   	     ((RD_RVB(ACC_SRC_C1) * ACC_COEF_C) >> 14) +
-	   	     ((RD_RVB(ACC_SRC_D1) * ACC_COEF_D) >> 14)) >> 1);
-
-   FB_A0 = RD_RVB(MIX_DEST_A0 - FB_SRC_A);
-   FB_A1 = RD_RVB(MIX_DEST_A1 - FB_SRC_A);
-   FB_B0 = RD_RVB(MIX_DEST_B0 - FB_SRC_B);
-   FB_B1 = RD_RVB(MIX_DEST_B1 - FB_SRC_B);
-
-   WR_RVB(MIX_DEST_A0, ReverbSat(ACC0 - ((FB_A0 * FB_ALPHA) >> 15)));
-   WR_RVB(MIX_DEST_A1, ReverbSat(ACC1 - ((FB_A1 * FB_ALPHA) >> 15)));
-
-   WR_RVB(MIX_DEST_B0, ReverbSat(((FB_ALPHA * ACC0) >> 15) - ((FB_A0 * (int16)(0x8000 ^ FB_ALPHA)) >> 15) - ((FB_B0 * FB_X) >> 15)));
-   WR_RVB(MIX_DEST_B1, ReverbSat(((FB_ALPHA * ACC1) >> 15) - ((FB_A1 * (int16)(0x8000 ^ FB_ALPHA)) >> 15) - ((FB_B1 * FB_X) >> 15)));
-  }
-
-  // 
-  // Get output samples
   //
-  RUSB[0][(RvbResPos >> 1) | 0x20] = RUSB[0][RvbResPos >> 1] = (RD_RVB(MIX_DEST_A0) + RD_RVB(MIX_DEST_B0)) >> 1;
-  RUSB[1][(RvbResPos >> 1) | 0x20] = RUSB[1][RvbResPos >> 1] = (RD_RVB(MIX_DEST_A1) + RD_RVB(MIX_DEST_B1)) >> 1;
+  for(unsigned lr = 0; lr < 2; lr++)
+  {
+   const int16 IIR_INPUT_A = ReverbSat((((RD_RVB(IIR_SRC_A[lr ^ 0]) * IIR_COEF) >> 14) + ((downsampled[lr] * IN_COEF[lr]) >> 14)) >> 1);
+   const int16 IIR_INPUT_B = ReverbSat((((RD_RVB(IIR_SRC_B[lr ^ 1]) * IIR_COEF) >> 14) + ((downsampled[lr] * IN_COEF[lr]) >> 14)) >> 1);
+   const int16 IIR_A = ReverbSat((((IIR_INPUT_A * IIR_ALPHA) >> 14) + (IIASM(IIR_ALPHA, RD_RVB(IIR_DEST_A[lr], -1)) >> 14)) >> 1);
+   const int16 IIR_B = ReverbSat((((IIR_INPUT_B * IIR_ALPHA) >> 14) + (IIASM(IIR_ALPHA, RD_RVB(IIR_DEST_B[lr], -1)) >> 14)) >> 1);
 
+   WR_RVB(IIR_DEST_A[lr], IIR_A);
+   WR_RVB(IIR_DEST_B[lr], IIR_B);
+
+   const int32 ACC = ((RD_RVB(ACC_SRC_A[lr]) * ACC_COEF_A) >> 14) +
+		     ((RD_RVB(ACC_SRC_B[lr]) * ACC_COEF_B) >> 14) +
+		     ((RD_RVB(ACC_SRC_C[lr]) * ACC_COEF_C) >> 14) +
+		     ((RD_RVB(ACC_SRC_D[lr]) * ACC_COEF_D) >> 14);
+
+   const int16 FB_A = RD_RVB(MIX_DEST_A[lr] - FB_SRC_A);
+   const int16 FB_B = RD_RVB(MIX_DEST_B[lr] - FB_SRC_B);
+   const int16 MDA = ReverbSat((ACC + ((FB_A * ReverbNeg(FB_ALPHA)) >> 14)) >> 1);
+   const int16 MDB = ReverbSat(FB_A + ((((MDA * FB_ALPHA) >> 14) + ((FB_B * ReverbNeg(FB_X)) >> 14)) >> 1));
+   const int16 IVB = ReverbSat(FB_B + ((MDB * FB_X) >> 15));
+
+   WR_RVB(MIX_DEST_A[lr], MDA);
+   WR_RVB(MIX_DEST_B[lr], MDB);
+#if 0
+   {
+    static uint32 sqcounter;
+    RUSB[lr][(RvbResPos >> 1) | 0x20] = RUSB[lr][RvbResPos >> 1] = ((sqcounter & 0xFF) == 0) ? 0x8000 : 0x0000; //((sqcounter & 0x80) ? 0x7000 : 0x9000);
+    sqcounter += lr;
+   }
+#else
+   RUSB[lr][(RvbResPos >> 1) | 0x20] = RUSB[lr][RvbResPos >> 1] = IVB;	// Output sample
+#endif
+  }
+  //
+  //
+  //
   ReverbCur = (ReverbCur + 1) & 0x3FFFF;
   if(!ReverbCur)
    ReverbCur = ReverbWA;
 
   for(unsigned lr = 0; lr < 2; lr++)
-   upsampled[lr] = Reverb2244<true>(&RUSB[lr][((RvbResPos - 39) & 0x3F) >> 1]);
+   upsampled[lr] = Reverb2244<false>(&RUSB[lr][((RvbResPos >> 1) - 19) & 0x1F]);
  }
  else
  {
   for(unsigned lr = 0; lr < 2; lr++)
-   upsampled[lr] = Reverb2244<false>(&RUSB[lr][((RvbResPos - 39) & 0x3F) >> 1]);
+   upsampled[lr] = Reverb2244<true>(&RUSB[lr][((RvbResPos >> 1) - 19) & 0x1F]);
  }
 
  RvbResPos = (RvbResPos + 1) & 0x3F;
 
  for(unsigned lr = 0; lr < 2; lr++)
+ {
+#if 0
+  if(!lr)
+   printf("%d\n", (-upsampled[lr]) >> 1);
+#endif
+
   out[lr] = upsampled[lr];
+ }
 }
 

@@ -409,6 +409,7 @@ void MDDBG_Init(void)
 
 DebuggerInfoStruct DBGInfo =
 {
+ false,
  "shift_jis",
  10,		// Max instruction size(bytes)
  2,		// Instruction alignment(bytes)

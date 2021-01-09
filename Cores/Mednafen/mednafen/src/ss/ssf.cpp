@@ -52,11 +52,12 @@ static void Emulate(EmulateSpecStruct* espec)
  SOUND_StartFrame(espec->SoundRate / espec->soundmultiplier, MDFN_GetSettingUI("ssfplay.resamp_quality"));
  espec->soundmultiplier = 1;
 
- SOUND_Update(588 * 512);
- espec->MasterCycles = 588 * 256;
+ const int32 target_timestamp = 588 * 512;
+ SOUND_Update(target_timestamp);
+ espec->MasterCycles = target_timestamp >> 1;
  espec->SoundBufSize = SOUND_FlushOutput(espec->SoundBuf, espec->SoundBufMaxSize, espec->NeedSoundReverse);
  espec->NeedSoundReverse = false;
- SOUND_ResetTS();
+ SOUND_AdjustTS(-target_timestamp);
 
  if(!espec->skip)
  {
@@ -65,7 +66,7 @@ static void Emulate(EmulateSpecStruct* espec)
  }
 }
 
-static void Cleanup(void)
+static MDFN_COLD void Cleanup(void)
 {
  if(ssf_loader)
  {
@@ -77,7 +78,7 @@ static void Cleanup(void)
 }
 
 
-static bool TestMagic(GameFile* gf)
+static MDFN_COLD bool TestMagic(GameFile* gf)
 {
  if(SSFLoader::TestMagic(gf->stream))
   return true;
@@ -85,7 +86,7 @@ static bool TestMagic(GameFile* gf)
  return false;
 }
 
-static void Reset(void)
+static MDFN_COLD void Reset(void)
 {
  SOUND_Reset(true);
  //{
@@ -99,7 +100,7 @@ static void Reset(void)
  }
 }
 
-static void Load(GameFile* gf)
+static MDFN_COLD void Load(GameFile* gf)
 {
  try
  {
@@ -124,12 +125,12 @@ static void Load(GameFile* gf)
  }
 }
 
-static void CloseGame(void)
+static MDFN_COLD void CloseGame(void)
 {
  Cleanup();
 }
 
-static void DoSimpleCommand(int cmd)
+static MDFN_COLD void DoSimpleCommand(int cmd)
 {
  switch(cmd)
  {

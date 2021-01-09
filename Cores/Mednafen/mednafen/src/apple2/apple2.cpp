@@ -1450,7 +1450,7 @@ static void Load(GameFile* gf)
     {
      const std::string& giotype = gio_cfg[1];
 
-     if(gio_cfg.size() != (2 + (giotype == "gamepad" || giotype == "joystick")))
+     if(gio_cfg.size() != (unsigned)(2 + (giotype == "gamepad" || giotype == "joystick")))
       throw MDFN_Error(0, _("Too many arguments for \"%s\" setting in MAI file."), "gameio");
      else
      {
