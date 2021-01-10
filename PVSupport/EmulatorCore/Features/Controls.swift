@@ -680,8 +680,8 @@ import Foundation
 }
 
 @objc public protocol PVSaturnSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc(didPushSaturnButton:forPlayer:)
+    @objc(didPushSSButton:forPlayer:)
     func didPush(_ button: PVSaturnButton, forPlayer player: Int)
-    @objc(didReleaseSaturnButton:forPlayer:)
+    @objc(didReleaseSSButton:forPlayer:)
     func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
 }

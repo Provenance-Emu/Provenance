@@ -354,23 +354,6 @@ static void mednafen_init(MednafenGameCore* current)
         PCEMap[PVPCEButtonSelect]   = 2;
         PCEMap[PVPCEButtonRun]      = 3;
         PCEMap[PVPCEButtonMode]     = 12;
-        
-        // SS / Saturn Map
-//        SSMAP[PVSaturnButtonUp]       = 4;
-//        PCEMap[PVPCEButtonRight]    = 5;
-//        PCEMap[PVPCEButtonDown]     = 6;
-//        PCEMap[PVPCEButtonLeft]     = 7;
-//
-//        PCEMap[PVPCEButtonButton1]  = 0;
-//        PCEMap[PVPCEButtonButton2]  = 1;
-//        PCEMap[PVPCEButtonButton3]  = 8;
-//        PCEMap[PVPCEButtonButton4]  = 9;
-//        PCEMap[PVPCEButtonButton5]  = 10;
-//        PCEMap[PVPCEButtonButton6]  = 11;
-//
-//        PCEMap[PVPCEButtonSelect]   = 2;
-//        PCEMap[PVPCEButtonRun]      = 3;
-//        PCEMap[PVPCEButtonMode]     = 12;
 
 		// PCFX Map
         PCFXMap[PVPCFXButtonUp]         = 8;
@@ -785,8 +768,6 @@ static void emulation_run(BOOL skipFrame) {
 		case MednaSystemNES:
 		case MednaSystemSNES:
         case MednaSystemSS:
-            maxPlayers = 2;
-            break;
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
@@ -1159,6 +1140,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 #pragma mark - Input -
 
+//Controller Stacks start here:
+
 #pragma mark Atari Lynx
 - (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
     inputBuffer[player][0] |= 1 << LynxMap[button];
@@ -1298,16 +1281,6 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	inputBuffer[player][0] &= ~(1 << GenesisMap[button]);
 }
 
-#pragma mark SS Sega Saturn
-- (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
-    int mappedButton = SSMap[button];
-    inputBuffer[player][0] |= 1 << mappedButton;
-}
-
--(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
-    inputBuffer[player][0] &= ~(1 << SSMap[button]);
-}
-
 #pragma mark Neo Geo
 - (void)didPushNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player
 {
@@ -1368,6 +1341,25 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 	if (button != PVPCFXButtonMode) {
     	inputBuffer[player][0] &= ~(1 << PCFXMap[button]);
 	}
+}
+
+#pragma mark SS Sega Saturn
+- (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player
+{
+//    int mappedButton = SSMap[button];
+//    inputBuffer[player][0] |= 1 << mappedButton;
+    if (button == PVSaturnButtonStart) {
+        self.isStartPressed = true;
+    }
+    inputBuffer[player][0] |= 1 << SSMap[button];
+}
+
+-(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
+//    inputBuffer[player][0] &= ~(1 << SSMap[button]);
+    if (button == PVSaturnButtonStart) {
+        self.isStartPressed = false;
+    }
+    inputBuffer[player][0] &= ~(1 << SSMap[button]);
 }
 
 #pragma mark PSX
@@ -1474,6 +1466,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 			// TODO: Unused since Mednafen sega support is 'low priority'
 			return 0;
 			break;
+        case MednaSystemSS:
+            return [self SSValueForButtonID:buttonID forController:controller];
+            break;
 		case MednaSystemGB:
 			return [self GBValueForButtonID:buttonID forController:controller];
 			break;
@@ -1514,6 +1509,101 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             break;
     }
 
+    return 0;
+}
+
+- (NSInteger)SSValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad]) {
+        GCExtendedGamepad *gamepad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        switch (buttonID) {
+            case PVSaturnButtonUp:
+                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+            case PVSaturnButtonDown:
+                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+            case PVSaturnButtonLeft:
+                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+            case PVSaturnButtonRight:
+                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+            case PVSaturnButtonA:
+                return [[gamepad buttonA] isPressed];
+            case PVSaturnButtonB:
+                return [[gamepad buttonB] isPressed];
+            case PVSaturnButtonC:
+                return [[gamepad leftShoulder] isPressed];
+            case PVSaturnButtonX:
+                return [[gamepad buttonX] isPressed];
+            case PVSaturnButtonY:
+                return [[gamepad buttonY] isPressed];
+            case PVSaturnButtonZ:
+                return [[gamepad rightShoulder] isPressed];
+            case PVSaturnButtonL:
+                return [[gamepad leftTrigger] isPressed];
+//            case PVSaturnButtonR:
+//                return [[gamepad rightTrigger] isPressed];
+// Use Right Trigger for Start, for now until we can fix the "P1 Start" Game menu option.
+            case PVSaturnButtonStart:
+                return [[gamepad rightTrigger] isPressed];
+            default:
+                break;
+        }
+    } else if ([controller gamepad]) {
+        GCGamepad *gamepad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        switch (buttonID) {
+            case PVSaturnButtonUp:
+                return [[dpad up] isPressed];
+            case PVSaturnButtonDown:
+                return [[dpad down] isPressed];
+            case PVSaturnButtonLeft:
+                return [[dpad left] isPressed];
+            case PVSaturnButtonRight:
+                return [[dpad right] isPressed];
+            case PVSaturnButtonA:
+                return [[gamepad buttonA] isPressed];
+            case PVSaturnButtonB:
+                return [[gamepad buttonB] isPressed];
+            case PVSaturnButtonC:
+                return [[gamepad leftShoulder] isPressed];
+            case PVSaturnButtonX:
+                return [[gamepad buttonX] isPressed];
+            case PVSaturnButtonY:
+                return [[gamepad buttonY] isPressed];
+            case PVSaturnButtonZ:
+                return [[gamepad rightShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *gamepad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        switch (buttonID) {
+            case PVSaturnButtonUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case PVSaturnButtonDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case PVSaturnButtonLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case PVSaturnButtonRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case PVSaturnButtonA:
+                return [[gamepad buttonA] isPressed];
+                break;
+            case PVSaturnButtonB:
+                return [[gamepad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
     return 0;
 }
 
