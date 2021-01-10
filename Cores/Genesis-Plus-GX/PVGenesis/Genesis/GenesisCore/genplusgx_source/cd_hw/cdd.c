@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  CD drive processor & CD-DA fader
  *
- *  Copyright (C) 2012-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2012-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -37,11 +37,19 @@
  ****************************************************************************************/
 #include "shared.h"
 
-#ifdef USE_LIBTREMOR
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
 #define SUPPORTED_EXT 20
 #else
 #define SUPPORTED_EXT 10
 #endif
+
+/* CD blocks scanning speed */
+#define CD_SCAN_SPEED 30
+
+/* CD tracks type (CD-DA by default) */
+#define TYPE_AUDIO 0x00
+#define TYPE_MODE1 0x01
+#define TYPE_MODE2 0x02
 
 /* BCD conversion lookup tables */
 static const uint8 lut_BCD_8[100] =
@@ -116,17 +124,11 @@ static const uint32 toc_ffightj[29] =
   14553, 9834, 10542, 1699, 1792, 1781, 3783, 3052
 };
 
-/* supported WAVE file header (16-bit stereo samples @44.1kHz) */
-static const unsigned char waveHeader[32] =
-{
-  0x57,0x41,0x56,0x45,0x66,0x6d,0x74,0x20,0x10,0x00,0x00,0x00,0x01,0x00,0x02,0x00,
-  0x44,0xac,0x00,0x00,0x10,0xb1,0x02,0x00,0x04,0x00,0x10,0x00,0x64,0x61,0x74,0x61
-};
 
-/* supported WAVE file extensions */
+/* supported audio file extensions */
 static const char extensions[SUPPORTED_EXT][16] =
 {
-#ifdef USE_LIBTREMOR
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
   "%02d.ogg",
   " %02d.ogg",
   "-%02d.ogg",
@@ -150,37 +152,62 @@ static const char extensions[SUPPORTED_EXT][16] =
   " - %d.wav"
 };
 
-static blip_t* blip[2];
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
 
-void cdd_init(blip_t* left, blip_t* right)
+static int seek64_wrap(void *f,ogg_int64_t off,int whence){
+  return fseek(f,off,whence);
+}
+
+static ov_callbacks cb =
+{ 
+  (size_t (*)(void *, size_t, size_t, void *))  fread,
+  (int (*)(void *, ogg_int64_t, int))           seek64_wrap,
+  (int (*)(void *))                             fclose,
+  (long (*)(void *))                            ftell
+};
+
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+static void ogg_free(int i)
+{
+  /* clear OGG file descriptor to prevent file from being closed */
+  cdd.toc.tracks[i].vf.datasource = NULL;
+
+  /* close VORBIS file structure */
+  ov_clear(&cdd.toc.tracks[i].vf);
+
+  /* indicates that the track is a seekable VORBIS file */
+  cdd.toc.tracks[i].vf.seekable = 1;
+
+  /* reset file reading position */
+  fseek(cdd.toc.tracks[i].fd, 0, SEEK_SET);
+}
+#endif
+
+#endif
+
+void cdd_init(int samplerate)
 {
   /* CD-DA is running by default at 44100 Hz */
   /* Audio stream is resampled to desired rate using Blip Buffer */
-  blip[0] = left;
-  blip[1] = right;
-  blip_set_rates(left, 44100, snd.sample_rate);
-  blip_set_rates(right, 44100, snd.sample_rate);
+  blip_set_rates(snd.blips[2], 44100, samplerate);
 }
 
 void cdd_reset(void)
 {
-  /* reset cycle counter */
-  cdd.cycles = 0;
-  
   /* reset drive access latency */
   cdd.latency = 0;
-  
+
   /* reset track index */
   cdd.index = 0;
-  
+
   /* reset logical block address */
   cdd.lba = 0;
 
   /* reset status */
-  cdd.status = cdd.loaded ? CD_STOP : NO_DISC;
+  cdd.status = cdd.loaded ? CD_TOC : NO_DISC;
   
   /* reset CD-DA fader (full volume) */
-  cdd.volume = 0x400;
+  cdd.fader[0] = cdd.fader[1] = 0x400;
 
   /* clear CD-DA output */
   cdd.audio[0] = cdd.audio[1] = 0;
@@ -195,7 +222,7 @@ int cdd_context_save(uint8 *state)
   save_param(&cdd.index, sizeof(cdd.index));
   save_param(&cdd.lba, sizeof(cdd.lba));
   save_param(&cdd.scanOffset, sizeof(cdd.scanOffset));
-  save_param(&cdd.volume, sizeof(cdd.volume));
+  save_param(&cdd.fader, sizeof(cdd.fader));
   save_param(&cdd.status, sizeof(cdd.status));
 
   return bufferptr;
@@ -206,12 +233,22 @@ int cdd_context_load(uint8 *state)
   int lba;
   int bufferptr = 0;
 
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+  /* close previous track VORBIS file structure to save memory */
+  if (cdd.toc.tracks[cdd.index].vf.datasource)
+  {
+    ogg_free(cdd.index);
+  }
+#endif
+#endif
+
   load_param(&cdd.cycles, sizeof(cdd.cycles));
   load_param(&cdd.latency, sizeof(cdd.latency));
   load_param(&cdd.index, sizeof(cdd.index));
   load_param(&cdd.lba, sizeof(cdd.lba));
   load_param(&cdd.scanOffset, sizeof(cdd.scanOffset));
-  load_param(&cdd.volume, sizeof(cdd.volume));
+  load_param(&cdd.fader, sizeof(cdd.fader));
   load_param(&cdd.status, sizeof(cdd.status));
 
   /* adjust current LBA within track limit */
@@ -221,24 +258,41 @@ int cdd_context_load(uint8 *state)
     lba = cdd.toc.tracks[cdd.index].start;
   }
 
+  /* seek to current subcode position */
+  if (cdd.toc.sub)
+  {
+    /* 96 bytes per sector */
+    fseek(cdd.toc.sub, lba * 96, SEEK_SET);
+  }
+
   /* seek to current track position */
-  if (!cdd.index)
+#if defined(USE_LIBCHDR)
+  if (cdd.chd.file)
+  {
+    /* CHD file offset */
+    cdd.chd.hunkofs = cdd.toc.tracks[cdd.index].offset + (lba * CD_FRAME_SIZE);
+  }
+  else
+#endif
+  if (cdd.toc.tracks[cdd.index].type)
   {
     /* DATA track */
-    if (cdd.toc.tracks[0].fd)
-    {
-      fseek(cdd.toc.tracks[0].fd, lba * cdd.sectorSize, SEEK_SET);
-    }
+    fseek(cdd.toc.tracks[cdd.index].fd, lba * cdd.sectorSize, SEEK_SET);
   }
-#ifdef USE_LIBTREMOR
-  else if (cdd.toc.tracks[cdd.index].vf.datasource)
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+  else if (cdd.toc.tracks[cdd.index].vf.seekable)
   {
-    ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (lba - cdd.toc.tracks[cdd.index].start) * 588 - cdd.toc.tracks[cdd.index].offset);
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+    /* VORBIS file need to be opened first */
+    ov_open_callbacks(cdd.toc.tracks[cdd.index].fd,&cdd.toc.tracks[cdd.index].vf,0,0,cb);
+#endif
+    /* VORBIS AUDIO track */
+    ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (lba * 588) - cdd.toc.tracks[cdd.index].offset);
   }
-#endif 
+#endif
   else if (cdd.toc.tracks[cdd.index].fd)
   {
-    /* AUDIO track */
+    /* PCM AUDIO track */
     fseek(cdd.toc.tracks[cdd.index].fd, (lba * 2352) - cdd.toc.tracks[cdd.index].offset, SEEK_SET);
   }
 
@@ -247,153 +301,278 @@ int cdd_context_load(uint8 *state)
 
 int cdd_load(char *filename, char *header)
 {
-  char fname[256];
+  char fname[256+10];
   char line[128];
-  char *ptr = 0;
-  char *lptr = 0;
-  FILE *fd;
+  char *ptr, *lptr;
+    FILE *fd;
+  
+  /* assume CD image file by default */
+  int isCDfile = 1;
 
   /* first unmount any loaded disc */
   cdd_unload();
 
   /* open file */
   fd = fopen(filename, "rb");
+  if (!fd)
+    return (-1);
+
+#if defined(USE_LIBCHDR)
+  if (!memcmp("chd", &filename[strlen(filename) - 3], 3) || !memcmp("CHD", &filename[strlen(filename) - 3], 3))
+  {
+    int sectors = 0;
+    char metadata[256];
+    const chd_header *head;
+
+    /* open CHD file */
+    if (chd_open_file(fd, CHD_OPEN_READ, NULL, &cdd.chd.file) != CHDERR_NONE)
+    {
+      chd_close(cdd.chd.file);
+      fclose(fd);
+      return -1;
+    }
+
+    /* retrieve CHD header */
+    head = chd_get_header(cdd.chd.file);
+ 
+    /* detect invalid hunk size */
+    if ((head->hunkbytes == 0) || (head->hunkbytes % CD_FRAME_SIZE))
+    {
+      chd_close(cdd.chd.file);
+      fclose(fd);
+      return -1;
+    }
+
+    /* allocate hunk buffer */
+    cdd.chd.hunk = (uint8 *)malloc(head->hunkbytes);
+    if (!cdd.chd.hunk)
+    {
+      chd_close(cdd.chd.file);
+      fclose(fd);
+      return -1;
+    }
+
+    /* initialize hunk size (usually fixed to 8 sectors) */
+    cdd.chd.hunkbytes = head->hunkbytes;
+
+    /* initialize buffered hunk index */
+    cdd.chd.hunknum = -1;
+
+    /* retrieve tracks informations */
+    for (cdd.toc.last = 0; cdd.toc.last < 99; cdd.toc.last++)
+    {
+      int tracknum = 0, frames = 0, pregap = 0, postgap = 0;
+      char type[16], subtype[16], pgtype[16], pgsub[16];
+      type[0] = subtype[0] = pgtype[0] = pgsub[0] = 0;
+
+      /* attempt fetch either complete or partial metadata for current track */
+      if (chd_get_metadata(cdd.chd.file, CDROM_TRACK_METADATA2_TAG, cdd.toc.last, metadata, 256, 0, 0, 0) == CHDERR_NONE)
+      {
+        if (sscanf(metadata, CDROM_TRACK_METADATA2_FORMAT, &tracknum, &type[0], &subtype[0], &frames, &pregap, &pgtype[0], &pgsub[0], &postgap) != 8)
+          break;
+      }
+      else if (chd_get_metadata(cdd.chd.file, CDROM_TRACK_METADATA_TAG, cdd.toc.last, metadata, 256, 0, 0, 0) == CHDERR_NONE)
+      {
+        if (sscanf(metadata, CDROM_TRACK_METADATA_FORMAT, &tracknum, &type[0], &subtype[0], &frames) != 4)
+          break;
+      }
+
+      /* no more track */
+      else break;
+
+      /* detect out of order track number or invalid parameter */
+      if ((tracknum != (cdd.toc.last + 1)) || (frames < 0) || (pregap < 0) || (postgap < 0))
+        break;
+
+      /* detect track type  */
+      if (cdd.toc.last)
+      {
+        /* CD-ROM track supported only for first track */
+        if (strcmp(type, "AUDIO"))
+          break;
+
+        /* Audio track start LBA (adjusted with pregap length) */
+        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end + pregap;
+      }
+      else
+      {
+        if (!strcmp(type, "MODE1_RAW"))
+        {
+          /* Mode 1 RAW format (2352 bytes data blocks) */
+          cdd.sectorSize = 2352;
+          cdd.toc.tracks[0].type = TYPE_MODE1;
+        }
+        else if (!strcmp(type, "MODE1"))
+        {
+          /* Mode 1 COOKED format (2048 bytes data blocks) */
+          cdd.sectorSize = 2048;
+          cdd.toc.tracks[0].type = TYPE_MODE1;
+        }
+        else if (!strcmp(type, "MODE2_RAW"))
+        {
+          /* Mode 2 RAW format (2352 bytes data blocks) */
+          cdd.sectorSize = 2352;
+          cdd.toc.tracks[0].type = TYPE_MODE2;
+        }
+        else if (strcmp(type, "AUDIO"))
+        {
+          /* unsupported track format */
+          break;
+        }
+
+        /* First track start LBA (2s pause assumed by default) */
+        cdd.toc.tracks[0].start = 0;
+      }
+
+      /* detect pregap type */
+      if (pgtype[0] != 'V')
+      {
+        /* clear pause length for further calculations (not included in CHD file) */
+        pregap = 0;
+      }
+
+      /* track end LBA (remove included pause from CHD track length) */
+      cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + frames - pregap;
+   
+      /* CHD file offset for current track */
+      cdd.toc.tracks[cdd.toc.last].offset = (sectors + pregap - cdd.toc.tracks[cdd.toc.last].start) * CD_FRAME_SIZE;
+
+      /* update TOC end with postgap length */
+      cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end + postgap;
+
+      /* update CHD file sector count (adjusted with end of the track padding) */
+      sectors += (((frames + CD_TRACK_PADDING - 1) / CD_TRACK_PADDING) * CD_TRACK_PADDING);
+
+      /* indicate valid track file */
+      cdd.toc.tracks[cdd.toc.last].fd = fd;
+    }
+
+    /* valid CD-ROM image file ? */
+    if (cdd.sectorSize)
+    {
+      /* read first chunk of data */
+      cdd.chd.hunknum = cdd.toc.tracks[0].offset / cdd.chd.hunkbytes;
+      chd_read(cdd.chd.file, cdd.chd.hunknum, cdd.chd.hunk);
+
+      /* copy CD image header + security code (skip RAW sector 16-byte header) */
+      memcpy(header, cdd.chd.hunk + (cdd.toc.tracks[0].offset % cdd.chd.hunkbytes) + ((cdd.sectorSize == 2048) ? 0 : 16), 0x210);
+    }
+
+    /* valid CD image ? */
+    if (cdd.toc.last && (cdd.toc.end < (100*60*75)))
+    {
+      /* Lead-out */
+      cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+
+      /* CD mounted */
+      cdd.loaded = 1;
+      return 1;
+    }
+
+    /* invalid CHD file */
+    chd_close(cdd.chd.file);
+    fclose(fd);
+    return -1;
+  }
+#endif
 
   /* save a copy of base filename */
   strncpy(fname, filename, 256);
 
-  /* autodetect .cue file */
-  if (!memcmp(".cue", &filename[strlen(filename) - 4], 4) || !memcmp(".CUE", &filename[strlen(filename) - 4], 4))
+  /* check loaded file extension */
+  if (memcmp("cue", &filename[strlen(filename) - 3], 3) && memcmp("CUE", &filename[strlen(filename) - 3], 3))
   {
-    if (fd)
+    int len;
+
+    static const uint8 sync[12] = {0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
+
+    /* read first 16 bytes */
+    fread(header, 0x10, 1, fd);
+
+    /* auto-detect valid Sega CD image */
+    if (!memcmp("SEGADISCSYSTEM", header, 14))
     {
-      /* find first FILE command */
-      while (!lptr)
-      {
-        if (fgets(line, 128, fd) == NULL)
-        {
-          break;
-        }
-        lptr = strstr(line, "FILE");
-      }
+      /* COOKED CD-ROM image (2048 bytes data blocks) */
+      cdd.sectorSize = 2048;
 
-      /* get BINARY file name  */
-      if (lptr && strstr(line, " BINARY"))
-      {
-        /* skip "FILE" attribute */
-        lptr += 4;
-
-        /* skip DOUBLE QUOTE or SPACE characters */
-        while ((*lptr == 0x20) || (*lptr == '\"')) lptr++;
-
-        /* set pointer at the end of filepath */
-        ptr = fname + strlen(fname) - 1;
-        while ((ptr - fname) && (*ptr != '/') && (*ptr != '\\')) ptr--;
-        if (ptr - fname) ptr++;
-
-        /* append filename characters after filepath */
-        while ((*lptr != '\"') && memcmp(lptr, " BINARY", 7) && (ptr < (fname + 255)))
-        {
-          *ptr++ = *lptr++;
-        }
-        *ptr = 0;
-
-        /* open file & initialize DATA track file descriptor */
-        cdd.toc.tracks[0].fd = fopen(fname, "rb");
-      }
-      else
-      {
-        /* close .cue file */
-        fclose(fd);
-
-        /* invalid .cue file */
-        return -1;
-      }
+      /* CD-ROM Mode 1 by default */
+      cdd.toc.tracks[0].type = TYPE_MODE1;
     }
-  }
-  else
-  {
-    /* initialize DATA track file descriptor */
-    cdd.toc.tracks[0].fd = fd;
 
-    /* automatically try to open associated .cue file  */
-    strncpy(&fname[strlen(fname) - 4], ".cue", 4);
+    /* auto-detect CD-ROM synchro pattern */
+    else if (!memcmp(sync, header, 12))
+    {
+      /* RAW CD-ROM image (2352 bytes data blocks) */
+      cdd.sectorSize = 2352;
+
+      /* auto-detect CD-ROM mode from block header (byte 15) */
+      cdd.toc.tracks[0].type = header[15];
+
+      /* read next 16 bytes (start of user data) */
+      fread(header, 0x10, 1, fd);
+    }
+
+    /* supported CD-ROM image file ? */
+    if ((cdd.toc.tracks[0].type == TYPE_MODE1) || (cdd.toc.tracks[0].type == TYPE_MODE2))
+    {
+      /* read Sega CD image header + security code */
+      fread(header + 0x10, 0x200, 1, fd);
+
+      /* initialize first track file descriptor */
+      cdd.toc.tracks[0].fd = fd;
+
+      /* DATA track end LBA (based on DATA file length) */
+      fseek(fd, 0, SEEK_END);
+      cdd.toc.tracks[0].end = ftell(fd) / cdd.sectorSize;
+
+      /* DATA track length should be at least 2s (BIOS requirement) */
+      if (cdd.toc.tracks[0].end < 150)
+      {
+        cdd.toc.tracks[0].end = 150;
+      }
+        
+      /* DATA track start LBA (logical block 0) */
+      fseek(fd, 0, SEEK_SET);
+      cdd.toc.tracks[0].start = 0;
+
+      /* initialize TOC */
+      cdd.toc.end = cdd.toc.tracks[0].end;
+      cdd.toc.last = 1;
+    }
+    else
+    {
+      /* this is not a supported CD-ROM image file */
+      isCDfile = 0;
+
+      /* close file */
+      fclose(fd);
+    }
+
+    /* automatically try to mount CD associated CUE file */
+    len = strlen(fname);
+    while ((len && (fname[len] != '.')) || (len > 251)) len--;
+    strcpy(&fname[len], ".cue");
     fd = fopen(fname, "rb");
   }
 
-  if (!cdd.toc.tracks[0].fd)
-  {
-    /* close any opened .cue file */
-    if (fd) fclose(fd);
-
-    /* error opening file */
-    return -1;
-  }
-
-  /* read first 16 bytes */
-  fread(header, 0x10, 1, cdd.toc.tracks[0].fd);
-
-  /* look for valid CD image ID string */
-  if (memcmp("SEGADISCSYSTEM", header, 14))
-  {    
-    /* if not found, read next 16 bytes */
-    fread(header, 0x10, 1, cdd.toc.tracks[0].fd);
-
-    /* look again for valid CD image ID string */
-    if (memcmp("SEGADISCSYSTEM", header, 14))
-    {
-      /* close any opened .cue file */
-      if (fd) fclose(fd);
-
-      /* close binary file */
-      fclose(cdd.toc.tracks[0].fd);
-      cdd.toc.tracks[0].fd = 0;
-
-      /* not a CD image file */
-      return 0;
-    }
-
-    /* BIN format (2352 bytes data blocks) */
-    cdd.sectorSize = 2352;
-  }
-  else
-  {
-    /* ISO format (2048 bytes data blocks) */
-    cdd.sectorSize = 2048;
-  }
-
-  /* read CD image header + security code */
-  fread(header + 0x10, 0x200, 1, cdd.toc.tracks[0].fd);
-
-  /* DATA track start time (based on DATA file length) */
-  fseek(cdd.toc.tracks[0].fd, 0, SEEK_END);
-  cdd.toc.tracks[0].end = ftell(cdd.toc.tracks[0].fd) / cdd.sectorSize;
-  
-  /* DATA track start time (logical block 0) */
-  fseek(cdd.toc.tracks[0].fd, 0, SEEK_SET);
-  cdd.toc.tracks[0].start = 0;
-
-  /* initialize TOC */
-  cdd.toc.end = cdd.toc.tracks[0].end;
-  cdd.toc.last = 1;
-
-  /* automatically retrieve audio tracks infos from .cue file */
+  /* parse CUE file */
   if (fd)
   {
-    int pregap = 0;
-    int mm, ss, bb;
-        
-    /* skip first (DATA) track */
-    while (!strstr(line, "INDEX 01") && !strstr(line, "INDEX 1"))
+    int mm, ss, bb, pregap = 0;
+
+    /* DATA track already loaded ? */
+    if (cdd.toc.last)
     {
-      if (fgets(line, 128, fd) == NULL)
+      /* skip first track */
+      while (fgets(line, 128, fd))
       {
-        break;
+        if (strstr(line, "INDEX 01") && !strstr(line, "INDEX 1"))
+          break;
       }
     }
 
-    /* read next lines until end of file */
-    while (fgets(line, 128, fd) != NULL)
+    /* read lines until end of file */
+    while (fgets(line, 128, fd))
     {
       /* skip any SPACE characters */
       lptr = line;
@@ -402,25 +581,34 @@ int cdd_load(char *filename, char *header)
       /* decode FILE commands */
       if (!(memcmp(lptr, "FILE", 4)))
       {
-        /* skip "FILE" attribute */
-        lptr += 4;
-
-        /* skip DOUBLE QUOTE or SPACE characters */
-        while ((*lptr == 0x20) || (*lptr == '\"')) lptr++;
-
-        /* set pointer at the end of filepath */
+        /* retrieve current path */
         ptr = fname + strlen(fname) - 1;
         while ((ptr - fname) && (*ptr != '/') && (*ptr != '\\')) ptr--;
         if (ptr - fname) ptr++;
 
-        /* append filename characters after filepath */
-        while ((*lptr != '\"') && (lptr <= (line + 128)) && (ptr < (fname + 255)))
+        /* skip "FILE" attribute */
+        lptr += 4;
+
+        /* skip SPACE characters */
+        while (*lptr == 0x20) lptr++;
+
+        /* retrieve full filename */
+        if (*lptr == '\"')
         {
-          *ptr++ = *lptr++;
+          /* skip first DOUBLE QUOTE character */
+          lptr++;
+          while ((*lptr != '\"') && (lptr <= (line + 128)) && (ptr < (fname + 255)))
+            *ptr++ = *lptr++;
+        }
+        else
+        {
+          /* no DOUBLE QUOTE used */
+          while ((*lptr != 0x20) && (lptr <= (line + 128)) && (ptr < (fname + 255)))
+            *ptr++ = *lptr++;
         }
         *ptr = 0;
 
-        /* open file & initialize track file descriptor */
+        /* open current track file descriptor */
         cdd.toc.tracks[cdd.toc.last].fd = fopen(fname, "rb");
         if (!cdd.toc.tracks[cdd.toc.last].fd)
         {
@@ -431,26 +619,49 @@ int cdd_load(char *filename, char *header)
         /* reset current file PREGAP length */
         pregap = 0;
 
-        /* reset current file read offset */
+        /* reset current track file read offset */
         cdd.toc.tracks[cdd.toc.last].offset = 0;
 
-        /* check supported file types */
-        if (!strstr(lptr,"BINARY"))
+        /* check supported audio file types */
+        if (!strstr(lptr,"BINARY") && !strstr(lptr,"MOTOROLA"))
         {
           /* read file header */
-          unsigned char head[32];
-          fseek(cdd.toc.tracks[cdd.toc.last].fd, 8, SEEK_SET);
-          fread(head, 32, 1, cdd.toc.tracks[cdd.toc.last].fd);
+          unsigned char head[12];
+          fread(head, 12, 1, cdd.toc.tracks[cdd.toc.last].fd);
           fseek(cdd.toc.tracks[cdd.toc.last].fd, 0, SEEK_SET);
-      
-          /* autodetect WAVE file header (16-bit stereo @44.1kHz only) */
-          if (!memcmp(head, waveHeader, 32))
+
+          /* autodetect WAVE file */
+          if (!memcmp(head, "RIFF", 4) && !memcmp(head + 8, "WAVE", 4))
           {
+            /* look for 'data' chunk */
+            int chunkSize, dataOffset = 0;
+            fseek(cdd.toc.tracks[cdd.toc.last].fd, 12, SEEK_SET);
+            while (fread(head, 8, 1, cdd.toc.tracks[cdd.toc.last].fd))
+            {
+              if (!memcmp(head, "data", 4))
+              {
+                dataOffset = ftell(cdd.toc.tracks[cdd.toc.last].fd);
+                fseek(cdd.toc.tracks[cdd.toc.last].fd, 0, SEEK_SET);
+                break;
+              }
+              chunkSize = head[4] + (head[5] << 8) + (head[6] << 16) + (head[7] << 24);
+              fseek(cdd.toc.tracks[cdd.toc.last].fd, chunkSize, SEEK_CUR);
+            }
+
+            /* check if 'data' chunk has not been found */
+            if (!dataOffset)
+            {
+              /* invalid WAVE file */
+              fclose(cdd.toc.tracks[cdd.toc.last].fd);
+              cdd.toc.tracks[cdd.toc.last].fd = 0;
+              break;
+            }
+
             /* adjust current track file read offset with WAVE header length */
-            cdd.toc.tracks[cdd.toc.last].offset -= 44;
+            cdd.toc.tracks[cdd.toc.last].offset -= dataOffset;
           }
- #ifdef USE_LIBTREMOR
-          else if (!ov_open(cdd.toc.tracks[cdd.toc.last].fd,&cdd.toc.tracks[cdd.toc.last].vf,0,0))
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+          else if (!ov_open_callbacks(cdd.toc.tracks[cdd.toc.last].fd,&cdd.toc.tracks[cdd.toc.last].vf,0,0,cb))
           {
             /* retrieve stream infos */
             vorbis_info *info = ov_info(&cdd.toc.tracks[cdd.toc.last].vf,-1);
@@ -474,27 +685,51 @@ int cdd_load(char *filename, char *header)
       }
 
       /* decode TRACK commands */
-      else if ((sscanf(lptr, "TRACK %02d AUDIO", &bb)) || (sscanf(lptr, "TRACK %d AUDIO", &bb)))
+      else if ((sscanf(lptr, "TRACK %02d %*s", &bb)) || (sscanf(lptr, "TRACK %d %*s", &bb)))
       {
-        /* check track number */
-        if (bb != (cdd.toc.last + 1))
+        /* autodetect DATA track type (first track only) */
+        if (!cdd.toc.last)
         {
-          /* close any opened file */
-          if (cdd.toc.tracks[cdd.toc.last].fd)
+          if (strstr(lptr,"MODE1/2048"))
           {
-            fclose(cdd.toc.tracks[cdd.toc.last].fd);
-            cdd.toc.tracks[cdd.toc.last].fd = 0;
+            /* Mode 1 COOKED format (2048 bytes / block) */
+            cdd.sectorSize = 2048;
+            cdd.toc.tracks[0].type = TYPE_MODE1;
+          }
+          else if (strstr(lptr,"MODE1/2352"))
+          {
+            /* Mode 1 RAW format (2352 bytes / block) */
+            cdd.sectorSize = 2352;
+            cdd.toc.tracks[0].type = TYPE_MODE1;
+          }
+          else if (strstr(lptr,"MODE2/2352"))
+          {
+            /* Mode 2 RAW format (2352 bytes / block) */
+            cdd.sectorSize = 2352;
+            cdd.toc.tracks[0].type = TYPE_MODE2;
           }
 
-          /* missing tracks */
-          break;
-        }
+          if (cdd.sectorSize)
+          {
+            if (cdd.sectorSize == 2352)
+            {
+              /* skip 16-byte header */
+              fseek(cdd.toc.tracks[0].fd, 0x10, SEEK_SET);
+            }
 
-        /* check if a single file is used for all tracks */
-        if (!cdd.toc.tracks[cdd.toc.last].fd)
+            /* read CD image header + security code */
+            fread(header, 0x210, 1, cdd.toc.tracks[0].fd);
+            fseek(cdd.toc.tracks[0].fd, 0, SEEK_SET);
+          }
+        }
+        else
         {
-          /* clear previous track end time */
-          cdd.toc.tracks[cdd.toc.last - 1].end = 0;
+          /* check if same file is used for consecutive tracks */
+          if (!cdd.toc.tracks[cdd.toc.last].fd)
+          {
+            /* clear previous track end time */
+            cdd.toc.tracks[cdd.toc.last - 1].end = 0;
+          }
         }
       }
 
@@ -507,46 +742,46 @@ int cdd_load(char *filename, char *header)
 
       /* decode INDEX commands */
       else if ((sscanf(lptr, "INDEX 00 %02d:%02d:%02d", &mm, &ss, &bb) == 3) ||
-                (sscanf(lptr, "INDEX 0 %02d:%02d:%02d", &mm, &ss, &bb) == 3))
+               (sscanf(lptr, "INDEX 0 %02d:%02d:%02d", &mm, &ss, &bb) == 3))
       {
-        /* check if a single file is used for all tracks */
-        if (!cdd.toc.tracks[cdd.toc.last].fd)
+        /* check if previous track end time needs to be set */
+        if (cdd.toc.last && !cdd.toc.tracks[cdd.toc.last - 1].end)
         {
-          /* set previous track end time */
+          /* set previous track end time (current file absolute time + PREGAP length) */
           cdd.toc.tracks[cdd.toc.last - 1].end = bb + ss*75 + mm*60*75 + pregap;
         }
       }
       else if ((sscanf(lptr, "INDEX 01 %02d:%02d:%02d", &mm, &ss, &bb) == 3) ||
-                (sscanf(lptr, "INDEX 1 %02d:%02d:%02d", &mm, &ss, &bb) == 3))
+               (sscanf(lptr, "INDEX 1 %02d:%02d:%02d", &mm, &ss, &bb) == 3))
       {
-        /* adjust file read offset for current track with current file PREGAP length */
+        /* adjust current track file read offset with current file PREGAP length (only used for AUDIO track) */
         cdd.toc.tracks[cdd.toc.last].offset += pregap * 2352;
 
-        /* check if a single file is used for all tracks */
-        if (!cdd.toc.tracks[cdd.toc.last].fd)
+        /* check if a single file is used for consecutive tracks */
+        if (!cdd.toc.tracks[cdd.toc.last].fd && cdd.toc.last)
         {
           /* use common file descriptor */
-          cdd.toc.tracks[cdd.toc.last].fd = cdd.toc.tracks[0].fd;
+          cdd.toc.tracks[cdd.toc.last].fd = cdd.toc.tracks[cdd.toc.last - 1].fd;
 
-          /* current track start time (based on current absolute time) */
+          /* current track start time (based on current file absolute time + PREGAP length) */
           cdd.toc.tracks[cdd.toc.last].start = bb + ss*75 + mm*60*75 + pregap;
 
-          /* check if previous track end time has not been already set (through INDEX00 command) */
-          if (cdd.toc.tracks[cdd.toc.last - 1].end == 0)
+          /* check if previous track end time needs to be set */
+          if (!cdd.toc.tracks[cdd.toc.last - 1].end)
           {
-            /* set previous track end time (based on current absolute timee) */
-            cdd.toc.tracks[cdd.toc.last - 1].end = bb + ss*75 + mm*60*75;
+            /* set previous track end time (based on current track start time, ignoring any "PREGAP"-type pause if no INDEX00) */
+            cdd.toc.tracks[cdd.toc.last - 1].end = cdd.toc.tracks[cdd.toc.last].start;
           }
         }
         else
         {
-          /* current track start time (based on previous track end time) */
-          cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end + bb + ss*75 + mm*60*75 + pregap;
+          /* current file start time (based on previous track end time + PREGAP length) */
+          cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end + pregap;
 
-          /* adjust file read offset with previous track end time */
+          /* adjust current track file read offset with previous track end time (only used for AUDIO track) */
           cdd.toc.tracks[cdd.toc.last].offset += cdd.toc.end * 2352;
 
- #ifdef USE_LIBTREMOR
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
           if (cdd.toc.tracks[cdd.toc.last].vf.datasource)
           { 
             /* convert read offset to PCM sample offset */
@@ -564,52 +799,83 @@ int cdd_load(char *filename, char *header)
               cdd.toc.tracks[cdd.toc.last].offset = 0;
               break;
             }
+
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+            /* close VORBIS file structure to save memory */
+            ogg_free(cdd.toc.last);
+#endif
           }
           else
 #endif
           {
             /* current track end time */
             fseek(cdd.toc.tracks[cdd.toc.last].fd, 0, SEEK_END);
-            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ((ftell(cdd.toc.tracks[cdd.toc.last].fd) + 2351) / 2352);
+            if (cdd.toc.tracks[cdd.toc.last].type)
+            {
+              /* DATA track length */
+              cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ((ftell(cdd.toc.tracks[cdd.toc.last].fd) + cdd.sectorSize - 1) / cdd.sectorSize);
+            }
+            else
+            {
+              /* AUDIO track length */
+              cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ((ftell(cdd.toc.tracks[cdd.toc.last].fd) + 2351) / 2352);
+            }
             fseek(cdd.toc.tracks[cdd.toc.last].fd, 0, SEEK_SET);
           }
+
+          /* adjust track start time (based on current file start time + index absolute time) */
+          cdd.toc.tracks[cdd.toc.last].start += (bb + ss*75 + mm*60*75);
 
           /* update TOC end */
           cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
         }
-     
+
         /* increment track number */
         cdd.toc.last++;
+        
+        /* max. 99 tracks */
+        if (cdd.toc.last == 99) break;
       }
     }
 
-    /* check if a single file is used for all tracks */
-    if (cdd.toc.tracks[cdd.toc.last - 1].fd == cdd.toc.tracks[0].fd)
+    /* check if last track end time needs to be set */
+    if (cdd.toc.last && !cdd.toc.tracks[cdd.toc.last - 1].end)
     {
-      /* adjust TOC end */
+      /* adjust TOC end with current file PREGAP length */
       cdd.toc.end += pregap;
 
-      /* last track end index */
+      /* last track end time */
       cdd.toc.tracks[cdd.toc.last - 1].end = cdd.toc.end;
     }
 
-    /* close .cue file */
+    /* close any incomplete track file */
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+    if (cdd.toc.tracks[cdd.toc.last].vf.datasource)
+    {
+      ov_clear(&cdd.toc.tracks[cdd.toc.last].vf);
+    }
+    else
+#endif
+    if (cdd.toc.tracks[cdd.toc.last].fd)
+    {
+      fclose(cdd.toc.tracks[cdd.toc.last].fd);
+    }
+
+    /* close CUE file */
     fclose(fd);
   }
-
-  /* .ISO audio tracks auto-detection */
-  else if (cdd.sectorSize == 2048)
+  else if (cdd.toc.last)
   {
-    int i, offset;
+    int i, offset = 1;
 
     /* set pointer at the end of filename */
-    ptr = fname + strlen(fname) - 4;
+    ptr = fname + strlen(fname) - 4; 
 
-    /* auto-detect track file extensions */
+    /* autodetect audio track file extensions */
     for (i=0; i<SUPPORTED_EXT; i++)
     {
-      /* auto-detect bad rips with wrong track indexes */
-      sprintf(ptr, extensions[i], 1);
+      /* auto-detect wrong initial track index */
+      sprintf(ptr, extensions[i], cdd.toc.last);
       fd = fopen(fname, "rb");
       if (fd)
       {
@@ -617,27 +883,45 @@ int cdd_load(char *filename, char *header)
         break;
       }
 
-      sprintf(ptr, extensions[i], 2);
+      sprintf(ptr, extensions[i], cdd.toc.last + 1);
       fd = fopen(fname, "rb");
-      if (fd)
-      {
-        offset = 1;
-        break;
-      }
+      if (fd) break;
     }
 
     /* repeat until no more valid track files can be found */
     while (fd)
     {
-      /* read file HEADER */
-      unsigned char head[32];
-      fseek(fd, 8, SEEK_SET);
-      fread(head, 32, 1, fd);
+      /* read file header */
+      unsigned char head[12];
+      fread(head, 12, 1, fd);
       fseek(fd, 0, SEEK_SET);
-      
-      /* check if this is a valid WAVE file (16-bit stereo @44.1kHz only) */
-      if (!memcmp(head, waveHeader, 32))
+
+      /* autodetect WAVE file */
+      if (!memcmp(head, "RIFF", 4) && !memcmp(head + 8, "WAVE", 4))
       {
+        /* look for 'data' chunk */
+        int chunkSize, dataOffset = 0;
+        fseek(fd, 12, SEEK_SET);
+        while (fread(head, 8, 1, fd))
+        {
+          if (!memcmp(head, "data", 4))
+          {
+            dataOffset = ftell(fd);
+            fseek(fd, 0, SEEK_SET);
+            break;
+          }
+          chunkSize = head[4] + (head[5] << 8) + (head[6] << 16) + (head[7] << 24);
+          fseek(fd, chunkSize, SEEK_CUR);
+        }
+
+        /* check if 'data' chunk has not been found */
+        if (!dataOffset)
+        {
+          /* invalid WAVE file */
+          fclose(fd);
+          break;
+        }
+
         /* initialize current track file descriptor */
         cdd.toc.tracks[cdd.toc.last].fd = fd;
 
@@ -649,7 +933,7 @@ int cdd_load(char *filename, char *header)
 
         /* current track end time */
         fseek(fd, 0, SEEK_END);
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ((ftell(fd) + 2351) / 2352);
+        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ((ftell(fd) - dataOffset + 2351) / 2352);
 
         /* initialize file read offset for current track */
         cdd.toc.tracks[cdd.toc.last].offset = cdd.toc.tracks[cdd.toc.last].start * 2352;
@@ -669,13 +953,13 @@ int cdd_load(char *filename, char *header)
         cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
 
         /* adjust file read offset for current track with WAVE header length */
-        cdd.toc.tracks[cdd.toc.last].offset -= 44;
+        cdd.toc.tracks[cdd.toc.last].offset -= dataOffset;
 
         /* increment track number */
         cdd.toc.last++;
       }
-#ifdef USE_LIBTREMOR
-      else if (!ov_open(fd,&cdd.toc.tracks[cdd.toc.last].vf,0,0))
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+      else if (!ov_open_callbacks(fd,&cdd.toc.tracks[cdd.toc.last].vf,0,0,cb))
       {
         /* retrieve stream infos */
         vorbis_info *info = ov_info(&cdd.toc.tracks[cdd.toc.last].vf,-1);
@@ -696,7 +980,7 @@ int cdd_load(char *filename, char *header)
         cdd.toc.tracks[cdd.toc.last].start += 150;
 
         /* current track end time */
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ov_pcm_total(&cdd.toc.tracks[cdd.toc.last].vf,-1)/588;
+        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + ((ov_pcm_total(&cdd.toc.tracks[cdd.toc.last].vf,-1) + 587) / 588);
         if (cdd.toc.tracks[cdd.toc.last].end <= cdd.toc.tracks[cdd.toc.last].start)
         {
           /* invalid file length */
@@ -707,9 +991,16 @@ int cdd_load(char *filename, char *header)
           break;
         }
 
+        /* initialize file read offset for current track */
+        cdd.toc.tracks[cdd.toc.last].offset = cdd.toc.tracks[cdd.toc.last].start * 588;
+
         /* auto-detect PAUSE within audio files */
         ov_pcm_seek(&cdd.toc.tracks[cdd.toc.last].vf, 100 * 588);
+#if defined(USE_LIBVORBIS)
+        ov_read(&cdd.toc.tracks[cdd.toc.last].vf, (char *)head, 32, 0, 2, 1, 0);
+#else
         ov_read(&cdd.toc.tracks[cdd.toc.last].vf, (char *)head, 32, 0);
+#endif
         ov_pcm_seek(&cdd.toc.tracks[cdd.toc.last].vf, 0);
         if (*(int32 *)head == 0)
         {
@@ -717,6 +1008,11 @@ int cdd_load(char *filename, char *header)
           cdd.toc.tracks[cdd.toc.last].offset -= 150 * 588;
           cdd.toc.tracks[cdd.toc.last].end -= 150;
         }
+
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+        /* close VORBIS file structure to save memory */
+        ogg_free(cdd.toc.last);
+#endif
 
         /* update TOC end */
         cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
@@ -732,114 +1028,140 @@ int cdd_load(char *filename, char *header)
         break;
       }
 
+      /* max. 99 tracks */
+      if (cdd.toc.last == 99)  break;
+
       /* try to open next audio track file */
       sprintf(ptr, extensions[i], cdd.toc.last + offset);
       fd = fopen(fname, "rb");
     }
+
+    /* Valid CD-ROM Mode 1 track found ? */
+    if (cdd.toc.tracks[0].type == TYPE_MODE1)
+    {
+      /* simulate audio tracks if none found */
+      if (cdd.toc.last == 1)
+      {
+        /* some games require exact TOC infos */
+        if (strstr(header + 0x180,"T-95035") != NULL)
+        {
+          /* Snatcher */
+          cdd.toc.last = cdd.toc.end = 0;
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_snatcher[cdd.toc.last];
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while (cdd.toc.last < 21);
+        }
+        else if (strstr(header + 0x180,"T-127015") != NULL)
+        {
+          /* Lunar - The Silver Star */
+          cdd.toc.last = cdd.toc.end = 0;
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_lunar[cdd.toc.last];
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while (cdd.toc.last < 52);
+        }
+        else if (strstr(header + 0x180,"T-113045") != NULL)
+        {
+          /* Shadow of the Beast II */
+          cdd.toc.last = cdd.toc.end = 0;
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_shadow[cdd.toc.last];
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while (cdd.toc.last < 15);
+        }
+        else if (strstr(header + 0x180,"T-143025") != NULL)
+        {
+          /* Dungeon Explorer */
+          cdd.toc.last = cdd.toc.end = 0;
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_dungeon[cdd.toc.last];
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while (cdd.toc.last < 13);
+        }
+        else if (strstr(header + 0x180,"MK-4410") != NULL)
+        {
+          /* Final Fight CD (USA, Europe) */
+          cdd.toc.last = cdd.toc.end = 0;
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_ffight[cdd.toc.last];
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while (cdd.toc.last < 26);
+        }
+        else if (strstr(header + 0x180,"G-6013") != NULL)
+        {
+          /* Final Fight CD (Japan) */
+          cdd.toc.last = cdd.toc.end = 0;
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_ffightj[cdd.toc.last];
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while (cdd.toc.last < 29);
+        }
+        else if (strstr(header + 0x180,"T-06201-01") != NULL)
+        {
+          /* Sewer Shark (USA) (REV1) */
+          /* no audio track */
+        }
+        else
+        {
+          /* default TOC (99 tracks & 2s per audio tracks) */
+          do
+          {
+            cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end + 2*75;
+            cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + 2*75;
+            cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
+            cdd.toc.last++;
+          }
+          while ((cdd.toc.last < 99) && (cdd.toc.end < 56*60*75));
+        }
+      }
+    }
+
   }
 
-  /* Simulate audio tracks if none found */
-  if (cdd.toc.last == 1)
+  /* CD tracks found ? */
+  if (cdd.toc.last)
   {
-    /* Some games require exact TOC infos */
-    if (strstr(header + 0x180,"T-95035") != NULL)
-    {
-      /* Snatcher */
-      cdd.toc.last = cdd.toc.end = 0;
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_snatcher[cdd.toc.last];
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while (cdd.toc.last < 21);
-    }
-    else if (strstr(header + 0x180,"T-127015") != NULL)
-    {
-      /* Lunar - The Silver Star */
-      cdd.toc.last = cdd.toc.end = 0;
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_lunar[cdd.toc.last];
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while (cdd.toc.last < 52);
-    }
-    else if (strstr(header + 0x180,"T-113045") != NULL)
-    {
-      /* Shadow of the Beast II */
-      cdd.toc.last = cdd.toc.end = 0;
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_shadow[cdd.toc.last];
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while (cdd.toc.last < 15);
-    }
-    else if (strstr(header + 0x180,"T-143025") != NULL)
-    {
-      /* Dungeon Explorer */
-      cdd.toc.last = cdd.toc.end = 0;
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_dungeon[cdd.toc.last];
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while (cdd.toc.last < 13);
-    }
-    else if (strstr(header + 0x180,"MK-4410") != NULL)
-    {
-      /* Final Fight CD (USA, Europe) */
-      cdd.toc.last = cdd.toc.end = 0;
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_ffight[cdd.toc.last];
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while (cdd.toc.last < 26);
-    }
-    else if (strstr(header + 0x180,"G-6013") != NULL)
-    {
-      /* Final Fight CD (Japan) */
-      cdd.toc.last = cdd.toc.end = 0;
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + toc_ffightj[cdd.toc.last];
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while (cdd.toc.last < 29);
-    }
-    else
-    {
-      /* default TOC (99 tracks & 2s per audio tracks) */
-      do
-      {
-        cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end + 2*75;
-        cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + 2*75;
-        cdd.toc.end = cdd.toc.tracks[cdd.toc.last].end;
-        cdd.toc.last++;
-      }
-      while ((cdd.toc.last < 99) && (cdd.toc.end < 56*60*75));
-    }
+    /* Lead-out */
+    cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
+
+    /* CD mounted */
+    cdd.loaded = 1;
+
+    /* Automatically try to open associated subcode data file */
+    memcpy(&fname[strlen(fname) - 4], ".sub", 4);
+    cdd.toc.sub = fopen(fname, "rb");
+
+    /* return 1 if loaded file is CD image file */
+    return (isCDfile);
   }
 
-  /* Lead-out */
-  cdd.toc.tracks[cdd.toc.last].start = cdd.toc.end;
-
-  /* CD loaded */
-  cdd.loaded = 1;
-  return 1;
+  /* no CD image file loaded */
+  return 0;
 }
 
 void cdd_unload(void)
@@ -848,32 +1170,42 @@ void cdd_unload(void)
   {
     int i;
 
+#if defined(USE_LIBCHDR)
+    chd_close(cdd.chd.file);
+    if (cdd.chd.hunk)
+      free(cdd.chd.hunk);
+#endif
+
     /* close CD tracks */
     for (i=0; i<cdd.toc.last; i++)
     {
-#ifdef USE_LIBTREMOR
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
       if (cdd.toc.tracks[i].vf.datasource)
       {
-        /* close VORBIS file */
+        /* close any opened VORBIS file */
         ov_clear(&cdd.toc.tracks[i].vf);
       }
       else
 #endif
+      if (cdd.toc.tracks[i].fd)
       {
-        if (cdd.toc.tracks[i].fd)
+        /* check if single file is used for consecutive tracks */
+        if ((i > 0) && (cdd.toc.tracks[i].fd == cdd.toc.tracks[i-1].fd))
+        {
+          /* skip track */
+          i++;
+        }
+        else
         {
           /* close file */
           fclose(cdd.toc.tracks[i].fd);
-
-          /* detect single file images */
-          if (cdd.toc.tracks[i+1].fd == cdd.toc.tracks[i].fd)
-          {
-            /* exit loop */
-            i = cdd.toc.last;
-          }
         }
       }
     }
+
+    /* close any opened subcode file */
+    if (cdd.toc.sub)
+      fclose(cdd.toc.sub);
 
     /* CD unloaded */
     cdd.loaded = 0;
@@ -881,50 +1213,193 @@ void cdd_unload(void)
 
   /* reset TOC */
   memset(&cdd.toc, 0x00, sizeof(cdd.toc));
-    
-  /* unknown CD image file format */
+
+#if defined(USE_LIBCHDR)
+  /* reset CHD data */
+  memset(&cdd.chd, 0x00, sizeof(cdd.chd));
+#endif
+
+  /* no CD-ROM track */
   cdd.sectorSize = 0;
 }
 
-void cdd_read_data(uint8 *dst)
+void cdd_read_data(uint8 *dst, uint8 *subheader)
 {
-  /* only read DATA track sectors */
-  if ((cdd.lba >= 0) && (cdd.lba < cdd.toc.tracks[0].end))
+  /* only allow reading (first) CD-ROM track sectors */
+  if (cdd.toc.tracks[cdd.index].type && (cdd.lba >= 0))
   {
-    /* BIN format ? */
-    if (cdd.sectorSize == 2352)
+#if defined(USE_LIBCHDR)
+    if (cdd.chd.file)
     {
-      /* skip 16-byte header */
-      fseek(cdd.toc.tracks[0].fd, cdd.lba * 2352 + 16, SEEK_SET);
-    }
+      /* CHD file offset */
+      int offset = cdd.toc.tracks[0].offset + (cdd.lba * CD_FRAME_SIZE);
 
-    /* read sector data (Mode 1 = 2048 bytes) */
-    fread(dst, 2048, 1, cdd.toc.tracks[0].fd);
+      /* CHD hunk index */
+      int hunknum = offset / cdd.chd.hunkbytes;
+
+      /* update CHD hunk cache if necessary */
+      if (hunknum != cdd.chd.hunknum)
+      {
+        chd_read(cdd.chd.file, hunknum, cdd.chd.hunk);
+        cdd.chd.hunknum = hunknum;
+      }
+
+      /* check sector size */
+      if (cdd.sectorSize == 2048)
+      {
+        /* read Mode 1 user data (2048 bytes) */
+        memcpy(dst, cdd.chd.hunk + (offset % cdd.chd.hunkbytes), 2048);
+      }
+      else
+      {
+        /* check if sub-header is required (Mode 2 sector only) */
+        if (!subheader)
+        {
+          /* read Mode 1 user data (2048 bytes), skipping block sync pattern (12 bytes) + block header (4 bytes)*/
+          memcpy(dst, cdd.chd.hunk + (offset % cdd.chd.hunkbytes) + 12 + 4, 2048);
+        }
+        else
+        {
+          /* read Mode 2 sub-header (first 4 bytes), skipping block sync pattern (12 bytes) + block header (4 bytes)*/
+          memcpy(subheader, cdd.chd.hunk + (offset % cdd.chd.hunkbytes) + 12 + 4, 4);
+
+          /* read Mode 2 user data (max 2328 bytes), skipping Mode 2 sub-header (8 bytes) */
+          memcpy(dst, cdd.chd.hunk + (offset % cdd.chd.hunkbytes) + 12 + 4 + 8, 2328);
+        }
+      }
+
+      return;
+    }
+#endif
+
+    /* check sector size */
+    if (cdd.sectorSize == 2048)
+    {
+      /* read Mode 1 user data (2048 bytes) */
+      fseek(cdd.toc.tracks[0].fd, cdd.lba * 2048, SEEK_SET);
+      fread(dst, 2048, 1, cdd.toc.tracks[0].fd);
+    }
+    else
+    {
+      /* check if sub-header is required (Mode 2 sector only) */
+      if (!subheader)
+      {
+        /* skip block sync pattern (12 bytes) + block header (4 bytes) then read Mode 1 user data (2048 bytes) */
+        fseek(cdd.toc.tracks[0].fd, (cdd.lba * 2352) + 12 + 4, SEEK_SET);
+        fread(dst, 2048, 1, cdd.toc.tracks[0].fd);
+      }
+      else
+      {
+        /* skip block sync pattern (12 bytes) + block header (4 bytes) + Mode 2 sub-header (first 4 bytes) then read Mode 2 sub-header (last 4 bytes) */
+        fseek(cdd.toc.tracks[0].fd, (cdd.lba * 2352) + 12 + 4 + 4, SEEK_SET);
+        fread(subheader, 4, 1, cdd.toc.tracks[0].fd);
+
+        /* read Mode 2 user data (max 2328 bytes) */
+        fread(dst, 2328, 1, cdd.toc.tracks[0].fd);
+      }
+    }
   }
 }
 
 void cdd_read_audio(unsigned int samples)
 {
   /* previous audio outputs */
-  int16 l = cdd.audio[0];
-  int16 r = cdd.audio[1];
+  int prev_l = cdd.audio[0];
+  int prev_r = cdd.audio[1];
 
-  /* get number of internal clocks (samples) needed */
-  samples = blip_clocks_needed(blip[0], samples);
+  /* get number of internal clocks (CD-DA samples) needed */
+  samples = blip_clocks_needed(snd.blips[2], samples);
 
   /* audio track playing ? */
   if (!scd.regs[0x36>>1].byte.h && cdd.toc.tracks[cdd.index].fd)
   {
-    int i, mul, delta;
+    int i, mul, l, r;
 
     /* current CD-DA fader volume */
-    int curVol = cdd.volume;
+    int curVol = cdd.fader[0];
 
     /* CD-DA fader volume setup (0-1024) */
-    int endVol = scd.regs[0x34>>1].w >> 4;
+    int endVol = cdd.fader[1];
 
     /* read samples from current block */
-#ifdef USE_LIBTREMOR
+#if defined(USE_LIBCHDR)
+    if (cdd.chd.file)
+    {
+#ifndef LSB_FIRST
+      int16 *ptr = (int16 *) (cdd.chd.hunk + (cdd.chd.hunkofs % cdd.chd.hunkbytes));
+#else
+      uint8 *ptr = cdd.chd.hunk + (cdd.chd.hunkofs % cdd.chd.hunkbytes);
+#endif
+
+      /* process 16-bit (big-endian) stereo samples */
+      for (i=0; i<samples; i++)
+      {
+        /* CHD hunk index */
+        int hunknum = cdd.chd.hunkofs / cdd.chd.hunkbytes;
+
+        /* update CHD hunk cache if necessary */
+        if (hunknum != cdd.chd.hunknum)
+        {
+          chd_read(cdd.chd.file, hunknum, cdd.chd.hunk);
+          cdd.chd.hunknum = hunknum;
+        }
+
+        /* CD-DA fader multiplier (cf. LC7883 datasheet) */
+        /* (MIN) 0,1,2,3,4,8,12,16,20...,1020,1024 (MAX) */
+        mul = (curVol & 0x7fc) ? (curVol & 0x7fc) : (curVol & 0x03);
+
+        /* left & right channels */
+#ifndef LSB_FIRST
+        l = ((ptr[0] * mul) / 1024);
+        r = ((ptr[1] * mul) / 1024);
+        ptr+=2;
+#else
+        l = (((int16)((ptr[1] + ptr[0]*256)) * mul) / 1024);
+        r = (((int16)((ptr[3] + ptr[2]*256)) * mul) / 1024);
+        ptr+=4;
+#endif
+        blip_add_delta_fast(snd.blips[2], i, l-prev_l, r-prev_r);
+        prev_l = l;
+        prev_r = r;
+
+        /* update CHD file offset */
+        cdd.chd.hunkofs += 4;
+
+        /* detect end of sector data (2352 bytes) */
+        if ((cdd.chd.hunkofs % CD_FRAME_SIZE) == CD_MAX_SECTOR_DATA)
+        {
+          /* skip subcode data (96 bytes) */
+          cdd.chd.hunkofs += CD_MAX_SUBCODE_DATA;
+
+          /* reinitialize hunk cache pointer */
+#ifndef LSB_FIRST
+          ptr = (int16 *) (cdd.chd.hunk + (cdd.chd.hunkofs % cdd.chd.hunkbytes));
+#else
+          ptr = cdd.chd.hunk + (cdd.chd.hunkofs % cdd.chd.hunkbytes);
+#endif
+        }
+
+        /* update CD-DA fader volume (one step/sample) */
+        if (curVol < endVol)
+        {
+          /* fade-in */
+          curVol++;
+        }
+        else if (curVol > endVol)
+        {
+          /* fade-out */
+          curVol--;
+        }
+        else if (!curVol)
+        {
+          /* audio will remain muted until next setup */
+          break;
+        }
+      }
+    }
+    else
+#endif
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
     if (cdd.toc.tracks[cdd.index].vf.datasource)
     {
       int len, done = 0;
@@ -932,7 +1407,11 @@ void cdd_read_audio(unsigned int samples)
       samples = samples * 4;
       while (done < samples)
       {
+#ifdef USE_LIBVORBIS
+        len = ov_read(&cdd.toc.tracks[cdd.index].vf, (char *)(cdc.ram + done), samples - done, 0, 2, 1, 0);
+#else
         len = ov_read(&cdd.toc.tracks[cdd.index].vf, (char *)(cdc.ram + done), samples - done, 0);
+#endif
         if (len <= 0) 
         {
           done = samples;
@@ -949,17 +1428,13 @@ void cdd_read_audio(unsigned int samples)
         /* (MIN) 0,1,2,3,4,8,12,16,20...,1020,1024 (MAX) */
         mul = (curVol & 0x7fc) ? (curVol & 0x7fc) : (curVol & 0x03);
 
-        /* left channel */
-        delta = ((ptr[0] * mul) / 1024) - l;
-        ptr++;
-        l += delta;
-        blip_add_delta_fast(blip[0], i, delta);
-
-        /* right channel */
-        delta = ((ptr[0] * mul) / 1024) - r;
-        ptr++;
-        r += delta;
-        blip_add_delta_fast(blip[1], i, delta);
+        /* left & right channels */
+        l = ((ptr[0] * mul) / 1024);
+        r = ((ptr[1] * mul) / 1024);
+        blip_add_delta_fast(snd.blips[2], i, l-prev_l, r-prev_r);
+        prev_l = l;
+        prev_r = r;
+        ptr+=2;
 
         /* update CD-DA fader volume (one step/sample) */
         if (curVol < endVol)
@@ -996,27 +1471,19 @@ void cdd_read_audio(unsigned int samples)
         /* (MIN) 0,1,2,3,4,8,12,16,20...,1020,1024 (MAX) */
         mul = (curVol & 0x7fc) ? (curVol & 0x7fc) : (curVol & 0x03);
 
-        /* left channel */
-  #ifdef LSB_FIRST
-        delta = ((ptr[0] * mul) / 1024) - l;
-        ptr++;
-  #else
-        delta = (((int16)((ptr[0] + ptr[1]*256)) * mul) / 1024) - l;
-        ptr += 2;
-  #endif
-        l += delta;
-        blip_add_delta_fast(blip[0], i, delta);
-
-        /* right channel */
-  #ifdef LSB_FIRST
-        delta = ((ptr[0] * mul) / 1024) - r;
-        ptr++;
-  #else
-        delta = (((int16)((ptr[0] + ptr[1]*256)) * mul) / 1024) - r;
-        ptr += 2;
-  #endif
-        r += delta;
-        blip_add_delta_fast(blip[1], i, delta);
+        /* left & right channels */
+#ifdef LSB_FIRST
+        l = ((ptr[0] * mul) / 1024);
+        r = ((ptr[1] * mul) / 1024);
+        ptr+=2;
+#else
+        l = (((int16)((ptr[0] + ptr[1]*256)) * mul) / 1024);
+        r = (((int16)((ptr[2] + ptr[3]*256)) * mul) / 1024);
+        ptr+=4;
+#endif
+        blip_add_delta_fast(snd.blips[2], i, l-prev_l, r-prev_r);
+        prev_l = l;
+        prev_r = r;
 
         /* update CD-DA fader volume (one step/sample) */
         if (curVol < endVol)
@@ -1038,74 +1505,116 @@ void cdd_read_audio(unsigned int samples)
     }
 
     /* save current CD-DA fader volume */
-    cdd.volume = curVol;
+    cdd.fader[0] = curVol;
 
     /* save last audio output for next frame */
-    cdd.audio[0] = l;
-    cdd.audio[1] = r;
+    cdd.audio[0] = prev_l;
+    cdd.audio[1] = prev_r;
   }
   else
   {
     /* no audio output */
-    if (l) blip_add_delta_fast(blip[0], 0, -l);
-    if (r) blip_add_delta_fast(blip[1], 0, -r);
+    if (prev_l | prev_r)
+    {
+      blip_add_delta_fast(snd.blips[2], 0, -prev_l, -prev_r);
 
-    /* save audio output for next frame */
-    cdd.audio[0] = 0;
-    cdd.audio[1] = 0;
+      /* save audio output for next frame */
+      cdd.audio[0] = 0;
+      cdd.audio[1] = 0;
+    }
   }
 
   /* end of Blip Buffer timeframe */
-  blip_end_frame(blip[0], samples);
-  blip_end_frame(blip[1], samples);
+  blip_end_frame(snd.blips[2], samples);
 }
 
+static void cdd_read_subcode(void)
+{
+  uint8 subc[96];
+  int i,j,index;
+
+  /* update subcode buffer pointer address */
+  scd.regs[0x68>>1].byte.l = (scd.regs[0x68>>1].byte.l + 98) & 0x7e;
+  
+  /* 16-bit register index */
+  index = (scd.regs[0x68>>1].byte.l + 0x100) >> 1;
+
+  /* read interleaved subcode data from .sub file (12 x 8-bit of P subchannel first, then Q subchannel, etc) */
+  fread(subc, 1, 96, cdd.toc.sub);
+
+  /* convert back to raw subcode format (96 bytes with 8 x P-W subchannel bits per byte) */
+  for (i=0; i<96; i+=2)
+  {
+    int code = 0;
+    for (j=0; j<8; j++)
+    {
+      int bits = (subc[(j*12)+(i/8)] >> (6 - (i & 6))) & 3;
+      code |= ((bits & 1) << (7 - j));
+      code |= ((bits >> 1) << (15 - j));
+    }
+
+    /* subcode buffer is accessed as 16-bit words */
+    scd.regs[index].w = code;
+
+    /* subcode buffer is limited to 64 x 16-bit words */
+    index = (index + 1) & 0xbf;
+  }
+
+  /* level 6 interrupt enabled ? */
+  if (scd.regs[0x32>>1].byte.l & 0x40)
+  {
+    /* trigger level 6 interrupt */
+    scd.pending |= (1 << 6);
+
+    /* update IRQ level */
+    s68k_update_irq((scd.pending & scd.regs[0x32>>1].byte.l) >> 1);
+  }
+}
 
 void cdd_update(void)
 {  
 #ifdef LOG_CDD
-  error("LBA = %d (track n°%d)(latency=%d)\n", cdd.lba, cdd.index, cdd.latency);
+  error("LBA = %d (track %d)(latency=%d)\n", cdd.lba, cdd.index, cdd.latency);
 #endif
-  
-  /* seeking disc */
-  if (cdd.status == CD_SEEK)
-  {
-    /* drive latency */
-    if (cdd.latency > 0)
-    {
-      cdd.latency--;
-      return;
-    }
 
-    /* drive is ready */
-    cdd.status = CD_READY;
+  /* drive latency */
+  if (cdd.latency > 0)
+  {
+    cdd.latency--;
+    return;
   }
 
   /* reading disc */
-  else if (cdd.status == CD_PLAY)
+  if (cdd.status == CD_PLAY)
   {
-    /* drive latency */
-    if (cdd.latency > 0)
+    /* end of disc detection */
+    if (cdd.index >= cdd.toc.last)
     {
-      cdd.latency--;
+      cdd.status = CD_END;
       return;
     }
 
-    /* track type */
-    if (!cdd.index)
+    /* subcode data processing */
+    if (cdd.toc.sub)
     {
-      /* DATA sector header (CD-ROM Mode 1) */
+      cdd_read_subcode();
+    }
+
+    /* track type */
+    if (cdd.toc.tracks[cdd.index].type)
+    {
+      /* CD-ROM sector header */
       uint8 header[4];
       uint32 msf = cdd.lba + 150;
       header[0] = lut_BCD_8[(msf / 75) / 60];
       header[1] = lut_BCD_8[(msf / 75) % 60];
       header[2] = lut_BCD_8[(msf % 75)];
-      header[3] = 0x01;
+      header[3] = cdd.toc.tracks[cdd.index].type;
 
-      /* data track sector read is controlled by CDC */
-      cdd.lba += cdc_decoder_update(*(uint32 *)(header));
+      /* decode CD-ROM track sector */
+      cdc_decoder_update(*(uint32 *)(header));
     }
-    else if (cdd.index < cdd.toc.last)
+    else
     {
       /* check against audio track start index */
       if (cdd.lba >= cdd.toc.tracks[cdd.index].start)
@@ -1116,20 +1625,23 @@ void cdd_update(void)
 
       /* audio blocks are still sent to CDC as well as CD DAC/Fader */
       cdc_decoder_update(0);
- 
-      /* next audio block is automatically read */
-      cdd.lba++;
     }
-    else
-    {
-      /* end of disc */
-      cdd.status = CD_END;
-      return;
-    }
+
+    /* read next sector */
+    cdd.lba++;
 
     /* check end of current track */
     if (cdd.lba >= cdd.toc.tracks[cdd.index].end)
     {
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+      /* close previous track VORBIS file structure to save memory */
+      if (cdd.toc.tracks[cdd.index].vf.datasource)
+      {
+        ogg_free(cdd.index);
+      }
+#endif
+#endif
       /* play next track */
       cdd.index++;
 
@@ -1137,10 +1649,22 @@ void cdd_update(void)
       scd.regs[0x36>>1].byte.h = 0x01;
 
       /* seek to next audio track start */
-#ifdef USE_LIBTREMOR
-      if (cdd.toc.tracks[cdd.index].vf.datasource)
+#if defined(USE_LIBCHDR)
+      if (cdd.chd.file)
       {
-        ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, -cdd.toc.tracks[cdd.index].offset);
+        /* CHD file offset */
+        cdd.chd.hunkofs = cdd.toc.tracks[cdd.index].offset + (cdd.toc.tracks[cdd.index].start * CD_FRAME_SIZE);
+      }
+      else
+#endif
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+      if (cdd.toc.tracks[cdd.index].vf.seekable)
+      {
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+        /* VORBIS file need to be opened first */
+        ov_open_callbacks(cdd.toc.tracks[cdd.index].fd,&cdd.toc.tracks[cdd.index].vf,0,0,cb);
+#endif
+        ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (cdd.toc.tracks[cdd.index].start * 588) - cdd.toc.tracks[cdd.index].offset);
       }
       else
 #endif 
@@ -1160,64 +1684,105 @@ void cdd_update(void)
     /* check current track limits */
     if (cdd.lba >= cdd.toc.tracks[cdd.index].end)
     {
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+      /* close previous track VORBIS file structure to save memory */
+      if (cdd.toc.tracks[cdd.index].vf.datasource)
+      {
+        ogg_free(cdd.index);
+      }
+#endif
+#endif
+
       /* next track */
       cdd.index++;
 
-      /* skip directly to track start position */
-      cdd.lba = cdd.toc.tracks[cdd.index].start;
-      
-      /* AUDIO track playing ? */
-      if (cdd.status == CD_PLAY)
+      /* check disc limits */
+      if (cdd.index < cdd.toc.last)
       {
-      	scd.regs[0x36>>1].byte.h = 0x00;
+        /* skip directly to next track start position */
+        cdd.lba = cdd.toc.tracks[cdd.index].start;
+      }
+      else
+      {
+        /* end of disc */
+        cdd.lba = cdd.toc.end;
+        cdd.status = CD_END;
+
+        /* no AUDIO track playing */
+        scd.regs[0x36>>1].byte.h = 0x01;
+        return;
       }
     }
     else if (cdd.lba < cdd.toc.tracks[cdd.index].start)
     {
-      /* previous track */
-      cdd.index--;
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+      /* close previous track VORBIS file structure to save memory */
+      if (cdd.toc.tracks[cdd.index].vf.datasource)
+      {
+        ogg_free(cdd.index);
+      }
+#endif
+#endif
 
-      /* skip directly to track end position */
-      cdd.lba = cdd.toc.tracks[cdd.index].end;
+      /* check disc limits */
+      if (cdd.index > 0)
+      {
+        /* previous track */
+        cdd.index--;
+
+        /* skip directly to previous track end position */
+        cdd.lba = cdd.toc.tracks[cdd.index].end;
+      }
+      else
+      {
+        /* start of first track */
+        cdd.lba = 0;
+      }
     }
 
-    /* check disc limits */
-    if (cdd.index < 0)
-    {
-      cdd.index = 0;
-      cdd.lba = 0;
-    }
-    else if (cdd.index >= cdd.toc.last)
-    {
-      /* no AUDIO track playing */
-      scd.regs[0x36>>1].byte.h = 0x01;
+    /* AUDIO track playing ? */
+    scd.regs[0x36>>1].byte.h = cdd.toc.tracks[cdd.index].type ? 0x01 : 0x00;
 
-      /* end of disc */
-      cdd.index = cdd.toc.last;
-      cdd.lba = cdd.toc.end;
-      cdd.status = CD_END;
-      return;
+    /* seek to current subcode position */
+    if (cdd.toc.sub)
+    {
+      fseek(cdd.toc.sub, cdd.lba * 96, SEEK_SET);
     }
 
-    /* seek to current block */
-    if (!cdd.index)
+    /* seek to current track position */
+#if defined(USE_LIBCHDR)
+    if (cdd.chd.file)
     {
-      /* no AUDIO track playing */
-      scd.regs[0x36>>1].byte.h = 0x01;
-
+      /* CHD file offset */
+      cdd.chd.hunkofs = cdd.toc.tracks[cdd.index].offset + (cdd.lba * CD_FRAME_SIZE);
+    }
+    else
+#endif
+    if (cdd.toc.tracks[cdd.index].type)
+    {
       /* DATA track */
       fseek(cdd.toc.tracks[0].fd, cdd.lba * cdd.sectorSize, SEEK_SET);
     }
-#ifdef USE_LIBTREMOR
-    else if (cdd.toc.tracks[cdd.index].vf.datasource)
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+    else if (cdd.toc.tracks[cdd.index].vf.seekable)
     {
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+      /* check if a new track is being played */
+      if (!cdd.toc.tracks[cdd.index].vf.datasource)
+      {
+        /* VORBIS file need to be opened first */
+        ov_open_callbacks(cdd.toc.tracks[cdd.index].fd,&cdd.toc.tracks[cdd.index].vf,0,0,cb);
+      }
+#endif
       /* VORBIS AUDIO track */
-      ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (cdd.lba - cdd.toc.tracks[cdd.index].start) * 588 - cdd.toc.tracks[cdd.index].offset);
+      ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (cdd.lba * 588) - cdd.toc.tracks[cdd.index].offset);
     }
 #endif 
     else if (cdd.toc.tracks[cdd.index].fd)
     {
-      /* AUDIO track */
+      /* PCM AUDIO track */
       fseek(cdd.toc.tracks[cdd.index].fd, (cdd.lba * 2352) - cdd.toc.tracks[cdd.index].offset, SEEK_SET);
     }
   }
@@ -1228,19 +1793,50 @@ void cdd_process(void)
   /* Process CDD command */
   switch (scd.regs[0x42>>1].byte.h & 0x0f)
   {
-    case 0x00:  /* Drive Status */
+    case 0x00:  /* Get Drive Status */
     {
-      /* RS1-RS8 normally unchanged */
-      scd.regs[0x38>>1].byte.h = cdd.status;
-
-      /* unless RS1 indicated invalid track infos */
-      if (scd.regs[0x38>>1].byte.l == 0x0f)
+      /* RS0-RS1 are normally unchanged unless reported drive status needs to be updated (i.e previous drive command has been processed) */
+      /* Note: this function is called one 75hz frame ahead of CDD update so latency counter is always one step ahead of upcoming status */
+      /* Radical Rex and Annet Futatabi both need at least respectively 2 and 3 interrupts with 'playing' status returned before sectors start getting incremented */
+      if (cdd.latency <= 3)
       {
-        /* and SEEK has ended */
-        if (cdd.status != CD_SEEK)
+        /* update reported drive status */
+        scd.regs[0x38>>1].byte.h = cdd.status;
+
+        /* check if RS1 indicated invalid track infos (during seeking) */
+        if (scd.regs[0x38>>1].byte.l == 0x0f)
         {
-          /* then return valid track infos, e.g current track number in RS2-RS3 (fixes Lunar - The Silver Star) */
-          scd.regs[0x38>>1].byte.l = 0x02;
+          /* seeking has ended so we return valid track infos, e.g current absolute time by default (fixes Lunar - The Silver Star) */
+          int lba = cdd.lba + 150;
+          scd.regs[0x38>>1].byte.l = 0x00;
+          scd.regs[0x3a>>1].w = lut_BCD_16[(lba/75)/60];
+          scd.regs[0x3c>>1].w = lut_BCD_16[(lba/75)%60];
+          scd.regs[0x3e>>1].w = lut_BCD_16[(lba%75)];
+          scd.regs[0x40>>1].byte.h = cdd.toc.tracks[cdd.index].type ? 0x04 : 0x00; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
+        }
+
+        /* otherwise, check if RS2-RS8 need to be updated */
+        else if (scd.regs[0x38>>1].byte.l == 0x00)
+        {
+          /* current absolute time */
+          int lba = cdd.lba + 150;
+          scd.regs[0x3a>>1].w = lut_BCD_16[(lba/75)/60];
+          scd.regs[0x3c>>1].w = lut_BCD_16[(lba/75)%60];
+          scd.regs[0x3e>>1].w = lut_BCD_16[(lba%75)];
+          scd.regs[0x40>>1].byte.h = cdd.toc.tracks[cdd.index].type ? 0x04 : 0x00; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
+        }
+        else if (scd.regs[0x38>>1].byte.l == 0x01)
+        {
+          /* current track relative time */
+          int lba = abs(cdd.lba - cdd.toc.tracks[cdd.index].start);
+          scd.regs[0x3a>>1].w = lut_BCD_16[(lba/75)/60];
+          scd.regs[0x3c>>1].w = lut_BCD_16[(lba/75)%60];
+          scd.regs[0x3e>>1].w = lut_BCD_16[(lba%75)];
+          scd.regs[0x40>>1].byte.h = cdd.toc.tracks[cdd.index].type ? 0x04 : 0x00; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
+        }
+        else if (scd.regs[0x38>>1].byte.l == 0x02)
+        {
+          /* current track number */
           scd.regs[0x3a>>1].w = (cdd.index < cdd.toc.last) ? lut_BCD_16[cdd.index + 1] : 0x0A0A;
         }
       }
@@ -1250,21 +1846,21 @@ void cdd_process(void)
     case 0x01:  /* Stop Drive */
     {
       /* update status */
-      cdd.status = cdd.loaded ? CD_STOP : NO_DISC;
+      cdd.status = cdd.loaded ? CD_TOC : NO_DISC;
 
       /* no audio track playing */
       scd.regs[0x36>>1].byte.h = 0x01;
 
-      /* RS1-RS8 ignored, expects 0x0 ("no disc" ?) in RS0 once */
-      scd.regs[0x38>>1].w = 0x0000;
+      /* RS1-RS8 ignored, expects 0x0 (CD_STOP) in RS0 once */
+      scd.regs[0x38>>1].w = CD_STOP << 8;
       scd.regs[0x3a>>1].w = 0x0000;
       scd.regs[0x3c>>1].w = 0x0000;
       scd.regs[0x3e>>1].w = 0x0000;
-      scd.regs[0x40>>1].w = 0x000f;
+      scd.regs[0x40>>1].w = ~CD_STOP & 0x0f;
       return;
     }
 
-    case 0x02:  /* Read TOC */
+    case 0x02:  /* Report TOC infos */
     {
       /* Infos automatically retrieved by CDD processor from Q-Channel */
       /* commands 0x00-0x02 (current block) and 0x03-0x05 (Lead-In) */
@@ -1277,18 +1873,18 @@ void cdd_process(void)
           scd.regs[0x3a>>1].w = lut_BCD_16[(lba/75)/60];
           scd.regs[0x3c>>1].w = lut_BCD_16[(lba/75)%60];
           scd.regs[0x3e>>1].w = lut_BCD_16[(lba%75)];
-          scd.regs[0x40>>1].byte.h = cdd.index ? 0x00 : 0x04; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
+          scd.regs[0x40>>1].byte.h = cdd.toc.tracks[cdd.index].type ? 0x04 : 0x00; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
           break;
         }
 
         case 0x01:  /* Current Track Relative Time (MM:SS:FF) */
         {
-          int lba = cdd.lba - cdd.toc.tracks[cdd.index].start;
+          int lba = abs(cdd.lba - cdd.toc.tracks[cdd.index].start);
           scd.regs[0x38>>1].w = (cdd.status << 8) | 0x01;
           scd.regs[0x3a>>1].w = lut_BCD_16[(lba/75)/60];
           scd.regs[0x3c>>1].w = lut_BCD_16[(lba/75)%60];
           scd.regs[0x3e>>1].w = lut_BCD_16[(lba%75)];
-          scd.regs[0x40>>1].byte.h = cdd.index ? 0x00 : 0x04; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
+          scd.regs[0x40>>1].byte.h = cdd.toc.tracks[cdd.index].type ? 0x04 : 0x00; /* Current block flags in RS8 (bit0 = mute status, bit1: pre-emphasis status, bit2: track type) */
           break;
         }
 
@@ -1331,19 +1927,25 @@ void cdd_process(void)
           scd.regs[0x3a>>1].w = lut_BCD_16[(lba/75)/60];
           scd.regs[0x3c>>1].w = lut_BCD_16[(lba/75)%60];
           scd.regs[0x3e>>1].w = lut_BCD_16[(lba%75)];
+          scd.regs[0x3e>>1].byte.h |= cdd.toc.tracks[track-1].type ? 0x08 : 0x00; /* RS6 bit 3 is set for CD-ROM track */
           scd.regs[0x40>>1].byte.h = track % 10;  /* Track Number (low digit) */
-          if (track == 1)
-          {
-            /* RS6 bit 3 is set for the first (DATA) track */
-            scd.regs[0x3e>>1].byte.h |= 0x08;
-          }
+          break;
+        }
+
+        case 0x06:  /* Latest Error Information */
+        {
+          scd.regs[0x38>>1].w = (cdd.status << 8) | 0x06;
+          scd.regs[0x3a>>1].w = 0x0000; /* no error */
+          scd.regs[0x3c>>1].w = 0x0000;
+          scd.regs[0x3e>>1].w = 0x0000;
+          scd.regs[0x40>>1].byte.h = 0x00;
           break;
         }
 
         default:
         {
 #ifdef LOG_ERROR
-          error("Unknown CDD Command %02X (%X)\n", scd.regs[0x44>>1].byte.l, s68k.pc);
+          error("Invalid CDD request code %02X (%X)\n", scd.regs[0x44>>1].byte.l, s68k.pc);
 #endif
           return;
         }
@@ -1351,7 +1953,7 @@ void cdd_process(void)
       break;
     }
 
-    case 0x03:  /* Play  */
+    case 0x03:  /* Play */
     {
       /* reset track index */
       int index = 0;
@@ -1364,12 +1966,10 @@ void cdd_process(void)
       /* CD drive latency */
       if (!cdd.latency)
       {
-        /* Fixes a few games hanging during intro because they expect data to be read with some delay */
-        /* Radical Rex needs at least one interrupt delay */
-        /* Wolf Team games (Anet Futatabi, Cobra Command, Road Avenger & Time Gal) need at least 6 interrupts delay  */
-        /* Space Adventure Cobra (2nd morgue scene) needs at least 13 interrupts delay (incl. seek time, so 6 is OK) */
-        /* Jeopardy & ESPN Sunday Night NFL are picky about this as well: 10 interrupts delay (+ seek time) seems OK */
-        cdd.latency = 10;
+        /* Fixes a few games hanging because they expect data to be read with some delay */
+        /* Wolf Team games (Annet Futatabi, Aisle Lord, Cobra Command, Earnest Evans, Road Avenger & Time Gal) need at least 11 interrupts delay  */
+        /* Space Adventure Cobra (2nd morgue scene) needs at least 13 interrupts delay (incl. seek time, so 11 is OK) */
+        cdd.latency = 11;
       }
 
       /* CD drive seek time */
@@ -1389,48 +1989,85 @@ void cdd_process(void)
       /* update current LBA */
       cdd.lba = lba;
 
-      /* update current track index */
+      /* get track index */
       while ((cdd.toc.tracks[index].end <= lba) && (index < cdd.toc.last)) index++;
+
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+      /* check if track index has changed */
+      if (index != cdd.index)
+      {
+        /* close previous track VORBIS file structure to save memory */
+        if (cdd.toc.tracks[cdd.index].vf.datasource)
+        {
+          ogg_free(cdd.index);
+        }
+
+        /* open current track VORBIS file */
+        if (cdd.toc.tracks[index].vf.seekable)
+        {
+          ov_open_callbacks(cdd.toc.tracks[index].fd,&cdd.toc.tracks[index].vf,0,0,cb);
+        }
+      }
+#endif
+#endif
+
+      /* update current track index */
       cdd.index = index;
 
-      /* stay within track limits */
+      /* stay within track limits when seeking files */
       if (lba < cdd.toc.tracks[index].start) 
       {
         lba = cdd.toc.tracks[index].start;
       }
-      
-      /* seek to current block */
-      if (!index)
+
+      /* seek to current track position */
+#if defined(USE_LIBCHDR)
+      if (cdd.chd.file)
+      {
+        /* CHD file offset */
+        cdd.chd.hunkofs = cdd.toc.tracks[index].offset + (lba * CD_FRAME_SIZE);
+      }
+      else
+#endif
+      if (cdd.toc.tracks[index].type)
       {
         /* DATA track */
-        fseek(cdd.toc.tracks[0].fd, lba * cdd.sectorSize, SEEK_SET);
+        fseek(cdd.toc.tracks[index].fd, lba * cdd.sectorSize, SEEK_SET);
       }
-#ifdef USE_LIBTREMOR
-      else if (cdd.toc.tracks[index].vf.datasource)
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+      else if (cdd.toc.tracks[index].vf.seekable)
       {
         /* VORBIS AUDIO track */
-        ov_pcm_seek(&cdd.toc.tracks[index].vf, (lba - cdd.toc.tracks[index].start) * 588 - cdd.toc.tracks[cdd.index].offset);
+        ov_pcm_seek(&cdd.toc.tracks[index].vf, (lba * 588) - cdd.toc.tracks[index].offset);
       }
 #endif 
       else if (cdd.toc.tracks[index].fd)
       {
-        /* AUDIO track */
+        /* PCM AUDIO track */
         fseek(cdd.toc.tracks[index].fd, (lba * 2352) - cdd.toc.tracks[index].offset, SEEK_SET);
+      }
+
+      /* seek to current subcode position */
+      if (cdd.toc.sub)
+      {
+        fseek(cdd.toc.sub, lba * 96, SEEK_SET);
       }
 
       /* no audio track playing (yet) */
       scd.regs[0x36>>1].byte.h = 0x01;
 
-      /* update status */
+      /* update status (reported to host once seeking has ended) */
       cdd.status = CD_PLAY;
 
-      /* return track index in RS2-RS3 */
-      scd.regs[0x38>>1].w = (CD_PLAY << 8) | 0x02;
-      scd.regs[0x3a>>1].w = (cdd.index < cdd.toc.last) ? lut_BCD_16[index + 1] : 0x0A0A;
+      /* RS0 should indicates seeking until drive is ready (fixes audio delay in Bari Arm) */
+      /* RS1=0xf to invalidate track infos in RS2-RS8 until drive is ready (fixes Snatcher Act 2 start cutscene) */
+      scd.regs[0x38>>1].w = (CD_SEEK << 8) | 0x0f;
+      scd.regs[0x3a>>1].w = 0x0000;
       scd.regs[0x3c>>1].w = 0x0000;
       scd.regs[0x3e>>1].w = 0x0000;
-      scd.regs[0x40>>1].byte.h = 0x00;
-      break;
+      scd.regs[0x40>>1].w = ~(CD_SEEK + 0xf) & 0x0f;
+      return;
     }
 
     case 0x04:  /* Seek */
@@ -1459,8 +2096,30 @@ void cdd_process(void)
       /* update current LBA */
       cdd.lba = lba;
 
-      /* update current track index */
+      /* get current track index */
       while ((cdd.toc.tracks[index].end <= lba) && (index < cdd.toc.last)) index++;
+
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+#ifdef DISABLE_MANY_OGG_OPEN_FILES
+      /* check if track index has changed */
+      if (index != cdd.index)
+      {
+        /* close previous track VORBIS file structure to save memory */
+        if (cdd.toc.tracks[cdd.index].vf.datasource)
+        {
+          ogg_free(cdd.index);
+        }
+
+        /* open current track VORBIS file */
+        if (cdd.toc.tracks[index].vf.seekable)
+        {
+          ov_open_callbacks(cdd.toc.tracks[index].fd,&cdd.toc.tracks[index].vf,0,0,cb);
+        }
+      }
+#endif
+#endif
+
+      /* update current track index */
       cdd.index = index;
 
       /* stay within track limits */
@@ -1468,33 +2127,47 @@ void cdd_process(void)
       {
         lba = cdd.toc.tracks[index].start;
       }
-      
-      /* seek to current block */
-      if (!index)
+
+      /* seek to current track position */
+#if defined(USE_LIBCHDR)
+      if (cdd.chd.file)
+      {
+        /* CHD file offset */
+        cdd.chd.hunkofs = cdd.toc.tracks[index].offset + (lba * CD_FRAME_SIZE);
+      }
+      else
+#endif
+      if (cdd.toc.tracks[index].type)
       {
         /* DATA track */
-        fseek(cdd.toc.tracks[0].fd, lba * cdd.sectorSize, SEEK_SET);
+        fseek(cdd.toc.tracks[index].fd, lba * cdd.sectorSize, SEEK_SET);
       }
-#ifdef USE_LIBTREMOR
-      else if (cdd.toc.tracks[index].vf.datasource)
+#if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
+      else if (cdd.toc.tracks[index].vf.seekable)
       {
         /* VORBIS AUDIO track */
-        ov_pcm_seek(&cdd.toc.tracks[index].vf, (lba - cdd.toc.tracks[index].start) * 588 - cdd.toc.tracks[cdd.index].offset);
+        ov_pcm_seek(&cdd.toc.tracks[index].vf, (lba * 588) - cdd.toc.tracks[index].offset);
       }
 #endif 
       else if (cdd.toc.tracks[index].fd)
       {
-        /* AUDIO track */
+        /* PCM AUDIO track */
         fseek(cdd.toc.tracks[index].fd, (lba * 2352) - cdd.toc.tracks[index].offset, SEEK_SET);
+      }
+
+      /* seek to current subcode position */
+      if (cdd.toc.sub)
+      {
+        fseek(cdd.toc.sub, lba * 96, SEEK_SET);
       }
 
       /* no audio track playing */
       scd.regs[0x36>>1].byte.h = 0x01;
 
-      /* update status */
-      cdd.status = CD_SEEK;
+      /* update status (reported to host once seeking has ended) */
+      cdd.status = CD_PAUSE;
 
-      /* unknown RS1-RS8 values (returning 0xF in RS1 invalidates track infos in RS2-RS8 and fixes Final Fight CD intro when seek time is emulated) */
+      /* RS1=0xf to invalidate track infos in RS2-RS8 while seeking (fixes Final Fight CD intro when seek time is emulated) */
       scd.regs[0x38>>1].w = (CD_SEEK << 8) | 0x0f;
       scd.regs[0x3a>>1].w = 0x0000;
       scd.regs[0x3c>>1].w = 0x0000;
@@ -1509,7 +2182,7 @@ void cdd_process(void)
       scd.regs[0x36>>1].byte.h = 0x01;
 
       /* update status (RS1-RS8 unchanged) */
-      cdd.status = scd.regs[0x38>>1].byte.h = CD_READY;
+      cdd.status = scd.regs[0x38>>1].byte.h = CD_PAUSE;
       break;
     }
 
@@ -1540,7 +2213,6 @@ void cdd_process(void)
       break;
     }
 
-
     case 0x0a:  /* N-Track Jump Control ? (usually sent before CD_SEEK or CD_PLAY commands) */
     {
       /* TC3 corresponds to seek direction (00=forward, FF=reverse) */
@@ -1552,7 +2224,7 @@ void cdd_process(void)
       scd.regs[0x36>>1].byte.h = 0x01;
 
       /* update status (RS1-RS8 unchanged) */
-      cdd.status = scd.regs[0x38>>1].byte.h = CD_READY;
+      cdd.status = scd.regs[0x38>>1].byte.h = CD_PAUSE;
       break;
     }
 
@@ -1562,14 +2234,14 @@ void cdd_process(void)
       scd.regs[0x36>>1].byte.h = 0x01;
 
       /* update status */
-      cdd.status = cdd.loaded ? CD_STOP : NO_DISC;
+      cdd.status = cdd.loaded ? CD_TOC : NO_DISC;
 
-      /* RS1-RS8 ignored, expects 0x0 ("no disc" ?) in RS0 once */
-      scd.regs[0x38>>1].w = 0x0000;
+      /* RS1-RS8 ignored, expects CD_STOP in RS0 once */
+      scd.regs[0x38>>1].w = CD_STOP << 8;
       scd.regs[0x3a>>1].w = 0x0000;
       scd.regs[0x3c>>1].w = 0x0000;
       scd.regs[0x3e>>1].w = 0x0000;
-      scd.regs[0x40>>1].w = 0x000f;
+      scd.regs[0x40>>1].w = ~CD_STOP & 0x0f;
 
 #ifdef CD_TRAY_CALLBACK
       CD_TRAY_CALLBACK
@@ -1597,8 +2269,8 @@ void cdd_process(void)
     }
 
     default:  /* Unknown command */
-#ifdef LOG_CDD
-      error("Unknown CDD Command !!!\n");
+#ifdef LOG_ERROR
+      error("Unsupported CDD command %02X (%X)\n", scd.regs[0x42>>1].byte.h & 0x0f, s68k.pc);
 #endif
       scd.regs[0x38>>1].byte.h = cdd.status;
       break;

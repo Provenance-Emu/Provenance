@@ -50,6 +50,7 @@ public final class PVGame: Object, PVLibraryEntry {
 
     /* Links to other objects */
     public private(set) var saveStates = LinkingObjects<PVSaveState>(fromType: PVSaveState.self, property: "game")
+    public private(set) var cheats = LinkingObjects<PVCheats>(fromType: PVCheats.self, property: "game")
     public private(set) var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
     public private(set) var screenShots = List<PVImageFile>()
 

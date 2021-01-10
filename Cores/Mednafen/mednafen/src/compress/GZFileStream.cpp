@@ -158,7 +158,7 @@ uint64 GZFileStream::read(void *data, uint64 count, bool error_on_eof)
   throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_save.c_str(), errstring);
  }
 
- const uint64 read_count_u64 = (std::make_unsigned<decltype(read_count)>::type)read_count;
+ const uint64 read_count_u64 = (std::make_unsigned<std::remove_const<decltype(read_count)>::type>::type)read_count;
 
  if(read_count_u64 != count && error_on_eof)
   throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_save.c_str(), _("Unexpected EOF"));
@@ -210,7 +210,7 @@ void GZFileStream::flush(void)
 void GZFileStream::write(const void *data, uint64 count)
 {
  const auto write_count = gzwrite(gzp, data, count);
- const uint64 write_count_u64 = (std::make_unsigned<decltype(write_count)>::type)write_count;
+ const uint64 write_count_u64 = (std::make_unsigned<std::remove_const<decltype(write_count)>::type>::type)write_count;
 
  if(write_count_u64 != count)
  {

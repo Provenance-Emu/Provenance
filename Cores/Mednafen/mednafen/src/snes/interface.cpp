@@ -346,7 +346,6 @@ int16_t bSNES_v059::Interface::input_poll(bool port, unsigned device, unsigned i
 
 	case bSNES_v059::Input::DeviceMouse:
 	{
-	 assert(port < 2);
 	 switch(id)
 	 {
 	  case bSNES_v059::Input::MouseX:
@@ -370,7 +369,6 @@ int16_t bSNES_v059::Interface::input_poll(bool port, unsigned device, unsigned i
 
 	case bSNES_v059::Input::DeviceSuperScope:
 	{
-	 assert(port < 2);
 	 switch(id)
 	 {
 	  case bSNES_v059::Input::SuperScopeX:

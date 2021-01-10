@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* vdp1_line.cpp - VDP1 Line Drawing Commands Emulation
-**  Copyright (C) 2015-2016 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -28,10 +28,10 @@ namespace MDFN_IEN_SS
 namespace VDP1
 {
 
-static int32 (*LineFuncTab[2][3][0x20][8 + 1])(void) =
+static int32 (*LineFuncTab[2][3][0x20][8 + 1])(bool* need_line_resume) =
 {
  #define LINEFN_BC(die, bpp8, b, c)	\
-	DrawLine<false, die, bpp8, c == 0x8, (bool)(b & 0x10), (b & 0x10) && (b & 0x08), (bool)(b & 0x04), false/*b & 0x02*/, (bool)(b & 0x01), false, (bool)(c & 0x4), (bool)(c & 0x2), (bool)(c & 0x1)>
+	DrawLine<false, false, die, bpp8, c == 0x8, (bool)(b & 0x10), (b & 0x10) && (b & 0x08), (bool)(b & 0x04), false/*b & 0x02*/, (bool)(b & 0x01), (bool)(c & 0x4), (bool)(c & 0x2), (bool)(c & 0x1)>
 
  #define LINEFN_B(die, bpp8, b)									\
 	{										\
@@ -70,58 +70,67 @@ static int32 (*LineFuncTab[2][3][0x20][8 + 1])(void) =
  #undef LINEFN_BC
 };
 
-template<unsigned num_lines>
-static INLINE int32 CMD_Line_Polyline_T(const uint16* cmd_data)
+int32 RESUME_Line(const uint16* cmd_data)
 {
  const uint16 mode = cmd_data[0x2];
+ // Abusing the SPD bit passed to the line draw function to denote non-transparency when == 1, transparent when == 0.
+ const bool SPD_Opaque = (((mode >> 3) & 0x7) < 0x6) ? ((int32)(TexFetchTab[(mode >> 3) & 0x1F](0xFFFFFFFF)) >= 0) : true;
+ auto* const fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][((mode >> 6) & 0x1E) | SPD_Opaque /*(mode >> 6) & 0x1F*/][(mode & 0x8000) ? 8 : (mode & 0x7)];
+ const uint32 num_lines = (cmd_data[0] & 0x1) ? 4 : 1;
+ uint32 iter = PrimData.iter;
  int32 ret = 0;
- //
- //
- bool SPD_Opaque = true;	// Abusing the SPD bit passed to the line draw function to denote non-transparency when == 1, transparent when == 0.
 
- LineSetup.tex_base = 0;
- LineSetup.color = cmd_data[0x3];
- LineSetup.PCD = mode & 0x800;
-
- if(((mode >> 3) & 0x7) < 0x6)
-  SPD_Opaque = (int32)(TexFetchTab[(mode >> 3) & 0x1F](0xFFFFFFFF)) >= 0;
- //
- //
- //
- auto* fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][((mode >> 6) & 0x1E) | SPD_Opaque /*(mode >> 6) & 0x1F*/][(mode & 0x8000) ? 8 : (mode & 0x7)];
-
- CheckUndefClipping();
-
- for(unsigned n = 0; n < num_lines; n++)
+ if(MDFN_UNLIKELY(PrimData.need_line_resume))
  {
-  LineSetup.p[0].x = sign_x_to_s32(13, cmd_data[0x6 + (((n << 1) + 0) & 0x7)] & 0x1FFF) + LocalX;
-  LineSetup.p[0].y = sign_x_to_s32(13, cmd_data[0x7 + (((n << 1) + 0) & 0x7)] & 0x1FFF) + LocalY;
-  LineSetup.p[1].x = sign_x_to_s32(13, cmd_data[0x6 + (((n << 1) + 2) & 0x7)] & 0x1FFF) + LocalX;
-  LineSetup.p[1].y = sign_x_to_s32(13, cmd_data[0x7 + (((n << 1) + 2) & 0x7)] & 0x1FFF) + LocalY;
-
-  if(mode & 0x4) // Gouraud
-  {
-   const uint16* gtb = &VRAM[cmd_data[0xE] << 2];
-
-   ret += 2;
-   LineSetup.p[0].g = gtb[(n + 0) & 0x3];
-   LineSetup.p[1].g = gtb[(n + 1) & 0x3];
-  }
-
-  ret += fnptr();
+  PrimData.need_line_resume = false;
+  goto ResumeLine;
  }
+
+ if(iter < num_lines)
+ {
+  do
+  {
+   LineData.p[0].x = sign_x_to_s32(13, cmd_data[0x6 + (((iter << 1) + 0) & 0x7)] & 0x1FFF) + LocalX;
+   LineData.p[0].y = sign_x_to_s32(13, cmd_data[0x7 + (((iter << 1) + 0) & 0x7)] & 0x1FFF) + LocalY;
+   LineData.p[1].x = sign_x_to_s32(13, cmd_data[0x6 + (((iter << 1) + 2) & 0x7)] & 0x1FFF) + LocalX;
+   LineData.p[1].y = sign_x_to_s32(13, cmd_data[0x7 + (((iter << 1) + 2) & 0x7)] & 0x1FFF) + LocalY;
+
+   if(mode & 0x4) // Gouraud
+   {
+    const uint16* gtb = &VRAM[cmd_data[0xE] << 2];
+
+    ret += 2;
+    LineData.p[0].g = gtb[(iter + 0) & 0x3];
+    LineData.p[1].g = gtb[(iter + 1) & 0x3];
+   }
+
+   SetupDrawLine(&ret, false, false, mode);
+   //
+   ResumeLine:;
+   ret += AdjustDrawTiming(fnptr(&PrimData.need_line_resume));
+   if(MDFN_UNLIKELY(PrimData.need_line_resume))
+    break;
+  } while(++iter < num_lines && ret < VDP1_SuspendResumeThreshold);
+ }
+
+ PrimData.iter = iter;
 
  return ret;
 }
 
-int32 CMD_Polyline(const uint16* cmd_data)
-{
- return CMD_Line_Polyline_T<4>(cmd_data);
-}
-
 int32 CMD_Line(const uint16* cmd_data)
 {
- return CMD_Line_Polyline_T<1>(cmd_data);
+ int32 ret = 1;
+ //
+ //
+ LineData.tex_base = 0;
+ LineData.color = cmd_data[0x3];
+ //
+ //
+ PrimData.iter = 0;
+ PrimData.need_line_resume = false;
+
+ return ret;
 }
 
 }

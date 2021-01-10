@@ -198,7 +198,7 @@ extension PVEmulatorViewController {
                 let completion = {
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }
 
                 guard success else {
@@ -231,7 +231,7 @@ extension PVEmulatorViewController {
         dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
         isShowingMenu = false
-        enableContorllerInput(false)
+        enableControllerInput(false)
     }
 
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion) {

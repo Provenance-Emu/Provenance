@@ -814,6 +814,7 @@ static void Emulate(EmulateSpecStruct *espec)
 #ifdef WANT_DEBUGGER
 static DebuggerInfoStruct DBGInfo =
 {
+ false,
  "shift_jis",
  4,
  2,             // Instruction alignment(bytes)

@@ -44,6 +44,7 @@
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/PVSupport-Swift.h>
 
+#import <mednafen/mempatcher.h>
 
 #define USE_PCE_FAST 0
 #define USE_SNES_FAUST 1
@@ -95,6 +96,7 @@ static inline OEIntRect OEIntRectMake(int x, int y, int width, int height)
 static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
 static Mednafen::MDFN_Surface *frontBufferSurf;
+NSMutableDictionary *cheatList;
 
 #pragma mark - Input maps
 int GBAMap[PVGBAButtonCount];
@@ -126,6 +128,7 @@ namespace MDFN_IEN_VB
     extern void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);
     int mednafenCurrentDisplayMode = 1;
 }
+
 
 @interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
@@ -271,6 +274,7 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
     Mednafen::MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
     Mednafen::MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
+    Mednafen::MDFNI_SetSetting("cheats", "1");       //
 
 //	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
 //	MDFN_SaveSettings(cfgPath.UTF8String);
@@ -364,7 +368,8 @@ static void mednafen_init(MednafenGameCore* current)
         
     }
 
-    
+    cheatList = [[NSMutableDictionary alloc] init];
+
     return self;
 }
 
@@ -387,7 +392,8 @@ static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
     
     static int16_t sound_buf[0x10000];
-	int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
+    int32 rects[game->fb_height];//int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
+    memset(rects, 0, game->fb_height*sizeof(int32));
     rects[0] = ~0;
 
 	current->spec = {0};
@@ -410,28 +416,38 @@ static void emulation_run(BOOL skipFrame) {
     // is up to date while respecting the current game speed setting
     [current setGameSpeed:[current gameSpeed]];
 
-    if(current->_systemType == MednaSystemPSX)
-    {
-        current->videoWidth = rects[current->spec.DisplayRect.y];
-        current->videoOffsetX = current->spec.DisplayRect.x;
-    }
-    else if(game->multires)
-    {
-        current->videoWidth = rects[current->spec.DisplayRect.y];
-        current->videoOffsetX = current->spec.DisplayRect.x;
-    }
-    else
-    {
-        current->videoWidth = current->spec.DisplayRect.w;
-        current->videoOffsetX = current->spec.DisplayRect.x;
-    }
-
-    current->videoHeight = current->spec.DisplayRect.h;
+    current->videoOffsetX = current->spec.DisplayRect.x;
     current->videoOffsetY = current->spec.DisplayRect.y;
+    if(game->multires) {
+        current->videoWidth = rects[current->spec.DisplayRect.y];
+    }
+    else {
+        current->videoWidth = current->spec.DisplayRect.w ?: rects[current->spec.DisplayRect.y];
+    }
+    current->videoHeight  = current->spec.DisplayRect.h;
+    
+//    if(current->_systemType == MednaSystemPSX)
+//    {
+//        current->videoWidth = rects[current->spec.DisplayRect.y];
+//        current->videoOffsetX = current->spec.DisplayRect.x;
+//    }
+//    else if(game->multires)
+//    {
+//        current->videoWidth = rects[current->spec.DisplayRect.y];
+//        current->videoOffsetX = current->spec.DisplayRect.x;
+//    }
+//    else
+//    {
+//        current->videoWidth = current->spec.DisplayRect.w;
+//        current->videoOffsetX = current->spec.DisplayRect.x;
+//    }
+//
+//    current->videoHeight = current->spec.DisplayRect.h;
+//    current->videoOffsetY = current->spec.DisplayRect.y;
 
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
 
-	delete[] rects;
+	//delete[] rects;
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
@@ -443,7 +459,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemLynx;
         
         mednafenCoreModule = @"lynx";
-        mednafenCoreAspect = OEIntSizeMake(80, 51);
+        //mednafenCoreAspect = OEIntSizeMake(80, 51);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -452,7 +468,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemNES;
 
 		mednafenCoreModule = @"nes";
-		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -465,7 +481,7 @@ static void emulation_run(BOOL skipFrame) {
 #else
 		mednafenCoreModule = @"snes";
 #endif
-		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -474,7 +490,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemGB;
 
 		mednafenCoreModule = @"gb";
-		mednafenCoreAspect = OEIntSizeMake(10, 9);
+		//mednafenCoreAspect = OEIntSizeMake(10, 9);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -483,7 +499,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemGBA;
 
 		mednafenCoreModule = @"gba";
-		mednafenCoreAspect = OEIntSizeMake(3, 2);
+		//mednafenCoreAspect = OEIntSizeMake(3, 2);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 44100;
 	}
@@ -492,7 +508,7 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemMD;
 
 		mednafenCoreModule = @"md";
-		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
@@ -501,8 +517,8 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemSMS;
 
 		mednafenCoreModule = @"sms";
-		mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 192);
-//		mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		//mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 192);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
@@ -510,7 +526,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemNeoGeo;
         
         mednafenCoreModule = @"ngp";
-        mednafenCoreAspect = OEIntSizeMake(20, 19);
+        //mednafenCoreAspect = OEIntSizeMake(20, 19);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
     }
@@ -523,7 +539,7 @@ static void emulation_run(BOOL skipFrame) {
 #else
 		mednafenCoreModule = @"pce";
 #endif
-        mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
+        //mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -532,7 +548,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemPCFX;
         
         mednafenCoreModule = @"pcfx";
-        mednafenCoreAspect = OEIntSizeMake(4, 3);
+        //mednafenCoreAspect = OEIntSizeMake(4, 3);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -542,7 +558,7 @@ static void emulation_run(BOOL skipFrame) {
         
         mednafenCoreModule = @"psx";
         // Note: OpenEmu sets this to 4:3, but it's demonstrably wrong. Tested and looked into it myself… the other emulators got this wrong, 3:2 was close, but it's actually 10:7 - Sev
-        mednafenCoreAspect = OEIntSizeMake(10, 7);
+        //mednafenCoreAspect = OEIntSizeMake(10, 7);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
     }
@@ -551,7 +567,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemVirtualBoy;
         
         mednafenCoreModule = @"vb";
-        mednafenCoreAspect = OEIntSizeMake(12, 7);
+        //mednafenCoreAspect = OEIntSizeMake(12, 7);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -560,7 +576,7 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemWonderSwan;
         
         mednafenCoreModule = @"wswan";
-        mednafenCoreAspect = OEIntSizeMake(14, 9);
+        //mednafenCoreAspect = OEIntSizeMake(14, 9);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
@@ -578,7 +594,7 @@ static void emulation_run(BOOL skipFrame) {
 
 	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
 	// is this correct for EU, JP, US? Still testing.
-//	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 
     if(!game) {
         if (error) {
@@ -887,7 +903,7 @@ static void emulation_run(BOOL skipFrame) {
 
 - (NSTimeInterval)frameInterval
 {
-    return mednafenCoreTiming ?: 59.92;
+    return mednafenCoreTiming ?: 60;
 }
 
 # pragma mark - Video
@@ -2446,6 +2462,140 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     }
 }
 
+
+#pragma mark - CheatCodes
+
+- (BOOL)getCheatSupport
+{
+    if (self.systemType == MednaSystemPSX ||
+        self.systemType == MednaSystemSNES) {
+        return true;
+    }
+    return false;
+}
+
+
+- (void)setPSXCheatCodes
+{
+    @synchronized(self) {
+        // Apply enabled cheats found in dictionary
+        // int cheatIdx=0;
+
+        for (id key in cheatList)
+        {
+            if ([[cheatList valueForKey:key] isEqual:@YES])
+            {
+                NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
+                NSString *singleCode=[key stringByReplacingOccurrencesOfString:@":" withString:@""];
+                singleCode=[singleCode stringByReplacingOccurrencesOfString:@"+" withString:@""];
+                singleCode=[singleCode stringByReplacingOccurrencesOfString:@"-" withString:@""];
+
+                int len=0;
+
+                while( (len+12)<=[singleCode length]) {
+                    [multipleCodes addObject:[singleCode substringWithRange:NSMakeRange(len,12)]];
+                    len+=12;
+                }
+                
+                NSLog(@"Multiple Codes %@", multipleCodes);
+                for (NSString *singleCode in multipleCodes) {
+                    if (singleCode!= nil && singleCode.length > 0) {
+                        NSLog(@"Applying Code %@",singleCode);
+                        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@"+" withString:@""] UTF8String];
+                        Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
+                        @try {
+                            if (sizeof(game->CheatInfo.CheatFormatInfo) > 0) {
+                                game->CheatInfo.CheatFormatInfo[0].DecodeCheat(cheatCode, &patch);
+                                // enabled
+                                patch.status=true;
+                                Mednafen::MDFNI_AddCheat(patch);
+                                /*
+                                 Mednafen::MDFNI_SetCheat(cheatIdx, patch);
+                                 Mednafen::MDFNI_ToggleCheat(cheatIdx);
+                                 cheatIdx+=1;
+                                 */
+                            }
+                        }
+                        @catch (...) {
+                           NSLog(@"Game Code Error");
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+- (void)setSNESCheatCodes
+{
+    @synchronized(self) {
+        for (id key in cheatList)
+        {
+            if ([[cheatList valueForKey:key] isEqual:@YES])
+            {
+                NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
+                multipleCodes = [key componentsSeparatedByString:@"+"];
+                
+                NSLog(@"Multiple Codes %@", multipleCodes);
+
+                for (NSString *singleCode in multipleCodes) {
+                    if (singleCode!= nil && singleCode.length > 0) {
+                        NSLog(@"Applying Code %@",singleCode);
+                        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
+                        Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
+                        @try {
+                            if (sizeof(game->CheatInfo.CheatFormatInfo) > 1) {
+                                if ([singleCode containsString:@"-"]) {
+                                    // Game Genie
+                                    game->CheatInfo.CheatFormatInfo[0].DecodeCheat(cheatCode, &patch);
+                                } else {
+                                    // PAR
+                                    game->CheatInfo.CheatFormatInfo[1].DecodeCheat(cheatCode, &patch);
+                                }
+                                // enabled
+                                patch.status=true;
+                                Mednafen::MDFNI_AddCheat(patch);
+                            }
+                        }
+                        @catch (...) {
+                           NSLog(@"Game Code Error");
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
+{
+    @synchronized(self) {
+        if (!(self.getCheatSupport)) {
+            return false;
+        }
+        if (enabled)
+            cheatList[code] = @YES;
+        else
+            [cheatList removeObjectForKey:code];
+        NSLog(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
+        
+        Mednafen::MDFN_FlushGameCheats(1);
+
+        switch (self.systemType) {
+            case MednaSystemPSX:
+                self.setPSXCheatCodes;
+                break;
+            case MednaSystemSNES:
+                self.setSNESCheatCodes;
+                break;
+        }
+
+        Mednafen::MDFNMP_ApplyPeriodicCheats();
+        // if no error til this point, return true
+        return YES;
+    }
+}
 //- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
 //
 //}

@@ -1357,7 +1357,7 @@ static void LoadAFD(Stream* sp, FloppyDisk* disk)
 {
  const uint8 header_magic[7] = { 'M', 'D', 'F', 'N', 'A', 'F', 'D' };
  uint8 header[16];
- uint32 version;
+ uint32 version MDFN_NOWARN_UNUSED;
  bool bigendian;
 
  if(sp->read(header, 16, false) != 16 || memcmp(header, header_magic, sizeof(header_magic)))
@@ -1840,7 +1840,7 @@ static void SetEverModified(FloppyDisk* disk)
  disk->ever_modified = true;
 }
 
-static bool GetClearDiskDirty(FloppyDisk* disk)
+static MDFN_NOWARN_UNUSED bool GetClearDiskDirty(FloppyDisk* disk)
 {
  bool ret = disk->dirty;
 

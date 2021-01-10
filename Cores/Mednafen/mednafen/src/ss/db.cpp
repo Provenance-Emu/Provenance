@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* db.cpp:
-**  Copyright (C) 2016-2019 Mednafen Team
+**  Copyright (C) 2016-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -21,12 +21,9 @@
 
 /*
  Grandia could use full cache emulation to fix a hang at the end of disc 1, but
- it glitches graphically during gameplay with it enabled, possibly from
- VDP1 drawing completing too fast relative to the CPU...  Also it makes
- emulator CPU usage too high.
-
- Lost World(Jurassic Park) could use full cache emulation to fix some disappearing background graphics(at least mostly), but
- it makes emulator CPU usage borderline too high.
+ FMVs make the emulator CPU usage too high; there's also currently a timing bug in
+ the VDP1 frame swap/draw start code that causes Grandia to glitch out during gameplay
+ with full cache emulation enabled.
 */
 
 #include <mednafen/mednafen.h>
@@ -114,7 +111,7 @@ static const struct
  { "T-3116G", CART_EXTRAM_1M, "Samurai Spirits - Amakusa Kourin (Japan)", gettext_noop("Game requirement.") }, // Incompatible with 4MiB extended RAM cart.
  { "T-3104G", CART_EXTRAM_1M, "Samurai Spirits - Zankurou Musouken (Japan)", gettext_noop("Game requirement.") },
  { "610636008",CART_EXTRAM_1M,"Tech Saturn 1997.6 (Japan)", gettext_noop("Required by \"Groove on Fight\" demo.") },
- { "T-16509G", CART_EXTRAM_1M, "Super Real Mahjong P7 (Japan) (TODO: Test)" },
+ { "T-16509G", CART_EXTRAM_1M, "Super Real Mahjong P7 (Japan)" },
  { "T-16510G", CART_EXTRAM_1M, "Super Real Mahjong P7 (Japan)" },	// Would 4MiB be better?
  { "T-3108G", CART_EXTRAM_1M, "The King of Fighters '96 (Japan)", gettext_noop("Game requirement.") },
  { "T-3121G", CART_EXTRAM_1M, "The King of Fighters '97 (Japan)", gettext_noop("Game requirement.") },
@@ -203,6 +200,9 @@ static const struct
  { "T-1219G", CART_BACKUP_MEM,	"Bio Hazard (Japan)" },
  { "T-1221H", CART_BACKUP_MEM,	"Resident Evil (USA)" },
  { "MK-81092", CART_BACKUP_MEM,	"Resident Evil (Europe)" },
+ { "T-7601G", CART_BACKUP_MEM,	"Sangokushi IV (Japan)" },
+ { "T-7644G", CART_BAKCUP_MEM,	"Sangokushi IV with Power-Up Kit (Japan)" },
+ { "T-7601H", CART_BACKUP_MEM,  "Romance of the Three Kingdoms IV - Wall of Fire (USA)" },
  { "MK-81383", CART_BACKUP_MEM,	"Shining Force III (Europe/USA)" }, // ~
  { "GS-9175", CART_BACKUP_MEM,	"Shining Force III - Scenario 1 (Japan)" }, // ~
  { "GS-9188", CART_BACKUP_MEM,	"Shining Force III - Scenario 2 (Japan)" }, // ~
@@ -231,75 +231,134 @@ static const struct
 static const struct
 {
  const char* sgid;
+ const char* sgname;
+ const char* sgarea;
  unsigned mode;
  const char* game_name;
  const char* purpose;
  uint8 fd_id[16];
 } cemdb[] =
 {
- { "T-9705H",	CPUCACHE_EMUMODE_DATA_CB,	"Area 51 (USA)", gettext_noop("Fixes game hang.") },
- { "T-25408H",	CPUCACHE_EMUMODE_DATA_CB,	"Area 51 (Europe)", gettext_noop("Fixes game hang.") },
- { "MK-81036",	CPUCACHE_EMUMODE_DATA_CB,	"Clockwork Knight 2 (USA)", gettext_noop("Fixes game hang that occurred when some FMVs were played.") },
- { "T-30304G", CPUCACHE_EMUMODE_DATA_CB,	"DeJig - Lassen Art Collection (Japan)", gettext_noop("Fixes graphical glitches.") },
- { "GS-9184", CPUCACHE_EMUMODE_DATA_CB,		"Dragon Force II (Japan)", gettext_noop("Fixes math and game logic errors during battles.") },
- { "T-18504G", CPUCACHE_EMUMODE_DATA_CB,	"Father Christmas (Japan)", gettext_noop("Fixes stuck music and voice acting.") },
- { "GS-9101",  CPUCACHE_EMUMODE_DATA_CB,	"Fighting Vipers (Japan)", gettext_noop("Fixes computer-controlled opponent turning into a ghost statue.") },
- { "MK-81041",  CPUCACHE_EMUMODE_DATA_CB,	"Fighting Vipers (Europe/USA)", gettext_noop("Fixes computer-controlled opponent turning into a ghost statue.") },
- { "T-7309G", CPUCACHE_EMUMODE_DATA_CB,		"Formula Grand Prix - Team Unei Simulation (Japan)", gettext_noop("Fixes game hang.") },
- { "MK-81045", CPUCACHE_EMUMODE_DATA_CB,	"Golden Axe - The Duel (Europe/USA)", gettext_noop("Fixes flickering title screen.") },
- { "GS-9041",	CPUCACHE_EMUMODE_DATA_CB,	"Golden Axe - The Duel (Japan)", gettext_noop("Fixes flickering title screen.") },
- { "GS-9173", CPUCACHE_EMUMODE_DATA_CB,		"House of the Dead (Japan)", gettext_noop("Fixes game crash on lightgun calibration screen.") },
- { "GS-9055", CPUCACHE_EMUMODE_DATA_CB,		"Linkle Liver Story (Japan)", gettext_noop("Fixes game crash when going to the world map.") },
- { "T-14415G", CPUCACHE_EMUMODE_DATA_CB,	"Ronde (Japan)", gettext_noop("Fixes missing graphics on the title screen, main menu, and elsewhere.") },
- { "81600",	CPUCACHE_EMUMODE_DATA_CB,	"Sega Saturn Choice Cuts (USA)", gettext_noop("Fixes FMV playback hangs and playback failures.") },
- { "610680501",CPUCACHE_EMUMODE_DATA_CB,	"Segakore Sega Bible Mogitate SegaSaturn (Japan)", gettext_noop("") },	// ? ? ?
- { "T-18703G", CPUCACHE_EMUMODE_DATA_CB,	"Shunsai (Japan)", gettext_noop("Fixes various graphical glitches.") },
- { "T-7001H",	CPUCACHE_EMUMODE_DATA_CB,	"Spot Goes to Hollywood (USA)", gettext_noop("Fixes hang at corrupted \"Burst\" logo.") },
- { "T-7014G",	CPUCACHE_EMUMODE_DATA_CB,	"Spot Goes to Hollywood (Japan)", gettext_noop("Fixes hang at corrupted \"Burst\" logo.") },
+ { "T-9705H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Area 51 (USA)", gettext_noop("Fixes game hang.") },
+ { "T-25408H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Area 51 (Europe)", gettext_noop("Fixes game hang.") },
+ { "MK-81036",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Clockwork Knight 2 (USA)", gettext_noop("Fixes game hang that occurred when some FMVs were played.") },
+ { "T-30304G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "DeJig - Lassen Art Collection (Japan)", gettext_noop("Fixes graphical glitches.") },
+ { "T-19801G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Doraemon - Nobita to Fukkatsu no Hoshi (Japan)", gettext_noop("Fixes blank Game Over screen.") },
+ { "GS-9184",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Dragon Force II (Japan)", gettext_noop("Fixes math and game logic errors during battles.") },
+ { "T-18504G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Father Christmas (Japan)", gettext_noop("Fixes stuck music and voice acting.") },
+ { "GS-9101",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Fighting Vipers (Japan)", gettext_noop("Fixes computer-controlled opponent turning into a ghost statue.") },
+ { "MK-81041",  NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Fighting Vipers (Europe/USA)", gettext_noop("Fixes computer-controlled opponent turning into a ghost statue.") },
+ { "T-7309G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Formula Grand Prix - Team Unei Simulation (Japan)", gettext_noop("Fixes game hang.") },
+ { "MK-81045",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Golden Axe - The Duel (Europe/USA)", gettext_noop("Fixes flickering title screen.") },
+ { "GS-9041",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Golden Axe - The Duel (Japan)", gettext_noop("Fixes flickering title screen.") },
+ { "GS-9173",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"House of the Dead (Japan)", gettext_noop("Fixes game crash on lightgun calibration screen.") },
+ { "GS-9055",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Linkle Liver Story (Japan)", gettext_noop("Fixes game crash when going to the world map.") },
+ { "T-25302G1", NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Mahjong Doukyuusei Special (Japan)",	gettext_noop("Fixes missing background layer on disc 2.") },
+ { "T-25302G2", NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Mahjong Doukyuusei Special (Japan)",	gettext_noop("Fixes missing background layer on disc 2.") },
+ { "T-28901G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Mujintou Monogatari R - Futari no Love Love Island (Japan)", gettext_noop("Fixes glitches when character graphics change.") },
+ { "T-14415G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Ronde (Japan)", gettext_noop("Fixes missing graphics on the title screen, main menu, and elsewhere.") },
+ { "81600",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Sega Saturn Choice Cuts (USA)", gettext_noop("Fixes FMV playback hangs and playback failures.") },
+ { "610680501", NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Segakore Sega Bible Mogitate SegaSaturn (Japan)", gettext_noop("Fixes graphical glitch on the character select screen in the \"Zero Divide\" demo.") },
+ { "T-18703G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Shunsai (Japan)", gettext_noop("Fixes various graphical glitches.") },
+ { "T-7001H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Spot Goes to Hollywood (USA)", gettext_noop("Fixes hang at corrupted \"Burst\" logo.") },
+ { "T-7014G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Spot Goes to Hollywood (Japan)", gettext_noop("Fixes hang at corrupted \"Burst\" logo.") },
  // Nooo, causes glitches: { "T-7001H-50",CPUCACHE_EMUMODE_DATA_CB,	"Spot Goes to Hollywood (Europe)
- { "T-1206G",	CPUCACHE_EMUMODE_DATA_CB,	"Street Fighter Zero (Japan)", gettext_noop("Fixes weird color/palette issues during game startup.") },
- { "T-1246G",	CPUCACHE_EMUMODE_DATA_CB,	"Street Fighter Zero 3 (Japan)", gettext_noop("") },	// ? ? ?
- { "T-1215H",	CPUCACHE_EMUMODE_DATA_CB,	"Super Puzzle Fighter II Turbo (USA)", gettext_noop("Fixes color/brightness and other graphical issues.") },
- { "T-5001H",	CPUCACHE_EMUMODE_DATA_CB,	"Theme Park (Europe)", gettext_noop("Fixes hang during FMV.") },
- { "T-1807G", CPUCACHE_EMUMODE_DATA_CB,		"Thunder Force Gold Pack 1 (Japan)", gettext_noop("Fixes explosion graphic glitches in \"Thunder Force III\".") },
- { "T-1808G", CPUCACHE_EMUMODE_DATA_CB,		"Thunder Force Gold Pack 2 (Japan)", gettext_noop("Fixes hang when pausing the game under certain conditions in \"Thunder Force AC\".") },
- { "GS-9113", CPUCACHE_EMUMODE_DATA_CB,		"Virtua Fighter Kids (Java Tea Original)", gettext_noop("Fixes malfunction of computer-controlled player.") },
- { "T-2206G", CPUCACHE_EMUMODE_DATA_CB,		"Virtual Mahjong (Japan)", gettext_noop("Fixes graphical glitches on the character select screen.") },
- { "T-15005G", CPUCACHE_EMUMODE_DATA_CB,	"Virtual Volleyball (Japan)", gettext_noop("Fixes invisible menu items and hang.") },
- { "T-18601H", CPUCACHE_EMUMODE_DATA_CB,	"WipEout (USA)", gettext_noop("Fixes hang when trying to exit gameplay back to the main menu.") },
- { "T-18603G", CPUCACHE_EMUMODE_DATA_CB,	"WipEout (Japan)", gettext_noop("Fixes hang when trying to exit gameplay back to the main menu.") },
- { "T-11301H", CPUCACHE_EMUMODE_DATA_CB,	"WipEout (Europe)", gettext_noop("Fixes hang when trying to exit gameplay back to the main menu.") },
- { "GS-9061", CPUCACHE_EMUMODE_DATA_CB,		"Hideo Nomo World Series Baseball (Japan)", gettext_noop("Fixes severe gameplay logic glitches.") },
- { "MK-81109", CPUCACHE_EMUMODE_DATA_CB,	"World Series Baseball (Europe/USA)", gettext_noop("Fixes severe gameplay logic glitches.") },
-
- //{ "MK-81019", CPUCACHE_EMUMODE_DATA },	// Astal (USA)
+ { "T-1206G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Street Fighter Zero (Japan)", gettext_noop("Fixes weird color/palette issues during game startup.") },
+ { "T-1246G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Street Fighter Zero 3 (Japan)", gettext_noop("") },	// ? ? ?
+ { "T-1215H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Super Puzzle Fighter II Turbo (USA)", gettext_noop("Fixes color/brightness and other graphical issues.") },
+ { "T-5001H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Theme Park (Europe)", gettext_noop("Fixes hang during FMV.") },
+ { "T-1808G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Thunder Force Gold Pack 2 (Japan)", gettext_noop("Fixes hang when pausing the game under certain conditions in \"Thunder Force AC\".") },
+ { "GS-9079","VF. KIDS",NULL,CPUCACHE_EMUMODE_DATA_CB,"Virtua Fighter Kids (Japan/Europe)", gettext_noop("Fixes FMV glitches.") },
+ { "GS-9113","VF. KIDS",NULL,CPUCACHE_EMUMODE_DATA_CB,"Virtua Fighter Kids (Korea/Java Tea Original)", gettext_noop("Fixes FMV glitches and/or malfunction of computer-controlled player.") },
+ { "MK-81049","VF. KIDS",NULL,CPUCACHE_EMUMODE_DATA_CB,"Virtua Fighter Kids (USA)", gettext_noop("Fixes FMV glitches.") },
+ { "T-2206G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Virtual Mahjong (Japan)", gettext_noop("Fixes graphical glitches on the character select screen.") },
+ { "T-15005G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Virtual Volleyball (Japan)", gettext_noop("Fixes invisible menu items and hang.") },
+ { "T-18601H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"WipEout (USA)", gettext_noop("Fixes hang when trying to exit gameplay back to the main menu.") },
+ { "T-18603G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"WipEout (Japan)", gettext_noop("Fixes hang when trying to exit gameplay back to the main menu.") },
+ { "T-11301H",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"WipEout (Europe)", gettext_noop("Fixes hang when trying to exit gameplay back to the main menu.") },
+ { "GS-9061",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"Hideo Nomo World Series Baseball (Japan)", gettext_noop("Fixes severe gameplay logic glitches.") },
+ { "MK-81109",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB,	"World Series Baseball (Europe/USA)", gettext_noop("Fixes severe gameplay logic glitches.") },
+ { "T-31601G",	NULL, NULL, CPUCACHE_EMUMODE_DATA_CB, "Zero Divide - The Final Conflict (Japan)", gettext_noop("Fixes graphical glitch on the character select screen.") },
+ //{ "MK-81019", NULL, NULL, CPUCACHE_EMUMODE_DATA },	// Astal (USA)
  //{ "GS-9019",  CPUCACHE_EMUMODE_DATA },	// Astal (Japan)
 
- { "T-1507G",	CPUCACHE_EMUMODE_FULL,		"Albert Odyssey (Japan)", gettext_noop("") },
- { "T-12705H",	CPUCACHE_EMUMODE_FULL,		"Albert Odyssey (USA)", gettext_noop("Fixes battle text truncation.") },
- { "GS-9123", CPUCACHE_EMUMODE_FULL,		"Die Hard Trilogy (Japan)", gettext_noop("Fixes game hang.") },
- { "T-16103H", CPUCACHE_EMUMODE_FULL,		"Die Hard Trilogy (Europe/USA)", gettext_noop("Fixes game hang.") },
- { "T-13331G", CPUCACHE_EMUMODE_FULL,		"Digital Monster Version S (Japan)", gettext_noop("Fixes game hang.") },
- //{ "T-20502G", CPUCACHE_EMUMODE_FULL,		"Discworld (Japan) (still broken...)" },
- { "T-13310G", CPUCACHE_EMUMODE_FULL,		"GeGeGe no Kitarou (Japan)", gettext_noop("Fixes game hang.") },
- { "T-15904G", CPUCACHE_EMUMODE_FULL,		"Gex (Japan)",		gettext_noop("Fixes minor FMV glitches.")  },
- { "T-15904H", CPUCACHE_EMUMODE_FULL,		"Gex (USA)",		gettext_noop("Fixes minor FMV glitches.") },
- { "T-15904H50", CPUCACHE_EMUMODE_FULL,		"Gex (Europe)",		gettext_noop("Fixes minor FMV glitches.") },
- { "T-27901G", CPUCACHE_EMUMODE_FULL,		"Lunar - Silver Star Story (Japan)", gettext_noop("Fixes FMV flickering with alternative BIOS.") },
- { "T-7664G", CPUCACHE_EMUMODE_FULL,		"Nobunaga no Yabou Shouseiroku (Japan)", gettext_noop("Fixes game hang.") },
- { "T-9510G", CPUCACHE_EMUMODE_FULL,		"Policenauts (Japan)",	gettext_noop("Fixes screen flickering on disc 2.") },
- { "T-25416H50", CPUCACHE_EMUMODE_FULL,		"Rampage - World Tour (Europe)", gettext_noop("Fixes game hang.") },
- { "T-159056", CPUCACHE_EMUMODE_FULL,		"Slam 'n Jam 96 (Japan)", gettext_noop("Fixes minor FMV glitches.") },
- { "T-159028H", CPUCACHE_EMUMODE_FULL,		"Slam 'n Jam 96 (USA)",	gettext_noop("Fixes minor FMV glitches.") },
- { "T-15902H50", CPUCACHE_EMUMODE_FULL,		"Slam 'n Jam 96 (Europe)", gettext_noop("Fixes minor FMV glitches.") },
- { "T-8119G", CPUCACHE_EMUMODE_FULL,		"Space Jam (Japan)", 	gettext_noop("Fixes game crash.") },
- { "T-8125H", CPUCACHE_EMUMODE_FULL,		"Space Jam (USA)", 	gettext_noop("Fixes game crash.") },
- { "T-8125H-50", CPUCACHE_EMUMODE_FULL,		"Space Jam (Europe)", 	gettext_noop("Fixes game crash.") },
- { "T-36102G",	CPUCACHE_EMUMODE_FULL,		"Whizz (Japan)", 	gettext_noop("Fixes quasi-random hangs during startup.") },
- { "T-9515H-50", CPUCACHE_EMUMODE_FULL,		"Whizz (Europe)", 	gettext_noop("Fixes quasi-random hangs during startup.") },
+ { "T-15906H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "3D Baseball (USA)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-18003G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "3D Baseball - The Majors (Japan)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-1507G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Albert Odyssey (Japan)", gettext_noop("") },
+ { "T-12705H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Albert Odyssey (USA)", gettext_noop("Fixes battle text truncation.") },
+ //{ "MK-81501",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Baku Baku Animal (Europe)", gettext_noop("Fixes hang when trying to watch a movie in the \"Movie Viewer\".") },
+ { "T-16201H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Corpse Killer (USA)", gettext_noop("Fixes glitchy rotation-zoom effect.") },
+ { "T-8124H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Crow, The (USA)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-8124H-50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Crow, The (Europe)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-8124H-18",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Crow, The (Germany)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-36101G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Dark Seed II (Japan)", gettext_noop("Fixes game hang.") },
+ { "GS-9123",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Die Hard Trilogy (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-16103H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Die Hard Trilogy (Europe/USA)", gettext_noop("Fixes game hang.") },
+ // Not needed in 1.26.0, and actually causes a game hang, probably due to lack of SCI emulation messing up game timing: { "T-13331G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Digital Monster Version S (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-13310G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "GeGeGe no Kitarou (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-15904G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Gex (Japan)",		gettext_noop("Fixes minor FMV glitches.")  },
+ { "T-15904H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Gex (USA)",		gettext_noop("Fixes minor FMV glitches.") },
+ { "T-15904H50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Gex (Europe)",		gettext_noop("Fixes minor FMV glitches.") },
+ { "T-24301G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Horror Tour (Japan)",	gettext_noop("Fixes graphical glitches on the save and load screens.") },
+ { "T-22403G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Irem Arcade Classics (Japan)", gettext_noop("Fixes hang when trying to start \"Zippy Race\".") },
+ { "GS-9142",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Kidou Senkan Nadesico - Yappari Saigo wa Ai ga Katsu", gettext_noop("Fixes game hang.") },
+ { "GS-9162",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "The Lost World - Jurassic Park (Japan)", gettext_noop("Fixes most graphical glitches in rock faces.") },
+ { "MK-81065",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "The Lost World - Jurassic Park (Europe/USA)", gettext_noop("Fixes most graphical glitches in rock faces.") },
+ { "T-27901G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Lunar - Silver Star Story (Japan)", gettext_noop("Fixes FMV flickering.") },
+ { "MK-81103",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "NBA Action (USA)", gettext_noop("Fixes minor FMV glitches.") },
+ { "MK81103-50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "NBA Action (Europe)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-8105G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "NFL Quarterback Club 96 (Japan)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-8109H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "NFL Quarterback Club 96 (USA)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-8109H-50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "NFL Quarterback Club 96 (Europe)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-7664G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Nobunaga no Yabou Shouseiroku (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-9510G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Policenauts (Japan)",	gettext_noop("Fixes screen flickering on disc 2.") },
+ { "T-25416H50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Rampage - World Tour (Europe)", gettext_noop("Fixes game hang.") }, 
+ { "T-37401G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Senken Kigyouden (Japan)", gettext_noop("Fixes dialogue text truncation.") },
+ { "T-37401H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Xian Jian Qi Xia Zhuan (Taiwan)", gettext_noop("Fixes dialogue text truncation.") },
+ { "T-159056",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Slam 'n Jam 96 (Japan)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-159028H", NULL, NULL, CPUCACHE_EMUMODE_FULL, "Slam 'n Jam 96 (USA)",	gettext_noop("Fixes minor FMV glitches.") },
+ { "T-15902H50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Slam 'n Jam 96 (Europe)", gettext_noop("Fixes minor FMV glitches.") },
+ { "T-8119G", 	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Space Jam (Japan)", 	gettext_noop("Fixes game crash.") },
+ { "T-8125H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Space Jam (USA)", 	gettext_noop("Fixes game crash.") },
+ { "T-8125H-50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Space Jam (Europe)", 	gettext_noop("Fixes game crash.") },
+ { "T-1807G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Thunder Force Gold Pack 1 (Japan)", gettext_noop("Fixes explosion graphic glitches in \"Thunder Force III\".") },
+ { "T-15903G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Titan Wars (Japan)",	gettext_noop("Fixes minor FMV glitches.") },
+ { "T-15911H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Solar Eclipse (USA)",	gettext_noop("Fixes minor FMV glitches.") },
+ { "T-15911H50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Titan Wars (Europe)",	gettext_noop("Fixes minor FMV glitches.") },
+ { "MK-81015",	NULL, "E",  CPUCACHE_EMUMODE_FULL, "Virtua Cop (Europe)", gettext_noop("Fixes game hang.") },
+ { "MK-81043",	NULL, "E",  CPUCACHE_EMUMODE_FULL, "Virtua Cop 2 (Europe)", gettext_noop("Fixes game hang.") },
+ { "GS-9001", 	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter (Japan)", gettext_noop("Fixes graphical glitches.") },
+ { "MK-81005",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter (USA)", gettext_noop("Fixes graphical glitches.") },
+ { "MK_8100550",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter (Europe)", gettext_noop("Fixes graphical glitches.") },
+ { "GS-9039",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter Remix (Japan)", gettext_noop("Fixes graphical glitches.") },
+ { "MK-81023",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter Remix (USA)", gettext_noop("Fixes graphical glitches.") },
+ { "MK-8102350",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter Remix (Europe)", gettext_noop("Fixes graphical glitches.") },
+ { "SG-7103",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Virtua Fighter Remix (SegaNet)", gettext_noop("Fixes graphical glitches.") },
+ { "T-36102G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Whizz (Japan)", 	gettext_noop("Fixes quasi-random hangs during startup.") },
+ { "T-9515H-50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Whizz (Europe)", 	gettext_noop("Fixes quasi-random hangs during startup.") },
+ { "T-28004G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Yu-No (Japan)",	gettext_noop("Fixes FMV ending too soon.") },
+ //
+ // DMA overhead sensitive games, may be fragile:
+ //
+#if 0
+ { "T-38001G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Another Memories (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-27810G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Device Reign (Japan)",	gettext_noop("Fixes game hang.") },
+ { "T-30002G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Real Sound - Kaze no Regret (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-13324G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"SD Gundam G Century S (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-26413G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Super Tempo (Japan)",	gettext_noop("Fixes game hang.") },
+ { "T-17703G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Tennis Arena (Japan)",	gettext_noop("Fixes game hang.") },
+ { "T-32508G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Tilk - Aoi Umi kara Kita Shoujo (Japan)", gettext_noop("Fixes game hang.") },
+ { "6106602",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Yuukyuu Gensoukyoku Demo (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-27804G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Yuukyuu Gensoukyoku (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-27806G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Yuukyuu no Kobako Official Collection (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-27807G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Yuukyuu Gensoukyoku 2nd Album (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-27808G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Yuukyuu Gensoukyoku ensemble (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-27809G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Yuukyuu Gensoukyoku ensemble 2 (Japan)", gettext_noop("Fixes game hang.") },
+ { "T-21401G",	NULL, NULL, CPUCACHE_EMUMODE_FULL,		"Zero4 Champ DooZy-J Type-R (Japan)", gettext_noop("Fixes game hang.") },
+#endif
 };
 
-void DB_Lookup(const char* path, const char* sgid, const uint8* fd_id, unsigned* const region, int* const cart_type, unsigned* const cpucache_emumode)
+void DB_Lookup(const char* path, const char* sgid, const char* sgname, const char* sgarea, const uint8* fd_id, unsigned* const region, int* const cart_type, unsigned* const cpucache_emumode)
 {
  for(auto& re : regiondb)
  {
@@ -321,7 +380,22 @@ void DB_Lookup(const char* path, const char* sgid, const uint8* fd_id, unsigned*
 
  for(auto& c : cemdb)
  {
-  if((c.sgid && !strcmp(c.sgid, sgid)) || (!c.sgid && !memcmp(c.fd_id, fd_id, 16)))
+  bool match;
+
+  if(c.sgid)
+  {
+   match = !strcmp(c.sgid, sgid);
+
+   if(c.sgname)
+    match &= !strcmp(c.sgname, sgname);
+
+   if(c.sgarea)
+    match &= !strcmp(c.sgarea, sgarea);
+  }
+  else
+   match = !memcmp(c.fd_id, fd_id, 16);
+
+  if(match)
   {
    *cpucache_emumode = c.mode;
    break;
@@ -340,7 +414,6 @@ static const struct
 {
  { "GS-9126", HORRIBLEHACK_NOSH2DMAPENALTY,	"Fighters Megamix (Japan)", gettext_noop("Fixes hang after watching or aborting FMV playback.") },
  { "MK-81073", HORRIBLEHACK_NOSH2DMAPENALTY,	"Fighters Megamix (Europe/USA)", gettext_noop("Fixes hang after watching or aborting FMV playback.") },
- { "T-22403G", HORRIBLEHACK_NOSH2DMAPENALTY,	"Irem Arcade Classics (Japan)", gettext_noop("Fixes hang when trying to start \"Zippy Race\".") }, // (way too finicky...)
 
  { "T-4507G", HORRIBLEHACK_VDP1VRAM5000FIX,	"Grandia (Japan)", gettext_noop("Fixes hang at end of first disc.") },
 
@@ -352,10 +425,23 @@ static const struct
  { "6106856", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Burning Rangers Taikenban (Japan)", gettext_noop("Fixes flickering rescue text.") },
  { "GS-9174", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Burning Rangers (Japan)", gettext_noop("Fixes flickering rescue text.") },
  { "MK-81803", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Burning Rangers (Europe/USA)", gettext_noop("Fixes flickering rescue text.") },
+ { "T-31505G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Falcom Classics II (Japan)", gettext_noop("Fixes FMV tearing in \"Ys II\".") },
  { "T-8111G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Frank Thomas Big Hurt Baseball (Japan)", gettext_noop("Reduces graphical glitches.") },
  { "T-8138H", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Frank Thomas Big Hurt Baseball (USA)", gettext_noop("Reduces graphical glitches.") }, // Probably need more-accurate VDP1 draw timings to fix the glitches completely.
+ { "T-9504G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Tokimeki Memorial - Forever with You (Japan)", gettext_noop("Fixes glitchy frames on the Konami intro arm sprite.") },
+ { "T-15006G",  HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Kaitei Daisensou (Japan)", gettext_noop("Fixes FMV tearing.") },
+ { "T-10001G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "In The Hunt (Europe/USA)", gettext_noop("Fixes FMV tearing.") },
+ { "GS-9001", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Virtua Fighter (Japan)", gettext_noop("Fixes graphical glitches.") },
+ { "MK-81005", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Virtua Fighter (USA)", gettext_noop("Fixes graphical glitches.") },
+ { "MK_8100550", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,"Virtua Fighter (Europe)", gettext_noop("Fixes graphical glitches.") },
+ { "GS-9039", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Virtua Fighter Remix (Japan)", gettext_noop("Fixes graphical glitches.") },
+ { "MK-81023", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Virtua Fighter Remix (USA)", gettext_noop("Fixes graphical glitches.") },
+ { "MK-8102350", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,"Virtua Fighter Remix (Europe)", gettext_noop("Fixes graphical glitches.") },
+ { "SG-7103", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Virtua Fighter Remix (SegaNet)", gettext_noop("Fixes graphical glitches.") },
  { "T-36102G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Whizz (Japan)", gettext_noop("Fixes major graphical issues during gameplay.") },
  { "T-9515H-50", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,"Whizz (Europe)", gettext_noop("Fixes major graphical issues during gameplay.") },
+ { "T-26105G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Wolf Fang SS - Kuuga 2001 (Japan)", gettext_noop("Fixes graphical glitches.") },
+ { "T-28004G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Yu-No (Japan)", gettext_noop("Reduces FMV tearing.") },
 
  // Still random hangs...wtf is this game doing...
  { "T-6006G", HORRIBLEHACK_NOSH2DMALINE106 | HORRIBLEHACK_VDP1INSTANT, "Thunderhawk II (Japan)", gettext_noop("Fixes hangs just before and during gameplay.") },
@@ -378,6 +464,28 @@ uint32 DB_LookupHH(const char* sgid, const uint8* fd_id)
 static std::string FDIDToString(const uint8 (&fd_id)[16])
 {
  return MDFN_sprintf("%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x", fd_id[0], fd_id[1], fd_id[2], fd_id[3], fd_id[4], fd_id[5], fd_id[6], fd_id[7], fd_id[8], fd_id[9], fd_id[10], fd_id[11], fd_id[12], fd_id[13], fd_id[14], fd_id[15]);
+}
+
+std::string DB_GetHHDescriptions(const uint32 hhv)
+{
+ std::string sv;
+
+ if(hhv & HORRIBLEHACK_NOSH2DMALINE106)
+  sv += "Block SH-2 DMA on last line of frame. ";
+
+ if(hhv & HORRIBLEHACK_NOSH2DMAPENALTY)
+  sv += "Disable slowing down of SH-2 CPU reads/writes during SH-2 DMA. ";
+
+ if(hhv & HORRIBLEHACK_VDP1VRAM5000FIX)
+  sv += "Patch VDP1 VRAM to break an infinite loop. ";
+
+ if(hhv & HORRIBLEHACK_VDP1RWDRAWSLOWDOWN)
+  sv += "SH-2 reads/writes from/to VDP1 slow down command execution. ";
+
+ if(hhv & HORRIBLEHACK_VDP1INSTANT)
+  sv += "Execute VDP1 commands instantly. ";
+
+ return sv;
 }
 
 void DB_GetInternalDB(std::vector<GameDB_Database>* databases)
@@ -458,7 +566,7 @@ void DB_GetInternalDB(std::vector<GameDB_Database>* databases)
  databases->push_back({
 	"cachemode",
 	gettext_noop("Cache Mode"),
-	gettext_noop("This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally due to the large increase in host CPU usage, along with the potential of causing games that fully utilize both SH-2 CPUs to run significantly slower than they should due to inadequate emulation of bus sharing/contention.")
+	gettext_noop("This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally primarily due to the large increase in host CPU usage.")
 	});
  for(auto& c : cemdb)
  {
@@ -472,8 +580,32 @@ void DB_GetInternalDB(std::vector<GameDB_Database>* databases)
   }
   GameDB_Entry e;
 
-  e.GameID = c.sgid ? c.sgid : FDIDToString(c.fd_id);
-  e.GameIDIsHash = !c.sgid;
+  if(c.sgid) 
+  {
+   unsigned lfcount = 0;
+
+   e.GameIDIsHash = false;
+   e.GameID = c.sgid;
+
+   if(c.sgname)
+   {
+    for(; lfcount < 1; lfcount++)
+     e.GameID += '\n';
+    e.GameID += c.sgname;
+   }
+
+   if(c.sgarea)
+   {
+    for(; lfcount < 2; lfcount++)
+     e.GameID += '\n';
+    e.GameID += c.sgarea;
+   }
+  }
+  else
+  {
+   e.GameIDIsHash = true;
+   e.GameID = FDIDToString(c.fd_id);
+  }
   e.Name = c.game_name;
   e.Setting = sv;
   e.Purpose = c.purpose ? _(c.purpose) : "";
@@ -486,30 +618,11 @@ void DB_GetInternalDB(std::vector<GameDB_Database>* databases)
  databases->push_back({
 	"horriblehacks",
 	gettext_noop("Horrible Hacks"),
-	gettext_noop("This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 CPU reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.")
+	gettext_noop("This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.")
 	});
  for(auto& hh : hhdb)
  {
-  std::string sv;
-  unsigned hhv = hh.horrible_hacks;
-
-  if(hhv & HORRIBLEHACK_NOSH2DMALINE106)
-   sv += "Block SH-2 DMA on last line of frame. ";
-
-  if(hhv & HORRIBLEHACK_NOSH2DMAPENALTY)
-   sv += "Disable slowing down of SH-2 CPU reads/writes during SH-2 DMA. ";
-
-  if(hhv & HORRIBLEHACK_VDP1VRAM5000FIX)
-   sv += "Patch VDP1 VRAM to break an infinite loop. ";
-
-  if(hhv & HORRIBLEHACK_VDP1RWDRAWSLOWDOWN)
-   sv += "SH-2 CPU reads/writes from/to VDP1 slow down command execution. ";
-
-  if(hhv & HORRIBLEHACK_VDP1INSTANT)
-   sv += "Execute VDP1 commands instantly. ";
-  //
-  //
-  //
+  std::string sv = DB_GetHHDescriptions(hh.horrible_hacks);
   GameDB_Entry e;
 
   e.GameID = hh.sgid ? hh.sgid : FDIDToString(hh.fd_id);

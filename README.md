@@ -82,11 +82,11 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
  - Sega
    - Dreamcast (reicast)
    - Saturn (yabause)
+   - Saturn (mednafen)
  - Sony
    - PSP (ppsspp)
 
 ## Features
-
 - Very Accurate, Full Speed Emulation
 - Stereo Sound
 - Save States (save anywhere/_game freezing_)
@@ -97,6 +97,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - iCade Controller Support ([8bitdo](http://www.8bitdo.com/), etc…)
 - Local Multiplayer via External Controllers
 - Portrait and Landscape Orientation
+- Cheatcode support! Currently for SNES and PSX only
 - Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
 - ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
@@ -112,7 +113,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - Taptic Engine Button Feedback (iPhone 7 and later)
   - Spotlight Searching ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
 - tvOS 10+ (Apple TV 4+)
-  - TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
+  - [broken for now] TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
 
 <sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
 

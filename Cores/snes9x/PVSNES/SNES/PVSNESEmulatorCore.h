@@ -35,4 +35,7 @@
 - (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
 - (void)flipBuffers;
 
+# pragma CheatCodeSupport
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
+
 @end

@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* sh7095.inc - Hitachi SH7095 Emulation
-**  Copyright (C) 2015-2019 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -17,14 +17,6 @@
 ** You should have received a copy of the GNU General Public License
 ** along with this program; if not, write to the Free Software Foundation, Inc.,
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
-
-/*
-   Instruction cache emulation shouldn't be enabled globally for all games until we resolve timestamp vs mem_timestamp issues
-   in regards to bus contention and time sharing, or else emulated dual-CPU programs may run slower
-   than they should and probably glitch out(and also until 5GHz desktop CPUs are the norm ;)).
-
-   Also...the emulated overhead is a little too high when executing a branch with no delay slot from non-cacheable memory.
 */
 
 /*
@@ -61,26 +53,20 @@
 	This cooouuuld turn out to be a problem, and if it does, it can be fixed by having two interrupt-pending variables,
 	with one being copied to the other in DoIDIF().
 
-	Instruction fetches don't go through the cache emulation, for performance reasons(getting the instruction fetches timed right
-	versus the instruction data read/write would be critical, to avoid causing inaccurate cache miss patterns which could cause code
-	to run slower than on the real thing, which is arguably worse than having it run faster).
+	Emulation of SH-2 master/slave bus sharing is very approximate.  On a real SH-2, internal bus cycles may affect
+	bus grant timing, need to run tests(though emulating that behavior would probably be unrealistic performance-wise).
+
+	The SCU C-bus DMA ExtHalt kludge doesn't work totally as intended when full cache emulation is enabled(and the
+	interruptible/resumable slave CPU code is used), but it proooobably won't be a problem in practice because on
+	a real Saturn, after the write that triggers the SCU DMA, a few CPU bus accesses can get in before the SCU hogs the bus.
 
 	SCI, UBC, and BSC are mostly unemulated.
 */
 
-// Address error exception order, sleep versus exceptions.
+/* TODO:
+	Check address error exception order, sleep versus exceptions.
 
-/*
- TODO: PC-relative addressing, uses instruction or data fetches?
-*/
-
-/*
- TODO: Make sure RecalcPendingIntPEX() is called in all places it needs to be called(which is arguably too many...).
-*/
-
-/*
- TODO: Penalize slave CPU external bus access if we ever figure out a solution to the timestamp vs mem_timestamp problem that doesn't murder
-       performance.
+	Make sure RecalcPendingIntPEX() is called in all places it needs to be called(which is arguably too many...).
 */
 
 #ifdef MSB_FIRST
@@ -89,60 +75,197 @@
  #define NE32ASU8_IDX_ADJ(T, idx) ( ((idx) & ~(sizeof(T) - 1)) ^ (4 - (sizeof(T))) )
 #endif
 
-SH7095::SH7095(const char* const name_arg, const unsigned event_id_dma_arg, uint8 (*exivecfn_arg)(void)) : event_id_dma(event_id_dma_arg), ExIVecFetch(exivecfn_arg), cpu_name(name_arg)
+SH7095::SH7095(const char* const name_arg, const unsigned event_id_dma_arg, uint8 (*exivecfn_arg)(void)) : event_id_dma(event_id_dma_arg), ExIVecFetch(exivecfn_arg), CBH_Setting(false), EIC_Setting(false), DM_Setting(false), cpu_name(name_arg)
 {
- Init(false);
+ if(this == &CPU[1])
+ {
+  for(unsigned dm = 0; dm < 2; dm++)
+  {
+   //
+   // Very fragile, be careful.
+   //
+   ResumePoint = nullptr;
+   ResumeTableP[dm] = nullptr;
+   timestamp = -1;
+   FRT_WDT_NextTS = 0x7FFFFFFF;
+   Pipe_ID = 0xFEU << 24;
+   //
+   if(dm)
+    RunSlaveUntil_Debug(0);
+   else
+    RunSlaveUntil(0);
+   //
+   assert(ResumePoint == nullptr);
+   assert(ResumeTableP[dm] != nullptr);
+   assert(timestamp == -1);
+   assert(FRT_WDT_NextTS == 0x7FFFFFFF);
+   assert(Pipe_ID == (0xFEU << 24));
+  }
+ }
+ //
+ //
+ Init(false, false);
 }
 
-template<unsigned which, typename T, unsigned region, bool CacheEnabled, bool TwoWayMode, bool IsInstr, bool CacheBypassHack>
-static NO_INLINE MDFN_FASTCALL T C_MemReadRT(uint32 A);
+template<unsigned which, int NeedSlaveCall, bool CacheBypassHack, typename T, unsigned region, bool CacheEnabled, int32 IsInstr>
+static NO_INLINE MDFN_FASTCALL T C_MemReadRT(uint32 A) MDFN_HOT;
 
-template<unsigned which, typename T, unsigned region, bool CacheEnabled>
-static NO_INLINE MDFN_FASTCALL void C_MemWriteRT(uint32 A, T V);
+template<unsigned which, int NeedSlaveCall, typename T, unsigned region, bool CacheEnabled>
+static NO_INLINE MDFN_FASTCALL void C_MemWriteRT(uint32 A, T V) MDFN_HOT;
 
-void SH7095::Init(const bool cbh)
+// WARNING: Template arguments CacheEnabled and CacheBypassHack are only valid for region==0.
+void SH7095::RecalcMRWFP_0(void)
 {
- CBH_Setting = cbh;
- //
- #define MAHL_P(w, region) {									\
-		  MRFP8[region]  = C_MemReadRT<w, uint8,  region, false, false, false, false>;	\
-		  MRFP16[region] = C_MemReadRT<w, uint16, region, false, false, false, false>;	\
-		  MRFP32[region] = C_MemReadRT<w, uint32, region, false, false, false, false>;	\
-		  MRFPI[region]  = C_MemReadRT<w, uint32, region, false, false, true, false>;	\
-		  MWFP8[region]  = C_MemWriteRT<w, uint8,  region, false>;	\
-		  MWFP16[region] = C_MemWriteRT<w, uint16, region, false>;	\
-		  MWFP32[region] = C_MemWriteRT<w, uint32, region, false>;	\
+ #define MAHL_(bs,w,nsc,cbh)									\
+		 if(CCR & CCR_CE)								\
+		 {										\
+		  if(bs == 16) { MRFP16_I[0] = C_MemReadRT<w, nsc, cbh, uint16, 0x0, true, -1>; }	\
+		  if(bs == 32) { MRFP32_I[0] = C_MemReadRT<w, nsc, cbh, uint32, 0x0, true, -1>; }	\
+		  MRFP##bs[0] = C_MemReadRT <w, nsc, cbh, uint##bs, 0x0, true, false>;		\
+		  MRFPI[0]    = C_MemReadRT <w, nsc, cbh, uint32,   0x0, true, true>;		\
+		  MWFP##bs[0] = C_MemWriteRT<w, nsc, uint##bs, 0x0, true>;			\
+		 }										\
+		 else										\
+		 {										\
+		  if(bs == 16) { MRFP16_I[0] = C_MemReadRT<w, nsc, cbh, uint16, 0x0, false, false>; }\
+		  if(bs == 32) { MRFP32_I[0] = C_MemReadRT<w, nsc, cbh, uint32, 0x0, false, false>; }\
+		  MRFP##bs[0] =  C_MemReadRT <w, nsc, cbh, uint##bs, 0x0, false, false>;		\
+		  MRFPI[0]    =  C_MemReadRT <w, nsc, cbh, uint32,   0x0, false, true>;		\
+		  MWFP##bs[0] =  C_MemWriteRT<w, nsc, uint##bs, 0x0, false>;			\
+		 }
+
+ #define MAHL(w, nsc, cbh)		\
+	{				\
+	 MAHL_( 8, w, nsc, cbh)		\
+	 MAHL_(16, w, nsc, cbh)		\
+	 MAHL_(32, w, nsc, cbh) 	\
+	}
+
+ if(this == &CPU[0])
+ {
+  if(EIC_Setting)
+  {
+   if(DM_Setting)
+    MAHL(0,   -1, false)
+   else
+    MAHL(0, true, false)
+  }
+  else if(CBH_Setting)
+  {
+   MAHL(0, false, true)
+  }
+  else
+  {
+   MAHL(0, false, false)
+  }
+ }
+ else
+ {
+  if(!EIC_Setting && CBH_Setting)
+  {
+   MAHL(1, false, true)
+  }
+  else
+  {
+   MAHL(1, false, false)
+  }
+ }
+ #undef MAHL_
+ #undef MAHL
+}
+
+void SH7095::RecalcMRWFP_1_7(void)
+{
+ #define MAHL_P(w, nsc, region) {								\
+		  MRFP8[region]  = C_MemReadRT<w, nsc, false, uint8,  region, false, false>;	\
+		  MRFP16[region] = C_MemReadRT<w, nsc, false, uint16, region, false, false>;	\
+		  MRFP32[region] = C_MemReadRT<w, nsc, false, uint32, region, false, false>;	\
+		  MRFP16_I[region] = C_MemReadRT<w, nsc, false, uint16, region, false, false>;	\
+		  MRFP32_I[region] = C_MemReadRT<w, nsc, false, uint32, region, false, false>;	\
+		  MRFPI[region]  = C_MemReadRT<w, nsc, false, uint32, region, false, true>;	\
+		  MWFP8[region]  = C_MemWriteRT<w, nsc, uint8,  region, false>;	\
+		  MWFP16[region] = C_MemWriteRT<w, nsc, uint16, region, false>;	\
+		  MWFP32[region] = C_MemWriteRT<w, nsc, uint32, region, false>;	\
 		  }
 
- #define MAHL(region)			\
-		  if(this == &CPU[0])	\
-		  { MAHL_P(0, region) }	\
-		  else			\
-		  { MAHL_P(1, region) }
+ #define MAHL(nsc, region)					\
+		  if(this == &CPU[0])				\
+		  { MAHL_P(0, nsc, region) }			\
+		  else						\
+		  { MAHL_P(1, false, region) }
 
- MAHL(1)
- MAHL(2)
- MAHL(3)
- MAHL(4)
- MAHL(5)
- MAHL(6)
- MAHL(7)
+ if(EIC_Setting)
+ {
+  if(DM_Setting)
+  {
+   MAHL(-1,  1)
+  }
+  else
+  {
+   MAHL(true,  1)
+  }
+  MAHL(false, 2)
+  MAHL(false, 3)
+  MAHL(false, 4)
+  MAHL(false, 5)
+  MAHL(false, 6)
+  MAHL(false, 7)
+ }
+ else
+ {
+  MAHL(false, 1)
+  MAHL(false, 2)
+  MAHL(false, 3)
+  MAHL(false, 4)
+  MAHL(false, 5)
+  MAHL(false, 6)
+  MAHL(false, 7)
+ }
 
  #undef MAHL
  #undef MAHL_P
- //
- //
- //
+}
 
+void SH7095::SetDebugMode(bool DebugMode)
+{
+ if(DM_Setting != DebugMode)
+ {
+  if(ResumePoint != nullptr)
+  {
+   bool found = false;
+
+   for(unsigned i = 0; i < 512; i++)
+   {
+    if(ResumeTableP[DM_Setting][i] == ResumePoint)
+    {
+     ResumePoint = ResumeTableP[DebugMode][i];
+     found = true;
+     break;
+    }
+   }
+   assert(found);
+  }
+  DM_Setting = DebugMode;
+  //
+  RecalcMRWFP_0();
+  RecalcMRWFP_1_7();
+ }
+}
+
+void SH7095::Init(const bool EmulateICache, const bool CacheBypassHack)
+{
+ CBH_Setting = CacheBypassHack;
+ EIC_Setting = EmulateICache;
+ RecalcMRWFP_0();
+ RecalcMRWFP_1_7();
+ //
+ //
+ //
  //
  // Initialize variables that won't be initialized elsewhere since they reflect the overall emulator timing state, or are cache variables
  // for signal inputs.
  //
  timestamp = 0;
- write_finish_timestamp = 0;
- divide_finish_timestamp = 0;
- FRT.lastts = 0;
- dma_lastts = 0;
 
  FRT.FTI = false;
  FRT.FTCI = false;
@@ -152,61 +275,14 @@ void SH7095::Init(const bool cbh)
  ExtHalt = false;
  ExtHaltDMA = false;
 
+ ResumePoint = nullptr;
+
  TruePowerOn();
 }
 
 SH7095::~SH7095()
 {
 
-}
-
-void SH7095::AdjustTS(int32 delta, bool force_set)
-{
- if(force_set)
- {
-  timestamp = delta;
-
-  MA_until = delta;
-  MM_until = delta;
-
-  for(unsigned i = 0; i < 16; i++)
-   WB_until[i] = delta;
-
-  write_finish_timestamp = delta;
-  divide_finish_timestamp = delta;
-
-  FRT.lastts = delta;
-  dma_lastts = delta;
- }
- else
- {
-  if(!(timestamp & 0x40000000))
-   timestamp += delta;
-
-  if(!(MA_until & 0x40000000))
-   MA_until += delta;
-
-  if(!(MM_until & 0x40000000))
-   MM_until += delta;
-
-  for(unsigned i = 0; i < 16; i++)
-  {
-   if(!(WB_until[i] & 0x40000000))
-    WB_until[i] += delta;
-  }
-
-  if(!(write_finish_timestamp & 0x40000000))
-   write_finish_timestamp += delta;
-
-  if(!(divide_finish_timestamp & 0x40000000))
-   divide_finish_timestamp += delta;
-
-  FRT.lastts += delta;
-  dma_lastts += delta;
- }
-
- FRT_WDT_ClockDivider &= 0x00FFFFFF;
- FRT_WDT_Recalc_NET();
 }
 
 //
@@ -218,7 +294,13 @@ void SH7095::TruePowerOn(void)
   R[i] = 0;
 
  for(unsigned i = 0; i < 16; i++)
-  WB_until[i] = 0;
+  WB_until[i] = timestamp;
+
+ UCRead_IF_Kludge = 0;
+
+ MA_until = timestamp;
+ MM_until = timestamp;
+ write_finish_timestamp = timestamp;
 
  PC = 0;
 
@@ -238,10 +320,39 @@ void SH7095::TruePowerOn(void)
  PC_IF = PC_ID = 0;
 
  memset(Cache, 0, sizeof(Cache));
+ memset(Cache_LRU, 0, sizeof(Cache_LRU));
+ CCRC_Replace_OR[0] = 0;
+ CCRC_Replace_OR[1] = 0;
+ CCRC_Replace_AND = 0;
  CCR = 0;
+ //
+ //
+ //
+ ResumePoint = nullptr;
+ Resume_cent = nullptr;
+ Resume_instr = 0;
+ Resume_way_match = 0;
+ Resume_uint8_A = 0;
+ Resume_uint16_A = 0;
+ Resume_uint32_A = 0;
+ Resume_unmasked_A = 0;
+ Resume_uint32_V = 0;
+ Resume_uint16_V = 0;
+ Resume_uint8_V = 0;
 
- MA_until = 0;
- MM_until = 0;
+ Resume_MAC_L_m0 = 0;
+ Resume_MAC_L_m1 = 0;
+
+ Resume_MAC_W_m0 = 0;
+ Resume_MAC_W_m1 = 0;
+
+ Resume_ea = 0;
+ Resume_new_PC = 0;
+ Resume_new_SR = 0;
+
+ Resume_ipr = 0;
+ Resume_exnum = 0;
+ Resume_vecnum = 0;
  //
  //
  //
@@ -253,10 +364,39 @@ void SH7095::TruePowerOn(void)
  VCRC = 0;
  VCRD = 0;
  ICR = 0;
+ //
+ //
+ //
+ BSC.BCR1 &= 0x8000;
+ BSC.BCR2 = 0;
+ BSC.WCR = 0;
+ BSC.MCR = 0;
 
+ BSC.RTCSR = 0;
+ BSC.RTCSRM = 0;
+ BSC.RTCNT = 0;
+ BSC.RTCOR = 0;
+
+ BSC.sdram_finish_time = timestamp;
+ BSC.last_mem_time = timestamp;
+ BSC.last_mem_addr = 0;
+ BSC.last_mem_type = 0;
  //
  //
  //
+ ResumePoint = nullptr;
+ //
+ //
+ //
+ SBYCR = 0;
+ Standby = false;
+ //
+ //
+ //
+ FRT.lastts = timestamp;
+
+ // Don't change FRT.FTI and FRT.FTCI here.
+
  FRT.FRC = 0;
  FRT.OCR[0] = FRT.OCR[1] = 0;
  FRT.FICR = 0;
@@ -279,8 +419,8 @@ void SH7095::TruePowerOn(void)
  //
  //
  //
- DMA_ClockCounter = 0;
- DMA_SGCounter = 0;
+ DMA_Timestamp = timestamp;
+ DMA_SGEndTimestamp = timestamp;
  DMA_RoundRobinRockinBoppin = 0;
  DMA_PenaltyKludgeAmount = 0;
  DMA_PenaltyKludgeAccum = 0;
@@ -291,6 +431,7 @@ void SH7095::TruePowerOn(void)
  //
  //
  //
+ divide_finish_timestamp = timestamp;
  DVSR = 0;
  DVDNT = 0;
  DVDNTH = 0;
@@ -302,10 +443,68 @@ void SH7095::TruePowerOn(void)
  //
  //
  //
+ SCI.SMR = 0;
+ SCI.BRR = 0;
+ SCI.SCR = 0;
+ SCI.TDR = 0;
+ SCI.SSR = 0;
+ SCI.SSRM = 0;
+ SCI.RDR = 0;
+ SCI.RSR = 0;
+ SCI.TSR = 0;
 }
 
+void SH7095::SetActive(bool active)
+{
+ if(active && timestamp == SS_EVENT_DISABLED_TS)
+ {
+  timestamp = SH7095_mem_timestamp;
+  FRT.lastts = timestamp;
 
+  DMA_Timestamp = SH7095_mem_timestamp;
+  DMA_SGEndTimestamp = SH7095_mem_timestamp;
 
+  SS_SetEventNT(&events[event_id_dma], SH7095_mem_timestamp + 1);
+  //
+  Reset(true);
+ }
+ else if(!active && timestamp != SS_EVENT_DISABLED_TS)
+ {
+  Reset(true);
+  //
+  timestamp = SS_EVENT_DISABLED_TS;
+  SS_SetEventNT(&events[event_id_dma], SS_EVENT_DISABLED_TS);
+ }
+}
+
+void SH7095::AdjustTS(int32 delta)
+{
+ if(MDFN_UNLIKELY(timestamp == SS_EVENT_DISABLED_TS))
+  return;
+
+ timestamp += delta;
+ FRT.lastts += delta;
+
+#define ATSD(v) v = std::max<sscpu_timestamp_t>(-1000000, v + (delta))
+ ATSD(DMA_Timestamp);
+ ATSD(DMA_SGEndTimestamp);
+
+ ATSD(MA_until);
+ ATSD(MM_until);
+
+ for(unsigned i = 0; i < 16; i++)
+  ATSD(WB_until[i]);
+
+ ATSD(write_finish_timestamp);
+ ATSD(divide_finish_timestamp);
+
+ ATSD(BSC.sdram_finish_time);
+ ATSD(BSC.last_mem_time);
+#undef ATSD
+
+ FRT_WDT_ClockDivider &= 0x00FFFFFF;
+ FRT_WDT_Recalc_NET();
+}
 
 
 // de=1, dme=1, te=0, nmif=0, ae=0
@@ -360,8 +559,8 @@ INLINE void SH7095::DMA_DoTransfer(unsigned ch)
 	{
 	 uint8 buffer;
 
-	 buffer = SH7095_BusRead<uint8>(sar & 0x07FFFFFF, false, &DMA_ClockCounter);
-	 SH7095_BusWrite<uint8>(dar & 0x07FFFFFF, buffer, false, &DMA_ClockCounter);
+	 buffer = BSC_BusRead<uint8>(sar & 0x07FFFFFF, false, &DMA_Timestamp);
+	 BSC_BusWrite<uint8>(dar & 0x07FFFFFF, buffer, false, &DMA_Timestamp);
 
 	 sar += ainc[0][sm];
  	 dar += ainc[0][dm];
@@ -373,8 +572,8 @@ INLINE void SH7095::DMA_DoTransfer(unsigned ch)
 	{
 	 uint16 buffer;
 
-	 buffer = SH7095_BusRead<uint16>(sar & 0x07FFFFFE, false, &DMA_ClockCounter);
-	 SH7095_BusWrite<uint16>(dar & 0x07FFFFFE, buffer, false, &DMA_ClockCounter);
+	 buffer = BSC_BusRead<uint16>(sar & 0x07FFFFFE, false, &DMA_Timestamp);
+	 BSC_BusWrite<uint16>(dar & 0x07FFFFFE, buffer, false, &DMA_Timestamp);
 
 	 if(MDFN_UNLIKELY((sar | dar) & 0x1))
 	 {
@@ -394,8 +593,8 @@ INLINE void SH7095::DMA_DoTransfer(unsigned ch)
 	{
 	 uint32 buffer;
 
-	 buffer = SH7095_BusRead<uint32>(sar & 0x07FFFFFC, false, &DMA_ClockCounter);
-	 SH7095_BusWrite<uint32>(dar & 0x07FFFFFC, buffer, false, &DMA_ClockCounter);
+	 buffer = BSC_BusRead<uint32>(sar & 0x07FFFFFC, false, &DMA_Timestamp);
+	 BSC_BusWrite<uint32>(dar & 0x07FFFFFC, buffer, false, &DMA_Timestamp);
 
 	 if(MDFN_UNLIKELY((sar | dar) & 0x3))
 	 {
@@ -425,14 +624,14 @@ INLINE void SH7095::DMA_DoTransfer(unsigned ch)
 
 	 for(unsigned i = 0; i < 4; i++)
 	 {
-	  buffer[i] = SH7095_BusRead<uint32>((sar + (i << 2)) & 0x07FFFFFC, (bool)i, &DMA_ClockCounter);
+	  buffer[i] = BSC_BusRead<uint32>((sar + (i << 2)) & 0x07FFFFFC, (bool)i, &DMA_Timestamp);
 	 }
 
 	 sar += 0x10;
 
 	 for(unsigned i = 0; i < 4; i++)
 	 {
-	  SH7095_BusWrite<uint32>(dar & 0x07FFFFFC, buffer[i], false, &DMA_ClockCounter);
+	  BSC_BusWrite<uint32>(dar & 0x07FFFFFC, buffer[i], false, &DMA_Timestamp);
 	  dar += ainc[2][dm];
 	  tcr = (tcr - 1) & 0xFFFFFF;
 	  if(MDFN_UNLIKELY(!tcr))
@@ -458,30 +657,25 @@ INLINE void SH7095::DMA_DoTransfer(unsigned ch)
 
 sscpu_timestamp_t SH7095::DMA_Update(sscpu_timestamp_t et)
 {
- if(MDFN_UNLIKELY(et < dma_lastts))
+#ifdef MDFN_ENABLE_DEV_BUILD
+ assert(timestamp != SS_EVENT_DISABLED_TS);
+#endif
+
+ if(MDFN_UNLIKELY(et < DMA_Timestamp))
  {
-  // et < dma_lastts may happen...look into it.
-  if(et < dma_lastts)
-   SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] DMA_Update called with et(%u) < dma_lastts(%u).\n", cpu_name, et, dma_lastts);
+  // may happen...look into it.
+  // SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] DMA_Update called with et(%d) < DMA_Timestamp(%d).\n", cpu_name, et, DMA_Timestamp);
+  return DMA_Timestamp + 32;
  }
  else if(MDFN_UNLIKELY(ExtHaltDMA))
  {
   //printf("%s ExtHaltDMA 0x%02x!\n", cpu_name, ExtHaltDMA);
-  dma_lastts = et;
-  return dma_lastts + 128;
+  DMA_Timestamp = et;
+  return DMA_Timestamp + 128;
  }
  else
  {
-  uint32 clocks = et - dma_lastts;
-  dma_lastts = et;
-
-  //
-  //
-  //
   bool rr = DMA_RoundRobinRockinBoppin;
-
-  DMA_ClockCounter += clocks;
-  DMA_SGCounter += clocks;
 
   if(DMAOR & 0x08) 	// Round robin
   {
@@ -489,7 +683,7 @@ sscpu_timestamp_t SH7095::DMA_Update(sscpu_timestamp_t et)
    {
     if(DMA_RunCond(rr))
     {
-     if(DMA_ClockCounter <= 0)
+     if(DMA_Timestamp >= et)
       goto TimeOver;
 
      DMA_DoTransfer(rr);
@@ -501,7 +695,7 @@ sscpu_timestamp_t SH7095::DMA_Update(sscpu_timestamp_t et)
   {
    while(DMA_RunCond(0))
    {
-    if(DMA_ClockCounter <= 0)
+    if(DMA_Timestamp >= et)
      goto TimeOver;
 
     DMA_DoTransfer(0);
@@ -509,7 +703,7 @@ sscpu_timestamp_t SH7095::DMA_Update(sscpu_timestamp_t et)
 
    while(DMA_RunCond(1))
    {
-    if(DMA_ClockCounter <= 0)
+    if(DMA_Timestamp >= et)
      goto TimeOver;
 
     DMA_DoTransfer(1);
@@ -521,26 +715,69 @@ sscpu_timestamp_t SH7095::DMA_Update(sscpu_timestamp_t et)
   TimeOver:;
 
   DMA_RoundRobinRockinBoppin = rr;
-  DMA_ClockCounter = std::min<int32>(DMA_ClockCounter, 128);
-  DMA_SGCounter = std::min<int32>(DMA_SGCounter, 0);
+  DMA_Timestamp = std::max<sscpu_timestamp_t>(DMA_Timestamp, et - 128);
 
   DMA_CheckEnterBurstHack();
   RecalcPendingIntPEX();	// TODO: conditionalize(or make RecalcPendingIntPEX() less expensive).
  }
 
- return dma_lastts + ((DMA_SGCounter < 0) ? 32 : 128);
+ return et + ((et < DMA_SGEndTimestamp) ? 32 : 128);
 }
+
+
+#ifdef MDFN_ENABLE_DEV_BUILD
+void SH7095::CheckDMARace(uint32 addr, uint32 size, bool write)
+{
+ for(unsigned cpu = 0; cpu < 2; cpu++)
+ {
+  for(unsigned ch = 0; ch < 2; ch++)
+  {
+   auto& dd = CPU[cpu].DMADebug[ch];
+
+   if(dd.rw[0][0] == ~0U)
+    continue;
+
+   for(uint32 A = addr; A != ((addr + size) & 0x07FFFFFF); A = (A + 1) & 0x07FFFFFF)
+   {
+    bool match = false;
+
+    if(dd.rw[1][1] < dd.rw[1][0])
+     match |= (A >= dd.rw[1][0] || A < dd.rw[1][1]);
+    else
+     match |= (A >= dd.rw[1][0] && A < dd.rw[1][1]);
+
+    if(write)
+    {
+     if(dd.rw[0][1] < dd.rw[0][0])
+      match |= (A >= dd.rw[0][0] || A < dd.rw[0][1]);
+     else
+      match |= (A >= dd.rw[0][0] && A < dd.rw[0][1]);
+    }
+
+    if(match)
+    {
+     SS_DBG(SS_DBG_SH2_DMARACE, "[%s] %u-byte %s 0x%07x races with %s DMA%u; SAR=0x%08x DAR=0x%08x, [0x%07x,0x%07x]->[0x%07x,0x%07x]\n", cpu_name, size, write ? "write to" : "read from", addr, CPU[cpu].cpu_name, ch, CPU[cpu].DMACH[ch].SAR, CPU[cpu].DMACH[ch].DAR, dd.rw[0][0], dd.rw[0][1] - 1, dd.rw[1][0], dd.rw[1][1] - 1);
+     break;
+    }
+   }
+  }
+ }
+}
+#endif
 
 // DMA_StartSG() must be paired with a DMA_Update(SH7095_mem_timestamp) somewhere before.
 void SH7095::DMA_StartSG(void)
 {
- DMA_SGCounter = DMA_ClockCounter - 128;
- SS_SetEventNT(&events[event_id_dma], SH7095_mem_timestamp + 32);	// fixed + 32, don't evaluate DMA_SGCounter here.
+ DMA_SGEndTimestamp = DMA_Timestamp + 192;
+ SS_SetEventNT(&events[event_id_dma], SH7095_mem_timestamp + 32);	// fixed + 32
 
  DMA_CheckEnterBurstHack();
 }
 
 // Must be called after DMACH[0].CHCR or DMACH[1].CHCR or DMAOR changes.
+//
+// If DMA_RunCond(...) returns false, SAR and DAR and TCR for that channel
+// should not be used(due to caching of variables in DMA_DoTransfer()).
 NO_INLINE void SH7095::DMA_RecalcRunning(void)
 {
  DMA_PenaltyKludgeAmount = 0;
@@ -549,7 +786,7 @@ NO_INLINE void SH7095::DMA_RecalcRunning(void)
  {
   if(DMA_RunCond(ch))
   {
-   const int32 npka = (((DMACH[ch].CHCR >> 10) & 3) == 3 && (DMACH[ch].SAR & DMACH[ch].DAR & 0x06000000) != 0x06000000) ? 23 : 18;
+   const int32 npka = (((DMACH[ch].CHCR >> 10) & 3) == 3 && (DMACH[ch].SAR & DMACH[ch].DAR & 0x06000000) != 0x06000000) ? 23 : 19;
 
    DMA_PenaltyKludgeAmount = std::max<int32>(DMA_PenaltyKludgeAmount, npka);
   }
@@ -562,16 +799,63 @@ NO_INLINE void SH7095::DMA_RecalcRunning(void)
  //
  //
  //
- if(ss_dbg_mask & (SS_DBG_WARNING | SS_DBG_SH2))
+#ifdef MDFN_ENABLE_DEV_BUILD
+ for(unsigned ch = 0; ch < 2; ch++)
  {
-  for(unsigned ch = 0; ch < 2; ch++)
+  const bool run_cond = DMA_RunCond(ch);
+  const unsigned ts = (DMACH[ch].CHCR >> 10) & 3;
+  const unsigned sm = (DMACH[ch].CHCR >> 12) & 3;
+  const unsigned dm = (DMACH[ch].CHCR >> 14) & 3;
+  const uint32 sar = DMACH[ch].SAR;
+  const uint32 dar = DMACH[ch].DAR;
+  const uint32 count = DMACH[ch].TCR ? DMACH[ch].TCR : 0x1000000;
+
+  if(run_cond && DMADebug[ch].rw[0][0] == ~0U)
   {
-   if(DMA_RunCond(ch) && ((DMACH[ch].CHCR >> 10) & 3) == 3 && ((DMACH[ch].SAR | DMACH[ch].DAR) & 0xF))
+   auto& dd = DMADebug[ch];
+
+   if(ts == 3)
    {
-    SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] DMA channel %u, 16-byte transfer size address misalignment, SAR=0x%08x DAR=0x%08x", cpu_name, ch, DMACH[ch].SAR, DMACH[ch].DAR);
+    dd.rw[0][0] = sar & 0x07FFFFFF;
+    dd.rw[0][1] = (dd.rw[0][0] + (count << 2)) & 0x07FFFFFF;
    }
+   else
+   {
+    if(sm & 2)
+    {
+     dd.rw[0][1] = (sar + (1 << ts)) & 0x07FFFFFF;
+     dd.rw[0][0] = (dd.rw[0][1] - (count << ts)) & 0x07FFFFFF;
+    }
+    else
+    {
+     dd.rw[0][0] = sar & 0x07FFFFFF;
+     dd.rw[0][1] = (dd.rw[0][0] + ((sm ? count : 1) << ts)) & 0x07FFFFFF;
+    }
+   }
+   //
+   const unsigned ts_adj = std::min<unsigned>(2, ts);
+
+   if(dm & 2)
+   {
+    dd.rw[1][1] = (dar + (1 << ts_adj)) & 0x07FFFFFF;
+    dd.rw[1][0] = (dd.rw[1][1] - (count << ts_adj)) & 0x07FFFFFF;
+   }
+   else
+   {
+    dd.rw[1][0] = dar & 0x07FFFFFF;
+    dd.rw[1][1] = (dd.rw[1][0] + ((dm ? count : 1) << ts_adj)) & 0x07FFFFFF;
+   }
+   //printf("%u, read:[0x%07x, 0x%07x) write:[0x%07x, 0x%07x)\n", ch, dd.rw[0][0], dd.rw[0][1], dd.rw[1][0], dd.rw[1][1]);
+  }
+  else if(!run_cond)
+   DMADebug[ch].rw[0][0] = ~0U;
+
+  if(run_cond && ts == 0x3 && ((sar | dar) & 0xF))
+  {
+   SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] DMA channel %u, 16-byte transfer size address misalignment, SAR=0x%08x DAR=0x%08x", cpu_name, ch, sar, dar);
   }
  }
+#endif
 }
 
 INLINE void SH7095::DMA_BusTimingKludge(void)
@@ -758,6 +1042,12 @@ void SH7095::FRT_WDT_Update(void)
 
 void SH7095::SetFTI(bool state)
 {
+ if(MDFN_UNLIKELY(timestamp == SS_EVENT_DISABLED_TS))
+ {
+  FRT.FTI = state;
+  return;
+ }
+
  FRT_WDT_Update();
  //
  //
@@ -963,9 +1253,9 @@ void SH7095::SCI_Reset(void)
 // Misaligned/wrong-sized accesses aren't handled correctly, it's a mess, but probably doesn't matter.
 //
 template<typename T>
-NO_INLINE void SH7095::OnChipRegWrite(uint32 A, uint32 V)
+NO_INLINE MDFN_HOT void SH7095::OnChipRegWrite(uint32 A, uint32 V)
 {
- //SS_DBG(SS_DBG_SH2_REGW, "[%s] %zu-byte write to on-chip register area; address=0x%08x value=0x%08x\n", cpu_name, sizeof(T), A, V);
+ SS_DBGTI(SS_DBG_SH2_REGW, "[%s] %zu-byte write to on-chip register area; address=0x%08x value=0x%08x, PC=0x%08x\n", cpu_name, sizeof(T), A, V, PC);
 
  if(A & 0x100)
  {
@@ -1405,14 +1695,9 @@ NO_INLINE void SH7095::OnChipRegWrite(uint32 A, uint32 V)
 	}
 	break;
 
-   case 0x92: case 0x93: case 0x94: case 0x95:
-   case 0x96: case 0x97: case 0x98: case 0x99:
-   case 0x9A: case 0x9B: case 0x9C: case 0x9D:
-   case 0x9E:
+   case 0x92:	// No 0x93...0x9F mirrors for writes.
 	SetCCR(V);
 	break;
-
-
    //
    //
    //
@@ -1467,7 +1752,7 @@ NO_INLINE void SH7095::OnChipRegWrite(uint32 A, uint32 V)
 }
 
 template<typename T>
-INLINE T SH7095::OnChipRegRead(uint32 A)
+INLINE T SH7095::OnChipRegRead_INLINE(uint32 A)
 {
  if(A & 0x100)
  {
@@ -1804,10 +2089,10 @@ INLINE T SH7095::OnChipRegRead(uint32 A)
 	ret = SBYCR;
 	break;
 
-   case 0x92: case 0x93: case 0x94: case 0x95:
-   case 0x96: case 0x97: case 0x98: case 0x99:
-   case 0x9A: case 0x9B: case 0x9C: case 0x9D:
-   case 0x9E:
+   case 0x92 ... 0x9F:
+	//
+	// TODO: Emulate jankiness of 16-bit reads from mirror addresses.
+	//
 	ret = CCR | (CCR << 8);
 	break;
    //
@@ -1869,8 +2154,158 @@ INLINE T SH7095::OnChipRegRead(uint32 A)
  }
 }
 
-template<typename T, bool BurstHax>
-INLINE T SH7095::ExtBusRead(uint32 A)
+template<typename T>
+void INLINE SH7095::BSC_BusWrite(uint32 A, T V, const bool BurstHax, int32* SH2DMAHax)
+{
+ uint32 DB = SH7095_DB;
+
+ if(!BurstHax)
+  SH7095_mem_timestamp += (SH7095_mem_timestamp == BSC.last_mem_time) & BSC.last_mem_type;
+
+ if(A < 0x02000000)	// CS0, configured as 16-bit
+ {
+  if(sizeof(T) == 4)
+  {
+   // TODO/FIXME: Don't allow DMA transfers to occur between the two 16-bit accesses.
+   //if(!SH2DMAHax)
+   // SH7095_BusLock++;
+
+   DB = (DB & 0xFFFF0000) | (V >> 16);
+   BusRW_DB_CS0<uint16, true>(A, DB, BurstHax, SH2DMAHax);
+
+   DB = (DB & 0xFFFF0000) | (uint16)V;
+   BusRW_DB_CS0<uint16, true>(A | 2, DB, BurstHax, SH2DMAHax);
+
+   //if(!SH2DMAHax)
+   // SH7095_BusLock--;
+  }
+  else
+  {
+   const uint32 shift = ((A & 1) ^ (2 - sizeof(T))) << 3;
+   const uint32 mask = (0xFFFF >> ((2 - sizeof(T)) * 8)) << shift;
+
+   DB = (DB & ~mask) | (V << shift);
+   BusRW_DB_CS0<T, true>(A, DB, BurstHax, SH2DMAHax);
+  }
+ }
+ else if(A >= 0x06000000)	// CS3; 32-bit
+ {
+  const uint32 shift = ((A & 3) ^ (4 - sizeof(T))) << 3;
+  const uint32 mask = (0xFFFFFFFF >> ((4 - sizeof(T)) * 8)) << shift;
+
+  DB = (DB & ~mask) | (V << shift);
+  BusRW_DB_CS3<T, true>(A, DB, BurstHax, SH2DMAHax);
+
+  if(!BurstHax)
+  {
+   if(!SH2DMAHax)
+   {
+    if(SH7095_mem_timestamp < BSC.sdram_finish_time)
+     SH7095_mem_timestamp = BSC.sdram_finish_time;
+
+    SH7095_mem_timestamp += 2;
+    BSC.sdram_finish_time = SH7095_mem_timestamp + 2;
+   }
+   else
+    *SH2DMAHax += 3;
+  }
+ }
+ else	// CS1, CS2; 32-bit
+ {
+  const uint32 shift = ((A & 3) ^ (4 - sizeof(T))) << 3;
+  const uint32 mask = (0xFFFFFFFF >> ((4 - sizeof(T)) * 8)) << shift;
+
+  DB = (DB & ~mask) | (V << shift);
+  BusRW_DB_CS12<T, true>(A, DB, BurstHax, SH2DMAHax);
+ }
+
+ SH7095_DB = DB;
+
+ if(!BurstHax)
+ {
+  BSC.last_mem_addr = A;
+  BSC.last_mem_type = 0;
+  BSC.last_mem_time = SH7095_mem_timestamp;
+ }
+}
+
+template<typename T>
+T INLINE SH7095::BSC_BusRead(uint32 A, const bool BurstHax, int32* SH2DMAHax)
+{
+ //
+ //
+ //
+ uint32 DB = SH7095_DB;
+ T ret;
+
+ if(!BurstHax)
+  SH7095_mem_timestamp += (SH7095_mem_timestamp == BSC.last_mem_time) & (bool)((BSC.last_mem_addr ^ A) & 0x06000000);
+
+ if(A < 0x02000000)	// CS0, configured as 16-bit
+ {
+  if(sizeof(T) == 4)
+  {
+   // TODO/FIXME: Don't allow DMA transfers to occur between the two 16-bit accesses.
+   //if(!SH2DMAHax)
+   // SH7095_BusLock++;
+
+   BusRW_DB_CS0<uint16, false>(A, DB, BurstHax, SH2DMAHax);
+   ret = DB << 16;
+
+   BusRW_DB_CS0<uint16, false>(A | 2, DB, BurstHax, SH2DMAHax);
+   ret |= (uint16)DB;
+
+   //if(!SH2DMAHax)
+   // SH7095_BusLock--;
+  }
+  else
+  {
+   BusRW_DB_CS0<T, false>(A, DB, BurstHax, SH2DMAHax);
+   ret = DB >> (((A & 1) ^ (2 - sizeof(T))) << 3);
+  }
+ }
+ else if(A >= 0x06000000)	// CS3; 32-bit
+ {
+  BusRW_DB_CS3<T, false>(A, DB, BurstHax, SH2DMAHax);
+  ret = DB >> (((A & 3) ^ (4 - sizeof(T))) << 3);
+
+  // SDRAM leaves data bus in a weird state after read...
+  // DB = 0;
+
+  if(!BurstHax)
+  {
+   if(!SH2DMAHax)
+   {
+    if(SH7095_mem_timestamp < BSC.sdram_finish_time)
+     SH7095_mem_timestamp = BSC.sdram_finish_time;
+
+    SH7095_mem_timestamp += 7;
+   }
+   else
+    *SH2DMAHax += 6;
+  }
+ }
+ else	// CS1, CS2; 32-bit
+ {
+  BusRW_DB_CS12<T, false>(A, DB, BurstHax, SH2DMAHax);
+  ret = DB >> (((A & 3) ^ (4 - sizeof(T))) << 3);
+ }
+
+ SH7095_DB = DB;
+
+ if(!BurstHax)
+ {
+  BSC.last_mem_addr = A;
+  BSC.last_mem_type = 1;
+  BSC.last_mem_time = SH7095_mem_timestamp;
+ }
+
+ return ret;
+}
+
+
+template<bool SlavePenalty, typename T, bool BurstHax>
+INLINE T SH7095::ExtBusRead_INLINE(uint32 A)
 {
  T ret;
 
@@ -1885,14 +2320,29 @@ INLINE T SH7095::ExtBusRead(uint32 A)
   DMA_PenaltyKludgeAccum += DMA_PenaltyKludgeAmount;
  }
  //
+#ifdef MDFN_ENABLE_DEV_BUILD
+ CheckDMARace(A, sizeof(T), false);
+#endif
+ if(SlavePenalty && !BurstHax)
+ {
+  if(SH7095_mem_timestamp > (BSC.last_mem_time + 1))
+   SH7095_mem_timestamp += 2;
+  else
+   SH7095_mem_timestamp++;
+ }
 
- ret = SH7095_BusRead<T>(A, BurstHax, NULL);
+ ret = BSC_BusRead<T>(A, BurstHax, NULL);
+
+ if(SlavePenalty && !BurstHax)
+ {
+  SH7095_mem_timestamp++;
+ }
 
  return ret;
 }
 
-template<typename T>
-INLINE void SH7095::ExtBusWrite(uint32 A, T V)
+template<bool SlavePenalty, typename T>
+INLINE void SH7095::ExtBusWrite_INLINE(uint32 A, T V)
 {
  A &= (1U << 27) - 1;
 
@@ -1900,16 +2350,88 @@ INLINE void SH7095::ExtBusWrite(uint32 A, T V)
   SH7095_mem_timestamp = timestamp;
 
  //
- {
-  DMA_PenaltyKludgeAccum += DMA_PenaltyKludgeAmount;
- }
+ DMA_PenaltyKludgeAccum += DMA_PenaltyKludgeAmount;
  //
+#ifdef MDFN_ENABLE_DEV_BUILD
+ CheckDMARace(A, sizeof(T), true);
+#endif
 
- SH7095_BusWrite<T>(A, V, false, NULL);
+ if(SlavePenalty)
+  SH7095_mem_timestamp++;
+
+ BSC_BusWrite<T>(A, V, false, NULL);
+
+ if(SlavePenalty)
+ {
+  if(SH7095_mem_timestamp < BSC.sdram_finish_time)
+   SH7095_mem_timestamp = BSC.sdram_finish_time;
+
+  SH7095_mem_timestamp++;
+ }
 
  write_finish_timestamp = SH7095_mem_timestamp;
 }
 
+template<unsigned w, bool SlavePenalty, typename T, bool BurstHax>
+static NO_INLINE MDFN_HOT T ExtBusRead_NI(uint32 A)
+{
+ return CPU[w].ExtBusRead_INLINE<SlavePenalty, T, BurstHax>(A);
+}
+
+template<unsigned w, bool SlavePenalty, typename T>
+static NO_INLINE MDFN_HOT void ExtBusWrite_NI(uint32 A, T V)
+{
+ CPU[w].ExtBusWrite_INLINE<SlavePenalty, T>(A, V);
+}
+
+template<unsigned w, typename T>
+static NO_INLINE MDFN_HOT T OnChipRegRead_NI(uint32 A)
+{
+ return CPU[w].OnChipRegRead_INLINE<T>(A);
+}
+
+template<typename T>
+INLINE void SH7095::DevBuild_ReadLog(uint32 A)
+{
+#ifdef MDFN_ENABLE_DEV_BUILD
+  if((A & 0xC7FFFFFF) >= 0x06000200 && (A & 0xC7FFFFFF) <= 0x060003FF)
+  {
+   const uint32 pcm = PC & 0x07FFFFFF;
+   bool match = (pcm >= 0x100000) && (pcm < 0x06000600 || pcm >= 0x06000A00);
+
+   if(match && !BWMIgnoreAddr[0][A & 0x1FF])
+   {
+    SS_DBG(SS_DBG_BIOS, "[%s] Read from BIOS area of RAM 0x%08x; PC=0x%08x\n", cpu_name, A, PC);
+   }
+  }
+
+  if((A & 0xC7FFFFFF) >= 0x00000200/*0x00000004*//*0x00000000*/ && (A & 0xC7FFFFFF) <= 0x000FFFFF)
+  {
+   const uint32 pcm = PC & 0x07FFFFFF;
+   bool match = (pcm >= 0x100000) && (pcm < 0x06000600 || pcm >= 0x06000A00);
+
+   if(match)
+    SS_DBG(SS_DBG_BIOS, "[%s] Read from BIOS ROM 0x%06x; PC=0x%08x\n", cpu_name, A, PC);
+  }
+#endif
+}
+
+template<typename T>
+INLINE void SH7095::DevBuild_WriteLog(uint32 A, T V)
+{
+#ifdef MDFN_ENABLE_DEV_BUILD
+  if((A & 0xC7FFFFFF) >= 0x06000200 && (A & 0xC7FFFFFF) <= 0x060003FF)
+  {
+   const uint32 pcm = PC & 0x07FFFFFF;
+   bool match = (pcm >= 0x100000) && (pcm < 0x06000600 || pcm >= 0x06000800);
+
+   if(match && !BWMIgnoreAddr[1][A & 0x1FF])
+   {
+    SS_DBG(SS_DBG_BIOS, "[%s] Write to BIOS area of RAM 0x%08x; PC=0x%08x\n", cpu_name, A, PC);
+   }
+  }
+#endif
+}
 
 //
 //
@@ -1952,202 +2474,34 @@ static INLINE uint32 cmov_eq_thing(const uint32 reg_compval, const uint32 mem_co
  return var;
 }
 
-INLINE void SH7095::AssocPurge(const uint32 A)
+INLINE void SH7095::Cache_AssocPurge(const uint32 A)
 {
  const uint32 ATM = A & (0x7FFFF << 10);
  auto* cent = &Cache[(A >> 4) & 0x3F];
+
+ SS_DBG(SS_DBG_SH2_CACHE_NOISY, "[%s] Associative purge; address=0x%08x\n", cpu_name, A);
 
  // Ignore two-way-mode bit in CCR here.
- if(ATM == cent->Tag[0]) cent->Tag[0] |= 1U << 31;	// Set invalid bit to 1.
- if(ATM == cent->Tag[1]) cent->Tag[1] |= 1U << 31;
- if(ATM == cent->Tag[2]) cent->Tag[2] |= 1U << 31;
- if(ATM == cent->Tag[3]) cent->Tag[3] |= 1U << 31;
+ cent->Tag[0] |= (ATM == cent->Tag[0]);	// Set invalid bit to 1.
+ cent->Tag[1] |= (ATM == cent->Tag[1]);
+ cent->Tag[2] |= (ATM == cent->Tag[2]);
+ cent->Tag[3] |= (ATM == cent->Tag[3]);
 }
 
-template<typename T, unsigned region, bool CacheEnabled, bool TwoWayMode, bool IsInstr, bool CacheBypassHack>
-INLINE T SH7095::MemReadRT(uint32 A)
+INLINE int SH7095::Cache_FindWay(CacheEntry* const cent, const uint32 ATM)
 {
- static_assert(region < 0x8, "Wrong region argument.");
- const uint32 unmasked_A = A;
+#if defined(HAVE_SSE2_INTRINSICS)
+ __m128i atm = _mm_set1_epi32(ATM);
+ __m128i v1234 = _mm_setr_epi32(1, 2, 3, 4);
+ __m128i tmp;
 
- if(!IsInstr)
- {
-  if(MDFN_UNLIKELY(A & (sizeof(T) - 1)))
-  {
-   SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Misaligned %zu-byte read from 0x%08x\n", cpu_name, sizeof(T), A);
-   A &= ~(sizeof(T) - 1);
-   SetPEX(PEX_CPUADDR);
-  }
- }
+ tmp = _mm_cmpeq_epi32(_mm_load_si128((__m128i*)cent->Tag), atm);
+ tmp = _mm_and_si128(tmp, v1234);
+ tmp = _mm_max_epi16(tmp, _mm_shuffle_epi32(tmp, (3 << 0) | (2 << 2) | (1 << 4) | (0 << 6)));
+ tmp = _mm_max_epi16(tmp, _mm_shuffle_epi32(tmp, (1 << 0) | (0 << 2)));
 
- if(!IsInstr)
-  MA_until = std::max<sscpu_timestamp_t>(MA_until, timestamp + 1);
- else
-  timestamp = std::max<sscpu_timestamp_t>(MA_until, timestamp);
-
-#ifdef MDFN_ENABLE_DEV_BUILD
-  if((A & 0xC7FFFFFF) >= 0x06000200 && (A & 0xC7FFFFFF) <= 0x060003FF)
-  {
-   const uint32 pcm = PC & 0x07FFFFFF;
-   bool match = (pcm >= 0x100000) && (pcm < 0x06000600 || pcm >= 0x06000A00);
-
-   if(match && !BWMIgnoreAddr[0][A & 0x1FF])
-   {
-    SS_DBG(SS_DBG_BIOS, "[%s] Read from BIOS area of RAM 0x%08x; PC=0x%08x\n", cpu_name, A, PC);
-   }
-  }
-
-  if((A & 0xC7FFFFFF) >= 0x00000200/*0x00000004*//*0x00000000*/ && (A & 0xC7FFFFFF) <= 0x000FFFFF)
-  {
-   const uint32 pcm = PC & 0x07FFFFFF;
-   bool match = (pcm >= 0x100000) && (pcm < 0x06000600 || pcm >= 0x06000A00);
-
-   if(match)
-    SS_DBG(SS_DBG_BIOS, "[%s] Read from BIOS ROM 0x%06x; PC=0x%08x\n", cpu_name, A, PC);
-  }
-#endif
-
- //
- // WARNING: Template arguments CacheEnabled and TwoWayMode are only valid for region==0.  In addition, TwoWayMode is only valid for CacheEnabled==true.
- //
- switch(region)	// A >> 29
- {
-  case 0:
-	if(CacheEnabled)
-	{
-	 const uint32 ATM = A & (0x7FFFF << 10);
-	 auto* cent = &Cache[(A >> 4) & 0x3F];
-	 int way_match = -1;
-
-	 way_match = cmov_eq_thing(ATM, cent->Tag[0], way_match, 0);
-	 way_match = cmov_eq_thing(ATM, cent->Tag[1], way_match, 1);
-	 way_match = cmov_eq_thing(ATM, cent->Tag[2], way_match, 2);
-	 way_match = cmov_eq_thing(ATM, cent->Tag[3], way_match, 3);
-
-	 if(MDFN_UNLIKELY(way_match < 0)) // Cache miss!
-	 {
-	  if(IsInstr)
-	  {
-	   if(MDFN_UNLIKELY(CCR & CCR_ID))
-	    goto EBRCase;
-	  }
-	  else
-	  {
-	   if(MDFN_UNLIKELY(CCR & CCR_OD))
-	    goto EBRCase;
-	  }
-
-	  if(TwoWayMode)
-	   way_match = 3 ^ (cent->LRU & 0x1);
-	  else
-	   way_match = LRU_Replace_Tab[cent->LRU];
-
-	  if(MDFN_UNLIKELY(way_match < 0))
-	   goto EBRCase;
-
-	  //
-	  // Load cache line.
-	  //
-	  //printf("Cache load line: %08x\n", A);
-	  cent->Tag[way_match] = ATM;
-
-	  {
-	   unsigned di = (A + 4 + 0) & 0xC; MDFN_ennsb<uint32, true>(&cent->Data[way_match][di], ExtBusRead<uint32, false>((A &~ 0xF) + di));
-	  }
-	  for(unsigned i = 4; i < 16; i += 4)
-	  {
-	   unsigned di = (A + 4 + i) & 0xC; MDFN_ennsb<uint32, true>(&cent->Data[way_match][di], ExtBusRead<uint32,  true>((A &~ 0xF) + di));
-	  }
-	  if(!IsInstr)
-	   MA_until = std::max<sscpu_timestamp_t>(MA_until, SH7095_mem_timestamp + 1);
-	  else
-	   timestamp = SH7095_mem_timestamp;
-	 }
-
-	 if((SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS] + (A & ~((1U << SH7095_EXT_MAP_GRAN_BITS) - 1))) == (uintptr_t)fmap_dummy)
-	  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2_CACHE, "[%s] Cacheable %zu-byte read from non-RAM address 0x%08x!\n", cpu_name, sizeof(T), A);
-	 else if(ne16_rbo_be<T>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A) != MDFN_densb<T, true>(&cent->Data[way_match][NE32ASU8_IDX_ADJ(T, A & 0x0F)]))
-	  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2_CACHE, "[%s] Cache incoherency for %zu-byte read from address 0x%08x!\n", cpu_name, sizeof(T), A);
-
-	 cent->LRU = (cent->LRU & LRU_Update_Tab[way_match].AND) | LRU_Update_Tab[way_match].OR;
-
-	 // Ugggghhhh....
-	 if(CacheBypassHack && FMIsWriteable[A >> SH7095_EXT_MAP_GRAN_BITS])
-	  return ne16_rbo_be<T>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A);
-
-  	 return MDFN_densb<T, true>(&cent->Data[way_match][NE32ASU8_IDX_ADJ(T, A & 0x0F)]);
-	}
-	// Fall-through, no break here
-  case 1:
-	EBRCase:
-	{
-	 T ret = ExtBusRead<T, false>(A);
-
-	 if(!IsInstr)
-	  MA_until = std::max<sscpu_timestamp_t>(MA_until, SH7095_mem_timestamp + 1);
-	 else
-	  timestamp = SH7095_mem_timestamp;
-
-	 return ret;
-	}
-
-  case 2:
-  case 5:
-	//
-	// Associative purge(apparently returns open bus of some sort)
-	//
-	//SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] %zu-byte read from associative purge area; address=0x%08x\n", cpu_name, sizeof(T), A);
-	AssocPurge(A);
-	return ~0;
-
-  case 3:
-	//
-	// Direct cache address/tag access
-	//
-	// Note: bits 0, 1, 3, 29, 30, 31 are some sort of open-bus(unemulated).
-	//
-	// SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] %zu-byte read from cache address array area; address=0x%08x\n", cpu_name, sizeof(T), A);
-	{
-	 const unsigned way = (CCR >> 6) & 0x3;
-	 const unsigned ena = (A >> 4) & 0x3F;
-
-	 return (Cache[ena].Tag[way] & (0x7FFFF << 10)) | (((int32)~Cache[ena].Tag[way] >> 31) & 0x4) | (Cache[ena].LRU << 4);
-	}
-
-  case 4:
-  case 6:
-	//
-	// Direct cache data access
-	//
-	//SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] %zu-byte read from cache data array area; address=0x%08x\n", cpu_name, sizeof(T), A);
-	{
-	 const unsigned way = (A >> 10) & 0x3;
-	 const unsigned ena = (A >> 4) & 0x3F;
-
-	 return MDFN_densb<T, true>(&Cache[ena].Data[way][NE32ASU8_IDX_ADJ(T, A & 0x0F)]);
-	}
-
-  case 7:
-	return OnChipRegRead<T>(unmasked_A);
- }
-}
-
-template<typename T>
-INLINE T SH7095::MemRead(uint32 A)
-{
- if(sizeof(T) == 1)
-  return MRFP8[A >> 29](A);
- else if(sizeof(T) == 2)
-  return MRFP16[A >> 29](A);
- else
-  return MRFP32[A >> 29](A);
-}
-
-template<typename T>
-INLINE void SH7095::Write_UpdateCache(uint32 A, T V)
-{
- const uint32 ATM = A & (0x7FFFF << 10);
- auto* cent = &Cache[(A >> 4) & 0x3F];
+ return _mm_cvtsi128_si32(tmp) - 1;
+#else
  int way_match = -1;
 
  way_match = cmov_eq_thing(ATM, cent->Tag[0], way_match, 0);
@@ -2155,196 +2509,345 @@ INLINE void SH7095::Write_UpdateCache(uint32 A, T V)
  way_match = cmov_eq_thing(ATM, cent->Tag[2], way_match, 2);
  way_match = cmov_eq_thing(ATM, cent->Tag[3], way_match, 3);
 
+ return way_match;
+#endif
+}
+
+template<typename T>
+INLINE void SH7095::Cache_WriteUpdate(uint32 A, T V)
+{
+ const uint32 ATM = A & (0x7FFFF << 10);
+ const unsigned ena = (A >> 4) & 0x3F;
+ CacheEntry* cent = &Cache[ena];
+ const int way_match = Cache_FindWay(cent, ATM);
+
  if(MDFN_LIKELY(way_match >= 0)) // Cache hit!
  {
-  cent->LRU = (cent->LRU & LRU_Update_Tab[way_match].AND) | LRU_Update_Tab[way_match].OR;
+  Cache_LRU[ena] = (Cache_LRU[ena] & LRU_Update_Tab[way_match].AND) | LRU_Update_Tab[way_match].OR;
   MDFN_ennsb<T, true>(&cent->Data[way_match][NE32ASU8_IDX_ADJ(T, A & 0x0F)], V);	// Ignore CCR OD bit here.
  }
 }
 
-template<typename T, unsigned region, bool CacheEnabled>
-INLINE void SH7095::MemWriteRT(uint32 A, T V)
+template<typename T>
+INLINE void SH7095::Cache_WriteAddressArray(uint32 A, T V)
 {
- static_assert(region < 0x8, "Wrong region argument.");
- const uint32 unmasked_A = A;
+ const unsigned way = (CCR >> 6) & 0x3;
+ const unsigned ena = (A >> 4) & 0x3F;
 
- if(MDFN_UNLIKELY(A & (sizeof(T) - 1)))
- {
-  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Misaligned %zu-byte write of 0x%08x to 0x%08x\n", cpu_name, sizeof(T), V, A);
-  A &= ~(sizeof(T) - 1);
-  SetPEX(PEX_CPUADDR);
- }
+ SS_DBG(SS_DBG_SH2_CACHE_NOISY, "[%s] %zu-byte write to cache address array area; address=0x%08x value=0x%x\n", cpu_name, sizeof(T), A, V);
 
- MA_until = std::max<sscpu_timestamp_t>(MA_until, timestamp + 1);
-
-#ifdef MDFN_ENABLE_DEV_BUILD
-  if((A & 0xC7FFFFFF) >= 0x06000200 && (A & 0xC7FFFFFF) <= 0x060003FF)
-  {
-   const uint32 pcm = PC & 0x07FFFFFF;
-   bool match = (pcm >= 0x100000) && (pcm < 0x06000600 || pcm >= 0x06000800);
-
-   if(match && !BWMIgnoreAddr[1][A & 0x1FF])
-   {
-    SS_DBG(SS_DBG_BIOS, "[%s] Write to BIOS area of RAM 0x%08x; PC=0x%08x\n", cpu_name, A, PC);
-   }
-  }
-#endif
-
- //
- // WARNING: Template argument CacheEnabled is only valid for region==0.
- //
- switch(region)	// A >> 29
- {
-  case 0:
-	if(CacheEnabled)
-	 Write_UpdateCache<T>(A, V);
-	// Fall-through, no break
-  case 1:
-  	MA_until = std::max<sscpu_timestamp_t>(MA_until, write_finish_timestamp + 1);
-
-	ExtBusWrite<T>(A, V);
-	return;
-
-  case 2:
-  case 5:
-	//
-	// Associative purge.
-	//
-	//SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] %zu-byte write to associative purge area; address=0x%08x value=0x%x\n", cpu_name, sizeof(T), A, V);
-	AssocPurge(A);
-	return;
-
-  case 3:
-	//
-	// Direct cache address/tag access
-	//
-	// TODO: Check non-32 bit access
-	//SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] %zu-byte write to cache address array area; address=0x%08x value=0x%x\n", cpu_name, sizeof(T), A, V);
-	timestamp++;
-	MA_until = std::max<sscpu_timestamp_t>(MA_until, timestamp + 1);
-	{
-	 const unsigned way = (CCR >> 6) & 0x3;
-	 const unsigned ena = (A >> 4) & 0x3F;
-
-	 Cache[ena].Tag[way] = (A & (0x7FFFF << 10)) | ((!(A & 0x4)) << 31);
-	 Cache[ena].LRU = (V >> 4) & 0x3F;
-	}
-	return;
-
-  case 4:
-  case 6:
-	//
-	// Direct cache data access
-	//
-	//SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] %zu-byte write to cache data array area; address=0x%08x value=0x%x\n", cpu_name, sizeof(T), A, V);
-	{
-	 const unsigned way = (A >> 10) & 0x3;
-	 const unsigned ena = (A >> 4) & 0x3F;
-
-	 MDFN_ennsb<T, true>(&Cache[ena].Data[way][NE32ASU8_IDX_ADJ(T, A & 0x0F)], V);
-	}
-	return;
-
-  case 7:
-	OnChipRegWrite<T>(unmasked_A, V);
-	return;
- }
+ Cache[ena].Tag[way] = (A & (0x7FFFF << 10)) | (!(A & 0x4));
+ Cache_LRU[ena] = (V >> 4) & 0x3F;
 }
 
 template<typename T>
-INLINE void SH7095::MemWrite(uint32 A, T V)
+INLINE void SH7095::Cache_WriteDataArray(uint32 A, T V)
 {
- if(sizeof(T) == 1)
-  MWFP8[A >> 29](A, V);
- else if(sizeof(T) == 2)
-  MWFP16[A >> 29](A, V);
- else
-  MWFP32[A >> 29](A, V);
+ const unsigned way = (A >> 10) & 0x3;
+ const unsigned ena = (A >> 4) & 0x3F;
+
+ SS_DBG(SS_DBG_SH2_CACHE_NOISY, "[%s] %zu-byte write to cache data array area; address=0x%08x value=0x%x\n", cpu_name, sizeof(T), A, V);
+
+ MDFN_ennsb<T, true>(&Cache[ena].Data[way][NE32ASU8_IDX_ADJ(T, A & 0x0F)], V);
 }
 
-
-template<unsigned which, typename T, unsigned region, bool CacheEnabled, bool TwoWayMode, bool IsInstr, bool CacheBypassHack>
-static NO_INLINE MDFN_FASTCALL T C_MemReadRT(uint32 A)
+template<typename T>
+INLINE T SH7095::Cache_ReadAddressArray(uint32 A)
 {
- return CPU[which].MemReadRT<T, region, CacheEnabled, TwoWayMode, IsInstr, CacheBypassHack>(A);
+ const unsigned way = (CCR >> 6) & 0x3;
+ const unsigned ena = (A >> 4) & 0x3F;
+
+ SS_DBG(SS_DBG_SH2_CACHE_NOISY, "[%s] %zu-byte read from cache address array area; address=0x%08x\n", cpu_name, sizeof(T), A);
+
+ return (Cache[ena].Tag[way] & (0x7FFFF << 10)) | ((~Cache[ena].Tag[way] & 1) << 2) | (Cache_LRU[ena] << 4);
 }
 
-template<unsigned which, typename T, unsigned region, bool CacheEnabled>
-static NO_INLINE MDFN_FASTCALL void C_MemWriteRT(uint32 A, T V)
+template<typename T>
+INLINE T SH7095::Cache_ReadDataArray(uint32 A)
 {
- CPU[which].MemWriteRT<T, region, CacheEnabled>(A, V);
+ const unsigned way = (A >> 10) & 0x3;
+ const unsigned ena = (A >> 4) & 0x3F;
+
+ SS_DBG(SS_DBG_SH2_CACHE_NOISY, "[%s] %zu-byte read from cache data array area; address=0x%08x\n", cpu_name, sizeof(T), A);
+
+ return MDFN_densb<T, true>(&Cache[ena].Data[way][NE32ASU8_IDX_ADJ(T, A & 0x0F)]);
 }
 
+template<typename T>
+INLINE void SH7095::Cache_CheckReadIncoherency(CacheEntry* cent, const int way, const uint32 A)
+{
+ if((SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS] + (A & ~((1U << SH7095_EXT_MAP_GRAN_BITS) - 1))) == (uintptr_t)fmap_dummy)
+  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2_CACHE | SS_DBG_SH2_CACHE_NOISY, "[%s] Cacheable %zu-byte read from non-RAM address 0x%08x!\n", cpu_name, sizeof(T), A);
+ else if(ne16_rbo_be<T>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A) != MDFN_densb<T, true>(&cent->Data[way][NE32ASU8_IDX_ADJ(T, A & 0x0F)]))
+  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2_CACHE | SS_DBG_SH2_CACHE_NOISY, "[%s] Cache incoherency for %zu-byte read from address 0x%08x!\n", cpu_name, sizeof(T), A);
+}
+
+#define MemRead(IsInstr, T, region, CacheEnabled, A_, outval_, A, unmasked_A, cent, way_match)			\
+{														\
+ __label__ EBRCase, MemReturn;											\
+ T retval;													\
+ retval = 0;													\
+ A = (A_);													\
+ unmasked_A = A;												\
+														\
+ if(IsInstr <= 0)												\
+ {														\
+  if(MDFN_UNLIKELY(A & (sizeof(T) - 1)))									\
+  {														\
+   SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Misaligned %zu-byte read from 0x%08x\n", cpu_name, sizeof(T), A);	\
+   A &= ~(sizeof(T) - 1);											\
+   SetPEX(PEX_CPUADDR);												\
+  }														\
+ }														\
+														\
+ if(IsInstr <= 0)												\
+  MA_until = std::max<sscpu_timestamp_t>(MA_until, timestamp + 1);						\
+ else														\
+  timestamp = std::max<sscpu_timestamp_t>(MA_until, timestamp);							\
+														\
+ DevBuild_ReadLog<T>(A); 											\
+														\
+ switch(region)													\
+ {														\
+  case 0:													\
+	if(MDFN_LIKELY(CacheEnabled))										\
+	{													\
+	 uint32 ATM;												\
+														\
+	 ATM = A & (0x7FFFF << 10);										\
+	 cent = &Cache[(A >> 4) & 0x3F];									\
+														\
+	 way_match = Cache_FindWay(cent, ATM);									\
+														\
+	 if(MDFN_UNLIKELY(way_match < 0)) /* Cache miss! */							\
+	 {													\
+	  way_match = LRU_Replace_Tab[Cache_LRU[(A >> 4) & 0x3F] & CCRC_Replace_AND] | CCRC_Replace_OR[(bool)IsInstr];		\
+														\
+	  if(MDFN_UNLIKELY(way_match < 0))									\
+	   goto EBRCase;											\
+														\
+	  /*                        */										\
+	  /* Load cache line.       */										\
+	  /*                        */										\
+	  /*printf("Cache load line: %08x\n", A);*/								\
+	  cent->Tag[way_match] = ATM;										\
+	  /* Don't use ATM after this point. */									\
+	  CHECK_EXIT_RESUME();											\
+	  {													\
+	   unsigned di = (A + 4 + 0) & 0xC; MDFN_ennsb<uint32, true>(&cent->Data[way_match][di], ExtBusRead(uint32, false, (A &~ 0xF) + di));	\
+	  }													\
+	  for(unsigned i = 4; i < 16; i += 4)									\
+	  {													\
+	   unsigned di = (A + 4 + i) & 0xC; MDFN_ennsb<uint32, true>(&cent->Data[way_match][di], ExtBusRead(uint32,  true, (A &~ 0xF) + di));	\
+	  }													\
+	  if(IsInstr <= 0)											\
+	   MA_until = std::max<sscpu_timestamp_t>(MA_until, SH7095_mem_timestamp + 1);				\
+	  else													\
+	   timestamp = SH7095_mem_timestamp;									\
+	 }													\
+														\
+	 Cache_CheckReadIncoherency<T>(cent, way_match, A);							\
+														\
+	 Cache_LRU[(A >> 4) & 0x3F] = (Cache_LRU[(A >> 4) & 0x3F] & LRU_Update_Tab[way_match].AND) | LRU_Update_Tab[way_match].OR;	\
+														\
+         /* Ugggghhhh.... */											\
+         if(CacheBypassHack && FMIsWriteable[A >> SH7095_EXT_MAP_GRAN_BITS])					\
+	 {													\
+          retval = ne16_rbo_be<T>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A);				\
+	  goto MemReturn;											\
+	 }													\
+														\
+  	 retval = MDFN_densb<T, true>(&cent->Data[way_match][NE32ASU8_IDX_ADJ(T, A & 0x0F)]);			\
+	 goto MemReturn;											\
+	}													\
+	/* Fall-through, no break here */									\
+  case 1:													\
+	EBRCase:												\
+	CHECK_EXIT_RESUME();											\
+	{													\
+	 retval = ExtBusRead(T, false, A);								\
+														\
+	 if(IsInstr <= 0)											\
+	  MA_until = std::max<sscpu_timestamp_t>(MA_until, SH7095_mem_timestamp + 1);				\
+	 else													\
+	 {													\
+	  timestamp = SH7095_mem_timestamp;									\
+	  UCRead_IF_Kludge = true;										\
+	 }													\
+														\
+	 goto MemReturn;											\
+	}													\
+														\
+  case 2:													\
+  case 5:													\
+	/*								*/					\
+	/* Associative purge(apparently returns open bus of some sort)	*/					\
+	/*								*/					\
+	Cache_AssocPurge(A);											\
+	retval = ~0;												\
+	goto MemReturn;												\
+														\
+  case 3:													\
+	/*				   		*/							\
+	/* Direct cache address/tag access 		*/							\
+	/*				   		*/							\
+	/* Note: bits 0, 1, 3, 29, 30, 31 are some sort	*/							\
+	/*       of open-bus(unemulated). 		*/							\
+	/*				   		*/							\
+	retval = Cache_ReadAddressArray<T>(A);									\
+	goto MemReturn;												\
+														\
+  case 4:													\
+  case 6:													\
+	/*			    */										\
+	/* Direct cache data access */										\
+	/*			    */										\
+	retval = Cache_ReadDataArray<T>(A);									\
+	goto MemReturn;												\
+														\
+  case 7:													\
+	retval = OnChipRegRead(T, unmasked_A);									\
+	goto MemReturn;												\
+ }														\
+ MemReturn: outval_ = retval;											\
+}
+
+#define MemWrite(T, region, CacheEnabled, A_, V_, A, unmasked_A, V)		\
+{										\
+ A = (A_);									\
+ unmasked_A = A;								\
+ V = (V_);									\
+										\
+ if(MDFN_UNLIKELY(A & (sizeof(T) - 1)))						\
+ {										\
+  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Misaligned %zu-byte write of 0x%08x to 0x%08x\n", cpu_name, sizeof(T), V, A);	\
+  A &= ~(sizeof(T) - 1);							\
+  SetPEX(PEX_CPUADDR);								\
+ }										\
+										\
+ MA_until = std::max<sscpu_timestamp_t>(MA_until, timestamp + 1);		\
+										\
+ DevBuild_WriteLog<T>(A, V);							\
+										\
+ switch(region)									\
+ {										\
+  case 0:									\
+	if(MDFN_LIKELY(CacheEnabled))						\
+	 Cache_WriteUpdate<T>(A, V);						\
+	/* Fall-through, no break */						\
+  case 1:									\
+  	MA_until = std::max<sscpu_timestamp_t>(MA_until, write_finish_timestamp + 1);	\
+										\
+	if(!SH7095_BusLock) { CHECK_EXIT_RESUME(); }				\
+	ExtBusWrite(T, A, V);							\
+	break;									\
+										\
+  case 2:									\
+  case 5:									\
+	/*		      */						\
+	/* Associative purge. */						\
+	/*		      */						\
+	Cache_AssocPurge(A);							\
+	break;									\
+										\
+  case 3:									\
+	/*				   */					\
+	/* Direct cache address/tag access */					\
+	/*				   */					\
+	/* TODO: Check non-32 bit access   */					\
+	timestamp++;								\
+	MA_until = std::max<sscpu_timestamp_t>(MA_until, timestamp + 1);	\
+										\
+	Cache_WriteAddressArray<T>(A, V);					\
+	break;									\
+										\
+  case 4:									\
+  case 6:									\
+	/*			    */						\
+	/* Direct cache data access */						\
+	/*			    */						\
+	Cache_WriteDataArray<T>(A, V);						\
+	break;									\
+										\
+  case 7:									\
+	OnChipRegWrite<T>(unmasked_A, V);					\
+	break;									\
+ }										\
+}
+
+#define CHECK_EXIT_RESUME() { if(NeedSlaveCall > 0) CPU[1].RunSlaveUntil(timestamp); if(NeedSlaveCall < 0) CPU[1].RunSlaveUntil_Debug(timestamp); }
+#define OnChipRegRead(T, A) OnChipRegRead_INLINE<T>(A)
+#define ExtBusRead(T, BurstHax, A) ExtBusRead_NI<which, false, T, BurstHax>(A)
+#define ExtBusWrite(T, A, V) ExtBusWrite_NI<which, false, T>(A, V)
+template<unsigned which, int NeedSlaveCall, bool CacheBypassHack, typename T, unsigned region, bool CacheEnabled, int32 IsInstr>
+INLINE T SH7095::MemReadRT(uint32 A)
+{
+ static_assert(region < 0x8, "Wrong region argument.");
+ static_assert(!NeedSlaveCall || (!which && region < 2), "Wrong arguments.");
+ static_assert(IsInstr >= 0 || (CacheEnabled && region == 0x0), "Wrong arguments.");
+ T ret;
+ uint32 unmasked_A;
+ CacheEntry* cent;
+ int way_match;
+
+ MemRead(IsInstr, T, region, CacheEnabled, A, ret, A, unmasked_A, cent, way_match);
+
+ return ret;
+}
+
+template<unsigned which, int NeedSlaveCall, typename T, unsigned region, bool CacheEnabled>
+INLINE void SH7095::MemWriteRT(uint32 A, T V)
+{
+ static_assert(region < 0x8, "Wrong region argument.");
+ static_assert(!NeedSlaveCall || (!which && region < 2), "Wrong arguments.");
+ uint32 unmasked_A;
+
+ MemWrite(T, region, CacheEnabled, A, V, A, unmasked_A, V);
+}
+#undef CHECK_EXIT_RESUME
+#undef OnChipRegRead
+#undef ExtBusRead
+#undef ExtBusWrite
+
+template<unsigned which, int NeedSlaveCall, bool CacheBypassHack, typename T, unsigned region, bool CacheEnabled, int32 IsInstr>
+static NO_INLINE MDFN_HOT MDFN_FASTCALL T C_MemReadRT(uint32 A)
+{
+ return CPU[which].MemReadRT<which, NeedSlaveCall, CacheBypassHack, T, region, CacheEnabled, IsInstr>(A);
+}
+
+template<unsigned which, int NeedSlaveCall, typename T, unsigned region, bool CacheEnabled>
+static NO_INLINE MDFN_HOT MDFN_FASTCALL void C_MemWriteRT(uint32 A, T V)
+{
+ CPU[which].MemWriteRT<which, NeedSlaveCall, T, region, CacheEnabled>(A, V);
+}
 
 INLINE void SH7095::SetCCR(uint8 V)
 {
  if(CCR != V)
-  SS_DBG(SS_DBG_SH2_CACHE, "[%s] CCR changed: 0x%02x->0x%02x%s\n", cpu_name, CCR, V, (V & CCR_CP) ? " (CACHE PURGE!)" : "");
+  SS_DBG(SS_DBG_SH2_CACHE | SS_DBG_SH2_CACHE_NOISY, "[%s] CCR changed: 0x%02x->0x%02x%s\n", cpu_name, CCR, V, (V & CCR_CP) ? " (CACHE PURGE!)" : "");
 
  if(V & CCR_CP)
  {
   for(unsigned entry = 0; entry < 64; entry++)
   {
-   Cache[entry].LRU = 0;
+   Cache_LRU[entry] = 0;
    for(unsigned way = 0; way < 4; way++)
-    Cache[entry].Tag[way] |= 1U << 31;	// Set invalid bit to 1.
+    Cache[entry].Tag[way] |= 1;	// Set invalid bit to 1.
   }
   V &= ~CCR_CP;
  }
- CCR = V;
 
- #define MAHL(bs,w,cbh)										\
-		 if(CCR & CCR_CE)								\
-		 {										\
-		  if(CCR & CCR_TW)								\
-		  {										\
-		   MRFP##bs[0] = C_MemReadRT <w, uint##bs, 0x0, true, true, false, cbh>;	\
-		   MRFPI[0]    = C_MemReadRT <w, uint32,   0x0, true, true, true, cbh>;		\
-		  }										\
-		  else										\
-		  {										\
-		   MRFP##bs[0] = C_MemReadRT <w, uint##bs, 0x0, true, false, false, cbh>;	\
-		   MRFPI[0]    = C_MemReadRT <w, uint32,   0x0, true, false, true, cbh>;	\
-		  }										\
-		  MWFP##bs[0] = C_MemWriteRT<w, uint##bs, 0x0, true>;				\
-		 }										\
-		 else										\
-		 {										\
-		  MRFP##bs[0] =  C_MemReadRT <w, uint##bs, 0x0, false, false, false, cbh>;	\
-		  MRFPI[0]    =  C_MemReadRT <w, uint32,   0x0, false, false, true, cbh>;	\
-		  MWFP##bs[0] =  C_MemWriteRT<w, uint##bs, 0x0, false>;				\
-		 }
- if(this == &CPU[0])
+ //if(MDFN_LIKELY(CCR != V))
  {
-  if(CBH_Setting)
-  {
-   MAHL( 8, 0, true)
-   MAHL(16, 0, true)
-   MAHL(32, 0, true)
-  }
-  else
-  {
-   MAHL( 8, 0, false)
-   MAHL(16, 0, false)
-   MAHL(32, 0, false)
-  }
+  CCR = V;
+  //
+  //
+  CCRC_Replace_AND = (CCR & CCR_TW) ? 0x1 : 0x3F;
+  CCRC_Replace_OR[0] = (CCR & CCR_OD) ? -1 : 0;
+  CCRC_Replace_OR[1] = (CCR & CCR_ID) ? -1 : 0;
+
+  RecalcMRWFP_0();
  }
- else
- {
-  if(CBH_Setting)
-  {
-   MAHL( 8, 1, true)
-   MAHL(16, 1, true)
-   MAHL(32, 1, true)
-  }
-  else
-  {
-   MAHL( 8, 1, false)
-   MAHL(16, 1, false)
-   MAHL(32, 1, false)
-  }
- }
- #undef MAHL
 }
 
 
@@ -2356,6 +2859,28 @@ INLINE void SH7095::SetCCR(uint8 V)
 */
 void NO_INLINE SH7095::Reset(bool power_on_reset, bool from_internal_wdt)
 {
+ if(timestamp == SS_EVENT_DISABLED_TS)
+  return;
+
+ if(power_on_reset)
+ {
+  FRT.lastts = timestamp;
+
+  MA_until = timestamp;
+  MM_until = timestamp;
+
+  for(unsigned i = 0; i < 16; i++)
+   WB_until[i] = timestamp;
+
+  UCRead_IF_Kludge = 0;
+
+  write_finish_timestamp = timestamp;
+  divide_finish_timestamp = timestamp;
+
+  DMA_Timestamp = timestamp;
+  DMA_SGEndTimestamp = timestamp;
+ }
+ //
  VBR = 0;
  SR |= 0xF << 4;
  SetCCR(0);
@@ -2367,12 +2892,22 @@ void NO_INLINE SH7095::Reset(bool power_on_reset, bool from_internal_wdt)
   BSC.WCR = 0xAAFF;
   BSC.MCR = 0x0000;
 
+  BSC.sdram_finish_time = timestamp;
+  BSC.last_mem_time = timestamp;
+  BSC.last_mem_addr = 0;
+  BSC.last_mem_type = 0;
+
   BSC.RTCSR = 0x00;
   BSC.RTCSRM = 0x00;
   BSC.RTCNT = 0x00;
   BSC.RTCOR = 0x00;
  }
  //
+#ifdef MDFN_ENABLE_DEV_BUILD
+ for(unsigned ch = 0; ch < 2; ch++)
+  DMADebug[ch].rw[0][0] = ~0U;
+#endif
+
  for(unsigned ch = 0; ch < 2; ch++)
  {
   DMACH[ch].CHCR = 0x00;
@@ -2401,6 +2936,7 @@ void NO_INLINE SH7095::Reset(bool power_on_reset, bool from_internal_wdt)
  EPending = 0;
  SetPEX(power_on_reset ? PEX_POWERON : PEX_RESET);
  Pipe_ID = EPending;
+ ResumePoint = nullptr;
 }
 
 void NO_INLINE SH7095::INTC_Reset(void)
@@ -2455,6 +2991,9 @@ void SH7095::SetIRL(unsigned level)
 
 void SH7095::ForceInternalEventUpdates(void)
 {
+ if(MDFN_UNLIKELY(timestamp == SS_EVENT_DISABLED_TS))
+  return;
+
  FRT_WDT_Update();
  FRT_WDT_Recalc_NET();
 }
@@ -2594,219 +3133,236 @@ static const uint8 InstrDecodeTab[65536] =
  #include "sh7095_idecodetab.inc"
 };
 
-template<bool EmulateICache, bool DebugMode>
-INLINE void SH7095::FetchIF(bool ForceIBufferFill)
-{
- if(DebugMode)
-  PC_IF = PC;
-
- if(EmulateICache)
- {
-  if(ForceIBufferFill)
-  {
-   IBuffer = MRFPI[PC >> 29](PC &~ 2);
-   Pipe_IF = (uint16)(IBuffer >> (((PC & 2) ^ 2) << 3));
-  }
-  else
-  {
-   Pipe_IF = (uint16)IBuffer;
-   if(!(PC & 0x2))
-   {
-    IBuffer = MRFPI[PC >> 29](PC);
-    Pipe_IF = IBuffer >> 16;
-   }
-  }
- }
- else
- {
-  if(timestamp < (MA_until - (ForceIBufferFill ? 0 : ((int32)(PC & 0x2) << 28))))
-   timestamp = MA_until;
-
-  if(MDFN_UNLIKELY((int32)PC < 0))	// Mr. Boooones
-  {
-   Pipe_IF = MRFP16[PC >> 29](PC);
-   timestamp++;
-   return;
-  }
-
-  Pipe_IF = *(uint16*)(SH7095_FastMap[PC >> SH7095_EXT_MAP_GRAN_BITS] + PC);
- }
- timestamp++;
+/*								*/
+/* TODO: Stop reading from memory when an exception is pending? */
+/*								*/
+#define FetchIF()							\
+{									\
+ if(DebugMode)								\
+  PC_IF = PC;								\
+									\
+ if(EmulateICache)							\
+ {									\
+  Pipe_IF = (uint16)IBuffer;						\
+									\
+  if(!(PC & 0x2))							\
+  {									\
+   MemReadInstr(PC, IBuffer);						\
+   Pipe_IF = IBuffer >> 16;						\
+  }									\
+ }									\
+ else									\
+ {									\
+  if(timestamp < (MA_until - ((int32)(PC & 0x2) << 28)))		\
+   timestamp = MA_until;						\
+									\
+  Pipe_IF = *(uint16*)(SH7095_FastMap[PC >> SH7095_EXT_MAP_GRAN_BITS] + PC);	\
+									\
+  if(MDFN_UNLIKELY((int32)PC < 0))      /* Mr. Boooones */		\
+   Pipe_IF = Cache_ReadDataArray<uint16>(PC);				\
+ }									\
+ timestamp++;								\
 }
 
-//
-// TODO: Stop reading from memory when an exception is pending?
-//
-template<bool EmulateICache, bool DebugMode, bool DelaySlot, bool IntPreventNext, bool SkipFetchIF>
-INLINE void SH7095::DoIDIF_Real(void)
-{
- if(DelaySlot)
- {
-  //
-  // Redecode the opcode from the 16-bit instruction to makes sure exceptions won't be taken in the delay slot(due
-  // to op field being forced to 0xFF in the previous call to DoIDIF()), and forces usage of the second half of the opcode
-  // table so we can generate illegal slot instruction exceptions as appropriate.
-  //
-  // Oh, and this effectively discards the previously-fetched instruction in Pipe_IF.  Poor, poor instruction.
-  //
-  Pipe_ID = (uint16)Pipe_ID;
-  Pipe_ID |= (InstrDecodeTab[Pipe_ID] | 0x80) << 24;
- }
- else
- {
-  uint32 op = InstrDecodeTab[Pipe_IF];
-  uint32 epo = EPending;
-
-  if(IntPreventNext)
-  {
-   epo &= ~(1U << (PEX_INT + EPENDING_PEXBITS_SHIFT));
-   if(!(epo & (0xFF << EPENDING_PEXBITS_SHIFT)))
-    epo = 0;
-  }
-
-  if(DebugMode)
-   PC_ID = PC_IF;
-
-  Pipe_ID = Pipe_IF | (op << 24) | epo;
- }
-
- if(!SkipFetchIF)
-  FetchIF<EmulateICache, DebugMode>(false);
+#define FetchIF_ForceIBufferFill()					\
+{									\
+ if(DebugMode)								\
+  PC_IF = PC;								\
+									\
+ if(EmulateICache)							\
+ {									\
+  MemReadInstr(PC &~ 2, IBuffer);					\
+  /*Pipe_IF = (uint16)(IBuffer >> (((PC & 2) ^ 2) << 3));*/		\
+  Pipe_IF = (uint16)IBuffer;						\
+  if(!(PC & 0x2))							\
+   Pipe_IF = IBuffer >> 16;						\
+ }									\
+ else									\
+ {									\
+  if(timestamp < MA_until)						\
+   timestamp = MA_until;						\
+									\
+  Pipe_IF = *(uint16*)(SH7095_FastMap[PC >> SH7095_EXT_MAP_GRAN_BITS] + PC);	\
+									\
+  if(MDFN_UNLIKELY((int32)PC < 0))      /* Mr. Boooones */		\
+   Pipe_IF = Cache_ReadDataArray<uint16>(PC);				\
+ }									\
+ timestamp++;								\
 }
 
-template<unsigned which, bool EmulateICache, bool DebugMode, bool DelaySlot, bool IntPreventNext, bool SkipFetchIF>
-static NO_INLINE void DoIDIF(void)
-{
- CPU[which].DoIDIF_Real<EmulateICache, DebugMode, DelaySlot, IntPreventNext, SkipFetchIF>();
+#define DoID(IntPreventNext)						\
+{									\
+ uint32 op = InstrDecodeTab[Pipe_IF];					\
+ uint32 epo = EPending;							\
+									\
+ if(IntPreventNext)							\
+ {									\
+  epo &= ~(1U << (PEX_INT + EPENDING_PEXBITS_SHIFT));			\
+  if(!(epo & (0xFF << EPENDING_PEXBITS_SHIFT)))				\
+   epo = 0;								\
+ }									\
+									\
+ if(DebugMode)								\
+  PC_ID = PC_IF;							\
+									\
+ Pipe_ID = Pipe_IF | (op << 24) | epo;					\
 }
 
-template<unsigned which, bool EmulateICache, int DebugMode, bool delayed>
-INLINE void SH7095::Branch(uint32 target)
-{
- if(DebugMode > 0)
-  DBG_AddBranchTrace(which, target, -1);
-
- PC = target;
-
- //
- // Not totally correct, but simplifies things...probably :p
- //
- if(delayed)
- {
-  if(MDFN_UNLIKELY(PC & 1))
-  {
-   DoIDIF<which, EmulateICache, (bool)DebugMode, true, true, true>();
-   SetPEX(PEX_CPUADDR);	// Pending for the instruction after the delay slot instruction.
-  }
-  else
-  {
-   if(EmulateICache)
-   {
-    if(PC & 0x2)
-     IBuffer = MRFPI[PC >> 29](PC &~ 2);
-   }
-
-   DoIDIF<which, EmulateICache, (bool)DebugMode, true, false, false>();
-  }
- }
- else
- {
-  if(MDFN_UNLIKELY(PC & 1))
-  {
-   SetPEX(PEX_CPUADDR);
-   DoIDIF<which, EmulateICache, (bool)DebugMode, false, false, true>();
-  }
-  else
-  {
-   if(EmulateICache)
-   {
-    if(PC & 0x2)
-     IBuffer = MRFPI[PC >> 29](PC &~ 2);
-   }
-
-   DoIDIF<which, EmulateICache, (bool)DebugMode, false, false, false>();
-   PC += 2;
-   DoIDIF<which, EmulateICache, (bool)DebugMode, false, false, false>();
-  }
- }
+#define DoIDIF_MACRO(IntPreventNext)					\
+{									\
+ DoID(IntPreventNext);							\
+ FetchIF();								\
 }
 
-// Remember to use BEGIN_OP_DLYIDIF instead of BEGIN_OP
-template<unsigned which, bool EmulateICache, int DebugMode>
-INLINE void SH7095::UCDelayBranch(uint32 target)
-{
- if(DebugMode > 0)
-  DBG_AddBranchTrace(which, target, -1);
-
- PC = target;
-
- if(DebugMode)
-  PC_ID = PC_IF;
-
- Pipe_ID = Pipe_IF | ((InstrDecodeTab[Pipe_IF] | 0x80) << 24);
-
- timestamp++;
-
- if(MDFN_UNLIKELY(PC & 1))
- {
-  DoIDIF<which, EmulateICache, (bool)DebugMode, true, true, true>();
-  SetPEX(PEX_CPUADDR);	// Pending for the instruction after the delay slot instruction.
- }
- else
- {
-  FetchIF<EmulateICache, DebugMode>(true);
- }
+/* */
+/* Not totally correct, but simplifies things...probably :p */
+/* */
+#define DelayBranch(target_)						\
+{									\
+ {									\
+  const uint32 target = (target_);					\
+									\
+  if(DebugMode > 0)							\
+   DBG_AddBranchTrace(which, target, -1);				\
+									\
+  PC = target;								\
+ }									\
+									\
+ /* Redecode the opcode from the 16-bit instruction to makes sure */	\
+ /* exceptions won't be taken in the delay slot(due to op field   */	\
+ /* being forced to 0xFF by OR'ing with EPending in the previous  */ 	\
+ /* call to DoID()), and forces usage of the second half of the   */	\
+ /* opcode table so we can generate illegal slot instruction      */	\
+ /* exceptions as appropriate. */					\
+ Pipe_ID = (uint16)Pipe_ID;						\
+ Pipe_ID |= (InstrDecodeTab[Pipe_ID] | 0x80) << 24;			\
+									\
+ if(MDFN_UNLIKELY(PC & 1))						\
+ {									\
+  /* Pending for the instruction after the delay slot instruction. */	\
+  SetPEX(PEX_CPUADDR);							\
+ }									\
+ else									\
+ {									\
+  /* This discards the previously-fetched instruction after the */	\
+  /* delay slot instruction.  Poor, poor instruction. */		\
+  if(EmulateICache)							\
+   UCRead_IF_Kludge = false;						\
+  FetchIF_ForceIBufferFill()						\
+  if(EmulateICache)							\
+   timestamp -= (PC >> 1) & UCRead_IF_Kludge; /* WTFBBQ?! */		\
+ }									\
 }
 
-template<unsigned which, bool EmulateICache, int DebugMode>
-INLINE void SH7095::UCRelDelayBranch(uint32 disp)
-{
- UCDelayBranch<which, EmulateICache, DebugMode>(PC + disp);
+#define Branch(need_addbt, target_)					\
+{									\
+ {									\
+  const uint32 target = (target_);					\
+									\
+  if(need_addbt)							\
+   DBG_AddBranchTrace(which, target, -1);				\
+									\
+  PC = target;								\
+ }									\
+									\
+ if(MDFN_UNLIKELY(PC & 1))						\
+ {									\
+  SetPEX(PEX_CPUADDR);							\
+  DoID(false);								\
+ }									\
+ else									\
+ {									\
+  /* This sequence discards the previously-fetched two instructions */	\
+  /* after the branch instruction. */					\
+  if(EmulateICache)							\
+   UCRead_IF_Kludge = false;						\
+  FetchIF_ForceIBufferFill();						\
+  if(EmulateICache)							\
+   timestamp -= (PC >> 1) & UCRead_IF_Kludge; /* WTFBBQ?! */		\
+  PC += 2;								\
+  DoIDIF(false);							\
+ }									\
 }
 
 
-template<unsigned which, bool EmulateICache, int DebugMode, bool delayed>
-INLINE void SH7095::CondRelBranch(bool cond, uint32 disp)
-{
- if(cond)
-  Branch<which, EmulateICache, DebugMode, delayed>(PC + disp);
+/* Remember to use with BEGIN_OP_DLYIDIF instead of BEGIN_OP */
+#define UCDelayBranch(target)						\
+{									\
+ if(DebugMode > 0)							\
+  DBG_AddBranchTrace(which, target, -1);				\
+									\
+ PC = target;								\
+									\
+ if(DebugMode)								\
+  PC_ID = PC_IF;							\
+									\
+ Pipe_ID = Pipe_IF | ((InstrDecodeTab[Pipe_IF] | 0x80) << 24);		\
+									\
+ timestamp++;								\
+									\
+ if(MDFN_UNLIKELY(PC & 1))						\
+ {									\
+  /* Pending for the instruction after the delay slot instruction. */	\
+  SetPEX(PEX_CPUADDR);							\
+ }									\
+ else									\
+ {									\
+  FetchIF_ForceIBufferFill();						\
+ }									\
 }
 
-template<bool DebugMode>
-uint32 NO_INLINE SH7095::Exception(const unsigned exnum, const unsigned vecnum)
-{
- uint32 new_PC;
+/* Remember to use with BEGIN_OP_DLYIDIF instead of BEGIN_OP */
+#define UCRelDelayBranch(disp) UCDelayBranch(PC + (disp))
 
- timestamp += 2;
- timestamp = std::max<sscpu_timestamp_t>(MA_until, timestamp);
+#define CondRelBranch(cond, disp)	\
+{					\
+ if(cond)				\
+  Branch(true, PC + (disp));		\
+}
 
- if(exnum == EXCEPTION_RESET || exnum == EXCEPTION_POWERON)
- {
-  new_PC = MemRead<uint32>((vecnum + 0) << 2);
-  R[15] = MemRead<uint32>((vecnum + 1) << 2);
- }
- else
- {
-  // Save SR to stack
-  // Save PC to stack
-  // Read exception vector table
-  R[15] -= 4;
-  MemWrite<uint32>(R[15], SR);
-  timestamp++;
-  R[15] -= 4;
-  MemWrite<uint32>(R[15], PC);
-  timestamp++;
-  timestamp++;
-  new_PC = MemRead<uint32>(VBR + (vecnum << 2));
-  timestamp++;
- }
+#define CondRelDelayBranch(cond, disp)	\
+{					\
+ if(cond)				\
+  DelayBranch(PC + (disp));		\
+}
 
- if(DebugMode)
-  DBG_AddBranchTrace(this - CPU, new_PC, exnum, vecnum);
+/* Reset/Poweron exception handling. */
+#define Exception_ResPow(exnum, vecnum, new_PC)				\
+{									\
+ timestamp += 2;							\
+ timestamp = std::max<sscpu_timestamp_t>(MA_until, timestamp);		\
+									\
+ MemRead32(((vecnum) + 0) << 2, new_PC);				\
+ MemRead32(((vecnum) + 1) << 2, R[15]);					\
+									\
+ if(DebugMode)								\
+  DBG_AddBranchTrace(this - CPU, new_PC, (exnum), (vecnum));		\
+									\
+ SS_DBGTI(SS_DBG_SH2_EXCEPT, "[%s] Exception %s, New PC=0x%08x, New R15=0x%08x", cpu_name, ((exnum) == EXCEPTION_RESET ? "RESET" : "POWERON"), new_PC, R[15]); \
+}
 
- //SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Exception %u, vecnum=%u, vbr=%08x, saved PC=0x%08x --- New PC=0x%08x, New R15=0x%08x\n", cpu_name, exnum, vecnum, VBR, PC, new_PC, R[15]);
-
- return new_PC;
+#define Exception(exnum, vecnum, new_PC)				\
+{									\
+ timestamp += 2;							\
+ timestamp = std::max<sscpu_timestamp_t>(MA_until, timestamp);		\
+									\
+ /* Save SR to stack */							\
+ /* Save PC to stack */							\
+ /* Read exception vector table */					\
+ R[15] -= 4;								\
+ MemWrite32(R[15], SR);							\
+ timestamp++;								\
+ R[15] -= 4;								\
+ MemWrite32(R[15], PC);							\
+ timestamp++;								\
+ timestamp++;								\
+ MemRead32(VBR + ((vecnum) << 2), new_PC);				\
+ timestamp++;								\
+									\
+ if(DebugMode)								\
+  DBG_AddBranchTrace(this - CPU, new_PC, (exnum), (vecnum));		\
+									\
+ SS_DBGTI(SS_DBG_SH2_EXCEPT, "[%s] Exception %u, vecnum=0x%02x, VBR=0x%08x, saved PC=0x%08x, New PC=0x%08x, New R15=0x%08x", cpu_name, (exnum), (vecnum), VBR, PC, new_PC, R[15]); \
 }
 
 
@@ -2827,6 +3383,38 @@ uint32 NO_INLINE SH7095::Exception(const unsigned exnum, const unsigned vecnum)
  IF = [4]
 
 */
+
+#define DoIDIF(IntPreventNext) DoIDIF_NI<which, EmulateICache, DebugMode, IntPreventNext>()
+
+#define OnChipRegRead(T, A) OnChipRegRead_INLINE<T>(A)
+#define ExtBusRead(T, BurstHax, A) ExtBusRead_NI<which, false, T, BurstHax>(A)
+#define ExtBusWrite(T, A, V) ExtBusWrite_NI<which, false, T>(A, V)
+
+#define MemReadInstr(A, outval) { outval = (MRFPI[(A) >> 29](A)); }
+#define MemRead8(A, outval) { outval = (MRFP8[(A) >> 29](A)); }
+#define MemRead16(A, outval) { outval = (MRFP16[(A) >> 29](A)); }
+#define MemRead32(A, outval) { outval = (MRFP32[(A) >> 29](A)); }
+#define MemRead16_I(A, outval) { outval = (MRFP16_I[(A) >> 29](A)); }
+#define MemRead32_I(A, outval) { outval = (MRFP32_I[(A) >> 29](A)); }
+
+#define MemWrite8(A, V) MWFP8[(A) >> 29]((A), (V));
+#define MemWrite16(A, V) MWFP16[(A) >> 29]((A), (V));
+#define MemWrite32(A, V) MWFP32[(A) >> 29]((A), (V));
+#define CHECK_EXIT_RESUME() { if(EmulateICache && !which) { if(DebugMode) CPU[1].RunSlaveUntil_Debug(timestamp); else CPU[1].RunSlaveUntil(timestamp); } }
+#define CONST_VAR(T, n) const T n
+#define RESUME_VAR(T, n) T n
+
+template<bool EmulateICache, bool DebugMode, bool IntPreventNext>
+INLINE void SH7095::DoIDIF_INLINE(void)
+{
+ DoIDIF_MACRO(IntPreventNext);
+}
+
+template<unsigned which, bool EmulateICache, bool DebugMode, bool IntPreventNext>
+static NO_INLINE MDFN_HOT void DoIDIF_NI(void)
+{
+ CPU[which].DoIDIF_INLINE<EmulateICache, DebugMode, IntPreventNext>();
+}
 
 template<unsigned which, bool EmulateICache, bool DebugMode>
 INLINE void SH7095::Step(void)
@@ -2849,2002 +3437,140 @@ INLINE void SH7095::Step(void)
  const unsigned instr_nyb1 = (instr >> 4) & 0xF;
  const unsigned instr_nyb2 = (instr >> 8) & 0xF;
 // asm volatile("":: "a"(instr_nyb1), "d"(instr_nyb2));
- switch(Pipe_ID >> 24)
- {
- #include "sh7095_opdefs.inc"
-
- #define PART_OP_NORMIDIF DoIDIF<which, EmulateICache, DebugMode, false, false, false>();
-
- #define BEGIN_OP(x) 	     OP_##x { PART_OP_NORMIDIF
- #define BEGIN_OP_DLYIDIF(x) OP_##x { 
-
- // "Interrupt-disabled" instruction(blocks interrupt from being taken for next instruction).
- // Use with BEGIN_OP_DLYIDIF()
- #define PART_OP_INTDIS DoIDIF<which, EmulateICache, DebugMode, false, true, false>();
-
- #define END_OP } break;
-
- #define WB_EX_CHECK(r) { if(EmulateICache) { if(timestamp < WB_until[(r)]) timestamp = WB_until[(r)]; } }
- #define WB_WRITE(r, v) { R[(r)] = (v); if(EmulateICache) { WB_until[(r)] = MA_until + 1; } }
  //
+ #include "sh7095_ops.inc"
  //
- //
- //
- // MOV #imm,Rn
- //
- BEGIN_OP(MOV_IMM_REG)
-	const unsigned n = instr_nyb2;
-	const uint32 imm = (int8)instr;
-
-	WB_EX_CHECK(n)
-
-	R[n] = imm;
- END_OP
-
-
- //
- // MOV.W @(disp,PC),Rn
- //
- BEGIN_OP(MOV_W_PCREL_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = PC + (d << 1);
-
-	WB_WRITE(n, (int16)MemRead<uint16>(ea));
- END_OP
-
-
- //
- // MOV.L @(disp,PC),Rn
- //
- BEGIN_OP(MOV_L_PCREL_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = (PC &~ 0x3) + (d << 2);
-
-	WB_WRITE(n, MemRead<uint32>(ea));
- END_OP
-
-
- //
- // MOV Rm,Rn
- //
- BEGIN_OP(MOV_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = R[m];
- END_OP
-
-
- //
- // MOV.B Rm,@Rn
- //
- BEGIN_OP(MOV_B_REG_REGINDIR)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 val = R[m];
-	const uint32 ea = R[n];
-
-	MemWrite<uint8>(ea, val);
- END_OP
-
-
- //
- // MOV.W Rm,@Rn
- //
- BEGIN_OP(MOV_W_REG_REGINDIR)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 val = R[m];
-	const uint32 ea = R[n];
-
-	MemWrite<uint16>(ea, val);
- END_OP
-
-
- //
- // MOV.L Rm,@Rn
- //
- BEGIN_OP(MOV_L_REG_REGINDIR)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 val = R[m];
-	const uint32 ea = R[n];
-
-	MemWrite<uint32>(ea, val);
- END_OP
-
-
- //
- // MOV.B @Rm,Rn
- //
- BEGIN_OP(MOV_B_REGINDIR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[m];
-
-	WB_WRITE(n, (int8)MemRead<uint8>(ea));
- END_OP
-
-
- //
- // MOV.W @Rm,Rn
- //
- BEGIN_OP(MOV_W_REGINDIR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[m];
-
-	WB_WRITE(n, (int16)MemRead<uint16>(ea));
- END_OP
-
-
- //
- // MOV.L @Rm,Rn
- //
- BEGIN_OP(MOV_L_REGINDIR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[m];
-
-	WB_WRITE(n, MemRead<uint32>(ea));
- END_OP
-
-
- //
- // MOV.B Rm,@-Rn
- //
- BEGIN_OP(MOV_B_REG_REGINDIRPD)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 val = R[m];
-	uint32 ea;
-
-	R[n] -= 1;
-	ea = R[n];
-
-	MemWrite<uint8>(ea, val);
- END_OP
-
-
- //
- // MOV.W Rm,@-Rn
- //
- BEGIN_OP(MOV_W_REG_REGINDIRPD)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 val = R[m];
-	uint32 ea;
-
-	R[n] -= 2;
-	ea = R[n];
-
-	MemWrite<uint16>(ea, val);
- END_OP
-
-
- //
- // MOV.L Rm,@-Rn
- //
- BEGIN_OP(MOV_L_REG_REGINDIRPD)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 val = R[m];
-	uint32 ea;
-
-	R[n] -= 4;
-	ea = R[n];
-
-	MemWrite<uint32>(ea, val);
- END_OP
-
-
- //
- // MOV.B @Rm+,Rn
- //
- BEGIN_OP(MOV_B_REGINDIRPI_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	uint32 ea;
-
-	ea = R[m];
-	R[m] += 1;
-
-	WB_WRITE(n, (int8)MemRead<uint8>(ea));
- END_OP
-
-
- //
- // MOV.W @Rm+,Rn
- //
- BEGIN_OP(MOV_W_REGINDIRPI_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	uint32 ea;
-
-	ea = R[m];
-	R[m] += 2;
-
-	WB_WRITE(n, (int16)MemRead<uint16>(ea));
- END_OP
-
-
- //
- // MOV.L @Rm+,Rn
- //
- BEGIN_OP(MOV_L_REGINDIRPI_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	uint32 ea;
-
-	ea = R[m];
-	R[m] += 4;
-
-	WB_WRITE(n, MemRead<uint32>(ea));
- END_OP
-
-
- //
- // MOV.B R0,@(disp,Rn)
- //
- BEGIN_OP(MOV_B_REG0_REGINDIRDISP)
-	const unsigned n = instr_nyb1;
-	const unsigned d = (instr >> 0) & 0xf;
-	const uint32 ea = R[n] + (d << 0);
-
-	MemWrite<uint8>(ea, R[0]);
- END_OP
-
-
- //
- // MOV.W R0,@(disp,Rn)
- //
- BEGIN_OP(MOV_W_REG0_REGINDIRDISP)
-	const unsigned n = instr_nyb1;
-	const unsigned d = (instr >> 0) & 0xf;
-	const uint32 ea = R[n] + (d << 1);
-
-	MemWrite<uint16>(ea, R[0]);
- END_OP
-
-
- //
- // MOV.L Rm,@(disp,Rn)
- //
- BEGIN_OP(MOV_L_REG_REGINDIRDISP)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const unsigned d = (instr >> 0) & 0xf;
-	const uint32 ea = R[n] + (d << 2);
-
-	MemWrite<uint32>(ea, R[m]);
- END_OP
-
-
- //
- // MOV.B @(disp,Rm),R0
- //
- BEGIN_OP(MOV_B_REGINDIRDISP_REG0)
-	const unsigned m = instr_nyb1;
-	const unsigned d = (instr >> 0) & 0xf;
-	const uint32 ea = R[m] + (d << 0);
-
-	WB_WRITE(0, (int8)MemRead<uint8>(ea));
- END_OP
-
-
- //
- // MOV.W @(disp,Rm),R0
- //
- BEGIN_OP(MOV_W_REGINDIRDISP_REG0)
-	const unsigned m = instr_nyb1;
-	const unsigned d = (instr >> 0) & 0xf;
-	const uint32 ea = R[m] + (d << 1);
-
-	WB_WRITE(0, (int16)MemRead<uint16>(ea));
- END_OP
-
-
- //
- // MOV.L @(disp,Rm),Rn
- //
- BEGIN_OP(MOV_L_REGINDIRDISP_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const unsigned d = (instr >> 0) & 0xf;
-	const uint32 ea = R[m] + (d << 2);
-
-	WB_WRITE(n, MemRead<uint32>(ea));
- END_OP
-
-
- //
- // MOV.B Rm,@(R0,Rn)
- //
- BEGIN_OP(MOV_B_REG_IDXREGINDIR)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[0] + R[n];
-
-	MemWrite<uint8>(ea, R[m]);
- END_OP
-
-
- //
- // MOV.W Rm,@(R0,Rn)
- //
- BEGIN_OP(MOV_W_REG_IDXREGINDIR)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[0] + R[n];
-
-	MemWrite<uint16>(ea, R[m]);
- END_OP
-
-
- //
- // MOV.L Rm,@(R0,Rn)
- //
- BEGIN_OP(MOV_L_REG_IDXREGINDIR)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[0] + R[n];
-
-	MemWrite<uint32>(ea, R[m]);
- END_OP
-
-
- //
- // MOV.B @(R0,Rm),Rn
- //
- BEGIN_OP(MOV_B_IDXREGINDIR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[0] + R[m];
-
-	WB_WRITE(n, (int8)MemRead<uint8>(ea));
- END_OP
-
-
- //
- // MOV.W @(R0,Rm),Rn
- //
- BEGIN_OP(MOV_W_IDXREGINDIR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[0] + R[m];
-
-	WB_WRITE(n, (int16)MemRead<uint16>(ea));
- END_OP
-
-
- //
- // MOV.L @(R0,Rm),Rn
- //
- BEGIN_OP(MOV_L_IDXREGINDIR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 ea = R[0] + R[m];
-
-	WB_WRITE(n, MemRead<uint32>(ea));
- END_OP
-
-
- //
- // MOV.B R0,@(disp,GBR)
- //
- BEGIN_OP(MOV_B_REG0_GBRINDIRDISP)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = GBR + (d << 0);
-
-	MemWrite<uint8>(ea, R[0]);
- END_OP
-
-
- //
- // MOV.W R0,@(disp,GBR)
- //
- BEGIN_OP(MOV_W_REG0_GBRINDIRDISP)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = GBR + (d << 1);
-
-	MemWrite<uint16>(ea, R[0]);
- END_OP
-
-
- //
- // MOV.L R0,@(disp,GBR)
- //
- BEGIN_OP(MOV_L_REG0_GBRINDIRDISP)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = GBR + (d << 2);
-
-	MemWrite<uint32>(ea, R[0]);
- END_OP
-
-
- //
- // MOV.B @(disp,GBR),R0
- //
- BEGIN_OP(MOV_B_GBRINDIRDISP_REG0)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = GBR + (d << 0);
-
-	WB_WRITE(0, (int8)MemRead<uint8>(ea));
- END_OP
-
-
- //
- // MOV.W @(disp,GBR),R0
- //
- BEGIN_OP(MOV_W_GBRINDIRDISP_REG0)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = GBR + (d << 1);
-
-	WB_WRITE(0, (int16)MemRead<uint16>(ea));
- END_OP
-
-
- //
- // MOV.L @(disp,GBR),R0
- //
- BEGIN_OP(MOV_L_GBRINDIRDISP_REG0)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = GBR + (d << 2);
-
-	WB_WRITE(0, MemRead<uint32>(ea));
- END_OP
-
-
- //
- // MOVA @(disp,PC),R0
- //
- BEGIN_OP(MOVA_PCREL_REG0)
-	const unsigned d = (instr >> 0) & 0xff;
-	const uint32 ea = (PC &~ 0x3) + (d << 2);
-
-	WB_EX_CHECK(0)
-
-	R[0] = ea;
- END_OP
-
-
- //
- // MOVT Rn
- //
- BEGIN_OP(MOVT_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] = GetT();
- END_OP
-
-
- //
- // SWAP.B Rm,Rn
- //
- BEGIN_OP(SWAP_B_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (R[m] & 0xFFFF0000) | ((R[m] << 8) & 0xFF00) | ((R[m] >> 8) & 0x00FF);
- END_OP
-
-
- //
- // SWAP.W Rm,Rn
- //
- BEGIN_OP(SWAP_W_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (R[m] << 16) | (R[m] >> 16);
- END_OP
-
-
- //
- // XTRCT Rm,Rn
- //
- BEGIN_OP(XTRCT_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (R[n] >> 16) | (R[m] << 16);
- END_OP
-
-
- //
- // ADD Rm,Rn
- //
- BEGIN_OP(ADD_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = R[n] + R[m];
- END_OP
-
-
- //
- // ADD #imm,Rn
- //
- BEGIN_OP(ADD_IMM_REG)
-	const unsigned n = instr_nyb2;
-	const uint32 imm = (int8)instr;
-
-	WB_EX_CHECK(n)
-
-	R[n] = R[n] + imm;
- END_OP
-
-
- //
- // ADDC Rm,Rn
- //
- BEGIN_OP(ADDC_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint64 result = (uint64)R[n] + R[m] + GetT();
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = result;
-	SetT((result >> 32) & 1);
- END_OP
-
-
- //
- // ADDV Rm,Rn
- //
- BEGIN_OP(ADDV_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 result = R[n] + R[m];
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT(((~(R[n] ^ R[m])) & (R[n] ^ result)) >> 31);
-	R[n] = result;
- END_OP
-
-
- //
- // CMP/EQ #imm,R0
- //
- BEGIN_OP(CMP_EQ_IMM_REG0)
-	const uint32 imm = (int8)instr;
-
-	WB_EX_CHECK(0)
-
-	SetT(imm == R[0]);
- END_OP
-
-
- //
- // CMP/EQ Rm,Rn
- //
- BEGIN_OP(CMP_EQ_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT(R[n] == R[m]);
- END_OP
-
-
- //
- // CMP/HS Rm,Rn
- //
- BEGIN_OP(CMP_HS_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT(R[n] >= R[m]);
- END_OP
-
-
- //
- // CMP/GE Rm,Rn
- //
- BEGIN_OP(CMP_GE_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT((int32)R[n] >= (int32)R[m]);
- END_OP
-
-
- //
- // CMP/HI Rm,Rn
- //
- BEGIN_OP(CMP_HI_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT(R[n] > R[m]);
- END_OP
-
-
- //
- // CMP/GT Rm,Rn
- //
- BEGIN_OP(CMP_GT_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT((int32)R[n] > (int32)R[m]);
- END_OP
-
-
- //
- // CMP/PZ Rn
- //
- BEGIN_OP(CMP_PZ_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	SetT((int32)R[n] >= 0);
- END_OP
-
-
- //
- // CMP/PL Rn
- //
- BEGIN_OP(CMP_PL_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	SetT((int32)R[n] > 0);
- END_OP
-
-
- //
- // CMP/STR Rm,Rn
- //
- BEGIN_OP(CMP_STR_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 tmp = R[n] ^ R[m];
-	unsigned new_T = 0;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	if(!(tmp & 0x000000FF)) new_T = 1;
-	if(!(tmp & 0x0000FF00)) new_T = 1;
-	if(!(tmp & 0x00FF0000)) new_T = 1;
-	if(!(tmp & 0xFF000000)) new_T = 1;
-
-	SetT(new_T);
- END_OP
-
-
- //
- // DIV1 Rm,Rn
- //
- BEGIN_OP(DIV1_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	uint32 tmp;
-	bool new_Q;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	new_Q = R[n] >> 31;
-	R[n] <<= 1;
-	R[n] |= GetT();
-
-	tmp = R[n];
-	new_Q ^= GetM();
-
-	if(!(GetQ() ^ GetM()))
-	{
-	 R[n] -= R[m];
-	 new_Q ^= (R[n] > tmp);
-	}
-	else
-	{
-	 R[n] += R[m];
-	 new_Q ^= (R[n] < tmp);
-	}
-
-	SetQ(new_Q);
-	SetT(new_Q == GetM());
- END_OP
-
-
- //
- // DIV0S Rm,Rn
- //
- BEGIN_OP(DIV0S_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const unsigned new_Q = R[n] >> 31;
-	const unsigned new_M = R[m] >> 31;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetQ(new_Q);
-	SetM(new_M);
-	SetT(new_Q != new_M);
- END_OP
-
-
- //
- // DIV0U 
- //
- BEGIN_OP(DIV0U)
-	SetQ(false);
-	SetM(false);
-	SetT(false);
- END_OP
-
-
- //
- // DT 
- //
- BEGIN_OP(DT)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n]--;
-	SetT(!R[n]);
- END_OP
-
-
- //
- // EXTS.B Rm,Rn
- //
- BEGIN_OP(EXTS_B_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (int8)R[m];
- END_OP
-
-
- //
- // EXTS.W Rm,Rn
- //
- BEGIN_OP(EXTS_W_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (int16)R[m];
- END_OP
-
-
- //
- // EXTU.B Rm,Rn
- //
- BEGIN_OP(EXTU_B_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (uint8)R[m];
- END_OP
-
-
- //
- // EXTU.W Rm,Rn
- //
- BEGIN_OP(EXTU_W_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = (uint16)R[m];
- END_OP
-
-
- //
- // MAC.L @Rm+,@Rn+
- //
- //  Pipeline: page 188(not implemented right here)
- BEGIN_OP(MAC_L)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	uint64 a, b, sum;
-	int32 m0, m1;
-
-	// Order confirmed.
-	m0 = (int32)MemRead<uint32>(R[m]);
-	R[m] += 4;
-        m1 = (int32)MemRead<uint32>(R[n]);
-	R[n] += 4;
-
-	a = GetMAC64();
-	b = (int64)m0 * m1;
-	sum = a + b;
-
-	if(GetS() && sum > 0x00007FFFFFFFFFFFULL && sum < 0xFFFF800000000000ULL)
-	{
-	 if((int32)(m0 ^ m1) < 0)
-	  sum = 0xFFFF800000000000ULL;
-	 else
-	  sum = 0x00007FFFFFFFFFFFULL;
-	}
-
-	SetMAC64(sum);
-
-	timestamp++;
- END_OP
-
-
- //
- // MAC.W @Rm+,@Rn+
- //
- //  Pipeline: page 180(not implemented right here)
- BEGIN_OP(MAC_W)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	int16 m0, m1;
-
-	// Order confirmed.
-	m0 = (int16)MemRead<uint16>(R[m]);
-	R[m] += 2;
-        m1 = (int16)MemRead<uint16>(R[n]);
-	R[n] += 2;
-
-	if(GetS())
-	{
-	 int32 b = (int32)m0 * m1;
-	 uint64 sum = (int64)(int32)MACL + b;
-
-	 if(sum > 0x000000007FFFFFFFULL && sum < 0xFFFFFFFF80000000ULL)
-	 {
-	  MACH |= 1;
-
-	  if(b < 0)
-	   sum = 0x80000000ULL;
-	  else
-	   sum = 0x7FFFFFFFULL;
-	 }
-
-	 MACL = sum;
-	}
-	else
-	 SetMAC64(GetMAC64() + (int64)m0 * m1);
-
-	timestamp++;
- END_OP
-
-
- //
- // DMULS.L Rm,Rn
- //
- //  Pipeline: page 215 (not implemented here totally correctly)
- BEGIN_OP_DLYIDIF(DMULS_L_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint64 result = (int64)(int32)R[n] * (int32)R[m];
-
-	timestamp++;
-
-	MA_until = std::max<sscpu_timestamp_t>(std::max<sscpu_timestamp_t>(MA_until, MM_until), timestamp + 1);
-	MM_until = MA_until + 4;
-	PART_OP_NORMIDIF
-
-	MACL = result >> 0;
-	MACH = result >> 32;
- END_OP
-
-
- //
- // DMULU.L Rm,Rn
- //
- //  Pipeline: page 215 (not implemented here totally correctly)
- BEGIN_OP_DLYIDIF(DMULU_L_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint64 result = (uint64)R[n] * R[m];
-
-	timestamp++;
-
-	MA_until = std::max<sscpu_timestamp_t>(std::max<sscpu_timestamp_t>(MA_until, MM_until), timestamp + 1);
-	MM_until = MA_until + 4;
-	PART_OP_NORMIDIF
-
-	MACL = result >> 0;
-	MACH = result >> 32;
- END_OP
-
-
- //
- // MUL.L Rm,Rn
- //
- //  Pipeline: page 215 (not implemented here totally correctly)
- BEGIN_OP_DLYIDIF(MUL_L_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	timestamp++;
-
-	MA_until = std::max<sscpu_timestamp_t>(std::max<sscpu_timestamp_t>(MA_until, MM_until), timestamp + 1);
-	MM_until = MA_until + 4;
-	PART_OP_NORMIDIF
-
-	MACL = R[n] * R[m];
- END_OP
-
-
- //
- // MULS.W Rm,Rn
- //
- //  Pipeline: page 207
- BEGIN_OP(MULS_W_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	MA_until = std::max<sscpu_timestamp_t>(std::max<sscpu_timestamp_t>(MA_until, MM_until), timestamp + 1);
-	MM_until = MA_until + 2;
-
-	MACL = (int16)R[n] * (int16)R[m];
- END_OP
-
-
- //
- // MULU.W Rm,Rn
- //
- //  Pipeline: page 207
- BEGIN_OP(MULU_W_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	MA_until = std::max<sscpu_timestamp_t>(std::max<sscpu_timestamp_t>(MA_until, MM_until), timestamp + 1);
-	MM_until = MA_until + 2;
-
-	MACL = (uint32)(uint16)R[n] * (uint32)(uint16)R[m];
- END_OP
-
-
- //
- // NEG Rm,Rn
- //
- BEGIN_OP(NEG_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = -R[m];
- END_OP
-
-
- //
- // NEGC Rm,Rn
- //
- BEGIN_OP(NEGC_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint64 result = (uint64)0 - R[m] - GetT();
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = result;
-	SetT((result >> 32) & 1);
- END_OP
-
-
- //
- // SUB Rm,Rn
- //
- BEGIN_OP(SUB_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = R[n] - R[m];
- END_OP
-
-
- //
- // SUBC Rm,Rn
- //
- BEGIN_OP(SUBC_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint64 result = (uint64)R[n] - R[m] - GetT();
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = result;
-	SetT((result >> 32) & 1);
- END_OP
-
-
- //
- // SUBV Rm,Rn
- //
- BEGIN_OP(SUBV_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-	const uint32 result = R[n] - R[m];
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT((((R[n] ^ R[m])) & (R[n] ^ result)) >> 31);
-	R[n] = result;
- END_OP
-
-
- //
- // AND Rm,Rn
- //
- BEGIN_OP(AND_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = R[n] & R[m];
- END_OP
-
-
- //
- // AND #imm,R0
- //
- BEGIN_OP(AND_IMM_REG0)
-	const unsigned imm = (uint8)instr;
-
-	WB_EX_CHECK(0)
-
-	R[0] = R[0] & imm;
- END_OP
-
-
- //
- // AND.B #imm,@(R0,GBR)
- //
- BEGIN_OP(AND_B_IMM_IDXGBRINDIR)
-	const unsigned imm = (uint8)instr;
-	const uint32 ea = R[0] + GBR;
-	uint32 tmp;
-
-	tmp = MemRead<uint8>(ea);
-	timestamp++;
-	tmp &= imm;
-	MemWrite<uint8>(ea, tmp);
-	timestamp++;
- END_OP
-
-
- //
- // NOT Rm,Rn
- //
- BEGIN_OP(NOT_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = ~R[m];
- END_OP
-
-
- //
- // OR Rm,Rn
- //
- BEGIN_OP(OR_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] |= R[m];
- END_OP
-
-
- //
- // OR #imm,R0
- //
- BEGIN_OP(OR_IMM_REG0)
-	const unsigned imm = (uint8)instr;
-
-	WB_EX_CHECK(0)
-
-	R[0] |= imm;
- END_OP
-
-
- //
- // OR.B #imm,@(R0,GBR)
- //
- BEGIN_OP(OR_B_IMM_IDXGBRINDIR)
-	const unsigned imm = (uint8)instr;
-	const uint32 ea = R[0] + GBR;
-	uint32 tmp;
-
-	tmp = MemRead<uint8>(ea);
-	timestamp++;
-	tmp |= imm;
-	MemWrite<uint8>(ea, tmp);
-	timestamp++;
- END_OP
-
-
- //
- // TAS.B @Rn
- //
- BEGIN_OP(TAS_B_REGINDIR)
-	const unsigned n = instr_nyb2;
-	const uint32 ea = R[n];
-	uint8 tmp;
-
-	SH7095_BusLock++;
-	tmp = ExtBusRead<uint8, false>(ea);	// FIXME: Address error on invalid address(>= 0x40000000 ?).
-	timestamp = SH7095_mem_timestamp;
-
-	SetT(!tmp);
-
-	tmp |= 0x80;
-
-	MemWrite<uint8>(ea, tmp);
-	SH7095_BusLock--;
-
-	timestamp += 3;
- END_OP
-
-
- //
- // TST Rm,Rn
- //
- BEGIN_OP(TST_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	SetT(!(R[n] & R[m]));
- END_OP
-
-
- //
- // TST #imm,R0
- //
- BEGIN_OP(TST_IMM_REG0)
-	const unsigned imm = (uint8)instr;
-
-	WB_EX_CHECK(0)
-
-	SetT(!(R[0] & imm));
- END_OP
-
-
- //
- // TST.B #imm,@(R0,GBR)
- //
- BEGIN_OP(TST_B_IMM_IDXGBRINDIR)
-	const unsigned imm = (uint8)instr;
-	const uint32 ea = R[0] + GBR;
-	uint32 tmp;
-
-	tmp = MemRead<uint8>(ea);
-	timestamp++;
-	SetT(!(tmp & imm));
-	timestamp++;
- END_OP
-
-
- //
- // XOR Rm,Rn
- //
- BEGIN_OP(XOR_REG_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned m = instr_nyb1;
-
-	WB_EX_CHECK(n)
-	WB_EX_CHECK(m)
-
-	R[n] = R[n] ^ R[m];
- END_OP
-
-
- //
- // XOR #imm,R0
- //
- BEGIN_OP(XOR_IMM_REG0)
-	const unsigned imm = (uint8)instr;
-
-	WB_EX_CHECK(0)
-
-	R[0] = R[0] ^ imm;
- END_OP
-
-
- //
- // XOR.B #imm,@(R0,GBR)
- //
- BEGIN_OP(XOR_B_IMM_IDXGBRINDIR)
-	const unsigned imm = (uint8)instr;
-	const uint32 ea = R[0] + GBR;
-	uint32 tmp;
-
-	tmp = MemRead<uint8>(ea);
-	timestamp++;
-	tmp ^= imm;
-	MemWrite<uint8>(ea, tmp);
-	timestamp++;
- END_OP
-
-
- //
- // ROTL Rn
- //
- BEGIN_OP(ROTL_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned rotbit = R[n] >> 31;
-
-	WB_EX_CHECK(n)
-
-	R[n] = (R[n] << 1) | rotbit;
-	SetT(rotbit);
- END_OP
-
-
- //
- // ROTR Rn
- //
- BEGIN_OP(ROTR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned rotbit = R[n] & 1;
-
-	WB_EX_CHECK(n)
-
-	R[n] = (R[n] >> 1) | (rotbit << 31);
-	SetT(rotbit);
- END_OP
-
-
- //
- // ROTCL Rn
- //
- BEGIN_OP(ROTCL_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned rotbit = R[n] >> 31;
-
-	WB_EX_CHECK(n)
-
-	R[n] = (R[n] << 1) | GetT();
-	SetT(rotbit);
- END_OP
-
-
- //
- // ROTCR Rn
- //
- BEGIN_OP(ROTCR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned rotbit = R[n] & 1;
-
-	WB_EX_CHECK(n)
-
-	R[n] = (R[n] >> 1) | (GetT() << 31);
-	SetT(rotbit);
- END_OP
-
-
- //
- // SHAR Rn
- //
- BEGIN_OP(SHAR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned shbit = R[n] & 1;
-
-	WB_EX_CHECK(n)
-
-	R[n] = (int32)R[n] >> 1;
-	SetT(shbit);
- END_OP
-
-
- //
- // SHLL Rn
- //
- BEGIN_OP(SHLL_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned shbit = R[n] >> 31;
-
-	WB_EX_CHECK(n)
-
-	R[n] <<= 1;
-	SetT(shbit);
- END_OP
-
-
- //
- // SHLR Rn
- //
- BEGIN_OP(SHLR_REG)
-	const unsigned n = instr_nyb2;
-	const unsigned shbit = R[n] & 1;
-
-	WB_EX_CHECK(n)
-
-	R[n] >>= 1;
-	SetT(shbit);
- END_OP
-
-
- //
- // SHLL2 Rn
- //
- BEGIN_OP(SHLL2_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] <<= 2;
- END_OP
-
-
- //
- // SHLR2 Rn
- //
- BEGIN_OP(SHLR2_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] >>= 2;
- END_OP
-
-
- //
- // SHLL8 Rn
- //
- BEGIN_OP(SHLL8_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] <<= 8;
- END_OP
-
-
- //
- // SHLR8 Rn
- //
- BEGIN_OP(SHLR8_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] >>= 8;
- END_OP
-
-
- //
- // SHLL16 Rn
- //
- BEGIN_OP(SHLL16_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] <<= 16;
- END_OP
-
-
- //
- // SHLR16 Rn
- //
- BEGIN_OP(SHLR16_REG)
-	const unsigned n = instr_nyb2;
-
-	WB_EX_CHECK(n)
-
-	R[n] >>= 16;
- END_OP
-
-
- //
- // BF 
- //
- BEGIN_OP(BF)
-	CondRelBranch<which, EmulateICache, DebugMode, false>(!GetT(), (uint32)(int8)instr << 1);
- END_OP
-
-
- //
- // BF/S 
- //
- BEGIN_OP(BF_S)
-	CondRelBranch<which, EmulateICache, DebugMode, true>(!GetT(), (uint32)(int8)instr << 1);
- END_OP
-
-
- //
- // BT 
- //
- BEGIN_OP(BT)
-	CondRelBranch<which, EmulateICache, DebugMode, false>(GetT(), (uint32)(int8)instr << 1);
- END_OP
-
-
- //
- // BT/S 
- //
- BEGIN_OP(BT_S)
-	CondRelBranch<which, EmulateICache, DebugMode, true>(GetT(), (uint32)(int8)instr << 1);
- END_OP
-
-
- //
- // BRA 
- //
- BEGIN_OP_DLYIDIF(BRA)
-	UCRelDelayBranch<which, EmulateICache, DebugMode>((uint32)sign_x_to_s32(12, instr) << 1);
- END_OP
-
-
- //
- // BRAF Rm
- //
- BEGIN_OP_DLYIDIF(BRAF_REG)
-	const unsigned m = instr_nyb2;
-
-	UCRelDelayBranch<which, EmulateICache, DebugMode>(R[m]);
- END_OP
-
-
- //
- // BSR 
- //
- BEGIN_OP_DLYIDIF(BSR)
-	PR = PC;
-
-	UCRelDelayBranch<which, EmulateICache, DebugMode>((uint32)sign_x_to_s32(12, instr) << 1);
- END_OP
-
-
- //
- // BSRF Rm
- //
- BEGIN_OP_DLYIDIF(BSRF_REG)
-	const unsigned m = instr_nyb2;
-
-	PR = PC;
-
-	UCRelDelayBranch<which, EmulateICache, DebugMode>(R[m]);
- END_OP
-
-
- //
- // JMP @Rm
- //
- BEGIN_OP_DLYIDIF(JMP_REGINDIR)
-	const unsigned m = instr_nyb2;
-
-	UCDelayBranch<which, EmulateICache, DebugMode>(R[m]);
- END_OP
-
-
- //
- // JSR @Rm
- //
- BEGIN_OP_DLYIDIF(JSR_REGINDIR)
-	const unsigned m = instr_nyb2;
-
-	PR = PC;
-
-	UCDelayBranch<which, EmulateICache, DebugMode>(R[m]);
- END_OP
-
-
- //
- // RTS 
- //
- BEGIN_OP_DLYIDIF(RTS)
-	UCDelayBranch<which, EmulateICache, DebugMode>(PR);
- END_OP
-
-
- //
- // CLRT 
- //
- BEGIN_OP(CLRT)
-	SetT(false);
- END_OP
-
-
- //
- // CLRMAC 
- //
- BEGIN_OP(CLRMAC)
-	MACH = 0;
-	MACL = 0;
- END_OP
-
-
- //
- // LDC 
- //
- BEGIN_OP_DLYIDIF(LDC)
-	const unsigned m = instr_nyb2;
-	const unsigned cri = (instr >> 4) & 0x3;
-
-	CtrlRegs[cri] = R[m];
-	if(cri == 0)
-	{
-	 SR &= 0x3F3;
-	 RecalcPendingIntPEX();
-	}
-	PART_OP_INTDIS
- END_OP
-
- //
- // LDC.L 
- //
- // Pipeline: page 233
- //
- BEGIN_OP_DLYIDIF(LDC_L)
-	const unsigned m = instr_nyb2;
-	const unsigned cri = (instr >> 4) & 0x3;
-	uint32 ea;
-
-	ea = R[m];
-	R[m] += 4;
-
-	timestamp++;
-	CtrlRegs[cri] = MemRead<uint32>(ea);
-	if(cri == 0)
-	{
-	 SR &= 0x3F3;
-	 RecalcPendingIntPEX();
-	}
-
-	timestamp++;
-	PART_OP_INTDIS
- END_OP
-
-
- //
- // LDS 
- //
- BEGIN_OP_DLYIDIF(LDS)
-	const unsigned m = instr_nyb2;
-	const unsigned sri = (instr >> 4) & 0x3;
-
-	SysRegs[sri] = R[m];
-	PART_OP_INTDIS
- END_OP
-
-
- //
- // LDS.L 
- //
- BEGIN_OP_DLYIDIF(LDS_L)	// Pipeline same as ordinary load instruction
-	const unsigned m = instr_nyb2;
-	const unsigned sri = (instr >> 4) & 0x3;
-	uint32 ea;
-
-	ea = R[m];
-	R[m] += 4;
-
-	PART_OP_INTDIS
-
-	SysRegs[sri] = MemRead<uint32>(ea);
-	//printf(" LDS.L: (0x%08x)->0x%08x\n", ea, SysRegs[sri]);
- END_OP
-
-
- //
- // NOP 
- //
- BEGIN_OP(NOP)
- END_OP
-
-
- //
- // RTE 
- //
- // Pipeline: page 241
- //
- BEGIN_OP(RTE)
-	uint32 new_PC;
-
-	new_PC = MemRead<uint32>(R[15]);
-	R[15] += 4;
-
-	SR = MemRead<uint32>(R[15]);
-	RecalcPendingIntPEX();
-	R[15] += 4;
-
-	timestamp++;
-
-	Branch<which, EmulateICache, DebugMode, true>(new_PC);
- END_OP
-
-
- //
- // SETT 
- //
- BEGIN_OP(SETT)
-	SetT(true);
- END_OP
-
-
- //
- // SLEEP 
- //
- BEGIN_OP_DLYIDIF(SLEEP)
-	//
-	// Standby mode time yay?
-	//
-	if(MDFN_UNLIKELY(SBYCR & 0x80))
-	{
-	 SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Entering standby mode.\n", cpu_name);
-
-	 for(unsigned ch = 0; ch < 2; ch++)
-	 {
-	  DMACH[ch].CHCR = 0x00;
-	  DMACH[ch].CHCRM = 0x00;
-	 }
-	 DMAOR = 0x00;
-	 DMA_RecalcRunning();
-	 RecalcPendingIntPEX();
-	 //
-	 //
-	 FRT_Reset();
-	 //
-	 //
-	 WDT_StandbyReset();
-	 //
-	 //
-	 SCI_Reset();
-	 //
-	 //
-
-	 timestamp++;
-	 Pipe_ID = (Pipe_ID & 0x00FFFFFF) | (0x7E << 24);
-
-	 Standby = true;
-
-	 return;
-	}
-
-	if(MDFN_LIKELY(!EPending))
-	{
-	 timestamp += 3;
-	 return;
-	}
-	else
-	{
-	 DoIDIF<which, EmulateICache, DebugMode, false, false, false>();
-	}
- END_OP
-
- BEGIN_OP_DLYIDIF(PSEUDO_STANDBY)
-	if(MDFN_LIKELY(Standby))
-	{
-	 timestamp += 7;
-	 return;
-	}
-	else 
-	{
-	 SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Exiting standby mode.\n", cpu_name);
-
-	 FRT_Reset();	// Reset again(for the counter) because we didn't stop clocking it.
-
-	 DoIDIF<which, EmulateICache, DebugMode, false, false, false>();
-	}
- END_OP
-
- //
- // STC 
- //
- BEGIN_OP_DLYIDIF(STC)
-	const unsigned n = instr_nyb2;
-	const unsigned cri = (instr >> 4) & 0x3;
-
-	R[n] = CtrlRegs[cri];
-	PART_OP_INTDIS
- END_OP
-
-
- //
- // STC.L 
- //
- // pipeline: page 234
- BEGIN_OP_DLYIDIF(STC_L)
-	const unsigned n = instr_nyb2;
-	const unsigned cri = (instr >> 4) & 0x3;
-	uint32 ea;
-
-	R[n] -= 4;
-	ea = R[n];
-
-	MemWrite<uint32>(ea, CtrlRegs[cri]);
-	timestamp++;
-	PART_OP_INTDIS
- END_OP
-
-
- //
- // STS 
- //
- BEGIN_OP_DLYIDIF(STS)
-	const unsigned n = instr_nyb2;
-	const unsigned sri = (instr >> 4) & 0x3;
-
-	R[n] = SysRegs[sri];
-	PART_OP_INTDIS
- END_OP
-
-
- //
- // STS.L 
- //
- BEGIN_OP_DLYIDIF(STS_L)	// Pipeline same as ordinary store instruction
-	const unsigned n = instr_nyb2;
-	const unsigned sri = (instr >> 4) & 0x3;
-	uint32 ea;
-
-	R[n] -= 4;
-	ea = R[n];
-
-	//printf(" STS.L: 0x%08x->(0x%08x)\n", SysRegs[sri], ea);
-
-	MemWrite<uint32>(ea, SysRegs[sri]);
-
-	PART_OP_INTDIS
- END_OP
-
-
- //
- // TRAPA #imm
- //
- // Saved PC is the address of the instruction after the TRAPA instruction
- //
- BEGIN_OP_DLYIDIF(TRAPA)
-	const unsigned imm = (uint8)instr;
-
-	PC -= 2;
-	Branch<which, EmulateICache, -DebugMode, false>(Exception<DebugMode>(EXCEPTION_TRAP, imm));
- END_OP
-
-
- /*
- **
- **
- */
- //
- // Illegal Instruction
- //
- // Saved PC is the address of the illegal instruction.
- //
- BEGIN_OP_DLYIDIF(ILLEGAL)
-	PC -= 4;
-	Branch<which, EmulateICache, -DebugMode, false>(Exception<DebugMode>(EXCEPTION_ILLINSTR, VECNUM_ILLINSTR));
- END_OP
-
- //
- // Illegal Slot Instruction
- //
- // Saved PC is the effective target address of the jump.
- //
- BEGIN_OP_DLYIDIF(SLOT_ILLEGAL)
-	PC -= 2;
-	Branch<which, EmulateICache, -DebugMode, false>(Exception<DebugMode>(EXCEPTION_ILLSLOT, VECNUM_ILLSLOT));
- END_OP
-
- //
- // Pending exception(address error/interrupt)
- //
- BEGIN_OP_DLYIDIF(PSEUDO_EPENDING)
-	uint32 new_PC = 0;
-
-	//
-	// Priority here(listed highest to lowest):
-	//  External halt
-	//   Power
-	//    Reset
-	//     Pseudo DMA burst(hacky abusey thing to stall the CPU, should be above everything but reset/power and ext halt otherwise kaboom!).
-	//      CPU address error
-	//       DMA address error
-	//        NMI
-	//         Interrupt (final else, may be called quasi-spuriously)
-	//
-	#define TPP(x) (Pipe_ID & (1U << ((x) + EPENDING_PEXBITS_SHIFT)))
-	//
-	// Test against Pipe_ID, reset bits in EPending(if appropriate).
-	//
-	if(MDFN_UNLIKELY(TPP(PEX_PSEUDO_EXTHALT)))
-	{
-	 //SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Ext halt begin: Pipe_ID=0x%08x PC=0x%08x\n", cpu_name, Pipe_ID, PC);
-	 Pipe_ID = (Pipe_ID & 0x00FFFFFF) | (0xFE << 24);
-	 return;
-	}
-	else if(MDFN_UNLIKELY(TPP(PEX_POWERON) || TPP(PEX_RESET)))
-	{
-         if(TPP(PEX_POWERON))
-	 {
-	  EPending = 0;
-	  new_PC = Exception<DebugMode>(EXCEPTION_POWERON, VECNUM_POWERON);
-	 }
-	 else
-	 {
-	  EPending = 0;
-	  new_PC = Exception<DebugMode>(EXCEPTION_RESET, VECNUM_RESET);
-	 }
-	}
-	else if(MDFN_UNLIKELY(TPP(PEX_PSEUDO_DMABURST)))
-	{
-	 //SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Burst begin: Pipe_ID=0x%08x PC=0x%08x\n", cpu_name, Pipe_ID, PC);
-	 Pipe_ID = (Pipe_ID & 0x00FFFFFF) | (0xFE << 24);
-	 return;
-	}
-	else if(MDFN_UNLIKELY(TPP(PEX_CPUADDR)))
-	{
-	 PC -= 4;
-	 ClearPEX(PEX_CPUADDR);
-	 new_PC = Exception<DebugMode>(EXCEPTION_CPUADDR, VECNUM_CPUADDR);
-	 ClearPEX(PEX_CPUADDR);	// Infinite recursive address errors are not good(stack wraparound could clobber backup memory).
-	}
-	else if(MDFN_UNLIKELY(TPP(PEX_DMAADDR)))
-	{
-	 PC -= 4;
-	 ClearPEX(PEX_DMAADDR);
-	 new_PC = Exception<DebugMode>(EXCEPTION_DMAADDR, VECNUM_DMAADDR);
-	}
-	else if(TPP(PEX_NMI))
-	{
-	 PC -= 4;
-	 ClearPEX(PEX_NMI);
-	 new_PC = Exception<DebugMode>(EXCEPTION_NMI, VECNUM_NMI);
-	 //
-	 //
-	 //
-	 SR |= 0xF << 4;
-	 RecalcPendingIntPEX();
-	}
-	else	// Int
-	{
-	 uint8 ipr;
-
-	 ipr = GetPendingInt(NULL);
-
-	 if(MDFN_LIKELY(ipr > ((SR >> 4) & 0xF)))
-	 {
-	  uint8 vecnum;
-
-	  // Note: GetPendingInt() may call ExIVecFetch(), which may call SetIRL with a new value, so be
-	  // careful to use the "old" value here.
-	  GetPendingInt(&vecnum);
-
-	  PC -= 4;
-	  new_PC = Exception<DebugMode>(EXCEPTION_INT, vecnum);
-	  //
-	  //
-	  //
-	  SR &= ~(0xF << 4);
-	  SR |= ipr << 4;
-	  RecalcPendingIntPEX();
-	 }
-	 else
-	 {
-	  // 
-	  // Can happen like so(note for future testing):
-	  //
-	  // (WDT interval timer IRQ pending here)
-	  //
-	  // WTCSR_R;
-	  // asm volatile(
-	  //	"ldc %0,SR\n\t"
-	  //	"mov.w %2, @%1\n\t"
-	  //	:
-	  //	:"r"(0), "r"(0xFFFFFE88), "r"(0xA500 | 0x00)
-	  // 	: "memory");
-	  //
-	  SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Spurious EPENDING. IPR=0x%02x SR=0x%04x EPending=0x%08x Pipe_ID=0x%08x PC=0x%08x\n", cpu_name, ipr, SR, EPending, Pipe_ID, PC);
-
-	  Pipe_ID = (uint16)Pipe_ID;
-	  Pipe_ID |= InstrDecodeTab[Pipe_ID] << 24;
-	  goto SPEPRecover;
-	 }
-	}
-	//
-	//
-	//
-	Branch<which, EmulateICache, -DebugMode, false>(new_PC);
- END_OP
-
- BEGIN_OP_DLYIDIF(PSEUDO_DMABURST)
-	if(MDFN_LIKELY(DMA_InBurst() || ExtHalt))
-	{
-	 timestamp += 7;
-	 return;
-	}
-	else
-	{
-	 ClearPEX(PEX_PSEUDO_DMABURST);
-	 ClearPEX(PEX_PSEUDO_EXTHALT);
-
-	 //
-	 // Recover Pipe_ID opcode field; only use Pipe_ID for this, not EPending, otherwise
-	 // we may accidentally allow an interrupt to occur immediately after an interrupt-disabled instruction.
-	 //
-	 Pipe_ID &= 0x00FFFFFF;
-	 Pipe_ID &= ~(1U << (PEX_PSEUDO_DMABURST + EPENDING_PEXBITS_SHIFT));
-	 Pipe_ID &= ~(1U << (PEX_PSEUDO_EXTHALT + EPENDING_PEXBITS_SHIFT));
-	 Pipe_ID |= InstrDecodeTab[(uint16)Pipe_ID] << 24;
-	 if(Pipe_ID & (0xFF << EPENDING_PEXBITS_SHIFT))
-	  Pipe_ID |= EPENDING_OP_OR;
-
-	 //SS_DBG(SS_DBG_WARNING | SS_DBG_SH2, "[%s] Burst/External halt end: Pipe_ID=0x%08x PC=0x%08x\n", cpu_name, Pipe_ID, PC);
-	 return;
-	}
- END_OP
-
-
- #undef BEGIN_OP
- #undef BEGIN_OP_DLYIDIF
- #undef END_OP
- }
-
- PC += 2;
 }
 
+#undef CHECK_EXIT_RESUME
+#undef DoIDIF
+#undef OnChipRegRead
+#undef ExtBusRead
+#undef ExtBusWrite
+#undef MemReadInstr
+#undef MemRead8
+#undef MemRead16
+#undef MemRead32
+#undef MemRead16_I
+#undef MemRead32_I
+#undef MemWrite8
+#undef MemWrite16
+#undef MemWrite32
+#undef CONST_VAR
+#undef RESUME_VAR
+//
+//
+//
+//
+//
+#pragma GCC push_options
+#pragma GCC optimize("O2,no-gcse") //no-unroll-loops,no-peel-loops,no-crossjumping")
 
+#define DoIDIF(IntPreventNext) DoIDIF_MACRO(IntPreventNext)
+
+#define OnChipRegRead(T, A) OnChipRegRead_NI<1, T>(A)
+#define ExtBusRead(T, BurstHax, A) ExtBusRead_NI<1, true, T, BurstHax>(A)
+#define ExtBusWrite(T, A, V) ExtBusWrite_NI<1, true, T>(A, V)
+
+#define MemReadInstr(A, outval) MemRead(true,  uint32, ((A) >> 29), (CCR & CCR_CE), (A), outval, /**/ Resume_uint32_A, Resume_unmasked_A, Resume_cent, Resume_way_match)
+#define MemRead8(A, outval)	MemRead(false, uint8,  ((A) >> 29), (CCR & CCR_CE), (A), outval, /**/ Resume_uint8_A,  Resume_unmasked_A, Resume_cent, Resume_way_match)
+#define MemRead16(A, outval)	MemRead(false, uint16, ((A) >> 29), (CCR & CCR_CE), (A), outval, /**/ Resume_uint16_A, Resume_unmasked_A, Resume_cent, Resume_way_match)
+#define MemRead32(A, outval)	MemRead(false, uint32, ((A) >> 29), (CCR & CCR_CE), (A), outval, /**/ Resume_uint32_A, Resume_unmasked_A, Resume_cent, Resume_way_match)
+#define MemRead16_I(A, outval)	MemRead(-1,    uint16, ((A) >> 29), (CCR & CCR_CE), (A), outval, /**/ Resume_uint16_A, Resume_unmasked_A, Resume_cent, Resume_way_match)
+#define MemRead32_I(A, outval)	MemRead(-1,    uint32, ((A) >> 29), (CCR & CCR_CE), (A), outval, /**/ Resume_uint32_A, Resume_unmasked_A, Resume_cent, Resume_way_match)
+
+#define MemWrite8(A, V)  MemWrite(uint8,  ((A) >> 29), (CCR & CCR_CE), (A), (V), /**/ Resume_uint8_A,  Resume_unmasked_A, Resume_uint8_V)
+#define MemWrite16(A, V) MemWrite(uint16, ((A) >> 29), (CCR & CCR_CE), (A), (V), /**/ Resume_uint16_A, Resume_unmasked_A, Resume_uint16_V)
+#define MemWrite32(A, V) MemWrite(uint32, ((A) >> 29), (CCR & CCR_CE), (A), (V), /**/ Resume_uint32_A, Resume_unmasked_A, Resume_uint32_V)
+
+#define CHECK_EXIT_RESUME__(n)		\
+	{					\
+	 if(timestamp >= bound_timestamp)	\
+	 {					\
+	  ResumePoint = &&Resume_ ## n;		\
+	  return;				\
+	 }					\
+	 Resume_ ## n:;				\
+	}
+
+#define CHECK_EXIT_RESUME_(n) CHECK_EXIT_RESUME__(n)
+#define CHECK_EXIT_RESUME() CHECK_EXIT_RESUME_(__COUNTER__)
+
+#define instr Resume_instr
+#define instr_nyb1 ((instr >> 4) & 0xF)
+#define instr_nyb2 ((instr >> 8) & 0xF)
+#define opexec_MAC_L_m0 Resume_MAC_L_m0
+#define opexec_MAC_L_m1 Resume_MAC_L_m1
+#define opexec_MAC_W_m0 Resume_MAC_W_m0
+#define opexec_MAC_W_m1 Resume_MAC_W_m1
+#define opexec_ea Resume_ea
+#define opexec_new_PC Resume_new_PC
+#define opexec_new_SR Resume_new_SR
+#define opexec_ipr Resume_ipr
+#define opexec_exnum Resume_exnum
+#define opexec_vecnum Resume_vecnum
+#define CONST_VAR(T, n) T n; n
+#define RESUME_VAR(T, n) static_assert(std::is_same<T,decltype(n)>::value, "Resume variable type mismatch.")
+#define SH7095_NEED_RESUME_TABLE_INIT 1
+
+
+#define SH7095_DEBUG_MODE 0
+#include "sh7095s_cnorm.inc"
+static_assert(__COUNTER__ == 5000, "Unexpected __COUNTER__ value.");
+NO_CLONE NO_INLINE MDFN_HOT void SH7095::RunSlaveUntil(const sscpu_timestamp_t bound_timestamp)
+{
+ #include "sh7095s_rsu.inc"
+}
+#undef SH7095_DEBUG_MODE
+
+#define SH7095_DEBUG_MODE 1
+#include "sh7095s_cnorm_dm.inc"
+static_assert(__COUNTER__ == 10000, "Unexpected __COUNTER__ value.");
+NO_CLONE NO_INLINE MDFN_COLD void SH7095::RunSlaveUntil_Debug(const sscpu_timestamp_t bound_timestamp)
+{
+ #include "sh7095s_rsu.inc"
+}
+#undef SH7095_DEBUG_MODE
+
+#pragma GCC pop_options
+#undef DoIDIF
+#undef OnChipRegRead
+#undef ExtBusRead
+#undef ExtBusWrite
+#undef MemReadInstr
+#undef MemRead8
+#undef MemRead16
+#undef MemRead32
+#undef MemRead16_I
+#undef MemRead32_I
+#undef MemWrite8
+#undef MemWrite16
+#undef MemWrite32
+#undef CHECK_EXIT_RESUME__
+#undef CHECK_EXIT_RESUME_
+#undef CHECK_EXIT_RESUME
+#undef instr
+#undef instr_nyb1
+#undef instr_nyb2
+#undef opexec_MAC_L_m0
+#undef opexec_MAC_L_m1
+#undef opexec_MAC_W_m0
+#undef opexec_MAC_W_m1
+#undef opexec_ea
+#undef opexec_new_PC
+#undef opexec_new_SR
+#undef opexec_ipr
+#undef opexec_exnum
+#undef opexec_vecnum
+#undef CONST_VAR
+#undef RESUME_VAR
+#undef SH7095_NEED_RESUME_TABLE_INIT
+//
+//
+//
+//
+//
+//
 void SH7095::StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname)
 {
  SFORMAT StateRegs[] =
@@ -4858,6 +3584,7 @@ void SH7095::StateAction(StateMem* sm, const unsigned load, const bool data_only
   SFVAR(MM_until),
   SFVAR(write_finish_timestamp),
   SFVAR(WB_until),
+  SFVAR(UCRead_IF_Kludge),
   SFVAR(SysRegs),
 
   SFVAR(EPending),
@@ -4867,7 +3594,7 @@ void SH7095::StateAction(StateMem* sm, const unsigned load, const bool data_only
   SFVAR(IBuffer),
 
   SFPTR32(Cache->Tag, 4, 64, sizeof(*Cache), Cache),
-  SFVAR(Cache->LRU, 64, sizeof(*Cache), Cache),
+  SFVARN(Cache_LRU, "Cache->LRU"),
   SFPTR32((uint32*)Cache->Data, 16, 64, sizeof(*Cache), Cache),	// Cast because it's stored as native-endian 32-bit.
 
   SFVAR(CCR),
@@ -4896,6 +3623,11 @@ void SH7095::StateAction(StateMem* sm, const unsigned load, const bool data_only
   SFVAR(BSC.RTCNT),
   SFVAR(BSC.RTCOR),
 
+  SFVAR(BSC.sdram_finish_time),
+  SFVAR(BSC.last_mem_time),
+  SFVAR(BSC.last_mem_addr),
+  SFVAR(BSC.last_mem_type),
+
   SFVAR(SBYCR),
   SFVAR(Standby),
 
@@ -4922,10 +3654,10 @@ void SH7095::StateAction(StateMem* sm, const unsigned load, const bool data_only
   SFVAR(WDT.RSTCSR),
   SFVAR(WDT.RSTCSRM),
 
-  SFVAR(dma_lastts),
-
-  SFVAR(DMA_ClockCounter),
-  SFVAR(DMA_SGCounter),
+ // SFVAR(DMA_ClockCounter),
+ // SFVAR(DMA_SGCounter),
+  SFVAR(DMA_Timestamp),
+  SFVAR(DMA_SGEndTimestamp),
   SFVAR(DMA_RoundRobinRockinBoppin),
 
   SFVAR(DMA_PenaltyKludgeAmount),
@@ -4974,36 +3706,182 @@ void SH7095::StateAction(StateMem* sm, const unsigned load, const bool data_only
 
  MDFNSS_StateAction(sm, load, data_only, StateRegs, sname);
 
+ if(this == &CPU[1])
+  StateAction_SlaveResume(sm, load, data_only, "SH2-S-Resume");
+}
+
+void SH7095::StateAction_SlaveResume(StateMem* sm, const unsigned load, const bool data_only, const char* sname)
+{
+ int32 ResumePointI = -1;
+ uint32 Resume_cent_I = 0;
+
+ if(!load)
+ {
+  if(ResumePoint)
+  {
+   for(uint32 i = 0; i < 512; i++)
+   {
+    if(ResumeTableP[DM_Setting][i] == ResumePoint)
+    {
+     ResumePointI = i;
+     break;
+    }
+   }
+   assert(ResumePointI >= 0);
+  }
+  //printf("State save resume point: %016llx (%d)\n", (unsigned long long)(uintptr_t)ResumePoint, ResumePointI);
+
+  if(Resume_cent)
+  {
+   Resume_cent_I = Resume_cent - Cache;
+   assert(Resume_cent_I < 0x40);
+  }
+ }
+
+ SFORMAT StateRegs[] =
+ {
+  SFVAR(ResumePointI),
+  SFVAR(Resume_uint8_A),
+  SFVAR(Resume_uint16_A),
+  SFVAR(Resume_uint32_A),
+  SFVAR(Resume_unmasked_A),
+  SFVAR(Resume_cent_I),
+  SFVAR(Resume_way_match),
+  SFVAR(Resume_uint8_V),
+  SFVAR(Resume_uint16_V),
+  SFVAR(Resume_uint32_V),
+  SFVAR(Resume_instr),
+
+  SFVAR(Resume_MAC_L_m0),
+  SFVAR(Resume_MAC_L_m1),
+
+  SFVAR(Resume_MAC_W_m0),
+  SFVAR(Resume_MAC_W_m1),
+
+  SFVAR(Resume_ea),
+  SFVAR(Resume_new_PC),
+  SFVAR(Resume_new_SR),
+
+  SFVAR(Resume_ipr),
+  SFVAR(Resume_exnum),
+  SFVAR(Resume_vecnum),
+
+  SFEND
+ };
+
+ MDFNSS_StateAction(sm, load, data_only, StateRegs, sname, load < 0x00102600);
+
  if(load)
  {
-  SetCCR(CCR);
+  ResumePoint = nullptr;
 
-  if(load < 0x00102300)
+  if(ResumePointI >= 0)
   {
-   ExtHaltDMA = ExtHalt;
+   ResumePoint = ResumeTableP[DM_Setting][ResumePointI & 511];
+   assert(ResumePoint != nullptr);
   }
+  //printf("State load resume point: %016llx (%d)\n", (unsigned long long)(uintptr_t)ResumePoint, ResumePointI);
+  Resume_uint16_A &= ~1;
+  Resume_uint32_A &= ~3;
+  Resume_cent = &Cache[Resume_cent_I & 0x3F];
+  Resume_way_match = std::max<int>(-1, std::min<int>(3, Resume_way_match));
+  Resume_instr &= 0xFFFF;
  }
 }
 
 //
-// Called after loading a state where instruction cache emulation was not previously enabled in the emulator, but is enabled now(e.g. via database).
+// Only call after all emulated devices variables and RAM have been loaded from the save state.
 //
-// May not cover all cases, needs more testing.
-//
-void SH7095::FixupICacheModeState(void)
+void SH7095::PostStateLoad(const unsigned state_version, const bool recorded_needicache, const bool needicache)
 {
- for(unsigned i = 0; i < 16; i++)
-  WB_until[i] = 0;
  //
- //const uint32 old_IBuffer = IBuffer;
- const uint32 A = (PC - 2) & ~3;
+ // Fixup cache tags.
+ //
+ for(unsigned entry = 0; entry < 64; entry++)
+ {
+  CacheEntry* const ce = &Cache[entry];
 
- if((int32)A < 0)
-  IBuffer = MDFN_densb<uint32, true>(&Cache[(A >> 4) & 0x3F].Data[(A >> 10) & 0x3][NE32ASU8_IDX_ADJ(uint32, A & 0x0F)]);
- else
-  IBuffer = ne16_rbo_be<uint32>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A);
+  for(unsigned way = 0; way < 4; way++)
+  {
+   const uint32 ATM = ce->Tag[way] & (0x7FFFF << 10);
+   const bool invalid = ce->Tag[way] & ~(0x7FFFF << 10);	// Handles backwards compat when invalid was bit31 instead of bit0.
 
- //printf("[%s] PC=0x%08x, IBuffer=0x%08x old_IBuffer=0x%08x --- 0x%08x\n", cpu_name, PC, IBuffer, old_IBuffer, ne16_rbo_be<uint32>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A));
+   ce->Tag[way] = ATM | invalid;
+  }
+ }
+ //
+ SetCCR(CCR);
+ //
+ if(!recorded_needicache && state_version < 0x00102600)
+ {
+  for(unsigned i = 0; i < 16; i++)
+   WB_until[i] = timestamp - 100;
+ }
+
+ if(needicache && !recorded_needicache)
+ {
+  //
+  // Handle loading a state where instruction cache emulation was not previously enabled in the emulator, but is enabled now(e.g. via database).
+  //
+  // May not cover all cases, needs more testing.
+  //
+  //printf("NeedEmuICache=%d, RecordedNeedEmuICache=%d\n", needicache, recorded_needicache);
+  //
+  //const uint32 old_IBuffer = IBuffer;
+  const uint32 A = (PC - 2) & ~3;
+
+  if((int32)A < 0)
+   IBuffer = MDFN_densb<uint32, true>(&Cache[(A >> 4) & 0x3F].Data[(A >> 10) & 0x3][NE32ASU8_IDX_ADJ(uint32, A & 0x0F)]);
+  else
+   IBuffer = ne16_rbo_be<uint32>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A);
+
+  //printf("[%s] PC=0x%08x, IBuffer=0x%08x old_IBuffer=0x%08x --- 0x%08x\n", cpu_name, PC, IBuffer, old_IBuffer, ne16_rbo_be<uint32>(SH7095_FastMap[A >> SH7095_EXT_MAP_GRAN_BITS], A));
+ }
+ //
+ //
+ //
+ if(state_version < 0x00102300)
+ {
+  ExtHaltDMA = ExtHalt;
+ }
+
+ if(state_version < 0x00102600 && timestamp >= 0x40000000)
+ {
+  timestamp = SS_EVENT_DISABLED_TS;
+ }
+
+ if(timestamp != SS_EVENT_DISABLED_TS)
+ {
+  if(state_version < 0x00102600)
+  {
+   DMA_Timestamp = SH7095_mem_timestamp - 128;
+   DMA_SGEndTimestamp = SH7095_mem_timestamp + 192;
+
+   BSC.sdram_finish_time = SH7095_mem_timestamp - 100;
+   BSC.last_mem_time = SH7095_mem_timestamp - 100;
+  }
+
+  clamp(&timestamp, -1000000, 1000000);
+  clamp(&FRT.lastts, -1000000, 1000000);
+  clamp(&DMA_Timestamp, -1000000, 1000000);
+  clamp(&DMA_SGEndTimestamp, -1000000, 1000000);
+
+  clamp(&MA_until, -1000000, 1000000);
+  clamp(&MM_until, -1000000, 1000000);
+
+  for(unsigned i = 0; i < 16; i++)
+   clamp(&WB_until[i], -1000000, 1000000);
+
+  clamp(&write_finish_timestamp, -1000000, 1000000);
+  clamp(&divide_finish_timestamp, -1000000, 1000000);
+
+  clamp(&BSC.sdram_finish_time, -1000000, 1000000);
+  clamp(&BSC.last_mem_time, -1000000, 1000000);
+ }
+ //
+ //
+ //
+ UCRead_IF_Kludge &= 1;
 }
 
 //
@@ -5263,6 +4141,25 @@ INLINE uint32 SH7095::GetRegister(const unsigned id, char* const special, const 
   case GSREG_RWT:
 	ret = FRT.RW_Temp;
 	break;
+  //
+  //
+  //
+  case GSREG_CCR:
+	ret = CCR;
+	if(special)
+	{
+	 trio_snprintf(special, special_len, "CE: %d, ID: %d, OD: %d, TW: %d, WS: %d",
+		(bool)(CCR & CCR_CE),
+		(bool)(CCR & CCR_ID),
+		(bool)(CCR & CCR_OD),
+		(bool)(CCR & CCR_TW),
+		(CCR >> 6) & 0x3);
+	}
+	break;
+
+  case GSREG_SBYCR:
+	ret = SBYCR;
+	break;
  }
 
  return ret;
@@ -5331,6 +4228,18 @@ void SH7095::SetRegister(const unsigned id, const uint32 value)
 
   case GSREG_FTCSRM:	
 	FRT.FTCSRM = value & 0x8F;
+	break;
+/*
+  case GSREG_TCR:
+	FRT.TCR = value;
+	FRT_WDT_Recalc_NET();
+	break;
+*/
+  //
+  //
+  //
+  case GSREG_CCR:
+	SetCCR(value);
 	break;
  }
 }

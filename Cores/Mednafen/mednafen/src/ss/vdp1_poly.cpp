@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* vdp1_poly.cpp - VDP1 Polygon Drawing Commands Emulation
-**  Copyright (C) 2015-2016 Mednafen Team
+**  Copyright (C) 2015-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -28,10 +28,10 @@ namespace MDFN_IEN_SS
 namespace VDP1
 {
 
-static int32 (*LineFuncTab[2][3][0x20][8 + 1])(void) =
+static int32 (*LineFuncTab[2][3][0x20][8 + 1])(bool* need_line_resume) =
 {
  #define LINEFN_BC(die, bpp8, b, c)	\
-	DrawLine<true, die, bpp8, c == 0x8, (bool)(b & 0x10), (b & 0x10) && (b & 0x08), (bool)(b & 0x04), false/*b & 0x02*/, (bool)(b & 0x01), false, (bool)(c & 0x4), (bool)(c & 0x2), (bool)(c & 0x1)>
+	DrawLine<true, false, die, bpp8, c == 0x8, (bool)(b & 0x10), (b & 0x10) && (b & 0x08), (bool)(b & 0x04), false/*b & 0x02*/, (bool)(b & 0x01), (bool)(c & 0x4), (bool)(c & 0x2), (bool)(c & 0x1)>
 
  #define LINEFN_B(die, bpp8, b)									\
 	{										\
@@ -71,28 +71,84 @@ static int32 (*LineFuncTab[2][3][0x20][8 + 1])(void) =
 };
 
 template<bool gourauden>
-static INLINE int32 CMD_PolygonG_T(const uint16* cmd_data)
+static int32 PolygonResumeBase(const uint16* cmd_data)
 {
  const uint16 mode = cmd_data[0x2];
+ // Abusing the SPD bit passed to the line draw function to denote non-transparency when == 1, transparent when == 0.
+ const bool SPD_Opaque = (((mode >> 3) & 0x7) < 0x6) ? ((int32)(TexFetchTab[(mode >> 3) & 0x1F](0xFFFFFFFF)) >= 0) : true;
+ auto* const fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][((mode >> 6) & 0x1E) | SPD_Opaque /*(mode >> 6) & 0x1F*/][(mode & 0x8000) ? 8 : (mode & 0x7)];
+ //
+ //
+ //
+ EdgeStepper e[2] = { PrimData.e[0], PrimData.e[1] };
+ int32 iter = PrimData.iter;
+ int32 ret = 0;
+ //
+ //
+ if(MDFN_UNLIKELY(PrimData.need_line_resume))
+ {
+  PrimData.need_line_resume = false;
+  goto ResumeLine;
+ }
+
+ if(iter >= 0)
+ {
+  do
+  {
+   //printf("x=0x%03x y=0x%03x x_error=0x%04x y_error=0x%04x --- x_error_inc=0x%04x, x_error_adj=0x%04x --- y_error_inc=0x%04x, y_error_adj=0x%04x\n", e[0].x & 0x7FF, e[0].y & 0x7FF, (uint32)e[0].x_error >> (32 - 13), (uint32)e[0].y_error >> (32 - 13), (uint32)e[0].x_error_inc >> (32 - 13), (uint32)e[0].x_error_adj >> (32 - 13), (uint32)e[0].y_error_inc >> (32 - 13), (uint32)e[0].y_error_adj >> (32 - 13));
+
+   e[0].GetVertex<gourauden>(&LineData.p[0]);
+   e[1].GetVertex<gourauden>(&LineData.p[1]);
+
+#if 0
+   printf("(Edge0: x=%u y=%u, d_error=0x%04x x_error=0x%04x y_error=0x%04x) ", LineData.p[0].x, LineData.p[0].y, (e[0].d_error + e[0].d_error_inc) >> (32 - 13), (e[0].x_error + e[0].x_error_inc) >> (32 - 13), (e[0].y_error + e[0].y_error_inc) >> (32 - 13));
+   printf("(Edge1: x=%u y=%u, d_error=0x%04x x_error=0x%04x y_error=0x%04x)\n", LineData.p[1].x, LineData.p[1].y, (e[1].d_error + e[1].d_error_inc) >> (32 - 13), (e[1].x_error + e[1].x_error_inc) >> (32 - 13), (e[1].y_error + e[1].y_error_inc) >> (32 - 13));
+#endif
+   //printf("%d,%d %d,%d\n", LineData.p[0].x, LineData.p[0].y, LineData.p[1].x, LineData.p[1].y);
+   //
+   if(!SetupDrawLine(&ret, true, false, mode) || !iter)
+   {
+    //
+    //printf("%d:%d -> %d:%d\n", lp[0].x, lp[0].y, lp[1].x, lp[1].y);
+    ResumeLine:;
+    ret += AdjustDrawTiming(fnptr(&PrimData.need_line_resume));
+    if(MDFN_UNLIKELY(PrimData.need_line_resume))
+     break;
+   }
+
+   e[0].Step<gourauden>();
+   e[1].Step<gourauden>();
+  } while(MDFN_LIKELY(--iter >= 0 && ret < VDP1_SuspendResumeThreshold));
+ }
+ //
+ //
+ PrimData.e[0] = e[0];
+ PrimData.e[1] = e[1];
+ PrimData.iter = iter;
+
+ return ret;
+}
+
+int32 RESUME_Polygon(const uint16* cmd_data)
+{
+ if(cmd_data[0x2] & 0x4) // gouraud
+  return PolygonResumeBase<true>(cmd_data);
+ else
+  return PolygonResumeBase<false>(cmd_data);
+}
+
+
+template<bool gourauden>
+static INLINE int32 CMD_PolygonG_T(const uint16* cmd_data)
+{
  line_vertex p[4];
  int32 ret = 0;
  //
  //
- bool SPD_Opaque = true;	// Abusing the SPD bit passed to the line draw function to denote non-transparency when == 1, transparent when == 0.
-
- LineSetup.tex_base = 0;
- LineSetup.color = cmd_data[0x3];
- LineSetup.PCD = mode & 0x800;
-
- if(((mode >> 3) & 0x7) < 0x6)
-  SPD_Opaque = (int32)(TexFetchTab[(mode >> 3) & 0x1F](0xFFFFFFFF)) >= 0;
+ LineData.tex_base = 0;
+ LineData.color = cmd_data[0x3];
  //
  //
- //
- auto* fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][((mode >> 6) & 0x1E) | SPD_Opaque /*(mode >> 6) & 0x1F*/][(mode & 0x8000) ? 8 : (mode & 0x7)];
-
- CheckUndefClipping();
-
  for(unsigned i = 0; i < 4; i++)
  {
   p[i].x = sign_x_to_s32(13, cmd_data[0x6 + (i << 1)]) + LocalX;
@@ -110,24 +166,18 @@ static INLINE int32 CMD_PolygonG_T(const uint16* cmd_data)
  //
  //
  //
- const int32 dmax = std::max<int32>(std::max<int32>(abs(p[3].x - p[0].x), abs(p[3].y - p[0].y)),
-				    std::max<int32>(abs(p[2].x - p[1].x), abs(p[2].y - p[1].y)));
- EdgeStepper<gourauden> e[2];
+ int32 dmax;
 
- e[0].Setup(p[0], p[3], dmax);
- e[1].Setup(p[1], p[2], dmax);
+ dmax = 		      abs(sign_x_to_s32(13, p[3].x - p[0].x));
+ dmax = std::max<int32>(dmax, abs(sign_x_to_s32(13, p[3].y - p[0].y)));
+ dmax = std::max<int32>(dmax, abs(sign_x_to_s32(13, p[2].x - p[1].x)));
+ dmax = std::max<int32>(dmax, abs(sign_x_to_s32(13, p[2].y - p[1].y)));
+ dmax &= 0xFFF;
 
- for(int32 i = 0; i <= dmax; i++)
- {
-  e[0].GetVertex(&LineSetup.p[0]);
-  e[1].GetVertex(&LineSetup.p[1]);
-  //
-  //printf("%d:%d -> %d:%d\n", lp[0].x, lp[0].y, lp[1].x, lp[1].y);
-  ret += fnptr();
-  //
-  e[0].Step();
-  e[1].Step();
- }
+ PrimData.e[0].Setup(gourauden, p[0], p[3], dmax);
+ PrimData.e[1].Setup(gourauden, p[1], p[2], dmax);
+ PrimData.iter = dmax;
+ PrimData.need_line_resume = false;
 
  return ret;
 }
