@@ -158,6 +158,12 @@ extension PVEmulatorViewController {
                 self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
             }))
         }
+        if let gameWithCheat = core as? GameWithCheat,
+           gameWithCheat.supportsCheatCode() {
+            actionsheet.addAction(UIAlertAction(title: "Cheat Codes", style: .default, handler: { action in
+                self.perform(#selector(self.showCheatsMenu), with: nil, afterDelay: 0.1)
+            }))
+        }
         actionsheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: { (_: UIAlertAction) -> Void in
             let completion = {
                 self.core.setPauseEmulation(false)

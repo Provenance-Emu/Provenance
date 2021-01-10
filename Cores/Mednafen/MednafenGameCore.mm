@@ -44,6 +44,7 @@
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/PVSupport-Swift.h>
 
+#import <mednafen/mempatcher.h>
 
 #define USE_PCE_FAST 0
 #define USE_SNES_FAUST 1
@@ -95,6 +96,7 @@ static inline OEIntRect OEIntRectMake(int x, int y, int width, int height)
 static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
 static Mednafen::MDFN_Surface *frontBufferSurf;
+NSMutableDictionary *cheatList;
 
 #pragma mark - Input maps
 int GBAMap[PVGBAButtonCount];
@@ -126,6 +128,7 @@ namespace MDFN_IEN_VB
     extern void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);
     int mednafenCurrentDisplayMode = 1;
 }
+
 
 @interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
@@ -271,6 +274,7 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
     Mednafen::MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
     Mednafen::MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
+    Mednafen::MDFNI_SetSetting("cheats", "1");       //
 
 //	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
 //	MDFN_SaveSettings(cfgPath.UTF8String);
@@ -364,7 +368,8 @@ static void mednafen_init(MednafenGameCore* current)
         
     }
 
-    
+    cheatList = [[NSMutableDictionary alloc] init];
+
     return self;
 }
 
@@ -2457,6 +2462,140 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     }
 }
 
+
+#pragma mark - CheatCodes
+
+- (BOOL)getCheatSupport
+{
+    if (self.systemType == MednaSystemPSX ||
+        self.systemType == MednaSystemSNES) {
+        return true;
+    }
+    return false;
+}
+
+
+- (void)setPSXCheatCodes
+{
+    @synchronized(self) {
+        // Apply enabled cheats found in dictionary
+        // int cheatIdx=0;
+
+        for (id key in cheatList)
+        {
+            if ([[cheatList valueForKey:key] isEqual:@YES])
+            {
+                NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
+                NSString *singleCode=[key stringByReplacingOccurrencesOfString:@":" withString:@""];
+                singleCode=[singleCode stringByReplacingOccurrencesOfString:@"+" withString:@""];
+                singleCode=[singleCode stringByReplacingOccurrencesOfString:@"-" withString:@""];
+
+                int len=0;
+
+                while( (len+12)<=[singleCode length]) {
+                    [multipleCodes addObject:[singleCode substringWithRange:NSMakeRange(len,12)]];
+                    len+=12;
+                }
+                
+                NSLog(@"Multiple Codes %@", multipleCodes);
+                for (NSString *singleCode in multipleCodes) {
+                    if (singleCode!= nil && singleCode.length > 0) {
+                        NSLog(@"Applying Code %@",singleCode);
+                        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@"+" withString:@""] UTF8String];
+                        Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
+                        @try {
+                            if (sizeof(game->CheatInfo.CheatFormatInfo) > 0) {
+                                game->CheatInfo.CheatFormatInfo[0].DecodeCheat(cheatCode, &patch);
+                                // enabled
+                                patch.status=true;
+                                Mednafen::MDFNI_AddCheat(patch);
+                                /*
+                                 Mednafen::MDFNI_SetCheat(cheatIdx, patch);
+                                 Mednafen::MDFNI_ToggleCheat(cheatIdx);
+                                 cheatIdx+=1;
+                                 */
+                            }
+                        }
+                        @catch (...) {
+                           NSLog(@"Game Code Error");
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+- (void)setSNESCheatCodes
+{
+    @synchronized(self) {
+        for (id key in cheatList)
+        {
+            if ([[cheatList valueForKey:key] isEqual:@YES])
+            {
+                NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
+                multipleCodes = [key componentsSeparatedByString:@"+"];
+                
+                NSLog(@"Multiple Codes %@", multipleCodes);
+
+                for (NSString *singleCode in multipleCodes) {
+                    if (singleCode!= nil && singleCode.length > 0) {
+                        NSLog(@"Applying Code %@",singleCode);
+                        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
+                        Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
+                        @try {
+                            if (sizeof(game->CheatInfo.CheatFormatInfo) > 1) {
+                                if ([singleCode containsString:@"-"]) {
+                                    // Game Genie
+                                    game->CheatInfo.CheatFormatInfo[0].DecodeCheat(cheatCode, &patch);
+                                } else {
+                                    // PAR
+                                    game->CheatInfo.CheatFormatInfo[1].DecodeCheat(cheatCode, &patch);
+                                }
+                                // enabled
+                                patch.status=true;
+                                Mednafen::MDFNI_AddCheat(patch);
+                            }
+                        }
+                        @catch (...) {
+                           NSLog(@"Game Code Error");
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
+{
+    @synchronized(self) {
+        if (!(self.getCheatSupport)) {
+            return false;
+        }
+        if (enabled)
+            cheatList[code] = @YES;
+        else
+            [cheatList removeObjectForKey:code];
+        NSLog(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
+        
+        Mednafen::MDFN_FlushGameCheats(1);
+
+        switch (self.systemType) {
+            case MednaSystemPSX:
+                self.setPSXCheatCodes;
+                break;
+            case MednaSystemSNES:
+                self.setSNESCheatCodes;
+                break;
+        }
+
+        Mednafen::MDFNMP_ApplyPeriodicCheats();
+        // if no error til this point, return true
+        return YES;
+    }
+}
 //- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
 //
 //}

@@ -64,4 +64,8 @@ __attribute__((visibility("default")))
 @property (nonatomic, assign) NSUInteger maxDiscs;
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 -(void)changeDisplayMode;
+
+# pragma CheatCodeSupport
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
+- (BOOL)getCheatSupport;
 @end
