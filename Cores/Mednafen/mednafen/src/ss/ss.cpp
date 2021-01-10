@@ -44,7 +44,7 @@
 
 using namespace Mednafen;
 
-MDFN_HIDE extern MDFNGI EmulatedSS;
+extern MDFNGI EmulatedSS;
 
 #include "ss.h"
 #include "sound.h"

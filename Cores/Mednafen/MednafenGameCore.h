@@ -40,6 +40,7 @@ typedef NS_ENUM(NSInteger, MednaSystem) {
     MednaSystemNeoGeo,
     MednaSystemPCE,
     MednaSystemPCFX,
+    MednaSystemSS,
 	MednaSystemSMS,
 	MednaSystemSNES,
     MednaSystemPSX,

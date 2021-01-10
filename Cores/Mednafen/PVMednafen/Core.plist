@@ -10,6 +10,7 @@
 	<string>Mednafen</string>
 	<key>PVSupportedSystems</key>
 	<array>
+		<string>com.provenance.saturn</string>
 		<string>com.provenance.psx</string>
 		<string>com.provenance.lynx</string>
 		<string>com.provenance.ngp</string>
