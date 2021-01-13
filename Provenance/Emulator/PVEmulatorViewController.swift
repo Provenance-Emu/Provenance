@@ -155,9 +155,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
-        controllerViewController?.willMove(toParent: nil)
-        controllerViewController?.view?.removeFromSuperview()
-        controllerViewController?.removeFromParent()
         glViewController.willMove(toParent: nil)
         glViewController.view?.removeFromSuperview()
         glViewController.removeFromParent()
@@ -199,8 +196,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.romSerial = game.romSerial
     }
 
-    private func initMenuButton() {
-        //        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+    private func addControllerOverlay() {
         if let aController = controllerViewController {
             addChild(aController)
         }
@@ -208,7 +204,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.addSubview(aView)
         }
         controllerViewController?.didMove(toParent: self)
+    }
 
+    private func initMenuButton() {
         let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
@@ -321,6 +319,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             glViewController.didMove(toParent: self)
         }
         #if os(iOS)
+            addControllerOverlay()
             initMenuButton()
         #endif
 
