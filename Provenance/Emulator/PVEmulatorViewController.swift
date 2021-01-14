@@ -155,6 +155,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
+        controllerViewController?.willMove(toParent: nil)
+        controllerViewController?.view?.removeFromSuperview()
+        controllerViewController?.removeFromParent()
         glViewController.willMove(toParent: nil)
         glViewController.view?.removeFromSuperview()
         glViewController.removeFromParent()
@@ -196,7 +199,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.romSerial = game.romSerial
     }
 
-    private func addControllerOverlay() {
+    private func initMenuButton() {
+        //        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         if let aController = controllerViewController {
             addChild(aController)
         }
@@ -204,9 +208,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.addSubview(aView)
         }
         controllerViewController?.didMove(toParent: self)
-    }
 
-    private func initMenuButton() {
         let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
@@ -319,7 +321,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             glViewController.didMove(toParent: self)
         }
         #if os(iOS)
-            addControllerOverlay()
             initMenuButton()
         #endif
 
@@ -382,6 +383,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         destroyAutosaveTimer()
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
 
     var autosaveTimer: Timer?
@@ -523,7 +528,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #endif
     }
 
-    @objc func hideMoreInfo() {
+    @objc func hideModeInfo() {
         dismiss(animated: true, completion: { () -> Void in
             #if os(tvOS)
                 self.showMenu(nil)
@@ -614,21 +619,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
-    }
-
-    func showMoreInfo() {
-        guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
-        moreInfoViewController.game = self.game
-        moreInfoViewController.showsPlayButton = false
-
-        #if os(iOS)
-        moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
-        #endif
-
-        let newNav = UINavigationController(rootViewController: moreInfoViewController)
-        self.present(newNav, animated: true) { () -> Void in }
-        self.isShowingMenu = false
-        self.enableControllerInput(false)
     }
 
     typealias QuitCompletion = () -> Void
