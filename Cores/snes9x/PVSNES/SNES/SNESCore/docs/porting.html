@@ -12,8 +12,7 @@
 	<body>
 		<h1 style="text-align:center">How to Port Snes9x to a New Platform</h1>
 		<div style="text-align:right">
-			Version: 1.53<br>
-			(c) Copyright 1998 Gary Henderson
+			Version: 1.60<br>
 		</div>
 		<h2>Introduction</h2>
 		<p>
@@ -33,7 +32,7 @@
 			A 16-bit color (two bytes per pixel) or deeper display, at least 512*478 pixels in resolution. Pixel format conversion may be required before you place the rendered SNES screen on to the display.
 		</p>
 		<p>
-			Sound output requires spooling 8-bit or 16-bit, mono or stereo digital sound data to the host sound system. Some ports can use interrupts or callbacks from the sound system to know when more sound data is required, most other ports have to periodically poll the host sound system to see if more data is required; if it is then the sound mixing code is called to fill the sound buffer with SNES sound data, which then can be passed on to the host sound system. Sound data is generated as an array of bytes (<code>uint8</code>) for 8-bit sound or shorts (<code>int16</code>) for 16-bit data. Stereo sound data generates twice as many samples, with each channel's samples interleaved, first left's then right's.
+			Snes9x outputs 16-bit stereo digital sound data. Ports may convert it from there to 8-bit or mono. Some ports can use interrupts or callbacks from the sound system to know when more sound data is required, most other ports have to periodically poll the host sound system to see if more data is required; if it is then the sound mixing code is called to fill the sound buffer with SNES sound data, which then can be passed on to the host sound system. Sound data is generated as an array of bytes (<code>uint8</code>) for 8-bit sound or shorts (<code>int16</code>) for 16-bit data. Stereo sound data generates twice as many samples, with each channel's samples interleaved, first left's then right's.
 		</p>
 		<p>
 			For the user to be able to control and play SNES games, some form of input device is required, a joypad or keyboard, for example. The real SNES can have 2 eight-button digital joypads connected to it or 5 joypads when an optional multi-player adaptor is connected, although most games only require a single joypad. Access to all eight buttons and the direction pad, of course, are usually required by most games. Snes9x does emulate the multi-player adaptor hardware, if you were wondering, but its still up to you to provide the emulation of the individual joypads.
@@ -104,13 +103,13 @@
 			<code>S9xMapButton(k1P_A_Button, s9xcommand_t cmd = S9xGetCommandT(&quot;Joypad1 A&quot;), false);</code>
 		</p>
 		<p>
-			In your main emulation loop, after <code>S9xMainLoop</code> function is called, check your system's keyboard/joypad, and call <code>S9xReportButton</code> function to report the states of the SNES joypad buttons to Snes9x.
+			In your main emulation loop, before <code>S9xMainLoop</code> function is called, check your system's keyboard/joypad, and call <code>S9xReportButton</code> function to report the states of the SNES joypad buttons to Snes9x. Checking and reporting input immediately before <code>S9xMainLoop</code> is preferred to minimize input latency.
 		</p>
 		<p>
 			<code>void MyMainLoop (void)<br>
 			{<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;S9xMainLoop();<br>
 			&nbsp;&nbsp;&nbsp;&nbsp;MyReportButttons();<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;S9xMainLoop();<br>
 			}</code>
 		</p>
 		<p>
@@ -179,10 +178,10 @@
 		<p>
 			Deallocates the allocations made by <code>S9xInitAPU</code> function.
 		</p>
-		<h3><code>bool8 S9xInitSound (int buffer_ms, int lag_ms)</code></h3>
+		<h3><code>bool8 S9xInitSound (int buffer_ms)</code></h3>
 		<p>
-			Allocates memory for mixing and queueing SNES sound data, does more sound code initialization and opens the host system's sound device by calling <code>S9xOpenSoundDevice</code>, a function you must provide. Before calling this function you must set up <code>Settings.SoundSync</code>, <code>Settings.SixteenBitSound</code>, <code>Settings.SoundPlaybackRate</code>, <code>Settings.SoundInputRate</code> (see section below) and <code>Settings.Stereo</code>.<br>
-			<code>buffer_ms</code>, given in milliseconds, is the memory buffer size for queueing sound data. <code>lag_ms</code> is allowable latency between when a sample is queued and when it is pulled in <code>S9xMixSamples</code>. Set <code>lag_ms</code> to zero if you have your own latency handling code in your port.
+			Allocates memory for mixing and queueing SNES sound data, does more sound code initialization and opens the host system's sound device by calling <code>S9xOpenSoundDevice</code>, a function you must provide. Before calling this function you must set up <code>Settings.SoundSync</code>, <code>Settings.SoundPlaybackRate</code>, and <code>Settings.SoundInputRate</code>. (see section below)<br>
+			<code>buffer_ms</code>, given in milliseconds, is the memory buffer size for queueing sound data. Leave this at 0 to use the suggested default.<br>
 		</p>
 		<h3><code>void S9xReset (void)</code></h3>
 		<p>
@@ -215,8 +214,8 @@
 		</p>
 		<h3><code>void S9xMixSamples (uint8 *buffer, int sample_count)</code></h3>
 		<p>
-			Call this function from your host sound system handling code to fill <code>buffer</code> with ready-mixed SNES sound data. If 16-bit sound mode is chosen, then the buffer will be filled with an array of <code>sample_count</code> <code>int16</code>, otherwise an array of <code>sample_count</code> <code>uint8</code>. If stereo sound generation is selected the buffer is filled with the same number of samples, but in pairs, first a left channel sample followed by the right channel sample.<br>
-			If there are less queued samples than you request by <code>sample_count</code>, the function fills <code>buffer</code> with silent sound data and returns <code>false</code>. To avoid this shortage of queued samples, request larger buffer size when calling <code>S9xInitSound</code>, and handle sound latency safely.
+			Call this function from your host sound system handling code to fill <code>buffer</code> with ready-mixed SNES sound data. The buffer will be filled with an array of <code>sample_count</code> <code>int16</code>. Samples are in pairs, first a left channel sample followed by the right channel sample.<br>
+			If there are fewer queued samples than you request by <code>sample_count</code>, the function fills <code>buffer</code> with silent sound data and returns <code>false</code>.
 		</p>
 		<h3><code>int S9xGetSampleCount (void)</code></h3>
 		<p>
@@ -224,16 +223,16 @@
 		</p>
 		<h3><code>void S9xSetSamplesAvailableCallback (void (*) samples_available (void *), void *data)</code></h3>
 		<p>
-			Call this function to set up a callback that is run when sound samples are made available. <code>samples_available</code> is a function you provide that returns <code>void</code> and takes a pointer as an argument. <code>data</code> is a pointer that you may wish to pass to your callback or can be <code>NULL</code>. If you choose to provide a callback, you must call the provided <code>S9xFinalizeSamples</code> function inside it to actually buffer the samples. If you are using a callback-oriented sound API, it is recommended to set up a function that locks a common mutex during the calls to <code>S9xFinalizeSamples</code> and <code>S9xMixSamples</code> to prevent them from running at the same time and corrupting the sound buffer.<br>
-			If you wish to disable a callback you have set up or need to temporarily shut down your sound system, you may pass <code>NULL</code> for both arguments to revert to the built-in version.
+			Call this function to set up a callback that is run when sound samples are made available. <code>samples_available</code> is a function you provide that returns <code>void</code> and takes a pointer as an argument. <code>data</code> is a pointer that you may wish to pass to your callback or can be <code>NULL</code>. Inside this function is the only time that it is safe to access Snes9x's sound data. Ideally, all samples reported available will be removed from Snes9x's buffer when this function is called and moved to either the sound driver output or a separate buffer that can be locked in a thread-safe fashion. If you are using a callback-oriented sound API, it is recommended to set up a separate buffer that can accumulate at least enough samples to fulfill more than one host sound driver callback request.<br>
+			If you wish to disable a callback you have set up or need to temporarily shut down your sound system, you may pass <code>NULL</code> for both arguments.
 		</p>
 		<h3><code>bool8 S9xSyncSound (void)</code></h3>
 		<p>
-			Call this function to synchronize the sound buffers to the game state. If Snes9x is generating too much sound data, or a buffer-overrun is likely, this function will return <code>false</code>. In this case, you may wish to wait until your host sound system uses the available samples, and <code>S9xSyncSound</code> returns <code>true</code> before continuing to execute <code>S9xMainLoop</code>.
+			Call this function to synchronize the sound buffers to the game state. This will call the <code>samples_available</code> function to try and move sound data out of Snes9x. If Snes9x is unable to make enough space to accumulate the sound data for a whole video frame, this function will return <code>false</code>. In this case, you may wish to wait until your host sound system uses the available samples, and <code>S9xSyncSound</code> returns <code>true</code> before continuing to execute <code>S9xMainLoop</code>.
 		</p>
 		<h3><code>bool8 S9xSetSoundMute (bool8 mute)</code></h3>
 		<p>
-			Call with a <code>true</code> parameter to prevent <code>S9xMixSamples</code> function from processing SNES sample data and instead just filling the return buffer with silent sound data. Useful if your sound system is interrupt or callback driven and the game has been paused either directly or indirectly because the user interacting with the emulator's user interface in some way.
+			Call with a <code>true</code> parameter to cause the <code>S9xMixSamples</code> to fill the output buffer with silence, instead of filling the output buffer with sound data. Useful if your sound system is interrupt or callback driven and the game has been paused either directly or indirectly because the user is interacting with the emulator's user interface in some way.
 		</p>
 		<h3><code>bool8 S9xFreezeGame (const char *filepath)</code></h3>
 		<p>
@@ -321,7 +320,7 @@
 		</p>
 		<h3><code>void S9xSetPalette (void)</code></h3>
 		<p>
-			Called when the SNES color palette has changed. Use this function if your system should change its color palette to match the SNES's. Otherwise let it empty.
+			Called when the SNES color palette has changed. Use this function if your system needs to change its color palette to match the SNES's. Otherwise, leave it empty.
 		</p>
 		<h3><code>void S9xSyncSpeed (void)</code></h3>
 		<p>
@@ -348,10 +347,8 @@
 			Settings.MultiPlayer5Master = true;<br>
 			Settings.FrameTimePAL = 20000;<br>
 			Settings.FrameTimeNTSC = 16667;<br>
-			Settings.SixteenBitSound = true;<br>
-			Settings.Stereo = true;<br>
-			Settings.SoundPlaybackRate = 32000;<br>
-			Settings.SoundInputRate = 32000;<br>
+			Settings.SoundPlaybackRate = 32040;<br>
+			Settings.SoundInputRate = 31947;<br>
 			Settings.SupportHiRes = true;<br>
 			Settings.Transparency = true;<br>
 			Settings.AutoDisplayMessages = true;<br>
@@ -361,11 +358,24 @@
 		</code></p>
 		<h3><code>Settings.SoundInputRate</code></h3>
 		<p>
-			Adjusts the sound rate through resampling. For every <code>Settings.SoundInputRate</code> samples generated by the SNES, <code>Settings.SoundPlaybackRate</code> samples will be produced.<br>
-			The sound generation rate on a SNES is directly proportional to the video output rate. Displays that synchronize with the vertical refresh but have a slightly lower refresh-rate than the emulated system can experience sound drop-outs. It may be beneficial to provide an option for users to configure <code>Settings.SoundInputRate</code> to suit their own systems. Setting <code>Settings.SoundInputRate</code> to a value that matches the actual output rate (i.e. 31977hz for 59.96hz) or lower will allow the users to eliminate crackling. A range of 31000hz to 33000hz should be inclusive enough for all displays. Use of this setting paired with the <code>S9xSyncSound</code> function can eliminate sound discontinuity.
+			Adjusts the sound rate through resampling. For every <code>Settings.SoundInputRate</code> samples generated by the SNES, <code>Settings.SoundPlaybackRate</code> samples will be produced.
+		</p>
+		<p>
+			On a NTSC SNES, the video refresh rate is usually 60.09881Hz, while the audio output is 32040Hz. This means for every video frame displayed, 532.4565 sound frames are produced. A modern computer display or television will usually provide one of two video rates, 60.00Hz exactly or 59.94Hz to support broadcast television. The sound output, however, is usually fixed at exact values like 32000Hz, 44100Hz, or 48000Hz. This means that the closest video-to-sound ratio we can achieve, with 60.00Hz and 32000Hz, is 1.0/533.3333. This discrepancy means if we wait for vertical sync and update once per refresh, we will experience a sound deficit of 0.87 samples every frame, eventually causing a sound underrun and producing audio problems. <br>
+		</p>
+		<p>
+			Settings.SoundInputRate can be set to a value such that the ratio with the video rate matches the SNES output. A 60.00Hz display, for example, should be set to 60.00 / 60.09881 * 32040, which is about 31987. The Snes9x resampler will then stretch the sound samples to fit this ratio. It may be beneficial to provide an option for users to configure <code>Settings.SoundInputRate</code> to suit their own systems. Setting <code>Settings.SoundInputRate</code> to a value that matches the actual output rate (i.e. 31915hz for 59.94Hz) or lower will allow the users to eliminate crackling. A range of 31000hz to 33000hz should be inclusive enough for all displays. Use of this setting paired with the <code>S9xSyncSound</code> function can eliminate sound discontinuity. However, this concept is difficult for most users to understand. If possible, read the display's refresh rate and automatically calculate the appropriate input rate by default. In practice, few displays exceed a target of 60.00Hz, so a good default would be no greater than 31950Hz, but probably lower.
+		</p>
+		<h3><code>Settings.DynamicRateControl</code> and <code>S9xUpdateDynamicRate(int numerator, int denominator)</code></h3>
+		<p>
+			To eliminate buffer overflows and underflows, dynamic rate control can be implemented and used. While this can accommodate for Settings.SoundInputRate not being set correctly, it works better the closer that value is to ideal.
+		</p>
+		<p>
+			To implement, set <code>Settings.DynamicRateControl</code> to <code>true</code>. At the beginning of your <code>samples_available</code> callback, check the hardware output buffer's fill level. Report the amount of free space in the buffer as a fraction of total buffer size to <code>S9xUpdateDynamicRate</code>, and Snes9x will try and keep the buffer close to 50% full. To tune this, <code>Settings.DynamicRateLimit</code> can be changed. A larger value will increase the range of frequencies it can use, but will also cause more noticeable pitch changes.
 		</p>
 		<div style="text-align:right; margin-top:3em">
-			Updated most recently by: 2011/1/16 zones
+			Original document (c) Copyright 1998 Gary Henderson;
+Updated most recently by: 2019/2/26 BearOso
 		</div>
 	</body>
 </html>
