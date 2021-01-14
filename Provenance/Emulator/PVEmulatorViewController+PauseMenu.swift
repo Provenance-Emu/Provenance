@@ -142,15 +142,7 @@ extension PVEmulatorViewController {
             }))
         #endif
         actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: { action in
-            let sb = UIStoryboard(name: "Provenance", bundle: nil)
-            let moreInfoViewContrller = sb.instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController
-            moreInfoViewContrller?.game = self.game
-            moreInfoViewContrller?.showsPlayButton = false
-            moreInfoViewContrller?.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideModeInfo))
-            let newNav = UINavigationController(rootViewController: moreInfoViewContrller ?? UIViewController())
-            self.present(newNav, animated: true) { () -> Void in }
-            self.isShowingMenu = false
-            self.enableControllerInput(false)
+            self.showMoreInfo()
         }))
         actionSheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: { action in
             self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
@@ -167,6 +159,13 @@ extension PVEmulatorViewController {
                 }))
         }
         actionSheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: { action in
+            let completion = {
+                self.core.setPauseEmulation(false)
+                self.core.resetEmulation()
+                self.isShowingMenu = false
+                self.enableControllerInput(false)
+            }
+
             if PVSettingsModel.shared.autoSave, self.core.supportsSaveStates {
                 self.autoSaveState { result in
                     switch result {
@@ -175,12 +174,11 @@ extension PVEmulatorViewController {
                     case let .error(error):
                         ELOG("Auto-save failed \(error.localizedDescription)")
                     }
+                    completion()
                 }
+            } else {
+                completion()
             }
-            self.core.setPauseEmulation(false)
-            self.core.resetEmulation()
-            self.isShowingMenu = false
-            self.enableControllerInput(false)
         }))
 
         let lastPlayed = game.lastPlayed ?? Date()
@@ -201,31 +199,17 @@ extension PVEmulatorViewController {
                 self.quit(optionallySave: true)
             }))
         }
-        
-        actionSheet.addAction(UIAlertAction(title: "Resume", style: .default, handler: { action in
-            actionSheet.dismiss(animated: true) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.core.setPauseEmulation(false)
-                    self.isShowingMenu = false
-                    self.enableControllerInput(false)
-                }
-            }
-        }))
 
-        if actionSheet.isBeingDismissed {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableControllerInput(false)
-            }
-        }
+        let resumeAction = UIAlertAction(title: "Resume", style: .default, handler: { action in
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+        })
+        actionSheet.addAction(resumeAction)
+        actionSheet.preferredAction = resumeAction
 
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
     }
-
-    //	override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-    //		super.dismiss(animated: flag, completion: completion)
-    //	}
 }
