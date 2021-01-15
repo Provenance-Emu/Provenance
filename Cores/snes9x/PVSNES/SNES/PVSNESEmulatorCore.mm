@@ -57,8 +57,8 @@ static __weak PVSNESEmulatorCore *_current;
 @public
     UInt16        *soundBuffer;
     unsigned char *videoBuffer;
-    unsigned char *videoBufferA;
-    unsigned char *videoBufferB;
+//    unsigned char *videoBufferA;
+//    unsigned char *videoBufferB;
     NSMutableDictionary *cheatList;
 }
 
@@ -67,7 +67,7 @@ static __weak PVSNESEmulatorCore *_current;
 bool8 S9xDeinitUpdate(int width, int height)
 {
     __strong PVSNESEmulatorCore *strongCurrent = _current;
-    [strongCurrent swapBuffers];
+//    [strongCurrent swapBuffers];
 
     return true;
 }
@@ -91,10 +91,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)dealloc
 {
-    free(videoBufferA);
-    videoBufferA = NULL;
-    free(videoBufferB);
-    videoBufferB = NULL;
+//    free(videoBufferA);
+//    videoBufferA = NULL;
+//    free(videoBufferB);
+//    videoBufferB = NULL;
     videoBuffer = NULL;
     free(soundBuffer);
     soundBuffer = NULL;
@@ -179,11 +179,14 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.Stereo                     =  true;
     Settings.ReverseStereo              =  false;
     Settings.SoundPlaybackRate          =  48000;
-    Settings.SoundInputRate             =  31950;
+    Settings.SoundInputRate             =  32000; // 31950;
     Settings.Mute                       =  false;
     Settings.DynamicRateControl         =  false;
     Settings.DynamicRateLimit           =  5;
     Settings.InterpolationMethod        =  2;
+    Settings.SkipFrames                 =  AUTO_FRAMERATE;
+    Settings.FrameTimePAL               =  19997; // 50.007 for PAL
+    Settings.FrameTimeNTSC              =  16639; // 60.0988 for NTSC
     
     // Display
 
@@ -205,31 +208,31 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 //	GFX.InfoString                  = NULL;
 //	GFX.InfoStringTimeout           = 0;
 	//GFX.PixelFormat = 3;
-
+    videoBuffer = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
 	GFX.Pitch = 512 * 2;
 	//GFX.PPL = SNES_WIDTH;
 
-    if (videoBufferA)
-    {
-        free(videoBufferA);
-    }
-    
-    if (videoBufferB)
-    {
-        free(videoBufferB);
-    }
+//    if (videoBufferA)
+//    {
+//        free(videoBufferA);
+//    }
+//
+//    if (videoBufferB)
+//    {
+//        free(videoBufferB);
+//    }
 
-    videoBuffer = NULL;
+//    videoBuffer = NULL;
 
-#if 0
-	videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-	videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-#else
-    videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
-    videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
-#endif
+//#if 0
+//	videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
+//	videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
+//#else
+//    videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+//    videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+//#endif
 
-	GFX.Screen = (short unsigned int *)videoBufferA;
+	GFX.Screen = (short unsigned int *)videoBuffer;
 
     S9xUnmapAllControls();
     [self mapButtons];
@@ -237,7 +240,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
     S9xSetController(1, CTL_JOYPAD, 1, 0, 0, 0);
 
-    //S9xSetRenderPixelFormat(RGB565);
+//  S9xSetRenderPixelFormat(RGB565);
     if(!Memory.Init() || !S9xInitAPU() || !S9xGraphicsInit())
     {
         ELOG(@"Couldn't init Graphics");
@@ -773,19 +776,19 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 #pragma mark Video
 
-- (void)swapBuffers
-{
-    if (GFX.Screen == (short unsigned int *)videoBufferA)
-    {
-        videoBuffer = videoBufferA;
-        GFX.Screen = (short unsigned int *)videoBufferB;
-    }
-    else
-    {
-        videoBuffer = videoBufferB;
-        GFX.Screen = (short unsigned int *)videoBufferA;
-    }
-}
+//- (void)swapBuffers
+//{
+//    if (GFX.Screen == (short unsigned int *)videoBufferA)
+//    {
+//        videoBuffer = videoBufferA;
+//        GFX.Screen = (short unsigned int *)videoBufferB;
+//    }
+//    else
+//    {
+//        videoBuffer = videoBufferB;
+//        GFX.Screen = (short unsigned int *)videoBufferA;
+//    }
+//}
 
 - (const void *)videoBuffer
 {
@@ -824,7 +827,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (NSTimeInterval)frameInterval
 {
-    return Settings.PAL ? 50 : 60; // 50.007 : 60.0988;
+    return Settings.PAL ? 50.007 : 60.0988;
 }
 
 - (BOOL)rendersToOpenGL
