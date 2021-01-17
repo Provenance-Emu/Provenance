@@ -271,13 +271,13 @@ void S9xLoadConfigFiles (char **argv, int argc)
 	Settings.DontSaveOopsSnapshot       =  conf.GetBool("Settings::DontSaveOopsSnapshot",      false);
 	Settings.AutoSaveDelay              =  conf.GetUInt("Settings::AutoSaveDelay",             0);
 
-//	if (conf.Exists("Settings::FrameTime"))
-//		Settings.FrameTimePAL = Settings.FrameTimeNTSC = conf.GetUInt("Settings::FrameTime", 16667);
-//
-//	if (!strcasecmp(conf.GetString("Settings::FrameSkip", "Auto"), "Auto"))
-//		Settings.SkipFrames = AUTO_FRAMERATE;
-//	else
-//		Settings.SkipFrames = conf.GetUInt("Settings::FrameSkip", 0) + 1;
+	if (conf.Exists("Settings::FrameTime"))
+		Settings.FrameTimePAL = Settings.FrameTimeNTSC = conf.GetUInt("Settings::FrameTime", 16667);
+
+	if (!strcasecmp(conf.GetString("Settings::FrameSkip", "Auto"), "Auto"))
+		Settings.SkipFrames = AUTO_FRAMERATE;
+	else
+		Settings.SkipFrames = conf.GetUInt("Settings::FrameSkip", 0) + 1;
 
 	// Controls
 

@@ -47,7 +47,7 @@
 #import <AudioUnit/AudioUnit.h>
 #include <pthread.h>
 
-#define SAMPLERATE      48000
+#define SAMPLERATE      32040
 #define SIZESOUNDBUFFER SAMPLERATE / 50 * 4
 
 static __weak PVSNESEmulatorCore *_current;
@@ -160,7 +160,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.Stereo                     =  true;
     Settings.ReverseStereo              =  false;
     Settings.SoundPlaybackRate          =  SAMPLERATE;
-    Settings.SoundInputRate             =  32000;
+    Settings.SoundInputRate             =  31955; //assumes 59.94 Hz display @ ((59.94/60.098806)*32040)
     Settings.Mute                       =  false;
     Settings.DynamicRateControl         =  false;
     Settings.DynamicRateLimit           =  5;
@@ -171,18 +171,14 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.SupportHiRes               = true;
     Settings.Transparency               = true;
     Settings.DisplayFrameRate           = false;
-    Settings.DisplayWatchedAddresses    = false;
     Settings.DisplayPressedKeys         = false;
-    Settings.DisplayMovieFrame          = false;
     Settings.AutoDisplayMessages        = true;
     Settings.InitialInfoStringTimeout   = 120;
-    Settings.BilinearFilter             = false;
     
     // Timings
-    
-//    Settings.SkipFrames                 =  AUTO_FRAMERATE;
-    Settings.FrameTimePAL               =  19997; // 50.007 for PAL 50.006978 : 60.098806
-    Settings.FrameTimeNTSC              =  16639; // 60.0988 for NTSC
+    Settings.SkipFrames = 0;
+    Settings.FrameTimePAL               =  20000; // uses generic 50 but should be ((1/50.006978)*1000000) for PAL
+    Settings.FrameTimeNTSC              =  16667; // uses generic 60 but should be ((1/60.098806)*1000000) for NTSC
 
     // Settings
     
@@ -198,17 +194,17 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.AutoSaveDelay              = 0;
     
     // Hack
-    Settings.InterpolationMethod    = DSP_INTERPOLATION_GAUSSIAN;
-    Settings.OneClockCycle          = ONE_CYCLE;
-    Settings.OneSlowClockCycle      = SLOW_ONE_CYCLE;
-    Settings.TwoClockCycles         = TWO_CYCLES;
-    Settings.SuperFXClockMultiplier = 100;
-    Settings.OverclockMode          = 0;
-    Settings.SeparateEchoBuffer     = false;
-    Settings.DisableGameSpecificHacks = true;
+    Settings.InterpolationMethod        = DSP_INTERPOLATION_GAUSSIAN;
+    Settings.OneClockCycle              = ONE_CYCLE;
+    Settings.OneSlowClockCycle          = SLOW_ONE_CYCLE;
+    Settings.TwoClockCycles             = TWO_CYCLES;
+    Settings.SuperFXClockMultiplier     = 100;
+    Settings.OverclockMode              = 0;
+    Settings.SeparateEchoBuffer         = false;
+    Settings.DisableGameSpecificHacks   = true;
     Settings.BlockInvalidVRAMAccessMaster = true; // disabling may fix some homebrew or ROM hacks
-    Settings.HDMATimingHack         = 100;
-    Settings.MaxSpriteTilesPerLine  = 34;
+    Settings.HDMATimingHack             = 100;
+    Settings.MaxSpriteTilesPerLine      = 34;
     
 	GFX.Pitch = 512 * 2;
 	GFX.PPL = SNES_WIDTH;
@@ -827,7 +823,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (NSTimeInterval)frameInterval
 {
-    return Settings.PAL ? 50.006978 : 60.098806; // 50.007 : 60.0988; 60.0988062658451 50.006977968268291
+    return Settings.PAL ? 50.007 : 60.098806; //50.006978 : 60.098806; // 50.007 : 60.0988; 60.0988062658451 50.006977968268291
 }
 
 //- (BOOL)rendersToOpenGL
