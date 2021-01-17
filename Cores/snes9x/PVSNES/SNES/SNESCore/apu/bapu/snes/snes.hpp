@@ -1,9 +1,9 @@
 #ifndef __SNES_HPP
 #define __SNES_HPP
 
-#include "snes9x.h"
-
-#define SNES9X
+#include "../../../snes9x.h"
+#include "../../resampler.h"
+#include "../../../msu1.h"
 
 #if defined(__GNUC__)
   #define inline        inline
@@ -33,8 +33,6 @@ struct Processor
 class CPU
 {
 public:
-    enum { Threaded = false };
-    int frequency;
     uint8 registers[4];
 
     inline void reset ()
@@ -55,6 +53,6 @@ public:
 
 extern CPU cpu;
 
-} /* namespace SNES */
+} // namespace SNES
 
 #endif

@@ -1,4 +1,4 @@
-#include <snes/snes.hpp>
+#include "../snes/snes.hpp"
 
 #define DSP_CPP
 namespace SNES {

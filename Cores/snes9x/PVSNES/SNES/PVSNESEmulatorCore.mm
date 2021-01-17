@@ -47,7 +47,7 @@
 #import <AudioUnit/AudioUnit.h>
 #include <pthread.h>
 
-#define SAMPLERATE      32040
+#define SAMPLERATE      48000
 #define SIZESOUNDBUFFER SAMPLERATE / 50 * 4
 
 static __weak PVSNESEmulatorCore *_current;
@@ -138,43 +138,80 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
-	[self printBuildFlags];
+//	[self printBuildFlags];
 
     memset(&Settings, 0, sizeof(Settings));
 
-    Settings.DontSaveOopsSnapshot = true;
-    Settings.ForcePAL      = false;
-    Settings.ForceNTSC     = false;
-    Settings.ForceHeader   = false;
-    Settings.ForceNoHeader = false;
+    Settings.DontSaveOopsSnapshot       = false;
+    Settings.ForcePAL                   = false;
+    Settings.ForceNTSC                  = false;
+    Settings.ForceHeader                = false;
+    Settings.ForceNoHeader              = false;
+    
+    Settings.MouseMaster                = true;
+    Settings.SuperScopeMaster           = true;
+    Settings.MultiPlayer5Master         = true;
+    Settings.JustifierMaster            = true;
+    
+    // Sound
+    
+    Settings.SoundSync                  =  true;
+    Settings.SixteenBitSound            =  true;
+    Settings.Stereo                     =  true;
+    Settings.ReverseStereo              =  false;
+    Settings.SoundPlaybackRate          =  SAMPLERATE;
+    Settings.SoundInputRate             =  32000;
+    Settings.Mute                       =  false;
+    Settings.DynamicRateControl         =  false;
+    Settings.DynamicRateLimit           =  5;
+    Settings.InterpolationMethod        =  2;
 
-    Settings.MouseMaster            = true;
-    Settings.SuperScopeMaster       = true;
-    Settings.MultiPlayer5Master     = true;
-    Settings.JustifierMaster        = true;
-    Settings.BlockInvalidVRAMAccess = true;
+    // Display
+
+    Settings.SupportHiRes               = true;
+    Settings.Transparency               = true;
+    Settings.DisplayFrameRate           = false;
+    Settings.DisplayWatchedAddresses    = false;
+    Settings.DisplayPressedKeys         = false;
+    Settings.DisplayMovieFrame          = false;
+    Settings.AutoDisplayMessages        = true;
+    Settings.InitialInfoStringTimeout   = 120;
+    Settings.BilinearFilter             = false;
+    
+    // Timings
+    
+//    Settings.SkipFrames                 =  AUTO_FRAMERATE;
+    Settings.FrameTimePAL               =  19997; // 50.007 for PAL 50.006978 : 60.098806
+    Settings.FrameTimeNTSC              =  16639; // 60.0988 for NTSC
+
+    // Settings
+    
+    Settings.BSXBootup                  = false;
+    Settings.TurboMode                  = false;
+    Settings.TurboSkipFrames            = 15;
+    Settings.MovieTruncate              = false;
+    Settings.MovieNotifyIgnored         = false;
+    Settings.WrongMovieStateProtection  = true;
+    Settings.StretchScreenshots         = 1;
+    Settings.SnapshotScreenshots        = true;
+    Settings.DontSaveOopsSnapshot       = false;
+    Settings.AutoSaveDelay              = 0;
+    
+    // Hack
+    Settings.InterpolationMethod    = DSP_INTERPOLATION_GAUSSIAN;
+    Settings.OneClockCycle          = ONE_CYCLE;
+    Settings.OneSlowClockCycle      = SLOW_ONE_CYCLE;
+    Settings.TwoClockCycles         = TWO_CYCLES;
+    Settings.SuperFXClockMultiplier = 100;
+    Settings.OverclockMode          = 0;
+    Settings.SeparateEchoBuffer     = false;
+    Settings.DisableGameSpecificHacks = true;
+    Settings.BlockInvalidVRAMAccessMaster = true; // disabling may fix some homebrew or ROM hacks
     Settings.HDMATimingHack         = 100;
-    Settings.SoundPlaybackRate      = SAMPLERATE;
-    Settings.Stereo                 = true;
-    Settings.SixteenBitSound        = true;
-    Settings.Transparency           = true;
-    Settings.SupportHiRes           = true;
-	Settings.NoPatch 				= false;
-	Settings.BSXBootup 				= false;
-	Settings.SoundInputRate         = 32000;
-	//Settings.DumpStreamsMaxFrames   = -1;
-	//Settings.AutoDisplayMessages    = true;
-	//Settings.FrameTimeNTSC          = 16667;
-#ifdef USE_OPENGL
-	Settings.OpenGLEnable           = true;
-#endif
-
-	GFX.InfoString                  = NULL;
-	GFX.InfoStringTimeout           = 0;
-	//GFX.PixelFormat = 3;
-
+    Settings.MaxSpriteTilesPerLine  = 34;
+    
 	GFX.Pitch = 512 * 2;
-	//GFX.PPL = SNES_WIDTH;
+	GFX.PPL = SNES_WIDTH;
 
     if (videoBufferA)
     {
@@ -204,7 +241,6 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
     S9xSetController(1, CTL_JOYPAD, 1, 0, 0, 0);
 
-    //S9xSetRenderPixelFormat(RGB565);
     if(!Memory.Init() || !S9xInitAPU() || !S9xGraphicsInit())
     {
         ELOG(@"Couldn't init Graphics");
@@ -227,7 +263,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     /* buffer_ms : buffer size given in millisecond
      lag_ms    : allowable time-lag given in millisecond
      S9xInitSound(macSoundBuffer_ms, macSoundLagEnable ? macSoundBuffer_ms / 2 : 0); */
-    if(!S9xInitSound(100, 0))
+    if(!S9xInitSound(100))
     {
 		ELOG(@"Couldn't init Graphics");
 		NSDictionary *userInfo = @{
@@ -724,19 +760,19 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     return NO;
 }
 
--(void)printBuildFlags {
-#define STR(x)   @#x
-#define SHOW_DEFINE(x) NSLog(@"%@=%@\n", @#x, STR(x) ?: @"undefined")
-
-	SHOW_DEFINE(GFX_MULTI_FORMAT);
-	SHOW_DEFINE(BLARGG_ENABLE_OPTIMIZER);
-	SHOW_DEFINE(LSB_FIRST);
-	SHOW_DEFINE(MSB_FIRST);
-	SHOW_DEFINE(USE_OPENGL);
-	SHOW_DEFINE(UNZIP_SUPPORT);
-#undef STR
-#undef SHOW_DEFINE
-}
+//-(void)printBuildFlags {
+//#define STR(x)   @#x
+//#define SHOW_DEFINE(x) NSLog(@"%@=%@\n", @#x, STR(x) ?: @"undefined")
+//
+//	SHOW_DEFINE(GFX_MULTI_FORMAT);
+//	SHOW_DEFINE(BLARGG_ENABLE_OPTIMIZER);
+//	SHOW_DEFINE(LSB_FIRST);
+//	SHOW_DEFINE(MSB_FIRST);
+//	SHOW_DEFINE(USE_OPENGL);
+//	SHOW_DEFINE(UNZIP_SUPPORT);
+//#undef STR
+//#undef SHOW_DEFINE
+//}
 
 #pragma mark Video
 
@@ -766,7 +802,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (CGSize)aspectSize
 {
-	return CGSizeMake(4, 3);
+	return CGSizeMake(IPPU.RenderedScreenWidth * (8.0/7.0), IPPU.RenderedScreenHeight);
 }
 
 - (CGSize)bufferSize
@@ -791,17 +827,17 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (NSTimeInterval)frameInterval
 {
-    return Settings.PAL ? 50 : 60.098;
+    return Settings.PAL ? 50.006978 : 60.098806; // 50.007 : 60.0988; 60.0988062658451 50.006977968268291
 }
 
-- (BOOL)rendersToOpenGL
-{
-#ifdef USE_OPENGL
-	return YES;
-#else
-	return NO;
-#endif
-}
+//- (BOOL)rendersToOpenGL
+//{
+//#ifdef USE_OPENGL
+//	return YES;
+//#else
+//	return NO;
+//#endif
+//}
 
 //- (BOOL)isDoubleBuffered {
 //    return YES;
@@ -818,7 +854,6 @@ static void FinalizeSamplesAudioCallback(void *)
 {
     __strong PVSNESEmulatorCore *strongCurrent = _current;
     
-    S9xFinalizeSamples();
     int samples = S9xGetSampleCount();
     S9xMixSamples((uint8_t*)strongCurrent->soundBuffer, samples);
     [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer maxLength:samples * 2];

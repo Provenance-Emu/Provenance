@@ -1,194 +1,8 @@
-/***********************************************************************************
-  Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
-
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
-
-  (c) Copyright 2002 - 2004  Matthew Kendora
-
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-
-  (c) Copyright 2002 - 2011  zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
-
-  (c) Copyright 2009 - 2018  BearOso,
-                             OV2
-
-  (c) Copyright 2017         qwertymodo
-
-  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
-                             Daniel De Matteis
-                             (Under no circumstances will commercial rights be given)
-
-
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
-
-  C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
-
-  C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
-
-  DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
-
-  DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
-
-  OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
-
-  SPC7110 and RTC C++ emulator code used in 1.39-1.51
-  (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
-
-  SPC7110 and RTC C++ emulator code used in 1.52+
-  (c) Copyright 2009         byuu,
-                             neviksti
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
-
-  S-RTC C emulator code
-  (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
-
-  Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
-
-  Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
-
-  Sound emulator code used in 1.5-1.51
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
-
-  Sound emulator code used in 1.52+
-  (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
-
-  S-SMP emulator code used in 1.54+
-  (c) Copyright 2016         byuu
-
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  NTSC filter
-  (c) Copyright 2006 - 2007  Shay Green
-
-  GTK+ GUI code
-  (c) Copyright 2004 - 2018  BearOso
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
-  (c) Copyright 2009 - 2018  OV2
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2011  zones
-
-  Libretro port
-  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
-                             Daniel De Matteis
-                             (Under no circumstances will commercial rights be given)
-
-
-  Specific ports contains the works of other authors. See headers in
-  individual files.
-
-
-  Snes9x homepage: http://www.snes9x.com/
-
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
-
-  This software is provided 'as-is', without any express or implied
-  warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
-
-  Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
-
-  The copyright holders request that bug fixes and improvements to the code
-  should be forwarded to them so everyone can benefit from the modifications
-  in future versions.
-
-  Super NES and Super Nintendo Entertainment System are trademarks of
-  Nintendo Co., Limited and its subsidiary companies.
- ***********************************************************************************/
-
+/*****************************************************************************\
+     Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
+                This file is licensed under the Snes9x License.
+   For further information, consult the LICENSE file in the root directory.
+\*****************************************************************************/
 
 #ifndef _CPUMACRO_H_
 #define _CPUMACRO_H_
@@ -315,57 +129,40 @@ static inline void ADC (uint16 Work16)
 {
 	if (CheckDecimal())
 	{
-		uint16	A1 = Registers.A.W & 0x000F;
-		uint16	A2 = Registers.A.W & 0x00F0;
-		uint16	A3 = Registers.A.W & 0x0F00;
-		uint32	A4 = Registers.A.W & 0xF000;
-		uint16	W1 = Work16 & 0x000F;
-		uint16	W2 = Work16 & 0x00F0;
-		uint16	W3 = Work16 & 0x0F00;
-		uint16	W4 = Work16 & 0xF000;
+		uint32 result;
+		uint32 carry = CheckCarry();
 
-		A1 += W1 + CheckCarry();
-		if (A1 > 0x0009)
-		{
-			A1 -= 0x000A;
-			A1 &= 0x000F;
-			A2 += 0x0010;
-		}
+		result = (Registers.A.W & 0x000F) + (Work16 & 0x000F) + carry;
+		if (result > 0x0009)
+			result += 0x0006;
+		carry = (result > 0x000F);
 
-		A2 += W2;
-		if (A2 > 0x0090)
-		{
-			A2 -= 0x00A0;
-			A2 &= 0x00F0;
-			A3 += 0x0100;
-		}
+		result = (Registers.A.W & 0x00F0) + (Work16 & 0x00F0) + (result & 0x000F) + carry * 0x10;
+		if (result > 0x009F)
+			result += 0x0060;
+		carry = (result > 0x00FF);
 
-		A3 += W3;
-		if (A3 > 0x0900)
-		{
-			A3 -= 0x0A00;
-			A3 &= 0x0F00;
-			A4 += 0x1000;
-		}
+		result = (Registers.A.W & 0x0F00) + (Work16 & 0x0F00) + (result & 0x00FF) + carry * 0x100;
+		if (result > 0x09FF)
+			result += 0x0600;
+		carry = (result > 0x0FFF);
 
-		A4 += W4;
-		if (A4 > 0x9000)
-		{
-			A4 -= 0xA000;
-			A4 &= 0xF000;
-			SetCarry();
-		}
-		else
-			ClearCarry();
+		result = (Registers.A.W & 0xF000) + (Work16 & 0xF000) + (result & 0x0FFF) + carry * 0x1000;
 
-		uint16	Ans16 = A4 | A3 | A2 | A1;
-
-		if (~(Registers.A.W ^ Work16) & (Work16 ^ Ans16) & 0x8000)
+		if ((Registers.A.W & 0x8000) == (Work16 & 0x8000) && (Registers.A.W & 0x8000) != (result & 0x8000))
 			SetOverflow();
 		else
 			ClearOverflow();
 
-		Registers.A.W = Ans16;
+		if (result > 0x9FFF)
+			result += 0x6000;
+
+		if (result > 0xFFFF)
+			SetCarry();
+		else
+			ClearCarry();
+
+		Registers.A.W = result & 0xFFFF;
 		SetZN(Registers.A.W);
 	}
 	else
@@ -388,37 +185,30 @@ static inline void ADC (uint8 Work8)
 {
 	if (CheckDecimal())
 	{
-		uint8	A1 = Registers.A.W & 0x0F;
-		uint16	A2 = Registers.A.W & 0xF0;
-		uint8	W1 = Work8 & 0x0F;
-		uint8	W2 = Work8 & 0xF0;
+		uint32 result;
+		uint32 carry = CheckCarry();
 
-		A1 += W1 + CheckCarry();
-		if (A1 > 0x09)
-		{
-			A1 -= 0x0A;
-			A1 &= 0x0F;
-			A2 += 0x10;
-		}
+		result = (Registers.AL & 0x0F) + (Work8 & 0x0F) + carry;
+		if ( result > 0x09 )
+			result += 0x06;
+		carry = (result > 0x0F);
 
-		A2 += W2;
-		if (A2 > 0x90)
-		{
-			A2 -= 0xA0;
-			A2 &= 0xF0;
-			SetCarry();
-		}
-		else
-			ClearCarry();
+		result = (Registers.AL & 0xF0) + (Work8 & 0xF0) + (result & 0x0F) + (carry * 0x10);
 
-		uint8	Ans8 = A2 | A1;
-
-		if (~(Registers.AL ^ Work8) & (Work8 ^ Ans8) & 0x80)
+		if ((Registers.AL & 0x80) == (Work8 & 0x80) && (Registers.AL & 0x80) != (result & 0x80))
 			SetOverflow();
 		else
 			ClearOverflow();
 
-		Registers.AL = Ans8;
+		if (result > 0x9F)
+			result += 0x60;
+
+		if (result > 0xFF)
+			SetCarry();
+		else
+			ClearCarry();
+
+		Registers.AL = result & 0xFF;
 		SetZN(Registers.AL);
 	}
 	else
@@ -691,58 +481,42 @@ static inline void SBC (uint16 Work16)
 {
 	if (CheckDecimal())
 	{
-		uint16	A1 = Registers.A.W & 0x000F;
-		uint16	A2 = Registers.A.W & 0x00F0;
-		uint16	A3 = Registers.A.W & 0x0F00;
-		uint32	A4 = Registers.A.W & 0xF000;
-		uint16	W1 = Work16 & 0x000F;
-		uint16	W2 = Work16 & 0x00F0;
-		uint16	W3 = Work16 & 0x0F00;
-		uint16	W4 = Work16 & 0xF000;
+		int result;
+		int carry = CheckCarry();
 
-		A1 -= W1 + !CheckCarry();
-		A2 -= W2;
-		A3 -= W3;
-		A4 -= W4;
+		Work16 ^= 0xFFFF;
 
-		if (A1 > 0x000F)
-		{
-			A1 += 0x000A;
-			A1 &= 0x000F;
-			A2 -= 0x0010;
-		}
+		result = (Registers.A.W & 0x000F) + (Work16 & 0x000F) + carry;
+		if (result < 0x0010)
+			result -= 0x0006;
+		carry = (result > 0x000F);
 
-		if (A2 > 0x00F0)
-		{
-			A2 += 0x00A0;
-			A2 &= 0x00F0;
-			A3 -= 0x0100;
-		}
+		result = (Registers.A.W & 0x00F0) + (Work16 & 0x00F0) + (result & 0x000F) + carry * 0x10;
+		if (result < 0x0100)
+			result -= 0x0060;
+		carry = (result > 0x00FF);
 
-		if (A3 > 0x0F00)
-		{
-			A3 += 0x0A00;
-			A3 &= 0x0F00;
-			A4 -= 0x1000;
-		}
+		result = (Registers.A.W & 0x0F00) + (Work16 & 0x0F00) + (result & 0x00FF) + carry * 0x100;
+		if (result < 0x1000)
+			result -= 0x0600;
+		carry = (result > 0x0FFF);
 
-		if (A4 > 0xF000)
-		{
-			A4 += 0xA000;
-			A4 &= 0xF000;
-			ClearCarry();
-		}
-		else
-			SetCarry();
+		result = (Registers.A.W & 0xF000) + (Work16 & 0xF000) + (result & 0x0FFF) + carry * 0x1000;
 
-		uint16	Ans16 = A4 | A3 | A2 | A1;
-
-		if ((Registers.A.W ^ Work16) & (Registers.A.W ^ Ans16) & 0x8000)
+		if (((Registers.A.W ^ Work16) & 0x8000) == 0 && ((Registers.A.W ^ result) & 0x8000))
 			SetOverflow();
 		else
 			ClearOverflow();
 
-		Registers.A.W = Ans16;
+		if (result < 0x10000)
+			result -= 0x6000;
+
+		if (result > 0xFFFF)
+			SetCarry();
+		else
+			ClearCarry();
+
+		Registers.A.W = result & 0xFFFF;
 		SetZN(Registers.A.W);
 	}
 	else
@@ -765,38 +539,32 @@ static inline void SBC (uint8 Work8)
 {
 	if (CheckDecimal())
 	{
-		uint8	A1 = Registers.A.W & 0x0F;
-		uint16	A2 = Registers.A.W & 0xF0;
-		uint8	W1 = Work8 & 0x0F;
-		uint8	W2 = Work8 & 0xF0;
+		int result;
+		int carry = CheckCarry();
 
-		A1 -= W1 + !CheckCarry();
-		A2 -= W2;
+		Work8 ^= 0xFF;
 
-		if (A1 > 0x0F)
-		{
-			A1 += 0x0A;
-			A1 &= 0x0F;
-			A2 -= 0x10;
-		}
+		result = (Registers.AL & 0x0F) + (Work8 & 0x0F) + carry;
+		if (result < 0x10)
+			result -= 0x06;
+		carry = (result > 0x0F);
 
-		if (A2 > 0xF0)
-		{
-			A2 += 0xA0;
-			A2 &= 0xF0;
-			ClearCarry();
-		}
-		else
-			SetCarry();
+		result = (Registers.AL & 0xF0) + (Work8 & 0xF0) + (result & 0x0F) + carry * 0x10;
 
-		uint8	Ans8 = A2 | A1;
-
-		if ((Registers.AL ^ Work8) & (Registers.AL ^ Ans8) & 0x80)
+		if ((Registers.AL & 0x80) == (Work8 & 0x80) && (Registers.AL & 0x80) != (result & 0x80))
 			SetOverflow();
 		else
 			ClearOverflow();
 
-		Registers.AL = Ans8;
+		if (result < 0x100 )
+			result -= 0x60;
+
+		if (result > 0xFF)
+			SetCarry();
+		else
+			ClearCarry();
+
+		Registers.AL = result & 0xFF;
 		SetZN(Registers.AL);
 	}
 	else
