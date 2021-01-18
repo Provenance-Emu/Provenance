@@ -10,8 +10,6 @@
 		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B3547B642058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
-		B3651068217704E6008FDB7B /* smp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B36510182177027F008FDB7B /* smp.hpp */; };
-		B365106C217704E6008FDB7B /* smp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B36510182177027F008FDB7B /* smp.hpp */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
 		B365108021782E9E008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107F21782E9E008FDB7B /* libz.tbd */; };
 		B3C9D5361DEA83DE0068D057 /* PVSNES.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D5341DEA83DE0068D057 /* PVSNES.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -602,7 +600,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B365106C217704E6008FDB7B /* smp.hpp in Headers */,
 				B3C9D5361DEA83DE0068D057 /* PVSNES.h in Headers */,
 				B3C9D5CE1DEA87930068D057 /* PVSNESEmulatorCore.h in Headers */,
 			);
@@ -612,7 +609,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3651068217704E6008FDB7B /* smp.hpp in Headers */,
 				B3C9D5CF1DEA87A00068D057 /* PVSNESEmulatorCore.h in Headers */,
 				B3C9D5D01DEA87A00068D057 /* PVSNES.h in Headers */,
 			);
