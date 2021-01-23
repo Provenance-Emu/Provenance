@@ -447,6 +447,10 @@ extern Mednafen::MDFNGI EmulatedPCE;
 extern Mednafen::MDFNGI EmulatedPCE_Fast;
 #endif
 
+#ifdef WANT_SS_EMU
+extern Mednafen::MDFNGI EmulatedSS;
+#endif
+
 #ifdef WANT_PCFX_EMU
 extern Mednafen::MDFNGI EmulatedPCFX;
 #endif
@@ -1380,6 +1384,11 @@ bool MDFNI_InitializeModules(void)
   #ifdef WANT_PCE_FAST_EMU
   &EmulatedPCE_Fast,
   #endif
+     
+  #ifdef WANT_SS_EMU
+  &EmulatedSS,
+  #endif
+
 
   #ifdef WANT_LYNX_EMU
   &EmulatedLynx,
