@@ -47,7 +47,7 @@
 #import <AudioUnit/AudioUnit.h>
 #include <pthread.h>
 
-#define SAMPLERATE      32040
+#define SAMPLERATE      48000
 #define SIZESOUNDBUFFER SAMPLERATE / 50 * 4
 
 static __weak PVSNESEmulatorCore *_current;
@@ -64,14 +64,6 @@ static __weak PVSNESEmulatorCore *_current;
 
 @end
 
-bool8 S9xDeinitUpdate(int width, int height)
-{
-    __strong PVSNESEmulatorCore *strongCurrent = _current;
-    [strongCurrent swapBuffers];
-
-    return true;
-}
-
 NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", @"X", @"Y", @"L", @"R", @"Start", @"Select", nil };
 
 @implementation PVSNESEmulatorCore
@@ -80,6 +72,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 {
 	if ((self = [super init]))
 	{
+        if(soundBuffer) free(soundBuffer);
 		soundBuffer = (UInt16 *)malloc(SIZESOUNDBUFFER * sizeof(UInt16));
 		memset(soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
         _current = self;
@@ -91,6 +84,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)dealloc
 {
+    S9xSetSamplesAvailableCallback(NULL, NULL);
     free(videoBufferA);
     videoBufferA = NULL;
     free(videoBufferB);
@@ -100,7 +94,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     soundBuffer = NULL;
 }
 
-#pragma mark Exectuion
+#pragma mark Execution
 
 - (void)resetEmulation
 {
@@ -132,13 +126,12 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)executeFrame
 {
-    IPPU.RenderThisFrame = YES;
+    IPPU.RenderThisFrame = TRUE;
     S9xMainLoop();
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
-//	[self printBuildFlags];
 
     memset(&Settings, 0, sizeof(Settings));
 
@@ -160,7 +153,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.Stereo                     =  true;
     Settings.ReverseStereo              =  false;
     Settings.SoundPlaybackRate          =  SAMPLERATE;
-    Settings.SoundInputRate             =  31955; //assumes 59.94 Hz display @ ((59.94/60.098806)*32040)
+    Settings.SoundInputRate             =  31955; //31955 assumes 59.94 Hz display @ ((59.94/60.098806)*32040)
     Settings.Mute                       =  false;
     Settings.DynamicRateControl         =  false;
     Settings.DynamicRateLimit           =  5;
@@ -176,9 +169,9 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.InitialInfoStringTimeout   = 120;
     
     // Timings
-    Settings.SkipFrames = 0;
-    Settings.FrameTimePAL               =  20000; // uses generic 50 but should be ((1/50.006978)*1000000) for PAL
-    Settings.FrameTimeNTSC              =  16667; // uses generic 60 but should be ((1/60.098806)*1000000) for NTSC
+//    Settings.SkipFrames                 =  AUTO_FRAMERATE;
+//    Settings.FrameTimePAL               =  20000; // uses generic 50 but should be ((1/50.006978)*1000000) for PAL
+//    Settings.FrameTimeNTSC              =  16667; // uses generic 60 but should be ((1/60.098806)*1000000) for NTSC
 
     // Settings
     
@@ -206,28 +199,27 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.HDMATimingHack             = 100;
     Settings.MaxSpriteTilesPerLine      = 34;
     
-	GFX.Pitch = 512 * 2;
-	GFX.PPL = SNES_WIDTH;
+    GFX.Pitch = MAX_SNES_WIDTH * sizeof(uint16_t); // 512 * 2;
 
-    if (videoBufferA)
-    {
-        free(videoBufferA);
-    }
+    if (videoBuffer)
+        {
+        free(videoBuffer);
+        }
     
+    if (videoBufferA)
+        {
+        free(videoBufferA);
+        }
+
     if (videoBufferB)
-    {
+        {
         free(videoBufferB);
-    }
+        }
 
     videoBuffer = NULL;
 
-#if 0
-	videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-	videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-#else
     videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
     videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
-#endif
 
 	GFX.Screen = (short unsigned int *)videoBufferA;
 
@@ -756,20 +748,6 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     return NO;
 }
 
-//-(void)printBuildFlags {
-//#define STR(x)   @#x
-//#define SHOW_DEFINE(x) NSLog(@"%@=%@\n", @#x, STR(x) ?: @"undefined")
-//
-//	SHOW_DEFINE(GFX_MULTI_FORMAT);
-//	SHOW_DEFINE(BLARGG_ENABLE_OPTIMIZER);
-//	SHOW_DEFINE(LSB_FIRST);
-//	SHOW_DEFINE(MSB_FIRST);
-//	SHOW_DEFINE(USE_OPENGL);
-//	SHOW_DEFINE(UNZIP_SUPPORT);
-//#undef STR
-//#undef SHOW_DEFINE
-//}
-
 #pragma mark Video
 
 - (void)swapBuffers
@@ -823,21 +801,13 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (NSTimeInterval)frameInterval
 {
-    return Settings.PAL ? 50.007 : 60.098806; //50.006978 : 60.098806; // 50.007 : 60.0988; 60.0988062658451 50.006977968268291
+    return Settings.PAL ? 50 : 60; // for more "accuracy" does 50.007 : 60.098806 make a difference?
 }
 
-//- (BOOL)rendersToOpenGL
-//{
-//#ifdef USE_OPENGL
-//	return YES;
-//#else
-//	return NO;
-//#endif
-//}
-
-//- (BOOL)isDoubleBuffered {
-//    return YES;
-//}
+- (BOOL)isDoubleBuffered
+{
+    return YES;
+}
 
 #pragma mark Audio
 
