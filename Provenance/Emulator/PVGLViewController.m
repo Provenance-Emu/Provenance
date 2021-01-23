@@ -232,6 +232,7 @@ struct RenderSettings {
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
+    WLOG(@"Pv Core frame interval (%f)", preferredFPS);
     if (preferredFPS  < 10) {
         WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
         preferredFPS = 60;

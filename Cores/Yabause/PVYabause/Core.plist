@@ -8,7 +8,7 @@
 	<string>PVYabauseGameCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.saturn</string>
+		<string></string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Yabause</string>

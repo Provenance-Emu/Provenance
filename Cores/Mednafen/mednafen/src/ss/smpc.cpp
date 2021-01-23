@@ -679,7 +679,7 @@ void SMPC_UpdateInput(const int32 time_elapsed)
 {
  //printf("%8d\n", time_elapsed);
 
- ResetButtonPhysStatus = (bool)(*MiscInputPtr & 0x1);
+// ResetButtonPhysStatus = (bool)(*MiscInputPtr & 0x1); //TODO needs pr to hook up SS controllers.
  for(unsigned vp = 0; vp < 12; vp++)
  {
   VirtualPorts[vp]->UpdateInput(VirtualPortsDPtr[vp], time_elapsed);
