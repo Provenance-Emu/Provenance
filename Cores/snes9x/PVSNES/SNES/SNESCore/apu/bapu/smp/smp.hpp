@@ -3,10 +3,6 @@ public:
   static const uint8 iplrom[64];
   uint8 *apuram;
 
-  enum { Threaded = false };
-  alwaysinline void synchronize_cpu();
-  alwaysinline void synchronize_dsp();
-
   unsigned port_read(unsigned port);
   void port_write(unsigned port, unsigned data);
 
@@ -17,13 +13,9 @@ public:
   void power();
   void reset();
 
-#ifndef SNES9X
-  void serialize(serializer&);
-#else
   void load_state(uint8 **);
   void save_state(uint8 **);
   void save_spc (uint8 *);
-#endif
   SMP();
   ~SMP();
 
@@ -102,6 +94,8 @@ public:
   debugvirtual alwaysinline uint8 op_read(uint16 addr);
   debugvirtual alwaysinline void op_write(uint16 addr, uint8 data);
   debugvirtual alwaysinline void op_step();
+  alwaysinline void op_writestack(uint8 data);
+  alwaysinline uint8 op_readstack();
   static const unsigned cycle_count_table[256];
   uint64 cycle_table_cpu[256];
   unsigned cycle_table_dsp[256];
@@ -129,10 +123,4 @@ public:
 #endif
 };
 
-// TODO: reactivate once APU debugger works again
-#if 0 // DEBUGGER
-  #include "debugger/debugger.hpp"
-  extern SMPDebugger smp;
-#else
-  extern SMP smp;
-#endif
+extern SMP smp;

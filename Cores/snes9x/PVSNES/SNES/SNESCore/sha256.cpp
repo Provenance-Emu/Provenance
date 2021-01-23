@@ -13,8 +13,9 @@
 *********************************************************************/
 
 /*************************** HEADER FILES ***************************/
+#include <stdint.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 
 /****************************** MACROS ******************************/
 #define ROTLEFT(a,b) (((a) << (b)) | ((a) >> (32-(b))))
@@ -35,7 +36,7 @@ typedef unsigned int  WORD;             /* 32-bit word, change to "long" for 16-
 typedef struct {
 	BYTE data[64];
 	WORD datalen;
-	unsigned long long bitlen;
+	uint64_t bitlen;
 	WORD state[8];
 } SHA256_CTX;
 

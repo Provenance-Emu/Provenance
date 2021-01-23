@@ -466,7 +466,7 @@ const uint8 SPC7110Decomp::mode2_context_table[32][2] = {
 uint8 SPC7110Decomp::probability  (unsigned n) { return evolution_table[context[n].index][0]; }
 uint8 SPC7110Decomp::next_lps     (unsigned n) { return evolution_table[context[n].index][1]; }
 uint8 SPC7110Decomp::next_mps     (unsigned n) { return evolution_table[context[n].index][2]; }
-bool  SPC7110Decomp::toggle_invert(unsigned n) { return evolution_table[context[n].index][3]; }
+uint8  SPC7110Decomp::toggle_invert(unsigned n) { return evolution_table[context[n].index][3]; }
 
 unsigned SPC7110Decomp::morton_2x8(unsigned data) {
   //reverse morton lookup: de-interleave two 8-bit values
@@ -498,7 +498,7 @@ void SPC7110Decomp::reset() {
 }
 
 SPC7110Decomp::SPC7110Decomp() {
-  decomp_buffer = new uint8_t[decomp_buffer_size];
+  decomp_buffer = new uint8[decomp_buffer_size];
   reset();
 
   //initialize reverse morton lookup tables
