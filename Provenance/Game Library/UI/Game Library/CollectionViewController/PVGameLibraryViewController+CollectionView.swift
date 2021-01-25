@@ -112,24 +112,24 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             switch item {
             case .none:
                 return .zero
+            case .favorites:
+                return .init(top: 0, left: -5, bottom: 20, right: 80)
+            case .saves:
+                return .init(top: 0, left: -26, bottom: 40, right: 80)
+            case .recents:
+                return .init(top: 0, left: -5, bottom: 20, right: 80)
             case .some(.game):
                 return .init(top: 20, left: 20, bottom: 25, right: 20)
-            case .saves:
-                return .init(top: -20, left: 0, bottom: 45, right: 0)
-            case .favorites:
-                return .init(top: 0, left: 20, bottom: 20, right: 20)
-            case .recents:
-                return .init(top: 0, left: 20, bottom: 20, right: 20)
             }
         #else
-        let item: Section.Item? = firstModel(in: collectionView, at: section)
-        switch item {
-        case .none:
-            return .zero
-        case .some(.game):
-            return .init(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
-        case .saves, .favorites, .recents:
-            return .zero
+            let item: Section.Item? = firstModel(in: collectionView, at: section)
+            switch item {
+            case .none:
+                return .zero
+            case .saves, .favorites, .recents:
+                return .zero
+            case .some(.game):
+                return .init(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
         }
         #endif
     }
