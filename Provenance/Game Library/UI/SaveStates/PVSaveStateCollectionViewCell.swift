@@ -44,8 +44,8 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
             if let saveState = saveState {
                 if let image = saveState.image {
                     imageView.image = UIImage(contentsOfFile: image.url.path)
-                    imageView.layer.borderWidth = 1.0
-                    imageView.layer.borderColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3).cgColor
+                    imageView.layer.borderWidth = 0.0
+ //                   imageView.layer.borderColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3).cgColor
                 }
 
                 let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)) \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
