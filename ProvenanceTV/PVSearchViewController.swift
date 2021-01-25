@@ -34,6 +34,8 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         self.gameLibrary = gameLibrary
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+        flowLayout.minimumInteritemSpacing = 120.0
+        flowLayout.minimumLineSpacing = 20.0
         super.init(collectionViewLayout: flowLayout)
     }
 
@@ -43,12 +45,8 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        #if os(iOS)
-            collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-        #else
-            collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-            collectionView?.backgroundColor = .black
-        #endif
+        collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        collectionView?.backgroundColor = .black
         collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 
         let sections: Observable<[Section]> = searchController
