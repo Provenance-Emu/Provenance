@@ -44,17 +44,20 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
             if let saveState = saveState {
                 if let image = saveState.image {
                     imageView.image = UIImage(contentsOfFile: image.url.path)
-                    imageView.layer.borderWidth = 0.0
- //                   imageView.layer.borderColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3).cgColor
                 }
 
                 let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)) \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
                 timeStampLabel.text = timeText
                 
-                #if os(tvOS) // Set up initial textColor for the savestate labels to match the other titles and allow for animation to white for our popup effect when focussed
+                #if os(tvOS)
+                // Set up initial textColor for the savestate labels to match the other titles and allow for animation to white for our popup effect when focussed
                     timeStampLabel.textColor = UIColor.darkGray
                     titleLabel.textColor = UIColor.darkGray
                     coreLabel.textColor = UIColor.darkGray
+                    
+                // Set up nicer Save State image filtering on tvOS
+                    imageView.layer.shouldRasterize = true
+                    imageView.layer.rasterizationScale = 2.0
                 #endif
                 
                 guard let game = saveState.game, let system = game.system, !system.cores.isEmpty else {
@@ -119,7 +122,7 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
     #if os(tvOS)
         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
             super.didUpdateFocus(in: context, with: coordinator)
-            imageView.layer.borderWidth = 0.0
+ //           imageView.layer.borderWidth = 0.0
             coordinator.addCoordinatedAnimations({ () -> Void in
                 if self.isFocused {
                     let yOffset = self.imageView.frame.maxY - self.labelContainer.frame.minY + 36
