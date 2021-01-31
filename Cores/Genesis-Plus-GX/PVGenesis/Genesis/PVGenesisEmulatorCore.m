@@ -746,6 +746,8 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
                     return [[gamepad leftShoulder] isPressed];
+                case PVGenesisButtonMode:
+                    return [[gamepad buttonOptions] isPressed];
                 case PVGenesisButtonStart:
 #if TARGET_OS_TV
                     return [[gamepad buttonMenu] isPressed];
@@ -776,6 +778,8 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
                     return [[gamepad rightShoulder] isPressed];
+                case PVGenesisButtonMode:
+                    return [[gamepad leftTrigger] isPressed];
                 case PVGenesisButtonStart:
                     return [[gamepad rightTrigger] isPressed];
                 default:
