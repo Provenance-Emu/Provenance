@@ -7,8 +7,8 @@
  * - 8bpp tile renderer
  * In 32x mode:
  * - 32x layer is overlayed on top of 16bpp one
- * - line internal one done on PicoDraw2FB, then mixed with 32x
- * - tile internal one done on PicoDraw2FB, then mixed with 32x
+ * - line internal one done on .Draw2FB, then mixed with 32x
+ * - tile internal one done on .Draw2FB, then mixed with 32x
  */
 
 #include <stdio.h>
@@ -30,7 +30,7 @@
 #include <pico/pico_int.h>
 #include <pico/patch.h>
 #include <pico/sound/mix.h>
-#include <zlib/zlib.h>
+#include <zlib.h>
 
 #ifdef BENCHMARK
 #define OSD_FPS_X 220
@@ -70,7 +70,7 @@ void pemu_prep_defconfig(void)
 void pemu_validate_config(void)
 {
 	if (gp2x_dev_id != GP2X_DEV_GP2X)
-		PicoOpt &= ~POPT_EXT_FM;
+		PicoIn.opt &= ~POPT_EXT_FM;
 	if (gp2x_dev_id != GP2X_DEV_WIZ)
 		currentConfig.EmuOpt &= ~EOPT_WIZ_TEAR_FIX;
 
@@ -83,7 +83,7 @@ void pemu_validate_config(void)
 
 static int get_renderer(void)
 {
-	if (PicoAHW & PAHW_32X)
+	if (PicoIn.AHW & PAHW_32X)
 		return currentConfig.renderer32x;
 	else
 		return currentConfig.renderer;
@@ -92,14 +92,14 @@ static int get_renderer(void)
 static void change_renderer(int diff)
 {
 	int *r;
-	if (PicoAHW & PAHW_32X)
+	if (PicoIn.AHW & PAHW_32X)
 		r = &currentConfig.renderer32x;
 	else
 		r = &currentConfig.renderer;
 	*r += diff;
 
 	// 8bpp fast is not there (yet?)
-	if ((PicoAHW & PAHW_SMS) && *r == RT_8BIT_FAST)
+	if ((PicoIn.AHW & PAHW_SMS) && *r == RT_8BIT_FAST)
 		(*r)++;
 
 	if      (*r >= RT_COUNT)
@@ -109,7 +109,7 @@ static void change_renderer(int diff)
 }
 
 #define is_16bit_mode() \
-	(get_renderer() == RT_16BIT || (PicoAHW & PAHW_32X))
+	(get_renderer() == RT_16BIT || (PicoIn.AHW & PAHW_32X))
 
 static void (*osd_text)(int x, int y, const char *text);
 
@@ -201,7 +201,7 @@ static void draw_pico_ptr(void)
 
 	x = pico_pen_x + PICO_PEN_ADJUST_X;
 	y = pico_pen_y + PICO_PEN_ADJUST_Y;
-	if (!(Pico.video.reg[12]&1) && !(PicoOpt & POPT_DIS_32C_BORDER))
+	if (!(Pico.video.reg[12]&1) && !(PicoIn.opt & POPT_DIS_32C_BORDER))
 		x += 32;
 
 	if (currentConfig.EmuOpt & EOPT_WIZ_TEAR_FIX) {
@@ -222,7 +222,7 @@ static unsigned char __attribute__((aligned(4))) rot_buff[320*4*2];
 
 static int EmuScanBegin16_rot(unsigned int num)
 {
-	DrawLineDest = rot_buff + (num & 3) * 320 * 2;
+	Pico.est.DrawLineDest = rot_buff + (num & 3) * 320 * 2;
 	return 0;
 }
 
@@ -231,13 +231,13 @@ static int EmuScanEnd16_rot(unsigned int num)
 	if ((num & 3) != 3)
 		return 0;
 	rotated_blit16(g_screen_ptr, rot_buff, num + 1,
-		!(Pico.video.reg[12] & 1) && !(PicoOpt & POPT_EN_SOFTSCALE));
+		!(Pico.video.reg[12] & 1) && !(PicoIn.opt & POPT_EN_SOFTSCALE));
 	return 0;
 }
 
 static int EmuScanBegin8_rot(unsigned int num)
 {
-	DrawLineDest = rot_buff + (num & 3) * 320;
+	Pico.est.DrawLineDest = rot_buff + (num & 3) * 320;
 	return 0;
 }
 
@@ -262,14 +262,14 @@ static int EmuScanBegin16_ld(unsigned int num)
 	if (emu_scan_begin)
 		return emu_scan_begin(ld_counter);
 	else
-		DrawLineDest = (char *)g_screen_ptr + 320 * ld_counter * gp2x_current_bpp / 8;
+		Pico.est.DrawLineDest = (char *)g_screen_ptr + 320 * ld_counter * gp2x_current_bpp / 8;
 
 	return 0;
 }
 
 static int EmuScanEnd16_ld(unsigned int num)
 {
-	void *oldline = DrawLineDest;
+	void *oldline = Pico.est.DrawLineDest;
 
 	if (emu_scan_end)
 		emu_scan_end(ld_counter);
@@ -280,7 +280,7 @@ static int EmuScanEnd16_ld(unsigned int num)
 		ld_left = ld_lines;
 
 		EmuScanBegin16_ld(num);
-		memcpy32(DrawLineDest, oldline, 320 * gp2x_current_bpp / 8 / 4);
+		memcpy(Pico.est.DrawLineDest, oldline, 320 * gp2x_current_bpp / 8);
 		if (emu_scan_end)
 			emu_scan_end(ld_counter);
 
@@ -310,12 +310,12 @@ static int make_local_pal_md(int fast_mode)
 		localPal[0xf0] = 0x00ffffff;
 		pallen = 0x100;
 	}
-	else if (rendstatus & PDRAW_SONIC_MODE) { // mid-frame palette changes
-		bgr444_to_rgb32(localPal+0x40, HighPal);
-		bgr444_to_rgb32(localPal+0x80, HighPal+0x40);
+	else if (Pico.est.rendstatus & PDRAW_SONIC_MODE) { // mid-frame palette changes
+		bgr444_to_rgb32(localPal+0x40, Pico.est.HighPal);
+		bgr444_to_rgb32(localPal+0x80, Pico.est.HighPal+0x40);
 	}
 	else
-		memcpy32(localPal+0x80, localPal, 0x40); // for spr prio mess
+		memcpy(localPal + 0x80, localPal, 0x40 * 4); // for spr prio mess
 
 	return pallen;
 }
@@ -342,7 +342,7 @@ void pemu_finalize_frame(const char *fps, const char *notice)
 	int emu_opt = currentConfig.EmuOpt;
 	int ret;
 
-	if (PicoAHW & PAHW_32X)
+	if (PicoIn.AHW & PAHW_32X)
 		; // nothing to do
 	else if (get_renderer() == RT_8BIT_FAST)
 	{
@@ -354,11 +354,11 @@ void pemu_finalize_frame(const char *fps, const char *notice)
 			gp2x_video_setpalette(localPal, ret);
 		}
 		// a hack for VR
-		if (PicoAHW & PAHW_SVP)
-			memset32((int *)(PicoDraw2FB+328*8+328*223), 0xe0e0e0e0, 328);
+		if (PicoIn.AHW & PAHW_SVP)
+			memset32((int *)(Pico.est.Draw2FB+328*8+328*223), 0xe0e0e0e0, 328);
 		// do actual copy
-		vidcpyM2(g_screen_ptr, PicoDraw2FB+328*8,
-			!(Pico.video.reg[12] & 1), !(PicoOpt & POPT_DIS_32C_BORDER));
+		vidcpyM2(g_screen_ptr, Pico.est.Draw2FB+328*8,
+			!(Pico.video.reg[12] & 1), !(PicoIn.opt & POPT_DIS_32C_BORDER));
 	}
 	else if (get_renderer() == RT_8BIT_ACC)
 	{
@@ -375,9 +375,9 @@ void pemu_finalize_frame(const char *fps, const char *notice)
 		osd_text(4, osd_y, notice);
 	if (emu_opt & EOPT_SHOW_FPS)
 		osd_text(osd_fps_x, osd_y, fps);
-	if ((PicoAHW & PAHW_MCD) && (emu_opt & EOPT_EN_CD_LEDS))
+	if ((PicoIn.AHW & PAHW_MCD) && (emu_opt & EOPT_EN_CD_LEDS))
 		draw_cd_leds();
-	if (PicoAHW & PAHW_PICO)
+	if (PicoIn.AHW & PAHW_PICO)
 		draw_pico_ptr();
 }
 
@@ -472,7 +472,7 @@ static void vid_reset_mode(void)
 	int gp2x_mode = 16;
 	int renderer = get_renderer();
 
-	PicoOpt &= ~POPT_ALT_RENDERER;
+	PicoIn.opt &= ~POPT_ALT_RENDERER;
 	emu_scan_begin = NULL;
 	emu_scan_end = NULL;
 
@@ -487,7 +487,7 @@ static void vid_reset_mode(void)
 		gp2x_mode = 8;
 		break;
 	case RT_8BIT_FAST:
-		PicoOpt |= POPT_ALT_RENDERER;
+		PicoIn.opt |= POPT_ALT_RENDERER;
 		PicoDrawSetOutFormat(PDF_NONE, 0);
 		vidcpyM2 = vidcpy_m2;
 		gp2x_mode = 8;
@@ -497,7 +497,7 @@ static void vid_reset_mode(void)
 		break;
 	}
 
-	if (PicoAHW & PAHW_32X) {
+	if (PicoIn.AHW & PAHW_32X) {
 		// Wiz 16bit is an exception, uses line rendering due to rotation mess
 		if (renderer == RT_16BIT && (currentConfig.EmuOpt & EOPT_WIZ_TEAR_FIX)) {
 			PicoDrawSetOutFormat(PDF_RGB555, 1);
@@ -510,7 +510,7 @@ static void vid_reset_mode(void)
 	}
 
 	if (currentConfig.EmuOpt & EOPT_WIZ_TEAR_FIX) {
-		if ((PicoAHW & PAHW_32X) || renderer == RT_16BIT) {
+		if ((PicoIn.AHW & PAHW_32X) || renderer == RT_16BIT) {
 			emu_scan_begin = EmuScanBegin16_rot;
 			emu_scan_end = EmuScanEnd16_rot;
 		}
@@ -549,12 +549,12 @@ static void vid_reset_mode(void)
 
 	Pico.m.dirtyPal = 1;
 
-	PicoOpt &= ~POPT_EN_SOFTSCALE;
+	PicoIn.opt &= ~POPT_EN_SOFTSCALE;
 	if (currentConfig.scaling == EOPT_SCALE_SW)
-		PicoOpt |= POPT_EN_SOFTSCALE;
+		PicoIn.opt |= POPT_EN_SOFTSCALE;
 
 	// palette converters for 8bit modes
-	make_local_pal = (PicoAHW & PAHW_SMS) ? make_local_pal_sms : make_local_pal_md;
+	make_local_pal = (PicoIn.AHW & PAHW_SMS) ? make_local_pal_sms : make_local_pal_md;
 }
 
 void emu_video_mode_change(int start_line, int line_count, int is_32cols)
@@ -569,10 +569,10 @@ void emu_video_mode_change(int start_line, int line_count, int is_32cols)
 	osd_y = 232;
 
 	/* set up hwscaling here */
-	PicoOpt &= ~POPT_DIS_32C_BORDER;
+	PicoIn.opt &= ~POPT_DIS_32C_BORDER;
 	if (is_32cols && currentConfig.scaling == EOPT_SCALE_HW) {
 		scalex = 256;
-		PicoOpt |= POPT_DIS_32C_BORDER;
+		PicoIn.opt |= POPT_DIS_32C_BORDER;
 		osd_fps_x = OSD_FPS_X - 64;
 	}
 
@@ -607,7 +607,7 @@ void plat_video_toggle_renderer(int change, int is_menu_call)
 	vid_reset_mode();
 	rendstatus_old = -1;
 
-	if (PicoAHW & PAHW_32X)
+	if (PicoIn.AHW & PAHW_32X)
 		emu_status_msg(renderer_names32x[get_renderer()]);
 	else
 		emu_status_msg(renderer_names[get_renderer()]);
@@ -626,7 +626,7 @@ static void RunEventsPico(unsigned int events)
 		if (ret > 35000)
 		{
 			if (pdown_frames++ > 5)
-				PicoPad[0] |= 0x20;
+				PicoIn.pad[0] |= 0x20;
 
 			pico_pen_x = px;
 			pico_pen_y = py;
@@ -654,7 +654,7 @@ void plat_update_volume(int has_changed, int is_up)
 	gp2x_soc_t soc;
 
 	soc = soc_detect();
-	if ((PicoOpt & POPT_EN_STEREO) && soc == SOCID_MMSP2)
+	if ((PicoIn.opt & POPT_EN_STEREO) && soc == SOCID_MMSP2)
 		need_low_volume = 1;
 
 	if (has_changed)
@@ -692,7 +692,7 @@ void pemu_sound_start(void)
 	{
 		soc = soc_detect();
 		if (soc == SOCID_POLLUX) {
-			PsndRate = pollux_get_real_snd_rate(PsndRate);
+			PicoIn.sndRate = pollux_get_real_snd_rate(PicoIn.sndRate);
 			PsndRerate(Pico.m.frame_count ? 1 : 0);
 		}
 
@@ -707,10 +707,10 @@ void pemu_sound_stop(void)
 	int i;
 
 	/* get back from Pollux pain */
-	PsndRate += 1000;
+	PicoIn.sndRate += 1000;
 	for (i = 0; i < ARRAY_SIZE(sound_rates); i++) {
-		if (PsndRate >= sound_rates[i]) {
-			PsndRate = sound_rates[i];
+		if (PicoIn.sndRate >= sound_rates[i]) {
+			PicoIn.sndRate = sound_rates[i];
 			break;
 		}
 	}

@@ -94,7 +94,7 @@
 #define s16	signed short
 #define u32	unsigned int
 #define s32	signed int
-#define uptr	unsigned long
+#define uptr	uintptr_t
 
 /*
 typedef unsigned char	u8;
@@ -228,21 +228,21 @@ typedef signed int	s32;
 // internals core macros
 /////////////////////////
 
-#define DREG(X)         (m68kcontext.dreg[(X)].D)
-#define DREGu32(X)      (m68kcontext.dreg[(X)].D)
-#define DREGs32(X)      (m68kcontext.dreg[(X)].SD)
-#define DREGu16(X)      (m68kcontext.dreg[(X)].W)
-#define DREGs16(X)      (m68kcontext.dreg[(X)].SW)
-#define DREGu8(X)       (m68kcontext.dreg[(X)].B)
-#define DREGs8(X)       (m68kcontext.dreg[(X)].SB)
+#define DREG(X)         (ctx->dreg[(X)].D)
+#define DREGu32(X)      (ctx->dreg[(X)].D)
+#define DREGs32(X)      (ctx->dreg[(X)].SD)
+#define DREGu16(X)      (ctx->dreg[(X)].W)
+#define DREGs16(X)      (ctx->dreg[(X)].SW)
+#define DREGu8(X)       (ctx->dreg[(X)].B)
+#define DREGs8(X)       (ctx->dreg[(X)].SB)
 
-#define AREG(X)         (m68kcontext.areg[(X)].D)
-#define AREGu32(X)      (m68kcontext.areg[(X)].D)
-#define AREGs32(X)      (m68kcontext.areg[(X)].SD)
-#define AREGu16(X)      (m68kcontext.areg[(X)].W)
-#define AREGs16(X)      (m68kcontext.areg[(X)].SW)
+#define AREG(X)         (ctx->areg[(X)].D)
+#define AREGu32(X)      (ctx->areg[(X)].D)
+#define AREGs32(X)      (ctx->areg[(X)].SD)
+#define AREGu16(X)      (ctx->areg[(X)].W)
+#define AREGs16(X)      (ctx->areg[(X)].SW)
 
-#define ASP             (m68kcontext.asp)
+#define ASP             (ctx->asp)
 
 #define LSL(A, C)       ((A) << (C))
 #define LSR(A, C)       ((A) >> (C))
@@ -271,39 +271,39 @@ typedef signed int	s32;
 
 #ifdef FAMEC_ROLL_INLINE
 #define RET(A)                                      \
-    m68kcontext.io_cycle_counter -= (A);                        \
-    if (m68kcontext.io_cycle_counter <= 0) goto famec_Exec_End;	\
+    ctx->io_cycle_counter -= (A);                        \
+    if (ctx->io_cycle_counter <= 0) goto famec_Exec_End;	\
     NEXT
 #else
 #define RET(A)                                      \
-    m68kcontext.io_cycle_counter -= (A);                        \
-    if (m68kcontext.io_cycle_counter <= 0) goto famec_Exec_End;	\
+    ctx->io_cycle_counter -= (A);                        \
+    if (ctx->io_cycle_counter <= 0) goto famec_Exec_End;	\
     goto famec_Exec;
 #endif
 
 #define RET0() \
-    m68kcontext.io_cycle_counter = -6; \
+    ctx->io_cycle_counter = -6; \
     goto famec_End;
 
 #else
 
 #define NEXT \
-    do{ \
-    	FETCH_WORD(Opcode); \
-    	JumpTable[Opcode](); \
-    }while(m68kcontext.io_cycle_counter>0);
+    do { \
+        FETCH_WORD(Opcode); \
+        JumpTable[Opcode](ctx); \
+    } while (ctx->io_cycle_counter > 0);
 
 #define RET(A) \
-    m68kcontext.io_cycle_counter -= (A);  \
+    ctx->io_cycle_counter -= (A);  \
     return;
 
 #define RET0() \
-    m68kcontext.io_cycle_counter = -6; \
+    ctx->io_cycle_counter = -6; \
     return;
 
 #endif
 
-#define M68K_PPL (m68kcontext.sr >> 8) & 7
+#define M68K_PPL (ctx->sr >> 8) & 7
 
 #define GET_PC                  \
 	(u32)((uptr)PC - BasePC)
@@ -321,7 +321,7 @@ typedef signed int	s32;
 { \
     u32 pc = A; \
     FORCE_ALIGNMENT(pc); \
-    BasePC = m68kcontext.Fetch[(pc >> M68K_FETCHSFT) & M68K_FETCHMASK];    \
+    BasePC = ctx->Fetch[(pc >> M68K_FETCHSFT) & M68K_FETCHMASK];    \
     PC = (u16*)((pc & M68K_ADR_MASK) + BasePC);	\
 }
 
@@ -331,7 +331,7 @@ typedef signed int	s32;
 { \
     u32 pc = A; \
     FORCE_ALIGNMENT(pc); \
-    BasePC = m68kcontext.Fetch[(pc >> M68K_FETCHSFT) & M68K_FETCHMASK];    \
+    BasePC = ctx->Fetch[(pc >> M68K_FETCHSFT) & M68K_FETCHMASK];    \
     BasePC -= pc & 0xFF000000;    \
     PC = (u16*)(pc + BasePC); \
 }
@@ -346,29 +346,29 @@ typedef signed int	s32;
 //    CCnt = io_cycle_counter;
 
 #define READ_BYTE_F(A, D)           \
-	D = m68kcontext.read_byte(A) & 0xFF;
+	D = ctx->read_byte(A) & 0xFF;
 
 #define READ_WORD_F(A, D)           \
-	D = m68kcontext.read_word(A) & 0xFFFF;
+	D = ctx->read_word(A) & 0xFFFF;
 
 #define READ_LONG_F(A, D)           \
-	D = m68kcontext.read_long(A);
+	D = ctx->read_long(A);
 
 #define READSX_LONG_F READ_LONG_F
 
 #define WRITE_LONG_F(A, D)          \
-	m68kcontext.write_long(A, D);
+	ctx->write_long(A, D);
 
 #define WRITE_LONG_DEC_F(A, D)          \
-	m68kcontext.write_word((A) + 2, (D) & 0xFFFF);    \
-	m68kcontext.write_word((A), (D) >> 16);
+	ctx->write_word((A) + 2, (D) & 0xFFFF);    \
+	ctx->write_word((A), (D) >> 16);
 
 #define PUSH_32_F(D)                        \
 	AREG(7) -= 4;                               \
-	m68kcontext.write_long(AREG(7), D);
+	ctx->write_long(AREG(7), D);
 
 #define POP_32_F(D)                         \
-	D = m68kcontext.read_long(AREG(7));         \
+	D = ctx->read_long(AREG(7));         \
 	AREG(7) += 4;
 
 #ifndef FAME_BIG_ENDIAN
@@ -440,23 +440,23 @@ typedef signed int	s32;
 #endif
 
 #define READSX_BYTE_F(A, D)             \
-    D = (s8)m68kcontext.read_byte(A);
+    D = (s8)ctx->read_byte(A);
 
 #define READSX_WORD_F(A, D)             \
-    D = (s16)m68kcontext.read_word(A);
+    D = (s16)ctx->read_word(A);
 
 
 #define WRITE_BYTE_F(A, D)      \
-    m68kcontext.write_byte(A, D);
+    ctx->write_byte(A, D);
 
 #define WRITE_WORD_F(A, D)      \
-    m68kcontext.write_word(A, D);
+    ctx->write_word(A, D);
 
 #define PUSH_16_F(D)                    \
-    m68kcontext.write_word(AREG(7) -= 2, D);   \
+    ctx->write_word(AREG(7) -= 2, D);   \
 
 #define POP_16_F(D)                     \
-    D = (u16)m68kcontext.read_word(AREG(7));   \
+    D = (u16)ctx->read_word(AREG(7));   \
     AREG(7) += 2;
 
 #define GET_CCR                                     \
@@ -501,17 +501,17 @@ typedef signed int	s32;
 #endif
 
 #define CHECK_INT_TO_JUMP(CLK) \
-	if (interrupt_chk__()) \
+	if (interrupt_chk__(ctx)) \
 	{ \
-		cycles_needed=m68kcontext.io_cycle_counter-(CLK); \
-		m68kcontext.io_cycle_counter=(CLK);  \
+		cycles_needed=ctx->io_cycle_counter-(CLK); \
+		ctx->io_cycle_counter=(CLK);  \
 	}
 
 
 #ifdef FAMEC_CHECK_BRANCHES
 
 #ifdef FAMEC_NO_GOTOS
-#define CHECK_BRANCH_EXCEPTION_GOTO_END m68kcontext.io_cycle_counter=0; return;
+#define CHECK_BRANCH_EXCEPTION_GOTO_END ctx->io_cycle_counter=0; return;
 #else
 #define CHECK_BRANCH_EXCEPTION_GOTO_END goto famec_Exec_End;
 #endif
@@ -520,8 +520,8 @@ typedef signed int	s32;
 	if ((_PC_)&1) \
 	{ \
 		u32 new_PC, pr_PC=GET_PC; \
-		m68kcontext.execinfo |= FM68K_EMULATE_GROUP_0; \
-		new_PC = execute_exception_group_0(M68K_ADDRESS_ERROR_EX, 0, pr_PC, 0x12 ); \
+		ctx->execinfo |= FM68K_EMULATE_GROUP_0; \
+		new_PC = execute_exception_group_0(ctx, M68K_ADDRESS_ERROR_EX, 0, pr_PC, 0x12 ); \
 		SET_PC(new_PC); \
 		CHECK_BRANCH_EXCEPTION_GOTO_END \
 	}
@@ -529,38 +529,33 @@ typedef signed int	s32;
 #define CHECK_BRANCH_EXCEPTION(_PC_)
 #endif
 
+#ifdef FAMEC_NO_GOTOS
+#define Opcode ctx->Opcode
+#define cycles_needed ctx->cycles_needed
+#define PC ctx->PC
+#define BasePC ctx->BasePC
+#define flag_C ctx->flag_C
+#define flag_V ctx->flag_V
+#define flag_NotZ ctx->flag_NotZ
+#define flag_N ctx->flag_N
+#define flag_X ctx->flag_X
+#endif
+
+#define flag_T ctx->flag_T
+#define flag_S ctx->flag_S
+#define flag_I ctx->flag_I
 
 // global variable
 ///////////////////
 
-/* Current CPU context */
-M68K_CONTEXT *g_m68kcontext;
-#define m68kcontext (*g_m68kcontext)
-
-#ifdef FAMEC_NO_GOTOS
-#define Opcode m68kcontext.Opcode
-#define cycles_needed m68kcontext.cycles_needed
-#define PC m68kcontext.PC
-#define BasePC m68kcontext.BasePC
-#define flag_C m68kcontext.flag_C
-#define flag_V m68kcontext.flag_V
-#define flag_NotZ m68kcontext.flag_NotZ
-#define flag_N m68kcontext.flag_N
-#define flag_X m68kcontext.flag_X
-#endif
-
-#define flag_T m68kcontext.flag_T
-#define flag_S m68kcontext.flag_S
-#define flag_I m68kcontext.flag_I
-
 static u32 initialised = 0;
 
 #ifdef PICODRIVE_HACK
-extern M68K_CONTEXT PicoCpuFM68k, PicoCpuFS68k;
+extern M68K_CONTEXT PicoCpuFS68k;
 #endif
 
 /* Custom function handler */
-typedef void (*opcode_func)(void);
+typedef void (*opcode_func)(M68K_CONTEXT *ctx);
 
 static opcode_func JumpTable[0x10000];
 
@@ -640,6 +635,7 @@ static const s32 exception_cycle_table[256] =
 	  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
 };
 
+static int init_jump_table(void);
 
 /***********************/
 /* core main functions */
@@ -656,8 +652,8 @@ void fm68k_init(void)
 	puts("Initializing FAME...");
 #endif
 
-    if (!initialised)
-	    fm68k_emulate(0, 0);
+	if (!initialised)
+		init_jump_table();
 
 #ifdef FAMEC_DEBUG
 	puts("FAME initialized.");
@@ -673,33 +669,33 @@ void fm68k_init(void)
 /*     M68K_NO_SUP_ADDR_SPACE (2):  No se puede resetear porque no hay mapa   */
 /*             de memoria supervisor de extraccion de opcodes                 */
 /******************************************************************************/
-int fm68k_reset(void)
+int fm68k_reset(M68K_CONTEXT *ctx)
 {
 	if (!initialised)
-		fm68k_emulate(0, 0);
+		init_jump_table();
 
 	// Si la CPU esta en ejecucion, salir con M68K_RUNNING
-	if (m68kcontext.execinfo & M68K_RUNNING)
+	if (ctx->execinfo & M68K_RUNNING)
 		return M68K_RUNNING;
 
 	// Resetear registros
-	//memset(&m68kcontext.dreg[0], 0, 16*4);
+	//memset(&ctx->dreg[0], 0, 16*4);
 
 	// Resetear interrupts, execinfo y ASP
-	m68kcontext.interrupts[0] = 0;
-	m68kcontext.execinfo = 0;
+	ctx->interrupts[0] = 0;
+	ctx->execinfo = 0;
 	ASP = 0;
 
 	// Fijar registro de estado
-	m68kcontext.sr = (m68kcontext.sr & 0xff) | 0x2700;
+	ctx->sr = (ctx->sr & 0xff) | 0x2700;
 
 	// Obtener puntero de pila inicial y PC
-	AREG(7) = m68kcontext.read_long(0);
-	m68kcontext.pc = m68kcontext.read_long(4);
+	AREG(7) = ctx->read_long(0);
+	ctx->pc = ctx->read_long(4);
 
 #ifdef FAMEC_DEBUG
 	puts("Reset 68k done!\n");
-	printf("PC = 0x%08X\n",m68kcontext.pc);
+	printf("PC = 0x%08X\n",ctx->pc);
 #endif
 
     return M68K_OK;
@@ -711,37 +707,40 @@ int fm68k_reset(void)
 /* No recibe parametros                                                     */
 /* Retorna 68k PC                                                           */
 /****************************************************************************/
-u32 fm68k_get_pc(M68K_CONTEXT *context)
+u32 fm68k_get_pc(const M68K_CONTEXT *ctx)
 {
 #ifdef FAMEC_NO_GOTOS
-	return (context->execinfo & M68K_RUNNING)?(uptr)PC-BasePC:context->pc;
+	return (ctx->execinfo & M68K_RUNNING)?(uptr)PC-BasePC:ctx->pc;
 #else
-	return context->pc; // approximate PC in this mode
+	return ctx->pc; // approximate PC in this mode
 #endif
 }
 
 
 //////////////////////////
 // Chequea las interrupciones y las inicia
-static FAMEC_EXTRA_INLINE s32 interrupt_chk__(void)
+static FAMEC_EXTRA_INLINE s32 interrupt_chk__(M68K_CONTEXT *ctx)
 {
-	if (m68kcontext.interrupts[0] > flag_I)
-		return m68kcontext.interrupts[0];
+	if (ctx->interrupts[0] > flag_I)
+		return ctx->interrupts[0];
 
 	return 0;
 }
 
-int fm68k_would_interrupt(void)
+int fm68k_would_interrupt(M68K_CONTEXT *ctx)
 {
-	return interrupt_chk__();
+	return interrupt_chk__(ctx);
 }
 
-static FAMEC_EXTRA_INLINE u32 execute_exception(s32 vect, u32 oldPC, u32 oldSR)
+static FAMEC_EXTRA_INLINE u32 execute_exception(M68K_CONTEXT *ctx, s32 vect, u32 oldPC, u32 oldSR)
 {
 	u32 newPC;
 	//u32 oldSR = GET_SR;
 
-        m68kcontext.io_cycle_counter -= exception_cycle_table[vect];
+        ctx->io_cycle_counter -= exception_cycle_table[vect];
+#ifdef FAMEC_EMULATE_TRACE
+	ctx->execinfo &= ~FM68K_EMULATE_TRACE;
+#endif
 
 	PRE_IO
 
@@ -763,6 +762,7 @@ static FAMEC_EXTRA_INLINE u32 execute_exception(s32 vect, u32 oldPC, u32 oldSR)
 
 	/* adjust SR */
 	flag_S = M68K_SR_S;
+	flag_T = 0;
 
 #ifndef FAMEC_32BIT_PC
 	newPC&=M68K_ADR_MASK
@@ -778,12 +778,12 @@ static FAMEC_EXTRA_INLINE u32 execute_exception(s32 vect, u32 oldPC, u32 oldSR)
 	return newPC;
 }
 
-static FAMEC_EXTRA_INLINE u32 execute_exception_group_0(s32 vect, s32 addr, u16 spec_info, u32 oldSR)
+static FAMEC_EXTRA_INLINE u32 execute_exception_group_0(M68K_CONTEXT *ctx, s32 vect, s32 addr, u16 spec_info, u32 oldSR)
 {
 	u32 newPC;
 	u16 inst_reg = 0;
-	newPC = execute_exception(vect, addr, oldSR);
-	//if (!(m68kcontext.icust_handler && m68kcontext.icust_handler[vect]))
+	newPC = execute_exception(ctx, vect, addr, oldSR);
+	//if (!(ctx->icust_handler && ctx->icust_handler[vect]))
 	{
 		PUSH_16_F(inst_reg);
 		PUSH_32_F(addr);
@@ -795,7 +795,7 @@ static FAMEC_EXTRA_INLINE u32 execute_exception_group_0(s32 vect, s32 addr, u16 
 
 #ifdef FAMEC_NO_GOTOS
 
-#define OPCODE(N_OP) static void OP_##N_OP(void)
+#define OPCODE(N_OP) static void OP_##N_OP(M68K_CONTEXT *ctx)
 #define CAST_OP(N_OP) (opcode_func)&OP_##N_OP
 #include "famec_opcodes.h"
 #endif
@@ -804,7 +804,7 @@ static FAMEC_EXTRA_INLINE u32 execute_exception_group_0(s32 vect, s32 addr, u16 
 // main exec function
 //////////////////////
 
-int fm68k_emulate(s32 cycles, int idle_mode)
+int fm68k_emulate(M68K_CONTEXT *ctx, s32 cycles, fm68k_call_reason reason)
 {
 #ifndef FAMEC_NO_GOTOS
 	u32 Opcode;
@@ -816,31 +816,35 @@ int fm68k_emulate(s32 cycles, int idle_mode)
 	u32 flag_NotZ;
 	u32 flag_N;
 	u32 flag_X;
-#endif
 
-	if (!initialised)
+	switch (reason)
 	{
+	case fm68k_reason_init:
 		goto init_jump_table;
-	}
-
 #ifdef PICODRIVE_HACK
-	if      (idle_mode == 1) goto idle_install;
-	else if (idle_mode == 2) goto idle_remove;
+	case fm68k_reason_idle_install:
+		goto idle_install;
+	case fm68k_reason_idle_remove:
+		goto idle_remove;
 #endif
+	case fm68k_reason_emulate:
+		break;
+	}
+#endif // FAMEC_NO_GOTOS
 
 	// won't emulate double fault
-	// if (m68kcontext.execinfo & M68K_FAULTED) return -1;
+	// if (ctx->execinfo & M68K_FAULTED) return -1;
 
 	// Cache PPL
 	flag_I = M68K_PPL;
 
-	if (m68kcontext.execinfo & FM68K_HALTED)
+	if (ctx->execinfo & FM68K_HALTED)
 	{
-		if (interrupt_chk__() <= 0)
+		if (interrupt_chk__(ctx) <= 0)
 		{
 			return cycles;
 		}
-		m68kcontext.execinfo &= ~FM68K_HALTED;
+		ctx->execinfo &= ~FM68K_HALTED;
 	}
 
 #ifdef FAMEC_DEBUG
@@ -848,13 +852,13 @@ int fm68k_emulate(s32 cycles, int idle_mode)
 #endif
 
 	/* Poner la CPU en estado de ejecucion */
-	m68kcontext.execinfo |= M68K_RUNNING;
+	ctx->execinfo |= M68K_RUNNING;
 
 	// Cache SR
-	SET_SR(m68kcontext.sr)
+	SET_SR(ctx->sr)
 
 	// Fijar PC
-	SET_PC(m68kcontext.pc)
+	SET_PC(ctx->pc)
 
 #ifdef FAMEC_DEBUG
 	printf("PC: %p\n",PC);
@@ -862,33 +866,33 @@ int fm68k_emulate(s32 cycles, int idle_mode)
 #endif
 
 	/* guardar ciclos de ejecucion solicitados */
-	m68kcontext.io_cycle_counter = cycles;
+	ctx->io_cycle_counter = cycles;
 	cycles_needed = 0;
 
 #ifdef FAMEC_EMULATE_TRACE
-	if (!(m68kcontext.execinfo & FM68K_EMULATE_TRACE))
+	if (!(ctx->execinfo & FM68K_EMULATE_TRACE))
 #endif
 	{
-		s32 line=interrupt_chk__();
+		s32 line=interrupt_chk__(ctx);
 		if (line>0)
 		{
 			/* comprobar si hay rutina de acknowledge */
-			if (m68kcontext.iack_handler != NULL)
-				m68kcontext.iack_handler(line);
+			if (ctx->iack_handler != NULL)
+				ctx->iack_handler(line);
 			else
-				m68kcontext.interrupts[0] = 0;
+				ctx->interrupts[0] = 0;
 
-			SET_PC(execute_exception(line + 0x18, GET_PC, GET_SR));
+			SET_PC(execute_exception(ctx, line + 0x18, GET_PC, GET_SR));
 			flag_I = (u32)line;
-			if (m68kcontext.io_cycle_counter <= 0) goto famec_End;
+			if (ctx->io_cycle_counter <= 0) goto famec_End;
 		}
 #ifdef FAMEC_EMULATE_TRACE
 		else
 			if  (flag_T)
 			{
-				m68kcontext.execinfo |= FM68K_EMULATE_TRACE;
-				cycles_needed = m68kcontext.io_cycle_counter;
-				m68kcontext.io_cycle_counter=0;
+				ctx->execinfo |= FM68K_EMULATE_TRACE;
+				cycles_needed = ctx->io_cycle_counter;
+				ctx->io_cycle_counter=0;
 			}
 #endif
 	}
@@ -914,15 +918,14 @@ famec_Exec:
 #endif
 
 #ifdef FAMEC_EMULATE_TRACE
-	if (m68kcontext.execinfo & FM68K_EMULATE_TRACE)
+	if (ctx->execinfo & FM68K_EMULATE_TRACE)
 	{
-		m68kcontext.io_cycle_counter = cycles_needed;
+		ctx->io_cycle_counter += cycles_needed;
 		cycles_needed = 0;
-		m68kcontext.execinfo &= ~FM68K_EMULATE_TRACE;
-		m68kcontext.execinfo |= FM68K_DO_TRACE;
-		SET_PC(execute_exception(M68K_TRACE_EX, GET_PC, GET_SR));
-		flag_T=0;
-		if (m68kcontext.io_cycle_counter > 0)
+		ctx->execinfo &= ~FM68K_EMULATE_TRACE;
+		ctx->execinfo |= FM68K_DO_TRACE;
+		SET_PC(execute_exception(ctx, M68K_TRACE_EX, GET_PC, GET_SR));
+		if (ctx->io_cycle_counter > 0)
 		{
 			//NEXT
 			goto famec_Exec;
@@ -933,24 +936,24 @@ famec_Exec:
 		if (cycles_needed != 0)
 		{
 			u32 line;
-			m68kcontext.io_cycle_counter = cycles_needed;
+			ctx->io_cycle_counter += cycles_needed;
 			cycles_needed = 0;
-			if (m68kcontext.io_cycle_counter <= 0) goto famec_End;
-			line=interrupt_chk__();
+			//if (ctx->io_cycle_counter <= 0) goto famec_End;
+			line=interrupt_chk__(ctx);
 			if (line>0)
 			{
-				if (m68kcontext.iack_handler != NULL)
-					m68kcontext.iack_handler(line);
+				if (ctx->iack_handler != NULL)
+					ctx->iack_handler(line);
 				else
-					m68kcontext.interrupts[0] = 0;
+					ctx->interrupts[0] = 0;
 
-				SET_PC(execute_exception(line + 0x18, GET_PC, GET_SR));
+				SET_PC(execute_exception(ctx, line + 0x18, GET_PC, GET_SR));
 				flag_I = (u32)line;
 			}
 #ifdef FAMEC_EMULATE_TRACE
 			if (!(flag_T))
 #endif
-			if (m68kcontext.io_cycle_counter > 0)
+			if (ctx->io_cycle_counter > 0)
 			{
 				//NEXT
 				goto famec_Exec;
@@ -958,21 +961,27 @@ famec_Exec:
 		}
 
 famec_End:
-	m68kcontext.sr = GET_SR;
-	m68kcontext.pc = GET_PC;
+	ctx->sr = GET_SR;
+	ctx->pc = GET_PC;
 
-	m68kcontext.execinfo &= ~M68K_RUNNING;
+	ctx->execinfo &= ~M68K_RUNNING;
 
 #ifdef FAMEC_DEBUG
 	printf("En really end...\n");
 	printf("PC: %p\n",PC);
 	printf("BasePC: 0x%08x\n",BasePC);
-	printf("pc: 0x%08x\n",m68kcontext.pc);
+	printf("pc: 0x%08x\n",ctx->pc);
 #endif
 
-	return cycles - m68kcontext.io_cycle_counter;
+	return cycles - ctx->io_cycle_counter;
 
+#ifndef FAMEC_NO_GOTOS
 init_jump_table:
+#else
+}
+
+static int init_jump_table(void)
+#endif
 {
 	u32 i, j;
 
@@ -5002,7 +5011,12 @@ init_jump_table:
 	JumpTable[fake_op_base] = JumpTable[fake_op_base|0x0200] = CAST_OP(0x4AFC); \
 	JumpTable[real_op] = CAST_OP(normal_handler)
 
+#ifndef FAMEC_NO_GOTOS
 idle_install:
+#else
+int fm68k_idle_install(void)
+#endif
+{
 	// printf("install..\n");
 	INSTALL_IDLE(0x71fa, 0x66fa, idle_detector_bcc8, 0x6601_idle, 0x6601);
 	INSTALL_IDLE(0x71f8, 0x66f8, idle_detector_bcc8, 0x6601_idle, 0x6601);
@@ -5015,8 +5029,14 @@ idle_install:
 	INSTALL_IDLE(0x7dfe, 0x60fe, idle_detector_bcc8, 0x6001_idle, 0x6001);
 	INSTALL_IDLE(0x7dfc, 0x60fc, idle_detector_bcc8, 0x6001_idle, 0x6001);
 	return 0;
+}
 
+#ifndef FAMEC_NO_GOTOS
 idle_remove:
+#else
+int fm68k_idle_remove(void)
+#endif
+{
 	// printf("remove..\n");
 	UNDO_IDLE(0x71fa, 0x66fa, 0x6601);
 	UNDO_IDLE(0x71f8, 0x66f8, 0x6601);
@@ -5029,9 +5049,26 @@ idle_remove:
 	UNDO_IDLE(0x7dfe, 0x60fe, 0x6001);
 	UNDO_IDLE(0x7dfc, 0x60fc, 0x6001);
 	return 0;
+}
+#endif // PICODRIVE_HACK
 
-#endif
+#ifndef FAMEC_NO_GOTOS
 }
 
-void *get_jumptab(void) { return JumpTable; }
+static int init_jump_table(void)
+{
+	return fm68k_emulate(NULL, 0, fm68k_reason_init);
+}
 
+#ifdef PICODRIVE_HACK
+int fm68k_idle_install(void)
+{
+	return fm68k_emulate(NULL, 0, fm68k_reason_idle_install);
+}
+
+int fm68k_idle_remove(void)
+{
+	return fm68k_emulate(NULL, 0, fm68k_reason_idle_remove);
+}
+#endif
+#endif // FAMEC_NO_GOTOS

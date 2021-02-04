@@ -89,14 +89,11 @@ static void input_poll_callback(void)
     GET_CURRENT_OR_RETURN();
 
     [current pollControllers];
-	//NSLog(@"poll callback");
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
     GET_CURRENT_OR_RETURN(0);
-
-    //NSLog(@"polled input: port: %d device: %d id: %d", port, device, id);
     
     if (port == 0 & device == RETRO_DEVICE_JOYPAD) {
         return current->pad[0][_id];
@@ -197,7 +194,7 @@ static void loadSaveFile(const char* path, int type)
         NSLog(@"Couldn't load save file.");
     }
     
-    NSLog(@"Loaded save file: %s", path);
+//    NSLog(@"Loaded save file: %s", path);
     
     fclose(file);
 }
@@ -219,11 +216,6 @@ static void writeSaveFile(const char* path, int type)
             fclose(file);
         }
     }
-}
-
--(BOOL)rendersToOpenGL;
-{
-    return NO;
 }
 
 #pragma mark - Input
@@ -414,11 +406,13 @@ static void writeSaveFile(const char* path, int type)
     }
 }
 
+#pragma mark Execution
+
 - (id)init
 {
     if((self = [super init]))
     {
-        videoBuffer = (uint16_t*)malloc(320 * 240 * 2);
+        videoBuffer = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
     }
     
 	_current = self;
@@ -447,8 +441,6 @@ static void writeSaveFile(const char* path, int type)
     }
 }
 
-#pragma mark Exectuion
-
 - (void)executeFrame
 {
     retro_run();
@@ -456,7 +448,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
-        // Copy default cartHW.cfg if need be
+    // Copy default cartHW.cfg if need be
     [self copyCartHWCFG];
 
 	memset(pad, 0, sizeof(int16_t) * 10);
@@ -480,8 +472,7 @@ static void writeSaveFile(const char* path, int type)
     retro_set_video_refresh(video_callback);
     retro_set_input_poll(input_poll_callback);
     retro_set_input_state(input_state_callback);
-    
-    
+        
     const char *fullPath = [path UTF8String];
     
     struct retro_game_info info = {NULL};
@@ -511,8 +502,6 @@ static void writeSaveFile(const char* path, int type)
         
         frameInterval = info.timing.fps;
         sampleRate = info.timing.sample_rate;
-        
-        //retro_set_controller_port_device(SNES_PORT_1, RETRO_DEVICE_JOYPAD);
         
         retro_get_region();
         
@@ -591,7 +580,11 @@ static void writeSaveFile(const char* path, int type)
 - (CGSize)bufferSize
 {
     return CGSizeMake(320, 240);
-    //return OEIntSizeMake(current->videoWidth, current->videoHeight);
+}
+
+- (CGSize)aspectSize
+{
+    return CGSizeMake(4, 3);
 }
 
 - (void)resetEmulation
@@ -601,6 +594,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)stopEmulation
 {
+    
     NSString *path = romName;
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
     
@@ -611,14 +605,14 @@ static void writeSaveFile(const char* path, int type)
         
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
         
-        NSLog(@"Trying to save SRAM");
+//        NSLog(@"Trying to save SRAM");
         
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
         
         writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
     }
     
-    NSLog(@"retro term");
+//    NSLog(@"retro term");
     retro_unload_game();
     retro_deinit();
     [super stopEmulation];
@@ -631,22 +625,17 @@ static void writeSaveFile(const char* path, int type)
 
 - (GLenum)pixelFormat
 {
-    return GL_RGB; // GL_RGB
+    return GL_RGB;
 }
 
 - (GLenum)pixelType
 {
-    return GL_UNSIGNED_SHORT_5_6_5; //GL_UNSIGNED_SHORT_5_6_5;
+    return GL_UNSIGNED_SHORT_5_6_5;
 }
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB; //GL_RGB5
-}
-
-- (double)audioSampleRate
-{
-    return sampleRate ? sampleRate : 44100;
+    return GL_RGB;
 }
 
 - (NSTimeInterval)frameInterval
@@ -654,14 +643,15 @@ static void writeSaveFile(const char* path, int type)
     return frameInterval ? frameInterval : 60;
 }
 
+#pragma mark Audio
+- (double)audioSampleRate
+{
+    return sampleRate;
+}
+
 - (NSUInteger)channelCount
 {
     return 2;
-}
-
-- (CGSize)aspectSize
-{
-    return CGSizeMake(4, 3);
 }
 
 #pragma mark - Save States

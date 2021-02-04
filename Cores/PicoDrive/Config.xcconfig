@@ -15,9 +15,9 @@
 // Use dyload to load and unload the framework on ARM64 platforms and preset a message to the user that the platform isn't support on armv7
 
 // Arm 32bit
-OTHER_CFLAGS[sdk=iphoneos*][arch=armv7] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
-OTHER_CFLAGS[sdk=iphoneos*][arch=armv7s] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
-OTHER_CFLAGS[sdk=iphoneos*][arch=armv6] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+//OTHER_CFLAGS[sdk=iphoneos*][arch=armv7] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+//OTHER_CFLAGS[sdk=iphoneos*][arch=armv7s] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+//OTHER_CFLAGS[sdk=iphoneos*][arch=armv6] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
 OTHER_CFLAGS[sdk=iphoneos*][arch=arm64] = $(inherited) -DDRC_SH2 -D_USE_CZ80
 
 OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -D_USE_CZ80

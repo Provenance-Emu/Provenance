@@ -7,9 +7,8 @@
  *
  * this is highly specialized, be careful if changing related C code!
  */
-#ifdef __arm__
-.extern Pico
-.extern PicoDraw2FB
+
+#include "pico_int_o32.h"
 
 @ define these constants in your include file:
 @ .equiv START_ROW, 		1
@@ -25,16 +24,16 @@
 .text
 .align 2
 
-.global BackFillFull @ int reg7
+@ void BackFillFull(void *dst, int reg7)
+
+.global BackFillFull
 
 BackFillFull:
     stmfd   sp!, {r4-r9,lr}
 
-    ldr     lr, =PicoDraw2FB      @ lr=PicoDraw2FB
-    mov     r0, r0, lsl #26
-    ldr     lr, [lr]
+    add     lr, r0, #328*8
+    mov     r0, r1, lsl #26
     mov     r0, r0, lsr #26
-    add     lr, lr, #328*8
 
     orr     r0, r0, r0, lsl #8
     orr     r0, r0, r0, lsl #16
@@ -67,15 +66,24 @@ BackFillFull:
 
     bne     .bff_loop
 
-    ldmfd   sp!, {r4-r9,r12}
-    bx      r12
+    ldmfd   sp!, {r4-r9,lr}
+    bx      lr
 
 .pool
 
 @ -------- some macros --------
 
+@ helpers
+.macro add_c24 d s c
+    add     \d, \s, #(\c & 0x00ff00)
+.if \c & 0x0000ff
+    add     \d, \d, #(\c & 0x0000ff)
+.endif
+.if \c & 0xff0000
+    add     \d, \d, #(\c & 0xff0000)
+.endif
+.endm
 
-@ helper
 @ TileLineSinglecol (r1=pdest, r2=pixels8, r3=pal) r4: scratch, r0: pixels8_old
 .macro TileLineSinglecol notsinglecol=0
     and     r2, r2, #0xf        @ #0x0000000f
@@ -343,19 +351,21 @@ BackFillFull:
 
 @ DrawLayerTiles(*hcache, *scrpos, (cells<<24)|(nametab<<9)|(vscroll&0x3ff)<<11|(shift[width]<<8)|planeend, (ymask<<24)|(planestart<<16)|[htab||hscroll]
 
-@static void DrawLayerFull(int plane, int *hcache, int planestart, int planeend)
+@ void DrawLayerFull(int plane, int *hcache, int planestart, int planeend,
+@                    struct PicoEState *est)
 
 .global DrawLayerFull
 
 DrawLayerFull:
+    ldr     r12,[sp]              @ est
     stmfd   sp!, {r4-r11,lr}
 
     mov     r6, r1        @ hcache
 
-    ldr     r11, =(Pico+0x22228)  @ Pico.video
-    ldr     r10, =(Pico+0x10000)  @ r10=Pico.vram
-    ldrb    r5, [r11, #13]        @ pvid->reg[13]
-    ldrb    r7, [r11, #11]
+    ldr     r11, [r12, #OFS_EST_Pico]
+    ldr     r10, [r12, #OFS_EST_PicoMem_vram]
+    ldrb    r5, [r11, #OFS_Pico_video_reg+13] @ pvid->reg[13]
+    ldrb    r7, [r11, #OFS_Pico_video_reg+11]
 
     sub     lr, r3, r2
     and     lr, lr, #0x00ff0000   @ lr=cells
@@ -365,7 +375,7 @@ DrawLayerFull:
     bic     r5, r5, #0x00ff0000   @ just in case
 
     tst     r7, #3                @ full screen scroll? (if ==0)
-    ldrb    r7, [r11, #16]        @ ??hh??ww
+    ldrb    r7, [r11, #OFS_Pico_video_reg+16] @ ??hh??ww
     ldreqh  r5, [r10, r5]
     biceq   r5, r5, #0x0000fc00   @ r5=hscroll (0-0x3ff)
     movne   r5, r5, lsr #1
@@ -396,22 +406,21 @@ DrawLayerFull:
 
     @ Find name table:
     tst     r0, r0
-    ldreqb  r4, [r11, #2]
+    ldreqb  r4, [r11, #OFS_Pico_video_reg+2]
     moveq   r4, r4, lsr #3
-    ldrneb  r4, [r11, #4]
+    ldrneb  r4, [r11, #OFS_Pico_video_reg+4]
     and     r4, r4, #7
     orr     lr, lr, r4, lsl #13   @ lr|=nametab_bits{3}<<13
 
-    ldr     r11, =PicoDraw2FB     @ r11=PicoDraw2FB
+    ldr     r11,[sp, #9*4]        @ est
     sub     r4, r9, #(START_ROW<<24)
-    ldr     r11, [r11]
+    ldr     r11, [r11, #OFS_EST_Draw2FB]
     mov     r4, r4, asr #24
     mov     r7, #328*8
     mla     r11, r4, r7, r11      @ scrpos+=8*328*(planestart-START_ROW);
 
     @ Get vertical scroll value:
-    add     r7, r10, #0x012000
-    add     r7, r7,  #0x000180    @ r7=Pico.vsram (Pico+0x22180)
+    add_c24 r7, r10, (OFS_PMEM_vsram-OFS_PMEM_vram)
     ldr     r7, [r7]
     tst     r0, r0
     moveq   r7, r7, lsl #22
@@ -571,8 +580,9 @@ DrawLayerFull:
 .pool
 
 
+@ void DrawTilesFromCacheF(int *hc, struct PicoEState *est)
 
-.global DrawTilesFromCacheF @ int *hc
+.global DrawTilesFromCacheF
 
 DrawTilesFromCacheF:
     stmfd   sp!, {r4-r10,lr}
@@ -580,14 +590,13 @@ DrawTilesFromCacheF:
     mov     r9, #0xff000000 @ r9=prevcode=-1
     mvn     r6, #0          @ r6=prevy=-1
 
-    ldr     r4, =PicoDraw2FB  @ r4=PicoDraw2FB
-    ldr     r1, [r0], #4    @ read y offset
-    ldr     r4, [r4]
+    ldr     r4, [r1, #OFS_EST_Draw2FB]
+    ldr     r2, [r0], #4    @ read y offset
     mov     r7, #328
-    mla     r1, r7, r1, r4
-    sub     r12, r1, #(328*8*START_ROW) @ r12=scrpos
+    mla     r2, r7, r2, r4
+    sub     r12, r2, #(328*8*START_ROW) @ r12=scrpos
 
-    ldr     r10, =(Pico+0x10000) @ r10=Pico.vram
+    ldr     r10, [r1, #OFS_EST_PicoMem_vram]
     mov     r8, r0               @ hc
     mov     r0, #0xf
 
@@ -666,16 +675,18 @@ DrawTilesFromCacheF:
 @ @@@@@@@@@@@@@@@
 
 @ (tile_start<<16)|row_start
-.global DrawWindowFull @ int tstart, int tend, int prio
+@ void DrawWindowFull(int start, int end, int prio, struct PicoEState *est)
+
+.global DrawWindowFull
 
 DrawWindowFull:
     stmfd   sp!, {r4-r11,lr}
 
-    ldr     r11, =(Pico+0x22228)  @ Pico.video
-    ldrb    r12, [r11, #3]        @ pvid->reg[3]
+    ldr     r11, [r3, #OFS_EST_Pico]
+    ldrb    r12, [r11, #OFS_Pico_video_reg+3] @ pvid->reg[3]
     mov     r12, r12, lsl #10
 
-    ldr     r4, [r11, #12]
+    ldr     r4, [r11, #OFS_Pico_video_reg+12]
     mov     r5, #1                @ nametab_step
     tst     r4, #1                @ 40 cell mode?
     andne   r12, r12, #0xf000     @ 0x3c<<10
@@ -686,11 +697,11 @@ DrawWindowFull:
     and     r4, r0, #0xff
     mla     r12, r5, r4, r12      @ nametab += nametab_step*start;
 
+    ldr     r10, [r3, #OFS_EST_PicoMem_vram]
     mov     r4, r0, lsr #16       @ r4=start_cell_h
     add     r7, r12, r4, lsl #1
 
     @ fetch the first code now
-    ldr     r10, =(Pico+0x10000)  @ lr=Pico.vram
     ldrh    r7, [r10, r7]
     cmp     r2, r7, lsr #15
     ldmnefd sp!, {r4-r11,pc}      @ hack: simply assume that whole window uses same priority
@@ -704,11 +715,10 @@ DrawWindowFull:
 
     mov     r9, #0xff000000       @ r9=prevcode=-1
 
-    ldr     r11, =PicoDraw2FB     @ r11=scrpos
+    ldr     r11, [r3, #OFS_EST_Draw2FB]
     and     r4, r0, #0xff
-    ldr     r11, [r11]
-    sub     r4, r4, #START_ROW
     add     r11, r11, #328*8
+    sub     r4, r4, #START_ROW
     add     r11, r11, #8
 
     mov     r7, #328*8
@@ -758,7 +768,8 @@ DrawWindowFull:
     tst     r9, #0x080000       @ hflip?
     bne     .dwf_hflip
 
-    @ Tile (r1=pdest, r3=pal, r9=prevcode, r10=Pico.vram) r2,r4,r7: scratch, r0=0xf
+    @ Tile (r1=pdest, r3=pal, r9=prevcode, r10=PicoMem.vram)
+    @ r2,r4,r7: scratch, r0=0xf
     Tile 0, 0
     b       .dwfloop
 
@@ -868,13 +879,15 @@ DrawWindowFull:
     cmp     r6, #(END_ROW*8+8)
     bge     52b
 
-    @ Tile (r1=pdest, r3=pal, r9=prevcode, r10=Pico.vram) r2,r4,r7: scratch, r0=0xf
+    @ Tile (r1=pdest, r3=pal, r9=prevcode, r10=PicoMem.vram)
+    @ r2,r4,r7: scratch, r0=0xf
     Tile \hflip, \vflip
     b       52b
 .endm
 
+@ void DrawSpriteFull(unsigned int *sprite, struct PicoEState *est)
 
-.global DrawSpriteFull @ unsigned int *sprite
+.global DrawSpriteFull
 
 DrawSpriteFull:
     stmfd   sp!, {r4-r11,lr}
@@ -902,9 +915,8 @@ DrawSpriteFull:
     and     r3, lr, #0x6000
     mov     r3, r3, lsr #9  @ r3=pal=((code>>9)&0x30);
 
-    ldr     r11, =PicoDraw2FB     @ r11=scrpos
-    ldr     r10, =(Pico+0x10000)  @ r10=Pico.vram
-    ldr     r11, [r11]
+    ldr     r11, [r1, #OFS_EST_Draw2FB]
+    ldr     r10, [r1, #OFS_EST_PicoMem_vram]
     sub     r1, r12, #(START_ROW*8)
     mov     r0, #328
     mla     r11, r1, r0, r11      @ scrpos+=(sy-START_ROW*8)*328;
@@ -935,4 +947,3 @@ DrawSpriteFull:
 .pool
 
 @ vim:filetype=armasm
-#endif

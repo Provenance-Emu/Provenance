@@ -1,4 +1,3 @@
-#ifdef __arm__
 ;@ Reesy's Z80 Emulator Version 0.001
 
 ;@ (c) Copyright 2004 Reesy, All rights reserved
@@ -13,7 +12,7 @@
       .global DrZ80Ver
 
       .equiv INTERRUPT_MODE,         0	;@0 = Use internal int handler, 1 = Use Mames int handler
-      .equiv FAST_Z80SP,             1	;@0 = Use mem functions for stack pointer, 1 = Use direct mem pointer
+      .equiv FAST_Z80SP,             0	;@0 = Use mem functions for stack pointer, 1 = Use direct mem pointer
       .equiv UPDATE_CONTEXT,         0
       .equiv DRZ80_XMAP,             1
       .equiv DRZ80_XMAP_MORE_INLINE, 1
@@ -213,6 +212,7 @@ z80_bad_jump:
     mov z80pc,r0
     ldmfd sp!,{r3,r12,pc}
 
+.if FAST_Z80SP
 z80_xmap_rebase_sp:
     ldr r1,[cpucontext,#z80_read8]
     sub r2,r0,#1
@@ -229,6 +229,7 @@ z80_xmap_rebase_sp:
     ldr pc,[cpucontext,#z80_rebaseSP]
     mov z80sp,r0
     ldmfd sp!,{r3,r12,pc}
+.endif @ FAST_Z80SP
  
 .endif @ DRZ80_XMAP
 
@@ -8095,4 +8096,4 @@ opcode_ED_BB:
 ;@     b end_loop
 
 ;@ vim:filetype=armasm
-#endif
+

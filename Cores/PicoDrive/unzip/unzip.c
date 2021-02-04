@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "zlib/zlib.h"
+#include <zlib.h>
 
 /* public globals */
 //int	gUnzipQuiet = 0;		/* flag controls error messages */
