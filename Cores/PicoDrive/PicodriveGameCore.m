@@ -218,6 +218,256 @@ static void writeSaveFile(const char* path, int type)
     }
 }
 
+#pragma mark Execution
+
+- (id)init
+{
+    if((self = [super init]))
+    {
+        videoBuffer = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
+    }
+    
+	_current = self;
+    
+	return self;
+}
+
+-(void)copyCartHWCFG {
+    NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+    NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
+    
+    NSString *systemPath = self.BIOSPath;
+    NSString *destinationPath = [systemPath stringByAppendingPathComponent:@"carthw.cfg"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if(![fm fileExistsAtPath:destinationPath]) {
+        NSError *error;
+        BOOL success = [fm copyItemAtPath:cartPath
+                                   toPath:destinationPath
+                                    error:&error];
+        if(!success) {
+            NSLog(@"Error copying carthw.cfg:\n %@", error.localizedDescription);
+        } else {
+            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
+        }
+    }
+}
+
+- (void)executeFrame
+{
+    retro_run();
+}
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+{
+    // Copy default cartHW.cfg if need be
+    [self copyCartHWCFG];
+
+	memset(pad, 0, sizeof(int16_t) * 10);
+    
+    const void *data;
+    size_t size;
+    romName = [path copy];
+    
+    //load cart, read bytes, get length
+    NSData* dataObj = [NSData dataWithContentsOfFile:[romName stringByStandardizingPath]];
+    if(dataObj == nil) return false;
+    size = [dataObj length];
+    data = (uint8_t*)[dataObj bytes];
+    const char *meta = NULL;
+    
+    retro_set_environment(environment_callback);
+	retro_init();
+	
+    retro_set_audio_sample(audio_callback);
+    retro_set_audio_sample_batch(audio_batch_callback);
+    retro_set_video_refresh(video_callback);
+    retro_set_input_poll(input_poll_callback);
+    retro_set_input_state(input_state_callback);
+        
+    const char *fullPath = [path UTF8String];
+    
+    struct retro_game_info info = {NULL};
+    info.path = fullPath;
+    info.data = data;
+    info.size = size;
+    info.meta = meta;
+    
+    if(retro_load_game(&info))
+    {
+        NSString *path = romName;
+        NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
+        
+        NSString *batterySavesDirectory = [self batterySavesPath];
+        
+        if([batterySavesDirectory length] != 0)
+        {
+            [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+            
+            NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+            
+            loadSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
+        }
+        
+        struct retro_system_av_info info;
+        retro_get_system_av_info(&info);
+        
+        frameInterval = info.timing.fps;
+        sampleRate = info.timing.sample_rate;
+        
+        retro_get_region();
+        
+        retro_run();
+        
+        return YES;
+    }
+
+    if (error) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"PicoDrive failed to load ROM.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+    }
+    return NO;
+    
+}
+
+- (void)loadSaveFile:(NSString *)path forType:(int)type
+{
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (size == 0 || !ramData)
+    {
+        return;
+    }
+    
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (!data || ![data length])
+    {
+        NSLog(@"Couldn't load save file.");
+    }
+    
+    [data getBytes:ramData length:size];
+}
+
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
+{
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (ramData && (size > 0))
+    {
+        retro_serialize(ramData, size);
+        NSData *data = [NSData dataWithBytes:ramData length:size];
+        BOOL success = [data writeToFile:path atomically:YES];
+        if (!success)
+        {
+            NSLog(@"Error writing save file");
+        }
+		return success;
+	} else {
+		return NO;
+	}
+}
+
+- (void)resetEmulation
+{
+    retro_reset();
+}
+
+- (void)stopEmulation
+{
+    
+    NSString *path = romName;
+    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
+    
+    NSString *batterySavesDirectory = [self batterySavesPath];
+    
+    if([batterySavesDirectory length] != 0)
+    {
+        
+        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+        
+//        NSLog(@"Trying to save SRAM");
+        
+        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+        
+        writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
+    }
+    
+//    NSLog(@"retro term");
+    retro_unload_game();
+    retro_deinit();
+    [super stopEmulation];
+}
+
+- (void)dealloc
+{
+    free(videoBuffer);
+}
+
+#pragma mark Video
+
+- (const void *)videoBuffer
+{
+    return videoBuffer;
+}
+
+- (CGRect)screenRect
+{
+    return CGRectMake(0, 0, videoWidth, videoHeight);
+}
+
+- (CGSize)bufferSize
+{
+    return CGSizeMake(320, 240);
+}
+
+- (CGSize)aspectSize
+{
+    return CGSizeMake(320, 240);
+}
+
+- (GLenum)pixelFormat
+{
+    return GL_RGB;
+}
+
+- (GLenum)pixelType
+{
+    return GL_UNSIGNED_SHORT_5_6_5;
+}
+
+- (GLenum)internalPixelFormat
+{
+    return GL_RGB;
+}
+
+- (NSTimeInterval)frameInterval
+{
+    return frameInterval ? frameInterval : 60;
+}
+
+#pragma mark Audio
+
+- (double)audioSampleRate
+{
+    return sampleRate;
+}
+
+- (NSUInteger)channelCount
+{
+    return 2;
+}
+
 #pragma mark - Input
 
 - (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
@@ -404,254 +654,6 @@ static void writeSaveFile(const char* path, int type)
         }
 #endif
     }
-}
-
-#pragma mark Execution
-
-- (id)init
-{
-    if((self = [super init]))
-    {
-        videoBuffer = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
-    }
-    
-	_current = self;
-    
-	return self;
-}
-
--(void)copyCartHWCFG {
-    NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
-    NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
-    
-    NSString *systemPath = self.BIOSPath;
-    NSString *destinationPath = [systemPath stringByAppendingPathComponent:@"carthw.cfg"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if(![fm fileExistsAtPath:destinationPath]) {
-        NSError *error;
-        BOOL success = [fm copyItemAtPath:cartPath
-                                   toPath:destinationPath
-                                    error:&error];
-        if(!success) {
-            NSLog(@"Error copying carthw.cfg:\n %@", error.localizedDescription);
-        } else {
-            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
-        }
-    }
-}
-
-- (void)executeFrame
-{
-    retro_run();
-}
-
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
-{
-    // Copy default cartHW.cfg if need be
-    [self copyCartHWCFG];
-
-	memset(pad, 0, sizeof(int16_t) * 10);
-    
-    const void *data;
-    size_t size;
-    romName = [path copy];
-    
-    //load cart, read bytes, get length
-    NSData* dataObj = [NSData dataWithContentsOfFile:[romName stringByStandardizingPath]];
-    if(dataObj == nil) return false;
-    size = [dataObj length];
-    data = (uint8_t*)[dataObj bytes];
-    const char *meta = NULL;
-    
-    retro_set_environment(environment_callback);
-	retro_init();
-	
-    retro_set_audio_sample(audio_callback);
-    retro_set_audio_sample_batch(audio_batch_callback);
-    retro_set_video_refresh(video_callback);
-    retro_set_input_poll(input_poll_callback);
-    retro_set_input_state(input_state_callback);
-        
-    const char *fullPath = [path UTF8String];
-    
-    struct retro_game_info info = {NULL};
-    info.path = fullPath;
-    info.data = data;
-    info.size = size;
-    info.meta = meta;
-    
-    if(retro_load_game(&info))
-    {
-        NSString *path = romName;
-        NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-        
-        NSString *batterySavesDirectory = [self batterySavesPath];
-        
-        if([batterySavesDirectory length] != 0)
-        {
-            [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-            
-            NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-            
-            loadSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-        }
-        
-        struct retro_system_av_info info;
-        retro_get_system_av_info(&info);
-        
-        frameInterval = info.timing.fps;
-        sampleRate = info.timing.sample_rate;
-        
-        retro_get_region();
-        
-        retro_run();
-        
-        return YES;
-    }
-
-    if (error) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"PicoDrive failed to load ROM.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
-    }
-    return NO;
-    
-}
-
-- (void)loadSaveFile:(NSString *)path forType:(int)type
-{
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
-    
-    if (size == 0 || !ramData)
-    {
-        return;
-    }
-    
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    if (!data || ![data length])
-    {
-        NSLog(@"Couldn't load save file.");
-    }
-    
-    [data getBytes:ramData length:size];
-}
-
-- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
-{
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
-    
-    if (ramData && (size > 0))
-    {
-        retro_serialize(ramData, size);
-        NSData *data = [NSData dataWithBytes:ramData length:size];
-        BOOL success = [data writeToFile:path atomically:YES];
-        if (!success)
-        {
-            NSLog(@"Error writing save file");
-        }
-		return success;
-	} else {
-		return NO;
-	}
-}
-
-#pragma mark Video
-- (const void *)videoBuffer
-{
-    return videoBuffer;
-}
-
-- (CGRect)screenRect
-{
-    return CGRectMake(0, 0, videoWidth, videoHeight);
-}
-
-- (CGSize)bufferSize
-{
-    return CGSizeMake(320, 240);
-}
-
-- (CGSize)aspectSize
-{
-    return CGSizeMake(4, 3);
-}
-
-- (void)resetEmulation
-{
-    retro_reset();
-}
-
-- (void)stopEmulation
-{
-    
-    NSString *path = romName;
-    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-    
-    NSString *batterySavesDirectory = [self batterySavesPath];
-    
-    if([batterySavesDirectory length] != 0)
-    {
-        
-        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-        
-//        NSLog(@"Trying to save SRAM");
-        
-        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-        
-        writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-    }
-    
-//    NSLog(@"retro term");
-    retro_unload_game();
-    retro_deinit();
-    [super stopEmulation];
-}
-
-- (void)dealloc
-{
-    free(videoBuffer);
-}
-
-- (GLenum)pixelFormat
-{
-    return GL_RGB;
-}
-
-- (GLenum)pixelType
-{
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat
-{
-    return GL_RGB;
-}
-
-- (NSTimeInterval)frameInterval
-{
-    return frameInterval ? frameInterval : 60;
-}
-
-#pragma mark Audio
-- (double)audioSampleRate
-{
-    return sampleRate;
-}
-
-- (NSUInteger)channelCount
-{
-    return 2;
 }
 
 #pragma mark - Save States
