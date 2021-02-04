@@ -2247,9 +2247,6 @@
 					"-falign-functions=2",
 					"-Wall",
 					"-DNDEBUG",
-					"-fno-expensive-optimizations",
-					"-DARM",
-					"-D__aarch64__=1",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
