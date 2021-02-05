@@ -273,6 +273,7 @@ extension MirroredSettings {
 
     public dynamic var controllerOpacity: Double = 0.8
     public dynamic var buttonTints = true
+    public dynamic var use8BitdoM30 = false
 
     #if os(tvOS)
         public dynamic var missingButtonsAlwaysOn = true

@@ -724,7 +724,40 @@ static bool environment_callback(unsigned cmd, void *data)
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            switch (buttonID) {
+            if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
+            {switch (buttonID) {
+                case PVGenesisButtonUp:
+                    return [[[gamepad leftThumbstick] up] value] > 0.5;
+                case PVGenesisButtonDown:
+                    return [[[gamepad leftThumbstick] down] value] > 0.5;
+                case PVGenesisButtonLeft:
+                    return [[[gamepad leftThumbstick] left] value] > 0.5;
+                case PVGenesisButtonRight:
+                    return [[[gamepad leftThumbstick] right] value] > 0.5;
+                case PVGenesisButtonA:
+                    return [[gamepad buttonA] isPressed];
+                case PVGenesisButtonB:
+                    return [[gamepad buttonB] isPressed];
+                case PVGenesisButtonC:
+                    return [[gamepad rightShoulder] isPressed];
+                case PVGenesisButtonX:
+                    return [[gamepad buttonX] isPressed];
+                case PVGenesisButtonY:
+                    return [[gamepad buttonY] isPressed];
+                case PVGenesisButtonZ:
+                    return [[gamepad leftShoulder] isPressed];
+                case PVGenesisButtonMode:
+                    return [[gamepad buttonOptions] isPressed];
+                case PVGenesisButtonStart:
+#if TARGET_OS_TV
+                    return [[gamepad buttonMenu] isPressed];
+#else
+                    return [[gamepad rightTrigger] isPressed];
+#endif
+                default:
+                    break;
+            }}
+            { switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
                 case PVGenesisButtonDown:
@@ -745,11 +778,13 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
                     return [[gamepad rightShoulder] isPressed];
+                case PVGenesisButtonMode:
+                    return [[gamepad leftTrigger] isPressed];
                 case PVGenesisButtonStart:
                     return [[gamepad rightTrigger] isPressed];
                 default:
-                    break;
-            }
+                   break;
+            }}
             
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
