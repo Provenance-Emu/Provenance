@@ -36,6 +36,8 @@
 @interface PicodriveGameCore () <PVSega32XSystemResponderClient>
 {
     uint16_t *videoBuffer;
+    uint16_t *videoBufferA;
+    uint16_t *videoBufferB;
     int videoWidth, videoHeight;
     int16_t pad[2][12];
     NSString *romName;
@@ -82,6 +84,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
         
         memcpy(dst, src, sizeof(uint16_t)*width);
     });
+    current = nil;
 }
 
 static void input_poll_callback(void)
@@ -225,6 +228,8 @@ static void writeSaveFile(const char* path, int type)
     if((self = [super init]))
     {
         videoBuffer = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
+        videoBufferA = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
+        videoBufferB = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
     }
     
 	_current = self;
@@ -278,6 +283,23 @@ static void writeSaveFile(const char* path, int type)
     
     retro_set_environment(environment_callback);
 	retro_init();
+    
+    if (videoBufferA) {
+        free(videoBufferA);
+    }
+    videoBufferA = NULL;
+
+    if (videoBufferB) {
+        free(videoBufferB);
+    }
+    videoBufferB = NULL;
+
+    videoBuffer = NULL;
+    
+    videoBufferA = (unsigned char *)malloc(320 * 240 * 2);
+    videoBufferB = (unsigned char *)malloc(320 * 240 * 2);
+    
+    videoBuffer = (short unsigned int *)videoBufferA;
 	
     retro_set_audio_sample(audio_callback);
     retro_set_audio_sample_batch(audio_batch_callback);
@@ -395,15 +417,12 @@ static void writeSaveFile(const char* path, int type)
     {
         
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-        
-//        NSLog(@"Trying to save SRAM");
-        
+            
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
         
         writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
     }
     
-//    NSLog(@"retro term");
     retro_unload_game();
     retro_deinit();
     [super stopEmulation];
@@ -416,9 +435,27 @@ static void writeSaveFile(const char* path, int type)
 
 #pragma mark Video
 
+- (void)swapBuffers
+{
+    if (videoBuffer == (short unsigned int *)videoBufferA)
+    {
+        videoBuffer = videoBufferA;
+        videoBuffer = (short unsigned int *)videoBufferB;
+    }
+    else
+    {
+        videoBuffer = videoBufferB;
+        videoBuffer = (short unsigned int *)videoBufferA;
+    }
+}
+
 - (const void *)videoBuffer
 {
     return videoBuffer;
+}
+
+-(BOOL)isDoubleBuffered {
+    return NO;
 }
 
 - (CGRect)screenRect
