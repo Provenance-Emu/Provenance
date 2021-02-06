@@ -1511,7 +1511,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
     return 0;
 }
-
+#pragma mark SS Buttons
 - (NSInteger)SSValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
@@ -1606,7 +1606,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
     return 0;
 }
-
+#pragma mark GB Buttons
 - (NSInteger)GBValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *gamepad = [controller extendedGamepad];
@@ -1712,7 +1712,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
 	return 0;
 }
-
+#pragma mark GBA Buttons
 - (NSInteger)GBAValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *gamepad = [controller extendedGamepad];
@@ -1800,7 +1800,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
 	return 0;
 }
-
+#pragma mark SNES Buttons
 - (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *gamepad = [controller extendedGamepad];
@@ -1892,7 +1892,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
 	return 0;
 }
-
+#pragma mark NES Buttons
 - (NSInteger)NESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
 	if ([controller extendedGamepad]) {
 		GCExtendedGamepad *gamepad = [controller extendedGamepad];
@@ -1972,7 +1972,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
 	return 0;
 }
-
+#pragma mark NEOGEOPOCKET Buttons
 - (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
@@ -2048,15 +2048,53 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
     return 0;
 }
-
+#pragma mark PCE Buttons
 - (NSInteger)PCEValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        switch (buttonID) {
+        if (PVSettingsModel.shared.use8BitdoM30) // M30 Mode
+        {switch (buttonID) {
 				// D-Pad
 			case PVPCEButtonUp:
+                return [[[gamepad leftThumbstick] up] value] > 0.1;
+            case PVPCEButtonDown:
+                return [[[gamepad leftThumbstick] down] value] > 0.1;
+            case PVPCEButtonLeft:
+                return [[[gamepad leftThumbstick] left] value] > 0.1;
+            case PVPCEButtonRight:
+                return [[[gamepad leftThumbstick] right] value] > 0.1;
+
+				// Select + Run
+            case PVPCEButtonSelect:
+                return [[gamepad leftTrigger] isPressed];
+            case PVPCEButtonRun:
+                return [[gamepad rightTrigger] isPressed];
+
+                // NEC Avenue 6 button layout
+            case PVPCEButtonButton1:
+				return [[gamepad rightShoulder] isPressed];
+			case PVPCEButtonButton2:
+				return [[gamepad buttonB] isPressed];
+			case PVPCEButtonButton3:
+                return [[gamepad buttonA] isPressed];
+            case PVPCEButtonButton4:
+                return [[gamepad buttonX] isPressed];
+            case PVPCEButtonButton5:
+                return [[gamepad buttonY] isPressed];
+            case PVPCEButtonButton6:
+                return [[gamepad leftShoulder] isPressed];
+
+                // Toggle to the 6 Button Mode when the Extended Buttons are pressed
+            case PVPCEButtonMode:
+                return [[gamepad buttonB] isPressed] || [[gamepad buttonX] isPressed] || [[gamepad buttonY] isPressed] || [[gamepad leftShoulder] isPressed] || [[gamepad buttonA] isPressed] || [[gamepad rightShoulder] isPressed];
+            default:
+                break;
+        }}
+        {switch (buttonID) { // Non M30 mode
+                // D-Pad
+            case PVPCEButtonUp:
                 return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] value] > 0.1;
             case PVPCEButtonDown:
                 return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] value] > 0.1;
@@ -2065,19 +2103,19 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPCEButtonRight:
                 return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] value] > 0.1;
 
-				// Standard Buttons
-			case PVPCEButtonButton1:
-				return [[gamepad buttonB] isPressed];
-			case PVPCEButtonButton2:
-				return [[gamepad buttonA] isPressed];
+                // Standard Buttons
+            case PVPCEButtonButton1:
+                return [[gamepad buttonB] isPressed];
+            case PVPCEButtonButton2:
+                return [[gamepad buttonA] isPressed];
 
-			case PVPCEButtonSelect:
-				return [[gamepad leftTrigger] isPressed];
-			case PVPCEButtonRun:
-				return [[gamepad rightTrigger] isPressed];
+            case PVPCEButtonSelect:
+                return [[gamepad leftTrigger] isPressed];
+            case PVPCEButtonRun:
+                return [[gamepad rightTrigger] isPressed];
 
-				// Extended Buttons
-			case PVPCEButtonButton3:
+                // Extended Buttons
+            case PVPCEButtonButton3:
                 return [[gamepad buttonX] isPressed];
             case PVPCEButtonButton4:
                 return [[gamepad leftShoulder] isPressed];
@@ -2091,7 +2129,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[gamepad buttonX] isPressed] || [[gamepad leftShoulder] isPressed] || [[gamepad buttonY] isPressed] || [[gamepad rightShoulder] isPressed];
             default:
                 break;
-        }
+        }}
     }
     else if ([controller gamepad])
     {
@@ -2164,7 +2202,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     
     return 0;
 }
-
+#pragma mark PSX Buttons
 - (float)PSXAnalogControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
@@ -2337,7 +2375,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
     return 0;
 }
-
+#pragma mark VirtualBoy Buttons
 - (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
@@ -2436,7 +2474,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
     return 0;
 }
-
+#pragma mark Wonderswan Buttons
 - (NSInteger)WonderSwanControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
