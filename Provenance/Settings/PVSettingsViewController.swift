@@ -194,13 +194,23 @@ final class PVSettingsViewController: PVQuickTableViewController {
             controllerRows.append(contentsOf: [
                 PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
                 PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
-                PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration)
-            ])
+                PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration),
+                PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive and Sega/Mega CD."), key: \PVSettingsModel.use8BitdoM30)
+            ]
+        
+        )
         #endif
         controllerRows.append(contentsOf: [
             SegueNavigationRow(text: "Controllers", detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
             SegueNavigationRow(text: "iCade Controller", detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
+            })
+        ])
+        controllerRows.append(contentsOf: [
+        PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive and Sega/Mega CD."),  key: \PVSettingsModel.use8BitdoM30,
+            customization: { cell, _ in
+            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+            cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
             })
         ])
 
