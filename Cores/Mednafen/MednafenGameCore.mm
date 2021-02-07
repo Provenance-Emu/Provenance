@@ -1516,7 +1516,42 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        switch (buttonID) {
+        if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
+            { switch (buttonID) {
+                case PVSaturnButtonUp:
+                    return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] value] > 0.1;
+                case PVSaturnButtonDown:
+                    return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] value] > 0.1;
+                case PVSaturnButtonLeft:
+                    return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] value] > 0.1;
+                case PVSaturnButtonRight:
+                    return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] value] > 0.1;
+                case PVSaturnButtonA:
+                    return [[gamepad buttonA] isPressed];
+                case PVSaturnButtonB:
+                    return [[gamepad buttonB] isPressed];
+                case PVSaturnButtonC:
+                    return [[gamepad rightShoulder] isPressed];
+                case PVSaturnButtonX:
+                    return [[gamepad buttonX] isPressed];
+                case PVSaturnButtonY:
+                    return [[gamepad buttonY] isPressed];
+                case PVSaturnButtonZ:
+                    return [[gamepad leftShoulder] isPressed];
+                case PVSaturnButtonL:
+                    return [[gamepad leftTrigger] isPressed];
+                case PVSaturnButtonStart:
+#if TARGET_OS_TV
+                    return [[gamepad buttonMenu] isPressed];
+                case PVSaturnButtonR:
+                    return [[gamepad rightTrigger] isPressed];
+#else
+                    return [[gamepad rightTrigger] isPressed]; // no Access to the R Shoulder Button on the Saturn Controller using the M30 due to Start Mismapping on iOS, for now
+#endif
+                default:
+                break;
+            }}
+        { switch (buttonID) {
             case PVSaturnButtonUp:
                 return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
             case PVSaturnButtonDown:
@@ -1546,7 +1581,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[gamepad rightTrigger] isPressed];
             default:
                 break;
-        }
+        }}
     } else if ([controller gamepad]) {
         GCGamepad *gamepad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
