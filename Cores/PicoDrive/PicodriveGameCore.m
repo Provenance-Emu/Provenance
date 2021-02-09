@@ -566,13 +566,13 @@ static void writeSaveFile(const char* path, int type)
             case PVSega32XButtonRight:
                 return [[[gamepad leftThumbstick] right] value] > 0.5;
             case PVSega32XButtonA:
-                return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonB:
                 return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonC:
+            case PVSega32XButtonB:
                 return [[gamepad buttonB] isPressed];
-            case PVSega32XButtonX:
+            case PVSega32XButtonC:
                 return [[gamepad rightShoulder] isPressed];
+            case PVSega32XButtonX:
+                return [[gamepad buttonX] isPressed];
             case PVSega32XButtonY:
                 return [[gamepad buttonY] isPressed];
             case PVSega32XButtonZ:
@@ -581,7 +581,7 @@ static void writeSaveFile(const char* path, int type)
                 return [[gamepad leftTrigger] isPressed];
             case PVSega32XButtonStart:
 #if TARGET_OS_TV
-                return [[gamepad buttonMenu] isPressed];
+                return [[gamepad buttonMenu] isPressed]?:[[gamepad rightTrigger] isPressed];
 #else
                 return [[gamepad rightTrigger] isPressed];
 #endif
@@ -598,13 +598,13 @@ static void writeSaveFile(const char* path, int type)
             case PVSega32XButtonRight:
                 return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
             case PVSega32XButtonA:
-                return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonB:
                 return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonC:
+            case PVSega32XButtonB:
                 return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonX:
+            case PVSega32XButtonC:
                 return [[gamepad buttonB] isPressed];
+            case PVSega32XButtonX:
+                return [[gamepad buttonY] isPressed];
             case PVSega32XButtonY:
                 return [[gamepad leftShoulder] isPressed];
             case PVSega32XButtonZ:
