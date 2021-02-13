@@ -155,6 +155,8 @@
 		C610F1AD25CF2A0A006D4A63 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
 		C610F1AE25CF2A0A006D4A63 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
 		C610F1AF25CF2A0A006D4A63 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
+		C6815C7125D870A400CFF7C9 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C6815C7025D870A300CFF7C9 /* Config.xcconfig */; };
+		C6815C7225D870A400CFF7C9 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C6815C7025D870A300CFF7C9 /* Config.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -582,6 +584,7 @@
 		C604DF5125C7C7E500E1FBE5 /* eeprom_spi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eeprom_spi.c; sourceTree = "<group>"; };
 		C604DF7425C7CB6B00E1FBE5 /* libretro.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
 		C604DF7525C7CB6B00E1FBE5 /* libretro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		C6815C7025D870A300CFF7C9 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -611,6 +614,7 @@
 		089C166AFE841209C02AAC07 /* GenesisPlus */ = {
 			isa = PBXGroup;
 			children = (
+				C6815C7025D870A300CFF7C9 /* Config.xcconfig */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -1562,6 +1566,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B371709E1D6CB559005D1EFF /* carthw.cfg in Resources */,
+				C6815C7125D870A400CFF7C9 /* Config.xcconfig in Resources */,
 				B3547B5D205858D800CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1571,6 +1576,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B371709F1D6CB55A005D1EFF /* carthw.cfg in Resources */,
+				C6815C7225D870A400CFF7C9 /* Config.xcconfig in Resources */,
 				B3547B5E205858D800CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
