@@ -13,6 +13,7 @@ struct patch_inst
 	unsigned int addr;
 	unsigned short data;
 	unsigned short data_old;
+	unsigned char comp;
 };
 
 extern struct patch_inst *PicoPatches;

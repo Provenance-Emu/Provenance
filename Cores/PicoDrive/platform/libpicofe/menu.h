@@ -117,6 +117,7 @@ extern void *g_menubg_ptr;
 extern void *g_menuscreen_ptr;
 extern int g_menuscreen_w;
 extern int g_menuscreen_h;
+extern int g_menuscreen_pp; // pitch (in pixels)
 
 extern int g_autostateld_opt;
 

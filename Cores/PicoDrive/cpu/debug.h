@@ -26,6 +26,6 @@ int pdb_net_connect(const char *host, const char *port);
 
 #else
 
-static inline int pdb_net_connect(const char *host, const char *port) {return 0;}
+static __inline int pdb_net_connect(const char *host, const char *port) {return 0;}
 
 #endif

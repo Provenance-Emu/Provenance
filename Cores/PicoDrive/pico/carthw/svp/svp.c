@@ -30,8 +30,9 @@
 #include <cpu/drc/cmn.h>
 #include "compiler.h"
 
+#define SVP_CYCLES_LINE 850
+
 svp_t *svp = NULL;
-int PicoSVPCycles = 850; // cycles/line, just a guess
 static int svp_dyn_ready = 0;
 
 /* save state stuff */
@@ -57,7 +58,7 @@ static void PicoSVPReset(void)
 	memcpy(svp->iram_rom + 0x800, Pico.rom + 0x800, 0x20000 - 0x800);
 	ssp1601_reset(&svp->ssp1601);
 #ifdef _SVP_DRC
-	if ((PicoOpt & POPT_EN_DRC) && svp_dyn_ready)
+	if ((PicoIn.opt & POPT_EN_DRC) && svp_dyn_ready)
 		ssp1601_dyn_reset(&svp->ssp1601);
 #endif
 }
@@ -77,37 +78,34 @@ static void PicoSVPLine(void)
 #endif
 
 #ifdef _SVP_DRC
-	if ((PicoOpt & POPT_EN_DRC) && svp_dyn_ready)
-		ssp1601_dyn_run(PicoSVPCycles * count);
+	if ((PicoIn.opt & POPT_EN_DRC) && svp_dyn_ready)
+		ssp1601_dyn_run(SVP_CYCLES_LINE * count);
 	else
 #endif
 	{
-		ssp1601_run(PicoSVPCycles * count);
+		ssp1601_run(SVP_CYCLES_LINE * count);
 		svp_dyn_ready = 0; // just in case
 	}
 
 	// test mode
-	//if (Pico.m.frame_count == 13) PicoPad[0] |= 0xff;
+	//if (Pico.m.frame_count == 13) PicoIn.pad[0] |= 0xff;
 }
 
 
-static int PicoSVPDma(unsigned int source, int len, unsigned short **srcp, unsigned short **limitp)
+static int PicoSVPDma(unsigned int source, int len, unsigned short **base, unsigned int *mask)
 {
 	if (source < Pico.romsize) // Rom
 	{
-		source -= 2;
-		*srcp = (unsigned short *)(Pico.rom + (source&~1));
-		*limitp = (unsigned short *)(Pico.rom + Pico.romsize);
-		return 1;
+		*base = (unsigned short *)(Pico.rom + (source & 0xfe0000));
+		*mask = 0x1ffff;
+		return source - 2;
 	}
 	else if ((source & 0xfe0000) == 0x300000)
 	{
 		elprintf(EL_VDPDMA|EL_SVP, "SVP DmaSlow from %06x, len=%i", source, len);
-		source &= 0x1fffe;
-		source -= 2;
-		*srcp = (unsigned short *)(svp->dram + source);
-		*limitp = (unsigned short *)(svp->dram + sizeof(svp->dram));
-		return 1;
+		*base = (unsigned short *)svp->dram;
+		*mask = 0x1ffff;
+		return source - 2;
 	}
 	else
 		elprintf(EL_VDPDMA|EL_SVP|EL_ANOMALY, "SVP FIXME unhandled DmaSlow from %06x, len=%i", source, len);
@@ -151,7 +149,7 @@ void PicoSVPStartup(void)
 	// init SVP compiler
 	svp_dyn_ready = 0;
 #ifdef _SVP_DRC
-	if (PicoOpt & POPT_EN_DRC) {
+	if (PicoIn.opt & POPT_EN_DRC) {
 		if (ssp1601_dyn_startup())
 			return;
 		svp_dyn_ready = 1;
@@ -170,6 +168,6 @@ void PicoSVPStartup(void)
 	svp_states[1].ptr = svp->dram;
 	svp_states[2].ptr = &svp->ssp1601;
 	carthw_chunks = svp_states;
-	PicoAHW |= PAHW_SVP;
+	PicoIn.AHW |= PAHW_SVP;
 }
 

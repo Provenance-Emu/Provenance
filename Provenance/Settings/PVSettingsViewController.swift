@@ -195,7 +195,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
                 PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
                 PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration),
-                PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
+                PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
             ]
         
         )
@@ -206,14 +206,16 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
             })
         ])
+        #if os(tvOS)
         controllerRows.append(contentsOf: [
-        PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD and the PC Engine."),  key: \PVSettingsModel.use8BitdoM30,
+            PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."),  key: \PVSettingsModel.use8BitdoM30,
             customization: { cell, _ in
             cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
             cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
             })
         ])
-
+        #endif
+        
         let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
 
         // Game Library

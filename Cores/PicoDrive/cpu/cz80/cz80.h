@@ -11,6 +11,12 @@
 #ifndef CZ80_H
 #define CZ80_H
 
+// uintptr_t
+#include <stdlib.h>
+#ifndef _MSC_VER
+#include <stdint.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,7 +50,7 @@ extern "C" {
 #endif
 
 #ifndef FPTR
-#define FPTR	unsigned long
+#define FPTR	uintptr_t
 #endif
 
 /*************************************/

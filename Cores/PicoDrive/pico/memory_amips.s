@@ -8,6 +8,8 @@
 
 # OUT OF DATE
 
+#include "pico_int_o32.h"
+
 .set noreorder
 .set noat
 
@@ -184,8 +186,8 @@ m_read32_table:
 
 
 PicoMemReset:
-    lui     $v1, %hi(Pico+0x22204)
-    lw      $v1, %lo(Pico+0x22204)($v1)  # romsize
+    lui     $v1, %hi(Pico+OFS_Pico_romsize)
+    lw      $v1, %lo(Pico+OFS_Pico_romsize)($v1)  # romsize
     lui     $t0, 8
     addu    $v1, $t0
     addiu   $v1, -1
@@ -235,12 +237,11 @@ m_read_neg1:
     jr      $ra
     addiu   $v0, $0, 0xffff
 
-# loads &Pico.rom to $t3
+# loads &Pico to $t3
 .macro m_read_rom_try_sram is200000 size
-    lui     $t2, %hi(SRam)
-    addiu   $t2, %lo(SRam)
-    lui     $t3, %hi(Pico+0x22200)
-    lw      $t1, 8($t2)     # SRam.end
+    lui     $t2, %hi(Pico)
+    addiu   $t2, %lo(Pico)
+    lw      $t1, OFS_Pico_sv_end($t2)
 .if \is200000
     ins     $a0, $0,  19, 13
     lui     $t4, 0x20
@@ -248,12 +249,11 @@ m_read_neg1:
 .endif
     subu    $t4, $a0, $t1
     bgtz    $t4, 1f
-    addiu   $t3, %lo(Pico+0x22200)
-    lw      $t1, 4($t2)     # SRam.start
+    lw      $t1, OFS_Pico_sv_start($t2)
     subu    $t4, $t1, $a0
     bgtz    $t4, 1f
     nop
-    lb      $t1, 0x11($t3)  # Pico.m.sram_reg
+    lb      $t1, OFS_Pico_m_sram_reg($t2)
     andi    $t4, $t1, 5
     beqz    $t4, 1f
     nop
@@ -288,8 +288,8 @@ m_read_neg1:
 .endm
 
 .macro m_read8_rom sect
-    lui     $t0, %hi(Pico+0x22200)
-    lw      $t0, %lo(Pico+0x22200)($t0)  # rom
+    lui     $t0, %hi(Pico+OFS_Pico_rom)
+    lw      $t0, %lo(Pico+OFS_Pico_rom)($t0)  # rom
     xori    $a0, 1
     ins     $a0, $0,  19, 13
 .if \sect
@@ -388,15 +388,15 @@ m_read8_misc_io:
     nop
 
 m_read8_misc_hwreg:
-    lui     $v0, %hi(Pico+0x2220f)
+    lui     $v0, %hi(Pico+OFS_Pico_m_hardware)
     jr      $ra
-    lb      $v0, %lo(Pico+0x2220f)($v0)
+    lb      $v0, %lo(Pico+OFS_Pico_m_hardware)($v0)
 
 m_read8_misc_ioports:
-    lui     $v0, %hi(Pico+0x22000)
+    lui     $v0, %hi(PicoMem+0x22000)
     ins     $v0, $t0, 0, 5
     jr      $ra
-    lb      $v0, %lo(Pico+0x22000)($v0)
+    lb      $v0, %lo(PicoMem+0x22000)($v0)
 
 m_read8_misc2:
     lui     $t0, 0xa1
@@ -423,10 +423,10 @@ m_read8_z80_misc:
     nop
 
 m_read8_fake_ym2612:
-    lb      $v0, %lo(Pico+0x22208)($t0) # Pico.m.rotate
+    lb      $v0, %lo(Pico+OFS_Pico_m_rotate)($t0)
     addiu   $t1, $v0, 1
     jr      $ra
-    sb      $t1, %lo(Pico+0x22208)($t0)
+    sb      $t1, %lo(Pico+OFS_Pico_m_rotate)($t0)
 
 # delay slot friendly
 .macro m_read8_call16 funcname is_func_ptr=0
@@ -468,15 +468,15 @@ m_read8_vdp:
     or      $t0, $t1
     bnez    $t0, m_read_null # invalid address
     nop
-    j       PicoVideoRead8
+    j       PicoRead8_vdp
     nop
 
 m_read8_ram:
-    lui     $t0, %hi(Pico)
+    lui     $t0, %hi(PicoMem)
     ins     $t0, $a0, 0, 16
     xori    $t0, 1
     jr      $ra
-    lb      $v0, %lo(Pico)($t0)
+    lb      $v0, %lo(PicoMem)($t0)
 
 m_read8_above_rom:
     # might still be SRam (Micro Machines, HardBall '95)
@@ -486,8 +486,8 @@ m_read8_above_rom:
 # #############################################################################
 
 .macro m_read16_rom sect
-    lui     $t0, %hi(Pico+0x22200)
-    lw      $t0, %lo(Pico+0x22200)($t0)  # rom
+    lui     $t0, %hi(Pico+OFS_Pico_rom)
+    lw      $t0, %lo(Pico+OFS_Pico_rom)($t0)  # rom
     ins     $a0, $0,   0,  1
     ins     $a0, $0,  19, 13
 .if \sect
@@ -583,11 +583,11 @@ m_read16_vdp:
     nop
 
 m_read16_ram:
-    lui     $t0, %hi(Pico)
+    lui     $t0, %hi(PicoMem)
     ins     $a0, $0, 0, 1
     ins     $t0, $a0, 0, 16
     jr      $ra
-    lh      $v0, %lo(Pico)($t0)
+    lh      $v0, %lo(PicoMem)($t0)
 
 m_read16_above_rom:
     # might still be SRam
@@ -600,8 +600,8 @@ m_read16_above_rom:
 # #############################################################################
 
 .macro m_read32_rom sect
-    lui     $t0, %hi(Pico+0x22200)
-    lw      $t0, %lo(Pico+0x22200)($t0)  # rom
+    lui     $t0, %hi(Pico+OFS_Pico_rom)
+    lw      $t0, %lo(Pico+OFS_Pico_rom)($t0)  # rom
     ins     $a0, $0,   0,  1
     ins     $a0, $0,  19, 13
 .if \sect
@@ -723,11 +723,11 @@ m_read32_vdp:
     m_read32_call16 PicoVideoRead
 
 m_read32_ram:
-    lui     $t0, %hi(Pico)
+    lui     $t0, %hi(PicoMem)
     ins     $a0, $0, 0, 1
     ins     $t0, $a0, 0, 16
-    lh      $v1, %lo(Pico)($t0)
-    lh      $v0, %lo(Pico+2)($t0)
+    lh      $v1, %lo(PicoMem)($t0)
+    lh      $v0, %lo(PicoMem+2)($t0)
     jr      $ra
     ins     $v0, $v1, 16, 16
 
@@ -771,11 +771,11 @@ PicoWriteRomHW_SSF2: # u32 a, u32 d
     bnez    $a0, pwr_banking
 
     # sram register
-    lui     $t0, %hi(Pico+0x22211)
-    lb      $t1, %lo(Pico+0x22211)($t0) # Pico.m.sram_reg
+    lui     $t0, %hi(Pico+OFS_Pico_m_sram_reg)
+    lb      $t1, %lo(Pico+OFS_Pico_m_sram_reg)($t0) # Pico.m.sram_reg
     ins     $t1, $a1, 0, 2
     jr      $ra
-    sb      $t1, %lo(Pico+0x22211)($t0)
+    sb      $t1, %lo(Pico+OFS_Pico_m_sram_reg)($t0)
 
 pwr_banking:
     andi    $a1, 0x1f

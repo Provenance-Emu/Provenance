@@ -42,14 +42,14 @@ static void EEPROM_write_do(unsigned int d) // ???? ??la (l=SCL, a=SDA)
   {
     // we are started and SCL went high - next cycle
     scyc++; // pre-increment
-    if(SRam.eeprom_type) {
+    if(Pico.sv.eeprom_type) {
       // X24C02+
       if((ssa&1) && scyc == 18) {
         scyc = 9;
         saddr++; // next address in read mode
-        /*if(SRam.eeprom_type==2) saddr&=0xff; else*/ saddr&=0x1fff; // mask
+        /*if(Pico.sv.eeprom_type==2) saddr&=0xff; else*/ saddr&=0x1fff; // mask
       }
-      else if(SRam.eeprom_type == 2 && scyc == 27) scyc = 18;
+      else if(Pico.sv.eeprom_type == 2 && scyc == 27) scyc = 18;
       else if(scyc == 36) scyc = 27;
     } else {
       // X24C01
@@ -63,29 +63,29 @@ static void EEPROM_write_do(unsigned int d) // ???? ??la (l=SCL, a=SDA)
   else if((sreg & 8) && (sreg & 2) && !(d&2))
   {
     // we are started and SCL went low (falling edge)
-    if(SRam.eeprom_type) {
+    if(Pico.sv.eeprom_type) {
       // X24C02+
       if(scyc == 9 || scyc == 18 || scyc == 27); // ACK cycles
-      else if( (SRam.eeprom_type == 3 && scyc > 27) || (SRam.eeprom_type == 2 && scyc > 18) ) {
+      else if( (Pico.sv.eeprom_type == 3 && scyc > 27) || (Pico.sv.eeprom_type == 2 && scyc > 18) ) {
         if(!(ssa&1)) {
           // data write
-          unsigned char *pm=SRam.data+saddr;
+          unsigned char *pm=Pico.sv.data+saddr;
           *pm <<= 1; *pm |= d&1;
           if(scyc == 26 || scyc == 35) {
             saddr=(saddr&~0xf)|((saddr+1)&0xf); // only 4 (?) lowest bits are incremented
             elprintf(EL_EEPROM, "eeprom: write done, addr inc to: %x, last byte=%02x", saddr, *pm);
           }
-          SRam.changed = 1;
+          Pico.sv.changed = 1;
         }
       } else if(scyc > 9) {
         if(!(ssa&1)) {
           // we latch another addr bit
           saddr<<=1;
-          if(SRam.eeprom_type == 2) saddr&=0xff; else saddr&=0x1fff; // mask
+          if(Pico.sv.eeprom_type == 2) saddr&=0xff; else saddr&=0x1fff; // mask
           saddr|=d&1;
           if(scyc==17||scyc==26) {
             elprintf(EL_EEPROM, "eeprom: addr reg done: %x", saddr);
-            if(scyc==17&&SRam.eeprom_type==2) { saddr&=0xff; saddr|=(ssa<<7)&0x700; } // add device bits too
+            if(scyc==17&&Pico.sv.eeprom_type==2) { saddr&=0xff; saddr|=(ssa<<7)&0x700; } // add device bits too
           }
         }
       } else {
@@ -99,13 +99,13 @@ static void EEPROM_write_do(unsigned int d) // ???? ??la (l=SCL, a=SDA)
       else if(scyc > 9) {
         if(!(saddr&1)) {
           // data write
-          unsigned char *pm=SRam.data+(saddr>>1);
+          unsigned char *pm=Pico.sv.data+(saddr>>1);
           *pm <<= 1; *pm |= d&1;
           if(scyc == 17) {
             saddr=(saddr&0xf9)|((saddr+2)&6); // only 2 lowest bits are incremented
             elprintf(EL_EEPROM, "eeprom: write done, addr inc to: %x, last byte=%02x", saddr>>1, *pm);
           }
-          SRam.changed = 1;
+          Pico.sv.changed = 1;
         }
       } else {
         // we latch another addr bit
@@ -129,11 +129,11 @@ static void EEPROM_upd_pending(unsigned int d)
   sreg &= ~0xc0;
 
   // SCL
-  d1 = (d >> SRam.eeprom_bit_cl) & 1;
+  d1 = (d >> Pico.sv.eeprom_bit_cl) & 1;
   sreg |= d1 << 7;
 
   // SDA in
-  d1 = (d >> SRam.eeprom_bit_in) & 1;
+  d1 = (d >> Pico.sv.eeprom_bit_in) & 1;
   sreg |= d1 << 6;
 
   Pico.m.eeprom_status = (unsigned char) sreg;
@@ -190,23 +190,23 @@ unsigned int EEPROM_read(void)
   } else if (scyc > 9 && scyc < 18) {
     // started and first command word received
     shift = 17-scyc;
-    if (SRam.eeprom_type) {
+    if (Pico.sv.eeprom_type) {
       // X24C02+
       if (ssa&1) {
         elprintf(EL_EEPROM, "eeprom: read: addr %02x, cycle %i, reg %02x", saddr, scyc, sreg);
-	if (shift==0) elprintf(EL_EEPROM, "eeprom: read done, byte %02x", SRam.data[saddr]);
-        d = (SRam.data[saddr]>>shift)&1;
+	if (shift==0) elprintf(EL_EEPROM, "eeprom: read done, byte %02x", Pico.sv.data[saddr]);
+        d = (Pico.sv.data[saddr]>>shift)&1;
       }
     } else {
       // X24C01
       if (saddr&1) {
         elprintf(EL_EEPROM, "eeprom: read: addr %02x, cycle %i, reg %02x", saddr>>1, scyc, sreg);
-	if (shift==0) elprintf(EL_EEPROM, "eeprom: read done, byte %02x", SRam.data[saddr>>1]);
-        d = (SRam.data[saddr>>1]>>shift)&1;
+	if (shift==0) elprintf(EL_EEPROM, "eeprom: read done, byte %02x", Pico.sv.data[saddr>>1]);
+        d = (Pico.sv.data[saddr>>1]>>shift)&1;
       }
     }
   }
 
-  return (d << SRam.eeprom_bit_out);
+  return (d << Pico.sv.eeprom_bit_out);
 }
 
