@@ -13,7 +13,7 @@ const char *men_scaling_opts[] = { "OFF", "software", "hardware", NULL };
 	mee_onoff     ("Vsync",                    MA_OPT2_VSYNC,         currentConfig.EmuOpt, EOPT_VSYNC),
 
 #define MENU_OPTIONS_ADV \
-	mee_onoff     ("Use second CPU for sound", MA_OPT_ARM940_SOUND,   PicoOpt, POPT_EXT_FM), \
+	mee_onoff     ("Use second CPU for sound", MA_OPT_ARM940_SOUND,   PicoIn.opt, POPT_EXT_FM), \
 
 
 static menu_entry e_menu_adv_options[];

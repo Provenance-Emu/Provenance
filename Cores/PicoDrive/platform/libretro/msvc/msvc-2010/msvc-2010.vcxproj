@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D4156C25-0E30-4407-9198-1F51EF74AA84}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>msvc2010</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)msvc-2010\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)msvc-2010\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MSVC2010_EXPORTS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;EMU_F68K;_USE_CZ80;FAMEC_NO_GOTOS</PreprocessorDefinitions>
+      <CompileAs>CompileAsC</CompileAs>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\..\;$(SolutionDIr)\..\..\..\pico;$(SolutionDIr)\..\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4018;4090;4101;4146;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>libretro.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MSVC2010_EXPORTS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;EMU_F68K;_USE_CZ80;FAMEC_NO_GOTOS</PreprocessorDefinitions>
+      <CompileAs>CompileAsC</CompileAs>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\..\;$(SolutionDIr)\..\..\..\pico;$(SolutionDIr)\..\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4018;4090;4101;4146;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>libretro.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\cpu\cz80\cz80.c" />
+    <ClCompile Include="..\..\..\..\cpu\drc\cmn.c" />
+    <ClCompile Include="..\..\..\..\cpu\fame\famec.c" />
+    <ClCompile Include="..\..\..\..\cpu\sh2\mame\sh2pico.c" />
+    <ClCompile Include="..\..\..\..\cpu\sh2\sh2.c" />
+    <ClCompile Include="..\..\..\..\pico\32x\32x.c" />
+    <ClCompile Include="..\..\..\..\pico\32x\draw.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\32x\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\32x\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\memory.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\32x\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\32x\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\pwm.c" />
+    <ClCompile Include="..\..\..\..\pico\32x\sh2soc.c" />
+    <ClCompile Include="..\..\..\..\pico\cart.c" />
+    <ClCompile Include="..\..\..\..\pico\carthw\carthw.c" />
+    <ClCompile Include="..\..\..\..\pico\carthw\eeprom_spi.c" />
+    <ClCompile Include="..\..\..\..\pico\carthw\svp\memory.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\svp\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\svp\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw\svp\ssp16.c" />
+    <ClCompile Include="..\..\..\..\pico\carthw\svp\svp.c" />
+    <ClCompile Include="..\..\..\..\pico\carthw_cfg.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\cdc.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\cdd.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\cd_image.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\cell_map.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\cue.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\gfx.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\gfx_dma.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\mcd.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\memory.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\cd\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\cd\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\misc.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\cd\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\cd\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\pcm.c" />
+    <ClCompile Include="..\..\..\..\pico\cd\sek.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\cd\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\cd\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\debug.c" />
+    <ClCompile Include="..\..\..\..\pico\draw.c" />
+    <ClCompile Include="..\..\..\..\pico\draw2.c" />
+    <ClCompile Include="..\..\..\..\pico\eeprom.c" />
+    <ClCompile Include="..\..\..\..\pico\media.c" />
+    <ClCompile Include="..\..\..\..\pico\memory.c" />
+    <ClCompile Include="..\..\..\..\pico\misc.c" />
+    <ClCompile Include="..\..\..\..\pico\mode4.c" />
+    <ClCompile Include="..\..\..\..\pico\patch.c" />
+    <ClCompile Include="..\..\..\..\pico\pico.c" />
+    <ClCompile Include="..\..\..\..\pico\pico\memory.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\pico\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\pico\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\pico\pico.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\pico\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\pico\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\pico\xpcm.c" />
+    <ClCompile Include="..\..\..\..\pico\sek.c" />
+    <ClCompile Include="..\..\..\..\pico\sms.c" />
+    <ClCompile Include="..\..\..\..\pico\sound\mix.c" />
+    <ClCompile Include="..\..\..\..\pico\sound\sn76496.c" />
+    <ClCompile Include="..\..\..\..\pico\sound\sound.c" />
+    <ClCompile Include="..\..\..\..\pico\sound\ym2612.c" />
+    <ClCompile Include="..\..\..\..\pico\state.c" />
+    <ClCompile Include="..\..\..\..\pico\videoport.c" />
+    <ClCompile Include="..\..\..\..\pico\z80if.c" />
+    <ClCompile Include="..\..\..\..\unzip\unzip.c" />
+    <ClCompile Include="..\..\..\..\zlib\adler32.c" />
+    <ClCompile Include="..\..\..\..\zlib\compress.c" />
+    <ClCompile Include="..\..\..\..\zlib\crc32.c" />
+    <ClCompile Include="..\..\..\..\zlib\deflate.c" />
+    <ClCompile Include="..\..\..\..\zlib\example.c" />
+    <ClCompile Include="..\..\..\..\zlib\gzio.c" />
+    <ClCompile Include="..\..\..\..\zlib\infback.c" />
+    <ClCompile Include="..\..\..\..\zlib\inffast.c" />
+    <ClCompile Include="..\..\..\..\zlib\inflate.c" />
+    <ClCompile Include="..\..\..\..\zlib\inftrees.c" />
+    <ClCompile Include="..\..\..\..\zlib\trees.c" />
+    <ClCompile Include="..\..\..\..\zlib\uncompr.c" />
+    <ClCompile Include="..\..\..\..\zlib\zutil.c" />
+    <ClCompile Include="..\..\..\common\mp3.c" />
+    <ClCompile Include="..\..\..\common\mp3_dummy.c" />
+    <ClCompile Include="..\..\libretro.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

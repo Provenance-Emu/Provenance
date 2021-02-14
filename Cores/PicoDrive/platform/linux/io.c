@@ -134,7 +134,7 @@ static void xlib_update(void)
 	XLockDisplay(xlib_display);
 
 	xstatus = XPutImage(xlib_display, xlib_window, DefaultGC(xlib_display, 0), ximage,
-		0, 0, 0, 0, g_screen_width, g_screen_height);
+		0, 0, 0, 0, g_screen_ppitch, g_screen_height);
 	if (xstatus != 0)
 		fprintf(stderr, "XPutImage %d\n", xstatus);
 
@@ -260,6 +260,7 @@ static void realloc_screen(void)
 	int size = scr_w * scr_h * 2;
 	g_screen_width = g_menuscreen_w = scr_w;
 	g_screen_height = g_menuscreen_h = scr_h;
+	g_screen_ppitch = g_menuscreen_pp = scr_w;
 	g_screen_ptr = realloc(g_screen_ptr, size);
 	g_menubg_ptr = realloc(g_menubg_ptr, size);
 	memset(g_screen_ptr, 0, size);
@@ -275,7 +276,7 @@ void plat_video_flip(void)
 	if (ximage == NULL)
 		return;
 
-	pixel_count = g_screen_width * g_screen_height;
+	pixel_count = g_screen_ppitch * g_screen_height;
 	image = (void *)ximage->data;
 
 	if (current_bpp == 8)
@@ -332,6 +333,7 @@ void plat_init(void)
 		exit(1);
 	g_screen_width = g_menuscreen_w = w;
 	g_screen_height = g_menuscreen_h = h;
+	g_screen_ppitch = g_menuscreen_pp = w;
 	g_menubg_ptr = realloc(g_menubg_ptr, w * g_screen_height * 2);
 #else
 	realloc_screen();

@@ -18,7 +18,7 @@ static int menu_loop_cscaler(int id, int keys)
 	for (;;)
 	{
 		menu_draw_begin(0, 1);
-		memset(g_menuscreen_ptr, 0, g_menuscreen_w * g_menuscreen_h * 2);
+		menuscreen_memset_lines(g_menuscreen_ptr, 0, g_menuscreen_h);
 		text_out16(2, 480 - 18, "%dx%d | d-pad to resize, R+d-pad to move", g_layer_cw, g_layer_ch);
 		menu_draw_end();
 

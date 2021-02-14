@@ -16,6 +16,11 @@
 #include "../libpicofe/lprintf.h"
 #include "mp3.h"
 
+#if LIBAVCODEC_VERSION_MAJOR < 55
+#define AVCodecID CodecID
+#define AV_CODEC_ID_MP3 CODEC_ID_MP3
+#endif
+
 static AVCodecContext *ctx;
 
 /* avoid compile time linking to libavcodec due to huge list of it's deps..
@@ -94,7 +99,7 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 int mp3dec_start(FILE *f, int fpos_start)
 {
 	void (*avcodec_register_all)(void);
-	AVCodec *(*avcodec_find_decoder)(enum CodecID id);
+	AVCodec *(*avcodec_find_decoder)(enum AVCodecID id);
 	AVCodecContext *(*avcodec_alloc_context)(void);
 	int (*avcodec_open)(AVCodecContext *avctx, AVCodec *codec);
 	void (*av_free)(void *ptr);
@@ -137,8 +142,7 @@ int mp3dec_start(FILE *f, int fpos_start)
 	//avcodec_init();
 	avcodec_register_all();
 
-	// AV_CODEC_ID_MP3 ?
-	codec = avcodec_find_decoder(CODEC_ID_MP3);
+	codec = avcodec_find_decoder(AV_CODEC_ID_MP3);
 	if (codec == NULL) {
 		lprintf("mp3dec: codec missing\n");
 		return -1;

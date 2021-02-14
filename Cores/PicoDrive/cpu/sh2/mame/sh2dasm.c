@@ -610,6 +610,7 @@ unsigned DasmSH2(char *buffer, unsigned pc, UINT16 opcode)
 	case 14: flags = op1110(buffer,pc,opcode);	  break;
 	default: flags = op1111(buffer,pc,opcode);	  break;
 	}
+	(void)flags;
 	return 0;//2 | flags | DASMFLAG_SUPPORTED;
 }
 
