@@ -727,13 +727,13 @@ static bool environment_callback(unsigned cmd, void *data)
             if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
             {switch (buttonID) {
                 case PVGenesisButtonUp:
-                    return [[[gamepad leftThumbstick] up] value] > 0.5;
+                    return [[[gamepad leftThumbstick] up] value] > 0.1;
                 case PVGenesisButtonDown:
-                    return [[[gamepad leftThumbstick] down] value] > 0.5;
+                    return [[[gamepad leftThumbstick] down] value] > 0.1;
                 case PVGenesisButtonLeft:
-                    return [[[gamepad leftThumbstick] left] value] > 0.5;
+                    return [[[gamepad leftThumbstick] left] value] > 0.1;
                 case PVGenesisButtonRight:
-                    return [[[gamepad leftThumbstick] right] value] > 0.5;
+                    return [[[gamepad leftThumbstick] right] value] > 0.1;
                 case PVGenesisButtonA:
                     return [[gamepad buttonA] isPressed];
                 case PVGenesisButtonB:
