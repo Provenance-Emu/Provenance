@@ -558,13 +558,13 @@ static void writeSaveFile(const char* path, int type)
         if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
         { switch (buttonID) {
             case PVSega32XButtonUp:
-                return [[[gamepad leftThumbstick] up] value] > 0.5;
+                return [[[gamepad leftThumbstick] up] value] > 0.1;
             case PVSega32XButtonDown:
-                return [[[gamepad leftThumbstick] down] value] > 0.5;
+                return [[[gamepad leftThumbstick] down] value] > 0.1;
             case PVSega32XButtonLeft:
-                return [[[gamepad leftThumbstick] left] value] > 0.5;
+                return [[[gamepad leftThumbstick] left] value] > 0.1;
             case PVSega32XButtonRight:
-                return [[[gamepad leftThumbstick] right] value] > 0.5;
+                return [[[gamepad leftThumbstick] right] value] > 0.1;
             case PVSega32XButtonA:
                 return [[gamepad buttonA] isPressed];
             case PVSega32XButtonB:
