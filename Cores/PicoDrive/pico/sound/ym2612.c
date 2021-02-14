@@ -135,9 +135,10 @@ void memset32(int *dest, int c, int count);
 #pragma warning (disable:4018) // signed/unsigned
 #endif
 
-#ifndef INLINE
+// Joe M - I changed this because it causes linking errors in XCode / iOS
+//#ifndef INLINE
 #define INLINE static __inline
-#endif
+//#endif
 
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
@@ -739,57 +740,83 @@ INLINE int advance_lfo(int lfo_ampm, UINT32 lfo_cnt_old, UINT32 lfo_cnt)
 	return lfo_ampm;
 }
 
-INLINE void update_eg_phase(UINT16 *vol_out, FM_SLOT *SLOT, UINT32 eg_cnt)
+#define EG_INC_VAL() \
+	((1 << ((pack >> ((eg_cnt>>shift)&7)*3)&7)) >> 1)
+
+INLINE UINT32 update_eg_phase(FM_SLOT *SLOT, UINT32 eg_cnt)
 {
 	INT32 volume = SLOT->volume;
-	UINT32 pack = SLOT->eg_pack[SLOT->state - 1];
-	UINT32 shift = pack >> 24;
-	INT32 eg_inc_val;
 
-	if (eg_cnt & ((1 << shift) - 1))
-		return;
-
-	eg_inc_val = pack >> ((eg_cnt >> shift) & 7) * 3;
-	eg_inc_val = (1 << (eg_inc_val & 7)) >> 1;
-
-	switch (SLOT->state)
+	switch(SLOT->state)
 	{
-	case EG_ATT:		/* attack phase */
-		volume += ( ~volume * eg_inc_val ) >> 4;
-		if ( volume <= MIN_ATT_INDEX )
+		case EG_ATT:		/* attack phase */
 		{
-			volume = MIN_ATT_INDEX;
-			SLOT->state = EG_DEC;
+			UINT32 pack = SLOT->eg_pack_ar;
+			UINT32 shift = pack>>24;
+			if ( !(eg_cnt & ((1<<shift)-1) ) )
+			{
+				volume += ( ~volume * EG_INC_VAL() ) >>4;
+
+				if (volume <= MIN_ATT_INDEX)
+				{
+					volume = MIN_ATT_INDEX;
+					SLOT->state = EG_DEC;
+				}
+			}
+			break;
 		}
-		break;
 
-	case EG_DEC:	/* decay phase */
-		volume += eg_inc_val;
-		if ( volume >= (INT32) SLOT->sl )
-			SLOT->state = EG_SUS;
-		break;
-
-	case EG_SUS:	/* sustain phase */
-		volume += eg_inc_val;
-		if ( volume >= MAX_ATT_INDEX )
+		case EG_DEC:	/* decay phase */
 		{
-			volume = MAX_ATT_INDEX;
-			/* do not change SLOT->state (verified on real chip) */
-		}
-		break;
+			UINT32 pack = SLOT->eg_pack_d1r;
+			UINT32 shift = pack>>24;
+			if ( !(eg_cnt & ((1<<shift)-1) ) )
+			{
+				volume += EG_INC_VAL();
 
-	case EG_REL:	/* release phase */
-		volume += eg_inc_val;
-		if ( volume >= MAX_ATT_INDEX )
-		{
-			volume = MAX_ATT_INDEX;
-			SLOT->state = EG_OFF;
+				if ( volume >= (INT32) SLOT->sl )
+					SLOT->state = EG_SUS;
+			}
+			break;
 		}
-		break;
+
+		case EG_SUS:	/* sustain phase */
+		{
+			UINT32 pack = SLOT->eg_pack_d2r;
+			UINT32 shift = pack>>24;
+			if ( !(eg_cnt & ((1<<shift)-1) ) )
+			{
+				volume += EG_INC_VAL();
+
+				if ( volume >= MAX_ATT_INDEX )
+				{
+					volume = MAX_ATT_INDEX;
+					/* do not change SLOT->state (verified on real chip) */
+				}
+			}
+			break;
+		}
+
+		case EG_REL:	/* release phase */
+		{
+			UINT32 pack = SLOT->eg_pack_rr;
+			UINT32 shift = pack>>24;
+			if ( !(eg_cnt & ((1<<shift)-1) ) )
+			{
+				volume += EG_INC_VAL();
+
+				if ( volume >= MAX_ATT_INDEX )
+				{
+					volume = MAX_ATT_INDEX;
+					SLOT->state = EG_OFF;
+				}
+			}
+			break;
+		}
 	}
 
 	SLOT->volume = volume;
-	*vol_out = SLOT->tl + volume; /* tl is 7bit<<3, volume 0-1023 (0-2039 total) */
+	return SLOT->tl + ((UINT32)volume); /* tl is 7bit<<3, volume 0-1023 (0-2039 total) */
 }
 #endif
 
@@ -847,10 +874,10 @@ static void chan_render_loop(chan_rend_context *ct, int *buffer, int length)
 			ct->eg_timer -= EG_TIMER_OVERFLOW;
 			ct->eg_cnt++;
 
-			if (ct->CH->SLOT[SLOT1].state != EG_OFF) update_eg_phase(&ct->vol_out1, &ct->CH->SLOT[SLOT1], ct->eg_cnt);
-			if (ct->CH->SLOT[SLOT2].state != EG_OFF) update_eg_phase(&ct->vol_out2, &ct->CH->SLOT[SLOT2], ct->eg_cnt);
-			if (ct->CH->SLOT[SLOT3].state != EG_OFF) update_eg_phase(&ct->vol_out3, &ct->CH->SLOT[SLOT3], ct->eg_cnt);
-			if (ct->CH->SLOT[SLOT4].state != EG_OFF) update_eg_phase(&ct->vol_out4, &ct->CH->SLOT[SLOT4], ct->eg_cnt);
+			if (ct->CH->SLOT[SLOT1].state != EG_OFF) ct->vol_out1 = update_eg_phase(&ct->CH->SLOT[SLOT1], ct->eg_cnt);
+			if (ct->CH->SLOT[SLOT2].state != EG_OFF) ct->vol_out2 = update_eg_phase(&ct->CH->SLOT[SLOT2], ct->eg_cnt);
+			if (ct->CH->SLOT[SLOT3].state != EG_OFF) ct->vol_out3 = update_eg_phase(&ct->CH->SLOT[SLOT3], ct->eg_cnt);
+			if (ct->CH->SLOT[SLOT4].state != EG_OFF) ct->vol_out4 = update_eg_phase(&ct->CH->SLOT[SLOT4], ct->eg_cnt);
 		}
 
 		if (ct->pack & 4) continue; /* output disabled */
@@ -1045,7 +1072,7 @@ static void chan_render_loop(chan_rend_context *ct, int *buffer, int length)
 			} else {
 				buffer[scounter] += smp;
 			}
-			ct->algo |= 8;
+			ct->algo = 8; // algo is only used in asm, here only bit3 is used
 		}
 
 		/* update phase counters AFTER output calculations */
@@ -1679,7 +1706,6 @@ void YM2612ResetChip_(void)
 	for(i = 0x26 ; i >= 0x20 ; i-- ) OPNWriteReg(i,0);
 	/* DAC mode clear */
 	ym2612.dacen = 0;
-	ym2612.dacout = 0;
 	ym2612.addr_A1 = 0;
 }
 
@@ -1694,19 +1720,22 @@ int YM2612Write_(unsigned int a, unsigned int v)
 
 	v &= 0xff;	/* adjust to 8 bit bus */
 
-	switch( a & 3 ){
+	switch( a&3){
 	case 0:	/* address port 0 */
-	case 2:	/* address port 1 */
 		ym2612.OPN.ST.address = v;
-		ym2612.addr_A1 = (a & 2) >> 1;
-		ret = 0;
+		ym2612.addr_A1 = 0;
+		ret=0;
 		break;
 
-	case 1:
-	case 3:	/* data port */
-		addr = ym2612.OPN.ST.address | ((int)ym2612.addr_A1 << 8);
+	case 1:	/* data port 0    */
+		if (ym2612.addr_A1 != 0) {
+			ret=0;
+			break;	/* verified on real YM2608 */
+		}
 
-		switch( addr & 0x1f0 )
+		addr = ym2612.OPN.ST.address;
+
+		switch( addr & 0xf0 )
 		{
 		case 0x20:	/* 0x20-0x2f Mode */
 			switch( addr )
@@ -1719,7 +1748,6 @@ int YM2612Write_(unsigned int a, unsigned int v)
 				else
 				{
 					ym2612.OPN.lfo_inc = 0;
-					ym2612.OPN.lfo_cnt = 0;
 				}
 				break;
 #if 0 // handled elsewhere
@@ -1788,6 +1816,23 @@ int YM2612Write_(unsigned int a, unsigned int v)
 			/* write register */
 			ret = OPNWriteReg(addr,v);
 		}
+		break;
+
+	case 2:	/* address port 1 */
+		ym2612.OPN.ST.address = v;
+		ym2612.addr_A1 = 1;
+		ret=0;
+		break;
+
+	case 3:	/* data port 1    */
+		if (ym2612.addr_A1 != 1) {
+			ret=0;
+			break;	/* verified on real YM2608 */
+		}
+
+		addr = ym2612.OPN.ST.address | 0x100;
+
+		ret = OPNWriteReg(addr, v);
 		break;
 	}
 

@@ -259,16 +259,16 @@ static int custom_read(menu_entry *me, const char *var, const char *val)
 
 		case MA_OPT_SOUND_QUALITY:
 			if (strcasecmp(var, "Sound Quality") != 0) return 0;
-			PicoIn.sndRate = strtoul(val, &tmp, 10);
-			if (PicoIn.sndRate < 8000 || PicoIn.sndRate > 44100)
-				PicoIn.sndRate = 22050;
+			PsndRate = strtoul(val, &tmp, 10);
+			if (PsndRate < 8000 || PsndRate > 44100)
+				PsndRate = 22050;
 			if (*tmp == 'H' || *tmp == 'h') tmp++;
 			if (*tmp == 'Z' || *tmp == 'z') tmp++;
 			while (*tmp == ' ') tmp++;
 			if        (strcasecmp(tmp, "stereo") == 0) {
-				PicoIn.opt |=  POPT_EN_STEREO;
+				PicoOpt |=  POPT_EN_STEREO;
 			} else if (strcasecmp(tmp, "mono") == 0) {
-				PicoIn.opt &= ~POPT_EN_STEREO;
+				PicoOpt &= ~POPT_EN_STEREO;
 			} else
 				return 0;
 			return 1;
@@ -279,31 +279,31 @@ static int custom_read(menu_entry *me, const char *var, const char *val)
 			{
 				const char *p = val + 5, *end = val + strlen(val);
 				int i;
-				PicoIn.regionOverride = PicoIn.autoRgnOrder = 0;
+				PicoRegionOverride = PicoAutoRgnOrder = 0;
 				for (i = 0; p < end && i < 3; i++)
 				{
 					while (*p == ' ') p++;
 					if        (p[0] == 'J' && p[1] == 'P') {
-						PicoIn.autoRgnOrder |= 1 << (i*4);
+						PicoAutoRgnOrder |= 1 << (i*4);
 					} else if (p[0] == 'U' && p[1] == 'S') {
-						PicoIn.autoRgnOrder |= 4 << (i*4);
+						PicoAutoRgnOrder |= 4 << (i*4);
 					} else if (p[0] == 'E' && p[1] == 'U') {
-						PicoIn.autoRgnOrder |= 8 << (i*4);
+						PicoAutoRgnOrder |= 8 << (i*4);
 					}
 					while (*p != ' ' && *p != 0) p++;
 					if (*p == 0) break;
 				}
 			}
 			else   if (strcasecmp(val, "Auto") == 0) {
-				PicoIn.regionOverride = 0;
+				PicoRegionOverride = 0;
 			} else if (strcasecmp(val, "Japan NTSC") == 0) {
-				PicoIn.regionOverride = 1;
+				PicoRegionOverride = 1;
 			} else if (strcasecmp(val, "Japan PAL") == 0) {
-				PicoIn.regionOverride = 2;
+				PicoRegionOverride = 2;
 			} else if (strcasecmp(val, "USA") == 0) {
-				PicoIn.regionOverride = 4;
+				PicoRegionOverride = 4;
 			} else if (strcasecmp(val, "Europe") == 0) {
-				PicoIn.regionOverride = 8;
+				PicoRegionOverride = 8;
 			} else
 				return 0;
 			return 1;
@@ -417,7 +417,7 @@ static void keys_parse_all(FILE *f)
 		acts = parse_bind_val(val, &type);
 		if (acts == -1) {
 			lprintf("config: unhandled action \"%s\"\n", val);
-			continue;
+			return;
 		}
 
 		mystrip(var + 5);

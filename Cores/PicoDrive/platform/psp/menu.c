@@ -33,7 +33,7 @@
 
 #include <pico/pico_int.h>
 #include <pico/patch.h>
-#include <zlib.h>
+#include <zlib/zlib.h>
 
 
 #define pspKeyUnkn "???"
@@ -506,7 +506,7 @@ static void draw_savestate_bg(int slot)
 	}
 
 	if (file) {
-		if (PicoIn.AHW & PAHW_MCD) {
+		if (PicoAHW & PAHW_MCD) {
 			PicoCdLoadStateGfx(file);
 		} else {
 			areaSeek(file, 0x10020, SEEK_SET);  // skip header and RAM in state file
@@ -708,7 +708,7 @@ menu_entry ctrlopt_entries[] =
 	{ "Player 1",                  MB_NONE,  MA_CTRL_PLAYER1,       NULL, 0, 0, 0, 1, 0 },
 	{ "Player 2",                  MB_NONE,  MA_CTRL_PLAYER2,       NULL, 0, 0, 0, 1, 0 },
 	{ "Emulator controls",         MB_NONE,  MA_CTRL_EMU,           NULL, 0, 0, 0, 1, 0 },
-	{ "6 button pad",              MB_ONOFF, MA_OPT_6BUTTON_PAD,   &PicoIn.opt, 0x020, 0, 0, 1, 1 },
+	{ "6 button pad",              MB_ONOFF, MA_OPT_6BUTTON_PAD,   &PicoOpt, 0x020, 0, 0, 1, 1 },
 	{ "Turbo rate",                MB_RANGE, MA_CTRL_TURBO_RATE,   &currentConfig.turbo_rate, 0, 1, 30, 1, 1 },
 	{ "Done",                      MB_NONE,  MA_CTRL_DONE,          NULL, 0, 0, 0, 1, 0 },
 };
@@ -763,7 +763,7 @@ static void kc_sel_loop(void)
 		if (inp & PBTN_UP  ) { menu_sel--; if (menu_sel < 0) menu_sel = menu_sel_max; }
 		if (inp & PBTN_DOWN) { menu_sel++; if (menu_sel > menu_sel_max) menu_sel = 0; }
 		if (inp & PBTN_CIRCLE) {
-			int is_6button = PicoIn.opt & POPT_6BTN_PAD;
+			int is_6button = PicoOpt & POPT_6BTN_PAD;
 			switch (selected_id) {
 				case MA_CTRL_PLAYER1: key_config_loop(me_ctrl_actions, is_6button ? 15 : 11, 0); return;
 				case MA_CTRL_PLAYER2: key_config_loop(me_ctrl_actions, is_6button ? 15 : 11, 1); return;
@@ -786,12 +786,12 @@ menu_entry cdopt_entries[] =
 	{ NULL,                        MB_NONE,  MA_CDOPT_TESTBIOS_EUR, NULL, 0, 0, 0, 1, 0 },
 	{ NULL,                        MB_NONE,  MA_CDOPT_TESTBIOS_JAP, NULL, 0, 0, 0, 1, 0 },
 	{ "CD LEDs",                   MB_ONOFF, MA_CDOPT_LEDS,         &currentConfig.EmuOpt,  0x0400, 0, 0, 1, 1 },
-	{ "CDDA audio",                MB_ONOFF, MA_CDOPT_CDDA,         &PicoIn.opt, 0x0800, 0, 0, 1, 1 },
-	{ "PCM audio",                 MB_ONOFF, MA_CDOPT_PCM,          &PicoIn.opt, 0x0400, 0, 0, 1, 1 },
+	{ "CDDA audio",                MB_ONOFF, MA_CDOPT_CDDA,         &PicoOpt, 0x0800, 0, 0, 1, 1 },
+	{ "PCM audio",                 MB_ONOFF, MA_CDOPT_PCM,          &PicoOpt, 0x0400, 0, 0, 1, 1 },
 	{ NULL,                        MB_NONE,  MA_CDOPT_READAHEAD,    NULL, 0, 0, 0, 1, 1 },
-	{ "SaveRAM cart",              MB_ONOFF, MA_CDOPT_SAVERAM,      &PicoIn.opt, 0x8000, 0, 0, 1, 1 },
-	{ "Scale/Rot. fx (slow)",      MB_ONOFF, MA_CDOPT_SCALEROT_CHIP,&PicoIn.opt, 0x1000, 0, 0, 1, 1 },
-	{ "Better sync (slow)",        MB_ONOFF, MA_CDOPT_BETTER_SYNC,  &PicoIn.opt, 0x2000, 0, 0, 1, 1 },
+	{ "SaveRAM cart",              MB_ONOFF, MA_CDOPT_SAVERAM,      &PicoOpt, 0x8000, 0, 0, 1, 1 },
+	{ "Scale/Rot. fx (slow)",      MB_ONOFF, MA_CDOPT_SCALEROT_CHIP,&PicoOpt, 0x1000, 0, 0, 1, 1 },
+	{ "Better sync (slow)",        MB_ONOFF, MA_CDOPT_BETTER_SYNC,  &PicoOpt, 0x2000, 0, 0, 1, 1 },
 	{ "done",                      MB_NONE,  MA_CDOPT_DONE,         NULL, 0, 0, 0, 1, 0 },
 };
 
@@ -1115,14 +1115,14 @@ static void dispmenu_loop_options(void)
 
 menu_entry opt2_entries[] =
 {
-	{ "Disable sprite limit",      MB_ONOFF, MA_OPT2_NO_SPRITE_LIM,  &PicoIn.opt, 0x40000, 0, 0, 1, 1 },
-	{ "Emulate Z80",               MB_ONOFF, MA_OPT2_ENABLE_Z80,     &PicoIn.opt, 0x00004, 0, 0, 1, 1 },
-	{ "Emulate YM2612 (FM)",       MB_ONOFF, MA_OPT2_ENABLE_YM2612,  &PicoIn.opt, 0x00001, 0, 0, 1, 1 },
-	{ "Emulate SN76496 (PSG)",     MB_ONOFF, MA_OPT2_ENABLE_SN76496, &PicoIn.opt, 0x00002, 0, 0, 1, 1 },
+	{ "Disable sprite limit",      MB_ONOFF, MA_OPT2_NO_SPRITE_LIM,  &PicoOpt, 0x40000, 0, 0, 1, 1 },
+	{ "Emulate Z80",               MB_ONOFF, MA_OPT2_ENABLE_Z80,     &PicoOpt, 0x00004, 0, 0, 1, 1 },
+	{ "Emulate YM2612 (FM)",       MB_ONOFF, MA_OPT2_ENABLE_YM2612,  &PicoOpt, 0x00001, 0, 0, 1, 1 },
+	{ "Emulate SN76496 (PSG)",     MB_ONOFF, MA_OPT2_ENABLE_SN76496, &PicoOpt, 0x00002, 0, 0, 1, 1 },
 	{ "gzip savestates",           MB_ONOFF, MA_OPT2_GZIP_STATES,    &currentConfig.EmuOpt, 0x00008, 0, 0, 1, 1 },
 	{ "Don't save last used ROM",  MB_ONOFF, MA_OPT2_NO_LAST_ROM,    &currentConfig.EmuOpt, 0x00020, 0, 0, 1, 1 },
 	{ "Status line in main menu",  MB_ONOFF, MA_OPT2_STATUS_LINE,    &currentConfig.EmuOpt, 0x20000, 0, 0, 1, 1 },
-	{ "Disable idle loop patching",MB_ONOFF, MA_OPT2_NO_IDLE_LOOPS,  &PicoIn.opt, 0x80000, 0, 0, 1, 1 },
+	{ "Disable idle loop patching",MB_ONOFF, MA_OPT2_NO_IDLE_LOOPS,  &PicoOpt, 0x80000, 0, 0, 1, 1 },
 	{ "Disable frame limiter",     MB_ONOFF, MA_OPT2_NO_FRAME_LIMIT, &currentConfig.EmuOpt, 0x40000, 0, 0, 1, 1 },
 	{ "done",                      MB_NONE,  MA_OPT2_DONE,           NULL, 0, 0, 0, 1, 0 },
 };
@@ -1182,7 +1182,7 @@ static void amenu_loop_options(void)
 menu_entry opt_entries[] =
 {
 	{ NULL,                        MB_NONE,  MA_OPT_RENDERER,      NULL, 0, 0, 0, 1, 1 },
-	{ "Accurate sprites",          MB_ONOFF, MA_OPT_ACC_SPRITES,   &PicoIn.opt, 0x080, 0, 0, 0, 1 },
+	{ "Accurate sprites",          MB_ONOFF, MA_OPT_ACC_SPRITES,   &PicoOpt, 0x080, 0, 0, 0, 1 },
 	{ "Show FPS",                  MB_ONOFF, MA_OPT_SHOW_FPS,      &currentConfig.EmuOpt,  0x0002,  0,  0, 1, 1 },
 	{ NULL,                        MB_RANGE, MA_OPT_FRAMESKIP,     &currentConfig.Frameskip,    0, -1, 16, 1, 1 },
 	{ "Enable sound",              MB_ONOFF, MA_OPT_ENABLE_SOUND,  &currentConfig.EmuOpt,  0x0004,  0,  0, 1, 1 },
@@ -1211,7 +1211,7 @@ static void menu_opt_cust_draw(const menu_entry *entry, int x, int y, void *para
 	switch (entry->id)
 	{
 		case MA_OPT_RENDERER:
-			if (PicoIn.opt & 0x10)
+			if (PicoOpt & 0x10)
 				str = "fast";
 			else if (currentConfig.EmuOpt & 0x80)
 				str = "accurate";
@@ -1226,11 +1226,11 @@ static void menu_opt_cust_draw(const menu_entry *entry, int x, int y, void *para
 			text_out16(x, y, "Frameskip                  %s", str24);
 			break;
 		case MA_OPT_SOUND_QUALITY:
-			str = (PicoIn.opt&0x08)?"stereo":"mono";
-			text_out16(x, y, "Sound Quality:     %5iHz %s", PicoIn.sndRate, str);
+			str = (PicoOpt&0x08)?"stereo":"mono";
+			text_out16(x, y, "Sound Quality:     %5iHz %s", PsndRate, str);
 			break;
 		case MA_OPT_REGION:
-			text_out16(x, y, "Region:              %s", me_region_name(PicoIn.regionOverride, PicoIn.autoRgnOrder));
+			text_out16(x, y, "Region:              %s", me_region_name(PicoRegionOverride, PicoAutoRgnOrder));
 			break;
 		case MA_OPT_CONFIRM_STATES:
 			switch ((currentConfig.EmuOpt >> 9) & 5) {
@@ -1291,31 +1291,31 @@ static void region_prevnext(int right)
 	static int rgn_orders[] = { 0x148, 0x184, 0x814, 0x418, 0x841, 0x481 };
 	int i;
 	if (right) {
-		if (!PicoIn.regionOverride) {
+		if (!PicoRegionOverride) {
 			for (i = 0; i < 6; i++)
-				if (rgn_orders[i] == PicoIn.autoRgnOrder) break;
-			if (i < 5) PicoIn.autoRgnOrder = rgn_orders[i+1];
-			else PicoIn.regionOverride=1;
+				if (rgn_orders[i] == PicoAutoRgnOrder) break;
+			if (i < 5) PicoAutoRgnOrder = rgn_orders[i+1];
+			else PicoRegionOverride=1;
 		}
-		else PicoIn.regionOverride<<=1;
-		if (PicoIn.regionOverride > 8) PicoIn.regionOverride = 8;
+		else PicoRegionOverride<<=1;
+		if (PicoRegionOverride > 8) PicoRegionOverride = 8;
 	} else {
-		if (!PicoIn.regionOverride) {
+		if (!PicoRegionOverride) {
 			for (i = 0; i < 6; i++)
-				if (rgn_orders[i] == PicoIn.autoRgnOrder) break;
-			if (i > 0) PicoIn.autoRgnOrder = rgn_orders[i-1];
+				if (rgn_orders[i] == PicoAutoRgnOrder) break;
+			if (i > 0) PicoAutoRgnOrder = rgn_orders[i-1];
 		}
-		else PicoIn.regionOverride>>=1;
+		else PicoRegionOverride>>=1;
 	}
 }
 
 static void menu_options_save(void)
 {
-	if (PicoIn.regionOverride) {
+	if (PicoRegionOverride) {
 		// force setting possibly changed..
-		Pico.m.pal = (PicoIn.regionOverride == 2 || PicoIn.regionOverride == 8) ? 1 : 0;
+		Pico.m.pal = (PicoRegionOverride == 2 || PicoRegionOverride == 8) ? 1 : 0;
 	}
-	if (!(PicoIn.opt & POPT_6BTN_PAD)) {
+	if (!(PicoOpt & POPT_6BTN_PAD)) {
 		// unbind XYZ MODE, just in case
 		unbind_action(0xf00);
 	}
@@ -1344,16 +1344,16 @@ static int menu_loop_options(void)
 			if (!me_process(opt_entries, OPT_ENTRY_COUNT, selected_id, (inp&PBTN_RIGHT) ? 1 : 0)) {
 				switch (selected_id) {
 					case MA_OPT_RENDERER:
-						if ((PicoIn.opt & 0x10) || !(currentConfig.EmuOpt & 0x80)) {
-							PicoIn.opt &= ~0x10;
+						if ((PicoOpt & 0x10) || !(currentConfig.EmuOpt & 0x80)) {
+							PicoOpt &= ~0x10;
 							currentConfig.EmuOpt |=  0x80;
 						} else {
-							PicoIn.opt |=  0x10;
+							PicoOpt |=  0x10;
 							currentConfig.EmuOpt &= ~0x80;
 						}
 						break;
 					case MA_OPT_SOUND_QUALITY:
-						PicoIn.sndRate = sndrate_prevnext(PicoIn.sndRate, inp & PBTN_RIGHT);
+						PsndRate = sndrate_prevnext(PsndRate, inp & PBTN_RIGHT);
 						break;
 					case MA_OPT_REGION:
 						region_prevnext(inp & PBTN_RIGHT);

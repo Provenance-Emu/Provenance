@@ -8,8 +8,10 @@
 /*
  * TODO:
  * - start in a state as if BIOS ran
+ * - remaining status flags (OVR/COL)
  * - RAM support in mapper
  * - region support
+ * - SN76496 DAC-like usage
  * - H counter
  */
 #include "pico_int.h"
@@ -21,7 +23,7 @@ static unsigned char vdp_data_read(void)
   struct PicoVideo *pv = &Pico.video;
   unsigned char d;
 
-  d = PicoMem.vramb[pv->addr];
+  d = Pico.vramb[pv->addr];
   pv->addr = (pv->addr + 1) & 0x3fff;
   pv->pending = 0;
   return d;
@@ -29,13 +31,9 @@ static unsigned char vdp_data_read(void)
 
 static unsigned char vdp_ctl_read(void)
 {
-  struct PicoVideo *pv = &Pico.video;
-  unsigned char d;
-
-  z80_int_assert(0);
-  d = pv->status | (pv->pending_ints << 7);
-  pv->pending = pv->pending_ints = 0;
-  pv->status = 0;
+  unsigned char d = Pico.video.pending_ints << 7;
+  Pico.video.pending = 0;
+  Pico.video.pending_ints = 0;
 
   elprintf(EL_SR, "VDP sr: %02x", d);
   return d;
@@ -46,44 +44,24 @@ static void vdp_data_write(unsigned char d)
   struct PicoVideo *pv = &Pico.video;
 
   if (pv->type == 3) {
-    PicoMem.cram[pv->addr & 0x1f] = d;
+    Pico.cram[pv->addr & 0x1f] = d;
     Pico.m.dirtyPal = 1;
   } else {
-    PicoMem.vramb[pv->addr] = d;
+    Pico.vramb[pv->addr] = d;
   }
   pv->addr = (pv->addr + 1) & 0x3fff;
 
   pv->pending = 0;
 }
 
-static NOINLINE void vdp_reg_write(struct PicoVideo *pv, u8 a, u8 d)
-{
-  int l;
-
-  pv->reg[a] = d;
-  switch (a) {
-  case 0:
-    l = pv->pending_ints & (d >> 3) & 2;
-    elprintf(EL_INTS, "hint %d", l);
-    z80_int_assert(l);
-    break;
-  case 1:
-    l = pv->pending_ints & (d >> 5) & 1;
-    elprintf(EL_INTS, "vint %d", l);
-    z80_int_assert(l);
-    break;
-  }
-}
-
-static void vdp_ctl_write(u8 d)
+static void vdp_ctl_write(unsigned char d)
 {
   struct PicoVideo *pv = &Pico.video;
 
   if (pv->pending) {
     if ((d >> 6) == 2) {
+      pv->reg[d & 0x0f] = pv->addr;
       elprintf(EL_IO, "  VDP r%02x=%02x", d & 0x0f, pv->addr & 0xff);
-      if (pv->reg[d & 0x0f] != (u8)pv->addr)
-        vdp_reg_write(pv, d & 0x0f, pv->addr);
     }
     pv->type = d >> 6;
     pv->addr &= 0x00ff;
@@ -127,12 +105,12 @@ static unsigned char z80_sms_in(unsigned short a)
       break;
 
     case 0xc0: /* I/O port A and B */
-      d = ~((PicoIn.pad[0] & 0x3f) | (PicoIn.pad[1] << 6));
+      d = ~((PicoPad[0] & 0x3f) | (PicoPad[1] << 6));
       break;
 
     case 0xc1: /* I/O port B and miscellaneous */
       d = (Pico.ms.io_ctl & 0x80) | ((Pico.ms.io_ctl << 1) & 0x40) | 0x30;
-      d |= ~(PicoIn.pad[1] >> 2) & 0x0f;
+      d |= ~(PicoPad[1] >> 2) & 0x0f;
       break;
   }
 
@@ -152,9 +130,8 @@ static void z80_sms_out(unsigned short a, unsigned char d)
 
     case 0x40:
     case 0x41:
-      if ((d & 0x90) == 0x90 && Pico.snd.psg_line < Pico.m.scanline)
-        PsndDoPSG(Pico.m.scanline);
-      SN76496Write(d);
+      if (PicoOpt & POPT_EN_PSG)
+        SN76496Write(d);
       break;
 
     case 0x80:
@@ -203,7 +180,7 @@ static void xwrite(unsigned int a, unsigned char d)
 {
   elprintf(EL_IO, "z80 write [%04x] %02x", a, d);
   if (a >= 0xc000)
-    PicoMem.zram[a & 0x1fff] = d;
+    Pico.zram[a & 0x1fff] = d;
   if (a >= 0xfff8)
     write_bank(a, d);
 }
@@ -218,7 +195,7 @@ void PicoPowerMS(void)
 {
   int s, tmp;
 
-  memset(&PicoMem,0,sizeof(PicoMem));
+  memset(&Pico.ram,0,(unsigned char *)&Pico.rom - Pico.ram);
   memset(&Pico.video,0,sizeof(Pico.video));
   memset(&Pico.m,0,sizeof(Pico.m));
   Pico.m.pal = 0;
@@ -242,11 +219,11 @@ void PicoPowerMS(void)
 void PicoMemSetupMS(void)
 {
   z80_map_set(z80_read_map, 0x0000, 0xbfff, Pico.rom, 0);
-  z80_map_set(z80_read_map, 0xc000, 0xdfff, PicoMem.zram, 0);
-  z80_map_set(z80_read_map, 0xe000, 0xffff, PicoMem.zram, 0);
+  z80_map_set(z80_read_map, 0xc000, 0xdfff, Pico.zram, 0);
+  z80_map_set(z80_read_map, 0xe000, 0xffff, Pico.zram, 0);
 
   z80_map_set(z80_write_map, 0x0000, 0xbfff, xwrite, 1);
-  z80_map_set(z80_write_map, 0xc000, 0xdfff, PicoMem.zram, 0);
+  z80_map_set(z80_write_map, 0xc000, 0xdfff, Pico.zram, 0);
   z80_map_set(z80_write_map, 0xe000, 0xffff, xwrite, 1);
  
 #ifdef _USE_DRZ80
@@ -255,8 +232,8 @@ void PicoMemSetupMS(void)
 #endif
 #ifdef _USE_CZ80
   Cz80_Set_Fetch(&CZ80, 0x0000, 0xbfff, (FPTR)Pico.rom);
-  Cz80_Set_Fetch(&CZ80, 0xc000, 0xdfff, (FPTR)PicoMem.zram);
-  Cz80_Set_Fetch(&CZ80, 0xe000, 0xffff, (FPTR)PicoMem.zram);
+  Cz80_Set_Fetch(&CZ80, 0xc000, 0xdfff, (FPTR)Pico.zram);
+  Cz80_Set_Fetch(&CZ80, 0xe000, 0xffff, (FPTR)Pico.zram);
   Cz80_Set_INPort(&CZ80, z80_sms_in);
   Cz80_Set_OUTPort(&CZ80, z80_sms_out);
 #endif
@@ -275,15 +252,13 @@ void PicoFrameMS(void)
   int lines = is_pal ? 313 : 262;
   int cycles_line = is_pal ? 58020 : 58293; /* (226.6 : 227.7) * 256 */
   int cycles_done = 0, cycles_aim = 0;
-  int skip = PicoIn.skipFrame;
+  int skip = PicoSkipFrame;
   int lines_vis = 192;
   int hint; // Hint counter
   int nmi;
   int y;
 
-  PsndStartFrame();
-
-  nmi = (PicoIn.pad[0] >> 7) & 1;
+  nmi = (PicoPad[0] >> 7) & 1;
   if (!Pico.ms.nmi_state && nmi)
     z80_nmi();
   Pico.ms.nmi_state = nmi;
@@ -308,7 +283,7 @@ void PicoFrameMS(void)
         pv->pending_ints |= 2;
         if (pv->reg[0] & 0x10) {
           elprintf(EL_INTS, "hint");
-          z80_int_assert(1);
+          z80_int();
         }
       }
     }
@@ -316,20 +291,16 @@ void PicoFrameMS(void)
       pv->pending_ints |= 1;
       if (pv->reg[1] & 0x20) {
         elprintf(EL_INTS, "vint");
-        z80_int_assert(1);
+        z80_int();
       }
     }
-
-    // 224 because of how it's done for MD...
-    if (y == 224 && PicoIn.sndOut)
-      PsndGetSamplesMS();
 
     cycles_aim += cycles_line;
     cycles_done += z80_run((cycles_aim - cycles_done) >> 8) << 8;
   }
 
-  if (PicoIn.sndOut && Pico.snd.psg_line < lines)
-    PsndDoPSG(lines - 1);
+  if (PsndOut)
+    PsndGetSamplesMS();
 }
 
 void PicoFrameDrawOnlyMS(void)
@@ -343,4 +314,3 @@ void PicoFrameDrawOnlyMS(void)
     PicoLineMode4(y);
 }
 
-// vim:ts=2:sw=2:expandtab

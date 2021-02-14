@@ -8,17 +8,11 @@
 .data
 .align 2
 
-idle_data:
 have_patches:
   .word 0
-  .word Op____
-  .word Op6002
-  .word Op6602
-  .word Op6702
 
 .equ patch_desc_table_size, 10
 
-@       to             from
 patch_desc_table:
   .word (0x71fa<<16) | 0x66fa, idle_detector_bcc8, idle_bne, Op6602  @ bne.s
   .word (0x71f8<<16) | 0x66f8, idle_detector_bcc8, idle_bne, Op6602  @ bne.s
@@ -36,13 +30,11 @@ patch_desc_table:
 .align 2
 
 
-.global CycloneInitIdleJT @ jt
+.global CycloneInitIdle
 
-CycloneInitIdleJT:
-    adr     r12,offset_table
-    ldr     r2, [r12, #1*4] @ =patch_desc_table-ot
-    mov     r3, r0          @ =CycloneJumpTab
-    add     r2, r2, r12
+CycloneInitIdle:
+    ldr     r3, =CycloneJumpTab
+    ldr     r2, =patch_desc_table
     mov     r12,#patch_desc_table_size
 
 cii_loop:
@@ -59,28 +51,22 @@ cii_loop:
     subs    r12,r12,#1
     bgt     cii_loop
 
-    adr     r12,offset_table
-    ldr     r0, [r12, #0*4] @ =idle_data-ot
+    ldr     r0, =have_patches
     mov     r1, #1
-    str     r1, [r0, r12]   @ have_patches
+    str     r1, [r0]
     bx      lr
 
 
-.global CycloneFinishIdleJT @ jt
+.global CycloneFinishIdle
 
-CycloneFinishIdleJT:
-    adr     r12,offset_table
-    ldr     r3, [r12, #0*4] @ =idle_data-ot
-    ldr     r1, [r3, r12]!  @ have_patches
-    tst     r1, r1
+CycloneFinishIdle:
+    ldr     r0, =have_patches
+    ldr     r0, [r0]
+    tst     r0, r0
     bxeq    lr
 
-    stmfd   sp!, {r4,r5}
-    mov     r5, r3
-    ldr     r2, [r12, #1*4] @ =patch_desc_table-ot
-    mov     r3, r0          @ =CycloneJumpTab
-    ldr     r4, [r5, #1*4]  @ =Op____
-    add     r2, r2, r12     @ =patch_desc_table
+    ldr     r3, =CycloneJumpTab
+    ldr     r2, =patch_desc_table
     mov     r12,#patch_desc_table_size
 
 cfi_loop:
@@ -88,16 +74,17 @@ cfi_loop:
     ldr     r1, [r2, #12]         @ normal
     str     r1, [r3, r0, lsl #2]
     ldrh    r0, [r2, #2]
+    ldr     r1, =Op____
     add     r0, r3, r0, lsl #2
-    str     r4, [r0]              @ Op____
-    str     r4, [r0, #0x800]
+    str     r1, [r0]
+    str     r1, [r0, #0x800]
     add     r2, r2, #16
     subs    r12,r12,#1
     bgt     cfi_loop
 
+    ldr     r0, =have_patches
     mov     r1, #0
-    str     r1, [r5]              @ have_patches
-    ldmfd   sp!, {r4,r5}
+    str     r1, [r0]
     bx      lr
 
 
@@ -167,16 +154,14 @@ idle_detector_bcc8:
     ble     exit_detector
 
     @ remove detector from Cyclone
-    adr     r12,offset_table
-    ldr     r1, [r12]       @ =idle_data-ot
     mov     r0, r8, lsr #8
     cmp     r0, #0x66
-    add     r1, r1, r12     @ =idle_data
-    ldrlt   r1, [r1, #4*2]  @ =Op6002-ot
-    ldreq   r1, [r1, #4*3]  @ =Op6602-ot
-    ldrgt   r1, [r1, #4*4]  @ =Op6702-ot
+    ldrlt   r1, =Op6002
+    ldreq   r1, =Op6602
+    ldrgt   r1, =Op6702
 
-    str     r1, [r6, r8, lsl #2]
+    ldr     r3, =CycloneJumpTab
+    str     r1, [r3, r8, lsl #2]
     bx      r1
 
 exit_detector:
@@ -186,6 +171,3 @@ exit_detector:
     beq     Op6602
     b       Op6702
 
-offset_table:
-    .word idle_data - offset_table
-    .word patch_desc_table - offset_table

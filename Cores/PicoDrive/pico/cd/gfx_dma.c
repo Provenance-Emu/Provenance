@@ -26,7 +26,7 @@ PICO_INTERNAL void DmaSlowCell(unsigned int source, unsigned int a, int len, uns
   switch (Pico.video.type)
   {
     case 1: // vram
-      r = PicoMem.vram;
+      r = Pico.vram;
       for(; len; len--)
       {
         asrc = cell_map(source >> 2) << 2;
@@ -37,12 +37,12 @@ PICO_INTERNAL void DmaSlowCell(unsigned int source, unsigned int a, int len, uns
         // AutoIncrement
         a=(u16)(a+inc);
       }
-      Pico.est.rendstatus |= PDRAW_SPRITES_MOVED;
+      rendstatus |= PDRAW_SPRITES_MOVED;
       break;
 
     case 3: // cram
       Pico.m.dirtyPal = 1;
-      r = PicoMem.cram;
+      r = Pico.cram;
       for(a2=a&0x7f; len; len--)
       {
         asrc = cell_map(source >> 2) << 2;
@@ -58,7 +58,7 @@ PICO_INTERNAL void DmaSlowCell(unsigned int source, unsigned int a, int len, uns
       break;
 
     case 5: // vsram[a&0x003f]=d;
-      r = PicoMem.vsram;
+      r = Pico.vsram;
       for(a2=a&0x7f; len; len--)
       {
         asrc = cell_map(source >> 2) << 2;

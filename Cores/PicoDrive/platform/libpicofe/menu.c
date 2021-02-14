@@ -33,7 +33,6 @@ void *g_menubg_ptr;
 
 int g_menuscreen_w;
 int g_menuscreen_h;
-int g_menuscreen_pp;
 
 int g_autostateld_opt;
 
@@ -54,17 +53,11 @@ static int g_menu_filter_off;
 static int g_border_style;
 static int border_left, border_right, border_top, border_bottom;
 
-void menuscreen_memset_lines(unsigned short *dst, int c, int l)
-{
-	for (; l > 0; l--, dst += g_menuscreen_pp)
-		memset(dst, c, g_menuscreen_w * 2);
-}
-
 // draws text to current bbp16 screen
 static void text_out16_(int x, int y, const char *text, int color)
 {
 	int i, lh, tr, tg, tb, len;
-	unsigned short *dest = (unsigned short *)g_menuscreen_ptr + x + y * g_menuscreen_pp;
+	unsigned short *dest = (unsigned short *)g_menuscreen_ptr + x + y * g_menuscreen_w;
 	tr = (color & 0xf800) >> 8;
 	tg = (color & 0x07e0) >> 3;
 	tb = (color & 0x001f) << 3;
@@ -93,7 +86,7 @@ static void text_out16_(int x, int y, const char *text, int color)
 		unsigned short *dst = dest;
 		int u, l;
 
-		for (l = 0; l < lh; l++, dst += g_menuscreen_pp - me_mfont_w)
+		for (l = 0; l < lh; l++, dst += g_menuscreen_w - me_mfont_w)
 		{
 			for (u = me_mfont_w / 2; u > 0; u--, src++)
 			{
@@ -166,7 +159,7 @@ static void smalltext_out16_(int x, int y, const char *texto, int color)
 			break;
 
 		src = fontdata6x8[c];
-		dst = (unsigned short *)g_menuscreen_ptr + x + y * g_menuscreen_pp;
+		dst = (unsigned short *)g_menuscreen_ptr + x + y * g_menuscreen_w;
 
 		while (h--)
 		{
@@ -181,7 +174,7 @@ static void smalltext_out16_(int x, int y, const char *texto, int color)
 						dst += multiplier;
 				}
 
-				dst += g_menuscreen_pp - me_sfont_w;
+				dst += g_menuscreen_w - me_sfont_w;
 			}
 			src++;
 		}
@@ -214,13 +207,13 @@ static void menu_draw_selection(int x, int y, int w)
 	if (menu_sel_color < 0) return; // no selection hilight
 
 	if (y > 0) y--;
-	dest = (unsigned short *)g_menuscreen_ptr + x + y * g_menuscreen_pp + me_mfont_w * 2 - 2;
+	dest = (unsigned short *)g_menuscreen_ptr + x + y * g_menuscreen_w + me_mfont_w * 2 - 2;
 	for (h = me_mfont_h + 1; h > 0; h--)
 	{
 		dst = dest;
 		for (i = w - (me_mfont_w * 2 - 2); i > 0; i--)
 			*dst++ = menu_sel_color;
-		dest += g_menuscreen_pp;
+		dest += g_menuscreen_w;
 	}
 }
 
@@ -259,7 +252,7 @@ void menu_init_base(void)
 		return;
 
 	// generate default 8x10 font from fontdata8x8
-	for (c = 0, fd = menu_font_data; c < 128; c++)
+	for (c = 0, fd = menu_font_data; c < 256; c++)
 	{
 		for (l = 0; l < 8; l++)
 		{
@@ -388,10 +381,10 @@ static void menu_darken_text_bg(void)
 		ymax = g_menuscreen_h - 1;
 
 	for (x = xmin; x <= xmax; x++)
-		screen[y * g_menuscreen_pp + x] = 0xa514;
+		screen[y * g_menuscreen_w + x] = 0xa514;
 	for (y++; y < ymax; y++)
 	{
-		ls = y * g_menuscreen_pp;
+		ls = y * g_menuscreen_w;
 		screen[ls + xmin] = 0xffff;
 		for (x = xmin + 1; x < xmax; x++)
 		{
@@ -401,7 +394,7 @@ static void menu_darken_text_bg(void)
 		}
 		screen[ls + xmax] = 0xffff;
 	}
-	ls = y * g_menuscreen_pp;
+	ls = y * g_menuscreen_w;
 	for (x = xmin; x <= xmax; x++)
 		screen[ls + x] = 0xffff;
 }
@@ -418,8 +411,6 @@ static void menu_reset_borders(void)
 
 static void menu_draw_begin(int need_bg, int no_borders)
 {
-	int y;
-
 	plat_video_menu_begin();
 
 	menu_reset_borders();
@@ -427,14 +418,12 @@ static void menu_draw_begin(int need_bg, int no_borders)
 
 	if (need_bg) {
 		if (g_border_style && no_borders) {
-			for (y = 0; y < g_menuscreen_h; y++)
-				menu_darken_bg((short *)g_menuscreen_ptr + g_menuscreen_pp * y,
-					(short *)g_menubg_ptr + g_menuscreen_w * y, g_menuscreen_w, 1);
+			menu_darken_bg(g_menuscreen_ptr, g_menubg_ptr,
+				g_menuscreen_w * g_menuscreen_h, 1);
 		}
 		else {
-			for (y = 0; y < g_menuscreen_h; y++)
-				memcpy((short *)g_menuscreen_ptr + g_menuscreen_pp * y,
-					(short *)g_menubg_ptr + g_menuscreen_w * y, g_menuscreen_w * 2);
+			memcpy(g_menuscreen_ptr, g_menubg_ptr,
+				g_menuscreen_w * g_menuscreen_h * 2);
 		}
 	}
 }
@@ -882,8 +871,8 @@ static void draw_dirlist(char *curdir, struct dirent **namelist,
 //	if (!rom_loaded)
 //		menu_darken_bg(gp2x_screen, 320*240, 0);
 
-	darken_ptr = (short *)g_menuscreen_ptr + g_menuscreen_pp * max_cnt/2 * me_sfont_h;
-	menu_darken_bg(darken_ptr, darken_ptr, g_menuscreen_pp * me_sfont_h * 8 / 10, 0);
+	darken_ptr = (short *)g_menuscreen_ptr + g_menuscreen_w * max_cnt/2 * me_sfont_h;
+	menu_darken_bg(darken_ptr, darken_ptr, g_menuscreen_w * me_sfont_h * 8 / 10, 0);
 
 	x = 5 + me_mfont_w + 1;
 	if (start - 2 >= 0)
@@ -904,9 +893,9 @@ static void draw_dirlist(char *curdir, struct dirent **namelist,
 
 	if (show_help) {
 		darken_ptr = (short *)g_menuscreen_ptr
-			+ g_menuscreen_pp * (g_menuscreen_h - me_sfont_h * 5 / 2);
+			+ g_menuscreen_w * (g_menuscreen_h - me_sfont_h * 5 / 2);
 		menu_darken_bg(darken_ptr, darken_ptr,
-			g_menuscreen_pp * (me_sfont_h * 5 / 2), 1);
+			g_menuscreen_w * (me_sfont_h * 5 / 2), 1);
 
 		snprintf(buff, sizeof(buff), "%s - select, %s - back",
 			in_get_key_name(-1, -PBTN_MOK), in_get_key_name(-1, -PBTN_MBACK));
@@ -948,17 +937,11 @@ static int scandir_filter(const struct dirent *ent)
 	const char *ext;
 	int i;
 
-	if (ent == NULL)
+	if (ent == NULL || ent->d_name == NULL)
 		return 0;
 
-	switch (ent->d_type) {
-	case DT_DIR:
+	if (ent->d_type == DT_DIR)
 		return 1;
-	case DT_LNK:
-	case DT_UNKNOWN:
-		// could be a dir, deal with it later..
-		return 1;
-	}
 
 	ext = strrchr(ent->d_name, '.');
 	if (ext == NULL)
@@ -995,16 +978,14 @@ static const char *menu_loop_romsel(char *curr_path, int len,
 	int (*extra_filter)(struct dirent **namelist, int count,
 			    const char *basedir))
 {
-	static char rom_fname_reload[256]; // used for scratch and return
+	static char rom_fname_reload[256]; // used for return
 	char sel_fname[256];
 	int (*filter)(const struct dirent *);
 	struct dirent **namelist = NULL;
 	int n = 0, inp = 0, sel = 0, show_help = 0;
 	char *curr_path_restore = NULL;
 	const char *ret = NULL;
-	int changed;
 	char cinp;
-	int r, i;
 
 	filter_exts_internal = filter_exts;
 	sel_fname[0] = 0;
@@ -1051,40 +1032,14 @@ rescan:
 		}
 	}
 
-	// try to resolve DT_UNKNOWN and symlinks
-	changed = 0;
-	for (i = 0; i < n; i++) {
-		struct stat st;
-
-		if (namelist[i]->d_type == DT_REG || namelist[i]->d_type == DT_DIR)
-			continue;
-
-		snprintf(rom_fname_reload, sizeof(rom_fname_reload),
-			"%s/%s", curr_path, namelist[i]->d_name);
-		r = stat(rom_fname_reload, &st);
-		if (r == 0)
-		{
-			if (S_ISREG(st.st_mode)) {
-				namelist[i]->d_type = DT_REG;
-				changed = 1;
-			}
-			else if (S_ISDIR(st.st_mode)) {
-				namelist[i]->d_type = DT_DIR;
-				changed = 1;
-			}
-		}
-	}
-
 	if (!g_menu_filter_off && extra_filter != NULL)
 		n = extra_filter(namelist, n, curr_path);
-
-	if (n > 1 && changed)
-		qsort(namelist, n, sizeof(namelist[0]), scandir_cmp);
 
 	// try to find selected file
 	// note: we don't show '.' so sel is namelist index - 1
 	sel = 0;
 	if (sel_fname[0] != 0) {
+		int i;
 		for (i = 1; i < n; i++) {
 			char *dname = namelist[i]->d_name;
 			if (dname[0] == sel_fname[0] && strcmp(dname, sel_fname) == 0) {
@@ -1120,6 +1075,7 @@ rescan:
 
 		if ((inp & PBTN_MOK) || (inp & (PBTN_MENU|PBTN_MA2)) == (PBTN_MENU|PBTN_MA2))
 		{
+			again:
 			if (namelist[sel+1]->d_type == DT_REG)
 			{
 				snprintf(rom_fname_reload, sizeof(rom_fname_reload),
@@ -1158,6 +1114,22 @@ rescan:
 				ret = menu_loop_romsel(newdir, newlen, filter_exts, extra_filter);
 				free(newdir);
 				break;
+			}
+			else
+			{
+				// unknown file type, happens on NTFS mounts. Try to guess.
+				FILE *tstf; int tmp;
+				snprintf(rom_fname_reload, sizeof(rom_fname_reload),
+					"%s/%s", curr_path, namelist[sel+1]->d_name);
+				tstf = fopen(rom_fname_reload, "rb");
+				if (tstf != NULL)
+				{
+					if (fread(&tmp, 1, 1, tstf) > 0 || ferror(tstf) == 0)
+						namelist[sel+1]->d_type = DT_REG;
+					else	namelist[sel+1]->d_type = DT_DIR;
+					fclose(tstf);
+					goto again;
+				}
 			}
 		}
 		else if (inp & PBTN_MA2) {
@@ -1392,8 +1364,7 @@ static void draw_key_config(const me_bind_action *opts, int opt_cnt, int player_
 	y = (g_menuscreen_h - 4 * me_mfont_h) / 2 - (2 + opt_cnt) * me_mfont_h / 2;
 	if (x < me_mfont_w * 2)
 		x = me_mfont_w * 2;
-	if (y < 0)
-		y = 0;
+
 	menu_draw_begin(1, 0);
 	if (player_idx >= 0)
 		text_out16(x, y, "Player %i controls", player_idx + 1);
@@ -1519,10 +1490,6 @@ static void key_config_loop(const me_bind_action *opts, int opt_cnt, int player_
 			in_unbind_all(bind_dev_id, opts[sel].mask << mask_shift, bindtype);
 
 		in_bind_key(bind_dev_id, kc, opts[sel].mask << mask_shift, bindtype, 0);
-
-		// make sure bind change is displayed
-		if (dev_id != -1)
-			dev_id = bind_dev_id;
 	}
 }
 

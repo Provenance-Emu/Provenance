@@ -29,9 +29,9 @@ void pemu_prep_defconfig(void)
 
 void pemu_validate_config(void)
 {
-#if !defined(__arm__) && !defined(__i386__) && !defined(__x86_64__)
-	PicoIn.opt &= ~POPT_EN_DRC;
-#endif
+	extern int PicoOpt;
+//	PicoOpt &= ~POPT_EXT_FM;
+	PicoOpt &= ~POPT_EN_DRC;
 }
 
 static void draw_cd_leds(void)
@@ -66,10 +66,10 @@ static void draw_cd_leds(void)
 
 void pemu_finalize_frame(const char *fps, const char *notice)
 {
-	if (currentConfig.renderer != RT_16BIT && !(PicoIn.AHW & PAHW_32X)) {
-		unsigned short *pd = (unsigned short *)g_screen_ptr + 8 * g_screen_ppitch;
-		unsigned char *ps = Pico.est.Draw2FB + 328*8 + 8;
-		unsigned short *pal = Pico.est.HighPal;
+	if (currentConfig.renderer != RT_16BIT && !(PicoAHW & PAHW_32X)) {
+		unsigned short *pd = (unsigned short *)g_screen_ptr + 8 * g_screen_width;
+		unsigned char *ps = PicoDraw2FB + 328*8 + 8;
+		unsigned short *pal = HighPal;
 		int i, x;
 		if (Pico.m.dirtyPal)
 			PicoDrawUpdateHighPal();
@@ -84,7 +84,7 @@ void pemu_finalize_frame(const char *fps, const char *notice)
 		if (currentConfig.EmuOpt & EOPT_SHOW_FPS)
 			emu_osd_text16(g_screen_width - 60, g_screen_height - 8, fps);
 	}
-	if ((PicoIn.AHW & PAHW_MCD) && (currentConfig.EmuOpt & EOPT_EN_CD_LEDS))
+	if ((PicoAHW & PAHW_MCD) && (currentConfig.EmuOpt & EOPT_EN_CD_LEDS))
 		draw_cd_leds();
 }
 
@@ -92,23 +92,23 @@ static void apply_renderer(void)
 {
 	switch (currentConfig.renderer) {
 	case RT_16BIT:
-		PicoIn.opt &= ~POPT_ALT_RENDERER;
+		PicoOpt &= ~POPT_ALT_RENDERER;
 		PicoDrawSetOutFormat(PDF_RGB555, 0);
-		PicoDrawSetOutBuf(g_screen_ptr, g_screen_ppitch * 2);
+		PicoDrawSetOutBuf(g_screen_ptr, g_screen_width * 2);
 		break;
 	case RT_8BIT_ACC:
-		PicoIn.opt &= ~POPT_ALT_RENDERER;
+		PicoOpt &= ~POPT_ALT_RENDERER;
 		PicoDrawSetOutFormat(PDF_8BIT, 0);
-		PicoDrawSetOutBuf(Pico.est.Draw2FB + 8, 328);
+		PicoDrawSetOutBuf(PicoDraw2FB + 8, 328);
 		break;
 	case RT_8BIT_FAST:
-		PicoIn.opt |=  POPT_ALT_RENDERER;
+		PicoOpt |=  POPT_ALT_RENDERER;
 		PicoDrawSetOutFormat(PDF_NONE, 0);
 		break;
 	}
 
-	if (PicoIn.AHW & PAHW_32X)
-		PicoDrawSetOutBuf(g_screen_ptr, g_screen_ppitch * 2);
+	if (PicoAHW & PAHW_32X)
+		PicoDrawSetOutBuf(g_screen_ptr, g_screen_width * 2);
 }
 
 void plat_video_toggle_renderer(int change, int is_menu)
@@ -127,8 +127,8 @@ void plat_video_toggle_renderer(int change, int is_menu)
 
 void plat_status_msg_clear(void)
 {
-	unsigned short *d = (unsigned short *)g_screen_ptr + g_screen_ppitch * g_screen_height;
-	int l = g_screen_ppitch * 8;
+	unsigned short *d = (unsigned short *)g_screen_ptr + g_screen_width * g_screen_height;
+	int l = g_screen_width * 8;
 	memset32((int *)(d - l), 0, l * 2 / 4);
 }
 
@@ -143,7 +143,7 @@ void plat_status_msg_busy_next(const char *msg)
 
 void plat_status_msg_busy_first(const char *msg)
 {
-//	memset32(g_screen_ptr, 0, g_screen_ppitch * g_screen_height * 2 / 4);
+//	memset32(g_screen_ptr, 0, g_screen_width * g_screen_height * 2 / 4);
 	plat_status_msg_busy_next(msg);
 }
 
@@ -153,7 +153,7 @@ void plat_update_volume(int has_changed, int is_up)
 
 void pemu_forced_frame(int no_scale, int do_emu)
 {
-	PicoDrawSetOutBuf(g_screen_ptr, g_screen_ppitch * 2);
+	PicoDrawSetOutBuf(g_screen_ptr, g_screen_width * 2);
 	PicoDrawSetCallbacks(NULL, NULL);
 	Pico.m.dirtyPal = 1;
 
@@ -174,7 +174,7 @@ void plat_debug_cat(char *str)
 void emu_video_mode_change(int start_line, int line_count, int is_32cols)
 {
 	// clear whole screen in all buffers
-	memset32(g_screen_ptr, 0, g_screen_ppitch * g_screen_height * 2 / 4);
+	memset32(g_screen_ptr, 0, g_screen_width * g_screen_height * 2 / 4);
 }
 
 void pemu_loop_prep(void)
@@ -201,7 +201,3 @@ void plat_wait_till_us(unsigned int us_to)
 	}
 }
 
-void *plat_mem_get_for_drc(size_t size)
-{
-	return NULL;
-}

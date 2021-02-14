@@ -16,7 +16,6 @@ extern void *g_screen_ptr;
 
 extern int g_screen_width;
 extern int g_screen_height;
-extern int g_screen_ppitch; // pitch in pixels
 
 #define EOPT_EN_SRAM      (1<<0)
 #define EOPT_SHOW_FPS     (1<<1)
@@ -75,7 +74,6 @@ typedef struct _currentConfig_t {
 	int analog_deadzone;
 	int msh2_khz;
 	int ssh2_khz;
-	int overclock_68k;
 } currentConfig_t;
 
 extern currentConfig_t currentConfig, defaultConfig;

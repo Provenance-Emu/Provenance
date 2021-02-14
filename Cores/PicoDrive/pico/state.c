@@ -7,7 +7,7 @@
  */
 
 #include "pico_int.h"
-#include <zlib.h>
+#include <zlib/zlib.h>
 
 #include "../cpu/sh2/sh2.h"
 #include "sound/ym2612.h"
@@ -76,6 +76,54 @@ static void *open_save_file(const char *fname, int is_save)
   }
 
   return afile;
+}
+
+// legacy savestate loading
+#define SCANP(f, x) areaRead(&Pico.x, sizeof(Pico.x), 1, f)
+
+static int state_load_legacy(void *file)
+{
+  unsigned char head[32];
+  unsigned char cpu[0x60];
+  unsigned char cpu_z80[Z80_STATE_SIZE];
+  void *ym2612_regs;
+  int ok;
+
+  memset(&cpu,0,sizeof(cpu));
+  memset(&cpu_z80,0,sizeof(cpu_z80));
+
+  memset(head, 0, sizeof(head));
+  areaRead(head, sizeof(head), 1, file);
+  if (strcmp((char *)head, "Pico") != 0)
+    return -1;
+
+  elprintf(EL_STATUS, "legacy savestate");
+
+  // Scan all the memory areas:
+  SCANP(file, ram);
+  SCANP(file, vram);
+  SCANP(file, zram);
+  SCANP(file, cram);
+  SCANP(file, vsram);
+
+  // Pack, scan and unpack the cpu data:
+  areaRead(cpu, sizeof(cpu), 1, file);
+  SekUnpackCpu(cpu, 0);
+
+  SCANP(file, m);
+  SCANP(file, video);
+
+  ok = areaRead(cpu_z80, sizeof(cpu_z80), 1, file) == sizeof(cpu_z80);
+  // do not unpack if we fail to load z80 state
+  if (!ok) z80_reset();
+  else     z80_unpack(cpu_z80);
+
+  ym2612_regs = YM2612GetRegs();
+  areaRead(sn76496_regs, 28*4, 1, file);
+  areaRead(ym2612_regs, 0x200+4, 1, file);
+  ym2612_unpack_state();
+
+  return 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -226,29 +274,23 @@ static int state_save(void *file)
   areaWrite("PicoSEXT", 1, 8, file);
   areaWrite(&ver, 1, 4, file);
 
-  if (!(PicoIn.AHW & PAHW_SMS)) {
-    // the patches can cause incompatible saves with no-idle
-    SekFinishIdleDet();
-
+  if (!(PicoAHW & PAHW_SMS)) {
     memset(buff, 0, sizeof(buff));
     SekPackCpu(buff, 0);
     CHECKED_WRITE_BUFF(CHUNK_M68K,  buff);
-    CHECKED_WRITE_BUFF(CHUNK_RAM,   PicoMem.ram);
-    CHECKED_WRITE_BUFF(CHUNK_VSRAM, PicoMem.vsram);
-    CHECKED_WRITE_BUFF(CHUNK_IOPORTS, PicoMem.ioports);
+    CHECKED_WRITE_BUFF(CHUNK_RAM,   Pico.ram);
+    CHECKED_WRITE_BUFF(CHUNK_VSRAM, Pico.vsram);
+    CHECKED_WRITE_BUFF(CHUNK_IOPORTS, Pico.ioports);
     ym2612_pack_state();
     CHECKED_WRITE(CHUNK_FM, 0x200+4, ym2612_regs);
-
-    if (!(PicoIn.opt & POPT_DIS_IDLE_DET))
-      SekInitIdleDet();
   }
   else {
     CHECKED_WRITE_BUFF(CHUNK_SMS, Pico.ms);
   }
 
-  CHECKED_WRITE_BUFF(CHUNK_VRAM,  PicoMem.vram);
-  CHECKED_WRITE_BUFF(CHUNK_ZRAM,  PicoMem.zram);
-  CHECKED_WRITE_BUFF(CHUNK_CRAM,  PicoMem.cram);
+  CHECKED_WRITE_BUFF(CHUNK_VRAM,  Pico.vram);
+  CHECKED_WRITE_BUFF(CHUNK_ZRAM,  Pico.zram);
+  CHECKED_WRITE_BUFF(CHUNK_CRAM,  Pico.cram);
   CHECKED_WRITE_BUFF(CHUNK_MISC,  Pico.m);
   CHECKED_WRITE_BUFF(CHUNK_VIDEO, Pico.video);
 
@@ -256,7 +298,7 @@ static int state_save(void *file)
   CHECKED_WRITE_BUFF(CHUNK_Z80, buff_z80);
   CHECKED_WRITE(CHUNK_PSG, 28*4, sn76496_regs);
 
-  if (PicoIn.AHW & PAHW_MCD)
+  if (PicoAHW & PAHW_MCD)
   {
     buf2 = malloc(CHUNK_LIMIT_W);
     if (buf2 == NULL)
@@ -293,7 +335,7 @@ static int state_save(void *file)
   }
 
 #ifndef NO_32X
-  if (PicoIn.AHW & PAHW_32X)
+  if (PicoAHW & PAHW_32X)
   {
     unsigned char cpubuff[SH2_STATE_SIZE];
 
@@ -412,9 +454,9 @@ static int state_load(void *file)
     CHECKED_READ(1, &chunk);
     CHECKED_READ(4, &len);
     if (len < 0 || len > 1024*512) R_ERROR_RETURN("bad length");
-    if (CHUNK_S68K <= chunk && chunk <= CHUNK_MISC_CD && !(PicoIn.AHW & PAHW_MCD))
+    if (CHUNK_S68K <= chunk && chunk <= CHUNK_MISC_CD && !(PicoAHW & PAHW_MCD))
       R_ERROR_RETURN("cd chunk in non CD state?");
-    if (CHUNK_32X_FIRST <= chunk && chunk <= CHUNK_32X_LAST && !(PicoIn.AHW & PAHW_32X))
+    if (CHUNK_32X_FIRST <= chunk && chunk <= CHUNK_32X_LAST && !(PicoAHW & PAHW_32X))
       Pico32xStartup();
 
     switch (chunk)
@@ -427,14 +469,14 @@ static int state_load(void *file)
         CHECKED_READ_BUFF(buff_z80);
         break;
 
-      case CHUNK_RAM:     CHECKED_READ_BUFF(PicoMem.ram); break;
-      case CHUNK_VRAM:    CHECKED_READ_BUFF(PicoMem.vram); break;
-      case CHUNK_ZRAM:    CHECKED_READ_BUFF(PicoMem.zram); break;
-      case CHUNK_CRAM:    CHECKED_READ_BUFF(PicoMem.cram); break;
-      case CHUNK_VSRAM:   CHECKED_READ_BUFF(PicoMem.vsram); break;
+      case CHUNK_RAM:     CHECKED_READ_BUFF(Pico.ram); break;
+      case CHUNK_VRAM:    CHECKED_READ_BUFF(Pico.vram); break;
+      case CHUNK_ZRAM:    CHECKED_READ_BUFF(Pico.zram); break;
+      case CHUNK_CRAM:    CHECKED_READ_BUFF(Pico.cram); break;
+      case CHUNK_VSRAM:   CHECKED_READ_BUFF(Pico.vsram); break;
       case CHUNK_MISC:    CHECKED_READ_BUFF(Pico.m); break;
       case CHUNK_VIDEO:   CHECKED_READ_BUFF(Pico.video); break;
-      case CHUNK_IOPORTS: CHECKED_READ_BUFF(PicoMem.ioports); break;
+      case CHUNK_IOPORTS: CHECKED_READ_BUFF(Pico.ioports); break;
       case CHUNK_PSG:     CHECKED_READ2(28*4, sn76496_regs); break;
       case CHUNK_FM:
         ym2612_regs = YM2612GetRegs();
@@ -541,37 +583,29 @@ breakswitch:
   }
 
 readend:
-  if (PicoIn.AHW & PAHW_SMS)
+  if (PicoAHW & PAHW_SMS)
     PicoStateLoadedMS();
 
-  if (PicoIn.AHW & PAHW_32X)
+  if (PicoAHW & PAHW_32X)
     Pico32xStateLoaded(1);
 
-  if (PicoLoadStateHook != NULL)
-    PicoLoadStateHook();
-
   // must unpack 68k and z80 after banks are set up
-  if (!(PicoIn.AHW & PAHW_SMS))
+  if (!(PicoAHW & PAHW_SMS))
     SekUnpackCpu(buff_m68k, 0);
-  if (PicoIn.AHW & PAHW_MCD)
+  if (PicoAHW & PAHW_MCD)
     SekUnpackCpu(buff_s68k, 1);
 
   z80_unpack(buff_z80);
 
   // due to dep from 68k cycles..
-  Pico.t.m68c_aim = Pico.t.m68c_cnt;
-  if (PicoIn.AHW & PAHW_32X)
+  SekCycleAim = SekCycleCnt;
+  if (PicoAHW & PAHW_32X)
     Pico32xStateLoaded(0);
-  if (PicoIn.AHW & PAHW_MCD)
+  if (PicoAHW & PAHW_MCD)
   {
     SekCycleAimS68k = SekCycleCntS68k;
     pcd_state_loaded();
   }
-
-  Pico.m.dirtyPal = 1;
-  Pico.video.status &= ~(SR_VB | SR_F);
-  Pico.video.status |= ((Pico.video.reg[1] >> 3) ^ SR_VB) & SR_VB;
-  Pico.video.status |= (Pico.video.pending_ints << 2) & SR_F;
 
   retval = 0;
 
@@ -585,7 +619,7 @@ static int state_load_gfx(void *file)
   int ver, len, found = 0, to_find = 4;
   char buff[8];
 
-  if (PicoIn.AHW & PAHW_32X)
+  if (PicoAHW & PAHW_32X)
     to_find += 2;
 
   g_read_offs = 0;
@@ -599,14 +633,14 @@ static int state_load_gfx(void *file)
     CHECKED_READ(1, buff);
     CHECKED_READ(4, &len);
     if (len < 0 || len > 1024*512) R_ERROR_RETURN("bad length");
-    if (buff[0] > CHUNK_FM && buff[0] <= CHUNK_MISC_CD && !(PicoIn.AHW & PAHW_MCD))
+    if (buff[0] > CHUNK_FM && buff[0] <= CHUNK_MISC_CD && !(PicoAHW & PAHW_MCD))
       R_ERROR_RETURN("cd chunk in non CD state?");
 
     switch (buff[0])
     {
-      case CHUNK_VRAM:  CHECKED_READ_BUFF(PicoMem.vram);  found++; break;
-      case CHUNK_CRAM:  CHECKED_READ_BUFF(PicoMem.cram);  found++; break;
-      case CHUNK_VSRAM: CHECKED_READ_BUFF(PicoMem.vsram); found++; break;
+      case CHUNK_VRAM:  CHECKED_READ_BUFF(Pico.vram);  found++; break;
+      case CHUNK_CRAM:  CHECKED_READ_BUFF(Pico.cram);  found++; break;
+      case CHUNK_VSRAM: CHECKED_READ_BUFF(Pico.vsram); found++; break;
       case CHUNK_VIDEO: CHECKED_READ_BUFF(Pico.video); found++; break;
 
 #ifndef NO_32X
@@ -642,8 +676,17 @@ static int pico_state_internal(void *afile, int is_save)
 
   if (is_save)
     ret = state_save(afile);
-  else
+  else {
     ret = state_load(afile);
+    if (ret != 0) {
+      areaSeek(afile, 0, SEEK_SET);
+      ret = state_load_legacy(afile);
+    }
+
+    if (PicoLoadStateHook != NULL)
+      PicoLoadStateHook();
+    Pico.m.dirtyPal = 1;
+  }
 
   return ret;
 }
@@ -687,10 +730,10 @@ int PicoStateLoadGfx(const char *fname)
   if (ret != 0) {
     // assume legacy
     areaSeek(afile, 0x10020, SEEK_SET);  // skip header and RAM
-    areaRead(PicoMem.vram, 1, sizeof(PicoMem.vram), afile);
+    areaRead(Pico.vram, 1, sizeof(Pico.vram), afile);
     areaSeek(afile, 0x2000, SEEK_CUR);
-    areaRead(PicoMem.cram, 1, sizeof(PicoMem.cram), afile);
-    areaRead(PicoMem.vsram, 1, sizeof(PicoMem.vsram), afile);
+    areaRead(Pico.cram, 1, sizeof(Pico.cram), afile);
+    areaRead(Pico.vsram, 1, sizeof(Pico.vsram), afile);
     areaSeek(afile, 0x221a0, SEEK_SET);
     areaRead(&Pico.video, 1, sizeof(Pico.video), afile);
   }
@@ -723,13 +766,13 @@ void *PicoTmpStateSave(void)
   if (t == NULL)
     return NULL;
 
-  memcpy(t->vram, PicoMem.vram, sizeof(PicoMem.vram));
-  memcpy(t->cram, PicoMem.cram, sizeof(PicoMem.cram));
-  memcpy(t->vsram, PicoMem.vsram, sizeof(PicoMem.vsram));
+  memcpy(t->vram, Pico.vram, sizeof(Pico.vram));
+  memcpy(t->cram, Pico.cram, sizeof(Pico.cram));
+  memcpy(t->vsram, Pico.vsram, sizeof(Pico.vsram));
   memcpy(&t->video, &Pico.video, sizeof(Pico.video));
 
 #ifndef NO_32X
-  if (PicoIn.AHW & PAHW_32X) {
+  if (PicoAHW & PAHW_32X) {
     memcpy(&t->t32x.p32x, &Pico32x, sizeof(Pico32x));
     memcpy(t->t32x.dram, Pico32xMem->dram, sizeof(Pico32xMem->dram));
     memcpy(t->t32x.pal, Pico32xMem->pal, sizeof(Pico32xMem->pal));
@@ -745,14 +788,14 @@ void PicoTmpStateRestore(void *data)
   if (t == NULL)
     return;
 
-  memcpy(PicoMem.vram, t->vram, sizeof(PicoMem.vram));
-  memcpy(PicoMem.cram, t->cram, sizeof(PicoMem.cram));
-  memcpy(PicoMem.vsram, t->vsram, sizeof(PicoMem.vsram));
+  memcpy(Pico.vram, t->vram, sizeof(Pico.vram));
+  memcpy(Pico.cram, t->cram, sizeof(Pico.cram));
+  memcpy(Pico.vsram, t->vsram, sizeof(Pico.vsram));
   memcpy(&Pico.video, &t->video, sizeof(Pico.video));
   Pico.m.dirtyPal = 1;
 
 #ifndef NO_32X
-  if (PicoIn.AHW & PAHW_32X) {
+  if (PicoAHW & PAHW_32X) {
     memcpy(&Pico32x, &t->t32x.p32x, sizeof(Pico32x));
     memcpy(Pico32xMem->dram, t->t32x.dram, sizeof(Pico32xMem->dram));
     memcpy(Pico32xMem->pal, t->t32x.pal, sizeof(Pico32xMem->pal));

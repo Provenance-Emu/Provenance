@@ -113,8 +113,8 @@ int OpLink(int op)
 
   if(reg!=7) {
     ot(";@ Get An\n");
-    EaCalc(11, 7, 8, 2);
-    EaRead(11, 1, 8, 2, 7);
+    EaCalc(11, 7, 8, 2, 1);
+    EaRead(11, 1, 8, 2, 7, 1);
   }
 
   ot("  ldr r0,[r7,#0x3c] ;@ Get A7\n");
@@ -128,7 +128,7 @@ int OpLink(int op)
 
   ot(";@ Save to An\n");
   if(reg!=7)
-    EaWrite(11, 8, 8, 2, 7);
+    EaWrite(11,8, 8, 2, 7, 1);
 
   ot(";@ Get offset:\n");
   EaCalc(0,0,0x3c,1);    // abused r8 is ok because of imm EA
@@ -154,8 +154,8 @@ int OpUnlk(int op)
   OpStart(op,0x10);
 
   ot(";@ Get An\n");
-  EaCalc(11, 0xf, 8, 2);
-  EaRead(11,   0, 8, 2, 0xf);
+  EaCalc(11, 0xf, 8, 2,   1);
+  EaRead(11,   0, 8, 2, 0xf, 1);
 
   ot("  add r8,r0,#4 ;@ A7+=4, abuse r8\n");
   ot("\n");
@@ -165,7 +165,7 @@ int OpUnlk(int op)
   ot("  str r8,[r7,#0x3c] ;@ Save A7\n");
   ot("\n");
   ot(";@ An = value from stack:\n");
-  EaWrite(11, 0, 8, 2, 7);
+  EaWrite(11, 0, 8, 2, 7, 1);
 
   Cycles=12;
   OpEnd(0x10);

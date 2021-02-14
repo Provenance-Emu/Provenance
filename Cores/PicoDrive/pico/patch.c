@@ -22,20 +22,18 @@
  */
 
 #include "pico_int.h"
-#include "memory.h"
 #include "patch.h"
 
 struct patch
 {
-   unsigned int addr;
-   unsigned short data;
-   unsigned char comp;
+	unsigned int addr;
+	unsigned short data;
 };
 
 struct patch_inst *PicoPatches = NULL;
 int PicoPatchCount = 0;
 
-static char genie_chars_md[] = "AaBbCcDdEeFfGgHhJjKkLlMmNnPpRrSsTtVvWwXxYyZz0O1I2233445566778899";
+static char genie_chars[] = "AaBbCcDdEeFfGgHhJjKkLlMmNnPpRrSsTtVvWwXxYyZz0O1I2233445566778899";
 
 /* genie_decode
  * This function converts a Game Genie code to an address:data pair.
@@ -49,23 +47,20 @@ static char genie_chars_md[] = "AaBbCcDdEeFfGgHhJjKkLlMmNnPpRrSsTtVvWwXxYyZz0O1I
  * by result. If an error results, both the address and data will be set to -1.
  */
 
-static void genie_decode_md(const char* code, struct patch* result)
+static void genie_decode(const char* code, struct patch* result)
 {
   int i = 0, n;
   char* x;
 
-  for(; i < 9; ++i)
+  for(; i < 8; ++i)
   {
-    /* Skip i=4; it's going to be the separating hyphen */
-    if (i==4) continue;
-
     /* If strchr returns NULL, we were given a bad character */
-    if(!(x = strchr(genie_chars_md, code[i])))
+    if(!(x = strchr(genie_chars, code[i])))
     {
       result->addr = -1; result->data = -1;
       return;
     }
-    n = (x - genie_chars_md) >> 1;
+    n = (x - genie_chars) >> 1;
     /* Now, based on which character this is, fit it into the result */
     switch(i)
     {
@@ -86,21 +81,21 @@ static void genie_decode_md(const char* code, struct patch* result)
       /* BCDE ____ ____ ___A ____ ____ : ____ ____ ____ ____ */
       result->addr |= (n & 0xF) << 20 | (n >> 4) << 8;
       break;
-    case 5:
+    case 4:
       /* ____ ABCD ____ ____ ____ ____ : ___E ____ ____ ____ */
       result->data |= (n & 1) << 12;
       result->addr |= (n >> 1) << 16;
       break;
-    case 6:
+    case 5:
       /* ____ ____ ____ ____ ____ ____ : E___ ABCD ____ ____ */
       result->data |= (n & 1) << 15 | (n >> 1) << 8;
       break;
-    case 7:
+    case 6:
       /* ____ ____ ____ ____ CDE_ ____ : _AB_ ____ ____ ____ */
       result->data |= (n >> 3) << 13;
       result->addr |= (n & 7) << 5;
       break;
-    case 8:
+    case 7:
       /* ____ ____ ____ ____ ___A BCDE : ____ ____ ____ ____ */
       result->addr |= n;
       break;
@@ -118,400 +113,223 @@ static void genie_decode_md(const char* code, struct patch* result)
 
 static char hex_chars[] = "00112233445566778899AaBbCcDdEeFf";
 
-static void hex_decode_md(const char *code, struct patch *result)
+static void hex_decode(const char *code, struct patch *result)
 {
   char *x;
   int i;
   /* 6 digits for address */
   for(i = 0; i < 6; ++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
     {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->addr = (result->addr << 4) | ((x - hex_chars) >> 1);
-  }
-  /* 4 digits for data */
-  for(i = 7; i < 11; ++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      if (i==8) break;
-      result->addr = result->data = -1;
-      return;
-    }
-    result->data = (result->data << 4) | ((x - hex_chars) >> 1);
-  }
-}
-
-void genie_decode_ms(const char *code, struct patch *result)
-{
-  char *x;
-  int i;
-  /* 2 digits for data */
-  for(i=0;i<2;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->data = (result->data << 4) | ((x - hex_chars) >> 1);
-  }
-  /* 4 digits for address */
-  for(i=2;i<7;++i)
-  {
-    /* 4th character is hyphen and can be skipped*/
-    if (i==3) continue;
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->addr = (result->addr << 4) | ((x - hex_chars) >> 1);
-  }
-  /* Correct the address */
-  result->addr = ((result->addr >> 4) | (result->addr << 12 & 0xF000)) ^ 0xF000;
-  /* Optional: 3 digits for comp */
-  if (code[7]=='-')
-  {
-    for(i=8;i<11;++i)
-    {
-      if (i==9) continue; /* 2nd character is ignored */
       if(!(x = strchr(hex_chars, code[i])))
       {
-         result->addr = result->data = -1;
-         return;
+	result->addr = result->data = -1;
+	return;
       }
-      result->comp = (result->comp << 4) | ((x - hex_chars) >> 1);
+      result->addr = (result->addr << 4) | ((x - hex_chars) >> 1);
     }
-    /* Correct the comp */
-    result->comp = ((result->comp >> 2) | ((result->comp << 6) & 0xC0)) ^ 0xBA;
-  }
-}
-
-void ar_decode_ms(const char *code, struct patch *result){
-  char *x;
-  int i;
-  /* 2 digits of padding*/
-  /* 4 digits for address */
-  for(i=2;i<7;++i)
-  {
-    /* 5th character is hyphen and can be skipped*/
-    if (i==4) continue;
-    if(!(x = strchr(hex_chars, code[i])))
+  /* 4 digits for data */
+  for(i = 6; i < 10; ++i)
     {
-      result->addr = result->data = -1;
-      return;
+      if(!(x = strchr(hex_chars, code[i])))
+      {
+	result->addr = result->data = -1;
+	return;
+      }
+      result->data = (result->data << 4) | ((x - hex_chars) >> 1);
     }
-    result->addr = (result->addr << 4) | ((x - hex_chars) >> 1);
-  }
-  /* 2 digits for data */
-  for(i=7;i<9;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->data = (result->data << 4) | ((x - hex_chars) >> 1);
-  }
-}
-
-void fusion_ram_decode(const char *code, struct patch *result){
-  char *x;
-  int i;
-  /* 4 digits for address */
-  for(i=0;i<4;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->addr = (result->addr << 4) | ((x - hex_chars) >> 1);
-  }
-  /* Skip the ':' */
-  /* 2 digits for data */
-  for(i=5;i<7;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->data = (result->data << 4) | ((x - hex_chars) >> 1);
-  }
-}
-
-void fusion_rom_decode(const char *code, struct patch *result){
-  char *x;
-  int i;
-  /* 2 digits for comp */
-  for(i=0;i<2;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->comp = (result->comp << 4) | ((x - hex_chars) >> 1);
-  }
-  /* 4 digits for address */
-  for(i=2;i<6;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->addr = (result->addr << 4) | ((x - hex_chars) >> 1);
-  }
-  /* 2 digits for data */
-  for(i=7;i<9;++i)
-  {
-    if(!(x = strchr(hex_chars, code[i])))
-    {
-      result->addr = result->data = -1;
-      return;
-    }
-    result->data = (result->data << 4) | ((x - hex_chars) >> 1);
-  }
 }
 
 /* THIS is the function you call from the MegaDrive or whatever. This figures
  * out whether it's a genie or hex code, depunctuates it, and calls the proper
  * decoder. */
-void decode(const char* code, struct patch* result)
+static void decode(const char* code, struct patch* result)
 {
-  int len = strlen(code);
+  int len = strlen(code), i, j;
+  char code_to_pass[16], *x;
+  const char *ad, *da;
+  int adl, dal;
 
   /* Initialize the result */
-  result->addr = result->data = result->comp = 0;
+  result->addr = result->data = 0;
 
-  if(!(PicoIn.AHW & PAHW_SMS))
+  /* Just assume 8 char long string to be Game Genie code */
+  if (len == 8)
   {
-    //If Genesis
+    genie_decode(code, result);
+    return;
+  }
 
-    //Game Genie
+  /* If it's 9 chars long and the 5th is a hyphen, we have a Game Genie
+   * code. */
     if(len == 9 && code[4] == '-')
     {
-      genie_decode_md(code, result);
+      /* Remove the hyphen and pass to genie_decode */
+      code_to_pass[0] = code[0];
+      code_to_pass[1] = code[1];
+      code_to_pass[2] = code[2];
+      code_to_pass[3] = code[3];
+      code_to_pass[4] = code[5];
+      code_to_pass[5] = code[6];
+      code_to_pass[6] = code[7];
+      code_to_pass[7] = code[8];
+      code_to_pass[8] = '\0';
+      genie_decode(code_to_pass, result);
       return;
     }
 
-    //Master
-    else if(len >=9 && code[6] == ':')
-    {
-      hex_decode_md(code, result);
-    }
+  /* Otherwise, we assume it's a hex code.
+   * Find the colon so we know where address ends and data starts. If there's
+   * no colon, then we haven't a code at all! */
+  if(!(x = strchr(code, ':'))) goto bad_code;
+  ad = code; da = x + 1; adl = x - code; dal = len - adl - 1;
 
-    else
-    {
-      goto bad_code;
-    }
-  } else {
-    //If Master System
+  /* If a section is empty or too long, toss it */
+  if(adl == 0 || adl > 6 || dal == 0 || dal > 4) goto bad_code;
 
-    //Genie
-    if(len >= 7 && code[3] == '-')
-    {
-      genie_decode_ms(code, result);
-    }
+  /* Pad the address with zeros, then fill it with the value */
+  for(i = 0; i < (6 - adl); ++i) code_to_pass[i] = '0';
+  for(j = 0; i < 6; ++i, ++j) code_to_pass[i] = ad[j];
 
-    //AR
-    else if(len == 9 && code[4] == '-')
-    {
-      ar_decode_ms(code, result);
-    }
+  /* Do the same for data */
+  for(i = 6; i < (10 - dal); ++i) code_to_pass[i] = '0';
+  for(j = 0; i < 10; ++i, ++j) code_to_pass[i] = da[j];
 
-    //Fusion RAM
-    else if(len == 7 && code[4] == ':')
-    {
-      fusion_ram_decode(code, result);
-    }
+  code_to_pass[10] = '\0';
 
-    //Fusion ROM
-    else if(len == 9 && code[6] == ':')
-    {
-      fusion_rom_decode(code, result);
-    }
-
-    else
-    {
-      goto bad_code;
-    }
-
-    //Convert RAM address space to Genesis location.
-    if (result->addr>=0xC000)
-      result->addr= 0xFF0000 | (0x1FFF & result->addr);
-  }
-
+  /* Decode and goodbye */
+  hex_decode(code_to_pass, result);
   return;
 
-  bad_code:
+bad_code:
+
+  /* AGH! Invalid code! */
   result->data = result->addr = -1;
   return;
 }
 
+
+
+unsigned int PicoRead16(unsigned int a);
+void PicoWrite16(unsigned int a, unsigned short d);
+
+
 void PicoPatchUnload(void)
 {
-   if (PicoPatches != NULL)
-   {
-      free(PicoPatches);
-      PicoPatches = NULL;
-   }
-   PicoPatchCount = 0;
+	if (PicoPatches != NULL)
+	{
+		free(PicoPatches);
+		PicoPatches = NULL;
+	}
+	PicoPatchCount = 0;
 }
 
 int PicoPatchLoad(const char *fname)
 {
-   FILE *f;
-   char buff[256];
-   struct patch pt;
-   int array_len = 0;
+	FILE *f;
+	char buff[256];
+	struct patch pt;
+	int array_len = 0;
 
-   PicoPatchUnload();
+	PicoPatchUnload();
 
-   f = fopen(fname, "r");
-   if (f == NULL)
-   {
-      return -1;
-   }
+	f = fopen(fname, "r");
+	if (f == NULL)
+	{
+		return -1;
+	}
 
-   while (fgets(buff, sizeof(buff), f))
-   {
-      int llen, clen;
+	while (fgets(buff, sizeof(buff), f))
+	{
+		int llen, clen;
 
-      llen = strlen(buff);
-      for (clen = 0; clen < llen; clen++)
-         if (isspace_(buff[clen]))
-            break;
-      buff[clen] = 0;
+		llen = strlen(buff);
+		for (clen = 0; clen < llen; clen++)
+			if (isspace_(buff[clen]))
+				break;
+		buff[clen] = 0;
 
-      if (clen > 11 || clen < 8)
-         continue;
+		if (clen > 11 || clen < 8)
+			continue;
 
-      decode(buff, &pt);
-      if (pt.addr == (unsigned int)-1 || pt.data == (unsigned short)-1)
-         continue;
+		decode(buff, &pt);
+		if (pt.addr == (unsigned int)-1 || pt.data == (unsigned short)-1)
+			continue;
 
-      /* code was good, add it */
-      if (array_len < PicoPatchCount + 1)
-      {
-         void *ptr;
-         array_len *= 2;
-         array_len++;
-         ptr = realloc(PicoPatches, array_len * sizeof(PicoPatches[0]));
-         if (ptr == NULL) break;
-         PicoPatches = ptr;
-      }
-      strcpy(PicoPatches[PicoPatchCount].code, buff);
-      /* strip */
-      for (clen++; clen < llen; clen++)
-         if (!isspace_(buff[clen]))
-            break;
-      for (llen--; llen > 0; llen--)
-         if (!isspace_(buff[llen]))
-            break;
-      buff[llen+1] = 0;
-      strncpy(PicoPatches[PicoPatchCount].name, buff + clen, 51);
-      PicoPatches[PicoPatchCount].name[51] = 0;
-      PicoPatches[PicoPatchCount].active = 0;
-      PicoPatches[PicoPatchCount].addr = pt.addr;
-      PicoPatches[PicoPatchCount].data = pt.data;
-      PicoPatches[PicoPatchCount].data_old = 0;
-      PicoPatchCount++;
-      // fprintf(stderr, "loaded patch #%i: %06x:%04x \"%s\"\n", PicoPatchCount-1, pt.addr, pt.data,
-      // PicoPatches[PicoPatchCount-1].name);
-   }
-   fclose(f);
+		/* code was good, add it */
+		if (array_len < PicoPatchCount + 1)
+		{
+			void *ptr;
+			array_len *= 2;
+			array_len++;
+			ptr = realloc(PicoPatches, array_len * sizeof(PicoPatches[0]));
+			if (ptr == NULL) break;
+			PicoPatches = ptr;
+		}
+		strcpy(PicoPatches[PicoPatchCount].code, buff);
+		/* strip */
+		for (clen++; clen < llen; clen++)
+			if (!isspace_(buff[clen]))
+				break;
+		for (llen--; llen > 0; llen--)
+			if (!isspace_(buff[llen]))
+				break;
+		buff[llen+1] = 0;
+		strncpy(PicoPatches[PicoPatchCount].name, buff + clen, 51);
+		PicoPatches[PicoPatchCount].name[51] = 0;
+		PicoPatches[PicoPatchCount].active = 0;
+		PicoPatches[PicoPatchCount].addr = pt.addr;
+		PicoPatches[PicoPatchCount].data = pt.data;
+		PicoPatches[PicoPatchCount].data_old = 0;
+		PicoPatchCount++;
+		// fprintf(stderr, "loaded patch #%i: %06x:%04x \"%s\"\n", PicoPatchCount-1, pt.addr, pt.data,
+		//	PicoPatches[PicoPatchCount-1].name);
+	}
+	fclose(f);
 
-   return 0;
+	return 0;
 }
 
 /* to be called when the Rom is loaded and byteswapped */
 void PicoPatchPrepare(void)
 {
-   int i;
-   int addr;
+	int i;
 
-   for (i = 0; i < PicoPatchCount; i++)
-   {
-      addr=PicoPatches[i].addr;
-      addr &= ~1;
-      if (addr < Pico.romsize)
-         PicoPatches[i].data_old = *(unsigned short *)(Pico.rom + addr);
-      else
-      {
-         if(!(PicoIn.AHW & PAHW_SMS))
-            PicoPatches[i].data_old = (unsigned short) m68k_read16(addr);
-         else
-            ;// wrong: PicoPatches[i].data_old = (unsigned char) PicoRead8_z80(addr);
-      }
-      if (strstr(PicoPatches[i].name, "AUTO"))
-         PicoPatches[i].active = 1;
-   }
+	for (i = 0; i < PicoPatchCount; i++)
+	{
+		PicoPatches[i].addr &= ~1;
+		if (PicoPatches[i].addr < Pico.romsize)
+			PicoPatches[i].data_old = *(unsigned short *)(Pico.rom + PicoPatches[i].addr);
+		if (strstr(PicoPatches[i].name, "AUTO"))
+			PicoPatches[i].active = 1;
+	}
 }
 
 void PicoPatchApply(void)
 {
-   int i, u;
-   unsigned int addr;
+	int i, u;
+	unsigned int addr;
 
-   for (i = 0; i < PicoPatchCount; i++)
-   {
-      addr = PicoPatches[i].addr;
-
-      if (addr < Pico.romsize)
-      {
-         if (PicoPatches[i].active)
-         {
-            if (!(PicoIn.AHW & PAHW_SMS))
-               *(unsigned short *)(Pico.rom + addr) = PicoPatches[i].data;
-            else if (!PicoPatches[i].comp || PicoPatches[i].comp == *(char *)(Pico.rom + addr))
-               *(char *)(Pico.rom + addr) = (char) PicoPatches[i].data;
-         }
-         else
-         {
-            // if current addr is not patched by older patch, write back original val
-            for (u = 0; u < i; u++)
-               if (PicoPatches[u].addr == addr) break;
-            if (u == i)
-            {
-               if (!(PicoIn.AHW & PAHW_SMS))
-                  *(unsigned short *)(Pico.rom + addr) = PicoPatches[i].data_old;
-               else
-                  *(char *)(Pico.rom + addr) = (char) PicoPatches[i].data_old;
-            }
-         }
-      // fprintf(stderr, "patched %i: %06x:%04x\n", PicoPatches[i].active, addr,
-      // *(unsigned short *)(Pico.rom + addr));
-      }
-      else
-      {
-         if (PicoPatches[i].active)
-         {
-            if (!(PicoIn.AHW & PAHW_SMS))
-              m68k_write16(addr,PicoPatches[i].data);
-            else
-              ;// wrong: PicoWrite8_z80(addr,PicoPatches[i].data);
-         }
-         else
-         {
-            // if current addr is not patched by older patch, write back original val
-            for (u = 0; u < i; u++)
-               if (PicoPatches[u].addr == addr) break;
-            if (u == i)
-            {
-              if (!(PicoIn.AHW & PAHW_SMS))
-                 m68k_write16(PicoPatches[i].addr,PicoPatches[i].data_old);
-              else
-                ;// wrong: PicoWrite8_z80(PicoPatches[i].addr,PicoPatches[i].data_old);
-            }
-         }
-      }
-   }
+	for (i = 0; i < PicoPatchCount; i++)
+	{
+		addr = PicoPatches[i].addr;
+		if (addr < Pico.romsize)
+		{
+			if (PicoPatches[i].active)
+				*(unsigned short *)(Pico.rom + addr) = PicoPatches[i].data;
+			else {
+				// if current addr is not patched by older patch, write back original val
+				for (u = 0; u < i; u++)
+					if (PicoPatches[u].addr == addr) break;
+				if (u == i)
+					*(unsigned short *)(Pico.rom + addr) = PicoPatches[i].data_old;
+			}
+			// fprintf(stderr, "patched %i: %06x:%04x\n", PicoPatches[i].active, addr,
+			//	*(unsigned short *)(Pico.rom + addr));
+		}
+		else
+		{
+			/* TODO? */
+		}
+	}
 }
 

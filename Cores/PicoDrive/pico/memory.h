@@ -1,11 +1,9 @@
 // memory map related stuff
 
-#include "pico_port.h"
-
 typedef unsigned char  u8;
 typedef unsigned short u16;
 typedef unsigned int   u32;
-typedef uintptr_t      uptr; // unsigned pointer-sized int
+typedef unsigned long  uptr; // unsigned pointer-sized int
 
 #define M68K_MEM_SHIFT 16
 // minimum size we can map
@@ -134,25 +132,6 @@ void name(u32 a, u32 d)                         \
     m[1] = d;                                   \
   }                                             \
 }
-
-#ifdef NEED_DMA_SOURCE // meh
-
-static __inline void *m68k_dma_source(u32 a)
-{
-  u8 *base;
-  uptr v;
-  v = m68k_read16_map[a >> M68K_MEM_SHIFT];
-  if (map_flag_set(v)) {
-    if (a >= Pico.romsize) // Rom
-      return NULL;
-    base = Pico.rom;
-  }
-  else
-    base = (void *)(v << 1);
-  return base + (a & 0xfe0000);
-}
-
-#endif
 
 // 32x
 typedef struct {

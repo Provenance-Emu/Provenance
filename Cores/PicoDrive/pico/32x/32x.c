@@ -99,7 +99,7 @@ void Pico32xStartup(void)
   elprintf(EL_STATUS|EL_32X, "32X startup");
 
   // TODO: OOM handling
-  PicoIn.AHW |= PAHW_32X;
+  PicoAHW |= PAHW_32X;
   sh2_init(&msh2, 0, &ssh2);
   msh2.irq_callback = sh2_irq_cb;
   sh2_init(&ssh2, 1, &msh2);
@@ -134,31 +134,28 @@ void p32x_reset_sh2s(void)
   // if we don't have BIOS set, perform it's work here.
   // MSH2
   if (p32x_bios_m == NULL) {
-    sh2_set_gbr(0, 0x20004000);
+    unsigned int idl_src, idl_dst, idl_size; // initial data load
+    unsigned int vbr;
 
-    if (!(PicoIn.AHW & PAHW_MCD)) {
-      unsigned int idl_src, idl_dst, idl_size; // initial data load
-      unsigned int vbr;
-
-      // initial data
-      idl_src = HWSWAP(*(unsigned int *)(Pico.rom + 0x3d4)) & ~0xf0000000;
-      idl_dst = HWSWAP(*(unsigned int *)(Pico.rom + 0x3d8)) & ~0xf0000000;
-      idl_size= HWSWAP(*(unsigned int *)(Pico.rom + 0x3dc));
-      if (idl_size > Pico.romsize || idl_src + idl_size > Pico.romsize ||
-          idl_size > 0x40000 || idl_dst + idl_size > 0x40000 || (idl_src & 3) || (idl_dst & 3)) {
-        elprintf(EL_STATUS|EL_ANOMALY, "32x: invalid initial data ptrs: %06x -> %06x, %06x",
-          idl_src, idl_dst, idl_size);
-      }
-      else
-        memcpy(Pico32xMem->sdram + idl_dst, Pico.rom + idl_src, idl_size);
-
-      // VBR
-      vbr = HWSWAP(*(unsigned int *)(Pico.rom + 0x3e8));
-      sh2_set_vbr(0, vbr);
-
-      // checksum and M_OK
-      Pico32x.regs[0x28 / 2] = *(unsigned short *)(Pico.rom + 0x18e);
+    // initial data
+    idl_src = HWSWAP(*(unsigned int *)(Pico.rom + 0x3d4)) & ~0xf0000000;
+    idl_dst = HWSWAP(*(unsigned int *)(Pico.rom + 0x3d8)) & ~0xf0000000;
+    idl_size= HWSWAP(*(unsigned int *)(Pico.rom + 0x3dc));
+    if (idl_size > Pico.romsize || idl_src + idl_size > Pico.romsize ||
+        idl_size > 0x40000 || idl_dst + idl_size > 0x40000 || (idl_src & 3) || (idl_dst & 3)) {
+      elprintf(EL_STATUS|EL_ANOMALY, "32x: invalid initial data ptrs: %06x -> %06x, %06x",
+        idl_src, idl_dst, idl_size);
     }
+    else
+      memcpy(Pico32xMem->sdram + idl_dst, Pico.rom + idl_src, idl_size);
+
+    // GBR/VBR
+    vbr = HWSWAP(*(unsigned int *)(Pico.rom + 0x3e8));
+    sh2_set_gbr(0, 0x20004000);
+    sh2_set_vbr(0, vbr);
+
+    // checksum and M_OK
+    Pico32x.regs[0x28 / 2] = *(unsigned short *)(Pico.rom + 0x18e);
     // program will set M_OK
   }
 
@@ -200,12 +197,12 @@ void PicoUnload32x(void)
   sh2_finish(&msh2);
   sh2_finish(&ssh2);
 
-  PicoIn.AHW &= ~PAHW_32X;
+  PicoAHW &= ~PAHW_32X;
 }
 
 void PicoReset32x(void)
 {
-  if (PicoIn.AHW & PAHW_32X) {
+  if (PicoAHW & PAHW_32X) {
     p32x_trigger_irq(NULL, SekCyclesDone(), P32XI_VRES);
     p32x_sh2_poll_event(&msh2, SH2_IDLE_STATES, 0);
     p32x_sh2_poll_event(&ssh2, SH2_IDLE_STATES, 0);
@@ -216,13 +213,13 @@ void PicoReset32x(void)
 
 static void p32x_start_blank(void)
 {
-  if (Pico32xDrawMode != PDM32X_OFF && !PicoIn.skipFrame) {
+  if (Pico32xDrawMode != PDM32X_OFF && !PicoSkipFrame) {
     int offs, lines;
 
     pprof_start(draw);
 
     offs = 8; lines = 224;
-    if ((Pico.video.reg[1] & 8) && !(PicoIn.opt & POPT_ALT_RENDERER)) {
+    if ((Pico.video.reg[1] & 8) && !(PicoOpt & POPT_ALT_RENDERER)) {
       offs = 0;
       lines = 240;
     }
@@ -230,7 +227,7 @@ static void p32x_start_blank(void)
     // XXX: no proper handling of 32col mode..
     if ((Pico32x.vdp_regs[0] & P32XV_Mx) != 0 && // 32x not blanking
         (Pico.video.reg[12] & 1) && // 40col mode
-        (!(Pico.video.debug_p & PVD_KILL_32X)))
+        (PicoDrawMask & PDRAW_32X_ON))
     {
       int md_bg = Pico.video.reg[7] & 0x3f;
 
@@ -297,9 +294,9 @@ typedef void (event_cb)(unsigned int now);
 unsigned int p32x_event_times[P32X_EVENT_COUNT];
 static unsigned int event_time_next;
 static event_cb *p32x_event_cbs[P32X_EVENT_COUNT] = {
-  p32x_pwm_irq_event, // P32X_EVENT_PWM
-  fillend_event,      // P32X_EVENT_FILLEND
-  hint_event,         // P32X_EVENT_HINT
+  [P32X_EVENT_PWM]      = p32x_pwm_irq_event,
+  [P32X_EVENT_FILLEND]  = fillend_event,
+  [P32X_EVENT_HINT]     = hint_event,
 };
 
 // schedule event at some time 'after', in m68k clocks
@@ -366,7 +363,7 @@ static void p32x_run_events(unsigned int until)
       oldest, event_time_next);
 }
 
-static void run_sh2(SH2 *sh2, int m68k_cycles)
+static inline void run_sh2(SH2 *sh2, int m68k_cycles)
 {
   int cycles, done;
 
@@ -376,7 +373,7 @@ static void run_sh2(SH2 *sh2, int m68k_cycles)
   elprintf_sh2(sh2, EL_32X, "+run %u %d @%08x",
     sh2->m68krcycles_done, cycles, sh2->pc);
 
-  done = sh2_execute(sh2, cycles, PicoIn.opt & POPT_EN_DRC);
+  done = sh2_execute(sh2, cycles, PicoOpt & POPT_EN_DRC);
 
   sh2->m68krcycles_done += C_SH2_TO_M68K(*sh2, done);
   sh2->state &= ~SH2_STATE_RUN;
@@ -422,9 +419,6 @@ void p32x_sync_other_sh2(SH2 *sh2, unsigned int m68k_target)
   }
 }
 
-#define STEP_LS 24
-#define STEP_N 440
-
 #define sync_sh2s_normal p32x_sync_sh2s
 //#define sync_sh2s_lockstep p32x_sync_sh2s
 
@@ -454,8 +448,6 @@ void sync_sh2s_normal(unsigned int m68k_target)
     target = m68k_target;
     if (event_time_next && CYCLES_GT(target, event_time_next))
       target = event_time_next;
-    if (CYCLES_GT(target, now + STEP_N))
-      target = now + STEP_N;
 
     while (CYCLES_GT(target, now))
     {
@@ -507,10 +499,9 @@ void sync_sh2s_normal(unsigned int m68k_target)
     if (CYCLES_GT(m68k_target, ssh2.m68krcycles_done))
       ssh2.m68krcycles_done = m68k_target;
   }
-
-  // everyone is in sync now
-  Pico32x.comm_dirty = 0;
 }
+
+#define STEP_68K 24
 
 void sync_sh2s_lockstep(unsigned int m68k_target)
 {
@@ -521,19 +512,19 @@ void sync_sh2s_lockstep(unsigned int m68k_target)
     mcycles = ssh2.m68krcycles_done;
 
   while (mcycles < m68k_target) {
-    mcycles += STEP_LS;
+    mcycles += STEP_68K;
     sync_sh2s_normal(mcycles);
   }
 }
 
 #define CPUS_RUN(m68k_cycles) do { \
-  if (PicoIn.AHW & PAHW_MCD) \
+  if (PicoAHW & PAHW_MCD) \
     pcd_run_cpus(m68k_cycles); \
   else \
     SekRunM68k(m68k_cycles); \
   \
   if ((Pico32x.emu_flags & P32XF_Z80_32X_IO) && Pico.m.z80Run \
-      && !Pico.m.z80_reset && (PicoIn.opt & POPT_EN_Z80)) \
+      && !Pico.m.z80_reset && (PicoOpt & POPT_EN_Z80)) \
     PicoSyncZ80(SekCyclesDone()); \
   if (Pico32x.emu_flags & (P32XF_68KCPOLL|P32XF_68KVPOLL)) \
     p32x_sync_sh2s(SekCyclesDone()); \
@@ -556,7 +547,7 @@ void PicoFrame32x(void)
   p32x_sh2_poll_event(&msh2, SH2_STATE_VPOLL, 0);
   p32x_sh2_poll_event(&ssh2, SH2_STATE_VPOLL, 0);
 
-  if (PicoIn.AHW & PAHW_MCD)
+  if (PicoAHW & PAHW_MCD)
     pcd_prepare_frame();
 
   PicoFrameStart();

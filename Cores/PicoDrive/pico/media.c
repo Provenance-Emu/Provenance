@@ -209,11 +209,11 @@ enum media_type_e PicoLoadMedia(const char *filename,
   if (media_type == PM_BAD_DETECT)
     goto out;
 
-  if ((PicoIn.AHW & PAHW_MCD) && Pico_mcd != NULL)
+  if ((PicoAHW & PAHW_MCD) && Pico_mcd != NULL)
     cdd_unload();
   PicoCartUnload();
-  PicoIn.AHW = 0;
-  PicoIn.quirks = 0;
+  PicoAHW = 0;
+  PicoQuirks = 0;
 
   if (media_type == PM_CD)
   {
@@ -230,7 +230,7 @@ enum media_type_e PicoLoadMedia(const char *filename,
         goto out;
       }
 
-      PicoIn.AHW |= PAHW_MCD;
+      PicoAHW |= PAHW_MCD;
     }
     else {
       media_type = PM_BAD_CD;
@@ -239,22 +239,22 @@ enum media_type_e PicoLoadMedia(const char *filename,
   }
   else if (media_type == PM_MARK3) {
     lprintf("detected SMS ROM\n");
-    PicoIn.AHW = PAHW_SMS;
+    PicoAHW = PAHW_SMS;
   }
 
   rom = pm_open(rom_fname);
   if (rom == NULL) {
-    lprintf("Failed to open ROM\n");
+    lprintf("Failed to open ROM");
     media_type = PM_ERROR;
     goto out;
   }
 
-  ret = PicoCartLoad(rom, &rom_data, &rom_size, (PicoIn.AHW & PAHW_SMS) ? 1 : 0);
+  ret = PicoCartLoad(rom, &rom_data, &rom_size, (PicoAHW & PAHW_SMS) ? 1 : 0);
   pm_close(rom);
   if (ret != 0) {
-    if      (ret == 2) lprintf("Out of memory\n");
-    else if (ret == 3) lprintf("Read failed\n");
-    else               lprintf("PicoCartLoad() failed.\n");
+    if      (ret == 2) lprintf("Out of memory");
+    else if (ret == 3) lprintf("Read failed");
+    else               lprintf("PicoCartLoad() failed.");
     media_type = PM_ERROR;
     goto out;
   }
@@ -266,7 +266,7 @@ enum media_type_e PicoLoadMedia(const char *filename,
     goto out;
   }
 
-  if (!(PicoIn.AHW & PAHW_SMS)) {
+  if (!(PicoAHW & PAHW_SMS)) {
     unsigned short *d = (unsigned short *)(rom_data + 4);
     if ((((d[0] << 16) | d[1]) & 0xffffff) >= (int)rom_size) {
       lprintf("bad reset vector\n");
@@ -276,7 +276,7 @@ enum media_type_e PicoLoadMedia(const char *filename,
   }
 
   // load config for this ROM (do this before insert to get correct region)
-  if (!(PicoIn.AHW & PAHW_MCD)) {
+  if (!(PicoAHW & PAHW_MCD)) {
     memcpy(media_id_header, rom_data + 0x100, sizeof(media_id_header));
     if (do_region_override != NULL)
       do_region_override(filename);
@@ -300,7 +300,7 @@ enum media_type_e PicoLoadMedia(const char *filename,
     Pico.m.ncart_in = 1;
   }
 
-  if (PicoIn.quirks & PQUIRK_FORCE_6BTN)
+  if (PicoQuirks & PQUIRK_FORCE_6BTN)
     PicoSetInputDevice(0, PICO_INPUT_PAD_6BTN);
 
 out:

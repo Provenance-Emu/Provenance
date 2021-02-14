@@ -602,14 +602,14 @@ static u32 PicoReadM68k8_ramc(u32 a)
 {
   u32 d = 0;
   if (a == 0x400001) {
-    if (Pico.sv.data != NULL)
+    if (SRam.data != NULL)
       d = 3; // 64k cart
     return d;
   }
 
   if ((a & 0xfe0000) == 0x600000) {
-    if (Pico.sv.data != NULL)
-      d = Pico.sv.data[((a >> 1) & 0xffff) + 0x2000];
+    if (SRam.data != NULL)
+      d = SRam.data[((a >> 1) & 0xffff) + 0x2000];
     return d;
   }
 
@@ -629,9 +629,9 @@ static u32 PicoReadM68k16_ramc(u32 a)
 static void PicoWriteM68k8_ramc(u32 a, u32 d)
 {
   if ((a & 0xfe0000) == 0x600000) {
-    if (Pico.sv.data != NULL && (Pico_mcd->m.bcram_reg & 1)) {
-      Pico.sv.data[((a>>1) & 0xffff) + 0x2000] = d;
-      Pico.sv.changed = 1;
+    if (SRam.data != NULL && (Pico_mcd->m.bcram_reg & 1)) {
+      SRam.data[((a>>1) & 0xffff) + 0x2000] = d;
+      SRam.changed = 1;
     }
     return;
   }
@@ -877,7 +877,7 @@ static u32 PicoReadS68k16_bram(u32 a)
 static void PicoWriteS68k8_bram(u32 a, u32 d)
 {
   Pico_mcd->bram[(a >> 1) & 0x1fff] = d;
-  Pico.sv.changed = 1;
+  SRam.changed = 1;
 }
 
 static void PicoWriteS68k16_bram(u32 a, u32 d)
@@ -886,7 +886,7 @@ static void PicoWriteS68k16_bram(u32 a, u32 d)
   a = (a >> 1) & 0x1fff;
   Pico_mcd->bram[a++] = d;
   Pico_mcd->bram[a++] = d >> 8; // TODO: verify..
-  Pico.sv.changed = 1;
+  SRam.changed = 1;
 }
 
 #ifndef _ASM_CD_MEMORY_C
@@ -1071,6 +1071,23 @@ static void remap_word_ram(u32 r3)
     cpu68k_map_set(s68k_write8_map,  0x080000, 0x0bffff, s68k_dec_write8[b0 ^ 1][m], 1);
     cpu68k_map_set(s68k_write16_map, 0x080000, 0x0bffff, s68k_dec_write16[b0 ^ 1][m], 1);
   }
+
+#ifdef EMU_F68K
+  // update fetchmap..
+  int i;
+  if (!(r3 & 4))
+  {
+    for (i = M68K_FETCHBANK1*2/16; (i<<(24-FAMEC_FETCHBITS)) < 0x240000; i++)
+      PicoCpuFM68k.Fetch[i] = (unsigned long)Pico_mcd->word_ram2M - 0x200000;
+  }
+  else
+  {
+    for (i = M68K_FETCHBANK1*2/16; (i<<(24-FAMEC_FETCHBITS)) < 0x220000; i++)
+      PicoCpuFM68k.Fetch[i] = (unsigned long)Pico_mcd->word_ram1M[r3 & 1] - 0x200000;
+    for (i = M68K_FETCHBANK1*0x0c/0x100; (i<<(24-FAMEC_FETCHBITS)) < 0x0e0000; i++)
+      PicoCpuFS68k.Fetch[i] = (unsigned long)Pico_mcd->word_ram1M[(r3&1)^1] - 0x0c0000;
+  }
+#endif
 }
 
 void pcd_state_loaded_mem(void)
@@ -1099,7 +1116,7 @@ PICO_INTERNAL void PicoMemSetupCD(void)
 
   // main68k map (BIOS mapped by PicoMemSetup()):
   // RAM cart
-  if (PicoIn.opt & POPT_EN_MCD_RAMCART) {
+  if (PicoOpt & POPT_EN_MCD_RAMCART) {
     cpu68k_map_set(m68k_read8_map,   0x400000, 0x7fffff, PicoReadM68k8_ramc, 1);
     cpu68k_map_set(m68k_read16_map,  0x400000, 0x7fffff, PicoReadM68k16_ramc, 1);
     cpu68k_map_set(m68k_write8_map,  0x400000, 0x7fffff, PicoWriteM68k8_ramc, 1);
@@ -1165,32 +1182,27 @@ PICO_INTERNAL void PicoMemSetupCD(void)
 
   // setup FAME fetchmap
   {
-#ifdef __clang__
-    volatile // prevent strange relocs from clang
-#endif
-    unsigned long ptr_ram = (uptr)PicoMem.ram;
     int i;
-
     // M68k
     // by default, point everything to fitst 64k of ROM (BIOS)
     for (i = 0; i < M68K_FETCHBANK1; i++)
-      PicoCpuFM68k.Fetch[i] = (uptr)Pico.rom - (i<<(24-FAMEC_FETCHBITS));
+      PicoCpuFM68k.Fetch[i] = (unsigned long)Pico.rom - (i<<(24-FAMEC_FETCHBITS));
     // now real ROM (BIOS)
     for (i = 0; i < M68K_FETCHBANK1 && (i<<(24-FAMEC_FETCHBITS)) < Pico.romsize; i++)
-      PicoCpuFM68k.Fetch[i] = (uptr)Pico.rom;
+      PicoCpuFM68k.Fetch[i] = (unsigned long)Pico.rom;
     // .. and RAM
     for (i = M68K_FETCHBANK1*14/16; i < M68K_FETCHBANK1; i++)
-      PicoCpuFM68k.Fetch[i] = ptr_ram - (i<<(24-FAMEC_FETCHBITS));
+      PicoCpuFM68k.Fetch[i] = (unsigned long)Pico.ram - (i<<(24-FAMEC_FETCHBITS));
     // S68k
     // PRG RAM is default
     for (i = 0; i < M68K_FETCHBANK1; i++)
-      PicoCpuFS68k.Fetch[i] = (uptr)Pico_mcd->prg_ram - (i<<(24-FAMEC_FETCHBITS));
+      PicoCpuFS68k.Fetch[i] = (unsigned long)Pico_mcd->prg_ram - (i<<(24-FAMEC_FETCHBITS));
     // real PRG RAM
     for (i = 0; i < M68K_FETCHBANK1 && (i<<(24-FAMEC_FETCHBITS)) < 0x80000; i++)
-      PicoCpuFS68k.Fetch[i] = (uptr)Pico_mcd->prg_ram;
+      PicoCpuFS68k.Fetch[i] = (unsigned long)Pico_mcd->prg_ram;
     // WORD RAM 2M area
     for (i = M68K_FETCHBANK1*0x08/0x100; i < M68K_FETCHBANK1 && (i<<(24-FAMEC_FETCHBITS)) < 0xc0000; i++)
-      PicoCpuFS68k.Fetch[i] = (uptr)Pico_mcd->word_ram2M - 0x80000;
+      PicoCpuFS68k.Fetch[i] = (unsigned long)Pico_mcd->word_ram2M - 0x80000;
     // remap_word_ram() will setup word ram for both
   }
 #endif

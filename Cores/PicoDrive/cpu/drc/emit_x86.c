@@ -16,7 +16,6 @@
 enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 
 #define CONTEXT_REG xBP
-#define RET_REG     xAX
 
 #define ICOND_JO  0x00
 #define ICOND_JNO 0x01
@@ -54,44 +53,26 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define EMIT_PTR(ptr, val, type) \
 	*(type *)(ptr) = val
 
-#define EMIT(val, type) do { \
+#define EMIT(val, type) { \
 	EMIT_PTR(tcache_ptr, val, type); \
 	tcache_ptr += sizeof(type); \
-} while (0)
+}
 
-#define EMIT_OP(op) do { \
+#define EMIT_OP(op) { \
 	COUNT_OP; \
 	EMIT(op, u8); \
-} while (0)
+}
 
-#define EMIT_MODRM(mod, r, rm) do { \
-	assert((mod) < 4u); \
-	assert((r) < 8u); \
-	assert((rm) < 8u); \
-	EMIT(((mod)<<6) | ((r)<<3) | (rm), u8); \
-} while (0)
+#define EMIT_MODRM(mod,r,rm) \
+	EMIT(((mod)<<6) | ((r)<<3) | (rm), u8)
 
-#define EMIT_SIB(scale, index, base) do { \
-	assert((scale) < 4u); \
-	assert((index) < 8u); \
-	assert((base) < 8u); \
-	EMIT(((scale)<<6) | ((index)<<3) | (base), u8); \
-} while (0)
-
-#define EMIT_SIB64(scale, index, base) \
-	EMIT_SIB(scale, (index) & ~8u, (base) & ~8u)
-
-#define EMIT_REX(w,r,x,b) \
-	EMIT(0x40 | ((w)<<3) | ((r)<<2) | ((x)<<1) | (b), u8)
+#define EMIT_SIB(scale,index,base) \
+	EMIT(((scale)<<6) | ((index)<<3) | (base), u8)
 
 #define EMIT_OP_MODRM(op,mod,r,rm) do { \
 	EMIT_OP(op); \
-	EMIT_MODRM(mod, (r), rm); \
+	EMIT_MODRM(mod, r, rm); \
 } while (0)
-
-// 64bit friendly, rm when everything is converted
-#define EMIT_OP_MODRM64(op, mod, r, rm) \
-	EMIT_OP_MODRM(op, mod, (r) & ~8u, (rm) & ~8u)
 
 #define JMP8_POS(ptr) \
 	ptr = tcache_ptr; \
@@ -108,11 +89,6 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 // _r_r
 #define emith_move_r_r(dst, src) \
 	EMIT_OP_MODRM(0x8b, 3, dst, src)
-
-#define emith_move_r_r_ptr(dst, src) do { \
-	EMIT_REX_IF(1, dst, src); \
-	EMIT_OP_MODRM64(0x8b, 3, dst, src); \
-} while (0)
 
 #define emith_add_r_r(d, s) \
 	EMIT_OP_MODRM(0x01, 3, s, d)
@@ -138,43 +114,38 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_tst_r_r(d, s) \
 	EMIT_OP_MODRM(0x85, 3, s, d) /* TEST */
 
-#define emith_tst_r_r_ptr(d, s) do { \
-	EMIT_REX_IF(1, s, d); \
-	EMIT_OP_MODRM64(0x85, 3, s, d); /* TEST */ \
-} while (0)
-
 #define emith_cmp_r_r(d, s) \
 	EMIT_OP_MODRM(0x39, 3, s, d)
 
 // fake teq - test equivalence - get_flags(d ^ s)
-#define emith_teq_r_r(d, s) do { \
+#define emith_teq_r_r(d, s) { \
 	emith_push(d); \
 	emith_eor_r_r(d, s); \
 	emith_pop(d); \
-} while (0)
+}
 
-#define emith_mvn_r_r(d, s) do { \
+#define emith_mvn_r_r(d, s) { \
 	if (d != s) \
 		emith_move_r_r(d, s); \
 	EMIT_OP_MODRM(0xf7, 3, 2, d); /* NOT d */ \
-} while (0)
+}
 
-#define emith_negc_r_r(d, s) do { \
+#define emith_negc_r_r(d, s) { \
 	int tmp_ = rcache_get_tmp(); \
 	emith_move_r_imm(tmp_, 0); \
 	emith_sbc_r_r(tmp_, s); \
 	emith_move_r_r(d, tmp_); \
 	rcache_free_tmp(tmp_); \
-} while (0)
+}
 
-#define emith_neg_r_r(d, s) do { \
+#define emith_neg_r_r(d, s) { \
 	if (d != s) \
 		emith_move_r_r(d, s); \
 	EMIT_OP_MODRM(0xf7, 3, 3, d); /* NEG d */ \
-} while (0)
+}
 
 // _r_r_r
-#define emith_add_r_r_r(d, s1, s2) do { \
+#define emith_add_r_r_r(d, s1, s2) { \
 	if (d == s1) { \
 		emith_add_r_r(d, s2); \
 	} else if (d == s2) { \
@@ -183,9 +154,9 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 		emith_move_r_r(d, s1); \
 		emith_add_r_r(d, s2); \
 	} \
-} while (0)
+}
 
-#define emith_eor_r_r_r(d, s1, s2) do { \
+#define emith_eor_r_r_r(d, s1, s2) { \
 	if (d == s1) { \
 		emith_eor_r_r(d, s2); \
 	} else if (d == s2) { \
@@ -194,29 +165,29 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 		emith_move_r_r(d, s1); \
 		emith_eor_r_r(d, s2); \
 	} \
-} while (0)
+}
 
 // _r_r_shift
-#define emith_or_r_r_lsl(d, s, lslimm) do { \
+#define emith_or_r_r_lsl(d, s, lslimm) { \
 	int tmp_ = rcache_get_tmp(); \
 	emith_lsl(tmp_, s, lslimm); \
 	emith_or_r_r(d, tmp_); \
 	rcache_free_tmp(tmp_); \
-} while (0)
+}
 
 // d != s
-#define emith_eor_r_r_lsr(d, s, lsrimm) do { \
+#define emith_eor_r_r_lsr(d, s, lsrimm) { \
 	emith_push(s); \
 	emith_lsr(s, s, lsrimm); \
 	emith_eor_r_r(d, s); \
 	emith_pop(s); \
-} while (0)
+}
 
 // _r_imm
-#define emith_move_r_imm(r, imm) do { \
+#define emith_move_r_imm(r, imm) { \
 	EMIT_OP(0xb8 + (r)); \
 	EMIT(imm, u32); \
-} while (0)
+}
 
 #define emith_move_r_imm_s8(r, imm) \
 	emith_move_r_imm(r, (u32)(signed int)(signed char)(imm))
@@ -241,14 +212,7 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_and_r_imm(r, imm) \
 	emith_arith_r_imm(4, r, imm)
 
-/* used for sub cycles after test, so retain flags with lea */
-#define emith_sub_r_imm(r, imm) do { \
-	assert(r != xSP); \
-	EMIT_OP_MODRM(0x8d, 2, r, r); \
-	EMIT(-(s32)(imm), s32); \
-} while (0)
-
-#define emith_subf_r_imm(r, imm) \
+#define emith_sub_r_imm(r, imm) \
 	emith_arith_r_imm(5, r, imm)
 
 #define emith_eor_r_imm(r, imm) \
@@ -267,20 +231,20 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 	emith_arith_r_imm(4, r, ~(imm))
 
 // fake conditionals (using SJMP instead)
-#define emith_move_r_imm_c(cond, r, imm) do { \
+#define emith_move_r_imm_c(cond, r, imm) { \
 	(void)(cond); \
 	emith_move_r_imm(r, imm); \
-} while (0)
+}
 
-#define emith_add_r_imm_c(cond, r, imm) do { \
+#define emith_add_r_imm_c(cond, r, imm) { \
 	(void)(cond); \
 	emith_add_r_imm(r, imm); \
-} while (0)
+}
 
-#define emith_sub_r_imm_c(cond, r, imm) do { \
+#define emith_sub_r_imm_c(cond, r, imm) { \
 	(void)(cond); \
 	emith_sub_r_imm(r, imm); \
-} while (0)
+}
 
 #define emith_or_r_imm_c(cond, r, imm) \
 	emith_or_r_imm(r, imm)
@@ -310,40 +274,26 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_ret_c(cond) \
 	emith_ret()
 
-// _r_r_imm - use lea
-#define emith_add_r_r_imm(d, s, imm) do { \
-	assert(s != xSP); \
-	EMIT_OP_MODRM(0x8d, 2, d, s); /* lea */ \
-	EMIT(imm, s32); \
-} while (0)
+// _r_r_imm
+#define emith_add_r_r_imm(d, s, imm) { \
+	if (d != s) \
+		emith_move_r_r(d, s); \
+	emith_add_r_imm(d, imm); \
+}
 
-#define emith_add_r_r_ptr_imm(d, s, imm) do { \
-	if ((s) != xSP) { \
-		EMIT_REX_IF(1, d, s); \
-		EMIT_OP_MODRM64(0x8d, 2, d, s); /* lea */ \
-	} \
-	else { \
-		if (d != s) \
-			emith_move_r_r_ptr(d, s); \
-		EMIT_REX_IF(1, 0, d); \
-		EMIT_OP_MODRM64(0x81, 3, 0, d); /* add */ \
-	} \
-	EMIT(imm, s32); \
-} while (0)
-
-#define emith_and_r_r_imm(d, s, imm) do { \
+#define emith_and_r_r_imm(d, s, imm) { \
 	if (d != s) \
 		emith_move_r_r(d, s); \
 	emith_and_r_imm(d, imm); \
-} while (0)
+}
 
 // shift
-#define emith_shift(op, d, s, cnt) do { \
+#define emith_shift(op, d, s, cnt) { \
 	if (d != s) \
 		emith_move_r_r(d, s); \
 	EMIT_OP_MODRM(0xc1, 3, op, d); \
 	EMIT(cnt, u8); \
-} while (0)
+}
 
 #define emith_lsl(d, s, cnt) \
 	emith_shift(4, d, s, cnt)
@@ -370,10 +320,10 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_push(r) \
 	EMIT_OP(0x50 + (r))
 
-#define emith_push_imm(imm) do { \
+#define emith_push_imm(imm) { \
 	EMIT_OP(0x68); \
 	EMIT(imm, u32); \
-} while (0)
+}
 
 #define emith_pop(r) \
 	EMIT_OP(0x58 + (r))
@@ -399,14 +349,13 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 	emith_asr(d, d, 32 - (bits)); \
 }
 
-#define emith_setc(r) do { \
-	assert(is_abcdx(r)); \
+#define emith_setc(r) { \
 	EMIT_OP(0x0f); \
 	EMIT_OP_MODRM(0x92, 3, 0, r); /* SETC r */ \
-} while (0)
+}
 
 // XXX: stupid mess
-#define emith_mul_(op, dlo, dhi, s1, s2) do { \
+#define emith_mul_(op, dlo, dhi, s1, s2) { \
 	int rmr; \
 	if (dlo != xAX && dhi != xAX) \
 		emith_push(xAX); \
@@ -432,7 +381,7 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 		emith_pop(xDX); \
 	if (dlo != xAX && dhi != xAX) \
 		emith_pop(xAX); \
-} while (0)
+}
 
 #define emith_mul_u64(dlo, dhi, s1, s2) \
 	emith_mul_(4, dlo, dhi, s1, s2) /* MUL */
@@ -444,19 +393,20 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 	emith_mul_(4, d, -1, s1, s2)
 
 // (dlo,dhi) += signed(s1) * signed(s2)
-#define emith_mula_s64(dlo, dhi, s1, s2) do { \
+#define emith_mula_s64(dlo, dhi, s1, s2) { \
 	emith_push(dhi); \
 	emith_push(dlo); \
 	emith_mul_(5, dlo, dhi, s1, s2); \
 	EMIT_OP_MODRM(0x03, 0, dlo, 4); \
-	EMIT_SIB(0, 4, 4); /* add dlo, [xsp] */ \
+	EMIT_SIB(0, 4, 4); /* add dlo, [esp] */ \
 	EMIT_OP_MODRM(0x13, 1, dhi, 4); \
 	EMIT_SIB(0, 4, 4); \
-	EMIT(sizeof(void *), u8); /* adc dhi, [xsp+{4,8}] */ \
-	emith_add_r_r_ptr_imm(xSP, xSP, sizeof(void *) * 2); \
-} while (0)
+	EMIT(4, u8); /* adc dhi, [esp+4] */ \
+	emith_add_r_imm(xSP, 4*2); \
+}
 
 // "flag" instructions are the same
+#define emith_subf_r_imm emith_sub_r_imm
 #define emith_addf_r_r   emith_add_r_r
 #define emith_subf_r_r   emith_sub_r_r
 #define emith_adcf_r_r   emith_adc_r_r
@@ -475,10 +425,10 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_deref_op(op, r, rs, offs) do { \
 	/* mov r <-> [ebp+#offs] */ \
 	if ((offs) >= 0x80) { \
-		EMIT_OP_MODRM64(op, 2, r, rs); \
+		EMIT_OP_MODRM(op, 2, r, rs); \
 		EMIT(offs, u32); \
 	} else { \
-		EMIT_OP_MODRM64(op, 1, r, rs); \
+		EMIT_OP_MODRM(op, 1, r, rs); \
 		EMIT(offs, u8); \
 	} \
 } while (0)
@@ -514,23 +464,18 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 		rcache_free_tmp(r_); \
 } while (0)
 
-#define emith_read16_r_r_offs(r, rs, offs) do { \
+#define emith_read16_r_r_offs(r, rs, offs) { \
 	EMIT(0x66, u8); /* operand override */ \
 	emith_read_r_r_offs(r, rs, offs); \
-} while (0)
+}
 
-#define emith_write16_r_r_offs(r, rs, offs) do { \
+#define emith_write16_r_r_offs(r, rs, offs) { \
 	EMIT(0x66, u8); \
 	emith_write_r_r_offs(r, rs, offs); \
-} while (0)
+}
 
 #define emith_ctx_read(r, offs) \
 	emith_read_r_r_offs(r, CONTEXT_REG, offs)
-
-#define emith_ctx_read_ptr(r, offs) do { \
-	EMIT_REX_IF(1, r, CONTEXT_REG); \
-	emith_deref_op(0x8b, r, CONTEXT_REG, offs); \
-} while (0)
 
 #define emith_ctx_write(r, offs) \
 	emith_write_r_r_offs(r, CONTEXT_REG, offs)
@@ -554,7 +499,7 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 }
 
 #define emith_jump(ptr) { \
-	u32 disp = (u8 *)(ptr) - ((u8 *)tcache_ptr + 5); \
+	u32 disp = (u32)(ptr) - ((u32)tcache_ptr + 5); \
 	EMIT_OP(0xe9); \
 	EMIT(disp, u32); \
 }
@@ -562,30 +507,30 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_jump_patchable(target) \
 	emith_jump(target)
 
-#define emith_jump_cond(cond, ptr) do { \
-	u32 disp = (u8 *)(ptr) - ((u8 *)tcache_ptr + 6); \
+#define emith_jump_cond(cond, ptr) { \
+	u32 disp = (u32)(ptr) - ((u32)tcache_ptr + 6); \
 	EMIT(0x0f, u8); \
 	EMIT_OP(0x80 | (cond)); \
 	EMIT(disp, u32); \
-} while (0)
+}
 
 #define emith_jump_cond_patchable(cond, target) \
 	emith_jump_cond(cond, target)
 
 #define emith_jump_patch(ptr, target) do { \
-	u32 disp_ = (u8 *)(target) - ((u8 *)(ptr) + 4); \
+	u32 disp_ = (u32)(target) - ((u32)(ptr) + 4); \
 	u32 offs_ = (*(u8 *)(ptr) == 0x0f) ? 2 : 1; \
 	EMIT_PTR((u8 *)(ptr) + offs_, disp_ - offs_, u32); \
 } while (0)
 
 #define emith_jump_at(ptr, target) { \
-	u32 disp_ = (u8 *)(target) - ((u8 *)(ptr) + 5); \
+	u32 disp_ = (u32)(target) - ((u32)(ptr) + 5); \
 	EMIT_PTR(ptr, 0xe9, u8); \
 	EMIT_PTR((u8 *)(ptr) + 1, disp_, u32); \
 }
 
 #define emith_call(ptr) { \
-	u32 disp = (u8 *)(ptr) - ((u8 *)tcache_ptr + 5); \
+	u32 disp = (u32)(ptr) - ((u32)tcache_ptr + 5); \
 	EMIT_OP(0xe8); \
 	EMIT(disp, u32); \
 }
@@ -596,10 +541,10 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_call_reg(r) \
 	EMIT_OP_MODRM(0xff, 3, 2, r)
 
-#define emith_call_ctx(offs) do { \
+#define emith_call_ctx(offs) { \
 	EMIT_OP_MODRM(0xff, 2, 2, CONTEXT_REG); \
 	EMIT(offs, u32); \
-} while (0)
+}
 
 #define emith_ret() \
 	EMIT_OP(0xc3)
@@ -607,10 +552,10 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define emith_jump_reg(r) \
 	EMIT_OP_MODRM(0xff, 3, 4, r)
 
-#define emith_jump_ctx(offs) do { \
+#define emith_jump_ctx(offs) { \
 	EMIT_OP_MODRM(0xff, 2, 4, CONTEXT_REG); \
 	EMIT(offs, u32); \
-} while (0)
+}
 
 #define emith_push_ret()
 
@@ -639,15 +584,6 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 
 // "simple" jump (no more then a few insns)
 // ARM will use conditional instructions here
-#define EMITH_SJMP_DECL_() \
-	u8 *cond_ptr
-
-#define EMITH_SJMP_START_(cond) \
-	JMP8_POS(cond_ptr)
-
-#define EMITH_SJMP_END_(cond) \
-	JMP8_EMIT(cond, cond_ptr)
-
 #define EMITH_SJMP_START EMITH_JMP_START
 #define EMITH_SJMP_END EMITH_JMP_END
 
@@ -655,91 +591,19 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 #define EMITH_SJMP3_MID EMITH_JMP3_MID
 #define EMITH_SJMP3_END EMITH_JMP3_END
 
-#define emith_pass_arg_r(arg, reg) do { \
+#define emith_pass_arg_r(arg, reg) { \
 	int rd = 7; \
 	host_arg2reg(rd, arg); \
-	emith_move_r_r_ptr(rd, reg); \
-} while (0)
+	emith_move_r_r(rd, reg); \
+}
 
-#define emith_pass_arg_imm(arg, imm) do { \
+#define emith_pass_arg_imm(arg, imm) { \
 	int rd = 7; \
 	host_arg2reg(rd, arg); \
 	emith_move_r_imm(rd, imm); \
-} while (0)
+}
 
 #define host_instructions_updated(base, end)
-
-#ifdef __x86_64__
-
-#define PTR_SCALE 3
-#define NA_TMP_REG xAX // non-arg tmp from reg_temp[]
-
-#define EMIT_REX_IF(w, r, rm) do { \
-	int r_ = (r) > 7 ? 1 : 0; \
-	int rm_ = (rm) > 7 ? 1 : 0; \
-	if ((w) | r_ | rm_) \
-		EMIT_REX(1, r_, 0, rm_); \
-} while (0)
-
-#ifndef _WIN32
-
-#define host_arg2reg(rd, arg) \
-	switch (arg) { \
-	case 0: rd = xDI; break; \
-	case 1: rd = xSI; break; \
-	case 2: rd = xDX; break; \
-	}
-
-#define emith_sh2_drc_entry() { \
-	emith_push(xBX); \
-	emith_push(xBP); \
-	emith_push(xSI); /* to align */ \
-}
-
-#define emith_sh2_drc_exit() {  \
-	emith_pop(xSI); \
-	emith_pop(xBP); \
-	emith_pop(xBX); \
-	emith_ret(); \
-}
-
-#else // _WIN32
-
-#define host_arg2reg(rd, arg) \
-	switch (arg) { \
-	case 0: rd = xCX; break; \
-	case 1: rd = xDX; break; \
-	case 2: rd = 8; break; \
-	}
-
-#define emith_sh2_drc_entry() { \
-	emith_push(xBX); \
-	emith_push(xBP); \
-	emith_push(xSI); \
-	emith_push(xDI); \
-	emith_add_r_r_ptr_imm(xSP, xSP, -8*5); \
-}
-
-#define emith_sh2_drc_exit() {  \
-	emith_add_r_r_ptr_imm(xSP, xSP, 8*5); \
-	emith_pop(xDI); \
-	emith_pop(xSI); \
-	emith_pop(xBP); \
-	emith_pop(xBX); \
-	emith_ret(); \
-}
-
-#endif // _WIN32
-
-#else // !__x86_64__
-
-#define PTR_SCALE 2
-#define NA_TMP_REG xBX // non-arg tmp from reg_temp[]
-
-#define EMIT_REX_IF(w, r, rm) do { \
-	assert((u32)(r) < 8u); \
-	assert((u32)(rm) < 8u); \
-} while (0)
 
 #define host_arg2reg(rd, arg) \
 	switch (arg) { \
@@ -748,6 +612,7 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 	case 2: rd = xCX; break; \
 	}
 
+/* SH2 drc specific */
 #define emith_sh2_drc_entry() { \
 	emith_push(xBX);        \
 	emith_push(xBP);        \
@@ -763,33 +628,15 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 	emith_ret();            \
 }
 
-#endif
-
-#define emith_save_caller_regs(mask) do { \
-	if ((mask) & (1 << xAX)) emith_push(xAX); \
-	if ((mask) & (1 << xCX)) emith_push(xCX); \
-	if ((mask) & (1 << xDX)) emith_push(xDX); \
-	if ((mask) & (1 << xSI)) emith_push(xSI); \
-	if ((mask) & (1 << xDI)) emith_push(xDI); \
-} while (0)
-
-#define emith_restore_caller_regs(mask) do { \
-	if ((mask) & (1 << xDI)) emith_pop(xDI); \
-	if ((mask) & (1 << xSI)) emith_pop(xSI); \
-	if ((mask) & (1 << xDX)) emith_pop(xDX); \
-	if ((mask) & (1 << xCX)) emith_pop(xCX); \
-	if ((mask) & (1 << xAX)) emith_pop(xAX); \
-} while (0)
-
+// assumes EBX is free temporary
 #define emith_sh2_wcall(a, tab) { \
 	int arg2_; \
 	host_arg2reg(arg2_, 2); \
-	emith_lsr(NA_TMP_REG, a, SH2_WRITE_SHIFT); \
-	EMIT_REX_IF(1, NA_TMP_REG, tab); \
-	EMIT_OP_MODRM64(0x8b, 0, NA_TMP_REG, 4); \
-	EMIT_SIB64(PTR_SCALE, NA_TMP_REG, tab); /* mov tmp, [tab + tmp * {4,8}] */ \
-	emith_move_r_r_ptr(arg2_, CONTEXT_REG); \
-	emith_jump_reg(NA_TMP_REG); \
+	emith_lsr(xBX, a, SH2_WRITE_SHIFT); \
+	EMIT_OP_MODRM(0x8b, 0, xBX, 4); \
+	EMIT_SIB(2, xBX, tab); /* mov ebx, [tab + ebx * 4] */ \
+	emith_move_r_r(arg2_, CONTEXT_REG); \
+	emith_jump_reg(xBX); \
 }
 
 #define emith_sh2_dtbf_loop() { \
@@ -850,8 +697,8 @@ enum { xAX = 0, xCX, xDX, xBX, xSP, xBP, xSI, xDI };
 	JMP8_EMIT(ICOND_JE, jmp0); /* do_sub: */  \
 	emith_sub_r_r(rn, rm);                    \
 	JMP8_EMIT_NC(jmp1);      /* done: */      \
-	emith_adc_r_r(tmp_, tmp_);                \
-	emith_eor_r_r(sr, tmp_);                  \
+	emith_setc(tmp_);                         \
+	EMIT_OP_MODRM(0x31, 3, tmp_, sr); /* T = Q1 ^ Q2 */ \
 	rcache_free_tmp(tmp_);                    \
 }
 

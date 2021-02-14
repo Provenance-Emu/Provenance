@@ -15,8 +15,8 @@ all: rel
 ../../tools/textfilter: ../../tools/textfilter.c
 	make -C ../../tools/
 
-#readme.txt: ../../tools/textfilter ../base_readme.txt ../../ChangeLog
-#	../../tools/textfilter ../base_readme.txt $@ PANDORA
+readme.txt: ../../tools/textfilter ../base_readme.txt ../../ChangeLog
+	../../tools/textfilter ../base_readme.txt $@ PANDORA
 
 /tmp/PicoDrive.pxml: PicoDrive.pxml.template FORCE
 	./make_pxml.sh $< $@
@@ -24,7 +24,7 @@ all: rel
 rel: ../../PicoDrive PicoDrive.sh picorestore \
 	PicoDrive.png PicoDrive_p.png \
 	../../pico/carthw.cfg skin \
-	../../README /tmp/PicoDrive.pxml
+	readme.txt /tmp/PicoDrive.pxml
 	rm -rf out
 	mkdir out
 	cp -r $^ out/

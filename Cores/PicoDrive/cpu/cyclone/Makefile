@@ -2,9 +2,6 @@ CFLAGS += -Wall -ggdb
 ifdef CONFIG_FILE
 CFLAGS += -DCONFIG_FILE="\"$(CONFIG_FILE)\""
 endif
-ifdef HAVE_ARMv6
-CFLAGS += -DHAVE_ARMv6=$(HAVE_ARMv6)
-endif
 CXXFLAGS += $(CFLAGS)
 
 OBJS = Main.o Ea.o OpAny.o OpArith.o OpBranch.o OpLogic.o OpMove.o Disa/Disa.o

@@ -43,16 +43,10 @@ typedef struct
 	INT16	volume;		/* #0x1a envelope counter | need_save */
 	UINT32	sl;		/* #0x1c sustain level:sl_table[SL] */
 
-	/* asm relies on this order: */
-	union {
-		struct {
-			UINT32 eg_pack_rr;  /* #0x20 1 (release state) */
-			UINT32 eg_pack_d2r; /* #0x24 2 (sustain state) */
-			UINT32 eg_pack_d1r; /* #0x28 3 (decay state) */
-			UINT32 eg_pack_ar;  /* #0x2c 4 (attack state) */
-		};
-		UINT32 eg_pack[4];
-	};
+	UINT32	eg_pack_ar; 	/* #0x20 (attack state) */
+	UINT32	eg_pack_d1r;	/* #0x24 (decay state) */
+	UINT32	eg_pack_d2r;	/* #0x28 (sustain state) */
+	UINT32	eg_pack_rr; 	/* #0x2c (release state) */
 } FM_SLOT;
 
 
@@ -176,20 +170,20 @@ int  YM2612PicoStateLoad2(int *tat, int *tbt);
 #else
 /* GP2X specific */
 #include "../../platform/gp2x/940ctl.h"
-extern int PicoIn.opt;
+extern int PicoOpt;
 #define YM2612Init(baseclock,rate) { \
-	if (PicoIn.opt&0x200) YM2612Init_940(baseclock, rate); \
+	if (PicoOpt&0x200) YM2612Init_940(baseclock, rate); \
 	else               YM2612Init_(baseclock, rate); \
 }
 #define YM2612ResetChip() { \
-	if (PicoIn.opt&0x200) YM2612ResetChip_940(); \
+	if (PicoOpt&0x200) YM2612ResetChip_940(); \
 	else               YM2612ResetChip_(); \
 }
 #define YM2612UpdateOne(buffer,length,stereo,is_buf_empty) \
-	(PicoIn.opt&0x200) ? YM2612UpdateOne_940(buffer, length, stereo, is_buf_empty) : \
+	(PicoOpt&0x200) ? YM2612UpdateOne_940(buffer, length, stereo, is_buf_empty) : \
 				YM2612UpdateOne_(buffer, length, stereo, is_buf_empty);
 #define YM2612PicoStateLoad() { \
-	if (PicoIn.opt&0x200) YM2612PicoStateLoad_940(); \
+	if (PicoOpt&0x200) YM2612PicoStateLoad_940(); \
 	else               YM2612PicoStateLoad_(); \
 }
 #endif /* __GP2X__ */
