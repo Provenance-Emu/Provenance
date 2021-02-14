@@ -391,7 +391,7 @@ int YM2612UpdateOne_940(int *buffer, int length, int stereo, int is_buf_empty)
 	ym_active_chs = shared_ctl->ym_active_chs;
 
 	// mix in ym buffer. is_buf_empty means nobody mixed there anything yet and it may contain trash
-	if (is_buf_empty && ym_active_chs) memcpy(buffer, ym_buf, length << (stereo + 2));
+	if (is_buf_empty && ym_active_chs) memcpy32(buffer, ym_buf, length<<stereo);
 	else memset32(buffer, 0, length<<stereo);
 
 	if (shared_ctl->writebuffsel == 1) {
@@ -402,9 +402,9 @@ int YM2612UpdateOne_940(int *buffer, int length, int stereo, int is_buf_empty)
 	writebuff_ptr = 0;
 
 	/* predict sample counter for next frame */
-	if (Pico.snd.len_e_add) {
-		length = Pico.snd.len;
-		if (Pico.snd.len_e_cnt + Pico.snd.len_e_add >= 0x10000) length++;
+	if (PsndLen_exc_add) {
+		length = PsndLen;
+		if (PsndLen_exc_cnt + PsndLen_exc_add >= 0x10000) length++;
 	}
 
 	/* give 940 ym job */
@@ -424,7 +424,7 @@ int YM2612UpdateOne_940(int *buffer, int length, int stereo, int is_buf_empty)
 
 int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 {
-	if (!(PicoIn.opt & POPT_EXT_FM)) {
+	if (!(PicoOpt & POPT_EXT_FM)) {
 		//mp3_update_local(buffer, length, stereo);
 		return 0;
 	}
@@ -456,18 +456,18 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 
 int mp3dec_start(FILE *f, int fpos_start)
 {
-	if (!(PicoIn.opt & POPT_EXT_FM)) {
+	if (!(PicoOpt & POPT_EXT_FM)) {
 		//mp3_start_play_local(f, pos);
 		return -1;
 	}
 
 	if (loaded_mp3 != f)
 	{
-		if (PicoIn.osdMessage != NULL)
+		if (PicoMessage != NULL)
 		{
 			fseek(f, 0, SEEK_END);
 			if (ftell(f) > 2*1024*1024)
-				PicoIn.osdMessage("Loading MP3...");
+				PicoMessage("Loading MP3...");
 		}
 		fseek(f, 0, SEEK_SET);
 		fread(mp3_mem, 1, MP3_SIZE_MAX, f);

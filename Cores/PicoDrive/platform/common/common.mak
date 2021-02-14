@@ -8,6 +8,7 @@ asm_memory = 0
 asm_render = 0
 asm_ym2612 = 0
 asm_misc = 0
+asm_cdpico = 0
 asm_cdmemory = 0
 asm_mix = 0
 endif
@@ -49,7 +50,7 @@ SRCS_COMMON += $(R)pico/draw_arm.S $(R)pico/draw2_arm.S
 endif
 ifeq "$(asm_memory)" "1"
 DEFINES += _ASM_MEMORY_C
-SRCS_COMMON += $(R)pico/memory_arm.S
+SRCS_COMMON += $(R)pico/memory_arm.s
 endif
 ifeq "$(asm_ym2612)" "1"
 DEFINES += _ASM_YM2612_C
@@ -60,16 +61,20 @@ DEFINES += _ASM_MISC_C
 SRCS_COMMON += $(R)pico/misc_arm.s
 SRCS_COMMON += $(R)pico/cd/misc_arm.s
 endif
+ifeq "$(asm_cdpico)" "1"
+DEFINES += _ASM_CD_PICO_C
+SRCS_COMMON += $(R)pico/cd/mcd_arm.s
+endif
 ifeq "$(asm_cdmemory)" "1"
 DEFINES += _ASM_CD_MEMORY_C
-SRCS_COMMON += $(R)pico/cd/memory_arm.S
+SRCS_COMMON += $(R)pico/cd/memory_arm.s
 endif
 ifeq "$(asm_32xdraw)" "1"
 DEFINES += _ASM_32X_DRAW
 SRCS_COMMON += $(R)pico/32x/draw_arm.s
 endif
 ifeq "$(asm_mix)" "1"
-SRCS_COMMON += $(R)pico/sound/mix_arm.S
+SRCS_COMMON += $(R)pico/sound/mix_arm.s
 endif
 endif # ARCH=arm
 
@@ -102,7 +107,6 @@ endif
 SRCS_COMMON += $(R)pico/pico/pico.c $(R)pico/pico/memory.c $(R)pico/pico/xpcm.c
 # carthw
 SRCS_COMMON += $(R)pico/carthw/carthw.c
-SRCS_COMMON += $(R)pico/carthw/eeprom_spi.c
 # SVP
 SRCS_COMMON += $(R)pico/carthw/svp/svp.c $(R)pico/carthw/svp/memory.c \
 	$(R)pico/carthw/svp/ssp16.c
@@ -173,15 +177,13 @@ ifeq "$(use_cyclone)" "1"
 $(FR)pico/pico.c: $(FR)cpu/cyclone/Cyclone.h
 endif
 
-CYCLONE_CONFIG ?= cyclone_config.h
-
 $(FR)cpu/cyclone/Cyclone.h:
 	@echo "Cyclone submodule is missing, please run 'git submodule update --init'"
 	@false
 
-$(FR)cpu/cyclone/Cyclone.s: $(FR)cpu/$(CYCLONE_CONFIG)
+$(FR)cpu/cyclone/Cyclone.s: $(FR)cpu/cyclone_config.h
 	@echo building Cyclone...
-	@make -C $(R)cpu/cyclone/ CONFIG_FILE=../$(CYCLONE_CONFIG)
+	@make -C $(R)cpu/cyclone/ CONFIG_FILE=../cyclone_config.h
 
 $(FR)cpu/cyclone/Cyclone.s: $(FR)cpu/cyclone/*.cpp $(FR)cpu/cyclone/*.h
 

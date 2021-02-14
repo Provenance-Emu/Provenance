@@ -1,6 +1,6 @@
 
 #ifdef PICODRIVE_HACK
-#define NOT_POLLING ctx->not_polling = 1;
+#define NOT_POLLING g_m68kcontext->not_polling = 1;
 #else
 #define NOT_POLLING
 #endif
@@ -644,7 +644,7 @@ OPCODE(0x007C)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 #ifdef USE_CYCLONE_TIMING
 		RET(0)
 #else
@@ -1302,7 +1302,7 @@ OPCODE(0x027C)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(20)
@@ -1952,7 +1952,7 @@ OPCODE(0x0A7C)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(0)
 	}
 RET(20)
@@ -5484,8 +5484,8 @@ OPCODE(0x1008)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5504,8 +5504,8 @@ OPCODE(0x1088)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5527,8 +5527,8 @@ OPCODE(0x10C8)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5551,8 +5551,8 @@ OPCODE(0x1108)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5575,8 +5575,8 @@ OPCODE(0x1148)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5599,8 +5599,8 @@ OPCODE(0x1188)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5623,8 +5623,8 @@ OPCODE(0x11C8)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5646,8 +5646,8 @@ OPCODE(0x13C8)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5669,8 +5669,8 @@ OPCODE(0x1EC8)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -5693,8 +5693,8 @@ OPCODE(0x1F08)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	flag_C = 0;
@@ -16570,7 +16570,7 @@ OPCODE(0x46C0)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(12)
@@ -16599,7 +16599,7 @@ OPCODE(0x46D0)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(16)
@@ -16629,7 +16629,7 @@ OPCODE(0x46D8)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(16)
@@ -16659,7 +16659,7 @@ OPCODE(0x46E0)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(18)
@@ -16689,7 +16689,7 @@ OPCODE(0x46E8)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(20)
@@ -16719,7 +16719,7 @@ OPCODE(0x46F0)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(22)
@@ -16749,7 +16749,7 @@ OPCODE(0x46F8)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(20)
@@ -16778,7 +16778,7 @@ OPCODE(0x46F9)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(24)
@@ -16808,7 +16808,7 @@ OPCODE(0x46FA)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(20)
@@ -16838,7 +16838,7 @@ OPCODE(0x46FB)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(22)
@@ -16864,7 +16864,7 @@ OPCODE(0x46FC)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(16)
@@ -16894,7 +16894,7 @@ OPCODE(0x46DF)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(16)
@@ -16924,7 +16924,7 @@ OPCODE(0x46E7)
 	}
 	else
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 RET(18)
@@ -16936,20 +16936,18 @@ OPCODE(0x4800)
 	u32 adr, res;
 	u32 src, dst;
 
-	dst = DREGu8((Opcode >> 0) & 7);
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	res = DREGu8((Opcode >> 0) & 7);
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		DREGu8((Opcode >> 0) & 7) = res;
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	DREGu8((Opcode >> 0) & 7) = res;
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 RET(6)
 }
@@ -16962,20 +16960,18 @@ OPCODE(0x4810)
 
 	adr = AREG((Opcode >> 0) & 7);
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(12)
@@ -16990,20 +16986,18 @@ OPCODE(0x4818)
 	adr = AREG((Opcode >> 0) & 7);
 	AREG((Opcode >> 0) & 7) += 1;
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(12)
@@ -17018,20 +17012,18 @@ OPCODE(0x4820)
 	adr = AREG((Opcode >> 0) & 7) - 1;
 	AREG((Opcode >> 0) & 7) = adr;
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(14)
@@ -17046,20 +17038,18 @@ OPCODE(0x4828)
 	FETCH_SWORD(adr);
 	adr += AREG((Opcode >> 0) & 7);
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(16)
@@ -17074,20 +17064,18 @@ OPCODE(0x4830)
 	adr = AREG((Opcode >> 0) & 7);
 	DECODE_EXT_WORD
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(18)
@@ -17101,20 +17089,18 @@ OPCODE(0x4838)
 
 	FETCH_SWORD(adr);
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(16)
@@ -17128,20 +17114,18 @@ OPCODE(0x4839)
 
 	FETCH_LONG(adr);
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(20)
@@ -17156,20 +17140,18 @@ OPCODE(0x481F)
 	adr = AREG(7);
 	AREG(7) += 2;
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(12)
@@ -17184,20 +17166,18 @@ OPCODE(0x4827)
 	adr = AREG(7) - 2;
 	AREG(7) = adr;
 	PRE_IO
-	READ_BYTE_F(adr, dst)
-	res = -dst - ((flag_X >> M68K_SR_X_SFT) & 1);
+	READ_BYTE_F(adr, res)
+	res = 0x9a - res - ((flag_X >> M68K_SR_X_SFT) & 1);
 
-	if (res != 0)
+	if (res != 0x9a)
 	{
-		flag_V = res;
-		if (((res|dst) & 0x0f) == 0) res = (res & 0xf0) + 6;
-		res = (res + 0x9a) & 0xFF;
-		WRITE_BYTE_F(adr, res)
-		flag_V &= ~res;
+		if ((res & 0x0f) == 0xa) res = (res & 0xf0) + 0x10;
+		res &= 0xFF;
+	WRITE_BYTE_F(adr, res)
 		flag_NotZ |= res;
 		flag_X = flag_C = M68K_SR_C;
 	}
-	else flag_V = flag_X = flag_C = 0;
+	else flag_X = flag_C = 0;
 	flag_N = res;
 	POST_IO
 RET(14)
@@ -17337,7 +17317,7 @@ OPCODE(0x4890)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(8)
 #else
@@ -17369,7 +17349,7 @@ OPCODE(0x48A0)
 	} while (res >>= 1);
 	AREG((Opcode >> 0) & 7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (dst - adr) * 2;
+	m68kcontext.io_cycle_counter -= (dst - adr) * 2;
 RET(8)
 }
 
@@ -17397,7 +17377,7 @@ OPCODE(0x48A8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(12)
 #else
@@ -17429,7 +17409,7 @@ OPCODE(0x48B0)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(14)
 #else
@@ -17460,7 +17440,7 @@ OPCODE(0x48B8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(12)
 #else
@@ -17491,7 +17471,7 @@ OPCODE(0x48B9)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -17523,7 +17503,7 @@ OPCODE(0x48A7)
 	} while (res >>= 1);
 	AREG(7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (dst - adr) * 2;
+	m68kcontext.io_cycle_counter -= (dst - adr) * 2;
 RET(8)
 }
 
@@ -17550,7 +17530,7 @@ OPCODE(0x48D0)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(8)
 #else
@@ -17582,7 +17562,7 @@ OPCODE(0x48E0)
 	} while (res >>= 1);
 	AREG((Opcode >> 0) & 7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (dst - adr) * 2;
+	m68kcontext.io_cycle_counter -= (dst - adr) * 2;
 RET(8)
 }
 
@@ -17610,7 +17590,7 @@ OPCODE(0x48E8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(12)
 #else
@@ -17642,7 +17622,7 @@ OPCODE(0x48F0)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(14)
 #else
@@ -17673,7 +17653,7 @@ OPCODE(0x48F8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(12)
 #else
@@ -17704,7 +17684,7 @@ OPCODE(0x48F9)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -17736,7 +17716,7 @@ OPCODE(0x48E7)
 	} while (res >>= 1);
 	AREG(7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (dst - adr) * 2;
+	m68kcontext.io_cycle_counter -= (dst - adr) * 2;
 RET(8)
 }
 
@@ -18319,7 +18299,7 @@ OPCODE(0x4AD0)
 	flag_NotZ = res;
 	flag_N = res;
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18349,7 +18329,7 @@ OPCODE(0x4AD8)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18379,7 +18359,7 @@ OPCODE(0x4AE0)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18409,7 +18389,7 @@ OPCODE(0x4AE8)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18439,7 +18419,7 @@ OPCODE(0x4AF0)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18468,7 +18448,7 @@ OPCODE(0x4AF8)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18497,7 +18477,7 @@ OPCODE(0x4AF9)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18527,7 +18507,7 @@ OPCODE(0x4ADF)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18557,7 +18537,7 @@ OPCODE(0x4AE7)
 	flag_N = res;
 
 #ifdef PICODRIVE_HACK
-	if (ctx == &PicoCpuFS68k) {
+	if (g_m68kcontext == &PicoCpuFS68k) {
 		res |= 0x80;
 		WRITE_BYTE_F(adr, res);
 	}
@@ -18574,25 +18554,21 @@ RET(8)
 // ILLEGAL
 OPCODE(0x4AFC)
 {
-#ifdef PICODRIVE_HACK
-	extern void SekFinishIdleDet(void);
-	SekFinishIdleDet();
-#endif
-	SET_PC(execute_exception(ctx, M68K_ILLEGAL_INSTRUCTION_EX, GET_PC-2, GET_SR));
+	SET_PC(execute_exception(M68K_ILLEGAL_INSTRUCTION_EX, GET_PC-2, GET_SR));
 RET(0)
 }
 
 // ILLEGAL A000-AFFF
 OPCODE(0xA000)
 {
-	SET_PC(execute_exception(ctx, M68K_1010_EX, GET_PC-2, GET_SR));
+	SET_PC(execute_exception(M68K_1010_EX, GET_PC-2, GET_SR));
 RET(0)
 }
 
 // ILLEGAL F000-FFFF
 OPCODE(0xF000)
 {
-	SET_PC(execute_exception(ctx, M68K_1111_EX, GET_PC-2, GET_SR));
+	SET_PC(execute_exception(M68K_1111_EX, GET_PC-2, GET_SR));
 RET(0) // 4 already taken by exc. handler
 }
 
@@ -18619,7 +18595,7 @@ OPCODE(0x4C90)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(12)
 #else
@@ -18651,7 +18627,7 @@ OPCODE(0x4C98)
 	} while (res >>= 1);
 	AREG((Opcode >> 0) & 7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 RET(12)
 }
 
@@ -18679,7 +18655,7 @@ OPCODE(0x4CA8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -18711,7 +18687,7 @@ OPCODE(0x4CB0)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(18)
 #else
@@ -18742,7 +18718,7 @@ OPCODE(0x4CB8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -18773,7 +18749,7 @@ OPCODE(0x4CB9)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(20)
 #else
@@ -18805,7 +18781,7 @@ OPCODE(0x4CBA)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -18837,7 +18813,7 @@ OPCODE(0x4CBB)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(18)
 #else
@@ -18869,7 +18845,7 @@ OPCODE(0x4C9F)
 	} while (res >>= 1);
 	AREG(7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 RET(12)
 }
 
@@ -18896,7 +18872,7 @@ OPCODE(0x4CD0)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(12)
 #else
@@ -18928,7 +18904,7 @@ OPCODE(0x4CD8)
 	} while (res >>= 1);
 	AREG((Opcode >> 0) & 7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 RET(12)
 }
 
@@ -18956,7 +18932,7 @@ OPCODE(0x4CE8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -18988,7 +18964,7 @@ OPCODE(0x4CF0)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(18)
 #else
@@ -19019,7 +18995,7 @@ OPCODE(0x4CF8)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -19050,7 +19026,7 @@ OPCODE(0x4CF9)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(20)
 #else
@@ -19082,7 +19058,7 @@ OPCODE(0x4CFA)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(16)
 #else
@@ -19114,7 +19090,7 @@ OPCODE(0x4CFB)
 		psrc++;
 	} while (res >>= 1);
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 #ifdef USE_CYCLONE_TIMING
 RET(18)
 #else
@@ -19146,14 +19122,14 @@ OPCODE(0x4CDF)
 	} while (res >>= 1);
 	AREG(7) = adr;
 	POST_IO
-	ctx->io_cycle_counter -= (adr - dst) * 2;
+	m68kcontext.io_cycle_counter -= (adr - dst) * 2;
 RET(12)
 }
 
 // TRAP
 OPCODE(0x4E40)
 {
-	SET_PC(execute_exception(ctx, M68K_TRAP_BASE_EX + (Opcode & 0xF), GET_PC, GET_SR));
+	SET_PC(execute_exception(M68K_TRAP_BASE_EX + (Opcode & 0xF), GET_PC, GET_SR));
 RET(4)
 }
 
@@ -19224,7 +19200,7 @@ OPCODE(0x4E60)
 
 	if (!flag_S)
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 	res = AREGu32((Opcode >> 0) & 7);
@@ -19240,7 +19216,7 @@ OPCODE(0x4E68)
 
 	if (!flag_S)
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 	res = ASP;
@@ -19256,11 +19232,11 @@ OPCODE(0x4E70)
 
 	if (!flag_S)
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 	PRE_IO
-	if (ctx->reset_handler) ctx->reset_handler();
+	if (m68kcontext.reset_handler) m68kcontext.reset_handler();
 //	CPU->Reset_CallBack();
 	POST_IO
 RET(132)
@@ -19280,7 +19256,7 @@ OPCODE(0x4E72)
 
 	if (!flag_S)
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 	FETCH_WORD(res);
@@ -19292,7 +19268,7 @@ OPCODE(0x4E72)
 		AREG(7) = ASP;
 		ASP = res;
 	}
-	ctx->execinfo |= FM68K_HALTED;
+	m68kcontext.execinfo |= FM68K_HALTED;
 RET0()
 }
 
@@ -19304,7 +19280,7 @@ OPCODE(0x4E73)
 
 	if (!flag_S)
 	{
-		SET_PC(execute_exception(ctx, M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
+		SET_PC(execute_exception(M68K_PRIVILEGE_VIOLATION_EX, GET_PC-2, GET_SR));
 		RET(4)
 	}
 	PRE_IO
@@ -19319,7 +19295,7 @@ OPCODE(0x4E73)
 		ASP = res;
 	}
 	POST_IO
-	ctx->execinfo &= ~(FM68K_EMULATE_GROUP_0|FM68K_EMULATE_TRACE|FM68K_DO_TRACE);
+	m68kcontext.execinfo &= ~(FM68K_EMULATE_GROUP_0|FM68K_EMULATE_TRACE|FM68K_DO_TRACE);
 	CHECK_INT_TO_JUMP(20)
 RET(20)
 }
@@ -19342,7 +19318,7 @@ RET(16)
 OPCODE(0x4E76)
 {
 	if (flag_V & 0x80)
-		SET_PC(execute_exception(ctx, M68K_TRAPV_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_TRAPV_EX, GET_PC, GET_SR));
 RET(4)
 }
 
@@ -19597,14 +19573,15 @@ RET(14)
 // CHK
 OPCODE(0x4180)
 {
-	s32 src, res;
+	u32 adr, res;
+	u32 src, dst;
 
-	src = DREGs16((Opcode >> 0) & 7);
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	src = DREGu16((Opcode >> 0) & 7);
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 RET(10)
 }
@@ -19612,17 +19589,17 @@ RET(10)
 // CHK
 OPCODE(0x4190)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = AREG((Opcode >> 0) & 7);
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(14)
@@ -19631,18 +19608,18 @@ RET(14)
 // CHK
 OPCODE(0x4198)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = AREG((Opcode >> 0) & 7);
 	AREG((Opcode >> 0) & 7) += 2;
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(14)
@@ -19651,18 +19628,18 @@ RET(14)
 // CHK
 OPCODE(0x41A0)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = AREG((Opcode >> 0) & 7) - 2;
 	AREG((Opcode >> 0) & 7) = adr;
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(16)
@@ -19671,18 +19648,18 @@ RET(16)
 // CHK
 OPCODE(0x41A8)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	FETCH_SWORD(adr);
 	adr += AREG((Opcode >> 0) & 7);
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(18)
@@ -19691,18 +19668,18 @@ RET(18)
 // CHK
 OPCODE(0x41B0)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = AREG((Opcode >> 0) & 7);
 	DECODE_EXT_WORD
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(20)
@@ -19711,17 +19688,17 @@ RET(20)
 // CHK
 OPCODE(0x41B8)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	FETCH_SWORD(adr);
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(18)
@@ -19730,17 +19707,17 @@ RET(18)
 // CHK
 OPCODE(0x41B9)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	FETCH_LONG(adr);
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(22)
@@ -19749,18 +19726,18 @@ RET(22)
 // CHK
 OPCODE(0x41BA)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = GET_SWORD + GET_PC;
 	PC++;
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(18)
@@ -19769,18 +19746,18 @@ RET(18)
 // CHK
 OPCODE(0x41BB)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = GET_PC;
 	DECODE_EXT_WORD
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(20)
@@ -19789,15 +19766,15 @@ RET(20)
 // CHK
 OPCODE(0x41BC)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
-	FETCH_SWORD(src);
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	FETCH_WORD(src);
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(14)
@@ -19806,18 +19783,18 @@ RET(14)
 // CHK
 OPCODE(0x419F)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = AREG(7);
 	AREG(7) += 2;
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(14)
@@ -19826,18 +19803,18 @@ RET(14)
 // CHK
 OPCODE(0x41A7)
 {
-	s32 src, res;
-	u32 adr;
+	u32 adr, res;
+	u32 src, dst;
 
 	adr = AREG(7) - 2;
 	AREG(7) = adr;
 	PRE_IO
-	READSX_WORD_F(adr, src)
-	res = DREGs16((Opcode >> 9) & 7);
-	if ((res < 0) || (res > src))
+	READ_WORD_F(adr, src)
+	res = DREGu16((Opcode >> 9) & 7);
+	if (((s32)res < 0) || (res > src))
 	{
 		flag_N = res >> 8;
-		SET_PC(execute_exception(ctx, M68K_CHK_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_CHK_EX, GET_PC, GET_SR));
 	}
 	POST_IO
 RET(16)
@@ -25051,7 +25028,7 @@ OPCODE(0x6201)
 	if (flag_NotZ && (!(flag_C & 0x100)))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25065,7 +25042,7 @@ OPCODE(0x6301)
 	if ((!flag_NotZ) || (flag_C & 0x100))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25079,7 +25056,7 @@ OPCODE(0x6401)
 	if (!(flag_C & 0x100))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25093,7 +25070,7 @@ OPCODE(0x6501)
 	if (flag_C & 0x100)
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25107,7 +25084,7 @@ OPCODE(0x6601)
 	if (flag_NotZ)
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25121,7 +25098,7 @@ OPCODE(0x6701)
 	if (!flag_NotZ)
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25135,7 +25112,7 @@ OPCODE(0x6801)
 	if (!(flag_V & 0x80))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25149,7 +25126,7 @@ OPCODE(0x6901)
 	if (flag_V & 0x80)
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25163,7 +25140,7 @@ OPCODE(0x6A01)
 	if (!(flag_N & 0x80))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25177,7 +25154,7 @@ OPCODE(0x6B01)
 	if (flag_N & 0x80)
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25191,7 +25168,7 @@ OPCODE(0x6C01)
 	if (!((flag_N ^ flag_V) & 0x80))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25205,7 +25182,7 @@ OPCODE(0x6D01)
 	if ((flag_N ^ flag_V) & 0x80)
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25219,7 +25196,7 @@ OPCODE(0x6E01)
 	if (flag_NotZ && (!((flag_N ^ flag_V) & 0x80)))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -25233,7 +25210,7 @@ OPCODE(0x6F01)
 	if ((!flag_NotZ) || ((flag_N ^ flag_V) & 0x80))
 	{
 		PC += ((s8)(Opcode & 0xFE)) >> 1;
-	ctx->io_cycle_counter -= 2;
+	m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }
@@ -26957,19 +26934,19 @@ OPCODE(0x8100)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	src = DREGu8((Opcode >> 0) & 7);
 	dst = DREGu8((Opcode >> 9) & 7);
 	res = (dst & 0xF) - (src & 0xF) - ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 0xF) corf = 6;
+	if (res > 9) res -= 6;
 	res += (dst & 0xF0) - (src & 0xF0);
-	flag_V = res;
-	flag_X = flag_C = (s32)res < (s32)corf ? M68K_SR_C : 0;
-	if (res > 0xff) res += 0xA0;
-	res = (res - corf) & 0xFF;
-	flag_V &= ~res;
-	flag_NotZ |= res;
+	if (res > 0x99)
+	{
+		res += 0xA0;
+		flag_X = flag_C = M68K_SR_C;
+	}
+	else flag_X = flag_C = 0;
+	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	DREGu8((Opcode >> 9) & 7) = res;
 RET(6)
@@ -26980,7 +26957,6 @@ OPCODE(0x8108)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG((Opcode >> 0) & 7) - 1;
 	AREG((Opcode >> 0) & 7) = adr;
@@ -26990,14 +26966,15 @@ OPCODE(0x8108)
 	AREG((Opcode >> 9) & 7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) - (src & 0xF) - ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 0xF) corf = 6;
+	if (res > 9) res -= 6;
 	res += (dst & 0xF0) - (src & 0xF0);
-	flag_V = res;
-	flag_X = flag_C = (s32)res < (s32)corf ? M68K_SR_C : 0;
-	if (res > 0xff) res += 0xA0;
-	res = (res - corf) & 0xFF;
-	flag_V &= ~res;
-	flag_NotZ |= res;
+	if (res > 0x99)
+	{
+		res += 0xA0;
+		flag_X = flag_C = M68K_SR_C;
+	}
+	else flag_X = flag_C = 0;
+	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -27009,7 +26986,6 @@ OPCODE(0x810F)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG(7) - 2;
 	AREG(7) = adr;
@@ -27019,14 +26995,15 @@ OPCODE(0x810F)
 	AREG((Opcode >> 9) & 7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) - (src & 0xF) - ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 0xF) corf = 6;
+	if (res > 9) res -= 6;
 	res += (dst & 0xF0) - (src & 0xF0);
-	flag_V = res;
-	flag_X = flag_C = (s32)res < (s32)corf ? M68K_SR_C : 0;
-	if (res > 0xff) res += 0xA0;
-	res = (res - corf) & 0xFF;
-	flag_V &= ~res;
-	flag_NotZ |= res;
+	if (res > 0x99)
+	{
+		res += 0xA0;
+		flag_X = flag_C = M68K_SR_C;
+	}
+	else flag_X = flag_C = 0;
+	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -27038,7 +27015,6 @@ OPCODE(0x8F08)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG((Opcode >> 0) & 7) - 1;
 	AREG((Opcode >> 0) & 7) = adr;
@@ -27048,14 +27024,15 @@ OPCODE(0x8F08)
 	AREG(7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) - (src & 0xF) - ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 0xF) corf = 6;
+	if (res > 9) res -= 6;
 	res += (dst & 0xF0) - (src & 0xF0);
-	flag_V = res;
-	flag_X = flag_C = (s32)res < (s32)corf ? M68K_SR_C : 0;
-	if (res > 0xff) res += 0xA0;
-	res = (res - corf) & 0xFF;
-	flag_V &= ~res;
-	flag_NotZ |= res;
+	if (res > 0x99)
+	{
+		res += 0xA0;
+		flag_X = flag_C = M68K_SR_C;
+	}
+	else flag_X = flag_C = 0;
+	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -27067,7 +27044,6 @@ OPCODE(0x8F0F)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG(7) - 2;
 	AREG(7) = adr;
@@ -27077,14 +27053,15 @@ OPCODE(0x8F0F)
 	AREG(7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) - (src & 0xF) - ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 0xF) corf = 6;
+	if (res > 9) res -= 6;
 	res += (dst & 0xF0) - (src & 0xF0);
-	flag_V = res;
-	flag_X = flag_C = (s32)res < (s32)corf ? M68K_SR_C : 0;
-	if (res > 0xff) res += 0xA0;
-	res = (res - corf) & 0xFF;
-	flag_V &= ~res;
-	flag_NotZ |= res;
+	if (res > 0x99)
+	{
+		res += 0xA0;
+		flag_X = flag_C = M68K_SR_C;
+	}
+	else flag_X = flag_C = 0;
+	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
 	POST_IO
@@ -27100,7 +27077,7 @@ OPCODE(0x80C0)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(140)
 #else
@@ -27148,7 +27125,7 @@ OPCODE(0x80D0)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(144)
 #else
@@ -27197,7 +27174,7 @@ OPCODE(0x80D8)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(144)
 #else
@@ -27246,7 +27223,7 @@ OPCODE(0x80E0)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(146)
 #else
@@ -27295,7 +27272,7 @@ OPCODE(0x80E8)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(148)
 #else
@@ -27344,7 +27321,7 @@ OPCODE(0x80F0)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(150)
 #else
@@ -27392,7 +27369,7 @@ OPCODE(0x80F8)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(148)
 #else
@@ -27440,9 +27417,9 @@ OPCODE(0x80F9)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
-RET(152)
+RET(162)
 #else
 RET(22)
 #endif
@@ -27458,7 +27435,7 @@ RET(22)
 		{
 			flag_V = M68K_SR_V;
 #ifdef USE_CYCLONE_TIMING_DIV
-RET(152)
+RET(162)
 #else
 	RET(82)
 #endif
@@ -27471,7 +27448,7 @@ RET(152)
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-RET(152)
+RET(162)
 #else
 RET(102)
 #endif
@@ -27489,7 +27466,7 @@ OPCODE(0x80FA)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(148)
 #else
@@ -27538,9 +27515,9 @@ OPCODE(0x80FB)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
-RET(150)
+RET(160)
 #else
 RET(20)
 #endif
@@ -27556,7 +27533,7 @@ RET(20)
 		{
 			flag_V = M68K_SR_V;
 #ifdef USE_CYCLONE_TIMING_DIV
-RET(150)
+RET(160)
 #else
 	RET(80)
 #endif
@@ -27569,7 +27546,7 @@ RET(150)
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-RET(150)
+RET(160)
 #else
 RET(100)
 #endif
@@ -27584,7 +27561,7 @@ OPCODE(0x80FC)
 	FETCH_WORD(src);
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(144)
 #else
@@ -27633,7 +27610,7 @@ OPCODE(0x80DF)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(144)
 #else
@@ -27682,7 +27659,7 @@ OPCODE(0x80E7)
 	READ_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 RET(146)
 #else
@@ -27728,7 +27705,7 @@ OPCODE(0x81C0)
 	src = (s32)DREGs16((Opcode >> 0) & 7);
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81C0;
 #endif
@@ -27768,7 +27745,7 @@ goto end81C0;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81C0: ctx->io_cycle_counter -= 50;
+end81C0: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(108)
 }
@@ -27784,7 +27761,7 @@ OPCODE(0x81D0)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81D0;
 #endif
@@ -27824,7 +27801,7 @@ goto end81D0;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81D0: ctx->io_cycle_counter -= 50;
+end81D0: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(112)
 }
@@ -27841,7 +27818,7 @@ OPCODE(0x81D8)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81D8;
 #endif
@@ -27881,7 +27858,7 @@ goto end81D8;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81D8: ctx->io_cycle_counter -= 50;
+end81D8: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(112)
 }
@@ -27898,7 +27875,7 @@ OPCODE(0x81E0)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81E0;
 #endif
@@ -27938,7 +27915,7 @@ goto end81E0;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81E0: ctx->io_cycle_counter -= 50;
+end81E0: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(114)
 }
@@ -27955,7 +27932,7 @@ OPCODE(0x81E8)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81E8;
 #endif
@@ -27995,7 +27972,7 @@ goto end81E8;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81E8: ctx->io_cycle_counter -= 50;
+end81E8: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(116)
 }
@@ -28012,7 +27989,7 @@ OPCODE(0x81F0)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81F0;
 #endif
@@ -28052,7 +28029,7 @@ goto end81F0;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81F0: ctx->io_cycle_counter -= 50;
+end81F0: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(118)
 }
@@ -28068,7 +28045,7 @@ OPCODE(0x81F8)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81F8;
 #endif
@@ -28108,7 +28085,7 @@ goto end81F8;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81F8: ctx->io_cycle_counter -= 50;
+end81F8: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(116)
 }
@@ -28124,7 +28101,7 @@ OPCODE(0x81F9)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81F9;
 #endif
@@ -28164,7 +28141,7 @@ goto end81F9;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81F9: ctx->io_cycle_counter -= 50;
+end81F9: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(120)
 }
@@ -28181,7 +28158,7 @@ OPCODE(0x81FA)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81FA;
 #endif
@@ -28221,7 +28198,7 @@ goto end81FA;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81FA: ctx->io_cycle_counter -= 50;
+end81FA: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(116)
 }
@@ -28238,7 +28215,7 @@ OPCODE(0x81FB)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81FB;
 #endif
@@ -28278,7 +28255,7 @@ goto end81FB;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81FB: ctx->io_cycle_counter -= 50;
+end81FB: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(118)
 }
@@ -28292,7 +28269,7 @@ OPCODE(0x81FC)
 	FETCH_SWORD(src);
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81FC;
 #endif
@@ -28332,7 +28309,7 @@ goto end81FC;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81FC: ctx->io_cycle_counter -= 50;
+end81FC: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(112)
 }
@@ -28349,7 +28326,7 @@ OPCODE(0x81DF)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81DF;
 #endif
@@ -28389,7 +28366,7 @@ goto end81DF;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81DF: ctx->io_cycle_counter -= 50;
+end81DF: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(112)
 }
@@ -28406,7 +28383,7 @@ OPCODE(0x81E7)
 	READSX_WORD_F(adr, src)
 	if (src == 0)
 	{
-		SET_PC(execute_exception(ctx, M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
+		SET_PC(execute_exception(M68K_ZERO_DIVIDE_EX, GET_PC, GET_SR));
 #ifdef USE_CYCLONE_TIMING_DIV
 goto end81E7;
 #endif
@@ -28446,7 +28423,7 @@ goto end81E7;
 	DREGu32((Opcode >> 9) & 7) = res;
 	}
 #ifdef USE_CYCLONE_TIMING_DIV
-end81E7: ctx->io_cycle_counter -= 50;
+end81E7: m68kcontext.io_cycle_counter -= 50;
 #endif
 RET(114)
 }
@@ -28475,8 +28452,8 @@ OPCODE(0x9008)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	dst = DREGu8((Opcode >> 9) & 7);
@@ -30649,8 +30626,8 @@ OPCODE(0xB008)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	dst = DREGu8((Opcode >> 9) & 7);
@@ -34144,22 +34121,18 @@ OPCODE(0xC100)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	src = DREGu8((Opcode >> 0) & 7);
 	dst = DREGu8((Opcode >> 9) & 7);
 	res = (dst & 0xF) + (src & 0xF) + ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 9) corf = 6;
+	if (res > 9) res += 6;
 	res += (dst & 0xF0) + (src & 0xF0);
-	flag_V = ~res;
-	res += corf;
-	if (res > 0x9F)
+	if (res > 0x99)
 	{
 		res -= 0xA0;
 		flag_X = flag_C = M68K_SR_C;
 	}
 	else flag_X = flag_C = 0;
-	flag_V &= res;
 	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	DREGu8((Opcode >> 9) & 7) = res;
@@ -34171,7 +34144,6 @@ OPCODE(0xC108)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG((Opcode >> 0) & 7) - 1;
 	AREG((Opcode >> 0) & 7) = adr;
@@ -34181,17 +34153,14 @@ OPCODE(0xC108)
 	AREG((Opcode >> 9) & 7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) + (src & 0xF) + ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 9) corf = 6;
+	if (res > 9) res += 6;
 	res += (dst & 0xF0) + (src & 0xF0);
-	flag_V = ~res;
-	res += corf;
-	if (res > 0x9F)
+	if (res > 0x99)
 	{
 		res -= 0xA0;
 		flag_X = flag_C = M68K_SR_C;
 	}
 	else flag_X = flag_C = 0;
-	flag_V &= res;
 	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
@@ -34204,7 +34173,6 @@ OPCODE(0xC10F)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG(7) - 2;
 	AREG(7) = adr;
@@ -34214,17 +34182,14 @@ OPCODE(0xC10F)
 	AREG((Opcode >> 9) & 7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) + (src & 0xF) + ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 9) corf = 6;
+	if (res > 9) res += 6;
 	res += (dst & 0xF0) + (src & 0xF0);
-	flag_V = ~res;
-	res += corf;
-	if (res > 0x9F)
+	if (res > 0x99)
 	{
 		res -= 0xA0;
 		flag_X = flag_C = M68K_SR_C;
 	}
 	else flag_X = flag_C = 0;
-	flag_V &= res;
 	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
@@ -34237,7 +34202,6 @@ OPCODE(0xCF08)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG((Opcode >> 0) & 7) - 1;
 	AREG((Opcode >> 0) & 7) = adr;
@@ -34247,17 +34211,14 @@ OPCODE(0xCF08)
 	AREG(7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) + (src & 0xF) + ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 9) corf = 6;
+	if (res > 9) res += 6;
 	res += (dst & 0xF0) + (src & 0xF0);
-	flag_V = ~res;
-	res += corf;
-	if (res > 0x9F)
+	if (res > 0x99)
 	{
 		res -= 0xA0;
 		flag_X = flag_C = M68K_SR_C;
 	}
 	else flag_X = flag_C = 0;
-	flag_V &= res;
 	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
@@ -34270,7 +34231,6 @@ OPCODE(0xCF0F)
 {
 	u32 adr, res;
 	u32 src, dst;
-	u32 corf = 0;
 
 	adr = AREG(7) - 2;
 	AREG(7) = adr;
@@ -34280,17 +34240,14 @@ OPCODE(0xCF0F)
 	AREG(7) = adr;
 	READ_BYTE_F(adr, dst)
 	res = (dst & 0xF) + (src & 0xF) + ((flag_X >> M68K_SR_X_SFT) & 1);
-	if (res > 9) corf = 6;
+	if (res > 9) res += 6;
 	res += (dst & 0xF0) + (src & 0xF0);
-	flag_V = ~res;
-	res += corf;
-	if (res > 0x9F)
+	if (res > 0x99)
 	{
 		res -= 0xA0;
 		flag_X = flag_C = M68K_SR_C;
 	}
 	else flag_X = flag_C = 0;
-	flag_V &= res;
 	flag_NotZ |= res & 0xFF;
 	flag_N = res;
 	WRITE_BYTE_F(adr, res)
@@ -34966,8 +34923,8 @@ OPCODE(0xD008)
 	u32 src, dst;
 
 	// can't read byte from Ax registers !
-	ctx->execinfo |= M68K_FAULTED;
-	ctx->io_cycle_counter = 0;
+	m68kcontext.execinfo |= M68K_FAULTED;
+	m68kcontext.io_cycle_counter = 0;
 /*
 	goto famec_Exec_End;
 	dst = DREGu8((Opcode >> 9) & 7);
@@ -37126,7 +37083,7 @@ OPCODE(0xE000)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = (s32)DREGs8((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_X = flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37146,7 +37103,7 @@ OPCODE(0xE040)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = (s32)DREGs16((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_X = flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37166,7 +37123,7 @@ OPCODE(0xE080)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = (s32)DREGs32((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_X = flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37186,7 +37143,7 @@ OPCODE(0xE008)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	flag_N = flag_V = 0;
 	flag_X = flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37205,7 +37162,7 @@ OPCODE(0xE048)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 	flag_N = flag_V = 0;
 	flag_X = flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37224,7 +37181,7 @@ OPCODE(0xE088)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 	flag_N = flag_V = 0;
 	flag_X = flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37243,7 +37200,7 @@ OPCODE(0xE010)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	src |= (flag_X & M68K_SR_X) << 0;
 	res = (src >> sft) | (src << (9 - sft));
@@ -37264,7 +37221,7 @@ OPCODE(0xE050)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 	src |= (flag_X & M68K_SR_X) << 8;
 	res = (src >> sft) | (src << (17 - sft));
@@ -37285,7 +37242,7 @@ OPCODE(0xE090)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 	flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
 	if (sft == 1) res = (src >> 1) | ((flag_X & M68K_SR_X) << (32 - (M68K_SR_X_SFT + 1)));
@@ -37307,7 +37264,7 @@ OPCODE(0xE018)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37327,7 +37284,7 @@ OPCODE(0xE058)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37347,7 +37304,7 @@ OPCODE(0xE098)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_C = src << ((M68K_SR_C_SFT + 1) - sft);
@@ -37367,7 +37324,7 @@ OPCODE(0xE100)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft < 8)
 	{
@@ -37406,7 +37363,7 @@ OPCODE(0xE140)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 		flag_X = flag_C = src >> (8 - sft);
 		res = src << sft;
@@ -37431,7 +37388,7 @@ OPCODE(0xE180)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 		flag_X = flag_C = src >> (24 - sft);
 		res = src << sft;
@@ -37456,7 +37413,7 @@ OPCODE(0xE108)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_X = flag_C = src << (0 + sft);
@@ -37476,7 +37433,7 @@ OPCODE(0xE148)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_X = flag_C = src >> (8 - sft);
@@ -37496,7 +37453,7 @@ OPCODE(0xE188)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_X = flag_C = src >> (24 - sft);
@@ -37516,7 +37473,7 @@ OPCODE(0xE110)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	src |= (flag_X & M68K_SR_X) << 0;
 	res = (src << sft) | (src >> (9 - sft));
@@ -37537,7 +37494,7 @@ OPCODE(0xE150)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 	src |= (flag_X & M68K_SR_X) << 8;
 	res = (src << sft) | (src >> (17 - sft));
@@ -37558,7 +37515,7 @@ OPCODE(0xE190)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 	flag_C = src >> ((32 - M68K_SR_C_SFT) - sft);
 	if (sft == 1) res = (src << 1) | ((flag_X & M68K_SR_X) >> ((M68K_SR_X_SFT + 1) - 1));
@@ -37580,7 +37537,7 @@ OPCODE(0xE118)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu8((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_C = src << (0 + sft);
@@ -37600,7 +37557,7 @@ OPCODE(0xE158)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu16((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_C = src >> (8 - sft);
@@ -37620,7 +37577,7 @@ OPCODE(0xE198)
 	u32 sft;
 
 	sft = (((Opcode >> 9) - 1) & 7) + 1;
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 	src = DREGu32((Opcode >> 0) & 7);
 	flag_V = 0;
 	flag_C = src >> (24 - sft);
@@ -37643,7 +37600,7 @@ OPCODE(0xE020)
 	src = (s32)DREGs8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 8)
 		{
 			flag_V = 0;
@@ -37696,7 +37653,7 @@ OPCODE(0xE060)
 	src = (s32)DREGs16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 16)
 		{
 			flag_V = 0;
@@ -37754,7 +37711,7 @@ OPCODE(0xE0A0)
 	src = (s32)DREGs32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 32)
 		{
 			flag_V = 0;
@@ -37808,7 +37765,7 @@ OPCODE(0xE028)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft <= 8)
 		{
 			flag_N = flag_V = 0;
@@ -37847,7 +37804,7 @@ OPCODE(0xE068)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft <= 16)
 		{
 			flag_N = flag_V = 0;
@@ -37891,7 +37848,7 @@ OPCODE(0xE0A8)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 32)
 		{
 			flag_N = flag_V = 0;
@@ -37933,7 +37890,7 @@ OPCODE(0xE030)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft %= 9;
 
 		src |= (flag_X & M68K_SR_X) << 0;
@@ -37965,7 +37922,7 @@ OPCODE(0xE070)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft %= 17;
 
 		src |= (flag_X & M68K_SR_X) << 8;
@@ -38002,14 +37959,14 @@ OPCODE(0xE0B0)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft %= 33;
 
 		if (sft != 0)
 		{
 			if (sft == 1) res = (src >> 1) | ((flag_X & M68K_SR_X) << (32 - (M68K_SR_X_SFT + 1)));
 			else res = (src >> sft) | (src << (33 - sft)) | (((flag_X & M68K_SR_X) << (32 - (M68K_SR_X_SFT + 1))) >> (sft - 1));
-			flag_X = (src >> (sft - 1)) << M68K_SR_X_SFT;
+			flag_X = (src >> (32 - sft)) << M68K_SR_X_SFT;
 		}
 		else res = src;
 		flag_C = flag_X;
@@ -38040,7 +37997,7 @@ OPCODE(0xE038)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft &= 0x07;
 
 		flag_C = src << (M68K_SR_C_SFT - ((sft - 1) & 7));
@@ -38071,7 +38028,7 @@ OPCODE(0xE078)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft &= 0x0F;
 
 		flag_C = (src >> ((sft - 1) & 15)) << M68K_SR_C_SFT;
@@ -38107,7 +38064,7 @@ OPCODE(0xE0B8)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft &= 0x1F;
 
 		flag_C = (src >> ((sft - 1) & 31)) << M68K_SR_C_SFT;
@@ -38139,7 +38096,7 @@ OPCODE(0xE120)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 8)
 		{
 			flag_X = flag_C = (src << sft) >> 0;
@@ -38187,7 +38144,7 @@ OPCODE(0xE160)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 16)
 		{
 			flag_X = flag_C = (src << sft) >> 8;
@@ -38240,7 +38197,7 @@ OPCODE(0xE1A0)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 32)
 		{
 			flag_X = flag_C = (src >> (32 - sft)) << M68K_SR_C_SFT;
@@ -38289,7 +38246,7 @@ OPCODE(0xE128)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft <= 8)
 		{
 			flag_X = flag_C = (src << sft) >> 0;
@@ -38329,7 +38286,7 @@ OPCODE(0xE168)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft <= 16)
 		{
 			flag_X = flag_C = (src << sft) >> 8;
@@ -38374,7 +38331,7 @@ OPCODE(0xE1A8)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft < 32)
 		{
 			flag_X = flag_C = (src >> (32 - sft)) << M68K_SR_C_SFT;
@@ -38417,7 +38374,7 @@ OPCODE(0xE130)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft %= 9;
 
 		src |= (flag_X & M68K_SR_X) << 0;
@@ -38449,7 +38406,7 @@ OPCODE(0xE170)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft %= 17;
 
 		src |= (flag_X & M68K_SR_X) << 8;
@@ -38486,7 +38443,7 @@ OPCODE(0xE1B0)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		sft %= 33;
 
 		if (sft != 0)
@@ -38524,7 +38481,7 @@ OPCODE(0xE138)
 	src = DREGu8((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft &= 0x07)
 		{
 			flag_C = (src << sft) >> 0;
@@ -38562,7 +38519,7 @@ OPCODE(0xE178)
 	src = DREGu16((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft &= 0x0F)
 		{
 			flag_C = (src << sft) >> 8;
@@ -38605,7 +38562,7 @@ OPCODE(0xE1B8)
 	src = DREGu32((Opcode >> 0) & 7);
 	if (sft)
 	{
-	ctx->io_cycle_counter -= sft * 2;
+	m68kcontext.io_cycle_counter -= sft * 2;
 		if (sft &= 0x1F)
 		{
 			flag_C = (src >> (32 - sft)) << M68K_SR_C_SFT;
@@ -40112,7 +40069,7 @@ OPCODE(idle_detector_bcc8)
 	if (  Opcode & 0x0100)  newop |= 0x400; // beq
 	if (!(Opcode & 0x0f00)) newop |= 0xc00; // bra
 
-	ret = SekRegisterIdlePatch(GET_PC - 2, Opcode, newop, ctx);
+	ret = SekRegisterIdlePatch(GET_PC - 2, Opcode, newop, &m68kcontext);
 	switch (ret)
 	{
 		case 0: PC[-1] = newop; break;
@@ -40128,7 +40085,7 @@ end:
 	if (cond_true)
 	{
 		PC = dest_pc;
-		ctx->io_cycle_counter -= 2;
+		m68kcontext.io_cycle_counter -= 2;
 	}
 RET(8)
 }

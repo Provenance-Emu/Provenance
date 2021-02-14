@@ -10,23 +10,17 @@
 #include <pico/pico_int.h>
 #include "cmn.h"
 
-u8 ALIGNED(4096) tcache_default[DRC_TCACHE_SIZE];
-u8 *tcache;
+u8 __attribute__((aligned(4096))) tcache[DRC_TCACHE_SIZE];
+
 
 void drc_cmn_init(void)
 {
-  int ret;
-
-  tcache = plat_mem_get_for_drc(DRC_TCACHE_SIZE);
-  if (tcache == NULL)
-    tcache = tcache_default;
-
-  ret = plat_mem_set_exec(tcache, DRC_TCACHE_SIZE);
+  int ret = plat_mem_set_exec(tcache, sizeof(tcache));
   elprintf(EL_STATUS, "drc_cmn_init: %p, %zd bytes: %d",
-    tcache, DRC_TCACHE_SIZE, ret);
+    tcache, sizeof(tcache), ret);
 
 #ifdef __arm__
-  if (PicoIn.opt & POPT_EN_DRC)
+  if (PicoOpt & POPT_EN_DRC)
   {
     static int test_done;
     if (!test_done)

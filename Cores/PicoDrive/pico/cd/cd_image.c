@@ -61,7 +61,6 @@ static void to_upper(char *d, const char *s)
     else
       *d = *s;
   }
-  *d = 0;
 }
 
 // cdd.c uses lba - 150

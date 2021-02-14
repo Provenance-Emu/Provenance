@@ -19,8 +19,6 @@ extern "C" {
 
 extern int CycloneVer; // Version number of library
 
-extern long CycloneJumpTab[65536]; // default jump table
-
 struct Cyclone
 {
   unsigned int d[8];    // [r7,#0x00]
@@ -50,21 +48,14 @@ struct Cyclone
   int  (*IrqCallback)(int int_level);       // [r7,#0x8c] optional irq callback function, see config.h
   void (*ResetCallback)(void);              // [r7,#0x90] if enabled in config.h, calls this whenever RESET opcode is encountered.
   int  (*UnrecognizedCallback)(void);       // [r7,#0x94] if enabled in config.h, calls this whenever unrecognized opcode is encountered.
-  void *internal_CycloneEnd;                // [r7,#0x98] internal, do not modify
-  int   internal_s_cycles;                  // [r7,#0x9c] internal, do not modify
-  void *internal_s_CycloneEnd;              // [r7,#0xa0] internal, do not modify
-  unsigned int internal[3];                 // [r7,#0xa4] reserved for internal use, do not change.
+  unsigned int internal[6];                 // [r7,#0x98] reserved for internal use, do not change.
 };
 
 // Initialize. Used only if Cyclone was compiled with compressed jumptable, see config.h
-#define CycloneInit() \
-	CycloneInitJT(CycloneJumpTab)
-void CycloneInitJT(void *jt);
+void CycloneInit(void);
 
 // Reset
-#define CycloneReset(pcy) \
-	CycloneResetJT(pcy, CycloneJumpTab)
-void CycloneResetJT(struct Cyclone *pcy, void *jt);
+void CycloneReset(struct Cyclone *pcy);
 
 // Run cyclone. Cycles should be specified in context (pcy->cycles)
 void CycloneRun(struct Cyclone *pcy);
@@ -84,9 +75,7 @@ void CyclonePack(const struct Cyclone *pcy, void *save_buffer);
 void CycloneUnpack(struct Cyclone *pcy, const void *save_buffer);
 
 // genesis: if 1, switch to normal TAS handlers
-#define CycloneSetRealTAS(use_real) \
-	CycloneSetRealTAS_JT(use_real, CycloneJumpTab)
-void CycloneSetRealTAS_JT(int use_real, void *jt);
+void CycloneSetRealTAS(int use_real);
 
 
 // These values are special return values for IrqCallback.

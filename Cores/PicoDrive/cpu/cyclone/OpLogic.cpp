@@ -126,9 +126,9 @@ int OpBtstReg(int op)
     if(size>=2) Cycles+=2;
   }
 
-  EaCalcRead(-1,11,sea,0,0x0e00,earwt_msb_dont_care);
+  EaCalcReadNoSE(-1,11,sea,0,0x0e00);
 
-  EaCalcRead((type>0)?8:-1,0,tea,size,0x003f,earwt_msb_dont_care);
+  EaCalcReadNoSE((type>0)?8:-1,0,tea,size,0x003f);
 
   if (tea>=0x10)
        ot("  and r11,r11,#7  ;@ mem - do mod 8\n");  // size always 0
@@ -147,7 +147,7 @@ int OpBtstReg(int op)
     if (type==2) ot("  bic r1,r0,r1,lsl r11 ;@ Clear bit\n");
     if (type==3) ot("  orr r1,r0,r1,lsl r11 ;@ Set bit\n");
     ot("\n");
-    EaWrite(8,1,tea,size,0x003f,earwt_msb_dont_care);
+    EaWrite(8,1,tea,size,0x003f,0,0);
   }
   OpEnd(tea);
 
@@ -181,7 +181,7 @@ int OpBtstImm(int op)
   OpStart(op,sea,tea);
 
   ot("\n");
-  EaCalcRead(-1,0,sea,0,0,earwt_msb_dont_care);
+  EaCalcReadNoSE(-1,0,sea,0,0);
   ot("  mov r11,#1\n");
   ot("  bic r10,r10,#0x40000000 ;@ Blank Z flag\n");
   if (tea>=0x10)
@@ -197,7 +197,7 @@ int OpBtstImm(int op)
     if(size>=2) Cycles+=2;
   }
 
-  EaCalcRead((type>0)?8:-1,0,tea,size,0x003f,earwt_msb_dont_care);
+  EaCalcReadNoSE((type>0)?8:-1,0,tea,size,0x003f);
   ot("  tst r0,r11 ;@ Do arithmetic\n");
   ot("  orreq r10,r10,#0x40000000 ;@ Get Z flag\n");
   ot("\n");
@@ -208,7 +208,7 @@ int OpBtstImm(int op)
     if (type==2) ot("  bic r1,r0,r11 ;@ Clear bit\n");
     if (type==3) ot("  orr r1,r0,r11 ;@ Set bit\n");
     ot("\n");
-    EaWrite(8, 1,tea,size,0x003f,earwt_msb_dont_care);
+    EaWrite(8,   1,tea,size,0x003f,0,0);
 #if CYCLONE_FOR_GENESIS && !MEMHANDLERS_CHANGE_CYCLES
     // this is a bit hacky (device handlers might modify cycles)
     if (tea==0x38||tea==0x39)
@@ -241,9 +241,9 @@ int OpNeg(int op)
   OpStart(op,ea); Cycles=size<2?4:6;
   if(ea >= 0x10)  Cycles*=2;
 
-  EaCalc (11,0x003f,ea,size,earwt_msb_dont_care);
+  EaCalc (11,0x003f,ea,size,0,0);
 
-  if (type!=1) EaRead (11,0,ea,size,0x003f,earwt_msb_dont_care); // Don't need to read for 'clr' (or do we, for a dummy read?)
+  if (type!=1) EaRead (11,0,ea,size,0x003f,0,0); // Don't need to read for 'clr' (or do we, for a dummy read?)
   if (type==1) ot("\n");
 
   if (type==0)
@@ -294,7 +294,7 @@ int OpNeg(int op)
   }
 
   if (type==1) eawrite_check_addrerr=1;
-  EaWrite(11, 1,ea,size,0x003f,earwt_msb_dont_care);
+  EaWrite(11,     1,ea,size,0x003f,0,0);
 
   OpEnd(ea);
 
@@ -314,13 +314,13 @@ int OpSwap(int op)
 
   OpStart(op); Cycles=4;
 
-  EaCalc (11,0x0007,ea,2,earwt_shifted_up);
-  EaRead (11,     0,ea,2,0x0007,earwt_shifted_up);
+  EaCalc (11,0x0007,ea,2,1);
+  EaRead (11,     0,ea,2,0x0007,1);
 
   ot("  movs r1,r0,ror #16\n");
   OpGetFlagsNZ(1);
 
-  EaWrite(11,     1,8,2,0x0007,earwt_shifted_up);
+  EaWrite(11,     1,8,2,0x0007,1);
 
   OpEnd();
 
@@ -345,8 +345,8 @@ int OpTst(int op)
 
   OpStart(op,sea); Cycles=4;
 
-  EaCalc (0,0x003f,sea,size,earwt_shifted_up);
-  EaRead (0,     0,sea,size,0x003f,earwt_shifted_up,1);
+  EaCalc (0,0x003f,sea,size,1);
+  EaRead (0,     0,sea,size,0x003f,1,0,1);
 
   OpGetFlagsNZ(0);
   ot("\n");
@@ -372,15 +372,15 @@ int OpExt(int op)
 
   OpStart(op); Cycles=4;
 
-  EaCalc (11,0x0007,ea,size+1,earwt_msb_dont_care);
-  EaRead (11,     0,ea,size+1,0x0007,earwt_msb_dont_care);
+  EaCalc (11,0x0007,ea,size+1,0,0);
+  EaRead (11,     0,ea,size+1,0x0007,0,0);
 
   ot("  movs r0,r0,asl #%d\n",shift);
   OpGetFlagsNZ(0);
   ot("  mov r1,r0,asr #%d\n",shift);
   ot("\n");
 
-  EaWrite(11,     1,ea,size+1,0x0007,earwt_msb_dont_care);
+  EaWrite(11,     1,ea,size+1,0x0007,0,0);
 
   OpEnd();
   return 0;
@@ -429,8 +429,8 @@ int OpSet(int op)
   ot("\n");
 
   eawrite_check_addrerr=1;
-  EaCalc (0,0x003f, ea,size,earwt_msb_dont_care);
-  EaWrite(0,     1, ea,size,0x003f,earwt_msb_dont_care);
+  EaCalc (0,0x003f, ea,size,0,0);
+  EaWrite(0,     1, ea,size,0x003f,0,0);
 
   opend_op_changes_cycles=changed_cycles;
   OpEnd(ea,0);
@@ -678,12 +678,12 @@ int OpAsr(int op)
 
   OpStart(op,ea,0,count<0); Cycles=size<2?6:8;
 
-  EaCalc(11,0x0007, ea,size,earwt_shifted_up);
-  EaRead(11,     0, ea,size,0x0007,earwt_shifted_up);
+  EaCalc(11,0x0007, ea,size,1);
+  EaRead(11,     0, ea,size,0x0007,1);
 
   EmitAsr(op,type,dir,count, size,usereg);
 
-  EaWrite(11,    0, ea,size,0x0007,earwt_shifted_up);
+  EaWrite(11,    0, ea,size,0x0007,1);
 
   opend_op_changes_cycles = (count<0);
   OpEnd(ea,0);
@@ -710,12 +710,12 @@ int OpAsrEa(int op)
 
   OpStart(op,ea); Cycles=6; // EmitAsr() will add 2
 
-  EaCalc (11,0x003f,ea,size,earwt_shifted_up);
-  EaRead (11,     0,ea,size,0x003f,earwt_shifted_up);
+  EaCalc (11,0x003f,ea,size,1);
+  EaRead (11,     0,ea,size,0x003f,1);
 
   EmitAsr(op,type,dir,1,size,0);
 
-  EaWrite(11,     0,ea,size,0x003f,earwt_shifted_up);
+  EaWrite(11,     0,ea,size,0x003f,1);
 
   OpEnd(ea);
   return 0;
@@ -741,8 +741,8 @@ int OpTas(int op, int gen_special)
   Cycles=4;
   if(ea>=8) Cycles+=10;
 
-  EaCalc (11,0x003f,ea,0,earwt_shifted_up);
-  EaRead (11,     1,ea,0,0x003f,earwt_shifted_up,1);
+  EaCalc (11,0x003f,ea,0,1);
+  EaRead (11,     1,ea,0,0x003f,1,0,1);
 
   OpGetFlagsNZ(1);
   ot("\n");
@@ -753,7 +753,7 @@ int OpTas(int op, int gen_special)
 #endif
     ot("  orr r1,r1,#0x80000000 ;@ set bit7\n");
 
-    EaWrite(11,   1,ea,0,0x003f,earwt_shifted_up);
+    EaWrite(11,     1,ea,0,0x003f,1);
 #if CYCLONE_FOR_GENESIS
   }
 #endif

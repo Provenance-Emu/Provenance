@@ -1,6 +1,6 @@
 CFLAGS = -Wall -ggdb
 
-TARGETS = amalgamate textfilter mkoffsets
+TARGETS = amalgamate textfilter
 OBJS = $(addsuffix .o,$(TARGETS))
 
 all: $(TARGETS)
@@ -8,6 +8,3 @@ all: $(TARGETS)
 clean:
 	$(RM) $(TARGETS) $(OBJS)
 
-mkoffsets: CFLAGS += -m32 -I..
-
-.PHONY: clean all

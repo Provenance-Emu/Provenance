@@ -108,7 +108,6 @@
 //#include "debugger.h"
 //#include "sh2.h"
 //#include "sh2comn.h"
-#undef INLINE
 #define INLINE static
 
 //CPU_DISASSEMBLE( sh2 );

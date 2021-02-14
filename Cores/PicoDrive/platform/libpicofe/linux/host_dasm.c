@@ -27,17 +27,11 @@ static struct disassemble_info di;
 #define BFD_ARCH bfd_arch_arm
 #define BFD_MACH bfd_mach_arm_unknown
 #define DASM_OPTS "reg-names-std"
-#elif defined(__x86_64__) || defined(__i386__)
+#else
 #define print_insn_func print_insn_i386_intel
 #define BFD_ARCH bfd_arch_i386
-#ifdef __x86_64__
-#define BFD_MACH bfd_mach_x86_64_intel_syntax
-#else
 #define BFD_MACH bfd_mach_i386_i386_intel_syntax
-#endif
 #define DASM_OPTS NULL
-#else
-#error "missing arch support"
 #endif
 
 /* symbols */
@@ -140,7 +134,7 @@ static int
 dis_asm_read_memory(bfd_vma memaddr, bfd_byte *myaddr, unsigned int len,
                      struct disassemble_info *info)
 {
-  memcpy(myaddr, (void *)(long)memaddr, len);
+  memcpy(myaddr, (void *)(int)memaddr, len);
   return 0;
 }
 
@@ -148,7 +142,7 @@ static void
 dis_asm_memory_error(int status, bfd_vma memaddr,
                       struct disassemble_info *info)
 {
-  fprintf(stderr, "memory_error %p\n", (void *)(long)memaddr);
+  fprintf(stderr, "memory_error %p\n", (void *)(int)memaddr);
 }
 
 static void

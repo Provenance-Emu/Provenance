@@ -94,7 +94,7 @@ void pemu_prep_defconfig(void)
 
 static int EmuScanBegin16(unsigned int num)
 {
-	Pico.est.DrawLineDest = (unsigned short *) giz_screen + 321 * num;
+	DrawLineDest = (unsigned short *) giz_screen + 321 * num;
 
 	if ((currentConfig.EmuOpt&0x4000) && (num&1) == 0) // (Pico.m.frame_count&1))
 		return 1; // skip next line
@@ -105,7 +105,7 @@ static int EmuScanBegin16(unsigned int num)
 static int EmuScanBegin8(unsigned int num)
 {
 	// draw like the fast renderer
-	Pico.est.HighCol = gfx_buffer + 328 * num;
+	HighCol = gfx_buffer + 328 * num;
 
 	return 0;
 }
@@ -121,6 +121,13 @@ static void osd_text(int x, int y, const char *text)
 	}
 	emu_text_out16(x, y, text);
 }
+
+/*
+void log1(void *p1, void *p2)
+{
+	lprintf("%p %p %p\n", p1, p2, DrawLineDest);
+}
+*/
 
 static void cd_leds(void)
 {
@@ -145,7 +152,7 @@ static void blit(const char *fps, const char *notice)
 {
 	int emu_opt = currentConfig.EmuOpt;
 
-	if (PicoIn.opt&0x10)
+	if (PicoOpt&0x10)
 	{
 		int lines_flags = 224;
 		// 8bit fast renderer
@@ -154,12 +161,12 @@ static void blit(const char *fps, const char *notice)
 			vidConvCpyRGB565(localPal, Pico.cram, 0x40);
 		}
 		// a hack for VR
-		if (PicoIn.AHW & PAHW_SVP)
-			memset32((int *)(Pico.est.Draw2FB+328*8+328*223), 0xe0e0e0e0, 328);
+		if (PicoAHW & PAHW_SVP)
+			memset32((int *)(PicoDraw2FB+328*8+328*223), 0xe0e0e0e0, 328);
 		if (!(Pico.video.reg[12]&1)) lines_flags|=0x10000;
 		if (currentConfig.EmuOpt&0x4000)
 			lines_flags|=0x40000; // (Pico.m.frame_count&1)?0x20000:0x40000;
-		vidCpy8to16((unsigned short *)giz_screen+321*8, Pico.est.Draw2FB+328*8, localPal, lines_flags);
+		vidCpy8to16((unsigned short *)giz_screen+321*8, PicoDraw2FB+328*8, localPal, lines_flags);
 	}
 	else if (!(emu_opt&0x80))
 	{
@@ -187,7 +194,7 @@ static void blit(const char *fps, const char *notice)
 		if (!(Pico.video.reg[12]&1)) lines_flags|=0x10000;
 		if (currentConfig.EmuOpt&0x4000)
 			lines_flags|=0x40000; // (Pico.m.frame_count&1)?0x20000:0x40000;
-		vidCpy8to16((unsigned short *)giz_screen+321*8, Pico.est.Draw2FB+328*8, localPal, lines_flags);
+		vidCpy8to16((unsigned short *)giz_screen+321*8, PicoDraw2FB+328*8, localPal, lines_flags);
 	}
 
 	if (notice || (emu_opt & 2)) {
@@ -196,7 +203,7 @@ static void blit(const char *fps, const char *notice)
 		if (emu_opt & 2) osd_text(OSD_FPS_X, h, fps);
 	}
 
-	if ((emu_opt & 0x400) && (PicoIn.AHW & PAHW_MCD))
+	if ((emu_opt & 0x400) && (PicoAHW & PAHW_MCD))
 		cd_leds();
 }
 
@@ -220,7 +227,7 @@ static void vidResetMode(void)
 {
 	giz_screen = fb_lock(1);
 
-	if (PicoIn.opt&0x10) {
+	if (PicoOpt&0x10) {
 	} else if (currentConfig.EmuOpt&0x80) {
 		PicoDrawSetOutFormat(PDF_RGB555, 0);
 		PicoDrawSetCallbacks(EmuScanBegin16, NULL);
@@ -228,7 +235,7 @@ static void vidResetMode(void)
 		PicoDrawSetOutFormat(PDF_NONE, 0);
 		PicoDrawSetCallbacks(EmuScanBegin8, NULL);
 	}
-	if ((PicoIn.opt&0x10) || !(currentConfig.EmuOpt&0x80)) {
+	if ((PicoOpt&0x10) || !(currentConfig.EmuOpt&0x80)) {
 		// setup pal for 8-bit modes
 		localPal[0xc0] = 0x0600;
 		localPal[0xd0] = 0xc000;
@@ -266,33 +273,33 @@ static void stdbg(const char *fmt, ...)
 static void updateSound(int len)
 {
 	snd_all_samples += len / 2;
-	PicoIn.sndOut += len / 2;
-	if (PicoIn.sndOut - snd_cbuff >= snd_cbuf_samples)
+	PsndOut += len / 2;
+	if (PsndOut - snd_cbuff >= snd_cbuf_samples)
 	{
-		//if (PicoIn.sndOut - snd_cbuff != snd_cbuf_samples)
-		//	stdbg("snd diff is %i, not %i", PicoIn.sndOut - snd_cbuff, snd_cbuf_samples);
-		PicoIn.sndOut = snd_cbuff;
+		//if (PsndOut - snd_cbuff != snd_cbuf_samples)
+		//	stdbg("snd diff is %i, not %i", PsndOut - snd_cbuff, snd_cbuf_samples);
+		PsndOut = snd_cbuff;
 	}
 }
 
 
 static void SkipFrame(void)
 {
-	PicoIn.skipFrame=1;
+	PicoSkipFrame=1;
 	PicoFrame();
-	PicoIn.skipFrame=0;
+	PicoSkipFrame=0;
 }
 
 /* forced frame to front buffer */
 void pemu_forced_frame(int no_scale, int do_emu)
 {
-	int po_old = PicoIn.opt;
+	int po_old = PicoOpt;
 	int eo_old = currentConfig.EmuOpt;
 
-	PicoIn.opt &= ~0x10;
-	PicoIn.opt |= POPT_ACC_SPRITES;
+	PicoOpt &= ~0x10;
+	PicoOpt |= POPT_ACC_SPRITES;
 	if (!no_scale)
-		PicoIn.opt |= POPT_EN_SOFTSCALE;
+		PicoOpt |= POPT_EN_SOFTSCALE;
 	currentConfig.EmuOpt |= 0x80;
 
 	if (giz_screen == NULL)
@@ -306,7 +313,7 @@ void pemu_forced_frame(int no_scale, int do_emu)
 	fb_unlock();
 	giz_screen = NULL;
 
-	PicoIn.opt = po_old;
+	PicoOpt = po_old;
 	currentConfig.EmuOpt = eo_old;
 }
 
@@ -317,7 +324,7 @@ static void RunEvents(unsigned int which)
 	{
 		int do_it = 1;
 
-		if (PicoIn.sndOut != NULL)
+		if (PsndOut != NULL)
 			FrameworkAudio_SetPause(1);
 		if (giz_screen == NULL)
 			giz_screen = fb_lock(1);
@@ -344,18 +351,18 @@ static void RunEvents(unsigned int which)
 			Sleep(0);
 		}
 
-		if (PicoIn.sndOut != NULL)
+		if (PsndOut != NULL)
 			FrameworkAudio_SetPause(0);
 		reset_timing = 1;
 	}
 	if (which & 0x0400) // switch renderer
 	{
-		if (PicoIn.opt&0x10) { PicoIn.opt&=~0x10; currentConfig.EmuOpt |=  0x80; }
-		else              { PicoIn.opt|= 0x10; currentConfig.EmuOpt &= ~0x80; }
+		if (PicoOpt&0x10) { PicoOpt&=~0x10; currentConfig.EmuOpt |=  0x80; }
+		else              { PicoOpt|= 0x10; currentConfig.EmuOpt &= ~0x80; }
 
 		vidResetMode();
 
-		if (PicoIn.opt&0x10) {
+		if (PicoOpt&0x10) {
 			strcpy(noticeMsg, " 8bit fast renderer");
 		} else if (currentConfig.EmuOpt&0x80) {
 			strcpy(noticeMsg, "16bit accurate renderer");
@@ -392,16 +399,16 @@ static void updateKeys(void)
 
 	keys &= CONFIGURABLE_KEYS;
 
-	PicoIn.pad[0] = allActions[0] & 0xfff;
-	PicoIn.pad[1] = allActions[1] & 0xfff;
+	PicoPad[0] = allActions[0] & 0xfff;
+	PicoPad[1] = allActions[1] & 0xfff;
 
-	if (allActions[0] & 0x7000) emu_DoTurbo(&PicoIn.pad[0], allActions[0]);
-	if (allActions[1] & 0x7000) emu_DoTurbo(&PicoIn.pad[1], allActions[1]);
+	if (allActions[0] & 0x7000) emu_DoTurbo(&PicoPad[0], allActions[0]);
+	if (allActions[1] & 0x7000) emu_DoTurbo(&PicoPad[1], allActions[1]);
 
 	events = (allActions[0] | allActions[1]) >> 16;
 
 	// volume is treated in special way and triggered every frame
-	if ((events & 0x6000) && PicoIn.sndOut != NULL)
+	if ((events & 0x6000) && PsndOut != NULL)
 	{
 		int vol = currentConfig.volume;
 		if (events & 0x2000) {
@@ -455,8 +462,8 @@ void pemu_loop(void)
 
 	// make sure we are in correct mode
 	vidResetMode();
-	if (currentConfig.scaling) PicoIn.opt|=0x4000;
-	else PicoIn.opt&=~0x4000;
+	if (currentConfig.scaling) PicoOpt|=0x4000;
+	else PicoOpt&=~0x4000;
 	Pico.m.dirtyPal = 1;
 	oldmodes = ((Pico.video.reg[12]&1)<<2) ^ 0xc;
 
@@ -466,22 +473,22 @@ void pemu_loop(void)
 	reset_timing = 1;
 
 	// prepare CD buffer
-	if (PicoIn.AHW & PAHW_MCD) PicoCDBufferInit();
+	if (PicoAHW & PAHW_MCD) PicoCDBufferInit();
 
 	// prepare sound stuff
-	PicoIn.sndOut = NULL;
+	PsndOut = NULL;
 	if (currentConfig.EmuOpt & 4)
 	{
 		int ret, snd_excess_add, stereo;
-		if (PicoIn.sndRate != PsndRate_old || (PicoIn.opt&0x0b) != (PicoOpt_old&0x0b) || Pico.m.pal != pal_old) {
+		if (PsndRate != PsndRate_old || (PicoOpt&0x0b) != (PicoOpt_old&0x0b) || Pico.m.pal != pal_old) {
 			PsndRerate(Pico.m.frame_count ? 1 : 0);
 		}
-		stereo=(PicoIn.opt&8)>>3;
-		snd_excess_add = ((PicoIn.sndRate - Pico.snd.len*target_fps)<<16) / target_fps;
-		snd_cbuf_samples = (PicoIn.sndRate<<stereo) * 16 / target_fps;
+		stereo=(PicoOpt&8)>>3;
+		snd_excess_add = ((PsndRate - PsndLen*target_fps)<<16) / target_fps;
+		snd_cbuf_samples = (PsndRate<<stereo) * 16 / target_fps;
 		lprintf("starting audio: %i len: %i (ex: %04x) stereo: %i, pal: %i\n",
-			PicoIn.sndRate, Pico.snd.len, snd_excess_add, stereo, Pico.m.pal);
-		ret = FrameworkAudio_Init(PicoIn.sndRate, snd_cbuf_samples, stereo);
+			PsndRate, PsndLen, snd_excess_add, stereo, Pico.m.pal);
+		ret = FrameworkAudio_Init(PsndRate, snd_cbuf_samples, stereo);
 		if (ret != 0) {
 			lprintf("FrameworkAudio_Init() failed: %i\n", ret);
 			sprintf(noticeMsg, "sound init failed (%i), snd disabled", ret);
@@ -489,12 +496,12 @@ void pemu_loop(void)
 			currentConfig.EmuOpt &= ~4;
 		} else {
 			FrameworkAudio_SetVolume(currentConfig.volume, currentConfig.volume);
-			PicoIn.writeSound = updateSound;
+			PicoWriteSound = updateSound;
 			snd_cbuff = FrameworkAudio_56448Buffer();
-			PicoIn.sndOut = snd_cbuff + snd_cbuf_samples / 2; // start writing at the middle
+			PsndOut = snd_cbuff + snd_cbuf_samples / 2; // start writing at the middle
 			snd_all_samples = 0;
-			PsndRate_old = PicoIn.sndRate;
-			PicoOpt_old  = PicoIn.opt;
+			PsndRate_old = PsndRate;
+			PicoOpt_old  = PicoOpt;
 			pal_old = Pico.m.pal;
 		}
 	}
@@ -553,15 +560,15 @@ void pemu_loop(void)
 			//tval_thissec += 1000;
 			tval_thissec += sec_ms;
 
-			if (PicoIn.sndOut != NULL)
+			if (PsndOut != NULL)
 			{
 				/* some code which tries to sync things to audio clock, the dirty way */
 				static int audio_skew_prev = 0;
 				int audio_skew, adj, co = 9, shift = 7;
 				audio_skew = snd_all_samples*2 - FrameworkAudio_BufferPos();
-				if (PicoIn.sndRate == 22050) co = 10;
-				if (PicoIn.sndRate  > 22050) co = 11;
-				if (PicoIn.opt&8) shift++;
+				if (PsndRate == 22050) co = 10;
+				if (PsndRate  > 22050) co = 11;
+				if (PicoOpt&8) shift++;
 				if (audio_skew < 0) {
 					adj = -((-audio_skew) >> shift);
 					if (audio_skew > -(6<<co)) adj>>=1;
@@ -600,7 +607,7 @@ void pemu_loop(void)
 			for (i = 0; i < currentConfig.Frameskip; i++) {
 				updateKeys();
 				SkipFrame(); frames_done++;
-				if (PicoIn.sndOut) { // do framelimitting if sound is enabled
+				if (PsndOut) { // do framelimitting if sound is enabled
 					int tval_diff;
 					tval = GetTickCount();
 					tval_diff = (int)(tval - tval_thissec) << 8;
@@ -660,7 +667,7 @@ void pemu_loop(void)
 
 		if (currentConfig.Frameskip < 0 && tval_diff - lim_time >= (300<<8)) // slowdown detection
 			reset_timing = 1;
-		else if (PicoIn.sndOut != NULL || currentConfig.Frameskip < 0)
+		else if (PsndOut != NULL || currentConfig.Frameskip < 0)
 		{
 			// sleep if we are still too fast
 			if (tval_diff < lim_time)
@@ -674,10 +681,10 @@ void pemu_loop(void)
 	}
 
 
-	if (PicoIn.AHW & PAHW_MCD) PicoCDBufferFree();
+	if (PicoAHW & PAHW_MCD) PicoCDBufferFree();
 
-	if (PicoIn.sndOut != NULL) {
-		PicoIn.sndOut = snd_cbuff = NULL;
+	if (PsndOut != NULL) {
+		PsndOut = snd_cbuff = NULL;
 		FrameworkAudio_Close();
 	}
 

@@ -74,7 +74,6 @@ static struct in_default_bind in_evdev_defbinds[] =
 	{ KEY_S,	IN_BINDTYPE_PLAYER12, GBTN_B },
 	{ KEY_D,	IN_BINDTYPE_PLAYER12, GBTN_C },
 	{ KEY_ENTER,	IN_BINDTYPE_PLAYER12, GBTN_START },
-	{ KEY_R,	IN_BINDTYPE_EMU, PEVB_RESET },
 	{ KEY_F,	IN_BINDTYPE_EMU, PEVB_FF },
 	{ KEY_BACKSPACE,IN_BINDTYPE_EMU, PEVB_FF },
 	{ KEY_BACKSLASH,IN_BINDTYPE_EMU, PEVB_MENU },
@@ -168,7 +167,7 @@ void pemu_finalize_frame(const char *fps, const char *notice)
 		emu_osd_text16(2, g_osd_y, notice);
 	if (fps && fps[0] && (currentConfig.EmuOpt & EOPT_SHOW_FPS))
 		emu_osd_text16(g_osd_fps_x, g_osd_y, fps);
-	if ((PicoIn.AHW & PAHW_MCD) && (currentConfig.EmuOpt & EOPT_EN_CD_LEDS))
+	if ((PicoAHW & PAHW_MCD) && (currentConfig.EmuOpt & EOPT_EN_CD_LEDS))
 		draw_cd_leds();
 }
 
@@ -442,11 +441,6 @@ void plat_wait_till_us(unsigned int us_to)
 */
 }
 
-void *plat_mem_get_for_drc(size_t size)
-{
-	return NULL;
-}
-
 void plat_early_init(void)
 {
 }
@@ -488,7 +482,7 @@ void plat_init(void)
 		exit(1);
 	}
 
-	g_menuscreen_w = g_menuscreen_pp = w;
+	g_menuscreen_w = w;
 	g_menuscreen_h = h;
 	g_menuscreen_ptr = vout_fbdev_flip(main_fb);
 

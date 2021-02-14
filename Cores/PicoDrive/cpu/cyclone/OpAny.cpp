@@ -165,52 +165,6 @@ void OpGetFlagsNZ(int rd)
   ot("  orreq r10,r10,#0x40000000 ;@ get NZ, clear CV\n");
 }
 
-// size 0=8bit, 1=16bit
-void SignExtend(int rd, int rs, int size)
-{
-  if (size >= 2)
-  {
-    if (rd != rs)
-      ot("  mov r%d,r%d\n", rd, rs);
-    return;
-  }
-#if defined(HAVE_ARMv6) && (HAVE_ARMv6)
-  if (size == 1)
-    ot("  sxth r%d,r%d ;@ sign extend\n", rd, rs);
-  else
-    ot("  sxtb r%d,r%d ;@ sign extend\n", rd, rs);
-#else
-  int shift = size ? 16 : 24;
-  ot("  mov r%d,r%d,asl #%d\n", rd, rs, shift);
-  ot("  mov r%d,r%d,asr #%d ;@ sign extend\n", rd, rd, shift);
-#endif
-}
-
-void ZeroExtend(int rd, int rs, int size)
-{
-  if (size >= 2)
-  {
-    if (rd != rs)
-      ot("  mov r%d,r%d\n", rd, rs);
-    return;
-  }
-#if defined(HAVE_ARMv6) && (HAVE_ARMv6)
-  if (size == 1)
-    ot("  uxth r%d,r%d ;@ zero extend\n", rd, rs);
-  else
-#else
-  if (size == 1)
-  {
-    ot("  mov r%d,r%d,lsl #16\n", rd, rs);
-    ot("  mov r%d,r%d,lsr #16 ;@ zero extend\n", rd, rd);
-  }
-  else
-#endif
-  {
-    ot("  and r%d,r%d,#0xff ;@ zero extend\n", rd, rs);
-  }
-}
-
 // -----------------------------------------------------------------
 
 int g_op;

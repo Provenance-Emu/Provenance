@@ -115,7 +115,7 @@ void mp3_start_play(void *f_, int pos1024)
 	cdda_out_pos = 0;
 	decoder_active = 0;
 
-	if (!(PicoIn.opt & POPT_EN_MCD_CDDA) || f == NULL) // cdda disabled or no file?
+	if (!(PicoOpt & POPT_EN_MCD_CDDA) || f == NULL) // cdda disabled or no file?
 		return;
 
 	fseek(f, 0, SEEK_END);
@@ -167,11 +167,11 @@ void mp3_update(int *buffer, int length, int stereo)
 		return;
 
 	length_mp3 = length;
-	if (PicoIn.sndRate <= 11025 + 100) {
+	if (PsndRate <= 11025 + 100) {
 		mix_samples = mix_16h_to_32_s2;
 		length_mp3 <<= 2; shr = 2;
 	}
-	else if (PicoIn.sndRate <= 22050 + 100) {
+	else if (PsndRate <= 22050 + 100) {
 		mix_samples = mix_16h_to_32_s1;
 		length_mp3 <<= 1; shr = 1;
 	}

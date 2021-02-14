@@ -24,13 +24,6 @@
 #include "Disa/Disa.h"
 
 // Ea.cpp
-enum EaRWType {
-  earwt_sign_extend = 1,
-  earwt_zero_extend,
-  earwt_shifted_up,
-  earwt_msb_dont_care,
-};
-
 extern int earead_check_addrerr;
 extern int eawrite_check_addrerr;
 extern int g_jmp_cycle_table[];
@@ -39,11 +32,12 @@ extern int g_lea_cycle_table[];
 extern int g_pea_cycle_table[];
 extern int g_movem_cycle_table[];
 int Ea_add_ns(int *tab, int ea); // add nonstandard EA cycles
-int EaCalc(int a,int mask,int ea,int size,EaRWType type=earwt_sign_extend); // 6
-int EaRead(int a,int v,int ea,int size,int mask,EaRWType type=earwt_sign_extend,int set_nz=0); // 8
-int EaCalcRead(int r_ea,int r,int ea,int size,int mask,EaRWType type=earwt_sign_extend,int set_nz=0); // 7
+int EaCalc(int a,int mask,int ea,int size,int top=0,int sign_extend=1); // 6
+int EaRead(int a,int v,int ea,int size,int mask,int top=0,int sign_extend=1,int set_nz=0); // 8
+int EaCalcRead(int r_ea,int r,int ea,int size,int mask,int sign_extend=1,int set_nz=0); // 7
+int EaCalcReadNoSE(int r_ea,int r,int ea,int size,int mask);
 int EaCanRead(int ea,int size);
-int EaWrite(int a,int v,int ea,int size,int mask,EaRWType type=earwt_sign_extend);
+int EaWrite(int a,int v,int ea,int size,int mask,int top=0,int sign_extend_ea=1);
 int EaCanWrite(int ea);
 int EaAn(int ea);
 
@@ -55,22 +49,16 @@ extern const char * const Sarm[4]; // Sign-extend ARM Extensions for operand siz
 extern int  Cycles;   // Current cycles for opcode
 extern int  pc_dirty; // something changed PC during processing
 extern int  arm_op_count; // for stats
-void ot(const char *format, ...)
-#ifdef __GNUC__
-  __attribute__((format(printf, 1, 2)));
-#endif
-  ;
+void ot(const char *format, ...);
 void ltorg();
 int MemHandler(int type,int size,int addrreg=0,int need_addrerr_check=1);
-void FlushPC(int force=0);
+void FlushPC(void);
 
 // OpAny.cpp
 extern int g_op;
 extern int opend_op_changes_cycles, opend_check_interrupt, opend_check_trace;
 int OpGetFlags(int subtract,int xbit,int sprecialz=0);
 void OpGetFlagsNZ(int rd);
-void SignExtend(int rd, int rs, int size);
-void ZeroExtend(int rd, int rs, int size);
 void OpUse(int op,int use);
 void OpStart(int op,int sea=0,int tea=0,int op_changes_cycles=0,int supervisor_check=0);
 void OpEnd(int sea=0,int tea=0);

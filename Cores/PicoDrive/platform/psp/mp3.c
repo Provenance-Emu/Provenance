@@ -403,8 +403,8 @@ void mp3_update(int *buffer, int length, int stereo)
 	if (mp3_handle < 0 || mp3_src_pos >= mp3_src_size) return;
 
 	length_mp3 = length;
-	if (PicoIn.sndRate == 22050) length_mp3 <<= 1;	// mp3s are locked to 44100Hz stereo
-	else if (PicoIn.sndRate == 11025) length_mp3 <<= 2;	// so make length 44100ish
+	if (PsndRate == 22050) length_mp3 <<= 1;	// mp3s are locked to 44100Hz stereo
+	else if (PsndRate == 11025) length_mp3 <<= 2;	// so make length 44100ish
 
 	/* do we have to wait? */
 	if (mp3_job_started && mp3_samples_ready < length_mp3)
@@ -420,8 +420,8 @@ void mp3_update(int *buffer, int length, int stereo)
 	{
 		int shr = 0;
 		void (*mix_samples)(int *dest_buf, short *mp3_buf, int count) = mix_16h_to_32;
-		if (PicoIn.sndRate == 22050) { mix_samples = mix_16h_to_32_s1; shr = 1; }
-		else if (PicoIn.sndRate == 11025) { mix_samples = mix_16h_to_32_s2; shr = 2; }
+		if (PsndRate == 22050) { mix_samples = mix_16h_to_32_s1; shr = 1; }
+		else if (PsndRate == 11025) { mix_samples = mix_16h_to_32_s2; shr = 2; }
 
 		if (1152 - mp3_buffer_offs >= length_mp3) {
 			mix_samples(buffer, mp3_mix_buffer[mp3_play_bufsel] + mp3_buffer_offs*2, length<<1);
@@ -466,7 +466,7 @@ int mp3_get_offset(void) // 0-1023
 	unsigned int offs1024 = 0;
 	int cdda_on;
 
-	cdda_on = (PicoIn.AHW & PAHW_MCD) && (PicoIn.opt&0x800) && !(Pico_mcd->s68k_regs[0x36] & 1) &&
+	cdda_on = (PicoAHW & PAHW_MCD) && (PicoOpt&0x800) && !(Pico_mcd->s68k_regs[0x36] & 1) &&
 			(Pico_mcd->scd.Status_CDC & 1) && mp3_handle >= 0;
 
 	if (cdda_on) {

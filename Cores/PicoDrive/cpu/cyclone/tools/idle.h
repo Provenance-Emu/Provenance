@@ -1,8 +1,3 @@
 
-void CycloneInitIdleJT(void *jt);
-void CycloneFinishIdleJT(void *jt);
-
-#define CycloneInitIdle() \
-	CycloneInitIdleJT(CycloneJumpTab)
-#define CycloneFinishIdle() \
-	CycloneFinishIdleJT(CycloneJumpTab)
+void CycloneInitIdle(void);
+void CycloneFinishIdle(void);

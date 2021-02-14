@@ -122,14 +122,12 @@ static const uint32 toc_ffightj[29] =
   14553, 9834, 10542, 1699, 1792, 1781, 3783, 3052
 };
 
-#if 0
 /* supported WAVE file header (16-bit stereo samples @44.1kHz) */
 static const unsigned char waveHeader[32] =
 {
   0x57,0x41,0x56,0x45,0x66,0x6d,0x74,0x20,0x10,0x00,0x00,0x00,0x01,0x00,0x02,0x00,
   0x44,0xac,0x00,0x00,0x10,0xb1,0x02,0x00,0x04,0x00,0x10,0x00,0x64,0x61,0x74,0x61
 };
-#endif
 
 #ifdef USE_LIBTREMOR
 #ifdef DISABLE_MANY_OGG_OPEN_FILES
@@ -1297,8 +1295,8 @@ void cdd_process(void)
       set_reg16(0x3e, 0x0000);
       set_reg16(0x40, 0x000f);
 
-      if (PicoIn.mcdTrayClose)
-        PicoIn.mcdTrayClose();
+      if (PicoMCDcloseTray)
+        PicoMCDcloseTray();
 
       return;
     }
@@ -1316,8 +1314,8 @@ void cdd_process(void)
       set_reg16(0x3e, 0x0000);
       set_reg16(0x40, ~CD_OPEN & 0x0f);
 
-      if (PicoIn.mcdTrayOpen)
-        PicoIn.mcdTrayOpen();
+      if (PicoMCDopenTray)
+        PicoMCDopenTray();
       return;
     }
 

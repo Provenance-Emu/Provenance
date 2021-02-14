@@ -72,7 +72,9 @@ int sndout_alsa_start(int rate_, int stereo)
 	snd_pcm_hw_params_get_period_size(hwparams, &period_size, NULL);
 	snd_pcm_hw_params_get_channels(hwparams, &channels);
 
-	silent_period = calloc(period_size * channels, 2);
+	silent_period = realloc(silent_period, period_size * 2 * channels);
+	if (silent_period != NULL)
+		memset(silent_period, 0, period_size * 2 * channels);
 
 	ret = snd_pcm_prepare(handle);
 	if (ret != 0) {
@@ -102,9 +104,6 @@ void sndout_alsa_stop(void)
 	int ret = snd_pcm_drop(handle);
 	if (ret != 0)
 		fprintf(stderr, PFX "snd_pcm_drop failed: %d\n", ret);
-
-	free(silent_period);
-	silent_period = NULL;
 }
 
 void sndout_alsa_wait(void)
