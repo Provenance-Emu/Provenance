@@ -1043,6 +1043,11 @@ void process_opcode_handlers(FILE* filep)
 		if(opinfo == NULL)
 			error_exit("Unable to find matching table entry for %s", func_name);
 
+#if 1 /* PD hack: 000 only */
+		if (opinfo->cpus[0] == UNSPECIFIED_CH)
+			continue;
+#endif
+
 		replace->length = 0;
 
 		/* Generate opcode variants */

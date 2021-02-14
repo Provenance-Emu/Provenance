@@ -20,6 +20,7 @@ void sh2_drc_frame(void);
 #define OF_BTARGET    (1 << 1)
 #define OF_T_SET      (1 << 2) // T is known to be set
 #define OF_T_CLEAR    (1 << 3) // ... clear
+#define OF_B_IN_DS    (1 << 4)
 
 void scan_block(unsigned int base_pc, int is_slave,
 		unsigned char *op_flags, unsigned int *end_pc,

@@ -474,6 +474,8 @@ static int get_inc(int mode)
 
 static u32 pm_io(int reg, int write, u32 d)
 {
+	unsigned int *pmac;
+
 	if (ssp->emu_status & SSP_PMC_SET)
 	{
 		// this MUST be blind r or w
@@ -484,7 +486,8 @@ static u32 pm_io(int reg, int write, u32 d)
 			return 0;
 		}
 		elprintf(EL_SVP, "PM%i (%c) set to %08x @ %04x", reg, write ? 'w' : 'r', rPMC.v, GET_PPC_OFFS());
-		ssp->pmac_read[write ? reg + 6 : reg] = rPMC.v;
+		pmac = write ? ssp->pmac_write : ssp->pmac_read;
+		pmac[reg] = rPMC.v;
 		ssp->emu_status &= ~SSP_PMC_SET;
 		if ((rPMC.v & 0x7fffff) == 0x1c8000 || (rPMC.v & 0x7fffff) == 0x1c8240) {
 			elprintf(EL_SVP, "ssp IRAM copy from %06x to %04x", (ssp->RAM1[0]-1)<<1, (rPMC.v&0x7fff)<<1);
@@ -573,7 +576,8 @@ static u32 pm_io(int reg, int write, u32 d)
 		}
 
 		// PMC value corresponds to last PMR accessed (not sure).
-		rPMC.v = ssp->pmac_read[write ? reg + 6 : reg];
+		pmac = write ? ssp->pmac_write : ssp->pmac_read;
+		rPMC.v = pmac[reg];
 
 		return d;
 	}

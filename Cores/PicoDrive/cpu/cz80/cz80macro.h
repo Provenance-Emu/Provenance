@@ -73,7 +73,7 @@
 #define WRITE_MEM8(A, D) { \
 	unsigned short a = A; \
 	unsigned char d = D; \
-	unsigned long v = z80_write_map[a >> Z80_MEM_SHIFT]; \
+	uptr v = z80_write_map[a >> Z80_MEM_SHIFT]; \
 	if (map_flag_set(v)) \
 		((z80_write_f *)(v << 1))(a, d); \
 	else \
