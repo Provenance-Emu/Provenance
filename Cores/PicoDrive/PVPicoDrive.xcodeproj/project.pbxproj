@@ -1921,7 +1921,6 @@
 					"-D_USE_CZ80",
 					"-falign-functions=2",
 					"-Wall",
-					"-DNDEBUG",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
@@ -1982,7 +1981,6 @@
 					"-D_USE_CZ80",
 					"-falign-functions=2",
 					"-Wall",
-					"-DNDEBUG",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
@@ -2043,17 +2041,9 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
-					"$(inherited)",
 					"-fPIC",
-					"-ffunction-sections",
-					"-falign-functions=2",
-					"-DNDEBUG",
 					"-DEMU_F68K",
-					"-DIOS",
-					"-DNO_ZLIB",
-					"-DINLINE=inline",
-					"-D_SVP_DRC",
-					"-DHAVE_GLES",
+					"-D_USE_CZ80",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
@@ -2112,7 +2102,6 @@
 					"-D_USE_CZ80",
 					"-falign-functions=2",
 					"-Wall",
-					"-DNDEBUG",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
@@ -2175,15 +2164,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-fPIC",
-					"-ffunction-sections",
-					"-falign-functions=2",
-					"-DNDEBUG",
 					"-DEMU_F68K",
-					"-DIOS",
-					"-DNO_ZLIB",
-					"-DINLINE=inline",
-					"-D_SVP_DRC",
-					"-DHAVE_GLES",
+					"-D_USE_CZ80",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
@@ -2243,7 +2225,6 @@
 					"-D_USE_CZ80",
 					"-falign-functions=2",
 					"-Wall",
-					"-DNDEBUG",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
