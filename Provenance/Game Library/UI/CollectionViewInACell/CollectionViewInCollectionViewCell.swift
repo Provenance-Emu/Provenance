@@ -23,7 +23,7 @@ protocol SubCellItem {
 class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
     var minimumInteritemSpacing: CGFloat {
         #if os(tvOS)
-            return 16
+            return 16.0
         #else
             return 8.0
         #endif
@@ -51,7 +51,7 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
 
     #if os(tvOS)
 
-        // MARK: tvOS focus
+// MARK: tvOS focus
 
         override var preferredFocusEnvironments: [UIFocusEnvironment] {
             return [internalCollectionView]

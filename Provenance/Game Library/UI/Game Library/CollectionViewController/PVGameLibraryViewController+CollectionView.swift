@@ -95,17 +95,29 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #endif
 
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        let item: Section.Item? = firstModel(in: collectionView, at: section)
-        switch item {
-        case .none:
-            return .zero
-        case .some(.game):
-            return minimumInteritemSpacing
-        case .saves, .favorites, .recents:
-            return 0
-        }
+        #if os(tvOS)
+            let item: Section.Item? = firstModel(in: collectionView, at: section)
+            switch item {
+            case .none:
+                return .zero
+            case .some(.game):
+                return minimumInteritemSpacing
+            case .saves, .favorites, .recents:
+                return 0
+            }
+        #else
+            let item: Section.Item? = firstModel(in: collectionView, at: section)
+            switch item {
+            case .none:
+                return .zero
+            case .some(.game):
+                return minimumInteritemSpacing
+            case .saves, .favorites, .recents:
+                return 0
+            }
+        #endif
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         #if os(tvOS)
             let item: Section.Item? = firstModel(in: collectionView, at: section)
@@ -113,13 +125,13 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             case .none:
                 return .zero
             case .favorites:
-                return .init(top: 0, left: -5, bottom: 20, right: 80)
+                return .init(top: 0, left: 0, bottom: 20, right: 0)
             case .saves:
-                return .init(top: 0, left: -26, bottom: 40, right: 80)
+                return .init(top: 0, left: 0, bottom: 30, right: 0)
             case .recents:
-                return .init(top: 0, left: -5, bottom: 20, right: 80)
+                return .init(top: 0, left: 0, bottom: 20, right: 0)
             case .some(.game):
-                return .init(top: 20, left: 20, bottom: 25, right: 20)
+                return .init(top: 20, left: 80, bottom: 25, right: 80)
             }
         #else
             let item: Section.Item? = firstModel(in: collectionView, at: section)

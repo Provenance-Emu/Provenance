@@ -55,10 +55,10 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
         super.init(frame: frame)
         #if os(tvOS)
-            titleLabel.frame = CGRect(x: 14, y: 0, width: bounds.size.width, height: bounds.size.height)
+            titleLabel.frame = CGRect(x: 94.0, y: 0, width: (bounds.size.width / 2.0) - 94.0, height: bounds.size.height)
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         
-        // add in separator for tvOS too, clean up if statements later and make this generic
+        // add in separator for tvOS too, clean up #if statements later and make this generic
             let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height, width: bounds.size.width + 200.0, height: 1.0))
             bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
             bottomSeparator.autoresizingMask = .flexibleWidth
@@ -109,7 +109,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         collapseButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         collapseButton.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         collapseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -94).isActive = true
 
         isOpaque = true
     }
@@ -125,7 +125,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
         var colorForText: UIColor {
             if traitCollection.userInterfaceStyle == .dark {
-                return UIColor.lightGray
+            return UIColor(white: 1.0, alpha: 0.5) // After being focussed the UIColor should return to our default UIColor(white: 1.0, alpha: 0.5) for Ui consistency
             }
 
             return UIColor.darkGray

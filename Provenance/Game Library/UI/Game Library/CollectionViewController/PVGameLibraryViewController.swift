@@ -418,10 +418,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
         #if os(tvOS)
-            collectionView.contentInset = UIEdgeInsets(top: 0, left: 80, bottom: 40, right: 80)
-            collectionView.remembersLastFocusedIndexPath = false
+//          collectionView.contentInset = UIEdgeInsets(top: 0, left: 80, bottom: 0, right: 80)
+            collectionView.remembersLastFocusedIndexPath = true
             collectionView.clipsToBounds = false
-            collectionView.backgroundColor = .black 
+            collectionView.backgroundColor = .black
         #else
             collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
             searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
