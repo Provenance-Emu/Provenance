@@ -40,7 +40,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         didSet {
             #if os(tvOS)
                 titleLabel.text = viewModel.title
-                titleLabel.font = UIFont.boldSystemFont(ofSize: 36)
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 32)
             #else
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -55,7 +55,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
         super.init(frame: frame)
         #if os(tvOS)
-            titleLabel.frame = CGRect(x: 94.0, y: 0, width: (bounds.size.width / 2.0) - 94.0, height: bounds.size.height)
+            titleLabel.frame = CGRect(x: 90, y: 0, width: (bounds.size.width / 2.0) - 90.0, height: bounds.size.height)
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         
         // add in separator for tvOS too, clean up #if statements later and make this generic
