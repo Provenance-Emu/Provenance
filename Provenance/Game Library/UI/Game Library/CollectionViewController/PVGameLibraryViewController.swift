@@ -1231,7 +1231,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 60)
+            return CGSize(width: view.bounds.size.width, height: 40)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif
