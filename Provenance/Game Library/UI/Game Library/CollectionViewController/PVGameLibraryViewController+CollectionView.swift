@@ -63,7 +63,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
             switch item {
             case .game(let game):
-                let boxartSize = CGSize(width: tvOSCellUnit, height: tvOSCellUnit / game.boxartAspectRatio.rawValue)
+                let boxartSize = CGSize(width: tvOSCellUnit, height: round(tvOSCellUnit / game.boxartAspectRatio.rawValue))
                 return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
             case .saves:
                 // TODO: Multirow?
