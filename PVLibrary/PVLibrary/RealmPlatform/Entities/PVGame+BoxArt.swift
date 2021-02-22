@@ -13,9 +13,20 @@ import RealmSwift
 public enum PVGameBoxArtAspectRatio: CGFloat {
     case square = 1.0
     case wide = 1.45
-    case tall = 0.70
-    case pce = 0.84
+    case tall = 0.72
+    case tg16 = 0.8497494768
+    case pce = 1.00176208
     case sgx = 1.12
+    case snesUSA = 1.3889901527
+    case genmd = 0.719651472
+    case smsUSA = 0.716864397
+    case nesUSA = 0.7251925801
+    case saturnUSA = 0.625
+    case saturnJAP = 1.136
+    case ggUSA = 0.7201
+    case ggJAP = 0.86
+    case gbUSA = 1.0028730846
+    case Sega32XUSA = 0.7194636596
 }
 
 public extension PVGame {
@@ -24,11 +35,34 @@ public extension PVGame {
         case .SGFX:
             return .sgx
         case .PCE:
-            return .pce
+            switch regionName {
+            case "Japan":
+                return .square
+            default:
+                return .tg16
+            }
         case .SNES, .N64:
-            return .wide
-        case .NES, .Genesis, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor:
+            return .snesUSA
+        case .Genesis:
+            return .genmd
+        case .GameGear:
+            switch regionName {
+            case "Japan":
+                return .ggJAP
+            default:
+                return .ggUSA
+            }            
+        case .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor, .MasterSystem, .SG1000,  .FDS:
             return .tall
+        case .GB, .GBA, .GBC, .Lynx, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy, .Dreamcast:
+            return .square
+        case .Saturn:
+            switch regionName {
+            case "Japan":
+                return .saturnJAP
+            default:
+                return .saturnUSA
+            }
         default:
             return .square
         }
