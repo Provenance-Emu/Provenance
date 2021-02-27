@@ -71,6 +71,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - Game Gear
   - CD / MegaCD
   - 32X
+  - Saturn (mednafen)
 - SNK
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
@@ -81,8 +82,6 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
    - DS
  - Sega
    - Dreamcast (reicast)
-   - Saturn (yabause)
-   - Saturn (mednafen)
  - Sony
    - PSP (ppsspp)
 
@@ -95,6 +94,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Controller Support:
   - [MFi Game Controller](https://mfigames.com/compare-mfi-controllers/) Support
   - iCade Controller Support ([8bitdo](http://www.8bitdo.com/), etc…)
+  - 8BitDo M30 Support
 - Local Multiplayer via External Controllers
 - Portrait and Landscape Orientation
 - Cheatcode support! Currently for SNES and PSX only
