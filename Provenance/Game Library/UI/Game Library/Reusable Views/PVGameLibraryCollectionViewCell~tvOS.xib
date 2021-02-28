@@ -108,7 +108,7 @@
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="wnP-qD-f99"/>
                         </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="none" minimumScaleFactor="1" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="none" minimumScaleFactor="1" enablesMarqueeWhenAncestorFocused="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="232" width="256" height="24"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="24" id="fL8-4I-Znr"/>

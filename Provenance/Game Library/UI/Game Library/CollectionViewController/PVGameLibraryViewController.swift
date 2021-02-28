@@ -1386,7 +1386,7 @@ extension PVGameLibraryViewController {
 #if os(iOS)
     extension PVGameLibraryViewController: UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {}
 #endif
-
+// MARK: Sort Options
 extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
