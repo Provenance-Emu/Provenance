@@ -394,9 +394,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 // The label's alpha will get set to 1 on focus
                 titleLabel.alpha = 1
                 titleLabel.textColor = UIColor.darkGray
-                titleLabel.layer.masksToBounds = false
-                titleLabel.adjustsFontForContentSizeCategory = true
-                titleLabel.adjustsFontSizeToFitWidth = true
             #endif
         }
     }
@@ -434,7 +431,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
         let size: CGSize
-        size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+        #if os(tvOS)
+            size = CGSize(width: imageSize.width, height: imageSize.height )
+        #else
+            size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+        #endif
         return size
     }
 
