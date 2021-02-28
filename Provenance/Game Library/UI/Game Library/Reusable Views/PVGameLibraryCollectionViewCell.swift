@@ -207,7 +207,7 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
 protocol GameLibraryCollectionViewDelegate: class {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
-
+// MARK: Corner Badge Glyph
 @IBDesignable
 final class CornerBadgeView: UIView {
     enum FillCorner {
@@ -500,11 +500,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                         }
                         let artwork: UIImage? = image ?? self.image(withText: artworkText)
                         self.image = artwork // ?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
-                        #if os(tvOS)
-                            //						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
-                            //						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
-//                        self.artworkContainerViewHeightConstraint?.constant = height
-                        #endif
+//                        #if os(tvOS)
+//                            let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
+//                            let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
+//                            self.artworkContainerViewHeightConstraint?.constant = height
+//                        #endif
                         self.updateImageConstraints()
                         self.setNeedsLayout()
                     }
