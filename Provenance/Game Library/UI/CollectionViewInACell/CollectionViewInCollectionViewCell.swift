@@ -158,7 +158,11 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
         //			pageIndicator.leadingAnchor.constraint(lessThanOrEqualTo: margins.leadingAnchor, constant: 8).isActive = true
         //			pageIndicator.trailingAnchor.constraint(lessThanOrEqualTo: margins.trailingAnchor, constant: 8).isActive = true
         pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
-        pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
+        #if os(tvOS)
+            pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 20).isActive = true
+        #else
+            pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
+        #endif
         pageIndicator.heightAnchor.constraint(equalToConstant: PageIndicatorHeight).isActive = true
         pageIndicator.pageCount = layout.numberOfPages
         // internalCollectionView
