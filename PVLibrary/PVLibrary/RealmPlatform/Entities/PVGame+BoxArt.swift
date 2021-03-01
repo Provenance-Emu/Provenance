@@ -17,7 +17,10 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case tg16 = 0.8497494768
     case pce = 1.00176208
     case sgx = 1.12
+    case gbJ = 0.8566003203
+    case gbUSA = 1.0028730846
     case snesUSA = 1.3889901527
+    case snesJAP = 0.5595619918
     case genmd = 0.719651472
     case smsUSA = 0.716864397
     case nesUSA = 0.7251925801
@@ -25,7 +28,6 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case saturnJAP = 1.136
     case ggUSA = 0.7201
     case ggJAP = 0.86
-    case gbUSA = 1.0028730846
     case Sega32XUSA = 0.7194636596
 }
 
@@ -41,7 +43,21 @@ public extension PVGame {
             default:
                 return .tg16
             }
-        case .SNES, .N64:
+        case .GB:
+            switch regionName {
+            case "Japan":
+                return .gbJ
+            default:
+                return .square
+            }
+        case .SNES:
+            switch regionName {
+            case "Japan":
+                return .snesJAP
+            default:
+                return .snesUSA
+            }
+        case .N64:
             return .snesUSA
         case .Genesis:
             return .genmd
@@ -54,7 +70,7 @@ public extension PVGame {
             }            
         case .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor, .MasterSystem, .SG1000,  .FDS:
             return .tall
-        case .GB, .GBA, .GBC, .Lynx, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy, .Dreamcast:
+        case .GBA, .GBC, .Lynx, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy, .Dreamcast:
             return .square
         case .Saturn:
             switch regionName {
