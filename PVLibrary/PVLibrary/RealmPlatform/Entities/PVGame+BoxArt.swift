@@ -17,17 +17,17 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case tg16 = 0.8497494768
     case pce = 1.00176208
     case sgx = 1.12
-    case gbJ = 0.8566003203
+    case gbJAPAN = 0.8566003203
     case gbUSA = 1.0028730846
     case snesUSA = 1.3889901527
-    case snesJAP = 0.5595619918
+    case snesJAPAN = 0.5595619918
     case genmd = 0.719651472
     case smsUSA = 0.716864397
     case nesUSA = 0.7251925801
     case saturnUSA = 0.625
-    case saturnJAP = 1.136
+    case saturnJAPAN = 1.136
     case ggUSA = 0.7201
-    case ggJAP = 0.86
+    case ggJAPAN = 0.86
     case Sega32XUSA = 0.7194636596
 }
 
@@ -46,14 +46,14 @@ public extension PVGame {
         case .GB:
             switch regionName {
             case "Japan":
-                return .gbJ
+                return .gbJAPAN
             default:
                 return .square
             }
         case .SNES:
             switch regionName {
             case "Japan":
-                return .snesJAP
+                return .snesJAPAN
             default:
                 return .snesUSA
             }
@@ -64,7 +64,7 @@ public extension PVGame {
         case .GameGear:
             switch regionName {
             case "Japan":
-                return .ggJAP
+                return .ggJAPAN
             default:
                 return .ggUSA
             }            
@@ -75,7 +75,7 @@ public extension PVGame {
         case .Saturn:
             switch regionName {
             case "Japan":
-                return .saturnJAP
+                return .saturnJAPAN
             default:
                 return .saturnUSA
             }
