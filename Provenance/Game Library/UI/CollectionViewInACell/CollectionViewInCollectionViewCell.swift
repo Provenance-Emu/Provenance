@@ -23,7 +23,7 @@ protocol SubCellItem {
 class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
     var minimumInteritemSpacing: CGFloat {
         #if os(tvOS)
-            return 16
+            return 16.0
         #else
             return 8.0
         #endif
@@ -51,7 +51,7 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
 
     #if os(tvOS)
 
-        // MARK: tvOS focus
+// MARK: tvOS focus
 
         override var preferredFocusEnvironments: [UIFocusEnvironment] {
             return [internalCollectionView]
@@ -158,7 +158,11 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
         //			pageIndicator.leadingAnchor.constraint(lessThanOrEqualTo: margins.leadingAnchor, constant: 8).isActive = true
         //			pageIndicator.trailingAnchor.constraint(lessThanOrEqualTo: margins.trailingAnchor, constant: 8).isActive = true
         pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
-        pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
+        #if os(tvOS)
+            pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 20).isActive = true
+        #else
+            pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
+        #endif
         pageIndicator.heightAnchor.constraint(equalToConstant: PageIndicatorHeight).isActive = true
         pageIndicator.pageCount = layout.numberOfPages
         // internalCollectionView
@@ -174,13 +178,9 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
         let pageIndicator = PillPageControl(frame: CGRect(origin: CGPoint(x: bounds.midX - 38.2, y: bounds.maxY - 18), size: CGSize(width: 38, height: PageIndicatorHeight)))
         pageIndicator.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
         pageIndicator.translatesAutoresizingMaskIntoConstraints = false
-        pageIndicator.activeTint = UIColor(white: 1.0, alpha: 0.9)
-        pageIndicator.activeTint = UIColor(white: 1.0, alpha: 0.3)
+        pageIndicator.activeTint = UIColor(white: 1.0, alpha: 0.6)
+        pageIndicator.inactiveTint = UIColor(white: 1.0, alpha: 0.3)
 
-        #if os(iOS)
-            //		pageIndicator.currentPageIndicatorTintColor = Theme.currentTheme.defaultTintColor
-            //		pageIndicator.pageIndicatorTintColor = Theme.currentTheme.gameLibraryText
-        #endif
         return pageIndicator
     }()
 
