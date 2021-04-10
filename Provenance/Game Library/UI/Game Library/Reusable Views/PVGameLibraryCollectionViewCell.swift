@@ -207,7 +207,7 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
 protocol GameLibraryCollectionViewDelegate: class {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
-
+// MARK: Corner Badge Glyph
 @IBDesignable
 final class CornerBadgeView: UIView {
     enum FillCorner {
@@ -394,9 +394,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 // The label's alpha will get set to 1 on focus
                 titleLabel.alpha = 1
                 titleLabel.textColor = UIColor.darkGray
-                titleLabel.layer.masksToBounds = false
-                titleLabel.adjustsFontForContentSizeCategory = true
-                titleLabel.adjustsFontSizeToFitWidth = true
             #endif
         }
     }
@@ -434,7 +431,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
         let size: CGSize
-        size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+        #if os(tvOS)
+            size = CGSize(width: imageSize.width, height: imageSize.height )
+        #else
+            size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+        #endif
         return size
     }
 
@@ -499,11 +500,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                         }
                         let artwork: UIImage? = image ?? self.image(withText: artworkText)
                         self.image = artwork // ?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
-                        #if os(tvOS)
-                            //						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
-                            //						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
-//                        self.artworkContainerViewHeightConstraint?.constant = height
-                        #endif
+//                        #if os(tvOS)
+//                            let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
+//                            let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
+//                            self.artworkContainerViewHeightConstraint?.constant = height
+//                        #endif
                         self.updateImageConstraints()
                         self.setNeedsLayout()
                     }
@@ -952,18 +953,20 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     }
 
                     if PVSettingsModel.shared.showGameTitles {
-                        let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
+//                        let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
 
-                        let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 36
+                        let yOffset = CGFloat(31.0) // (round(imageContentFrame.maxY) - round(self.titleLabel.frame.minY) + 36)
                         self.titleLabel.textColor = UIColor.white
                         self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
                         self.titleLabel.alpha = 1.0
-                    }
+                        self.titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+                        }
                     //				self.artworkContainerView?.addMotionEffect(wrapper.s_atvMotionEffect)
                 } else {
                     //				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
                     self.titleLabel.transform = .identity
                     self.titleLabel.textColor = UIColor.darkGray
+                    self.titleLabel.font = UIFont.systemFont(ofSize: 20)
                     //self.titleLabel.alpha = 0.0
                     if PVSettingsModel.shared.showGameBadges {
                         if #available(tvOS 11, *) {} else {
