@@ -4,7 +4,7 @@
 namespace MDFN_IEN_PCE
 {
 
-extern const IDIISG PCE_MouseIDII;
+MDFN_HIDE extern const IDIISG PCE_MouseIDII;
 
 PCE_Input_Device *PCEINPUT_MakeMouse(void);
 

@@ -12,7 +12,7 @@ uint8 tms_lookup[16][256][2];   /* Expand BD, PG data into 8-bit pixels (G1,G2) 
 uint8 mc_lookup[16][256][8];    /* Expand BD, PG data into 8-bit pixels (MC) */
 uint8 txt_lookup[256][2];       /* Expand BD, PG data into 8-bit pixels (TX) */
 uint8 bp_expand[256][8];        /* Expand PG data into 8-bit pixels */
-uint8 tms_obj_lut[16*256];      /* Look up priority between SG and display pixels */
+static uint8 tms_obj_lut[16*256];      /* Look up priority between SG and display pixels */
 
 static const uint8 diff_mask[]  = {0x07, 0x07, 0x0F, 0x0F};
 static const uint8 name_mask[]  = {0xFF, 0xFF, 0xFC, 0xFC};
@@ -26,8 +26,8 @@ typedef struct {
     uint8 sg[2];
 } tms_sprite;
 
-tms_sprite sprites[4];
-int sprites_found;
+static tms_sprite sprites[4];
+static int sprites_found;
 
 void parse_line(int line)
 {
@@ -281,8 +281,8 @@ void make_tms_tables(void)
     {
         for(pg = 0; pg < 256; pg++)
         {
-            uint8 l = (pg >> 4) & 0x0F;
-            uint8 r = (pg >> 0) & 0x0F;
+            int l = (pg >> 4) & 0x0F;
+            int r = (pg >> 0) & 0x0F;
 
             /* If foreground is transparent, use background color */
             if(l == 0) l = bd;
@@ -291,7 +291,7 @@ void make_tms_tables(void)
             /* Unpack 2 nibbles across eight pixels */
             for(x = 0; x < 8; x++)
             {
-                uint8 c = (x & 4) ? r : l;
+                int c = (x & 4) ? r : l;
 
                 mc_lookup[bd][pg][x] = c;
             }

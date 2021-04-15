@@ -76,10 +76,8 @@ namespace JoystickManager
  int64 TestAxisRel(const ButtConfig& bc);
 
  // Returns ~0U if joystick was not found.
- unsigned GetIndexByUniqueID(const std::array<uint8, 16>& unique_id);
- unsigned GetIndexByUniqueID_09x(uint64 unique_id);
-
- std::array<uint8, 16> GetUniqueIDByIndex(unsigned index);
+ unsigned GetIndexByUniqueID(const std::array<uint8, 16>& unique_id, const bool is09xid);
+ bool GetUniqueIDByIndex(unsigned index, std::array<uint8, 16>* unique_id);
 
  std::string BNToString(const uint32 bn);
  bool StringToBN(const char* s, uint16* bn);

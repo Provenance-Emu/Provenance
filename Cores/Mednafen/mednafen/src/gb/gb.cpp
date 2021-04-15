@@ -44,18 +44,11 @@ static uint32 gbMonoColorMap[12 + 1];	// Mono color map(+1 = LCD off color)!
 
 static void LoadROM(Stream* s);
 static int32 SoundTS = 0;
-//extern uint16 gbLineMix[160];
-extern union __gblmt
-{
- uint16 cgb[160];
- uint8 dmg[160];
- uint32 dmg_32[40];
-} gbLineMix;
 
 // mappers
-void (*mapper)(uint16,uint8) = NULL;
-void (*mapperRAM)(uint16,uint8) = NULL;
-uint8 (*mapperReadRAM)(uint16) = NULL;
+static void (*mapper)(uint16,uint8) = NULL;
+static void (*mapperRAM)(uint16,uint8) = NULL;
+static uint8 (*mapperReadRAM)(uint16) = NULL;
 
 static uint8 HRAM[0x80];
 uint8 gbOAM[0xA0];
@@ -66,9 +59,9 @@ static uint8 register_P1    = 0;
 // 0xff01
 static uint8 register_SB    = 0;
 // 0xff02
-uint8 register_SC    = 0;
+static uint8 register_SC    = 0;
 // 0xff04
-uint8 register_DIV   = 0;
+static uint8 register_DIV   = 0;
 // 0xff05
 static uint8 register_TIMA  = 0;
 // 0xff06
@@ -88,9 +81,9 @@ uint8 register_SCX   = 0;
 // 0xff44
 uint8 register_LY    = 0;
 // 0xff45
-uint8 register_LYC   = 0;
+static uint8 register_LYC   = 0;
 // 0xff46
-uint8 register_DMA   = 0;
+static uint8 register_DMA   = 0;
 // 0xff4a
 uint8 register_WY    = 0;
 // 0xff4b
@@ -139,18 +132,17 @@ static uint8 register_SVBK  = 0;
 uint8 register_IE    = 0;
 
 // ticks definition
-static int GBDIV_CLOCK_TICKS          = 64;
-static int GBLCD_MODE_0_CLOCK_TICKS   = 51;
-static int GBLCD_MODE_1_CLOCK_TICKS   = 1140;
-static int GBLCD_MODE_2_CLOCK_TICKS   = 20;
-static int GBLCD_MODE_3_CLOCK_TICKS   = 43;
-static int GBLY_INCREMENT_CLOCK_TICKS = 114;
-static int GBTIMER_MODE_0_CLOCK_TICKS = 256;
-static int GBTIMER_MODE_1_CLOCK_TICKS = 4;
-static int GBTIMER_MODE_2_CLOCK_TICKS = 16;
-static int GBTIMER_MODE_3_CLOCK_TICKS = 64;
-static int GBSERIAL_CLOCK_TICKS       = 128;
-static int GBSYNCHRONIZE_CLOCK_TICKS  = 52920;
+static int GBDIV_CLOCK_TICKS;
+static int GBLCD_MODE_0_CLOCK_TICKS;
+static int GBLCD_MODE_1_CLOCK_TICKS;
+static int GBLCD_MODE_2_CLOCK_TICKS;
+static int GBLCD_MODE_3_CLOCK_TICKS;
+static int GBLY_INCREMENT_CLOCK_TICKS;
+static int GBTIMER_MODE_0_CLOCK_TICKS;
+static int GBTIMER_MODE_1_CLOCK_TICKS;
+static int GBTIMER_MODE_2_CLOCK_TICKS;
+static int GBTIMER_MODE_3_CLOCK_TICKS;
+static int GBSERIAL_CLOCK_TICKS;
 
 // state variables
 static int32 snooze;
@@ -176,26 +168,23 @@ enum
 };
 
 // lcd
-int gbLcdMode = GBLCDM_OAM;
-int gbLcdTicks = GBLCD_MODE_2_CLOCK_TICKS;
-int gbLcdLYIncrementTicks = 0;
+static int gbLcdMode;
+static int gbLcdTicks;
+static int gbLcdLYIncrementTicks;
 // div
-int gbDivTicks = GBDIV_CLOCK_TICKS;
+static int gbDivTicks;
 // cgb
-int gbWramBank = 1;
-int gbHdmaSource = 0x0000;
-int gbHdmaDestination = 0x8000;
-int gbHdmaBytes = 0x0000;
-int gbHdmaOn = 0;
-int gbSpeed = 0;
-
-// timing
-int gbSynchronizeTicks = GBSYNCHRONIZE_CLOCK_TICKS;
+static int gbWramBank;
+static int gbHdmaSource;
+static int gbHdmaDestination;
+static int gbHdmaBytes;
+static int gbHdmaOn;
+int gbSpeed;
 
 // emulator features
-int gbBattery = 0;
-
+static int gbBattery = 0;
 static uint8 gbJoymask;
+uint32 gblayerSettings;
 
 static const int gbRomSizes[] = { 0x00008000, // 32K
                      0x00010000, // 64K
@@ -309,7 +298,7 @@ static void SetPixelFormat(const MDFN_PixelFormat &format, bool cgb_mode, const 
 {
  if(cgb_mode)
  {
-  if(format.bpp == 8)
+  if(format.opp == 1)
   {
    unsigned pti = 0;
 
@@ -396,7 +385,7 @@ static void SetPixelFormat(const MDFN_PixelFormat &format, bool cgb_mode, const 
       nb = CustomColorMap[((b << 10) | (g << 5) | r) * 3 + 2];
      }
 
-     if(format.bpp == 8)
+     if(format.opp == 1)
       gbColorFilter[(b << 10) | (g << 5) | r] = pm8.FindClose(format.MakePColor(nr, ng, nb));
      else
       gbColorFilter[(b << 10) | (g << 5) | r] = format.MakeColor(nr, ng, nb);
@@ -518,7 +507,7 @@ static void ClockTIMA(void)
  }
 }
 
-void gbWriteMemory(uint16 address, uint8 value)
+MDFN_FASTCALL void gbWriteMemory(uint16 address, uint8 value)
 {
   if(address < 0x8000) {
     if(mapper)
@@ -1021,7 +1010,7 @@ void gbWriteMemory(uint16 address, uint8 value)
   //gbMemory[address - 0x8000] = value;
 }
 
-uint8 gbReadMemory(uint16 address)
+MDFN_FASTCALL uint8 gbReadMemory(uint16 address)
 {
   uint8 retval = 0xFF;
 
@@ -1244,10 +1233,9 @@ uint8 gbReadMemory(uint16 address)
  //return gbMemoryMap[address>>12][address & 0x0fff];
 }
 
-void gbSpeedSwitch()
+static void RecalcTickConstants(void)
 {
-  if(gbSpeed == 0) {
-    gbSpeed = 1;
+ if(gbSpeed) {
     GBLCD_MODE_0_CLOCK_TICKS = 51 * 2; //127; //51 * 2;
     GBLCD_MODE_1_CLOCK_TICKS = 1140 * 2;
     GBLCD_MODE_2_CLOCK_TICKS = 20 * 2; //52; //20 * 2;
@@ -1259,16 +1247,7 @@ void gbSpeedSwitch()
     GBTIMER_MODE_2_CLOCK_TICKS = 16; //16*2;
     GBTIMER_MODE_3_CLOCK_TICKS = 64; //64*2;
     GBSERIAL_CLOCK_TICKS = 128 * 2;
-    gbDivTicks *= 2;
-    gbLcdTicks *= 2;
-    gbLcdLYIncrementTicks *= 2;
-    //    timerTicks *= 2;
-    //    timerClockTicks *= 2;
-    gbSerialTicks *= 2;
-    //    synchronizeTicks *= 2;
-    //    SYNCHRONIZE_CLOCK_TICKS *= 2;
-  } else {
-    gbSpeed = 0;
+ } else {
     GBLCD_MODE_0_CLOCK_TICKS = 51;
     GBLCD_MODE_1_CLOCK_TICKS = 1140;
     GBLCD_MODE_2_CLOCK_TICKS = 20;
@@ -1280,6 +1259,25 @@ void gbSpeedSwitch()
     GBTIMER_MODE_2_CLOCK_TICKS = 16;
     GBTIMER_MODE_3_CLOCK_TICKS = 64;
     GBSERIAL_CLOCK_TICKS = 128;
+ }
+}
+
+static void SetSpeed(bool speed)
+{
+ gbSpeed = speed;
+ //
+ RecalcTickConstants();
+
+ if(speed) {
+    gbDivTicks *= 2;
+    gbLcdTicks *= 2;
+    gbLcdLYIncrementTicks *= 2;
+    //    timerTicks *= 2;
+    //    timerClockTicks *= 2;
+    gbSerialTicks *= 2;
+    //    synchronizeTicks *= 2;
+    //    SYNCHRONIZE_CLOCK_TICKS *= 2;
+ } else {
     gbDivTicks /= 2;
     gbLcdTicks /= 2;
     gbLcdLYIncrementTicks /= 2;
@@ -1288,12 +1286,34 @@ void gbSpeedSwitch()
     gbSerialTicks /= 2;
     //    synchronizeTicks /= 2;
     //    SYNCHRONIZE_CLOCK_TICKS /= 2;    
-  }
+ }
 }
 
-void gbReset()
+void gbSpeedSwitch()
+{
+ SetSpeed(!gbSpeed);
+}
+
+static MDFN_COLD void gbReset()
 {
  GBZ80_Reset();
+ SetSpeed(false);
+
+  register_P1 = 0;
+  register_SB = 0;
+  register_SC = 0;
+  register_RP = 0;
+  register_BCPS = 0;
+  register_BCPD = 0;
+  register_OCPS = 0;
+  register_OCPD = 0;
+
+  register_FF6C = 0;
+  register_FF72 = 0;
+  register_FF73 = 0;
+  register_FF74 = 0;
+  register_FF75 = 0;
+  register_SVBK  = 0;
 
   register_DIV = 0;
   register_TIMA = 0;
@@ -1317,6 +1337,7 @@ void gbReset()
   register_HDMA5 = 0;
   register_SVBK = 0;
   register_IE = 0;  
+  register_KEY1 = 0;
 
   if(gbCgbMode) 
   {
@@ -1334,11 +1355,6 @@ void gbReset()
      gbPalette[i] = fun | (fun << 5) | (fun << 10);
     }
   }
-
-  if(gbSpeed) {
-    gbSpeedSwitch();
-    register_KEY1 = 0;
-  }
   
   gbDivTicks = GBDIV_CLOCK_TICKS;
   gbLcdMode = GBLCDM_OAM;
@@ -1352,16 +1368,16 @@ void gbReset()
   gbWindowLine = -1;
   gbTimerOn = 0;
   gbTimerMode = 0;
-  //  gbSynchronizeTicks = GBSYNCHRONIZE_CLOCK_TICKS;
-  gbSpeed = 0;
   gbJoymask = 0;
-  
+
+  gbDmaTicks = 0;
+
+  gbHdmaOn = 0;
+  gbHdmaBytes = 0x0000;
+  gbHdmaSource = 0x0000;
+  gbHdmaDestination = 0x8000;
+  gbWramBank = 1;
   if(gbCgbMode) {
-    gbSpeed = 0;
-    gbHdmaOn = 0;
-    gbHdmaSource = 0x0000;
-    gbHdmaDestination = 0x8000;
-    gbWramBank = 1;
     register_LY = 0x90;
     gbLcdMode = GBLCDM_VBLANK;
     for(int i = 0; i < 64; i++)
@@ -1381,11 +1397,23 @@ void gbReset()
   gbDataMBC2.mapperRAMEnable = 0;
   gbDataMBC2.mapperROMBank = 1;
 
-  memset(&gbDataMBC3,0, 6 * sizeof(int));
+  gbDataMBC3.mapperRAMEnable = 0;
   gbDataMBC3.mapperROMBank = 1;
+  gbDataMBC3.mapperRAMBank = 0;
+  gbDataMBC3.mapperClockLatch = 0;
+  gbDataMBC3.mapperClockRegister = 0;
+  gbDataMBC3.mapperControl &= 0x01;
+  gbDataMBC3.mapperLSeconds = 0;
+  gbDataMBC3.mapperLMinutes = 0;
+  gbDataMBC3.mapperLHours = 0;
+  gbDataMBC3.mapperLDays = 0;
+  gbDataMBC3.mapperLControl = 0;
 
   memset(&gbDataMBC5, 0, sizeof(gbDataMBC5));
   gbDataMBC5.mapperROMBank = 1;
+
+  memset(&gbDataMBC7, 0, sizeof(gbDataMBC7));
+  gbDataMBC7.mapperROMBank = 1;
 
   memset(&gbDataHuC1, 0, sizeof(gbDataHuC1));
   gbDataHuC1.mapperROMBank = 1;
@@ -1430,7 +1458,7 @@ void gbReset()
  SOUND_Write(0, 0xFF24, 0x77);
 }
 
-static void gbPower(void)
+static MDFN_COLD void gbPower(void)
 {
  snooze = 0;
  PadInterruptDelay = 0;
@@ -1670,18 +1698,18 @@ static const SFORMAT MBC3_StateRegs[] =
  SFVARN(gbDataMBC3.mapperRAMBank, "RAMB"),
  SFVARN(gbDataMBC3.mapperClockLatch, "CLKL"),
  SFVARN(gbDataMBC3.mapperClockRegister, "CLKR"),
- SFVARN(gbDataMBC3.mapperSeconds, "SEC"),
- SFVARN(gbDataMBC3.mapperMinutes, "MIN"),
- SFVARN(gbDataMBC3.mapperHours, "HOUR"),
- SFVARN(gbDataMBC3.mapperDays, "DAY"),
- SFVARN(gbDataMBC3.mapperControl, "CTRL"),
+ SFVARN(gbDataMBC3.mapperSeconds, SFORMAT::FORM::NVMEM_INIT, "SEC"),
+ SFVARN(gbDataMBC3.mapperMinutes, SFORMAT::FORM::NVMEM_INIT, "MIN"),
+ SFVARN(gbDataMBC3.mapperHours, SFORMAT::FORM::NVMEM_INIT, "HOUR"),
+ SFVARN(gbDataMBC3.mapperDays, SFORMAT::FORM::NVMEM_INIT, "DAY"),
+ SFVARN(gbDataMBC3.mapperControl, SFORMAT::FORM::NVMEM_INIT, "CTRL"),
 
  SFVARN(gbDataMBC3.mapperLSeconds, "LSEC"),
  SFVARN(gbDataMBC3.mapperLMinutes, "LMIN"),
  SFVARN(gbDataMBC3.mapperLHours, "LHUR"),
  SFVARN(gbDataMBC3.mapperLDays, "LDAY"),
  SFVARN(gbDataMBC3.mapperLControl, "LCTR"),
- SFVARN(gbDataMBC3.mapperLastTime, "LTIM"),
+ SFVARN(gbDataMBC3.mapperLastTime, SFORMAT::FORM::NVMEM_INIT, "LTIM"),
 
  SFEND
 };
@@ -1749,19 +1777,6 @@ static const SFORMAT HuC3_StateRegs[] =
 
 static const SFORMAT gbSaveGameStruct[] = 
 {
-  SFVAR(GBLCD_MODE_0_CLOCK_TICKS),
-  SFVAR(GBLCD_MODE_1_CLOCK_TICKS),
-  SFVAR(GBLCD_MODE_2_CLOCK_TICKS),
-  SFVAR(GBLCD_MODE_3_CLOCK_TICKS),
-  SFVAR(GBDIV_CLOCK_TICKS),
-  SFVAR(GBLY_INCREMENT_CLOCK_TICKS),
-  SFVAR(GBTIMER_MODE_0_CLOCK_TICKS),
-  SFVAR(GBTIMER_MODE_1_CLOCK_TICKS),
-  SFVAR(GBTIMER_MODE_2_CLOCK_TICKS),
-  SFVAR(GBTIMER_MODE_3_CLOCK_TICKS),
-  SFVAR(GBSERIAL_CLOCK_TICKS),
-  SFVAR(GBSYNCHRONIZE_CLOCK_TICKS),
-
   SFVAR(snooze),
   SFVAR(PadInterruptDelay),
 
@@ -1770,10 +1785,8 @@ static const SFORMAT gbSaveGameStruct[] =
   SFVAR(gbLcdTicks),
   SFVAR(gbLcdLYIncrementTicks),
   SFVAR(gbTimerTicks),
-  SFVAR(gbTimerClockTicks),
   SFVAR(gbSerialTicks),
   SFVAR(gbSerialBits),
-  SFVAR(gbSynchronizeTicks),
   SFVAR(gbTimerOn),
   SFVAR(gbTimerMode),
   SFVAR(gbSerialOn),
@@ -1803,6 +1816,7 @@ static const SFORMAT gbSaveGameStruct[] =
   SFVAR(register_DMA),
   SFVAR(register_WY),
   SFVAR(register_WX),
+  SFVAR(register_KEY1),
   SFVAR(register_VBK),
   SFVAR(register_HDMA1),
   SFVAR(register_HDMA2),
@@ -1810,6 +1824,10 @@ static const SFORMAT gbSaveGameStruct[] =
   SFVAR(register_HDMA4),
   SFVAR(register_HDMA5),
   SFVAR(register_RP),
+  SFVAR(register_BCPS),
+  SFVAR(register_BCPD),
+  SFVAR(register_OCPS),
+  SFVAR(register_OCPD),
   SFVAR(register_FF6C),
   SFVAR(register_SVBK),
   SFVAR(register_FF72),
@@ -1823,8 +1841,7 @@ static const SFORMAT gbSaveGameStruct[] =
   SFEND
 };
 
-static void CloseGame(void) MDFN_COLD;
-static void CloseGame(void)
+static MDFN_COLD void CloseGame(void)
 {
  try
  {
@@ -1842,6 +1859,9 @@ static void StateRest(int version)
 {
  register_SVBK &= 7;
  register_VBK &= 1;
+ gbSpeed &= 0x1;
+ gbLcdMode &= 0x3;
+ gbTimerMode &= 0x3;
 
  for(unsigned i = 0; i < 4; i++)
  {
@@ -1849,6 +1869,33 @@ static void StateRest(int version)
   gbObp0[i] = (gbObp0[i] & 0x3) | 4;
   gbObp1[i] = (gbObp1[i] & 0x3) | 8;
  }
+
+ gbWindowLine = std::max<int>(-1, std::min<int>(144, gbWindowLine));
+ //
+ RecalcTickConstants();
+ //
+ switch(gbTimerMode) {
+    case 0:
+      gbTimerClockTicks = GBTIMER_MODE_0_CLOCK_TICKS;
+      break;
+    case 1:
+      gbTimerClockTicks = GBTIMER_MODE_1_CLOCK_TICKS;
+      break;
+    case 2:
+      gbTimerClockTicks = GBTIMER_MODE_2_CLOCK_TICKS;
+      break;
+    case 3:
+      gbTimerClockTicks = GBTIMER_MODE_3_CLOCK_TICKS;
+      break;
+ }
+ //
+ //printf("%02x -- %6d %6d %6d %6d %6d %6d\n", gbTimerMode, gbDmaTicks, gbLcdTicks, gbLcdLYIncrementTicks, gbTimerTicks, gbSerialTicks, gbDivTicks);
+ gbDmaTicks = std::max<int>(0, std::min<int>(8192, gbDmaTicks));
+ gbLcdTicks = std::max<int>(0, std::min<int>(4096, gbLcdTicks));
+ gbLcdLYIncrementTicks = std::max<int>(0, std::min<int>(8192, gbLcdLYIncrementTicks));
+ gbTimerTicks = std::max<int>(0, std::min<int>(gbTimerClockTicks, gbTimerTicks));
+ gbSerialTicks = std::max<int>(0, std::min<int>(8192, gbSerialTicks));
+ gbDivTicks = std::max<int>(0, std::min<int>(8192, gbDivTicks));
 
   gbMemoryMap[0x00] = &gbRom[0x0000];
   gbMemoryMap[0x01] = &gbRom[0x1000];
@@ -1941,9 +1988,7 @@ static void StateRest(int version)
 
 }
 
-uint32 gblayerSettings;
-
-static const char *GetGBRAMSizeString(uint8 t)
+static MDFN_COLD const char *GetGBRAMSizeString(uint8 t)
 {
  const char *type = _("Unknown");
 
@@ -1973,7 +2018,7 @@ static const char *GetGBRAMSizeString(uint8 t)
 }
 
 
-static const char *GetGBTypeString(uint8 t)
+static MDFN_COLD const char *GetGBTypeString(uint8 t)
 {
  const char *type = _("Unknown");
 
@@ -2055,7 +2100,7 @@ static bool TestMagic(GameFile* gf)
  return true;
 }
 
-static void Cleanup(void)
+static MDFN_COLD void Cleanup(void)
 {
  SOUND_Kill();
 
@@ -2090,8 +2135,7 @@ static void Cleanup(void)
  }
 }
 
-static void Load(GameFile* gf) MDFN_COLD;
-static void Load(GameFile* gf)
+static MDFN_COLD void Load(GameFile* gf)
 {
  try
  {
@@ -2378,29 +2422,6 @@ static void Emulate(EmulateSpecStruct *espec)
 {
  bool linedrawn[144];
 
-#if 0
- {
-  static bool firstcat = true;
-  MDFN_PixelFormat nf;
-
-  nf.bpp = 8;
-  nf.colorspace = MDFN_COLORSPACE_RGB;
-  nf.Rshift = 0;
-  nf.Gshift = 0;
-  nf.Bshift = 0;
-  nf.Ashift = 8;
-  
-  nf.Rprec = 6;
-  nf.Gprec = 6;
-  nf.Bprec = 6;
-  nf.Aprec = 0;
-
-  espec->surface->SetFormat(nf, false);
-  espec->VideoFormatChanged = firstcat;
-  firstcat = false;
- }
-#endif
-
  if(espec->VideoFormatChanged)
   SetPixelFormat(espec->surface->format, gbCgbMode, espec->CustomPalette, espec->CustomPaletteNumEntries);
 
@@ -2576,17 +2597,17 @@ static void Emulate(EmulateSpecStruct *espec)
 		linedrawn[register_LY] = 1;
                 gbRenderLine();
 
-		switch(espec->surface->format.bpp)
+		switch(espec->surface->format.opp)
 		{
-		 case 8:
+		 case 1:
 			CopyLineSurface<uint8>(espec->surface);
 			break;
 
-		 case 16:
+		 case 2:
 			CopyLineSurface<uint16>(espec->surface);
 			break;
 
-		 case 32:
+		 case 4:
 			CopyLineSurface<uint32>(espec->surface);
 			break;
 		}
@@ -2681,17 +2702,17 @@ static void Emulate(EmulateSpecStruct *espec)
  {
   if(!linedrawn[y])
   {
-   switch(espec->surface->format.bpp)
+   switch(espec->surface->format.opp)
    {
-    case 8:
+    case 1:
 	FillLineSurface<uint8>(espec->surface, y);
 	break;
 
-    case 16:
+    case 2:
 	FillLineSurface<uint16>(espec->surface, y);
 	break;
 
-    case 32:
+    case 4:
 	FillLineSurface<uint32>(espec->surface, y);
 	break;
    }
@@ -2711,7 +2732,7 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
  {
   SFPTR8N(gbOAM, 0xA0, "OAM"),
   SFPTR8N(HRAM, 0x80, "HRAM"),
-  SFPTR8N(gbRam, gbRamSize, "RAM"),
+  SFPTR8N(gbRam, gbRamSize, (gbBattery ? SFORMAT::FORM::NVMEM : SFORMAT::FORM::GENERIC), "RAM"),
   SFPTR8N(gbVram, gbCgbMode ? 0x4000 : 0x2000, "VRAM"),
   SFPTR8N(gbWram, gbCgbMode ? 0x8000 : 0x2000, "WRAM"),
   SFPTR16(gbPalette, (gbCgbMode ? 128 : 0)),
@@ -2856,7 +2877,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_GB;
 
-MDFNGI EmulatedGB =
+MDFN_HIDE extern const MDFNGI EmulatedGB =
 {
  "gb",
  "GameBoy (Color)",
@@ -2893,6 +2914,9 @@ MDFNGI EmulatedGB =
  GBSettings,
  MDFN_MASTERCLOCK_FIXED(4194304),
  (uint32)((double)4194304 / 70224 * 65536 * 256),
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false, // Multires possible?
 
  160,	// lcm_width

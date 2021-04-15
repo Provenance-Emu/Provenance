@@ -44,12 +44,12 @@ struct StateSectionMapEntry
 
 struct StateMem
 {
- StateMem(Stream*s, bool svbe_ = false, bool fuzz_ = false) : st(s), svbe(svbe_), fuzz(fuzz_) { };
+ StateMem(Stream*s, bool svbe_ = false, int fuzz_ = MDFNSS_FUZZ_DISABLED) : st(s), svbe(svbe_), fuzz(fuzz_) { };
  ~StateMem();
 
  Stream* st = nullptr;
  bool svbe = false;	// State variable data is stored big-endian(for normal-path state loading only).
- bool fuzz = false;
+ int fuzz = MDFNSS_FUZZ_DISABLED;
 
  std::map<std::string, StateSectionMapEntry> secmap; // For loads
 
@@ -176,7 +176,7 @@ static void MakeSFMap(const SFORMAT *sf, SFMap_t &sfmap)
  }
 }
 
-static void ReadStateChunk(Stream *st, const SFORMAT *sf, const char* sname, uint32 size, const bool svbe, const bool fuzz)
+static void ReadStateChunk(Stream *st, const SFORMAT *sf, const char* sname, uint32 size, const bool svbe, const int fuzz)
 {
  SFMap_t sfmap;
  SFMap_t sfmap_found;	// Used for identifying variables that are missing in the save state.
@@ -224,15 +224,43 @@ static void ReadStateChunk(Stream *st, const SFORMAT *sf, const char* sname, uin
     {
      st->read((void*)p, expected_size);
 
-     if(MDFN_UNLIKELY(fuzz))
+     if(MDFN_UNLIKELY(fuzz != MDFNSS_FUZZ_DISABLED) && tmp->form != SFORMAT::FORM::CONFIG_VALIDATE && tmp->form != SFORMAT::FORM::NVMEM)
      {
       static uint64 lcg[2] = { 0xDEADBEEFCAFEBABEULL, 0x0123456789ABCDEFULL };
 
-      for(unsigned i = 0; i < expected_size; i++)
+      if(fuzz == MDFNSS_FUZZ_RANDOM || tmp->form != SFORMAT::FORM::NVMEM_INIT)
       {
-       ((uint8*)p)[i] = (lcg[0] ^ lcg[1]) >> 28;
-       lcg[0] = (19073486328125ULL * lcg[0]) + 1;
-       lcg[1] = (6364136223846793005ULL * lcg[1]) + 1442695040888963407ULL;
+       for(unsigned i = 0; i < expected_size; i++)
+       {
+	uint8 fv;
+
+	switch(fuzz)
+	{
+	 default:
+	 case MDFNSS_FUZZ_RANDOM:
+		fv = (lcg[0] ^ lcg[1]) >> 28;
+		break;
+
+	 case MDFNSS_FUZZ_SIGNED_MIN:
+		fv = (i == (svbe ? 0 : expected_size - 1)) ? 0x80 : 0x00;
+		break;
+
+	 case MDFNSS_FUZZ_SIGNED_MAX:
+		fv = (i == (svbe ? 0 : expected_size - 1)) ? 0x7F : 0xFF;
+		break;
+
+	 case MDFNSS_FUZZ_UNSIGNED_MIN:
+		fv = 0x00;
+		break;
+
+	 case MDFNSS_FUZZ_UNSIGNED_MAX:
+		fv = 0xFF;
+		break;
+	}
+	((uint8*)p)[i] = fv;
+	lcg[0] = (19073486328125ULL * lcg[0]) + 1;
+	lcg[1] = (6364136223846793005ULL * lcg[1]) + 1442695040888963407ULL;
+       }
       }
      }
 
@@ -508,9 +536,9 @@ void MDFNSS_SaveSM(Stream *st, bool data_only, const MDFN_Surface *surface, cons
 	 if(surface && DisplayRect && LineWidths)
 	 {
 	  //
-	  // TODO: Make work with 8bpp and 16bpp.
+	  // TODO: Make work with 8bpp.
 	  //
-	  MDFN_Surface dest_surface(NULL, neowidth, neoheight, neowidth, surface->format);
+	  MDFN_Surface dest_surface(NULL, neowidth, neoheight, neowidth, MDFN_PixelFormat::ABGR32_8888);
 	  MDFN_Rect dest_rect;
 
 	  dest_rect.x = 0;
@@ -526,13 +554,11 @@ void MDFNSS_SaveSM(Stream *st, bool data_only, const MDFN_Surface *surface, cons
 
 	   for(int32 a = 0; a < neowidth * neoheight; a++)
 	   {
-	    int nr, ng, nb;
+	    const uint32 c = previewbuffer[a];
 
-	    surface->DecodeColor(previewbuffer[a], nr, ng, nb);
-
-	    previewbuffer8[0] = nr;
-	    previewbuffer8[1] = ng;
-	    previewbuffer8[2] = nb;
+	    previewbuffer8[0] = (uint8)(c >>  0);
+	    previewbuffer8[1] = (uint8)(c >>  8);
+	    previewbuffer8[2] = (uint8)(c >> 16);
 
 	    previewbuffer8 += 3;
 	   }
@@ -559,7 +585,7 @@ void MDFNSS_SaveSM(Stream *st, bool data_only, const MDFN_Surface *surface, cons
 	}
 }
 
-void MDFNSS_LoadSM(Stream *st, bool data_only, bool fuzz)
+void MDFNSS_LoadSM(Stream *st, bool data_only, const int fuzz)
 {
 	if(!MDFNGameInfo->StateAction)
 	{

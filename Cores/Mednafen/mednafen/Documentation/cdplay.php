@@ -1,6 +1,6 @@
 <?php require("docgen.inc"); ?>
 
-<?php BeginPage('cdplay', 'Sega Saturn Sound Format Player'); ?>
+<?php BeginPage('cdplay', 'CD-DA Player'); ?>
 
 <?php BeginSection('Introduction', "Section_intro"); ?>
 CD-DA player, for dev testing purposes mostly.

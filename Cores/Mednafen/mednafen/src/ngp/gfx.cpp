@@ -142,9 +142,18 @@ bool NGPGFX_CLASS::draw(MDFN_Surface *surface, bool skip)
                 if (!K2GE_MODE)        draw_scanline_colour(layer_enable_setting, raster_line);
                 else                   draw_scanline_mono(layer_enable_setting, raster_line);
 
-                uint32 *dest = surface->pixels + surface->pitch32 * raster_line;
-                for(int x = 0; x < SCREEN_WIDTH; x++)
-                 dest[x] = ColorMap[cfb_scanline[x] & 4095];
+		if(surface->format.opp == 4)
+		{
+                 uint32 *dest = surface->pix<uint32>() + surface->pitchinpix * raster_line;
+                 for(int x = 0; x < SCREEN_WIDTH; x++)
+                  dest[x] = ColorMap[cfb_scanline[x] & 4095];
+		}
+		else
+		{
+                 uint16 *dest = surface->pix<uint16>() + surface->pitchinpix * raster_line;
+                 for(int x = 0; x < SCREEN_WIDTH; x++)
+                  dest[x] = ColorMap[cfb_scanline[x] & 4095];
+		}
         }
 	raster_line++;
 
@@ -220,7 +229,7 @@ void NGPGFX_CLASS::SetLayerEnableMask(uint64 mask)
 }
 
 //extern uint32 ngpc_soundTS;
-void NGPGFX_CLASS::write8(uint32 address, uint8 data)
+MDFN_FASTCALL void NGPGFX_CLASS::write8(uint32 address, uint8 data)
 {
  //if(address >= 0x8032 && address <= 0x8035)
  // printf("%08x %02x %d\n", address, data, ngpc_soundTS);
@@ -290,7 +299,7 @@ void NGPGFX_CLASS::write8(uint32 address, uint8 data)
  }
 }
 
-void NGPGFX_CLASS::write16(uint32 address, uint16 data)
+MDFN_FASTCALL void NGPGFX_CLASS::write16(uint32 address, uint16 data)
 {
  write8(address, data & 0xFF);
  write8(address + 1, data >> 8);
@@ -303,7 +312,7 @@ namespace TLCS900H
 };
 #endif
 
-uint8 NGPGFX_CLASS::read8(uint32 address)
+MDFN_FASTCALL uint8 NGPGFX_CLASS::read8(uint32 address)
 {
 #if 0
  if(address >= 0x8200 && address <= 0xbfff)
@@ -384,7 +393,7 @@ uint8 NGPGFX_CLASS::read8(uint32 address)
  return(0);
 }
 
-uint16 NGPGFX_CLASS::read16(uint32 address)
+MDFN_FASTCALL uint16 NGPGFX_CLASS::read16(uint32 address)
 {
  uint16 ret;
 

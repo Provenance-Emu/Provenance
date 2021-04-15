@@ -32,11 +32,11 @@ class NGPGFX_CLASS
  NGPGFX_CLASS() MDFN_COLD;
  ~NGPGFX_CLASS() MDFN_COLD;
 
- void write8(uint32 address, uint8 data);
- void write16(uint32 address, uint16 data);
+ MDFN_FASTCALL void write8(uint32 address, uint8 data);
+ MDFN_FASTCALL void write16(uint32 address, uint16 data);
 
- uint8 read8(uint32 address);
- uint16 read16(uint32 address);
+ MDFN_FASTCALL uint8 read8(uint32 address);
+ MDFN_FASTCALL uint16 read16(uint32 address);
 
  int StateAction(StateMem *sm, int load, int data_only);
  void SetLayerEnableMask(uint64 mask);

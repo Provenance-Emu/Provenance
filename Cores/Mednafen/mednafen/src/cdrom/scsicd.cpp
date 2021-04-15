@@ -193,7 +193,7 @@ static scsicd_timestamp_t lastts;
 static int64 monotonic_timestamp;
 static int64 pce_lastsapsp_timestamp;
 
-scsicd_t cd;
+static scsicd_t cd;
 scsicd_bus_t cd_bus;
 static cdda_t cdda;
 

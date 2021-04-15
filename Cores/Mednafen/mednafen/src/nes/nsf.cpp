@@ -81,6 +81,7 @@ static DECLFR(NSFROMRead)
 
 static uint8 BSon;
 
+static uint8 lastjoy;
 static uint8 SongReload;
 static bool doreset = false;
 static int NSFNMIFlags;
@@ -126,6 +127,7 @@ static void NSF_StateAction(StateMem *sm, const unsigned load, const bool data_o
 {
  SFORMAT StateRegs[] =
  {
+  SFVAR(lastjoy),
   SFVAR(SongReload),
   SFVAR(doreset),
   SFVAR(NSFNMIFlags),
@@ -308,6 +310,8 @@ void NSFLoad(Stream *fp, NESGameType *gt)
    ExWRAM = new uint8[32768+8192];
   else
    ExWRAM = new uint8[8192];
+
+  lastjoy = 0;
 
   MDFN_indent(-1);
 
@@ -520,10 +524,9 @@ void DoNSFFrame(void)
   TriggerNMI();
 
  {
-  static uint8 last=0;
   uint8 tmp;
   tmp=MDFN_GetJoyJoy();
-  if((tmp&JOY_RIGHT) && !(last&JOY_RIGHT))
+  if((tmp&JOY_RIGHT) && !(lastjoy&JOY_RIGHT))
   {
    if(NSFInfo->CurrentSong < (NSFInfo->TotalSongs - 1))
    {
@@ -531,7 +534,7 @@ void DoNSFFrame(void)
     SongReload = 0xFF;
    }
   }
-  else if((tmp&JOY_LEFT) && !(last&JOY_LEFT))
+  else if((tmp&JOY_LEFT) && !(lastjoy&JOY_LEFT))
   {
    if(NSFInfo->CurrentSong > 0)
    {
@@ -539,7 +542,7 @@ void DoNSFFrame(void)
     SongReload = 0xFF;
    }
   }
-  else if((tmp&JOY_UP) && !(last&JOY_UP))
+  else if((tmp&JOY_UP) && !(lastjoy&JOY_UP))
   {
    unsigned ns = NSFInfo->CurrentSong + std::min<unsigned>(NSFInfo->TotalSongs - 1 - NSFInfo->CurrentSong, 10);
 
@@ -549,7 +552,7 @@ void DoNSFFrame(void)
     SongReload = 0xFF;
    }
   }
-  else if((tmp&JOY_DOWN) && !(last&JOY_DOWN))
+  else if((tmp&JOY_DOWN) && !(lastjoy&JOY_DOWN))
   {
    unsigned ns = NSFInfo->CurrentSong - std::min<unsigned>(NSFInfo->CurrentSong, 10);
 
@@ -559,13 +562,13 @@ void DoNSFFrame(void)
     SongReload = 0xFF;
    }
   }
-  else if((tmp&JOY_START) && !(last&JOY_START))
+  else if((tmp&JOY_START) && !(lastjoy&JOY_START))
    SongReload = 0xFF;
-  else if((tmp&JOY_A) && !(last&JOY_A))
+  else if((tmp&JOY_A) && !(lastjoy&JOY_A))
   {
 
   }
-  last=tmp;
+  lastjoy=tmp;
  }
 }
 

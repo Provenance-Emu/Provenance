@@ -27,21 +27,20 @@
 #include "mednafen.h"
 #include "lepacker.h"
 #include "tests.h"
+#include "testsexp.h"
 
 #include <mednafen/hash/md5.h>
 #include <mednafen/hash/sha1.h>
 #include <mednafen/hash/sha256.h>
 
-#include <mednafen/sound/SwiftResampler.h>
-#include <mednafen/sound/OwlResampler.h>
-#include <mednafen/sound/WAVRecord.h>
 #include <mednafen/SimpleBitset.h>
 
 #include <mednafen/Time.h>
 #include <mednafen/MThreading.h>
 
 #include <mednafen/MemoryStream.h>
-#include <mednafen/MTStreamReader.h>
+
+#include <mednafen/jump.h>
 
 #include <time.h>
 
@@ -1120,77 +1119,6 @@ static void NO_INLINE NO_CLONE RunMiscEndianTests(uint32 arg0, uint32 arg1)
  }
 }
 
-static void NO_INLINE NO_CLONE ExceptionTestSub(int v, int n, int* y)
-{
- if(n)
- {
-  if(n & 1)
-  {
-   try
-   {
-    ExceptionTestSub(v + n, n - 1, y);
-   }
-   catch(const std::exception &e)
-   {
-    (*y)++;
-    throw;
-   }
-  }
-  else
-   ExceptionTestSub(v + n, n - 1, y);
- }
- else
-  throw MDFN_Error(v, "%d", v);
-}
-
-static NO_CLONE NO_INLINE int RunExceptionTests_TEP(void* data)
-{
- std::atomic_int_least32_t* sv = (std::atomic_int_least32_t*)data;
-
- sv->fetch_sub(1, std::memory_order_release);
-
- while(sv->load(std::memory_order_acquire) > 0);
-
- unsigned t = 0;
-
- for(; !t || sv->load(std::memory_order_acquire) == 0; t++)
- {
-  int y = 0;
-  int z = 0;
-
-  for(int x = -8; x < 8; x++)
-  {
-   try
-   {
-    ExceptionTestSub(x, x & 3, &y);
-   }
-   catch(const MDFN_Error &e)
-   {
-    int epv = x;
-
-    for(unsigned i = x & 3; i; i--)
-     epv += i;
-
-    z += epv;
-
-    assert(e.GetErrno() == epv);
-    assert(atoi(e.what()) == epv);
-    continue;
-   }
-   catch(...)
-   {
-    abort();
-   }
-   abort();
-  }
-
-  assert(y == 16);
-  assert(z == 32);
- }
-
- return t;
-}
-
 std::vector<int> stltests_vec[2];
 
 static void NO_INLINE NO_CLONE RunSTLTests_Sub0(int v)
@@ -1894,7 +1822,7 @@ static void Time_Test(void)
   assert(ut.tm_hour == 0);
   assert(ut.tm_mday == 1);
   assert(ut.tm_mon == 0);
-  assert(ut.tm_year = 70);
+  assert(ut.tm_year == 70);
   assert(ut.tm_wday == 4);
   assert(ut.tm_yday == 0);
   assert(ut.tm_isdst <= 0);
@@ -1911,7 +1839,7 @@ static void Time_Test(void)
   assert(ut.tm_hour == 6);
   assert(ut.tm_mday == 7);
   assert(ut.tm_mon == 1);
-  assert(ut.tm_year = 106);
+  assert(ut.tm_year == 206);
   assert(ut.tm_wday == 0);
   assert(ut.tm_yday == 37);
   assert(ut.tm_isdst <= 0);
@@ -2089,51 +2017,80 @@ static void TestMemcpySanity(void)
  assert(TestMemcpySanity_Sub1() == 0x23442344);
 }
 
-static int ThreadSafeErrno_Test_Entry(void* data)
+static struct
 {
- MThreading::Sem** sem = (MThreading::Sem**)data;
+ MDFN_jmp_buf jbuf;
+ uint8 dummy[8];
+} TestJumpS;
 
- errno = 0;
+NO_INLINE NO_CLONE bool TestJump_Sub0(int v)
+{
+ if(v == 0)
+ {
+  assert(MDFN_de64lsb(TestJumpS.dummy) == 0xDEADBEEF5555AAAAULL);
+ }
+ else if(v >= 4)
+ {
+  assert(MDFN_de64lsb(TestJumpS.dummy) == 0xCAFEF00DAAAA5555ULL);
+ }
 
- MThreading::Sem_Post(sem[0]);
- MThreading::Sem_Wait(sem[1]);
+ if(v == 3)
+ {
+  MDFN_en64lsb(&TestJumpS.dummy, 0xCAFEF00DAAAA5555ULL);
+  MDFN_longjmp(TestJumpS.jbuf);
+  return false;
+ }
 
- errno = 0xDEAD;
- MThreading::Sem_Post(sem[0]);
- return 0;
+ return true;
 }
 
-static void ThreadSafeErrno_Test(void)
+static NO_INLINE NO_CLONE void TestJump(void)
 {
- //uint64 st = Time::MonoUS();
- //
- MThreading::Sem* sem[2] = { MThreading::Sem_Create(), MThreading::Sem_Create() };
- MThreading::Thread* thr = MThreading::Thread_Create(ThreadSafeErrno_Test_Entry, sem);
+ volatile int i = 0;
+ volatile uint32 a = 987654321;
+ volatile uint32 b = 420349502;
+ volatile uint32 c = 692094390;
+ volatile uint32 d =   2394209;
+ uint32 e = 398457985;
+ uint32 f = 150590249;
+ uint32 g = 593049509;
+ uint32 h = 203402499;
+ MDFN_en64lsb(TestJumpS.dummy, 0xDEADBEEF5555AAAAULL);
 
- MThreading::Sem_Wait(sem[0]);
- errno = 0;
- MThreading::Sem_Post(sem[1]);
- MThreading::Sem_Wait(sem[0]);
- assert(errno != 0xDEAD);
- MThreading::Thread_Wait(thr, nullptr);
- //
- for(int i = 9; i >= 0; i--)
+ MDFN_setjmp(TestJumpS.jbuf);
+
+ while(i < 8)
  {
-  const uint64 st = Time::MonoUS();
-  unsigned ms = i * 10;
+  a = (a * b) + c;
+  b = (a * c) + d;
+  c = (a * d) + e;
+  d = (a * e) + f;
 
-  MThreading::Sem_TimedWait(sem[i & 1], ms);
+  bool rv = TestJump_Sub0(i++);
 
-  printf("sem wait requested: %uus, actual: %lluus\n", ms * 1000, (unsigned long long)(Time::MonoUS() - st));
+  assert(i != 4);
+
+  if(i >= 5)
+  {
+   e = (a * f) + g;
+   f = (a * g) + h;
+   g = (a * h) + a;
+   h = (a * a) + b;
+  }
+
+  assert(rv);
  }
- //
- MThreading::Sem_Destroy(sem[0]);
- MThreading::Sem_Destroy(sem[1]);
- //
- //
- //
- errno = 0;
- //printf("%llu\n", (unsigned long long)Time::MonoUS() - st);
+
+ assert(a == 0x2c05efe7);
+ assert(b == 0x8a16b667);
+ assert(c == 0x921de4a5);
+ assert(d == 0xafaeef58);
+ assert(e == 0x1c8cdf2d);
+ assert(f == 0xc7f04e88);
+ assert(g == 0x05402fff);
+ assert(h == 0x31edd8d8);
+
+ assert(MDFN_de64lsb(TestJumpS.dummy) == 0xCAFEF00DAAAA5555ULL);
 }
 
 static void TestSimpleBitset(void)
@@ -2258,226 +2215,6 @@ static void TestEscapeString(void)
 
 using namespace MDFN_TESTS_CPP;
 
-void MDFN_RunExceptionTests(const unsigned thread_count, const unsigned thread_delay)
-{
- std::atomic_int_least32_t sv;
-
- if(thread_count == 1)
- {
-  sv.store(-1, std::memory_order_release);
-  RunExceptionTests_TEP(&sv);
- }
- else
- {
-  ThreadSafeErrno_Test();
-  //
-  //
-  std::vector<MThreading::Thread*> t;
-  std::vector<int> trv;
-
-  t.resize(thread_count);
-  trv.resize(thread_count);
-
-  sv.store(thread_count, std::memory_order_release);
-
-  for(unsigned i = 0; i < thread_count; i++)
-   t[i] = MThreading::Thread_Create(RunExceptionTests_TEP, &sv);
-
-  Time::SleepMS(thread_delay);
-
-  sv.store(-1, std::memory_order_release);
-
-  for(unsigned i = 0; i < thread_count; i++)
-   MThreading::Thread_Wait(t[i], &trv[i]);
-
-  for(unsigned i = 0; i < thread_count; i++)
-   printf("%d: %d\n", i, trv[i]);
- }
-}
-
-void MDFN_RunSwiftResamplerTest(void)
-{
- static const double input_rates[] =
- {
-  //1500000,
-  1662607.125,
-  1789772.72727272
-  //2000000
- };
-
- const double rate_error = 0.00004;
-
- for(int quality = 3; quality <= 3; quality++)
- {
-  for(unsigned iri = 0; iri < sizeof(input_rates) / sizeof(input_rates[0]); iri++)
-  {
-   const double irate = input_rates[iri];
-   const int32 output_rates[] =
-   {
-    //22050, 32000, 44100, 48000, 64000, 96000, 192000
-    22050,
-    44100,
-    48000, 96000, 192000, 
-    //(int32)floor(0.5 + irate / 32)
-   };
-
-   for(unsigned ori = 0; ori < sizeof(output_rates) / sizeof(output_rates[0]); ori++)
-   {
-    const int32 orate = output_rates[ori];
-    std::unique_ptr<SwiftResampler> res(new SwiftResampler(irate, orate, rate_error, 0, quality));
-    char fn[256];
-    snprintf(fn, sizeof(fn), "swift-%s-q%d-%u-%u.wav", res->GetSIMDType(), quality, (unsigned)irate, (unsigned)orate);
-    std::unique_ptr<WAVRecord> wr(new WAVRecord(fn, orate, 1));
-    std::unique_ptr<int16[]> ibuf(new int16[65536]);
-    std::unique_ptr<int16[]> obuf(new int16[65536]);
-    int32 leftover = 0;
-    double phase = 0;
-    double phase_inc = 0.000;
-    double phase_inc_inc = 0.000000001;
-
-    for(int base_i = 0; base_i < irate * 60 * 2; base_i += 32768)
-    {
-     for(int i = 0; i < 32768; i++)
-     {
-      ibuf[i + leftover] = floor(0.5 + 32767 * 0.95 * sin(phase));
-      phase += phase_inc;
-      phase_inc += phase_inc_inc;
-     }
-     const int32 inlen = leftover + 32768;
-     const int32 outlen = res->Do(&ibuf[0], &obuf[0], 65536, inlen, &leftover);
-
-     memmove(&ibuf[0], &ibuf[inlen - leftover], leftover * sizeof(int16));
-
-     wr->WriteSound(&obuf[0], outlen);
-    }
-   }
-  }
- }
-}
-
-void MDFN_RunOwlResamplerTest(void)
-{
- static const double input_rates[] =
- {
-  /*1500000, 1662607.125,*/ 1789772.72727272 /*, 2000000*/
- };
-
- const double rate_error = 0.00004;
- //for(int quality = -2; quality <= 5; quality++)
- int quality = 5;
- {
-  for(unsigned iri = 0; iri < sizeof(input_rates) / sizeof(input_rates[0]); iri++)
-  {
-   const double irate = input_rates[iri];
-
-   const int32 output_rates[] =
-   {
-    44100, 48000, 96000, 192000, (int32)floor(0.5 + irate / 32)
-   };
-
-   for(unsigned ori = 0; ori < sizeof(output_rates) / sizeof(output_rates[0]); ori++)
-   {
-    const int32 orate = output_rates[ori];
-    std::unique_ptr<OwlResampler> res(new OwlResampler(irate, orate, rate_error, 0, quality));
-    std::unique_ptr<OwlBuffer> ibuf(new OwlBuffer());
-    char fn[256];
-    snprintf(fn, sizeof(fn), "owl-%s-q%d-%u-%u.wav", res->GetSIMDType(), quality, (unsigned)irate, (unsigned)orate);
-    std::unique_ptr<WAVRecord> wr(new WAVRecord(fn, orate, 1));
-    std::unique_ptr<int16[]> obuf(new int16[65536 * 2]);
-    double phase = 0;
-    double phase_inc = 0.000;
-    double phase_inc_inc = 0.000000001;
-    const int32 inlen = 16384;
-
-    for(int base_i = 0; base_i < irate * 60 * 2; base_i += inlen)
-    {
-     for(int i = 0; i < inlen; i++)
-     {
-      ibuf->BufPudding()[i].f = 256 * 32767 * 0.95 * sin(phase);
-      phase += phase_inc;
-      phase_inc += phase_inc_inc;
-     }
-     const int32 outlen = res->Resample(ibuf.get(), inlen, &obuf[0], 65536);
-
-     for(int32 i = 0; i < outlen; i++)
-      obuf[i] = obuf[i * 2];
-
-     wr->WriteSound(&obuf[0], outlen);
-    }
-   }
-  }
- }
-}
-
-#if 0
-void TestMTStreamReader(void)
-{
- for(uint32 pzb = 0; pzb < 256; pzb = (pzb * 3) + 1)
- for(uint32 test_size = 0; test_size < 256 * 2; test_size++)
- for(uint32 loop_pos = 0; loop_pos <= test_size; loop_pos++)
- {
-  printf("pzb=0x%04x, test_size=0x%04x, loop_pos=0x%04x\n", pzb, test_size, loop_pos);
-  //
-  std::unique_ptr<MTStreamReader> test_mtsr(new MTStreamReader(0));
-  std::unique_ptr<MemoryStream> test_stream(new MemoryStream(test_size, true));
-  //
-  for(uint64 i = 0, lcg = 0xDEADBEEFCAFEBABEULL; i < test_size; i++, lcg = (lcg * 6364136223846793005ULL) + 1442695040888963407ULL)
-  {
-   test_stream->map()[i] = lcg >> 32;
-   //printf("%u: 0x%02x\n", (unsigned)i, (uint8)(lcg >> 32));
-  }
-  //
-  const uint8* const g = test_stream->map();
-  {
-   MTStreamReader::StreamInfo si;
-   si.size = test_stream->size();
-   si.loop_pos = loop_pos;
-   si.stream = std::move(test_stream);
-   si.pos = 0;
-
-   test_mtsr->add_stream(std::move(si));
-   test_mtsr->set_active_stream(0, 0, pzb);
-   test_mtsr->sync();
-  }
-  //
-  for(uint64 i = 0; i < pzb; i++)
-  {
-   uint8* b =  test_mtsr->get_buffer(1);
-   if(*b != 0)
-   {
-    printf("0x%02x\n", *b);
-    assert(*b == 0);
-   }
-   test_mtsr->advance(1);
-  }
-  
-  for(uint32 i = 0; i < /*1024 * 1024*/16384; i++)
-  {
-   uint8* b = test_mtsr->get_buffer(1);
-
-   if(test_size == loop_pos && i >= test_size)
-   {
-    assert(*b == 0);
-   }
-   else
-   {
-    uint8 test_b = g[(i < test_size) ? i : loop_pos + ((i - test_size) % (test_size - loop_pos))];
-
-    //printf("%u: 0x%02x 0x%02x\n", (unsigned)i, *b, test_b);
-
-    if(*b != test_b)
-    {
-     fprintf(stderr, "TestMTStreamReader() test_size=%llu, i=%llu\n", (unsigned long long)test_size, (unsigned long long)i);
-     abort();
-    }
-   }
-   //
-   test_mtsr->advance(1);
-  }
- }
-}
-#endif
-
 bool MDFN_RunMathTests(void)
 {
  TestSStringNullChar();
@@ -2556,13 +2293,14 @@ bool MDFN_RunMathTests(void)
 
  TestArrayStruct();
 
+ TestJump();
+
  TestSimpleBitset();
 
  TestStrArgsSplit();
 
  TestEscapeString();
 
- //TestMTStreamReader();
  //
  assert(!MDFN_strazicmp("", ""));
  assert(!MDFN_strazicmp("AA", "AZ", 1));

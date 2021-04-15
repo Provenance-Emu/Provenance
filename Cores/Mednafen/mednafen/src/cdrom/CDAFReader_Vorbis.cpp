@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* CDAFReader_Vorbis.cpp:
-**  Copyright (C) 2010-2016 Mednafen Team
+**  Copyright (C) 2010-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -111,6 +111,13 @@ static long iov_tell_func(void *user_data)
 
 CDAFReader_Vorbis::CDAFReader_Vorbis(Stream *fp) : fw(fp)
 {
+ uint8 magic[4];
+
+ if(fw->read(magic, 4, false) != 4 || memcmp(magic, "OggS", 4))
+  throw 0;
+
+ fw->rewind();
+ //
  ov_callbacks cb;
 
  memset(&cb, 0, sizeof(cb));

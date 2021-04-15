@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* qtrecord.cpp:
-**  Copyright (C) 2010-2016 Mednafen Team
+**  Copyright (C) 2010-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -248,7 +248,10 @@ QTRecord::QTRecord(const std::string& path, const VideoSpec &spec) : qtfile(path
   RawVideoBuffer.resize(QTVideoWidth * QTVideoHeight * 3);
 
  if(VideoCodec == VCODEC_CSCD)
+ {
+  lzo1x_1_workmem.reset(new uint8[LZO1X_1_MEM_COMPRESS]);
   CompressedVideoBuffer.resize((RawVideoBuffer.size() * 110 + 99 ) / 100);	// 1.10
+ }
  else if(VideoCodec == VCODEC_PNG)
   CompressedVideoBuffer.resize(compressBound(RawVideoBuffer.size()));
 
@@ -264,6 +267,61 @@ QTRecord::QTRecord(const std::string& path, const VideoSpec &spec) : qtfile(path
  atom_begin("mdat", false);
 }
 
+
+template<typename T, uint64 rgb16_tag = 0>
+static void DecodeLine(const T* src, const MDFN_PixelFormat& src_pf, int src_width, uint8* dest, bool dest_bgr, uint32 dest_width)
+{
+ const int xscale_factor = dest_width / src_width;
+ uint32 dest_x = 0;
+ const unsigned rs = src_pf.Rshift;
+ const unsigned gs = src_pf.Gshift;
+ const unsigned bs = src_pf.Bshift;
+
+ for(int x = 0; x < src_width; x++)
+ {
+  const uint32 c = src[x];
+  int r, g, b;
+
+  if(sizeof(T) == 2)
+   MDFN_PixelFormat::TDecodeColor(rgb16_tag, c, &r, &g, &b);
+  else
+  {
+   r = (uint8)(c >> rs);
+   g = (uint8)(c >> gs);
+   b = (uint8)(c >> bs);
+  }
+
+  for(int sub_x = 0; sub_x < xscale_factor; sub_x++)
+  {
+   if(dest_x < dest_width)
+   {
+    if(dest_bgr)
+    {
+     dest[dest_x * 3 + 0] = b;
+     dest[dest_x * 3 + 1] = g;
+     dest[dest_x * 3 + 2] = r;
+    }
+    else
+    {
+     dest[dest_x * 3 + 0] = r;
+     dest[dest_x * 3 + 1] = g;
+     dest[dest_x * 3 + 2] = b;
+    }
+
+    dest_x++;
+   }
+  }
+ }
+
+ while(dest_x < dest_width)
+ {
+  dest[dest_x * 3 + 0] = 0;
+  dest[dest_x * 3 + 1] = 0;
+  dest[dest_x * 3 + 2] = 0;
+
+  dest_x++;
+ }
+}
 
 void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayRect, const int32 *LineWidths,
 			  const int16 *SoundBuf, const int32 SoundBufSize, const int64 MasterCycles)
@@ -288,11 +346,7 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
 
   for(int y = DisplayRect.y; y < DisplayRect.y + DisplayRect.h; y++)
   {
-   int x_start;
    int width;
-   int xscale_factor;
-   uint32 dest_x;
-   uint32 *src_ptr;
    uint8 *dest_line;
 
    if(dest_y >= QTVideoHeight)
@@ -305,18 +359,10 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
    else
     dest_line = &RawVideoBuffer[dest_y * QTVideoWidth * 3];
 
-   x_start = DisplayRect.x;
-
    if(LineWidths[0] == ~0)
     width = DisplayRect.w;
    else
     width = LineWidths[y];
-
-   xscale_factor = QTVideoWidth / width;
-
-   dest_x = 0;
-
-   src_ptr = surface->pixels + y * surface->pitchinpix + x_start;
 
    if(VideoCodec == VCODEC_PNG)
    {
@@ -324,53 +370,22 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
     dest_line++;
    }
 
-#if 0
-   while(dest_x < ((QTVideoWidth - (xscale_factor * width)) / 2))
+   switch(surface->format.opp)
    {
-    dest_line[dest_x * 3 + 0] = 0;
-    dest_line[dest_x * 3 + 1] = 0;
-    dest_line[dest_x * 3 + 2] = 0;
+    case 1:
+	DecodeLine<uint8>(surface->pix<uint8>() + y * surface->pitchinpix + DisplayRect.x, surface->format, width, dest_line, VideoCodec == VCODEC_CSCD, QTVideoWidth);
+	break;
 
-    dest_x++;
-   }
-#endif
+    case 2:
+	if(surface->format.Gprec == 5)
+	 DecodeLine<uint16, MDFN_PixelFormat::IRGB16_1555>(surface->pix<uint16>() + y * surface->pitchinpix + DisplayRect.x, surface->format, width, dest_line, VideoCodec == VCODEC_CSCD, QTVideoWidth);
+	else
+	 DecodeLine<uint16, MDFN_PixelFormat::RGB16_565>(surface->pix<uint16>() + y * surface->pitchinpix + DisplayRect.x, surface->format, width, dest_line, VideoCodec == VCODEC_CSCD, QTVideoWidth);
+	break;
 
-   for(int x = x_start; x < x_start + width; x++)
-   {
-    for(int sub_x = 0; sub_x < xscale_factor; sub_x++)
-    {
-     if(dest_x < QTVideoWidth)
-     {
-      int r, g, b, a;
-
-      surface->DecodeColor(*src_ptr, r, g, b, a);
-
-      if(VideoCodec == VCODEC_CSCD)
-      {
-       dest_line[dest_x * 3 + 0] = b;
-       dest_line[dest_x * 3 + 1] = g;
-       dest_line[dest_x * 3 + 2] = r;
-      }
-      else
-      {
-       dest_line[dest_x * 3 + 0] = r;
-       dest_line[dest_x * 3 + 1] = g;
-       dest_line[dest_x * 3 + 2] = b;
-      }
-
-      dest_x++;
-     }
-    }
-    src_ptr++;
-   }
-
-   while(dest_x < QTVideoWidth)
-   {
-    dest_line[dest_x * 3 + 0] = 0;
-    dest_line[dest_x * 3 + 1] = 0;
-    dest_line[dest_x * 3 + 2] = 0;
-
-    dest_x++;
+    case 4:
+	DecodeLine<uint32>(surface->pix<uint32>() + y * surface->pitchinpix + DisplayRect.x, surface->format, width, dest_line, VideoCodec == VCODEC_CSCD, QTVideoWidth);
+	break;
    }
 
    for(int sub_y = 1; sub_y < yscale_factor; sub_y++)
@@ -392,7 +407,6 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
 
  if(VideoCodec == VCODEC_CSCD)
  {
-  static uint8 workmem[LZO1X_1_MEM_COMPRESS];
   lzo_uint dst_len = CompressedVideoBuffer.size();
   uint8 tmp[2];
 
@@ -401,7 +415,7 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
 
   qtfile.write(tmp, 2);
 
-  lzo1x_1_compress(&RawVideoBuffer[0], RawVideoBuffer.size(), &CompressedVideoBuffer[0], &dst_len, workmem);
+  lzo1x_1_compress(&RawVideoBuffer[0], RawVideoBuffer.size(), &CompressedVideoBuffer[0], &dst_len, lzo1x_1_workmem.get());
 
   qtfile.write(&CompressedVideoBuffer[0], dst_len);
  }

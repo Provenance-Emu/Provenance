@@ -96,13 +96,10 @@ static size_t utf32_strlen(const char32_t *s)
  return(ret);
 }
 
-static void DecodeGlyph(char32_t thisglyph, const uint8 **glyph_ptr, uint8 *glyph_width, uint8 *glyph_ov_width, uint32 fontid)
+static bool DecodeGlyph(char32_t thisglyph, const uint8 **glyph_ptr, uint8 *glyph_width, uint32 fontid)
 {
  bool GlyphFound = false;
  uint32 recurse_fontid = fontid;
-
- //if(thisglyph < 0x20)
- // thisglyph = 0x2400 + thisglyph;
 
  while(!GlyphFound)
  {
@@ -117,28 +114,28 @@ static void DecodeGlyph(char32_t thisglyph, const uint8 **glyph_ptr, uint8 *glyp
   else
    break;
  }
+ const bool iscomb = UCPIsCombining(thisglyph);
 
  if(!GlyphFound)
  {
-  *glyph_ptr = FontDescriptors[fontid].base_ptr + (FontDescriptors[fontid].entry_bsize * FontDataIndexCache[fontid][0xFFFD]);
+  *glyph_ptr = FontDescriptors[fontid].base_ptr + (FontDescriptors[fontid].entry_bsize * FontDataIndexCache[fontid][/*iscomb ? 0x0020 : */0xFFFD]);
   *glyph_width = FontDescriptors[fontid].glyph_width;
  }
 
- if((thisglyph >= 0x0300 && thisglyph <= 0x036F) || (thisglyph >= 0xFE20 && thisglyph <= 0xFE2F))
-  *glyph_ov_width = 0;
- //else if(MDFN_UNLIKELY(thisglyph < 0x20))
- //{
- // if(thisglyph == '\b')	(If enabling this, need to change all glyph_ov_width types to int8)
- // {
- //  glyph_width[x] = 0;
- //  glyph_ov_width[x] = std::max<int64>(-(int64)ret, -FontDescriptors[fontid].glyph_width);
- //}
- //}
- else
-  *glyph_ov_width = *glyph_width;
+ return iscomb;
 }
 
-static uint32 GetTextPixLength(const char32_t* text, const size_t text_len, const uint32 fontid)
+uint32 GetGlyphWidth(char32_t cp, uint32 fontid)
+{
+ const uint8* glyph_ptr;
+ uint8 glyph_width;
+
+ DecodeGlyph(cp, &glyph_ptr, &glyph_width, fontid);
+
+ return glyph_width;
+}
+
+uint32 GetTextPixLength(const char32_t* text, const size_t text_len, const uint32 fontid)
 {
  uint32 ret = 0;
 
@@ -146,11 +143,13 @@ static uint32 GetTextPixLength(const char32_t* text, const size_t text_len, cons
  {
   const uint8 *glyph_ptr;
   uint8 glyph_width;
-  uint8 glyph_ov_width;
 
-  DecodeGlyph(text[i], &glyph_ptr, &glyph_width, &glyph_ov_width, fontid);
-  ret += (i == (text_len - 1)) ? glyph_width : glyph_ov_width;
+  if(DecodeGlyph(text[i], &glyph_ptr, &glyph_width, fontid))
+   ret += glyph_width - std::min<uint32>(ret, glyph_width);
+  else
+   ret += glyph_width;
  }
+
  return ret;
 }
 
@@ -196,9 +195,13 @@ static uint32 DoRealDraw(T* const surfp, uint32 pitch, const int32 x, const int3
  {
   const uint8* glyph_ptr;
   uint8 glyph_width;
-  uint8 glyph_ov_width;
 
-  DecodeGlyph(text[i], &glyph_ptr, &glyph_width, &glyph_ov_width, fontid);
+  if(DecodeGlyph(text[i], &glyph_ptr, &glyph_width, fontid))
+  {
+   const uint32 poffs_adj = std::min<uint32>(ret, glyph_width);
+   ret -= poffs_adj;
+   dest -= poffs_adj;
+  }
   //
   //
   //
@@ -221,9 +224,11 @@ static uint32 DoRealDraw(T* const surfp, uint32 pitch, const int32 x, const int3
    sd += sd_inc;
   }
 
-  dest += glyph_ov_width;
-  ret += (i == (text_len - 1)) ? glyph_width : glyph_ov_width;
+  ret += glyph_width;
+  dest += glyph_width;
  }
+
+ //assert(ret == GetTextPixLength(text, text_len, fontid));
 
  return ret;
 }
@@ -264,24 +269,24 @@ static uint32 DrawTextUTF32(MDFN_Surface* surf, const MDFN_Rect* cr, int32 x, in
    x += (int32)(hcenterw - pixwidth) / 2;
  }
 
- switch(surf->format.bpp)
+ switch(surf->format.opp)
  {
   default:
 	return 0;
 
-  case 8:
+  case 1:
 	if(shadow)
 	 DoRealDraw(surf->pix<uint8>(), surf->pitchinpix, x + 1, y + 1, bx0, bx1, by0, by1, shadcolor, text, text_len, fontid);
 
 	return DoRealDraw(surf->pix<uint8>(), surf->pitchinpix, x, y, bx0, bx1, by0, by1, color, text, text_len, fontid);
 
-  case 16:
+  case 2:
 	if(shadow)
 	 DoRealDraw(surf->pix<uint16>(), surf->pitchinpix, x + 1, y + 1, bx0, bx1, by0, by1, shadcolor, text, text_len, fontid);
 
 	return DoRealDraw(surf->pix<uint16>(), surf->pitchinpix, x, y, bx0, bx1, by0, by1, color, text, text_len, fontid);
 
-  case 32:
+  case 4:
 	if(shadow)
 	 DoRealDraw(surf->pix<uint32>(), surf->pitchinpix, x + 1, y + 1, bx0, bx1, by0, by1, shadcolor, text, text_len, fontid);
 

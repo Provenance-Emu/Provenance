@@ -371,7 +371,7 @@ SexyAL_device *SexyALI_WASAPISH_Open(const char *id, SexyAL_format *format, Sexy
   return(NULL);
  }
 
- if((w->avrt_dll = LoadLibrary("avrt.dll")) != NULL)
+ if((w->avrt_dll = LoadLibrary(TEXT("avrt.dll"))) != NULL)
  {
   if(!(w->p_AvSetMmThreadCharacteristicsA = (HANDLE WINAPI (*)(LPCSTR, LPDWORD))(GetProcAddress(w->avrt_dll, "AvSetMmThreadCharacteristicsA"))))
   {

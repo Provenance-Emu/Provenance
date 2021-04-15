@@ -2,7 +2,7 @@
 /* Mednafen Fast SNES Emulation Module                                        */
 /******************************************************************************/
 /* cart.cpp:
-**  Copyright (C) 2015-2019 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -178,17 +178,25 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
   SPECIAL_CHIP_ST010,
   SPECIAL_CHIP_ST011
  };
- unsigned special_chip = SPECIAL_CHIP_NONE;
- unsigned rom_layout = ROM_LAYOUT_INVALID;
+ const bool maybe_exrom = (size >= 4 * 1024 * 1024 + 32768);
+ const unsigned rv[4] = { MDFN_de16lsb(&Cart.ROM[0x7FFC]), MDFN_de16lsb(&Cart.ROM[0xFFFC]), MDFN_de16lsb(&Cart.ROM[0x407FFC]), MDFN_de16lsb(&Cart.ROM[0x40FFFC]) };
  unsigned ram_size = 0;
- //uint8* header = NULL;
+ int header_found = false;
+ unsigned special_chip = SPECIAL_CHIP_NONE;
+ unsigned rom_layout;
 
- for(unsigned s = 0; s < 2; s++)
+ if(maybe_exrom && rv[3] >= 0x8000)
+  rom_layout = ROM_LAYOUT_EXHIROM;
+ else if(rv[0] < 0x8000 && rv[1] >= 0x8000)
+  rom_layout = ROM_LAYOUT_HIROM;
+ else
+  rom_layout = ROM_LAYOUT_LOROM;
+
+ for(unsigned s = 0; s < 4 && header_found <= 0; s++)
  {
-  unsigned char* tmp = &Cart.ROM[s * 0x8000];
-  unsigned rv = MDFN_de16lsb(&tmp[0x7FFC]);
+  uint8* tmp = &Cart.ROM[(s & 1) * 0x8000 + ((s & 2) ? 0x400000 : 0x000000)];
 
-  if(rv >= 0x8000)
+  if(rv[s] >= 0x8000)
   {
    const uint8 header_ram_size = tmp[0x7FD8];
    const uint8 header_rom_size = tmp[0x7FD7];
@@ -198,75 +206,110 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
    const uint8 header_developer = tmp[0x7FDA];
    const uint8 header_subchip = tmp[0x7FBF];
 
-   if(rom_layout == ROM_LAYOUT_INVALID)
-    rom_layout = (s ? ROM_LAYOUT_HIROM : ROM_LAYOUT_LOROM);
+   if(header_rom_size < 0x01 || header_rom_size > 0x0D || header_ram_size > 0x09)
+    continue;
 
-   if(header_rom_size >= 0x01 && header_rom_size <= 0x0D && header_ram_size >= 0x00 && header_ram_size <= 0x09)
+   if(tmp[0x7FDC] != (tmp[0x7FDE] ^ 0xFF) || tmp[0x7FDD] != (tmp[0x7FDF] ^ 0xFF))
    {
-    if(tmp[0x7FDC] == (tmp[0x7FDE] ^ 0xFF) && tmp[0x7FDD] == (tmp[0x7FDF] ^ 0xFF))
-    {
-     //	printf("Country: %02x\n", country_code);
-     switch(country_code)
-     {
-      case 0x02:
-      case 0x03:
-      case 0x04:
-      case 0x05:
-      case 0x06:
-      case 0x07:
-      case 0x08:
-      case 0x09:
-      case 0x0A:
-      case 0x0B:
-      case 0x0C:
-      case 0x11:
+#if 0
+    if((header_rom_speedmap & 0xE0) != 0x20)
+     continue;
+
+    if(!(0x2F & (1U << (header_rom_speedmap & 0xF))))
+     continue;
+#else
+    if((header_rom_speedmap & 0xEE) != 0x20)
+     continue;
+
+    if(header_chipset != 0x02 && header_chipset != 0x00)
+     continue;
+#endif
+
+    if(country_code > 0x14)
+     continue;
+
+    if(header_found)
+     continue;
+
+    //fprintf(stderr, "%02x %02x %02x %02x\n", tmp[0x7FD5], tmp[0x7FD6], tmp[0x7FD7], tmp[0x7FD8]);
+
+    header_found = -1;
+   }
+   else
+    header_found = true;
+   //
+   //
+   //
+   switch(country_code)
+   {
+    case 0x02:
+    case 0x03:
+    case 0x04:
+    case 0x05:
+    case 0x06:
+    case 0x07:
+    case 0x08:
+    case 0x09:
+    case 0x0A:
+    case 0x0B:
+    case 0x0C:
+    case 0x11:
 	IsPAL = true;
 	break;
-     }
+   }
 
-     switch(header_rom_speedmap)
-     {
-      case 0x30:
-      case 0x20:
-	rom_layout = ROM_LAYOUT_LOROM;
+   switch(header_rom_speedmap)
+   {
+    default:
+	if(maybe_exrom && (s & 2))
+	 rom_layout = (s & 1) ? ROM_LAYOUT_EXHIROM : ROM_LAYOUT_EXLOROM;
+	else
+	 rom_layout = (s & 1) ? ROM_LAYOUT_HIROM : ROM_LAYOUT_LOROM;
 	break;
 
-      case 0x31:
-      case 0x21:
+    case 0x30:
+    case 0x20:
+	rom_layout = ROM_LAYOUT_LOROM;
+
+	// For "Derby Stallion 96", "RPG Tsukuru 2", and "Sound Novel Tsukuru"
+	if(header_developer == 0x33 && tmp[0x7FB0] == 0x42 && tmp[0x7FB1] == 0x31 && tmp[0x7FB2] == 0x5A && tmp[0x7FB3] > 0x20 && tmp[0x7FB4] > 0x20 && tmp[0x7FB5] > 0x20)
+	 rom_layout = ROM_LAYOUT_LOROM_SPECIAL;
+	break;
+
+    case 0x31:
+    case 0x21:
 	rom_layout = ROM_LAYOUT_HIROM;
 	break;
 
-      case 0x32:
+    case 0x32:
 	rom_layout = ROM_LAYOUT_EXLOROM;
 	break;
 
-      case 0x35:
+    case 0x35:
 	rom_layout = ROM_LAYOUT_EXHIROM;
 	break;
+   }
 
-      default:
-	if(size >= 4 * 1024 * 1024 + 32768)
-	 rom_layout = s ? ROM_LAYOUT_EXHIROM : ROM_LAYOUT_EXLOROM;
-	else
-	 rom_layout = s ? ROM_LAYOUT_HIROM : ROM_LAYOUT_LOROM;
-	break;
-     }
+   if(rom_layout == ROM_LAYOUT_HIROM && (rv[1] < 0x8000) && (rv[0] >= 0x8000))
+    rom_layout = ROM_LAYOUT_LOROM;
+   else if(rom_layout == ROM_LAYOUT_LOROM && (rv[0] < 0x8000) && (rv[1] >= 0x8000))
+    rom_layout = ROM_LAYOUT_HIROM;
 
+   {
+    const unsigned ln = header_chipset & 0xF;
+    const unsigned hn = header_chipset >> 4;
+
+    SNES_DBG("[CART] %02x %02x\n", header_chipset, header_subchip);
+
+    ram_size = (header_ram_size ? (0x800 << (header_ram_size - 1)) : 0);
+
+    SNES_DBG("[CART] %02x %02x %02x %02x --- %c%c%c%c\n", rom_layout, header_ram_size, header_rom_size, header_developer, tmp[0x7FB2], tmp[0x7FB3], tmp[0x7FB4], tmp[0x7FB5]);
+
+    if(ln >= 0x3 && ln <= 0xA && ln != 0x7 && ln != 0x8)
+    {
+     switch(hn)
      {
-      const unsigned ln = header_chipset & 0xF;
-      const unsigned hn = header_chipset >> 4;
-
-      SNES_DBG("[CART] %02x %02x\n", header_chipset, header_subchip);
-
-      ram_size = (header_ram_size ? (0x800 << (header_ram_size - 1)) : 0);
-
-      SNES_DBG("[CART] %02x %02x %02x %02x\n", rom_layout, header_ram_size, header_rom_size, header_developer);
-
-      if(ln >= 0x3 && ln <= 0xA && ln != 0x7 && ln != 0x8)
-      {
-       switch(hn)
-       {
-        case 0x0: // DSPn
+      case 0x0: // DSPn
 		if(rom_layout == ROM_LAYOUT_LOROM && header_ram_size == 0x05 && header_rom_size == 0x0A)
 		{
 		 SNES_DBG("[CART] DSP2\n");
@@ -296,7 +339,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
 		}
 		break;
 
-        case 0x1:
+      case 0x1:
 		special_chip = SPECIAL_CHIP_SUPERFX;
 		if(!ram_size)
 		{
@@ -308,31 +351,54 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
 		  ram_size = 32768;
 		}
 		break;
-        case 0x2: special_chip = SPECIAL_CHIP_OBC1; break; // OBC1
-        case 0x3: special_chip = SPECIAL_CHIP_SA1; break; // SA1
-        case 0x4: special_chip = SPECIAL_CHIP_SDD1; break; // SDD1
-        case 0xF:
-	 switch(header_subchip)
-	 {
-          case 0x00: special_chip = SPECIAL_CHIP_SPC7110; break;
-	  case 0x01: /*special_chip = SPECIAL_CHIP_ST010_ST011;*/ break;
-	  case 0x02: special_chip = SPECIAL_CHIP_ST018; break;
-	  case 0x10: special_chip = SPECIAL_CHIP_CX4; break;
-	 }
-	 break;
-       }
+      case 0x2: special_chip = SPECIAL_CHIP_OBC1; break; // OBC1
+      case 0x3: special_chip = SPECIAL_CHIP_SA1; break; // SA1
+      case 0x4: special_chip = SPECIAL_CHIP_SDD1; break; // SDD1
+      case 0xF:
+		switch(header_subchip)
+		{
+		 case 0x00: special_chip = SPECIAL_CHIP_SPC7110; break;
+		 case 0x01: /*special_chip = SPECIAL_CHIP_ST010_ST011;*/ break;
+		 case 0x02: special_chip = SPECIAL_CHIP_ST018; break;
+		 case 0x10: special_chip = SPECIAL_CHIP_CX4; break;
+	 	}
+	 	break;
+     }
+    }
+   }
+   //
+   //
+   //
+   if(rom_layout == ROM_LAYOUT_LOROM && special_chip == SPECIAL_CHIP_NONE && size <= (0x70 * 32768) && ram_size)
+   {
+    // For "Light Fantasy" and "Ys III"
+    if(header_developer == 0xC6 || header_developer == 0x53)
+    {
+     for(uint64 i = 0; i < (1024 * 1024 - 7); i++)
+     {
+      uint8* const p = &Cart.ROM[i];
+      bool isd = false;
+
+      isd |= ((p[0] == 0xA9 && p[1] == 0x00) || p[1] == 0xA9) && p[2] == 0x00 && (p[3] == 0x9F || p[3] == 0x8F) && p[4] == 0x00 && p[5] == 0x80 && p[6] == 0x70;
+
+      if(isd)
+      {
+       rom_layout = ROM_LAYOUT_LOROM_SRAM8000MIRROR;
+       break;
       }
      }
-
-     break;
     }
+    // For "PGA Tour Golf"
+    else if(header_rom_speedmap == 0x20 && header_rom_size == 0x09 && header_ram_size == 0x03 && (header_developer == 0x69 || (header_developer == 0x9C && country_code == 0x00)))
+     rom_layout = ROM_LAYOUT_LOROM_SRAM8000MIRROR;
    }
   }
  }
 
- if(rom_layout == ROM_LAYOUT_INVALID)	// FIXME: Error out?
-  rom_layout = ROM_LAYOUT_LOROM;
-
+ assert(rom_layout != ROM_LAYOUT_INVALID);
+ //
+ //
+ //
  SNES_DBG("[CART] rom_layout=%d\n", rom_layout);
  Cart.ROMLayout = rom_layout;
  Cart.ROM_Size = size;
@@ -370,7 +436,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
    readfunc cart_r;
    const writefunc cart_w = (bank & 0x80) ? OBWrite_VAR : OBWrite_SLOW;
 
-   if(rom_layout == ROM_LAYOUT_LOROM || rom_layout == ROM_LAYOUT_EXLOROM)
+   if(rom_layout == ROM_LAYOUT_LOROM || rom_layout == ROM_LAYOUT_EXLOROM || rom_layout == ROM_LAYOUT_LOROM_SRAM8000MIRROR)
    {
     if(rom_layout == ROM_LAYOUT_EXLOROM && bank < 0xC0)
      cart_r = ((bank >= 0x80) ? CartRead_LoROM<-1, 0x400000> : CartRead_LoROM<MEMCYC_SLOW, 0x400000>);
@@ -378,6 +444,35 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
      cart_r = ((bank >= 0x80) ? CartRead_LoROM<-1> : CartRead_LoROM<MEMCYC_SLOW>);
 
     Set_A_Handlers((bank << 16) | 0x8000, (bank << 16) | 0xFFFF, cart_r, cart_w);
+
+    if(Cart.RAM_Mask != SIZE_MAX)
+    {
+     const uint16 ha = (rom_layout == ROM_LAYOUT_LOROM_SRAM8000MIRROR) ? 0xFFFF : 0x7FFF;
+
+     if(bank >= 0x70 && bank <= 0x7D)
+      Set_A_Handlers((bank << 16) | 0x0000, (bank << 16) | ha, CartRead_SRAM_LoROM<MEMCYC_SLOW>, CartWrite_SRAM_LoROM<MEMCYC_SLOW>);
+     else if(bank >= 0xF0)
+      Set_A_Handlers((bank << 16) | 0x0000, (bank << 16) | ha, CartRead_SRAM_LoROM<-1>, CartWrite_SRAM_LoROM<-1>);
+    }
+   }
+   else if(rom_layout == ROM_LAYOUT_LOROM_SPECIAL)
+   {
+    uint32 la = 0x8000;
+    uint32 ha = 0xFFFF;
+
+    cart_r = (bank & 0x80) ? OBRead_VAR : OBRead_SLOW;
+
+    if(bank < 0x40 || (bank >= 0xA0 && bank <= 0xBF))
+     cart_r = (bank >= 0x80) ? CartRead_LoROM<-1> : CartRead_LoROM<MEMCYC_SLOW>;
+    else if(bank >= 0x80 && bank <= 0x9F)
+     cart_r = CartRead_LoROM<-1, 0x200000>;
+    else if(bank >= 0xC0 && bank <= 0xDF)
+    {
+     la = 0x0000;
+     cart_r = CartRead_LoROM<-1, 0x100000>;
+    }
+
+    Set_A_Handlers((bank << 16) | la, (bank << 16) | ha, cart_r, cart_w);
 
     if(Cart.RAM_Mask != SIZE_MAX)
     {
@@ -540,7 +635,7 @@ void CART_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 {
  SFORMAT StateRegs[] =
  {
-  SFPTR8N(Cart.RAM, Cart.RAM_Size, "&CartRAM[0]"),
+  SFPTR8N(Cart.RAM, Cart.RAM_Size, SFORMAT::FORM::NVMEM, "&CartRAM[0]"),
 
   SFEND
  };

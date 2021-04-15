@@ -244,11 +244,11 @@
 /* Define to 1 if you have the `asound' library (-lasound). */
 #undef HAVE_LIBASOUND
 
+/* Define if we are compiling with libFLAC support. */
+#undef HAVE_LIBFLAC
+
 /* Define to 1 if you have the `mpcdec' library (-lmpcdec). */
 #undef HAVE_LIBMPCDEC
-
-/* Define if we are compiling with libsndfile support. */
-#undef HAVE_LIBSNDFILE
 
 /* Define to 1 if you have the `trio' library (-ltrio). */
 #undef HAVE_LIBTRIO
@@ -270,6 +270,9 @@
 
 /* Define to 1 if the system has the type `long long int'. */
 #undef HAVE_LONG_LONG_INT
+
+/* Define to 1 if you have the `lseek64' function. */
+#undef HAVE_LSEEK64
 
 /* Define to 1 if you have the `madvise' function. */
 #undef HAVE_MADVISE
@@ -422,6 +425,9 @@
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
 
+/* Define to 1 if you have the `siglongjmp' function. */
+#undef HAVE_SIGLONGJMP
+
 /* Define to 1 if you have the `signal' function. */
 #undef HAVE_SIGNAL
 
@@ -525,6 +531,9 @@
 
 /* Define to 1 if O_NOFOLLOW works. */
 #undef HAVE_WORKING_O_NOFOLLOW
+
+/* Define to 1 if you have the `_longjmp' function. */
+#undef HAVE__LONGJMP
 
 /* Define to 1 if you have the `_mkdir' function. */
 #undef HAVE__MKDIR

@@ -271,29 +271,31 @@ bin_PROGRAMS = mednafen$(EXEEXT)
 @NEED_SMS_APU_EMU_TRUE@am__append_54 = hw_sound/sms_apu/Sms_Apu.cpp
 @NEED_PCE_PSG_EMU_TRUE@am__append_55 = hw_sound/pce_psg/pce_psg.cpp
 @NEED_HUC6270_EMU_TRUE@am__append_56 = hw_video/huc6270/vdc.cpp
-@WIN32_TRUE@am__append_57 = mthreading/MThreading_Win32.cpp
-@WIN32_FALSE@am__append_58 = mthreading/MThreading_POSIX.cpp
-@HAVE_LIBSNDFILE_TRUE@am__append_59 = cdrom/CDAFReader_SF.cpp
-@NEED_BLIP_BUFFER_TRUE@am__append_60 = sound/Blip_Buffer.cpp sound/Stereo_Buffer.cpp
-@HAVE_POSIX_SOCKETS_TRUE@am__append_61 = net/Net_POSIX.cpp
-@WIN32_TRUE@am__append_62 = net/Net_WS2.cpp
-@ARCH_X86_TRUE@am__append_63 = cputest/x86_cpu.c
-@ARCH_POWERPC_TRUE@am__append_64 = cputest/ppc_cpu.c
-@HAVE_EXTERNAL_LZO2_TRUE@am__append_65 = @LZO2_LIBS@
-@HAVE_EXTERNAL_LZO2_TRUE@am__append_66 = @LZO2_CFLAGS@
-@HAVE_EXTERNAL_LZO2_FALSE@am__append_67 = minilzo/minilzo.c
-@HAVE_EXTERNAL_TREMOR_TRUE@am__append_68 = @TREMOR_LIBS@
-@HAVE_EXTERNAL_TREMOR_FALSE@am__append_69 = libvorbisidec.a
-@HAVE_EXTERNAL_TREMOR_FALSE@am__append_70 = libvorbisidec.a
+@WIN32_TRUE@am__append_57 = time/Time_Win32.cpp
+@WIN32_FALSE@am__append_58 = time/Time_POSIX.cpp
+@WIN32_TRUE@am__append_59 = mthreading/MThreading_Win32.cpp
+@WIN32_FALSE@am__append_60 = mthreading/MThreading_POSIX.cpp
+@HAVE_LIBFLAC_TRUE@am__append_61 = cdrom/CDAFReader_FLAC.cpp
+@NEED_BLIP_BUFFER_TRUE@am__append_62 = sound/Blip_Buffer.cpp sound/Stereo_Buffer.cpp
+@HAVE_POSIX_SOCKETS_TRUE@am__append_63 = net/Net_POSIX.cpp
+@WIN32_TRUE@am__append_64 = net/Net_WS2.cpp
+@ARCH_X86_TRUE@am__append_65 = cputest/x86_cpu.c
+@ARCH_POWERPC_TRUE@am__append_66 = cputest/ppc_cpu.c
+@HAVE_EXTERNAL_LZO2_TRUE@am__append_67 = @LZO2_LIBS@
+@HAVE_EXTERNAL_LZO2_TRUE@am__append_68 = @LZO2_CFLAGS@
+@HAVE_EXTERNAL_LZO2_FALSE@am__append_69 = minilzo/minilzo.c
+@HAVE_EXTERNAL_TREMOR_TRUE@am__append_70 = @TREMOR_LIBS@
 @HAVE_EXTERNAL_TREMOR_FALSE@am__append_71 = libvorbisidec.a
-@HAVE_EXTERNAL_MPCDEC_TRUE@am__append_72 = @MPCDEC_LIBS@
-@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_73 = libmpcdec.a
-@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_74 = libmpcdec.a
+@HAVE_EXTERNAL_TREMOR_FALSE@am__append_72 = libvorbisidec.a
+@HAVE_EXTERNAL_TREMOR_FALSE@am__append_73 = libvorbisidec.a
+@HAVE_EXTERNAL_MPCDEC_TRUE@am__append_74 = @MPCDEC_LIBS@
 @HAVE_EXTERNAL_MPCDEC_FALSE@am__append_75 = libmpcdec.a
-@HAVE_EXTERNAL_TRIO_TRUE@am__append_76 = @TRIO_LIBS@
-@HAVE_EXTERNAL_TRIO_FALSE@am__append_77 = libtrio.a
-@HAVE_EXTERNAL_TRIO_FALSE@am__append_78 = libtrio.a
+@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_76 = libmpcdec.a
+@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_77 = libmpcdec.a
+@HAVE_EXTERNAL_TRIO_TRUE@am__append_78 = @TRIO_LIBS@
 @HAVE_EXTERNAL_TRIO_FALSE@am__append_79 = libtrio.a
+@HAVE_EXTERNAL_TRIO_FALSE@am__append_80 = libtrio.a
+@HAVE_EXTERNAL_TRIO_FALSE@am__append_81 = libtrio.a
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cflags_gcc_option.m4 \
@@ -470,12 +472,12 @@ am__libvorbisidec_a_SOURCES_DIST = tremor/mdct.c tremor/block.c \
 @HAVE_EXTERNAL_TREMOR_FALSE@	tremor/libvorbisidec_a-bitwise.$(OBJEXT)
 libvorbisidec_a_OBJECTS = $(am_libvorbisidec_a_OBJECTS)
 am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
-	settings.cpp endian.cpp Time.cpp mednafen.cpp git.cpp file.cpp \
+	settings.cpp endian.cpp mednafen.cpp git.cpp file.cpp \
 	general.cpp memory.cpp netplay.cpp state.cpp state_rewind.cpp \
 	movie.cpp player.cpp PSFLoader.cpp SSFLoader.cpp \
-	SNSFLoader.cpp SPCReader.cpp tests.cpp qtrecord.cpp \
-	IPSPatcher.cpp VirtualFS.cpp NativeVFS.cpp Stream.cpp \
-	MemoryStream.cpp ExtMemStream.cpp FileStream.cpp \
+	SNSFLoader.cpp SPCReader.cpp tests.cpp testsexp.cpp \
+	qtrecord.cpp IPSPatcher.cpp VirtualFS.cpp NativeVFS.cpp \
+	Stream.cpp MemoryStream.cpp ExtMemStream.cpp FileStream.cpp \
 	MTStreamReader.cpp win32-common.cpp drivers/win-resource.rc \
 	cdplay/cdplay.cpp demo/demo.cpp apple2/apple2.cpp gb/gb.cpp \
 	gb/gfx.cpp gb/gbGlobals.cpp gb/memory.cpp gb/sound.cpp \
@@ -584,6 +586,7 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	hw_sound/gb_apu/Gb_Apu.cpp hw_sound/gb_apu/Gb_Apu_State.cpp \
 	hw_sound/gb_apu/Gb_Oscs.cpp hw_sound/sms_apu/Sms_Apu.cpp \
 	hw_sound/pce_psg/pce_psg.cpp hw_video/huc6270/vdc.cpp \
+	time/Time_Win32.cpp time/Time_POSIX.cpp \
 	mthreading/MThreading_Win32.cpp \
 	mthreading/MThreading_POSIX.cpp cdrom/crc32.cpp \
 	cdrom/galois.cpp cdrom/l-ec.cpp cdrom/recover-raw.cpp \
@@ -592,19 +595,20 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	cdrom/CDAccess.cpp cdrom/CDAccess_Image.cpp \
 	cdrom/CDAccess_CCD.cpp cdrom/CDAFReader.cpp \
 	cdrom/CDAFReader_Vorbis.cpp cdrom/CDAFReader_MPC.cpp \
-	cdrom/CDAFReader_SF.cpp cdrom/scsicd.cpp sound/Blip_Buffer.cpp \
-	sound/Stereo_Buffer.cpp sound/Fir_Resampler.cpp \
-	sound/WAVRecord.cpp sound/okiadpcm.cpp sound/DSPUtility.cpp \
-	sound/SwiftResampler.cpp sound/OwlResampler.cpp net/Net.cpp \
-	net/Net_POSIX.cpp net/Net_WS2.cpp compress/GZFileStream.cpp \
+	cdrom/CDAFReader_FLAC.cpp cdrom/CDAFReader_PCM.cpp \
+	cdrom/scsicd.cpp sound/Blip_Buffer.cpp sound/Stereo_Buffer.cpp \
+	sound/Fir_Resampler.cpp sound/WAVRecord.cpp sound/okiadpcm.cpp \
+	sound/DSPUtility.cpp sound/SwiftResampler.cpp \
+	sound/OwlResampler.cpp net/Net.cpp net/Net_POSIX.cpp \
+	net/Net_WS2.cpp compress/GZFileStream.cpp \
 	compress/ZLInflateFilter.cpp compress/ZIPReader.cpp \
 	hash/md5.cpp hash/sha1.cpp hash/sha256.cpp hash/crc.cpp \
 	string/escape.cpp string/string.cpp video/surface.cpp \
-	video/png.cpp video/primitives.cpp video/video.cpp \
-	video/tblur.cpp video/resize.cpp video/text.cpp \
-	video/font-data.cpp video/font-data-18x18.c \
-	video/font-data-12x13.c video/Deinterlacer.cpp \
+	video/convert.cpp video/tblur.cpp video/Deinterlacer.cpp \
 	video/Deinterlacer_Simple.cpp video/Deinterlacer_Blend.cpp \
+	video/resize.cpp video/video.cpp video/primitives.cpp \
+	video/png.cpp video/text.cpp video/font-data.cpp \
+	video/font-data-18x18.c video/font-data-12x13.c \
 	resampler/resample.c cputest/cputest.c cputest/x86_cpu.c \
 	cputest/ppc_cpu.c cheat_formats/gb.cpp cheat_formats/psx.cpp \
 	cheat_formats/snes.cpp minilzo/minilzo.c
@@ -896,27 +900,29 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 @NEED_PCE_PSG_EMU_TRUE@	hw_sound/pce_psg/pce_psg.$(OBJEXT)
 @NEED_HUC6270_EMU_TRUE@am__objects_33 =  \
 @NEED_HUC6270_EMU_TRUE@	hw_video/huc6270/vdc.$(OBJEXT)
-@WIN32_TRUE@am__objects_34 = mthreading/MThreading_Win32.$(OBJEXT)
-@WIN32_FALSE@am__objects_35 = mthreading/MThreading_POSIX.$(OBJEXT)
-@HAVE_LIBSNDFILE_TRUE@am__objects_36 = cdrom/CDAFReader_SF.$(OBJEXT)
-@NEED_BLIP_BUFFER_TRUE@am__objects_37 = sound/Blip_Buffer.$(OBJEXT) \
+@WIN32_TRUE@am__objects_34 = time/Time_Win32.$(OBJEXT)
+@WIN32_FALSE@am__objects_35 = time/Time_POSIX.$(OBJEXT)
+@WIN32_TRUE@am__objects_36 = mthreading/MThreading_Win32.$(OBJEXT)
+@WIN32_FALSE@am__objects_37 = mthreading/MThreading_POSIX.$(OBJEXT)
+@HAVE_LIBFLAC_TRUE@am__objects_38 = cdrom/CDAFReader_FLAC.$(OBJEXT)
+@NEED_BLIP_BUFFER_TRUE@am__objects_39 = sound/Blip_Buffer.$(OBJEXT) \
 @NEED_BLIP_BUFFER_TRUE@	sound/Stereo_Buffer.$(OBJEXT)
-@HAVE_POSIX_SOCKETS_TRUE@am__objects_38 = net/Net_POSIX.$(OBJEXT)
-@WIN32_TRUE@am__objects_39 = net/Net_WS2.$(OBJEXT)
-@ARCH_X86_TRUE@am__objects_40 = cputest/x86_cpu.$(OBJEXT)
-@ARCH_POWERPC_TRUE@am__objects_41 = cputest/ppc_cpu.$(OBJEXT)
-@HAVE_EXTERNAL_LZO2_FALSE@am__objects_42 = minilzo/minilzo.$(OBJEXT)
+@HAVE_POSIX_SOCKETS_TRUE@am__objects_40 = net/Net_POSIX.$(OBJEXT)
+@WIN32_TRUE@am__objects_41 = net/Net_WS2.$(OBJEXT)
+@ARCH_X86_TRUE@am__objects_42 = cputest/x86_cpu.$(OBJEXT)
+@ARCH_POWERPC_TRUE@am__objects_43 = cputest/ppc_cpu.$(OBJEXT)
+@HAVE_EXTERNAL_LZO2_FALSE@am__objects_44 = minilzo/minilzo.$(OBJEXT)
 am_mednafen_OBJECTS = debug.$(OBJEXT) error.$(OBJEXT) \
 	mempatcher.$(OBJEXT) settings.$(OBJEXT) endian.$(OBJEXT) \
-	Time.$(OBJEXT) mednafen.$(OBJEXT) git.$(OBJEXT) file.$(OBJEXT) \
+	mednafen.$(OBJEXT) git.$(OBJEXT) file.$(OBJEXT) \
 	general.$(OBJEXT) memory.$(OBJEXT) netplay.$(OBJEXT) \
 	state.$(OBJEXT) state_rewind.$(OBJEXT) movie.$(OBJEXT) \
 	player.$(OBJEXT) PSFLoader.$(OBJEXT) SSFLoader.$(OBJEXT) \
 	SNSFLoader.$(OBJEXT) SPCReader.$(OBJEXT) tests.$(OBJEXT) \
-	qtrecord.$(OBJEXT) IPSPatcher.$(OBJEXT) VirtualFS.$(OBJEXT) \
-	NativeVFS.$(OBJEXT) Stream.$(OBJEXT) MemoryStream.$(OBJEXT) \
-	ExtMemStream.$(OBJEXT) FileStream.$(OBJEXT) \
-	MTStreamReader.$(OBJEXT) $(am__objects_1) \
+	testsexp.$(OBJEXT) qtrecord.$(OBJEXT) IPSPatcher.$(OBJEXT) \
+	VirtualFS.$(OBJEXT) NativeVFS.$(OBJEXT) Stream.$(OBJEXT) \
+	MemoryStream.$(OBJEXT) ExtMemStream.$(OBJEXT) \
+	FileStream.$(OBJEXT) MTStreamReader.$(OBJEXT) $(am__objects_1) \
 	cdplay/cdplay.$(OBJEXT) demo/demo.$(OBJEXT) $(am__objects_2) \
 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
@@ -929,36 +935,37 @@ am_mednafen_OBJECTS = debug.$(OBJEXT) error.$(OBJEXT) \
 	$(am__objects_27) $(am__objects_28) $(am__objects_29) \
 	$(am__objects_30) $(am__objects_31) $(am__objects_32) \
 	$(am__objects_33) $(am__objects_34) $(am__objects_35) \
-	cdrom/crc32.$(OBJEXT) cdrom/galois.$(OBJEXT) \
-	cdrom/l-ec.$(OBJEXT) cdrom/recover-raw.$(OBJEXT) \
-	cdrom/lec.$(OBJEXT) cdrom/CDUtility.$(OBJEXT) \
-	cdrom/CDInterface.$(OBJEXT) cdrom/CDInterface_MT.$(OBJEXT) \
-	cdrom/CDInterface_ST.$(OBJEXT) cdrom/CDAccess.$(OBJEXT) \
-	cdrom/CDAccess_Image.$(OBJEXT) cdrom/CDAccess_CCD.$(OBJEXT) \
-	cdrom/CDAFReader.$(OBJEXT) cdrom/CDAFReader_Vorbis.$(OBJEXT) \
-	cdrom/CDAFReader_MPC.$(OBJEXT) $(am__objects_36) \
-	cdrom/scsicd.$(OBJEXT) $(am__objects_37) \
-	sound/Fir_Resampler.$(OBJEXT) sound/WAVRecord.$(OBJEXT) \
-	sound/okiadpcm.$(OBJEXT) sound/DSPUtility.$(OBJEXT) \
-	sound/SwiftResampler.$(OBJEXT) sound/OwlResampler.$(OBJEXT) \
-	net/Net.$(OBJEXT) $(am__objects_38) $(am__objects_39) \
+	$(am__objects_36) $(am__objects_37) cdrom/crc32.$(OBJEXT) \
+	cdrom/galois.$(OBJEXT) cdrom/l-ec.$(OBJEXT) \
+	cdrom/recover-raw.$(OBJEXT) cdrom/lec.$(OBJEXT) \
+	cdrom/CDUtility.$(OBJEXT) cdrom/CDInterface.$(OBJEXT) \
+	cdrom/CDInterface_MT.$(OBJEXT) cdrom/CDInterface_ST.$(OBJEXT) \
+	cdrom/CDAccess.$(OBJEXT) cdrom/CDAccess_Image.$(OBJEXT) \
+	cdrom/CDAccess_CCD.$(OBJEXT) cdrom/CDAFReader.$(OBJEXT) \
+	cdrom/CDAFReader_Vorbis.$(OBJEXT) \
+	cdrom/CDAFReader_MPC.$(OBJEXT) $(am__objects_38) \
+	cdrom/CDAFReader_PCM.$(OBJEXT) cdrom/scsicd.$(OBJEXT) \
+	$(am__objects_39) sound/Fir_Resampler.$(OBJEXT) \
+	sound/WAVRecord.$(OBJEXT) sound/okiadpcm.$(OBJEXT) \
+	sound/DSPUtility.$(OBJEXT) sound/SwiftResampler.$(OBJEXT) \
+	sound/OwlResampler.$(OBJEXT) net/Net.$(OBJEXT) \
+	$(am__objects_40) $(am__objects_41) \
 	compress/GZFileStream.$(OBJEXT) \
 	compress/ZLInflateFilter.$(OBJEXT) \
 	compress/ZIPReader.$(OBJEXT) hash/md5.$(OBJEXT) \
 	hash/sha1.$(OBJEXT) hash/sha256.$(OBJEXT) hash/crc.$(OBJEXT) \
 	string/escape.$(OBJEXT) string/string.$(OBJEXT) \
-	video/surface.$(OBJEXT) video/png.$(OBJEXT) \
-	video/primitives.$(OBJEXT) video/video.$(OBJEXT) \
-	video/tblur.$(OBJEXT) video/resize.$(OBJEXT) \
-	video/text.$(OBJEXT) video/font-data.$(OBJEXT) \
-	video/font-data-18x18.$(OBJEXT) \
-	video/font-data-12x13.$(OBJEXT) video/Deinterlacer.$(OBJEXT) \
+	video/surface.$(OBJEXT) video/convert.$(OBJEXT) \
+	video/tblur.$(OBJEXT) video/Deinterlacer.$(OBJEXT) \
 	video/Deinterlacer_Simple.$(OBJEXT) \
-	video/Deinterlacer_Blend.$(OBJEXT) \
-	resampler/resample.$(OBJEXT) cputest/cputest.$(OBJEXT) \
-	$(am__objects_40) $(am__objects_41) cheat_formats/gb.$(OBJEXT) \
-	cheat_formats/psx.$(OBJEXT) cheat_formats/snes.$(OBJEXT) \
-	$(am__objects_42)
+	video/Deinterlacer_Blend.$(OBJEXT) video/resize.$(OBJEXT) \
+	video/video.$(OBJEXT) video/primitives.$(OBJEXT) \
+	video/png.$(OBJEXT) video/text.$(OBJEXT) \
+	video/font-data.$(OBJEXT) video/font-data-18x18.$(OBJEXT) \
+	video/font-data-12x13.$(OBJEXT) resampler/resample.$(OBJEXT) \
+	cputest/cputest.$(OBJEXT) $(am__objects_42) $(am__objects_43) \
+	cheat_formats/gb.$(OBJEXT) cheat_formats/psx.$(OBJEXT) \
+	cheat_formats/snes.$(OBJEXT) $(am__objects_44)
 mednafen_OBJECTS = $(am_mednafen_OBJECTS)
 am__DEPENDENCIES_1 =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -981,20 +988,20 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	./$(DEPDIR)/NativeVFS.Po ./$(DEPDIR)/PSFLoader.Po \
 	./$(DEPDIR)/SNSFLoader.Po ./$(DEPDIR)/SPCReader.Po \
 	./$(DEPDIR)/SSFLoader.Po ./$(DEPDIR)/Stream.Po \
-	./$(DEPDIR)/Time.Po ./$(DEPDIR)/VirtualFS.Po \
-	./$(DEPDIR)/debug.Po ./$(DEPDIR)/endian.Po \
-	./$(DEPDIR)/error.Po ./$(DEPDIR)/file.Po \
+	./$(DEPDIR)/VirtualFS.Po ./$(DEPDIR)/debug.Po \
+	./$(DEPDIR)/endian.Po ./$(DEPDIR)/error.Po ./$(DEPDIR)/file.Po \
 	./$(DEPDIR)/general.Po ./$(DEPDIR)/git.Po \
 	./$(DEPDIR)/mednafen.Po ./$(DEPDIR)/memory.Po \
 	./$(DEPDIR)/mempatcher.Po ./$(DEPDIR)/movie.Po \
 	./$(DEPDIR)/netplay.Po ./$(DEPDIR)/player.Po \
 	./$(DEPDIR)/qtrecord.Po ./$(DEPDIR)/settings.Po \
 	./$(DEPDIR)/state.Po ./$(DEPDIR)/state_rewind.Po \
-	./$(DEPDIR)/tests.Po ./$(DEPDIR)/win32-common.Po \
-	apple2/$(DEPDIR)/apple2.Po cdplay/$(DEPDIR)/cdplay.Po \
-	cdrom/$(DEPDIR)/CDAFReader.Po \
+	./$(DEPDIR)/tests.Po ./$(DEPDIR)/testsexp.Po \
+	./$(DEPDIR)/win32-common.Po apple2/$(DEPDIR)/apple2.Po \
+	cdplay/$(DEPDIR)/cdplay.Po cdrom/$(DEPDIR)/CDAFReader.Po \
+	cdrom/$(DEPDIR)/CDAFReader_FLAC.Po \
 	cdrom/$(DEPDIR)/CDAFReader_MPC.Po \
-	cdrom/$(DEPDIR)/CDAFReader_SF.Po \
+	cdrom/$(DEPDIR)/CDAFReader_PCM.Po \
 	cdrom/$(DEPDIR)/CDAFReader_Vorbis.Po \
 	cdrom/$(DEPDIR)/CDAccess.Po cdrom/$(DEPDIR)/CDAccess_CCD.Po \
 	cdrom/$(DEPDIR)/CDAccess_Image.Po \
@@ -1239,7 +1246,8 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	sound/$(DEPDIR)/Stereo_Buffer.Po \
 	sound/$(DEPDIR)/SwiftResampler.Po sound/$(DEPDIR)/WAVRecord.Po \
 	sound/$(DEPDIR)/okiadpcm.Po string/$(DEPDIR)/escape.Po \
-	string/$(DEPDIR)/string.Po \
+	string/$(DEPDIR)/string.Po time/$(DEPDIR)/Time_POSIX.Po \
+	time/$(DEPDIR)/Time_Win32.Po \
 	tremor/$(DEPDIR)/libvorbisidec_a-bitwise.Po \
 	tremor/$(DEPDIR)/libvorbisidec_a-block.Po \
 	tremor/$(DEPDIR)/libvorbisidec_a-codebook.Po \
@@ -1263,7 +1271,7 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	video/$(DEPDIR)/Deinterlacer.Po \
 	video/$(DEPDIR)/Deinterlacer_Blend.Po \
 	video/$(DEPDIR)/Deinterlacer_Simple.Po \
-	video/$(DEPDIR)/font-data-12x13.Po \
+	video/$(DEPDIR)/convert.Po video/$(DEPDIR)/font-data-12x13.Po \
 	video/$(DEPDIR)/font-data-18x18.Po \
 	video/$(DEPDIR)/font-data.Po video/$(DEPDIR)/png.Po \
 	video/$(DEPDIR)/primitives.Po video/$(DEPDIR)/resize.Po \
@@ -1390,6 +1398,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(srcdir)/snes_faust/Makefile.am.inc \
 	$(srcdir)/sound/Makefile.am.inc \
 	$(srcdir)/string/Makefile.am.inc \
+	$(srcdir)/time/Makefile.am.inc \
 	$(srcdir)/tremor/Makefile.am.inc \
 	$(srcdir)/trio/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc \
 	$(srcdir)/video/Makefile.am.inc \
@@ -1450,13 +1459,15 @@ CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
-DEFS = @DEFS@ @SNDFILE_CFLAGS@ $(am__append_66)
+DEFS = @DEFS@ @FLAC_CFLAGS@ $(am__append_68)
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FLAC_CFLAGS = @FLAC_CFLAGS@
+FLAC_LIBS = @FLAC_LIBS@
 GENCAT = @GENCAT@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GLIBC2 = @GLIBC2@
@@ -1531,8 +1542,6 @@ SDL_CFLAGS = @SDL_CFLAGS@
 SDL_LIBS = @SDL_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-SNDFILE_CFLAGS = @SNDFILE_CFLAGS@
-SNDFILE_LIBS = @SNDFILE_LIBS@
 SNES_EXTRA_CXXFLAGS = @SNES_EXTRA_CXXFLAGS@
 SNES_EXTRA_FLAGS = @SNES_EXTRA_FLAGS@
 SS_EXTRA_FLAGS = @SS_EXTRA_FLAGS@
@@ -1608,63 +1617,63 @@ DEFAULT_INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include -I$(top_bui
 SUBDIRS = $(am__append_1) $(am__append_5) $(am__append_8) sexyal \
 	$(SS_SUBDIRS)
 noinst_LIBRARIES = $(am__append_21) $(am__append_32) $(am__append_44) \
-	libmdfnquicklz.a $(am__append_69) $(am__append_73) \
-	$(am__append_77)
+	libmdfnquicklz.a $(am__append_71) $(am__append_75) \
+	$(am__append_79)
 mednafen_LDADD = $(am__append_2) $(am__append_6) $(am__append_9) \
 	sexyal/libsexyal.a @ALSA_LIBS@ @JACK_LIBS@ $(am__append_11) \
 	$(am__append_22) $(am__append_33) $(am__append_36) \
 	$(am__append_38) $(am__append_45) libmdfnquicklz.a \
-	$(am__append_65) $(am__append_68) $(am__append_70) \
-	$(am__append_72) $(am__append_74) $(am__append_76) \
-	$(am__append_78) @SNDFILE_LIBS@ @ZLIB_LIBS@ @LIBINTL@ \
-	@LIBICONV@ $(am__empty)
+	$(am__append_67) $(am__append_70) $(am__append_72) \
+	$(am__append_74) $(am__append_76) $(am__append_78) \
+	$(am__append_80) @FLAC_LIBS@ @ZLIB_LIBS@ @LIBINTL@ @LIBICONV@
 mednafen_DEPENDENCIES = $(am__append_3) $(am__append_7) \
 	$(am__append_10) sexyal/libsexyal.a $(am__append_23) \
 	$(am__append_34) $(am__append_37) $(am__append_39) \
-	$(am__append_46) libmdfnquicklz.a $(am__append_71) \
-	$(am__append_75) $(am__append_79)
+	$(am__append_46) libmdfnquicklz.a $(am__append_73) \
+	$(am__append_77) $(am__append_81)
 mednafen_SOURCES = debug.cpp error.cpp mempatcher.cpp settings.cpp \
-	endian.cpp Time.cpp mednafen.cpp git.cpp file.cpp general.cpp \
+	endian.cpp mednafen.cpp git.cpp file.cpp general.cpp \
 	memory.cpp netplay.cpp state.cpp state_rewind.cpp movie.cpp \
 	player.cpp PSFLoader.cpp SSFLoader.cpp SNSFLoader.cpp \
-	SPCReader.cpp tests.cpp qtrecord.cpp IPSPatcher.cpp \
-	VirtualFS.cpp NativeVFS.cpp Stream.cpp MemoryStream.cpp \
-	ExtMemStream.cpp FileStream.cpp MTStreamReader.cpp \
-	$(am__append_4) cdplay/cdplay.cpp demo/demo.cpp \
-	$(am__append_12) $(am__append_13) $(am__append_14) \
-	$(am__append_15) $(am__append_16) $(am__append_17) \
-	$(am__append_18) $(am__append_19) $(am__append_20) \
-	$(am__append_24) $(am__append_25) $(am__append_26) \
-	$(am__append_27) $(am__append_28) $(am__append_29) \
-	$(am__append_30) $(am__append_31) $(am__append_35) \
-	$(am__append_40) $(am__append_41) $(am__append_42) \
-	$(am__append_43) $(am__append_47) $(am__append_48) \
-	$(am__append_49) $(am__append_50) $(am__append_51) \
-	$(am__append_52) $(am__append_53) $(am__append_54) \
-	$(am__append_55) $(am__append_56) $(am__append_57) \
-	$(am__append_58) cdrom/crc32.cpp cdrom/galois.cpp \
+	SPCReader.cpp tests.cpp testsexp.cpp qtrecord.cpp \
+	IPSPatcher.cpp VirtualFS.cpp NativeVFS.cpp Stream.cpp \
+	MemoryStream.cpp ExtMemStream.cpp FileStream.cpp \
+	MTStreamReader.cpp $(am__append_4) cdplay/cdplay.cpp \
+	demo/demo.cpp $(am__append_12) $(am__append_13) \
+	$(am__append_14) $(am__append_15) $(am__append_16) \
+	$(am__append_17) $(am__append_18) $(am__append_19) \
+	$(am__append_20) $(am__append_24) $(am__append_25) \
+	$(am__append_26) $(am__append_27) $(am__append_28) \
+	$(am__append_29) $(am__append_30) $(am__append_31) \
+	$(am__append_35) $(am__append_40) $(am__append_41) \
+	$(am__append_42) $(am__append_43) $(am__append_47) \
+	$(am__append_48) $(am__append_49) $(am__append_50) \
+	$(am__append_51) $(am__append_52) $(am__append_53) \
+	$(am__append_54) $(am__append_55) $(am__append_56) \
+	$(am__append_57) $(am__append_58) $(am__append_59) \
+	$(am__append_60) cdrom/crc32.cpp cdrom/galois.cpp \
 	cdrom/l-ec.cpp cdrom/recover-raw.cpp cdrom/lec.cpp \
 	cdrom/CDUtility.cpp cdrom/CDInterface.cpp \
 	cdrom/CDInterface_MT.cpp cdrom/CDInterface_ST.cpp \
 	cdrom/CDAccess.cpp cdrom/CDAccess_Image.cpp \
 	cdrom/CDAccess_CCD.cpp cdrom/CDAFReader.cpp \
 	cdrom/CDAFReader_Vorbis.cpp cdrom/CDAFReader_MPC.cpp \
-	$(am__append_59) cdrom/scsicd.cpp $(am__append_60) \
-	sound/Fir_Resampler.cpp sound/WAVRecord.cpp sound/okiadpcm.cpp \
-	sound/DSPUtility.cpp sound/SwiftResampler.cpp \
-	sound/OwlResampler.cpp net/Net.cpp $(am__append_61) \
-	$(am__append_62) compress/GZFileStream.cpp \
+	$(am__append_61) cdrom/CDAFReader_PCM.cpp cdrom/scsicd.cpp \
+	$(am__append_62) sound/Fir_Resampler.cpp sound/WAVRecord.cpp \
+	sound/okiadpcm.cpp sound/DSPUtility.cpp \
+	sound/SwiftResampler.cpp sound/OwlResampler.cpp net/Net.cpp \
+	$(am__append_63) $(am__append_64) compress/GZFileStream.cpp \
 	compress/ZLInflateFilter.cpp compress/ZIPReader.cpp \
 	hash/md5.cpp hash/sha1.cpp hash/sha256.cpp hash/crc.cpp \
 	string/escape.cpp string/string.cpp video/surface.cpp \
-	video/png.cpp video/primitives.cpp video/video.cpp \
-	video/tblur.cpp video/resize.cpp video/text.cpp \
-	video/font-data.cpp video/font-data-18x18.c \
-	video/font-data-12x13.c video/Deinterlacer.cpp \
+	video/convert.cpp video/tblur.cpp video/Deinterlacer.cpp \
 	video/Deinterlacer_Simple.cpp video/Deinterlacer_Blend.cpp \
-	resampler/resample.c cputest/cputest.c $(am__append_63) \
-	$(am__append_64) cheat_formats/gb.cpp cheat_formats/psx.cpp \
-	cheat_formats/snes.cpp $(am__append_67)
+	video/resize.cpp video/video.cpp video/primitives.cpp \
+	video/png.cpp video/text.cpp video/font-data.cpp \
+	video/font-data-18x18.c video/font-data-12x13.c \
+	resampler/resample.c cputest/cputest.c $(am__append_65) \
+	$(am__append_66) cheat_formats/gb.cpp cheat_formats/psx.cpp \
+	cheat_formats/snes.cpp $(am__append_69)
 @WANT_NGP_EMU_TRUE@libngp_a_CFLAGS = @AM_CFLAGS@ @NO_STRICT_ALIASING_FLAGS@
 @WANT_NGP_EMU_TRUE@libngp_a_CXXFLAGS = @AM_CXXFLAGS@ @NO_STRICT_ALIASING_FLAGS@
 @WANT_NGP_EMU_TRUE@libngp_a_SOURCES = ngp/bios.cpp ngp/biosHLE.cpp ngp/dma.cpp ngp/flash.cpp ngp/gfx.cpp ngp/T6W28_Apu.cpp	\
@@ -1770,7 +1779,7 @@ all: all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .c .cpp .o .obj .rc
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/time/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1790,7 +1799,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
 	esac;
-$(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__empty):
+$(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/time/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -3057,6 +3066,16 @@ hw_video/huc6270/$(DEPDIR)/$(am__dirstamp):
 	@: > hw_video/huc6270/$(DEPDIR)/$(am__dirstamp)
 hw_video/huc6270/vdc.$(OBJEXT): hw_video/huc6270/$(am__dirstamp) \
 	hw_video/huc6270/$(DEPDIR)/$(am__dirstamp)
+time/$(am__dirstamp):
+	@$(MKDIR_P) time
+	@: > time/$(am__dirstamp)
+time/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) time/$(DEPDIR)
+	@: > time/$(DEPDIR)/$(am__dirstamp)
+time/Time_Win32.$(OBJEXT): time/$(am__dirstamp) \
+	time/$(DEPDIR)/$(am__dirstamp)
+time/Time_POSIX.$(OBJEXT): time/$(am__dirstamp) \
+	time/$(DEPDIR)/$(am__dirstamp)
 mthreading/$(am__dirstamp):
 	@$(MKDIR_P) mthreading
 	@: > mthreading/$(am__dirstamp)
@@ -3103,7 +3122,9 @@ cdrom/CDAFReader_Vorbis.$(OBJEXT): cdrom/$(am__dirstamp) \
 	cdrom/$(DEPDIR)/$(am__dirstamp)
 cdrom/CDAFReader_MPC.$(OBJEXT): cdrom/$(am__dirstamp) \
 	cdrom/$(DEPDIR)/$(am__dirstamp)
-cdrom/CDAFReader_SF.$(OBJEXT): cdrom/$(am__dirstamp) \
+cdrom/CDAFReader_FLAC.$(OBJEXT): cdrom/$(am__dirstamp) \
+	cdrom/$(DEPDIR)/$(am__dirstamp)
+cdrom/CDAFReader_PCM.$(OBJEXT): cdrom/$(am__dirstamp) \
 	cdrom/$(DEPDIR)/$(am__dirstamp)
 cdrom/scsicd.$(OBJEXT): cdrom/$(am__dirstamp) \
 	cdrom/$(DEPDIR)/$(am__dirstamp)
@@ -3184,15 +3205,23 @@ video/$(DEPDIR)/$(am__dirstamp):
 	@: > video/$(DEPDIR)/$(am__dirstamp)
 video/surface.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
-video/png.$(OBJEXT): video/$(am__dirstamp) \
-	video/$(DEPDIR)/$(am__dirstamp)
-video/primitives.$(OBJEXT): video/$(am__dirstamp) \
-	video/$(DEPDIR)/$(am__dirstamp)
-video/video.$(OBJEXT): video/$(am__dirstamp) \
+video/convert.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
 video/tblur.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
+video/Deinterlacer.$(OBJEXT): video/$(am__dirstamp) \
+	video/$(DEPDIR)/$(am__dirstamp)
+video/Deinterlacer_Simple.$(OBJEXT): video/$(am__dirstamp) \
+	video/$(DEPDIR)/$(am__dirstamp)
+video/Deinterlacer_Blend.$(OBJEXT): video/$(am__dirstamp) \
+	video/$(DEPDIR)/$(am__dirstamp)
 video/resize.$(OBJEXT): video/$(am__dirstamp) \
+	video/$(DEPDIR)/$(am__dirstamp)
+video/video.$(OBJEXT): video/$(am__dirstamp) \
+	video/$(DEPDIR)/$(am__dirstamp)
+video/primitives.$(OBJEXT): video/$(am__dirstamp) \
+	video/$(DEPDIR)/$(am__dirstamp)
+video/png.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
 video/text.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
@@ -3201,12 +3230,6 @@ video/font-data.$(OBJEXT): video/$(am__dirstamp) \
 video/font-data-18x18.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
 video/font-data-12x13.$(OBJEXT): video/$(am__dirstamp) \
-	video/$(DEPDIR)/$(am__dirstamp)
-video/Deinterlacer.$(OBJEXT): video/$(am__dirstamp) \
-	video/$(DEPDIR)/$(am__dirstamp)
-video/Deinterlacer_Simple.$(OBJEXT): video/$(am__dirstamp) \
-	video/$(DEPDIR)/$(am__dirstamp)
-video/Deinterlacer_Blend.$(OBJEXT): video/$(am__dirstamp) \
 	video/$(DEPDIR)/$(am__dirstamp)
 resampler/$(am__dirstamp):
 	@$(MKDIR_P) resampler
@@ -3333,6 +3356,7 @@ mostlyclean-compile:
 	-rm -f snes_faust/cart/*.$(OBJEXT)
 	-rm -f sound/*.$(OBJEXT)
 	-rm -f string/*.$(OBJEXT)
+	-rm -f time/*.$(OBJEXT)
 	-rm -f tremor/*.$(OBJEXT)
 	-rm -f trio/*.$(OBJEXT)
 	-rm -f vb/*.$(OBJEXT)
@@ -3354,7 +3378,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SPCReader.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SSFLoader.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Stream.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Time.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VirtualFS.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/endian.Po@am__quote@ # am--include-marker
@@ -3373,12 +3396,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state_rewind.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tests.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testsexp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/win32-common.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/apple2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdplay/$(DEPDIR)/cdplay.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader_FLAC.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader_MPC.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader_SF.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader_PCM.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader_Vorbis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAccess.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAccess_CCD.Po@am__quote@ # am--include-marker
@@ -3777,6 +3802,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@sound/$(DEPDIR)/okiadpcm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@string/$(DEPDIR)/escape.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@string/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@time/$(DEPDIR)/Time_POSIX.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@time/$(DEPDIR)/Time_Win32.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tremor/$(DEPDIR)/libvorbisidec_a-bitwise.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tremor/$(DEPDIR)/libvorbisidec_a-block.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tremor/$(DEPDIR)/libvorbisidec_a-codebook.Po@am__quote@ # am--include-marker
@@ -3804,6 +3831,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/Deinterlacer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/Deinterlacer_Blend.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/Deinterlacer_Simple.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/convert.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/font-data-12x13.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/font-data-18x18.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@video/$(DEPDIR)/font-data.Po@am__quote@ # am--include-marker
@@ -5279,6 +5307,8 @@ distclean-generic:
 	-rm -f sound/$(am__dirstamp)
 	-rm -f string/$(DEPDIR)/$(am__dirstamp)
 	-rm -f string/$(am__dirstamp)
+	-rm -f time/$(DEPDIR)/$(am__dirstamp)
+	-rm -f time/$(am__dirstamp)
 	-rm -f tremor/$(DEPDIR)/$(am__dirstamp)
 	-rm -f tremor/$(am__dirstamp)
 	-rm -f trio/$(DEPDIR)/$(am__dirstamp)
@@ -5312,7 +5342,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/SPCReader.Po
 	-rm -f ./$(DEPDIR)/SSFLoader.Po
 	-rm -f ./$(DEPDIR)/Stream.Po
-	-rm -f ./$(DEPDIR)/Time.Po
 	-rm -f ./$(DEPDIR)/VirtualFS.Po
 	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/endian.Po
@@ -5331,12 +5360,14 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/state.Po
 	-rm -f ./$(DEPDIR)/state_rewind.Po
 	-rm -f ./$(DEPDIR)/tests.Po
+	-rm -f ./$(DEPDIR)/testsexp.Po
 	-rm -f ./$(DEPDIR)/win32-common.Po
 	-rm -f apple2/$(DEPDIR)/apple2.Po
 	-rm -f cdplay/$(DEPDIR)/cdplay.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader.Po
+	-rm -f cdrom/$(DEPDIR)/CDAFReader_FLAC.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader_MPC.Po
-	-rm -f cdrom/$(DEPDIR)/CDAFReader_SF.Po
+	-rm -f cdrom/$(DEPDIR)/CDAFReader_PCM.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader_Vorbis.Po
 	-rm -f cdrom/$(DEPDIR)/CDAccess.Po
 	-rm -f cdrom/$(DEPDIR)/CDAccess_CCD.Po
@@ -5735,6 +5766,8 @@ distclean: distclean-recursive
 	-rm -f sound/$(DEPDIR)/okiadpcm.Po
 	-rm -f string/$(DEPDIR)/escape.Po
 	-rm -f string/$(DEPDIR)/string.Po
+	-rm -f time/$(DEPDIR)/Time_POSIX.Po
+	-rm -f time/$(DEPDIR)/Time_Win32.Po
 	-rm -f tremor/$(DEPDIR)/libvorbisidec_a-bitwise.Po
 	-rm -f tremor/$(DEPDIR)/libvorbisidec_a-block.Po
 	-rm -f tremor/$(DEPDIR)/libvorbisidec_a-codebook.Po
@@ -5762,6 +5795,7 @@ distclean: distclean-recursive
 	-rm -f video/$(DEPDIR)/Deinterlacer.Po
 	-rm -f video/$(DEPDIR)/Deinterlacer_Blend.Po
 	-rm -f video/$(DEPDIR)/Deinterlacer_Simple.Po
+	-rm -f video/$(DEPDIR)/convert.Po
 	-rm -f video/$(DEPDIR)/font-data-12x13.Po
 	-rm -f video/$(DEPDIR)/font-data-18x18.Po
 	-rm -f video/$(DEPDIR)/font-data.Po
@@ -5843,7 +5877,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/SPCReader.Po
 	-rm -f ./$(DEPDIR)/SSFLoader.Po
 	-rm -f ./$(DEPDIR)/Stream.Po
-	-rm -f ./$(DEPDIR)/Time.Po
 	-rm -f ./$(DEPDIR)/VirtualFS.Po
 	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/endian.Po
@@ -5862,12 +5895,14 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/state.Po
 	-rm -f ./$(DEPDIR)/state_rewind.Po
 	-rm -f ./$(DEPDIR)/tests.Po
+	-rm -f ./$(DEPDIR)/testsexp.Po
 	-rm -f ./$(DEPDIR)/win32-common.Po
 	-rm -f apple2/$(DEPDIR)/apple2.Po
 	-rm -f cdplay/$(DEPDIR)/cdplay.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader.Po
+	-rm -f cdrom/$(DEPDIR)/CDAFReader_FLAC.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader_MPC.Po
-	-rm -f cdrom/$(DEPDIR)/CDAFReader_SF.Po
+	-rm -f cdrom/$(DEPDIR)/CDAFReader_PCM.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader_Vorbis.Po
 	-rm -f cdrom/$(DEPDIR)/CDAccess.Po
 	-rm -f cdrom/$(DEPDIR)/CDAccess_CCD.Po
@@ -6266,6 +6301,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f sound/$(DEPDIR)/okiadpcm.Po
 	-rm -f string/$(DEPDIR)/escape.Po
 	-rm -f string/$(DEPDIR)/string.Po
+	-rm -f time/$(DEPDIR)/Time_POSIX.Po
+	-rm -f time/$(DEPDIR)/Time_Win32.Po
 	-rm -f tremor/$(DEPDIR)/libvorbisidec_a-bitwise.Po
 	-rm -f tremor/$(DEPDIR)/libvorbisidec_a-block.Po
 	-rm -f tremor/$(DEPDIR)/libvorbisidec_a-codebook.Po
@@ -6293,6 +6330,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f video/$(DEPDIR)/Deinterlacer.Po
 	-rm -f video/$(DEPDIR)/Deinterlacer_Blend.Po
 	-rm -f video/$(DEPDIR)/Deinterlacer_Simple.Po
+	-rm -f video/$(DEPDIR)/convert.Po
 	-rm -f video/$(DEPDIR)/font-data-12x13.Po
 	-rm -f video/$(DEPDIR)/font-data-18x18.Po
 	-rm -f video/$(DEPDIR)/font-data.Po
@@ -6359,7 +6397,7 @@ uninstall-am: uninstall-binPROGRAMS
 # Resource file wasn't linking in properly when it was in an archive, so we resort to this!
 #
 @HAVE_SDL_TRUE@@WIN32_TRUE@.rc.o:
-@HAVE_SDL_TRUE@@WIN32_TRUE@	@WINDRES@ -o $@ $<
+@HAVE_SDL_TRUE@@WIN32_TRUE@	@WINDRES@ @DEFS@ -I$(top_builddir)/include $(CPPFLAGS) -o $@ $<
 
 #if WANT_DEBUGGER
 #mednafen_SOURCES	+=	apple2/debug.cpp

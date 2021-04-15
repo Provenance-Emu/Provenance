@@ -35,10 +35,10 @@ void PCFXDBG_DoLog(const char *type, const char *format, ...);
 char *PCFXDBG_ShiftJIS_to_UTF8(const uint16 sjc);
 
 
-extern bool PCFX_LoggingOn;
+MDFN_HIDE extern bool PCFX_LoggingOn;
 
 void PCFXDBG_Init(void) MDFN_COLD;
-extern DebuggerInfoStruct PCFXDBGInfo;
+MDFN_HIDE extern DebuggerInfoStruct PCFXDBGInfo;
 
 #endif
 

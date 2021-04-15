@@ -63,9 +63,11 @@ static MDFN_PixelFormat format;
 static bool EnableMixedTextMonoHack;
 
 static void (*BlitLineBitBuffer)(uint32* target);
-template<bool tfr> static void BlitLineBitBuffer_RGB_Alt(uint32* target);
-template<bool tfr> static void BlitLineBitBuffer_RGB(uint32* target);
-static void BlitLineBitBuffer_Composite(uint32* target);
+static void (*BlitLineBitBuffer16)(uint16* target);
+
+template<typename T, bool tfr> static void BlitLineBitBuffer_RGB_Alt(T* target);
+template<typename T, bool tfr> static void BlitLineBitBuffer_RGB(T* target);
+template<typename T, bool rgb555> static void BlitLineBitBuffer_Composite(T* target);
 
 struct Settings
 {
@@ -151,8 +153,8 @@ static void Power(void)
  NoiseLCG = 0;
 }
 
-template<bool tfr>
-static void BlitLineBitBuffer_RGB_Alt(uint32* target)
+template<typename T, bool tfr>
+static void BlitLineBitBuffer_RGB_Alt(T* target)
 {
  uint32 pdata = 0;
 
@@ -258,8 +260,8 @@ static void BlitLineBitBuffer_RGB_Alt(uint32* target)
  }
 }
 
-template<bool tfr>
-static void BlitLineBitBuffer_RGB(uint32* target)
+template<typename T, bool tfr>
+static void BlitLineBitBuffer_RGB(T* target)
 {
  for(int i = 0; i < 6; i++)
   *(target++) = RGBLUT[0];
@@ -355,7 +357,8 @@ static void BlitLineBitBuffer_RGB(uint32* target)
   *(target++) = RGBLUT[0];
 }
 
-static void BlitLineBitBuffer_Composite(uint32* target)
+template<typename T, bool rgb555>
+static void BlitLineBitBuffer_Composite(T* target)
 {
  uint32 pdata = 0;
  const unsigned nb_pos = (ColorLUT_NumPixels - 1) + (12 - (ColorLUT_NumPixels / 2));
@@ -370,7 +373,12 @@ static void BlitLineBitBuffer_Composite(uint32* target)
   pdata |= ((linebuffer[x >> 3] >> (x & 0x7)) & 1) << nb_pos;
   c += (NoiseLCG >> 32) & ((0x7 << 0) | (0x7 << 10) | (0x7 << 20));
 
-  target[x] = (((c >> 2) & 0xFF) << rs) + (((c >> 12) & 0xFF) << gs) + (((c >> 22) & 0xFF) << bs);
+  if(sizeof(T) == 4)
+   target[x] = (((c >> 2) & 0xFF) << rs) + (((c >> 12) & 0xFF) << gs) + (((c >> 22) & 0xFF) << bs);
+  else if(rgb555)
+   target[x] = (((c >> 5) & 0x1F) << rs) + (((c >> 15) & 0x1F) << gs) + (((c >> 25) & 0x1F) << bs);
+  else
+   target[x] = (((c >> 5) & 0x1F) << rs) + (((c >> 14) & 0x3F) << gs) + (((c >> 25) & 0x1F) << bs);
 
   pdata >>= 1;
   NoiseLCG = (NoiseLCG * 6364136223846793005ULL) + 1442695040888963407ULL;
@@ -546,7 +554,10 @@ static NO_INLINE void Tick(void)
    }
 #endif
 
-   BlitLineBitBuffer(surface->pixels + vis_vc * surface->pitchinpix);
+   if(surface->pixels)
+    BlitLineBitBuffer(surface->pixels + vis_vc * surface->pitchinpix);
+   else
+    BlitLineBitBuffer16(surface->pixels16 + vis_vc * surface->pitchinpix);
   }
   //
   VCounter = (VCounter + 1) & 0x1FF;
@@ -734,6 +745,33 @@ static const float matrixes[Settings::MATRIX_CUSTOM][3][2] =
  },
 };
 
+template<typename T, bool rgb555, typename U>
+static void GetBlitLineFunction(const int mode, U* p)
+{
+ switch(mode)
+ {
+  case Settings::MODE_COMPOSITE:
+	*p = BlitLineBitBuffer_Composite<T, rgb555>;
+	break;
+
+  case Settings::MODE_RGB_ALT_TFR:
+	*p = BlitLineBitBuffer_RGB_Alt<T, true>;
+	break;
+
+  case Settings::MODE_RGB_ALT:
+	*p = BlitLineBitBuffer_RGB_Alt<T, false>;
+	break;
+
+  case Settings::MODE_RGB_TFR:
+	*p = BlitLineBitBuffer_RGB<T, true>;
+	break;
+
+  case Settings::MODE_RGB:
+	*p = BlitLineBitBuffer_RGB<T, false>;
+	break;
+ }
+}
+
 // tint, saturation, -1.0 to 1.0
 static INLINE void SetFormat(const MDFN_PixelFormat& f, const Settings& s, uint8* CustomPalette, uint32 CustomPaletteNumEntries)
 {
@@ -761,19 +799,18 @@ static INLINE void SetFormat(const MDFN_PixelFormat& f, const Settings& s, uint8
  //
  //
  //
- if(mode == Settings::MODE_COMPOSITE)
-  BlitLineBitBuffer = BlitLineBitBuffer_Composite;
+ if(format.opp == 4)
+  GetBlitLineFunction<uint32, false>(mode, &BlitLineBitBuffer);
  else
  {
-  if(mode == Settings::MODE_RGB_ALT_TFR)
-   BlitLineBitBuffer = BlitLineBitBuffer_RGB_Alt<true>;
-  else if(mode == Settings::MODE_RGB_ALT)
-   BlitLineBitBuffer = BlitLineBitBuffer_RGB_Alt<false>;
-  else if(mode == Settings::MODE_RGB_TFR)
-   BlitLineBitBuffer = BlitLineBitBuffer_RGB<true>;
-  else if(mode == Settings::MODE_RGB)
-   BlitLineBitBuffer = BlitLineBitBuffer_RGB<false>;
+  if(format.Gprec == 5)
+   GetBlitLineFunction<uint16, true>(mode, &BlitLineBitBuffer16);
+  else
+   GetBlitLineFunction<uint16, false>(mode, &BlitLineBitBuffer16);
+ }
 
+ if(mode != Settings::MODE_COMPOSITE)
+ {
   if(CustomPalette && (CustomPaletteNumEntries == 16 || CustomPaletteNumEntries == 32))
   {
    for(unsigned i = 0; i < 16; i++)

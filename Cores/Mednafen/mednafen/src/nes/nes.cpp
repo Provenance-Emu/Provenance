@@ -37,8 +37,6 @@
 
 #include	<trio/trio.h>
 
-MDFN_HIDE extern MDFNGI EmulatedNES;
-
 namespace MDFN_IEN_NES
 {
 uint64 timestampbase;
@@ -320,30 +318,6 @@ static MDFN_COLD void Load(GameFile* gf)
 static void Emulate(EmulateSpecStruct *espec)
 {
  int ssize;
-
-#if 0
- static bool firstcat = true;
-
- MDFN_PixelFormat tmp_pf;
-
- tmp_pf.Rshift = 0;
- tmp_pf.Gshift = 0;
- tmp_pf.Bshift = 0;
- tmp_pf.Ashift = 8;
-
- tmp_pf.Rprec = 6;
- tmp_pf.Gprec = 6;
- tmp_pf.Bprec = 6;
- tmp_pf.Aprec = 0;
-
- tmp_pf.bpp = 8;
- tmp_pf.colorspace = MDFN_COLORSPACE_RGB;
-
- espec->surface->SetFormat(tmp_pf, false);
- espec->VideoFormatChanged = firstcat;
- firstcat = false;
-#endif
-
 
  if(espec->VideoFormatChanged)
  {
@@ -763,7 +737,7 @@ static const CheatInfoStruct CheatInfo =
 
 }
 
-MDFNGI EmulatedNES =
+MDFN_HIDE extern const MDFNGI EmulatedNES =
 {
  "nes",
  "Nintendo Entertainment System/Famicom",
@@ -802,6 +776,9 @@ MDFNGI EmulatedNES =
  NESSettings,
  0,
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false,	// Multires
 
  0,   // lcm_width		(replaced in game load)

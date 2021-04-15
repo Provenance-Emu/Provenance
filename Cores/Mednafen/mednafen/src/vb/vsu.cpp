@@ -79,9 +79,12 @@ void VSU::Power(void)
   LatcherClockDivider[ch] = 120;
  }
 
+ ModWavePos = 0;
 
  NoiseLatcherClockDivider = 120;
  NoiseLatcher = 0;
+
+ lfsr = 0;
 
  memset(WaveData, 0, sizeof(WaveData));
  memset(ModData, 0, sizeof(ModData));
@@ -91,6 +94,12 @@ void VSU::Power(void)
 
 void VSU::Write(int32 timestamp, uint32 A, uint8 V)
 {
+ if(MDFN_UNLIKELY(A & 0x3))
+ {
+  return;
+ }
+ //
+ //
  A &= 0x7FF;
 
  Update(timestamp);

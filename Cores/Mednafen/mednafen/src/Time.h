@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* Time.h:
-**  Copyright (C) 2017 Mednafen Team
+**  Copyright (C) 2017-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -45,8 +45,9 @@ namespace Time
  static INLINE std::string StrTime(const struct tm& tin) { return StrTime("%c", tin); }
  static INLINE std::string StrTime(void) { return StrTime("%c", LocalTime()); }
 
- uint32 MonoMS(void);	// Milliseconds
  int64 MonoUS(void);	// Microseconds
+ static INLINE uint32 MonoMS(void) { return MonoUS() / 1000; } // Milliseconds
+
  void SleepMS(uint32) noexcept;	// Sleep for approximately the time specified in milliseconds.
 }
 

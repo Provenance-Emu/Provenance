@@ -14,38 +14,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 /* http://lists.fedoraproject.org/pipermail/legal/2009-October/000928.html */
 
-//#include "main.h"
-
-//#if defined(__GNUC__) && defined(__i386__)
-//  #define 2XSAI_MMX 1
-//#else
-//  #undef 2XSAI_MMX
-//#endif
+#include <mednafen/types.h>
 
 #ifndef __2XSAI_H
 #define __2XSAI_H
 
-typedef unsigned char sai_uint8;
-typedef unsigned short sai_uint16;
-typedef unsigned sai_uint32;
+bool SAI_SetFormat(unsigned bpp, bool rgb555);
 
-//#define BLUE_MASK565 0x001F001F
-//#define RED_MASK565 0xF800F800
-//#define GREEN_MASK565 0x07E007E0
-
-//#define BLUE_MASK555 0x001F001F
-//#define RED_MASK555 0x7C007C00
-//#define GREEN_MASK555 0x03E003E0
-
-int Init_2xSaI(sai_uint32 systemColorDepth, sai_uint32 BitFormat);
-void Super2xSaI   (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 *deltaPtr,        sai_uint8 *dstPtr, sai_uint32 dstPitch, int width, int height);
-void Super2xSaI32 (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 *dstPtr, sai_uint32 dstPitch, int width, int height);
-void SuperEagle   (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 *deltaPtr,        sai_uint8 *dstPtr, sai_uint32 dstPitch, int width, int height);
-void SuperEagle32 (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 *dstPtr, sai_uint32 dstPitch, int width, int height);
-void _2xSaI       (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 *deltaPtr,        sai_uint8 *dstPtr, sai_uint32 dstPitch, int width, int height);
-void _2xSaI32     (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 *dstPtr, sai_uint32 dstPitch, int width, int height);
-void Scale_2xSaI  (sai_uint8 *srcPtr, sai_uint32 srcPitch, sai_uint8 * /* deltaPtr */, sai_uint8 *dstPtr, sai_uint32 dstPitch, sai_uint32 dstWidth, sai_uint32 dstHeight, int width, int height);
+void SAI_Super2xSaI   (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SAI_Super2xSaI32 (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SAI_SuperEagle   (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SAI_SuperEagle32 (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SAI_2xSaI       (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SAI_2xSaI32     (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void SAI_Scale_2xSaI  (uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, uint32 dstWidth, uint32 dstHeight, int width, int height);
 
 #endif

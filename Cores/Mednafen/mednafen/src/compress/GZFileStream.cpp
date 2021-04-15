@@ -20,6 +20,9 @@
 */
 
 #include <mednafen/mednafen.h>
+#ifdef WIN32
+ #include <mednafen/win32-common.h>
+#endif
 #include "GZFileStream.h"
 
 #include <trio/trio.h>
@@ -79,12 +82,12 @@ GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int l
  #ifdef WIN32
  {
   bool invalid_utf8;
-  std::u16string u16path = UTF8_to_UTF16(path, &invalid_utf8, true);
+  auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
   if(invalid_utf8)
    throw MDFN_Error(EINVAL, _("Error opening file \"%s\": %s"), path_save.c_str(), _("Invalid UTF-8 in path."));
 
-  tmpfd = ::_wopen((const wchar_t*)u16path.c_str(), open_flags, perm_mode);
+  tmpfd = ::_topen((const TCHAR*)tpath.c_str(), open_flags, perm_mode);
  }
  #else
  tmpfd = ::open(path.c_str(), open_flags, perm_mode);

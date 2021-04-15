@@ -209,7 +209,7 @@ void FLASH_LoadNV(void)
 //-----------------------------------------------------------------------------
 // flash_write()
 //-----------------------------------------------------------------------------
-void flash_write(uint32 start_address, uint16 length)
+MDFN_FASTCALL void flash_write(uint32 start_address, uint16 length)
 {
 	uint16 i;
 

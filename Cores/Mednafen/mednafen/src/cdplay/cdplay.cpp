@@ -30,8 +30,6 @@ using namespace CDUtility;
 
 #include <mednafen/resampler/resampler.h>
 
-extern MDFNGI EmulatedCDPlay;
-
 namespace MDFN_IEN_CDPLAY
 {
 
@@ -121,10 +119,10 @@ static void LoadCD(std::vector<CDInterface *> *CDInterfaces)
 
  //
  //
- EmulatedCDPlay.RMD->Drives.clear();
- EmulatedCDPlay.RMD->DrivesDefaults.clear();
- EmulatedCDPlay.RMD->MediaTypes.clear();
- EmulatedCDPlay.RMD->Media.clear();
+ MDFNGameInfo->RMD->Drives.clear();
+ MDFNGameInfo->RMD->DrivesDefaults.clear();
+ MDFNGameInfo->RMD->MediaTypes.clear();
+ MDFNGameInfo->RMD->Media.clear();
 }
 
 static bool TestMagicCD(std::vector<CDInterface *> *CDInterfaces)
@@ -186,6 +184,58 @@ static void InitLUT(void)
 
  for(int i = 0; i < 65536; i++)
   sin_lut[i] = sin((double)i * M_PI * 2 / 65536);
+}
+
+template<typename T>
+static void DrawVisualization(T* MDFN_RESTRICT pixels, uint32 pitchinpix, const uint32 wf_color)
+{
+ static const int lobes = 2;
+ static const int oversample_shift = 5;	// Don't increase without resolving integer overflow issues.
+ static const int oversample = 1 << oversample_shift;
+
+ for(int i = 0; i < 588; i++)
+ { 
+  const float rawp_adjust = 1.0 / (1 * M_PI * 2 / 65536);
+  const float unip_samp = (float)(((CDDABuffer[i * 2 + 0] + CDDABuffer[i * 2 + 1]) >> 1) + 32768) / 65536;
+  const float next_unip_samp = (float)(((CDDABuffer[(i * 2 + 2) % 1176] + CDDABuffer[(i * 2 + 3) % 1176]) >> 1) + 32768) / 65536;
+  const float sample_inc = (next_unip_samp - unip_samp) / oversample;
+  float sample = (unip_samp - 0.5) / 2;
+
+  for(int osi = 0; osi < oversample; osi++, sample += sample_inc)
+  {
+   unsigned x;	// Make sure x and y are unsigned, else we need to change our in-bounds if() check.
+   unsigned y;
+   float x_raw, y_raw;
+   float x_raw2, y_raw2;
+   float x_raw_prime, y_raw_prime;
+   int32 theta_i = (uint32)65536 * (i * oversample + osi) / (oversample * 588);
+
+   float radius = sin_lut[(lobes * theta_i) & 0xFFFF];
+   float radius2 = sin_lut[(lobes * (theta_i + 1)) & 0xFFFF];
+
+   x_raw = radius * sin_lut[(16384 + theta_i) & 0xFFFF];
+   y_raw = radius * sin_lut[theta_i & 0xFFFF];
+
+   x_raw2 = radius2 * sin_lut[(16384 + theta_i + 1) & 0xFFFF];
+   y_raw2 = radius2 * sin_lut[(theta_i + 1) & 0xFFFF];
+
+   // Approximation, of course.
+   x_raw_prime = (x_raw2 - x_raw) * rawp_adjust;
+   y_raw_prime = (y_raw2 - y_raw) * rawp_adjust;
+
+   x_raw_prime = x_raw_prime / (float)sqrt(x_raw_prime * x_raw_prime + y_raw_prime * y_raw_prime);
+   y_raw_prime = y_raw_prime / (float)sqrt(x_raw_prime * x_raw_prime + y_raw_prime * y_raw_prime);
+
+   x_raw += sample * y_raw_prime;
+   y_raw += sample * -x_raw_prime;
+
+   x = 96 + 60 * x_raw;
+   y = 72 + 60 * y_raw;
+
+   if(x < 192 && y < 144)
+    pixels[x + y * pitchinpix] = wf_color;
+  }
+ }
 }
 
 static void Emulate(EmulateSpecStruct *espec)
@@ -295,7 +345,6 @@ static void Emulate(EmulateSpecStruct *espec)
  {
   char tmpbuf[256];
   const MDFN_PixelFormat &format = espec->surface->format;
-  uint32 *pixels = espec->surface->pixels;
   uint32 text_color = format.MakeColor(0xE0, 0xE0, 0xE0);
   uint32 text_shadow_color = format.MakeColor(0x20, 0x20, 0x20);
   uint32 wf_color = format.MakeColor(0xE0, 0x00, 0xE0);
@@ -311,53 +360,10 @@ static void Emulate(EmulateSpecStruct *espec)
 
   if(MDFN_GetSettingB("cdplay.visualization"))
   {
-   static const int lobes = 2;
-   static const int oversample_shift = 5;	// Don't increase without resolving integer overflow issues.
-   static const int oversample = 1 << oversample_shift;
-
-   for(int i = 0; i < 588; i++)
-   { 
-    const float rawp_adjust = 1.0 / (1 * M_PI * 2 / 65536);
-    const float unip_samp = (float)(((CDDABuffer[i * 2 + 0] + CDDABuffer[i * 2 + 1]) >> 1) + 32768) / 65536;
-    const float next_unip_samp = (float)(((CDDABuffer[(i * 2 + 2) % 1176] + CDDABuffer[(i * 2 + 3) % 1176]) >> 1) + 32768) / 65536;
-    const float sample_inc = (next_unip_samp - unip_samp) / oversample;
-    float sample = (unip_samp - 0.5) / 2;
-
-    for(int osi = 0; osi < oversample; osi++, sample += sample_inc)
-    {
-     unsigned x;	// Make sure x and y are unsigned, else we need to change our in-bounds if() check.
-     unsigned y;
-     float x_raw, y_raw;
-     float x_raw2, y_raw2;
-     float x_raw_prime, y_raw_prime;
-     int32 theta_i = (uint32)65536 * (i * oversample + osi) / (oversample * 588);
-
-     float radius = sin_lut[(lobes * theta_i) & 0xFFFF];
-     float radius2 = sin_lut[(lobes * (theta_i + 1)) & 0xFFFF];
-
-     x_raw = radius * sin_lut[(16384 + theta_i) & 0xFFFF];
-     y_raw = radius * sin_lut[theta_i & 0xFFFF];
-
-     x_raw2 = radius2 * sin_lut[(16384 + theta_i + 1) & 0xFFFF];
-     y_raw2 = radius2 * sin_lut[(theta_i + 1) & 0xFFFF];
-
-     // Approximation, of course.
-     x_raw_prime = (x_raw2 - x_raw) * rawp_adjust;
-     y_raw_prime = (y_raw2 - y_raw) * rawp_adjust;
-
-     x_raw_prime = x_raw_prime / (float)sqrt(x_raw_prime * x_raw_prime + y_raw_prime * y_raw_prime);
-     y_raw_prime = y_raw_prime / (float)sqrt(x_raw_prime * x_raw_prime + y_raw_prime * y_raw_prime);
-
-     x_raw += sample * y_raw_prime;
-     y_raw += sample * -x_raw_prime;
-
-     x = 96 + 60 * x_raw;
-     y = 72 + 60 * y_raw;
-
-     if(x < 192 && y < 144)
-      pixels[x + y * espec->surface->pitch32] = wf_color;
-    }
-   }
+   if(format.opp == 4)
+    DrawVisualization(espec->surface->pix<uint32>(), espec->surface->pitchinpix, wf_color);
+   else
+    DrawVisualization(espec->surface->pix<uint16>(), espec->surface->pitchinpix, wf_color);
   }
 
   int32 text_y = 0;
@@ -546,7 +552,7 @@ static const std::vector<InputPortInfoStruct> PortInfo =
 
 using namespace MDFN_IEN_CDPLAY;
 
-MDFNGI EmulatedCDPlay =
+MDFN_HIDE extern const MDFNGI EmulatedCDPlay =
 {
  "cdplay",
  "CD-DA Player",
@@ -583,6 +589,9 @@ MDFNGI EmulatedCDPlay =
  CDPlaySettings,
  MDFN_MASTERCLOCK_FIXED(44100),
  75 * 65536 * 256,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false, // Multires possible?
 
  192,   // lcm_width

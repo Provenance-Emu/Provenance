@@ -4,7 +4,7 @@
 namespace MDFN_IEN_SMS
 {
 
-extern int text_counter;
+MDFN_HIDE extern int text_counter;
 
 
 void make_tms_tables(void);

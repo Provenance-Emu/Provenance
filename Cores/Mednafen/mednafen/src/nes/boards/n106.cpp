@@ -443,6 +443,7 @@ static void N106_Power(CartInfo *info)
 	memset(vcount,0,sizeof(vcount));
 	memset(PlayIndex,0,sizeof(PlayIndex));
 	memset(PlayIndexBS, 0, sizeof(PlayIndexBS));
+	CVBC=0;
 }
 
 #ifdef WANT_DEBUGGER

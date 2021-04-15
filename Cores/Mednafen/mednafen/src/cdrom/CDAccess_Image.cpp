@@ -224,10 +224,15 @@ void CDAccess_Image::ParseTOCFileLineInfo(VirtualFS* vfs, CDRFILE_TRACK_INFO *tr
 
  if(filename.length() >= 4 && !MDFN_strazicmp(filename.c_str() + filename.length() - 4, ".wav"))
  {
-  track->AReader = CDAFR_Open(track->fp);
-
-  if(!track->AReader)
-   throw MDFN_Error(0, "TODO ERROR");
+  try
+  {
+   if(!(track->AReader = CDAFR_Open(track->fp)))
+    throw MDFN_Error(0, _("Unsupported audio track file format."));
+  }
+  catch(std::exception& e)
+  {
+   throw MDFN_Error(0, _("Error handling audio track file \"%s\": %s"), vfs->eval_fip(base_dir, filename).c_str(), e.what());
+  }
  }
 
  sector_mult = DI_Size_Table[track->DIFormat];
@@ -659,15 +664,19 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
      else if(!MDFN_strazicmp(args[1].c_str(), "OGG") || !MDFN_strazicmp(args[1].c_str(), "VORBIS") || !MDFN_strazicmp(args[1].c_str(), "WAVE") || !MDFN_strazicmp(args[1].c_str(), "WAV") || !MDFN_strazicmp(args[1].c_str(), "PCM")
 	|| !MDFN_strazicmp(args[1].c_str(), "MPC") || !MDFN_strazicmp(args[1].c_str(), "MP+"))
      {
-      TmpTrack.AReader = CDAFR_Open(TmpTrack.fp);
-      if(!TmpTrack.AReader)
+      try
       {
-       throw(MDFN_Error(0, _("Unsupported audio track file format: %s\n"), args[0].c_str()));
+       if(!(TmpTrack.AReader = CDAFR_Open(TmpTrack.fp)))
+        throw MDFN_Error(0, _("Unsupported audio track file format."));
+      }
+      catch(std::exception& e)
+      {
+       throw MDFN_Error(0, _("Error handling audio track file \"%s\": %s"), efn.c_str(), e.what());
       }
      }
      else
      {
-      throw(MDFN_Error(0, _("Unsupported track format: %s\n"), args[1].c_str()));
+      throw MDFN_Error(0, _("Unsupported track format: %s\n"), args[1].c_str());
      }
     }
     else if(cmdbuf == "TRACK")

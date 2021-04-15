@@ -57,8 +57,13 @@
 <?php BeginSection("Compact Disc Images", "Section_cd_images"); ?>
  <p>
   Mednafen supports "CUE" sheets, CloneCD "CCD/IMG/SUB", and cdrdao "TOC" files; though only a very limited
-  subset of the latter's full capabilities is supported.  Mednafen supports raw, simple storage formats supported by
-  <a href="http://www.mega-nerd.com/libsndfile/">libsndfile</a>(MS WAV, AIFF/AIFC, AU/SND, etc.), and <a href="http://xiph.org/vorbis/">Ogg Vorbis</a> and <a href="http://www.musepack.net/">Musepack</a> audio files referenced by CUE sheets.
+  subset of the latter's full capabilities is supported.  The following formats/encodings are supported for audio files referenced by CUE sheets:
+  <ul>
+   <li>Uncompressed PCM in AIFF/AIFC, AU/SND, W64, and WAV
+   <li><a href="https://xiph.org/flac/">FLAC</a>
+   <li><a href="https://xiph.org/vorbis/">Ogg Vorbis</a>
+   <li><a href="https://www.musepack.net/">Musepack</a>
+  </ul>
   MP3 is not supported, and will not be supported.
  </p>
  <p>
@@ -125,9 +130,9 @@
  <p>
  CUE and TOC, and PSF(PSF1, GSF, etc.) files can reference arbitrary files for inclusion and parsing.  Inclusion of
  device files may cause odd system behavior, particularly if you are running Mednafen as root(which you shouldn't be!) on a
- UN*X system, or cause Mednafen to lockup or abort.  <b>In combination with save states, this file inclusion presents
- the possibility of leaking of private local information;</b> for example, if an attacker supplies a CD image or PSF rip that
- you subsequently run, and can convince you to save a state and send it back, or to connect to a network play server(in
+ UN*X system, or cause Mednafen to lockup or abort.  <b>In combination with save states, screen snapshots, and audio/video recordings,
+ this file inclusion presents the possibility of leaking of private local information;</b> for example, if an attacker supplies a CD image or PSF rip that
+ you subsequently run, and can convince you to save a state or screenshot and send it back, or to connect to a network play server(in
  which save states are automatically utilized), the attacker may then have access to local private data from your
  system.  The setting <a href="#filesys.untrusted_fip_check">filesys.untrusted_fip_check</a>, when set to 1(the default), will enable
  checks that mitigate this potential problem.
@@ -193,6 +198,7 @@
  <tr><td nowrap>CTRL + SHIFT + [<i>n</i>]</td><td>Select input device on input port <i>n</i>(1-8).<br /><br /><b>Note:</b> Many games do not expect input devices to change while the game is running, and thus may require a hard reset.</td><td>device_select<i>n</i></td></tr>
  <tr><td>F2</td><td><a name="command.input_configc">Activate in-game input configuration process for a command key.</a></td><td>input_configc</td></tr>
  <tr><td>SHIFT + F2</td><td>Like F2, but after configuration completes, to activate the configured command key will require all buttons configured to it to be in a pressed state simultaneously to trigger the action.  Note that keyboard modifier keys(CTRL, ALT, SHIFT) are still treated as modifiers and not discrete keys.<br><br>Especially useful in conjunction with the <a href="#ckdelay">ckdelay</a> setting.</td><td>input_configc_am</td></tr>
+ <tr><td>SHIFT + F3</td><td><a name="command.reinit_joysticks"></a>Reinitialize physical joysticks/gamepads.  Note that this will also cause Mednafen to forget about any analog buttons detected by previously pressing <a href="#command.input_config_abd">F3</a>.</td><td>reinit_joysticks</td></tr>
  <tr><td nowrap>CTRL + SHIFT + Menu</td><td><a name="command.toggle_grab">Toggle <a href="#Section_input_grabbing">input grabbing</a>(for emulated mice and keyboards).</a></td><td>toggle_grab</td></tr>
  <tr><th>Key(s):</th><th>Action:</th><th>Configuration String:</th></tr>
  <tr><td>SHIFT + F6</td><td>Select drive.</td><td>select_drive</td></tr>
@@ -567,15 +573,6 @@ the optional "g" flag with "-+" polarity(e.g. "abs_0-+g").
   Mednafen makes use of much open-source code from other people, and could not be what it is without their work.  Feel
   free to give them your thanks, but keep in mind most have nothing to do with the Mednafen project, so don't ask
   them questions regarding Mednafen unless appropriate in context.
- </p>
- <p>
- In addition to the listing of licenses and copyright notices for code included in Mednafen, the following 
- "non-system" external libraries are linked to:
- <ul>
-  <li><a href="http://www.mega-nerd.com/libsndfile/">libsndfile</a></li>
-  <li><a href="http://www.libsdl.org/">SDL</a></li>
-  <li><a href="http://www.zlib.org">zlib</a></li>
- </ul>
  </p>
  <hr>
 
@@ -1355,6 +1352,160 @@ Cygne is distributed under the terms of the GNU GPL Version 2, 1991.<br>Copyrigh
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+</pre>
+</blockquote>
+<?php EndSection(); ?>
+
+<?php BeginSection("libFLAC", "Section_legal_libflac"); ?>
+<blockquote>
+<pre>
+Copyright (C) 2000-2009  Josh Coalson
+Copyright (C) 2011-2016  Xiph.Org Foundation
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+- Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+- Neither the name of the Xiph.org Foundation nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
+</blockquote>
+<?php EndSection(); ?>
+
+<?php BeginSection("libogg", "Section_legal_libogg"); ?>
+<blockquote>
+<pre>
+Copyright (c) 2002, Xiph.org Foundation
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+- Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+- Neither the name of the Xiph.org Foundation nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
+</blockquote>
+<?php EndSection(); ?>
+
+<?php BeginSection("libiconv", "Section_legal_libiconv"); ?>
+<blockquote>
+<pre>
+ * The GNU LIBICONV Library is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * The GNU LIBICONV Library is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with the GNU LIBICONV Library; see the file COPYING.LIB.
+ * If not, see <http://www.gnu.org/licenses/>.
+</pre>
+</blockquote>
+<?php EndSection(); ?>
+
+<?php BeginSection("SDL2", "Section_legal_sdl2"); ?>
+<blockquote>
+<pre>
+Simple DirectMedia Layer
+Copyright (C) 1997-2018 Sam Lantinga &lt;slouken@libsdl.org&gt;
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+</pre>
+</blockquote>
+<?php EndSection(); ?>
+
+<?php BeginSection("zlib", "Section_legal_zlib"); ?>
+<blockquote>
+<pre>
+Copyright notice:
+
+ (C) 1995-2013 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+
+If you use the zlib library in a product, we would appreciate *not* receiving
+lengthy legal documents to sign.  The sources are provided for free but without
+warranty of any kind.  The library has been entirely written by Jean-loup
+Gailly and Mark Adler; it does not include third-party code.
+
+If you redistribute modified sources, we would appreciate that you include in
+the file ChangeLog history information documenting your changes.  Please read
+the FAQ for more information on the distribution of modified source versions.
 </pre>
 </blockquote>
 <?php EndSection(); ?>

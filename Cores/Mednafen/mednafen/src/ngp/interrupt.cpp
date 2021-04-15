@@ -144,7 +144,7 @@ void int_check_pending(void)
 
 }
 
-void int_write8(uint32 address, uint8 data)
+MDFN_FASTCALL void int_write8(uint32 address, uint8 data)
 {
  switch(address)
  {
@@ -172,7 +172,7 @@ void int_write8(uint32 address, uint8 data)
  }
 }
 
-uint8 int_read8(uint32 address)
+MDFN_FASTCALL uint8 int_read8(uint32 address)
 {
  uint8 ret = 0;
  switch(address)
@@ -222,10 +222,6 @@ void TestIntHDMA(int bios_num, int vec_num)
 	if(!WasDMA)
          set_interrupt(bios_num, true);
 }
-
-
-extern int32 ngpc_soundTS;
-extern bool NGPFrameSkip;
 
 bool updateTimers(MDFN_Surface *surface, int cputicks)
 {
@@ -490,7 +486,7 @@ void reset_int(void)
  h_int = false;
 }
 
-void timer_write8(uint32 address, uint8 data)
+MDFN_FASTCALL void timer_write8(uint32 address, uint8 data)
 {
 	switch(address)
 	{
@@ -511,7 +507,7 @@ void timer_write8(uint32 address, uint8 data)
 	}
 }
 
-uint8 timer_read8(uint32 address)
+MDFN_FASTCALL uint8 timer_read8(uint32 address)
 {
 	uint8 ret = 0;
 

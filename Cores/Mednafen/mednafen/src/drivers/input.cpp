@@ -52,13 +52,44 @@ static unsigned int ckdelay;
 static bool fftoggle_setting;
 static bool sftoggle_setting;
 
-static int ConfigDevice(int arg);
-static void ConfigDeviceBegin(void);
+enum ICType
+{
+	none,
+	Port1,
+	Port2,
+	Port3,
+	Port4,
+	Port5,
+	Port6,
+	Port7,
+	Port8,
+	Port9,
+	Port10,
+	Port11,
+	Port12,
+	Port13,
+	Port14,
+	Port15,
+	Port16,
+	Command,
+	CommandAM
+};
+static_assert((Port16 - Port1) == (16 - 1), "Bad ICType enum values.");
+
+static ICType IConfig = none;
+static int ICLatch;
+static uint32 ICDeadDelay = 0;
+
+//#include "InputConfigurator.inc"
+//static InputConfigurator *IConfigurator = NULL;
+
+static bool ConfigDevice(void);
+static void ConfigDeviceBegin(unsigned port);
+static void ConfigDeviceAbort(void);
 
 static void subcon_begin(void);
 static bool subcon(const char *text, std::vector<ButtConfig> &bc, const bool commandkey, const bool AND_Mode);
 
-static void ResyncGameInputSettings(unsigned port);
 static void CalcWMInputBehavior(void);
 
 static bool DTestButton(const std::vector<ButtConfig>& bc, const bool bypass_key_masking)
@@ -179,7 +210,7 @@ static float DTestPointer(const std::vector<ButtConfig>& bc, const bool bypass_k
   switch(bce.DeviceType)
   {
    case BUTTC_JOYSTICK:
-	printf("%d %d %f\n", axis_hint, JoystickManager::TestAnalogButton(bce), Video_PtoV_J(JoystickManager::TestAnalogButton(bce), axis_hint, bce.ButtonNum & JoystickManager::JOY_BN_GUN_TRANSLATE));
+	//printf("%d %d %f\n", axis_hint, JoystickManager::TestAnalogButton(bce), Video_PtoV_J(JoystickManager::TestAnalogButton(bce), axis_hint, bce.ButtonNum & JoystickManager::JOY_BN_GUN_TRANSLATE));
 	return Video_PtoV_J(JoystickManager::TestAnalogButton(bce), axis_hint, bce.ButtonNum & JoystickManager::JOY_BN_GUN_TRANSLATE);
 
    case BUTTC_MOUSE:
@@ -242,6 +273,8 @@ static std::string BCGToString(const std::vector<ButtConfig>& bcg)
   char devidstr[2 + 32 + 1];
   const ButtConfig& bc = bcg[i];
   char scalestr[32];
+
+  assert(!(bc.Flags & BUTTC_FLAG_09XDEVID));
 
   if(!MDFN_de64msb(&bc.DeviceID[0]) && !MDFN_de64msb(&bc.DeviceID[8]))
    trio_snprintf(devidstr, sizeof(devidstr), "0x0");
@@ -356,6 +389,7 @@ static bool StringToBCG(std::vector<ButtConfig>* bcg, const char* s, const char*
      ButtConfig bc;
 
      bc.ANDGroupCont = AND_Mode;
+     bc.Flags = 0;
      bc.Scale = 4096;
 
      if(!MDFN_strazicmp(device_name, "joystick"))
@@ -368,8 +402,13 @@ static bool StringToBCG(std::vector<ButtConfig>* bcg, const char* s, const char*
       if(trio_sscanf(extra, "%016llx %08x", &devid, &bn) == 2)
       {
        bc.DeviceType = BUTTC_JOYSTICK;
-       bc.DeviceNum = JoystickManager::GetIndexByUniqueID_09x(devid);
-       bc.DeviceID = JoystickManager::GetUniqueIDByIndex(bc.DeviceNum);	// Not perfect, but eh...
+       bc.Flags |= BUTTC_FLAG_09XDEVID;
+       MDFN_en64msb(&bc.DeviceID[0], devid);
+       MDFN_en64msb(&bc.DeviceID[8], ~(uint64)0);
+
+       bc.DeviceNum = JoystickManager::GetIndexByUniqueID(bc.DeviceID, bc.Flags & BUTTC_FLAG_09XDEVID);
+       if(JoystickManager::GetUniqueIDByIndex(bc.DeviceNum, &bc.DeviceID))	// Not perfect, but eh...
+        bc.Flags &= ~BUTTC_FLAG_09XDEVID;
 
        if(!JoystickManager::Translate09xBN(bn, &bc.ButtonNum, abs_pointer_axis_thing))
         return false;
@@ -453,6 +492,8 @@ static bool StringToBCG(std::vector<ButtConfig>* bcg, const char* s, const char*
  unsigned which_part = 0;
  ButtConfig bc;
  size_t len;
+
+ bc.Flags = 0;
 
  do
  {
@@ -551,7 +592,7 @@ static bool StringToBCG(std::vector<ButtConfig>* bcg, const char* s, const char*
      return false;
     }
 
-    bc.DeviceNum = JoystickManager::GetIndexByUniqueID(bc.DeviceID);
+    bc.DeviceNum = JoystickManager::GetIndexByUniqueID(bc.DeviceID, bc.Flags & BUTTC_FLAG_09XDEVID);
    }
    else if(bc.DeviceType == BUTTC_MOUSE)
    {
@@ -1026,6 +1067,8 @@ static void IncSelectedDevice(unsigned int port)
   MDFN_Notify(MDFN_NOTICE_STATUS, _("Port %u does not exist."), port + 1);
  else if(CurGame->PortInfo[port].DeviceInfo.size() <= 1)
   MDFN_Notify(MDFN_NOTICE_STATUS, _("Port %u device not selectable."), port + 1);
+ else if(IConfig == (Port1 + port))
+  MDFN_Notify(MDFN_NOTICE_STATUS, _("Port %u device change blocked by active button mapping process."), port + 1);
  else
  {
   char tmp_setting_name[512];
@@ -1110,6 +1153,7 @@ enum CommandKey
         CK_INPUT_CONFIGC,
 	CK_INPUT_CONFIGC_AM,
 	CK_INPUT_CONFIG_ABD,
+	CK_REINIT_JOYSTICKS,
 
 	CK_RESET,
 	CK_POWER,
@@ -1234,6 +1278,8 @@ static const COKE CKeys[_CK_COUNT]	=
 
 	CKEYDEF( "input_config_abd", "Detect analog buttons on physical joysticks/gamepads(for use with the input configuration process).", CKEYDEF_DANGEROUS, MK_CK(F3) ),
 
+	CKEYDEF( "reinit_joysticks", "Reinitialize physical joysticks/gamepads.", CKEYDEF_DANGEROUS, MK_CK_SHIFT(F3) ),
+
 	CKEYDEF( "reset", "Reset", CKEYDEF_DANGEROUS, MK_CK(F10) ),
 	CKEYDEF( "power", "Power toggle", CKEYDEF_DANGEROUS, MK_CK(F11) ),
 	CKEYDEF( "exit", "Exit", CKEYDEF_BYPASSKEYZEROING | CKEYDEF_DANGEROUS, MK_CK2(F12, ESCAPE) ),
@@ -1339,32 +1385,6 @@ static INLINE bool CK_CheckActive(CommandKey which)
  return CKeysActive[which];
 }
 
-typedef enum
-{
-	none,
-	Port1,
-	Port2,
-	Port3,
-	Port4,
-	Port5,
-	Port6,
-	Port7,
-	Port8,
-	Port9,
-	Port10,
-	Port11,
-	Port12,
-	Command,
-	CommandAM
-} ICType;
-
-static ICType IConfig = none;
-static int ICLatch;
-static uint32 ICDeadDelay = 0;
-
-//#include "InputConfigurator.inc"
-//static InputConfigurator *IConfigurator = NULL;
-
 // Can be called from MDFND_MidSync(), so be careful.
 void Input_Event(const SDL_Event *event)
 {
@@ -1415,7 +1435,7 @@ static void ToggleLayer(int which)
 {
  static uint64 le_mask = ~0ULL; // FIXME/TODO: Init to ~0ULL on game load.
 
- if(CurGame && CurGame->LayerNames)
+ if(CurGame && CurGame->LayerNames && CurGame->SetLayerEnableMask)
  {
   const char *goodies = CurGame->LayerNames;
   int x = 0;
@@ -1425,7 +1445,12 @@ static void ToggleLayer(int which)
    while(*goodies)
     goodies++;
    goodies++;
-   if(!*goodies) return; // ack, this layer doesn't exist.
+   if(!*goodies)
+   {
+    // ack, this layer doesn't exist.
+    MDFN_Notify(MDFN_NOTICE_STATUS, _("Layer %u not available to toggle."), which);
+    return;
+   }
    x++;
   }
 
@@ -1437,6 +1462,8 @@ static void ToggleLayer(int which)
   else
    MDFN_Notify(MDFN_NOTICE_STATUS, _("%s disabled."), _(goodies));
  }
+ else
+  MDFN_Notify(MDFN_NOTICE_STATUS, _("No toggleable layers available."));
 }
 
 
@@ -1496,30 +1523,66 @@ static void DoKeyStateZeroing(void)
  }
 }
 
+static void ReinitJoysticks(void)
+{
+#if 0
+ //JoystickManager::Reinitialize();
+#else
+ JoystickManager::Kill();
+ JoystickManager::Init();
+ JoystickManager::SetAnalogThreshold(MDFN_GetSettingF("analogthreshold") / 100);
+#endif
+ //
+ for(auto& pidc : PIDC)
+ {
+  for(auto& bic : pidc.BIC)
+  {
+   for(auto& bc : bic.BC)
+   {
+    if(bc.DeviceType != BUTTC_JOYSTICK)
+     continue;
+
+    bc.DeviceNum = JoystickManager::GetIndexByUniqueID(bc.DeviceID, bc.Flags & BUTTC_FLAG_09XDEVID);
+   }
+  }
+ }
+
+ for(auto& ckc : CKeysConfig)
+ {
+  for(auto& bc : ckc)
+  {
+   if(bc.DeviceType != BUTTC_JOYSTICK)
+    continue;
+
+   bc.DeviceNum = JoystickManager::GetIndexByUniqueID(bc.DeviceID, bc.Flags & BUTTC_FLAG_09XDEVID);
+  }
+ }
+ //
+ if(1)
+  MDFN_Notify(MDFN_NOTICE_STATUS, _("Physical joysticks reinitialized."));
+}
+
 static void CheckCommandKeys(void)
 {
-  for(unsigned i = 0; i < 12; i++)
+  if(IConfig >= Port1 && IConfig <= Port12)
   {
-   if(IConfig == Port1 + i)
+   const unsigned i = IConfig - Port1;
+
+   if(CK_Check((CommandKey)(CK_INPUT_CONFIG1 + i)))
    {
-    if(CK_Check((CommandKey)(CK_INPUT_CONFIG1 + i)))
-    {
-     CK_PostRemapUpdate((CommandKey)(CK_INPUT_CONFIG1 + i));	// Kind of abusing that function if going by its name, but meh.
+    CK_PostRemapUpdate((CommandKey)(CK_INPUT_CONFIG1 + i));	// Kind of abusing that function if going by its name, but meh.
 
-     ResyncGameInputSettings(i);
-     CalcWMInputBehavior();
-     IConfig = none;
+    ConfigDeviceAbort();
+    CalcWMInputBehavior();
+    IConfig = none;
 
-     MDFN_Notify(MDFN_NOTICE_STATUS, _("Configuration interrupted."));
-    }
-    else if(ConfigDevice(i))
-    {
-     ResyncGameInputSettings(i);
-     CalcWMInputBehavior();
-     ICDeadDelay = CurTicks + 300;
-     IConfig = none;
-    }
-    break;
+    MDFN_Notify(MDFN_NOTICE_STATUS, _("Configuration aborted."));
+   }
+   else if(ConfigDevice())
+   {
+    CalcWMInputBehavior();
+    ICDeadDelay = CurTicks + 300;
+    IConfig = none;
    }
   }
 
@@ -1673,7 +1736,7 @@ static void CheckCommandKeys(void)
      else
      {
       //SetJoyReadMode(0);
-      ConfigDeviceBegin();
+      ConfigDeviceBegin(i);
       IConfig = (ICType)(Port1 + i);
      }
      break;
@@ -1683,7 +1746,6 @@ static void CheckCommandKeys(void)
    if(CK_Check(CK_INPUT_CONFIGC))
    {
     //SetJoyReadMode(0);
-    ConfigDeviceBegin();
     ICLatch = -1;
     IConfig = Command;
    }
@@ -1691,7 +1753,6 @@ static void CheckCommandKeys(void)
    if(CK_Check(CK_INPUT_CONFIGC_AM))
    {
     //SetJoyReadMode(0);
-    ConfigDeviceBegin();
     ICLatch = -1;
     IConfig = CommandAM;
    }
@@ -1700,6 +1761,11 @@ static void CheckCommandKeys(void)
    {
     MDFN_Notify(MDFN_NOTICE_STATUS, "%u joystick/gamepad analog button(s) detected.", JoystickManager::DetectAnalogButtonsForChangeCheck());
    }
+  }
+
+  if(CK_Check(CK_REINIT_JOYSTICKS))
+  {
+   ReinitJoysticks();
   }
 
   if(CK_Check(CK_ROTATESCREEN))
@@ -2167,14 +2233,6 @@ void Input_GameLoaded(MDFNGI *gi)
  CalcWMInputBehavior();
 }
 
-// Update setting strings with butt configs.
-static void ResyncGameInputSettings(unsigned port)
-{
- for(unsigned int x = 0; x < PIDC[port].BIC.size(); x++)
-  MDFNI_SetSetting(PIDC[port].BIC[x].SettingName, BCGToString(PIDC[port].BIC[x].BC));
-}
-
-
 static std::vector<ButtConfig> subcon_bcg;
 static ButtConfig subcon_bc;
 static size_t subcon_tb;
@@ -2183,7 +2241,7 @@ static void subcon_begin(void)
 {
  subcon_bcg.clear();
 
- memset(&subcon_bc, 0, sizeof(subcon_bc));
+ subcon_bc = ButtConfig();
  subcon_tb = ~(size_t)0;
 }
 
@@ -2215,6 +2273,7 @@ static bool subcon(const char *text, std::vector<ButtConfig>& bcg, const bool co
     break;
   }
 
+  subcon_bc.Flags = 0;
   subcon_bc.ANDGroupCont = AND_Mode;
   subcon_bc.Scale = 4096;
   subcon_bcg.push_back(subcon_bc);
@@ -2228,15 +2287,36 @@ static bool subcon(const char *text, std::vector<ButtConfig>& bcg, const bool co
  return true;
 }
 
-static int cd_x;
-static int cd_lx = -1;
-static void ConfigDeviceBegin(void)
+static std::vector<std::vector<ButtConfig>> cd_bcs;
+static unsigned cd_port;
+static PortInfoCache* cd_pic = nullptr;
+static unsigned cd_x;
+static unsigned cd_lx;
+
+static void ConfigDeviceBegin(unsigned port)
 {
  cd_x = 0;
- cd_lx = -1;
+ cd_lx = ~0U;
+ cd_port = port;
+ cd_pic = &PIDC[port];
+ cd_bcs.resize(cd_pic->BCC.size());
 }
 
-static int ConfigDevice(int arg)
+static void ConfigDeviceCleanup(void)
+{
+ cd_x = 0;
+ cd_lx = 0;
+ cd_port = 0;
+ cd_pic = nullptr;
+ cd_bcs.clear();
+}
+
+static void ConfigDeviceAbort(void)
+{
+ ConfigDeviceCleanup();
+}
+
+static bool ConfigDevice(void)
 {
  char buf[512];
 
@@ -2244,28 +2324,38 @@ static int ConfigDevice(int arg)
  // printf("%d\n", PIDC[arg].BCPrettyPrio[i]);
  //exit(1);
 
- for(;cd_x < (int)PIDC[arg].BCC.size(); cd_x++)
+ for(;cd_x < cd_pic->BCC.size(); cd_x++)
  {
-  size_t snooty = PIDC[arg].BCC[cd_x];
+  ButtonInfoCache* const bic = &cd_pic->BIC[cd_pic->BCC[cd_x]];
 
   // For Lynx, GB, GBA, NGP, WonderSwan(especially wonderswan!)
   if(CurGame->PortInfo.size() == 1 && CurGame->PortInfo[0].DeviceInfo.size() == 1)
-   trio_snprintf(buf, 512, "%s", PIDC[arg].BIC[snooty].CPName);
+   trio_snprintf(buf, sizeof(buf), "%s", bic->CPName);
   else
-   trio_snprintf(buf, 512, "%s %d: %s", PIDC[arg].Device->FullName, arg + 1, PIDC[arg].BIC[snooty].CPName);
+   trio_snprintf(buf, sizeof(buf), "%s %d: %s", cd_pic->Device->FullName, cd_port + 1, bic->CPName);
 
   if(cd_x != cd_lx)
   {
    cd_lx = cd_x;
    subcon_begin();
   }
-  if(!subcon(buf, PIDC[arg].BIC[snooty].BC, false, false))
-   return(0);
+  if(!subcon(buf, cd_bcs[cd_x], false, false))
+   return false;
  }
+
+ for(size_t i = 0; i < cd_pic->BCC.size(); i++)
+ {
+  ButtonInfoCache* const bic = &cd_pic->BIC[cd_pic->BCC[i]];
+
+  bic->BC = cd_bcs[i];
+  MDFNI_SetSetting(bic->SettingName, BCGToString(bic->BC));
+ }
+
+ ConfigDeviceCleanup();
 
  MDFN_Notify(MDFN_NOTICE_STATUS, _("Configuration finished."));
 
- return(1);
+ return true;
 }
 
 

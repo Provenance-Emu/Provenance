@@ -51,7 +51,7 @@ static INLINE void MDFN_FastArraySet(uint64* const dst, const uint64 value, cons
  #endif
 }
 
-static INLINE void MDFN_FastArraySet(uint32* const dst, const uint32 value, const size_t count)
+static INLINE void MDFN_FastArraySet(uint32* dst, const uint32 value, size_t count)
 {
  #if defined(ARCH_X86) && !defined(__x86_64__)
  {
@@ -67,36 +67,42 @@ static INLINE void MDFN_FastArraySet(uint32* const dst, const uint32 value, cons
   return;
  }
  #else
- if(0 == ((uintptr_t)dst & (sizeof(uint64) - 1)) && !(count & 1))
-  MDFN_FastArraySet((uint64*)dst, value | ((uint64)value << 32), count >> 1);
- else
+ if(0 == ((uintptr_t)dst & (sizeof(uint64) - 1)))
  {
-  for(uint32 *ai = dst; MDFN_LIKELY(ai != (dst + count)); ai++)
-   MDFN_ennsb<uint32, true>(ai, value);
+  MDFN_FastArraySet((uint64*)dst, value | ((uint64)value << 32), count >> 1);
+  dst += count &~ 1;
+  count &= 1;
  }
+
+ for(uint32 *ai = dst; MDFN_LIKELY(ai != (dst + count)); ai++)
+  MDFN_ennsb<uint32, true>(ai, value);
  #endif
 }
 
-static INLINE void MDFN_FastArraySet(uint16* const dst, const uint16 value, const size_t count)
+static INLINE void MDFN_FastArraySet(uint16* dst, const uint16 value, size_t count)
 {
- if(0 == ((uintptr_t)dst & (sizeof(uint32) - 1)) && !(count & 1))
-  MDFN_FastArraySet((uint32*)dst, value | (value << 16), count >> 1);
- else
+ if(0 == ((uintptr_t)dst & (sizeof(uint32) - 1)))
  {
-  for(uint16 *ai = dst; MDFN_LIKELY(ai != (dst + count)); ai++)
-   MDFN_ennsb<uint16, true>(ai, value);
+  MDFN_FastArraySet((uint32*)dst, value | (value << 16), count >> 1);
+  dst += count &~ 1;
+  count &= 1;
  }
+
+ for(uint16 *ai = dst; MDFN_LIKELY(ai != (dst + count)); ai++)
+  MDFN_ennsb<uint16, true>(ai, value);
 }
 
-static INLINE void MDFN_FastArraySet(uint8* const dst, const uint16 value, const size_t count)
+static INLINE void MDFN_FastArraySet(uint8* dst, const uint16 value, size_t count)
 {
- if(0 == ((uintptr_t)dst & (sizeof(uint16) - 1)) && !(count & 1))
-  MDFN_FastArraySet((uint16*)dst, value | (value << 8), count >> 1);
- else
+ if(0 == ((uintptr_t)dst & (sizeof(uint16) - 1)))
  {
-  for(uint8 *ai = dst; MDFN_LIKELY(ai != (dst + count)); ai++)
-   *ai = value;
+  MDFN_FastArraySet((uint16*)dst, value | (value << 8), count >> 1);
+  dst += count &~ 1;
+  count &= 1;
  }
+
+ for(uint8 *ai = dst; MDFN_LIKELY(ai != (dst + count)); ai++)
+  *ai = value;
 }
 
 

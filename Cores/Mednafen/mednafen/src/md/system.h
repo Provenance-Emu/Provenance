@@ -25,7 +25,7 @@ namespace MDFN_IEN_MD
 #define INPUT_DOWN      (0x00000002)
 #define INPUT_UP        (0x00000001)
 
-extern int32 md_timestamp;
+MDFN_HIDE extern int32 md_timestamp;
 
 #define MD_DBG_ERROR          0       // Emulator-level error.
 #define MD_DBG_WARNING        1       // Warning about game doing questionable things/hitting stuff that might not be emulated correctly.
@@ -38,8 +38,8 @@ bool MD_Is68KSuspended(void);
 
 void MD_UpdateSubStuff();
 
-extern bool MD_IsCD;
-extern int MD_HackyHackyMode;
+MDFN_HIDE extern bool MD_IsCD;
+MDFN_HIDE extern int MD_HackyHackyMode;
 
 }
 

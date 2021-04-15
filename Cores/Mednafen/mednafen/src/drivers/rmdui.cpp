@@ -241,7 +241,7 @@ void RMDUI_Init(MDFNGI* gi, const int which_medium)
  }
 }
 
-void RMDUI_Kill(void)
+void RMDUI_Kill(void) noexcept
 {
  Drives.clear();
 }

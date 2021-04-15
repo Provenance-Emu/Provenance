@@ -50,29 +50,29 @@ void dump_registers_TLCS900h(void);
 
 //=============================================================================
 
-extern uint32 pc;
-extern uint16	sr;
-extern uint8 f_dash;
+MDFN_HIDE extern uint32 pc;
+MDFN_HIDE extern uint16	sr;
+MDFN_HIDE extern uint8 f_dash;
 
-extern uint32 gprBank[4][4], gpr[4];
+MDFN_HIDE extern uint32 gprBank[4][4], gpr[4];
 
-extern uint32 rErr;
+MDFN_HIDE extern uint32 rErr;
 
-extern uint8 statusRFP;
+MDFN_HIDE extern uint8 statusRFP;
 
 //GPR Access
-extern uint8* gprMapB[4][8];
-extern uint16* gprMapW[4][8];
-extern uint32* gprMapL[4][8];
+MDFN_HIDE extern uint8* gprMapB[4][8];
+MDFN_HIDE extern uint16* gprMapW[4][8];
+MDFN_HIDE extern uint32* gprMapL[4][8];
 
 #define regB(x)	(*(gprMapB[statusRFP][(x)]))
 #define regW(x)	(*(gprMapW[statusRFP][(x)]))
 #define regL(x)	(*(gprMapL[statusRFP][(x)]))
 
 //Reg.Code Access
-extern uint8* regCodeMapB[4][256];
-extern uint16* regCodeMapW[4][128];
-extern uint32* regCodeMapL[4][64];
+MDFN_HIDE extern uint8* regCodeMapB[4][256];
+MDFN_HIDE extern uint16* regCodeMapW[4][128];
+MDFN_HIDE extern uint32* regCodeMapL[4][64];
 
 #define rCodeB(r)	(*(regCodeMapB[statusRFP][(r)]))
 #define rCodeW(r)	(*(regCodeMapW[statusRFP][(r) >> 1]))

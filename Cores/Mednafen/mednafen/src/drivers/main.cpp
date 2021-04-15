@@ -58,15 +58,17 @@
 #include "rmdui.h"
 #include <mednafen/qtrecord.h>
 #include <mednafen/tests.h>
+#include <mednafen/testsexp.h>
 #include <mednafen/MemoryStream.h>
 #include <mednafen/string/string.h>
 #include <mednafen/file.h>
 
 static bool SuppressErrorPopups;	// Set from env variable "MEDNAFEN_NOPOPUPS"
 
+static int StateFuzzTest = false;
 static int StateSLSTest = false;
 static int StateRCTest = false;	// Rewind consistency
-#if 0
+#if 1
 static int StatePCTest = false;	// Power(toggle) consistency
 #endif
 static WMInputBehavior NeededWMInputBehavior = { false, false, false, false };
@@ -127,8 +129,10 @@ static const MDFNSetting_EnumList FontSize_List[] =
 
 static const MDFNSetting_EnumList FPSPos_List[] =
 {
- { "upper_left", 0, gettext_noop("Upper left.") },
- { "upper_right", 1, gettext_noop("Upper right.") },
+ { "upper_left", FPSPOS_UPPER_LEFT, gettext_noop("Upper left.") },
+ { "upper_right", FPSPOS_UPPER_RIGHT, gettext_noop("Upper right.") },
+ { "upper_center", FPSPOS_UPPER_CENTER, gettext_noop("Upper center.") },
+ { "center", FPSPOS_CENTER, gettext_noop("Center.") },
 
  { NULL, 0 },
 };
@@ -279,14 +283,14 @@ MDFNGI *CurGame=NULL;
 static std::string GetModuleFileName_UTF8(HMODULE hModule)
 {
  const size_t path_size = 32767;
- std::unique_ptr<char16_t[]> path(new char16_t[path_size]);
+ std::unique_ptr<TCHAR[]> path(new TCHAR[path_size]);
  DWORD fnl;
 
- fnl = GetModuleFileNameW(hModule, (LPWSTR)&path[0], path_size);
+ fnl = GetModuleFileName(hModule, path.get(), path_size);
  if(fnl == 0 || fnl == path_size)
-  throw MDFN_Error(0, "GetModuleFileNameW() error.");
+  throw MDFN_Error(0, "GetModuleFileName() error.");
 
- return UTF16_to_UTF8(&path[0], nullptr, true);
+ return Win32Common::T_to_UTF8(path.get(), nullptr, true);
 }
 
 // returns 1 if redirected, 0 if not redirected due to error, -1 if not redirected due to env variable
@@ -306,13 +310,13 @@ static int RedirectSTDxxx(void)
  if((catpos = path.find_last_of('\\')) != std::string::npos)
   path.resize(catpos + 1);
 
- const std::u16string stdout_path = UTF8_to_UTF16(path + "stdout.txt", nullptr, true);
- const std::u16string stderr_path = UTF8_to_UTF16(path + "stderr.txt", nullptr, true);
+ const auto stdout_path = Win32Common::UTF8_to_T(path + "stdout.txt", nullptr, true);
+ const auto stderr_path = Win32Common::UTF8_to_T(path + "stderr.txt", nullptr, true);
  int new_stdout = -1;
  int new_stderr = -1;
 
- new_stdout = _wopen((const wchar_t*)stdout_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, _S_IREAD | _S_IWRITE);
- new_stderr = _wopen((const wchar_t*)stderr_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, _S_IREAD | _S_IWRITE);
+ new_stdout = _topen((const TCHAR*)stdout_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, _S_IREAD | _S_IWRITE);
+ new_stderr = _topen((const TCHAR*)stderr_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, _S_IREAD | _S_IWRITE);
 
  // Not sure if we need to handle stdin here...
 
@@ -340,19 +344,36 @@ static int RedirectSTDxxx(void)
   return false;
  }
 }
-
-static bool HandleConsoleMadness(void)
+/*
+static BOOL CALLBACK ETWCB(HWND hwnd, LPARAM lParam)
 {
- HWND cwin = GetConsoleWindow();
- bool ret = false;
+ char tmp[256] = { 0 };
+ const char* dark_magic = "Spider spider on your bed, spider spider on your head~"; //EE4Kt9r8PTdyOJDiYFErTH";
+
+ SetWindowTextA(hwnd, dark_magic);
+ GetConsoleTitleA(tmp, sizeof(tmp) - 1);
+ printf("Title: %s\n", tmp);
+ if(strstr(tmp, dark_magic))
+ {
+  *(HWND*)lParam = hwnd;
+  return FALSE;
+ }
+ return TRUE;
+}
+*/
+static void HandleConsoleMadness(void)
+{
+ decltype(GetConsoleWindow)* p_GetConsoleWindow = (decltype(GetConsoleWindow)*)GetProcAddress(GetModuleHandleA("kernel32.dll"), "GetConsoleWindow");
+
+ if(!p_GetConsoleWindow)
+  return;
+ //
+ //
+ HWND cwin = p_GetConsoleWindow();
 
  if(cwin)
  {
   DWORD cwin_pid = 0;
-
-  SetConsoleOutputCP(65001);	// UTF-8
-
-  ret = true;
 
   GetWindowThreadProcessId(cwin, &cwin_pid);
   if(GetCurrentProcessId() == cwin_pid)
@@ -362,7 +383,6 @@ static bool HandleConsoleMadness(void)
     // Just hide the console window, don't call FreeConsole(), as Windows 10 does something weird that feels
     // like it's asynchronously screwing with the stdout and stderr file descriptors/handles.
     ShowWindow(cwin, SW_HIDE);
-    ret = false;
    }
   }
  }
@@ -370,8 +390,6 @@ static bool HandleConsoleMadness(void)
  {
   if(AllocConsole())
   {
-   SetConsoleOutputCP(65001);	// UTF-8
-   //
    HANDLE hand_stdout, hand_stderr;
 
    hand_stdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -395,10 +413,7 @@ static bool HandleConsoleMadness(void)
     }
    }
   }
-  ret = false;	// We still want console-less behavior elsewhere.
  }
-
- return ret;
 }
 #endif
 
@@ -473,18 +488,52 @@ void Mednafen::MDFND_OutputInfo(const char *s) noexcept
  }
 }
 
-static void CreateDirs(void)
+static bool CreateDataDirs(void)
 {
- static const char* const subs[] = { "mcs", "mcm", "snaps", "palettes", "sav", "cheats", "firmware", "pgconfig" };
-
- NVFS.mkdir(DrBaseDirectory, false);
-
- for(auto const& s : subs)
+ try
  {
-  std::string tdir = DrBaseDirectory + PSS + s;
+  static const struct
+  {
+   const char* sname_path;
+   const char* sname_fname;
+  } subs[] =
+  {
+   // The directories referenced by these settings will be automatically
+   // created as needed internally in core Mednafen, but we should still
+   // create them preemptively, as long as the filesys.fname_* settings are
+   // still at their default values:
+   { "filesys.path_snap", "filesys.fname_snap" },
+   { "filesys.path_sav", "filesys.fname_sav" },
+   { "filesys.path_savbackup", "filesys.fname_savbackup" },
+   { "filesys.path_state", "filesys.fname_state" },
+   { "filesys.path_movie", "filesys.fname_movie" },
 
-  NVFS.mkdir(tdir, false);
+   // These will not be automatically created internally:
+   { "filesys.path_cheat", nullptr },
+   { "filesys.path_palette", nullptr },
+   { "filesys.path_pgconfig", nullptr },
+   { "filesys.path_firmware", nullptr },
+  };
+
+  for(auto const& s : subs)
+  {
+   if(s.sname_fname && MDFN_GetSettingS(s.sname_fname) != MDFNI_GetSettingDefault(s.sname_fname))
+    continue;
+   //
+   std::string dir = MDFN_GetSettingS(s.sname_path);
+
+   if(!NVFS.is_absolute_path(dir))
+    dir = DrBaseDirectory + PSS + dir;
+
+   NVFS.create_missing_dirs(dir + PSS);
+  }
  }
+ catch(std::exception &e)
+ {
+  MDFN_Notify(MDFN_NOTICE_ERROR, _("Error creating data directories: %s\n"), e.what());
+  return false;
+ }
+ return true;
 }
 
 static bool volatile SignalSafeExitWanted = false;
@@ -639,91 +688,7 @@ static void RemoveSignalHandlers(void) { }
 //
 //
 //
-#include <mednafen/FileStream.h>
-#include <mednafen/compress/GZFileStream.h>
-static void Stream64Test(const char* path)
-{
- try
- {
-  {
-   FileStream fp(path, FileStream::MODE_WRITE_SAFE);
 
-   assert(fp.tell() == 0);
-   assert(fp.size() == 0);
-   fp.put_BE<uint32>(0xDEADBEEF);
-   assert(fp.tell() == 4);
-   assert(fp.size() == 4);
-
-   fp.seek(0x7FFFFFFFU, SEEK_SET);
-   assert(fp.tell() == 0x7FFFFFFFU);
-   fp.truncate(0x7FFFFFFFU);
-   assert(fp.size() == 0x7FFFFFFFU);
-   fp.put_LE<uint8>(0xB0);
-   assert(fp.tell() == 0x80000000U);
-   assert(fp.size() == 0x80000000U);
-   fp.put_LE<uint8>(0x0F);
-   assert(fp.tell() == 0x80000001U);
-   assert(fp.size() == 0x80000001U);
-
-   fp.seek(0xFFFFFFFFU, SEEK_SET);
-   assert(fp.tell() == 0xFFFFFFFFU);
-   fp.truncate(0xFFFFFFFFU);
-   assert(fp.size() == 0xFFFFFFFFU);
-   fp.put_LE<uint8>(0xCA);
-   assert(fp.tell() == 0x100000000ULL);
-   assert(fp.size() == 0x100000000ULL);
-   fp.put_LE<uint8>(0xAD);
-   assert(fp.tell() == 0x100000001ULL);
-   assert(fp.size() == 0x100000001ULL);
-
-   fp.seek((uint64)8192 * 1024 * 1024, SEEK_SET);
-   fp.put_BE<uint32>(0xCAFEBABE);
-   assert(fp.tell() == (uint64)8192 * 1024 * 1024 + 4);
-   assert(fp.size() == (uint64)8192 * 1024 * 1024 + 4);
-
-   fp.put_BE<uint32>(0xAAAAAAAA);
-   assert(fp.tell() == (uint64)8192 * 1024 * 1024 + 8);
-   assert(fp.size() == (uint64)8192 * 1024 * 1024 + 8);
-
-   fp.truncate((uint64)8192 * 1024 * 1024 + 4);
-   assert(fp.size() == (uint64)8192 * 1024 * 1024 + 4);
-
-   fp.seek(-((uint64)8192 * 1024 * 1024 + 8), SEEK_CUR);
-   assert(fp.tell() == 0);
-   fp.seek((uint64)-4, SEEK_END);
-   assert(fp.tell() == (uint64)8192 * 1024 * 1024);
-  }
-
-  {
-   FileStream fp(path, FileStream::MODE_READ);
-   uint32 tmp;
-
-   assert(fp.size() == (uint64)8192 * 1024 * 1024 + 4);
-   tmp = fp.get_LE<uint32>();
-   assert(tmp == 0xEFBEADDE);
-   fp.seek((uint64)8192 * 1024 * 1024 - 4, SEEK_CUR);
-   tmp = fp.get_LE<uint32>(); 
-   assert(tmp == 0xBEBAFECA);
-  }
-
-  {
-   GZFileStream fp(path, GZFileStream::MODE::READ);
-   uint32 tmp;
-
-   tmp = fp.get_LE<uint32>();
-   assert(tmp == 0xEFBEADDE);
-   fp.seek((uint64)8192 * 1024 * 1024 - 4, SEEK_CUR);
-   tmp = fp.get_LE<uint32>(); 
-   assert(tmp == 0xBEBAFECA);  
-   assert(fp.tell() == (uint64)8192 * 1024 * 1024 + 4);
-  }
- }
- catch(std::exception& e)
- {
-  printf("%s\n", e.what());
-  abort();
- }
-}
 //
 //
 //
@@ -890,11 +855,11 @@ static bool DoArgs(int argc, char *argv[], char **filename)
 	char *dsfn = NULL;
 	char *dmfn = NULL;
 	char *dummy_remote = NULL;
-	char *stream64testpath = NULL;
+	char *exptestspath = NULL;
 	char *cdtestpath = NULL;
-	int mtetest = 0;
 	int swiftresamptest = 0;
 	int owlresamptest = 0;
+	int vidbench = 0;
 	#ifdef WANT_SS_EMU
 	int ss_midsync;
 	#endif
@@ -924,12 +889,12 @@ static bool DoArgs(int argc, char *argv[], char **filename)
 	 { "config_macros", NULL, &ShowConfigMacros, 0, 0 },
 
 	 // Largefile support test(with FileStream and GZFileStream).
-	 { "stream64test", NULL, 0, &stream64testpath, SUBSTYPE_STRING_ALLOC },
+	 { "exptests", NULL, 0, &exptestspath, SUBSTYPE_STRING_ALLOC },
 
 	 { "cdtest", NULL, 0, &cdtestpath, SUBSTYPE_STRING_ALLOC },
 
-	 // Multithreaded exception handling test.
-	 { "mtetest", NULL, &mtetest, 0, 0 },
+	 // Save state fuzz testing
+	 { "statefuzztest", NULL, &StateFuzzTest, 0, 0 },
 
 	 // Save state save->load->save consistency test.
 	 { "stateslstest", NULL, &StateSLSTest, 0, 0 },
@@ -937,7 +902,7 @@ static bool DoArgs(int argc, char *argv[], char **filename)
 	 // Save state rewind consistency test.
 	 { "staterctest", NULL, &StateRCTest, 0, 0 },
 
-#if 0
+#if 1
 	 // Save state power consistency test.
 	 { "statepctest", NULL, &StatePCTest, 0, 0 },
 #endif
@@ -947,6 +912,8 @@ static bool DoArgs(int argc, char *argv[], char **filename)
 
 	 // OwlResampler test.
 	 { "owlresamptest", NULL, &owlresamptest, 0, 0 },
+
+	 { "vidbench", NULL, &vidbench, 0, 0 },
 
 	 #ifdef WANT_SS_EMU
 	 // Quick kludge to avoid breaking frontends and scripts due to the setting being removed.
@@ -994,21 +961,21 @@ static bool DoArgs(int argc, char *argv[], char **filename)
 	  return false;
 	 }
 
-	 if(mtetest)
-	  MDFN_RunExceptionTests(4, 30000);
+	 if(exptestspath)
+	 {
+	  MDFNI_RunExpensiveTests(exptestspath);
+	  free(exptestspath);
+	  exptestspath = NULL;
+	 }
 
 	 if(swiftresamptest)
-	  MDFN_RunSwiftResamplerTest();
+	  MDFNI_RunSwiftResamplerTest();
 
 	 if(owlresamptest)
-	  MDFN_RunOwlResamplerTest();
+	  MDFNI_RunOwlResamplerTest();
 
-	 if(stream64testpath)
-	 {
-	  Stream64Test(stream64testpath);
-	  free(stream64testpath);
-	  stream64testpath = NULL;
-	 }
+	 if(vidbench)
+	  MDFN_RunVideoBenchmarks();
 
 	 if(cdtestpath)
 	 {
@@ -1040,13 +1007,14 @@ static int GameLoop(void *arg);
 int volatile GameThreadRun = 0;
 static bool MDFND_Update(int WhichVideoBuffer, int16 *Buffer, int Count);
 
-bool sound_active;	// true if sound is enabled and initialized
+static bool sound_active;	// true if sound is enabled and initialized
 
 
 static EmuRealSyncher ers;
 
 static bool autosave_load_error = false;
 
+static void CloseGame(void) MDFN_COLD;
 static int LoadGame(const char *force_module, const char *path)
 {
 	assert(MThreading::Thread_ID() == MainThreadID);
@@ -1073,37 +1041,40 @@ static int LoadGame(const char *force_module, const char *path)
 	//
 	//
 	//
-#if 0
+#if 1
 	if(StatePCTest)
 	{
-	 MemoryStream state0(524288);
-	 MemoryStream state1(524288);
-	 MDFNI_Power();
-	 MDFNSS_SaveSM(&state0);
-	 state0.rewind();
-	 MDFNSS_LoadSM(&state0, false, true);
-	 MDFNI_CloseGame();
-         if(!(tmp=MDFNI_LoadGame(force_module, &::Mednafen::NVFS, path)))
-	  abort();
-	 MDFNI_Power();
-	 MDFNSS_SaveSM(&state1);
-	 state0.rewind();
-	 MDFNSS_LoadSM(&state0);
-	 MDFNI_CloseGame();
-         if(!(tmp=MDFNI_LoadGame(force_module, &::Mednafen::NVFS, path)))
-	  abort();
-
-	 if(!(state0.map_size() == state1.map_size() && !memcmp(state0.map() + 32, state1.map() + 32, state1.map_size() - 32)))
+	 for(unsigned i = 0; i < 2; i++)
 	 {
-	  FileStream sd0("/tmp/sdump0", FileStream::MODE_WRITE);
-	  FileStream sd1("/tmp/sdump1", FileStream::MODE_WRITE);
+	  MemoryStream state0(524288);
+	  MemoryStream state1(524288);
+	  MDFNI_Power();
+	  MDFNSS_SaveSM(&state0);
+	  state0.rewind();
+	  MDFNSS_LoadSM(&state0, false, (i ? MDFNSS_FUZZ_UNSIGNED_MIN : MDFNSS_FUZZ_UNSIGNED_MAX));
+	  MDFNI_CloseGame();
+          if(!(tmp=MDFNI_LoadGame(force_module, &::Mednafen::NVFS, path)))
+	   abort();
+	  MDFNI_Power();
+	  MDFNSS_SaveSM(&state1);
+	  state0.rewind();
+	  MDFNSS_LoadSM(&state0);
+	  MDFNI_CloseGame();
+          if(!(tmp=MDFNI_LoadGame(force_module, &::Mednafen::NVFS, path)))
+	   abort();
 
-	  sd0.write(state0.map(), state0.map_size());
-	  sd1.write(state1.map(), state1.map_size());
-	  sd0.close();
-	  sd1.close();
-	  abort();
-	 }
+	  if(!(state0.map_size() == state1.map_size() && !memcmp(state0.map() + 32, state1.map() + 32, state1.map_size() - 32)))
+	  {
+	   FileStream sd0("/tmp/sdump0", FileStream::MODE_WRITE);
+	   FileStream sd1("/tmp/sdump1", FileStream::MODE_WRITE);
+
+	   sd0.write(state0.map(), state0.map_size());
+	   sd1.write(state1.map(), state1.map_size());
+	   sd0.close();
+	   sd1.close();
+	   abort();
+	  }
+         }
 	}
 #endif
 	//
@@ -1175,10 +1146,13 @@ static int LoadGame(const char *force_module, const char *path)
 }
 
 /* Closes a game and frees memory. */
-int CloseGame(void)
+static void CloseGame(void)
 {
-	if(!CurGame) return(0);
-
+	if(!CurGame)
+	 return;
+	//
+	//
+	//
 	GameThreadRun = 0;
 
 	if(GameThread)
@@ -1186,7 +1160,9 @@ int CloseGame(void)
 	 MThreading::Thread_Wait(GameThread, NULL);
 	 GameThread = NULL;
 	}
-
+	//
+	//
+	//
         if(qtrecfn)	// Needs to be before MDFNI_Closegame() for now
          MDFNI_StopAVRecord();
 
@@ -1200,15 +1176,14 @@ int CloseGame(void)
 
 	Debugger_Kill();
 
-	MDFNI_CloseGame();
-
 	RMDUI_Kill();
 	Input_GameClosed();
 	Sound_Kill();
-
+	//
+	//
+	//
+	MDFNI_CloseGame();
 	CurGame = NULL;
-
-	return(1);
 }
 
 static void GameThread_HandleEvents(void);
@@ -1314,6 +1289,19 @@ static int GameLoop(void *arg)
  	 espec.SoundRate = Sound_GetRate();
 	 espec.SoundBuf = Sound_GetEmuModBuffer(&espec.SoundBufMaxSize);
  	 espec.SoundVolume = (double)MDFN_GetSettingUI("sound.volume") / 100;
+
+	 if(MDFN_UNLIKELY(StateFuzzTest))
+	 {
+	  EmulateSpecStruct estmp = espec;
+	  MemoryStream state0(524288);
+
+	  MDFNSS_SaveSM(&state0);
+	  state0.rewind();
+	  MDFNSS_LoadSM(&state0, false, MDFNSS_FUZZ_RANDOM);
+	  MDFNI_Emulate(&estmp);
+	  state0.rewind();
+	  MDFNSS_LoadSM(&state0);
+	 }
 
 	 if(MDFN_UNLIKELY(StateRCTest))
 	 {
@@ -1434,15 +1422,15 @@ std::string GetBaseDirectory(void)
 {
 #ifdef WIN32
  {
-  const wchar_t* ol;
+  const TCHAR* ol;
 
-  ol = _wgetenv(L"MEDNAFEN_HOME");
+  ol = _tgetenv(TEXT("MEDNAFEN_HOME"));
   if(ol != NULL && ol[0] != 0)
-   return UTF16_to_UTF8((const char16_t*)ol, nullptr, true);
+   return Win32Common::T_to_UTF8(ol, nullptr, true);
 
-  ol = _wgetenv(L"HOME");
+  ol = _tgetenv(TEXT("HOME"));
   if(ol)
-   return UTF16_to_UTF8((const char16_t*)ol, nullptr, true) + PSS + ".mednafen";
+   return Win32Common::T_to_UTF8(ol, nullptr, true) + PSS + ".mednafen";
  }
 
  {
@@ -1782,14 +1770,14 @@ void PrintSDLVersion(void)
  }
 }
 
-#ifdef HAVE_LIBSNDFILE
- #include <sndfile.h>
+#ifdef HAVE_LIBFLAC
+ #include <FLAC/all.h>
 #endif
 
-void PrintLIBSNDFILEVersion(void)
+void PrintLIBFLACVersion(void)
 {
- #ifdef HAVE_LIBSNDFILE
-  MDFN_printf(_("Running with %s\n"), sf_version_string());
+ #ifdef HAVE_LIBFLAC
+  MDFN_printf(_("Running with libFLAC %s\n"), FLAC__VERSION_STRING);
  #endif
 }
 
@@ -1863,102 +1851,11 @@ char *GetFileDialog(void)
 }
 #endif
 
-#if 0
-static MThreading::Mutex* milk_mutex = NULL;
-static MThreading::Cond* milk_cond = NULL;
-static volatile unsigned cow_milk = 0;
-static volatile unsigned farmer_milk = 0;
-static volatile unsigned calf_milk = 0;
-static volatile unsigned am3000_milk = 0;
-
-static int CowEntry(void*)
-{
- uint32 start_time = Time::MonoMS();
-
- for(unsigned i = 0; i < 1000 * 1000; i++)
- {
-  MThreading::Mutex_Lock(milk_mutex);
-  cow_milk++;
-
-  MThreading::Cond_Signal(milk_cond);
-  MThreading::Mutex_Unlock(milk_mutex);
-
-  while(cow_milk != 0);
- }
-
- while(cow_milk != 0);
-
- return(Time::MonoMS() - start_time);
-}
-
-static int FarmerEntry(void*)
-{
- MThreading::Mutex_Lock(milk_mutex);
- while(1)
- {
-  MThreading::Cond_TimedWait(milk_cond, milk_mutex);
-
-  farmer_milk += cow_milk;
-  cow_milk = 0;
- }
- MThreading::Mutex_Unlock(milk_mutex);
- return(0);
-}
-
-static int CalfEntry(void*)
-{
- MThreading::Mutex_Lock(milk_mutex);
- while(1)
- {
-  MThreading::Cond_Wait(milk_cond, milk_mutex);
-
-  calf_milk += cow_milk;
-  cow_milk = 0;
- }
- MThreading::Mutex_Unlock(milk_mutex);
- return(0);
-}
-
-static int AutoMilker3000Entry(void*)
-{
- MThreading::Mutex_Lock(milk_mutex);
- while(1)
- {
-  MThreading::Cond_Wait(milk_cond, milk_mutex);
-
-  am3000_milk += cow_milk;
-  cow_milk = 0;
- }
- MThreading::Mutex_Unlock(milk_mutex);
- return(0);
-}
-
-static void ThreadTest(void)
-{
- MThreading::Thread *cow_thread, *farmer_thread, *calf_thread, *am3000_thread;
- int rec;
-
- milk_mutex = MThreading::Mutex_Create();
- milk_cond = MThreading::Cond_Create();
-
- //farmer_thread = MThreading::Thread_Create(FarmerEntry, NULL);
- //calf_thread = MThreading::Thread_Create(CalfEntry, NULL);
- //am3000_thread = MThreading::Thread_Create(AutoMilker3000Entry, NULL);
-
- cow_thread = MThreading::Thread_Create(CowEntry, NULL);
- MThreading::Thread_Wait(cow_thread, &rec);
-
- printf("%8u %8u %8u --- %8u, time=%u\n", farmer_milk, calf_milk, am3000_milk, farmer_milk + calf_milk + am3000_milk, rec);
-
- exit(0);
-}
-
-#endif
-
 static bool LoadSettings(void)
 {
+ const std::string opath09x = DrBaseDirectory + PSS + "mednafen-09x.cfg";
  const std::string npath = DrBaseDirectory + PSS + "mednafen.cfg";
- bool mednafencfg_old = false;	// old or nonexistent
+ bool mednafencfg_old = false;	// "mednafen.cfg" is old(0.8.x or earlier), or nonexistent
 
  try
  {
@@ -1990,9 +1887,15 @@ static bool LoadSettings(void)
   }
  }
 
- if(mednafencfg_old)
+ // Make sure the old settings file actually exists before calling
+ // MDFNI_LoadSettings() with its path, as MDFNI_LoadSettings() will,
+ // as of 1.27.0, open the (non-override) settings file with
+ // FileStream::MODE_READ_WRITE so that locking will work over NFS
+ // and to ensure that the settings file is actually writeable,
+ // which will create an empty mednafen-09x.cfg that we don't want.
+ if(mednafencfg_old && NVFS.finfo(opath09x, nullptr, false))
  {
-  switch(MDFNI_LoadSettings((DrBaseDirectory + PSS + "mednafen-09x.cfg").c_str()))
+  switch(MDFNI_LoadSettings(opath09x.c_str()))
   {
    case -1: return true;
    case 0: return false;
@@ -2051,16 +1954,17 @@ static void SaveSettings(void)
 }
 
 #ifdef WIN32
-static char** MSW_GetArgcArgv(int *argc)
+static bool MSW_GetArgcArgv(int *argc, char ***argv)
 {
+#ifdef UNICODE
  wchar_t** argvw = CommandLineToArgvW(GetCommandLineW(), argc);
  char** ret;
 
  if(!argvw)
-  return nullptr;
+  return false;
 
  if(!(ret = (char**)malloc((*argc + 1) * sizeof(char*))))
-  return nullptr;
+  return false;
 
  ret[*argc] = nullptr;
 
@@ -2071,14 +1975,21 @@ static char** MSW_GetArgcArgv(int *argc)
 
   UTF16_to_UTF8((char16_t*)argvw[i], argvw_i_slen + 1, nullptr, &dlen, true);
   if(!(ret[i] = (char*)malloc(dlen)))
-   return nullptr;
+   return false;
   UTF16_to_UTF8((char16_t*)argvw[i], argvw_i_slen + 1, ret[i],  &dlen, true);
  }
 
  LocalFree(argvw);
  argvw = nullptr;
 
- return ret;
+ *argv = ret;
+#else
+ //
+ // TODO?
+ //
+#endif
+
+ return true;
 }
 #endif
 
@@ -2124,7 +2035,7 @@ int main(int argc, char *argv[])
 	int FatalVideoError = -1;
 
 	#ifdef WIN32
-	if(!(argv = MSW_GetArgcArgv(&argc)))
+	if(!MSW_GetArgcArgv(&argc, &argv))
 	{
 	 if(!SuppressErrorPopups)
 	  MessageBoxA(NULL, "Error getting/allocating arguments.", "Mednafen Startup Error", MB_OK | MB_ICONERROR | MB_TASKMODAL | MB_SETFOREGROUND | MB_TOPMOST);
@@ -2187,6 +2098,22 @@ int main(int argc, char *argv[])
 	//
 	//
 	//
+        #if defined(WIN32) && !defined(UNICODE)
+        if(!(GetVersion() & 0x80000000))
+        {
+	 const char* errorstr = _("This special build of Mednafen is intended for use on Windows 98, Windows 98SE, and Windows Me.  It will perform suboptimally on NT-based versions of Windows.  Download a regular Windows build from https://mednafen.github.io/releases/");
+
+	 if(!SuppressErrorPopups)
+	  MessageBoxA(NULL, errorstr, "Mednafen Windows Version Error", MB_OK | MB_ICONSTOP | MB_TASKMODAL | MB_SETFOREGROUND | MB_TOPMOST);
+
+	 printf("%s\n", errorstr);
+
+	 return -1;
+        }
+        #endif
+	//
+	//
+	//
 	MDFNI_printf(_("Starting Mednafen %s\n"), MEDNAFEN_VERSION);
 	MDFN_indent(1);
 
@@ -2197,7 +2124,7 @@ int main(int argc, char *argv[])
         PrintZLIBVersion();
 	PrintLIBICONVVersion();
         PrintSDLVersion();
-        PrintLIBSNDFILEVersion();
+        PrintLIBFLACVersion();
         MDFN_indent(-2);
 
         MDFN_printf(_("Base directory: %s\n"), DrBaseDirectory.c_str());
@@ -2248,11 +2175,12 @@ int main(int argc, char *argv[])
 	//
 	try
 	{
-	 CreateDirs();
+ 	 // Create base directory
+	 NVFS.create_missing_dirs(DrBaseDirectory + PSS);
 	}
 	catch(std::exception &e)
 	{
-	 MDFN_Notify(MDFN_NOTICE_ERROR, _("Error creating directories: %s\n"), e.what());
+	 MDFN_Notify(MDFN_NOTICE_ERROR, _("Error creating base directory: %s\n"), e.what());
 	 return -1;
 	}
 	//
@@ -2303,11 +2231,23 @@ int main(int argc, char *argv[])
 
 	if(!DoArgs(argc, argv, &needie))
 	{
+	 CreateDataDirs();
 	 SaveSettings();
 	 MDFNI_Kill();
 	 return -1;
 	}
-
+	//
+	//
+	//
+	if(!CreateDataDirs())
+	{
+	 SaveSettings();
+	 MDFNI_Kill();
+	 return -1;
+	}
+	//
+	//
+	//
 	InstallSignalHandlers();
 	//
 	//
@@ -2373,7 +2313,7 @@ for(int zgi = 1; zgi < argc; zgi++)// start game load test loop
 	 //
 	 //
 	 uint32 pitch32 = CurGame->fb_width; 
-	 MDFN_PixelFormat nf(MDFN_COLORSPACE_RGB, 0, 8, 16, 24);
+	 MDFN_PixelFormat nf(MDFN_PixelFormat::ABGR32_8888);
 
          for(int i = 0; i < 2; i++)
 	 {
@@ -2586,7 +2526,7 @@ void Mednafen::MDFND_MidSync(EmulateSpecStruct *espec, const unsigned flags)
 {
  //printf("MidSync; flags=0x%08x --- SoundBufSize_DriverProcessed=0x%08x, SoundBufSize=0x%08x\n", flags, espec->SoundBufSize_DriverProcessed, espec->SoundBufSize);
  //
- if(MDFN_UNLIKELY(StateRCTest))
+ if(MDFN_UNLIKELY(StateRCTest || StateFuzzTest))
  {
   // TODO: Make state rewind consistency checking compatible with midsync, instead of this quick workaround.
   //puts("MDFND_MidSync ignored");

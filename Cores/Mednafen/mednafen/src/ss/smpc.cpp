@@ -504,10 +504,10 @@ void SMPC_StateAction(StateMem* sm, const unsigned load, const bool data_only)
  SFORMAT StateRegs[] =
  {
   SFVAR(RTC.ClockAccum),
-  SFVAR(RTC.Valid),
-  SFVAR(RTC.raw),
+  SFVAR(RTC.Valid, SFORMAT::FORM::NVMEM_INIT),
+  SFVAR(RTC.raw, SFORMAT::FORM::NVMEM_INIT),
 
-  SFVAR(SaveMem),
+  SFVAR(SaveMem, SFORMAT::FORM::NVMEM_INIT),
 
   SFVAR(IREG),
   SFVAR(OREG),

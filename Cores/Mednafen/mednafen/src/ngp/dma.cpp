@@ -196,7 +196,7 @@ void DMA_update(int channel)
 
 //=============================================================================
 
-void dmaStoreB(uint8 cr, uint8 data)
+MDFN_FASTCALL void dmaStoreB(uint8 cr, uint8 data)
 {
 	switch(cr)
 	{
@@ -211,7 +211,7 @@ void dmaStoreB(uint8 cr, uint8 data)
 	}
 }
 
-void dmaStoreW(uint8 cr, uint16 data)
+MDFN_FASTCALL void dmaStoreW(uint8 cr, uint16 data)
 {
 	switch(cr)
 	{
@@ -226,7 +226,7 @@ void dmaStoreW(uint8 cr, uint16 data)
 	}
 }
 
-void dmaStoreL(uint8 cr, uint32 data)
+MDFN_FASTCALL void dmaStoreL(uint8 cr, uint32 data)
 {
 	switch(cr)
 	{
@@ -248,7 +248,7 @@ void dmaStoreL(uint8 cr, uint32 data)
 
 //=============================================================================
 
-uint8 dmaLoadB(uint8 cr)
+MDFN_FASTCALL uint8 dmaLoadB(uint8 cr)
 {
 
 	switch(cr)
@@ -264,7 +264,7 @@ uint8 dmaLoadB(uint8 cr)
 	}
 }
 
-uint16 dmaLoadW(uint8 cr)
+MDFN_FASTCALL uint16 dmaLoadW(uint8 cr)
 {
 	switch(cr)
 	{
@@ -279,7 +279,7 @@ uint16 dmaLoadW(uint8 cr)
 	}
 }
 
-uint32 dmaLoadL(uint8 cr)
+MDFN_FASTCALL uint32 dmaLoadL(uint8 cr)
 {
 	switch(cr)
 	{

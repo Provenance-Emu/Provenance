@@ -20,7 +20,7 @@ namespace MDFN_IEN_NGP
 {
 
 //Marks flash blocks for saving.
-void flash_write(uint32 start_address, uint16 length);
+MDFN_FASTCALL void flash_write(uint32 start_address, uint16 length);
 void flash_optimise_blocks(void);
 
 void FLASH_LoadNV(void);

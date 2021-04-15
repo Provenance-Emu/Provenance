@@ -1,8 +1,8 @@
 /******************************************************************************/
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
-/* Time.cpp:
-**  Copyright (C) 2017 Mednafen Team
+/* Time_POSIX.cpp:
+**  Copyright (C) 2017-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -21,11 +21,7 @@
 
 #include <mednafen/mednafen.h>
 #include <mednafen/string/string.h>
-#include "Time.h"
-
-#if defined(WIN32)
- #include <mednafen/win32-common.h>
-#endif
+#include <mednafen/Time.h>
 
 namespace Mednafen
 {
@@ -34,25 +30,16 @@ namespace Time
 {
 
 static bool Initialized = false;
-
-#if defined(WIN32)
- static uint32 tgt_base;
-#else
- static struct timespec cgt_base;
-#endif
+static struct timespec cgt_base;
 
 void Time_Init(void)
 {
- #ifdef WIN32
-  tgt_base = timeGetTime();
- #else
-  if(MDFN_UNLIKELY(clock_gettime(CLOCK_MONOTONIC, &cgt_base) == -1))
-  {
-   ErrnoHolder ene(errno);
+ if(MDFN_UNLIKELY(clock_gettime(CLOCK_MONOTONIC, &cgt_base) == -1))
+ {
+  ErrnoHolder ene(errno);
 
-   throw MDFN_Error(ene.Errno(), _("%s failed: %s"), "clock_gettime()", ene.StrError());
-  }
- #endif
+  throw MDFN_Error(ene.Errno(), _("%s failed: %s"), "clock_gettime()", ene.StrError());
+ }
  Initialized = true;
 }
 
@@ -60,16 +47,7 @@ int64 EpochTime(void)
 {
  if(MDFN_UNLIKELY(!Initialized))
   Time_Init();
-
-#ifdef WIN32
- __time64_t ret = _time64(nullptr);
-
- if(ret == -1)
- {
-  ErrnoHolder ene(errno);
-  throw MDFN_Error(ene.Errno(), _("%s failed: %s"), "_time64()", ene.StrError());
- }
-#else
+ //
  time_t ret = time(nullptr);
 
  if(ret == (time_t)-1)
@@ -77,7 +55,6 @@ int64 EpochTime(void)
   ErrnoHolder ene(errno);
   throw MDFN_Error(ene.Errno(), _("%s failed: %s"), "time()", ene.StrError());
  }
-#endif
 
  return (int64)ret;
 }
@@ -86,20 +63,9 @@ struct tm LocalTime(const int64 ept)
 {
  if(MDFN_UNLIKELY(!Initialized))
   Time_Init();
-
+ //
  struct tm tout;
 
-#ifdef WIN32
- __time64_t tt = (__time64_t)ept;
- struct tm* tr;
- if(!(tr = _localtime64(&tt)))
- {
-  ErrnoHolder ene(errno);
-
-  throw MDFN_Error(ene.Errno(), _("%s failed: %s"), "_localtime64()", ene.StrError());
- }
- memcpy(&tout, tr, sizeof(struct tm));
-#else
  time_t tt = (time_t)ept;
 
  #ifdef HAVE_LOCALTIME_R
@@ -118,7 +84,6 @@ struct tm LocalTime(const int64 ept)
  }
  memcpy(&tout, tr, sizeof(struct tm));
  #endif
-#endif
 
  return tout;
 }
@@ -127,20 +92,9 @@ struct tm UTCTime(const int64 ept)
 {
  if(MDFN_UNLIKELY(!Initialized))
   Time_Init();
-
+ //
  struct tm tout;
 
-#ifdef WIN32
- __time64_t tt = (__time64_t)ept;
- struct tm* tr;
- if(!(tr = _gmtime64(&tt)))
- {
-  ErrnoHolder ene(errno);
-
-  throw MDFN_Error(ene.Errno(), _("%s failed: %s"), "_gmtime64()", ene.StrError());
- }
- memcpy(&tout, tr, sizeof(struct tm));
-#else
  time_t tt = (time_t)ept;
 
  #ifdef HAVE_GMTIME_R
@@ -159,25 +113,12 @@ struct tm UTCTime(const int64 ept)
  }
  memcpy(&tout, tr, sizeof(struct tm));
  #endif
-#endif
 
  return tout;
 }
 
 std::string StrTime(const char* format, const struct tm& tin)
 {
- #ifdef WIN32
- std::u16string ret((size_t)256, 0);
- size_t rv;
- std::u16string formatadj = UTF8_to_UTF16(format) + u"!";
-
- while(!(rv = wcsftime((wchar_t*)&ret[0], ret.size(), (const wchar_t*)formatadj.c_str(), &tin)))
-  ret.resize(ret.size() * 2);
-
- ret.resize(rv - 1);
-
- return UTF16_to_UTF8(ret);
- #else
  std::string ret((size_t)256, 0);
  size_t rv;
  std::string formatadj = std::string(format) + "!";
@@ -188,7 +129,6 @@ std::string StrTime(const char* format, const struct tm& tin)
  ret.resize(rv - 1);
 
  return ret;
- #endif
 }
 
 int64 MonoUS(void)
@@ -196,11 +136,6 @@ int64 MonoUS(void)
  if(MDFN_UNLIKELY(!Initialized))
   Time_Init();
 
- #if defined(WIN32)
- {
-  return (int64)1000 * (timeGetTime() - tgt_base);
- }
- #else
  {
   struct timespec tp;
 
@@ -213,12 +148,6 @@ int64 MonoUS(void)
 
   return (int64)(tp.tv_sec - cgt_base.tv_sec) * 1000 * 1000 + (tp.tv_nsec - cgt_base.tv_nsec) / 1000;
  }
- #endif
-}
-
-uint32 MonoMS(void)
-{
- return MonoUS() / 1000;
 }
 
 void SleepMS(uint32 amount) noexcept
@@ -226,9 +155,6 @@ void SleepMS(uint32 amount) noexcept
  if(MDFN_UNLIKELY(!Initialized))
   Time_Init();
 
- #if defined(WIN32)
-  Sleep(amount);
- #else
  {
   struct timespec want, rem;
 
@@ -237,7 +163,6 @@ void SleepMS(uint32 amount) noexcept
 
   nanosleep(&want, &rem);
  }
- #endif
 }
 
 }

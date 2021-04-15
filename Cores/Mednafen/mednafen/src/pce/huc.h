@@ -27,8 +27,8 @@ void HuC_Power(void);
 DECLFR(PCE_ACRead);
 DECLFW(PCE_ACWrite);
 
-extern bool PCE_IsCD;
-extern bool IsTsushin;
+MDFN_HIDE extern bool PCE_IsCD;
+MDFN_HIDE extern bool IsTsushin;
 
 // Debugger support functions.
 bool HuC_IsBRAMAvailable(void);

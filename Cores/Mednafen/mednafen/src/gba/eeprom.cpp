@@ -31,8 +31,6 @@
 namespace MDFN_IEN_GBA
 {
 
-extern int cpuDmaCount;
-
 static int eepromMode = EEPROM_IDLE;
 static int eepromByte = 0;
 static int eepromBits = 0;

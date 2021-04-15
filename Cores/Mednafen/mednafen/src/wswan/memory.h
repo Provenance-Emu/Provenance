@@ -4,10 +4,10 @@
 namespace MDFN_IEN_WSWAN
 {
 
-extern uint8 wsRAM[65536];
-extern uint8 *wsCartROM;
-extern uint32 eeprom_size;
-extern uint8 wsEEPROM[2048];
+MDFN_HIDE extern uint8 wsRAM[65536];
+MDFN_HIDE extern uint8 *wsCartROM;
+MDFN_HIDE extern uint32 eeprom_size;
+MDFN_HIDE extern uint8 wsEEPROM[2048];
 
 MDFN_FASTCALL uint8 WSwan_readmem20(uint32);
 MDFN_FASTCALL void WSwan_writemem20(uint32 address,uint8 data);

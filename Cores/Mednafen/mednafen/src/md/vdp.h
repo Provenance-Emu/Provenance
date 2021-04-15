@@ -96,13 +96,13 @@ class MDVDP
 
  private:
  /* Tables that define the playfield layout */
- static const uint8 shift_table[4];
- static const uint8 col_mask_table[4];
- static const uint16 row_mask_table[4];
- static const uint32 y_mask_table[4];
+ MDFN_HIDE static const uint8 shift_table[4];
+ MDFN_HIDE static const uint8 col_mask_table[4];
+ MDFN_HIDE static const uint16 row_mask_table[4];
+ MDFN_HIDE static const uint32 y_mask_table[4];
 
  /* Attribute expansion table */
- static const uint32 atex_table[8];
+ MDFN_HIDE static const uint32 atex_table[8];
 
  enum
  {

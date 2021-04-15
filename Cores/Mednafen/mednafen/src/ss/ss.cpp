@@ -44,8 +44,6 @@
 
 using namespace Mednafen;
 
-extern MDFNGI EmulatedSS;
-
 #include "ss.h"
 #include "sound.h"
 #include "scsp.h"	// For debug.inc
@@ -745,9 +743,9 @@ static int32 cur_clock_div;
 static int64 UpdateInputLastBigTS;
 static INLINE void UpdateSMPCInput(const sscpu_timestamp_t timestamp)
 {
- int32 elapsed_time = (((int64)timestamp * cur_clock_div * 1000 * 1000) - UpdateInputLastBigTS) / (EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1));
+ int32 elapsed_time = (((int64)timestamp * cur_clock_div * 1000 * 1000) - UpdateInputLastBigTS) / (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));
 
- UpdateInputLastBigTS += (int64)elapsed_time * (EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1));
+ UpdateInputLastBigTS += (int64)elapsed_time * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));
 
  SMPC_UpdateInput(elapsed_time);
 }
@@ -794,7 +792,7 @@ static void Emulate(EmulateSpecStruct* espec_arg)
  UpdateSMPCInput(0);
  VDP2::StartFrame(espec, cur_clock_div == 61);
  SOUND_StartFrame(espec->SoundRate / espec->soundmultiplier, MDFN_GetSettingUI("ss.scsp.resamp_quality"));
- CART_SetCPUClock(EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1), cur_clock_div);
+ CART_SetCPUClock(MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1), cur_clock_div);
  espec->SoundBufSize = 0;
  espec->MasterCycles = 0;
  espec->soundmultiplier = 1;
@@ -854,7 +852,7 @@ static void Emulate(EmulateSpecStruct* espec_arg)
  //
  if(BackupRAM_Dirty)
  {
-  BackupRAM_SaveDelay = (int64)3 * (EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 3 second delay
+  BackupRAM_SaveDelay = (int64)3 * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 3 second delay
   BackupRAM_Dirty = false;
  }
  else if(BackupRAM_SaveDelay > 0)
@@ -870,13 +868,13 @@ static void Emulate(EmulateSpecStruct* espec_arg)
    catch(std::exception& e)
    {
     MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
-    BackupRAM_SaveDelay = (int64)60 * (EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 60 second retry delay.
+    BackupRAM_SaveDelay = (int64)60 * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 60 second retry delay.
    }
   }
  }
 
  if(CART_GetClearNVDirty())
-  CartNV_SaveDelay = (int64)3 * (EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 3 second delay
+  CartNV_SaveDelay = (int64)3 * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 3 second delay
  else if(CartNV_SaveDelay > 0)
  {
   CartNV_SaveDelay -= espec->MasterCycles;
@@ -890,7 +888,7 @@ static void Emulate(EmulateSpecStruct* espec_arg)
    catch(std::exception& e)
    {
     MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
-    CartNV_SaveDelay = (int64)60 * (EmulatedSS.MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 60 second retry delay.
+    CartNV_SaveDelay = (int64)60 * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 60 second retry delay.
    }
   }
  }
@@ -1329,7 +1327,7 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
    BIOSROM[i] = MDFN_de16msb(&BIOSROM[i]);
  }
 
- EmulatedSS.MasterClock = MDFN_MASTERCLOCK_FIXED(MasterClock);
+ MDFNGameInfo->MasterClock = MDFN_MASTERCLOCK_FIXED(MasterClock);
 
  SCU_Init();
  SMPC_Init(smpc_area, MasterClock);
@@ -1356,7 +1354,7 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
   MDFN_printf(_("Show H Overscan: %s\n"), h_overscan ? _("Enabled") : _("Disabled"));
   MDFN_printf(_("H Blend: %s\n"), h_blend ? _("Enabled") : _("Disabled"));
 
-  VDP2::SetGetVideoParams(&EmulatedSS, correct_aspect, sls, sle, h_overscan, h_blend);
+  VDP2::SetGetVideoParams(MDFNGameInfo, correct_aspect, sls, sle, h_overscan, h_blend);
  }
 
  MDFN_printf("\n");
@@ -1658,8 +1656,8 @@ static MDFN_COLD void LoadCD(std::vector<CDInterface*>* CDInterfaces)
 static MDFN_COLD void CloseGame(void)
 {
 #ifdef MDFN_ENABLE_DEV_BUILD
- VDP1::MakeDump("/tmp/vdp1_dump.h");
- VDP2::MakeDump("/tmp/vdp2_dump.h");
+ try { VDP1::MakeDump("/tmp/vdp1_dump.h"); } catch(std::exception& e) { MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what()); }
+ try { VDP2::MakeDump("/tmp/vdp2_dump.h"); } catch(std::exception& e) { MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what()); }
 #endif
  //
  //
@@ -1881,8 +1879,8 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
 
   SFORMAT SRDStateRegs[] = 
   {
-   SFPTR8(sr_dig.data(), sr_dig.size()),
-   SFVAR(cart_type),
+   SFPTR8(sr_dig.data(), sr_dig.size(), SFORMAT::FORM::CONFIG_VALIDATE),
+   SFVAR(cart_type, SFORMAT::FORM::CONFIG_VALIDATE),
    SFEND
   };
 
@@ -1927,7 +1925,7 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
 
   SFVAR(WorkRAML),
   SFVAR(WorkRAMH),
-  SFVAR(BackupRAM),
+  SFVAR(BackupRAM, SFORMAT::FORM::NVMEM),
 
   SFVAR(RecordedNeedEmuICache),
 
@@ -1965,7 +1963,7 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
 
 static MDFN_COLD void SetMedia(uint32 drive_idx, uint32 state_idx, uint32 media_idx, uint32 orientation_idx)
 {
- const RMD_Layout* rmd = EmulatedSS.RMD;
+ const RMD_Layout* rmd = MDFNGameInfo->RMD;
  const RMD_Drive* rd = &rmd->Drives[drive_idx];
  const RMD_State* rs = &rd->PossibleStates[state_idx];
 
@@ -2213,7 +2211,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_SS;
 
-MDFNGI EmulatedSS =
+MDFN_HIDE extern const MDFNGI EmulatedSS =
 {
  "ss",
  "Sega Saturn",
@@ -2254,6 +2252,8 @@ MDFNGI EmulatedSS =
  SSSettings,
  0,
  0,
+
+ EVFSUPPORT_NONE,
 
  true, // Multires possible?
 

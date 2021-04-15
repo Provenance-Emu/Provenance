@@ -5,12 +5,12 @@ namespace MDFN_IEN_MD
 {
 
 /* Function prototypes */
-extern void gen_io_reset(void);
-extern void gen_io_w(int offset, int value);
-extern int gen_io_r(int offset);
+void gen_io_reset(void);
+void gen_io_w(int offset, int value);
+int gen_io_r(int offset);
 
-extern void gen_io_update(void);
-extern void gen_io_set_device(int which, int type);
+void gen_io_update(void);
+void gen_io_set_device(int which, int type);
 
 void MDIO_BeginTimePeriod(const int32 timestamp_base);
 void MDIO_EndTimePeriod(const int32 master_timestamp);
@@ -31,7 +31,7 @@ enum
 };
 void MDINPUT_SetMultitap(unsigned type);
 
-extern const std::vector<InputPortInfoStruct> MDPortInfo;
+MDFN_HIDE extern const std::vector<InputPortInfoStruct> MDPortInfo;
 
 class MD_Input_Device
 {

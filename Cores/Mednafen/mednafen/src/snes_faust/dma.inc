@@ -77,6 +77,12 @@ static void DMA_UnhaltCPU(void)
 // TODO: Warning message when DMA overwrites DMA registers.
 void CPU_Misc::RunDMA(void)
 {
+#ifdef SNES_DBG_ENABLE
+ assert(!InDMABusAccess);
+#endif
+
+ InDMABusAccess = true;
+
  for(unsigned ch = 0; ch < 8; ch++)
  {
   if(DMAEnable & (1U << ch))
@@ -89,7 +95,10 @@ void CPU_Misc::RunDMA(void)
    do
    {
     if(timestamp >= next_event_ts)
+    {
+     InDMABusAccess = false;
      return;
+    }
 
     const uint32 a_addr = ((DMACH[ch].ABusBank << 16) + DMACH[ch].ABusAddr);
     const uint8 b_addr = DMACH[ch].BBusAddr + tm.offsets[DMACH[ch].Offset];
@@ -121,6 +130,8 @@ void CPU_Misc::RunDMA(void)
   }
  }
 
+ InDMABusAccess = false;
+
  if(DMAEnable == 0)
  {
 #ifdef SNES_DBG_ENABLE
@@ -143,6 +154,12 @@ static uint32 DMA_Update(uint32 timestamp)
 
 void DMA_InitHDMA(void)
 {
+#ifdef SNES_DBG_ENABLE
+ assert(!CPUM.InDMABusAccess);
+#endif
+
+ CPUM.InDMABusAccess = true;
+
  DMAEnable &= ~HDMAEnable;
 
  if((CPUM.halted & CPU_Misc::HALTED_DMA) && DMAEnable == 0)
@@ -180,10 +197,17 @@ void DMA_InitHDMA(void)
    SNES_DBG("[DMA] HDMA %u Init: Control=0x%02x, LineCounter=0x%02x, TableAddr=0x%04x, IndirAddr=0x%04x --- ABank=0x%02x, IndirBank=0x%02x\n", ch, DMACH[ch].Control, DMACH[ch].LineCounter, DMACH[ch].TableAddr, DMACH[ch].IndirAddr, DMACH[ch].ABusBank, DMACH[ch].IndirBank);
   }
  }
+ CPUM.InDMABusAccess = false;
 }
 
 void DMA_RunHDMA(void)
 {
+#ifdef SNES_DBG_ENABLE
+ assert(!CPUM.InDMABusAccess);
+#endif
+
+ CPUM.InDMABusAccess = true;
+
  for(unsigned ch = 0; ch < 8; ch++)
  {
   if(HDMAEnable & HDMAEnableMask & (1U << ch))
@@ -275,6 +299,7 @@ void DMA_RunHDMA(void)
   }
  }
 
+ CPUM.InDMABusAccess = false;
  //
  //
  if((CPUM.halted & CPU_Misc::HALTED_DMA) && DMAEnable == 0)
@@ -612,6 +637,8 @@ static void DMA_Reset(bool powering_up)
 
 static void DMA_Init(void)
 {
+ CPUM.InDMABusAccess = false;
+
  for(unsigned bank = 0x00; bank < 0x100; bank++)
  {
   if(bank <= 0x3F || (bank >= 0x80 && bank <= 0xBF))

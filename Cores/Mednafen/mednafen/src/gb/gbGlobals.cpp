@@ -24,10 +24,10 @@ namespace MDFN_IEN_GB
 
 uint8 *gbMemoryMap[16];
 
-int gbRomSizeMask = 0;
-int gbRomSize = 0;
-int gbRamSizeMask = 0;
-int gbRamSize = 0;
+int gbRomSizeMask;
+int gbRomSize;
+int gbRamSizeMask;
+int gbRamSize;
 
 uint8 *gbVram = NULL;
 uint8 *gbRom = NULL;
@@ -39,13 +39,13 @@ uint8 gbBgp[4];
 uint8 gbObp0[4];
 uint8 gbObp1[4];
 
-int gbWindowLine = -1;
+int gbWindowLine;
 
-int gbCgbMode = 0;
+int gbCgbMode;
 
-int gbPaletteOption = 0;
-int gbEmulatorType = 0;
-int gbDmaTicks = 0;
+int gbPaletteOption;
+int gbEmulatorType;
+int gbDmaTicks;
 
 uint8 (*gbSerialFunction)(uint8) = NULL;
 

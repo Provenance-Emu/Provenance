@@ -1016,12 +1016,12 @@ void MDVDP::render_line(int line)
     {
      //printf("ION: %d, IFIELD: %d --- %d, %d, im2f=%d\n", espec->InterlaceOn, espec->InterlaceField, line, ((line + ((240 - visible_frame_end) >> 1)) * (espec->InterlaceOn ? 2 : 1) + espec->InterlaceField), im2_flag);
      //printf("%d, %d %d\n", line, espec->InterlaceOn, espec->InterlaceField);
-     switch(surface->format.bpp)
+     switch(surface->format.opp)
      {
-	case 16:CopyLineSurface<uint16>(&lb[vp_x], cvp_line, vp_w);
+	case 2: CopyLineSurface<uint16>(&lb[vp_x], cvp_line, vp_w);
 		break;
 
-	case 32:CopyLineSurface<uint32>(&lb[vp_x], cvp_line, vp_w);
+	case 4: CopyLineSurface<uint32>(&lb[vp_x], cvp_line, vp_w);
 		break;
      }
     }

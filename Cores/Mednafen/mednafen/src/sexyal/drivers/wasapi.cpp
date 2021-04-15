@@ -443,7 +443,7 @@ SexyAL_device *SexyALI_WASAPI_Open(const char *id, SexyAL_format *format, SexyAL
  if(w->evt == NULL)
   assert(0);
 
- if(!(w->avrt_dll = LoadLibrary("avrt.dll")))
+ if(!(w->avrt_dll = LoadLibrary(TEXT("avrt.dll"))))
   assert(0);
 
  if(!(w->p_AvSetMmThreadCharacteristicsA = (HANDLE WINAPI (*)(LPCSTR, LPDWORD))(GetProcAddress(w->avrt_dll, "AvSetMmThreadCharacteristicsA"))))

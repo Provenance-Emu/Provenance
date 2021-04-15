@@ -94,7 +94,7 @@ static void SSCleanup(void)
 }
 
 // TODO: Handle memory allocation errors.
-void DrawSaveStates(int32 screen_w, int32 screen_h, double exs, double eys, int rs, int gs, int bs, int as)
+void DrawSaveStates(int32 screen_w, int32 screen_h, double exs, double eys, const MDFN_PixelFormat& pf)
 {
  if(StateShow <= Time::MonoMS())
  {
@@ -105,7 +105,7 @@ void DrawSaveStates(int32 screen_w, int32 screen_h, double exs, double eys, int 
  {
   if(!PreviewSurface)
   {
-   PreviewSurface = new MDFN_Surface(NULL, StateStatus->w + 2, StateStatus->h + 2, StateStatus->w + 2, MDFN_PixelFormat(MDFN_COLORSPACE_RGB, rs, gs, bs, as));
+   PreviewSurface = new MDFN_Surface(NULL, StateStatus->w + 2, StateStatus->h + 2, StateStatus->w + 2, pf);
 
    PreviewRect.x = PreviewRect.y = 0;
    PreviewRect.w = StateStatus->w + 2;
@@ -135,7 +135,7 @@ void DrawSaveStates(int32 screen_w, int32 screen_h, double exs, double eys, int 
 
    if(!TextSurface)
    {
-    TextSurface = new MDFN_Surface(NULL, 230, 40, 230, MDFN_PixelFormat(MDFN_COLORSPACE_RGB, rs, gs, bs, as));
+    TextSurface = new MDFN_Surface(NULL, 230, 40, 230, pf);
 
     TextRect.x = TextRect.y = 0;
     TextRect.w = 230;
@@ -172,14 +172,14 @@ void DrawSaveStates(int32 screen_w, int32 screen_h, double exs, double eys, int 
   tdrect.x = (screen_w - tdrect.w) / 2;
   tdrect.y = screen_h - tdrect.h;
 
-  BlitRaw(TextSurface, &TextRect, &tdrect);
+  BlitOSD(TextSurface, &TextRect, &tdrect);
 
   drect.w = PreviewRect.w * meow;
   drect.h = PreviewRect.h * meow;
   drect.x = (screen_w - drect.w) / 2;
   drect.y = screen_h - drect.h - tdrect.h - 4;
 
-  BlitRaw(PreviewSurface, &PreviewRect, &drect);
+  BlitOSD(PreviewSurface, &PreviewRect, &drect);
 
  }
 

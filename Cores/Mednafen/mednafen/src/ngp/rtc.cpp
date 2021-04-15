@@ -57,7 +57,7 @@ static void update_rtc_latch(void)
 
 
 
-uint8 rtc_read8(uint32 address)
+MDFN_FASTCALL uint8 rtc_read8(uint32 address)
 {
  if(address >= 0x0091 && address <= 0x0097)
  {

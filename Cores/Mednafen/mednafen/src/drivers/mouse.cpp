@@ -63,7 +63,7 @@ void Init(void)
  memset(MouseDataPointerAsAxis, 0, sizeof(MouseDataPointerAsAxis));
  MouseDataButtons = 0;
 
- memset(&config_pending_bc, 0, sizeof(config_pending_bc));
+ config_pending_bc = ButtConfig();
 }
 
 /*
@@ -139,7 +139,7 @@ void Event(const SDL_Event* event)
 
 void Reset_BC_ChangeCheck(void)
 {
- memset(&config_pending_bc, 0, sizeof(config_pending_bc));
+ config_pending_bc = ButtConfig();
  config_pending_bc.DeviceType = BUTTC_NONE;
 }
 

@@ -783,7 +783,7 @@ void SetLayerEnableMask(uint64 mask)
 }
 
 
-MDFNGI EmulatedMD =
+MDFN_HIDE extern const MDFNGI EmulatedMD =
 {
  "md",
  "Sega Genesis/MegaDrive",
@@ -824,6 +824,9 @@ MDFNGI EmulatedMD =
  MDSettings,
  0,	// MasterClock(set in game loading code)
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  true, // Multires possible?
 
  0,   // lcm_width		// Calculated in game load
