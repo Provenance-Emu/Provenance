@@ -37,7 +37,7 @@ steps:
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-    packageApp: false
+    packageApp: true
     destinationPlatformOption: iOS
     destinationSimulators: iPhone 8
   displayName: Building project
@@ -48,7 +48,7 @@ steps:
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
-    packageApp: false
+    packageApp: true
     destinationPlatformOption: iOS
     destinationSimulators: iPhone 8
   displayName: Running tests
