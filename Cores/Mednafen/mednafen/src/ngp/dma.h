@@ -46,13 +46,13 @@ void reset_dma(void);
 
 void DMA_update(int channel);
 
-uint8  dmaLoadB(uint8 cr);
-uint16 dmaLoadW(uint8 cr);
-uint32 dmaLoadL(uint8 cr);
+MDFN_FASTCALL uint8  dmaLoadB(uint8 cr);
+MDFN_FASTCALL uint16 dmaLoadW(uint8 cr);
+MDFN_FASTCALL uint32 dmaLoadL(uint8 cr);
 
-void dmaStoreB(uint8 cr, uint8 data);
-void dmaStoreW(uint8 cr, uint16 data);
-void dmaStoreL(uint8 cr, uint32 data);
+MDFN_FASTCALL void dmaStoreB(uint8 cr, uint8 data);
+MDFN_FASTCALL void dmaStoreW(uint8 cr, uint16 data);
+MDFN_FASTCALL void dmaStoreL(uint8 cr, uint32 data);
 
 int MDFNNGPCDMA_StateAction(StateMem *sm, int load, int data_only);
 

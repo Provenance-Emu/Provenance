@@ -358,7 +358,7 @@ bool Sound_Init(MDFNGI *gi)
  return true;
 }
 
-bool Sound_Kill(void)
+void Sound_Kill(void) noexcept
 {
  SoundRate = 0;
 
@@ -371,14 +371,10 @@ bool Sound_Kill(void)
  }
 
  if(Output)
+ {
   Output->Close(Output);
-
- if(!Output)
-  return false;
-
- Output = NULL;
-
- return true;
+  Output = NULL;
+ }
 }
 
 

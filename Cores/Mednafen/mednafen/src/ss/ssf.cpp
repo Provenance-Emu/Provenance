@@ -28,8 +28,6 @@
 
 using namespace Mednafen;
 
-MDFN_HIDE extern MDFNGI EmulatedSSFPlay;
-
 #define MDFN_SSFPLAY_COMPILE
 #define SS_DBG(a, ...) ((void)0)
 #define CDB_GetCDDA(n) ((void)0)
@@ -113,8 +111,8 @@ static MDFN_COLD void Load(GameFile* gf)
 
   SOUND_Init();
 
-  EmulatedSSFPlay.fps = 75 * 65536 * 256;
-  EmulatedSSFPlay.MasterClock = MDFN_MASTERCLOCK_FIXED(44100 * 256);
+  MDFNGameInfo->fps = 75 * 65536 * 256;
+  MDFNGameInfo->MasterClock = MDFN_MASTERCLOCK_FIXED(44100 * 256);
 
   Reset();
  }
@@ -164,7 +162,7 @@ static std::vector<InputPortInfoStruct> DummyPortInfo;
 
 using namespace MDFN_IEN_SSFPLAY;
 
-MDFNGI EmulatedSSFPlay =
+MDFN_HIDE extern const MDFNGI EmulatedSSFPlay =
 {
  "ssfplay",
  "Sega Saturn Sound Format Player",
@@ -201,6 +199,8 @@ MDFNGI EmulatedSSFPlay =
  SSFPlaySettings,
  0,
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
 
  false, // Multires possible?
 

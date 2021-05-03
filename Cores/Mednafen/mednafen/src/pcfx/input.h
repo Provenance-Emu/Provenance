@@ -72,7 +72,7 @@ void FXINPUT_StateAction(StateMem *sm, const unsigned load, const bool data_only
 v810_timestamp_t FXINPUT_Update(const v810_timestamp_t timestamp);
 void FXINPUT_ResetTS(int32 ts_base);
 
-extern const std::vector<InputPortInfoStruct> PCFXPortInfo;
+MDFN_HIDE extern const std::vector<InputPortInfoStruct> PCFXPortInfo;
 
 #ifdef WANT_DEBUGGER
 

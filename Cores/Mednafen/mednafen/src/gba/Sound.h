@@ -50,10 +50,10 @@ namespace MDFN_IEN_GBA
 #define FIFOB_L 0xa4
 #define FIFOB_H 0xa6
 
-extern void soundReset();
-extern void soundEvent(uint32, uint8);
-extern void soundEvent(uint32, uint16);
-extern void soundTimerOverflow(int);
+void soundReset();
+void soundEvent(uint32, uint8);
+void soundEvent(uint32, uint16);
+void soundTimerOverflow(int);
 
 int32 MDFNGBASOUND_Flush(int16 *SoundBuf, const int32 MaxSoundFrames);
 void MDFNGBASOUND_Init(void) MDFN_COLD;

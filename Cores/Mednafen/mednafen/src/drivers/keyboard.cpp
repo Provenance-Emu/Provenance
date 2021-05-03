@@ -104,7 +104,7 @@ bool StringToBN(const char* s, uint16* bn)
 
 void Reset_BC_ChangeCheck(bool isck)
 {
- memset(&config_pending_bc, 0, sizeof(config_pending_bc));
+ config_pending_bc = ButtConfig();
  config_pending_bc.DeviceType = BUTTC_NONE;
  config_isck = isck;
 }

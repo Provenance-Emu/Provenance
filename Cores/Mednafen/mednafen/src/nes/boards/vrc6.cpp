@@ -245,12 +245,27 @@ static int StateAction(StateMem *sm, int load, int data_only)
  {
   SFPTR8(WRAM, 8192),
   SFPTR8(CHRBanks, 8),
-  SFVAR(PRGBank8), SFVAR(PRGBank16),
-  SFVAR(IRQCount), SFVAR(IRQLatch), SFVAR(IRQEnabled),
-  SFVAR(b3), SFVAR(phaseacc), SFVAR(acount),
-  SFVAR(vcount[0]), SFVAR(vcount[1]), SFVAR(vcount[2]),
-  SFVAR(dcount[0]), SFVAR(dcount[1]),
+  SFVAR(Mirroring),
+  SFVAR(PRGBank8),
+  SFVAR(PRGBank16),
+  SFVAR(IRQCount),
+  SFVAR(IRQLatch),
+  SFVAR(IRQEnabled),
+  SFVAR(vrctemp),
+
+  SFVAR(b3),
+  SFVAR(phaseacc),
+  SFVAR(acount),
+
+  SFVAR(vcount[0]),
+  SFVAR(vcount[1]),
+  SFVAR(vcount[2]),
+
+  SFVAR(dcount[0]),
+  SFVAR(dcount[1]),
+
   SFVARN(VPSG, "VPSG"),
+
   SFEND
  };
  int ret = MDFNSS_StateAction(sm, load, data_only, StateRegs, "VRC6");
@@ -304,13 +319,14 @@ static void Power(CartInfo *info)
 	DoPRG();
 
 	IRQCount = IRQLatch = IRQEnabled = 0;
+	vrctemp = 0;
 	Mirroring = 0;
 	DoMirroring();
 
 	b3 = 0;
 	phaseacc = 0;
 	acount = 0;
-
+	memset(VPSG, 0, sizeof(VPSG));
 }
 
 static int VRC6_Init(CartInfo *info)

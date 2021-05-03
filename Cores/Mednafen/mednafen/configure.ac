@@ -6,8 +6,8 @@ AC_CONFIG_MACRO_DIR([m4])
 #
 # Avoid trailing and leading zeroes in the decimal version components to avoid confusing not-so-learned people.
 #
-MEDNAFEN_VERSION='1.26.1'
-MEDNAFEN_VERSION_NUMERIC=0x00102601
+MEDNAFEN_VERSION='1.27.0-UNSTABLE'
+MEDNAFEN_VERSION_NUMERIC=0x00102700
 #                        0xJJJnnnRR
 
 AC_CANONICAL_HOST
@@ -55,7 +55,7 @@ AC_CHECK_SIZEOF(size_t)
 AC_CHECK_SIZEOF(ptrdiff_t)
 AC_CHECK_SIZEOF(off_t)
 AC_C_CONST
-AC_CHECK_FUNCS(memcmp memcpy memmove memset mmap munmap madvise signal sigaction fork pipe dup2 fcntl getenv putenv setenv gettimeofday getpwuid getuid strerror strerror_r ftello fopen64 fseeko64 ftello64 fstat64 ftruncate64 __mingw_get_crt_info)
+AC_CHECK_FUNCS(memcmp memcpy memmove memset mmap munmap madvise signal sigaction siglongjmp _longjmp fork pipe dup2 fcntl getenv putenv setenv gettimeofday getpwuid getuid strerror strerror_r ftello fopen64 fseeko64 lseek64 ftello64 fstat64 ftruncate64 __mingw_get_crt_info)
 
 AC_SEARCH_LIBS(fmodl, [m])
 
@@ -628,21 +628,21 @@ fi
 AC_CONFIG_LINKS([include/minilzo/minilzo.h:$minilzo_include_symsrc/minilzo.h])
 
 #
-# libsndfile
+# libFLAC
 #
-AM_CONDITIONAL(HAVE_LIBSNDFILE, false)
-AC_ARG_WITH([libsndfile],
-            [AS_HELP_STRING([--with-libsndfile],
-              [support various sound file formats in ripped CD images @<:@default=yes@:>@])],
+AM_CONDITIONAL(HAVE_LIBFLAC, false)
+AC_ARG_WITH([libflac],
+            [AS_HELP_STRING([--with-libflac],
+              [support FLAC file format in ripped CD images @<:@default=yes@:>@])],
             [],
-            [with_libsndfile=yes])
-if test x$with_libsndfile = xyes; then
-	PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.2, [], AC_MSG_ERROR([*** libsndfile >= 1.0.2 not found!]))
-	AC_DEFINE([HAVE_LIBSNDFILE], [1], [Define if we are compiling with libsndfile support.])
-	AM_CONDITIONAL(HAVE_LIBSNDFILE, true)
+            [with_libflac=yes])
+if test x$with_libflac = xyes; then
+	PKG_CHECK_MODULES(FLAC, flac >= 1.3.0, [], AC_MSG_ERROR([*** libflac >= 1.3.0 not found!]))
+	AC_DEFINE([HAVE_LIBFLAC], [1], [Define if we are compiling with libFLAC support.])
+	AM_CONDITIONAL(HAVE_LIBFLAC, true)
 fi
-AC_SUBST([SNDFILE_LIBS])
-AC_SUBST([SNDFILE_CFLAGS])
+AC_SUBST([FLAC_LIBS])
+AC_SUBST([FLAC_CFLAGS])
 
 AM_CONDITIONAL(HAVE_OSSDSP, false)
 AM_CONDITIONAL(HAVE_DIRECTSOUND, false)

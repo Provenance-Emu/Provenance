@@ -58,13 +58,14 @@ uint8 sz53p_table[0x100]; /* OR the above two tables together */
 processor z80;
 uint64 z80_tstates;
 uint64 last_z80_tstates;
-int z80_iline = 0;
+int z80_iline;
 
 static void z80_init_tables(void);
 
 /* Set up the z80 emulation */
 void z80_init( void )
 {
+  z80_iline = 0;
   z80_init_tables();
 }
 

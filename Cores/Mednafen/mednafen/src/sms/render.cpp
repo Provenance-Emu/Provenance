@@ -16,7 +16,7 @@ static const uint8 tms_crom[] =
     0x04, 0x33, 0x15, 0x3F
 };
 
-static void remap_8_to_32(int line);
+static void (*remap_8)(int line);
 
 /* Background drawing function */
 void (*render_bg)(int line) = NULL;
@@ -200,7 +200,7 @@ void render_line(int line, int skip)
 	if(meow_line < 240)
 	{
          memset(linebuf, BACKDROP_COLOR, 256);
-	 remap_8_to_32(meow_line);
+	 remap_8(meow_line);
 	}
         return;
     }
@@ -233,7 +233,7 @@ void render_line(int line, int skip)
         }
     }
 
-    remap_8_to_32(meow_line);
+    remap_8(meow_line);
 }
 
 
@@ -522,10 +522,11 @@ void palette_sync(int index, int force)
  pixel[index] = color;
 }
 
-static void remap_8_to_32(int line)
+template<typename T>
+static void remap_8_to_T(int line)
 {
     int i;
-    uint32 *p = (uint32 *)&bitmap.data[(line * bitmap.pitch)];
+    T *p = (T *)&bitmap.data[(line * bitmap.pitch)];
 
     for(i = 0; i < 256; i++)
     {
@@ -536,6 +537,11 @@ static void remap_8_to_32(int line)
 void SMS_VDPSetPixelFormat(const MDFN_PixelFormat &format, const uint8* CustomPalette)
 {
  int r, g, b;
+
+ if(format.opp == 4)
+  remap_8 = remap_8_to_T<uint32>;
+ else
+  remap_8 = remap_8_to_T<uint16>;
 
  if(IS_GG)
  {

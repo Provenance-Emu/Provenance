@@ -85,8 +85,8 @@ struct FloppyDisk
  bool ever_modified = false;	// Disk has ever been modified(as compared to source disk image).
 };
 
-static FloppyDisk DummyDisk; 	// TODO: Check disk absence write protect signal
-static FloppyDisk StateHelperDisk;
+static FloppyDisk DummyDisk;	// TODO: Check disk absence write protect signal
+static FloppyDisk* StateHelperDisk = nullptr;
 
 static struct FloppyDrive
 {
@@ -1402,6 +1402,8 @@ static INLINE T_RET sext(const T_ARG v)
 
 void Init(void)
 {
+ StateHelperDisk = new FloppyDisk();
+
  for(unsigned i = 0; i < 256; i++)
  {
   //printf("%08x %08x %08x %08x %08x\n", sign_x_to_s32(6, i), sext<uint32, 6>((unsigned)i), sext<uint32, 6>((signed)i), sext<int32, 6>((unsigned)i), sext<int32, 6>((signed)i));
@@ -1908,15 +1910,15 @@ static void StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
 static void StateAction_Disk(StateMem* sm, const unsigned load, const bool data_only, FloppyDisk* disk, const char* sname)
 {
- StateHelperDisk = *disk;
+ *StateHelperDisk = *disk;
 
  SFORMAT StateRegs[] =
  {
   //SFVAR(disk->write_protect),
   // Don't store write protect?
-  SFVAR(StateHelperDisk.tracks->data.data, num_tracks, sizeof(*StateHelperDisk.tracks), StateHelperDisk.tracks),
-  SFVAR(StateHelperDisk.tracks->length, num_tracks, sizeof(*StateHelperDisk.tracks), StateHelperDisk.tracks),
-  SFVAR(StateHelperDisk.tracks->flux_fudge, num_tracks, sizeof(*StateHelperDisk.tracks), StateHelperDisk.tracks),
+  SFVARN(StateHelperDisk->tracks->data.data, num_tracks, sizeof(*StateHelperDisk->tracks), StateHelperDisk->tracks, "StateHelperDisk.tracks->data.data"),
+  SFVARN(StateHelperDisk->tracks->length, num_tracks, sizeof(*StateHelperDisk->tracks), StateHelperDisk->tracks, "StateHelperDisk.tracks->length"),
+  SFVARN(StateHelperDisk->tracks->flux_fudge, num_tracks, sizeof(*StateHelperDisk->tracks), StateHelperDisk->tracks, "StateHelperDisk.tracks->flux_fudge"),
 
   SFVAR(disk->angle),
 
@@ -1932,22 +1934,22 @@ static void StateAction_Disk(StateMem* sm, const unsigned load, const bool data_
 
   for(unsigned t = 0; t < num_tracks; t++)
   {
-   StateHelperDisk.tracks[t].length = std::min<unsigned>(max_bits_per_track, std::max<unsigned>(1, StateHelperDisk.tracks[t].length));
+   StateHelperDisk->tracks[t].length = std::min<unsigned>(max_bits_per_track, std::max<unsigned>(1, StateHelperDisk->tracks[t].length));
   }
 
   for(unsigned t = 0; t < num_tracks; t++)
   {
    bool diff = false;
 
-   diff |= StateHelperDisk.tracks[t].data != disk->tracks[t].data;
-   diff |= StateHelperDisk.tracks[t].flux_fudge != disk->tracks[t].flux_fudge;
-   diff |= StateHelperDisk.tracks[t].length != disk->tracks[t].length;
+   diff |= StateHelperDisk->tracks[t].data != disk->tracks[t].data;
+   diff |= StateHelperDisk->tracks[t].flux_fudge != disk->tracks[t].flux_fudge;
+   diff |= StateHelperDisk->tracks[t].length != disk->tracks[t].length;
 
    if(diff)
    {
     APPLE2_DBG(APPLE2_DBG_DISK2, "[DISK2] State load dirty track %u.\n", t);
     //
-    disk->tracks[t] = StateHelperDisk.tracks[t];
+    disk->tracks[t] = StateHelperDisk->tracks[t];
     disk->dirty = true;
     disk->ever_modified = true;
    }
@@ -1957,7 +1959,11 @@ static void StateAction_Disk(StateMem* sm, const unsigned load, const bool data_
 
 static void Kill(void)
 {
-
+ if(StateHelperDisk)
+ {
+  delete StateHelperDisk;
+  StateHelperDisk = nullptr;
+ }
 }
 
 }

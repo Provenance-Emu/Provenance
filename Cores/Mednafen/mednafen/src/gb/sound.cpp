@@ -52,7 +52,7 @@ void SOUND_Reset(void)
 	gb_apu.reset(gbmode);
 }
 
-uint32 SOUND_Read(int ts, uint32 addr)
+MDFN_FASTCALL uint32 SOUND_Read(int ts, uint32 addr)
 {
 	uint32 ret;
 
@@ -61,7 +61,7 @@ uint32 SOUND_Read(int ts, uint32 addr)
 	return(ret);
 }
 
-void SOUND_Write(int ts, uint32 addr, uint8 val)
+MDFN_FASTCALL void SOUND_Write(int ts, uint32 addr, uint8 val)
 {
 	//if(addr == 0xFF26)
  	// printf("%04x %02x\n", addr, val);

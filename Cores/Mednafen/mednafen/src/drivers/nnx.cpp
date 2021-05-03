@@ -189,18 +189,18 @@ static void t_nnyx(int factor, const MDFN_Surface *src, const MDFN_Rect *src_rec
 
 void nnx(int factor, const MDFN_Surface* src, const MDFN_Rect& src_rect, MDFN_Surface* dest, const MDFN_Rect& dest_rect)
 {
- switch(src->format.bpp)
+ switch(src->format.opp)
  {
-#if 0
-  case 8:
+/*
+  case 1:
 	t_nnx<uint8>(factor, src, src_rect, dest, dest_rect);
 	break;
-
-  case 16:
-	t_nnx<uint16>(factor, src, src_rect, dest, dest_rect);
+*/
+  case 2:
+	t_nnx<uint16>(factor, src, &src_rect, dest, &dest_rect);
 	break;
-#endif
-  case 32:
+
+  case 4:
 	t_nnx<uint32>(factor, src, &src_rect, dest, &dest_rect);
 	break;
  }
@@ -208,18 +208,18 @@ void nnx(int factor, const MDFN_Surface* src, const MDFN_Rect& src_rect, MDFN_Su
 
 void nnyx(int factor, const MDFN_Surface* src, const MDFN_Rect& src_rect, MDFN_Surface* dest, const MDFN_Rect& dest_rect)
 {
- switch(src->format.bpp)
+ switch(src->format.opp)
  {
-#if 0
-  case 8:
+/*
+  case 1:
         t_nnyx<uint8>(factor, src, src_rect, dest, dest_rect);
         break;
-
-  case 16:
-        t_nnyx<uint16>(factor, src, src_rect, dest, dest_rect);
+*/
+  case 2:
+        t_nnyx<uint16>(factor, src, &src_rect, dest, &dest_rect);
         break;
-#endif
-  case 32:
+
+  case 4:
         t_nnyx<uint32>(factor, src, &src_rect, dest, &dest_rect);
         break;
  }

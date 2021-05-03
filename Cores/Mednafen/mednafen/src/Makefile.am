@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = subdir-objects
-DEFS = @DEFS@ @SNDFILE_CFLAGS@
+DEFS = @DEFS@ @FLAC_CFLAGS@
 DEFAULT_INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include -I$(top_builddir)/intl
 
 bin_PROGRAMS	=	mednafen
@@ -8,7 +8,7 @@ SUBDIRS			=
 noinst_LIBRARIES	=
 mednafen_LDADD		=
 mednafen_DEPENDENCIES	=
-mednafen_SOURCES 	= 	debug.cpp error.cpp mempatcher.cpp settings.cpp endian.cpp Time.cpp mednafen.cpp git.cpp file.cpp general.cpp memory.cpp netplay.cpp state.cpp state_rewind.cpp movie.cpp player.cpp PSFLoader.cpp SSFLoader.cpp SNSFLoader.cpp SPCReader.cpp tests.cpp qtrecord.cpp IPSPatcher.cpp
+mednafen_SOURCES 	= 	debug.cpp error.cpp mempatcher.cpp settings.cpp endian.cpp mednafen.cpp git.cpp file.cpp general.cpp memory.cpp netplay.cpp state.cpp state_rewind.cpp movie.cpp player.cpp PSFLoader.cpp SSFLoader.cpp SNSFLoader.cpp SPCReader.cpp tests.cpp testsexp.cpp qtrecord.cpp IPSPatcher.cpp
 mednafen_SOURCES	+=	VirtualFS.cpp NativeVFS.cpp Stream.cpp MemoryStream.cpp ExtMemStream.cpp FileStream.cpp MTStreamReader.cpp
 
 if HAVE_SDL
@@ -21,7 +21,7 @@ mednafen_DEPENDENCIES   +=	drivers/libmdfnsdl.a
 #
 if WIN32
 .rc.o:
-	@WINDRES@ -o $@ $<
+	@WINDRES@ @DEFS@ -I$(top_builddir)/include $(CPPFLAGS) -o $@ $<
 
 mednafen_SOURCES	+=	win32-common.cpp drivers/win-resource.rc
 endif
@@ -143,6 +143,7 @@ include hw_cpu/Makefile.am.inc
 include hw_misc/Makefile.am.inc
 include hw_sound/Makefile.am.inc
 include hw_video/Makefile.am.inc
+include time/Makefile.am.inc
 include mthreading/Makefile.am.inc
 include cdrom/Makefile.am.inc
 include sound/Makefile.am.inc
@@ -181,5 +182,5 @@ else
 include trio/Makefile.am.inc
 endif
 
-mednafen_LDADD		+= 	@SNDFILE_LIBS@ @ZLIB_LIBS@ @LIBINTL@ @LIBICONV@
+mednafen_LDADD		+= 	@FLAC_LIBS@ @ZLIB_LIBS@ @LIBINTL@ @LIBICONV@
 

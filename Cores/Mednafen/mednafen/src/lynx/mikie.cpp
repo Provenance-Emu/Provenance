@@ -495,13 +495,13 @@ uint32 CMikie::DisplayRenderLine(void)
 		// Assign the temporary pointer;
 		if(!mpSkipFrame)
 		{
-			switch(mpDisplayCurrent->format.bpp)
+			switch(mpDisplayCurrent->format.opp)
 			{
-				case 16:
+				case 2:
 					CopyLineSurface<uint16>();
 					break;
 
-				case 32:
+				case 4:
 					CopyLineSurface<uint32>();
 					break;
 			}

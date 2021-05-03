@@ -947,7 +947,7 @@ void CheatIF_MT_Draw(const MDFN_PixelFormat& pformat, const int32 screen_w, cons
  else
   fontid = MDFN_FONT_9x18_18x18;
 
- BlitRaw(CheatConsole.CheatConsoleT::Draw(pformat, CheatRect.w, CheatRect.h, fontid), &CheatRect, &zederect);
+ BlitOSD(CheatConsole.CheatConsoleT::Draw(pformat, CheatRect.w, CheatRect.h, fontid), &CheatRect, &zederect);
 }
 
 int CheatIF_MT_EventHook(const SDL_Event *event)

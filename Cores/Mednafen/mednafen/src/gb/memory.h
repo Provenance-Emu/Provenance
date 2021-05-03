@@ -100,14 +100,14 @@ struct mapperHuC3 {
   int mapperRegister8;
 };
 
-extern mapperMBC1 gbDataMBC1;
-extern mapperMBC2 gbDataMBC2;
-extern mapperMBC3 gbDataMBC3;
-extern mapperMBC5 gbDataMBC5;
-extern mapperMBC7 gbDataMBC7;
+MDFN_HIDE extern mapperMBC1 gbDataMBC1;
+MDFN_HIDE extern mapperMBC2 gbDataMBC2;
+MDFN_HIDE extern mapperMBC3 gbDataMBC3;
+MDFN_HIDE extern mapperMBC5 gbDataMBC5;
+MDFN_HIDE extern mapperMBC7 gbDataMBC7;
 
-extern mapperHuC1 gbDataHuC1;
-extern mapperHuC3 gbDataHuC3;
+MDFN_HIDE extern mapperHuC1 gbDataHuC1;
+MDFN_HIDE extern mapperHuC3 gbDataHuC3;
 
 void mapperMBC1ROM(uint16,uint8);
 void mapperMBC1RAM(uint16,uint8);
@@ -127,16 +127,12 @@ void mapperHuC3ROM(uint16,uint8);
 void mapperHuC3RAM(uint16,uint8);
 uint8 mapperHuC3ReadRAM(uint16);
 
-//extern void (*mapper)(uint16,uint8);
-//extern void (*mapperRAM)(uint16,uint8);
-//extern uint8 (*mapperReadRAM)(uint16);
-
-extern void memoryUpdateMapMBC1();
-extern void memoryUpdateMapMBC2();
-extern void memoryUpdateMapMBC3();
-extern void memoryUpdateMapMBC5();
-extern void memoryUpdateMapMBC7();
-extern void memoryUpdateMapHuC1();
-extern void memoryUpdateMapHuC3();
+void memoryUpdateMapMBC1();
+void memoryUpdateMapMBC2();
+void memoryUpdateMapMBC3();
+void memoryUpdateMapMBC5();
+void memoryUpdateMapMBC7();
+void memoryUpdateMapHuC1();
+void memoryUpdateMapHuC3();
 
 }

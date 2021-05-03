@@ -71,23 +71,23 @@ int z80_do_opcode(void);
 
 void z80_enable_interrupts( void );
 
-extern processor z80;
+MDFN_HIDE extern processor z80;
 inline uint16 z80_getpc(void) { return z80.pc.w; }
-extern const uint8 halfcarry_add_table[];
-extern const uint8 halfcarry_sub_table[];
-extern const uint8 overflow_add_table[];
-extern const uint8 overflow_sub_table[];
-extern uint8 sz53_table[];
-extern uint8 sz53p_table[];
-extern uint8 parity_table[];
+MDFN_HIDE extern const uint8 halfcarry_add_table[];
+MDFN_HIDE extern const uint8 halfcarry_sub_table[];
+MDFN_HIDE extern const uint8 overflow_add_table[];
+MDFN_HIDE extern const uint8 overflow_sub_table[];
+MDFN_HIDE extern uint8 sz53_table[];
+MDFN_HIDE extern uint8 sz53p_table[];
+MDFN_HIDE extern uint8 parity_table[];
 
-extern uint64 z80_tstates, last_z80_tstates;
-extern int z80_iline;
+MDFN_HIDE extern uint64 z80_tstates, last_z80_tstates;
+MDFN_HIDE extern int z80_iline;
 
-extern void (*z80_writebyte)(uint16, uint8);
-extern uint8 (*z80_readbyte)(uint16);
-extern void (*z80_writeport)(uint16, uint8);
-extern uint8 (*z80_readport)(uint16);
+MDFN_HIDE extern void (*z80_writebyte)(uint16, uint8);
+MDFN_HIDE extern uint8 (*z80_readbyte)(uint16);
+MDFN_HIDE extern void (*z80_writeport)(uint16, uint8);
+MDFN_HIDE extern uint8 (*z80_readport)(uint16);
 
 // Ok, I lied, not a macro!
 

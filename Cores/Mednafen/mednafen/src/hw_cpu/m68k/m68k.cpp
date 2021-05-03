@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* m68k.cpp - Motorola 68000 CPU Emulator
-**  Copyright (C) 2015-2016 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -691,6 +691,14 @@ void NO_INLINE M68K::Exception(unsigned which, unsigned vecnum)
 
  Push<uint32>(PC_save);
  Push<uint16>(SR_save);
+
+ if(MDFN_UNLIKELY(which == EXCEPTION_BUS_ERROR || which == EXCEPTION_ADDRESS_ERROR))
+ {
+  Push<uint16>(0); // TODO: Instruction register
+  Push<uint32>(0); // TODO: Access address
+  Push<uint16>(0); // TODO: R/W, I/N, function code
+ }
+
  PC = Read<uint32>(vecnum << 2);
 
  //
@@ -2212,18 +2220,30 @@ INLINE void M68K::InternalStep(void)
 {
  if(MDFN_UNLIKELY(XPending))
  {
-  if(MDFN_LIKELY(!(XPending & XPENDING_MASK_EXTHALTED)))
+  if(MDFN_LIKELY(!(XPending & (XPENDING_MASK_ERRORHALTED | XPENDING_MASK_DTACKHALTED | XPENDING_MASK_EXTHALTED))))
   {
-   if(MDFN_UNLIKELY(XPending & XPENDING_MASK_RESET))
+   if(MDFN_UNLIKELY(XPending & (XPENDING_MASK_RESET | XPENDING_MASK_ADDRESS | XPENDING_MASK_BUS)))
    {
-    XPending &= ~XPENDING_MASK_RESET;
+    if(XPending & XPENDING_MASK_RESET)
+    {
+     SetSVisor(true);
+     SetTrace(false);
+     SetIMask(0x7);
 
-    SetSVisor(true);
-    SetTrace(false);
-    SetIMask(0x7);
-
-    A[7] = Read<uint32>(VECNUM_RESET_SSP << 2);
-    PC = Read<uint32>(VECNUM_RESET_PC << 2);
+     A[7] = Read<uint32>(VECNUM_RESET_SSP << 2);
+     PC = Read<uint32>(VECNUM_RESET_PC << 2);
+     //
+     XPending &= ~XPENDING_MASK_RESET;
+    }
+    else
+    {
+     if(XPending & XPENDING_MASK_BUS)
+      Exception(EXCEPTION_BUS_ERROR, VECNUM_BUS_ERROR);
+     else
+      Exception(EXCEPTION_ADDRESS_ERROR, VECNUM_ADDRESS_ERROR);
+     // Clear bus/address error bits in XPending only after Exception() returns normally:
+     XPending &= ~(XPENDING_MASK_BUS | XPENDING_MASK_ADDRESS);
+    }
 
     return;
    }
@@ -2299,7 +2319,7 @@ void M68K::Reset(bool powering_up)
 
   SetSR(0);
  }
- XPending = (XPending & ~(XPENDING_MASK_STOPPED | XPENDING_MASK_NMI)) | XPENDING_MASK_RESET;
+ XPending = (XPending & ~(XPENDING_MASK_STOPPED | XPENDING_MASK_NMI | XPENDING_MASK_ADDRESS | XPENDING_MASK_BUS | XPENDING_MASK_ERRORHALTED | XPENDING_MASK_DTACKHALTED)) | XPENDING_MASK_RESET;
 }
 
 

@@ -8,6 +8,7 @@
 namespace Mednafen
 {
 void MDFN_InitFontData(void) MDFN_COLD;
+void MDFN_RunVideoBenchmarks(void) MDFN_COLD;
 }
 
 #endif

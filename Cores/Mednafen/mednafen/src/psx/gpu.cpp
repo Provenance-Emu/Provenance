@@ -157,6 +157,8 @@ void GPU_SetGetVideoParams(MDFNGI* gi, const bool caspect, const int sls, const 
  //
  //
  //
+ gi->ExtraVideoFormatSupport = EVFSUPPORT_NONE;
+
  gi->lcm_width = HVis;
  gi->lcm_height = (LineVisLast + 1 - LineVisFirst) * 2;
 

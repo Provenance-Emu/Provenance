@@ -330,13 +330,8 @@ std::unique_ptr<Stream> MDFN_AmbigGZOpenHelper(const std::string& path, std::vec
 
 void MDFN_BackupSavFile(const uint8 max_backup_count, const char* sav_ext)
 {
- FileStream cts(MDFN_MakeFName(MDFNMKF_SAVBACK, -1, sav_ext), FileStream::MODE_READ_WRITE, true);
  std::unique_ptr<MemoryStream> tmp;
- uint8 counter = max_backup_count - 1;
 
- cts.read(&counter, 1, false);
- //
- //
  try
  {
   tmp.reset(new MemoryStream(new FileStream(MDFN_MakeFName(MDFNMKF_SAV, 0, sav_ext), FileStream::MODE_READ)));
@@ -348,6 +343,13 @@ void MDFN_BackupSavFile(const uint8 max_backup_count, const char* sav_ext)
 
   throw;
  }
+ //
+ //
+ //
+ FileStream cts(MDFN_MakeFName(MDFNMKF_SAVBACK, -1, sav_ext), FileStream::MODE_READ_WRITE, true);
+ uint8 counter = max_backup_count - 1;
+
+ cts.read(&counter, 1, false);
  //
  //
  //

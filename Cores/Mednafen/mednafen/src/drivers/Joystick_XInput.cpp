@@ -171,7 +171,7 @@ class JoystickDriver_XInput : public JoystickDriver
 };
 
 template<typename T>
-bool GetXIPA(HMODULE dll_handle, T& pf, const char *name)
+bool GetXIPA(HMODULE dll_handle, T& pf, const char* name)
 {
  pf = (T)GetProcAddress(dll_handle, name);
  return(pf != NULL);
@@ -179,11 +179,11 @@ bool GetXIPA(HMODULE dll_handle, T& pf, const char *name)
 
 JoystickDriver_XInput::JoystickDriver_XInput()
 {
- if((dll_handle = LoadLibrary("xinput1_3.dll")) == NULL)
+ if((dll_handle = LoadLibrary(TEXT("xinput1_3.dll"))) == NULL)
  {
-  if((dll_handle = LoadLibrary("xinput1_4.dll")) == NULL)
+  if((dll_handle = LoadLibrary(TEXT("xinput1_4.dll"))) == NULL)
   {
-   if((dll_handle = LoadLibrary("xinput9_1_0.dll")) == NULL)
+   if((dll_handle = LoadLibrary(TEXT("xinput9_1_0.dll"))) == NULL)
    {
     return;
    }
@@ -211,6 +211,7 @@ JoystickDriver_XInput::JoystickDriver_XInput()
   try
   {
    XINPUT_CAPABILITIES caps;
+   memset(&caps, 0, sizeof(caps));
 
    if(xfps.p_XInputGetCapabilities(i, XINPUT_FLAG_GAMEPAD, &caps) == ERROR_SUCCESS)
    {

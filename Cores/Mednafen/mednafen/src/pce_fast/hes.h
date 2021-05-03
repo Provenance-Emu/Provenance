@@ -1,4 +1,4 @@
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 uint8 ReadIBP(unsigned int A);

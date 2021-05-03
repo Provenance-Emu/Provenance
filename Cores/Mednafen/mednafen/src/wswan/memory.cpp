@@ -35,7 +35,7 @@
 namespace MDFN_IEN_WSWAN
 {
 
-uint32 wsRAMSize;
+static uint32 wsRAMSize;
 uint8 wsRAM[65536];
 static uint8 *wsSRAM = NULL;
 
@@ -78,8 +78,6 @@ enum
 
 static uint8 WW_FWSM;
 //
-
-extern uint16 WSButtonStatus;
 
 template<bool WW>
 static INLINE void WriteMem(uint32 A, uint8 V)
@@ -828,7 +826,7 @@ void WSwan_MemoryStateAction(StateMem *sm, const unsigned load, const bool data_
  SFORMAT StateRegs[] =
  {
   SFVARN(wsRAM, "RAM"),
-  SFPTR8N(sram_size ? wsSRAM : NULL, sram_size, "SRAM"),
+  SFPTR8N(sram_size ? wsSRAM : NULL, sram_size, SFORMAT::FORM::NVMEM, "SRAM"),
   SFVAR(ButtonWhich),
   SFVAR(ButtonReadLatch),
   SFVAR(WSButtonStatus),
@@ -846,7 +844,7 @@ void WSwan_MemoryStateAction(StateMem *sm, const unsigned load, const bool data_
 
   SFVAR(BankSelector),
 
-  SFPTR8N(IsWW ? wsCartROM : NULL, 524288, "WW flash"),
+  SFPTR8N(IsWW ? wsCartROM : NULL, 524288, SFORMAT::FORM::NVMEM, "WW flash"),
   SFVAR(WW_FlashLock),
   SFVAR(WW_FWSM),
 

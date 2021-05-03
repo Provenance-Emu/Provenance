@@ -79,7 +79,7 @@ void MDFN_FASTCALL MemWrite16(v810_timestamp_t &timestamp, uint32 A, uint16 V);
 
 
 
-extern int32 VB_InDebugPeek;
+MDFN_HIDE extern int32 VB_InDebugPeek;
 }
 
 #endif

@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* scsp.inc - SCSP Emulation
-**  Copyright (C) 2015-2020 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -21,6 +21,9 @@
 
 /*
  TODO:
+	Open bus or something seems to get into the audio when a slot's playback ends by loop end, but not by env level being max, under
+	certain conditions.  Test further, maybe emulate in the future?
+
 	Open bus emulation and cycle timing granularity instead of sample(someday?); be careful with DSP input/output buffering
 	with respect to dry/direct output path delay, and the mapping of the buffers to the address space.
 
@@ -651,10 +654,7 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
   //
   // Sound stack data
   //
-  if(IsWrite)
-   *(T*)((uint8*)SoundStack + ((A & 0x7F &~(sizeof(T) - 1)) ^ (2 - sizeof(T)))) = DBV;
-  else
-   DBV = *(T*)((uint8*)SoundStack + ((A & 0x7F & ~(sizeof(T) - 1)) ^ (2 - sizeof(T))));
+  ne16_rwbo_be<T, IsWrite>(SoundStack, A & 0x7F, &DBV);
 
   return;
  }
@@ -902,11 +902,8 @@ INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
 
   s->EnvLevel += inc_base >> srac;
 
-  if((int32)s->EnvLevel >= 0x3FF)
-  {
-   s->WFAllowAccess = false;
+  if((int32)s->EnvLevel > 0x3FF)
    s->EnvLevel = 0x3FF;
-  }
 
   if((int32)s->EnvLevel < 0)
    s->EnvLevel = 0;
@@ -1316,6 +1313,9 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
   auto* s = &Slots[slot];
   unsigned key_eg_scale;
 
+  s->WFAllowAccess &= (s->EnvLevel < 0x3C0 || s->EGBypass);
+  //
+  //
   if(s->KRS == 0xF)
    key_eg_scale = 0x00;
   else
@@ -1714,16 +1714,32 @@ uint32 SS_SCSP::GetRegister(const unsigned id, char* const special, const uint32
 	ret = Mem4Mb;
 	break;
 
-  case GSREG_RBP:
-	ret = RBP;
-	break;
-
-  case GSREG_RBL:
-	ret = RBL;
+  case GSREG_RBC:
+	ret = RBP | (RBL << 7);
 	break;
 
   case GSREG_MSLC:
 	ret = SlotMonitorWhich;
+	break;
+
+  case GSREG_SCIEB:
+	ret = SCIEB;
+	break;
+
+  case GSREG_SCIPD:
+	ret = SCIPD;
+	break;
+
+  case GSREG_MCIEB:
+	ret = MCIEB;
+	break;
+
+  case GSREG_MCIPD:
+	ret = MCIPD;
+	break;
+
+  case GSREG_EFREG0 ... GSREG_EFREGF:
+	ret = DSP.EFREG[id - GSREG_EFREG0];
 	break;
  }
 
@@ -1744,16 +1760,17 @@ void SS_SCSP::SetRegister(const unsigned id, const uint32 value)
 	Mem4Mb = value & 1;
 	break;
 
-  case GSREG_RBP:
+  case GSREG_RBC:
 	RBP = value & 0x7F;
-	break;
-
-  case GSREG_RBL:
-	RBL = value & 0x3;
+	RBL = (value >> 7) & 0x3;
 	break;
 
   case GSREG_MSLC:
 	SlotMonitorWhich = value & 0x1F;
+	break;
+
+  case GSREG_EFREG0 ... GSREG_EFREGF:
+	DSP.EFREG[id - GSREG_EFREG0] = (uint16)value;
 	break;
  }
 }

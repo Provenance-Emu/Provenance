@@ -1,7 +1,7 @@
 #ifndef _PCE_VDC_H
 #define _PCE_VDC_H
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 #define REGSETP(_reg, _data, _msb) { _reg &= 0xFF << ((_msb) ? 0 : 8); _reg |= (_data) << ((_msb) ? 8 : 0); }
@@ -21,7 +21,7 @@ typedef struct
         uint8 st_mode;
 } vpc_t;
 
-extern vpc_t vpc;
+MDFN_HIDE extern vpc_t vpc;
 
 static const int VRAM_Size = 0x8000;
 static const int VRAM_SizeMask = VRAM_Size - 1; //0x7FFF;
@@ -37,7 +37,7 @@ typedef struct
         uint32 color_table_cache[0x200];
 } vce_t;
 
-extern vce_t vce;
+MDFN_HIDE extern vce_t vce;
 
 typedef struct
 {
@@ -99,13 +99,13 @@ typedef struct
 	uint16 SAT[0x100];
 
         uint16 VRAM[65536];	//VRAM_Size];
-        uint64 bg_tile_cache[65536][8]; 	// Tile, y, x
+        uint64 bg_tile_cache[4096 * 8]; 	// Tile, y, x
         uint8 spr_tile_cache[1024][16][16];	// Tile, y, x
         uint8 spr_tile_clean[1024];     //VRAM_Size / 64];
 } vdc_t;
 
-extern vdc_t vdc_chips[2];
-extern int VDC_TotalChips;
+MDFN_HIDE extern vdc_t vdc_chips[2];
+MDFN_HIDE extern int VDC_TotalChips;
 
 void VDC_SetPixelFormat(const MDFN_PixelFormat &format, const uint8* CustomColorMap, const uint32 CustomColorMapLen) MDFN_COLD;
 void VDC_RunFrame(EmulateSpecStruct *espec, bool IsHES);

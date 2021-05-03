@@ -18,11 +18,11 @@
 namespace MDFN_IEN_NGP
 {
 
-void Write_SoundChipLeft(uint8 data);
-void Write_SoundChipRight(uint8 data);
+MDFN_FASTCALL void Write_SoundChipLeft(uint8 data);
+MDFN_FASTCALL void Write_SoundChipRight(uint8 data);
 
-void dac_write_left(uint8);
-void dac_write_right(uint8);
+MDFN_FASTCALL void dac_write_left(uint8);
+MDFN_FASTCALL void dac_write_right(uint8);
 
 int32 MDFNNGPCSOUND_Flush(int16 *SoundBuf, const int32 MaxSoundFrames);
 void MDFNNGPCSOUND_Init(void) MDFN_COLD;

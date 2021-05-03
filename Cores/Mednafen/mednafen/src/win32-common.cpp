@@ -28,23 +28,55 @@ namespace Win32Common
 {
 //
 //
-std::string ErrCodeToString(uint32 errcode)
+
+FARPROC GetProcAddress_TOE(HMODULE mod, LPCSTR name, bool error_on_pnf)
+{
+ FARPROC ret;
+
+ if(!(ret = GetProcAddress(mod, name)))
+ {
+  const uint32 ec = GetLastError();
+
+  if(ec == ERROR_PROC_NOT_FOUND && !error_on_pnf)
+   return NULL;
+
+  throw MDFN_Error(0, _("GetProcAddress(..., \"%s\") failed: %s"), name, ErrCodeToString(ec).c_str());
+ }
+
+ return ret;
+}
+
+HMODULE GetModuleHandle_TOE(LPCTSTR name)
+{
+ HMODULE ret;
+
+ if(!(ret = GetModuleHandle(name)))
+ {
+  const uint32 ec = GetLastError();
+
+  throw MDFN_Error(0, _("GetModuleHandle(\"%s\") failed: %s"), T_to_UTF8(name).c_str(), ErrCodeToString(ec).c_str());
+ }
+
+ return ret;
+}
+
+std::string ErrCodeToString(uint32 errcode, HMODULE mod)
 {
  std::string ret;
  void* msg_buffer = NULL;
  unsigned int tchar_count;
 
- tchar_count = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-	       		     NULL, errcode,
+ tchar_count = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | (mod ? FORMAT_MESSAGE_FROM_HMODULE : 0) | FORMAT_MESSAGE_IGNORE_INSERTS,
+	       		     mod, errcode,
 		             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-               		     (LPWSTR)&msg_buffer, 0, NULL);
+               		     (LPTSTR)&msg_buffer, 0, NULL);
 
  if(tchar_count == 0)
-  return "FormatMessageW() Error";
+  return "FormatMessage() Error";
 
  try
  {
-  ret = UTF16_to_UTF8((char16_t*)msg_buffer, tchar_count);
+  ret = T_to_UTF8((TCHAR*)msg_buffer, tchar_count);
  }
  catch(...)
  {
@@ -54,6 +86,36 @@ std::string ErrCodeToString(uint32 errcode)
  LocalFree(msg_buffer);
  return ret;
 }
+
+#ifndef UNICODE
+// TODO!
+
+std::string T_to_UTF8(const char* s, size_t slen, bool* invalid_utf16, bool permit_utf16_surrogates)
+{
+ if(invalid_utf16)
+  *invalid_utf16 = false;
+
+ return std::string(s, slen);
+}
+
+std::string UTF8_to_T(const char* s, size_t slen, bool* invalid_utf8, bool permit_utf16_surrogates)
+{
+ if(invalid_utf8)
+  *invalid_utf8 = false;
+
+ return std::string(s, slen);
+/*
+ std::u16string tmp = UTF8_to_UTF16(s, slen, invalid_utf8, permit_utf16_surrogates);
+ std::string ret;
+ unsigned req_size = WideCharToMultiByte(CP_ACP, WC_NO_BEST_FIT_CHARS, s, slen, NULL, 0);
+
+ if(slen && !)
+ {
+
+ }
+*/
+}
+#endif
 
 //
 //

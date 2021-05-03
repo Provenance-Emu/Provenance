@@ -43,7 +43,7 @@ void VBDBG_SetLogFunc(void (*func)(const char *, const char *));
 void VBDBG_DoLog(const char *type, const char *format, ...);
 
 
-extern bool VB_LoggingOn;
+MDFN_HIDE extern bool VB_LoggingOn;
 
 bool VBDBG_Init(void) MDFN_COLD;
 

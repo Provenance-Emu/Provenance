@@ -25,7 +25,7 @@
 namespace MDFN_IEN_VB
 {
 
-extern const CustomPalette_Spec VIP_CPInfo[];
+MDFN_HIDE extern const CustomPalette_Spec VIP_CPInfo[];
 
 void VIP_Init(void) MDFN_COLD;
 void VIP_Kill(void) MDFN_COLD;

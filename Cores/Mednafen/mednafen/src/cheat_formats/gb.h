@@ -4,7 +4,7 @@
 namespace Mednafen
 {
 
-extern const std::vector<CheatFormatStruct> CheatFormats_GB;
+MDFN_HIDE extern const std::vector<CheatFormatStruct> CheatFormats_GB;
 
 }
 

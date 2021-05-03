@@ -60,12 +60,7 @@ static const uint8 gbInvertTab[256] =
   0x1f,0x9f,0x5f,0xdf,0x3f,0xbf,0x7f,0xff
 };
 
-union __gblmt
-{
- uint16 cgb[160];
- uint8 dmg[160];
- uint32 dmg_32[40];
-} gbLineMix;
+gblmt gbLineMix;
 
 static uint16 gbLineBuffer[160];
 

@@ -184,7 +184,7 @@ void PS_SPU::Power(void)
  CWA = 0;
 
  memset(Regs, 0, sizeof(Regs));
-
+ memset(AuxRegs, 0, sizeof(AuxRegs));
  memset(RDSB, 0, sizeof(RDSB));
  memset(RUSB, 0, sizeof(RUSB));
  RvbResPos = 0;

@@ -25,7 +25,7 @@
 #include <mednafen/cputest/cputest.h>
 #include <trio/trio.h>
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 static uint32 systemColorMap32[2][512];	// 0 = normal, 1 = strip colorburst
@@ -55,7 +55,7 @@ vdc_t vdc_chips[2];
 
 static INLINE void FixPCache(int entry)
 {
- const uint32* __restrict__ cm32 = systemColorMap32[vce.CR >> 7];
+ const uint32* MDFN_RESTRICT cm32 = systemColorMap32[vce.CR >> 7];
 
  if(!(entry & 0xFF))
  {
@@ -79,7 +79,7 @@ static INLINE void FixTileCache(vdc_t *which_vdc, uint16 A)
 {
  uint32 charname = (A >> 4);
  uint32 y = (A & 0x7);
- uint64 *tc = &which_vdc->bg_tile_cache[charname][y];
+ uint64 *tc = which_vdc->bg_tile_cache + (charname * 8) + y;
 
  uint32 bitplane01 = which_vdc->VRAM[y + charname * 16];
  uint32 bitplane23 = which_vdc->VRAM[y+ 8 + charname * 16];
@@ -248,7 +248,7 @@ void VDC_SetPixelFormat(const MDFN_PixelFormat &format, const uint8* CustomColor
 {
  amask = 1 << format.Ashift;
 
- if(format.bpp == 8)
+ if(format.opp == 1)
  {
   unsigned pti = 0;
 
@@ -378,7 +378,7 @@ void VDC_SetPixelFormat(const MDFN_PixelFormat &format, const uint8* CustomColor
    sc_r = sc_g = sc_b = y;
   }
 
-  if(format.bpp == 8)
+  if(format.opp == 1)
   {
    systemColorMap32[0][x] = FindClose(format.MakePColor(r, g, b));
    systemColorMap32[1][x] = FindClose(format.MakePColor(sc_r, sc_g, sc_b));
@@ -694,7 +694,7 @@ static const uint64 cblock_exlut[16] =  {
                                         CB_EXL(8ULL), CB_EXL(9ULL), CB_EXL(10ULL), CB_EXL(11ULL), CB_EXL(12ULL), CB_EXL(13ULL), CB_EXL(14ULL), CB_EXL(15ULL)
                                    };
 
-static NO_INLINE void DrawBG(const vdc_t *vdc, const uint32 count, uint8* __restrict__ target)
+static NO_INLINE void DrawBG(const vdc_t *vdc, const uint32 count, uint8* MDFN_RESTRICT target)
 {
  int bat_width_shift = bat_width_shift_tab[(vdc->MWR >> 4) & 3];
  int bat_width_mask = (1U << bat_width_shift) - 1;
@@ -707,7 +707,7 @@ static NO_INLINE void DrawBG(const vdc_t *vdc, const uint32 count, uint8* __rest
   int line_sub = vdc->BG_YOffset & 7;
 
   const uint16 *BAT_Base = &vdc->VRAM[bat_y];
-  const uint64 *CG_Base = &vdc->bg_tile_cache[0][line_sub];
+  const uint64 *CG_Base = vdc->bg_tile_cache + (0 * 8) + line_sub;
 
   if(MDFN_UNLIKELY((vdc->MWR & 0x3) == 0x3))
   {
@@ -991,7 +991,7 @@ static NO_INLINE void DrawSprites(vdc_t *vdc, const int32 end, uint16 *spr_lineb
 }
 
 template<typename T>
-static void MixBGSPR(const uint32 count, const uint8*  __restrict__ bg_linebuf, const uint16*  __restrict__ spr_linebuf, T* __restrict__ target)
+static void MixBGSPR(const uint32 count, const uint8*  MDFN_RESTRICT bg_linebuf, const uint16*  MDFN_RESTRICT spr_linebuf, T* MDFN_RESTRICT target)
 {
 #ifdef ARCH_X86
  bg_linebuf += count;
@@ -1061,21 +1061,21 @@ static void MixBGSPR(const uint32 count, const uint8*  __restrict__ bg_linebuf, 
 }
 
 template<typename T>
-static void MixBGOnly(const uint32 count, const uint8* __restrict__ bg_linebuf, T* __restrict__ target)
+static void MixBGOnly(const uint32 count, const uint8* MDFN_RESTRICT bg_linebuf, T* MDFN_RESTRICT target)
 {
  for(unsigned int x = 0; x < count; x++)
   target[x] = vce.color_table_cache[bg_linebuf[x]];
 }
 
 template<typename T>
-static void MixSPROnly(const uint32 count, const uint16* __restrict__ spr_linebuf, T* __restrict__ target)
+static void MixSPROnly(const uint32 count, const uint16* MDFN_RESTRICT spr_linebuf, T* MDFN_RESTRICT target)
 {
  for(unsigned int x = 0; x < count; x++)
   target[x] = vce.color_table_cache[(spr_linebuf[x] | 0x100) & 0x1FF];
 }
 
 template<typename T>
-static void MixNone(const uint32 count, T* __restrict__ target)
+static void MixNone(const uint32 count, T* MDFN_RESTRICT target)
 {
  uint32 bg_color = vce.color_table_cache[0x000];
 
@@ -1089,7 +1089,7 @@ static const int prio_select[4] = { 1, 1, 0, 0 };
 static const int prio_shift[4] = { 4, 0, 4, 0 };
 
 template<typename T>
-static void MixVPC(const uint32 count, const uint32* __restrict__ lb0, const uint32* __restrict__ lb1, T*  __restrict__ target)
+static void MixVPC(const uint32 count, const uint32* MDFN_RESTRICT lb0, const uint32* MDFN_RESTRICT lb1, T*  MDFN_RESTRICT target)
 {
 	// Windowing disabled.
 	if(MDFN_LIKELY(vpc.winwidths[0] <= 0x40 && vpc.winwidths[1] <= 0x40))
@@ -1533,20 +1533,20 @@ void VDC_RunFrame(EmulateSpecStruct *espec, bool IsHES)
 {
  if(VDC_TotalChips == 2)
  {
-  switch(espec->surface ? espec->surface->format.bpp : 32)
+  switch(espec->surface ? espec->surface->format.opp : 4)
   {
-   case  8: BigDrawThingy<2,  uint8, uint32>(espec, IsHES); break;
-   case 16: BigDrawThingy<2, uint16, uint32>(espec, IsHES); break;
-   case 32: BigDrawThingy<2, uint32, uint32>(espec, IsHES); break;
+   case 1: BigDrawThingy<2,  uint8, uint32>(espec, IsHES); break;
+   case 2: BigDrawThingy<2, uint16, uint32>(espec, IsHES); break;
+   case 4: BigDrawThingy<2, uint32, uint32>(espec, IsHES); break;
   }
  }
  else
  {
-  switch(espec->surface ? espec->surface->format.bpp : 32)
+  switch(espec->surface ? espec->surface->format.opp : 4)
   {
-   case  8: BigDrawThingy<1,  uint8,  uint8>(espec, IsHES); break;
-   case 16: BigDrawThingy<1, uint16, uint16>(espec, IsHES); break;
-   case 32: BigDrawThingy<1, uint32, uint32>(espec, IsHES); break;
+   case 1: BigDrawThingy<1,  uint8,  uint8>(espec, IsHES); break;
+   case 2: BigDrawThingy<1, uint16, uint16>(espec, IsHES); break;
+   case 4: BigDrawThingy<1, uint32, uint32>(espec, IsHES); break;
   }
  }
 }

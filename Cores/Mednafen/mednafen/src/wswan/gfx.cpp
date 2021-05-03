@@ -31,6 +31,8 @@
 namespace MDFN_IEN_WSWAN
 {
 
+static void wsScanline(MDFN_Surface* surface);
+
 static uint32 wsMonoPal[16][4];
 static uint32 wsColors[8];
 static uint32 wsCols[16][16];
@@ -515,7 +517,7 @@ bool wsExecuteLine(MDFN_Surface *surface, bool skip)
 	if(wsLine < 144)
 	{
 	 if(!skip)
-          wsScanline(surface->pixels + wsLine * surface->pitch32);
+          wsScanline(surface);
 	}
 
 	Comm_Process();
@@ -623,9 +625,24 @@ void WSwan_SetPixelFormat(const MDFN_PixelFormat &format)
  }
 }
 
-void wsScanline(uint32 *target)
+template<typename T>
+static INLINE void wsBlitScanline(T* MDFN_RESTRICT target, uint8* MDFN_RESTRICT bg, uint8* MDFN_RESTRICT bg_pal)
 {
-	uint32		start_tile_n,map_a,startindex,adrbuf,b1,b2,j,t,l;
+	if(wsVMode)
+	{
+	 for(size_t l = 0; l < 224; l++)
+	  target[l] = ColorMap[wsCols[bg_pal[l]][bg[l] & 0xF]];
+	}
+	else
+	{
+	 for(size_t l = 0; l < 224; l++)
+	  target[l] = ColorMapG[bg[l] & 0xF];
+	}
+}
+
+static void wsScanline(MDFN_Surface* surface)
+{
+	uint32		start_tile_n,map_a,startindex,adrbuf,b1,b2,j,t;
 	uint8		b_bg[256];
 	uint8		b_bg_pal[256];
 
@@ -885,19 +902,14 @@ void wsScanline(uint32 *target)
 		}
 
 	}	// End sprite drawing
-
-	if(wsVMode)
-	{
-	 for(l=0;l<224;l++)
-	  target[l] = ColorMap[wsCols[b_bg_pal[l+7]][b_bg[(l+7)]&0xf]];
-	}
+	//
+	//
+	//
+	if(surface->format.opp == 4)
+	 wsBlitScanline<uint32>(surface->pix<uint32>() + wsLine * surface->pitchinpix, b_bg + 7, b_bg_pal + 7);
 	else
-	{
-	 for(l=0;l<224;l++)
- 	  target[l] = ColorMapG[(b_bg[l+7])&15];
-	}
+	 wsBlitScanline<uint16>(surface->pix<uint16>() + wsLine * surface->pitchinpix, b_bg + 7, b_bg_pal + 7);
 }
-
 
 void WSwan_GfxReset(void)
 {

@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* surface.cpp:
-**  Copyright (C) 2009-2016 Mednafen Team
+**  Copyright (C) 2009-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -21,41 +21,10 @@
 
 #include <mednafen/mednafen.h>
 #include "surface.h"
+#include "convert.h"
 
 namespace Mednafen
 {
-
-MDFN_PixelFormat::MDFN_PixelFormat()
-{
- bpp = 0;
- colorspace = 0;
-
- Rshift = 0;
- Gshift = 0;
- Bshift = 0;
- Ashift = 0;
-
- Rprec = 0;
- Gprec = 0;
- Bprec = 0;
- Aprec = 0;
-}
-
-MDFN_PixelFormat::MDFN_PixelFormat(const unsigned int p_colorspace, const uint8 p_rs, const uint8 p_gs, const uint8 p_bs, const uint8 p_as)
-{
- bpp = 32;
- colorspace = p_colorspace;
-
- Rshift = p_rs;
- Gshift = p_gs;
- Bshift = p_bs;
- Ashift = p_as;
-
- Rprec = 8;
- Gprec = 8;
- Bprec = 8;
- Aprec = 8;
-}
 
 MDFN_Surface::MDFN_Surface()
 {
@@ -101,16 +70,16 @@ void MDFN_Surface::Resize(const uint32 p_width, const uint32 p_height, const uin
 void MDFN_Surface::Init(void *const p_pixels, const uint32 p_width, const uint32 p_height, const uint32 p_pitchinpix, const MDFN_PixelFormat &nf, const bool alloc_init_pixels)
 {
  void *rpix = NULL;
- assert(nf.bpp == 8 || nf.bpp == 16 || nf.bpp == 32);
+ assert(nf.opp == 1 || nf.opp == 2 || nf.opp == 4);
 
  format = nf;
 
- if(nf.bpp == 8)
+ if(nf.opp == 1)
  {
   //assert(!nf.Rshift && !nf.Gshift && !nf.Bshift && !nf.Ashift);
   //assert(!nf.Rprec && !nf.Gprec && !nf.Bprec && !nf.Aprec);
  }
- else if(nf.bpp == 16)
+ else if(nf.opp == 2)
  {
   assert(nf.Rprec && nf.Gprec && nf.Bprec && nf.Aprec);
  }
@@ -140,9 +109,9 @@ void MDFN_Surface::Init(void *const p_pixels, const uint32 p_width, const uint32
  else
  {
   if(alloc_init_pixels)
-   rpix = calloc(1, p_pitchinpix * p_height * (nf.bpp / 8));
+   rpix = calloc(1, p_pitchinpix * p_height * nf.opp);
   else
-   rpix = malloc(p_pitchinpix * p_height * (nf.bpp / 8));
+   rpix = malloc(p_pitchinpix * p_height * nf.opp);
 
   if(!rpix)
   {
@@ -150,7 +119,7 @@ void MDFN_Surface::Init(void *const p_pixels, const uint32 p_width, const uint32
   }
  }
 
- if(nf.bpp == 8)
+ if(nf.opp == 1)
  {
   if(!(palette = (MDFN_PaletteEntry*) calloc(sizeof(MDFN_PaletteEntry), 256)))
   {
@@ -163,9 +132,9 @@ void MDFN_Surface::Init(void *const p_pixels, const uint32 p_width, const uint32
   }
  }
 
- if(nf.bpp == 16)
+ if(nf.opp == 2)
   pixels16 = (uint16 *)rpix;
- else if(nf.bpp == 8)
+ else if(nf.opp == 1)
   pixels8 = (uint8 *)rpix;
  else
   pixels = (uint32 *)rpix;
@@ -176,217 +145,135 @@ void MDFN_Surface::Init(void *const p_pixels, const uint32 p_width, const uint32
  pitchinpix = p_pitchinpix;
 }
 
+const uint8 MDFN_PixelFormat::LUT5to8[32] =
+{
+ 0x00, 0x08, 0x10, 0x18, 0x20, 0x29, 0x31, 0x39, 0x41, 0x4a, 0x52, 0x5a, 0x62, 0x6a, 0x73, 0x7b,
+ 0x83, 0x8b, 0x94, 0x9c, 0xa4, 0xac, 0xb4, 0xbd, 0xc5, 0xcd, 0xd5, 0xde, 0xe6, 0xee, 0xf6, 0xff
+};
+
+const uint8 MDFN_PixelFormat::LUT6to8[64] =
+{
+ 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24, 0x28, 0x2c, 0x30, 0x34, 0x38, 0x3c, 
+ 0x40, 0x44, 0x48, 0x4c, 0x50, 0x55, 0x59, 0x5d, 0x61, 0x65, 0x69, 0x6d, 0x71, 0x75, 0x79, 0x7d, 
+ 0x81, 0x85, 0x89, 0x8d, 0x91, 0x95, 0x99, 0x9d, 0xa1, 0xa5, 0xaa, 0xae, 0xb2, 0xb6, 0xba, 0xbe, 
+ 0xc2, 0xc6, 0xca, 0xce, 0xd2, 0xd6, 0xda, 0xde, 0xe2, 0xe6, 0xea, 0xee, 0xf2, 0xf6, 0xfa, 0xff
+};
+
+const uint8 MDFN_PixelFormat::LUT8to5[256] =
+{
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 
+ 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 
+ 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 
+ 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 
+ 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x0a, 
+ 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0c, 
+ 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 
+ 0x0e, 0x0e, 0x0e, 0x0e, 0x0e, 0x0e, 0x0e, 0x0e, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 
+ 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 
+ 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 
+ 0x13, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 
+ 0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 
+ 0x17, 0x17, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 
+ 0x19, 0x19, 0x1a, 0x1a, 0x1a, 0x1a, 0x1a, 0x1a, 0x1a, 0x1a, 0x1b, 0x1b, 0x1b, 0x1b, 0x1b, 0x1b, 
+ 0x1b, 0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1c, 0x1c, 0x1c, 0x1c, 0x1d, 0x1d, 0x1d, 0x1d, 0x1d, 
+ 0x1d, 0x1d, 0x1d, 0x1e, 0x1e, 0x1e, 0x1e, 0x1e, 0x1e, 0x1e, 0x1e, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f
+};
+
+const uint8 MDFN_PixelFormat::LUT8to6[256] =
+{
+ 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 
+ 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x08, 
+ 0x08, 0x08, 0x08, 0x09, 0x09, 0x09, 0x09, 0x0a, 0x0a, 0x0a, 0x0a, 0x0b, 0x0b, 0x0b, 0x0b, 0x0c, 
+ 0x0c, 0x0c, 0x0c, 0x0d, 0x0d, 0x0d, 0x0d, 0x0e, 0x0e, 0x0e, 0x0e, 0x0f, 0x0f, 0x0f, 0x0f, 0x10, 
+ 0x10, 0x10, 0x10, 0x11, 0x11, 0x11, 0x11, 0x12, 0x12, 0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 
+ 0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15, 0x16, 0x16, 0x16, 0x16, 0x17, 0x17, 0x17, 0x17, 
+ 0x18, 0x18, 0x18, 0x18, 0x19, 0x19, 0x19, 0x19, 0x1a, 0x1a, 0x1a, 0x1a, 0x1b, 0x1b, 0x1b, 0x1b, 
+ 0x1c, 0x1c, 0x1c, 0x1c, 0x1d, 0x1d, 0x1d, 0x1d, 0x1e, 0x1e, 0x1e, 0x1e, 0x1f, 0x1f, 0x1f, 0x1f, 
+ 0x20, 0x20, 0x20, 0x20, 0x21, 0x21, 0x21, 0x21, 0x22, 0x22, 0x22, 0x22, 0x23, 0x23, 0x23, 0x23, 
+ 0x24, 0x24, 0x24, 0x24, 0x25, 0x25, 0x25, 0x25, 0x26, 0x26, 0x26, 0x26, 0x27, 0x27, 0x27, 0x27, 
+ 0x28, 0x28, 0x28, 0x28, 0x29, 0x29, 0x29, 0x29, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2b, 0x2b, 0x2b, 
+ 0x2b, 0x2c, 0x2c, 0x2c, 0x2c, 0x2d, 0x2d, 0x2d, 0x2d, 0x2e, 0x2e, 0x2e, 0x2e, 0x2f, 0x2f, 0x2f, 
+ 0x2f, 0x30, 0x30, 0x30, 0x30, 0x31, 0x31, 0x31, 0x31, 0x32, 0x32, 0x32, 0x32, 0x33, 0x33, 0x33, 
+ 0x33, 0x34, 0x34, 0x34, 0x34, 0x35, 0x35, 0x35, 0x35, 0x36, 0x36, 0x36, 0x36, 0x37, 0x37, 0x37, 
+ 0x37, 0x38, 0x38, 0x38, 0x38, 0x39, 0x39, 0x39, 0x39, 0x3a, 0x3a, 0x3a, 0x3a, 0x3b, 0x3b, 0x3b, 
+ 0x3b, 0x3c, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d, 0x3d, 0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f
+};
+
 // When we're converting, only convert the w*h area(AKA leave the last part of the line, pitch32 - w, alone),
 // for places where we store auxillary information there(graphics viewer in the debugger), and it'll be faster
 // to boot.
 void MDFN_Surface::SetFormat(const MDFN_PixelFormat &nf, bool convert)
 {
- if(format.bpp != 32 || nf.bpp != 32)
-  printf("%u->%u\n",format.bpp, nf.bpp);
+ if(format == nf)
+  return;
+ //
+ void* old_pixels = nullptr;
+ void* new_pixels = nullptr;
+ void* new_palette = nullptr;
 
- assert(format.bpp == 8 || format.bpp == 16 || format.bpp == 32);
- assert((nf.bpp == 8 && !convert) || nf.bpp == 16 || nf.bpp == 32);
-
- if(nf.bpp == 8)
+ switch(format.opp)
  {
-
- }
- else if(nf.bpp == 16)
- {
-
- }
- else
- {
-  assert((nf.Rshift + nf.Gshift + nf.Bshift + nf.Ashift) == 48);
-  assert(!((nf.Rshift | nf.Gshift | nf.Bshift | nf.Ashift) & 0x7));
+  case 1: old_pixels = pix<uint8>(); break;
+  case 2: old_pixels = pix<uint16>(); break;
+  case 4: old_pixels = pix<uint32>(); break;
  }
 
- if(nf.bpp != format.bpp)
+ if(nf.opp != format.opp)
  {
-  void *rpix = calloc(1, pitchinpix * h * (nf.bpp / 8));
-  void *oldpix;
-
-  if(nf.bpp == 8)
-  {
-   assert(!convert);
-
-   pixels8 = (uint8 *)rpix;
-   palette = (MDFN_PaletteEntry*)calloc(sizeof(MDFN_PaletteEntry), 256);
-  }
-  else if(nf.bpp == 16)	// 32bpp or 8bpp to 16bpp
-  {
-   pixels16 = (uint16 *)rpix;
-
-   if(convert)
-   {
-    if(format.bpp == 8)
-    {
-     uint16 palconv[256];
-
-     for(unsigned i = 0; i < 256; i++)
-     {
-      uint8 r, g, b;
-
-      format.DecodePColor(palette[i], r, g, b);
-      palconv[i] = nf.MakeColor(r, g, b, 0);
-     }
-
-     puts("8bpp to 16bpp convert");
-     for(int y = 0; y < h; y++)
-     {
-      uint8 *srow = &pixels8[y * pitchinpix];
-      uint16 *drow = &pixels16[y * pitchinpix];
-
-      for(int x = 0; x < w; x++)
-      {
-       drow[x] = palconv[srow[x]];
-      }
-     }
-    }
-    else
-    {
-     puts("32bpp to 16bpp convert");
-     for(int y = 0; y < h; y++)
-     {
-      uint32 *srow = &pixels[y * pitchinpix];
-      uint16 *drow = &pixels16[y * pitchinpix];
-
-      for(int x = 0; x < w; x++)
-      {
-       uint32 c = srow[x];
-       int r, g, b, a;
-
-       DecodeColor(c, r, g, b, a);
-       drow[x] = nf.MakeColor(r, g, b, a);
-      }
-     }
-    }
-   }
-  }
-  else			// 16bpp or 8bpp to 32bpp
-  {
-   pixels = (uint32 *)rpix;
-
-   if(convert)
-   {
-    if(format.bpp == 8)
-    {
-     uint32 palconv[256];
-
-     for(unsigned i = 0; i < 256; i++)
-     {
-      uint8 r, g, b;
-
-      format.DecodePColor(palette[i], r, g, b);
-      palconv[i] = nf.MakeColor(r, g, b, 0);
-     }
-
-     puts("8bpp to 32bpp convert");
-     for(int y = 0; y < h; y++)
-     {
-      uint8 *srow = &pixels8[y * pitchinpix];
-      uint32 *drow = &pixels[y * pitchinpix];
-
-      for(int x = 0; x < w; x++)
-      {
-       drow[x] = palconv[srow[x]];
-      }
-     }
-    }
-    else
-    {
-     puts("16bpp to 32bpp convert");
-     for(int y = 0; y < h; y++)
-     {
-      uint16 *srow = &pixels16[y * pitchinpix];
-      uint32 *drow = &pixels[y * pitchinpix];
-
-      for(int x = 0; x < w; x++)
-      {
-       uint32 c = srow[x];
-       int r, g, b, a;
-
-       DecodeColor(c, r, g, b, a);
-       drow[x] = nf.MakeColor(r, g, b, a);
-      }
-     }
-    }
-   }
-  }
-
-  switch(format.bpp)
-  {
-   default:
-
-   case 32: oldpix = pixels;
-	    pixels = NULL;
-	    break;
-
-   case 16: oldpix = pixels16;
-	    pixels16 = NULL;
-	    break;
-
-   case 8:  oldpix = pixels8;
-	    pixels8 = NULL;
-	    if(palette)
-	    {
-	     free(palette);
-	     palette = NULL;
-	    }
-	    break;
-  }
-
-  if(oldpix && !pixels_is_external)
-   free(oldpix);
-
-  pixels_is_external = false;
-
-  // We already handled surface conversion above.
-  convert = false;
+  new_pixels = calloc(1, pitchinpix * h * nf.opp);
+  
+  if(nf.opp == 1)
+   new_palette = calloc(sizeof(MDFN_PaletteEntry), 256);
  }
-
- if(convert && format != nf)
+ //
+ //
+ if(convert)
  {
-  //puts("Convert");
-  if(format.bpp == 16)
+  MDFN_PixelFormatConverter fconv(format, nf, (MDFN_PaletteEntry*)(palette ? palette : new_palette));
+  size_t old_pitchinbytes = pitchinpix * format.opp;
+  size_t new_pitchinbytes = pitchinpix * nf.opp;
+
+  if(new_pixels)
   {
-   // We should assert that surface->pixels is non-NULL even if we don't need to convert the surface, to catch more insidious bugs.
-   assert(pixels16);
-
-   for(int y = 0; y < h; y++)
-   {
-    uint16 *row = &pixels16[y * pitchinpix];
-
-    for(int x = 0; x < w; x++)
-    {
-     uint32 c = row[x];
-     int r, g, b, a;
-
-     DecodeColor(c, r, g, b, a);
-     row[x] = nf.MakeColor(r, g, b, a);
-    }
-   }
+   for(int32 y = 0; y < h; y++)
+    fconv.Convert((uint8*)old_pixels + y * old_pitchinbytes, (uint8*)new_pixels + y * new_pitchinbytes, w);
   }
   else
   {
-   // We should assert that surface->pixels is non-NULL even if we don't need to convert the surface, to catch more insidious bugs.
-   assert(pixels);
-
-   for(int y = 0; y < h; y++)
-   {
-    uint32 *row = &pixels[y * pitchinpix];
-
-    for(int x = 0; x < w; x++)
-    {
-     uint32 c = row[x];
-     int r, g, b, a;
-
-     DecodeColor(c, r, g, b, a);
-     row[x] = nf.MakeColor(r, g, b, a);
-    }
-   }
+   for(int32 y = 0; y < h; y++)
+    fconv.Convert((uint8*)old_pixels + y * old_pitchinbytes, w);
   }
  }
+ //
+ //
+ if(nf.opp != format.opp)
+ {
+  switch(format.opp)
+  {
+   case 1: pixels8 = nullptr; break;
+   case 2: pixels16 = nullptr; break;
+   case 4: pixels = nullptr; break;
+  }
+
+  if(palette)
+  {
+   free(palette);
+   palette = nullptr;
+  }
+
+  if(!pixels_is_external)
+   free(old_pixels);
+
+  pixels_is_external = false;
+
+  switch(nf.opp)
+  {
+   case 1: pixels8 = (uint8*)new_pixels; palette = (MDFN_PaletteEntry*)new_palette; break;
+   case 2: pixels16 = (uint16*)new_pixels; break;
+   case 4: pixels = (uint32*)new_pixels; break;
+  }
+ }
+
  format = nf;
 }
 
@@ -394,13 +281,13 @@ void MDFN_Surface::Fill(uint8 r, uint8 g, uint8 b, uint8 a)
 {
  uint32 color = MakeColor(r, g, b, a);
 
- if(format.bpp == 8)
+ if(format.opp == 1)
  {
   assert(pixels8);
 
   MDFN_FastArraySet(pixels8, color, pitchinpix * h);
  }
- else if(format.bpp == 16)
+ else if(format.opp == 2)
  {
   assert(pixels16);
 

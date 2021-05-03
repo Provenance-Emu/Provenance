@@ -148,6 +148,7 @@ static void Power(CartInfo *info)
   CHRBanks[x] = x;
  DoCHR();
  K4sel = 0;
+ K4IRQ = 0;
  PRGBanks[0] = 0;
  PRGBanks[1] = 1;
  DoPRG();
@@ -155,6 +156,7 @@ static void Power(CartInfo *info)
  DoMirroring();
 
  IRQCount = IRQLatch = 0;
+ IRQa = 0;
  setprg8(0xe000, ~0);
  setprg8r(0x10, 0x6000, 0);
 

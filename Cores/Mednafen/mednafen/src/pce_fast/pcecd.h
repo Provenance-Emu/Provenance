@@ -3,7 +3,7 @@
 
 #include <mednafen/sound/Blip_Buffer.h>
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 typedef struct

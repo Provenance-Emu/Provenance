@@ -43,7 +43,7 @@ class CDInterface
  virtual ~CDInterface();
 
  //
- // LBA range limits for sector reading functions; MSF 00:00:00 to 99:57:74 
+ // LBA range limits for sector reading functions; MSF 00:00:00 to 99:59:74 
  //
  enum : int32 { LBA_Read_Minimum = -150 };
  enum : int32 { LBA_Read_Maximum = 449849 };

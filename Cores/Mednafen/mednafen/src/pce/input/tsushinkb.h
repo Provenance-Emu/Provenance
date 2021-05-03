@@ -4,7 +4,7 @@
 namespace MDFN_IEN_PCE
 {
 
-extern const IDIISG PCE_TsushinKBIDII;
+MDFN_HIDE extern const IDIISG PCE_TsushinKBIDII;
 
 PCE_Input_Device *PCEINPUT_MakeTsushinKB(void);
 

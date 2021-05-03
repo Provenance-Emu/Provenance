@@ -41,7 +41,7 @@ static uint8 IPL[64];
 static uint8 APURAM[65536];
 static uint8 IOFromSPC700[4];
 static uint8 IOToSPC700[4];
-//#include "spc700.inc"
+//TODO: per-game(for performance reasons) fix for Kishin Douji Zenki Tenchi Meidou: static uint8 PendingIOToSPC700[4];
 
 static uint8 Control;
 
@@ -178,11 +178,13 @@ static MDFN_HOT void MDFN_FASTCALL SPC_Write(uint16 A, uint8 V)
 	      if(V & 0x10)
 	      {
 	       IOToSPC700[0] = IOToSPC700[1] = 0x00;
+	       //PendingIOToSPC700[0] = PendingIOToSPC700[1] = 0x00;
 	      }
 
 	      if(V & 0x20)
 	      {
 	       IOToSPC700[2] = IOToSPC700[3] = 0x00;
+	       //PendingIOToSPC700[2] = PendingIOToSPC700[3] = 0x00;
 	      }
 	      Control = V & 0x87;
 	      break;
@@ -263,6 +265,20 @@ static DEFWRITE(MainCPU_APUIOWrite)
 
  IOToSPC700[A & 0x3] = V;
 }
+
+/*
+static DEFWRITE(MainCPU_APUIOWrite_TenchiMeidou)
+{
+ //printf("[MAIN] APU Write: %08x %02x\n", A, V);
+
+ CPUM.timestamp += MEMCYC_FAST / 2;
+ APU_Update(CPUM.timestamp);
+ PendingIOToSPC700[A & 0x3] = V;
+ CPUM.timestamp += MEMCYC_FAST / 2;
+ APU_Update(CPUM.timestamp);
+ IOToSPC700[A & 0x3] = PendingIOToSPC700[A & 0x3];
+}
+*/
 
 #ifdef MDFN_SNES_FAUST_SPC700_IPL_HLE
 static int32 HLEPhase;
@@ -449,7 +465,10 @@ void APU_Reset(bool powering_up)
  memset(IOToSPC700, 0x00, sizeof(IOToSPC700));
 
  if(powering_up)
-  memset(APURAM, 0xFF, sizeof(APURAM));
+ {
+  for(unsigned i = 0; i < 65536; i++)
+   APURAM[i] = (i & 0x20) ? 0xFF : 0x00;
+ }
 
  Control = 0x80;
 

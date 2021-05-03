@@ -119,18 +119,18 @@ static INLINE void DrawWaveform(MDFN_Surface* surface, const MDFN_Rect& dr, cons
  const uint32 right_color = surface->MakeColor(0x80, 0xFF, 0x80);
  const uint32 center_color = surface->MakeColor(0x80, 0xCC, 0xCC);
 
- switch(surface->format.bpp)
+ switch(surface->format.opp)
  {
-  case 8:
+  case 1:
 	// TODO(colors):
 	DrawWaveformSub(surface->pix<uint8>() + dr.x + dr.y * surface->pitchinpix, surface->pitchinpix, left_color, right_color, center_color, dr.w, dr.h, numchan, soundbuf, framecount);
 	break;
 
-  case 16:
+  case 2:
 	DrawWaveformSub(surface->pix<uint16>() + dr.x + dr.y * surface->pitchinpix, surface->pitchinpix, left_color, right_color, center_color, dr.w, dr.h, numchan, soundbuf, framecount);
 	break;
 
-  case 32:
+  case 4:
 	DrawWaveformSub(surface->pix<uint32>() + dr.x + dr.y * surface->pitchinpix, surface->pitchinpix, left_color, right_color, center_color, dr.w, dr.h, numchan, soundbuf, framecount);
 	break;
  }

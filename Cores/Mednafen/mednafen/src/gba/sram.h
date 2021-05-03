@@ -23,8 +23,8 @@
 namespace MDFN_IEN_GBA
 {
 
-extern uint8 sramRead(uint32 address);
-extern void sramWrite(uint32 address, uint8 byte);
+uint8 sramRead(uint32 address);
+void sramWrite(uint32 address, uint8 byte);
 
 }
 

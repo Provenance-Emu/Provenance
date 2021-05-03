@@ -27,14 +27,14 @@ void Flash_Init(void) MDFN_COLD;
 void Flash_Kill(void) MDFN_COLD;
 void Flash_Reset(void) MDFN_COLD;
 
-extern void flashSaveGame(gzFile gzFile) MDFN_COLD;
-extern void flashReadGame(gzFile gzFile, int version) MDFN_COLD;
-extern uint8 flashRead(uint32 address);
-extern void flashWrite(uint32 address, uint8 byte);
-extern uint8 *flashSaveMemory;
-extern void flashSetSize(int size);
+void flashSaveGame(gzFile gzFile) MDFN_COLD;
+void flashReadGame(gzFile gzFile, int version) MDFN_COLD;
+uint8 flashRead(uint32 address);
+void flashWrite(uint32 address, uint8 byte);
+MDFN_HIDE extern uint8 *flashSaveMemory;
+void flashSetSize(int size);
 
-extern uint32 flashSize;
+MDFN_HIDE extern uint32 flashSize;
 
 int Flash_StateAction(StateMem *sm, int load, int data_only);
 
