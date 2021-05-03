@@ -48,7 +48,6 @@ MDFN_HIDE extern int NoWaiting;
 MDFN_HIDE extern bool MDFNDHaveFocus;
 
 MDFN_HIDE extern MDFNGI *CurGame;
-int CloseGame(void);
 
 void RefreshThrottleFPS(double);
 void PumpWrap(void);

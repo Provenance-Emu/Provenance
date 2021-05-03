@@ -916,7 +916,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 apple2.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -1546,7 +1546,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 cdplay.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -2344,6 +2344,15 @@ keyboard 0x0 68
 
 
 0
+command.reinit_joysticks
+MDFNSF_CAT_INPUT_MAPPING MDFNSF_SUPPRESS_DOC 
+Reinitialize physical joysticks/gamepads.
+
+MDFNST_STRING
+keyboard 0x0 60+shift
+
+
+0
 command.reset
 MDFNSF_CAT_INPUT_MAPPING MDFNSF_SUPPRESS_DOC 
 Reset
@@ -2962,7 +2971,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 demo.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -3468,12 +3477,18 @@ MDFNST_ENUM
 upper_left
 
 
-2
+4
 upper_left
 Upper left.
 
 upper_right
 Upper right.
+
+upper_center
+Upper center.
+
+center
+Center.
 
 fps.scale
 
@@ -3691,7 +3706,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 gb.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -4168,7 +4183,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 gba.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -4588,7 +4603,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 gg.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -5098,7 +5113,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 lynx.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -9103,7 +9118,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 md.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -12007,7 +12022,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 nes.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -12616,7 +12631,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 ngp.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -15343,7 +15358,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 pce.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -17026,7 +17041,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 pce_fast.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -19420,7 +19435,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 pcfx.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -19759,7 +19774,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 player.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -30883,7 +30898,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 psx.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -31492,7 +31507,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 sms.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -33298,7 +33313,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 snes.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -35098,7 +35113,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 snes_faust.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -72619,7 +72634,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 ss.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -73054,7 +73069,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 ssfplay.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -73774,7 +73789,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 vb.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 
@@ -74149,6 +74164,30 @@ MDFNST_INT
 -1
 32767
 0
+video.glformat
+
+Preferred source data pixel format for emulated video.
+Using hicolor(RGB555/RGB565) formats may boost performance, but at the cost of color fidelity.  Noticeability of color degradation depends on the emulated system and features, such as custom palettes or NTSC blitter, being used.  When hicolor format support is not available for the emulation module or special scaler being used, Mednafen will automatically fall back to using a truecolor format.  Examine Mednafen\'s startup output to see the actual OpenGL texture formats being used.
+MDFNST_ENUM
+auto
+
+
+5
+auto
+Auto
+Currently the same as \"truecolor\", but may automatically select deeper color formats in the future.
+truecolor
+Truecolor, 16M colors
+RGB, 8 bits per color component.
+hicolor
+Hicolor, 32K/64K colors
+RGB565 or RGB555, with priority given to RGB565.
+rgb565
+RGB565, 64K colors
+
+rgb555
+RGB555, 32K colors
+
 video.glvsync
 
 Attempt to synchronize OpenGL page flips to vertical retrace period.
@@ -74653,7 +74692,7 @@ Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 
 wswan.shader.goat.fprog
 MDFNSF_COMMON_TEMPLATE 
 Force interlaced video to be treated as progressive.
-When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
+When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it\'s set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.
 MDFNST_BOOL
 0
 

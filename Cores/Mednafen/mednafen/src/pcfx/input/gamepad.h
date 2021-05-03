@@ -25,8 +25,8 @@
 namespace MDFN_IEN_PCFX
 {
 
-extern const IDIISG PCFX_GamepadIDII;
-extern const IDIISG PCFX_GamepadIDII_DSR;
+MDFN_HIDE extern const IDIISG PCFX_GamepadIDII;
+MDFN_HIDE extern const IDIISG PCFX_GamepadIDII_DSR;
 
 PCFX_Input_Device *PCFXINPUT_MakeGamepad(void);
 

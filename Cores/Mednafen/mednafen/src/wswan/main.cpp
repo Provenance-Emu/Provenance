@@ -653,7 +653,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_WSWAN;
 
-MDFNGI EmulatedWSwan =
+MDFN_HIDE extern const MDFNGI EmulatedWSwan =
 {
  "wswan",
  "WonderSwan",
@@ -694,6 +694,9 @@ MDFNGI EmulatedWSwan =
  WSwanSettings,
  MDFN_MASTERCLOCK_FIXED(3072000),
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false, // Multires possible?
 
  224,   // lcm_width

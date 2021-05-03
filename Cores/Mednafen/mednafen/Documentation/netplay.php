@@ -39,8 +39,8 @@
   <tr><td>Down</td><td>Scroll down.</td></tr>
   <tr><td>Page Up</td><td>Scroll up a page.</td></tr>
   <tr><td>Page Down</td><td>Scroll down a page.</td></tr>
-  <tr><td>Shift + Home</td><td>Scroll to the beginning.</td></tr>
-  <tr><td>Shift + End</td><td>Scroll to the end.</td></tr>
+  <tr><td nowrap>CTRL + Home</td><td>Scroll to the beginning.</td></tr>
+  <tr><td nowrap>CTRL + End</td><td>Scroll to the end.</td></tr>
   </table>
   </p>
   <p>
@@ -49,10 +49,13 @@
   <tr><th>Key:</th><th>Action:</th></tr>
   <tr><td>Left</td><td>Move cursor left.</td></tr>
   <tr><td>Right</td><td>Move cursor right.</td></tr>
-  <tr><td>Home</td><td>Move cursor to the beginning.</td></tr>
-  <tr><td>End</td><td>Move cursor to the end.</td></tr>
+  <tr><td nowrap>Home<td>Move cursor to the beginning.</td></tr>
+  <tr><td nowrap>End<td>Move cursor to the end.</td></tr>
   <tr><td>Backspace</td><td>Remove character to the left of cursor position, and move cursor left.</td></tr>
+  <tr><td nowrap>CTRL + Backspace</td><td>Remove all characters to the left of the cursor position, and move cursor to the beginning.</td></tr>
   <tr><td>Delete</td><td>Remove character at cursor position.</td></tr>
+  <tr><td nowrap>CTRL + Delete</td><td>Remove characters at and after cursor position.</td></tr>
+  <tr><td nowrap>CTRL + V <font size="-1"><i>(or)</i></font><br>SHIFT + Insert</td><td>Paste text from the clipboard.</td></tr>
   <tr><td>Enter</td><td>Process text entered into prompt.</td></tr>
   </table>
   </p>

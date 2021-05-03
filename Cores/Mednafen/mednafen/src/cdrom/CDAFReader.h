@@ -42,13 +42,16 @@ class CDAFReader
   {
    //puts("SEEK");
    if(!Seek_(frame_offset))
-    return(0);
+   {
+    LastReadPos = ~(uint64)0;
+    return 0;
+   }
    LastReadPos = frame_offset;
   }
 
   ret = Read_(buffer, frames);
   LastReadPos += ret;
-  return(ret);
+  return ret;
  }
 
  private:

@@ -71,21 +71,21 @@ static void CPUUpdateRender(void);
 
 RTC *GBA_RTC = NULL;
 
-int SWITicks = 0;
-int IRQTicks = 0;
+static int SWITicks = 0;
+static int IRQTicks = 0;
 
-int layerEnableDelay = 0;
+static int layerEnableDelay = 0;
 bool busPrefetch = false;
 bool busPrefetchEnable = false;
 uint32 busPrefetchCount = 0;
-int cpuDmaTicksToUpdate = 0;
+static int cpuDmaTicksToUpdate = 0;
 int cpuDmaCount = 0;
 bool cpuDmaHack = false;
 uint32 cpuDmaLast = 0;
-int dummyAddress = 0;
+static int dummyAddress = 0;
 
-bool cpuBreakLoop = false;
-int cpuNextEvent = 0;
+static bool cpuBreakLoop = false;
+static int cpuNextEvent = 0;
 
 static bool intState = false;
 static bool stopState = false;
@@ -102,15 +102,15 @@ uint32 cpuPrefetch[2];
 
 int cpuTotalTicks = 0;
 static int lcdTicks;
-uint8 timerOnOffDelay = 0;
+static uint8 timerOnOffDelay = 0;
 
 GBATimer timers[4];
 
-uint32 dmaSource[4] = {0};
-uint32 dmaDest[4] = {0};
-void (*renderLine)() = mode0RenderLine;
-bool fxOn = false;
-bool windowOn = false;
+static uint32 dmaSource[4] = {0};
+static uint32 dmaDest[4] = {0};
+static void (*renderLine)() = mode0RenderLine;
+static bool fxOn = false;
+static bool windowOn = false;
 
 static const int TIMER_TICKS[4] = 
 {
@@ -254,12 +254,19 @@ static SFORMAT Joy_StateRegs[] =
  SFEND
 };
 
+static void RecalcWaits(uint16 value);
+
 static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
 {
  SFORMAT StateRegs[] =
  {
   // Type-cast to uint32* so the macro will work(they really are 32-bit elements, just wrapped up in a union)
   SFPTR32N((uint32 *)reg, sizeof(reg) / sizeof(reg_pair), "reg"),
+
+  SFVAR(SWITicks),
+  SFVAR(IRQTicks),
+
+  SFVAR(cpuPrefetch),
 
   SFVAR(busPrefetch),
   SFVAR(busPrefetchEnable),
@@ -335,6 +342,8 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
   SFVAR(holdType),
   SFVAR(lcdTicks),
 
+  SFVAR(timerOnOffDelay),
+
   SFVAR(timers[0].On),
   SFVAR(timers[0].Ticks),
   SFVAR(timers[0].Reload),
@@ -360,6 +369,8 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
 
   SFVAR(fxOn),
   SFVAR(windowOn),
+
+  SFVAR(biosProtected),
 
   SFVAR(N_FLAG),
   SFVAR(C_FLAG),
@@ -414,12 +425,15 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
   CPUUpdateWindow0();
   CPUUpdateWindow1();
 
-  if(armState) {
-    ARM_PREFETCH;
-  } else {
-    THUMB_PREFETCH;
+  if(load < 0x00102700)
+  {
+   if(armState) {
+     ARM_PREFETCH;
+   } else {
+     THUMB_PREFETCH;
+   }
   }
-  CPUUpdateRegister(0x204, CPUReadHalfWordQuick(0x4000204));
+  RecalcWaits(CPUReadHalfWordQuick(0x4000204));
  }
 }
 
@@ -627,7 +641,7 @@ static void RedoColorMap(const MDFN_PixelFormat &format, const uint8* CustomColo
    g = ((x & 0x3E0) >> 5);
    b = ((x & 0x7C00) >> 10);
 
-   if(format.bpp == 16)
+   if(format.opp == 2)
    {
     r = (r * 255 + 15) / 31;
     g = (g * 255 + 15) / 31;
@@ -641,7 +655,7 @@ static void RedoColorMap(const MDFN_PixelFormat &format, const uint8* CustomColo
    }
   }
 
-  if(format.bpp == 32)
+  if(format.opp == 4)
    systemColorMap->v32[x] = format.MakeColor(r, g, b);
   else
    systemColorMap->v16[x] = format.MakeColor(r, g, b);
@@ -758,16 +772,19 @@ static void Load(GameFile* gf)
   CPUInit(gsf_loader ? std::string("") : MDFN_GetSettingS("gba.bios"));
   CPUReset();
 
-  Flash_Init();
-  EEPROM_Init();
-
   if(!gsf_loader)
   {
    if(cpuSramEnabled || cpuFlashEnabled)
+   {
+    MDFN_BackupSavFile(5, "sav");
     CPUReadBatteryFile(MDFN_MakeFName(MDFNMKF_SAV, 0, "sav"));
+   }
 
    if(cpuEEPROMEnabled)
+   {
+    MDFN_BackupSavFile(5, "eep");
     EEPROM_LoadFile(MDFN_MakeFName(MDFNMKF_SAV, 0, "eep"));
+   }
   }
  }
  catch(std::exception &e)
@@ -1566,6 +1583,28 @@ void CPUCheckDMA(int reason, int dmamask)
   }
 }
 
+static void RecalcWaits(uint16 value)
+{
+      memoryWait[0x0e] = memoryWaitSeq[0x0e] = gamepakRamWaitState[value & 3];
+      
+      memoryWait[0x08] = memoryWait[0x09] = gamepakWaitState[(value >> 2) & 3];
+      memoryWaitSeq[0x08] = memoryWaitSeq[0x09] =
+        gamepakWaitState0[(value >> 4) & 1];
+        
+      memoryWait[0x0a] = memoryWait[0x0b] = gamepakWaitState[(value >> 5) & 3];
+      memoryWaitSeq[0x0a] = memoryWaitSeq[0x0b] =
+        gamepakWaitState1[(value >> 7) & 1];
+        
+      memoryWait[0x0c] = memoryWait[0x0d] = gamepakWaitState[(value >> 8) & 3];
+      memoryWaitSeq[0x0c] = memoryWaitSeq[0x0d] =
+        gamepakWaitState2[(value >> 10) & 1];
+         
+      for(int i = 8; i < 15; i++) {
+        memoryWait32[i] = memoryWait[i] + memoryWaitSeq[i] + 1;
+        memoryWaitSeq32[i] = memoryWaitSeq[i]*2 + 1;
+      }
+}
+
 void CPUUpdateRegister(uint32 address, uint16 value)
 {
   switch(address) 
@@ -2015,24 +2054,7 @@ void CPUUpdateRegister(uint32 address, uint16 value)
     break;
   case 0x204:
     {
-      memoryWait[0x0e] = memoryWaitSeq[0x0e] = gamepakRamWaitState[value & 3];
-      
-      memoryWait[0x08] = memoryWait[0x09] = gamepakWaitState[(value >> 2) & 3];
-      memoryWaitSeq[0x08] = memoryWaitSeq[0x09] =
-        gamepakWaitState0[(value >> 4) & 1];
-        
-      memoryWait[0x0a] = memoryWait[0x0b] = gamepakWaitState[(value >> 5) & 3];
-      memoryWaitSeq[0x0a] = memoryWaitSeq[0x0b] =
-        gamepakWaitState1[(value >> 7) & 1];
-        
-      memoryWait[0x0c] = memoryWait[0x0d] = gamepakWaitState[(value >> 8) & 3];
-      memoryWaitSeq[0x0c] = memoryWaitSeq[0x0d] =
-        gamepakWaitState2[(value >> 10) & 1];
-         
-      for(int i = 8; i < 15; i++) {
-        memoryWait32[i] = memoryWait[i] + memoryWaitSeq[i] + 1;
-        memoryWaitSeq32[i] = memoryWaitSeq[i]*2 + 1;
-      }
+      RecalcWaits(value);
 
       if((value & 0x4000) == 0x4000) {
         busPrefetchEnable = true;
@@ -2044,7 +2066,6 @@ void CPUUpdateRegister(uint32 address, uint16 value)
         busPrefetchCount = 0;
       }
       UPDATE_REG(0x204, value & 0x7FFF);
-
     }
     break;
   case 0x208:
@@ -2378,6 +2399,9 @@ static void CPUInit(const std::string &bios_fn)
  cpuEEPROMEnabled = true;
  cpuEEPROMSensorEnabled = true;
 
+ Flash_Init();
+ EEPROM_Init();
+
  try
  {
   FileStream memfp(MDFN_MakeFName(MDFNMKF_SAV, 0, "type"), FileStream::MODE_READ);
@@ -2659,6 +2683,8 @@ static void CPUReset(void)
   reg[15].I += 4;
 
   // reset internal state
+  intState = false;
+  stopState = false;
   holdState = false;
   holdType = 0;
   
@@ -2669,6 +2695,7 @@ static void CPUReset(void)
   
   lcdTicks = (useBios && !skipBios) ? 1008 : 208;
 
+  timerOnOffDelay = 0;
   for(int i = 0; i < 4; i++)
   {
    timers[i].On = false;
@@ -2745,9 +2772,12 @@ static void CPUReset(void)
 
   ARM_PREFETCH;
 
+  cpuDmaTicksToUpdate = 0;
+  cpuDmaCount = 0;
   cpuDmaHack = false;
-
+  cpuDmaLast = 0;
   SWITicks = 0;
+  IRQTicks = 0;
 }
 
 void CPUInterrupt()
@@ -2928,7 +2958,7 @@ static void CPULoop(EmulateSpecStruct* espec, int ticks)
 
               (*renderLine)();
 
-	      if(surface->format.bpp == 32)
+	      if(surface->format.opp == 4)
 	      {
 	       const uint32* cm = systemColorMap->v32;
                uint32 *dest = surface->pixels + VCOUNT * surface->pitch32;
@@ -3168,29 +3198,6 @@ static void Emulate(EmulateSpecStruct *espec)
  espec->DisplayRect.w = 240;
  espec->DisplayRect.h = 160;
 
-#if 0
- {
-  static bool firstcat = true;
-  MDFN_PixelFormat nf;
-
-  nf.bpp = 16;
-  nf.colorspace = MDFN_COLORSPACE_RGB;
-  nf.Rshift = 11;
-  nf.Gshift = 5;
-  nf.Bshift = 0;
-  nf.Ashift = 16;
-  
-  nf.Rprec = 5;
-  nf.Gprec = 5;
-  nf.Bprec = 5;
-  nf.Aprec = 8;
-
-  espec->surface->SetFormat(nf, false);
-  espec->VideoFormatChanged = firstcat;
-  firstcat = false;
- }
-#endif
-
  if(espec->VideoFormatChanged)
   RedoColorMap(espec->surface->format, espec->CustomPalette);
 
@@ -3331,7 +3338,7 @@ static const CustomPalette_Spec CPInfo[] =
 
 using namespace MDFN_IEN_GBA;
 
-MDFNGI EmulatedGBA =
+MDFN_HIDE extern const MDFNGI EmulatedGBA =
 {
  "gba",
  "GameBoy Advance",
@@ -3368,6 +3375,8 @@ MDFNGI EmulatedGBA =
  GBASettings,
  MDFN_MASTERCLOCK_FIXED(16777216),
  (uint32)((double)4194304 / 70224 * 65536 * 256),
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
 
  false, // Multires possible?
 

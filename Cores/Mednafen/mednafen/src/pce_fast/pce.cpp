@@ -28,9 +28,7 @@
 #include <mednafen/mempatcher.h>
 #include <mednafen/cdrom/CDInterface.h>
 
-extern MDFNGI EmulatedPCE_Fast;
-
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 static std::vector<CDInterface*> *cdifs = NULL;
@@ -515,54 +513,8 @@ static void Emulate(EmulateSpecStruct *espec)
 
  MDFNMP_ApplyPeriodicCheats();
 
- #if 0
- {
-  static bool firstcat = true;
-  MDFN_PixelFormat nf;
-
-  nf.bpp = 16;
-  nf.colorspace = MDFN_COLORSPACE_RGB;
-  nf.Rshift = 11;
-  nf.Gshift = 5;
-  nf.Bshift = 0;
-  nf.Ashift = 16;
-  
-  nf.Rprec = 5;
-  nf.Gprec = 6;
-  nf.Bprec = 5;
-  nf.Aprec = 8;
-
-  espec->surface->SetFormat(nf, false);
-  espec->VideoFormatChanged = firstcat;
-  firstcat = false;
- }
- #endif
-
-#if 0
- static bool firstcat = true;
-
- MDFN_PixelFormat tmp_pf;
-
- tmp_pf.Rshift = 0;
- tmp_pf.Gshift = 0;
- tmp_pf.Bshift = 0;
- tmp_pf.Ashift = 8;
-
- tmp_pf.Rprec = 6;
- tmp_pf.Gprec = 6;
- tmp_pf.Bprec = 6;
- tmp_pf.Aprec = 0;
-
- tmp_pf.bpp = 8;
- tmp_pf.colorspace = MDFN_COLORSPACE_RGB;
-
- espec->surface->SetFormat(tmp_pf, false);
- espec->VideoFormatChanged = firstcat;
- firstcat = false;
-#endif
-
  if(espec->VideoFormatChanged)
-  VDC_SetPixelFormat(espec->surface->format, espec->CustomPalette, espec->CustomPaletteNumEntries); //.Rshift, espec->surface->format.Gshift, espec->surface->format.Bshift);
+  VDC_SetPixelFormat(espec->surface->format, espec->CustomPalette, espec->CustomPaletteNumEntries);
 
  if(espec->SoundFormatChanged)
  {
@@ -657,7 +609,7 @@ void PCE_Power(void)
 
 static MDFN_COLD void SetMedia(uint32 drive_idx, uint32 state_idx, uint32 media_idx, uint32 orientation_idx)
 {
- const RMD_Layout* rmd = EmulatedPCE_Fast.RMD;
+ const RMD_Layout* rmd = MDFNGameInfo->RMD;
  const RMD_Drive* rd = &rmd->Drives[drive_idx];
  const RMD_State* rs = &rd->PossibleStates[state_idx];
 
@@ -736,7 +688,7 @@ static const CheatInfoStruct CheatInfo =
 
 };
 
-MDFNGI EmulatedPCE_Fast =
+MDFN_HIDE extern const MDFNGI EmulatedPCE_Fast =
 {
  "pce_fast",
  "PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx",
@@ -773,6 +725,8 @@ MDFNGI EmulatedPCE_Fast =
  PCESettings,
  MDFN_MASTERCLOCK_FIXED(PCE_MASTER_CLOCK),
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
 
  true,  // Multires possible?
 

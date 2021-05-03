@@ -62,7 +62,7 @@
 #define RAM_PEEKW(m)			(mRamPointer[(uint16)(m)]+(mRamPointer[(uint16)((m)+1)]<<8))
 #define RAM_POKE(m1,m2)			{mRamPointer[(uint16)(m1)]=(m2);}
 
-uint32 cycles_used=0;
+static uint32 cycles_used=0;
 
 CSusie::CSusie(CSystem& parent)
 	:mSystem(parent)
@@ -161,6 +161,16 @@ void CSusie::Reset(void)
 	mEVERON=false;
 
 	for(int loop=0;loop<16;loop++) mPenIndex[loop]=loop;
+
+	mLineType = 0;
+	mLineShiftRegCount = 0;
+	mLineShiftReg = 0;
+	mLineRepeatCount = 0;
+	mLinePixel = 0;
+	mLinePacketBitsLeft = 0;
+	mCollision = 0;
+	mLineBaseAddress = 0;
+	mLineCollisionAddress = 0;
 
 	hquadoff = vquadoff = 0;
 

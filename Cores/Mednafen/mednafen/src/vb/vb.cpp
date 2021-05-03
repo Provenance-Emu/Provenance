@@ -71,9 +71,9 @@ static uint32 GPRAM_Mask;
 static uint8 *GPROM = NULL;
 static uint32 GPROM_Mask;
 
-V810 *VB_V810 = NULL;
+MDFN_HIDE V810 *VB_V810 = NULL;
 
-VSU *VB_VSU = NULL;
+MDFN_HIDE VSU *VB_VSU = NULL;
 static uint32 VSU_CycleFix;
 
 static uint8 WCR;
@@ -150,7 +150,7 @@ static MDFN_FASTCALL void HWCTRL_Write(v810_timestamp_t &timestamp, uint32 A, ui
 {
  if(A & 0x3)
  {
-  puts("HWCtrl Bogus Write?");
+  //puts("HWCtrl Bogus Write?");
   return;
  }
 
@@ -846,7 +846,7 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
  SFORMAT StateRegs[] =
  {
   SFPTR8(WRAM, 65536),
-  SFPTR8(GPRAM, GPRAM_Mask ? (GPRAM_Mask + 1) : 0),
+  SFPTR8(GPRAM, GPRAM_Mask ? (GPRAM_Mask + 1) : 0, SFORMAT::FORM::NVMEM),
   SFVAR(WCR),
   SFVAR(IRQ_Asserted),
   SFVAR(VSU_CycleFix),
@@ -1019,7 +1019,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_VB;
 
-MDFNGI EmulatedVB =
+MDFN_HIDE extern const MDFNGI EmulatedVB =
 {
  "vb",
  "Virtual Boy",
@@ -1060,6 +1060,9 @@ MDFNGI EmulatedVB =
  VBSettings,
  MDFN_MASTERCLOCK_FIXED(VB_MASTER_CLOCK),
  0,
+
+ EVFSUPPORT_NONE,
+
  false, // Multires possible?
 
  0,   // lcm_width

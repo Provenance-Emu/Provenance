@@ -34,7 +34,6 @@ static uint8 CurrentDACLeft = 0, CurrentDACRight = 0;
 
 typedef Blip_Synth<blip_good_quality, 0xFF> Synth;
 static Synth synth;
-extern int32 ngpc_soundTS;
 static bool schipenable = 0;
 
 void MDFNNGPCSOUND_SetEnable(bool set)
@@ -44,20 +43,20 @@ void MDFNNGPCSOUND_SetEnable(bool set)
   apu.reset();
 }
 
-void Write_SoundChipLeft(uint8 data)
+MDFN_FASTCALL void Write_SoundChipLeft(uint8 data)
 {
  if(schipenable)
   apu.write_data_left(ngpc_soundTS >> 1, data);
 }
 
-void Write_SoundChipRight(uint8 data)
+MDFN_FASTCALL void Write_SoundChipRight(uint8 data)
 {
  if(schipenable)
   apu.write_data_right(ngpc_soundTS >> 1, data);
 }
 
 
-void dac_write_left(uint8 data)
+MDFN_FASTCALL void dac_write_left(uint8 data)
 {
  CurrentDACLeft = data;
 
@@ -66,7 +65,7 @@ void dac_write_left(uint8 data)
  LastDACLeft = data;
 }
 
-void dac_write_right(uint8 data)
+MDFN_FASTCALL void dac_write_right(uint8 data)
 {
  CurrentDACRight = data;
 

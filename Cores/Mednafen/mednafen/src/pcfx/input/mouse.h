@@ -25,7 +25,7 @@
 namespace MDFN_IEN_PCFX
 {
 
-extern const IDIISG PCFX_MouseIDII;
+MDFN_HIDE extern const IDIISG PCFX_MouseIDII;
 
 PCFX_Input_Device *PCFXINPUT_MakeMouse(int which);
 

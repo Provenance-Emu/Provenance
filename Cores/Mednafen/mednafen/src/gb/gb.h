@@ -39,18 +39,14 @@ typedef union {
   uint16 W;
 } gbRegister;
 
-extern uint8 gbOAM[0xA0];
-extern uint8 register_IF, register_IE, register_KEY1;
+MDFN_HIDE extern uint8 gbOAM[0xA0];
+MDFN_HIDE extern uint8 register_IF, register_IE, register_KEY1;
 
-extern void gbReset();
-extern void gbCleanUp();
-extern void gbSgbRenderBorder();
+void gbCleanUp();
+void gbSgbRenderBorder();
 
-extern struct EmulatedSystem GBSystem;
-
-
-void gbWriteMemory(uint16 address, uint8 value);
-uint8 gbReadMemory(uint16 address);
+MDFN_FASTCALL void gbWriteMemory(uint16 address, uint8 value);
+MDFN_FASTCALL uint8 gbReadMemory(uint16 address);
 void gbSpeedSwitch();
 
 }

@@ -740,7 +740,7 @@ void Debugger_MT_DrawToScreen(const MDFN_PixelFormat& pf, signed screen_w, signe
  zederect.y = (screen_h - zederect.h) / 2;
 
  *(MDFN_Rect*)&dlc_screen_dest_rect = zederect;
- BlitRaw(debsurf, debrect, &zederect);
+ BlitOSD(debsurf, debrect, &zederect);
 }
 
 void Debugger_GT_Draw(void)
@@ -1172,8 +1172,8 @@ static void MDFN_COLD SetActive(bool active, unsigned which_ms)
   {
    if(!DebuggerSurface[0])
    {
-    DebuggerSurface[0] = new MDFN_Surface(NULL, 640, 480, 640, MDFN_PixelFormat(MDFN_COLORSPACE_RGB, 0, 8, 16, 24));
-    DebuggerSurface[1] = new MDFN_Surface(NULL, 640, 480, 640, MDFN_PixelFormat(MDFN_COLORSPACE_RGB, 0, 8, 16, 24));
+    DebuggerSurface[0] = new MDFN_Surface(NULL, 640, 480, 640, MDFN_PixelFormat::ABGR32_8888);
+    DebuggerSurface[1] = new MDFN_Surface(NULL, 640, 480, 640, MDFN_PixelFormat::ABGR32_8888);
    }
 
    if(NeedInit)

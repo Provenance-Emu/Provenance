@@ -17,6 +17,8 @@
 
 #include "main.h"
 #include "video.h"
+#include "fps.h"
+
 #include <trio/trio.h>
 
 static struct
@@ -69,7 +71,7 @@ void FPS_Init(const unsigned fps_pos, const unsigned fps_scale, const unsigned f
  FPSRect.w = 6 * font_width;
  FPSRect.h = 3 * font_height;
 
- FPSSurface = new MDFN_Surface(NULL, FPSRect.w, FPSRect.h, FPSRect.w, MDFN_PixelFormat(MDFN_COLORSPACE_RGB, 0, 8, 16, 24));
+ FPSSurface = new MDFN_Surface(NULL, FPSRect.w, FPSRect.h, FPSRect.w, MDFN_PixelFormat::ABGR32_8888);
 }
 
 void FPS_IncVirtual(int64 vcycles)
@@ -168,12 +170,12 @@ static void CalcFramerates(char *virtfps, char *drawnfps, char *blitfps, size_t 
   trio_snprintf(blitfps, maxlen, "?");
 }
 
-void FPS_DrawToScreen(int rs, int gs, int bs, int as, const MDFN_Rect& cr, unsigned min_screen_w_h)
+void FPS_DrawToScreen(const MDFN_PixelFormat& pf, const MDFN_Rect& cr, unsigned min_screen_w_h)
 {
  if(!isactive) 
   return;
 
- FPSSurface->SetFormat(MDFN_PixelFormat(MDFN_COLORSPACE_RGB, rs, gs, bs, as), false);
+ FPSSurface->SetFormat(pf, false);
  //
  const unsigned eff_scale = scale ? scale : std::max<unsigned>(1, /*std::min(cr.w, cr.h)*/min_screen_w_h / std::max(FPSRect.w, FPSRect.h) / 8);
  char virtfps[32], drawnfps[32], blitfps[32];
@@ -193,16 +195,27 @@ void FPS_DrawToScreen(int rs, int gs, int bs, int as, const MDFN_Rect& cr, unsig
  drect.w = FPSRect.w * eff_scale;
  drect.h = FPSRect.h * eff_scale;
 
- if(position)
+ switch(position)
  {
-  drect.x = cr.x + (cr.w - drect.w);
-  drect.y = cr.y;
- }
- else
- {
-  drect.x = cr.x;
-  drect.y = cr.y;
- }
+  case FPSPOS_UPPER_LEFT:
+	drect.x = cr.x;
+	drect.y = cr.y;
+	break;
 
- BlitRaw(FPSSurface, &FPSRect, &drect, -1);
+  case FPSPOS_UPPER_RIGHT:
+	drect.x = cr.x + (cr.w - drect.w);
+	drect.y = cr.y;
+	break;
+
+  case FPSPOS_UPPER_CENTER:
+	drect.x = cr.x + (cr.w - drect.w) / 2;
+	drect.y = cr.y;
+	break;
+
+  case FPSPOS_CENTER:
+	drect.x = cr.x + (cr.w - drect.w) / 2;
+	drect.y = cr.y + (cr.h - drect.h) / 2;
+	break;
+ }
+ BlitOSD(FPSSurface, &FPSRect, &drect, -1);
 }

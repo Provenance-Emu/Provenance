@@ -104,6 +104,7 @@ class QTRecord
 
  std::vector<uint8> RawVideoBuffer;
  std::vector<uint8> CompressedVideoBuffer;
+ std::unique_ptr<uint8[]> lzo1x_1_workmem;
 
  std::list<bool> atom_smalls;
  std::list<uint64> atom_foffsets;

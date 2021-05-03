@@ -43,28 +43,28 @@ namespace TLCS900H
 char* TLCS900h_disassemble(void);
 
 //Print to this string the disassembled instruction
-extern char instr[128];
+MDFN_HIDE extern char instr[128];
 
 //Print the mnemonic for the addressing mode / reg code.
-extern char extra[256];
+MDFN_HIDE extern char extra[256];
 
 //=============================================================================
 
-extern char str_R[8];		//Big R
-extern char str_r[8];		//Little R
+MDFN_HIDE extern char str_R[8];		//Big R
+MDFN_HIDE extern char str_r[8];		//Little R
 
 //Translate an rr or RR value for MUL/MULS/DIV/DIVS
 void get_rr_Name(void);
 void get_RR_Name(void);
 
-extern uint8 bytes[16];		//Stores the bytes used
-extern uint8 bcnt;			//Byte Counter for above
+MDFN_HIDE extern uint8 bytes[16];		//Stores the bytes used
+MDFN_HIDE extern uint8 bcnt;			//Byte Counter for above
 
-extern const char* gprName[8][3];		//8 regs * 3 names (byte, word, long)
-extern const char* regCodeName[3][256];
-extern const char* crName[3][0x40];
+MDFN_HIDE extern const char* gprName[8][3];		//8 regs * 3 names (byte, word, long)
+MDFN_HIDE extern const char* regCodeName[3][256];
+MDFN_HIDE extern const char* crName[3][0x40];
 
-extern const char* ccName[];
+MDFN_HIDE extern const char* ccName[];
 
 uint8 get8_dis(void);
 uint16 get16_dis(void);

@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* gfxdebugger.cpp:
-**  Copyright (C) 2006-2016 Mednafen Team
+**  Copyright (C) 2006-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ static void RedoSGD(bool instant = 0)
 // Call this function from the game thread.
 void GfxDebugger_SetActive(bool newia)
 {
- if(CurGame->Debugger && CurGame->Debugger->SetGraphicsDecode)
+ if(CurGame->Debugger && CurGame->Debugger->SetGraphicsDecode && CurGame->LayerNames)
  {
   IsActive = newia;
 
@@ -70,7 +70,7 @@ void GfxDebugger_SetActive(bool newia)
   else if(IsActive)
   {
    if(!gd_surface)
-    gd_surface = new MDFN_Surface(NULL, 128, 128, 128 * 3, MDFN_PixelFormat(MDFN_COLORSPACE_RGB, 0, 8, 16, 24));
+    gd_surface = new MDFN_Surface(NULL, 128, 128, 128 * 3, MDFN_PixelFormat::ABGR32_8888);
   }
   RedoSGD();
  }
@@ -175,76 +175,80 @@ void GfxDebugger_Draw(MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_R
 // Call this from the game thread
 int GfxDebugger_Event(const SDL_Event *event)
 {
- switch(event->type)
+ if(!IsActive)
+  return true;
+
+ if(event->type == SDL_KEYDOWN)
  {
-  case SDL_KEYDOWN:
-	switch(event->key.keysym.sym)
+  switch(event->key.keysym.sym)
+  {
+   default:
+	break;
+
+   case SDLK_MINUS:
+	if(LayerScanline[CurLayer])
 	{
-	 default: break;
-
-	 case SDLK_MINUS:		      
-		       if(LayerScanline[CurLayer])
-		       {
-			LayerScanline[CurLayer]--;
-			RedoSGD();
-		       }
-		       break;
-
-	 case SDLK_EQUALS:
-		       LayerScanline[CurLayer]++;
-		       RedoSGD();
-		       break;
-
-         case SDLK_UP: 
-		       if(LayerScroll[CurLayer])
-		       {
-                        LayerScroll[CurLayer]--;
-                        RedoSGD();
-		       }
-                       break;
-
-         case SDLK_PAGEUP:
-                         LayerScroll[CurLayer] -= 8;
-			 if(LayerScroll[CurLayer] < 0)
-			  LayerScroll[CurLayer] = 0;
-                         RedoSGD();
-                         break;
-
-	 case SDLK_PAGEDOWN:
-			 LayerScroll[CurLayer] += 8;
-			 RedoSGD();
-			 break;
-	 case SDLK_DOWN: 
-			 LayerScroll[CurLayer]++;
-			 RedoSGD();
-			 break;
-
-	 case SDLK_LEFT: 
-			 CurLayer = (CurLayer - 1);
-
-			 if(CurLayer < 0) CurLayer = LayerCount - 1;
-
-			 RedoSGD();
-			 break;
-
-	 case SDLK_RIGHT: 
-			  CurLayer = (CurLayer + 1) % LayerCount;
-			  RedoSGD();
-			  break;
-
-	 case SDLK_COMMA: 
-			  if(LayerPBN[CurLayer] >= 0)
-			   LayerPBN[CurLayer]--;
-			  RedoSGD();
-			  break;
-
-	 case SDLK_PERIOD:
-			  LayerPBN[CurLayer]++;
-			  RedoSGD();
-			  break;
+	 LayerScanline[CurLayer]--;
+	 RedoSGD();
 	}
 	break;
+
+   case SDLK_EQUALS:
+	LayerScanline[CurLayer]++;
+	RedoSGD();
+	break;
+
+   case SDLK_UP:
+	if(LayerScroll[CurLayer])
+	{
+	 LayerScroll[CurLayer]--;
+	 RedoSGD();
+	}
+	break;
+
+   case SDLK_PAGEUP:
+	LayerScroll[CurLayer] -= 8;
+	if(LayerScroll[CurLayer] < 0)
+	 LayerScroll[CurLayer] = 0;
+	RedoSGD();
+	break;
+
+   case SDLK_PAGEDOWN:
+	LayerScroll[CurLayer] += 8;
+	RedoSGD();
+	break;
+
+   case SDLK_DOWN:
+	LayerScroll[CurLayer]++;
+	RedoSGD();
+	break;
+
+   case SDLK_LEFT:
+	CurLayer = (CurLayer - 1);
+
+	if(CurLayer < 0)
+	 CurLayer = LayerCount - 1;
+
+	RedoSGD();
+	break;
+
+   case SDLK_RIGHT:
+	CurLayer = (CurLayer + 1) % LayerCount;
+	RedoSGD();
+	break;
+
+   case SDLK_COMMA:
+	if(LayerPBN[CurLayer] >= 0)
+	 LayerPBN[CurLayer]--;
+	RedoSGD();
+	break;
+
+   case SDLK_PERIOD:
+	LayerPBN[CurLayer]++;
+	RedoSGD();
+	break;
+  }
  }
- return(1);
+ return true;
 }
 

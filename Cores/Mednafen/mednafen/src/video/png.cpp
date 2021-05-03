@@ -61,7 +61,7 @@ INLINE void PNGWrite::EncodeImage(const MDFN_Surface *src, const MDFN_PixelForma
  const int32 pitchinpix = src->pitchinpix;
  uint8 *tmp_inc;
 
- tmp_buffer.resize((png_width * ((format.bpp == 8) ? 1 : 3) + 1) * rect.h);
+ tmp_buffer.resize((png_width * ((format.opp == 1) ? 1 : 3) + 1) * rect.h);
 
  tmp_inc = &tmp_buffer[0];
 
@@ -81,14 +81,14 @@ INLINE void PNGWrite::EncodeImage(const MDFN_Surface *src, const MDFN_PixelForma
   {
    int r, g, b;
 
-   if(format.bpp == 8)
+   if(format.opp == 1)
    {
     tmp_inc[0] = src->pixels8[(y + rect.y) * pitchinpix + (x + x_base)];
     tmp_inc++;
    }
    else
    {
-    if(format.bpp == 16)
+    if(format.opp == 2)
      format.DecodeColor(src->pixels16[(y + rect.y) * pitchinpix + (x + x_base)], r, g, b);
     else
      format.DecodeColor(src->pixels[(y + rect.y) * pitchinpix + (x + x_base)], r, g, b);
@@ -102,7 +102,7 @@ INLINE void PNGWrite::EncodeImage(const MDFN_Surface *src, const MDFN_PixelForma
 
   for(int x = line_width; x < png_width; x++)
   {
-   if(format.bpp == 8)
+   if(format.opp == 1)
    {
     tmp_inc[0] = 0;
     tmp_inc++;
@@ -162,7 +162,7 @@ void PNGWrite::WriteIt(FileStream &pngfile, const MDFN_Surface *src, const MDFN_
 
   chunko[8]=8;				// Bit depth
 
-  if(format.bpp == 8)
+  if(format.opp == 1)
    chunko[9]=3;				// Color type; palette index
   else 
    chunko[9]=2;				// Color type; RGB triplet
@@ -174,7 +174,7 @@ void PNGWrite::WriteIt(FileStream &pngfile, const MDFN_Surface *src, const MDFN_
   WriteChunk(pngfile, 13, "IHDR", chunko);
  }
 
- if(format.bpp == 8)
+ if(format.opp == 1)
  {
   uint8 chunko[256 * 3];
 
@@ -220,14 +220,14 @@ void PNGWrite::WriteIt(FileStream &pngfile, const MDFN_Surface *src, const MDFN_
  {
   //uint32 st = MDFND_GetTime();
 
-  if(MDFN_LIKELY(format.colorspace == MDFN_COLORSPACE_RGB && format.bpp == 32))
+  if(MDFN_LIKELY(format.colorspace == MDFN_COLORSPACE_RGB && format.opp == 4))
    EncodeImage(src, format, rect, LineWidths, png_width);
   else
    EncodeImage(src, format, rect, LineWidths, png_width);
 
   //printf("%u\n", MDFND_GetTime() - st);
 
-  if(compress(&compmem[0], &compmemsize, &tmp_buffer[0], rect.h * (png_width * ((format.bpp == 8) ? 1 : 3) + 1)) != Z_OK)
+  if(compress(&compmem[0], &compmemsize, &tmp_buffer[0], rect.h * (png_width * ((format.opp == 1) ? 1 : 3) + 1)) != Z_OK)
   {
    throw(MDFN_Error(0, "zlib error"));	// TODO: verbosify
   }

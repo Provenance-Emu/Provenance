@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* tblur.h:
-**  Copyright (C) 2007-2016 Mednafen Team
+**  Copyright (C) 2007-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,16 +19,16 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MDFN_TBLUR_H
-#define __MDFN_TBLUR_H
+#ifndef __MDFN_VIDEO_TBLUR_H
+#define __MDFN_VIDEO_TBLUR_H
 
 #include <mednafen/video.h>
 
 namespace Mednafen
 {
 
-void TBlur_Init(void);
-void TBlur_Kill(void);
+void TBlur_Init(bool accum_mode, double accum_amount, uint32 max_width, uint32 max_height) MDFN_COLD;
+void TBlur_Kill(void) MDFN_COLD;
 void TBlur_Run(EmulateSpecStruct *espec);
 bool TBlur_IsOn(void);
 

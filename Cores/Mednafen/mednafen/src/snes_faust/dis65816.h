@@ -78,6 +78,6 @@ namespace Mednafen
    uint8 address_mode;
   };
  
-  static const OpTableEntry OpTable[256];
+  MDFN_HIDE static const OpTableEntry OpTable[256];
  };
 }

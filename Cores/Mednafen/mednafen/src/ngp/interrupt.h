@@ -37,18 +37,18 @@ void reset_int(void);
 bool updateTimers(MDFN_Surface *surface, int cputicks);
 
 //H-INT Timer
-extern uint32 timer_hint;
+MDFN_HIDE extern uint32 timer_hint;
 
-void timer_write8(uint32 address, uint8 data);
-uint8 timer_read8(uint32 address);
+MDFN_FASTCALL void timer_write8(uint32 address, uint8 data);
+MDFN_FASTCALL uint8 timer_read8(uint32 address);
 
 
 // Set this value to fix problems with glitching extra lines.
-extern bool gfx_hack;
+MDFN_HIDE extern bool gfx_hack;
 
 
-void int_write8(uint32 address, uint8 data);
-uint8 int_read8(uint32 address);
+MDFN_FASTCALL void int_write8(uint32 address, uint8 data);
+MDFN_FASTCALL uint8 int_read8(uint32 address);
 void int_check_pending(void);
 void TestIntHDMA(int bios_num, int vec_num);
 

@@ -20,7 +20,7 @@ typedef struct
  //bool kingACK, kingRST, kingSEL, kingATN;
 } scsicd_bus_t;
 
-extern scsicd_bus_t cd_bus; // Don't access this structure directly by name outside of scsicd.c, but use the macros below.
+MDFN_HIDE extern scsicd_bus_t cd_bus; // Don't access this structure directly by name outside of scsicd.c, but use the macros below.
 
 // Signals under our(the "target") control.
 #define SCSICD_IO_mask	0x001

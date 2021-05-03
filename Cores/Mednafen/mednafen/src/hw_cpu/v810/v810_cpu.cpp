@@ -326,6 +326,10 @@ void V810::Reset()
  lastop = 0;
 
  in_bstr = false;
+ src_cache = 0;
+ dst_cache = 0;
+ have_src_cache = 0;
+ have_dst_cache = 0;
 
  RecalcIPendingCache();
 }

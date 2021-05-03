@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* rtc.cpp - WonderSwan RTC Emulation
-**  Copyright (C) 2014-2016 Mednafen Team
+**  Copyright (C) 2014-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -68,7 +68,7 @@ GenericRTC::GenericRTC()
  hour = 0x00;
  wday = 0x00;
  mday = 0x01;
- mon = 0x00;
+ mon = 0x01;
  year = 0x00;
 }
 
@@ -103,7 +103,7 @@ void GenericRTC::Init(const struct tm& toom)
  hour = U8_to_BCD(toom.tm_hour);
  wday = U8_to_BCD(toom.tm_wday);
  mday = U8_to_BCD(toom.tm_mday);
- mon = U8_to_BCD(toom.tm_mon);
+ mon = U8_to_BCD(toom.tm_mon + 1);
  year = U8_to_BCD(toom.tm_year % 100);
 
  if(sec >= 0x60)	// Murder the leap second.
@@ -120,21 +120,21 @@ void GenericRTC::Clock(void)
    {
     uint8 mday_thresh = 0x32;
 
-    if(mon == 0x01)
+    if(mon == 0x02)
     {
      mday_thresh = 0x29;
 
      if(((year & 0x0F) % 4) == ((year & 0x10) ? 0x02 : 0x00))
       mday_thresh = 0x30;
     }
-    else if(mon == 0x03 || mon == 0x05 || mon == 0x08 || mon == 0x10)
+    else if(mon == 0x04 || mon == 0x06 || mon == 0x09 || mon == 0x11)
      mday_thresh = 0x31;
 
     BCDInc(wday, 0x07);
 
     if(BCDInc(mday, mday_thresh, 0x01))
     {
-     if(BCDInc(mon, 0x12))
+     if(BCDInc(mon, 0x13, 0x01))
      {
       BCDInc(year, 0xA0);
      }
@@ -255,13 +255,16 @@ void RTC_Init(void)
 #if 0
  {
   GenericRTC rtc_a, rtc_b;
-  time_t ct = 0; //947000000; //time(NULL);
+  uint64 ct = 0; //947000000; //time(NULL);
 
-  rtc_a.Init(ct);
+  rtc_a.Init(Time::UTCTime(ct));
 
   while(ct < INT_MAX)
   {
-   rtc_b.Init(ct);
+   if(!(ct & 0xFFFFFF))
+    printf("0x%08llx\n", (unsigned long long)ct);
+
+   rtc_b.Init(Time::UTCTime(ct));
 
    if(memcmp(&rtc_a, &rtc_b, sizeof(GenericRTC)))
    {
@@ -280,6 +283,9 @@ void RTC_Init(void)
 void RTC_Reset(void)
 {
  Command = 0x00;
+ memset(CommandBuffer, 0, sizeof(CommandBuffer));
+ CommandIndex = 0;
+ CommandCount = 0;
 }
 
 void RTC_StateAction(StateMem *sm, const unsigned load, const bool data_only)
@@ -307,7 +313,7 @@ void RTC_StateAction(StateMem *sm, const unsigned load, const bool data_only)
 
  if(load)
  {
-
+  CommandCount = std::min<unsigned>(CommandCount, sizeof(CommandBuffer));
  }
 }
 

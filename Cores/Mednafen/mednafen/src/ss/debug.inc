@@ -598,7 +598,7 @@ static const RegType DBG_Regs_CPU[] =
  { 0, "", "", 0 },
 };
 
-static const RegType DBG_Regs_CPUE[] =
+static const RegType DBG_Regs_CPUE_SCSP[] =
 {
  { SH7095::GSREG_DMAOR, "DMAOR", "DMAOR", 1 },
  { SH7095::GSREG_DMAORM, "DMAORM", "DMAORM", 1 },
@@ -639,83 +639,139 @@ static const RegType DBG_Regs_CPUE[] =
  { SH7095::GSREG_CCR, "CCR", "Cache Control Register", 1 },
  { SH7095::GSREG_SBYCR, "SBYCR", "Standby Control Register", 1 },
 
+ { 0, "------", "", 0xFFFF },
+
+ { (4 << 16) | SS_SCSP::GSREG_MVOL, "MVOL", "Master Volume", 0x100 | 4 },
+ { (4 << 16) | SS_SCSP::GSREG_DAC18B, "DAC18B", "18-bit DAC Enable", 0x100 | 1 },
+ { (4 << 16) | SS_SCSP::GSREG_MEM4MB, "Mem4Mb", "4Mb Memory Enable", 0x100 | 1 },
+ { (4 << 16) | SS_SCSP::GSREG_MSLC, "MSLC", "Slot to Monitor", 0x100 | 5 },
+
+ { (4 << 16) | SS_SCSP::GSREG_SCIEB, "SCIEB", "SCIEB", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_SCIPD, "SCIPD", "SCIPD", 2 },
+
+ { (4 << 16) | SS_SCSP::GSREG_MCIEB, "MCIEB", "MCIEB", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_MCIPD, "MCIPD", "MCIPD", 2 },
+/*
+ { (6 << 16) | M68K::GSREG_PC, "PC", "PC", 4 },
+ { (6 << 16) | M68K::GSREG_SR, "SR", "SR", 2 },
+ { (6 << 16) | M68K::GSREG_SSP, "SSP", "SSP", 4 },
+ { (6 << 16) | M68K::GSREG_USP, "USP", "USP", 4 },
+*/
+ { (4 << 16) | SS_SCSP::GSREG_RBC, "RBC", "DSP Ringbuffer Control", 0x100 | 9 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG0, "EFREG0", "DSP Effect Register 0", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG1, "EFREG1", "DSP Effect Register 1", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG2, "EFREG2", "DSP Effect Register 2", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG3, "EFREG3", "DSP Effect Register 3", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG4, "EFREG4", "DSP Effect Register 4", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG5, "EFREG5", "DSP Effect Register 5", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG6, "EFREG6", "DSP Effect Register 6", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG7, "EFREG7", "DSP Effect Register 7", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG8, "EFREG8", "DSP Effect Register 8", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREG9, "EFREG9", "DSP Effect Register 9", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREGA, "EFREGA", "DSP Effect Register A", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREGB, "EFREGB", "DSP Effect Register B", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREGC, "EFREGC", "DSP Effect Register C", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREGD, "EFREGD", "DSP Effect Register D", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREGE, "EFREGE", "DSP Effect Register E", 2 },
+ { (4 << 16) | SS_SCSP::GSREG_EFREGF, "EFREGF", "DSP Effect Register F", 2 },
+
  { 0, "", "", 0 },
 };
 
-static MDFN_COLD uint32 DBG_GetRegister_CPU(const unsigned int id, char* special, const uint32 special_len)
+static MDFN_COLD uint32 GetRegister(const unsigned id, char* const special, const uint32 special_len)
 {
- return CPU[DBG.ActiveCPU].GetRegister(id, special, special_len);
+ switch(id >> 16)
+ {
+  case 0: return CPU[DBG.ActiveCPU].GetRegister((uint16)id, special, special_len);
+  case 1: return CDB_GetRegister((uint16)id, special, special_len);
+  case 2: return VDP1::GetRegister((uint16)id, special, special_len);
+  case 3: return VDP2::GetRegister((uint16)id, special, special_len);
+  case 4: return SOUND_GetSCSPRegister((uint16)id, special, special_len);
+  case 5: return SCU_GetRegister((uint16)id, special, special_len);
+  case 6: return SOUND_GetM68KRegister((uint16)id, special, special_len);
+ }
+
+ return 0;
 }
 
-static MDFN_COLD void DBG_SetRegister_CPU(const unsigned int id, uint32 value)
+static MDFN_COLD void SetRegister(const unsigned id, const uint32 value)
 {
- CPU[DBG.ActiveCPU].SetRegister(id, value);
+ switch(id >> 16)
+ {
+  case 0: CPU[DBG.ActiveCPU].SetRegister((uint16)id, value); break;
+  case 1: CDB_SetRegister((uint16)id, value); break;
+  case 2: VDP1::SetRegister((uint16)id, value); break;
+  case 3: VDP2::SetRegister((uint16)id, value); break;
+  case 4: SOUND_SetSCSPRegister((uint16)id, value); break;
+  case 5: SCU_SetRegister((uint16)id, value); break;
+  case 6: SOUND_SetM68KRegister((uint16)id, value); break;
+ }
 }
 
 static const RegGroupType DBG_RegGroup_CPU =
 {
  NULL,
  DBG_Regs_CPU,
- DBG_GetRegister_CPU,
- DBG_SetRegister_CPU
+ GetRegister,
+ SetRegister
 };
 
-static const RegGroupType DBG_RegGroup_CPUE =
+static const RegGroupType DBG_RegGroup_CPUE_SCSP =
 {
  NULL,
- DBG_Regs_CPUE,
- DBG_GetRegister_CPU,
- DBG_SetRegister_CPU
+ DBG_Regs_CPUE_SCSP,
+ GetRegister,
+ SetRegister
 };
 
 
 static const RegType DBG_Regs_SCU_CDB_VDP1[] =
 {
- { SCU_GSREG_ILEVEL, "ILevel", "IRL Output to SH2-M", 1 },
- { SCU_GSREG_IVEC, "IVec", "Pending IRQ Vector Number", 1 },
+ { (5 << 16) | SCU_GSREG_ILEVEL, "ILevel", "IRL Output to SH2-M", 1 },
+ { (5 << 16) | SCU_GSREG_IVEC, "IVec", "Pending IRQ Vector Number", 1 },
 
  { 0, "------", "", 0xFFFF },
 
- { SCU_GSREG_IASSERTED, "IAss", "Status of Input IRQ Lines", 4 },
- { SCU_GSREG_IPENDING, "IPend", "Pending IRQs", 4 },
- { SCU_GSREG_IMASK, "IMask", "IRQ Mask", 2 },
+ { (5 << 16) | SCU_GSREG_IASSERTED, "IAss", "Status of Input IRQ Lines", 4 },
+ { (5 << 16) | SCU_GSREG_IPENDING, "IPend", "Pending IRQs", 4 },
+ { (5 << 16) | SCU_GSREG_IMASK, "IMask", "IRQ Mask", 2 },
 
  { 0, "------", "", 0xFFFF },
 
- { SCU_GSREG_D0MD, "D0MD", "D0MD", 4 },
- { SCU_GSREG_D1MD, "D1MD", "D1MD", 4 },
- { SCU_GSREG_D2MD, "D2MD", "D2MD", 4 },
+ { (5 << 16) | SCU_GSREG_D0MD, "D0MD", "D0MD", 4 },
+ { (5 << 16) | SCU_GSREG_D1MD, "D1MD", "D1MD", 4 },
+ { (5 << 16) | SCU_GSREG_D2MD, "D2MD", "D2MD", 4 },
 
  { 0, "------", "", 0xFFFF },
 
- { SCU_GSREG_ASR0_CS0, "ASR0_CS0", "A-bus CS0 Config", 2 },
- { SCU_GSREG_ASR0_CS1, "ASR0_CS1", "A-bus CS1 Config", 2 },
- { SCU_GSREG_ASR1_CS2, "ASR1_CS2", "A-bus CS2 Config", 2 },
- { SCU_GSREG_ASR1_CSD, "ASR1_CSD", "A-bus Dummy Config", 2 },
+ { (5 << 16) | SCU_GSREG_ASR0_CS0, "ASR0_CS0", "A-bus CS0 Config", 2 },
+ { (5 << 16) | SCU_GSREG_ASR0_CS1, "ASR0_CS1", "A-bus CS1 Config", 2 },
+ { (5 << 16) | SCU_GSREG_ASR1_CS2, "ASR1_CS2", "A-bus CS2 Config", 2 },
+ { (5 << 16) | SCU_GSREG_ASR1_CSD, "ASR1_CSD", "A-bus Dummy Config", 2 },
 
- { SCU_GSREG_AREF, "AREF", "A-bus Refresh Config", 1 },
+ { (5 << 16) | SCU_GSREG_AREF, "AREF", "A-bus Refresh Config", 1 },
 
- { SCU_GSREG_RSEL, "RSEL", "SDRAM Size Config", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_RSEL, "RSEL", "SDRAM Size Config", 0x100 | 1 },
 
  { 0, "------", "", 0xFFFF },
 
- { SCU_GSREG_TENBL, "TENBL", "Timers Enable", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_TENBL, "TENBL", "Timers Enable", 0x100 | 1 },
 
- { SCU_GSREG_T0CNT, "T0CNT", "Timer0 Counter", 0x100 | 10 },
- { SCU_GSREG_T0CMP, "T0CMP", "Timer0 Compare Value", 0x100 | 10 },
- { SCU_GSREG_T0MET, "T0MET", "Timer0 Met", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_T0CNT, "T0CNT", "Timer0 Counter", 0x100 | 10 },
+ { (5 << 16) | SCU_GSREG_T0CMP, "T0CMP", "Timer0 Compare Value", 0x100 | 10 },
+ { (5 << 16) | SCU_GSREG_T0MET, "T0MET", "Timer0 Met", 0x100 | 1 },
 
- { SCU_GSREG_T1RLV, "T1RLV", "Timer1 Reload Value", 0x100 | 9 },
- { SCU_GSREG_T1CNT, "T1CNT", "Timer1 Counter", 0x100 | 9 },
- { SCU_GSREG_T1MOD, "T1MOD", "Timer1 Mode", 0x100 | 1 },
- { SCU_GSREG_T1MET, "T1MET", "Timer1 Met", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_T1RLV, "T1RLV", "Timer1 Reload Value", 0x100 | 9 },
+ { (5 << 16) | SCU_GSREG_T1CNT, "T1CNT", "Timer1 Counter", 0x100 | 9 },
+ { (5 << 16) | SCU_GSREG_T1MOD, "T1MOD", "Timer1 Mode", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_T1MET, "T1MET", "Timer1 Met", 0x100 | 1 },
 
  { 0, "--DSP:--", "", 0xFFFF },
 
- { SCU_GSREG_DSP_EXEC, "EXEC", "Executing", 0x100 | 1 },
- { SCU_GSREG_DSP_PAUSE, "PAUSE", "Paused", 0x100 | 1 },
- { SCU_GSREG_DSP_PC, "PC", "Program Counter", 1 },
- { SCU_GSREG_DSP_END, "END", "End Flag", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_DSP_EXEC, "EXEC", "Executing", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_DSP_PAUSE, "PAUSE", "Paused", 0x100 | 1 },
+ { (5 << 16) | SCU_GSREG_DSP_PC, "PC", "Program Counter", 1 },
+ { (5 << 16) | SCU_GSREG_DSP_END, "END", "End Flag", 0x100 | 1 },
 
  { 0, "------", "", 0xFFFF },
 
@@ -752,32 +808,6 @@ static const RegType DBG_Regs_SCU_CDB_VDP1[] =
  { 0, "", "", 0 },
 };
 
-static MDFN_COLD uint32 GetRegister(const unsigned id, char* const special, const uint32 special_len)
-{
- switch(id >> 16)
- {
-  case 0: return SCU_GetRegister((uint16)id, special, special_len);
-  case 1: return CDB_GetRegister((uint16)id, special, special_len);
-  case 2: return VDP1::GetRegister((uint16)id, special, special_len);
-  case 3: return VDP2::GetRegister((uint16)id, special, special_len);
-  case 4: return SOUND_GetSCSPRegister((uint16)id, special, special_len);
- }
-
- return 0;
-}
-
-static MDFN_COLD void SetRegister(const unsigned id, const uint32 value)
-{
- switch(id >> 16)
- {
-  case 0: SCU_SetRegister((uint16)id, value); break;
-  case 1: CDB_SetRegister((uint16)id, value); break;
-  case 2: VDP1::SetRegister((uint16)id, value); break;
-  case 3: VDP2::SetRegister((uint16)id, value); break;
-  case 4: SOUND_SetSCSPRegister((uint16)id, value); break;
- }
-}
-
 
 static const RegGroupType DBG_RegGroup_SCU_CDB_VDP1 =
 {
@@ -790,7 +820,7 @@ static const RegGroupType DBG_RegGroup_SCU_CDB_VDP1 =
 //
 //
 
-static const RegType DBG_Regs_VDP2_SCSP[] =
+static const RegType DBG_Regs_VDP2[] =
 {
  { (3 << 16) | VDP2::GSREG_LINE, "Line", "Line", 2 },
  { (3 << 16) | VDP2::GSREG_DON, "DON", "Display On", 0x100 | 1 },
@@ -844,22 +874,13 @@ static const RegType DBG_Regs_VDP2_SCSP[] =
  { (3 << 16) | VDP2::GSREG_ZMCTL, "ZMCTL", "ZMCTL", 2 },
  { (3 << 16) | VDP2::GSREG_SCRCTL, "SCRCTL", "SCRCTL", 2 },
 
- { 0, "------", "", 0xFFFF },
-
- { (4 << 16) | SS_SCSP::GSREG_MVOL, "MVOL", "Master Volume", 0x100 | 4 },
- { (4 << 16) | SS_SCSP::GSREG_DAC18B, "DAC18B", "18-bit DAC Enable", 0x100 | 1 },
- { (4 << 16) | SS_SCSP::GSREG_MEM4MB, "Mem4Mb", "4Mb Memory Enable", 0x100 | 1 },
- { (4 << 16) | SS_SCSP::GSREG_RBP, "RBP", "DSP Ringbuffer Base Address", 0x100 | 7 },
- { (4 << 16) | SS_SCSP::GSREG_RBL, "RBL", "DSP Ringbuffer Length", 0x100 | 2 },
- { (4 << 16) | SS_SCSP::GSREG_MSLC, "MSLC", "Slot to Monitor", 0x100 | 5 },
-
  { 0, "", "", 0 },
 };
 
-static const RegGroupType DBG_RegGroup_VDP2_SCSP =
+static const RegGroupType DBG_RegGroup_VDP2 =
 {
  NULL,
- DBG_Regs_VDP2_SCSP,
+ DBG_Regs_VDP2,
  GetRegister,
  SetRegister
 };
@@ -888,9 +909,9 @@ static MDFN_COLD void DBG_Init(void)
  DBG.inss = false;
 
  MDFNDBG_AddRegGroup(&DBG_RegGroup_CPU);
- MDFNDBG_AddRegGroup(&DBG_RegGroup_CPUE);
+ MDFNDBG_AddRegGroup(&DBG_RegGroup_CPUE_SCSP);
  MDFNDBG_AddRegGroup(&DBG_RegGroup_SCU_CDB_VDP1);
- MDFNDBG_AddRegGroup(&DBG_RegGroup_VDP2_SCSP);
+ MDFNDBG_AddRegGroup(&DBG_RegGroup_VDP2);
  //
  //
  //

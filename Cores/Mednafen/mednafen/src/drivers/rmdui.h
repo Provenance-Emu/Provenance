@@ -20,7 +20,7 @@
 */
 
 void RMDUI_Init(MDFNGI* gi, const int which_medium) MDFN_COLD;
-void RMDUI_Kill(void) MDFN_COLD;
+void RMDUI_Kill(void) noexcept MDFN_COLD;
 void RMDUI_Toggle_InsertEject(void);
 void RMDUI_SelectDisk(void);
 void RMDUI_SelectDrive(void);

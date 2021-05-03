@@ -27,7 +27,7 @@ void Video_ShowNotice(MDFN_NoticeType t, char* s);
 // source_alpha = 0 (disabled)
 //	        = 1 (enabled)
 //              = -1 (enabled only if it will be hardware-accelerated, IE via OpenGL)
-void BlitRaw(MDFN_Surface *src, const MDFN_Rect *src_rect, const MDFN_Rect *dest_rect, int source_alpha = 1);
+void BlitOSD(MDFN_Surface *src, const MDFN_Rect *src_rect, const MDFN_Rect *dest_rect, int source_alpha = 1);
 
 //
 void Video_MakeSettings(std::vector <MDFNSetting> &settings);

@@ -199,7 +199,7 @@ static uint8 FindClose(const MDFN_PaletteEntry& pe)
 
 void MDFNNES_SetPixelFormat(const MDFN_PixelFormat &pixel_format)
 {
- if(pixel_format.bpp == 8)
+ if(pixel_format.opp == 1)
  {
   for(int x = 0; x < 0x40; x++)
   {
@@ -778,10 +778,24 @@ static void Fixit1(void)
 #include "ppu-fastrl.h"
 
 // FIXME, use MakeColor() method
-#define MEOW_OUT(n, a) { uint32 otmp; NES_NTSC_RAW_OUT(n, otmp); a = (((otmp >> 21) & 0xFF) << pixel_format.Rshift) | (((otmp >> 11) & 0xFF) << pixel_format.Gshift) | (((otmp >>  1) & 0xFF) << pixel_format.Bshift); }
+#define MEOW_OUT(n, a) 			\
+	{				\
+	 uint32 otmp;			\
+	 NES_NTSC_RAW_OUT(n, otmp);	\
+	 if(sizeof(T) == 2)		\
+	 {				\
+	  if(rgb555)			\
+	   a = (((otmp >> 24) & 0x1F) << pixel_format.Rshift) | (((otmp >> 14) & 0x1F) << pixel_format.Gshift) | (((otmp >>  4) & 0x1F) << pixel_format.Bshift);	\
+	  else				\
+	   a = (((otmp >> 24) & 0x1F) << pixel_format.Rshift) | (((otmp >> 13) & 0x3F) << pixel_format.Gshift) | (((otmp >>  4) & 0x1F) << pixel_format.Bshift);	\
+	 }		\
+	 else																			\
+	  a = (((otmp >> 21) & 0xFF) << pixel_format.Rshift) | (((otmp >> 11) & 0xFF) << pixel_format.Gshift) | (((otmp >>  1) & 0xFF) << pixel_format.Bshift);	\
+	}
 
-static void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t const* ntsc, uint8 const* nes_in, uint8 const* nes_emph_in, long in_pitch,
-                int burst_phase, int width, int height, uint32* rgb_out, long out_pitch )
+template<typename T, bool rgb555 = false>
+static NO_INLINE void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t const* ntsc, uint8 const* nes_in, uint8 const* nes_emph_in, long in_pitch,
+                int burst_phase, int width, int height, T* rgb_out)
 {
         /* determine how many chunks to blit, less one for the final chunk */
         int chunk_count = width / nes_ntsc_out_chunk - 1;
@@ -790,7 +804,7 @@ static void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t 
                 uint8 const* line_in = nes_in;
 		uint8 const* line_emph_in = nes_emph_in;
                 NES_NTSC_BEGIN_ROW( ntsc, burst_phase, nes_ntsc_black, nes_ntsc_black, (*line_in++ & 0x3F) | (*line_emph_in++ << 6));
-                uint32* line_out = rgb_out;
+                T* line_out = rgb_out;
                 int n;
 
                 /* blit main chunks, each using 3 nes pixels to generate 7 output pixels */
@@ -835,7 +849,7 @@ static void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t 
                 MEOW_OUT( 6, line_out [6] );
 }
 
-static int BurstPhase = 0;
+static int BurstPhase;
 
 static void DoLine(MDFN_Surface *surface, int skip)
 {
@@ -902,21 +916,24 @@ static void DoLine(MDFN_Surface *surface, int skip)
    if(!skip)
    {
     // TODO:  Factor this out/make it more elegant.
-    if(surface->format.colorspace != MDFN_COLORSPACE_RGB || surface->format.bpp != 32)
+    switch(surface->format.opp)
     {
-     MDFN_PixelFormat nf;
+     default:
+     case 4:
+	nes_ntsc_blit(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pix<uint32>() + scanline * surface->pitchinpix);
+	break;
 
-     nf.bpp = 32;
-     nf.colorspace = MDFN_COLORSPACE_RGB;
-     
-     nf.Rshift = 0;
-     nf.Gshift = 8;
-     nf.Bshift = 16;
-     nf.Ashift = 24;
+     case 2:
+	if(surface->format.Gprec == 5)
+	 nes_ntsc_blit<uint16, true>(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pix<uint16>() + scanline * surface->pitchinpix);
+	else
+	 nes_ntsc_blit(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pix<uint16>() + scanline * surface->pitchinpix);
+	break;
 
-     surface->SetFormat(nf, false);
+     case 1:
+	assert(0);
+	break;
     }
-    nes_ntsc_blit(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pixels + scanline * surface->pitchinpix, surface->pitch32 * sizeof(uint32));
    }
    BurstPhase = (BurstPhase + 1) % 3;
   }
@@ -924,10 +941,10 @@ static void DoLine(MDFN_Surface *surface, int skip)
   {
    if(!skip) 
    {
-    switch(surface->format.bpp)
+    switch(surface->format.opp)
     {
      default:
-     case 32:
+     case 4:
 	{
          uint32 *real_target = surface->pixels + scanline * surface->pitchinpix;
 
@@ -936,7 +953,7 @@ static void DoLine(MDFN_Surface *surface, int skip)
 	}
 	break;
 
-     case 16:
+     case 2:
 	{
 	 uint16 *real_target16 = surface->pixels16 + scanline * surface->pitchinpix;
 
@@ -945,7 +962,7 @@ static void DoLine(MDFN_Surface *surface, int skip)
 	}
 	break;
 
-     case 8:
+     case 1:
 	{
 	 uint8 *real_target8 = surface->pixels8 + scanline * surface->pitchinpix;
 
@@ -1210,6 +1227,7 @@ void MDFNPPU_Power(void)
         memset(NTARAM, 0x00, 0x800);
         memset(PALRAM, 0x00, 0x20); 
         memset(SPRAM, 0x00, 0x100); 
+	BurstPhase = 0;
         MDFNPPU_Reset();
 }
 

@@ -21,8 +21,8 @@
 namespace MDFN_IEN_NGP
 {
 
-uint8 Z80_ReadComm(void);
-void Z80_WriteComm(uint8 data);
+MDFN_FASTCALL uint8 Z80_ReadComm(void);
+MDFN_FASTCALL void Z80_WriteComm(uint8 data);
 
 void Z80_reset(void);	// z80 reset
 

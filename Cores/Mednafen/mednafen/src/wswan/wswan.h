@@ -14,9 +14,10 @@ namespace MDFN_IEN_WSWAN
 
 #define  mBCD(value) (((value)/10)<<4)|((value)%10)
 
-extern		uint32 WS_InDebug;
-extern          uint32 rom_size;
-extern          int wsc;
+MDFN_HIDE extern uint16 WSButtonStatus;
+MDFN_HIDE extern uint32 WS_InDebug;
+MDFN_HIDE extern uint32 rom_size;
+MDFN_HIDE extern int wsc;
 
 enum
 {

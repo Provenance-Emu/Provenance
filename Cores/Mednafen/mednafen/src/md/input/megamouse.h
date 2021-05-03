@@ -22,7 +22,7 @@
 namespace MDFN_IEN_MD
 {
 
-extern const IDIISG MegaMouseIDII;
+MDFN_HIDE extern const IDIISG MegaMouseIDII;
 MD_Input_Device *MDInput_MakeMegaMouse(void);
 
 }

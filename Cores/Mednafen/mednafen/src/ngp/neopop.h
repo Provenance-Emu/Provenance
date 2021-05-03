@@ -93,9 +93,9 @@ static_assert(sizeof(RomHeader) == 0x40, "RomHeader wrong size!");
 /* Fill the bios rom area with a bios. call once at program start */
 	bool bios_install(void);
 
-	extern RomInfo ngpc_rom;
+	MDFN_HIDE extern RomInfo ngpc_rom;
 
-	extern RomHeader* rom_header;
+	MDFN_HIDE extern RomHeader* rom_header;
 
 /*!	Emulate a single instruction with correct TLCS900h:Z80 timing */
 
@@ -126,7 +126,7 @@ static_assert(sizeof(RomHeader) == 0x40, "RomHeader wrong size!");
 #define SCREEN_WIDTH	160
 #define SCREEN_HEIGHT	152
 
-	extern COLOURMODE system_colour;
+	MDFN_HIDE extern COLOURMODE system_colour;
 
 	
 //-----------------------------------------------------------------------------
@@ -178,8 +178,10 @@ void int_redo_icache(void);
 
 namespace MDFN_IEN_NGP
 {
-extern NGPGFX_CLASS *NGPGfx;
-extern uint8 NGPJoyLatch;
+MDFN_HIDE extern NGPGFX_CLASS *NGPGfx;
+MDFN_HIDE extern uint8 NGPJoyLatch;
+MDFN_HIDE extern int32 ngpc_soundTS;
+MDFN_HIDE extern bool NGPFrameSkip;
 }
 
 using namespace MDFN_IEN_NGP;

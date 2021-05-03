@@ -13,7 +13,7 @@ void m68k_lockup_w_16(unsigned int address, unsigned int value);
 unsigned int m68k_lockup_r_8(unsigned int address);
 unsigned int m68k_lockup_r_16(unsigned int address);
 
-extern uint32 obsim;
+MDFN_HIDE extern uint32 obsim;
 
 MDFN_FASTCALL void Main68K_BusRESET(bool state);
 MDFN_FASTCALL void Main68K_BusRMW(uint32 A, uint8 (MDFN_FASTCALL *cb)(M68K*, uint8));

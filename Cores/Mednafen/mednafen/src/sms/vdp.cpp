@@ -46,6 +46,8 @@ void vdp_shutdown(void)
 /* Reset VDP emulation */
 void vdp_reset(void)
 {
+ z80_set_interrupt(false);
+
  memset(vdp.vram, 0, sizeof(vdp.vram));
  memset(vdp.cram, 0, sizeof(vdp.cram));
  memset(vdp.reg, 0, sizeof(vdp.reg));

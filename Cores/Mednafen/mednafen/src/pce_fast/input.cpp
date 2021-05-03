@@ -19,7 +19,7 @@
 #include "input.h"
 #include "huc.h"
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 static int InputTypes[5];
@@ -34,8 +34,8 @@ static int64 mouse_last_meow[5];
 static int32 mouse_x[5], mouse_y[5];
 static uint16 mouse_rel[5];
 
-uint8 pce_mouse_button[5];
-uint8 mouse_index[5];
+static uint8 pce_mouse_button[5];
+static uint8 mouse_index[5];
 
 static uint8 sel;
 static uint8 read_index = 0;

@@ -2,7 +2,7 @@
 /* Mednafen Fast SNES Emulation Module                                        */
 /******************************************************************************/
 /* snes.cpp:
-**  Copyright (C) 2015-2019 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -34,8 +34,6 @@
 #include <mednafen/cheat_formats/snes.h>
 
 #include <bitset>
-
-extern MDFNGI EmulatedSNES_Faust;
 
 namespace MDFN_IEN_SNES_FAUST
 {
@@ -142,6 +140,10 @@ static INLINE DEFREAD(OBRead)
   CPUM.timestamp += cyc;
  else
   CPUM.timestamp += CPUM.MemSelectCycles;
+
+ // TODO: tentative fix for "Speedy Gonzales", but should it be per-game or restricted to specific addresses?
+ //if(MDFN_UNLIKELY(CPUM.timestamp >= events[SNES_EVENT_PPU].event_time) && !CPUM.InDMABusAccess)
+ // CPUM.EventHandler();
 
  SNES_DBG("[SNES] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
  return CPUM.mdr;
@@ -515,10 +517,10 @@ static MDFN_COLD void LoadReal(GameFile* gf)
  {
   spc_reader = new SPCReader(gf->stream);
   Player_Init(1, spc_reader->GameName(), spc_reader->ArtistName(), "", std::vector<std::string>({ spc_reader->SongName() }));
-  EmulatedSNES_Faust.fps = (1U << 24) * 75;
-  EmulatedSNES_Faust.MasterClock = MDFN_MASTERCLOCK_FIXED(21477272.7);
+  MDFNGameInfo->fps = (1U << 24) * 75;
+  MDFNGameInfo->MasterClock = MDFN_MASTERCLOCK_FIXED(21477272.7);
 
-  EmulatedSNES_Faust.IdealSoundRate = APU_Init(false, (double)EmulatedSNES_Faust.MasterClock / MDFN_MASTERCLOCK_FIXED(1));
+  MDFNGameInfo->IdealSoundRate = APU_Init(false, (double)MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));
   Reset(true);
 
   return;
@@ -613,7 +615,7 @@ static MDFN_COLD void LoadReal(GameFile* gf)
  const int32 cx4_ocmultiplier = ((MDFN_GetSettingUI("snes_faust.cx4.clock_rate") << 16) + 50) / 100;
  const int32 superfx_ocmultiplier = ((MDFN_GetSettingUI("snes_faust.superfx.clock_rate") << 16) + 50) / 100;
  const bool superfx_enable_icache = MDFN_GetSettingB("snes_faust.superfx.icache");
- const bool CartIsPAL = CART_Init(snsf_loader ? &snsf_loader->ROM_Data : gf->stream, EmulatedSNES_Faust.MD5, cx4_ocmultiplier, superfx_ocmultiplier, superfx_enable_icache);
+ const bool CartIsPAL = CART_Init(snsf_loader ? &snsf_loader->ROM_Data : gf->stream, MDFNGameInfo->MD5, cx4_ocmultiplier, superfx_ocmultiplier, superfx_enable_icache);
  const unsigned region = MDFN_GetSettingUI("snes_faust.region");
  bool IsPAL, IsPALPPUBit;
 
@@ -677,8 +679,8 @@ static MDFN_COLD void LoadReal(GameFile* gf)
   INPUT_SetMultitap(mte);
  }
 
- EmulatedSNES_Faust.MasterClock = IsPAL ? MDFN_MASTERCLOCK_FIXED(21281370.0) : MDFN_MASTERCLOCK_FIXED(21477272.7);
- EmulatedSNES_Faust.VideoSystem = IsPAL ? VIDSYS_PAL : VIDSYS_NTSC;
+ MDFNGameInfo->MasterClock = IsPAL ? MDFN_MASTERCLOCK_FIXED(21281370.0) : MDFN_MASTERCLOCK_FIXED(21477272.7);
+ MDFNGameInfo->VideoSystem = IsPAL ? VIDSYS_PAL : VIDSYS_NTSC;
 
  PPU_Init(MDFN_GetSettingUI("snes_faust.renderer"), IsPAL, IsPALPPUBit, MDFN_GetSettingB("snes_faust.frame_begin_vblank"), MDFN_GetSettingUI("snes_faust.affinity.ppu"));
  //
@@ -688,10 +690,10 @@ static MDFN_COLD void LoadReal(GameFile* gf)
  if(sle < sls)
   std::swap(sls, sle);
 
- PPU_SetGetVideoParams(&EmulatedSNES_Faust, MDFN_GetSettingUI("snes_faust.correct_aspect"), MDFN_GetSettingUI("snes_faust.h_filter"), sls, sle);
+ PPU_SetGetVideoParams(MDFNGameInfo, MDFN_GetSettingUI("snes_faust.correct_aspect"), MDFN_GetSettingUI("snes_faust.h_filter"), sls, sle);
 
- EmulatedSNES_Faust.IdealSoundRate = APU_Init(IsPAL, (double)EmulatedSNES_Faust.MasterClock / MDFN_MASTERCLOCK_FIXED(1));
- MSU1_Init(gf, &EmulatedSNES_Faust.IdealSoundRate, MDFN_GetSettingUI("snes_faust.affinity.msu1.audio"), MDFN_GetSettingUI("snes_faust.affinity.msu1.data"));
+ MDFNGameInfo->IdealSoundRate = APU_Init(IsPAL, (double)MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));
+ MSU1_Init(gf, &MDFNGameInfo->IdealSoundRate, MDFN_GetSettingUI("snes_faust.affinity.msu1.audio"), MDFN_GetSettingUI("snes_faust.affinity.msu1.data"));
  //
  if(snsf_loader)
   Player_Init(1, snsf_loader->tags.GetTag("game"), snsf_loader->tags.GetTag("artist"), snsf_loader->tags.GetTag("copyright"), std::vector<std::string>({ snsf_loader->tags.GetTag("title") }));
@@ -916,6 +918,10 @@ void ForceEventUpdates(const uint32 timestamp)
 
 void CPU_Misc::EventHandler(void)
 {
+#ifdef SNES_DBG_ENABLE
+ assert(!CPUM.InDMABusAccess);
+#endif
+
  event_list_entry *e = events[SNES_EVENT__SYNFIRST].next;
 
  while(timestamp >= e->event_time)	// If Running = 0, SNES_EventHandler() may be called even if there isn't an event per-se, so while() instead of do { ... } while
@@ -942,7 +948,7 @@ static void NO_INLINE EmulateReal(EmulateSpecStruct* espec)
  int32 apu_clock_multiplier;
  int32 resamp_num;
  int32 resamp_denom;
- const double master_clock = (double)EmulatedSNES_Faust.MasterClock / MDFN_MASTERCLOCK_FIXED(1);
+ const double master_clock = (double)MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1);
  const bool resamp_clear_buf = APU_StartFrame(master_clock, espec->SoundRate, &apu_clock_multiplier, &resamp_num, &resamp_denom);
 
  MSU1_StartFrame(master_clock, espec->SoundRate, apu_clock_multiplier, resamp_num, resamp_denom, resamp_clear_buf);
@@ -1334,7 +1340,7 @@ static const CheatInfoStruct CheatInfo =
 
 using namespace MDFN_IEN_SNES_FAUST;
 
-MDFNGI EmulatedSNES_Faust =
+MDFN_HIDE extern const MDFNGI EmulatedSNES_Faust =
 {
  "snes_faust",
  "Super Nintendo Entertainment System/Super Famicom",
@@ -1379,6 +1385,8 @@ MDFNGI EmulatedSNES_Faust =
  Settings,
  0,
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
 
  true, // Multires possible?
 

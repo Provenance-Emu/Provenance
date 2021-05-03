@@ -4,7 +4,7 @@
 namespace MDFN_IEN_NGP
 {
 
-uint8 rtc_read8(uint32 address);
+MDFN_FASTCALL uint8 rtc_read8(uint32 address);
 
 }
 

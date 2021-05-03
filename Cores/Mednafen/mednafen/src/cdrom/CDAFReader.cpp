@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* CDAFReader.cpp:
-**  Copyright (C) 2010-2016 Mednafen Team
+**  Copyright (C) 2010-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -30,9 +30,11 @@
 #include "CDAFReader_Vorbis.h"
 #include "CDAFReader_MPC.h"
 
-#ifdef HAVE_LIBSNDFILE
-#include "CDAFReader_SF.h"
+#ifdef HAVE_LIBFLAC
+#include "CDAFReader_FLAC.h"
 #endif
+
+#include "CDAFReader_PCM.h"
 
 namespace Mednafen
 {
@@ -47,15 +49,16 @@ CDAFReader::~CDAFReader()
 
 }
 
-CDAFReader *CDAFR_Open(Stream *fp)
+CDAFReader* CDAFR_Open(Stream* fp)
 {
  static CDAFReader* (* const OpenFuncs[])(Stream* fp) =
  {
   CDAFR_MPC_Open,
-  CDAFR_Vorbis_Open,	// Must come before CDAFR_SF_Open
-#ifdef HAVE_LIBSNDFILE
-  CDAFR_SF_Open,
+  CDAFR_Vorbis_Open,
+#ifdef HAVE_LIBFLAC
+  CDAFR_FLAC_Open,
 #endif
+  CDAFR_PCM_Open,
  };
 
  for(auto const& f : OpenFuncs)
@@ -71,7 +74,7 @@ CDAFReader *CDAFR_Open(Stream *fp)
   }
  }
 
- return(NULL);
+ return NULL;
 }
 
 }

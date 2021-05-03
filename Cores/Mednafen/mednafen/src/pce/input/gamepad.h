@@ -3,7 +3,7 @@
 
 namespace MDFN_IEN_PCE
 {
- extern const IDIISG PCE_GamepadIDII;
+ MDFN_HIDE extern const IDIISG PCE_GamepadIDII;
  PCE_Input_Device *PCEINPUT_MakeGamepad(void);
 };
 

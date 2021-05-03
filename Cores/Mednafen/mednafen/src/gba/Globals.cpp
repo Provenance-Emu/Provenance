@@ -38,12 +38,8 @@ uint32 stop = 0x08000568;
 int saveType = 0;
 bool useBios = false;
 bool skipBios = false;
-int frameSkip = 1;
-bool speedup = false;
-bool synchronize = true;
 bool cpuDisableSfx = false;
 bool cpuIsMultiBoot = false;
-bool parseDebug = true;
 int layerSettings = 0xff00;
 int layerEnable = 0xff00;
 

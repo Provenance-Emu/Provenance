@@ -16,6 +16,7 @@
  */
 
 #include "video-common.h"
+#include <mednafen/Time.h>
 
 #include <trio/trio.h>
 
@@ -55,6 +56,52 @@ void MDFNI_SaveSnapshot(const MDFN_Surface *src, const MDFN_Rect *rect, const in
  catch(std::exception &e)
  {
   MDFN_Notify(MDFN_NOTICE_ERROR, _("Error saving screen snapshot: %s"), e.what());
+ }
+}
+
+void MDFN_RunVideoBenchmarks(void)
+{
+ static const uint64 test_formats[] =
+ {
+  MDFN_PixelFormat::ABGR32_8888,
+  MDFN_PixelFormat::ARGB32_8888,
+  MDFN_PixelFormat::RGBA32_8888,
+  MDFN_PixelFormat::BGRA32_8888,
+
+  MDFN_PixelFormat::IRGB16_1555,
+  MDFN_PixelFormat::RGB16_565,
+
+  MDFN_PixelFormat::ARGB16_4444
+ };
+
+ for(const uint64 sft : test_formats)
+ {
+  for(const uint64 dft : test_formats)
+  {
+   MDFN_Surface surf(nullptr, 2048, 2048, 2048, sft);
+   uint64 times[2];
+
+   times[0] = Time::MonoUS();
+   surf.SetFormat(dft, true);
+   times[1] = Time::MonoUS();
+
+   printf("0x%016llx->0x%016llx: %6llu\n", (unsigned long long)sft, (unsigned long long)dft, (unsigned long long)(times[1] - times[0]));
+  }
+ }
+
+ for(const uint64 ft : test_formats)
+ {
+  const unsigned w = 2049;
+  const unsigned h = 2047;
+  const unsigned count = 16;
+  MDFN_Surface surf(nullptr, w, h, w, ft);
+  uint64 times[2];
+
+  times[0] = Time::MonoUS();
+  for(unsigned i = count; i; i--)
+   surf.Fill(0, 0, 0, 0);
+  times[1] = Time::MonoUS();
+  printf("Fill 0x%016llx %ux%u * %u: %6llu\n", (unsigned long long)ft, w, h, count, (unsigned long long)(times[1] - times[0]));
  }
 }
 

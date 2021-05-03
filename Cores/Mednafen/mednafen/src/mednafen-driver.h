@@ -6,7 +6,7 @@
 namespace Mednafen
 {
 
-MDFN_HIDE extern std::vector<MDFNGI *>MDFNSystems;
+MDFN_HIDE extern std::vector<const MDFNGI*> MDFNSystems;
 
 /* Indent stdout newlines +- "indent" amount */
 void MDFN_indent(int indent);

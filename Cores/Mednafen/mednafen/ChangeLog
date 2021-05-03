@@ -1,3 +1,197 @@
+-- 1.27.0-UNSTABLE: --
+
+March 29, 2021:
+	SS: Corrected threshold and semantics of envelope level-based blocking of slots' access to SCSP RAM, per tests on a SS.
+
+March 13, 2021:
+	SS: Fixed a big-endian target incompatibility in the SCSP emulation code.
+
+	Use ternary operator instead of std::min in endian.h, as doing so somehow causes gcc to produce smaller and faster machine code.
+
+	PSX: Removed incorrect filtering of CD-XA ADPCM sectors based on the file and channel numbers of the first ADPCM sector played,
+	originally added in 0.9.24-WIP to fix the speech playback in "Yarudora Series Vol.1: Double Cast", but made unnecessary by later sector buffering
+	accuracy improvements; fixes missing audio in the FMVs of "Blue's Clues: Blue's Big Musical".
+
+March 12, 2021:
+	PSX: Adjusted which sectors are processed and reflected by GetLocP after SeekP completes to only those before the seek target(which is slightly different
+	than SeekL behavior, which also includes the target and a few after, at least with a typical PS1 CD); fixes hangs at different points in
+	some versions of "Tomb Raider", a problem initially fixed in 0.9.38.3, but regressed in 1.22.0-UNSTABLE.
+
+March 9, 2021:
+	VB: Block writes to VSU registers and memories when A0 and A1 are not both 0, per tip from "enthusi".
+
+March 7, 2021:
+	SS: Implemented incomplete(regarding stack frame data) M68K address error handling, and implemented M68K halting when accessing addresses where any of
+	A21-A23 is 1.  Fixes major audio distortion during boss battles in "Lunar: Silver Star Story" due to SCSP DSP register corruption that occurred when
+	the game crashed the sound CPU during bootup.
+
+	SNES-Faust: Don't call event handlers in read/write handlers if the read/write is from DMA/HDMA, to avoid problematic recursion and related issues.
+
+	SNES-Faust: Fixed clearing of pending SuperFX IRQ on reset/power; fixes hang/crash in "Stunt Race FX" upon performing a virtual power toggle after the
+	game boots up.
+
+March 4, 2021:
+	SNES-Faust: Added commented-out fix for "Speedy Gonzales", to enable later.
+
+	SNES-Faust: Added detection heuristics and support for mapping LoROM RAM into $8000-$FFFF, to fix save game saving/loading in "Light Fantasy",
+	"PGA Tour Golf", and "Ys III".
+
+February 23, 2021:
+	SNES-Faust: Added commented-out fix for "Kishin Douji Zenki Tenchi Meidou", to enable on a per-game basis in the future due to a minor negative
+	performance impact.
+
+February 19, 2021:
+	SNES-Faust: Reworked cart header detection and cart type detection logic a bit, fixes "Yuuyu no Quiz de Go! Go!".
+
+February 17, 2021:
+	SNES-Faust: Return open bus in bits 4 through 6 for reads from $4210; fixes early hang in "Super Professional Baseball II".
+
+	SNES-Faust: Return open bus in bits 0 through 6 for reads from $4211; fixes early hang in "Yuujin Janjuu Gakuen 2".
+
+	SNES-Faust: Added support for special ROM mapping required by "Derby Stallion 96" and "Sound Novel Tsukuru".
+
+February 16, 2021:
+	SNES-Faust: Changed power-on APU RAM initialization pattern; fixes hangs in "Ihatov Monogatari" and "Kyuuyaku Megami Tensei".
+
+February 3, 2021:
+	Fixed an off-by-1 error in the multithreaded CD reader that would cause a hang if a read was attempted for the sector at LBA 449849.
+
+January 31, 2021:
+	Fixed a design flaw that caused the creation of empty backup counter files when automatically attempting to back up a nonvolatile memory save file that
+	does not exist.
+
+January 28, 2021:
+	SNES-Faust: Disabled the PPU brightness modulation sanity check when compiling a non-dev build, and fixed array misalignment that was causing the code to
+	segfault when compiled with stack smashing protection enabled on newer gcc.
+
+January 25, 2021:
+	Resync console scroll to the last drawn line of the target unwrapped line in the scrollback buffer, not the first, otherwise the console will erroneously
+	scroll up on windowed<->fullscreen transitions when the last line is wider than the console viewport, confusing the user.
+
+January 24, 2021:
+	Fixed rendering of Unicode combining characters, fixed handling of combining characters when entering text in the console and debugger prompt, added support
+	for pasting into the debugger prompt, cleaned up rendering of the debugger prompt box, implemented automatic scrolling when entering text in the debugger prompt,
+	made console text entry automatic scrolling bidirectional, changed console scrollback buffer beginning/end scroll key combos to CTRL+Home/CTRL+End instead of
+	SHIFT+Home and SHIFT+End, added support for clearing multiple characters at once in the console and debugger prompts by pressing CTRL with Backspace/Delete.
+
+January 19, 2021:
+	Added support for reinitializing game controllers while Mednafen is running by pressing Shift+F3.
+
+	Aborting the input configuration process for a virtual device will now discard the new configuration data, instead of combining it with the old configuration data
+	for the not-configured buttons as previously done.
+
+January 12, 2021:
+	Added "upper_center" and "center" options to the "fps.position" setting.
+
+January 7, 2021:
+	WonderSwan: Fixed RTC month field being incorrectly treated as 0-based instead of 1-based.
+
+	Give the user feedback when they try to toggle a graphics layer that doesn't exist or isn't toggleable.
+
+	NGP: Sanitize some sound-related variables on state load to prevent potential memory corruption.
+
+January 6, 2021:
+	SMS: Sanitize more variables on state load.
+
+	NES: Fixed a few instances of missing variable initialization on poweron.
+
+January 5, 2021:
+	GB: Sanitize a few variables on state load.
+
+January 4, 2021:
+	Automatically create any missing parent directories to the Mednafen base directory on startup.
+
+	Create each Mednafen data directory(e.g. firmware, sav, snaps, etc.) at startup based on the current value of the filesys.path_* setting instead of based on
+	its default value, unless the corresponding filesys.fname_* setting is not set to its default value, in which case the directory is not created.
+
+January 2, 2021:
+	NES: Sanitize more sound emulation variables on state load.
+
+January 1, 2021:
+	NES: Added missing VRC6 variables to save states.
+
+	GBA: Backup save game memory files on game load
+
+	SMS: Fixed a bug that could cause the emulated reset button state to get stuck as pressed if a hard reset occurred within about 20 frames after a soft reset.
+
+December 31, 2020:
+	GBA: Added a few missing variables to save states.
+
+	GB: Added a few missing variables to save states.
+
+	PCE-Fast: Renamed encapsulating namespace from "PCE_Fast" to "MDFN_IEN_PCE_FAST", to match the convention of all other emulation modules.
+
+	Made Emulated* MDFNGI objects constant, copied over to a dynamically-allocated MDFNGI assigned to MDFNGameInfo on game load.
+
+December 30, 2020:
+	Dynamically-allocate QTRecord LZO work memory.
+
+	Apple2: Dynamically allocate state helper floppy disk object.
+
+	PCE-Fast: Fixed massive overallocation of memory for the VDC background tile cache.
+
+December 29, 2020:
+	Optimized MDFN_FastArraySet() for non-ideal counts.
+
+	Utilized MDFN_HIDE in more places.
+
+December 28, 2020:
+	Removed incomplete YCbCr MDFN_Surface support unused since 0.9.x, and likely to remain unused.
+
+	Added support for 16bpp graphics output to core Mednafen code and the majority of emulation modules(excluding "pce", "pcfx", "psx", "snes", "ss", and "vb"),
+	and added setting "video.glformat" to allow for using this support with OpenGL.
+
+December 25, 2020:
+	PSX: Initialize some missed state on reset/poweron.
+
+December 24, 2020:
+	Completely rewrote the save state preview image resizing code, so that now it's only somewhat wrong, instead of mostly wrong as before.
+
+December 22, 2020:
+	GB: Use fastcall on 32-bit x86, for a tiny performance boost.
+
+	Use MDFN_RESTRICT macro instead of __restrict__.
+
+	NGP: Use fastcall calling convention on 32-bit x86 to boost performance a little bit.
+
+	Apple2: Disabled some expensive asserts when compiling without MDFN_ENABLE_DEV_BUILD defined.
+
+December 20, 2020:
+	Birthed pernicious human date/time calculation functions to replace the usage of _gmtime64() and _localtime64() on Windows, for Windows 9x compatibility.
+
+December 14, 2020:
+	Set icon using Win32 API functions on Windows instead of relying on SDL_SetWindowIcon(), and use alternate, smaller(and boxier!) window icons when running
+	on Windows 9x so the poor beetle doesn't look splatted.
+
+December 12, 2020:
+	Don't call SetConsoleOutputCP() on startup on Windows, as it messes up the cmd.exe console on Windows 7(at least) even when Mednafen has exited,
+	and for Windows 9x compatibility.
+
+	Pass a pointer to a dummy variable, instead of NULL, as the output thread identifier pointer argument to _beginthreadex(), for Windows 9x compatibility.
+
+	Allow for the absence of GetConsoleWindow() on Windows, for Windows 9x compatibility.
+
+	Automatically attempt to lock file offset 0xFFFFFFFF if the attempt to lock offset 0xFFFFFFFFFFFFFFFF fails with an invalid parameter error on Windows,
+	for Windows 9x compatibility.
+
+	Use SetFilePointer(), GetFileSize(), and LockFile() instead of SetFilePointerEx(), GetFileSizeEx(), and LockFileEx() on Windows, for Windows 9x compatibility.
+
+December 10, 2020:
+	Dropped usage of and dependency on libsndfile, and added a direct dependency on libFLAC. The only CD image audio file formats/encodings other than raw supported
+	now are: FLAC, Ogg Vorbis, Musepack, and uncompressed PCM in AIFF/AIFC, AU/SND, W64, and WAV.
+
+	Require the first four bytes of the tentative Ogg Vorbis file to be "OggS" before calling ov_open_callbacks(), to prevent unnecessary excessive reads when trying
+	to determine the type of the audio file, and to avoid treating a non-Vorbis file as Vorbis under certain conditions.
+
+	Open the main settings file for both reading+writing on startup instead of just reading, to allow file locking to work over NFS, and as a quick check to make
+	sure the file is writeable before it's too late upon exit.
+
+December 1, 2020:
+	Made various changes to the Windows support code, to allow for compiling a non-Unicode Windows build.
+
+November 24, 2020:
+	Implemented stream buffering in the FileStream class, now using read(), write(), etc. instead of fread(), fwrite(), etc.
+
 -- 1.26.1: --
 
 November 8, 2020:

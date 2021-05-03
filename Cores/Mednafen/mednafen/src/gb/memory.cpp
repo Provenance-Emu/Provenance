@@ -25,12 +25,7 @@
 namespace MDFN_IEN_GB
 {
 
-mapperMBC1 gbDataMBC1 = {
-  0, // RAM enable
-  1, // ROM bank
-  0, // RAM bank or high address
-  0, // memory model
-};
+mapperMBC1 gbDataMBC1;
 
 static void SetROMMap(uint32 tmpAddress)
 {
@@ -110,10 +105,7 @@ void mapperMBC1RAM(uint16 address, uint8 value)
   }
 }
 
-mapperMBC2 gbDataMBC2 = {
-  0, // RAM enable
-  1  // ROM bank
-};
+mapperMBC2 gbDataMBC2;
 
 // MBC2 ROM write registers
 void mapperMBC2ROM(uint16 address, uint8 value)
@@ -154,24 +146,7 @@ void memoryUpdateMapMBC2()
   SetROMMap(gbDataMBC2.mapperROMBank << 14);
 }
 
-mapperMBC3 gbDataMBC3 = {
-  0, // RAM enable
-  1, // ROM bank
-  0, // RAM bank
-  0, // timer clock latch
-  0, // timer clock register
-  0, // timer seconds
-  0, // timer minutes
-  0, // timer hours
-  0, // timer days
-  0, // timer control
-  0, // timer latched seconds
-  0, // timer latched minutes
-  0, // timer latched hours
-  0, // timer latched days
-  0, // timer latched control
-  ~0ULL // last time
-};
+mapperMBC3 gbDataMBC3;
 
 void memoryUpdateMBC3Clock()
 {
@@ -336,13 +311,7 @@ void memoryUpdateMapMBC3()
   }
 }
 
-mapperMBC5 gbDataMBC5 = {
-  0, // RAM enable
-  1, // ROM bank
-  0, // RAM bank
-  0, // ROM high address
-  0  // is rumble cartridge?
-};
+mapperMBC5 gbDataMBC5;
 
 // MBC5 ROM write registers
 void mapperMBC5ROM(uint16 address, uint8 value)
@@ -402,19 +371,7 @@ void memoryUpdateMapMBC5()
   SetRAM8K(gbDataMBC5.mapperRAMBank);
 }
 
-mapperMBC7 gbDataMBC7 = {
-  1, // ROM bank
-  0, // chip select
-  0, // ??
-  0, // mapper state
-  0, // buffer for receiving serial data
-  0, // idle state
-  0, // count of bits received
-  0, // command received
-  0, // address received
-  0, // write enable
-  0, // value to return on ram
-};
+mapperMBC7 gbDataMBC7;
 
 // MBC7 ROM write registers
 void mapperMBC7ROM(uint16 address, uint8 value)
@@ -619,13 +576,7 @@ void memoryUpdateMapMBC7()
   SetROMMap(gbDataMBC7.mapperROMBank << 14);
 }
 
-mapperHuC1 gbDataHuC1 = {
-  0, // RAM enable
-  1, // ROM bank
-  0, // RAM bank
-  0, // memory model
-  0, // ROM high address
-};
+mapperHuC1 gbDataHuC1;
 
 // HuC1 ROM write registers
 void mapperHuC1ROM(uint16 address, uint8 value)
@@ -688,14 +639,7 @@ void memoryUpdateMapHuC1()
   SetRAM8K(gbDataHuC1.mapperRAMBank);
 }
 
-mapperHuC3 gbDataHuC3 = {
-  0, // RAM enable
-  1, // ROM bank
-  0, // RAM bank
-  0, // RAM flag
-  0  // RAM read value
-};
-
+mapperHuC3 gbDataHuC3;
 
 // HuC3 ROM write registers
 void mapperHuC3ROM(uint16 address, uint8 value)

@@ -72,7 +72,7 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
 {
  SFORMAT StateRegs[] =
  {
-  SFPTR8N(ExtBackupRAM, 0x80000, "ExtBackupRAM"),
+  SFPTR8N(ExtBackupRAM, 0x80000, SFORMAT::FORM::NVMEM, "ExtBackupRAM"),
   SFEND
  };
 

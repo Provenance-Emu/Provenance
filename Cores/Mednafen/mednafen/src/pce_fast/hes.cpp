@@ -21,7 +21,7 @@
 #include "pcecd.h"
 #include <mednafen/player.h>
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 

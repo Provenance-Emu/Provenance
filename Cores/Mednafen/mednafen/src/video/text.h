@@ -46,13 +46,26 @@ enum
  _MDFN_FONT_COUNT
 };
 
+INLINE bool UCPIsCombining(char32_t cp)
+{
+ bool ret = false;
+
+ ret |= (cp >= 0x0300 && cp <= 0x036F);
+ ret |= (cp >= 0x20D0 && cp <= 0x20FF);
+ ret |= (cp >= 0xFE20 && cp <= 0xFE2F);
+
+ return ret;
+}
+
 uint32 GetFontHeight(const unsigned fontid);
+uint32 GetGlyphWidth(char32_t cp, uint32 fontid);
+uint32 GetTextPixLength(const char32_t* text, const size_t text_len, const uint32 fontid);
 
-uint32 GetTextPixLength(const char* text, uint32 fontid = MDFN_FONT_9x18_18x18);
-uint32 GetTextPixLength(const char32_t* text, uint32 fontid = MDFN_FONT_9x18_18x18);
+uint32 GetTextPixLength(const char* text, uint32 fontid);
+uint32 GetTextPixLength(const char32_t* text, uint32 fontid);
 
-INLINE uint32 GetTextPixLength(const std::string& text, uint32 fontid = MDFN_FONT_9x18_18x18) { return GetTextPixLength(text.c_str(), fontid); }
-INLINE uint32 GetTextPixLength(const std::u32string& text, uint32 fontid = MDFN_FONT_9x18_18x18) { return GetTextPixLength(text.c_str(), fontid); } 
+INLINE uint32 GetTextPixLength(const std::string& text, uint32 fontid) { return GetTextPixLength(text.c_str(), fontid); }
+INLINE uint32 GetTextPixLength(const std::u32string& text, uint32 fontid) { return GetTextPixLength(text.c_str(), fontid); } 
 
 uint32 DrawText(MDFN_Surface* surf, int32 x, int32 y, const char* text, uint32 color, uint32 fontid = MDFN_FONT_9x18_18x18, uint32 hcenterw = 0);
 uint32 DrawText(MDFN_Surface* surf, const MDFN_Rect& crect, int32 x, int32 y, const char* text, uint32 color, uint32 fontid = MDFN_FONT_9x18_18x18, uint32 hcenterw = 0);

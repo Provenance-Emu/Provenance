@@ -25,12 +25,12 @@ namespace MDFN_IEN_NGP
 static uint8 CommByte;
 static bool Z80Enabled;
 
-uint8 Z80_ReadComm(void)
+MDFN_FASTCALL uint8 Z80_ReadComm(void)
 {
  return(CommByte);
 }
 
-void Z80_WriteComm(uint8 data)
+MDFN_FASTCALL void Z80_WriteComm(uint8 data)
 {
  CommByte = data;
 }

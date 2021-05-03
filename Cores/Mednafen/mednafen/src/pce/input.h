@@ -27,7 +27,7 @@ uint8 INPUT_Read(int32 timestamp, unsigned int A);
 void INPUT_Write(int32 timestamp, unsigned int A, uint8 V);
 void INPUT_Frame(void);
 int INPUT_StateAction(StateMem *sm, int load, int data_only);
-extern const std::vector<InputPortInfoStruct> PCEPortInfo;
+MDFN_HIDE extern const std::vector<InputPortInfoStruct> PCEPortInfo;
 void INPUT_AdjustTS(int32 delta_timestamp);
 
 uint16 INPUT_HESHack(void);

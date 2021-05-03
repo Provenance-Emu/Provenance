@@ -29,8 +29,6 @@
 
 using namespace Mednafen;
 
-extern MDFNGI EmulatedSNES;
-
 static void Cleanup(void);
 
 static SpeexResamplerState *resampler = NULL;
@@ -1353,7 +1351,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
  { NULL, 0, NULL }
 };
 
-MDFNGI EmulatedSNES =
+MDFN_HIDE extern const MDFNGI EmulatedSNES =
 {
  "snes",
  "Super Nintendo Entertainment System/Super Famicom",
@@ -1388,6 +1386,9 @@ MDFNGI EmulatedSNES =
  SNESSettings,
  0,
  0,
+
+ EVFSUPPORT_NONE,
+
  false, // Multires
 
  512,   // lcm_width

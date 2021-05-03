@@ -1765,6 +1765,7 @@ static MDFN_COLD void Reset(bool powering_up)
 
  SFX.Running = false;
  SFX.IRQPending = false;
+ CPU_SetIRQ(false, CPU_IRQSOURCE_CART);
 
  SFX.GPRWriteLatch = 0;
  //

@@ -33,12 +33,12 @@ namespace MDFN_IEN_GBA
 #define EXCLUDE_ARM_FROM_INLINE INLINE
 #endif
 
-extern bool cpuSramEnabled;
-extern bool cpuFlashEnabled;
-extern bool cpuEEPROMEnabled;
-extern bool cpuEEPROMSensorEnabled;
-extern bool cpuDmaHack;
-extern uint32 cpuDmaLast;
+MDFN_HIDE extern bool cpuSramEnabled;
+MDFN_HIDE extern bool cpuFlashEnabled;
+MDFN_HIDE extern bool cpuEEPROMEnabled;
+MDFN_HIDE extern bool cpuEEPROMSensorEnabled;
+MDFN_HIDE extern bool cpuDmaHack;
+MDFN_HIDE extern uint32 cpuDmaLast;
 
 typedef struct
 {
@@ -51,9 +51,9 @@ typedef struct
 	uint16 CNT;
 } GBATimer;
 
-extern GBATimer timers[4];
+MDFN_HIDE extern GBATimer timers[4];
 
-extern int cpuTotalTicks;
+MDFN_HIDE extern int cpuTotalTicks;
 
 #define ARM_PREFETCH \
   {\

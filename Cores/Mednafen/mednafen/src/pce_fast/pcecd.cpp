@@ -33,7 +33,7 @@ using namespace Mednafen;
 #include "pcecd_drive.h"
 #include "pcecd.h"
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 //#define PCECD_DEBUG

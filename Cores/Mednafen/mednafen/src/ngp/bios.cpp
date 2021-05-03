@@ -32,6 +32,8 @@ uint8 ngpc_bios[0x10000];		//Holds bios program data
 
 void reset(void)
 {
+	memset(CPUExRAM, 0, sizeof(CPUExRAM));
+
         NGPGfx->power();
 	Z80_reset();
 	reset_int();

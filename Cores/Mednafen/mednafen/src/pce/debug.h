@@ -31,10 +31,10 @@ char *PCEDBG_ShiftJIS_to_UTF8(const uint16 sjc);
 
 void PCEDBG_EnableUsageMap(bool);
 
-extern bool PCE_LoggingOn;
-extern bool PCE_UsageMapOn;
+MDFN_HIDE extern bool PCE_LoggingOn;
+MDFN_HIDE extern bool PCE_UsageMapOn;
 
-extern DebuggerInfoStruct PCEDBGInfo;
+MDFN_HIDE extern DebuggerInfoStruct PCEDBGInfo;
 
 void PCEDBG_Init(bool sgx, PCE_PSG *psg, const uint32 vram_size) MDFN_COLD;
 void PCEDBG_Kill(void) MDFN_COLD;

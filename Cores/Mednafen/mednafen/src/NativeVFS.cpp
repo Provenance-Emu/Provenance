@@ -73,12 +73,12 @@ bool NativeVFS::mkdir(const std::string& path, const bool throw_on_exist)
 
  #ifdef WIN32
  bool invalid_utf8;
- std::u16string u16path = UTF8_to_UTF16(path, &invalid_utf8, true);
+ auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
  if(invalid_utf8)
   throw MDFN_Error(EINVAL, _("Error creating directory \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
 
- if(::_wmkdir((const wchar_t*)u16path.c_str()))
+ if(::_tmkdir((const TCHAR*)tpath.c_str()))
  #elif defined HAVE_MKDIR
   #if MKDIR_TAKES_ONE_ARG
    if(::mkdir(path.c_str()))
@@ -111,12 +111,12 @@ bool NativeVFS::unlink(const std::string& path, const bool throw_on_noent, const
 
  #ifdef WIN32
  bool invalid_utf8;
- std::u16string u16path = UTF8_to_UTF16(path, &invalid_utf8, true);
+ auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
  if(invalid_utf8)
   throw MDFN_Error(EINVAL, _("Error unlinking \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
 
- if(::_wunlink((const wchar_t*)u16path.c_str()))
+ if(::_tunlink((const TCHAR*)tpath.c_str()))
  #else
  if(::unlink(path.c_str()))
  #endif
@@ -143,20 +143,20 @@ void NativeVFS::rename(const std::string& oldpath, const std::string& newpath, c
  #ifdef WIN32
  bool invalid_utf8_old;
  bool invalid_utf8_new;
- std::u16string u16oldpath = UTF8_to_UTF16(oldpath, &invalid_utf8_old, true);
- std::u16string u16newpath = UTF8_to_UTF16(newpath, &invalid_utf8_new, true);
+ auto toldpath = Win32Common::UTF8_to_T(oldpath, &invalid_utf8_old, true);
+ auto tnewpath = Win32Common::UTF8_to_T(newpath, &invalid_utf8_new, true);
 
  if(invalid_utf8_old || invalid_utf8_new)
   throw MDFN_Error(EINVAL, _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), _("Invalid UTF-8"));
 
- if(::_wrename((const wchar_t*)u16oldpath.c_str(), (const wchar_t*)u16newpath.c_str()))
+ if(::_trename((const TCHAR*)toldpath.c_str(), (const TCHAR*)tnewpath.c_str()))
  {
   ErrnoHolder ene(errno);
 
   // TODO/FIXME: Ensure oldpath and newpath don't refer to the same file via symbolic link.
   if(oldpath != newpath && (ene.Errno() == EACCES || ene.Errno() == EEXIST))
   {
-   if(::_wunlink((const wchar_t*)u16newpath.c_str()) || _wrename((const wchar_t*)u16oldpath.c_str(), (const wchar_t*)u16newpath.c_str()))
+   if(::_tunlink((const TCHAR*)tnewpath.c_str()) || ::_trename((const TCHAR*)toldpath.c_str(), (const TCHAR*)tnewpath.c_str()))
     throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), ene.StrError());
   }
   else
@@ -182,13 +182,13 @@ bool NativeVFS::finfo(const std::string& path, FileInfo* fi, const bool throw_on
  //
  #ifdef WIN32
  bool invalid_utf8;
- std::u16string u16path = UTF8_to_UTF16(path, &invalid_utf8, true);
+ auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
  struct _stati64 buf;
 
  if(invalid_utf8)
   throw MDFN_Error(EINVAL, _("Error getting file information for \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
 
- if(::_wstati64((const wchar_t*)u16path.c_str(), &buf))
+ if(::_tstati64((const TCHAR*)tpath.c_str(), &buf))
  #else
  struct stat buf;
  if(::stat(path.c_str(), &buf))
@@ -230,15 +230,15 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
  //
  HANDLE dp = nullptr;
  bool invalid_utf8;
- std::u16string u16path = UTF8_to_UTF16(path + preferred_path_separator + '*', &invalid_utf8, true);
- WIN32_FIND_DATAW ded;
+ auto tpath = Win32Common::UTF8_to_T(path + preferred_path_separator + '*', &invalid_utf8, true);
+ WIN32_FIND_DATA ded;
 
  if(invalid_utf8)
   throw MDFN_Error(EINVAL, _("Error reading directory entries from \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
 
  try
  {
-  if(!(dp = FindFirstFileW((const wchar_t*)u16path.c_str(), &ded)))
+  if(!(dp = FindFirstFile((const TCHAR*)tpath.c_str(), &ded)))
   {
    const uint32 ec = GetLastError();
 
@@ -248,10 +248,10 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
   for(;;)
   {
    //printf("%s\n", UTF16_to_UTF8((const char16_t*)ded.cFileName, nullptr, true).c_str());
-   if(!callb(UTF16_to_UTF8((const char16_t*)ded.cFileName, nullptr, true)))
+   if(!callb(Win32Common::T_to_UTF8(ded.cFileName, nullptr, true)))
     break;
    //
-   if(!FindNextFileW(dp, &ded))
+   if(!FindNextFile(dp, &ded))
    {
     const uint32 ec = GetLastError();
 
