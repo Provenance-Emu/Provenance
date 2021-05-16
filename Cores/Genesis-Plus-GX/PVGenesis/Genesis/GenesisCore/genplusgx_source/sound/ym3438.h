@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 Alexey Khokholov (Nuke.YKT)
+ *  Copyright (C) 2017-2018 Alexey Khokholov (Nuke.YKT)
  * 
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -39,15 +39,19 @@
  *      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
  *          OPL2 ROMs.
  *
- * version: 1.0.8
+ * version: 1.0.9
  */
 
 #ifndef YM3438_H
 #define YM3438_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
     ym3438_mode_ym2612 = 0x01,      /* Enables YM2612 emulation (MD1, MD2 VA2) */
-    ym3438_mode_readmode = 0x02,    /* Enables status read on any port (TeraDrive, MD1 VA7, MD2, etc) */
+    ym3438_mode_readmode = 0x02     /* Enables status read on any port (TeraDrive, MD1 VA7, MD2, etc) */
 };
 
 #include <stdint.h>
@@ -66,7 +70,6 @@ typedef int8_t          Bit8s;
 typedef struct
 {
     Bit32u cycles;
-    Bit32u slot;
     Bit32u channel;
     Bit16s mol, mor;
     /* IO */
@@ -79,7 +82,7 @@ typedef struct
     Bit8u write_busy_cnt;
     Bit8u write_fm_address;
     Bit8u write_fm_data;
-    Bit8u write_fm_mode_a;
+    Bit16u write_fm_mode_a;
     Bit16u address;
     Bit8u data;
     Bit8u pin_test_in;
@@ -155,7 +158,7 @@ typedef struct
     Bit8u timer_a_load_latch;
     Bit8u timer_a_overflow_flag;
     Bit8u timer_a_overflow;
-    
+
     Bit16u timer_b_cnt;
     Bit8u timer_b_subcnt;
     Bit16u timer_b_reg;
@@ -166,7 +169,7 @@ typedef struct
     Bit8u timer_b_load_latch;
     Bit8u timer_b_overflow_flag;
     Bit8u timer_b_overflow;
-    
+
     /* Register set */
     Bit8u mode_test_21[8];
     Bit8u mode_test_2c[8];
@@ -178,7 +181,7 @@ typedef struct
     Bit8u mode_kon_csm;
     Bit8u dacen;
     Bit16s dacdata;
-    
+
     Bit8u ks[24];
     Bit8u ar[24];
     Bit8u sr[24];
@@ -190,7 +193,7 @@ typedef struct
     Bit8u am[24];
     Bit8u tl[24];
     Bit8u ssg_eg[24];
-    
+
     Bit16u fnum[6];
     Bit8u block[6];
     Bit8u kcode[6];
@@ -216,4 +219,9 @@ void OPN2_SetTestPin(ym3438_t *chip, Bit32u value);
 Bit32u OPN2_ReadTestPin(ym3438_t *chip);
 Bit32u OPN2_ReadIRQPin(ym3438_t *chip);
 Bit8u OPN2_Read(ym3438_t *chip, Bit32u port);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
