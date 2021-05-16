@@ -20,6 +20,9 @@
 /*
 **  CHANGELOG:
 **
+** 11-05-2021 Eke-Eke (Genesis Plus GX):
+**  - fixed potential issue with SSG-EG inverted attenuation level on Key OFF
+**
 ** 03-12-2017 Eke-Eke (Genesis Plus GX):
 **  - improved 9-bit DAC emulation accuracy
 **  - added discrete YM2612 DAC distortion emulation ("ladder effect")
@@ -684,7 +687,7 @@ INLINE void FM_KEYOFF(FM_CH *CH , int s )
       {
         /* convert EG attenuation level */
         if (SLOT->ssgn ^ (SLOT->ssg&0x04))
-          SLOT->volume = (0x200 - SLOT->volume);
+          SLOT->volume = (0x200 - SLOT->volume) & MAX_ATT_INDEX;
 
         /* force EG attenuation level */
         if (SLOT->volume >= 0x200)
@@ -749,7 +752,7 @@ INLINE void FM_KEYOFF_CSM(FM_CH *CH , int s )
       {
         /* convert EG attenuation level */
         if (SLOT->ssgn ^ (SLOT->ssg&0x04))
-          SLOT->volume = (0x200 - SLOT->volume);
+          SLOT->volume = (0x200 - SLOT->volume) & MAX_ATT_INDEX;
 
         /* force EG attenuation level */
         if (SLOT->volume >= 0x200)
