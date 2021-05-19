@@ -130,7 +130,7 @@ Genesis Plus GX 1.7.5 (xx/xx/xxxx) (Eke-Eke)
 * improved accuracy of Master System color palette brightness range (verified against real hardware)
 * fixed misaligned buffer writes in Mode 4 when -DALIGN_LONG option is used
 * fixed alpha channel for 15-bit (RGB555) and 32-bit (RGB888) color support
-* fixed register #10 state on VDP¨reset (fixes GG Terminator 2: Judgment Day)
+* fixed register #10 state on VDPï¿½reset (fixes GG Terminator 2: Judgment Day)
 * fixed Mode 1 rendering (TMS99xx "text" mode)
 * fixed Master System II extended video modes sprite parsing (fixes Mega Man 2 demo)
 * fixed Game Gear display rendering regression when left/right borders were disabled
@@ -139,24 +139,20 @@ Genesis Plus GX 1.7.5 (xx/xx/xxxx) (Eke-Eke)
 
 [Core/Sound]
 ---------------
-* replaced configurable YM2612 DAC quantization by configurable YM2612 chip model emulation (discrete, ASIC-integrated or enhanced)
 * added DAC distortion emulation for discrete YM2612 chip model
 * added accurate status & BUSY flag emulation for discrete and ASIC-integrated YM2612 chip models (verified on real hardware)
 * added optional support for cycle-accurate YM3438/YM2612 & YM2413 cores from Nuked
-* improved 9-bit DAC quantization accuracy for discrete and ASIC-integrated YM2612 chip models (verified on YM2612 die)
-* rewrote optimized & more accurate PSG core from scratch
 * removed PSG boost noise feature & added optional high-quality PSG resampling
+* rewrote optimized & more accurate PSG core from scratch
+* replaced configurable YM2612 DAC quantization by configurable YM2612 chip model emulation (discrete, ASIC-integrated or enhanced)
+* improved 9-bit DAC quantization accuracy for discrete and ASIC-integrated YM2612 chip models (verified on YM2612 die)
+* improved YM2413 EG accuracy (verified on YM2413 real hardware)
 * fixed YM2612 self-feedback regression introduced in 1.7.1
 * fixed YM2612 one-sample extra delay on operator1 output
 * fixed YM2612 LFO PM implementation: block & keyscale code should not be modified by LFO (verified on YM2612 die)
 * fixed YM2612 Timer B overflow handling
-* fixed YM2413 carrier/modulator phase reset after channel Key ON (Japanese Master System BIOS music)
+* fixed YM2413 carrier/modulator phase reset after channel Key ON (fixes Japanese Master System BIOS music)
 * fixed YM2413 intruments ROM (verified on YM2413B die)
-* fixed YM2413 EG resolution bits (verified on YM2413B die)
-* fixed YM2413 EG dump rate (verified on YM2413 hardware)
-* fixed YM2413 EG behavior for fastest attack rates (verified on YM2413 hardware)
-* fixed YM2413 EG behavior when SL=0 (verified on YM2413 hardware)
-* improved YM2413 EG sustain phase transition comparator accuracy (verified on YM2413 real hardware)
 
 [Gamecube/Wii]
 ---------------
