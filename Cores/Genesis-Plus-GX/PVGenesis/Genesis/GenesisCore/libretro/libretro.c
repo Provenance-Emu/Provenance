@@ -182,7 +182,7 @@ static char arvalidchars[] = "0123456789ABCDEF";
 static uint32_t overclock_delay;
 #endif
 
-#define SOUND_FREQUENCY 48000 // 44100 Apple uses a default Frequency of 48000 so lets default to that as opposed to 44100
+#define SOUND_FREQUENCY 44100 // 44100 Apple uses a default Frequency of 48000 so lets default to that as opposed to 44100
 
 /* Hide the EQ settings for now */
 /*#define HAVE_EQ*/

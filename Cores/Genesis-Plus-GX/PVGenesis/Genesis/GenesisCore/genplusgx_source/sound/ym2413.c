@@ -38,6 +38,7 @@ to do:
 /** 2021/04/25: improved EG sustain phase transition comparator accuracy (verified on YM2413 real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2015-12-31) **/
 /** 2021/05/04: improved EG increment steps accuracy (verified on YM2413 real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2015-03-20) **/
 /** 2021/05/08: improved EG transitions accuracy (verified against https://github.com/nukeykt/Nuked-OPLL/blob/master/opll.c) **/
+/** 2021/05/11: improved EG attack phase algorithm accuracy (verified on YM2413 real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2017-01-26) **/
 /************************************************/
 
 #include "shared.h"
@@ -233,66 +234,99 @@ static const UINT32 sl_tab[16]={
 
 
 #define RATE_STEPS (16)
-static const unsigned char eg_inc[15*RATE_STEPS]={
+
+static const unsigned char eg_inc[14*RATE_STEPS]={
 
 /*cycle:0 1  2 3  4 5  6 7  8 9  10 11  12 13  14 15*/
 
-/* 0 */ 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, /* rates 00..12 0 (increment by 0 or 1) */
-/* 1 */ 0,1, 0,1, 1,1, 0,1, 0,1, 0,1, 1,1, 0,1, /* rates 00..12 1 */
-/* 2 */ 0,1, 1,1, 0,1, 1,1, 0,1, 1,1, 0,1, 1,1, /* rates 00..12 2 */
-/* 3 */ 0,1, 1,1, 1,1, 1,1, 0,1, 1,1, 1,1, 1,1, /* rates 00..12 3 */
+/* 0 */ 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, /* infinity rates for decay(s) */
 
-/* 4 */ 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, /* rate 13 0 (increment by 0 or 1) */
-/* 5 */ 0,1, 0,1, 1,1, 1,1, 0,1, 0,1, 0,1, 0,1, /* rate 13 1 */
-/* 6 */ 0,1, 0,1, 1,1, 1,1, 0,1, 0,1, 1,1, 1,1, /* rate 13 2 */
-/* 7 */ 0,1, 0,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, /* rate 13 3 */
+/* 1 */ 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, /* rates 01..12 0 for decay(s) (increment by 0 or 1) */
+/* 2 */ 0,1, 1,1, 0,1, 0,1, 0,1, 1,1, 0,1, 0,1, /* rates 01..12 1 for decay(s) */
+/* 3 */ 0,1, 1,1, 0,1, 1,1, 0,1, 1,1, 0,1, 1,1, /* rates 01..12 2 for decay(s) */
+/* 4 */ 0,1, 1,1, 1,1, 1,1, 0,1, 1,1, 1,1, 1,1, /* rates 01..12 3 for decay(s) */
 
-/* 8 */ 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, /* rate 14 0 (increment by 1) */
-/* 9 */ 1,1, 1,1, 2,2, 2,2, 1,1, 1,1, 1,1, 1,1, /* rate 14 1 */
-/*10 */ 1,1, 1,1, 2,2, 2,2, 1,1, 1,1, 2,2, 2,2, /* rate 14 2 */
-/*11 */ 1,1, 1,1, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, /* rate 14 3 */
+/* 5 */ 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, /* rate 13 0 for decay(s) (increment by 0 or 1) */
+/* 6 */ 0,1, 0,1, 1,1, 1,1, 0,1, 0,1, 0,1, 0,1, /* rate 13 1 for decay(s) */
+/* 7 */ 0,1, 0,1, 1,1, 1,1, 0,1, 0,1, 1,1, 1,1, /* rate 13 2 for decay(s) */
+/* 8 */ 0,1, 0,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, /* rate 13 3 for decay(s) */
 
-/*12 */ 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, /* rates 15 0, 15 1, 15 2, 15 3 for decay (increment by 2) */
-/*13 */ 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, /* rates 15 0, 15 1, 15 2, 15 3 for attack (not used as attack phase is skipped in these cases) */
-/*14 */ 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, /* infinity rates for attack and decay(s) */
+/* 9 */ 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, /* rate 14 0 for decay(s) (increment by 1) */
+/*10 */ 1,1, 1,1, 2,2, 2,2, 1,1, 1,1, 1,1, 1,1, /* rate 14 1 for decay(s) */
+/*11 */ 1,1, 1,1, 2,2, 2,2, 1,1, 1,1, 2,2, 2,2, /* rate 14 2 for decay(s) */
+/*12 */ 1,1, 1,1, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, /* rate 14 3 for decay(s) */
+
+/*13 */ 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, /* rates 15 0, 15 1, 15 2, 15 3 for decay(s) (increment by 2) */
+
 };
 
+static const unsigned char eg_mul[17*RATE_STEPS]={
+
+/*cycle:0 1  2 3  4 5  6 7  8 9  10 11  12 13  14 15*/
+
+/* 0 */ 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, 0,0, /* infinity rates for attack */
+
+/* 1 */ 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, 0,1, /* rates 01..11 0 for attack */
+/* 2 */ 0,1, 1,1, 0,1, 0,1, 0,1, 1,1, 0,1, 0,1, /* rates 01..11 1 for attack */
+/* 3 */ 0,1, 1,1, 0,1, 1,1, 0,1, 1,1, 0,1, 1,1, /* rates 01..11 2 for attack */
+/* 4 */ 0,1, 1,1, 1,1, 1,1, 0,1, 1,1, 1,1, 1,1, /* rates 01..11 3 for attack */
+
+/* 5 */ 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, 1,1, /* rate 12 0 for attack */
+/* 6 */ 1,1, 1,1, 2,2, 2,2, 1,1, 1,1, 1,1, 1,1, /* rate 12 1 for attack */
+/* 7 */ 1,1, 1,1, 2,2, 2,2, 1,1, 1,1, 2,2, 2,2, /* rate 12 2 for attack */
+/* 8 */ 1,1, 1,1, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, /* rate 12 3 for attack */
+
+/* 9 */ 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, 2,2, /* rate 13 0 for attack */
+/*10 */ 2,2, 2,2, 4,4, 4,4, 2,2, 2,2, 2,2, 2,2, /* rate 13 1 for attack */
+/*11 */ 2,2, 2,2, 4,4, 4,4, 2,2, 2,2, 4,4, 4,4, /* rate 13 2 for attack */
+/*12 */ 2,2, 2,2, 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, /* rate 13 3 for attack */
+
+/*13 */ 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, 4,4, /* rate 14 0 for attack */
+/*14 */ 4,4, 4,4, 8,8, 8,8, 4,4, 4,4, 4,4, 4,4, /* rate 14 1 for attack */
+/*15 */ 4,4, 4,4, 8,8, 8,8, 4,4, 4,4, 8,8, 8,8, /* rate 14 2 for attack */
+/*16 */ 4,4, 4,4, 8,8, 8,8, 8,8, 8,8, 8,8, 8,8, /* rate 14 3 for attack */
+
+};
 
 #define O(a) (a*RATE_STEPS)
 
-/*note that there is no O(13) in this table - it's directly in the code */
 static const unsigned char eg_rate_select[16+64+16]={  /* Envelope Generator rates (16 + 64 rates + 16 RKS) */
+
 /* 16 infinite time rates */
-O(14),O(14),O(14),O(14),O(14),O(14),O(14),O(14),
-O(14),O(14),O(14),O(14),O(14),O(14),O(14),O(14),
+O(0),O(0),O(0),O(0),O(0),O(0),O(0),O(0),
+O(0),O(0),O(0),O(0),O(0),O(0),O(0),O(0),
 
-/* rates 00-12 */
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
-O( 0),O( 1),O( 2),O( 3),
+/* rate 00 */
+O( 0),O( 0),O( 0),O( 0), /* never used since infinite time rates are directly forced in the code for rate 00 */
 
-/* rate 13 */
-O( 4),O( 5),O( 6),O( 7),
+/* rates 01-11 */
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
+O( 1),O( 2),O( 3),O( 4),
 
-/* rate 14 */
-O( 8),O( 9),O(10),O(11),
+/* rate 12 */ /* only used for decay(s), handled directly in the code for attack */
+O( 1),O( 2),O( 3),O( 4),
 
-/* rate 15 */
-O(12),O(12),O(12),O(12),
+/* rate 13 */ /* only used for decay(s), handled directly in the code for attack */
+O( 5),O( 6),O( 7),O( 8),
+
+/* rate 14 */ /* only used for decay(s), handled directly in the code for attack */
+O( 9),O(10),O(11),O(12),
+
+/* rate 15 */ /* only used for decay(s), handled directly in the code for attack */
+O(13),O(13),O(13),O(13),
 
 /* 16 dummy rates (same as 15 3) */
-O(12),O(12),O(12),O(12),O(12),O(12),O(12),O(12),
-O(12),O(12),O(12),O(12),O(12),O(12),O(12),O(12),
+O(13),O(13),O(13),O(13),O(13),O(13),O(13),O(13),
+O(13),O(13),O(13),O(13),O(13),O(13),O(13),O(13),
 
 };
 #undef O
@@ -300,15 +334,19 @@ O(12),O(12),O(12),O(12),O(12),O(12),O(12),O(12),
 /*rate  0,    1,    2,    3,    4,   5,   6,   7,  8,  9, 10, 11, 12, 13, 14, 15 */
 /*shift 13,   12,   11,   10,   9,   8,   7,   6,  5,  4,  3,  2,  1,  0,  0,  0 */
 /*mask  8191, 4095, 2047, 1023, 511, 255, 127, 63, 31, 15, 7,  3,  1,  0,  0,  0 */
+/*NB: for attack, above mask values lower 2 bits are cleared and rate 12 shift value is equal to 0 */
 
 #define O(a) (a*1)
 static const unsigned char eg_rate_shift[16+64+16]={  /* Envelope Generator counter shifts (16 + 64 rates + 16 RKS) */
-/* 16 infinite time rates */
-O(0),O(0),O(0),O(0),O(0),O(0),O(0),O(0),
-O(0),O(0),O(0),O(0),O(0),O(0),O(0),O(0),
 
-/* rates 00-12 */
-O(13),O(13),O(13),O(13),
+/* 16 infinite time rates */
+O(13),O(13),O(13),O(13),O(13),O(13),O(13),O(13),
+O(13),O(13),O(13),O(13),O(13),O(13),O(13),O(13),
+
+/* rate 00 */
+O(13),O(13),O(13),O(13), /* never used since infinite time rates are directly forced in the code for rate 00 */
+
+/* rates 01-11 */
 O(12),O(12),O(12),O(12),
 O(11),O(11),O(11),O(11),
 O(10),O(10),O(10),O(10),
@@ -320,15 +358,17 @@ O( 5),O( 5),O( 5),O( 5),
 O( 4),O( 4),O( 4),O( 4),
 O( 3),O( 3),O( 3),O( 3),
 O( 2),O( 2),O( 2),O( 2),
+
+/* rate 12 */ /* only used for decay(s), handled directly in the code for attack */
 O( 1),O( 1),O( 1),O( 1),
 
-/* rate 13 */
+/* rate 13 */ /* only used for decay(s), handled directly in the code for attack */
 O( 0),O( 0),O( 0),O( 0),
 
-/* rate 14 */
+/* rate 14 */ /* only used for decay(s), handled directly in the code for attack */
 O( 0),O( 0),O( 0),O( 0),
 
-/* rate 15 */
+/* rate 15 */ /* only used for decay(s), handled directly in the code for attack */
 O( 0),O( 0),O( 0),O( 0),
 
 /* 16 dummy rates (same as 15 3) */
@@ -612,9 +652,9 @@ INLINE void advance(void)
           {
             op->state = EG_DEC;
           }
-          else if ( !(ym2413.eg_cnt & ((1<<op->eg_sh_ar)-1) ) )
+          else if ( !(ym2413.eg_cnt & (((1<<op->eg_sh_ar)-1) & ~3)) )
           {
-            op->volume += (~op->volume * (eg_inc[op->eg_sel_ar + ((ym2413.eg_cnt>>op->eg_sh_ar)&15)])) >>2;
+            op->volume += (~op->volume * (eg_mul[op->eg_sel_ar + ((ym2413.eg_cnt>>op->eg_sh_ar)&15)]))>>4;
           }
           break;
 
@@ -1191,24 +1231,30 @@ INLINE void CALC_FCSLOT(YM2413_OPLL_CH *CH,YM2413_OPLL_SLOT *SLOT)
     SLOT->ksr = ksr;
 
     /* calculate envelope generator rates */
-    if ((SLOT->ar + SLOT->ksr) < 16+60)
+    if ((SLOT->ar + SLOT->ksr) >= 16+60)
     {
-      SLOT->eg_sh_ar  = eg_rate_shift [SLOT->ar + SLOT->ksr ];
-      SLOT->eg_sel_ar = eg_rate_select[SLOT->ar + SLOT->ksr ];
+      /* attack phase is skipped in case attack rate is set to 15.0-15.3 before attack phase is started */
+      /* during attack phase, in case attack rate is changed to 15.0-15.3, attack phase is blocked */
+      /* (verified on real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2017-01-26) */
+      SLOT->eg_sh_ar  = 13;
+      SLOT->eg_sel_ar = 0 * RATE_STEPS;
     }
-    else
+    else if ((SLOT->ar + SLOT->ksr) >= 16+48)
     {
-      /* attack phase is skipped in case attack rate is set to 15.0-15.3 before it is started */
-      /* during attack phase, when attack rate is changed to 15.0-15.3, attack phase is blocked */
+      /* attack rates 12.0 to 14.3 have similar specific behavior */
       /* (verified on real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2017-01-26) */
       SLOT->eg_sh_ar  = 0;
-      SLOT->eg_sel_ar = 14*RATE_STEPS;
+      SLOT->eg_sel_ar = eg_rate_select[SLOT->ar + SLOT->ksr] + (4 * RATE_STEPS);
+    }
+    else 
+    {
+      SLOT->eg_sh_ar  = eg_rate_shift [SLOT->ar + SLOT->ksr];
+      SLOT->eg_sel_ar = eg_rate_select[SLOT->ar + SLOT->ksr];
     }
     SLOT->eg_sh_dr  = eg_rate_shift [SLOT->dr + SLOT->ksr ];
     SLOT->eg_sel_dr = eg_rate_select[SLOT->dr + SLOT->ksr ];
     SLOT->eg_sh_rr  = eg_rate_shift [SLOT->rr + SLOT->ksr ];
     SLOT->eg_sel_rr = eg_rate_select[SLOT->rr + SLOT->ksr ];
-
   }
 
   if (CH->sus)
@@ -1277,18 +1323,25 @@ INLINE void set_ar_dr(int slot,int v)
 
   SLOT->ar = (v>>4)  ? 16 + ((v>>4)  <<2) : 0;
 
-  if ((SLOT->ar + SLOT->ksr) < 16+60)
+  if ((SLOT->ar + SLOT->ksr) >= 16+60)
   {
-    SLOT->eg_sh_ar  = eg_rate_shift [SLOT->ar + SLOT->ksr ];
-    SLOT->eg_sel_ar = eg_rate_select[SLOT->ar + SLOT->ksr ];
+    /* attack phase is skipped in case attack rate is set to 15.0-15.3 before attack phase is started */
+    /* during attack phase, in case attack rate is changed to 15.0-15.3, attack phase is blocked */
+    /* (verified on real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2017-01-26) */
+    SLOT->eg_sh_ar  = 13;
+    SLOT->eg_sel_ar = 0 * RATE_STEPS;
   }
-  else
+  else if ((SLOT->ar + SLOT->ksr) >= 16+48)
   {
-    /* attack phase is skipped in case attack rate is set to 15.0-15.3 before it is started */
-    /* during attack phase, when attack rate is changed to 15.0-15.3, attack phase is blocked */
+    /* attack rates 12.0 to 14.3 have similar specific behavior */
     /* (verified on real hardware, cf. https://www.smspower.org/Development/YM2413ReverseEngineeringNotes2017-01-26) */
     SLOT->eg_sh_ar  = 0;
-    SLOT->eg_sel_ar = 14*RATE_STEPS;
+    SLOT->eg_sel_ar = eg_rate_select[SLOT->ar + SLOT->ksr] + (4 * RATE_STEPS);
+  }
+  else 
+  {
+    SLOT->eg_sh_ar  = eg_rate_shift [SLOT->ar + SLOT->ksr];
+    SLOT->eg_sel_ar = eg_rate_select[SLOT->ar + SLOT->ksr];
   }
 
   SLOT->dr    = (v&0x0f)? 16 + ((v&0x0f)<<2) : 0;
