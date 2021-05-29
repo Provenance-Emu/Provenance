@@ -151,6 +151,7 @@ Genesis Plus GX 1.7.5 (xx/xx/xxxx) (Eke-Eke)
 * fixed YM2612 one-sample extra delay on operator1 output
 * fixed YM2612 LFO PM implementation: block & keyscale code should not be modified by LFO (verified on YM2612 die)
 * fixed YM2612 Timer B overflow handling
+* fixed YM2612 potential issue with SSG-EG inverted attenuation level on Key OFF
 * fixed YM2413 carrier/modulator phase reset after channel Key ON (fixes Japanese Master System BIOS music)
 * fixed YM2413 intruments ROM (verified on YM2413B die)
 
