@@ -12,8 +12,9 @@
 //#import <PVSupport/DebugUtils.h>
 //#import <PVSupport/PVLogging.h>
 #import <PVGenesis/libretro.h>
-#import <OpenGLES/EAGL.h>
+//#import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
 
 #include "shared.h"
 #include "libretro.h"
@@ -24,9 +25,9 @@
 
 @interface PVGenesisEmulatorCore ()
 {
-    uint16_t *videoBuffer;
-    uint16_t *videoBufferA;
-    uint16_t *videoBufferB;
+    uint32_t *videoBuffer;
+    uint32_t *videoBufferA;
+    uint32_t *videoBufferB;
 
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
@@ -69,10 +70,10 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
     dispatch_apply(height, the_queue, ^(size_t y){
-        const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = strongCurrent->videoBuffer + y * 720;
+        const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
+        uint32_t *dst = strongCurrent->videoBuffer + y * 720;
         
-        memcpy(dst, src, sizeof(uint16_t)*width);
+        memcpy(dst, src, sizeof(uint32_t)*width);
     });
 	
 	strongCurrent = nil;
@@ -150,8 +151,8 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (id)init {
 	if ((self = [super init])) {
-	videoBufferA = malloc(720 * 576 * 2);
-        videoBufferB = malloc(720 * 576 * 2);
+	videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
+        videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
 	}
 	
 	_current = self;
@@ -268,10 +269,10 @@ static bool environment_callback(unsigned cmd, void *data)
     
     videoBuffer = NULL;
     
-    videoBufferA = (unsigned char *)malloc(720 * 576 * 2);
-    videoBufferB = (unsigned char *)malloc(720 * 576 * 2);
+    videoBufferA = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
+    videoBufferB = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
     
-    bitmap.data = (short unsigned int *)videoBufferA;
+    bitmap.data = (uint8_t *)videoBufferA;
     videoBuffer = videoBufferB;
     
     retro_set_environment(environment_callback);
@@ -372,15 +373,15 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)swapBuffers
 {
-    if (bitmap.data == (short unsigned int *)videoBufferA)
+    if (bitmap.data == (uint8_t*)videoBufferA)
     {
         videoBuffer = videoBufferA;
-        bitmap.data = (short unsigned int *)videoBufferB;
+        bitmap.data = (uint8_t*)videoBufferB;
     }
     else
     {
         videoBuffer = videoBufferB;
-        bitmap.data = (short unsigned int *)videoBufferA;
+        bitmap.data = (uint8_t*)videoBufferA;
     }
 }
 
@@ -428,17 +429,17 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (GLenum)pixelFormat
 {
-    return GL_RGB;
+    return GL_BGRA;
 }
 
 - (GLenum)pixelType
 {
-    return GL_UNSIGNED_SHORT_5_6_5;
+    return GL_UNSIGNED_BYTE;
 }
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB;
+    return GL_RGBA;
 }
 
 - (NSTimeInterval)frameInterval
@@ -450,7 +451,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (double)audioSampleRate
 {
-	return _sampleRate ? _sampleRate : 48000;
+	return _sampleRate ? _sampleRate : 44100;
 }
 
 - (NSUInteger)channelCount

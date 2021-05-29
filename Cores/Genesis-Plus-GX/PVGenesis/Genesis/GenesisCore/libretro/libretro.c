@@ -134,7 +134,7 @@ static uint8_t brm_format[0x40] =
 static bool is_running = 0;
 static uint8_t temp[0x10000];
 int16 soundbuffer[3068];
-static uint16_t bitmap_data_[720 * 576];
+static uint32_t bitmap_data_[720 * 576];
 
 static bool restart_eq = false;
 
@@ -182,7 +182,7 @@ static char arvalidchars[] = "0123456789ABCDEF";
 static uint32_t overclock_delay;
 #endif
 
-#define SOUND_FREQUENCY 44100 // 44100 Apple uses a default Frequency of 48000 so lets default to that as opposed to 44100
+#define SOUND_FREQUENCY 44100
 
 /* Hide the EQ settings for now */
 /*#define HAVE_EQ*/
@@ -534,12 +534,12 @@ void osd_input_update(void)
   }
 }
 
-static void draw_cursor(int16_t x, int16_t y, uint16_t color)
+static void draw_cursor(int16_t x, int16_t y, uint8_t color)
 {
    int i;
 
    /* crosshair center position */   
-   uint16_t *ptr = (uint16_t *)bitmap.data + ((bitmap.viewport.y + y) * bitmap.width) + x + bitmap.viewport.x;
+   uint8_t *ptr = (uint8_t *)bitmap.data + ((bitmap.viewport.y + y) * bitmap.width) + x + bitmap.viewport.x;
 
    /* default crosshair dimension */
    int x_start = x - 3;
@@ -569,7 +569,7 @@ static void init_bitmap(void)
    memset(&bitmap, 0, sizeof(bitmap));
    bitmap.width      = 720;
    bitmap.height     = 576;
-   bitmap.pitch      = bitmap.width * 2;
+   bitmap.pitch      = bitmap.width * sizeof(uint32_t);
    bitmap.data       = (uint8_t *)bitmap_data_;
 }
 
