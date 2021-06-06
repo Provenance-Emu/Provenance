@@ -101,13 +101,13 @@ final class PVControllerSelectionViewController: UITableViewController {
             var title = controller.vendorName ?? ""
 
             if controller == PVControllerManager.shared.player1 {
-                title.append(" (Player 1")
+                title.append(" (Player 1)")
             } else if controller == PVControllerManager.shared.player2 {
-                title.append(" (Player 2")
+                title.append(" (Player 2)")
             } else if controller == PVControllerManager.shared.player3 {
-                title.append(" (Player 3")
+                title.append(" (Player 3)")
             } else if controller == PVControllerManager.shared.player4 {
-                title.append(" (Player 4")
+                title.append(" (Player 4)")
             }
 
             actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
