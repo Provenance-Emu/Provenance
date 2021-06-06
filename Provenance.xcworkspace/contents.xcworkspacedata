@@ -61,8 +61,5 @@
       <FileRef
          location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
       </FileRef>
-      <FileRef
-         location = "group:Cores/Yabause/PVYabause.xcodeproj">
-      </FileRef>
    </Group>
 </Workspace>
