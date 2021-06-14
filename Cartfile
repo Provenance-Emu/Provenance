@@ -1,18 +1,17 @@
 # App
-github "bcylin/QuickTableViewController"
-github "RxSwiftCommunity/RxDataSources"
-github "zydeco/SteamController"
+#github "bcylin/QuickTableViewController"
+#github "RxSwiftCommunity/RxDataSources"
+#github "zydeco/SteamController"
 
 # PVSupport
-github "CocoaLumberjack/CocoaLumberjack"
-github "ashleymills/Reachability.swift"
+#github "CocoaLumberjack/CocoaLumberjack"
+#github "ashleymills/Reachability.swift"
 
 # PVLibrary
-github "ZipArchive/ZipArchive"
-github "realm/realm-cocoa"
-github "stephencelis/SQLite.swift"
+#github "ZipArchive/ZipArchive"
+#github "realm/realm-cocoa"
+#github "stephencelis/SQLite.swift"
 
 # Rx
-github "ReactiveX/RxSwift"
-# Contains a fix for tvOS building with XCode 11.5+
-github "cheif/RxRealm" "a6fa47c1ba721b19a7c6da0d629bf7f0d7271d06"
+#github "ReactiveX/RxSwift"
+github "RxSwiftCommunity/RxRealm"
