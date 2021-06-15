@@ -37,9 +37,6 @@
 [submodule "Carthage/Checkouts/RxDataSources"]
 	path = Carthage/Checkouts/RxDataSources
 	url = https://github.com/RxSwiftCommunity/RxDataSources.git
-[submodule "Carthage/Checkouts/SwiftyUserDefaults"]
-	url = https://github.com/radex/SwiftyUserDefaults.git
-	path = Carthage/Checkouts/SwiftyUserDefaults
 [submodule "Carthage/Checkouts/SQLite.swift"]
 	url = https://github.com/stephencelis/SQLite.swift.git
 	path = Carthage/Checkouts/SQLite.swift

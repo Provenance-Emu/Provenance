@@ -862,11 +862,11 @@ static void emulation_run(BOOL skipFrame) {
         {
             controller = self.controller2;
         }
-        else if (self.controller3 && playerIndex == 3)
+        else if (self.controller3 && playerIndex == 2)
         {
             controller = self.controller3;
         }
-        else if (self.controller4 && playerIndex == 4)
+        else if (self.controller4 && playerIndex == 3)
         {
             controller = self.controller4;
         }
