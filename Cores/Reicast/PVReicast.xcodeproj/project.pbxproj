@@ -4496,6 +4496,7 @@
 					"-fpermissive",
 					"-fno-operator-names",
 					"-fsingle-precision-constant",
+					"-DTARGET_NO_NIXPROF",
 				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -4745,7 +4746,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
 				SDKROOT = iphoneos;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -4831,6 +4832,7 @@
 					"-fpermissive",
 					"-fno-operator-names",
 					"-fsingle-precision-constant",
+					"-DTARGET_NO_NIXPROF",
 				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
