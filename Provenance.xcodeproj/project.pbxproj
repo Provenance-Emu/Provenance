@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -54,6 +54,68 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		09B0C685267EF32C008180A1 /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796527267ECC7400FB2F20 /* CocoaLumberjack.xcframework */; };
+		09B0C686267EF32C008180A1 /* CocoaLumberjack.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796527267ECC7400FB2F20 /* CocoaLumberjack.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C687267EF331008180A1 /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796523267ECC7400FB2F20 /* CocoaLumberjackSwift.xcframework */; };
+		09B0C688267EF331008180A1 /* CocoaLumberjackSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796523267ECC7400FB2F20 /* CocoaLumberjackSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C689267EF34B008180A1 /* QuickTableViewController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796528267ECC7400FB2F20 /* QuickTableViewController.xcframework */; };
+		09B0C68A267EF34B008180A1 /* QuickTableViewController.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796528267ECC7400FB2F20 /* QuickTableViewController.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C68B267EF359008180A1 /* Realm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651C267ECC7400FB2F20 /* Realm.xcframework */; };
+		09B0C68C267EF359008180A1 /* Realm.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651C267ECC7400FB2F20 /* Realm.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C68D267EF360008180A1 /* RealmSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796522267ECC7400FB2F20 /* RealmSwift.xcframework */; };
+		09B0C68E267EF360008180A1 /* RealmSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796522267ECC7400FB2F20 /* RealmSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C68F267EF369008180A1 /* RxCocoa.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796521267ECC7400FB2F20 /* RxCocoa.xcframework */; };
+		09B0C690267EF369008180A1 /* RxCocoa.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796521267ECC7400FB2F20 /* RxCocoa.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C691267EF370008180A1 /* RxRealm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651D267ECC7400FB2F20 /* RxRealm.xcframework */; };
+		09B0C692267EF370008180A1 /* RxRealm.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651D267ECC7400FB2F20 /* RxRealm.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C693267EF379008180A1 /* RxSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796526267ECC7400FB2F20 /* RxSwift.xcframework */; };
+		09B0C694267EF379008180A1 /* RxSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796526267ECC7400FB2F20 /* RxSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C695267EF385008180A1 /* SQLite.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651A267ECC7400FB2F20 /* SQLite.xcframework */; };
+		09B0C696267EF385008180A1 /* SQLite.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651A267ECC7400FB2F20 /* SQLite.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C697267EF38D008180A1 /* SteamController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796520267ECC7400FB2F20 /* SteamController.xcframework */; };
+		09B0C698267EF38D008180A1 /* SteamController.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796520267ECC7400FB2F20 /* SteamController.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C699267EF394008180A1 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796525267ECC7400FB2F20 /* ZipArchive.xcframework */; };
+		09B0C69A267EF394008180A1 /* ZipArchive.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796525267ECC7400FB2F20 /* ZipArchive.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C6A6267EF5F0008180A1 /* Reachability.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796529267ECC7400FB2F20 /* Reachability.xcframework */; };
+		09B0C6A7267EF5F0008180A1 /* Reachability.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796529267ECC7400FB2F20 /* Reachability.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C6A8267EF72D008180A1 /* Differentiator.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796524267ECC7400FB2F20 /* Differentiator.xcframework */; };
+		09B0C6A9267EF72D008180A1 /* Differentiator.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796524267ECC7400FB2F20 /* Differentiator.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C6AA267EF791008180A1 /* RxDataSources.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651F267ECC7400FB2F20 /* RxDataSources.xcframework */; };
+		09B0C6AB267EF791008180A1 /* RxDataSources.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651F267ECC7400FB2F20 /* RxDataSources.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C6AC267EF7AC008180A1 /* RxRelay.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651B267ECC7400FB2F20 /* RxRelay.xcframework */; };
+		09B0C6AD267EF7AC008180A1 /* RxRelay.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651B267ECC7400FB2F20 /* RxRelay.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF673267ED85D00640D7C /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796527267ECC7400FB2F20 /* CocoaLumberjack.xcframework */; };
+		09FDF674267ED85D00640D7C /* CocoaLumberjack.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796527267ECC7400FB2F20 /* CocoaLumberjack.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF675267ED85F00640D7C /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796523267ECC7400FB2F20 /* CocoaLumberjackSwift.xcframework */; };
+		09FDF676267ED85F00640D7C /* CocoaLumberjackSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796523267ECC7400FB2F20 /* CocoaLumberjackSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF677267ED86300640D7C /* Differentiator.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796524267ECC7400FB2F20 /* Differentiator.xcframework */; };
+		09FDF678267ED86300640D7C /* Differentiator.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796524267ECC7400FB2F20 /* Differentiator.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF679267ED87300640D7C /* QuickTableViewController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796528267ECC7400FB2F20 /* QuickTableViewController.xcframework */; };
+		09FDF67A267ED87300640D7C /* QuickTableViewController.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796528267ECC7400FB2F20 /* QuickTableViewController.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF67B267ED87400640D7C /* Reachability.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796529267ECC7400FB2F20 /* Reachability.xcframework */; };
+		09FDF67C267ED87400640D7C /* Reachability.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796529267ECC7400FB2F20 /* Reachability.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF67D267ED87600640D7C /* Realm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651C267ECC7400FB2F20 /* Realm.xcframework */; };
+		09FDF67E267ED87600640D7C /* Realm.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651C267ECC7400FB2F20 /* Realm.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF67F267ED87700640D7C /* RealmSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796522267ECC7400FB2F20 /* RealmSwift.xcframework */; };
+		09FDF680267ED87700640D7C /* RealmSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796522267ECC7400FB2F20 /* RealmSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF681267ED87A00640D7C /* RxBlocking.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651E267ECC7400FB2F20 /* RxBlocking.xcframework */; };
+		09FDF682267ED87A00640D7C /* RxBlocking.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651E267ECC7400FB2F20 /* RxBlocking.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF683267ED87C00640D7C /* RxCocoa.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796521267ECC7400FB2F20 /* RxCocoa.xcframework */; };
+		09FDF684267ED87C00640D7C /* RxCocoa.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796521267ECC7400FB2F20 /* RxCocoa.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF685267ED87D00640D7C /* RxDataSources.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651F267ECC7400FB2F20 /* RxDataSources.xcframework */; };
+		09FDF686267ED87D00640D7C /* RxDataSources.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651F267ECC7400FB2F20 /* RxDataSources.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF687267ED87F00640D7C /* RxRealm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651D267ECC7400FB2F20 /* RxRealm.xcframework */; };
+		09FDF688267ED87F00640D7C /* RxRealm.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651D267ECC7400FB2F20 /* RxRealm.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF689267ED88100640D7C /* RxRelay.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651B267ECC7400FB2F20 /* RxRelay.xcframework */; };
+		09FDF68A267ED88100640D7C /* RxRelay.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651B267ECC7400FB2F20 /* RxRelay.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF68B267ED88300640D7C /* RxSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796526267ECC7400FB2F20 /* RxSwift.xcframework */; };
+		09FDF68C267ED88300640D7C /* RxSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796526267ECC7400FB2F20 /* RxSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF68D267ED88500640D7C /* SQLite.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651A267ECC7400FB2F20 /* SQLite.xcframework */; };
+		09FDF68E267ED88500640D7C /* SQLite.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979651A267ECC7400FB2F20 /* SQLite.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF68F267ED88700640D7C /* SteamController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796520267ECC7400FB2F20 /* SteamController.xcframework */; };
+		09FDF690267ED88700640D7C /* SteamController.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796520267ECC7400FB2F20 /* SteamController.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09FDF691267ED88B00640D7C /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09796525267ECC7400FB2F20 /* ZipArchive.xcframework */; };
+		09FDF692267ED88B00640D7C /* ZipArchive.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09796525267ECC7400FB2F20 /* ZipArchive.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
@@ -133,8 +195,6 @@
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
-		2882D23421DEBB4600AA0B5D /* SteamController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2882D23321DEBB4600AA0B5D /* SteamController.framework */; };
-		2882D23621DEBB6700AA0B5D /* SteamController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2882D23521DEBB6700AA0B5D /* SteamController.framework */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
 		378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
@@ -174,10 +234,6 @@
 		B316B4E3219269D800693472 /* PVYabause-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4E1219269D800693472 /* PVYabause-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; };
 		B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B317E5522274DD6B00F2C1C7 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10489218F212600210C39 /* CocoaLumberjack.framework */; };
-		B317E5532274DD6B00F2C1C7 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10491218F212700210C39 /* CocoaLumberjackSwift.framework */; };
-		B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F421919394009F4EDC /* RealmSwift.framework */; };
-		B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2F521919394009F4EDC /* RxRealm.framework */; };
 		B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
 		B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FF2191958D009F4EDC /* CoreGraphics.framework */; };
@@ -187,7 +243,6 @@
 		B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C307219195A8009F4EDC /* GLKit.framework */; };
 		B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C309219195AE009F4EDC /* AudioToolbox.framework */; };
 		B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30B219195BB009F4EDC /* SystemConfiguration.framework */; };
-		B324C30E219195C0009F4EDC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30D219195C0009F4EDC /* Security.framework */; };
 		B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C311219195CE009F4EDC /* CFNetwork.framework */; };
 		B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C313219195E0009F4EDC /* TVServices.framework */; };
 		B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; };
@@ -266,8 +321,6 @@
 		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
-		B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0E621A458940064EDCA /* Reachability.framework */; };
-		B369B0E921A4589E0064EDCA /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B369B0E821A4589E0064EDCA /* Reachability.framework */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -335,20 +388,6 @@
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
 		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
 		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E6DACE20B79F1000454DD4 /* CocoaLumberjack.framework */; };
-		B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B374932B2175667D00C65DD1 /* QuickTableViewController.framework */; };
-		B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10463218F20FC00210C39 /* Realm.framework */; };
-		B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10464218F20FC00210C39 /* RxRealm.framework */; };
-		B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10465218F20FD00210C39 /* SQLite.framework */; };
-		B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10467218F20FD00210C39 /* RealmSwift.framework */; };
-		B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046D218F20FE00210C39 /* RxSwift.framework */; };
-		B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10471218F20FE00210C39 /* CocoaLumberjackSwift.framework */; };
-		B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10472218F20FE00210C39 /* RxCocoa.framework */; };
-		B3B10498218F212800210C39 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10485218F212500210C39 /* SQLite.framework */; };
-		B3B1049D218F212800210C39 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048A218F212600210C39 /* Realm.framework */; };
-		B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1048E218F212700210C39 /* RxSwift.framework */; };
-		B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10490218F212700210C39 /* RxCocoa.framework */; };
-		B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10495218F212800210C39 /* QuickTableViewController.framework */; };
 		B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B3B104BE218F2EAA00210C39 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
@@ -416,8 +455,6 @@
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
-		B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B1046F218F20FE00210C39 /* ZipArchive.framework */; };
-		B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B10487218F212600210C39 /* ZipArchive.framework */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -449,10 +486,6 @@
 		B3F43DDE2169D42500CDD40A /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
 		B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
-		B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */; };
-		B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */; };
-		B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */; };
-		B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -464,8 +497,6 @@
 		B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869A2313835D00A9DDF6 /* RxRelay.framework */; };
-		B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD869C2313836B00A9DDF6 /* RxRelay.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -562,17 +593,33 @@
 				B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */,
 				B316B4DD219265B700693472 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
+				09FDF68E267ED88500640D7C /* SQLite.xcframework in Embed Frameworks */,
 				B324C650219216DD009F4EDC /* PVLibrary.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
+				09FDF68A267ED88100640D7C /* RxRelay.xcframework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B316B4E3219269D800693472 /* PVYabause-tvOS.framework in Embed Frameworks */,
 				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
+				09FDF676267ED85F00640D7C /* CocoaLumberjackSwift.xcframework in Embed Frameworks */,
+				09FDF688267ED87F00640D7C /* RxRealm.xcframework in Embed Frameworks */,
+				09FDF674267ED85D00640D7C /* CocoaLumberjack.xcframework in Embed Frameworks */,
+				09FDF678267ED86300640D7C /* Differentiator.xcframework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
+				09FDF68C267ED88300640D7C /* RxSwift.xcframework in Embed Frameworks */,
+				09FDF684267ED87C00640D7C /* RxCocoa.xcframework in Embed Frameworks */,
+				09FDF686267ED87D00640D7C /* RxDataSources.xcframework in Embed Frameworks */,
 				B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */,
+				09FDF67C267ED87400640D7C /* Reachability.xcframework in Embed Frameworks */,
+				09FDF690267ED88700640D7C /* SteamController.xcframework in Embed Frameworks */,
+				09FDF692267ED88B00640D7C /* ZipArchive.xcframework in Embed Frameworks */,
+				09FDF680267ED87700640D7C /* RealmSwift.xcframework in Embed Frameworks */,
+				09FDF67E267ED87600640D7C /* Realm.xcframework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
+				09FDF682267ED87A00640D7C /* RxBlocking.xcframework in Embed Frameworks */,
+				09FDF67A267ED87300640D7C /* QuickTableViewController.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -584,6 +631,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */,
+				09B0C68A267EF34B008180A1 /* QuickTableViewController.xcframework in Embed Frameworks */,
+				09B0C69A267EF394008180A1 /* ZipArchive.xcframework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */,
 				B324C6202192057E009F4EDC /* PVFCEU.framework in Embed Frameworks */,
@@ -592,17 +641,30 @@
 				B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */,
 				1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				09B0C68E267EF360008180A1 /* RealmSwift.xcframework in Embed Frameworks */,
 				B316B4DA219265AB00693472 /* PVVirtualJaguar.framework in Embed Frameworks */,
+				09B0C696267EF385008180A1 /* SQLite.xcframework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */,
+				09B0C698267EF38D008180A1 /* SteamController.xcframework in Embed Frameworks */,
+				09B0C694267EF379008180A1 /* RxSwift.xcframework in Embed Frameworks */,
 				B3AF701421916C3A000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
+				09B0C6A9267EF72D008180A1 /* Differentiator.xcframework in Embed Frameworks */,
 				B324C61E21920523009F4EDC /* ProSystem.framework in Embed Frameworks */,
+				09B0C6AD267EF7AC008180A1 /* RxRelay.xcframework in Embed Frameworks */,
 				B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */,
+				09B0C6A7267EF5F0008180A1 /* Reachability.xcframework in Embed Frameworks */,
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
+				09B0C688267EF331008180A1 /* CocoaLumberjackSwift.xcframework in Embed Frameworks */,
+				09B0C690267EF369008180A1 /* RxCocoa.xcframework in Embed Frameworks */,
+				09B0C686267EF32C008180A1 /* CocoaLumberjack.xcframework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				09B0C68C267EF359008180A1 /* Realm.xcframework in Embed Frameworks */,
+				09B0C6AB267EF791008180A1 /* RxDataSources.xcframework in Embed Frameworks */,
+				09B0C692267EF370008180A1 /* RxRealm.xcframework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B316B4E0219269C600693472 /* PVYabause.framework in Embed Frameworks */,
 			);
@@ -634,6 +696,23 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		09796519267ECC7400FB2F20 /* RxTest.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxTest.xcframework; path = Carthage/Build/RxTest.xcframework; sourceTree = "<group>"; };
+		0979651A267ECC7400FB2F20 /* SQLite.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SQLite.xcframework; path = Carthage/Build/SQLite.xcframework; sourceTree = "<group>"; };
+		0979651B267ECC7400FB2F20 /* RxRelay.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxRelay.xcframework; path = Carthage/Build/RxRelay.xcframework; sourceTree = "<group>"; };
+		0979651C267ECC7400FB2F20 /* Realm.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Realm.xcframework; path = Carthage/Build/Realm.xcframework; sourceTree = "<group>"; };
+		0979651D267ECC7400FB2F20 /* RxRealm.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxRealm.xcframework; path = Carthage/Build/RxRealm.xcframework; sourceTree = "<group>"; };
+		0979651E267ECC7400FB2F20 /* RxBlocking.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxBlocking.xcframework; path = Carthage/Build/RxBlocking.xcframework; sourceTree = "<group>"; };
+		0979651F267ECC7400FB2F20 /* RxDataSources.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxDataSources.xcframework; path = Carthage/Build/RxDataSources.xcframework; sourceTree = "<group>"; };
+		09796520267ECC7400FB2F20 /* SteamController.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SteamController.xcframework; path = Carthage/Build/SteamController.xcframework; sourceTree = "<group>"; };
+		09796521267ECC7400FB2F20 /* RxCocoa.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxCocoa.xcframework; path = Carthage/Build/RxCocoa.xcframework; sourceTree = "<group>"; };
+		09796522267ECC7400FB2F20 /* RealmSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RealmSwift.xcframework; path = Carthage/Build/RealmSwift.xcframework; sourceTree = "<group>"; };
+		09796523267ECC7400FB2F20 /* CocoaLumberjackSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CocoaLumberjackSwift.xcframework; path = Carthage/Build/CocoaLumberjackSwift.xcframework; sourceTree = "<group>"; };
+		09796524267ECC7400FB2F20 /* Differentiator.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Differentiator.xcframework; path = Carthage/Build/Differentiator.xcframework; sourceTree = "<group>"; };
+		09796525267ECC7400FB2F20 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
+		09796526267ECC7400FB2F20 /* RxSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxSwift.xcframework; path = Carthage/Build/RxSwift.xcframework; sourceTree = "<group>"; };
+		09796527267ECC7400FB2F20 /* CocoaLumberjack.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CocoaLumberjack.xcframework; path = Carthage/Build/CocoaLumberjack.xcframework; sourceTree = "<group>"; };
+		09796528267ECC7400FB2F20 /* QuickTableViewController.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = QuickTableViewController.xcframework; path = Carthage/Build/QuickTableViewController.xcframework; sourceTree = "<group>"; };
+		09796529267ECC7400FB2F20 /* Reachability.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Reachability.xcframework; path = Carthage/Build/Reachability.xcframework; sourceTree = "<group>"; };
 		1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Rx.swift"; sourceTree = "<group>"; };
 		1180B3172492A93F00636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		1180B31B2492A95400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
@@ -768,17 +847,12 @@
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
 		B3532C3B21A9AC93006CDA0F /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
-		B3532C3E21A9B681006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
-		B3532C4021A9B698006CDA0F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/tvOS/PromiseKit.framework; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsCell.swift; sourceTree = "<group>"; };
 		B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsHeaderCell.swift; sourceTree = "<group>"; };
 		B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemOverviewViewModel.swift; sourceTree = "<group>"; };
 		B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionsViewController.swift; sourceTree = "<group>"; };
 		B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spotlight.entitlements; sourceTree = "<group>"; };
-		B3589E33219E954C001C5E12 /* Answers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Answers.framework; path = Carthage/Build/iOS/Answers.framework; sourceTree = "<group>"; };
-		B3589E34219E954C001C5E12 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
-		B3589E35219E954D001C5E12 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
 		B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVSaveStateCollectionViewCell.xib; sourceTree = "<group>"; };
 		B35B31CA206CA04A00AEAF88 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLaunchingViewController.swift; sourceTree = "<group>"; };
@@ -795,10 +869,6 @@
 		B35E6C1F207ED7040040709A /* AppearanceStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyle.swift; sourceTree = "<group>"; };
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
-		B369B0D8219EA29A0064EDCA /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/tvOS/Fabric.framework; sourceTree = "<group>"; };
-		B369B0D9219EA29A0064EDCA /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/tvOS/Crashlytics.framework; sourceTree = "<group>"; };
-		B369B0E621A458940064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
-		B369B0E821A4589E0064EDCA /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		B369B0EA21A458F60064EDCA /* xcfilelists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = xcfilelists; path = Carthage/xcfilelists; sourceTree = "<group>"; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
@@ -914,8 +984,6 @@
 		B3DE5B1021B102F20066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3DE5B2521B110A80066069E /* ProvenanceShared_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProvenanceShared_tvOS.h; sourceTree = "<group>"; };
 		B3DE5B2621B110A90066069E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3DE5B3021B110C20066069E /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3DE5B3221B110C70066069E /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		B3E21D6B203211BE009939D3 /* Spotlight.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spotlight.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
@@ -932,18 +1000,12 @@
 		B3F43DD82169B94E00CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SaveStates.storyboard; sourceTree = "<group>"; };
 		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
-		B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/iOS/RxDataSources.framework; sourceTree = "<group>"; };
-		B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differentiator.framework; path = Carthage/Build/iOS/Differentiator.framework; sourceTree = "<group>"; };
-		B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = Carthage/Build/tvOS/RxDataSources.framework; sourceTree = "<group>"; };
-		B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differentiator.framework; path = Carthage/Build/tvOS/Differentiator.framework; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
 		B3F64ECE205CD1F100C273C7 /* JSButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSButton.swift; sourceTree = "<group>"; };
 		B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVButtonGroupOverlayView.swift; sourceTree = "<group>"; };
 		B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerManager.swift; sourceTree = "<group>"; };
 		B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerSelectionViewController.swift; sourceTree = "<group>"; };
 		B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVConflictViewController.swift; sourceTree = "<group>"; };
-		B3FD869A2313835D00A9DDF6 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
-		B3FD869C2313836B00A9DDF6 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/tvOS/RxRelay.framework; sourceTree = "<group>"; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		BE9FDCBE1C210B9F0046DF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -971,29 +1033,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B369B0E921A4589E0064EDCA /* Reachability.framework in Frameworks */,
 				B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */,
-				B3B1045E218F20FC00210C39 /* CocoaLumberjack.framework in Frameworks */,
-				B3B10482218F20FE00210C39 /* CocoaLumberjackSwift.framework in Frameworks */,
-				B3FD869B2313835D00A9DDF6 /* RxRelay.framework in Frameworks */,
-				B3B10460218F20FC00210C39 /* QuickTableViewController.framework in Frameworks */,
-				B3B10474218F20FE00210C39 /* Realm.framework in Frameworks */,
-				B3B10478218F20FE00210C39 /* RealmSwift.framework in Frameworks */,
 				55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B3F5A92421A68BDB000BB0A5 /* RxDataSources.framework in Frameworks */,
+				09B0C685267EF32C008180A1 /* CocoaLumberjack.xcframework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
-				B3F5A92521A68BDB000BB0A5 /* Differentiator.framework in Frameworks */,
-				B3B10483218F20FE00210C39 /* RxCocoa.framework in Frameworks */,
-				B3B10475218F20FE00210C39 /* RxRealm.framework in Frameworks */,
-				B3B1047E218F20FE00210C39 /* RxSwift.framework in Frameworks */,
-				B3B10476218F20FE00210C39 /* SQLite.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
 				B324C61F2192057E009F4EDC /* PVFCEU.framework in Frameworks */,
 				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
+				09B0C68D267EF360008180A1 /* RealmSwift.xcframework in Frameworks */,
 				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
+				09B0C697267EF38D008180A1 /* SteamController.xcframework in Frameworks */,
 				B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */,
 				1180B3182492A94200636C8A /* CoreServices.framework in Frameworks */,
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
@@ -1002,31 +1054,41 @@
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
+				09B0C695267EF385008180A1 /* SQLite.xcframework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				B3CDEECD21D4D0D0000C55F7 /* ZipArchive.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				B316B4DF219269C600693472 /* PVYabause.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
+				09B0C68B267EF359008180A1 /* Realm.xcframework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				B3AF701321916C3A000FA7F9 /* PVLibrary.framework in Frameworks */,
+				09B0C6A8267EF72D008180A1 /* Differentiator.xcframework in Frameworks */,
 				B324C61D21920523009F4EDC /* ProSystem.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
 				B3AF701021916C30000FA7F9 /* PVSupport.framework in Frameworks */,
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				09B0C687267EF331008180A1 /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				09B0C6AC267EF7AC008180A1 /* RxRelay.xcframework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
+				09B0C693267EF379008180A1 /* RxSwift.xcframework in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				09B0C68F267EF369008180A1 /* RxCocoa.xcframework in Frameworks */,
+				09B0C6A6267EF5F0008180A1 /* Reachability.xcframework in Frameworks */,
+				09B0C699267EF394008180A1 /* ZipArchive.xcframework in Frameworks */,
+				09B0C689267EF34B008180A1 /* QuickTableViewController.xcframework in Frameworks */,
+				09B0C6AA267EF791008180A1 /* RxDataSources.xcframework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
-				2882D23421DEBB4600AA0B5D /* SteamController.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
+				09B0C691267EF370008180A1 /* RxRealm.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1039,53 +1101,53 @@
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
-				B324C30E219195C0009F4EDC /* Security.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
+				09FDF679267ED87300640D7C /* QuickTableViewController.xcframework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
-				B317E5522274DD6B00F2C1C7 /* CocoaLumberjack.framework in Frameworks */,
-				B317E5532274DD6B00F2C1C7 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
+				09FDF685267ED87D00640D7C /* RxDataSources.xcframework in Frameworks */,
+				09FDF68F267ED88700640D7C /* SteamController.xcframework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
-				B3FD869D2313836B00A9DDF6 /* RxRelay.framework in Frameworks */,
+				09FDF673267ED85D00640D7C /* CocoaLumberjack.xcframework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B324C6222192059E009F4EDC /* PVMednafen.framework in Frameworks */,
+				09FDF67D267ED87600640D7C /* Realm.xcframework in Frameworks */,
 				14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */,
+				09FDF67B267ED87400640D7C /* Reachability.xcframework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */,
+				09FDF681267ED87A00640D7C /* RxBlocking.xcframework in Frameworks */,
 				B3AF701C21916E38000FA7F9 /* PVSupport.framework in Frameworks */,
+				09FDF68D267ED88500640D7C /* SQLite.xcframework in Frameworks */,
+				09FDF675267ED85F00640D7C /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				B316B4E2219269D800693472 /* PVYabause-tvOS.framework in Frameworks */,
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
-				B3F5A92921A68C9E000BB0A5 /* Differentiator.framework in Frameworks */,
-				B3B104A8218F212800210C39 /* QuickTableViewController.framework in Frameworks */,
-				B369B0E721A458940064EDCA /* Reachability.framework in Frameworks */,
-				B3B1049D218F212800210C39 /* Realm.framework in Frameworks */,
-				B324C2F721919394009F4EDC /* RealmSwift.framework in Frameworks */,
-				B3B104A3218F212800210C39 /* RxCocoa.framework in Frameworks */,
-				B3F5A92821A68C9E000BB0A5 /* RxDataSources.framework in Frameworks */,
-				B324C2F821919394009F4EDC /* RxRealm.framework in Frameworks */,
-				B3B104A1218F212800210C39 /* RxSwift.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
-				B3B10498218F212800210C39 /* SQLite.framework in Frameworks */,
-				B3CDEECE21D4D22E000C55F7 /* ZipArchive.framework in Frameworks */,
-				2882D23621DEBB6700AA0B5D /* SteamController.framework in Frameworks */,
 				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
+				09FDF67F267ED87700640D7C /* RealmSwift.xcframework in Frameworks */,
 				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
+				09FDF689267ED88100640D7C /* RxRelay.xcframework in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
 				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
 				B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				09FDF683267ED87C00640D7C /* RxCocoa.xcframework in Frameworks */,
 				B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				09FDF68B267ED88300640D7C /* RxSwift.xcframework in Frameworks */,
 				B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */,
 				B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */,
 				B3B3B9761DED14A100602746 /* PVMupen64Plus.framework in Frameworks */,
 				B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */,
+				09FDF687267ED87F00640D7C /* RxRealm.xcframework in Frameworks */,
+				09FDF691267ED88B00640D7C /* ZipArchive.xcframework in Frameworks */,
+				09FDF677267ED86300640D7C /* Differentiator.xcframework in Frameworks */,
 				B316B4D22192652000693472 /* PVReicast.framework in Frameworks */,
 				B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */,
 			);
@@ -1209,24 +1271,24 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				09796527267ECC7400FB2F20 /* CocoaLumberjack.xcframework */,
+				09796523267ECC7400FB2F20 /* CocoaLumberjackSwift.xcframework */,
+				09796524267ECC7400FB2F20 /* Differentiator.xcframework */,
+				09796528267ECC7400FB2F20 /* QuickTableViewController.xcframework */,
+				09796529267ECC7400FB2F20 /* Reachability.xcframework */,
+				0979651C267ECC7400FB2F20 /* Realm.xcframework */,
+				09796522267ECC7400FB2F20 /* RealmSwift.xcframework */,
+				0979651E267ECC7400FB2F20 /* RxBlocking.xcframework */,
+				09796521267ECC7400FB2F20 /* RxCocoa.xcframework */,
+				0979651F267ECC7400FB2F20 /* RxDataSources.xcframework */,
+				0979651D267ECC7400FB2F20 /* RxRealm.xcframework */,
+				0979651B267ECC7400FB2F20 /* RxRelay.xcframework */,
+				09796526267ECC7400FB2F20 /* RxSwift.xcframework */,
+				09796519267ECC7400FB2F20 /* RxTest.xcframework */,
+				0979651A267ECC7400FB2F20 /* SQLite.xcframework */,
+				09796520267ECC7400FB2F20 /* SteamController.xcframework */,
+				09796525267ECC7400FB2F20 /* ZipArchive.xcframework */,
 				C13CC82823CABE2800463EDD /* Photos.framework */,
-				B3FD869A2313835D00A9DDF6 /* RxRelay.framework */,
-				B3FD869C2313836B00A9DDF6 /* RxRelay.framework */,
-				B3DE5B3221B110C70066069E /* PVLibrary.framework */,
-				B3DE5B3021B110C20066069E /* PVSupport.framework */,
-				B3532C3E21A9B681006CDA0F /* PromiseKit.framework */,
-				B3532C4021A9B698006CDA0F /* PromiseKit.framework */,
-				B3F5A92221A68BDB000BB0A5 /* Differentiator.framework */,
-				B3F5A92721A68C9E000BB0A5 /* Differentiator.framework */,
-				B3F5A92121A68BDB000BB0A5 /* RxDataSources.framework */,
-				B3F5A92621A68C9E000BB0A5 /* RxDataSources.framework */,
-				B369B0E621A458940064EDCA /* Reachability.framework */,
-				B369B0E821A4589E0064EDCA /* Reachability.framework */,
-				B369B0D9219EA29A0064EDCA /* Crashlytics.framework */,
-				B369B0D8219EA29A0064EDCA /* Fabric.framework */,
-				B3589E33219E954C001C5E12 /* Answers.framework */,
-				B3589E34219E954C001C5E12 /* Crashlytics.framework */,
-				B3589E35219E954D001C5E12 /* Fabric.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 			);
@@ -1869,7 +1931,6 @@
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
-				6W8N7WB7Z36QWEFVAW5LHTNV /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -1892,7 +1953,6 @@
 				1A44C0AE1D0A1E730018751A /* Script: Set Build Number */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
-				0CO5J70NW5JDTTZ5BCHAVYZE /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -2126,27 +2186,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0CO5J70NW5JDTTZ5BCHAVYZE /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/ProvenanceTV-inputPaths.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = Carthage;
-			outputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/ProvenanceTV-outputPaths.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-			showEnvVarsInLog = 0;
-		};
 		1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2205,27 +2244,6 @@
 			name = Carthage;
 			outputFileListPaths = (
 				"$(SRCROOT)/Carthage/xcfilelists/Provenance Tests-outputPaths.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-			showEnvVarsInLog = 0;
-		};
-		6W8N7WB7Z36QWEFVAW5LHTNV /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/Provenance-inputPaths.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = Carthage;
-			outputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/Provenance-outputPaths.xcfilelist",
 			);
 			outputPaths = (
 			);
@@ -2807,6 +2825,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2839,13 +2858,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-Free.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2863,9 +2882,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125ios.provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2887,12 +2906,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-Free.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2911,9 +2930,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125ios.provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -2938,13 +2957,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2969,9 +2988,9 @@
 					"@executable_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125.provenance;
 				PRODUCT_NAME = Provenance;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
@@ -2995,12 +3014,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3026,11 +3046,13 @@
 					"@executable_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125.provenance;
 				PRODUCT_NAME = Provenance;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -3239,7 +3261,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125ios.provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.provenance-emu.provenance";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
@@ -3584,12 +3606,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -3606,9 +3628,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.extension.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125ios.provenance.extension.spotlight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.extension.spotlight";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG EXTENSION";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -3632,13 +3654,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3656,9 +3678,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.extension.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsxc125ios.provenance.extension.spotlight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.extension.spotlight";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
 				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
@@ -3677,12 +3699,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3701,9 +3723,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jsxc125.provenance.topshelf-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.topshelf-extension tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
@@ -3721,12 +3743,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
+				DEVELOPMENT_TEAM = EX9Q95JKRZ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3746,9 +3768,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.topshelf-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jsxc125.provenance.topshelf-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.provenance-emu.provenance.topshelf-extension tvos";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";

@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09B0C6A1267EF540008180A1 /* RxRelay.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09B0C6A0267EF540008180A1 /* RxRelay.xcframework */; };
+		09B0C6A2267EF540008180A1 /* RxRelay.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09B0C6A0267EF540008180A1 /* RxRelay.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09B0C6A4267EF5B3008180A1 /* RxDataSources.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09B0C6A3267EF5B3008180A1 /* RxDataSources.xcframework */; };
+		09B0C6A5267EF5B3008180A1 /* RxDataSources.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09B0C6A3267EF5B3008180A1 /* RxDataSources.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
@@ -33,8 +37,6 @@
 		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B31EF0D824DE1714003F8FB1 /* RxRealm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11D381FB247D9A82005594A2 /* RxRealm.framework */; };
-		B31EF0D924DE1714003F8FB1 /* RxRealm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 11D381FB247D9A82005594A2 /* RxRealm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2EC219192FF009F4EDC /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
@@ -437,7 +439,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B31EF0D924DE1714003F8FB1 /* RxRealm.framework in Embed Frameworks */,
+				09B0C6A5267EF5B3008180A1 /* RxDataSources.xcframework in Embed Frameworks */,
+				09B0C6A2267EF540008180A1 /* RxRelay.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -464,6 +467,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		09B0C6A0267EF540008180A1 /* RxRelay.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxRelay.xcframework; path = ../Carthage/Build/RxRelay.xcframework; sourceTree = "<group>"; };
+		09B0C6A3267EF5B3008180A1 /* RxDataSources.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxDataSources.xcframework; path = ../Carthage/Build/RxDataSources.xcframework; sourceTree = "<group>"; };
 		112E7E2E247EF3840050431C /* PVGameLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibrary.swift; sourceTree = "<group>"; };
 		1180B31D2492A9B400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B31F2492A9C200636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
@@ -897,11 +902,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */,
+				09B0C6A4267EF5B3008180A1 /* RxDataSources.xcframework in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
-				B31EF0D824DE1714003F8FB1 /* RxRealm.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
+				09B0C6A1267EF540008180A1 /* RxRelay.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -932,8 +938,10 @@
 			isa = PBXGroup;
 			children = (
 				B3AF6FB72191600A000FA7F9 /* iOS */,
+				09B0C6A0267EF540008180A1 /* RxRelay.xcframework */,
 				B3AF6FB621916002000FA7F9 /* tvOS */,
 				B3AF6FA121915EE8000FA7F9 /* Carthage */,
+				09B0C6A3267EF5B3008180A1 /* RxDataSources.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
