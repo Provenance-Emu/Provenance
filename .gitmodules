@@ -21,7 +21,7 @@
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
 [submodule "Cores/Reicast/reicast-emulator"]
 	path = Cores/Reicast/reicast-emulator
-	url = https://github.com/JoeMatt/reicast-emulator.git
+	url = https://github.com/Provenance-Emu/reicast-emulator.git
 [submodule "Cores/PokeMini/PokeMini-libretro"]
 	path = Cores/PokeMini/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
