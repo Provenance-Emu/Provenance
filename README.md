@@ -3,7 +3,9 @@
 <h4 align="center" style="text-align: center; align: center">An iOS & tvOS Frontend for Multiple Emulators</h4>
 </p>
 
-![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
+<p align="center">
+  <img width="128" height="128" src="https://gblobscdn.gitbook.com/spaces%2F-LcssjTrcP7HWLfsYZCJ%2Favatar.png">
+</p>
 
 <div style="align:center" align="center">
 <a href="https://github.com/provenance-emu/Provenance/network">
