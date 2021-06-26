@@ -36,7 +36,7 @@
 	url = https://github.com/ashleymills/Reachability.swift.git
 [submodule "Carthage/Checkouts/RxDataSources"]
 	path = Carthage/Checkouts/RxDataSources
-	url = https://github.com/RxSwiftCommunity/RxDataSources.git
+	url = https://github.com/Provenance-EMU/RxDataSources.git
 [submodule "Carthage/Checkouts/SQLite.swift"]
 	url = https://github.com/stephencelis/SQLite.swift.git
 	path = Carthage/Checkouts/SQLite.swift

@@ -1,6 +1,8 @@
 # App
 github "bcylin/QuickTableViewController"
 #github "RxSwiftCommunity/RxDataSources"
+#github "Provenance-EMU/RxDataSources"
+
 github "zydeco/SteamController"
 
 # PVSupport
