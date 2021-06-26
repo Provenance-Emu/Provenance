@@ -27,7 +27,7 @@
 	url = https://github.com/libretro/PokeMini.git
 [submodule "Carthage/Checkouts/RxRealm"]
 	path = Carthage/Checkouts/RxRealm
-	url = https://github.com/cheif/RxRealm.git
+	url = https://github.com/RxSwiftCommunity/RxRealm.git
 [submodule "Carthage/Checkouts/RxSwift"]
 	path = Carthage/Checkouts/RxSwift
 	url = https://github.com/ReactiveX/RxSwift.git
