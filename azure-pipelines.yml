@@ -8,9 +8,12 @@ pool:
 
 variables:
   scheme: 'Provenance'
-  sdk: 'iphonesimulator'
-  configuration: 'Debug'
+  sdk: 'iphonesimulator' # 'iphoneos'
+  configuration: 'Debug' # 'Release'
   carthage-platform: 'iOS'
+  name: $(Build.SourceBranchName)
+  tag: $(Build.BuildNumber)
+  xcode-version: '12.5.1'
 
 steps:
 
@@ -20,15 +23,22 @@ steps:
 
 - task: Cache@2
   inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
+    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved'
     path: Carthage/Build
   displayName: Carthage cache
 
 # This seems to be needed to force carthage to use the same version of XCode as the build/run steps
-- script: sudo xcode-select -s "/Applications/Xcode_12.2.app"
+- script: >-
+    sudo xcode-select
+    -s '/Applications/Xcode_$(xcode-version).app'
 
-- script: |
-    ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug --cache-builds
+- script: >-
+    ./carthage.sh
+    bootstrap
+    --platform $(carthage-platform)
+    --configuration ${$(echo "{0}" | tr "[:upper:]" "[:lower:]" | tr -d "-")}
+    --use-xcframeworks
+    --cache-builds
   displayName: Carthage bootstrap
 
 - task: Xcode@5
@@ -39,7 +49,7 @@ steps:
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: true
     destinationPlatformOption: iOS
-    destinationSimulators: iPhone 8
+    destinationSimulators: iPhone XS
   displayName: Building project
 
 - task: Xcode@5
@@ -50,5 +60,5 @@ steps:
     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
     packageApp: true
     destinationPlatformOption: iOS
-    destinationSimulators: iPhone 8
+    destinationSimulators: iPhone XS
   displayName: Running tests
