@@ -16,6 +16,4 @@ github "stephencelis/SQLite.swift"
 
 # Rx
 github "ReactiveX/RxSwift"
-
-# Contains a fix for tvOS building with XCode 11.5+
 github "RxSwiftCommunity/RxRealm"
