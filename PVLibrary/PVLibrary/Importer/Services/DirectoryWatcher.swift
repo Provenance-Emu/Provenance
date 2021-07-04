@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import PVSupport
+@_exported import PVSupport
 import ZipArchive
 
 public typealias PVExtractionStartedHandler = (_ path: URL) -> Void

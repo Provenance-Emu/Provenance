@@ -27,7 +27,7 @@
 	url = https://github.com/libretro/PokeMini.git
 [submodule "Carthage/Checkouts/RxRealm"]
 	path = Carthage/Checkouts/RxRealm
-	url = https://github.com/cheif/RxRealm.git
+	url = https://github.com/RxSwiftCommunity/RxRealm.git
 [submodule "Carthage/Checkouts/RxSwift"]
 	path = Carthage/Checkouts/RxSwift
 	url = https://github.com/ReactiveX/RxSwift.git
@@ -36,7 +36,7 @@
 	url = https://github.com/ashleymills/Reachability.swift.git
 [submodule "Carthage/Checkouts/RxDataSources"]
 	path = Carthage/Checkouts/RxDataSources
-	url = https://github.com/RxSwiftCommunity/RxDataSources.git
+	url = https://github.com/Provenance-EMU/RxDataSources.git
 [submodule "Carthage/Checkouts/SQLite.swift"]
 	url = https://github.com/stephencelis/SQLite.swift.git
 	path = Carthage/Checkouts/SQLite.swift

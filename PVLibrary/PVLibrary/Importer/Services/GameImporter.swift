@@ -9,7 +9,7 @@
 
 import CoreSpotlight
 import Foundation
-import PVSupport
+@_exported import PVSupport
 import RealmSwift
 import SQLite
 

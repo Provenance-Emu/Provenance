@@ -9,8 +9,8 @@ protocol AbstractRepository {
     func queryAll() -> Observable<[T]>
     func query(with predicate: NSPredicate,
                sortDescriptors: [NSSortDescriptor]) -> Observable<[T]>
-    func save(entity: T) -> Observable<()>
-    func delete(entity: T) -> Observable<()>
+//    func save(entity: T) -> Observable<()>
+//    func delete(entity: T) -> Observable<()>
 }
 
 final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.RealmType.DomainType, T.RealmType: Object {
@@ -36,7 +36,7 @@ final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.R
             return Observable.array(from: objects)
                 .mapToDomain()
         }
-        .subscribeOn(scheduler)
+        .subscribe(on: scheduler)
     }
 
     func query(with _: NSPredicate,
@@ -52,18 +52,18 @@ final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.R
             return Observable.array(from: objects)
                 .mapToDomain()
         }
-        .subscribeOn(scheduler)
+        .subscribe(on: scheduler)
     }
 
-    func save(entity: T) -> Observable<()> {
-        return Observable.deferred {
-            self.realm.rx.save(entity: entity)
-        }.subscribeOn(scheduler)
-    }
-
-    func delete(entity: T) -> Observable<()> {
-        return Observable.deferred {
-            self.realm.rx.delete(entity: entity)
-        }.subscribeOn(scheduler)
-    }
+//    func save(entity: T) -> Observable<()> {
+//        return Observable.deferred {
+//            self.realm.rx.save(entity: entity)
+//        }.subscribe(on:scheduler)
+//    }
+//
+//    func delete(entity: T) -> Observable<()> {
+//        return Observable.deferred {
+//            self.realm.rx.delete()
+//        }.subscribe(on:scheduler)
+//    }
 }
