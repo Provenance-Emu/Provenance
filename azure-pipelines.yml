@@ -13,7 +13,8 @@ variables:
   carthage-platform: 'iOS'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
-  xcode-version: '12.5.1'
+  # xcode-version: '12.5.1'
+  xcode-version: '12.4'
 
 steps:
 
