@@ -12,7 +12,7 @@ import RxRealm
 import RxSwift
 import UIKit
 
-protocol PVCheatsViewControllerDelegate: class {
+protocol PVCheatsViewControllerDelegate: AnyObject {
     func cheatsViewControllerDone(_ cheatsViewController: PVCheatsViewController)
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
         code: String,
@@ -61,7 +61,7 @@ final class PVCheatsViewController: UITableViewController {
         
             
         for cheat in allCheats {
-            NSLog("Cheat Found \(cheat.code) \(cheat.type)")
+            NSLog("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
             // start disabled to prevent bad cheat code from crashing the game all the time
             if (isFirstLoad) {
                 let realm = try! Realm()
