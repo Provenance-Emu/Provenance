@@ -90,7 +90,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                     LibrarySerializer.storeMetadata(cheatsState, completion: { result in
                         switch result {
                         case let .success(url):
-                            ILOG("Serialzed cheats state metadata to (\(url.path))")
+                            ILOG("Serialized cheats state metadata to (\(url.path))")
                         case let .error(error):
                             ELOG("Failed to serialize cheats metadata. \(error)")
                         }

@@ -150,7 +150,7 @@
 
 -(BOOL)startWebDavServer {
     if (_webDavServer.isRunning) {
-        NSLog(@"WebDav Server is already running");
+        NSLog(@"WebDAV Server is already running");
         return YES;
     }
     
@@ -171,7 +171,7 @@
     BOOL success = [self.webDavServer startWithOptions:webDavSeverOptions
                                             error:&error];
     if (!success) {
-        NSLog(@"Failed to start WebDav Server with error: %@", error.localizedDescription);
+        NSLog(@"Failed to start WebDAV Server with error: %@", error.localizedDescription);
     }
 
     return success;
