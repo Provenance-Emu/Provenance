@@ -94,13 +94,12 @@ final class PVCheatsViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if navigationController?.viewControllers.count == 1 {
-            if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
+        if navigationController?.viewControllers.count == 1,
+            let emulatorViewController = presentingViewController as? PVEmulatorViewController {
                 emulatorViewController.core.setPauseEmulation(false)
                 emulatorViewController.isShowingMenu = false
                 emulatorViewController.enableControllerInput(false)
                 emulatorViewController.setIsFirstLoad(isFirstLoad: false)
-            }
         }
     
     }
