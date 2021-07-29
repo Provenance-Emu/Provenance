@@ -643,7 +643,6 @@ extension GameLaunchingViewController where Self: UIViewController {
                 }))
 
                 #if os(tvOS)
-                    // Restart Always…
                     alert.addAction(UIAlertAction(title: "Restart (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
                         PVSettingsModel.shared.askToAutoLoad = false
                         PVSettingsModel.shared.autoLoadSaves = false
@@ -651,8 +650,8 @@ extension GameLaunchingViewController where Self: UIViewController {
                     }))
                 #endif
 
-                // Continue…
-                alert.addAction(UIAlertAction(title: "Continue…", style: .default, handler: { (_: UIAlertAction) -> Void in
+                // Continue
+                alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_: UIAlertAction) -> Void in
                     #if os(iOS)
                         if switchControl.isOn {
                             PVSettingsModel.shared.askToAutoLoad = false
@@ -663,8 +662,8 @@ extension GameLaunchingViewController where Self: UIViewController {
                 }))
 
                 #if os(tvOS)
-                    // Continue Always…
-                    alert.addAction(UIAlertAction(title: "Continue… (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
+                    // Continue Always
+                    alert.addAction(UIAlertAction(title: "Continue (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
                         PVSettingsModel.shared.askToAutoLoad = false
                         PVSettingsModel.shared.autoLoadSaves = true
                         completion(latestSaveState)
