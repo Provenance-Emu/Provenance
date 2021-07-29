@@ -168,7 +168,7 @@ extension GameSharingViewController where Self: UIViewController {
             hud.isUserInteractionEnabled = false
             hud.mode = .indeterminate
             hud.labelText = "Creating ZIP"
-            hud.detailsLabelText = "Please be patient, this may take a while..."
+            hud.detailsLabelText = "Please be patient, this may take a while…"
 
             DispatchQueue.global(qos: .background).async {
                 let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
@@ -405,7 +405,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         for core in cores {
             let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
-                let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)...", preferredStyle: .actionSheet)
+                let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)…", preferredStyle: .actionSheet)
                 if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
                     alwaysUseAlert.popoverPresentationController?.sourceView = senderView
                     alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds

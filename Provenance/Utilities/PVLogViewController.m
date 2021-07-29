@@ -287,7 +287,7 @@
             [self hideLumberJackUI];
                 // Register for updates
             [[PVLogging sharedInstance] removeListner:self];
-            [self updateText:@"Loading..."];
+            [self updateText:@"Loading…"];
 
             __weak PVLogViewController *weakSelf = self;
             
