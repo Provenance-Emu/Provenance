@@ -862,6 +862,7 @@ static void FinalizeSamplesAudioCallback(void *)
 
         S9xDeleteCheats();
 
+        BOOL cheatListSuccessfull = YES;
         NSArray *multipleCodes = [[NSArray alloc] init];
 
         // Apply enabled cheats found in dictionary
@@ -880,6 +881,8 @@ static void FinalizeSamplesAudioCallback(void *)
                             NSLog(@"Code %@ applied successfully", singleCode);
                             S9xEnableCheatGroup(Cheat.g.size () - 1);
                         } else {
+                            cheatListSuccessfull = NO;
+                            [cheatList removeObjectForKey:code];
                             NSLog(@"Code %@ failed", singleCode);
                         }
                     }
@@ -890,7 +893,7 @@ static void FinalizeSamplesAudioCallback(void *)
         S9xCheatsEnable();
         
         // if no error til this point, return true
-        return YES;
+        return cheatListSuccessfull;
     }
 }
 
