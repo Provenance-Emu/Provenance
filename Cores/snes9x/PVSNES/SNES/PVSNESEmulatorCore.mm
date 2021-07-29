@@ -876,9 +876,12 @@ static void FinalizeSamplesAudioCallback(void *)
                     // Sanitize for PAR codes that might contain colons
                     const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
                     if (singleCode != nil && singleCode.length > 0) {
-                        NSLog(@"Applying Code %@",singleCode);
-                        S9xAddCheatGroup("Provenance", cheatCode);
-                        S9xEnableCheatGroup(Cheat.g.size () - 1);
+                        if (S9xAddCheatGroup("Provenance", cheatCode) >= 0) {
+                            NSLog(@"Code %@ applied successfully", singleCode);
+                            S9xEnableCheatGroup(Cheat.g.size () - 1);
+                        } else {
+                            NSLog(@"Code %@ failed", singleCode);
+                        }
                     }
                 }
             }
