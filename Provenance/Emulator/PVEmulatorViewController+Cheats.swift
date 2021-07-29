@@ -101,6 +101,9 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 }
                 // All done successfully
                 completion(.success)
+            } else {
+                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
+                completion(.error(.coreCheatsError(error)))
             }
         } else {
             WLOG("Core \(core.description) doesn't support cheats states.")
