@@ -16,7 +16,7 @@ public struct AnimatableSectionModel<Section: IdentifiableType, ItemType: Identi
         self.model = model
         self.items = items
     }
-    
+
 }
 
 extension AnimatableSectionModel
@@ -32,12 +32,11 @@ extension AnimatableSectionModel
         self.model = original.model
         self.items = items
     }
-    
+
     public var hashValue: Int {
         return self.model.identity.hashValue
     }
 }
-
 
 extension AnimatableSectionModel
     : CustomStringConvertible {
@@ -50,7 +49,7 @@ extension AnimatableSectionModel
 
 extension AnimatableSectionModel
     : Equatable where Section: Equatable {
-    
+
     public static func == (lhs: AnimatableSectionModel, rhs: AnimatableSectionModel) -> Bool {
         return lhs.model == rhs.model
             && lhs.items == rhs.items

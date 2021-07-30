@@ -48,18 +48,18 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
                 let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)) \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
                 timeStampLabel.text = timeText
-                
+
                 #if os(tvOS)
                 // Set up initial textColor for the savestate labels to match the other titles and allow for animation to white for our popup effect when focussed
                     timeStampLabel.textColor = UIColor.darkGray
                     titleLabel.textColor = UIColor.darkGray
                     coreLabel.textColor = UIColor.darkGray
-                    
+
                 // Set up nicer Save State image filtering on tvOS
                     imageView.layer.shouldRasterize = true
                     imageView.layer.rasterizationScale = 2.0
                 #endif
-                
+
                 guard let game = saveState.game, let system = game.system, !system.cores.isEmpty else {
                     let gameNil = saveState.game == nil ? "true" : "false"
                     let systemNil = saveState.game?.system == nil ? "true" : "false"

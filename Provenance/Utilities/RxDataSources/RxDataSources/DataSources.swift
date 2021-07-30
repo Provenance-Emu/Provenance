@@ -8,7 +8,7 @@
 
 import Foundation
 
-//@_exported import Differentiator
+// @_exported import Differentiator
 
 enum RxDataSourceError: Error {
   case preconditionFailed(message: String)

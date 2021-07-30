@@ -36,7 +36,6 @@ extension Int64 : IdentifiableType {
 
 }
 
-
 extension UInt : IdentifiableType {
 
 }
@@ -54,6 +53,5 @@ extension UInt32 : IdentifiableType {
 }
 
 extension UInt64 : IdentifiableType {
-    
-}
 
+}

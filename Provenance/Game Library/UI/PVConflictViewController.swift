@@ -11,7 +11,7 @@ import PVLibrary
 import PVSupport
 import UIKit
 import RxSwift
-//import RxDataSources
+// import RxDataSources
 
 final class PVConflictViewController: UITableViewController {
     let conflictsController: ConflictsController

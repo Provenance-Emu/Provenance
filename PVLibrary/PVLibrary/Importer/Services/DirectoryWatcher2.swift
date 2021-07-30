@@ -59,7 +59,7 @@ public extension BehaviorRelay where Element: SetAlgebra {
         self.accept(set)
         return inserted
     }
-    
+
     func remove(_ element: Element.Element) -> Element.Element? {
         var set = self.value
         let removed = set.remove(element)

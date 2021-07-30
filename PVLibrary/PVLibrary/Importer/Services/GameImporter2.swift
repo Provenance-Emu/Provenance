@@ -47,13 +47,13 @@ extension URL {
     }
 }
 
-//struct ImportCandiate2 {
+// struct ImportCandiate2 {
 //    let url: URL
 //
 //    var isFileArchive: Promise<Bool> { return Promise { self.url.isFileArchive } }
-//}
+// }
 
-//public final class ImporterService {
+// public final class ImporterService {
 //    public static let shared: ImporterService = ImporterService()
 //
 //    private let dispaseBag = DisposeBag()
@@ -103,4 +103,4 @@ extension URL {
      y. multi-match, move to conflicts
 
      */
-//}b
+// }b
