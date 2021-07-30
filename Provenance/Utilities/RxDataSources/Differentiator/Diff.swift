@@ -115,9 +115,9 @@ public enum Diff {
         return indexedSections
     }
 
-    //================================================================================
+    // ================================================================================
     //  Optimizations because Swift dictionaries are extremely slow (ARC, bridging ...)
-    //================================================================================
+    // ================================================================================
     // swift dictionary optimizations {
 
     private struct OptimizedIdentity<Identity: Hashable> : Hashable {
@@ -577,8 +577,7 @@ public enum Diff {
 
                         finalSectionData[i].event = moveType
                         initialSectionData[oldSectionIndex].event = moveType
-                    }
-                    else {
+                    } else {
                         finalSectionData[i].event = .inserted
                     }
                 }
@@ -665,7 +664,7 @@ public enum Diff {
                     try precondition(false, "Unhandled case in initial sections")
                 }
             }
-            
+
             for i in 0 ..< finalSections.count {
                 switch finalSectionData[i].event {
                 case .inserted:
@@ -674,80 +673,78 @@ public enum Diff {
                     break
                 }
             }
-            
+
             if insertedSections.isEmpty && movedSections.isEmpty {
                 return []
             }
-            
+
             // sections should be in place, but items should be original without deleted ones
             let sectionsAfterChange: [Section] = try self.finalSections.enumerated().map { i, s -> Section in
                 let event = self.finalSectionData[i].event
-                
+
                 if event == .inserted {
                     // it's already set up
                     return s
-                }
-                else if event == .moved || event == .movedAutomatically {
+                } else if event == .moved || event == .movedAutomatically {
                     let originalSectionIndex = try finalSectionData[i].moveIndex.unwrap()
                     let originalSection = initialSections[originalSectionIndex]
-                    
+
                     var items: [Section.Item] = []
                     items.reserveCapacity(originalSection.items.count)
                     let itemAssociatedData = self.initialItemData[originalSectionIndex]
                     for j in 0 ..< originalSection.items.count {
                         let initialData = itemAssociatedData[j]
-                        
+
                         guard initialData.event != .deleted else {
                             continue
                         }
-                        
+
                         guard let finalIndex = initialData.moveIndex else {
                             try precondition(false, "Item was moved, but no final location.")
                             continue
                         }
-                        
+
                         items.append(finalItemCache[finalIndex.sectionIndex][finalIndex.itemIndex])
                     }
-                    
+
                     let modifiedSection = try Section(safeOriginal: s, safeItems: items)
-                    
+
                     return modifiedSection
-                }
-                else {
+                } else {
                     try precondition(false, "This is weird, this shouldn't happen")
                     return s
                 }
             }
-            
+
             return [Changeset(
                 finalSections: sectionsAfterChange,
                 insertedSections:  insertedSections,
                 movedSections: movedSections
                 )]
         }
-        
+
         mutating func generateInsertAndMovedItems() throws -> [Changeset<Section>] {
             var insertedItems = [ItemPath]()
             var movedItems = [(from: ItemPath, to: ItemPath)]()
-            
+
             // mark new and moved items {
             // 3rd stage
             for i in 0 ..< finalSections.count {
                 let finalSection = finalSections[i]
-                
+
                 let sectionEvent = finalSectionData[i].event
                 // new and deleted sections cause reload automatically
                 if sectionEvent != .moved && sectionEvent != .movedAutomatically {
                     continue
                 }
-                
+
                 for j in 0 ..< finalSection.items.count {
                     let currentItemEvent = finalItemData[i][j].event
-                    
+
                     try precondition(currentItemEvent != .untouched, "Current event is not untouched")
-                    
+
                     let event = finalItemData[i][j].event
-                    
+
                     switch event {
                     case .inserted:
                         insertedItems.append(ItemPath(sectionIndex: i, itemIndex: j))
@@ -755,7 +752,7 @@ public enum Diff {
                         let originalIndex = try finalItemData[i][j].moveIndex.unwrap()
                         let finalSectionIndex = try initialSectionData[originalIndex.sectionIndex].moveIndex.unwrap()
                         let moveFromItemWithIndex = try initialItemData[originalIndex.sectionIndex][originalIndex.itemIndex].indexAfterDelete.unwrap()
-                        
+
                         let moveCommand = (
                             from: ItemPath(sectionIndex: finalSectionIndex, itemIndex: moveFromItemWithIndex),
                             to: ItemPath(sectionIndex: i, itemIndex: j)
@@ -767,7 +764,7 @@ public enum Diff {
                 }
             }
             // }
-            
+
             if insertedItems.isEmpty && movedItems.isEmpty {
                 return []
             }

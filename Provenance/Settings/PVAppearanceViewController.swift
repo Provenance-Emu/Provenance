@@ -79,7 +79,7 @@ final class PVAppearanceViewController: UITableViewController {
         }
         #if os(tvOS)
             self.tableView.backgroundColor = .black
-            self.tableView.mask = nil;
+            self.tableView.mask = nil
         #endif
         if indexPath.section == 0 {
             if indexPath.row == 0 {

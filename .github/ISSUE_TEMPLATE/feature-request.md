@@ -1,10 +1,10 @@
 ---
 name: Feature Request
 about: Suggest an idea for this project
-title: ''
+title: 'Feature Request'
 labels: request
-assignees: ''
-
+assignees: 'JoeMatt'
+tag: feature
 ---
 
 <!--- DISCLAIMERS ---------------------------------------------------------------

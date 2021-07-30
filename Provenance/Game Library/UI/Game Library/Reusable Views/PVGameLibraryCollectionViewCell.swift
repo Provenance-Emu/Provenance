@@ -967,7 +967,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     self.titleLabel.transform = .identity
                     self.titleLabel.textColor = UIColor.darkGray
                     self.titleLabel.font = UIFont.systemFont(ofSize: 20)
-                    //self.titleLabel.alpha = 0.0
+                    // self.titleLabel.alpha = 0.0
                     if PVSettingsModel.shared.showGameBadges {
                         if #available(tvOS 11, *) {} else {
                             if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.alpha = 1.0 }
