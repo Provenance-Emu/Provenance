@@ -25,7 +25,7 @@ struct ServicesOptions: OptionSet {
 
     static let iOSOnly: ServicesOptions = all.subtracting(.tvOS)
 
-    static var isOfficialBuild: Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.provenance")
+    static var isOfficialBuild: Bool = Bundle.main.bundleIdentifier!.contains("org.provenance-emu.provenance")
 }
 
 enum ServicePlatforms {
