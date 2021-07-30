@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>$(APP_DISPLAY_NAME)</string>
+	<string>Provenance</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -75,7 +75,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2775</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -122,7 +122,7 @@
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.com.provenance-emu.provenance</key>
+		<key>iCloud.org.provenance-emu.provenance</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>

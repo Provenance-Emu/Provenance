@@ -1,19 +1,4 @@
 # App
-github "bcylin/QuickTableViewController"
 #github "RxSwiftCommunity/RxDataSources"
 #github "Provenance-EMU/RxDataSources"
-
 github "zydeco/SteamController"
-
-# PVSupport
-github "CocoaLumberjack/CocoaLumberjack"
-github "ashleymills/Reachability.swift"
-
-# PVLibrary
-github "ZipArchive/ZipArchive"
-github "realm/realm-cocoa"
-github "stephencelis/SQLite.swift"
-
-# Rx
-github "ReactiveX/RxSwift"
-github "RxSwiftCommunity/RxRealm"

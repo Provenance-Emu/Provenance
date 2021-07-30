@@ -8,14 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
-		0979653C267ECF9100FB2F20 /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653B267ECF9100FB2F20 /* CocoaLumberjack.xcframework */; };
-		0979653D267ECF9100FB2F20 /* CocoaLumberjack.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653B267ECF9100FB2F20 /* CocoaLumberjack.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		09796540267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653F267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework */; };
-		09796541267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653F267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		09B0C69B267EF3D3008180A1 /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653B267ECF9100FB2F20 /* CocoaLumberjack.xcframework */; };
-		09B0C69C267EF3D3008180A1 /* CocoaLumberjack.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653B267ECF9100FB2F20 /* CocoaLumberjack.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		09B0C69E267EF3D7008180A1 /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653F267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework */; };
-		09B0C69F267EF3D7008180A1 /* CocoaLumberjackSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0979653F267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
@@ -29,6 +21,10 @@
 		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
 		B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
 		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
+		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
+		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F326B398A900960A81 /* Reachability */; };
+		B336B8F626B3991500960A81 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F526B3991500960A81 /* CocoaLumberjack */; };
+		B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F726B3991500960A81 /* CocoaLumberjackSwift */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -102,6 +98,7 @@
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDC219161BC000FA7F9 /* Foundation.framework */; };
 		B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDE219161C0000FA7F9 /* GameController.framework */; };
+		B3B492CB26B3A96B000B426B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3B492CA26B3A96B000B426B /* Reachability */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
@@ -151,30 +148,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		0979653E267ECF9100FB2F20 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				09796541267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework in Embed Frameworks */,
-				0979653D267ECF9100FB2F20 /* CocoaLumberjack.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		09B0C69D267EF3D3008180A1 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				09B0C69F267EF3D7008180A1 /* CocoaLumberjackSwift.xcframework in Embed Frameworks */,
-				09B0C69C267EF3D3008180A1 /* CocoaLumberjack.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3532B4421A7C01D006CDA0F /* Carthage Copy */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -302,11 +275,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B336B8F626B3991500960A81 /* CocoaLumberjack in Frameworks */,
+				B3B492CB26B3A96B000B426B /* Reachability in Frameworks */,
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
-				09796540267ECF9600FB2F20 /* CocoaLumberjackSwift.xcframework in Frameworks */,
-				0979653C267ECF9100FB2F20 /* CocoaLumberjack.xcframework in Frameworks */,
+				B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,10 +288,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09B0C69E267EF3D7008180A1 /* CocoaLumberjackSwift.xcframework in Frameworks */,
+				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
-				09B0C69B267EF3D3008180A1 /* CocoaLumberjack.xcframework in Frameworks */,
+				B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -671,13 +645,17 @@
 				B3C96E991D62C3A3003F1E93 /* Sources */,
 				B3C96E9A1D62C3A3003F1E93 /* Frameworks */,
 				B3C96E9C1D62C3A3003F1E93 /* Resources */,
-				0979653E267ECF9100FB2F20 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "PVSupport-tvOS";
+			packageProductDependencies = (
+				B336B8F526B3991500960A81 /* CocoaLumberjack */,
+				B336B8F726B3991500960A81 /* CocoaLumberjackSwift */,
+				B3B492CA26B3A96B000B426B /* Reachability */,
+			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -690,13 +668,16 @@
 				B3C96EBF1D62C5E7003F1E93 /* Sources */,
 				B3C96EC71D62C5E7003F1E93 /* Frameworks */,
 				B3C96ED21D62C5E7003F1E93 /* Resources */,
-				09B0C69D267EF3D3008180A1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "PVSupport-iOS";
+			packageProductDependencies = (
+				B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */,
+				B336B8F326B398A900960A81 /* Reachability */,
+			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -737,6 +718,10 @@
 				Base,
 			);
 			mainGroup = 1ACEA63B17F7467D0031B1C9;
+			packageReferences = (
+				B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
+				B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
+			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1064,7 +1049,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1329,7 +1314,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1376,7 +1361,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1439,6 +1424,53 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.7.2;
+			};
+		};
+		B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+		B336B8F326B398A900960A81 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
+		};
+		B336B8F526B3991500960A81 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		B336B8F726B3991500960A81 /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+		B3B492CA26B3A96B000B426B /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1ACEA63C17F7467D0031B1C9 /* Project object */;
 }

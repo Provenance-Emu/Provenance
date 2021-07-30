@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		09B0C6A1267EF540008180A1 /* RxRelay.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09B0C6A0267EF540008180A1 /* RxRelay.xcframework */; };
-		09B0C6A2267EF540008180A1 /* RxRelay.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09B0C6A0267EF540008180A1 /* RxRelay.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
@@ -60,6 +58,16 @@
 		B3274E802106BDD300857F52 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
+		B336B8FB26B399B400960A81 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8FA26B399B400960A81 /* RxCocoa */; };
+		B336B8FF26B399B400960A81 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8FE26B399B400960A81 /* RxSwift */; };
+		B336B90126B399E200960A81 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90026B399E200960A81 /* RxSwift */; };
+		B336B90326B39A1200960A81 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90226B39A1200960A81 /* RxCocoa */; };
+		B336B90626B39ABA00960A81 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90526B39ABA00960A81 /* RxRealm */; };
+		B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90B26B39ACB00960A81 /* RxRealm */; };
+		B336B90F26B39BCF00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90E26B39BCF00960A81 /* SQLite */; };
+		B336B91126B39BDA00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91026B39BDA00960A81 /* SQLite */; };
+		B336B91426B3A0E200960A81 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91326B3A0E200960A81 /* ZipArchive */; };
+		B336B91626B3A0EB00960A81 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91526B3A0EB00960A81 /* ZipArchive */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B354E78E219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
 		B354E78F219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
@@ -99,8 +107,6 @@
 		B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B378227121D40A360077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FCE21916106000FA7F9 /* RxSwift.framework */; };
-		B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700621916979000FA7F9 /* RxSwift.framework */; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
@@ -431,17 +437,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B31EF0DA24DE1715003F8FB1 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				09B0C6A2267EF540008180A1 /* RxRelay.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C04B6C21078CD900E7AF79 /* Copy Framework */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -484,6 +479,7 @@
 		B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
 		B3274E832106BF2F00857F52 /* PVImageFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVImageFile.swift; sourceTree = "<group>"; };
 		B3274E852106BFD000857F52 /* ImportCandidateFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCandidateFile.swift; sourceTree = "<group>"; };
+		B336B90726B39AC200960A81 /* RxRealm.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RxRealm.xcframework; path = ../Carthage/Build/RxRealm.xcframework; sourceTree = "<group>"; };
 		B354E785219A76C80041F971 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		B354E786219A76C80041F971 /* BIOS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BIOS.swift; sourceTree = "<group>"; };
 		B354E787219A76C80041F971 /* PlistDataModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlistDataModels.swift; sourceTree = "<group>"; };
@@ -897,12 +893,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B378227221D40A4C0077E86F /* RxSwift.framework in Frameworks */,
+				B336B90F26B39BCF00960A81 /* SQLite in Frameworks */,
+				B336B8FF26B399B400960A81 /* RxSwift in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
+				B336B8FB26B399B400960A81 /* RxCocoa in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
-				09B0C6A1267EF540008180A1 /* RxRelay.xcframework in Frameworks */,
+				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
+				B336B91426B3A0E200960A81 /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -910,11 +909,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B378227121D40A360077E86F /* RxSwift.framework in Frameworks */,
+				B336B91126B39BDA00960A81 /* SQLite in Frameworks */,
+				B336B90326B39A1200960A81 /* RxCocoa in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
+				B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
+				B336B90126B399E200960A81 /* RxSwift in Frameworks */,
 				1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */,
 				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
+				B336B91626B3A0EB00960A81 /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -932,6 +935,7 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B336B90726B39AC200960A81 /* RxRealm.xcframework */,
 				B3AF6FB72191600A000FA7F9 /* iOS */,
 				09B0C6A0267EF540008180A1 /* RxRelay.xcframework */,
 				B3AF6FB621916002000FA7F9 /* tvOS */,
@@ -1770,13 +1774,19 @@
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
-				B31EF0DA24DE1715003F8FB1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "PVLibrary-iOS";
+			packageProductDependencies = (
+				B336B8FA26B399B400960A81 /* RxCocoa */,
+				B336B8FE26B399B400960A81 /* RxSwift */,
+				B336B90526B39ABA00960A81 /* RxRealm */,
+				B336B90E26B39BCF00960A81 /* SQLite */,
+				B336B91326B3A0E200960A81 /* ZipArchive */,
+			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1795,6 +1805,13 @@
 			dependencies = (
 			);
 			name = "PVLibrary-tvOS";
+			packageProductDependencies = (
+				B336B90026B399E200960A81 /* RxSwift */,
+				B336B90226B39A1200960A81 /* RxCocoa */,
+				B336B90B26B39ACB00960A81 /* RxRealm */,
+				B336B91026B39BDA00960A81 /* SQLite */,
+				B336B91526B3A0EB00960A81 /* ZipArchive */,
+			);
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1849,6 +1866,12 @@
 				Base,
 			);
 			mainGroup = B3579D052106B11D00DDEBD6;
+			packageReferences = (
+				B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */,
+				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */,
+			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2325,7 +2348,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -2366,7 +2389,6 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2410,7 +2432,6 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2505,7 +2526,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2565,7 +2586,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2607,7 +2628,6 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2651,7 +2671,6 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2694,7 +2713,6 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2738,7 +2756,6 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2852,6 +2869,94 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 6.2.0;
+			};
+		};
+		B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxRealm.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ZipArchive/ZipArchive";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B336B8FA26B399B400960A81 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		B336B8FE26B399B400960A81 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		B336B90026B399E200960A81 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		B336B90226B39A1200960A81 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		B336B90526B39ABA00960A81 /* RxRealm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */;
+			productName = RxRealm;
+		};
+		B336B90B26B39ACB00960A81 /* RxRealm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */;
+			productName = RxRealm;
+		};
+		B336B90E26B39BCF00960A81 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		B336B91026B39BDA00960A81 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		B336B91326B3A0E200960A81 /* ZipArchive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */;
+			productName = ZipArchive;
+		};
+		B336B91526B3A0EB00960A81 /* ZipArchive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */;
+			productName = ZipArchive;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3579D062106B11D00DDEBD6 /* Project object */;
 }
