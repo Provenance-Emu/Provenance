@@ -9,7 +9,7 @@ pool:
 variables:
   scheme: 'Provenance'
   sdk: 'iphonesimulator' # 'iphoneos'
-  configuration: 'Release' # 'Release'
+  configuration: 'Debug' # 'Release'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
   CertificateFileName: 'itunes-adhoc.p12'
