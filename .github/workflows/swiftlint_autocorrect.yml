@@ -1,0 +1,23 @@
+# Rebase PR branch when someone comments /rebase
+on:
+  issue_comment:
+    types: [created]
+  # pull_request:
+  #   paths:
+  #     - ".github/workflows/swiftlint.yml"
+  #     - ".swiftlint.yml"
+  #     - "Headlinez/**/*.swift"
+  #     - "HeadlinezNotificationExtensions/**/*.swift"
+  #     - "HeadlinezTests/**/*.swift"
+name: Automatic Swift Lint Autocorrect
+jobs:
+  lint-autocorrect:
+    name: SwiftLint Autocorrect
+    if: contains(github.event.comment.body, '/swiftlint autocorrect')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: GitHub Action for SwiftLint
+        uses: JoeMatt/action-swiftlint@3dd0ef1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
