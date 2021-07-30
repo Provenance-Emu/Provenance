@@ -2689,11 +2689,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 }
 
 
-- (void)setPSXCheatCodes
+- (BOOL)setPSXCheatCodes
 {
     @synchronized(self) {
         // Apply enabled cheats found in dictionary
         // int cheatIdx=0;
+
+        BOOL cheatListSuccessfull = YES;
 
         for (id key in cheatList)
         {
@@ -2731,19 +2733,25 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                             }
                         }
                         @catch (...) {
-                           NSLog(@"Game Code Error");
+                            cheatListSuccessfull = NO;
+                            [cheatList removeObjectForKey:singleCode];
+                            NSLog(@"Game Code Error");
                         }
                     }
                 }
             }
         }
+        return cheatListSuccessfull;
     }
 }
 
 
-- (void)setSNESCheatCodes
+- (BOOL)setSNESCheatCodes
 {
     @synchronized(self) {
+
+        BOOL cheatListSuccessfull = YES;
+
         for (id key in cheatList)
         {
             if ([[cheatList valueForKey:key] isEqual:@YES])
@@ -2773,18 +2781,24 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                             }
                         }
                         @catch (...) {
-                           NSLog(@"Game Code Error");
+                            cheatListSuccessfull = NO;
+                            [cheatList removeObjectForKey:singleCode];
+                            NSLog(@"Game Code Error");
                         }
                     }
                 }
             }
         }
+        return cheatListSuccessfull;
     }
 }
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
 {
     @synchronized(self) {
+
+        BOOL cheatListSuccessfull;
+
         if (!(self.getCheatSupport)) {
             return false;
         }
@@ -2798,16 +2812,16 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
         switch (self.systemType) {
             case MednaSystemPSX:
-                self.setPSXCheatCodes;
+                cheatListSuccessfull = self.setPSXCheatCodes;
                 break;
             case MednaSystemSNES:
-                self.setSNESCheatCodes;
+                cheatListSuccessfull = self.setSNESCheatCodes;
                 break;
         }
 
         Mednafen::MDFNMP_ApplyPeriodicCheats();
         // if no error til this point, return true
-        return YES;
+        return cheatListSuccessfull;
     }
 }
 //- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {

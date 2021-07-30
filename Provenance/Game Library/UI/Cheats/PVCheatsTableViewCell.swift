@@ -16,8 +16,7 @@ final class PVCheatsTableViewCell: UITableViewCell {
     public var cheat: PVCheats!
     
     #if os(iOS)
-    @IBOutlet public var
-        enableSwitch: UISwitch!
+    @IBOutlet public var enableSwitch: UISwitch!
     #endif
     
     #if os(tvOS)
@@ -38,9 +37,6 @@ final class PVCheatsTableViewCell: UITableViewCell {
         realm.beginWrite();
         cheat.enabled = enabled;
         try! realm.commitWrite();
-        #if os(tvOS)
-        enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
-        #endif
         delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
             in
             switch result {

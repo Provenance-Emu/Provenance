@@ -215,6 +215,10 @@ final class PVCheatsViewController: UITableViewController {
             case .success:
                 break
             case let .error(error):
+                let realm = try! Realm()
+                realm.beginWrite();
+                cheat.enabled = !(cheat.enabled);
+                try! realm.commitWrite();
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
