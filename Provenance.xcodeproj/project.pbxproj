@@ -454,7 +454,7 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3F31D2326B4A4CD003A5E09 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3F31D2226B4A4CD003A5E09 /* AltKit */; };
+		B3F31D2326B4A4CD003A5E09 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3F31D2226B4A4CD003A5E09 /* AltKit */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3F31D2526B4A57C003A5E09 /* AltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F31D2426B4A57C003A5E09 /* AltKitService.swift */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
