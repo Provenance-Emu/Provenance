@@ -1140,7 +1140,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
             let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-            if fetchResult.count > 0 {
+            if !fetchResult.isEmpty {
                 let lastPhoto = fetchResult.lastObject
 
                 imagePickerActionSheet.addAction(UIAlertAction(title: "Use Latest Photo", style: .default, handler: { (action) in

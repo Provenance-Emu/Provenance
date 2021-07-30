@@ -190,17 +190,16 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     @IBAction func
         saveButtonTapped(_ sender: Any) {
         #if os(iOS)
-        if (codeText.text.count > 0) {
-            play()
-        }
+            if !codeText.text.isEmpty {
+                play()
+            }
         #endif
         #if os(tvOS)
-        let fieldValue=codeTextField.text ?? ""
-        if (fieldValue.count > 0) {
-            play()
-        }
+            let fieldValue=codeTextField.text ?? ""
+            if !fieldValue.isEmpty {
+                play()
+            }
         #endif
-
     }
 
     @IBAction func
@@ -218,7 +217,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         #endif
         #if os(tvOS)
         let fieldValue = self.codeTextField.text ?? ""
-        if (fieldValue.count > 0) {
+        if !fieldValue.isEmpty {
             self.delegate?.saveCheatCode(
                 code: fieldValue,
                 type: typeText.text!,
