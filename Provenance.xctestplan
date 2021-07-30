@@ -20,13 +20,6 @@
     {
       "target" : {
         "containerPath" : "container:Provenance.xcodeproj",
-        "identifier" : "B3DE5B0621B102F10066069E",
-        "name" : "ProvenanceSharedTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Provenance.xcodeproj",
         "identifier" : "1AD9AA341ACC988F00EC87A0",
         "name" : "Provenance Tests"
       }

@@ -19,7 +19,7 @@ import QuartzCore
 import Reachability
 import RealmSwift
 import RxCocoa
-import RxDataSources
+//import RxDataSources
 import RxSwift
 import UIKit
 
@@ -614,7 +614,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
     }
 
-    fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.")
+    fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("org.provenance-emu.")
 
     var transitioningToSize: CGSize?
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
