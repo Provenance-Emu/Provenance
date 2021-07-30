@@ -19,7 +19,7 @@ import QuartzCore
 import Reachability
 import RealmSwift
 import RxCocoa
-import RxDataSources
+//import RxDataSources
 import RxSwift
 import UIKit
 
@@ -614,7 +614,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
     }
 
-    fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("com.provenance-emu.")
+    fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("org.provenance-emu.")
 
     var transitioningToSize: CGSize?
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -820,7 +820,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                         hud.isUserInteractionEnabled = false
                         hud.mode = .indeterminate
                         hud.labelText = "Migrating Game Library"
-                        hud.detailsLabelText = "Please be patient, this may take a while..."
+                        hud.detailsLabelText = "Please be patient, this may take a while…"
                     case .pathsToImport(let paths):
                         hud.hide(true)
                         let _ = self.gameImporter.importFiles(atPaths: paths)
@@ -841,7 +841,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             self.displayConflictVC()
         }))
 
-        alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Nah, I'll do it later…", style: .cancel, handler: nil))
         self.present(alert, animated: true) { () -> Void in }
 
         ILOG("Encountered conflicts, should be showing message")
@@ -942,7 +942,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
 
             // Action to Open with...
-            actionSheet.addAction(UIAlertAction(title: "Open with...", style: .default, handler: { [unowned self] _ in
+            actionSheet.addAction(UIAlertAction(title: "Open with…", style: .default, handler: { [unowned self] _ in
                 self.presentCoreSelection(forGame: game, sender: sender)
             }))
         }
@@ -1282,7 +1282,7 @@ extension PVGameLibraryViewController {
         hud.isUserInteractionEnabled = false
         hud.mode = .indeterminate
         hud.labelText = "Migrating Game Library"
-        hud.detailsLabelText = "Please be patient, this may take a while..."
+        hud.detailsLabelText = "Please be patient, this may take a while…"
     }
 
     @objc public func databaseMigrationFinished(_: Notification) {

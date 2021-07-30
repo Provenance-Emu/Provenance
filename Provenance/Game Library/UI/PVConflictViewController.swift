@@ -11,7 +11,7 @@ import PVLibrary
 import PVSupport
 import UIKit
 import RxSwift
-import RxDataSources
+//import RxDataSources
 
 final class PVConflictViewController: UITableViewController {
     let conflictsController: ConflictsController
@@ -49,7 +49,7 @@ final class PVConflictViewController: UITableViewController {
         let rows = conflictsController.conflicts
             .map({ conflicts -> [Row] in
                 if conflicts.isEmpty {
-                    return [.empty(title: ""), .empty(title: ""), .empty(title: "No Conflicts...")]
+                    return [.empty(title: ""), .empty(title: ""), .empty(title: "No Conflicts…")]
                 } else {
                     return conflicts.map { .conflict($0) }
                 }

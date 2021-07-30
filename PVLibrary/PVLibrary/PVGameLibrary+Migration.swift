@@ -134,7 +134,7 @@ private extension Reactive where Base: FileManager {
                 let urls = try self.base.contentsOfDirectory(at: path, includingPropertiesForKeys: includingPropertiesForKeys, options: options)
                 observer(.success(urls))
             } catch {
-                observer(.error(error))
+                observer(.failure(error))
             }
             return Disposables.create()
         }

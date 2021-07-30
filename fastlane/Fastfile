@@ -34,10 +34,10 @@ SCHEMES =  ["Provenance-Release", "ProvenanceTV-Release"]
 TEST_SCHEMES = []
 TEST_DEVICES = ["iPad Air"]
 
-REQUIRED_XCODE_VERSION = '10.2'.freeze
+REQUIRED_XCODE_VERSION = '12.0'.freeze
 
 default_platform(:ios)
-$dev_domain = ENV['DEV_DOMAIN'] || 'com.provenance-emu'
+$dev_domain = ENV['DEV_DOMAIN'] || 'org.provenance-emu'
 
 ## Fastlane imports
 # The URL of the repository to import the Fastfile from.
@@ -50,7 +50,7 @@ FASTLANE_GIT_PATH = 'Fastlane'
 # Multiple conditions can be used to select the latest version within constraints.
 # eg; [">= 1.1.0", "< 2.0.0"] 
 FASTLANE_GIT_VERSION = [">= 1.0.0", "< 2.0.0"]
-IMPORTS = ["Build", "Carthage", "Certs", "Rome", "Publish", "CI", "Badge", "Testing", "Install", "Enviroment"]
+IMPORTS = ["Build", "Certs", "Publish", "CI", "Badge", "Testing", "Install", "Enviroment"]
 FASTLANE_IMPORT_LOCAL = true
 
 platform :ios do

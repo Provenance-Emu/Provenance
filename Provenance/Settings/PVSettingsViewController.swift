@@ -223,7 +223,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         var libraryRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
                 text: "Launch Web Server",
-                detailText: .subtitle("Import/Export ROMs, saves, cover art..."),
+                detailText: .subtitle("Import/Export ROMs, saves, cover art…"),
                 icon: nil,
                 customization: nil,
                 action: { [weak self] _ in
