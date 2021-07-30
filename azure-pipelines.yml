@@ -29,7 +29,7 @@ steps:
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: true
     destinationPlatformOption: iOS
-    destinationSimulators: iPhone XS
+    destinationSimulators: iPhone 12
   displayName: Building project
 
 - task: Xcode@5
