@@ -627,7 +627,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                         textField.delegate = textEditBlocker // Weak ref
 
                         switchControl.translatesAutoresizingMaskIntoConstraints = false
-                        switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+                        switchControl.transform = CGAffineTransform(scaleX: 0.55, y: 0.55)
                     }
                 #endif
 
