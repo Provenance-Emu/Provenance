@@ -165,6 +165,16 @@ Provenance would not be possible without the great work of those who came before
 
 <sub>The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).</sub>
 
+### Collaborators
+
+<!-- readme: collaborators -start -->
+<!-- readme: collaborators -end -->
+
+### Contributors
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
+
 ----
 
 #### Provenance License
