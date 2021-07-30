@@ -10,7 +10,6 @@ variables:
   scheme: 'Provenance'
   sdk: 'iphonesimulator' # 'iphoneos'
   configuration: 'Debug' # 'Release'
-  carthage-platform: 'iOS'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
   # xcode-version: '12.5.1'
@@ -21,26 +20,6 @@ steps:
 - checkout: self # self represents the repo where the initial Pipelines YAML file was found
   clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
   submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
-
-- task: Cache@2
-  inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved'
-    path: Carthage/Build
-  displayName: Carthage cache
-
-# This seems to be needed to force carthage to use the same version of XCode as the build/run steps
-- script: >-
-    sudo xcode-select
-    -s '/Applications/Xcode_$(xcode-version).app'
-
-- script: >-
-    ./carthage.sh
-    bootstrap
-    --platform $(carthage-platform)
-    --configuration ${$(echo "{0}" | tr "[:upper:]" "[:lower:]" | tr -d "-")}
-    --use-xcframeworks
-    --cache-builds
-  displayName: Carthage bootstrap
 
 - task: Xcode@5
   inputs:
