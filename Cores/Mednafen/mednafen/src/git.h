@@ -507,6 +507,16 @@ struct CustomPalette_Spec
  unsigned valid_entry_count[32];	// 0-terminated
 };
 
+// 4-byte RGB-colorspace xxx888 support is required by all emulation modules, so it's not specified here.
+enum
+{
+ EVFSUPPORT_NONE    = 0,
+
+ EVFSUPPORT_8BPP    = 0x01,	// Palette
+ EVFSUPPORT_RGB555  = 0x02,
+ EVFSUPPORT_RGB565  = 0x04
+};
+
 struct GameFile
 {
  VirtualFS* const vfs;
@@ -555,7 +565,7 @@ struct GameDB_Database
  std::vector<GameDB_Entry> Entries;
 };
 
-typedef struct
+struct MDFNGI
 {
  /* Private functions to Mednafen.  Do not call directly
     from the driver code, or else bad things shall happen.  Maybe.  Probably not, but don't
@@ -622,7 +632,6 @@ typedef struct
  uint64 CPInfoActiveBF;			// 1 = 0, 2 = 1, 4 = 2, 8 = 3, etc. (to allow for future expansion for systems that might need
 					// multiple custom palette files, without having to go back and restructure this data).
 
-
  const CheatInfoStruct& CheatInfo;
 
  bool SaveStateAltersState;	// true for bsnes and some libco-style emulators, false otherwise.
@@ -664,6 +673,9 @@ typedef struct
  // May be deprecated in the future due to many systems having slight frame rate programmability.
  uint32 fps;
 
+ // Additional video format support, in addition to the required 4-byte RGB-colorspace xxx888 support.
+ uint32 ExtraVideoFormatSupport; // = EVFSUPPORT_NONE
+
  // multires is a hint that, if set, indicates that the system has fairly programmable video modes(particularly, the ability
  // to display multiple horizontal resolutions, such as the PCE, PC-FX, or Genesis).  In practice, it will cause the driver
  // code to set the linear interpolation on by default.
@@ -690,11 +702,14 @@ typedef struct
  int fb_height;		// Height of the framebuffer passed to the Emulate() function(not necessarily height of the image)
 
  int soundchan; 	// Number of output sound channels.  Only values of 1 and 2 are currently supported.
-
-
+ //
+ //
+ //
+ //
+ //
  int rotated;
 
- std::string name;    /* Game name, UTF-8 encoding */
+ std::string name;    // Game name, UTF-8 encoding
  uint8 MD5[16];
 
  VideoSystems VideoSystem;
@@ -702,25 +717,24 @@ typedef struct
 
  RMD_Layout* RMD;
 
- const char *cspecial;  /* Special cart expansion: DIP switches, barcode reader, etc. */
+ // Special cart expansion: DIP switches, barcode reader, etc.
+ const char* cspecial;
 
- std::vector<DesiredInputType> DesiredInput; // Desired input devices and default switch positions for the input ports
+ // Desired input devices and default switch positions for the input ports
+ std::vector<DesiredInputType> DesiredInput;
 
  double IdealSoundRate;
 
  // For mouse relative motion.
  double mouse_sensitivity;
 
-
  //
  // For absolute coordinates(IDIT_X_AXIS and IDIT_Y_AXIS), usually mapped to a mouse(hence the naming).
  //
  float mouse_scale_x, mouse_scale_y;
  float mouse_offs_x, mouse_offs_y; 
-} MDFNGI;
+};
 
 }
-
-#include "file.h"
 
 #endif

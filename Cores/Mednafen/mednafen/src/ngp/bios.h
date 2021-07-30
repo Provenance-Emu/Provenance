@@ -42,7 +42,7 @@
 namespace MDFN_IEN_NGP
 {
 
-extern uint8 ngpc_bios[0x10000];
+MDFN_HIDE extern uint8 ngpc_bios[0x10000];
 
 void iBIOSHLE(void);
 

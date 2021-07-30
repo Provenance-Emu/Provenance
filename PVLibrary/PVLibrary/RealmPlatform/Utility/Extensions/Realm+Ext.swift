@@ -11,11 +11,11 @@ extension Object {
     }
 }
 
-extension SortDescriptor {
-    init(sortDescriptor: NSSortDescriptor) {
-        self.init(keyPath: sortDescriptor.key ?? "", ascending: sortDescriptor.ascending)
-    }
-}
+// extension SortDescriptor {
+//    init(sortDescriptor: NSSortDescriptor) {
+//        self.init(keyPath: sortDescriptor.key ?? "", ascending: sortDescriptor.ascending)
+//    }
+// }
 
 extension Reactive where Base == Realm {
     func save<R: RealmRepresentable>(entity: R, update: Bool = true) -> Observable<()> where R.RealmType: Object {

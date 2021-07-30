@@ -112,6 +112,7 @@ void sms_reset(void)
     sms.fm_detect   = 0x00;
     sms.memctrl     = 0xAB;
     sms.ioctrl      = 0xFF;
+    sms.cycle_counter = 0;
 }
 
 }

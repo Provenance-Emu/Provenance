@@ -32,10 +32,8 @@ final class PVSliderCell: SliderCell {
             slider.isContinuous = false
         #else
             bg.backgroundColor = UIColor.clear
-            if #available(tvOS 10.0, *) {
-                self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-                self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-            }
+            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
+            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
         #endif
         backgroundView = bg
     }

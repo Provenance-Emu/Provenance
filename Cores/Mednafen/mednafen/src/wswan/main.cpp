@@ -618,6 +618,7 @@ static const std::vector<InputPortInfoStruct> PortInfo =
 #ifdef WANT_DEBUGGER
 static DebuggerInfoStruct DBGInfo =
 {
+ false,
  "shift_jis",
  7 + 1 + 8,	// Fixme, probably not right...  maximum number of prefixes + 1 for opcode + 4 for operand(go with 8 to be safe)
  1,             // Instruction alignment(bytes)
@@ -652,7 +653,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_WSWAN;
 
-MDFNGI EmulatedWSwan =
+MDFN_HIDE extern const MDFNGI EmulatedWSwan =
 {
  "wswan",
  "WonderSwan",
@@ -693,6 +694,9 @@ MDFNGI EmulatedWSwan =
  WSwanSettings,
  MDFN_MASTERCLOCK_FIXED(3072000),
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false, // Multires possible?
 
  224,   // lcm_width

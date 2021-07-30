@@ -119,7 +119,7 @@
 
 -(BOOL)startWWWUploadServer {
     if (_webServer.isRunning) {
-        NSLog(@"Web Server alreading running");
+        NSLog(@"Web Server is already running");
         return YES;
     }
     
@@ -142,7 +142,7 @@
     BOOL success = [self.webServer startWithOptions:webSeverOptions
                                               error:&error];
     if (!success) {
-        NSLog(@"Failed to start Web Sever with error: %@", error.localizedDescription);
+        NSLog(@"Failed to start Web Server with error: %@", error.localizedDescription);
     }
     
     return success;
@@ -150,7 +150,7 @@
 
 -(BOOL)startWebDavServer {
     if (_webDavServer.isRunning) {
-        NSLog(@"WebDav Server alreading running");
+        NSLog(@"WebDav Server is already running");
         return YES;
     }
     
@@ -171,7 +171,7 @@
     BOOL success = [self.webDavServer startWithOptions:webDavSeverOptions
                                             error:&error];
     if (!success) {
-        NSLog(@"Failed to start WebDav Sever with error: %@", error.localizedDescription);
+        NSLog(@"Failed to start WebDav Server with error: %@", error.localizedDescription);
     }
 
     return success;
@@ -184,9 +184,7 @@
     [self stopWWWUploadServer];
     [self stopWebDavServer];
     
-    if (@available(iOS 9.0, *)) {
-        [self.handoffActivity resignCurrent];
-    }
+    [self.handoffActivity resignCurrent];
 }
 
 -(void)stopWWWUploadServer {
@@ -288,7 +286,7 @@
 }
 
 - (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server {
-    ILOG(@"Bonjor register completed for URL: %@", server.bonjourServerURL.absoluteString);
+    ILOG(@"Bonjour registration completed for URL: %@", server.bonjourServerURL.absoluteString);
 	self.bonjourSeverURL = server.bonjourServerURL;
 }
 

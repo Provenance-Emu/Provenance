@@ -29,8 +29,6 @@
 
 using namespace Mednafen;
 
-extern MDFNGI EmulatedSNES;
-
 static void Cleanup(void);
 
 static SpeexResamplerState *resampler = NULL;
@@ -346,7 +344,6 @@ int16_t bSNES_v059::Interface::input_poll(bool port, unsigned device, unsigned i
 
 	case bSNES_v059::Input::DeviceMouse:
 	{
-	 assert(port < 2);
 	 switch(id)
 	 {
 	  case bSNES_v059::Input::MouseX:
@@ -370,7 +367,6 @@ int16_t bSNES_v059::Interface::input_poll(bool port, unsigned device, unsigned i
 
 	case bSNES_v059::Input::DeviceSuperScope:
 	{
-	 assert(port < 2);
 	 switch(id)
 	 {
 	  case bSNES_v059::Input::SuperScopeX:
@@ -1355,7 +1351,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
  { NULL, 0, NULL }
 };
 
-MDFNGI EmulatedSNES =
+MDFN_HIDE extern const MDFNGI EmulatedSNES =
 {
  "snes",
  "Super Nintendo Entertainment System/Super Famicom",
@@ -1390,6 +1386,9 @@ MDFNGI EmulatedSNES =
  SNESSettings,
  0,
  0,
+
+ EVFSUPPORT_NONE,
+
  false, // Multires
 
  512,   // lcm_width

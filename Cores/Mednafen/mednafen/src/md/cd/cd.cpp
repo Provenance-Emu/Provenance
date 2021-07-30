@@ -43,12 +43,12 @@ static bool SBRQ;	// Sub CPU Bus Req.
 			// Read: 0 = Sub CPU "operating"(?), 1 = acknowledge
 static bool SACK;
 
-static uint8 LEDControl;
-static bool InPeripheralReset;
+//static uint8 LEDControl;
+//static bool InPeripheralReset;
 
 static uint8 MM_WP;	// Write protect
 static uint8 MM_BK;	// R/W only on main.  PRAM bank select for the main CPU 
-static uint8 MM_PM;	// R/W only on sub.  Priority mode.
+//static uint8 MM_PM;	// R/W only on sub.  Priority mode.
 static bool MM_MODE;	// R/W on main and sub.  0 = 2M mode, 1 = 1M mode
 enum
 {
@@ -439,7 +439,7 @@ static MDFN_FASTCALL uint16 MDCD_MainRead16(uint32 A)
  printf("Unknown main Read16: %08x\n", A);
  return(0);
 }
-
+#if 0
 //////////////////////////////////
 //
 // Sub 68K memory map handling:
@@ -820,7 +820,7 @@ static uint16 MDCD_SubRead16(uint32 A)
  printf("Unknown Sub read16: %08x\n", A);
  return(0);
 }
-
+#endif
 #define SUBCPU_CLOCK 12500000
 
 void MDCD_Run(int32 md_master_cycles)

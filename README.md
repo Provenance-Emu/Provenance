@@ -3,7 +3,9 @@
 <h4 align="center" style="text-align: center; align: center">An iOS & tvOS Frontend for Multiple Emulators</h4>
 </p>
 
-![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
+<p align="center">
+  <img width="128" height="128" src="https://gblobscdn.gitbook.com/spaces%2F-LcssjTrcP7HWLfsYZCJ%2Favatar.png">
+</p>
 
 <div style="align:center" align="center">
 <a href="https://github.com/provenance-emu/Provenance/network">
@@ -71,6 +73,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - Game Gear
   - CD / MegaCD
   - 32X
+  - Saturn (mednafen)
 - SNK
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
@@ -81,12 +84,10 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
    - DS
  - Sega
    - Dreamcast (reicast)
-   - Saturn (yabause)
  - Sony
    - PSP (ppsspp)
 
 ## Features
-
 - Very Accurate, Full Speed Emulation
 - Stereo Sound
 - Save States (save anywhere/_game freezing_)
@@ -95,8 +96,10 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Controller Support:
   - [MFi Game Controller](https://mfigames.com/compare-mfi-controllers/) Support
   - iCade Controller Support ([8bitdo](http://www.8bitdo.com/), etc…)
+  - 8BitDo M30 Support
 - Local Multiplayer via External Controllers
 - Portrait and Landscape Orientation
+- Cheatcode support! Currently for SNES and PSX only
 - Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
 - ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
@@ -107,12 +110,12 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
     - Copying _(from other mobile apps and AirDrop)_
     - Injecting _(with desktop apps)_
 - Game Library Searching
-- iOS 9+ (iPhone, iPad)
+- iOS 10+ (iPhone, iPad)
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later, except iPhone SE and iPhone Xʀ)
   - Taptic Engine Button Feedback (iPhone 7 and later)
   - Spotlight Searching ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
-- tvOS 9+ (Apple TV 4+)
-  - TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
+- tvOS 10+ (Apple TV 4+)
+  - [broken for now] TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
 
 <sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
 
@@ -161,6 +164,16 @@ Provenance would not be possible without the great work of those who came before
 <sub>Atari 2600: [Stella](http://stella.sourceforge.net/) | Atari 5200: [Atari 800](http://atari800.sourceforge.net) | Atari 7800: [ProSystem](http://gstanton.github.io/ProSystem1_3/) | Atari Jaguar: [Virtual Jaguar](https://icculus.org/virtualjaguar/) | Nintendo Entertainment System/Famicom (NES/FC), Famicom Disk System (FDS): [FCEUX](http://www.fceux.com/web/home.html) | Super Nintendo Entertainment System/Super Famicom (SNES/SFC): [SNES9x](http://www.snes9x.com) | Game Boy / Game Boy Color: [Gambatte](http://gambatte.sourceforge.net/) | Nintendo 64 (N64): [Mupen64Plus](https://github.com/mupen64plus) | Game Boy Advance (GBA): [VisualBoyAdvance](http://sourceforge.net/projects/vba/) | Pokémon mini: [PokiMini](https://sourceforge.net/projects/pokemini/) | Sega Master System, Game Gear, Genesis/MegaDrive, SG-1000: [Genesis Plus GX](https://bitbucket.org/eke/genesis-plus-gx/) | Sega 32X: [PicoDrive](https://github.com/notaz/picodrive) | Atari Lynx, Bandai WonderSwan + WonderSwan Color, NEC TurboGrafx-16/PC Engine / TurboGrafx-CD/Super CD-ROM² System / SuperGrafx / PC-FX, Nintendo Entertainment System/Famicom (NES/FC) / Game Boy / Game Boy Color / Game Boy Advance / Super Nintendo Entertainment System/Super Famicom (SNES/SFC) / VirtualBoy, SNK Neo Geo Pocket / Neo Geo Pocket Color, Sony PlayStation: [Mednafen](https://mednafen.github.io)</sub><br>
 
 <sub>The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).</sub>
+
+### Collaborators
+
+<!-- readme: collaborators -start -->
+<!-- readme: collaborators -end -->
+
+### Contributors
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
 
 ----
 

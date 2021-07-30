@@ -202,7 +202,7 @@ int CDInterface_MT::ReadThreadStart()
   //
   // Don't read beyond what the disc (image) readers can handle sanely.
   //
-  if(ra_count && ra_lba == LBA_Read_Maximum)
+  if(ra_count && ra_lba > LBA_Read_Maximum)
   {
    ra_count = 0;
    //printf("Ephemeral scarabs: %d!\n", ra_lba);

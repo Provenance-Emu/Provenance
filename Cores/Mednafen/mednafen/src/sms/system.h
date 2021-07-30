@@ -50,8 +50,8 @@ typedef struct
 } bitmap_t;
 
 /* Global variables */
-extern bitmap_t bitmap;     /* Display bitmap */
-extern input_t input;       /* Controller input */
+MDFN_HIDE extern bitmap_t bitmap;     /* Display bitmap */
+MDFN_HIDE extern input_t input;       /* Controller input */
 
 /* Function prototypes */
 void system_frame(int skip_render);

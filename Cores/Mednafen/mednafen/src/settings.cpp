@@ -47,8 +47,8 @@ typedef struct
  char *value;
 } UnknownSetting_t;
 
-std::vector<MDFNCS> CurrentSettings;
-std::vector<UnknownSetting_t> UnknownSettings;
+static std::vector<MDFNCS> CurrentSettings;
+static std::vector<UnknownSetting_t> UnknownSettings;
 
 static MDFNCS *FindSetting(const char *name, bool dont_freak_out_on_fail = false);
 
@@ -414,7 +414,10 @@ bool MDFN_LoadSettings(const std::string& path, bool override)
 
  try
  {
-  MemoryStream mp(new FileStream(path, FileStream::MODE_READ, true));
+  //
+  // MODE_READ_WRITE instead of MODE_READ to allow for locking, and to ensure that the file is writeable.
+  //
+  MemoryStream mp(new FileStream(path, (override ? FileStream::MODE_READ : FileStream::MODE_READ_WRITE), !override));
   size_t valid_count = 0;
   size_t unknown_count = 0;
 
@@ -560,8 +563,8 @@ void MDFN_FinalizeSettings(void)
   {
    if(!strcmp(CurrentSettings[i].name, CurrentSettings[j].name))
    {
-    printf("Duplicate setting name %s\n", CurrentSettings[j].name);
-//    abort();
+//    printf("Duplicate setting name %s\n", CurrentSettings[j].name); // Stops the log spamming.
+//    abort(); //TODO investigate why we need to ignore this in Provenance and the Mednafen settings aren't cleared out correctly
    }
   }
  }

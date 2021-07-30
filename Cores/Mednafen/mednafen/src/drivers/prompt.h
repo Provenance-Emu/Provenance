@@ -1,6 +1,8 @@
 #ifndef __MDFN_DRIVERS_PROMPT_H
 #define __MDFN_DRIVERS_PROMPT_H
 
+#include "TextEntry.h"
+
 class HappyPrompt
 {
 	public:
@@ -11,7 +13,6 @@ class HappyPrompt
 
 	void Draw(MDFN_Surface *surface, const MDFN_Rect *rect);
 	void Event(const SDL_Event *event);
-	void Init(const std::string &ptext, const std::string &zestring);
 	void SetText(const std::string &ptext);
 	void InsertKBB(const std::string &zestring);
 
@@ -23,8 +24,7 @@ class HappyPrompt
 
 	private:
 
-	std::u32string kb_buffer;
-	unsigned int kb_cursor_pos;
+	TextEntry te;
 };
 
 #endif

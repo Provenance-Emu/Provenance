@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 uint32 HuC_Load(Stream* fp) MDFN_COLD;
@@ -30,6 +30,6 @@ void HuC_Power(void) MDFN_COLD;
 DECLFR(PCE_ACRead);
 DECLFW(PCE_ACWrite);
 
-extern bool PCE_IsCD;
+MDFN_HIDE extern bool PCE_IsCD;
 
 };

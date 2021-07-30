@@ -34,7 +34,7 @@ void SOUND_Reset68K(void);
 
 void SOUND_SetClockRatio(uint32 ratio); // Ratio between SH-2 clock and 68K clock (sound clock / 2)
 sscpu_timestamp_t SOUND_Update(sscpu_timestamp_t timestamp);
-void SOUND_ResetTS(void);
+void SOUND_AdjustTS(const int32 delta);
 void SOUND_StartFrame(double rate, uint32 quality);
 int32 SOUND_FlushOutput(int16* SoundBuf, const int32 SoundBufMaxSize, const bool reverse);
 void SOUND_StateAction(StateMem* sm, const unsigned load, const bool data_only) MDFN_COLD;
@@ -48,7 +48,8 @@ void SOUND_PokeRAM(uint32 A, uint8 V);
 
 uint32 SOUND_GetSCSPRegister(const unsigned id, char* const special, const uint32 special_len) MDFN_COLD;
 void SOUND_SetSCSPRegister(const unsigned id, const uint32 value) MDFN_COLD;
-
+uint32 SOUND_GetM68KRegister(const unsigned id, char* const special, const uint32 special_len) MDFN_COLD;
+void SOUND_SetM68KRegister(const unsigned id, const uint32 value) MDFN_COLD;
 }
 
 #endif

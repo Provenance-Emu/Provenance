@@ -36,11 +36,9 @@ static Synth synth;
 static Gb_Apu gba_apu;
 static Stereo_Buffer gba_buf;
 
-extern uint32 soundTS;
-
 static int lleft = 0, lright = 0;
 
-int soundControl = 0;
+static int soundControl = 0;
 
 typedef struct
 {
@@ -53,7 +51,7 @@ typedef struct
  uint8 Value;
 } GBADigiSound;
 
-GBADigiSound DSChans[2]; // Digital sound channels, not Nintendo DS :b
+static GBADigiSound DSChans[2]; // Digital sound channels, not Nintendo DS :b
 
 #define soundDSFifoAIndex DSChans[0].FifoIndex
 #define soundDSFifoACount DSChans[0].FifoCount
@@ -335,8 +333,6 @@ static inline void soundMix(int &left, int &right)
   }
  right = res;
 }
-
-int meow = 0;
 
 static inline void soundLick(void)
 {

@@ -299,6 +299,7 @@ m32_16_mo_no_unal2:
     bx      lr
 
 
+#ifdef __GP2X__
 
 .data
 .align 4
@@ -365,5 +366,7 @@ m32_16l_st_l_end:
 m32_16l_st_l_no_unal2:
     ldmfd   sp!, {r4-r9,lr}
     bx      lr
+
+#endif /* __GP2X__ */
 
 @ vim:filetype=armasm

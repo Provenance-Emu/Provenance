@@ -32,25 +32,27 @@ void reset_memory(void);
 
 void dump_memory(uint32 start, uint32 length);
 
-extern bool debug_abort_memory;
-extern bool debug_mask_memory_error_messages;
+MDFN_HIDE extern uint8 CPUExRAM[16384];
 
-extern bool memory_unlock_flash_write;
-extern bool memory_flash_error;
-extern bool memory_flash_command;
+MDFN_HIDE extern bool debug_abort_memory;
+MDFN_HIDE extern bool debug_mask_memory_error_messages;
 
-extern bool FlashStatusEnable;
-extern uint8 COMMStatus;
+MDFN_HIDE extern bool memory_unlock_flash_write;
+MDFN_HIDE extern bool memory_flash_error;
+MDFN_HIDE extern bool memory_flash_command;
+
+MDFN_HIDE extern bool FlashStatusEnable;
+MDFN_HIDE extern uint8 COMMStatus;
 
 //=============================================================================
 
-uint8  loadB(uint32 address);
-uint16 loadW(uint32 address);
-uint32 loadL(uint32 address);
+MDFN_FASTCALL uint8  loadB(uint32 address);
+MDFN_FASTCALL uint16 loadW(uint32 address);
+MDFN_FASTCALL uint32 loadL(uint32 address);
 
-void storeB(uint32 address, uint8 data);
-void storeW(uint32 address, uint16 data);
-void storeL(uint32 address, uint32 data);
+MDFN_FASTCALL void storeB(uint32 address, uint8 data);
+MDFN_FASTCALL void storeW(uint32 address, uint16 data);
+MDFN_FASTCALL void storeL(uint32 address, uint32 data);
 
 void SetFRM(void);
 void RecacheFRM(void);

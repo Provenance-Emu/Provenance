@@ -4,7 +4,7 @@
 namespace MDFN_IEN_MD
 {
 
-extern M68K Sub68K;
+MDFN_HIDE extern M68K Sub68K;
 
 void MDCD_Run(int32 md_master_cycles);
 void MDCD_PCM_Run(int32 cycles);

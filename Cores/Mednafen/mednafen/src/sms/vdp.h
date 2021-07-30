@@ -60,7 +60,7 @@ typedef struct
 } vdp_t;
 
 /* Global data */
-extern vdp_t vdp;
+MDFN_HIDE extern vdp_t vdp;
 
 /* Function prototypes */
 void vdp_init(bool want_quirk);

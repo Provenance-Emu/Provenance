@@ -5,7 +5,7 @@
  * This work is licensed under the terms of MAME license.
  * See COPYING file in the top-level directory.
  */
-#ifdef __arm__
+
 .equ M68K_MEM_SHIFT, 16
 
 .global cyclone_checkpc
@@ -147,4 +147,3 @@ cyclone_write32: @ u32 a, u32 d
     bx      r2
 
 @ vim:filetype=armasm
-#endif

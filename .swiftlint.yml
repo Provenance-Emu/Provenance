@@ -13,6 +13,8 @@ disabled_rules:
   - switch_case_alignment
   - todo
   - type_name
+  - type_body_length
+  - function_body_length
   - unused_closure_parameter
 
 # parameterized rules can be customized from this configuration file
@@ -20,7 +22,7 @@ line_length: 200
 # parameterized rules are first parameterized as a warning level, then error level.
 type_body_length:
   - 300 # warning
-  - 400 # error
+  - 600 # error
 # parameterized rules are first parameterized as a warning level, then error level.
 # identifier_name_max_length:
 #   - 40 # warning
@@ -30,8 +32,8 @@ type_body_length:
 #   - 3 # warning
 #   - 2 # error
 function_body_length:
-  - 150 # warning
-  - 180 # error
+  - 200 # warning
+  - 500 # error
 large_tuple:
   - 4 # warning
   - 6 # error

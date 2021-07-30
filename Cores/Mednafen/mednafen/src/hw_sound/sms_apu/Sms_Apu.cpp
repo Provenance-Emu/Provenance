@@ -369,7 +369,7 @@ void Sms_Apu::load_state(const Sms_ApuState *state)
  for(int x = 0; x < 4; x++)
  {
   oscs[x]->volume = state->volume[x];
-  oscs[x]->delay = state->delay[x];
+  oscs[x]->delay = state->delay[x] & ((x == 3) ? 0x7FFF : 0x3FFF);
  }
 
  for(int x = 0; x < 3; x++)

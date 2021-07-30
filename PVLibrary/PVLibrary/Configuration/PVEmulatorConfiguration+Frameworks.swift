@@ -36,15 +36,6 @@ public extension PVEmulatorConfiguration {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
-        // Remove all existing cores first incase things have been updated
-        //		if !database.realm.isInWriteTransaction {
-        //			try! database.writeTransaction {
-        //				try! database.deleteAll(PVCore.self)
-        //			}
-        //		} else {
-        //			try! database.deleteAll(PVCore.self)
-        //		}
-
         plists.forEach { plist in
             do {
                 let data = try Data(contentsOf: plist)
@@ -52,6 +43,7 @@ public extension PVEmulatorConfiguration {
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
 
                 let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
+                database.refresh()
                 try newCore.add(update: true)
             } catch {
                 // Handle error
@@ -73,6 +65,7 @@ public extension PVEmulatorConfiguration {
                 systems?.forEach { system in
                     if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
                         do {
+                            database.refresh()
                             try database.writeTransaction {
                                 setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
                                 VLOG("Updated system for id \(system.PVSystemIdentifier)")
@@ -85,6 +78,7 @@ public extension PVEmulatorConfiguration {
                         newSystem.identifier = system.PVSystemIdentifier
                         setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
                         do {
+                            database.refresh()
                             try database.add(newSystem, update: true)
                             DLOG("Added new system for id \(system.PVSystemIdentifier)")
                         } catch {
@@ -106,7 +100,11 @@ public extension PVEmulatorConfiguration {
         pvSystem.bit = Int(system.PVBit) ?? 0
         pvSystem.releaseYear = Int(system.PVReleaseYear)!
         pvSystem.name = system.PVSystemName
-        pvSystem.shortName = system.PVSystemShortName
+        #if os(tvOS)    // Show full system names on tvOS
+            pvSystem.shortName = system.PVSystemName
+        #else           // And short names on iOS???
+            pvSystem.shortName = system.PVSystemShortName
+        #endif
         pvSystem.shortNameAlt = system.PVSystemShortNameAlt
         pvSystem.controllerLayout = system.PVControlLayout
         pvSystem.portableSystem = system.PVPortable ?? false
@@ -140,6 +138,7 @@ public extension PVEmulatorConfiguration {
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)
                 } else {
+                    database.refresh()
                     try! database.add(newBIOS)
                 }
             }

@@ -34,8 +34,8 @@
 namespace MDFN_IEN_VB
 {
 
-extern V810 *VB_V810;
-extern VSU *VB_VSU;
+MDFN_HIDE extern V810 *VB_V810;
+MDFN_HIDE extern VSU *VB_VSU;
 
 static void RedoCPUHook(void);
 static void (*CPUHook)(uint32, bool bpoint) = NULL;
@@ -455,7 +455,7 @@ void VBDBG_SetLogFunc(void (*func)(const char *, const char *))
  RedoCPUHook();
 }
 
-static RegType V810Regs[] =
+static const RegType V810Regs[] =
 {
         { V810::GSREG_PC, "PC", "Program Counter", 4 },
 	{ V810::GSREG_PR + 1, "PR1", "Program Register 1", 4 },
@@ -507,7 +507,7 @@ static RegType V810Regs[] =
 };
 
 
-static RegGroupType V810RegsGroup =
+static const RegGroupType V810RegsGroup =
 {
  NULL,
  V810Regs,
@@ -526,7 +526,7 @@ static void MISC_SetRegister(const unsigned int id, const uint32 value)
 }
 
 
-static RegType Regs_Misc[] =
+static const RegType Regs_Misc[] =
 {
 	{ TIMER_GSREG_TCR,	"TCR", "Timer Control Register", 1 },
 	{ TIMER_GSREG_DIVCOUNTER, "DivCounter", "Timer Clock Divider Counter", 2 },
@@ -535,7 +535,7 @@ static RegType Regs_Misc[] =
         { 0, "", "", 0 },
 };
 
-static RegGroupType RegsGroup_Misc =
+static const RegGroupType RegsGroup_Misc =
 {
         "Misc",
         Regs_Misc,
@@ -544,7 +544,7 @@ static RegGroupType RegsGroup_Misc =
 };
 
 
-static RegType Regs_VIP[] =
+static const RegType Regs_VIP[] =
 {
 	{ VIP_GSREG_IPENDING,	"IPending", "Interrupts Pending", 2 },
 	{ VIP_GSREG_IENABLE,	"IEnable", "Interrupts Enabled", 2 },
@@ -578,7 +578,7 @@ static RegType Regs_VIP[] =
         { 0, "", "", 0 },
 };
 
-static RegGroupType RegsGroup_VIP =
+static const RegGroupType RegsGroup_VIP =
 {
         "VIP",
         Regs_VIP,

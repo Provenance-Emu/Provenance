@@ -7,23 +7,21 @@ namespace MDFN_IEN_WSWAN
 
 void WSWan_TCacheInvalidByAddr(uint32);
 
-extern uint8		wsTCache[512*64];		  //tiles cache
-extern uint8		wsTCacheFlipped[512*64];  	  //tiles cache (H flip)
-extern uint8		wsTileRow[8];		  //extracted 8 pixels (tile row)
-extern uint8		wsTCacheUpdate[512];	  //tiles cache flags
-extern uint8		wsTCache2[512*64];		  //tiles cache
-extern uint8		wsTCacheFlipped2[512*64];  	  //tiles cache (H flip)
-extern uint8		wsTCacheUpdate2[512];	  //tiles cache flags
-extern int		wsVMode;			  //Video Mode	
+MDFN_HIDE extern uint8	wsTCache[512*64];		  //tiles cache
+MDFN_HIDE extern uint8	wsTCacheFlipped[512*64];  	  //tiles cache (H flip)
+MDFN_HIDE extern uint8	wsTileRow[8];		  //extracted 8 pixels (tile row)
+MDFN_HIDE extern uint8	wsTCacheUpdate[512];	  //tiles cache flags
+MDFN_HIDE extern uint8	wsTCache2[512*64];		  //tiles cache
+MDFN_HIDE extern uint8	wsTCacheFlipped2[512*64];  	  //tiles cache (H flip)
+MDFN_HIDE extern uint8	wsTCacheUpdate2[512];	  //tiles cache flags
+MDFN_HIDE extern int	wsVMode;			  //Video Mode	
 
 void wsMakeTiles(void);
 void wsGetTile(uint32,uint32,int,int,int);
 void wsSetVideo(int, bool);
 
-void wsScanline(uint32 *target);
-
-extern uint32		dx_r,dx_g,dx_b,dx_sr,dx_sg,dx_sb;
-extern uint32		dx_bits,dx_pitch,cmov,dx_linewidth_blit,dx_buffer_line;
+MDFN_HIDE extern uint32	dx_r,dx_g,dx_b,dx_sr,dx_sg,dx_sb;
+MDFN_HIDE extern uint32	dx_bits,dx_pitch,cmov,dx_linewidth_blit,dx_buffer_line;
 
 
 void WSwan_SetPixelFormat(const MDFN_PixelFormat &format);

@@ -189,25 +189,18 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
 
     @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
         #if os(iOS)
+            if let urlString = game?.referenceURL, let url = URL(string: urlString) {
+                if #available(iOS 11.0, *) {
+                    let config = SFSafariViewController.Configuration()
+                    config.barCollapsingEnabled = true
+                    config.entersReaderIfAvailable = true
 
-            if #available(iOS 9.0, *) {
-                if let urlString = game?.referenceURL, let url = URL(string: urlString) {
-                    if #available(iOS 11.0, *) {
-                        let config = SFSafariViewController.Configuration()
-                        config.barCollapsingEnabled = true
-                        config.entersReaderIfAvailable = true
-
-                        let webVC = SFSafariViewController(url: url, configuration: config)
-                        present(webVC, animated: true, completion: nil)
-                    } else {
-                        let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-                        present(webVC, animated: true, completion: nil)
-                    }
+                    let webVC = SFSafariViewController(url: url, configuration: config)
+                    present(webVC, animated: true, completion: nil)
+                } else {
+                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+                    present(webVC, animated: true, completion: nil)
                 }
-            } else {
-                let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                present(alert, animated: true, completion: nil)
             }
         #endif
     }
@@ -287,11 +280,6 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         #if os(iOS)
             // Ignore Smart Invert
             artworkImageView.ignoresInvertColors = true
-
-            if #available(iOS 9.0, *) {} else {
-                // Fix iOS 8 colors
-                descriptionTextView.textColor = Theme.currentTheme.settingsCellText
-            }
         #endif
     }
 
@@ -469,24 +457,18 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     #if os(iOS)
 
         @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
-            if #available(iOS 9.0, *) {
-                if let urlString = game?.referenceURL, let url = URL(string: urlString) {
-                    if #available(iOS 11.0, *) {
-                        let config = SFSafariViewController.Configuration()
-                        config.barCollapsingEnabled = true
-                        config.entersReaderIfAvailable = true
+            if let urlString = game?.referenceURL, let url = URL(string: urlString) {
+                if #available(iOS 11.0, *) {
+                    let config = SFSafariViewController.Configuration()
+                    config.barCollapsingEnabled = true
+                    config.entersReaderIfAvailable = true
 
-                        let webVC = SFSafariViewController(url: url, configuration: config)
-                        present(webVC, animated: true, completion: nil)
-                    } else {
-                        let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-                        present(webVC, animated: true, completion: nil)
-                    }
+                    let webVC = SFSafariViewController(url: url, configuration: config)
+                    present(webVC, animated: true, completion: nil)
+                } else {
+                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+                    present(webVC, animated: true, completion: nil)
                 }
-            } else {
-                let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                present(alert, animated: true, completion: nil)
             }
         }
     #endif
@@ -666,7 +648,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             let submittedValue = textField?.text
 
             if submittedValue == nil || submittedValue!.isEmpty {
-                let errAlert = UIAlertController(title: "Invalid Value", message: "\(title) cannot be empty", preferredStyle: .alert)
+                let errAlert = UIAlertController(title: "Invalid Value", message: "\(title) cannot be empty.", preferredStyle: .alert)
                 errAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 self.present(errAlert, animated: true, completion: nil)
             } else if submittedValue != currentValue, let newValue = submittedValue {
@@ -696,7 +678,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             guard let `self` = self else { return }
 
             switch change {
-            case let .change(properties):
+            case let .change(_, properties):
                 if !properties.isEmpty, self.isViewLoaded {
                     DispatchQueue.main.async { [weak self] in
                         guard let `self` = self else { return }
@@ -712,7 +694,6 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     }
 }
 
-@available(iOS 9.0, *)
 extension PVGameMoreInfoViewController {
     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {

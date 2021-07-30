@@ -340,7 +340,7 @@ static INLINE uintptr_t neX_ptr_be(uintptr_t const base, const size_t byte_offse
 #ifdef MSB_FIRST
  return base + (byte_offset &~ (sizeof(T) - 1));
 #else
- return base + (((byte_offset &~ (sizeof(T) - 1)) ^ (sizeof(X) - std::min<size_t>(sizeof(X), sizeof(T)))));
+ return base + (((byte_offset &~ (sizeof(T) - 1)) ^ (sizeof(X) - ((sizeof(T) < sizeof(X)) ? sizeof(T) : sizeof(X)))));
 #endif
 }
 
@@ -350,7 +350,7 @@ static INLINE uintptr_t neX_ptr_le(uintptr_t const base, const size_t byte_offse
 #ifdef LSB_FIRST
  return base + (byte_offset &~ (sizeof(T) - 1));
 #else
- return base + (((byte_offset &~ (sizeof(T) - 1)) ^ (sizeof(X) - std::min<size_t>(sizeof(X), sizeof(T)))));
+ return base + (((byte_offset &~ (sizeof(T) - 1)) ^ (sizeof(X) - ((sizeof(T) < sizeof(X)) ? sizeof(T) : sizeof(X)))));
 #endif
 }
 

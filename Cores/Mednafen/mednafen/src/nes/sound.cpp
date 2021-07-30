@@ -514,9 +514,14 @@ void MDFN_FASTCALL MDFN_SoundCPUHook(int cycles)
    int t = ((DMCShift&1)<<2)-2;
 
    /* Unbelievably ugly hack */ 
-   soundtsoffs+=DMCacc;
+   const uint32 fudge = std::min<uint32>(-DMCacc, soundtsoffs + timestamp);
+
+   //if(fudge != (uint32)-DMCacc)
+   // printf("OOPS: DMCacc=%d, soundtsoffs=%d, timestamp=%d\n", DMCacc, soundtsoffs, timestamp);
+
+   soundtsoffs -= fudge;
    DoNoiseAndPCM();
-   soundtsoffs-=DMCacc;
+   soundtsoffs += fudge;
    /* End unbelievably ugly hack */
 
    RawDALatch += t;
@@ -1075,6 +1080,20 @@ void MDFNSND_StateAction(StateMem *sm, const unsigned load, const bool data_only
 
   if(DMCacc <= 0)
    DMCacc = 1;
+
+  for(unsigned i = 0; i < 4; i++)
+  {
+   wlcount[i] = std::max<int32>(1, std::min<int32>(0xFFFF, wlcount[i]));
+  }
+
+  for(unsigned i = 0; i < 2; i++)
+  {
+   RectDutyCount[i] &= 0x7;
+   curfreq[i] &= 0xFFFF;
+   SweepShift[i] &= 0x7;
+   if(!SweepShift[i])
+    SweepOn[i] = false;
+  }
  }
 }
 

@@ -237,7 +237,7 @@ static void dump_regs(SH2 *sh2)
 	printf("%csh2 SR:      %03x  PR: %08x\n", csh2, sh2->sr, sh2->pr);
 }
 
-void do_sh2_cmp(SH2 *current)
+void REGPARM(1) do_sh2_cmp(SH2 *current)
 {
 	static int current_slave;
 	static u32 current_val;
@@ -251,6 +251,13 @@ void do_sh2_cmp(SH2 *current)
 	int cycles;
 	int i, ret;
 
+#if 0
+	sr = current->sr;
+	current->sr &= 0x3f3;
+	do_sh2_trace(current, (signed int)sr >> 12);
+	current->sr = sr;
+	return;
+#endif
 	sh2ref[1].is_slave = 1;
 
 	while (1) {

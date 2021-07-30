@@ -127,7 +127,7 @@ void pcd_pcm_update(int *buf32, int length, int stereo)
 
   pcd_pcm_sync(SekCyclesDoneS68k());
 
-  if (!Pico_mcd->pcm_mixbuf_dirty || !(PicoOpt & POPT_EN_MCD_PCM))
+  if (!Pico_mcd->pcm_mixbuf_dirty || !(PicoIn.opt & POPT_EN_MCD_PCM))
     goto out;
 
   step = (Pico_mcd->pcm_mixpos << 16) / length;

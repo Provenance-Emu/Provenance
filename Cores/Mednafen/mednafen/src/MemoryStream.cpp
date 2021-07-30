@@ -245,6 +245,9 @@ uint64 MemoryStream::read(void *data, uint64 count, bool error_on_eos)
 
 void MemoryStream::write(const void *data, uint64 count)
 {
+ if(MDFN_UNLIKELY(!count))	// avoid calling grow_if_necessary() when count == 0
+  return;
+ //
  uint64 nrs = position + count;
 
  if(nrs < position)

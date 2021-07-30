@@ -24,8 +24,10 @@ protocol WebServerActivatorController: class {
             let webServerAddress: String = PVWebServer.shared.urlString
             let webDavAddress: String = PVWebServer.shared.webDavURLString
             let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
+            Read about how to import ROMs on the Provenance wiki at:
+            https://wiki.provenance-emu.com
+
+            Upload/Download files to your device at:
 
             \(webServerAddress)  ᵂᵉᵇᵁᴵ
             \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
@@ -38,16 +40,13 @@ protocol WebServerActivatorController: class {
             alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                 PVWebServer.shared.stopServers()
             }))
-            if #available(iOS 9.0, *) {
-                let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-                alert.addAction(viewAction)
-            }
+            let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.showServer()
+            })
+            alert.addAction(viewAction)
             present(alert, animated: true) { () -> Void in }
         }
 
-        @available(iOS 9.0, *)
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
             let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
@@ -69,11 +68,13 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let webServerAddress: String = PVWebServer.shared.urlString
         let webDavAddress: String = PVWebServer.shared.webDavURLString
         let message = """
-        Read Importing ROMs wiki…
-        Upload/Download files at:
+        Read about how to import ROMs on the Provenance wiki at:
+        https://wiki.provenance-emu.com
+
+        Upload/Download files to your device at:
 
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
-        \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+        \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
         """
         return message
     }
@@ -98,19 +99,17 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     PVWebServer.shared.stopServers()
                 }))
                 #if os(iOS)
-                    if #available(iOS 9.0, *) {
-                        let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                            self.showServer()
-                        })
-                        alert.addAction(viewAction)
-                    }
+                    let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                        self.showServer()
+                    })
+                    alert.addAction(viewAction)
                 #endif
                 present(alert, animated: true) { () -> Void in
                     alert.message = self.webServerAlertMessage
                 }
             } else {
                 // Display error
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }

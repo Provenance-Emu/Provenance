@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AF2CF4C259CBB8E00E6A51F /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
+		0AF2CF85259CBB9D00E6A51F /* superfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB30E248811EE000A3922 /* superfx.cpp */; };
 		11AFB2BE24880B99000A3922 /* ExtMemStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */; };
 		11AFB2BF24880B99000A3922 /* ExtMemStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BA24880B98000A3922 /* ExtMemStream.cpp */; };
 		11AFB2C024880B99000A3922 /* VirtualFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2BB24880B98000A3922 /* VirtualFS.cpp */; };
@@ -276,7 +278,6 @@
 		B324C41B21919D73009F4EDC /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3AC20736EEC0097D86F /* settings.cpp */; };
 		B324C41C21919D73009F4EDC /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB11D20736EEA0097D86F /* state.cpp */; };
 		B324C41D21919D73009F4EDC /* mednafen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB1B20736EE80097D86F /* mednafen.cpp */; };
-		B324C41E21919D73009F4EDC /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3C920736EEC0097D86F /* Time.cpp */; };
 		B324C41F21919D73009F4EDC /* movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3AD20736EEC0097D86F /* movie.cpp */; };
 		B324C42021919D73009F4EDC /* ZIPReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB2020736EE80097D86F /* ZIPReader.cpp */; };
 		B324C42121919D73009F4EDC /* mempatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAA9F20736EE70097D86F /* mempatcher.cpp */; };
@@ -983,7 +984,6 @@
 		B333556E207B1DA80036A448 /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE1B20736EE90097D86F /* sha1.cpp */; };
 		B3335570207B1DA80036A448 /* gb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB28F20736EEB0097D86F /* gb.cpp */; };
 		B3335573207B1DA80036A448 /* GZFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB2420736EE80097D86F /* GZFileStream.cpp */; };
-		B3335575207B1DA80036A448 /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3C920736EEC0097D86F /* Time.cpp */; };
 		B3335577207B1DA80036A448 /* movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3AD20736EEC0097D86F /* movie.cpp */; };
 		B333557B207B1DA80036A448 /* psx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB28B20736EEB0097D86F /* psx.cpp */; };
 		B333557C207B1DA80036A448 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2B120736EEB0097D86F /* debug.cpp */; };
@@ -1197,6 +1197,88 @@
 		B3FBDFAF207FFBE500E661D1 /* SNSFLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB1C20736EE80097D86F /* SNSFLoader.cpp */; };
 		B3FBDFB0207FFC1E00E661D1 /* SPCReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE4C20736EE90097D86F /* SPCReader.cpp */; };
 		B3FBDFB3207FFC6100E661D1 /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB29020736EEB0097D86F /* snes.cpp */; };
+		C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D560B2626B12100CDECE9 /* Time_POSIX.cpp */; };
+		C66D56122626B12100CDECE9 /* Time_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D560B2626B12100CDECE9 /* Time_POSIX.cpp */; };
+		C66D56172626B2FB00CDECE9 /* convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56162626B2FB00CDECE9 /* convert.cpp */; };
+		C66D56182626B2FB00CDECE9 /* convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56162626B2FB00CDECE9 /* convert.cpp */; };
+		C66D561B2626B37300CDECE9 /* testsexp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56192626B37200CDECE9 /* testsexp.cpp */; };
+		C66D561C2626B37300CDECE9 /* testsexp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56192626B37200CDECE9 /* testsexp.cpp */; };
+		C66D56222626B4E700CDECE9 /* CDAFReader_PCM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D561F2626B4E700CDECE9 /* CDAFReader_PCM.cpp */; };
+		C66D56232626B4E700CDECE9 /* CDAFReader_PCM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D561F2626B4E700CDECE9 /* CDAFReader_PCM.cpp */; };
+		C6E1B62925AA9CB4007C3CF1 /* scu_dsp_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17B20736EEA0097D86F /* scu_dsp_misc.cpp */; };
+		C6E1B62A25AA9CB4007C3CF1 /* scu_dsp_jmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18020736EEA0097D86F /* scu_dsp_jmp.cpp */; };
+		C6E1B62B25AA9CB4007C3CF1 /* 3dpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18920736EEA0097D86F /* 3dpad.cpp */; };
+		C6E1B62C25AA9CB4007C3CF1 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18B20736EEA0097D86F /* mouse.cpp */; };
+		C6E1B62D25AA9CB4007C3CF1 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18D20736EEA0097D86F /* gamepad.cpp */; };
+		C6E1B62E25AA9CB4007C3CF1 /* multitap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18E20736EEA0097D86F /* multitap.cpp */; };
+		C6E1B62F25AA9CB4007C3CF1 /* wheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB19620736EEA0097D86F /* wheel.cpp */; };
+		C6E1B63025AA9CB4007C3CF1 /* gun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB19920736EEA0097D86F /* gun.cpp */; };
+		C6E1B63125AA9CB4007C3CF1 /* mission.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB19C20736EEA0097D86F /* mission.cpp */; };
+		C6E1B63225AA9CB4007C3CF1 /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1A820736EEA0097D86F /* keyboard.cpp */; };
+		C6E1B63325AA9CB4007C3CF1 /* jpkeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1A920736EEA0097D86F /* jpkeyboard.cpp */; };
+		C6E1B63425AA9CB4007C3CF1 /* db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1AF20736EEA0097D86F /* db.cpp */; };
+		C6E1B63525AA9CB4007C3CF1 /* scu_dsp_mvi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1B820736EEA0097D86F /* scu_dsp_mvi.cpp */; };
+		C6E1B63625AA9CB4007C3CF1 /* vdp2_render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1BA20736EEA0097D86F /* vdp2_render.cpp */; };
+		C6E1B63725AA9CB4007C3CF1 /* vdp1_poly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1C120736EEA0097D86F /* vdp1_poly.cpp */; };
+		C6E1B63825AA9CB4007C3CF1 /* ssf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1C620736EEA0097D86F /* ssf.cpp */; };
+		C6E1B63925AA9CB4007C3CF1 /* gen_dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1CF20736EEA0097D86F /* gen_dsp.cpp */; };
+		C6E1B63A25AA9CB4007C3CF1 /* ss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1D220736EEA0097D86F /* ss.cpp */; };
+		C6E1B63B25AA9CB4007C3CF1 /* smpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1D520736EEA0097D86F /* smpc.cpp */; };
+		C6E1B63C25AA9CB4007C3CF1 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1D720736EEA0097D86F /* sound.cpp */; };
+		C6E1B63D25AA9CB4007C3CF1 /* ar4mp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1DB20736EEA0097D86F /* ar4mp.cpp */; };
+		C6E1B63E25AA9CB4007C3CF1 /* extram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E420736EEA0097D86F /* extram.cpp */; };
+		C6E1B63F25AA9CB4007C3CF1 /* backup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E620736EEA0097D86F /* backup.cpp */; };
+		C6E1B64025AA9CB4007C3CF1 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E820736EEA0097D86F /* debug.cpp */; };
+		C6E1B64125AA9CB4007C3CF1 /* cs1ram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E920736EEA0097D86F /* cs1ram.cpp */; };
+		C6E1B64225AA9CB4007C3CF1 /* vdp1_sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1F820736EEA0097D86F /* vdp1_sprite.cpp */; };
+		C6E1B64325AA9CB4007C3CF1 /* vdp1_line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1FB20736EEA0097D86F /* vdp1_line.cpp */; };
+		C6E1B64425AA9CB4007C3CF1 /* vdp2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21120736EEB0097D86F /* vdp2.cpp */; };
+		C6E1B64525AA9CB4007C3CF1 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21520736EEB0097D86F /* cart.cpp */; };
+		C6E1B64625AA9CB4007C3CF1 /* vdp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21620736EEB0097D86F /* vdp1.cpp */; };
+		C6E1B64725AA9CB4007C3CF1 /* scu_dsp_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21820736EEB0097D86F /* scu_dsp_gen.cpp */; };
+		C6E1B64825AA9CD6007C3CF1 /* libsaturn-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B62825AA9C15007C3CF1 /* libsaturn-tvOS.a */; };
+		C6E1B64B25AAA00E007C3CF1 /* cdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB20E20736EEB0097D86F /* cdb.cpp */; };
+		C6E1B64C25AAA042007C3CF1 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E720736EEA0097D86F /* rom.cpp */; };
+		C6E1B64F25AAA24A007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
+		C6E1B65125AAA24A007C3CF1 /* SwiftResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CD24880BF3000A3922 /* SwiftResampler.cpp */; };
+		C6E1B65225AAA3EA007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		C6E1B66F25AAC1B1007C3CF1 /* scu_dsp_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17B20736EEA0097D86F /* scu_dsp_misc.cpp */; };
+		C6E1B67025AAC1B1007C3CF1 /* scu_dsp_jmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18020736EEA0097D86F /* scu_dsp_jmp.cpp */; };
+		C6E1B67125AAC1B1007C3CF1 /* 3dpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18920736EEA0097D86F /* 3dpad.cpp */; };
+		C6E1B67225AAC1B1007C3CF1 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18B20736EEA0097D86F /* mouse.cpp */; };
+		C6E1B67325AAC1B1007C3CF1 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18D20736EEA0097D86F /* gamepad.cpp */; };
+		C6E1B67425AAC1B1007C3CF1 /* multitap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18E20736EEA0097D86F /* multitap.cpp */; };
+		C6E1B67525AAC1B1007C3CF1 /* wheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB19620736EEA0097D86F /* wheel.cpp */; };
+		C6E1B67625AAC1B1007C3CF1 /* gun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB19920736EEA0097D86F /* gun.cpp */; };
+		C6E1B67725AAC1B1007C3CF1 /* mission.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB19C20736EEA0097D86F /* mission.cpp */; };
+		C6E1B67825AAC1B1007C3CF1 /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1A820736EEA0097D86F /* keyboard.cpp */; };
+		C6E1B67925AAC1B1007C3CF1 /* jpkeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1A920736EEA0097D86F /* jpkeyboard.cpp */; };
+		C6E1B67A25AAC1B1007C3CF1 /* db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1AF20736EEA0097D86F /* db.cpp */; };
+		C6E1B67B25AAC1B1007C3CF1 /* scu_dsp_mvi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1B820736EEA0097D86F /* scu_dsp_mvi.cpp */; };
+		C6E1B67C25AAC1B1007C3CF1 /* vdp2_render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1BA20736EEA0097D86F /* vdp2_render.cpp */; };
+		C6E1B67D25AAC1B1007C3CF1 /* vdp1_poly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1C120736EEA0097D86F /* vdp1_poly.cpp */; };
+		C6E1B67E25AAC1B1007C3CF1 /* ssf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1C620736EEA0097D86F /* ssf.cpp */; };
+		C6E1B67F25AAC1B1007C3CF1 /* gen_dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1CF20736EEA0097D86F /* gen_dsp.cpp */; };
+		C6E1B68025AAC1B1007C3CF1 /* ss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1D220736EEA0097D86F /* ss.cpp */; };
+		C6E1B68125AAC1B1007C3CF1 /* smpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1D520736EEA0097D86F /* smpc.cpp */; };
+		C6E1B68225AAC1B1007C3CF1 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1D720736EEA0097D86F /* sound.cpp */; };
+		C6E1B68325AAC1B1007C3CF1 /* ar4mp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1DB20736EEA0097D86F /* ar4mp.cpp */; };
+		C6E1B68425AAC1B1007C3CF1 /* extram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E420736EEA0097D86F /* extram.cpp */; };
+		C6E1B68525AAC1B1007C3CF1 /* backup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E620736EEA0097D86F /* backup.cpp */; };
+		C6E1B68625AAC1B1007C3CF1 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E720736EEA0097D86F /* rom.cpp */; };
+		C6E1B68725AAC1B1007C3CF1 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E820736EEA0097D86F /* debug.cpp */; };
+		C6E1B68825AAC1B2007C3CF1 /* cs1ram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E920736EEA0097D86F /* cs1ram.cpp */; };
+		C6E1B68925AAC1B2007C3CF1 /* vdp1_sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1F820736EEA0097D86F /* vdp1_sprite.cpp */; };
+		C6E1B68A25AAC1B2007C3CF1 /* vdp1_line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1FB20736EEA0097D86F /* vdp1_line.cpp */; };
+		C6E1B68B25AAC1B2007C3CF1 /* cdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB20E20736EEB0097D86F /* cdb.cpp */; };
+		C6E1B68C25AAC1B2007C3CF1 /* vdp2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21120736EEB0097D86F /* vdp2.cpp */; };
+		C6E1B68D25AAC1B2007C3CF1 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21520736EEB0097D86F /* cart.cpp */; };
+		C6E1B68E25AAC1B2007C3CF1 /* vdp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21620736EEB0097D86F /* vdp1.cpp */; };
+		C6E1B68F25AAC1B2007C3CF1 /* scu_dsp_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21820736EEB0097D86F /* scu_dsp_gen.cpp */; };
+		C6E1B69225AAC1FC007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		C6E1B69325AAC243007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
+		C6E1B69425AAC243007C3CF1 /* SwiftResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CD24880BF3000A3922 /* SwiftResampler.cpp */; };
+		C6E1B69525AAC5A3007C3CF1 /* libsaturn-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1563,6 +1645,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = B35D6684218185710005A992;
 			remoteInfo = "hwcpu-tvOS";
+		};
+		C6E1B64925AA9DC1007C3CF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6E1B5A925AA9C15007C3CF1;
+			remoteInfo = "saturn-tvOS";
+		};
+		C6E1B69025AAC1D5007C3CF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6E1B65325AAC123007C3CF1;
+			remoteInfo = "saturn-iOS";
+		};
+		C6E1B69625AAC5A3007C3CF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6E1B65325AAC123007C3CF1;
+			remoteInfo = "saturn-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2045,6 +2148,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3FBDF9D207FF5D800E661D1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6E1B62325AA9C15007C3CF1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6E1B66925AAC123007C3CF1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -3866,12 +3987,23 @@
 		B3AAB3C620736EEC0097D86F /* apu_ipl.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = apu_ipl.inc; sourceTree = "<group>"; };
 		B3AAB3C720736EEC0097D86F /* snes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snes.h; sourceTree = "<group>"; };
 		B3AAB3C820736EEC0097D86F /* cart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cart.cpp; sourceTree = "<group>"; };
-		B3AAB3C920736EEC0097D86F /* Time.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Time.cpp; sourceTree = "<group>"; };
 		B3AAB3CA20736EEC0097D86F /* git.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = git.cpp; sourceTree = "<group>"; };
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnes-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FBDF9F207FF5D800E661D1 /* libsnes_faust-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnes_faust-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C66D560A2626B12100CDECE9 /* Makefile.am.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Makefile.am.inc; sourceTree = "<group>"; };
+		C66D560B2626B12100CDECE9 /* Time_POSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Time_POSIX.cpp; sourceTree = "<group>"; };
+		C66D560C2626B12100CDECE9 /* Time_Win32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Time_Win32.cpp; sourceTree = "<group>"; };
+		C66D56152626B2FA00CDECE9 /* convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert.h; sourceTree = "<group>"; };
+		C66D56162626B2FB00CDECE9 /* convert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = convert.cpp; sourceTree = "<group>"; };
+		C66D56192626B37200CDECE9 /* testsexp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testsexp.cpp; sourceTree = "<group>"; };
+		C66D561A2626B37200CDECE9 /* testsexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testsexp.h; sourceTree = "<group>"; };
+		C66D561D2626B48700CDECE9 /* jump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jump.h; sourceTree = "<group>"; };
+		C66D561F2626B4E700CDECE9 /* CDAFReader_PCM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDAFReader_PCM.cpp; sourceTree = "<group>"; };
+		C66D56212626B4E700CDECE9 /* CDAFReader_PCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDAFReader_PCM.h; sourceTree = "<group>"; };
+		C6E1B62825AA9C15007C3CF1 /* libsaturn-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsaturn-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsaturn-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4246,6 +4378,7 @@
 				B33355C2207B207F0036A448 /* libquicklz-iOS.a in Frameworks */,
 				B33355B3207B1EBC0036A448 /* libmpcdec-iOS.a in Frameworks */,
 				B333559C207B1DB10036A448 /* libmednafen-iOS.a in Frameworks */,
+				C6E1B69525AAC5A3007C3CF1 /* libsaturn-iOS.a in Frameworks */,
 				B33354BD207B1C600036A448 /* libvideo-iOS.a in Frameworks */,
 				B33354A2207B1C0D0036A448 /* libsound-iOS.a in Frameworks */,
 				B3335488207B1B8E0036A448 /* libcdrom-iOS.a in Frameworks */,
@@ -4274,6 +4407,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E1B64825AA9CD6007C3CF1 /* libsaturn-tvOS.a in Frameworks */,
 				B32CF1D6219241EE0058E2E7 /* libhwvideo-tvOS.a in Frameworks */,
 				B32CF1D7219241EE0058E2E7 /* libmednafen-tvOS.a in Frameworks */,
 				B32CF1D8219241EE0058E2E7 /* libnes-tvOS.a in Frameworks */,
@@ -4323,6 +4457,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3FBDF9C207FF5D800E661D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6E1B62225AA9C15007C3CF1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6E1B66825AAC123007C3CF1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4465,6 +4613,8 @@
 				B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */,
 				B32CF1C421923F850058E2E7 /* libsegamastersystem-tvOS.a */,
 				B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */,
+				C6E1B62825AA9C15007C3CF1 /* libsaturn-tvOS.a */,
+				C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4878,6 +5028,7 @@
 		B3AAAA6820736EE70097D86F /* src */ = {
 			isa = PBXGroup;
 			children = (
+				C66D56092626B12100CDECE9 /* time */,
 				B3AAAE5220736EE90097D86F /* Makefile */,
 				B3AAB23A20736EEB0097D86F /* Makefile.am */,
 				B3AAB2B120736EEB0097D86F /* debug.cpp */,
@@ -4908,7 +5059,6 @@
 				B3AAB11D20736EEA0097D86F /* state.cpp */,
 				B3AAB29920736EEB0097D86F /* Stream.cpp */,
 				B3AAB29720736EEB0097D86F /* tests.cpp */,
-				B3AAB3C920736EEC0097D86F /* Time.cpp */,
 				11AFB2BB24880B98000A3922 /* VirtualFS.cpp */,
 				B3AAB36C20736EEB0097D86F /* AtomicFIFO.h */,
 				B3AAABB720736EE80097D86F /* debug.h */,
@@ -4943,8 +5093,11 @@
 				B3AAAE5020736EE90097D86F /* settings-common.h */,
 				B3AAB35C20736EEB0097D86F /* settings-driver.h */,
 				B3AAAE1420736EE90097D86F /* settings.h */,
+				C66D56192626B37200CDECE9 /* testsexp.cpp */,
+				C66D561A2626B37200CDECE9 /* testsexp.h */,
 				11AFB2C924880BB7000A3922 /* SimpleBitset.h */,
 				B3AAB28920736EEB0097D86F /* SNSFLoader.h */,
+				C66D561D2626B48700CDECE9 /* jump.h */,
 				B3AAB17420736EEA0097D86F /* SPCReader.h */,
 				B3AAB35920736EEB0097D86F /* SSFLoader.h */,
 				B3AAB0B120736EEA0097D86F /* state_rewind.h */,
@@ -5204,6 +5357,8 @@
 				B3AAAB7520736EE80097D86F /* surface.cpp */,
 				B3AAAB6A20736EE80097D86F /* tblur.cpp */,
 				B3AAAB6120736EE80097D86F /* text.cpp */,
+				C66D56162626B2FB00CDECE9 /* convert.cpp */,
+				C66D56152626B2FA00CDECE9 /* convert.h */,
 				B3AAAB6C20736EE80097D86F /* video.cpp */,
 				B3AAAB8520736EE80097D86F /* README.FONTS */,
 				11AFB32424881339000A3922 /* Deinterlacer_Blend.h */,
@@ -5237,6 +5392,8 @@
 				B3AAABB520736EE80097D86F /* CDAccess.cpp */,
 				B3AAAB8D20736EE80097D86F /* CDAFReader_MPC.cpp */,
 				B3AAAB8E20736EE80097D86F /* CDAFReader_SF.cpp */,
+				C66D561F2626B4E700CDECE9 /* CDAFReader_PCM.cpp */,
+				C66D56212626B4E700CDECE9 /* CDAFReader_PCM.h */,
 				B3AAAB8920736EE80097D86F /* CDAFReader_Vorbis.cpp */,
 				B3AAAB8B20736EE80097D86F /* CDAFReader.cpp */,
 				11AFB326248813A8000A3922 /* CDInterface_MT.cpp */,
@@ -7435,6 +7592,16 @@
 			path = snes_faust;
 			sourceTree = "<group>";
 		};
+		C66D56092626B12100CDECE9 /* time */ = {
+			isa = PBXGroup;
+			children = (
+				C66D560A2626B12100CDECE9 /* Makefile.am.inc */,
+				C66D560B2626B12100CDECE9 /* Time_POSIX.cpp */,
+				C66D560C2626B12100CDECE9 /* Time_Win32.cpp */,
+			);
+			path = time;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -8338,6 +8505,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C6E1B69125AAC1D5007C3CF1 /* PBXTargetDependency */,
 				B34AB5882106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB58A2106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB58C2106DF8400C45F09 /* PBXTargetDependency */,
@@ -8364,6 +8532,7 @@
 				B34AB5B82106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB5BA2106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB5BC2106DF8400C45F09 /* PBXTargetDependency */,
+				C6E1B69725AAC5A3007C3CF1 /* PBXTargetDependency */,
 			);
 			name = "PVMednafen-iOS";
 			productName = PVMednafen;
@@ -8382,6 +8551,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C6E1B64A25AA9DC1007C3CF1 /* PBXTargetDependency */,
 				11389F99248D4F6B0089CBFF /* PBXTargetDependency */,
 				11389F9B248D4F6B0089CBFF /* PBXTargetDependency */,
 				11389F9D248D4F6B0089CBFF /* PBXTargetDependency */,
@@ -8465,13 +8635,49 @@
 			productReference = B3FBDF9F207FF5D800E661D1 /* libsnes_faust-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		C6E1B5A925AA9C15007C3CF1 /* saturn-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6E1B62425AA9C15007C3CF1 /* Build configuration list for PBXNativeTarget "saturn-tvOS" */;
+			buildPhases = (
+				C6E1B5AA25AA9C15007C3CF1 /* Sources */,
+				C6E1B62225AA9C15007C3CF1 /* Frameworks */,
+				C6E1B62325AA9C15007C3CF1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "saturn-tvOS";
+			productName = snes;
+			productReference = C6E1B62825AA9C15007C3CF1 /* libsaturn-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		C6E1B65325AAC123007C3CF1 /* saturn-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6E1B66A25AAC123007C3CF1 /* Build configuration list for PBXNativeTarget "saturn-iOS" */;
+			buildPhases = (
+				C6E1B65425AAC123007C3CF1 /* Sources */,
+				C6E1B66825AAC123007C3CF1 /* Frameworks */,
+				C6E1B66925AAC123007C3CF1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "saturn-iOS";
+			productName = snes_faust;
+			productReference = C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
+				LastSwiftUpdateCheck = 1160;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
@@ -8594,7 +8800,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVMednafen" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -8661,6 +8867,8 @@
 				B324C42C21919DC9009F4EDC /* snes-tvOS */,
 				B3FBDF9E207FF5D800E661D1 /* snes_faust-iOS */,
 				B324C54E2191AAD1009F4EDC /* snes_faust-tvOS */,
+				C6E1B5A925AA9C15007C3CF1 /* saturn-tvOS */,
+				C6E1B65325AAC123007C3CF1 /* saturn-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -8722,6 +8930,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B324C34621919C1C009F4EDC /* vdc.cpp in Sources */,
+				C66D56182626B2FB00CDECE9 /* convert.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8943,7 +9152,6 @@
 				B324C41B21919D73009F4EDC /* settings.cpp in Sources */,
 				B324C41C21919D73009F4EDC /* state.cpp in Sources */,
 				B324C41D21919D73009F4EDC /* mednafen.cpp in Sources */,
-				B324C41E21919D73009F4EDC /* Time.cpp in Sources */,
 				B324C41F21919D73009F4EDC /* movie.cpp in Sources */,
 				B324C42021919D73009F4EDC /* ZIPReader.cpp in Sources */,
 				B324C42121919D73009F4EDC /* mempatcher.cpp in Sources */,
@@ -9137,6 +9345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF2CF85259CBB9D00E6A51F /* superfx.cpp in Sources */,
 				B324C5502191AAD1009F4EDC /* input.cpp in Sources */,
 				11AFB31A24881207000A3922 /* sa1cpu.cpp in Sources */,
 				B324C5512191AAD1009F4EDC /* ppu.cpp in Sources */,
@@ -9218,6 +9427,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E1B64F25AAA24A007C3CF1 /* DSPUtility.cpp in Sources */,
+				C6E1B65125AAA24A007C3CF1 /* SwiftResampler.cpp in Sources */,
 				B324C5A32191ABAD009F4EDC /* Blip_Buffer.cpp in Sources */,
 				B324C5A42191ABAD009F4EDC /* OwlResampler.cpp in Sources */,
 				B324C5A52191ABAD009F4EDC /* okiadpcm.cpp in Sources */,
@@ -9238,6 +9449,7 @@
 				B324C5B72191ABB7009F4EDC /* galois.cpp in Sources */,
 				B324C5B82191ABB7009F4EDC /* scsicd.cpp in Sources */,
 				B324C5B92191ABB7009F4EDC /* CDAccess_CCD.cpp in Sources */,
+				C66D56232626B4E700CDECE9 /* CDAFReader_PCM.cpp in Sources */,
 				B324C5BA2191ABB7009F4EDC /* CDAccess.cpp in Sources */,
 				B324C5BB2191ABB7009F4EDC /* CDUtility.cpp in Sources */,
 				B324C5BC2191ABB7009F4EDC /* CDAFReader.cpp in Sources */,
@@ -9415,6 +9627,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B32CF1C7219240270058E2E7 /* arcade_card.cpp in Sources */,
+				C66D561C2626B37300CDECE9 /* testsexp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9825,6 +10038,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B33352D7207B06990036A448 /* vdc.cpp in Sources */,
+				C66D56172626B2FB00CDECE9 /* convert.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9832,6 +10046,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E1B69225AAC1FC007C3CF1 /* m68k.cpp in Sources */,
 				B33352E8207B07C20036A448 /* z80_ops.cpp in Sources */,
 				B33352E0207B06D70036A448 /* v810_cpu.cpp in Sources */,
 				B33352E9207B07FD0036A448 /* z80.cpp in Sources */,
@@ -9844,6 +10059,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B33352DF207B06B90036A448 /* arcade_card.cpp in Sources */,
+				C66D561B2626B37300CDECE9 /* testsexp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9858,6 +10074,7 @@
 				B3335483207B1B780036A448 /* galois.cpp in Sources */,
 				B3335487207B1B780036A448 /* scsicd.cpp in Sources */,
 				B3335479207B1B780036A448 /* CDAccess_CCD.cpp in Sources */,
+				C66D56222626B4E700CDECE9 /* CDAFReader_PCM.cpp in Sources */,
 				B333547B207B1B780036A448 /* CDAccess.cpp in Sources */,
 				B3335481207B1B780036A448 /* CDUtility.cpp in Sources */,
 				B333547F207B1B780036A448 /* CDAFReader.cpp in Sources */,
@@ -9871,6 +10088,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E1B69325AAC243007C3CF1 /* DSPUtility.cpp in Sources */,
+				C6E1B69425AAC243007C3CF1 /* SwiftResampler.cpp in Sources */,
 				B333549C207B1C000036A448 /* Blip_Buffer.cpp in Sources */,
 				B333549F207B1C000036A448 /* OwlResampler.cpp in Sources */,
 				B333549E207B1C000036A448 /* okiadpcm.cpp in Sources */,
@@ -9945,7 +10164,6 @@
 				B3335580207B1DA80036A448 /* settings.cpp in Sources */,
 				B3335559207B1DA80036A448 /* state.cpp in Sources */,
 				B3335595207B1DA80036A448 /* mednafen.cpp in Sources */,
-				B3335575207B1DA80036A448 /* Time.cpp in Sources */,
 				B3335577207B1DA80036A448 /* movie.cpp in Sources */,
 				B3335568207B1DA80036A448 /* ZIPReader.cpp in Sources */,
 				B3335598207B1DA80036A448 /* mempatcher.cpp in Sources */,
@@ -10020,6 +10238,7 @@
 				B3AAB425207379230097D86F /* stubs.mm in Sources */,
 				B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */,
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
+				C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
 				B333559D207B1DC50036A448 /* thread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10033,6 +10252,7 @@
 				B33355F7207B3BAD0036A448 /* MednafenGameCore.mm in Sources */,
 				B33355F5207B3BAD0036A448 /* stubs.mm in Sources */,
 				B33355F3207B3BAD0036A448 /* MednafenGameCore.swift in Sources */,
+				C66D56122626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
 				B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10041,6 +10261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E1B65225AAA3EA007C3CF1 /* m68k.cpp in Sources */,
 				B35D6686218185710005A992 /* z80_ops.cpp in Sources */,
 				B35D6687218185710005A992 /* v810_cpu.cpp in Sources */,
 				B35D6688218185710005A992 /* z80.cpp in Sources */,
@@ -10178,6 +10399,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF2CF4C259CBB8E00E6A51F /* superfx.cpp in Sources */,
 				B3FBDFA9207FF5F200E661D1 /* input.cpp in Sources */,
 				11AFB31324881206000A3922 /* sa1cpu.cpp in Sources */,
 				B3FBDFA8207FF5F200E661D1 /* ppu.cpp in Sources */,
@@ -10196,6 +10418,86 @@
 				11AFB31224881206000A3922 /* sa1.cpp in Sources */,
 				11AFB2EB24880C49000A3922 /* ppu_st.cpp in Sources */,
 				11AFB2E724880C49000A3922 /* dis65816.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6E1B5AA25AA9C15007C3CF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6E1B64C25AAA042007C3CF1 /* rom.cpp in Sources */,
+				C6E1B64B25AAA00E007C3CF1 /* cdb.cpp in Sources */,
+				C6E1B62925AA9CB4007C3CF1 /* scu_dsp_misc.cpp in Sources */,
+				C6E1B62A25AA9CB4007C3CF1 /* scu_dsp_jmp.cpp in Sources */,
+				C6E1B62B25AA9CB4007C3CF1 /* 3dpad.cpp in Sources */,
+				C6E1B62C25AA9CB4007C3CF1 /* mouse.cpp in Sources */,
+				C6E1B62D25AA9CB4007C3CF1 /* gamepad.cpp in Sources */,
+				C6E1B62E25AA9CB4007C3CF1 /* multitap.cpp in Sources */,
+				C6E1B62F25AA9CB4007C3CF1 /* wheel.cpp in Sources */,
+				C6E1B63025AA9CB4007C3CF1 /* gun.cpp in Sources */,
+				C6E1B63125AA9CB4007C3CF1 /* mission.cpp in Sources */,
+				C6E1B63225AA9CB4007C3CF1 /* keyboard.cpp in Sources */,
+				C6E1B63325AA9CB4007C3CF1 /* jpkeyboard.cpp in Sources */,
+				C6E1B63425AA9CB4007C3CF1 /* db.cpp in Sources */,
+				C6E1B63525AA9CB4007C3CF1 /* scu_dsp_mvi.cpp in Sources */,
+				C6E1B63625AA9CB4007C3CF1 /* vdp2_render.cpp in Sources */,
+				C6E1B63725AA9CB4007C3CF1 /* vdp1_poly.cpp in Sources */,
+				C6E1B63825AA9CB4007C3CF1 /* ssf.cpp in Sources */,
+				C6E1B63925AA9CB4007C3CF1 /* gen_dsp.cpp in Sources */,
+				C6E1B63A25AA9CB4007C3CF1 /* ss.cpp in Sources */,
+				C6E1B63B25AA9CB4007C3CF1 /* smpc.cpp in Sources */,
+				C6E1B63C25AA9CB4007C3CF1 /* sound.cpp in Sources */,
+				C6E1B63D25AA9CB4007C3CF1 /* ar4mp.cpp in Sources */,
+				C6E1B63E25AA9CB4007C3CF1 /* extram.cpp in Sources */,
+				C6E1B63F25AA9CB4007C3CF1 /* backup.cpp in Sources */,
+				C6E1B64025AA9CB4007C3CF1 /* debug.cpp in Sources */,
+				C6E1B64125AA9CB4007C3CF1 /* cs1ram.cpp in Sources */,
+				C6E1B64225AA9CB4007C3CF1 /* vdp1_sprite.cpp in Sources */,
+				C6E1B64325AA9CB4007C3CF1 /* vdp1_line.cpp in Sources */,
+				C6E1B64425AA9CB4007C3CF1 /* vdp2.cpp in Sources */,
+				C6E1B64525AA9CB4007C3CF1 /* cart.cpp in Sources */,
+				C6E1B64625AA9CB4007C3CF1 /* vdp1.cpp in Sources */,
+				C6E1B64725AA9CB4007C3CF1 /* scu_dsp_gen.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6E1B65425AAC123007C3CF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6E1B66F25AAC1B1007C3CF1 /* scu_dsp_misc.cpp in Sources */,
+				C6E1B67025AAC1B1007C3CF1 /* scu_dsp_jmp.cpp in Sources */,
+				C6E1B67125AAC1B1007C3CF1 /* 3dpad.cpp in Sources */,
+				C6E1B67225AAC1B1007C3CF1 /* mouse.cpp in Sources */,
+				C6E1B67325AAC1B1007C3CF1 /* gamepad.cpp in Sources */,
+				C6E1B67425AAC1B1007C3CF1 /* multitap.cpp in Sources */,
+				C6E1B67525AAC1B1007C3CF1 /* wheel.cpp in Sources */,
+				C6E1B67625AAC1B1007C3CF1 /* gun.cpp in Sources */,
+				C6E1B67725AAC1B1007C3CF1 /* mission.cpp in Sources */,
+				C6E1B67825AAC1B1007C3CF1 /* keyboard.cpp in Sources */,
+				C6E1B67925AAC1B1007C3CF1 /* jpkeyboard.cpp in Sources */,
+				C6E1B67A25AAC1B1007C3CF1 /* db.cpp in Sources */,
+				C6E1B67B25AAC1B1007C3CF1 /* scu_dsp_mvi.cpp in Sources */,
+				C6E1B67C25AAC1B1007C3CF1 /* vdp2_render.cpp in Sources */,
+				C6E1B67D25AAC1B1007C3CF1 /* vdp1_poly.cpp in Sources */,
+				C6E1B67E25AAC1B1007C3CF1 /* ssf.cpp in Sources */,
+				C6E1B67F25AAC1B1007C3CF1 /* gen_dsp.cpp in Sources */,
+				C6E1B68025AAC1B1007C3CF1 /* ss.cpp in Sources */,
+				C6E1B68125AAC1B1007C3CF1 /* smpc.cpp in Sources */,
+				C6E1B68225AAC1B1007C3CF1 /* sound.cpp in Sources */,
+				C6E1B68325AAC1B1007C3CF1 /* ar4mp.cpp in Sources */,
+				C6E1B68425AAC1B1007C3CF1 /* extram.cpp in Sources */,
+				C6E1B68525AAC1B1007C3CF1 /* backup.cpp in Sources */,
+				C6E1B68625AAC1B1007C3CF1 /* rom.cpp in Sources */,
+				C6E1B68725AAC1B1007C3CF1 /* debug.cpp in Sources */,
+				C6E1B68825AAC1B2007C3CF1 /* cs1ram.cpp in Sources */,
+				C6E1B68925AAC1B2007C3CF1 /* vdp1_sprite.cpp in Sources */,
+				C6E1B68A25AAC1B2007C3CF1 /* vdp1_line.cpp in Sources */,
+				C6E1B68B25AAC1B2007C3CF1 /* cdb.cpp in Sources */,
+				C6E1B68C25AAC1B2007C3CF1 /* vdp2.cpp in Sources */,
+				C6E1B68D25AAC1B2007C3CF1 /* cart.cpp in Sources */,
+				C6E1B68E25AAC1B2007C3CF1 /* vdp1.cpp in Sources */,
+				C6E1B68F25AAC1B2007C3CF1 /* scu_dsp_gen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10462,6 +10764,21 @@
 			target = B35D6684218185710005A992 /* hwcpu-tvOS */;
 			targetProxy = B35D6692218185FF0005A992 /* PBXContainerItemProxy */;
 		};
+		C6E1B64A25AA9DC1007C3CF1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6E1B5A925AA9C15007C3CF1 /* saturn-tvOS */;
+			targetProxy = C6E1B64925AA9DC1007C3CF1 /* PBXContainerItemProxy */;
+		};
+		C6E1B69125AAC1D5007C3CF1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6E1B65325AAC123007C3CF1 /* saturn-iOS */;
+			targetProxy = C6E1B69025AAC1D5007C3CF1 /* PBXContainerItemProxy */;
+		};
+		C6E1B69725AAC5A3007C3CF1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6E1B65325AAC123007C3CF1 /* saturn-iOS */;
+			targetProxy = C6E1B69625AAC5A3007C3CF1 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -10524,16 +10841,16 @@
 					WANT_PCE_EMU,
 					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
-					WANT_SMS_EMU,
+					WANT_SS_EMU,
 					WANT_SNES_EMU,
 					WANT_SNES_FAUST_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.27.0\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102700",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10569,7 +10886,7 @@
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libsndfile",
@@ -10631,7 +10948,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
@@ -10642,16 +10959,16 @@
 					WANT_PCE_EMU,
 					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
-					WANT_SMS_EMU,
+					WANT_SS_EMU,
 					WANT_SNES_EMU,
 					WANT_SNES_FAUST_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.27.0\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102700",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -10687,53 +11004,41 @@
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libsndfile",
 					"\"$(SRCROOT)\"",
 				);
-				LLVM_LTO = YES;
+				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mfpu=neon",
-					"-fwrapv",
-					"-fprefetch-loop-arrays",
-					"-fjump-tables",
-					"-ftree-vectorize",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"-DHAVE_UNISTD_H",
+					"-DMEDNAFEN_VERSION=\\\"1.27.0\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102403",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-disable-lsr",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102700",
+					"-DHAVE_LROUND",
+					"-DHAVE_STDINT_H",
+					"-DHAVE_STDLIB_H",
+					"-DHAVE_SYS_PARAM_H",
+					"-DNDEBUG",
+					"-funroll-loops",
+					"-fPIC",
 					"-Wall",
-					"-Wshadow",
-					"-Wempty-body",
-					"-Wignored-qualifiers",
-					"-Wvla",
-					"-Wvariadic-macros",
-					"-Wdisabled-optimization",
-					"-mllvm",
-					"-disable-lsr",
-					"-mcmodel=small",
+					"-Wno-sign-compare",
+					"-Wno-unused-variable",
+					"-Wno-unused-function",
+					"-Wno-uninitialized",
+					"-Wno-strict-aliasing",
+					"-Wno-aggressive-loop-optimizations",
+					"-fno-fast-math",
+					"-fomit-frame-pointer",
+					"-fsigned-char",
+					"-DWANT_STEREO_SOUND",
+					"-DSTDC_HEADERS",
+					"-D__STDC_LIMIT_MACROS",
+					"-D__LIBRETRO__",
+					"-DINLINE=\"inline\"",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -11291,7 +11596,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
@@ -11302,16 +11607,16 @@
 					WANT_PCE_EMU,
 					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
-					WANT_SMS_EMU,
+					WANT_SS_EMU,
 					WANT_SNES_EMU,
 					WANT_SNES_FAUST_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
 					"WANT_FANCY_SCALERS=1",
 					HAVE_MKDIR,
-					"MEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"MEDNAFEN_VERSION=\\\"1.27.0\\\"",
 					"PACKAGE=\\\"mednafen\\\"",
-					"MEDNAFEN_VERSION_NUMERIC=0x00102403",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102700",
 					"PSS_STYLE=1",
 					MPC_FIXED_POINT,
 					ARCH_ARM,
@@ -11347,53 +11652,41 @@
 					"\"$(SRCROOT)/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libsndfile",
 					"\"$(SRCROOT)\"",
 				);
-				LLVM_LTO = YES;
+				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mfpu=neon",
-					"-fwrapv",
-					"-fprefetch-loop-arrays",
-					"-fjump-tables",
-					"-ftree-vectorize",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.24.3\\\"",
+					"-DHAVE_UNISTD_H",
+					"-DMEDNAFEN_VERSION=\\\"1.27.0\\\"",
 					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102403",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-disable-lsr",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102700",
+					"-DHAVE_LROUND",
+					"-DHAVE_STDINT_H",
+					"-DHAVE_STDLIB_H",
+					"-DHAVE_SYS_PARAM_H",
+					"-DNDEBUG",
+					"-funroll-loops",
+					"-fPIC",
 					"-Wall",
-					"-Wshadow",
-					"-Wempty-body",
-					"-Wignored-qualifiers",
-					"-Wvla",
-					"-Wvariadic-macros",
-					"-Wdisabled-optimization",
-					"-mllvm",
-					"-disable-lsr",
-					"-mcmodel=small",
+					"-Wno-sign-compare",
+					"-Wno-unused-variable",
+					"-Wno-unused-function",
+					"-Wno-uninitialized",
+					"-Wno-strict-aliasing",
+					"-Wno-aggressive-loop-optimizations",
+					"-fno-fast-math",
+					"-fomit-frame-pointer",
+					"-fsigned-char",
+					"-DWANT_STEREO_SOUND",
+					"-DSTDC_HEADERS",
+					"-D__STDC_LIMIT_MACROS",
+					"-D__LIBRETRO__",
+					"-DINLINE=\"inline\"",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -11438,12 +11731,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -11506,6 +11800,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.27.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15754,12 +16049,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15817,12 +16113,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.24.3;
+				MARKETING_VERSION = 1.26.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -15888,6 +16185,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.27.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -15948,6 +16246,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.27.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMednafen";
@@ -16160,6 +16459,234 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		C6E1B62525AA9C15007C3CF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
+					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		C6E1B62625AA9C15007C3CF1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
+					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-DHAVE_UNISTD_H",
+					"-DMEDNAFEN_VERSION=\\\"1.26.1\\\"",
+					"-DPACKAGE=\\\"mednafen\\\"",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102601",
+					"-DHAVE_LROUND",
+					"-DHAVE_STDINT_H",
+					"-DHAVE_STDLIB_H",
+					"-DHAVE_SYS_PARAM_H",
+					"-DNDEBUG",
+					"-funroll-loops",
+					"-fPIC",
+					"-Wall",
+					"-Wno-sign-compare",
+					"-Wno-unused-variable",
+					"-Wno-unused-function",
+					"-Wno-uninitialized",
+					"-Wno-strict-aliasing",
+					"-Wno-aggressive-loop-optimizations",
+					"-fno-fast-math",
+					"-fomit-frame-pointer",
+					"-fsigned-char",
+					"-DWANT_STEREO_SOUND",
+					"-DSTDC_HEADERS",
+					"-D__STDC_LIMIT_MACROS",
+					"-D__LIBRETRO__",
+					"-DINLINE=\"inline\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = 3;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C6E1B62725AA9C15007C3CF1 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mednafen/include\"",
+					"\"$(SRCROOT)/mednafen/intl\"",
+					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = 3;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		C6E1B66B25AAC123007C3CF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C6E1B66C25AAC123007C3CF1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C6E1B66D25AAC123007C3CF1 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
 		};
 /* End XCBuildConfiguration section */
 
@@ -16730,6 +17257,26 @@
 				B3FBDFA6207FF5D900E661D1 /* Debug */,
 				B3FBDFA7207FF5D900E661D1 /* Release */,
 				B324C4FD2191A22A009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C6E1B62425AA9C15007C3CF1 /* Build configuration list for PBXNativeTarget "saturn-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6E1B62525AA9C15007C3CF1 /* Debug */,
+				C6E1B62625AA9C15007C3CF1 /* Release */,
+				C6E1B62725AA9C15007C3CF1 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C6E1B66A25AAC123007C3CF1 /* Build configuration list for PBXNativeTarget "saturn-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6E1B66B25AAC123007C3CF1 /* Debug */,
+				C6E1B66C25AAC123007C3CF1 /* Release */,
+				C6E1B66D25AAC123007C3CF1 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

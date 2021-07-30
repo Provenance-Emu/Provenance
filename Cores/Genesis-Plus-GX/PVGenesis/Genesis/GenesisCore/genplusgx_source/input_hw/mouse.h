@@ -1,8 +1,8 @@
 /***************************************************************************************
  *  Genesis Plus
- *  Sega Mouse support
+ *  Sega/Mega Mouse support
  *
- *  Copyright (C) 2007-2011  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2017  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:

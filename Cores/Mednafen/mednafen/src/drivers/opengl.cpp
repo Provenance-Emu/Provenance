@@ -26,7 +26,7 @@
 void OpenGL_Blitter::ReadPixels(MDFN_Surface *surface, const MDFN_Rect *rect)
 {
  p_glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitchinpix);
- p_glReadPixels(rect->x, gl_screen_h - rect->h - rect->y, rect->w, rect->h, PixelFormat, PixelType, surface->pixels);
+ p_glReadPixels(rect->x, gl_screen_h - rect->h - rect->y, rect->w, rect->h, OSDPixelFormat, OSDPixelType, surface->pixels);
 
  for(int y = 0; y < surface->h / 2; y++)
  {
@@ -39,7 +39,7 @@ void OpenGL_Blitter::ReadPixels(MDFN_Surface *surface, const MDFN_Rect *rect)
 }
 
 
-void OpenGL_Blitter::BlitRaw(const MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_Rect *dest_rect, const bool source_alpha)
+void OpenGL_Blitter::BlitOSD(const MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_Rect *dest_rect, const bool source_alpha)
 {
  unsigned int tmpwidth;
  unsigned int tmpheight;
@@ -80,7 +80,7 @@ void OpenGL_Blitter::BlitRaw(const MDFN_Surface *surface, const MDFN_Rect *rect,
     neo_dest_rect.y = dest_rect->y + yseg * dest_rect->h / rect->h;
     neo_dest_rect.w = neo_rect.w * dest_rect->w / rect->w;
     neo_dest_rect.h = neo_rect.h * dest_rect->h / rect->h;
-    BlitRaw(surface, &neo_rect, &neo_dest_rect, source_alpha);
+    BlitOSD(surface, &neo_rect, &neo_dest_rect, source_alpha);
    }
   }
  }
@@ -96,8 +96,8 @@ void OpenGL_Blitter::BlitRaw(const MDFN_Surface *surface, const MDFN_Rect *rect,
   p_glBindTexture(GL_TEXTURE_2D, textures[3]);
   p_glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitchinpix);
 
-  p_glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tmpwidth, tmpheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-  p_glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect->w, rect->h, PixelFormat, PixelType, surface->pixels + rect->x + rect->y * surface->pitchinpix);
+  p_glTexImage2D(GL_TEXTURE_2D, 0, OSDInternalFormat, tmpwidth, tmpheight, 0, OSDPixelFormat, OSDPixelType, NULL);
+  p_glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect->w, rect->h, OSDPixelFormat, OSDPixelType, surface->pixels + rect->x + rect->y * surface->pitchinpix);
 
   p_glBegin(GL_QUADS);
 
@@ -310,7 +310,7 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
  int dest_coords[4][2];
  unsigned int tmpwidth;
  unsigned int tmpheight;
- uint32 *src_pixies;
+ void* src_pixies;
  const bool ShaderIlace = (InterlaceField >= 0) && shader && shader->ShaderNeedsProperIlace();
 
  if(shader)
@@ -328,7 +328,10 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
  }
 
 
- src_pixies = src_surface->pixels + tex_src_rect.x + (tex_src_rect.y + (InterlaceField & ShaderIlace)) * src_surface->pitchinpix;
+ if(src_surface->pixels16)
+  src_pixies = src_surface->pixels16 + tex_src_rect.x + (tex_src_rect.y + (InterlaceField & ShaderIlace)) * src_surface->pitchinpix;
+ else
+  src_pixies = src_surface->pixels + tex_src_rect.x + (tex_src_rect.y + (InterlaceField & ShaderIlace)) * src_surface->pitchinpix;
  tex_src_rect.x = 0;
  tex_src_rect.y = 0;
  tex_src_rect.h >>= ShaderIlace;
@@ -346,7 +349,7 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
 
   if(tmpwidth != last_w || tmpheight != last_h)
   {
-   p_glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tmpwidth, tmpheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+   p_glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, tmpwidth, tmpheight, 0, PixelFormat, PixelType, NULL);
    last_w = tmpwidth;
    last_h = tmpheight;
   }
@@ -361,7 +364,7 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
   // If the required GL texture size has changed, resize the texture! :b
   if(tmpwidth != round_up_pow2(last_w) || tmpheight != round_up_pow2(last_h))
   {
-   p_glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tmpwidth, tmpheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+   p_glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, tmpwidth, tmpheight, 0, PixelFormat, PixelType, NULL);
    ImageSizeChange = TRUE;
   }
  
@@ -575,8 +578,44 @@ static bool CheckAlternateFormat(const uint32 version_h)
  return(false);
 }
 
+#define XTSC(e) case e: return #e;
+static const char* GLEToString(GLenum e)
+{
+ switch(e)
+ {
+  default:
+	return _("UNKNOWN");
+
+  XTSC(GL_RGB)
+  XTSC(GL_RGBA)
+  XTSC(GL_BGR)
+  XTSC(GL_BGRA)
+  XTSC(GL_RGB4)
+  XTSC(GL_RGB5)
+  XTSC(GL_RGB8)
+  XTSC(GL_RGB565)
+
+  XTSC(GL_BYTE)
+  XTSC(GL_UNSIGNED_BYTE)
+  XTSC(GL_SHORT)
+  XTSC(GL_UNSIGNED_SHORT)
+  XTSC(GL_UNSIGNED_SHORT_5_6_5)
+  XTSC(GL_UNSIGNED_SHORT_5_6_5_REV)
+  XTSC(GL_UNSIGNED_SHORT_4_4_4_4)
+  XTSC(GL_UNSIGNED_SHORT_4_4_4_4_REV)
+  XTSC(GL_UNSIGNED_SHORT_5_5_5_1)
+  XTSC(GL_UNSIGNED_SHORT_1_5_5_5_REV)
+  XTSC(GL_INT)
+  XTSC(GL_UNSIGNED_INT)
+  XTSC(GL_UNSIGNED_INT_8_8_8_8)
+  XTSC(GL_UNSIGNED_INT_8_8_8_8_REV)
+  XTSC(GL_UNSIGNED_INT_10_10_10_2)
+  XTSC(GL_UNSIGNED_INT_2_10_10_10_REV)
+ }
+}
+
 /* Rectangle, left, right(not inclusive), top, bottom(not inclusive). */
-OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const ShaderParams& shader_params, int *rs, int *gs, int *bs, int *as)
+OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const ShaderParams& shader_params, MDFN_PixelFormat* game_pf, MDFN_PixelFormat* osd_pf, uint32 preferred_format)
 {
  try
  {
@@ -870,30 +909,61 @@ OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const Shader
  if(!CheckAlternateFormat(version_h))
  {
   #ifdef LSB_FIRST
-  *rs = 0;
-  *gs = 8;
-  *bs = 16;
-  *as = 24;
+  *osd_pf = MDFN_PixelFormat::ABGR32_8888;
   #else
-  *rs = 24;
-  *gs = 16;
-  *bs = 8;
-  *as = 0;
+  *osd_pf = MDFN_PixelFormat::RGBA32_8888;
   #endif
-  PixelFormat = GL_RGBA;
-  PixelType = GL_UNSIGNED_BYTE;
-  MDFN_printf(_("Using GL_RGBA, GL_UNSIGNED_BYTE for texture source data.\n"));
+  OSDInternalFormat = GL_RGBA;
+  OSDPixelFormat = GL_RGBA;
+  OSDPixelType = GL_UNSIGNED_BYTE;
  }
  else
  {
-  *as = 24;
-  *rs = 16;
-  *gs = 8;
-  *bs = 0;
-  PixelFormat = GL_BGRA;
-  PixelType = GL_UNSIGNED_INT_8_8_8_8_REV;
-  MDFN_printf(_("Using GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for texture source data.\n"));
+  *osd_pf = MDFN_PixelFormat::ARGB32_8888;
+  OSDInternalFormat = GL_RGBA;
+  OSDPixelFormat = GL_BGRA;
+  OSDPixelType = GL_UNSIGNED_INT_8_8_8_8_REV;
  }
+
+ *game_pf = *osd_pf;
+ InternalFormat = OSDInternalFormat;
+ PixelFormat = OSDPixelFormat;
+ PixelType = OSDPixelType;
+
+ if(version_h >= 0x0102 && preferred_format != EVFSUPPORT_NONE)
+ {
+  if(preferred_format & EVFSUPPORT_RGB565)
+  {
+   *game_pf = MDFN_PixelFormat::RGB16_565;
+
+   if(0)
+    InternalFormat = GL_RGB565;
+   else
+    InternalFormat = GL_RGB;
+
+   PixelFormat = GL_RGB;
+   PixelType = GL_UNSIGNED_SHORT_5_6_5;
+  }
+  else if(preferred_format & EVFSUPPORT_RGB555)
+  {
+   *game_pf = MDFN_PixelFormat::IRGB16_1555;
+
+   InternalFormat = GL_RGB5;
+   PixelFormat = GL_BGRA;
+   PixelType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
+  }
+ }
+
+ if(InternalFormat == OSDInternalFormat && PixelFormat == OSDPixelFormat && PixelType == OSDPixelType)
+  MDFN_printf(_("Using %s - %s, %s for texture source data.\n"), GLEToString(OSDInternalFormat), GLEToString(OSDPixelFormat), GLEToString(OSDPixelType));
+ else
+ {
+  MDFN_printf(_("Using %s - %s, %s for OSD texture source data.\n"), GLEToString(OSDInternalFormat), GLEToString(OSDPixelFormat), GLEToString(OSDPixelType));
+  MDFN_printf(_("Using %s - %s, %s for emulated video texture source data.\n"), GLEToString(InternalFormat), GLEToString(PixelFormat), GLEToString(PixelType));
+ }
+ //
+ //
+ //
  }
  catch(...)
  {

@@ -5,7 +5,7 @@
 
 #define HUC6280_LAZY_FLAGS
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 
@@ -59,7 +59,7 @@ struct HuC6280
 void HuC6280_Run(int32 cycles);
 void HuC6280_ResetTS(void);
 
-extern HuC6280 HuCPU;
+MDFN_HIDE extern HuC6280 HuCPU;
 
 #define N_FLAG  0x80
 #define V_FLAG  0x40

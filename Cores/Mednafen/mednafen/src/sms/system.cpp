@@ -45,12 +45,6 @@ void system_frame(int skip_render)
          sms.paused = 0;
     }
 
-    if(SoftResetCount)
-    {
-     SoftResetCount--;
-     if(!SoftResetCount)
-      input.system &= ~INPUT_RESET;     
-    }
     SMS_VDPRunFrame(skip_render);
 }
 
@@ -104,11 +98,7 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
 
  if(load)
  {
-  if(sms.cycle_counter > 1000)
-  {
-   sms.cycle_counter = 1000;
-   puts("sms.cycle_counter sanity failed");
-  }
+  sms.cycle_counter = std::max<int32>(-1000, std::min<int32>(0, sms.cycle_counter));
  } 
 }
 
@@ -130,6 +120,13 @@ static void Emulate(EmulateSpecStruct *espec)
 
  sms.timestamp = 0;
 
+ input.system = 0;
+ if(SoftResetCount)
+ {
+  input.system |= INPUT_RESET;
+  SoftResetCount--;
+ }
+
  input.pad[0] = *InputPtrs[0] & 0x3F;
 
  if(IS_SMS)
@@ -138,17 +135,11 @@ static void Emulate(EmulateSpecStruct *espec)
 
   if((*InputPtrs[0] | *InputPtrs[1]) & 0x40)
    input.system |= INPUT_PAUSE;
-  else
-   input.system &= ~INPUT_PAUSE;
  }
  else // GG:
  {
   if(*InputPtrs[0] & 0x40)
-  {
    input.system |= INPUT_START;
-  }
-  else
-   input.system &= ~INPUT_START;
  }
 
  MDFNMP_ApplyPeriodicCheats();
@@ -168,10 +159,25 @@ static void Emulate(EmulateSpecStruct *espec)
   espec->DisplayRect.h = sle + 1 - sls;
  }
 
- bitmap.data = (uint8*)espec->surface->pixels;
  bitmap.width = 256;
  bitmap.height = 240;
- bitmap.pitch = espec->surface->pitchinpix * sizeof(uint32);
+
+ switch(espec->surface->format.opp)
+ {
+  case 4:
+	bitmap.data = (uint8*)espec->surface->pix<uint32>();
+	bitmap.pitch = espec->surface->pitchinpix * sizeof(uint32);
+	break;
+
+  case 2:
+	bitmap.data = (uint8*)espec->surface->pix<uint16>();
+	bitmap.pitch = espec->surface->pitchinpix * sizeof(uint16);
+	break;
+
+  default:
+	assert(0);
+	break;
+ }
 
  system_frame(espec->skip);
 
@@ -361,15 +367,16 @@ static void DoSimpleCommand(int cmd)
 {
  switch(cmd)
  {
-  case MDFN_MSC_POWER: system_reset(); break;
-  case MDFN_MSC_RESET: if(IS_SMS)
-			{
-			 input.system |= INPUT_RESET;
-			 SoftResetCount = 20;
-			}
-			else
-			 system_reset();
-			break;
+  case MDFN_MSC_POWER:
+	system_reset();
+	break;
+
+  case MDFN_MSC_RESET:
+	if(IS_SMS)
+	 SoftResetCount = 20;
+	else
+	 system_reset();
+	break;
  }
 }
 
@@ -427,7 +434,7 @@ static const CustomPalette_Spec GGCPInfo[] =
 };
 
 
-MDFNGI EmulatedSMS =
+MDFN_HIDE extern const MDFNGI EmulatedSMS =
 {
  "sms",
  "Sega Master System",
@@ -464,6 +471,9 @@ MDFNGI EmulatedSMS =
  SMSSettings,
  0,
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false, // Multires possible?
 
  256,   // lcm_width
@@ -479,7 +489,7 @@ MDFNGI EmulatedSMS =
  2,     // Number of output sound channels
 };
 
-MDFNGI EmulatedGG =
+MDFN_HIDE extern const MDFNGI EmulatedGG =
 {
  "gg",
  "Sega Game Gear",
@@ -516,6 +526,9 @@ MDFNGI EmulatedGG =
  GGSettings,
  0,
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
+
  false, // Multires possible?
 
  160,   // lcm_width

@@ -61,26 +61,15 @@
 //
 // Define the global variable list
 //
-
-#ifdef SYSTEM_CPP
-	uint32   gSuzieDoneTime = 0;
-	uint32	gSystemCycleCount=0;
-	uint32	gNextTimerEvent=0;
-	uint32	gCPUBootAddress=0;
-	uint32	gSystemIRQ=false;
-	uint32	gSystemNMI=false;
-	uint32	gSystemCPUSleep=false;
-	uint32	gSystemHalt=false;
-#else
-	extern uint32	gSystemCycleCount;
-	extern uint32	gSuzieDoneTime;
-	extern uint32	gNextTimerEvent;
-	extern uint32	gCPUBootAddress;
-	extern uint32	gSystemIRQ;
-	extern uint32	gSystemNMI;
-	extern uint32	gSystemCPUSleep;
-	extern uint32	gSystemHalt;
-#endif
+MDFN_HIDE extern uint32	gSystemCycleCount;
+MDFN_HIDE extern uint32	gSuzieDoneTime;
+MDFN_HIDE extern uint32	gNextTimerEvent;
+MDFN_HIDE extern uint32	gCPUBootAddress;
+MDFN_HIDE extern uint32	gSystemIRQ;
+MDFN_HIDE extern uint32	gSystemNMI;
+MDFN_HIDE extern uint32	gSystemCPUSleep;
+MDFN_HIDE extern uint32	gSystemHalt;
+MDFN_HIDE extern bool LynxLineDrawn[256];
 
 //
 // Define the interfaces before we start pulling in the classes
@@ -214,7 +203,5 @@ class CSystem : public CSystemBase
 
 		uint32			mFileType;
 };
-
-extern bool LynxLineDrawn[256];
 
 #endif

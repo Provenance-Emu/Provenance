@@ -9,7 +9,7 @@
 
 import CoreSpotlight
 import Foundation
-import PVSupport
+@_exported import PVSupport
 import RealmSwift
 import SQLite
 
@@ -198,14 +198,9 @@ public final class GameImporter {
     public func importFiles(atPaths paths: [URL]) -> [URL] {
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
-            if #available(iOS 9.0, *) {
-                if url.hasDirectoryPath {
-                    return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                } else {
-                    return [url]
-                }
+            if url.hasDirectoryPath {
+                return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             } else {
-                // Fallback on earlier versions
                 return [url]
             }
         }.joined().map { $0 }
@@ -611,7 +606,7 @@ public extension GameImporter {
         }
 
         // Create new Data from scaled image
-        guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.5) else {
+        guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) else {
             ELOG("Failed to create data respresentation of scaled image")
             return nil
         }
@@ -649,14 +644,9 @@ public extension GameImporter {
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
-            if #available(iOS 9.0, *) {
-                if url.hasDirectoryPath {
-                    return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                } else {
-                    return [url]
-                }
+            if url.hasDirectoryPath {
+                return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             } else {
-                // Fallback on earlier versions
                 return [url]
             }
         }.joined().map { $0 }
@@ -676,11 +666,7 @@ public extension GameImporter {
         let fileExtensionLower = urlPath.pathExtension.lowercased()
 
         let isDirectory: Bool
-        if #available(iOS 9.0, *) {
-            isDirectory = path.hasDirectoryPath
-        } else {
-            isDirectory = (try? path.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
-        }
+        isDirectory = path.hasDirectoryPath
         if path.lastPathComponent.hasPrefix(".") {
             VLOG("Skipping file with . as first character or it's a directory")
             return

@@ -178,7 +178,6 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
 
     #if os(iOS)
         private var _feedbackGenerator: AnyObject?
-        @available(iOS 10.0, *)
         var feedbackGenerator: UISelectionFeedbackGenerator? {
             get {
                 return _feedbackGenerator as? UISelectionFeedbackGenerator
@@ -220,10 +219,8 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         #if os(iOS)
-            if #available(iOS 10.0, *) {
-                feedbackGenerator = UISelectionFeedbackGenerator()
-                feedbackGenerator?.prepare()
-            }
+            feedbackGenerator = UISelectionFeedbackGenerator()
+            feedbackGenerator?.prepare()
             updateHideTouchControls()
 
             if PVSettingsModel.shared.volumeHUD {
@@ -293,7 +290,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             if PVSettingsModel.shared.buttonVibration {
                 // only iPhone 7 and 7 Plus support the taptic engine APIs for now.
                 // everything else should fall back to the vibration motor.
-                if #available(iOS 10.0, *), UIDevice.hasTapticMotor {
+                if UIDevice.hasTapticMotor {
                     feedbackGenerator?.selectionChanged()
                 } else {
                     AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))

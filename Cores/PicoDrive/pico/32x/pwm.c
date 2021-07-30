@@ -326,11 +326,11 @@ void p32x_pwm_state_loaded(void)
   p32x_pwm_ctl_changed();
 
   // for old savestates
-  cycles_diff_sh2 = SekCycleCnt * 3 - Pico32x.pwm_cycle_p;
+  cycles_diff_sh2 = Pico.t.m68c_cnt * 3 - Pico32x.pwm_cycle_p;
   if (cycles_diff_sh2 >= pwm_cycles || cycles_diff_sh2 < 0) {
     Pico32x.pwm_irq_cnt = pwm_irq_reload;
-    Pico32x.pwm_cycle_p = SekCycleCnt * 3;
-    p32x_pwm_schedule(SekCycleCnt);
+    Pico32x.pwm_cycle_p = Pico.t.m68c_cnt * 3;
+    p32x_pwm_schedule(Pico.t.m68c_cnt);
   }
 }
 

@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  Team Player support
  *
- *  Copyright (C) 2007-2011  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2014  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -87,18 +87,20 @@ INLINE unsigned int teamplayer_read(int port)
   /* acquisition sequence */
   switch (counter)
   {
-    case 0: /* initial state: TH = 1, TR = 1 -> RLDU = 0011 */
+    case 0: /* initial state: xxx0011 */
     {
-      return 0x73;
+      /* TL should match TR */
+      return ((teamplayer[port].State & 0x20) >> 1) | 0x03;
     }
 
-    case 1: /* start request: TH = 0, TR = 1 -> RLDU = 1111 */
+    case 1: /* start request: xxx1111 */
     {
-      return 0x3F; 
+      /* TL should match TR */
+      return ((teamplayer[port].State & 0x20) >> 1) | 0x0F;
     }
 
     case 2:
-    case 3: /* ack request: TH=0, TR=0/1 -> RLDU = 0000 */
+    case 3: /* ack request: xxx0000 */
     {
       /* TL should match TR */
       return ((teamplayer[port].State & 0x20) >> 1);
@@ -107,7 +109,7 @@ INLINE unsigned int teamplayer_read(int port)
     case 4:
     case 5:
     case 6:
-    case 7: /* PAD type */
+    case 7: /* PAD type: xxx0000 (3B), xxx0001 (6B) or xxx1111 (NC)*/
     {
       unsigned int retval = input.dev[(port << 2) + (counter - 4)];
 
@@ -115,7 +117,7 @@ INLINE unsigned int teamplayer_read(int port)
       return (((teamplayer[port].State & 0x20) >> 1) | retval);
     }
 
-    default: /* PAD status */
+    default: /* PAD status: xxxRLDU -> xxxSACB -> xxxMXYZ */
     {
       unsigned int retval = 0x0F;
 
@@ -136,23 +138,22 @@ INLINE void teamplayer_write(int port, unsigned char data, unsigned char mask)
   /* update bits set as output only */
   unsigned int state = (teamplayer[port].State & ~mask) | (data & mask);
 
-  /* TH & TR handshaking */
-  if ((teamplayer[port].State ^ state) & 0x60)
+  /* check if TH is HIGH */
+  if (state & 0x40) 
   {
-    if (state & 0x40) 
-    {
-      /* TH high -> reset counter */
-      teamplayer[port].Counter = 0;
-    }
-    else
-    {
-      /* increment counter */
-      teamplayer[port].Counter++;
-    }
-
-    /* update internal state */
-    teamplayer[port].State = state;
+    /* reset counter */
+    teamplayer[port].Counter = 0;
   }
+
+  /* TH & TR handshaking */
+  else if ((teamplayer[port].State ^ state) & 0x60)
+  {
+    /* increment counter */
+    teamplayer[port].Counter++;
+  }
+
+  /* update internal state */
+  teamplayer[port].State = state;
 }
 
 unsigned char teamplayer_1_read(void)

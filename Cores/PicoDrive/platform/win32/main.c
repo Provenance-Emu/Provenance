@@ -131,7 +131,7 @@ static HBITMAP png2hb(const char *fname, int is_480)
 static void PrepareForROM(void)
 {
   unsigned char *rom_data = NULL;
-  int i, ret, show = PicoAHW & PAHW_PICO;
+  int i, ret, show = PicoIn.AHW & PAHW_PICO;
   
   PicoGetInternal(PI_ROM, (pint_ret_t *) &rom_data);
   EnableMenuItem(mmain, 2, MF_BYPOSITION|(show ? MF_ENABLED : MF_GRAYED));

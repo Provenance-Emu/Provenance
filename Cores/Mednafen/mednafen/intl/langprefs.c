@@ -207,7 +207,7 @@ _nl_language_preferences_win32_95 ()
 
 /* Get the system's preference.  This can be used as a fallback.  */
 static BOOL CALLBACK
-ret_first_language (HMODULE h, LPCSTR type, LPCSTR name, WORD lang, LONG_PTR param)
+ret_first_language (HMODULE h, LPCTSTR type, LPCTSTR name, WORD lang, LONG_PTR param)
 {
   *(const char **)param = _nl_locale_name_from_win32_LANGID (lang);
   return FALSE;
@@ -329,7 +329,7 @@ _nl_language_preferences_default (void)
     if (!cache_initialized && getenv ("GETTEXT_MUI") != NULL)
       {
         const char *languages = NULL;
-        HMODULE kernel32 = GetModuleHandle ("kernel32");
+        HMODULE kernel32 = GetModuleHandle (TEXT("kernel32"));
 
         if (kernel32 != NULL)
           languages = _nl_language_preferences_win32_mui (kernel32);

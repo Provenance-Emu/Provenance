@@ -2,7 +2,7 @@
 /* Mednafen Fast SNES Emulation Module                                        */
 /******************************************************************************/
 /* msu1.cpp - MSU1 emulation
-**  Copyright (C) 2019 Mednafen Team
+**  Copyright (C) 2019-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -90,8 +90,11 @@ static uint32 NO_INLINE Update(uint32 master_timestamp)
  //
  const float eff_volume = volume * ((1.0 / 255.0f) * 256.0f);
 
- if(MDFN_UNLIKELY(!(status & 0x10) || (status & 0x40)))
+ if(MDFN_UNLIKELY((status & 0x50) != 0x10 || !audio_reader))
  {
+  if(!(status & 0x60) && !audio_reader)
+   status &= ~0x10;
+
   while(run_count)
   {
    (&ResampBuf[0].BufPudding()->f)[ResampBufPos] = 0;
@@ -481,7 +484,6 @@ void MSU1_Init(GameFile* gf, double* IdealSoundRate, uint64 affinity_audio, uint
  //
  //
  //
- audio_reader = new MTStreamReader(affinity_audio);
  data_reader = new MTStreamReader(affinity_data);
  //
  {
@@ -500,6 +502,7 @@ void MSU1_Init(GameFile* gf, double* IdealSoundRate, uint64 affinity_audio, uint
 
  const std::string filebase = gf->outside.fbase;
  const std::string fnamepat = filebase + "-%.pcm";
+ const size_t fnamepat_pctpos = fnamepat.size() - 5;
  const std::string dirpath = gf->outside.dir;
  std::bitset<65536> trypcm;	// May have false positives, should not have false negatives, but who knows with case insensitive filesystems...
  try
@@ -515,9 +518,11 @@ void MSU1_Init(GameFile* gf, double* IdealSoundRate, uint64 affinity_audio, uint
 	   if(si >= fname.size())
 	    return ret;
 	   //
-	   if(fnamepat[i] == '%')
+	   if(i == fnamepat_pctpos)
 	   {
 	    bool first = true;
+
+	    assert(fnamepat[i] == '%');
 
 	    tnum = 0;
 	    do
@@ -606,6 +611,9 @@ void MSU1_Init(GameFile* gf, double* IdealSoundRate, uint64 affinity_audio, uint
   asi.pos = 0;
   asi.stream = std::move(afp);
 
+  if(!audio_reader)
+   audio_reader = new MTStreamReader(affinity_audio);
+
   audio_reader->add_stream(std::move(asi));
   //
   td.w = w++;
@@ -658,7 +666,7 @@ void MSU1_Reset(bool powering_up)
  control = 0x00;
  
  data_reader->set_active_stream(0, 0);
- if(tracks.size())
+ if(audio_reader)
   audio_reader->set_active_stream(0, 8);
  //
  //

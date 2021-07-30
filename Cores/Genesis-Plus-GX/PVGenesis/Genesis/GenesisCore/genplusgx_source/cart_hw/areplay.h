@@ -2,7 +2,7 @@
  *  Genesis Plus
  *  DATEL Action Replay / Pro Action Replay emulation
  *
- *  Copyright (C) 2009-2011  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2009-2014  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:

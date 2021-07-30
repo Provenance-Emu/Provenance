@@ -282,24 +282,26 @@ unsigned DetectAnalogButtonsForChangeCheck(void)
 
  for(unsigned i = 0; i < JoystickCache.size(); i++)
  {
-  for(unsigned axis = 0; axis < JoystickCache[i].joystick->NumAxes(); axis++)
-  {
-   JoystickCache[i].axis_config_type[axis] = JoystickManager_Cache::AXIS_CONFIG_TYPE_GENERIC;
+  JoystickManager_Cache* const jce = &JoystickCache[i];
 
-   if(JoystickCache[i].joystick->IsAxisButton(axis))
+  for(unsigned axis = 0; axis < jce->joystick->NumAxes(); axis++)
+  {
+   jce->axis_config_type[axis] = JoystickManager_Cache::AXIS_CONFIG_TYPE_GENERIC;
+
+   if(jce->joystick->IsAxisButton(axis))
     ret++;
    else
    {
-    int pos = JoystickCache[i].joystick->GetAxis(axis);
+    int pos = jce->joystick->GetAxis(axis);
 
     if(abs(pos) >= 31000)
     {
      if(pos < 0)
-      JoystickCache[i].axis_config_type[axis] = JoystickManager_Cache::AXIS_CONFIG_TYPE_ANABUTTON_POSPRESS;
+      jce->axis_config_type[axis] = JoystickManager_Cache::AXIS_CONFIG_TYPE_ANABUTTON_POSPRESS;
      else
-      JoystickCache[i].axis_config_type[axis] = JoystickManager_Cache::AXIS_CONFIG_TYPE_ANABUTTON_NEGPRESS;
+      jce->axis_config_type[axis] = JoystickManager_Cache::AXIS_CONFIG_TYPE_ANABUTTON_NEGPRESS;
 
-     printf("SPOON -- joystick=%u, axis=%u, type=%u\n", i, axis, JoystickCache[i].axis_config_type[axis]);
+     MDFN_printf(_("Dual-polarity analog button detected: joystick 0x%016llx%016llx abs_%u%s\n"), (unsigned long long)MDFN_de64msb(&jce->UniqueID[0]), (unsigned long long)MDFN_de64msb(&jce->UniqueID[8]), axis, (pos < 0) ? "-+" : "+-");
      ret++;
     }
    }
@@ -313,7 +315,7 @@ void Reset_BC_ChangeCheck(void)
  for(unsigned i = 0; i < JoystickCache.size(); i++)
   JoystickCache[i].prev_state_valid = false;
 
- memset(&BCPending, 0, sizeof(BCPending));
+ BCPending = ButtConfig();
  BCPending.DeviceType = BUTTC_NONE;
  BCPending_Prio = -1;
  BCPending_CCCC = 0;
@@ -723,37 +725,41 @@ bool Translate09xBN(unsigned bn09x, uint16* bn, bool abs_pointer_axis_thing)
 }
 
 
-unsigned GetIndexByUniqueID(const std::array<uint8, 16>& unique_id)
+unsigned GetIndexByUniqueID(const std::array<uint8, 16>& unique_id, const bool is09xid)
 {
- for(unsigned i = 0; i < JoystickCache.size(); i++)
+ if(is09xid)
  {
-  if(JoystickCache[i].UniqueID == unique_id)
-   return i;
+  const uint64 id09x = MDFN_de64msb(&unique_id[0]);
+
+  for(unsigned i = 0; i < JoystickCache.size(); i++)
+  {
+   if(JoystickCache[i].UniqueID_09x == id09x)
+   {
+    //printf("%16llx %u\n", unique_id, i);
+    return i;
+   }
+  }
+ }
+ else
+ {
+  for(unsigned i = 0; i < JoystickCache.size(); i++)
+  {
+   if(JoystickCache[i].UniqueID == unique_id)
+    return i;
+  }
  }
 
  return ~0U;
 }
 
-unsigned GetIndexByUniqueID_09x(uint64 unique_id)
-{
- for(unsigned i = 0; i < JoystickCache.size(); i++)
- {
-  if(JoystickCache[i].UniqueID_09x == unique_id)
-  {
-   //printf("%16llx %u\n", unique_id, i);
-   return(i);
-  }
- }
-
- return(~0U);
-}
-
-std::array<uint8, 16> GetUniqueIDByIndex(unsigned index)
+bool GetUniqueIDByIndex(unsigned index, std::array<uint8, 16>* unique_id)
 {
  if(index >= JoystickCache.size())
-  return { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  return false;
 
- return JoystickCache[index].UniqueID;
+ *unique_id = JoystickCache[index].UniqueID;
+
+ return true;
 }
 
 }

@@ -691,12 +691,22 @@ static void GenMMC5Reset(CartInfo *info)
  for(x=0;x<4;x++) PRGBanks[x]=~0;
  for(x=0;x<8;x++) CHRBanksA[x]=~0;
  for(x=0;x<4;x++) CHRBanksB[x]=~0;
+ WRAMPage = 0;
  WRAMMaskEnable[0]=WRAMMaskEnable[1]=~0;
 
+ ABMode = 0;
+ IRQScanline = 0;
+ IRQEnable = 0;
  mmc5psize=mmc5vsize=3;
  CHRMode=0;
 
  NTAMirroring=NTFill=ATFill=0xFF;
+
+ MMC5IRQR = 0;
+ MMC5LineCounter = 0;
+
+ memset(&MMC5Sound, 0, sizeof(MMC5Sound));
+ mul[0] = mul[1] = 0;
 
  MMC5Synco();
 

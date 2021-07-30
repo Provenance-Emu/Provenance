@@ -64,56 +64,57 @@ typedef union {
 } reg_pair;
 
 #ifndef NO_GBA_MAP
-extern memoryMap map[256];
+MDFN_HIDE extern memoryMap map[256];
 #endif
 
-extern bool busPrefetch;
-extern bool busPrefetchEnable;
-extern uint32 busPrefetchCount;
-extern uint32 cpuPrefetch[2];
+MDFN_HIDE extern bool busPrefetch;
+MDFN_HIDE extern bool busPrefetchEnable;
+MDFN_HIDE extern uint32 busPrefetchCount;
+MDFN_HIDE extern uint32 cpuPrefetch[2];
 
+MDFN_HIDE extern int cpuDmaCount;
 
-extern uint8 memoryWait[16];
-extern uint8 memoryWait32[16];
-extern uint8 memoryWaitSeq[16];
-extern uint8 memoryWaitSeq32[16];
+MDFN_HIDE extern uint8 memoryWait[16];
+MDFN_HIDE extern uint8 memoryWait32[16];
+MDFN_HIDE extern uint8 memoryWaitSeq[16];
+MDFN_HIDE extern uint8 memoryWaitSeq32[16];
 
-extern reg_pair reg[45];
-extern uint8 biosProtected[4];
+MDFN_HIDE extern reg_pair reg[45];
+MDFN_HIDE extern uint8 biosProtected[4];
 
-extern uint32 N_FLAG;
-extern bool Z_FLAG;
-extern bool C_FLAG;
-extern bool V_FLAG;
-extern bool armIrqEnable;
-extern bool armState;
-extern int armMode;
-extern void (*cpuSaveGameFunc)(uint32,uint8);
+MDFN_HIDE extern uint32 N_FLAG;
+MDFN_HIDE extern bool Z_FLAG;
+MDFN_HIDE extern bool C_FLAG;
+MDFN_HIDE extern bool V_FLAG;
+MDFN_HIDE extern bool armIrqEnable;
+MDFN_HIDE extern bool armState;
+MDFN_HIDE extern int armMode;
+MDFN_HIDE extern void (*cpuSaveGameFunc)(uint32,uint8);
 
-extern void doMirroring(bool);
-extern void CPUUpdateRegister(uint32, uint16);
-extern void applyTimer ();
+void doMirroring(bool);
+void CPUUpdateRegister(uint32, uint16);
+void applyTimer ();
 
 MDFN_FASTCALL void CPUWriteMemory(uint32 address, uint32 value);
 MDFN_FASTCALL void CPUWriteHalfWord(uint32, uint16);
 MDFN_FASTCALL void CPUWriteByte(uint32, uint8);
 
-extern void CPUCheckDMA(int,int);
+void CPUCheckDMA(int,int);
 
-extern void CPUSwitchMode(int mode, bool saveState, bool breakLoop);
-extern void CPUSwitchMode(int mode, bool saveState);
-extern void CPUUndefinedException();
-extern void CPUSoftwareInterrupt();
-extern void CPUSoftwareInterrupt(int comment);
-extern void CPUUpdateCPSR();
-extern void CPUUpdateFlags(bool breakLoop);
-extern void CPUUpdateFlags();
+void CPUSwitchMode(int mode, bool saveState, bool breakLoop);
+void CPUSwitchMode(int mode, bool saveState);
+void CPUUndefinedException();
+void CPUSoftwareInterrupt();
+void CPUSoftwareInterrupt(int comment);
+void CPUUpdateCPSR();
+void CPUUpdateFlags(bool breakLoop);
+void CPUUpdateFlags();
 
 
-extern uint8 cpuBitsSet[256];
-extern uint8 cpuLowestBitSet[256];
+MDFN_HIDE extern uint8 cpuBitsSet[256];
+MDFN_HIDE extern uint8 cpuLowestBitSet[256];
 
-extern struct EmulatedSystem GBASystem;
+MDFN_HIDE extern uint32 soundTS;
 
 int32 MDFNGBA_GetTimerPeriod(int which);
 
@@ -150,7 +151,7 @@ int32 MDFNGBA_GetTimerPeriod(int which);
 namespace MDFN_IEN_GBA
 {
 
-extern RTC *GBA_RTC;
+MDFN_HIDE extern RTC *GBA_RTC;
 
 }
 

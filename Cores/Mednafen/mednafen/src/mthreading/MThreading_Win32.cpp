@@ -60,7 +60,7 @@ static BOOL WINAPI (*p_SleepConditionVariableCS)(NAKED_CONDITION_VARIABLE*, PCRI
 static void WINAPI (*p_WakeConditionVariable)(NAKED_CONDITION_VARIABLE*) = NULL;
 
 template<typename T>
-static bool GetPAW(HMODULE dll_handle, T& pf, const char *name)
+static bool GetPAW(HMODULE dll_handle, T& pf, const char* name)
 {
  pf = (T)GetProcAddress(dll_handle, name);
  return(pf != NULL);
@@ -68,7 +68,7 @@ static bool GetPAW(HMODULE dll_handle, T& pf, const char *name)
 
 static void InitCVStuff(void)
 {
- kdh = LoadLibrary("Kernel32.dll");
+ kdh = LoadLibrary(TEXT("Kernel32.dll"));
 
  GetPAW(kdh, p_InitializeConditionVariable, "InitializeConditionVariable");
  GetPAW(kdh, p_SleepConditionVariableCS, "SleepConditionVariableCS");
@@ -136,6 +136,7 @@ static unsigned __stdcall ThreadPivot(void* data)
 
 Thread* Thread_Create(int (*fn)(void *), void *data, const char* debug_name)
 {
+ static unsigned dummy;
  Thread* ret = NULL;
 
 #if 0
@@ -151,7 +152,7 @@ Thread* Thread_Create(int (*fn)(void *), void *data, const char* debug_name)
  ret->fn = fn;
  ret->data = data;
 
- if(!(ret->thr = (HANDLE)_beginthreadex(NULL, 0, ThreadPivot, ret, 0, NULL)))
+ if(!(ret->thr = (HANDLE)_beginthreadex(NULL, 0, ThreadPivot, ret, 0, &dummy)))
  {
   ErrnoHolder ene(errno);
 

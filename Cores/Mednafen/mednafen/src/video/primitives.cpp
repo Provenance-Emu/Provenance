@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* primitives.cpp:
-**  Copyright (C) 2013-2016 Mednafen Team
+**  Copyright (C) 2013-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -25,9 +25,10 @@ namespace Mednafen
 {
 
 template<typename T, bool fill>
-static void SuperDrawRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 border_color, uint32 fill_color)
+static void SuperDrawRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 border_color, uint32 fill_color, RectStyle style)
 {
  T* pixels = surface->pix<T>() + (y * surface->pitchinpix) + x;
+ const uint32 pitchinpix = surface->pitchinpix;
 
  if(w < 1 || h < 1)
   return;
@@ -45,78 +46,107 @@ static void SuperDrawRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, u
   return;
  }
 
- for(uint32 ix = 0; ix < w; ix++)
+ if(style == RectStyle::Rounded && w >= 2 && h >= 2)
  {
-  pixels[ix] = border_color;
-  pixels[ix + (h - 1) * surface->pitchinpix] = border_color;
+  for(uint32 iy = 0; iy < h; iy++)
+  {
+   uint32 xo = 0;
+   bool f = fill;
+   uint32 fc = fill_color;
+
+   if(iy == 0 || iy == (h - 1))
+   {
+    xo = 2;
+    f = true;
+    fc = border_color;
+   }
+   else if(iy == 1 || iy == (h - 2))
+    xo = 1;
+
+   pixels[xo] = border_color;
+   pixels[w - 1 - xo] = border_color;
+   if(f)
+   {
+    for(uint32 ix = 1 + xo; (ix + 1 + xo) < w; ix++)
+     pixels[ix] = fc;
+   }
+   pixels += pitchinpix;
+  }
  }
-
- pixels += surface->pitchinpix;
-
- for(uint32 iy = 1; iy < (h - 1); iy++)
+ else
  {
-  pixels[0] = border_color;
-  pixels[w - 1] = border_color;
+  for(uint32 ix = 0; ix < w; ix++)
+  {
+   pixels[ix] = border_color;
+   pixels[ix + (h - 1) * pitchinpix] = border_color;
+  }
+  pixels += pitchinpix;
 
-  if(fill)
-   for(uint32 ix = 1; ix < (w - 1); ix++)
-    pixels[ix] = fill_color;
+  for(uint32 iy = 1; iy < (h - 1); iy++)
+  {
+   pixels[0] = border_color;
+   pixels[w - 1] = border_color;
 
-  pixels += surface->pitchinpix;
- }
-}
+   if(fill)
+    for(uint32 ix = 1; ix < (w - 1); ix++)
+     pixels[ix] = fill_color;
 
-
-void MDFN_DrawRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 border_color)
-{
- switch(surface->format.bpp)
- {
-  case 8:
-	SuperDrawRect<uint8,  false>(surface, x, y, w, h, border_color, 0);
-	break;
-
-  case 16:
-	SuperDrawRect<uint16, false>(surface, x, y, w, h, border_color, 0);
-	break;
-
-  case 32:
-	SuperDrawRect<uint32, false>(surface, x, y, w, h, border_color, 0);
-	break;
- }
-}
-
-void MDFN_DrawFillRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 border_color, uint32 fill_color)
-{
- switch(surface->format.bpp)
- {
-  case 8:
-	SuperDrawRect<uint8,  true>(surface, x, y, w, h, border_color, fill_color);
-	break;
-
-  case 16:
-	SuperDrawRect<uint16, true>(surface, x, y, w, h, border_color, fill_color);
-	break;
-
-  case 32:
-	SuperDrawRect<uint32, true>(surface, x, y, w, h, border_color, fill_color);
-	break;
+   pixels += pitchinpix;
+  }
  }
 }
 
-void MDFN_DrawFillRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 fill_color)
+
+void MDFN_DrawRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 border_color, RectStyle style)
 {
- switch(surface->format.bpp)
+ switch(surface->format.opp)
  {
-  case 8:
-	SuperDrawRect<uint8,  true>(surface, x, y, w, h, fill_color, fill_color);
+  case 1:
+	SuperDrawRect<uint8,  false>(surface, x, y, w, h, border_color, 0, style);
 	break;
 
-  case 16:
-	SuperDrawRect<uint16, true>(surface, x, y, w, h, fill_color, fill_color);
+  case 2:
+	SuperDrawRect<uint16, false>(surface, x, y, w, h, border_color, 0, style);
 	break;
 
-  case 32:
-	SuperDrawRect<uint32, true>(surface, x, y, w, h, fill_color, fill_color);
+  case 4:
+	SuperDrawRect<uint32, false>(surface, x, y, w, h, border_color, 0, style);
+	break;
+ }
+}
+
+void MDFN_DrawFillRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 border_color, uint32 fill_color, RectStyle style)
+{
+ switch(surface->format.opp)
+ {
+  case 1:
+	SuperDrawRect<uint8,  true>(surface, x, y, w, h, border_color, fill_color, style);
+	break;
+
+  case 2:
+	SuperDrawRect<uint16, true>(surface, x, y, w, h, border_color, fill_color, style);
+	break;
+
+  case 4:
+	SuperDrawRect<uint32, true>(surface, x, y, w, h, border_color, fill_color, style);
+	break;
+ }
+}
+
+void MDFN_DrawFillRect(MDFN_Surface *surface, uint32 x, uint32 y, uint32 w, uint32 h, uint32 fill_color, RectStyle style)
+{
+ switch(surface->format.opp)
+ {
+  case 1:
+	SuperDrawRect<uint8,  true>(surface, x, y, w, h, fill_color, fill_color, style);
+	break;
+
+  case 2:
+	SuperDrawRect<uint16, true>(surface, x, y, w, h, fill_color, fill_color, style);
+	break;
+
+  case 4:
+	SuperDrawRect<uint32, true>(surface, x, y, w, h, fill_color, fill_color, style);
 	break;
  }
 }
@@ -250,7 +280,7 @@ static void SuperDrawLine(MDFN_Surface *surface, int x0, int y0, int x1, int y1,
  const unsigned int abs_dx = abs(dx);
  const unsigned int abs_dy = abs(dy);
  const uint32 pitchinpix = surface->pitchinpix;
- uint32 *pixels = surface->pixels;
+ T *pixels = surface->pix<T>();
 // const unsigned int s_w = surface->w;
 // const unsigned int s_h = surface->h;
 
@@ -298,18 +328,66 @@ static void SuperDrawLine(MDFN_Surface *surface, int x0, int y0, int x1, int y1,
 
 void MDFN_DrawLine(MDFN_Surface *surface, int x0, int y0, int x1, int y1, uint32 color)
 {
- switch(surface->format.bpp)
+ switch(surface->format.opp)
  {
-  case 8:
+  case 1:
 	SuperDrawLine<uint8>(surface, x0, y0, x1, y1, color);
 	break;
 
-  case 16:
+  case 2:
 	SuperDrawLine<uint16>(surface, x0, y0, x1, y1, color);
 	break;
 
-  case 32:
+  case 4:
 	SuperDrawLine<uint32>(surface, x0, y0, x1, y1, color);
+	break;
+ }
+}
+
+template<typename T>
+static void MDFN_SuperDrawFillRect(MDFN_Surface* surface, const MDFN_Rect& crect, int32 x, int32 y, uint32 w, uint32 h, uint32 color)
+{
+ int32 bx0 = std::min<int32>(surface->w, std::max<int32>(0, crect.x));
+ int32 bx1 = std::min<int64>(surface->w, std::max<int64>(0, (int64)crect.x + std::max<int32>(0, crect.w)));
+ int32 by0 = std::min<int32>(surface->h, std::max<int32>(0, crect.y));
+ int32 by1 = std::min<int64>(surface->h, std::max<int64>(0, (int64)crect.y + std::max<int32>(0, crect.h)));
+ int32 xstart = std::min<int32>(bx1, std::max<int32>(bx0, x));
+ int32 xbound = std::min<int64>(bx1, std::max<int64>(bx0, (int64)x + w));
+ int32 ystart = std::min<int32>(by1, std::max<int32>(by0, y));
+ int32 ybound = std::min<int64>(by1, std::max<int64>(by0, (int64)y + h));
+
+ if(xstart >= xbound || ystart >= ybound)
+  return;
+ //
+ //
+ //
+ T* p = surface->pix<T>() + ystart * surface->pitchinpix + xstart;
+ const uint32 pitchinpix = surface->pitchinpix;
+ const int32 iw = xbound - xstart;
+
+ for(int32 iy = ybound - ystart; iy; iy--)
+ {
+  for(int32 ix = 0; ix < iw; ix++)
+   p[ix] = color;
+
+  p += pitchinpix;
+ }
+}
+
+void MDFN_DrawFillRect(MDFN_Surface* surface, const MDFN_Rect& crect, int32 x, int32 y, uint32 w, uint32 h, uint32 color)
+{
+ switch(surface->format.opp)
+ {
+  case 1:
+	MDFN_SuperDrawFillRect<uint8>(surface, crect, x, y, w, h, color);
+	break;
+
+  case 2:
+	MDFN_SuperDrawFillRect<uint16>(surface, crect, x, y, w, h, color);
+	break;
+
+  case 4:
+	MDFN_SuperDrawFillRect<uint32>(surface, crect, x, y, w, h, color);
 	break;
  }
 }

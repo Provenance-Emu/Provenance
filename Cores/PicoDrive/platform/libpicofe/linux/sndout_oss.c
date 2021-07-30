@@ -51,7 +51,7 @@ void sndout_oss_stop(void)
 		return;
 
 	// sync causes trouble on Caanoo..
-	//ioctl(sounddev, SOUND_PCM_SYNC, 0);
+	//ioctl(sounddev, SNDCTL_DSP_SYNC, 0);
 
 	close(sounddev);
 	sounddev = -1;
@@ -178,7 +178,7 @@ int sndout_oss_can_write(int bytes)
 void sndout_oss_wait(void)
 {
 	// FIXME?
-	ioctl(sounddev, SOUND_PCM_SYNC, 0);
+	ioctl(sounddev, SNDCTL_DSP_SYNC, 0);
 }
 
 void sndout_oss_setvol(int l, int r)

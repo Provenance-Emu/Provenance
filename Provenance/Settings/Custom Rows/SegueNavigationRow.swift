@@ -19,10 +19,18 @@ final class SegueNavigationRow: NavigationRow<SystemSettingsCell> {
                   customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
         self.viewController = viewController
 
-        super.init(text: text, detailText: detailText, icon: nil, customization: customization) { [weak viewController] _ in
-            guard let viewController = viewController else { return }
+        #if os(tvOS)
+            super.init(text: text, detailText: detailText, icon: nil, customization: customization) { [weak viewController] _ in
+                guard let viewController = viewController else { return }
 
-            viewController.performSegue(withIdentifier: segue, sender: nil)
-        }
+                viewController.performSegue(withIdentifier: segue, sender: nil)
+            }
+        #else
+            super.init(text: text, detailText: detailText, icon: nil, customization: customization, accessoryButtonAction: { [weak viewController] _ in
+                guard let viewController = viewController else { return }
+
+                viewController.performSegue(withIdentifier: segue, sender: nil)
+            })
+        #endif
     }
 }

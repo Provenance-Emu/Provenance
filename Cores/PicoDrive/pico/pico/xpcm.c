@@ -50,7 +50,7 @@ PICO_INTERNAL void PicoPicoPCMReset(void)
 
 PICO_INTERNAL void PicoPicoPCMRerate(int xpcm_rate)
 {
-  stepsamples = (PsndRate<<10)/xpcm_rate;
+  stepsamples = (PicoIn.sndRate<<10)/xpcm_rate;
 }
 
 #define XSHIFT 6

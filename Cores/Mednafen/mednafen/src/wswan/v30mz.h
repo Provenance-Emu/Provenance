@@ -10,8 +10,8 @@ enum {
 };
 
 /* Public variables */
-extern int v30mz_ICount;
-extern uint32 v30mz_timestamp;
+MDFN_HIDE extern int v30mz_ICount;
+MDFN_HIDE extern uint32 v30mz_timestamp;
 
 
 /* Public functions */

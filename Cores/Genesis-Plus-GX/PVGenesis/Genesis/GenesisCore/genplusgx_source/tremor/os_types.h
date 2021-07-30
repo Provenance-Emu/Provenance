@@ -32,7 +32,11 @@
 #define _ogg_realloc realloc
 #define _ogg_free    free
 
+#if defined(_WIN32) && defined(__LIBRETRO__)
+#include <stdint.h>
+#else
 #include <inttypes.h>
+#endif
 
 typedef int64_t ogg_int64_t;
 typedef int32_t ogg_int32_t;

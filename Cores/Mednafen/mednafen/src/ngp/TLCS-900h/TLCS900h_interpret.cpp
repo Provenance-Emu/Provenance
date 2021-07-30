@@ -87,7 +87,7 @@ bool	brCode;		//Register code used?
 uint8		rCode;		//The code
 
 int32		cycles;		//How many state changes?
-int32		cycles_extra;	//How many extra state changes?
+static int32	cycles_extra;	//How many extra state changes?
 
 //=========================================================================
 
@@ -115,7 +115,7 @@ uint32 fetch32(void)
 
 //=============================================================================
 
-void parityB(uint8 value)
+MDFN_FASTCALL void parityB(uint8 value)
 {
 	uint8 count = 0, i;
 
@@ -129,7 +129,7 @@ void parityB(uint8 value)
 	SETFLAG_V((count & 1) == 0);
 }
 
-void parityW(uint16 value)
+MDFN_FASTCALL void parityW(uint16 value)
 {
 	uint8 count = 0, i;
 
@@ -145,9 +145,9 @@ void parityW(uint16 value)
 
 //=========================================================================
 
-void push8(uint8 data)	{ REGXSP -= 1;	storeB(REGXSP, data);}
-void push16(uint16 data)	{ REGXSP -= 2;	storeW(REGXSP, data);}
-void push32(uint32 data)	{ REGXSP -= 4;	storeL(REGXSP, data);}
+MDFN_FASTCALL void push8(uint8 data)	{ REGXSP -= 1;	storeB(REGXSP, data);}
+MDFN_FASTCALL void push16(uint16 data)	{ REGXSP -= 2;	storeW(REGXSP, data);}
+MDFN_FASTCALL void push32(uint32 data)	{ REGXSP -= 4;	storeL(REGXSP, data);}
 
 uint8 pop8(void)	 {  uint8 temp = loadB(REGXSP); REGXSP += 1; return temp;}
 uint16 pop16(void) { uint16 temp = loadW(REGXSP); REGXSP += 2; return temp;}
@@ -155,7 +155,7 @@ uint32 pop32(void) { uint32 temp = loadL(REGXSP); REGXSP += 4; return temp;}
 
 //=============================================================================
 
-uint16 generic_DIV_B(uint16 val, uint8 div)
+MDFN_FASTCALL uint16 generic_DIV_B(uint16 val, uint8 div)
 {
 	if (div == 0)
 	{ 
@@ -171,7 +171,7 @@ uint16 generic_DIV_B(uint16 val, uint8 div)
 	}
 }
 
-uint32 generic_DIV_W(uint32 val, uint16 div)
+MDFN_FASTCALL uint32 generic_DIV_W(uint32 val, uint16 div)
 {
 	if (div == 0)
 	{ 
@@ -189,7 +189,7 @@ uint32 generic_DIV_W(uint32 val, uint16 div)
 
 //=============================================================================
 
-uint16 generic_DIVS_B(int16 val, int8 div)
+MDFN_FASTCALL uint16 generic_DIVS_B(int16 val, int8 div)
 {
 	if (div == 0)
 	{
@@ -205,7 +205,7 @@ uint16 generic_DIVS_B(int16 val, int8 div)
 	}
 }
 
-uint32 generic_DIVS_W(int32 val, int16 div)
+MDFN_FASTCALL uint32 generic_DIVS_W(int32 val, int16 div)
 {
 	if (div == 0)
 	{
@@ -223,7 +223,7 @@ uint32 generic_DIVS_W(int32 val, int16 div)
 
 //=============================================================================
 
-uint8 generic_ADD_B(uint8 dst, uint8 src)
+MDFN_FASTCALL uint8 generic_ADD_B(uint8 dst, uint8 src)
 {
 	uint8 half = (dst & 0xF) + (src & 0xF);
 	uint32 resultC = (uint32)dst + (uint32)src;
@@ -243,7 +243,7 @@ uint8 generic_ADD_B(uint8 dst, uint8 src)
 	return result;
 }
 
-uint16 generic_ADD_W(uint16 dst, uint16 src)
+MDFN_FASTCALL uint16 generic_ADD_W(uint16 dst, uint16 src)
 {
 	uint16 half = (dst & 0xF) + (src & 0xF);
 	uint32 resultC = (uint32)dst + (uint32)src;
@@ -263,7 +263,7 @@ uint16 generic_ADD_W(uint16 dst, uint16 src)
 	return result;
 }
 
-uint32 generic_ADD_L(uint32 dst, uint32 src)
+MDFN_FASTCALL uint32 generic_ADD_L(uint32 dst, uint32 src)
 {
 	uint64 resultC = (uint64)dst + (uint64)src;
 	uint32 result = (uint32)(resultC & 0xFFFFFFFF);
@@ -283,7 +283,7 @@ uint32 generic_ADD_L(uint32 dst, uint32 src)
 
 //=============================================================================
 
-uint8 generic_ADC_B(uint8 dst, uint8 src)
+MDFN_FASTCALL uint8 generic_ADC_B(uint8 dst, uint8 src)
 {
 	uint8 half = (dst & 0xF) + (src & 0xF) + FLAG_C;
 	uint32 resultC = (uint32)dst + (uint32)src + (uint32)FLAG_C;
@@ -303,7 +303,7 @@ uint8 generic_ADC_B(uint8 dst, uint8 src)
 	return result;
 }
 
-uint16 generic_ADC_W(uint16 dst, uint16 src)
+MDFN_FASTCALL uint16 generic_ADC_W(uint16 dst, uint16 src)
 {
 	uint16 half = (dst & 0xF) + (src & 0xF) + FLAG_C;
 	uint32 resultC = (uint32)dst + (uint32)src + (uint32)FLAG_C;
@@ -323,7 +323,7 @@ uint16 generic_ADC_W(uint16 dst, uint16 src)
 	return result;
 }
 
-uint32 generic_ADC_L(uint32 dst, uint32 src)
+MDFN_FASTCALL uint32 generic_ADC_L(uint32 dst, uint32 src)
 {
 	uint64 resultC = (uint64)dst + (uint64)src + (uint64)FLAG_C;
 	uint32 result = (uint32)(resultC & 0xFFFFFFFF);
@@ -343,7 +343,7 @@ uint32 generic_ADC_L(uint32 dst, uint32 src)
 
 //=============================================================================
 
-uint8 generic_SUB_B(uint8 dst, uint8 src)
+MDFN_FASTCALL uint8 generic_SUB_B(uint8 dst, uint8 src)
 {
 	uint8 half = (dst & 0xF) - (src & 0xF);
 	uint32 resultC = (uint32)dst - (uint32)src;
@@ -363,7 +363,7 @@ uint8 generic_SUB_B(uint8 dst, uint8 src)
 	return result;
 }
 
-uint16 generic_SUB_W(uint16 dst, uint16 src)
+MDFN_FASTCALL uint16 generic_SUB_W(uint16 dst, uint16 src)
 {
 	uint16 half = (dst & 0xF) - (src & 0xF);
 	uint32 resultC = (uint32)dst - (uint32)src;
@@ -383,7 +383,7 @@ uint16 generic_SUB_W(uint16 dst, uint16 src)
 	return result;
 }
 
-uint32 generic_SUB_L(uint32 dst, uint32 src)
+MDFN_FASTCALL uint32 generic_SUB_L(uint32 dst, uint32 src)
 {
 	uint64 resultC = (uint64)dst - (uint64)src;
 	uint32 result = (uint32)(resultC & 0xFFFFFFFF);
@@ -403,7 +403,7 @@ uint32 generic_SUB_L(uint32 dst, uint32 src)
 
 //=============================================================================
 
-uint8 generic_SBC_B(uint8 dst, uint8 src)
+MDFN_FASTCALL uint8 generic_SBC_B(uint8 dst, uint8 src)
 {
 	uint8 half = (dst & 0xF) - (src & 0xF) - FLAG_C;
 	uint32 resultC = (uint32)dst - (uint32)src - (uint32)FLAG_C;
@@ -423,7 +423,7 @@ uint8 generic_SBC_B(uint8 dst, uint8 src)
 	return result;
 }
 
-uint16 generic_SBC_W(uint16 dst, uint16 src)
+MDFN_FASTCALL uint16 generic_SBC_W(uint16 dst, uint16 src)
 {
 	uint16 half = (dst & 0xF) - (src & 0xF) - FLAG_C;
 	uint32 resultC = (uint32)dst - (uint32)src - (uint32)FLAG_C;
@@ -443,7 +443,7 @@ uint16 generic_SBC_W(uint16 dst, uint16 src)
 	return result;
 }
 
-uint32 generic_SBC_L(uint32 dst, uint32 src)
+MDFN_FASTCALL uint32 generic_SBC_L(uint32 dst, uint32 src)
 {
 	uint64 resultC = (uint64)dst - (uint64)src - (uint64)FLAG_C;
 	uint32 result = (uint32)(resultC & 0xFFFFFFFF);
@@ -463,7 +463,7 @@ uint32 generic_SBC_L(uint32 dst, uint32 src)
 
 //=============================================================================
 
-bool conditionCode(int cc)
+MDFN_FASTCALL bool conditionCode(int cc)
 {
 	switch(cc)
 	{

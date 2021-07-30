@@ -21,7 +21,7 @@ typedef unsigned char  UINT8;
 
 // this nasty conversion is needed for drc-expecting memhandlers
 #define MAKE_READFUNC(name, cname) \
-static inline unsigned int name(SH2 *sh2, unsigned int a) \
+static __inline unsigned int name(SH2 *sh2, unsigned int a) \
 { \
 	unsigned int ret; \
 	sh2->sr |= sh2->icount << 12; \
@@ -32,7 +32,7 @@ static inline unsigned int name(SH2 *sh2, unsigned int a) \
 }
 
 #define MAKE_WRITEFUNC(name, cname) \
-static inline void name(SH2 *sh2, unsigned int a, unsigned int d) \
+static __inline void name(SH2 *sh2, unsigned int a, unsigned int d) \
 { \
 	sh2->sr |= sh2->icount << 12; \
 	cname(a, d, sh2); \
@@ -122,6 +122,18 @@ int sh2_execute_interpreter(SH2 *sh2, int cycles)
 		{
 			sh2->ppc = sh2->delay;
 			opcode = RW(sh2, sh2->delay);
+
+			// TODO: more branch types
+			if ((opcode >> 13) == 5) { // BRA/BSR
+				sh2->r[15] -= 4;
+				WL(sh2, sh2->r[15], sh2->sr);
+				sh2->r[15] -= 4;
+				WL(sh2, sh2->r[15], sh2->pc);
+				sh2->pc = RL(sh2, sh2->vbr + 6 * 4);
+				sh2->icount -= 5;
+				opcode = 9; // NOP
+			}
+
 			sh2->pc -= 2;
 		}
 		else

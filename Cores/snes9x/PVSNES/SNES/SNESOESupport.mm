@@ -252,3 +252,8 @@ void S9xParsePortConfig(ConfigFile&, int)
 {
     
 }
+
+bool8 S9xDeinitUpdate(int width, int height)
+{
+    return true;
+}

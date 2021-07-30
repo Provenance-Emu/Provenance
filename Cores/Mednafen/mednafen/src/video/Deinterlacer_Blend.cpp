@@ -224,13 +224,13 @@ void Deinterlacer_Blend::Process(MDFN_Surface* surface, MDFN_Rect& dr, int32* Li
   prev_field->SetFormat(surface->format, prev_valid);
  }
  //
- switch(surface->format.bpp)
+ switch(surface->format.opp)
  {
-  case 8:
+  case 1:
 	InternalProcess<uint8, false, 0, 0, 0>(surface, dr, LineWidths, field);
 	break;
 
-  case 16:
+  case 2:
         if(surface->format.Rprec == 5 && surface->format.Gprec == 6 && surface->format.Bprec == 5)
          InternalProcess<uint16, false, 0, 5, 11>(surface, dr, LineWidths, field); 
         else if(surface->format.Rprec == 5 && surface->format.Gprec == 5 && surface->format.Bprec == 5 && (surface->format.Rshift + surface->format.Gshift + surface->format.Bshift) == 15)
@@ -243,7 +243,7 @@ void Deinterlacer_Blend::Process(MDFN_Surface* surface, MDFN_Rect& dr, int32* Li
 	}
 	break;
 
-  case 32:
+  case 4:
 	if(WantRG)
 	{
 	 switch(surface->format.Ashift)

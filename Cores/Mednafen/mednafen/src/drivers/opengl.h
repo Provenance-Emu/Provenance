@@ -149,12 +149,12 @@ class OpenGL_Blitter
 {
  public:
 
- OpenGL_Blitter(int scanlines, ShaderType pixshader, const ShaderParams& shader_params, int *rs, int *gs, int *bs, int *as);
+ OpenGL_Blitter(int scanlines, ShaderType pixshader, const ShaderParams& shader_params, MDFN_PixelFormat* game_pf, MDFN_PixelFormat* osd_pf, uint32 preferred_format);
  ~OpenGL_Blitter();
 
  void SetViewport(int w, int h);
 
- void BlitRaw(const MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_Rect *dest_rect, const bool source_alpha);
+ void BlitOSD(const MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_Rect *dest_rect, const bool source_alpha);
  void Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_rect, const MDFN_Rect *dest_rect, const MDFN_Rect *original_src_rect, int InterlaceField, int UsingIP, int rotated);
  void ClearBackBuffer(void);
 
@@ -246,8 +246,9 @@ class OpenGL_Blitter
  uint32 MaxTextureSize;		// Maximum power-of-2 texture width/height(we assume they're the same, and if they're not, this is set to the lower value of the two)
  bool SupportNPOT; 		// True if the OpenGL implementation supports non-power-of-2-sized textures
  bool SupportARBSync;
- GLenum PixelFormat;		// For glTexSubImage2D()
- GLenum PixelType;		// For glTexSubImage2D()
+ GLenum InternalFormat, OSDInternalFormat;
+ GLenum PixelFormat, OSDPixelFormat;// For glTexSubImage2D()
+ GLenum PixelType, OSDPixelType;// For glTexSubImage2D()
 
  int gl_screen_w, gl_screen_h;
  GLuint textures[4];		// emulated fb, scanlines, osd, raw(netplay)

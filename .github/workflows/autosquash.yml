@@ -27,7 +27,7 @@ jobs:
     name: Autosquash
     runs-on: ubuntu-18.04
     steps:
-      - uses: tibdex/autosquash@v2.0.1 # https://github.com/tibdex/autosquash
+      - uses: tibdex/autosquash@v2
         with:
           # We can't use the built-in secrets.GITHUB_TOKEN yet because of this limitation:
           # https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676

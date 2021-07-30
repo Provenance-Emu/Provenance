@@ -49,12 +49,25 @@
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#define SYSTEM_CPP
-
 //#include <crtdbg.h>
 //#define	TRACE_SYSTEM
 
 #include "system.h"
+
+uint32  gSuzieDoneTime;
+uint32	gSystemCycleCount;
+uint32	gNextTimerEvent;
+uint32	gCPUBootAddress;
+uint32	gSystemIRQ;
+uint32	gSystemNMI;
+uint32	gSystemCPUSleep;
+uint32	gSystemHalt;
+
+// Somewhat of a hack to make sure undrawn lines are black.
+bool LynxLineDrawn[256];
+
+static CSystem *lynxie = NULL;
+static uint8 *chee;
 
 #include <mednafen/general.h>
 #include <mednafen/mempatcher.h>
@@ -164,12 +177,6 @@ void CSystem::Reset(void)
 	}
 }
 
-// Somewhat of a hack to make sure undrawn lines are black.
-bool LynxLineDrawn[256];
-
-static CSystem *lynxie = NULL;
-extern MDFNGI EmulatedLynx;
-
 static bool TestMagic(GameFile* gf)
 {
  uint8 data[((size_t)CCart::HEADER_RAW_SIZE > (size_t)CRam::HEADER_RAW_SIZE) ? (size_t)CCart::HEADER_RAW_SIZE : (size_t)CRam::HEADER_RAW_SIZE];
@@ -249,7 +256,6 @@ static void CloseGame(void)
  Cleanup();
 }
 
-static uint8 *chee;
 static void Emulate(EmulateSpecStruct *espec)
 {
  espec->DisplayRect.x = 0;
@@ -293,7 +299,7 @@ static void Emulate(EmulateSpecStruct *espec)
 
   for(int y = 0; y < 102; y++)
   {
-   if(espec->surface->format.bpp == 16)
+   if(espec->surface->format.opp == 2)
    {
     uint16 *row = espec->surface->pixels16 + y * espec->surface->pitchinpix;
 
@@ -439,7 +445,7 @@ static const CustomPalette_Spec CPInfo[] =
  { NULL, NULL },
 };
 
-MDFNGI EmulatedLynx =
+MDFN_HIDE extern const MDFNGI EmulatedLynx =
 {
  "lynx",
  "Atari Lynx",
@@ -476,6 +482,8 @@ MDFNGI EmulatedLynx =
  LynxSettings,
  MDFN_MASTERCLOCK_FIXED(16000000),
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
 
  false, // Multires possible?
 

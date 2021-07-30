@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* Joystick_DX5.cpp:
-**  Copyright (C) 2012-2018 Mednafen Team
+**  Copyright (C) 2012-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -25,8 +25,7 @@
 #include "Joystick_DX5.h"
 
 #define DIRECTINPUT_VERSION 0x0500
-#include <windows.h>
-#include <windowsx.h>
+#include <mednafen/win32-common.h>
 #include <dinput.h>
 
 #include <set>
@@ -144,7 +143,7 @@ Joystick_DX5::Joystick_DX5(LPDIRECTINPUT dii, DIDEVICEINSTANCE *ddi) : dev(NULL)
   MDFN_en16msb(&id[6], ddi->guidProduct.Data3);
   memcpy(&id[8], ddi->guidProduct.Data4, 8);
 
-  name = ddi->tszProductName;
+  name = Win32Common::T_to_UTF8(ddi->tszProductName, nullptr, true);
  }
  catch(...)
  {
@@ -278,7 +277,7 @@ static INLINE std::set<uint32> GetXInputVidPid(void)
  UINT WINAPI (*p_GetRawInputDeviceInfo)(HANDLE, UINT, LPVOID, PUINT) = NULL;
  std::set<uint32> exclude_vps;
 
- if((us32 = LoadLibrary("user32.dll")) == NULL)
+ if((us32 = LoadLibrary(TEXT("user32.dll"))) == NULL)
   return exclude_vps;
 
  p_GetRawInputDeviceList = (UINT WINAPI (*)(PRAWINPUTDEVICELIST, PUINT, UINT))GetProcAddress(us32, "GetRawInputDeviceList");

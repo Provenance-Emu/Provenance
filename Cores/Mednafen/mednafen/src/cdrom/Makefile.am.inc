@@ -6,10 +6,10 @@ mednafen_SOURCES	+=	cdrom/CDAccess.cpp cdrom/CDAccess_Image.cpp cdrom/CDAccess_C
 mednafen_SOURCES	+=	cdrom/CDAFReader.cpp
 mednafen_SOURCES	+=	cdrom/CDAFReader_Vorbis.cpp
 mednafen_SOURCES	+=	cdrom/CDAFReader_MPC.cpp
-
-if HAVE_LIBSNDFILE
-mednafen_SOURCES	+=	cdrom/CDAFReader_SF.cpp
+if HAVE_LIBFLAC
+mednafen_SOURCES	+=	cdrom/CDAFReader_FLAC.cpp
 endif
+mednafen_SOURCES	+=	cdrom/CDAFReader_PCM.cpp
 
 mednafen_SOURCES	+=	cdrom/scsicd.cpp
 

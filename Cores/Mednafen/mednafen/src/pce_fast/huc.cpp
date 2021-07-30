@@ -32,7 +32,7 @@
 
 #include "huc.h"
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 
 static const uint8 BRAM_Init_String[8] = { 'H', 'U', 'B', 'M', 0x00, 0x88, 0x10, 0x80 }; //"HUBM\x00\x88\x10\x80";

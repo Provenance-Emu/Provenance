@@ -9,11 +9,18 @@ enum : uint8
  BUTTC_MOUSE
 };
 
+enum : uint8
+{
+ BUTTC_FLAG_09XDEVID = 0x01,
+};
+
 struct ButtConfig
 {
+ INLINE constexpr ButtConfig() : DeviceType(BUTTC_NONE), DeviceNum(0), ANDGroupCont(false), Flags(0), ButtonNum(0), Scale(0), DeviceID({0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}) { }
  uint8 DeviceType;
  uint8 DeviceNum;
  int8 ANDGroupCont;
+ uint8 Flags;
  uint16 ButtonNum;
  uint16 Scale;
  std::array<uint8, 16> DeviceID;

@@ -230,7 +230,7 @@ extension MirroredSettings {
         @objc public dynamic var iCloudSync = false
 //        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
-        @objc public dynamic var multiThreadedGL = false
+        @objc public dynamic var multiThreadedGL = true
         @objc public dynamic var multiSampling = true
     }
 
@@ -244,16 +244,20 @@ extension MirroredSettings {
     public dynamic var autoLoadSaves = false
 
     #if os(tvOS)
-    public dynamic var disableAutoLock = true
+        public dynamic var disableAutoLock = true
     #else
-    public dynamic var disableAutoLock = false
+        public dynamic var disableAutoLock = false
     #endif
 
     public dynamic var buttonVibration = true
-
+    #if os(iOS)
+        public dynamic var nativeScaleEnabled = true
+    #else
+        public dynamic var nativeScaleEnabled = false
+    #endif
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
-    public dynamic var nativeScaleEnabled = true
+    public dynamic var integerScaleEnabled = false
 
     public dynamic var showRecentSaveStates = true
     public dynamic var showGameBadges = true
@@ -269,6 +273,7 @@ extension MirroredSettings {
 
     public dynamic var controllerOpacity: Double = 0.8
     public dynamic var buttonTints = true
+    public dynamic var use8BitdoM30 = false
 
     #if os(tvOS)
         public dynamic var missingButtonsAlwaysOn = true

@@ -165,17 +165,17 @@ void Deinterlacer_Simple::Process(MDFN_Surface *surface, MDFN_Rect &DisplayRect,
   }
  }
 
- switch(surface->format.bpp)
+ switch(surface->format.opp)
  {
-  case 8:
+  case 1:
 	InternalProcess<uint8>(surface, DisplayRect, LineWidths, field);
 	break;
 
-  case 16:
+  case 2:
 	InternalProcess<uint16>(surface, DisplayRect, LineWidths, field);
 	break;
 
-  case 32:
+  case 4:
 	InternalProcess<uint32>(surface, DisplayRect, LineWidths, field);
 	break;
  }

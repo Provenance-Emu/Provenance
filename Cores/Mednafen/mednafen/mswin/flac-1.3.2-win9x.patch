@@ -1,0 +1,185 @@
+diff -rupN flac-1.3.2.orig/autogen.sh flac-1.3.2/autogen.sh
+--- flac-1.3.2.orig/autogen.sh	2016-12-07 12:10:26.210453897 -0800
++++ flac-1.3.2/autogen.sh	2020-12-10 15:18:18.905598590 -0800
+@@ -24,7 +24,7 @@ test_program () {
+ 		fi
+ }
+ 
+-for prog in autoconf automake libtool pkg-config ; do
++for prog in autoconf automake pkg-config ; do
+ 	test_program $prog
+ 	done
+
+diff -rupN flac-1.3.2.orig/Makefile.am flac-1.3.2/Makefile.am
+--- flac-1.3.2.orig/Makefile.am	2016-12-11 01:20:55.591830738 -0800
++++ flac-1.3.2/Makefile.am	2020-12-10 15:23:15.433597953 -0800
+@@ -31,7 +31,7 @@
+ 
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS = doc include m4 man src examples test build objs microbench
++SUBDIRS = include m4 src build objs
+ 
+ EXTRA_DIST = \
+ 	COPYING.FDL \
+
+diff -rupN flac-1.3.2.orig/src/Makefile.am flac-1.3.2/src/Makefile.am
+--- flac-1.3.2.orig/src/Makefile.am	2016-12-07 12:10:26.218454157 -0800
++++ flac-1.3.2/src/Makefile.am	2020-12-10 15:22:26.777598057 -0800
+@@ -16,27 +16,9 @@
+ #  restrictive of those mentioned above.  See the file COPYING.Xiph in this
+ #  distribution.
+ 
+-if FLaC__HAS_XMMS
+-XMMS_DIRS = plugin_common plugin_xmms
+-endif
+-
+-if FLaC__WITH_CPPLIBS
+-CPPLIBS_DIRS = libFLAC++ test_libFLAC++
+-endif
+-
+ SUBDIRS = \
+ 	libFLAC \
+-	share \
+-	flac \
+-	metaflac \
+-	$(XMMS_DIRS) \
+-	test_grabbag \
+-	test_libs_common \
+-	test_libFLAC \
+-	test_seeking \
+-	test_streams \
+-	utils \
+-	$(CPPLIBS_DIRS)
++	share
+ 
+ EXTRA_DIST = \
+ 	Makefile.lite
+
+diff -rupN flac-1.3.2.orig/src/libFLAC/Makefile.am flac-1.3.2/src/libFLAC/Makefile.am
+--- flac-1.3.2.orig/src/libFLAC/Makefile.am	2016-12-07 12:10:26.222454288 -0800
++++ flac-1.3.2/src/libFLAC/Makefile.am	2020-12-10 18:29:19.893573967 -0800
+@@ -116,14 +138,7 @@ libFLAC_sources = \
+ 	lpc_intrin_avx2.c \
+ 	md5.c \
+ 	memory.c \
+-	metadata_iterators.c \
+-	metadata_object.c \
+ 	stream_decoder.c \
+-	stream_encoder.c \
+-	stream_encoder_intrin_sse2.c \
+-	stream_encoder_intrin_ssse3.c \
+-	stream_encoder_intrin_avx2.c \
+-	stream_encoder_framing.c \
+ 	window.c \
+ 	$(windows_unicode_compat) \
+ 	$(extra_ogg_sources)
+
+diff -rupN flac-1.3.2.orig/include/share/compat.h flac-1.3.2/include/share/compat.h
+--- flac-1.3.2.orig/include/share/compat.h	2016-12-07 12:10:26.218454157 -0800
++++ flac-1.3.2/include/share/compat.h	2020-12-10 14:55:48.625601491 -0800
+@@ -183,6 +183,66 @@
+ #define flac_fstat fstat
+ #endif
+ 
++#if 1
++ #undef flac_printf
++ #undef flac_fprintf
++ #undef flac_vfprintf
++
++ #undef flac_fopen
++ #undef flac_chmod
++ #undef flac_utime
++ #undef flac_unlink
++ #undef flac_rename
++ #undef flac_stat
++
++ #undef flac_stat_s
++ #undef flac_fstat
++
++ static inline int flac_printf(const char* format, ...) { /*errno = ENOTSUP;*/return -1; }
++ static inline int flac_fprintf(FILE* fp, const char* format, ...) { /*errno = ENOTSUP;*/return -1; }
++ static inline int flac_vfprintf(FILE* fp, const char* format, va_list ap) { /*errno = ENOTSUP;*/return -1; }
++
++ static inline FILE* flac_fopen(const char* path, const char* mode) { /*errno = ENOTSUP;*/return NULL; }
++ static inline int flac_chmod(const char* path, unsigned mode) { /*errno = ENOTSUP;*/return -1; }
++ static inline int flac_utime(const char* path, void* times) { /*errno = ENOTSUP;*/return -1; }
++ static inline int flac_unlink(const char* path) { /*errno = ENOTSUP;*/return -1; }
++ static inline int flac_rename(const char* oldpath, const char* newpath) { /*errno = ENOTSUP;*/return -1; }
++ static inline int flac_stat(const char* path, void* statbuf) { /*errno = ENOTSUP;*/return -1; }
++
++ #define flac_stat_s stat
++ static inline int flac_fstat(int fd, void* statbuf) { /*errno = ENOTSUP;*/return NULL; }
++
++ #undef fclose
++ #undef feof
++ #undef ferror
++ #undef fflush
++ #undef ftello
++ #undef fseeko
++ #undef fread
++ #undef fwrite
++
++ static inline int flac_fclose(FILE* fp) { /*errno = ENOTSUP;*/ return -1; }
++ static inline int flac_feof(FILE* fp) { return 1; }
++ static inline int flac_ferror(FILE* fp) { return 1; }
++ static inline int flac_fflush(FILE* fp) { /*errno = ENOTSUP;*/ return -1; }
++ static inline off_t flac_ftello(FILE* fp) { /*errno = ENOTSUP;*/ return -1; }
++ static inline int flac_fseeko(FILE* fp, off_t offset, int whence) { /*errno = ENOTSUP;*/ return -1; }
++
++ static inline size_t flac_fread(void* ptr, size_t size, size_t nmemb, FILE* fp) { /*errno = ENOTSUP;*/  return 0; }
++ static inline size_t flac_fwrite(const void* ptr, size_t size, size_t nmemb, FILE* fp) { /*errno = ENOTSUP;*/ return 0; }
++
++ #define fclose flac_fclose
++ #define feof flac_feof
++ #define ferror flac_ferror
++ #define fflush flac_fflush
++ #define ftello flac_ftello
++ #define fseeko flac_fseeko
++ #define fread flac_fread
++ #define fwrite flac_fwrite
++
++#endif
++
++
+ #ifndef M_LN2
+ #define M_LN2 0.69314718055994530942
+ #endif
+
+diff -rupN flac-1.3.2.orig/src/share/win_utf8_io/win_utf8_io.c flac-1.3.2/src/share/win_utf8_io/win_utf8_io.c
+--- flac-1.3.2.orig/src/share/win_utf8_io/win_utf8_io.c	2016-12-07 12:10:26.234454678 -0800
++++ flac-1.3.2/src/share/win_utf8_io/win_utf8_io.c	2020-12-10 14:55:48.665601491 -0800
+@@ -39,6 +39,7 @@
+ 
+ #define UTF8_BUFFER_SIZE 32768
+ 
++#if 0
+ static int local_vsnprintf(char *str, size_t size, const char *fmt, va_list va)
+ {
+ 	int rc;
+@@ -251,3 +252,5 @@ int vfprintf_utf8(FILE *stream, const ch
+ 
+ 	return ret;
+ }
++
++#endif
+
+diff -rupN flac-1.3.2.orig/src/libFLAC/windows_unicode_filenames.c flac-1.3.2/src/libFLAC/windows_unicode_filenames.c
+--- flac-1.3.2.orig/src/libFLAC/windows_unicode_filenames.c	2016-12-07 12:10:26.230454548 -0800
++++ flac-1.3.2/src/libFLAC/windows_unicode_filenames.c	2020-12-10 14:55:48.665601491 -0800
+@@ -28,7 +28,7 @@
+  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+-
++#if 0
+ #ifdef HAVE_CONFIG_H
+ #  include <config.h>
+ #endif
+@@ -199,3 +199,5 @@ HANDLE WINAPI flac_internal_CreateFile_u
+ 		return handle;
+ 	}
+ }
++
++#endif
+

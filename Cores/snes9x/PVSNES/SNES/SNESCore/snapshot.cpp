@@ -1,194 +1,8 @@
-/***********************************************************************************
-  Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
-
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
-
-  (c) Copyright 2002 - 2004  Matthew Kendora
-
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-
-  (c) Copyright 2002 - 2011  zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
-
-  (c) Copyright 2009 - 2018  BearOso,
-                             OV2
-
-  (c) Copyright 2017         qwertymodo
-
-  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
-                             Daniel De Matteis
-                             (Under no circumstances will commercial rights be given)
-
-
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
-
-  C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
-
-  C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
-
-  DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
-
-  DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
-
-  OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
-
-  SPC7110 and RTC C++ emulator code used in 1.39-1.51
-  (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
-
-  SPC7110 and RTC C++ emulator code used in 1.52+
-  (c) Copyright 2009         byuu,
-                             neviksti
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
-
-  S-RTC C emulator code
-  (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
-
-  Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
-
-  Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
-
-  Sound emulator code used in 1.5-1.51
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
-
-  Sound emulator code used in 1.52+
-  (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
-
-  S-SMP emulator code used in 1.54+
-  (c) Copyright 2016         byuu
-
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  NTSC filter
-  (c) Copyright 2006 - 2007  Shay Green
-
-  GTK+ GUI code
-  (c) Copyright 2004 - 2018  BearOso
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
-  (c) Copyright 2009 - 2018  OV2
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2011  zones
-
-  Libretro port
-  (c) Copyright 2011 - 2017  Hans-Kristian Arntzen,
-                             Daniel De Matteis
-                             (Under no circumstances will commercial rights be given)
-
-
-  Specific ports contains the works of other authors. See headers in
-  individual files.
-
-
-  Snes9x homepage: http://www.snes9x.com/
-
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
-
-  This software is provided 'as-is', without any express or implied
-  warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
-
-  Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
-
-  The copyright holders request that bug fixes and improvements to the code
-  should be forwarded to them so everyone can benefit from the modifications
-  in future versions.
-
-  Super NES and Super Nintendo Entertainment System are trademarks of
-  Nintendo Co., Limited and its subsidiary companies.
- ***********************************************************************************/
-
+/*****************************************************************************\
+     Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
+                This file is licensed under the Snes9x License.
+   For further information, consult the LICENSE file in the root directory.
+\*****************************************************************************/
 
 #include <assert.h>
 #include "snes9x.h"
@@ -204,6 +18,7 @@
 #include "movie.h"
 #include "display.h"
 #include "language.h"
+#include "gfx.h"
 
 #ifndef min
 #define min(a,b)	(((a) < (b)) ? (a) : (b))
@@ -433,6 +248,7 @@ static FreezeData	SnapPPU[] =
 	INT_ENTRY(6, CGFLIP),
 	INT_ENTRY(6, CGFLIPRead),
 	INT_ENTRY(6, CGADD),
+	INT_ENTRY(11, CGSavedByte),
 	ARRAY_ENTRY(6, CGDATA, 256, uint16_ARRAY_V),
 #define O(N) \
 	INT_ENTRY(6, OBJ[N].HPos), \
@@ -529,7 +345,8 @@ static FreezeData	SnapPPU[] =
 	INT_ENTRY(6, HDMA),
 	INT_ENTRY(6, HDMAEnded),
 	INT_ENTRY(6, OpenBus1),
-	INT_ENTRY(6, OpenBus2)
+	INT_ENTRY(6, OpenBus2),
+	INT_ENTRY(11, VRAMReadBuffer)
 };
 
 #undef STRUCT
@@ -599,7 +416,8 @@ static FreezeData	SnapTimings[] =
 	INT_ENTRY(6, IRQFlagChanging),
 	INT_ENTRY(6, APUSpeedup),
 	INT_ENTRY(7, IRQTriggerCycles),
-	INT_ENTRY(7, APUAllowTimeOverflow)
+	INT_ENTRY(7, APUAllowTimeOverflow),
+	INT_ENTRY(11, NextIRQTimer)
 };
 
 #undef STRUCT
@@ -1181,6 +999,8 @@ static int UnfreezeStructCopy (STREAM, const char *, uint8 **, FreezeData *, int
 static void UnfreezeStructFromCopy (void *, FreezeData *, int, uint8 *, int);
 static void FreezeBlock (STREAM, const char *, uint8 *, int);
 static void FreezeStruct (STREAM, const char *, void *, FreezeData *, int);
+static bool CheckBlockName(STREAM stream, const char *name, int &len);
+static void SkipBlockWithName(STREAM stream, const char *name);
 
 
 void S9xResetSaveTimer (bool8 dontsave)
@@ -1469,6 +1289,8 @@ void S9xFreezeToStream (STREAM stream)
 
 int S9xUnfreezeFromStream (STREAM stream)
 {
+	const bool8 fast = Settings.FastSavestates;
+
 	int		result = SUCCESS;
 	int		version, len;
 	char	buffer[PATH_MAX + 1];
@@ -1535,19 +1357,31 @@ int S9xUnfreezeFromStream (STREAM stream)
 		if (result != SUCCESS)
 			break;
 
-		result = UnfreezeBlockCopy (stream, "VRA", &local_vram, 0x10000);
+		if (fast)
+			result = UnfreezeBlock(stream, "VRA", Memory.VRAM, 0x10000);
+		else
+			result = UnfreezeBlockCopy(stream, "VRA", &local_vram, 0x10000);
 		if (result != SUCCESS)
 			break;
 
-		result = UnfreezeBlockCopy (stream, "RAM", &local_ram, 0x20000);
+		if (fast)
+			result = UnfreezeBlock(stream, "RAM", Memory.RAM, 0x20000);
+		else
+			result = UnfreezeBlockCopy(stream, "RAM", &local_ram, 0x20000);
 		if (result != SUCCESS)
 			break;
 
-		result = UnfreezeBlockCopy (stream, "SRA", &local_sram, 0x20000);
+		if (fast)
+			result = UnfreezeBlock(stream, "SRA", Memory.SRAM, 0x20000);
+		else
+			result = UnfreezeBlockCopy (stream, "SRA", &local_sram, 0x20000);
 		if (result != SUCCESS)
 			break;
 
-		result = UnfreezeBlockCopy (stream, "FIL", &local_fillram, 0x8000);
+		if (fast)
+			result = UnfreezeBlock(stream, "FIL", Memory.FillRAM, 0x8000);
+		else
+			result = UnfreezeBlockCopy(stream, "FIL", &local_fillram, 0x8000);
 		if (result != SUCCESS)
 			break;
 
@@ -1587,9 +1421,19 @@ int S9xUnfreezeFromStream (STREAM stream)
 		if (result != SUCCESS && Settings.DSP == 4)
 			break;
 
-		result = UnfreezeBlockCopy (stream, "CX4", &local_cx4_data, 8192);
-		if (result != SUCCESS && Settings.C4)
-			break;
+		if (Settings.C4)
+		{
+			if (fast)
+				result = UnfreezeBlock(stream, "CX4", Memory.C4RAM, 8192);
+			else
+				result = UnfreezeBlockCopy(stream, "CX4", &local_cx4_data, 8192);
+			if (result != SUCCESS)
+				break;
+		}
+		else
+		{
+			SkipBlockWithName(stream, "CX4");
+		}
 
 		result = UnfreezeStructCopy(stream, "ST0", &local_st010, SnapST010, COUNT(SnapST010), version);
 		if (result != SUCCESS && Settings.SETA == ST_010)
@@ -1599,9 +1443,19 @@ int S9xUnfreezeFromStream (STREAM stream)
 		if (result != SUCCESS && Settings.OBC1)
 			break;
 
-		result = UnfreezeBlockCopy (stream, "OBM", &local_obc1_data, 8192);
-		if (result != SUCCESS && Settings.OBC1)
-			break;
+		if (Settings.OBC1)
+		{
+			if (fast)
+				result = UnfreezeBlock(stream, "OBM", Memory.OBC1RAM, 8192);
+			else
+				result = UnfreezeBlockCopy(stream, "OBM", &local_obc1_data, 8192);
+			if (result != SUCCESS)
+				break;
+		}
+		else
+		{
+			SkipBlockWithName(stream, "OBM");
+		}
 
 		result = UnfreezeStructCopy(stream, "S71", &local_spc7110, SnapSPC7110Snap, COUNT(SnapSPC7110Snap), version);
 		if (result != SUCCESS && Settings.SPC7110)
@@ -1664,7 +1518,15 @@ int S9xUnfreezeFromStream (STREAM stream)
 		uint32 old_flags     = CPU.Flags;
 		uint32 sa1_old_flags = SA1.Flags;
 
-		S9xReset();
+		if (fast)
+		{
+			S9xResetPPUFast();
+		}
+		else
+		{
+			//Do not call this if you have written directly to "Memory." arrays
+			S9xReset();
+		}
 
 		UnfreezeStructFromCopy(&CPU, SnapCPU, COUNT(SnapCPU), local_cpu, version);
 
@@ -1675,13 +1537,17 @@ int S9xUnfreezeFromStream (STREAM stream)
 		struct SDMASnapshot	dma_snap;
 		UnfreezeStructFromCopy(&dma_snap, SnapDMA, COUNT(SnapDMA), local_dma, version);
 
-		memcpy(Memory.VRAM, local_vram, 0x10000);
+		if (local_vram)
+			memcpy(Memory.VRAM, local_vram, 0x10000);
 
-		memcpy(Memory.RAM, local_ram, 0x20000);
+		if (local_ram)
+			memcpy(Memory.RAM, local_ram, 0x20000);
 
-		memcpy(Memory.SRAM, local_sram, 0x20000);
+		if (local_sram)
+			memcpy(Memory.SRAM, local_sram, 0x20000);
 
-		memcpy(Memory.FillRAM, local_fillram, 0x8000);
+		if (local_fillram)
+			memcpy(Memory.FillRAM, local_fillram, 0x8000);
 
         if(version < SNAPSHOT_VERSION_BAPU) {
             printf("Using Blargg APU snapshot loading (snapshot version %d, current is %d)\n...", version, SNAPSHOT_VERSION);
@@ -1771,8 +1637,8 @@ int S9xUnfreezeFromStream (STREAM stream)
 				SA1.HCounter = 0;
 				SA1.VCounter = 0;
 				SA1.PrevHCounter = 0;
-				SA1.MemSpeed = SLOW_ONE_CYCLE;
-				SA1.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
+				SA1.MemSpeed = ONE_CYCLE;
+				SA1.MemSpeedx2 = ONE_CYCLE * 2;
 			}
 		}
 
@@ -1781,11 +1647,13 @@ int S9xUnfreezeFromStream (STREAM stream)
 		ICPU.ShiftedDB = Registers.DB << 16;
 		S9xSetPCBase(Registers.PBPC);
 		S9xUnpackStatus();
-		S9xUpdateIRQPositions(false);
+		if(version < SNAPSHOT_VERSION_IRQ_2018)
+			S9xUpdateIRQPositions(false); // calculate the new trigger pos from saved PPU data
 		S9xFixCycles();
 
 		for (int d = 0; d < 8; d++)
 			DMA[d] = dma_snap.dma[d];
+		// TODO: these should already be correct since they are stored in the snapshot
 		CPU.InDMA = CPU.InHDMA = FALSE;
 		CPU.InDMAorHDMA = CPU.InWRAMDMAorHDMA = FALSE;
 		CPU.HDMARanInDMA = 0;
@@ -1795,9 +1663,18 @@ int S9xUnfreezeFromStream (STREAM stream)
 		IPPU.ColorsChanged = TRUE;
 		IPPU.OBJChanged = TRUE;
 		IPPU.RenderThisFrame = TRUE;
+		
+		GFX.InterlaceFrame = Timings.InterlaceField;
+		GFX.DoInterlace = 0;
 
-		uint8 hdma_byte = Memory.FillRAM[0x420c];
-		S9xSetCPU(hdma_byte, 0x420c);
+		S9xGraphicsScreenResize();
+		
+		if (Settings.FastSavestates == 0)
+			memset(GFX.Screen,0,GFX.Pitch * MAX_SNES_HEIGHT);
+
+		// TODO: this seems to be a relic from 1.43 changes, completely remove if no issues in the future
+		/*uint8 hdma_byte = Memory.FillRAM[0x420c];
+		S9xSetCPU(hdma_byte, 0x420c);*/
 
 		S9xControlPostLoadState(&ctl_snap);
 
@@ -1890,12 +1767,6 @@ int S9xUnfreezeFromStream (STREAM stream)
 				memset(GFX.Screen + y * GFX.RealPPL, 0, GFX.RealPPL * 2);
 
 			delete ssi;
-		}
-		else
-		{
-			// couldn't load graphics, so black out the screen instead
-			for (uint32 y = 0; y < (uint32) (IMAGE_HEIGHT); y++)
-				memset(GFX.Screen + y * GFX.RealPPL, 0, GFX.RealPPL * 2);
 		}
 	}
 
@@ -2092,6 +1963,50 @@ static void FreezeBlock (STREAM stream, const char *name, uint8 *block, int size
 	WRITE_STREAM(block, size, stream);
 }
 
+static bool CheckBlockName(STREAM stream, const char *name, int &len)
+{
+	char	buffer[16];
+	len = 0;
+
+	size_t	l = READ_STREAM(buffer, 11, stream);
+	buffer[l] = 0;
+	REVERT_STREAM(stream, FIND_STREAM(stream) - l, 0);
+
+	if (buffer[4] == '-')
+	{
+		len = (((unsigned char)buffer[6]) << 24)
+			| (((unsigned char)buffer[7]) << 16)
+			| (((unsigned char)buffer[8]) << 8)
+			| (((unsigned char)buffer[9]) << 0);
+	}
+	else
+		len = atoi(buffer + 4);
+
+	if (l != 11 || strncmp(buffer, name, 3) != 0 || buffer[3] != ':')
+	{
+		return false;
+	}
+
+	if (len <= 0)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+static void SkipBlockWithName(STREAM stream, const char *name)
+{
+	int len;
+	bool matchesName = CheckBlockName(stream, name, len);
+	if (matchesName)
+	{
+		long rewind = FIND_STREAM(stream);
+		rewind += len + 11;
+		REVERT_STREAM(stream, rewind, 0);
+	}
+}
+
 static int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int size)
 {
 	char	buffer[20];
@@ -2130,7 +2045,10 @@ static int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int siz
 		len = size;
 	}
 
-	memset(block, 0, size);
+	if (!Settings.FastSavestates)
+	{
+		memset(block, 0, size);
+	}
 
 	if (READ_STREAM(block, len, stream) != (unsigned int) len)
 	{
@@ -2156,6 +2074,13 @@ static int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int siz
 static int UnfreezeBlockCopy (STREAM stream, const char *name, uint8 **block, int size)
 {
 	int	result;
+
+	//check name first to avoid memory allocation
+	int blockLength;
+	if (!CheckBlockName(stream, name, blockLength))
+	{
+		return 0;
+	}
 
 	*block = new uint8[size];
 

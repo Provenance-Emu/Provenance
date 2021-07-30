@@ -1,10 +1,10 @@
 ---
 name: Bug Report
 about: Create a report to help us improve
-title: ''
+title: 'Bug Report'
 labels: bug
-assignees: ''
-
+assignees: 'JoeMatt'
+tag: bug
 ---
 
 <!--- DISCLAIMERS ---------------------------------------------------------------
@@ -149,6 +149,7 @@ replaceWithNotesOrDelete
 - [ ] Apple TV
 
 #### iOS/tvOS VERSION
+- [ ] 14.x
 - [ ] 13.x
 - [ ] 12.x
 - [ ] 11.x

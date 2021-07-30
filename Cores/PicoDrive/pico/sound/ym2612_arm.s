@@ -30,103 +30,73 @@
 .equiv EG_TIMER_OVERFLOW, (3*(1<<EG_SH)) @ envelope generator timer overflows every 3 samples (on real chip)
 .equiv LFO_SH,            25  /*  7.25 fixed point (LFO calculations)       */
 
-.equiv ENV_QUIET,		  (2*13*256/8)/2
+.equiv ENV_QUIET,		  (2*13*256/8)
 
+.text
+.align 2
 
 @ r5=slot, r1=eg_cnt, trashes: r0,r2,r3
 @ writes output to routp, but only if vol_out changes
 .macro update_eg_phase_slot slot
-    ldrb    r2, [r5,#0x17]	     @ state
-    mov     r3, #1               @ 1ci
-    cmp     r2, #1
-    blt     5f                   @ EG_OFF
-    beq     3f                   @ EG_REL
-    cmp     r2, #3
-    blt     2f                   @ EG_SUS
-    beq     1f                   @ EG_DEC
+    ldrb    r2, [r5,#0x17]       @ state
+    add     r3, r5, #0x1c
+    tst     r2, r2
+    beq     0f                   @ EG_OFF
 
-0:  @ EG_ATT
-    ldr     r2, [r5,#0x20]       @ eg_pack_ar (1ci)
-    mov     r0, r2, lsr #24
+    ldr     r2, [r3, r2, lsl #2] @ pack
+    mov     r3, #1
+    mov     r0, r2, lsr #24      @ shift
     mov     r3, r3, lsl r0
     sub     r3, r3, #1
+
     tst     r1, r3
-    bne     5f                   @ do smth for tl problem (set on init?)
+    bne     0f                   @ no volume change
+
     mov     r3, r1, lsr r0
-    ldrh    r0, [r5,#0x1a]	     @ volume, unsigned (0-1023)
     and     r3, r3, #7
     add     r3, r3, r3, lsl #1
     mov     r3, r2, lsr r3
-    and     r3, r3, #7           @ shift for eg_inc calculation
-    mvn     r2, r0
+    and     r3, r3, #7           @ eg_inc_val shift, may be 0
+    ldrb    r2, [r5,#0x17]       @ state
+    ldrh    r0, [r5,#0x1a]       @ volume, unsigned (0-1023)
+
+    cmp     r2, #4               @ EG_ATT
+    beq     4f
+    cmp     r2, #2
+    mov     r2, #1
     mov     r2, r2, lsl r3
-    add     r0, r0, r2, asr #5
+    mov     r2, r2, lsr #1       @ eg_inc_val
+    add     r0, r0, r2
+    blt     1f                   @ EG_REL
+    beq     2f                   @ EG_SUS
+
+3:  @ EG_DEC
+    ldr     r2, [r5,#0x1c]       @ sl (can be 16bit?)
+    mov     r3, #EG_SUS
+    cmp     r0, r2               @ if ( volume >= (INT32) SLOT->sl )
+    strgeb  r3, [r5,#0x17]       @ state
+    b       10f
+
+4:  @ EG_ATT
+    subs    r3, r3, #1           @ eg_inc_val_shift - 1
+    mov     r2, #0
+    mvnpl   r2, r0
+    mov     r2, r2, lsl r3
+    add     r0, r0, r2, asr #4
     cmp     r0, #0               @ if (volume <= MIN_ATT_INDEX)
     movle   r3, #EG_DEC
     strleb  r3, [r5,#0x17]       @ state
     movle   r0, #0
-    b       4f
-
-1:  @ EG_DEC
-    ldr     r2, [r5,#0x24]       @ eg_pack_d1r (1ci)
-    mov     r0, r2, lsr #24
-    mov     r3, r3, lsl r0
-    sub     r3, r3, #1
-    tst     r1, r3
-    bne     5f                   @ do smth for tl problem (set on init?)
-    mov     r3, r1, lsr r0
-    ldrh    r0, [r5,#0x1a]       @ volume
-    and     r3, r3, #7
-    add     r3, r3, r3, lsl #1
-    mov     r3, r2, lsr r3
-    and     r3, r3, #7           @ shift for eg_inc calculation
-    mov     r2, #1
-    mov     r3, r2, lsl r3
-    ldr     r2, [r5,#0x1c]       @ sl (can be 16bit?)
-    add     r0, r0, r3, asr #1
-    cmp     r0, r2               @ if ( volume >= (INT32) SLOT->sl )
-    movge   r3, #EG_SUS
-    strgeb  r3, [r5,#0x17]       @ state
-    b       4f
+    b       10f
 
 2:  @ EG_SUS
-    ldr     r2, [r5,#0x28]       @ eg_pack_d2r (1ci)
-    mov     r0, r2, lsr #24
-    mov     r3, r3, lsl r0
-    sub     r3, r3, #1
-    tst     r1, r3
-    bne     5f                   @ do smth for tl problem (set on init?)
-    mov     r3, r1, lsr r0
-    ldrh    r0, [r5,#0x1a]       @ volume
-    and     r3, r3, #7
-    add     r3, r3, r3, lsl #1
-    mov     r3, r2, lsr r3
-    and     r3, r3, #7           @ shift for eg_inc calculation
-    mov     r2, #1
-    mov     r3, r2, lsl r3
-    add     r0, r0, r3, asr #1
     mov     r2, #1024
     sub     r2, r2, #1           @ r2 = MAX_ATT_INDEX
     cmp     r0, r2               @ if ( volume >= MAX_ATT_INDEX )
     movge   r0, r2
-    b       4f
+    b       10f
 
-3:  @ EG_REL
-    ldr     r2, [r5,#0x2c]       @ eg_pack_rr (1ci)
-    mov     r0, r2, lsr #24
-    mov     r3, r3, lsl r0
-    sub     r3, r3, #1
-    tst     r1, r3
-    bne     5f                   @ do smth for tl problem (set on init?)
-    mov     r3, r1, lsr r0
-    ldrh    r0, [r5,#0x1a]       @ volume
-    and     r3, r3, #7
-    add     r3, r3, r3, lsl #1
-    mov     r3, r2, lsr r3
-    and     r3, r3, #7           @ shift for eg_inc calculation
-    mov     r2, #1
-    mov     r3, r2, lsl r3
-    add     r0, r0, r3, asr #1
+1:  @ EG_REL
     mov     r2, #1024
     sub     r2, r2, #1           @ r2 = MAX_ATT_INDEX
     cmp     r0, r2               @ if ( volume >= MAX_ATT_INDEX )
@@ -134,7 +104,7 @@
     movge   r3, #EG_OFF
     strgeb  r3, [r5,#0x17]       @ state
 
-4:
+10: @ finish
     ldrh    r3, [r5,#0x18]       @ tl
     strh    r0, [r5,#0x1a]       @ volume
 .if     \slot == SLOT1
@@ -157,7 +127,7 @@
     orr     r7, r0, r7, lsr #16
 .endif
 
-5:
+0: @ EG_OFF
 .endm
 
 
@@ -187,28 +157,30 @@
     tstne   r12, #(1<<(\slot+8))
 .if     \slot == SLOT1
     mov     r1, r6, lsl #16
-    mov     r1, r1, lsr #17
+    mov     r1, r1, lsr #16
 .elseif \slot == SLOT2
-    mov     r1, r6, lsr #17
+    mov     r1, r6, lsr #16
 .elseif \slot == SLOT3
     mov     r1, r7, lsl #16
-    mov     r1, r1, lsr #17
+    mov     r1, r1, lsr #16
 .elseif \slot == SLOT4
-    mov     r1, r7, lsr #17
+    mov     r1, r7, lsr #16
 .endif
     andne   r2, r12, #0xc0
     movne   r2, r2,  lsr #6
     addne   r2, r2,  #24
     addne   r1, r1,  r12, lsr r2
+    bic     r1, r1,  #1
 .endm
 
 
+@ \r=sin/result, r1=env, r3=ym_tl_tab
 .macro lookup_tl r
     tst     \r, #0x100
     eorne   \r, \r, #0xff   @ if (sin & 0x100) sin = 0xff - (sin&0xff);
     tst     \r, #0x200
     and     \r, \r, #0xff
-    orr     \r, \r, r1, lsl #8
+    orr     \r, \r, r1, lsl #7
     mov     \r, \r, lsl #1
     ldrh    \r, [r3, \r]    @ 2ci if ne
     rsbne   \r, \r, #0
@@ -345,9 +317,9 @@
     make_eg_out SLOT3
     cmp     r1, #ENV_QUIET
     ldr     r2, [lr, #0x38] @ mem (for future)
-    movcs   r0, r2
+    mov     r0, #0
     bcs     0f
-    ldr     r0, [lr, #0x18]      @ 1ci
+    ldr     r0, [lr, #0x18]      @ phase3
     mov     r0, r0, lsr #16
     lookup_tl r0                 @ r0=c2
 
@@ -370,13 +342,13 @@
     cmp     r1, #ENV_QUIET
     movcs   r2, #0
     bcs     2f
-    ldr     r2, [lr, #0x14]
+    ldr     r2, [lr, #0x14]      @ phase2
     mov     r5, r10, lsr #17
     add     r2, r5, r2, lsr #16
     lookup_tl r2                 @ r2=mem
 
 2:
-    str     r2, [lr, #0x38] @ mem
+    str     r2, [lr, #0x38]      @ mem
 .endm
 
 
@@ -541,9 +513,9 @@
     movne   r0, r0, asr #16
     movne   r0, r0, lsl r2
 
-    ldr     r2, [lr, #0x10]
+    ldr     r2, [lr, #0x10]     @ phase1
+    add     r0, r0, r2
     mov     r0, r0, lsr #16
-    add     r0, r0, r2, lsr #16
     lookup_tl r0
     mov     r10,r10,lsl #16     @ ct->op1_out <<= 16;
     mov     r0, r0, lsl #16
@@ -759,10 +731,17 @@ chan_render_loop:
 crl_loop_lfo:
     add     r0, lr, #0x30
     ldmia   r0, {r1,r2}
+
+    subs    r4, r4, #0x100
+    bmi     crl_loop_end
+
     add     r2, r2, r1
     str     r2, [lr, #0x30]
+
     @ r12=lfo_ampm[31:16], r1=lfo_cnt_old, r2=lfo_cnt
     advance_lfo_m
+
+    add     r4, r4, #0x100
 
 crl_loop:
     subs    r4, r4, #0x100
@@ -859,7 +838,6 @@ crl_algo6:
 
 crl_algo7:
     upd_algo7_m
-    .pool
 
 
 crl_algo_done:
@@ -917,6 +895,7 @@ crl_do_phase:
 
 
 crl_loop_end:
+@    stmia   lr,  {r6,r7}         @ save volumes (for debug)
     str     r8,  [lr, #0x44]     @ eg_timer
     str     r12, [lr, #0x4c]     @ pack (for lfo_ampm)
     str     r4,  [lr, #0x50]     @ was_update
@@ -925,3 +904,4 @@ crl_loop_end:
 
 .pool
 
+@ vim:filetype=armasm

@@ -85,7 +85,7 @@ typedef struct
 } sms_t;
 
 /* Global data */
-extern sms_t sms;
+MDFN_HIDE extern sms_t sms;
 
 /* Function prototypes */
 uint8 sms_readbyte(uint16 A);

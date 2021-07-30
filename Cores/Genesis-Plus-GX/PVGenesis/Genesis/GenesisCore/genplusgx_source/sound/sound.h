@@ -2,8 +2,8 @@
  *  Genesis Plus
  *  Sound Hardware
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -46,8 +46,8 @@ extern void sound_reset(void);
 extern int sound_context_save(uint8 *state);
 extern int sound_context_load(uint8 *state);
 extern int sound_update(unsigned int cycles);
-extern void fm_reset(unsigned int cycles);
-extern void fm_write(unsigned int cycles, unsigned int address, unsigned int data);
-extern unsigned int fm_read(unsigned int cycles, unsigned int address);
+extern void (*fm_reset)(unsigned int cycles);
+extern void (*fm_write)(unsigned int cycles, unsigned int address, unsigned int data);
+extern unsigned int (*fm_read)(unsigned int cycles, unsigned int address);
 
 #endif /* _SOUND_H_ */

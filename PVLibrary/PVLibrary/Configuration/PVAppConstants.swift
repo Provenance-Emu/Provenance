@@ -16,7 +16,7 @@ public let PVGameMD5Key = "md5"
 public let PVAppURLKey = "provenance"
 
 #if os(tvOS)
-    public let PVThumbnailMaxResolution: Float = 400.0
+    public let PVThumbnailMaxResolution: Float = 800.0
 #else
     public let PVThumbnailMaxResolution: Float = 200.0
 #endif

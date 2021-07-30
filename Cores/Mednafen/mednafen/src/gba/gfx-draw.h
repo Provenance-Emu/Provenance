@@ -70,29 +70,29 @@ void gfxDrawOBJWin(void);
 //void gfxDecreaseBrightness(uint32 *line, int coeff);
 //void gfxAlphaBlend(uint32 *ta, uint32 *tb, int ca, int cb);
 
-extern uint32 AlphaClampLUT[64];
-alignas(16) extern uint32 line0[512];
-alignas(16) extern uint32 line1[512];
-alignas(16) extern uint32 line2[512];
-alignas(16) extern uint32 line3[512];
-alignas(16) extern uint32 lineOBJ[512];
-alignas(16) extern uint32 lineOBJWin[512];
-alignas(16) extern uint32 lineMix[512];
-extern bool gfxInWin0[512];
-extern bool gfxInWin1[512];
+MDFN_HIDE extern uint32 AlphaClampLUT[64];
+alignas(16) MDFN_HIDE extern uint32 line0[512];
+alignas(16) MDFN_HIDE extern uint32 line1[512];
+alignas(16) MDFN_HIDE extern uint32 line2[512];
+alignas(16) MDFN_HIDE extern uint32 line3[512];
+alignas(16) MDFN_HIDE extern uint32 lineOBJ[512];
+alignas(16) MDFN_HIDE extern uint32 lineOBJWin[512];
+alignas(16) MDFN_HIDE extern uint32 lineMix[512];
+MDFN_HIDE extern bool gfxInWin0[512];
+MDFN_HIDE extern bool gfxInWin1[512];
 
-extern int gfxBG2Changed;
-extern int gfxBG3Changed;
+MDFN_HIDE extern int gfxBG2Changed;
+MDFN_HIDE extern int gfxBG3Changed;
 
-extern int gfxBG2X;
-extern int gfxBG2Y;
-extern int gfxBG2LastX;
-extern int gfxBG2LastY;
-extern int gfxBG3X;
-extern int gfxBG3Y;
-extern int gfxBG3LastX;
-extern int gfxBG3LastY;
-extern int gfxLastVCOUNT;
+MDFN_HIDE extern int gfxBG2X;
+MDFN_HIDE extern int gfxBG2Y;
+MDFN_HIDE extern int gfxBG2LastX;
+MDFN_HIDE extern int gfxBG2LastY;
+MDFN_HIDE extern int gfxBG3X;
+MDFN_HIDE extern int gfxBG3Y;
+MDFN_HIDE extern int gfxBG3LastX;
+MDFN_HIDE extern int gfxBG3LastY;
+MDFN_HIDE extern int gfxLastVCOUNT;
 
 static INLINE void gfxClearArray(uint32 *array)
 {

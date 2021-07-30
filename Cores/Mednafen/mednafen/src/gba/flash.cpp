@@ -36,12 +36,12 @@ namespace MDFN_IEN_GBA
 #define FLASH_SETBANK            9
 
 uint8 *flashSaveMemory = NULL;
-static int flashState = FLASH_READ_ARRAY;
-static int flashReadState = FLASH_READ_ARRAY;
-uint32 flashSize = 0x10000;
-static int flashDeviceID = 0x1b;
-static int flashManufacturerID = 0x32;
-static int flashBank = 0;
+static int flashState;
+static int flashReadState;
+uint32 flashSize;
+static int flashDeviceID;
+static int flashManufacturerID;
+static int flashBank;
 
 int Flash_StateAction(StateMem *sm, int load, int data_only)
 {
@@ -70,6 +70,8 @@ int Flash_StateAction(StateMem *sm, int load, int data_only)
 
 void Flash_Init(void)
 {
+ flashSetSize(0x10000);
+ //
  flashSaveMemory = new uint8[0x20000];
  memset(flashSaveMemory, 0x00, 0x20000);
 }

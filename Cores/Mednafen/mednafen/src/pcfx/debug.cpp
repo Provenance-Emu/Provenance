@@ -1008,6 +1008,7 @@ static void ForceIRQ(int level)
 
 DebuggerInfoStruct PCFXDBGInfo =
 {
+ false,
  "shift_jis",
  4,
  2,             // Instruction alignment(bytes)

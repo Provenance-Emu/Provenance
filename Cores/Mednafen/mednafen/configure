@@ -661,10 +661,10 @@ HAVE_DIRECTSOUND_FALSE
 HAVE_DIRECTSOUND_TRUE
 HAVE_OSSDSP_FALSE
 HAVE_OSSDSP_TRUE
-SNDFILE_LIBS
-SNDFILE_CFLAGS
-HAVE_LIBSNDFILE_FALSE
-HAVE_LIBSNDFILE_TRUE
+FLAC_LIBS
+FLAC_CFLAGS
+HAVE_LIBFLAC_FALSE
+HAVE_LIBFLAC_TRUE
 LZO2_LIBS
 LZO2_CFLAGS
 HAVE_EXTERNAL_LZO2_FALSE
@@ -835,7 +835,6 @@ am__nodep
 AMDEPBACKSLASH
 AMDEP_FALSE
 AMDEP_TRUE
-am__quote
 am__include
 DEPDIR
 am__untar
@@ -898,6 +897,7 @@ infodir
 docdir
 oldincludedir
 includedir
+runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -916,7 +916,8 @@ PACKAGE_VERSION
 PACKAGE_TARNAME
 PACKAGE_NAME
 PATH_SEPARATOR
-SHELL'
+SHELL
+am__quote'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
@@ -964,7 +965,7 @@ with_external_mpcdec
 with_external_tremor
 with_external_trio
 with_external_lzo
-with_libsndfile
+with_libflac
 with_sdl_prefix
 with_sdl_exec_prefix
 enable_sdltest
@@ -992,8 +993,8 @@ JACK_CFLAGS
 JACK_LIBS
 LZO2_CFLAGS
 LZO2_LIBS
-SNDFILE_CFLAGS
-SNDFILE_LIBS
+FLAC_CFLAGS
+FLAC_LIBS
 SDL2_FRAMEWORK
 SDL_CFLAGS
 SDL_LIBS'
@@ -1035,6 +1036,7 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
+runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE}'
@@ -1287,6 +1289,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1424,7 +1435,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1577,6 +1588,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1682,8 +1694,8 @@ Optional Packages:
   --with-external-tremor  compile and link with external tremor [default=no]
   --with-external-trio    compile and link with external trio [default=no]
   --with-external-lzo     compile and link with external LZO [default=no]
-  --with-libsndfile       support various sound file formats in ripped CD
-                          images [default=yes]
+  --with-libflac          support FLAC file format in ripped CD images
+                          [default=yes]
   --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)
   --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)
 
@@ -1710,10 +1722,8 @@ Some influential environment variables:
   JACK_LIBS   linker flags for JACK, overriding pkg-config
   LZO2_CFLAGS C compiler flags for LZO2, overriding pkg-config
   LZO2_LIBS   linker flags for LZO2, overriding pkg-config
-  SNDFILE_CFLAGS
-              C compiler flags for SNDFILE, overriding pkg-config
-  SNDFILE_LIBS
-              linker flags for SNDFILE, overriding pkg-config
+  FLAC_CFLAGS C compiler flags for FLAC, overriding pkg-config
+  FLAC_LIBS   linker flags for FLAC, overriding pkg-config
   SDL2_FRAMEWORK
               Path to SDL2.framework
   SDL_CFLAGS  C compiler flags for SDL, overriding pkg-config
@@ -4366,8 +4376,8 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 #
 # Avoid trailing and leading zeroes in the decimal version components to avoid confusing not-so-learned people.
 #
-MEDNAFEN_VERSION='1.24.3'
-MEDNAFEN_VERSION_NUMERIC=0x00102403
+MEDNAFEN_VERSION='1.27.0-UNSTABLE'
+MEDNAFEN_VERSION_NUMERIC=0x00102700
 #                        0xJJJnnnRR
 
 # Make sure we can run config.sub.
@@ -4441,7 +4451,7 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
-am__api_version='1.14'
+am__api_version='1.16'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -4630,7 +4640,7 @@ else
 $as_echo "$as_me: WARNING: 'missing' script is too old or missing" >&2;}
 fi
 
-if test x"${install_sh}" != xset; then
+if test x"${install_sh+set}" != xset; then
   case $am_aux_dir in
   *\ * | *\	*)
     install_sh="\${SHELL} '$am_aux_dir/install-sh'" ;;
@@ -4867,45 +4877,45 @@ DEPDIR="${am__leading_dot}deps"
 
 ac_config_commands="$ac_config_commands depfiles"
 
-
-am_make=${MAKE-make}
-cat > confinc << 'END'
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} supports the include directive" >&5
+$as_echo_n "checking whether ${MAKE-make} supports the include directive... " >&6; }
+cat > confinc.mk << 'END'
 am__doit:
-	@echo this is the am__doit target
+	@echo this is the am__doit target >confinc.out
 .PHONY: am__doit
 END
-# If we don't find an include directive, just comment out the code.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for style of include used by $am_make" >&5
-$as_echo_n "checking for style of include used by $am_make... " >&6; }
 am__include="#"
 am__quote=
-_am_result=none
-# First try GNU make style include.
-echo "include confinc" > confmf
-# Ignore all kinds of additional output from 'make'.
-case `$am_make -s -f confmf 2> /dev/null` in #(
-*the\ am__doit\ target*)
-  am__include=include
-  am__quote=
-  _am_result=GNU
-  ;;
-esac
-# Now try BSD make style include.
-if test "$am__include" = "#"; then
-   echo '.include "confinc"' > confmf
-   case `$am_make -s -f confmf 2> /dev/null` in #(
-   *the\ am__doit\ target*)
-     am__include=.include
-     am__quote="\""
-     _am_result=BSD
+# BSD make does it like this.
+echo '.include "confinc.mk" # ignored' > confmf.BSD
+# Other make implementations (GNU, Solaris 10, AIX) do it like this.
+echo 'include confinc.mk # ignored' > confmf.GNU
+_am_result=no
+for s in GNU BSD; do
+  { echo "$as_me:$LINENO: ${MAKE-make} -f confmf.$s && cat confinc.out" >&5
+   (${MAKE-make} -f confmf.$s && cat confinc.out) >&5 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }
+  case $?:`cat confinc.out 2>/dev/null` in #(
+  '0:this is the am__doit target') :
+    case $s in #(
+  BSD) :
+    am__include='.include' am__quote='"' ;; #(
+  *) :
+    am__include='include' am__quote='' ;;
+esac ;; #(
+  *) :
      ;;
-   esac
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $_am_result" >&5
-$as_echo "$_am_result" >&6; }
-rm -f confinc confmf
+esac
+  if test "$am__include" != "#"; then
+    _am_result="yes ($s style)"
+    break
+  fi
+done
+rm -f confinc.* confmf.*
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${_am_result}" >&5
+$as_echo "${_am_result}" >&6; }
 
 # Check whether --enable-dependency-tracking was given.
 if test "${enable_dependency_tracking+set}" = set; then :
@@ -5018,12 +5028,12 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 
 # For better backward compatibility.  To be removed once Automake 1.9.x
 # dies out for good.  For more background, see:
-# <http://lists.gnu.org/archive/html/automake/2012-07/msg00001.html>
-# <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
+# <https://lists.gnu.org/archive/html/automake/2012-07/msg00001.html>
+# <https://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
 mkdir_p='$(MKDIR_P)'
 
-# We need awk for the "check" target.  The system "awk" is bad on
-# some platforms.
+# We need awk for the "check" target (and possibly the TAP driver).  The
+# system "awk" is bad on some platforms.
 # Always define AMTAR for backward compatibility.  Yes, it's still used
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
@@ -5198,7 +5208,7 @@ END
 Aborting the configuration process, to ensure you take notice of the issue.
 
 You can download and install GNU coreutils to get an 'rm' implementation
-that behaves properly: <http://www.gnu.org/software/coreutils/>.
+that behaves properly: <https://www.gnu.org/software/coreutils/>.
 
 If you want to complete the configuration process using your problematic
 'rm' anyway, export the environment variable ACCEPT_INFERIOR_RM_PROGRAM
@@ -7578,7 +7588,7 @@ $as_echo "#define const /**/" >>confdefs.h
 
 fi
 
-for ac_func in memcmp memcpy memmove memset mmap munmap madvise signal sigaction fork pipe dup2 fcntl getenv putenv setenv gettimeofday getpwuid getuid strerror strerror_r ftello fopen64 fseeko64 ftello64 fstat64 ftruncate64 __mingw_get_crt_info
+for ac_func in memcmp memcpy memmove memset mmap munmap madvise signal sigaction siglongjmp _longjmp fork pipe dup2 fcntl getenv putenv setenv gettimeofday getpwuid getuid strerror strerror_r ftello fopen64 fseeko64 lseek64 ftello64 fstat64 ftruncate64 __mingw_get_crt_info
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -9830,6 +9840,8 @@ main ()
     if (*(data + i) != *(data3 + i))
       return 14;
   close (fd);
+  free (data);
+  free (data3);
   return 0;
 }
 _ACEOF
@@ -17556,40 +17568,40 @@ ac_config_links="$ac_config_links include/minilzo/minilzo.h:$minilzo_include_sym
 
 
 #
-# libsndfile
+# libFLAC
 #
  if false; then
-  HAVE_LIBSNDFILE_TRUE=
-  HAVE_LIBSNDFILE_FALSE='#'
+  HAVE_LIBFLAC_TRUE=
+  HAVE_LIBFLAC_FALSE='#'
 else
-  HAVE_LIBSNDFILE_TRUE='#'
-  HAVE_LIBSNDFILE_FALSE=
+  HAVE_LIBFLAC_TRUE='#'
+  HAVE_LIBFLAC_FALSE=
 fi
 
 
-# Check whether --with-libsndfile was given.
-if test "${with_libsndfile+set}" = set; then :
-  withval=$with_libsndfile;
+# Check whether --with-libflac was given.
+if test "${with_libflac+set}" = set; then :
+  withval=$with_libflac;
 else
-  with_libsndfile=yes
+  with_libflac=yes
 fi
 
-if test x$with_libsndfile = xyes; then
+if test x$with_libflac = xyes; then
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SNDFILE" >&5
-$as_echo_n "checking for SNDFILE... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for FLAC" >&5
+$as_echo_n "checking for FLAC... " >&6; }
 
-if test -n "$SNDFILE_CFLAGS"; then
-    pkg_cv_SNDFILE_CFLAGS="$SNDFILE_CFLAGS"
+if test -n "$FLAC_CFLAGS"; then
+    pkg_cv_FLAC_CFLAGS="$FLAC_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"sndfile >= 1.0.2\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "sndfile >= 1.0.2") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"flac >= 1.3.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "flac >= 1.3.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_SNDFILE_CFLAGS=`$PKG_CONFIG --cflags "sndfile >= 1.0.2" 2>/dev/null`
+  pkg_cv_FLAC_CFLAGS=`$PKG_CONFIG --cflags "flac >= 1.3.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -17597,16 +17609,16 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$SNDFILE_LIBS"; then
-    pkg_cv_SNDFILE_LIBS="$SNDFILE_LIBS"
+if test -n "$FLAC_LIBS"; then
+    pkg_cv_FLAC_LIBS="$FLAC_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"sndfile >= 1.0.2\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "sndfile >= 1.0.2") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"flac >= 1.3.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "flac >= 1.3.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_SNDFILE_LIBS=`$PKG_CONFIG --libs "sndfile >= 1.0.2" 2>/dev/null`
+  pkg_cv_FLAC_LIBS=`$PKG_CONFIG --libs "flac >= 1.3.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -17627,34 +17639,34 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        SNDFILE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "sndfile >= 1.0.2" 2>&1`
+	        FLAC_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "flac >= 1.3.0" 2>&1`
         else
-	        SNDFILE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "sndfile >= 1.0.2" 2>&1`
+	        FLAC_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "flac >= 1.3.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$SNDFILE_PKG_ERRORS" >&5
+	echo "$FLAC_PKG_ERRORS" >&5
 
-	as_fn_error $? "*** libsndfile >= 1.0.2 not found!" "$LINENO" 5
+	as_fn_error $? "*** libflac >= 1.3.0 not found!" "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-	as_fn_error $? "*** libsndfile >= 1.0.2 not found!" "$LINENO" 5
+	as_fn_error $? "*** libflac >= 1.3.0 not found!" "$LINENO" 5
 else
-	SNDFILE_CFLAGS=$pkg_cv_SNDFILE_CFLAGS
-	SNDFILE_LIBS=$pkg_cv_SNDFILE_LIBS
+	FLAC_CFLAGS=$pkg_cv_FLAC_CFLAGS
+	FLAC_LIBS=$pkg_cv_FLAC_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 fi
 
-$as_echo "#define HAVE_LIBSNDFILE 1" >>confdefs.h
+$as_echo "#define HAVE_LIBFLAC 1" >>confdefs.h
 
 	 if true; then
-  HAVE_LIBSNDFILE_TRUE=
-  HAVE_LIBSNDFILE_FALSE='#'
+  HAVE_LIBFLAC_TRUE=
+  HAVE_LIBFLAC_FALSE='#'
 else
-  HAVE_LIBSNDFILE_TRUE='#'
-  HAVE_LIBSNDFILE_FALSE=
+  HAVE_LIBFLAC_TRUE='#'
+  HAVE_LIBFLAC_FALSE=
 fi
 
 fi
@@ -20114,12 +20126,12 @@ if test -z "${HAVE_EXTERNAL_LZO2_TRUE}" && test -z "${HAVE_EXTERNAL_LZO2_FALSE}"
   as_fn_error $? "conditional \"HAVE_EXTERNAL_LZO2\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${HAVE_LIBSNDFILE_TRUE}" && test -z "${HAVE_LIBSNDFILE_FALSE}"; then
-  as_fn_error $? "conditional \"HAVE_LIBSNDFILE\" was never defined.
+if test -z "${HAVE_LIBFLAC_TRUE}" && test -z "${HAVE_LIBFLAC_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LIBFLAC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${HAVE_LIBSNDFILE_TRUE}" && test -z "${HAVE_LIBSNDFILE_FALSE}"; then
-  as_fn_error $? "conditional \"HAVE_LIBSNDFILE\" was never defined.
+if test -z "${HAVE_LIBFLAC_TRUE}" && test -z "${HAVE_LIBFLAC_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LIBFLAC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HAVE_OSSDSP_TRUE}" && test -z "${HAVE_OSSDSP_FALSE}"; then
@@ -20821,7 +20833,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 #
 # INIT-COMMANDS
 #
-AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
+AMDEP_TRUE="$AMDEP_TRUE" MAKE="${MAKE-make}"
 # Capture the value of obsolete ALL_LINGUAS because we need it to compute
     # POFILES, UPDATEPOFILES, DUMMYPOFILES, GMOFILES, CATALOGS. But hide it
     # from automake < 1.5.
@@ -21487,29 +21499,35 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
   # Older Autoconf quotes --file arguments for eval, but not when files
   # are listed without --file.  Let's play safe and only enable the eval
   # if we detect the quoting.
-  case $CONFIG_FILES in
-  *\'*) eval set x "$CONFIG_FILES" ;;
-  *)   set x $CONFIG_FILES ;;
-  esac
+  # TODO: see whether this extra hack can be removed once we start
+  # requiring Autoconf 2.70 or later.
+  case $CONFIG_FILES in #(
+  *\'*) :
+    eval set x "$CONFIG_FILES" ;; #(
+  *) :
+    set x $CONFIG_FILES ;; #(
+  *) :
+     ;;
+esac
   shift
-  for mf
+  # Used to flag and report bootstrapping failures.
+  am_rc=0
+  for am_mf
   do
     # Strip MF so we end up with the name of the file.
-    mf=`echo "$mf" | sed -e 's/:.*$//'`
-    # Check whether this is an Automake generated Makefile or not.
-    # We used to match only the files named 'Makefile.in', but
-    # some people rename them; so instead we look at the file content.
-    # Grep'ing the first line is not enough: some people post-process
-    # each Makefile.in and add a new line on top of each file to say so.
-    # Grep'ing the whole file is not good either: AIX grep has a line
+    am_mf=`$as_echo "$am_mf" | sed -e 's/:.*$//'`
+    # Check whether this is an Automake generated Makefile which includes
+    # dependency-tracking related rules and includes.
+    # Grep'ing the whole file directly is not great: AIX grep has a line
     # limit of 2048, but all sed's we know have understand at least 4000.
-    if sed -n 's,^#.*generated by automake.*,X,p' "$mf" | grep X >/dev/null 2>&1; then
-      dirpart=`$as_dirname -- "$mf" ||
-$as_expr X"$mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$mf" : 'X\(//\)[^/]' \| \
-	 X"$mf" : 'X\(//\)$' \| \
-	 X"$mf" : 'X\(/\)' \| . 2>/dev/null ||
-$as_echo X"$mf" |
+    sed -n 's,^am--depfiles:.*,X,p' "$am_mf" | grep X >/dev/null 2>&1 \
+      || continue
+    am_dirpart=`$as_dirname -- "$am_mf" ||
+$as_expr X"$am_mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+	 X"$am_mf" : 'X\(//\)[^/]' \| \
+	 X"$am_mf" : 'X\(//\)$' \| \
+	 X"$am_mf" : 'X\(/\)' \| . 2>/dev/null ||
+$as_echo X"$am_mf" |
     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
 	    s//\1/
 	    q
@@ -21527,53 +21545,48 @@ $as_echo X"$mf" |
 	    q
 	  }
 	  s/.*/./; q'`
-    else
-      continue
-    fi
-    # Extract the definition of DEPDIR, am__include, and am__quote
-    # from the Makefile without running 'make'.
-    DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
-    test -z "$DEPDIR" && continue
-    am__include=`sed -n 's/^am__include = //p' < "$mf"`
-    test -z "$am__include" && continue
-    am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
-    # Find all dependency output files, they are included files with
-    # $(DEPDIR) in their names.  We invoke sed twice because it is the
-    # simplest approach to changing $(DEPDIR) to its actual value in the
-    # expansion.
-    for file in `sed -n "
-      s/^$am__include $am__quote\(.*(DEPDIR).*\)$am__quote"'$/\1/p' <"$mf" | \
-	 sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g'`; do
-      # Make sure the directory exists.
-      test -f "$dirpart/$file" && continue
-      fdir=`$as_dirname -- "$file" ||
-$as_expr X"$file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$file" : 'X\(//\)[^/]' \| \
-	 X"$file" : 'X\(//\)$' \| \
-	 X"$file" : 'X\(/\)' \| . 2>/dev/null ||
-$as_echo X"$file" |
-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
+    am_filepart=`$as_basename -- "$am_mf" ||
+$as_expr X/"$am_mf" : '.*/\([^/][^/]*\)/*$' \| \
+	 X"$am_mf" : 'X\(//\)$' \| \
+	 X"$am_mf" : 'X\(/\)' \| . 2>/dev/null ||
+$as_echo X/"$am_mf" |
+    sed '/^.*\/\([^/][^/]*\)\/*$/{
 	    s//\1/
 	    q
 	  }
-	  /^X\(\/\/\)[^/].*/{
+	  /^X\/\(\/\/\)$/{
 	    s//\1/
 	    q
 	  }
-	  /^X\(\/\/\)$/{
-	    s//\1/
-	    q
-	  }
-	  /^X\(\/\).*/{
+	  /^X\/\(\/\).*/{
 	    s//\1/
 	    q
 	  }
 	  s/.*/./; q'`
-      as_dir=$dirpart/$fdir; as_fn_mkdir_p
-      # echo "creating $dirpart/$file"
-      echo '# dummy' > "$dirpart/$file"
-    done
+    { echo "$as_me:$LINENO: cd "$am_dirpart" \
+      && sed -e '/# am--include-marker/d' "$am_filepart" \
+        | $MAKE -f - am--depfiles" >&5
+   (cd "$am_dirpart" \
+      && sed -e '/# am--include-marker/d' "$am_filepart" \
+        | $MAKE -f - am--depfiles) >&5 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); } || am_rc=$?
   done
+  if test $am_rc -ne 0; then
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "Something went wrong bootstrapping makefile fragments
+    for automatic dependency tracking.  Try re-running configure with the
+    '--disable-dependency-tracking' option to at least be able to build
+    the package (albeit without support for automatic dependency tracking).
+See \`config.log' for more details" "$LINENO" 5; }
+  fi
+  { am_dirpart=; unset am_dirpart;}
+  { am_filepart=; unset am_filepart;}
+  { am_mf=; unset am_mf;}
+  { am_rc=; unset am_rc;}
+  rm -f conftest-deps.mk
 }
  ;;
     "po-directories":C)

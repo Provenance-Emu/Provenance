@@ -434,7 +434,7 @@ void gfx_update(unsigned int cycles)
     pcd_event_schedule(cycles, PCD_EVENT_GFX, 5 * w * lines);
   }
 
-  if (PicoOpt & POPT_EN_MCD_GFX)
+  if (PicoIn.opt & POPT_EN_MCD_GFX)
   {
     /* render lines */
     while (lines--)

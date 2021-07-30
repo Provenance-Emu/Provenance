@@ -2,10 +2,10 @@
  *  Genesis Plus
  *  Video Display Processor (68k & Z80 CPU interface)
  *
- *  Support for SG-1000, Master System (315-5124 & 315-5246), Game Gear & Mega Drive VDP
+ *  Support for SG-1000 (TMS99xx & 315-5066), Master System (315-5124 & 315-5246), Game Gear & Mega Drive VDP
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2017  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -70,12 +70,14 @@ extern uint8 odd_frame;
 extern uint8 im2_flag;
 extern uint8 interlaced;
 extern uint8 vdp_pal;
+extern uint8 h_counter;
 extern uint16 v_counter;
 extern uint16 vc_max;
 extern uint16 vscroll;
 extern uint16 lines_per_frame;
+extern uint16 max_sprite_pixels;
 extern int32 fifo_write_cnt;
-extern uint32 fifo_lastwrite;
+extern uint32 fifo_slots;
 extern uint32 hvc_latch;
 extern const uint8 *hctab;
 

@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* console.h:
-**  Copyright (C) 2006-2016 Mednafen Team
+**  Copyright (C) 2006-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -18,6 +18,8 @@
 ** along with this program; if not, write to the Free Software Foundation, Inc.,
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+
+#include "TextEntry.h"
 
 class MDFNConsole
 {
@@ -42,9 +44,9 @@ class MDFNConsole
 
 	private:
 	std::vector<std::string> TextLog;
-	std::u32string kb_buffer;
 
-	size_t kb_cursor_pos;
+	TextEntry te;
+
 	bool shellstyle;
 	bool prompt_visible;
 	int32 Scrolled;
@@ -58,6 +60,5 @@ class MDFNConsole
 	std::unique_ptr<MDFN_Surface> surface;
 	std::unique_ptr<MDFN_Surface> tmp_surface;
 
-	void PasteText(const std::u32string& text);
 	void ProcessKBBuffer(void);
 };

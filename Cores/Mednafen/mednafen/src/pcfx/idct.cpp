@@ -131,7 +131,7 @@ static INLINE int32 MUL_32x32_H32(const int32& c, int32 v)
 #endif
 
 template<unsigned psh>
-static INLINE void IDCT_1D(int32* __restrict__ c_in, int32* __restrict__ o)
+static INLINE void IDCT_1D(int32* MDFN_RESTRICT c_in, int32* MDFN_RESTRICT o)
 {
  static const int32 coeffs[10] =
  {
@@ -253,7 +253,7 @@ static INLINE void IDCT_1D(int32* __restrict__ c_in, int32* __restrict__ o)
 }
 
 template<unsigned psh>
-static INLINE void IDCT_1D_Multi(int32* __restrict__ c, int32* __restrict__ o)
+static INLINE void IDCT_1D_Multi(int32* MDFN_RESTRICT c, int32* MDFN_RESTRICT o)
 {
  for(unsigned i = 0; i < 8; i++)
   IDCT_1D<psh>(&c[i * 8], &o[i]);

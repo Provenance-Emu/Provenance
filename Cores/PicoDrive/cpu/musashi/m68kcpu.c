@@ -808,7 +808,7 @@ int m68k_execute(int num_cycles)
 		// notaz
 		m68ki_trace_t1();
 
-		while(GET_CYCLES() >= 0)
+		while(GET_CYCLES() > 0)
 //		do
 		{
 			/* Set tracing accodring to T1. (T0 is done inside instruction) */

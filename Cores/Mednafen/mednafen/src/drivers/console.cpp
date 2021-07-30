@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* console.cpp:
-**  Copyright (C) 2006-2018 Mednafen Team
+**  Copyright (C) 2006-2020 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -26,7 +26,6 @@
 
 MDFNConsole::MDFNConsole(bool setshellstyle)
 {
- kb_cursor_pos = 0;
  shellstyle = setshellstyle;
  prompt_visible = true;
  Scrolled = 0;
@@ -48,18 +47,11 @@ bool MDFNConsole::TextHook(const std::string &text)
  return true;
 }
 
-void MDFNConsole::PasteText(const std::u32string& u32text)
-{
- kb_buffer.insert(kb_cursor_pos, u32text);
- kb_cursor_pos += u32text.size();
-}
-
 void MDFNConsole::ProcessKBBuffer(void)
 {
- const std::string kb_utf8 = UTF32_to_UTF8(kb_buffer); 
+ const std::string kb_utf8 = UTF32_to_UTF8(te.GetKBB()); 
  //
- kb_buffer.clear();
- kb_cursor_pos = 0;
+ te.ClearKBB();
  //
  for(size_t i = 0, begin_i = 0; i <= kb_utf8.size(); i++)
  {
@@ -80,100 +72,55 @@ void MDFNConsole::ProcessKBBuffer(void)
 
 bool MDFNConsole::Event(const SDL_Event *event)
 {
- switch(event->type)
+ if(event->type == SDL_TEXTINPUT)
  {
-  case SDL_TEXTINPUT:
-	if(!(SDL_GetModState() & KMOD_LALT))
-	{
-	 std::u32string u32text = UTF8_to_UTF32(event->text.text);
-	 kb_buffer.insert(kb_cursor_pos, u32text);
-	 kb_cursor_pos += u32text.size();
-	}
-	break;
-
-  case SDL_KEYDOWN:
-	if(event->key.keysym.mod & KMOD_LALT)
-	 break;
-
-	if((KMOD_TEST_CTRL(event->key.keysym.mod) && event->key.keysym.sym == SDLK_v) ||
-	   (KMOD_TEST_SHIFT(event->key.keysym.mod) && event->key.keysym.sym == SDLK_INSERT))
-	{
-	 if(SDL_HasClipboardText() == SDL_TRUE)
- 	 {
-	  char* ctext = SDL_GetClipboardText();	// FIXME: SDL_Free() on exception
-	  if(ctext)
-	  {
-	   const std::u32string u32ctext = UTF8_to_UTF32(ctext);
-	   SDL_free(ctext);
-	   PasteText(u32ctext);
-
-	   return true;
-	  }
-	 }
-	}
-	else switch(event->key.keysym.sym)
-	{
-	 case SDLK_HOME:
-		if(event->key.keysym.mod & KMOD_SHIFT)
-		 Scrolled = -1;
-		else
-		 kb_cursor_pos = 0;
-		break;
-
-	 case SDLK_END:
-		if(event->key.keysym.mod & KMOD_SHIFT)
-		 Scrolled = 0;
-		else
-		 kb_cursor_pos = kb_buffer.size();
-		break;
-
-	 case SDLK_LEFT:
-		if(kb_cursor_pos)
-		 kb_cursor_pos--;
-		break;
-
-	 case SDLK_RIGHT:
-		if(kb_cursor_pos < kb_buffer.size())
-		 kb_cursor_pos++;
-		break;
-
-	 case SDLK_UP: 
-		Scrolled = Scrolled + 1;
-		break;
-
-	 case SDLK_DOWN: 
-		Scrolled = std::max<int32>(0, Scrolled - 1);
-		break;
-
-	 case SDLK_PAGEUP:
-		Scrolled = (Scrolled + LastPageSize);
-		break;
-
-	 case SDLK_PAGEDOWN:
-		Scrolled = std::max<int64>(0, (int64)Scrolled - LastPageSize);
-		break;
-
-	 case SDLK_RETURN:
-		ProcessKBBuffer();
-		break;
-
-	 case SDLK_BACKSPACE:
-		if(kb_buffer.size() && kb_cursor_pos)
-		{
-		 kb_buffer.erase(kb_cursor_pos - 1, 1);
-		 kb_cursor_pos--;
-		}
-		break;
-
-	 case SDLK_DELETE:
-		if(kb_buffer.size() && kb_cursor_pos < kb_buffer.size())
-		{
-		 kb_buffer.erase(kb_cursor_pos, 1);
-		}
-		break;
-	}
-	break;
+  if(!(SDL_GetModState() & KMOD_LALT))
+  {
+   te.InsertKBB(event->text.text);
+  }
  }
+ else if(event->type == SDL_KEYDOWN)
+ {
+  const auto mod = event->key.keysym.mod;
+  const bool ctrl = mod & KMOD_CTRL;
+  //const bool shift = mod & KMOD_SHIFT;
+  const bool alt = mod & KMOD_LALT;
+
+  if(alt)
+   return false;
+
+  switch(event->key.keysym.sym)
+  {
+   case SDLK_HOME:
+	if(ctrl)
+	 Scrolled = -1;
+	break;
+
+   case SDLK_END:
+	if(ctrl)
+	 Scrolled = 0;
+	break;
+
+   case SDLK_UP: 
+	Scrolled = Scrolled + 1;
+	break;
+
+   case SDLK_DOWN: 
+	Scrolled = std::max<int32>(0, Scrolled - 1);
+	break;
+
+   case SDLK_PAGEUP:
+	Scrolled = (Scrolled + LastPageSize);
+	break;
+
+   case SDLK_PAGEDOWN:
+	Scrolled = std::max<int64>(0, (int64)Scrolled - LastPageSize);
+	break;
+  }
+ }
+
+ if(te.Event(event))
+  ProcessKBBuffer();
 
  return false;
 }
@@ -254,14 +201,17 @@ MDFN_Surface* MDFNConsole::Draw(const MDFN_PixelFormat& pformat, const int32 dim
   DrawTextShadow(tmp_surface.get(), 0, 0, TextLog[vec_index], color, shadcolor, fontid);
   int32 numlines = (uint32)ceil((double)pw / w);
 
+  // Resync console scroll to the last drawn line of the target unwrapped line in the scrollback buffer, not the first,
+  // otherwise the console will erroneously scroll up on windowed<->fullscreen transitions when the last line is wider
+  // than the console viewport, confusing the user.
+  if(scroll_resync && vec_index == ScrolledVecTarg)
+  {
+   Scrolled = scroll_counter;
+   scroll_resync = false;
+  }
+
   while(numlines > 0 && destline >= 0)
   {
-   if(scroll_resync && vec_index == ScrolledVecTarg && numlines == 1)
-   {
-    Scrolled = scroll_counter;
-    scroll_resync = false;
-   }
-
    if(!scroll_resync && scroll_counter >= Scrolled)
    {
     if(scroll_counter == Scrolled)
@@ -293,65 +243,21 @@ MDFN_Surface* MDFNConsole::Draw(const MDFN_PixelFormat& pformat, const int32 dim
 
  if(prompt_visible)
  {
-  const unsigned space_width = GetTextPixLength(U" ");
-  std::u32string concat_str;
-  size_t concat_cursorpos = 0;
+  const char* prefix_str;
 
   if(shellstyle)
   {
    int t = TextLog.size() - 1;
    if(t >= 0)
-    concat_str = UTF8_to_UTF32(TextLog[t]);
+    prefix_str = TextLog[t].c_str();
    else
-    concat_str = U"";
+    prefix_str = "";
   }
   else
-   concat_str = U"#>";
+   prefix_str = "#>";
 
-  concat_cursorpos = concat_str.size() + kb_cursor_pos;
-  concat_str.append(kb_buffer);
-
-  {
-   int32 nw = GetTextPixLength(concat_str.c_str()) + space_width;
-
-   if(nw > tmp_surface->w)
-   {
-    tmp_surface.reset(nullptr);
-    tmp_surface.reset(new MDFN_Surface(nullptr, nw, font_height + 1, nw, surface->format));
-   }
-  }
-
-  tmp_surface->Fill(0, 0, 0, opacity);
-  MDFN_Rect tmp_rect, dest_rect;
-  const uint32 tpl = DrawTextShadow(tmp_surface.get(), 0, 0, concat_str, color, shadcolor, fontid) + space_width;
-
-  if(Time::MonoMS() & 0x100)
-  {
-   const int32 rx = GetTextPixLength(concat_str.substr(0, concat_cursorpos));
-   const int32 ry = 0;
-   const int32 rw = (concat_cursorpos < concat_str.size()) ? GetTextPixLength(concat_str.substr(concat_cursorpos, 1)) : space_width;
-   const int32 rh = GetFontHeight(fontid);
-
-   if((rx + rw) <= tmp_surface->w && (ry + rw) <= tmp_surface->h)
-    MDFN_DrawFillRect(tmp_surface.get(), rx, ry, rw, rh, /*cursor*/color);
-  }
-
-  tmp_rect.x = 0;
-  tmp_rect.y = 0;
-  tmp_rect.w = std::min<uint32>(tpl, tmp_surface->w);
-  tmp_rect.h = font_height;
-
-  if(tmp_rect.w >= w)
-  {
-   tmp_rect.x = tmp_rect.w - w;
-   tmp_rect.w -= tmp_rect.x;
-  }
-  dest_rect.x = 0;
-  dest_rect.y = h - (font_height + 1);
-  dest_rect.w = tmp_rect.w;
-  dest_rect.h = tmp_rect.h;
-
-  MDFN_StretchBlitSurface(tmp_surface.get(), tmp_rect, surface.get(), dest_rect);
+  MDFN_Rect kbrect = { 0, h - (font_height + 1), surface->w, font_height };
+  te.Draw(surface.get(), kbrect, prefix_str, color, shadcolor, fontid);
  }
 
  if(draw_scrolled_notice)

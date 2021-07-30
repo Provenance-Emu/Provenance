@@ -56,6 +56,8 @@ struct CPU_Misc
 
  uint8 MemSelectCycles;
 
+ uint8 InDMABusAccess;
+
  readfunc ReadFuncs[256];	// A and B bus read handlers
  writefunc WriteFuncs[256];	// A and B bus write handlers
 

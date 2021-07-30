@@ -7,7 +7,6 @@ asm_memory = 1
 asm_render = 1
 asm_ym2612 = 1
 asm_misc = 1
-asm_cdpico = 1
 asm_cdmemory = 1
 amalgamate = 0
 #profile = 1

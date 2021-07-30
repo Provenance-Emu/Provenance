@@ -137,6 +137,7 @@ blip_inline void T6W28_Noise::reset()
 	period = &noise_periods [0];
 	shifter = 0x4000;
 	tap = 13;
+	period_extra = 0;
 	T6W28_Osc::reset();
 }
 
@@ -404,7 +405,7 @@ void T6W28_Apu::load_state(const T6W28_ApuState *state)
 {
  for(int x = 0; x < 4; x++)
  {
-  oscs[x]->delay = state->delay[x];
+  oscs[x]->delay = state->delay[x] & ((x == 3) ? 0x7FFF : 0x3FFF);
   oscs[x]->volume_left = state->volume_left[x];
   oscs[x]->volume_right = state->volume_right[x];
  }

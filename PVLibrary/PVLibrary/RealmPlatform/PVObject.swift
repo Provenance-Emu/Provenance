@@ -21,10 +21,6 @@ public extension PVObject where Self: Object {
         try RomDatabase.sharedInstance.add(self, update: update)
     }
 
-    static func deleteAll() throws {
-        try RomDatabase.sharedInstance.deleteAll(Self.self)
-    }
-
     func delete() throws {
         try RomDatabase.sharedInstance.delete(self)
     }

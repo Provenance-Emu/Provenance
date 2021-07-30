@@ -54,8 +54,8 @@ static void writemem_mapper_sega(uint16 A, uint8 V)
    BankAdd = BankAddoo[fcr[0] & 0x3];
   }
  }
- if(fcr[0] & 0x3)
-  printf("%02x\n", fcr[0] & 0x3);
+ //if(fcr[0] & 0x3)
+ // printf("%02x\n", fcr[0] & 0x3);
 }
 
 static void writemem_mapper_codies(uint16 A, uint8 V)
@@ -288,7 +288,7 @@ void Cart_StateAction(StateMem *sm, int load, int data_only)
 {
  SFORMAT StateRegs[] =
  {
-  SFPTR8(sram, 0x8000),
+  SFPTR8(sram, 0x8000, SFORMAT::FORM::NVMEM),
   SFPTR8(fcr, 4),
   SFVAR(BankAdd),
   SFPTR8(CodeMasters_Bank, 3),

@@ -21,10 +21,10 @@ namespace MDFN_IEN_PCE
 
 namespace MDFN_IEN_PCE
 {
-extern HuC6280 HuCPU;
+MDFN_HIDE extern HuC6280 HuCPU;
 
-extern uint32 PCE_InDebug;
-extern bool PCE_ACEnabled; // Arcade Card emulation enabled?
+MDFN_HIDE extern uint32 PCE_InDebug;
+MDFN_HIDE extern bool PCE_ACEnabled; // Arcade Card emulation enabled?
 void PCE_Power(void);
 
 uint8 PCE_PeekMainRAM(uint32 A);

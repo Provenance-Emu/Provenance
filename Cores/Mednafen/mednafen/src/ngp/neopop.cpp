@@ -29,8 +29,6 @@
 namespace MDFN_IEN_NGP
 {
 
-extern uint8 CPUExRAM[16384];
-
 NGPGFX_CLASS *NGPGfx = NULL;
 
 COLOURMODE system_colour = COLOURMODE_AUTO;
@@ -383,7 +381,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_NGP;
 
-MDFNGI EmulatedNGP =
+MDFN_HIDE extern const MDFNGI EmulatedNGP =
 {
  "ngp",
  "Neo Geo Pocket (Color)",
@@ -420,6 +418,8 @@ MDFNGI EmulatedNGP =
  NGPSettings,
  MDFN_MASTERCLOCK_FIXED(6144000),
  0,
+
+ EVFSUPPORT_RGB555 | EVFSUPPORT_RGB565,
 
  false, // Multires possible?
 

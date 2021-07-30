@@ -157,6 +157,8 @@ void GPU_SetGetVideoParams(MDFNGI* gi, const bool caspect, const int sls, const 
  //
  //
  //
+ gi->ExtraVideoFormatSupport = EVFSUPPORT_NONE;
+
  gi->lcm_width = HVis;
  gi->lcm_height = (LineVisLast + 1 - LineVisFirst) * 2;
 
@@ -1448,7 +1450,7 @@ MDFN_FASTCALL pscpu_timestamp_t GPU_Update(const pscpu_timestamp_t sys_timestamp
     }
     else
     {
-     PSX_GPULineHook(sys_timestamp, sys_timestamp - ((uint64)gpu_clocks * 65536) / GPUClockRatio, scanline == 0, NULL, &surface->format, 0, 0, 0, 0);
+     PSX_GPULineHook(sys_timestamp, sys_timestamp - ((uint64)gpu_clocks * 65536) / GPUClockRatio, scanline == 0, NULL, NULL, 0, 0, 0, 0);
     }
 
     if(!InVBlank)

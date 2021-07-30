@@ -6,8 +6,8 @@ namespace MDFN_IEN_SMS
 {
 
 /* Global data */
-extern uint8 data_bus_pullup;
-extern uint8 data_bus_pulldown;
+MDFN_HIDE extern uint8 data_bus_pullup;
+MDFN_HIDE extern uint8 data_bus_pulldown;
 
 /* Function prototypes */
 uint8 z80_read_unmapped(void);

@@ -24,7 +24,7 @@ using namespace Mednafen;
 #include <mednafen/cdrom/CDInterface.h>
 #include <mednafen/cdrom/SimpleFIFO.h>
 
-namespace PCE_Fast
+namespace MDFN_IEN_PCE_FAST
 {
 //#define SCSIDBG(format, ...) { printf("SCSI: " format "\n",  ## __VA_ARGS__); }
 //#define SCSIDBG(format, ...) { }

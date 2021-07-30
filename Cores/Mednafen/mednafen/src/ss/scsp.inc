@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* scsp.inc - SCSP Emulation
-**  Copyright (C) 2015-2020 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -21,6 +21,9 @@
 
 /*
  TODO:
+	Open bus or something seems to get into the audio when a slot's playback ends by loop end, but not by env level being max, under
+	certain conditions.  Test further, maybe emulate in the future?
+
 	Open bus emulation and cycle timing granularity instead of sample(someday?); be careful with DSP input/output buffering
 	with respect to dry/direct output path delay, and the mapping of the buffers to the address space.
 
@@ -547,7 +550,7 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
 	 if(!shift)
 	  t->Reload = DBV & 0xFF;
 
-	 //printf("Timer(%zu-byte) %u: %04x\n", sizeof(T), ((A >> 1) & 0x1F) - 0x0C, DBV);
+	 //printf("Timer(%zu-byte) %u: %04x --- %02x\n", sizeof(T), ((A >> 1) & 0x1F) - 0x0C, DBV, t->Counter);
 	}
 	else
 	 DBV = 0;
@@ -651,10 +654,7 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
   //
   // Sound stack data
   //
-  if(IsWrite)
-   *(T*)((uint8*)SoundStack + ((A & 0x7F &~(sizeof(T) - 1)) ^ (2 - sizeof(T)))) = DBV;
-  else
-   DBV = *(T*)((uint8*)SoundStack + ((A & 0x7F & ~(sizeof(T) - 1)) ^ (2 - sizeof(T))));
+  ne16_rwbo_be<T, IsWrite>(SoundStack, A & 0x7F, &DBV);
 
   return;
  }
@@ -902,11 +902,8 @@ INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
 
   s->EnvLevel += inc_base >> srac;
 
-  if((int32)s->EnvLevel >= 0x3FF)
-  {
-   s->WFAllowAccess = false;
+  if((int32)s->EnvLevel > 0x3FF)
    s->EnvLevel = 0x3FF;
-  }
 
   if((int32)s->EnvLevel < 0)
    s->EnvLevel = 0;
@@ -1313,10 +1310,12 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
  //
  for(unsigned slot = 0; slot < 32; slot++)
  {
-  uint32 mdata = 0;
   auto* s = &Slots[slot];
   unsigned key_eg_scale;
 
+  s->WFAllowAccess &= (s->EnvLevel < 0x3C0 || s->EGBypass);
+  //
+  //
   if(s->KRS == 0xF)
    key_eg_scale = 0x00;
   else
@@ -1343,16 +1342,8 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
    else
     s->EnvPhase = ENV_PHASE_RELEASE;
   }
-
   //
   //
-  uint16 sample = 0;
-
-  if(s->SourceControl == 1)
-   sample = LFSR << 8;
-
-  sample ^= s->SBXOR;	// For zero and noise case only; waveform playback needs it to occur before linear interpolation.
-
   if(!s->InLoop)
   {
    if((uint16)(s->CurrentAddr + 1) > s->LoopStart)
@@ -1393,29 +1384,27 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
     }
    }
   }
+ }
+
+ for(unsigned slot = 0; slot < 32; slot++)
+ {
+  auto* s = &Slots[slot];
+  uint32 mdata = 0;
+  uint16 sample = 0;
+
+  if(s->SourceControl == 1)
+   sample = LFSR << 8;
+
+  sample ^= s->SBXOR;	// For zero and noise case only; waveform playback needs it to occur before linear interpolation.
   //
   //
   if(s->WFAllowAccess)
   {
-   uint32 modalizer;
-   uint32 modalizer_int;
+   uint32 modalizer_int[2];
    uint32 tmppw = s->PhaseWhacker;
    uint16 tmpa = s->CurrentAddr;
-   int16 s0, s1;
-
    //
    //
-   modalizer  = (int16)SoundStack[(GlobalCounter + s->ModInputX) & 0x3F];
-   modalizer += (int16)SoundStack[(GlobalCounter + s->ModInputY) & 0x3F];
-   modalizer = (modalizer << 6) >> (0x10 - s->ModLevel);
-
-   if(s->ModLevel <= 0x04)
-    modalizer = 0;
-
-   modalizer_int = sign_x_to_s32(11, modalizer >> 6);
-   //
-   //
-
    if(s->LoopSub)
    {
     tmppw = ~tmppw;
@@ -1423,19 +1412,48 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
    }
 
    mdata |= ((tmpa >> 12) << 7);
+   //
+   //
+   uint32 sia;
+   int16 s0, s1;
+
+   {
+    //
+    // TODO/FIXME: Proper handling of the slot 31->0 buggy FM interpolation case with respect to reverse looping(ns->LoopSub)
+    // requires sub-sample timing emulation.
+    //
+    auto* ns = &Slots[(slot + 1) & 0x1F];
+    uint32 modalizer;
+    uint32 ns_sia;
+
+    modalizer  = (int16)SoundStack[(GlobalCounter + s->ModInputX) & 0x3F];
+    modalizer += (int16)SoundStack[(GlobalCounter + s->ModInputY) & 0x3F];
+    modalizer = ((modalizer << 6) >> (0x10 - s->ModLevel)) & ~1;
+
+    if(s->ModLevel <= 0x04)
+     modalizer = 0;
+
+    sia = modalizer + ((tmppw >> (14 - 6)) & 0x3F);
+    ns_sia = modalizer + (((ns->PhaseWhacker >> (14 - 6)) ^ (ns->LoopSub ? 0x3F : 0x00)) & 0x3F);
+
+    modalizer_int[0] = sign_x_to_s32(11,    sia >> 6);
+    modalizer_int[1] = sign_x_to_s32(11, ns_sia >> 6);
+    //
+    sia &= 0x3F;
+   }
 
    if(s->WF8Bit)
    {
-    const uint32 addr0 = (s->StartAddr + ((modalizer_int + (uint16)(tmpa + 0)) & s->ShortWaveMask)) & 0xFFFFF;
-    const uint32 addr1 = (s->StartAddr + ((modalizer_int + (uint16)(tmpa + 1)) & s->ShortWaveMask)) & 0xFFFFF;
+    const uint32 addr0 = (s->StartAddr + ((modalizer_int[0] + (uint16)(tmpa + 0)) & s->ShortWaveMask)) & 0xFFFFF;
+    const uint32 addr1 = (s->StartAddr + ((modalizer_int[1] + (uint16)(tmpa + 1)) & s->ShortWaveMask)) & 0xFFFFF;
 
     s0 = ne16_rbo_be<uint8>(RAM, addr0) << 8;
     s1 = ne16_rbo_be<uint8>(RAM, addr1) << 8;
    }
    else
    {
-    s0 = RAM[((s->StartAddr >> 1) + ((modalizer_int + (uint16)(tmpa + 0)) & s->ShortWaveMask)) & 0x7FFFF];
-    s1 = RAM[((s->StartAddr >> 1) + ((modalizer_int + (uint16)(tmpa + 1)) & s->ShortWaveMask)) & 0x7FFFF];
+    s0 = RAM[((s->StartAddr >> 1) + ((modalizer_int[0] + (uint16)(tmpa + 0)) & s->ShortWaveMask)) & 0x7FFFF];
+    s1 = RAM[((s->StartAddr >> 1) + ((modalizer_int[1] + (uint16)(tmpa + 1)) & s->ShortWaveMask)) & 0x7FFFF];
    }
 
    s0 ^= s->SBXOR;
@@ -1443,7 +1461,6 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
 
    if(s->SourceControl == 0)
    {
-    const unsigned sia = std::min<unsigned>(0x40, ((tmppw >> (14 - 6)) & 0x3F) + (modalizer & 0x3E));
     sample = ((s0 * (0x40 - sia)) + (s1 * sia)) >> 6;
    }
 
@@ -1697,16 +1714,32 @@ uint32 SS_SCSP::GetRegister(const unsigned id, char* const special, const uint32
 	ret = Mem4Mb;
 	break;
 
-  case GSREG_RBP:
-	ret = RBP;
-	break;
-
-  case GSREG_RBL:
-	ret = RBL;
+  case GSREG_RBC:
+	ret = RBP | (RBL << 7);
 	break;
 
   case GSREG_MSLC:
 	ret = SlotMonitorWhich;
+	break;
+
+  case GSREG_SCIEB:
+	ret = SCIEB;
+	break;
+
+  case GSREG_SCIPD:
+	ret = SCIPD;
+	break;
+
+  case GSREG_MCIEB:
+	ret = MCIEB;
+	break;
+
+  case GSREG_MCIPD:
+	ret = MCIPD;
+	break;
+
+  case GSREG_EFREG0 ... GSREG_EFREGF:
+	ret = DSP.EFREG[id - GSREG_EFREG0];
 	break;
  }
 
@@ -1727,16 +1760,17 @@ void SS_SCSP::SetRegister(const unsigned id, const uint32 value)
 	Mem4Mb = value & 1;
 	break;
 
-  case GSREG_RBP:
+  case GSREG_RBC:
 	RBP = value & 0x7F;
-	break;
-
-  case GSREG_RBL:
-	RBL = value & 0x3;
+	RBL = (value >> 7) & 0x3;
 	break;
 
   case GSREG_MSLC:
 	SlotMonitorWhich = value & 0x1F;
+	break;
+
+  case GSREG_EFREG0 ... GSREG_EFREGF:
+	DSP.EFREG[id - GSREG_EFREG0] = (uint16)value;
 	break;
  }
 }

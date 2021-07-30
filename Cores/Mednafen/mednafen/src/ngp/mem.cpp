@@ -41,7 +41,7 @@ bool memory_flash_error = false;
 bool memory_flash_command = false;
 
 
-uint8 SC0BUF; // Serial channel 0 buffer.
+static uint8 SC0BUF; // Serial channel 0 buffer.
 uint8 COMMStatus;
 
 // In very very very rare conditions(like on embedded platforms with no virtual memory and very limited RAM and
@@ -195,7 +195,7 @@ static void* translate_address_write(uint32 address)
 
 /* WARNING:  32-bit loads and stores apparently DON'T have to be 4-byte-aligned(so we must +2 instead of |2). */
 /* Treat all 32-bit operations as two 16-bit operations */
-uint8 loadB(uint32 address)
+MDFN_FASTCALL uint8 loadB(uint32 address)
 {
         address &= 0xFFFFFF;
 
@@ -241,7 +241,7 @@ uint8 loadB(uint32 address)
 	return(0);
 }
 
-uint16 loadW(uint32 address)
+MDFN_FASTCALL uint16 loadW(uint32 address)
 {
         address &= 0xFFFFFF;
 
@@ -310,7 +310,7 @@ uint16 loadW(uint32 address)
 	return(0);
 }
 
-uint32 loadL(uint32 address)
+MDFN_FASTCALL uint32 loadL(uint32 address)
 {
 	uint32 ret;
 
@@ -322,7 +322,7 @@ uint32 loadL(uint32 address)
 
 //=============================================================================
 
-void storeB(uint32 address, uint8 data)
+MDFN_FASTCALL void storeB(uint32 address, uint8 data)
 {
         address &= 0xFFFFFF;
 
@@ -426,7 +426,7 @@ void storeB(uint32 address, uint8 data)
 
 }
 
-void storeW(uint32 address, uint16 data)
+MDFN_FASTCALL void storeW(uint32 address, uint16 data)
 {
         address &= 0xFFFFFF;
 
@@ -522,7 +522,7 @@ void storeW(uint32 address, uint16 data)
 
 }
 
-void storeL(uint32 address, uint32 data)
+MDFN_FASTCALL void storeL(uint32 address, uint32 data)
 {
 	storeW(address, data & 0xFFFF);
         storeW(address + 2, data >> 16);

@@ -350,45 +350,17 @@ void MDFN_VSUniCheck(uint64 md5partial, int *MapperNo, int *Mirroring)
 
 void MDFN_VSUniDraw(MDFN_Surface *surface)
 {
- uint32 *XBuf = surface->pixels;
+ if(!DIPS)
+  return;
+ //
+ //
+ MDFN_DrawFillRect(surface, 164, 12, 72, 24, surface->MakeColor(0, 0, 0));
 
-  uint32 *dest;
-  int y,x;
-
-  if(!DIPS) return;
-
-  dest = XBuf+256*12+164;
-  for(y=24;y;y--,dest+=256-72)
-  {
-   for(x=72;x;x--,dest++) 
-    *dest = surface->MakeColor(0, 0, 0);
-  }
-  
-  dest = XBuf+256*(12+4)+164+6;
-  for(y=16;y;y--,dest+=256-64)
-   for(x=8;x;x--)
-   {
-    uint32 col = surface->MakeColor(0xE0, 0xE0, 0xE0);
-    *dest=col; //0x01010101;
-    *(dest + 1) = col;
-    *(dest + 2) = col;
-    *(dest + 3) = col;
-    dest+=8;
-   }
-  
-  dest = XBuf+256*(12+4)+164+6;
-  for(x=0;x<8;x++,dest+=8)
-  {
-   uint32 *da=dest+256;
-
-   if(!((vsdip>>x)&1))
-    da+=256*10;
-   for(y=4;y;y--,da+=256)
-   {
-    *da = *(da + 1) = *(da + 2) = *(da + 3) = surface->MakeColor(0x70, 0x10, 0x70);
-   }
-  } 
- 
+ for(unsigned i = 0; i < 8; i++)
+ {
+  MDFN_DrawFillRect(surface, 170 + i * 8, 16, 4, 16, surface->MakeColor(0xE0, 0xE0, 0xE0));
+  MDFN_DrawFillRect(surface, 170 + i * 8, 17 + 10 * !((vsdip>>i)&1), 4, 4, surface->MakeColor(0x70, 0x10, 0x70));
+ }
 }
 
 void MDFNNES_VSUNIStateAction(StateMem *sm, const unsigned load, const bool data_only)

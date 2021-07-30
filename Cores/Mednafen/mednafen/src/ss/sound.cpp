@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* sound.cpp - Sound Emulation
-**  Copyright (C) 2015-2017 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <mednafen/mednafen.h>
 #include <mednafen/resampler/resampler.h>
 #include <mednafen/hw_cpu/m68k/m68k.h>
+#include <mednafen/jump.h>
 
 #ifndef MDFN_SSFPLAY_COMPILE
 #include "ss.h"
@@ -51,6 +52,8 @@ static int32 next_scsp_time;
 
 static uint32 clock_ratio;
 static sscpu_timestamp_t lastts;
+
+static MDFN_jmp_buf jbuf;
 
 static int16 IBuffer[1024][2];
 static uint32 IBufferCount;
@@ -132,13 +135,19 @@ void SOUND_PokeRAM(uint32 A, uint8 V)
  ne16_wbo_be<uint8>(SCSP.GetRAMPtr(), A & 0x7FFFF, V);
 }
 
-void SOUND_ResetTS(void)
+static INLINE void ResetTS_68K(void)
 {
  next_scsp_time -= SoundCPU.timestamp;
  run_until_time -= (int64)SoundCPU.timestamp << 32;
  SoundCPU.timestamp = 0;
+}
 
- lastts = 0;
+void SOUND_AdjustTS(const int32 delta)
+{
+ ResetTS_68K();
+ //
+ //
+ lastts += delta;
 }
 
 void SOUND_Reset(bool powering_up)
@@ -213,6 +222,8 @@ sscpu_timestamp_t SOUND_Update(sscpu_timestamp_t timestamp)
  lastts = timestamp;
  //
  //
+ MDFN_setjmp(jbuf);
+
  if(MDFN_LIKELY(SoundCPU.timestamp < (run_until_time >> 32)))
  {
   do
@@ -337,11 +348,22 @@ void SOUND_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
 //
 //
-// TODO: test masks.
 //
 template<typename T>
 static MDFN_FASTCALL T SoundCPU_BusRead(uint32 A)
 {
+ if(MDFN_UNLIKELY(A & (0xE00000 | (sizeof(T) - 1))))
+ {
+  SoundCPU.timestamp += 4;
+
+  if(A & (sizeof(T) - 1))
+   SoundCPU.SignalAddressError(A, 0x3);
+  else
+   SoundCPU.SignalDTACKHalted(A);
+
+  MDFN_longjmp(jbuf);
+ }
+ //
  T ret;
 
  SoundCPU.timestamp += 4;
@@ -358,6 +380,18 @@ static MDFN_FASTCALL T SoundCPU_BusRead(uint32 A)
 
 static MDFN_FASTCALL uint16 SoundCPU_BusReadInstr(uint32 A)
 {
+ if(MDFN_UNLIKELY(A & 0xE00001))
+ {
+  SoundCPU.timestamp += 4;
+
+  if(A & 1)
+   SoundCPU.SignalAddressError(A, 0x2);
+  else
+   SoundCPU.SignalDTACKHalted(A);
+
+  MDFN_longjmp(jbuf);
+ }
+ //
  uint16 ret;
 
  SoundCPU.timestamp += 4;
@@ -375,10 +409,25 @@ static MDFN_FASTCALL uint16 SoundCPU_BusReadInstr(uint32 A)
 template<typename T>
 static MDFN_FASTCALL void SoundCPU_BusWrite(uint32 A, T V)
 {
+ if(MDFN_UNLIKELY(A & (0xE00000 | (sizeof(T) - 1))))
+ {
+  SoundCPU.timestamp += 4;
+
+  if(A & (sizeof(T) - 1))
+   SoundCPU.SignalAddressError(A, 0x1);
+  else
+   SoundCPU.SignalDTACKHalted(A);
+
+  MDFN_longjmp(jbuf);
+ }
+ //
+ SoundCPU.timestamp += 2;
+
  if(MDFN_UNLIKELY(SoundCPU.timestamp >= next_scsp_time))
   RunSCSP();
 
  SoundCPU.timestamp += 2;
+
  SCSP.RW<T, true>(A & 0x1FFFFF, V);
  SoundCPU.timestamp += 2;
 }
@@ -386,6 +435,13 @@ static MDFN_FASTCALL void SoundCPU_BusWrite(uint32 A, T V)
 
 static MDFN_FASTCALL void SoundCPU_BusRMW(uint32 A, uint8 (MDFN_FASTCALL *cb)(M68K*, uint8))
 {
+ if(MDFN_UNLIKELY(A & 0xE00000))
+ {
+  SoundCPU.timestamp += 4;
+  SoundCPU.SignalDTACKHalted(A);
+  MDFN_longjmp(jbuf);
+ }
+ //
  uint8 tmp;
 
  SoundCPU.timestamp += 4;
@@ -426,6 +482,16 @@ uint32 SOUND_GetSCSPRegister(const unsigned id, char* const special, const uint3
 void SOUND_SetSCSPRegister(const unsigned id, const uint32 value)
 {
  SCSP.SetRegister(id, value);
+}
+
+uint32 SOUND_GetM68KRegister(const unsigned id, char* const special, const uint32 special_len)
+{
+ return SoundCPU.GetRegister(id, special, special_len);
+}
+
+void SOUND_SetM68KRegister(const unsigned id, const uint32 value)
+{
+ SoundCPU.SetRegister(id, value);
 }
 
 

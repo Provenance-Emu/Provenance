@@ -138,7 +138,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
         token?.invalidate()
         token = saveState?.observe({ change in
             switch change {
-            case let .change(properties):
+            case let .change(_, properties):
                 if !properties.isEmpty, self.isViewLoaded {
                     DispatchQueue.main.async {
                         self.updateLabels()
@@ -153,7 +153,6 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
     }
 }
 
-@available(iOS 9.0, *)
 extension PVSaveStateInfoViewController {
     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {

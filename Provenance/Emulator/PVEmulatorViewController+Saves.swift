@@ -15,6 +15,7 @@ public enum SaveStateError: Error {
     case coreSaveError(Error?)
     case coreLoadError(Error?)
     case saveStatesUnsupportedByCore
+    case ineligibleError
     case noCoreFound(String)
     case realmWriteError(Error)
     case realmDeletionError(Error)
@@ -24,6 +25,7 @@ public enum SaveStateError: Error {
         case let .coreSaveError(coreError): return "Core failed to save: \(coreError?.localizedDescription ?? "No reason given.")"
         case let .coreLoadError(coreError): return "Core failed to load: \(coreError?.localizedDescription ?? "No reason given.")"
         case .saveStatesUnsupportedByCore: return "This core does not support save states."
+        case .ineligibleError: return "Save states are currently ineligible."
         case let .noCoreFound(id): return "No core found to match id: \(id)"
         case let .realmWriteError(realmError): return "Unable to write save state to realm: \(realmError.localizedDescription)"
         case let .realmDeletionError(realmError): return "Unable to delete old auto-save from database: \(realmError.localizedDescription)"
@@ -49,23 +51,19 @@ extension PVEmulatorViewController {
 
     func createAutosaveTimer() {
         autosaveTimer?.invalidate()
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            let interval = PVSettingsModel.shared.timedAutoSaveInterval
-            autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
-                DispatchQueue.main.async {
-                    let image = self.captureScreenshot()
-                    self.createNewSaveState(auto: true, screenshot: image) { result in
-                        switch result {
-                        case .success: break
-                        case let .error(error):
-                            ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
-                        }
+        let interval = PVSettingsModel.shared.timedAutoSaveInterval
+        autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
+            DispatchQueue.main.async {
+                let image = self.captureScreenshot()
+                self.createNewSaveState(auto: true, screenshot: image) { result in
+                    switch result {
+                    case .success: break
+                    case let .error(error):
+                        ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
                     }
                 }
-            })
-        } else {
-            // Fallback on earlier versions
-        }
+            }
+        })
     }
 
     func autoSaveState(completion: @escaping SaveCompletion) {
@@ -77,16 +75,19 @@ extension PVEmulatorViewController {
 
         if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1) < minimumPlayTimeToMakeAutosave {
             ILOG("Haven't been playing game long enough to make an autosave")
+            completion(.error(.ineligibleError))
             return
         }
 
         guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
             ILOG("Last autosave is too new to make new one")
+            completion(.error(.ineligibleError))
             return
         }
 
         if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
             ILOG("Latest manual save state is too recent to make a new auto save")
+            completion(.error(.ineligibleError))
             return
         }
 
@@ -109,7 +110,7 @@ extension PVEmulatorViewController {
 
         var imageFile: PVImageFile?
         if let screenshot = screenshot {
-            if let jpegData = screenshot.jpegData(compressionQuality: 0.5) {
+            if let jpegData = screenshot.jpegData(compressionQuality: 0.85) {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
                     try jpegData.write(to: imageURL)
@@ -202,7 +203,7 @@ extension PVEmulatorViewController {
                 let completion = {
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }
 
                 guard success else {
@@ -235,7 +236,7 @@ extension PVEmulatorViewController {
         dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
         isShowingMenu = false
-        enableContorllerInput(false)
+        enableControllerInput(false)
     }
 
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion) {

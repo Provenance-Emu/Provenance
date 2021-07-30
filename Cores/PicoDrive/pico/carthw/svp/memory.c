@@ -87,7 +87,7 @@ static u32 PicoRead16_svpr(u32 a)
         a15004_looping = 0;
 
       if (!a15004_looping)
-        elprintf(EL_SVP, "SVP r%i: [%06x] %04x @%06x", realsize, a, d, SekPc);
+        elprintf(EL_SVP, "SVP r: [%06x] %04x @%06x", a, d, SekPc);
 
       if (a == 0xa15004 && !(d&1)) {
         if (!a15004_looping)

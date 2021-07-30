@@ -199,7 +199,7 @@ static uint8 FindClose(const MDFN_PaletteEntry& pe)
 
 void MDFNNES_SetPixelFormat(const MDFN_PixelFormat &pixel_format)
 {
- if(pixel_format.bpp == 8)
+ if(pixel_format.opp == 1)
  {
   for(int x = 0; x < 0x40; x++)
   {
@@ -778,10 +778,24 @@ static void Fixit1(void)
 #include "ppu-fastrl.h"
 
 // FIXME, use MakeColor() method
-#define MEOW_OUT(n, a) { uint32 otmp; NES_NTSC_RAW_OUT(n, otmp); a = (((otmp >> 21) & 0xFF) << pixel_format.Rshift) | (((otmp >> 11) & 0xFF) << pixel_format.Gshift) | (((otmp >>  1) & 0xFF) << pixel_format.Bshift); }
+#define MEOW_OUT(n, a) 			\
+	{				\
+	 uint32 otmp;			\
+	 NES_NTSC_RAW_OUT(n, otmp);	\
+	 if(sizeof(T) == 2)		\
+	 {				\
+	  if(rgb555)			\
+	   a = (((otmp >> 24) & 0x1F) << pixel_format.Rshift) | (((otmp >> 14) & 0x1F) << pixel_format.Gshift) | (((otmp >>  4) & 0x1F) << pixel_format.Bshift);	\
+	  else				\
+	   a = (((otmp >> 24) & 0x1F) << pixel_format.Rshift) | (((otmp >> 13) & 0x3F) << pixel_format.Gshift) | (((otmp >>  4) & 0x1F) << pixel_format.Bshift);	\
+	 }		\
+	 else																			\
+	  a = (((otmp >> 21) & 0xFF) << pixel_format.Rshift) | (((otmp >> 11) & 0xFF) << pixel_format.Gshift) | (((otmp >>  1) & 0xFF) << pixel_format.Bshift);	\
+	}
 
-static void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t const* ntsc, uint8 const* nes_in, uint8 const* nes_emph_in, long in_pitch,
-                int burst_phase, int width, int height, uint32* rgb_out, long out_pitch )
+template<typename T, bool rgb555 = false>
+static NO_INLINE void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t const* ntsc, uint8 const* nes_in, uint8 const* nes_emph_in, long in_pitch,
+                int burst_phase, int width, int height, T* rgb_out)
 {
         /* determine how many chunks to blit, less one for the final chunk */
         int chunk_count = width / nes_ntsc_out_chunk - 1;
@@ -790,7 +804,7 @@ static void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t 
                 uint8 const* line_in = nes_in;
 		uint8 const* line_emph_in = nes_emph_in;
                 NES_NTSC_BEGIN_ROW( ntsc, burst_phase, nes_ntsc_black, nes_ntsc_black, (*line_in++ & 0x3F) | (*line_emph_in++ << 6));
-                uint32* line_out = rgb_out;
+                T* line_out = rgb_out;
                 int n;
 
                 /* blit main chunks, each using 3 nes pixels to generate 7 output pixels */
@@ -835,7 +849,7 @@ static void nes_ntsc_blit(const MDFN_PixelFormat &pixel_format, nes_ntsc_emph_t 
                 MEOW_OUT( 6, line_out [6] );
 }
 
-static int BurstPhase = 0;
+static int BurstPhase;
 
 static void DoLine(MDFN_Surface *surface, int skip)
 {
@@ -902,21 +916,24 @@ static void DoLine(MDFN_Surface *surface, int skip)
    if(!skip)
    {
     // TODO:  Factor this out/make it more elegant.
-    if(surface->format.colorspace != MDFN_COLORSPACE_RGB || surface->format.bpp != 32)
+    switch(surface->format.opp)
     {
-     MDFN_PixelFormat nf;
+     default:
+     case 4:
+	nes_ntsc_blit(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pix<uint32>() + scanline * surface->pitchinpix);
+	break;
 
-     nf.bpp = 32;
-     nf.colorspace = MDFN_COLORSPACE_RGB;
-     
-     nf.Rshift = 0;
-     nf.Gshift = 8;
-     nf.Bshift = 16;
-     nf.Ashift = 24;
+     case 2:
+	if(surface->format.Gprec == 5)
+	 nes_ntsc_blit<uint16, true>(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pix<uint16>() + scanline * surface->pitchinpix);
+	else
+	 nes_ntsc_blit(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pix<uint16>() + scanline * surface->pitchinpix);
+	break;
 
-     surface->SetFormat(nf, false);
+     case 1:
+	assert(0);
+	break;
     }
-    nes_ntsc_blit(surface->format, NTSCBlitter, target, emphlinebuf, nes_ntsc_min_in_width, setup.merge_fields ? scanline % 3 : BurstPhase, nes_ntsc_min_out_width, 1, surface->pixels + scanline * surface->pitchinpix, surface->pitch32 * sizeof(uint32));
    }
    BurstPhase = (BurstPhase + 1) % 3;
   }
@@ -924,10 +941,10 @@ static void DoLine(MDFN_Surface *surface, int skip)
   {
    if(!skip) 
    {
-    switch(surface->format.bpp)
+    switch(surface->format.opp)
     {
      default:
-     case 32:
+     case 4:
 	{
          uint32 *real_target = surface->pixels + scanline * surface->pitchinpix;
 
@@ -936,7 +953,7 @@ static void DoLine(MDFN_Surface *surface, int skip)
 	}
 	break;
 
-     case 16:
+     case 2:
 	{
 	 uint16 *real_target16 = surface->pixels16 + scanline * surface->pitchinpix;
 
@@ -945,7 +962,7 @@ static void DoLine(MDFN_Surface *surface, int skip)
 	}
 	break;
 
-     case 8:
+     case 1:
 	{
 	 uint8 *real_target8 = surface->pixels8 + scanline * surface->pitchinpix;
 
@@ -1037,47 +1054,47 @@ static void FetchSpriteData(void)
                  if(n == 0)
 		  sb=1;
 
-                  uint8 *C;
-                  int t;
-                  unsigned int vadr;
+                 uint8 *C;
+                 int t;
+                 unsigned int vadr;
 
-                  t = (int)scanline-(spr->y);
+                 t = (int)scanline-(spr->y);
 
-                  if (Sprite16)
-                   vadr = ((spr->no&1)<<12) + ((spr->no&0xFE)<<4);
-                  else
-                   vadr = (spr->no<<4)+vofs;
+                 if (Sprite16)
+                  vadr = ((spr->no&1)<<12) + ((spr->no&0xFE)<<4);
+                 else
+                  vadr = (spr->no<<4)+vofs;
 
-                  if (spr->atr&V_FLIP)
-                  {
+                 if (spr->atr&V_FLIP)
+                 {
                         vadr+=7;
                         vadr-=t;
                         vadr+=(P0&0x20)>>1;
                         vadr-=t&8;
-                  }
-                  else
-                  {
+                 }
+                 else
+                 {
                         vadr+=t;
                         vadr+=t&8;
-                  }
+                 }
 
-                  if(MMC5Hack && geniestage!=1 && Sprite16) C = MMC5SPRVRAMADR(vadr);
-                  else C = VRAMADR(vadr);
-                  dst->ca[0]=C[0];
+                 if(MMC5Hack && geniestage!=1 && Sprite16) C = MMC5SPRVRAMADR(vadr);
+                 else C = VRAMADR(vadr);
+                 dst->ca[0]=C[0];
 
-		  if(PPU_hook && ns < 8)
-		  {
-                   PPU_hook(0x2000);
-                   PPU_hook(vadr);
-                  }
+		 if(PPU_hook && ns < 8)
+		 {
+                  PPU_hook(0x2000);
+                  PPU_hook(vadr);
+                 }
 
-                  dst->ca[1]=C[8];
+                 dst->ca[1]=C[8];
 
-                  if(PPU_hook && ns<8)
-                   PPU_hook(vadr | 8);
+                 if(PPU_hook && ns<8)
+                  PPU_hook(vadr | 8);
 
-                  dst->x=spr->x;
-                  dst->atr=spr->atr;
+                 dst->x=spr->x;
+                 dst->atr=spr->atr;
 
                  ns++;
                 }
@@ -1210,6 +1227,7 @@ void MDFNPPU_Power(void)
         memset(NTARAM, 0x00, 0x800);
         memset(PALRAM, 0x00, 0x20); 
         memset(SPRAM, 0x00, 0x100); 
+	BurstPhase = 0;
         MDFNPPU_Reset();
 }
 
@@ -1722,61 +1740,52 @@ static void DoGfxDecode(void)
    neo_palette[x] = GfxDecode_Buf->format.MakeColor(x * 85, x * 85, x * 85, 0xFF);
  }
  else
+ {
   for(int x = 0; x < 4; x++)
    neo_palette[x] = CM.PALRAMLUTCache[PALRAMCache[pbn * 4 + x] & 0x3F] | GfxDecode_Buf->format.MakeColor(0, 0, 0, 0xFF);
+ }
 
-  for(int y = 0; y < GfxDecode_Buf->h; y++)
+ for(int y = 0; y < GfxDecode_Buf->h; y++)
+ {
+  for(int x = 0; x < GfxDecode_Buf->w; x+=8)
   {
-   for(int x = 0; x < GfxDecode_Buf->w; x+=8)
+   unsigned which_tile = (x / 8) + (GfxDecode_Scroll + (y / 8)) * (GfxDecode_Buf->w / 8);
+   unsigned tile_c = 0;
+
+   uint8 *cg_ptr;
+   uint8 cg[2];
+
+   if(MMC5Hack)
    {
-    unsigned which_tile = (x / 8) + (GfxDecode_Scroll + (y / 8)) * (GfxDecode_Buf->w / 8);
-    unsigned tile_c = 0;
-
-    uint8 *cg_ptr;
-    uint8 cg[2];
-
-    if(MMC5Hack)
+    if(GfxDecode_Layer) // Sprites
     {
-     if(GfxDecode_Layer) // Sprites
+     //which_tile &= 0x1FF;
+     cg_ptr = MMC5SPRVRAMADR(which_tile * 16);
+     tile_c = 0x200;
+    }
+    else
+    {
+     switch(MMC5HackCHRMode)
      {
-      //which_tile &= 0x1FF;
-      cg_ptr = MMC5SPRVRAMADR(which_tile * 16);
+      case 1: break;
+      default: //which_tile &= 0x1FF;
+		cg_ptr = MMC5BGVRAMADR(which_tile * 16);
+		tile_c = 0x200;
+		break;
+     }
+    }
+   }
+   else
+   {
+    if(GfxDecode_Layer) // Sprites
+    {
+     if(Sprite16)
+     {
       tile_c = 0x200;
      }
      else
      {
-      switch(MMC5HackCHRMode)
-      {
-       case 1: break;
-       default: //which_tile &= 0x1FF;
-                cg_ptr = MMC5BGVRAMADR(which_tile * 16);
-		tile_c = 0x200;
-		break;
-      }
-     }
-    }
-    else
-    {
-     if(GfxDecode_Layer) // Sprites
-     {
-      if(Sprite16)
-      {
-       tile_c = 0x200;
-      }
-      else
-      {
-       if(SpAdrHI)
-       {
-	which_tile += 0x100;
-	tile_c = 0x200;
-       }
-       else
-	tile_c = 0x100;
-      }
-     }
-     else // Background
-     {
-      if(BGAdrHI)
+      if(SpAdrHI)
       {
        which_tile += 0x100;
        tile_c = 0x200;
@@ -1784,30 +1793,41 @@ static void DoGfxDecode(void)
       else
        tile_c = 0x100;
      }
-
-     cg_ptr = VRAMADR(which_tile * 16);
     }
-
-    if(which_tile >= tile_c)
+    else // Background
     {
-     for(int sx = 0; sx < 8; sx++) target[x + sx] = GfxDecode_Buf->format.MakeColor(0, 0, 0, 0);
-     continue;
+     if(BGAdrHI)
+     {
+      which_tile += 0x100;
+      tile_c = 0x200;
+     }
+     else
+      tile_c = 0x100;
     }
 
-    cg[0] = cg_ptr[0 + (y & 0x7)];
-    cg[1] = cg_ptr[8 + (y & 0x7)];
-
-    for(int sx = 0; sx < 8; sx++)
-     target[x + sx] = neo_palette[((cg[0] >> (7-sx)) & 0x1) | (((cg[1] >> (7-sx)) & 0x1) << 1)];
-
-    target[x + GfxDecode_Buf->w*2 + 0] = target[x + GfxDecode_Buf->w*2 + 1] = target[x + GfxDecode_Buf->w*2 + 2] = target[x + GfxDecode_Buf->w*2 + 3] =
-    target[x + GfxDecode_Buf->w*2 + 4] = target[x + GfxDecode_Buf->w*2 + 5] = target[x + GfxDecode_Buf->w*2 + 6] = target[x + GfxDecode_Buf->w*2 + 7] = which_tile * 16;
-
-    target[x + GfxDecode_Buf->w*1 + 0]=target[x + GfxDecode_Buf->w*1 + 1]=target[x + GfxDecode_Buf->w*1 + 2]=target[x + GfxDecode_Buf->w*1 + 3] =
-    target[x + GfxDecode_Buf->w*1 + 4]=target[x + GfxDecode_Buf->w*1 + 5]=target[x + GfxDecode_Buf->w*1 + 6]=target[x + GfxDecode_Buf->w*1 + 7] = which_tile;
+    cg_ptr = VRAMADR(which_tile * 16);
    }
-   target += GfxDecode_Buf->w * 3;
+
+   if(which_tile >= tile_c)
+   {
+    for(int sx = 0; sx < 8; sx++) target[x + sx] = GfxDecode_Buf->format.MakeColor(0, 0, 0, 0);
+    continue;
+   }
+
+   cg[0] = cg_ptr[0 + (y & 0x7)];
+   cg[1] = cg_ptr[8 + (y & 0x7)];
+
+   for(int sx = 0; sx < 8; sx++)
+    target[x + sx] = neo_palette[((cg[0] >> (7-sx)) & 0x1) | (((cg[1] >> (7-sx)) & 0x1) << 1)];
+
+   target[x + GfxDecode_Buf->w*2 + 0] = target[x + GfxDecode_Buf->w*2 + 1] = target[x + GfxDecode_Buf->w*2 + 2] = target[x + GfxDecode_Buf->w*2 + 3] =
+   target[x + GfxDecode_Buf->w*2 + 4] = target[x + GfxDecode_Buf->w*2 + 5] = target[x + GfxDecode_Buf->w*2 + 6] = target[x + GfxDecode_Buf->w*2 + 7] = which_tile * 16;
+
+   target[x + GfxDecode_Buf->w*1 + 0]=target[x + GfxDecode_Buf->w*1 + 1]=target[x + GfxDecode_Buf->w*1 + 2]=target[x + GfxDecode_Buf->w*1 + 3] =
+   target[x + GfxDecode_Buf->w*1 + 4]=target[x + GfxDecode_Buf->w*1 + 5]=target[x + GfxDecode_Buf->w*1 + 6]=target[x + GfxDecode_Buf->w*1 + 7] = which_tile;
   }
+  target += GfxDecode_Buf->w * 3;
+ }
 }
 
 }

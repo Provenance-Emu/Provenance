@@ -25,6 +25,11 @@ avoid short emulator pauses and audio pops due to waiting for disk accesses to c
 A list of known emulation bugs(with workarounds in some cases) in Saturn games with Mednafen is available at <a href="https://forum.fobby.net/index.php?t=msg&th=1357">https://forum.fobby.net/index.php?t=msg&th=1357</a>
 </p>
 
+<p>
+Mednafen's Sega Saturn emulation should not be used in lieu of a Sega Saturn for authoritative game performance/FPS review purposes.  The emulation will generally
+run Saturn games with less slowdown than on a real Saturn, even when more accurate emulation modes are enabled via internal databases.
+</p>
+
 <?php EndSection(); ?>
 
 <?php BeginSection("Firmware/BIOS", "Section_firmware_bios"); ?>

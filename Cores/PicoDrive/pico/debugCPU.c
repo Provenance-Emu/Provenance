@@ -30,6 +30,7 @@ static struct Cyclone *currentC68k = NULL;
 #define other_is_stopped()  (currentC68k->state_flags&1)
 #define other_is_tracing() ((currentC68k->state_flags&2)?1:0)
 #elif defined(EMU_F68K)
+static struct M68K_CONTEXT *g_m68kcontext;
 #define other_set_sub(s)   g_m68kcontext=(s)?&PicoCpuFS68k:&PicoCpuFM68k;
 #define other_get_sr()     g_m68kcontext->sr
 #define other_dar(i)       ((unsigned int*)g_m68kcontext->dreg)[i]
@@ -49,7 +50,7 @@ static int otherRun(void)
   CycloneRun(currentC68k);
   return 1-currentC68k->cycles;
 #elif defined(EMU_F68K)
-  return fm68k_emulate(1, 0);
+  return fm68k_emulate(g_m68kcontext, 1, 0);
 #endif
 }
 
