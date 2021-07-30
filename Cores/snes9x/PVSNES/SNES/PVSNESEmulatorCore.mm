@@ -862,6 +862,7 @@ static void FinalizeSamplesAudioCallback(void *)
 
         S9xDeleteCheats();
 
+        BOOL cheatListSuccessfull = YES;
         NSArray *multipleCodes = [[NSArray alloc] init];
 
         // Apply enabled cheats found in dictionary
@@ -876,9 +877,14 @@ static void FinalizeSamplesAudioCallback(void *)
                     // Sanitize for PAR codes that might contain colons
                     const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
                     if (singleCode != nil && singleCode.length > 0) {
-                        NSLog(@"Applying Code %@",singleCode);
-                        S9xAddCheatGroup("Provenance", cheatCode);
-                        S9xEnableCheatGroup(Cheat.g.size () - 1);
+                        if (S9xAddCheatGroup("Provenance", cheatCode) >= 0) {
+                            NSLog(@"Code %@ applied successfully", singleCode);
+                            S9xEnableCheatGroup(Cheat.g.size () - 1);
+                        } else {
+                            cheatListSuccessfull = NO;
+                            [cheatList removeObjectForKey:code];
+                            NSLog(@"Code %@ failed", singleCode);
+                        }
                     }
                 }
             }
@@ -887,7 +893,7 @@ static void FinalizeSamplesAudioCallback(void *)
         S9xCheatsEnable();
         
         // if no error til this point, return true
-        return YES;
+        return cheatListSuccessfull;
     }
 }
 
