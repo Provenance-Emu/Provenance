@@ -42,7 +42,6 @@ extension PVGameLibrary {
             .createDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, withIntermediateDirectories: true, attributes: nil)
             .catchError { .error(MigrationError.unableToCreateRomsDirectory(error: $0)) }
 
-
         // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
         let moveFiles: Completable = fileManager.rx
             .contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])

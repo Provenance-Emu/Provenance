@@ -16,9 +16,9 @@ extension PVEmulatorViewController {
         enableControllerInput(true)
         core.setPauseEmulation(true)
         isShowingMenu = true
-        
+
         let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
-        
+
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton!.bounds

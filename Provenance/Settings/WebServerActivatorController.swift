@@ -26,9 +26,9 @@ protocol WebServerActivatorController: class {
             let message = """
             Read about how to import ROMs on the Provenance wiki at:
             https://wiki.provenance-emu.com
-            
+
             Upload/Download files to your device at:
-            
+
             \(webServerAddress)  ᵂᵉᵇᵁᴵ
             \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
             """
@@ -70,9 +70,9 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let message = """
         Read about how to import ROMs on the Provenance wiki at:
         https://wiki.provenance-emu.com
-            
+
         Upload/Download files to your device at:
-           
+
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
         """

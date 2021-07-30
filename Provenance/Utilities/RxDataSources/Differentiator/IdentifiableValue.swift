@@ -23,9 +23,7 @@ extension IdentifiableValue
 }
 
 extension IdentifiableValue
-    : Equatable
-    , CustomStringConvertible
-    , CustomDebugStringConvertible {
+    : Equatable, CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
         return "\(value)"

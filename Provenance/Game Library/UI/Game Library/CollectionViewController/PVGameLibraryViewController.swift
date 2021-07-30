@@ -19,7 +19,7 @@ import QuartzCore
 import Reachability
 import RealmSwift
 import RxCocoa
-//import RxDataSources
+// import RxDataSources
 import RxSwift
 import UIKit
 
@@ -823,7 +823,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                         hud.detailsLabelText = "Please be patient, this may take a while…"
                     case .pathsToImport(let paths):
                         hud.hide(true)
-                        let _ = self.gameImporter.importFiles(atPaths: paths)
+                        _ = self.gameImporter.importFiles(atPaths: paths)
                     }
                 }, onError: { error in
                     ELOG(error.localizedDescription)
@@ -1115,10 +1115,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     private func chooseCustomArtwork(for game: PVGame, sourceView: UIView) {
             weak var weakSelf: PVGameLibraryViewController? = self
             let imagePickerActionSheet = UIAlertController(title: "Choose Artwork", message: "Choose the location of the artwork.\n\nUse Latest Photo: Use the last image in the camera roll.\nTake Photo: Use the camera to take a photo.\nChoose Photo: Use the camera roll to choose an image.", preferredStyle: .actionSheet)
-            
+
             let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
             let photoLibraryIsAvaialble: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
-            
+
             let cameraAction = UIAlertAction(title: "Take Photo", style: .default, handler: { action in
                 self.gameForCustomArt = game
                 let pickerController = UIImagePickerController()
@@ -1127,7 +1127,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 pickerController.sourceType = .camera
                 self.present(pickerController, animated: true) { () -> Void in }
             })
-            
+
             let libraryAction = UIAlertAction(title: "Choose Photo", style: .default, handler: { action in
                 self.gameForCustomArt = game
                 let pickerController = UIImagePickerController()
@@ -1136,13 +1136,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 pickerController.sourceType = .photoLibrary
                 self.present(pickerController, animated: true) { () -> Void in }
             })
-            
+
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
             let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
             if fetchResult.count > 0 {
                 let lastPhoto = fetchResult.lastObject
-                
+
                 imagePickerActionSheet.addAction(UIAlertAction(title: "Use Latest Photo", style: .default, handler: { (action) in
                     PHImageManager.default().requestImage(for: lastPhoto!, targetSize: CGSize(width: lastPhoto!.pixelWidth, height: lastPhoto!.pixelHeight), contentMode: .aspectFill, options: PHImageRequestOptions(), resultHandler: { (image, _) in
                         let orientation: UIImage.Orientation = UIImage.Orientation(rawValue: (image?.imageOrientation)!.rawValue)!
@@ -1161,7 +1161,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     })
                 }))
             }
-                    
+
             if cameraIsAvailable || photoLibraryIsAvaialble {
                 if cameraIsAvailable {
                     imagePickerActionSheet.addAction(cameraAction)
@@ -1173,16 +1173,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             imagePickerActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
                 imagePickerActionSheet.dismiss(animated: true, completion: nil)
             }))
-        
+
             presentActionSheetViewControllerForPopoverPresentation(imagePickerActionSheet, sourceView: sourceView)
         }
-    
+
         private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIAlertController, sourceView: UIView) {
             if traitCollection.userInterfaceIdiom == .pad {
                 alertController.popoverPresentationController?.sourceView = sourceView
                 alertController.popoverPresentationController?.sourceRect = sourceView.bounds
             }
-            
+
             present(alertController, animated: true)
         }
 

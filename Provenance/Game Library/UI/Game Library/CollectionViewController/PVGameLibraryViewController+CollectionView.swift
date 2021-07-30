@@ -65,12 +65,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             case .saves:
                 // TODO: Multirow?
                 let numberOfRows: CGFloat = 1.0
-                let width = viewWidth //- collectionView.contentInset.left - collectionView.contentInset.right / 4
+                let width = viewWidth // - collectionView.contentInset.left - collectionView.contentInset.right / 4
                 let height = (tvOSCellUnit + PageIndicatorHeight + 24) * numberOfRows
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             case .favorites, .recents:
                 let numberOfRows: CGFloat = 1.0
-                let width = viewWidth //- collectionView.contentInset.left - collectionView.contentInset.right / 5
+                let width = viewWidth // - collectionView.contentInset.left - collectionView.contentInset.right / 5
                 let height: CGFloat = tvOSCellUnit * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             case .game(let game):
@@ -117,7 +117,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
             }
         #endif
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         #if os(tvOS)
             let item: Section.Item? = firstModel(in: collectionView, at: section)

@@ -19,7 +19,7 @@ public struct ItemPath {
 }
 
 extension ItemPath : Equatable {
-    
+
 }
 
 public func == (lhs: ItemPath, rhs: ItemPath) -> Bool {
@@ -32,5 +32,5 @@ extension ItemPath: Hashable {
       hasher.combine(sectionIndex.byteSwapped.hashValue)
       hasher.combine(itemIndex.hashValue)
     }
-    
+
 }

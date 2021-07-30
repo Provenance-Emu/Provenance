@@ -10,7 +10,7 @@
 import PVLibrary
 import PVSupport
 import RxSwift
-//import RxDataSources
+// import RxDataSources
 import UIKit
 
 extension PVSearchViewController {
@@ -35,7 +35,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         let flowLayout = UICollectionViewFlowLayout()
         let width = tvOSCellUnit
         let height = tvOSCellUnit
-        flowLayout.itemSize = CGSize (width: width, height: height)
+        flowLayout.itemSize = CGSize(width: width, height: height)
         flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         flowLayout.minimumInteritemSpacing = 48.0
         flowLayout.minimumLineSpacing = 40.0
@@ -56,7 +56,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         collectionView.alwaysBounceVertical = true
         collectionView.remembersLastFocusedIndexPath = true
         collectionView.bounces = true
-        
+
         let sections: Observable<[Section]> = searchController
             .rx.searchText
             .compactMap { $0 }

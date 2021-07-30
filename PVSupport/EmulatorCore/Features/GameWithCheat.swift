@@ -9,6 +9,6 @@ import Foundation
         type: String,
         enabled: Bool
     ) -> Bool
-    
+
     func supportsCheatCode() -> Bool
 }

@@ -14,15 +14,15 @@ final class PVCheatsTableViewCell: UITableViewCell {
     public weak var delegate: PVCheatsViewControllerDelegate?
 
     public var cheat: PVCheats!
-    
+
     #if os(iOS)
     @IBOutlet public var enableSwitch: UISwitch!
     #endif
-    
+
     #if os(tvOS)
     @IBOutlet public var enabledText: UILabel!
     #endif
-    
+
     @IBOutlet public var codeText: UILabel!
     @IBOutlet public var typeText: UILabel!
 
@@ -31,12 +31,12 @@ final class PVCheatsTableViewCell: UITableViewCell {
         toggle(enabled: enableSwitch.isOn)
         #endif
     }
-    
+
     func toggle(enabled:Bool) {
         let realm = try! Realm()
-        realm.beginWrite();
-        cheat.enabled = enabled;
-        try! realm.commitWrite();
+        realm.beginWrite()
+        cheat.enabled = enabled
+        try! realm.commitWrite()
         delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
             in
             switch result {
@@ -46,9 +46,8 @@ final class PVCheatsTableViewCell: UITableViewCell {
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
-            
+
         }
     }
 
-    
 }

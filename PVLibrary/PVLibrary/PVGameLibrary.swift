@@ -132,7 +132,7 @@ extension LinkingObjects where Element: PVGame {
 }
 
 extension Array where Element == PVGameLibrary.System {
-    func sorted(by sortOptions: SortOptions) -> Array<Element> {
+    func sorted(by sortOptions: SortOptions) -> [Element] {
         let titleSort: (Element, Element) -> Bool = { (s1, s2) -> Bool in
             let mc = s1.manufacturer.compare(s2.manufacturer)
             if mc == .orderedSame {

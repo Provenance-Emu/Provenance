@@ -22,7 +22,7 @@ extension SectionModel
     : SectionModelType {
     public typealias Identity = Section
     public typealias Item = ItemType
-    
+
     public var identity: Section {
         return model
     }
@@ -45,7 +45,7 @@ extension SectionModel {
 
 extension SectionModel
     : Equatable where Section: Equatable, ItemType: Equatable {
-    
+
     public static func == (lhs: SectionModel, rhs: SectionModel) -> Bool {
         return lhs.model == rhs.model
             && lhs.items == rhs.items
