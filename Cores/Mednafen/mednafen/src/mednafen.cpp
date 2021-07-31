@@ -1363,7 +1363,7 @@ bool MDFNI_InitializeModules(void)
    &EmulatedCDPlay,
    &EmulatedDEMO
   };
-  static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102700, "Bad MEDNAFEN_VERSION_NUMERIC");
+  static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102700 && MEDNAFEN_VERSION_NUMERIC < 0x00200000, "Bad MEDNAFEN_VERSION_NUMERIC");
 
   for(unsigned int i = 0; i < sizeof(InternalSystems) / sizeof(MDFNGI *); i++)
    AddSystem(InternalSystems[i]);

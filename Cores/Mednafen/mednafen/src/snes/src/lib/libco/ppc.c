@@ -40,7 +40,7 @@ static thread_local cothread_t co_active_handle = 0;
 /* Whether function calls are indirect through a descriptor,
 or are directly to function */
 #ifndef LIBCO_PPCDESC
-	#if !_CALL_SYSV && (_CALL_AIX || _CALL_AIXDESC || LIBCO_PPC64)
+	#if !_CALL_SYSV && (_CALL_AIX || _CALL_AIXDESC || (LIBCO_PPC64 && (!defined(_CALL_ELF) || _CALL_ELF == 1)))
 		#define LIBCO_PPCDESC 1
 	#endif
 #endif

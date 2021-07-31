@@ -870,17 +870,12 @@ void NO_INLINE SS_SCSP::RunDMA(void)
 
 INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
 {
- if(s->EnvPhase == ENV_PHASE_DECAY1 && (s->EnvLevel >> 5) == s->DecayLevel)
-  s->EnvPhase = ENV_PHASE_DECAY2;
-
- //
- //
- //
- bool ClockEG;
+ const uint32 EnvLevelCache = s->EnvLevel;
  const unsigned ERateNoScale = s->EnvRates[s->EnvPhase];
  const unsigned ERate = std::min<unsigned>(0x1F, key_eg_scale + ERateNoScale);
  const unsigned ERateWBT = (0x22 - std::min<unsigned>(0x18, ERate)) >> 1;
  const bool EGCBT = (GlobalCounter >> ERateWBT) & 1;
+ bool ClockEG;
 
  ClockEG = !s->EnvGCBTPrev && EGCBT;
 
@@ -889,32 +884,53 @@ INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
 
  ClockEG &= (bool)ERateNoScale;
 
+ if(s->EnvPhase == ENV_PHASE_ATTACK && (ERateNoScale + key_eg_scale) >= 0x20)
+ {
+  ClockEG = false;
+
+  if(EnvLevelCache)
+  {
+   SS_DBG(SS_DBG_WARNING | SS_DBG_SCSP, "[SCSP] Slot %u stuck in EG attack phase @ EGL=0x%03x: AR=0x%02x, KRS=0x%01x, OCT=0x%01x\n", (unsigned)(s - Slots), EnvLevelCache, ERateNoScale, s->KRS, s->Octave);
+   //assert(0);
+  }
+ }
+
  s->EnvGCBTPrev = EGCBT;
 
  if(ClockEG)
  {
-  const int32 inc_base = (s->EnvPhase == ENV_PHASE_ATTACK) ? ~s->EnvLevel : 16;
+  const int32 inc_base = (s->EnvPhase == ENV_PHASE_ATTACK) ? ~EnvLevelCache : 16;
   const unsigned ermaxo = std::max<unsigned>(0x18, std::min<unsigned>(0x1E, ERate));
   const uint32 srac = ((0x20 - ermaxo) >> 1) + (ermaxo & 1 & (GlobalCounter >> (ERateWBT + 1)));
+  int32 NewEnvLevel;
 
-  //if(s == &Slots[0] && s->EnvLevel)
-  // printf("EP: %u, EL: 0x%04x, AR: 0x%02x, %d, %u --- %02x\n", s->EnvPhase, s->EnvLevel, s->EnvRates[ENV_PHASE_ATTACK], inc_base, srac, ERate);
+  //if(s == &Slots[0] && EnvLevelCache)
+  // printf("EP: %u, EL: 0x%04x, AR: 0x%02x, %d, %u --- %02x\n", s->EnvPhase, EnvLevelCache, s->EnvRates[ENV_PHASE_ATTACK], inc_base, srac, ERate);
 
-  s->EnvLevel += inc_base >> srac;
+  NewEnvLevel = EnvLevelCache + (inc_base >> srac);
 
-  if((int32)s->EnvLevel > 0x3FF)
-   s->EnvLevel = 0x3FF;
+  if(NewEnvLevel > 0x3FF)
+   NewEnvLevel = 0x3FF;
 
-  if((int32)s->EnvLevel < 0)
-   s->EnvLevel = 0;
+  if(NewEnvLevel < 0)
+   NewEnvLevel = 0;
+
+  s->EnvLevel = NewEnvLevel;
  }
  //
+ // Using EnvLevelCache instead of s->EnvLevel here is intentional:
  //
- //
-
- if(s->EnvPhase == ENV_PHASE_ATTACK)
+ if(s->EnvPhase == ENV_PHASE_DECAY1)
  {
-  if((s->AttackLoopLink && s->InLoop) || (!s->AttackLoopLink && s->EnvLevel == 0))
+  //if(s->DecayLevel == 0 && s->EnvRates[ENV_PHASE_DECAY1] && s->EnvRates[ENV_PHASE_DECAY1] != s->EnvRates[ENV_PHASE_DECAY2])
+  // printf("MOO: key_eg_scale=0x%02x AR=0x%02x D1R=0x%02x D2R=0x%02x ClockEG=%d\n", key_eg_scale, s->EnvRates[ENV_PHASE_ATTACK], s->EnvRates[ENV_PHASE_DECAY1], s->EnvRates[ENV_PHASE_DECAY2], ClockEG);
+
+  if((EnvLevelCache >> 5) == s->DecayLevel)
+   s->EnvPhase = ENV_PHASE_DECAY2;
+ }
+ else if(s->EnvPhase == ENV_PHASE_ATTACK)
+ {
+  if((s->AttackLoopLink && s->InLoop) || (!s->AttackLoopLink && EnvLevelCache == 0))
    s->EnvPhase = ENV_PHASE_DECAY1;
  }
 }
