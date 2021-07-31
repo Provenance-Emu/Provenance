@@ -2265,26 +2265,32 @@ INLINE void M68K::InternalStep(void)
  //
  //
  //
- uint16 instr = ReadOp();
- const unsigned instr_b11_b9 = (instr >> 9) & 0x7;
- const unsigned instr_b2_b0 = instr & 0x7;
 
-#if 0
-  printf("PC=%08x: %04x ---", PC - 2, instr);
+ InternalStepSwitch();
+}
 
-  for(unsigned i = 0; i < 8; i++)
-   printf(" A%u=0x%08x", i, A[i]);
- 
-  for(unsigned i = 0; i < 8; i++)
-   printf(" D%u=0x%08x", i, D[i]);
+__attribute__ ((optnone)) INLINE void M68K::InternalStepSwitch(void) {
+    uint16 instr = ReadOp();
+    const unsigned instr_b11_b9 = (instr >> 9) & 0x7;
+    const unsigned instr_b2_b0 = instr & 0x7;
 
-  printf("\n");
-#endif
- switch(instr)
- {
-  default: ILLEGAL(instr); break;
-  #include "m68k_instr.inc"
- }
+   #if 0
+     printf("PC=%08x: %04x ---", PC - 2, instr);
+
+     for(unsigned i = 0; i < 8; i++)
+      printf(" A%u=0x%08x", i, A[i]);
+    
+     for(unsigned i = 0; i < 8; i++)
+      printf(" D%u=0x%08x", i, D[i]);
+
+     printf("\n");
+   #endif
+    
+    switch(instr)
+    {
+     default: [[unlikely]] ILLEGAL(instr); break;
+     #include "m68k_instr.inc"
+    }
 }
 
 

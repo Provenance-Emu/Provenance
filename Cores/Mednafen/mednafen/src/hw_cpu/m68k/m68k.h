@@ -454,6 +454,7 @@ static uint8 TAS_Callback(uint8 data)
  bool CheckPrivilege(void);
 
  void InternalStep(void);
+ void InternalStepSwitch(void) __attribute__((fastcall)) __attribute__ ((optnone));
 
  //
  //
