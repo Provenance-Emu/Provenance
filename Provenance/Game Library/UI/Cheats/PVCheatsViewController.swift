@@ -12,7 +12,7 @@ import RxRealm
 import RxSwift
 import UIKit
 
-protocol PVCheatsViewControllerDelegate: class {
+protocol PVCheatsViewControllerDelegate: AnyObject {
     func cheatsViewControllerDone(_ cheatsViewController: PVCheatsViewController)
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
         code: String,
@@ -60,7 +60,7 @@ final class PVCheatsViewController: UITableViewController {
         }
 
         for cheat in allCheats {
-            NSLog("Cheat Found \(cheat.code) \(cheat.type)")
+            NSLog("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
             // start disabled to prevent bad cheat code from crashing the game all the time
             if (isFirstLoad) {
                 let realm = try! Realm()
@@ -93,11 +93,12 @@ final class PVCheatsViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
-            emulatorViewController.core.setPauseEmulation(false)
-            emulatorViewController.isShowingMenu = false
-            emulatorViewController.enableControllerInput(false)
-            emulatorViewController.setIsFirstLoad(isFirstLoad: false)
+        if navigationController?.viewControllers.count == 1,
+            let emulatorViewController = presentingViewController as? PVEmulatorViewController {
+                emulatorViewController.core.setPauseEmulation(false)
+                emulatorViewController.isShowingMenu = false
+                emulatorViewController.enableControllerInput(false)
+                emulatorViewController.setIsFirstLoad(isFirstLoad: false)
         }
 
     }
