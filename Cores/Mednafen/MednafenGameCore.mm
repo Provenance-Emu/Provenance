@@ -608,10 +608,7 @@ static void emulation_run(BOOL skipFrame) {
     Mednafen::NativeVFS fs = Mednafen::NativeVFS();
 
     game = Mednafen::MDFNI_LoadGame([mednafenCoreModule UTF8String], &fs, [path UTF8String]);
-
-	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
-	// is this correct for EU, JP, US? Still testing.
-	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+    assert(game);
 
     if(!game) {
         if (error) {
@@ -629,6 +626,10 @@ static void emulation_run(BOOL skipFrame) {
         }
         return NO;
     }
+    
+    // Uncomment this to set the aspect ratio by the game's render size according to mednafen
+    // is this correct for EU, JP, US? Still testing.
+    mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
     
     // BGRA pixel format
     Mednafen::MDFN_PixelFormat pix_fmt(Mednafen::MDFN_COLORSPACE_RGB, 4, 0, 8, 16, 24);
