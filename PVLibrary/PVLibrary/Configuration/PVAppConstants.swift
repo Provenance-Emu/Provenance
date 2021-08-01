@@ -14,6 +14,7 @@ public let kInterfaceDidChangeNotification = "kInterfaceDidChangeNotification"
 public let PVGameControllerKey = "PlayController"
 public let PVGameMD5Key = "md5"
 public let PVAppURLKey = "provenance"
+public let UbiquityIdentityTokenKey = "org.provenance-emu.provenenace.UbiquityIdentityToken"
 
 #if os(tvOS)
     public let PVThumbnailMaxResolution: Float = 800.0
