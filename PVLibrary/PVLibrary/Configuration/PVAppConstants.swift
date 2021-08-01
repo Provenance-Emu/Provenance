@@ -9,7 +9,7 @@
 import Foundation
 
 public let PVMaxRecentsShortcutCount: Int = 4
-public let PVAppGroupId = "group.provenance-emu.provenance"
+public let PVAppGroupId = "group.org.provenance-emu.provenance"
 public let kInterfaceDidChangeNotification = "kInterfaceDidChangeNotification"
 public let PVGameControllerKey = "PlayController"
 public let PVGameMD5Key = "md5"
