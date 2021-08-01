@@ -7,6 +7,7 @@ pool:
   vmImage: 'macOS-latest'
 
 variables:
+  xcWorkspacePath: "Provenance.xcworkspace"
   ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
     configuration: 'Release'
   ${{ if not(contains('main,develop', variables['Build.SourceBranchName'])) }}:
@@ -17,7 +18,7 @@ variables:
   ExportOptionsFileName: 'options.plist'
   ExportMethod: 'development'
   # xcode-version: '12.5.1'
-  xcodeVersion: '12.5'  # Options: 8, 9, default, specifyPath
+  xcodeVersion: '12.4'  # Options: 8, 9, default, specifyPath
 
 strategy:
   matrix:
@@ -51,7 +52,7 @@ steps:
 - task: Xcode@5
   inputs:
     scheme: '$(scheme)'
-    xcWorkspacePath: 'Provenance.xcworkspace'
+    xcWorkspacePath: '$(xcWorkspacePath)'
     xcodeVersion: '$(xcodeVersion)'
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: true
