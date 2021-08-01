@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team, and additional contributors.
 
 **N64 Release!** with Mupen64Plus + GlideN64 — a non-jailbreak emulation _first._ A lot in this update: Swift codebase conversion, Atari Jaguar support, Saturn, Dreamcast…full _multi-disc support_ for all of you RPG fans out there, dark theme default, 60 FPS optimizations, core updates, new touch controls, iOS 12, iPhone X, WebDAV support and _much more…_
+
+⚠️ **Breaking** ⚠️
+
+2.0 does not support upgrading from 1.4 libraries. It MAY work with some versions of 1.5beta's but not all betas are the same. Your mileage may vary. For this reason we're updating the version to 2, to indicate the lack of upgrade path. 
+
+ℹ️ *You can install 2.0 along side 1.x by using a different bundle id*
 ### Added
 
 #### New Cores
