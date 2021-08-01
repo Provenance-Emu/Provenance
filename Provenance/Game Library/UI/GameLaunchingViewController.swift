@@ -12,6 +12,8 @@ import RealmSwift
 import UIKit
 import ZipArchive
 
+fileprivate let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
+
 public func PVMaxRecentsCount() -> Int {
     #if os(tvOS)
         return 12
@@ -530,7 +532,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             #if os(iOS)
                 let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                    UIApplication.shared.open(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 })
                 displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
             #else
