@@ -7,16 +7,29 @@ pool:
   vmImage: 'macOS-latest'
 
 variables:
-  scheme: 'Provenance'
-  sdk: 'iphonesimulator' # 'iphoneos'
-  configuration: 'Debug' # 'Release'
+  ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
+    configuration: 'Release'
+  ${{ if not(contains('main,develop', variables['Build.SourceBranchName'])) }}:
+    configuration: 'Debug'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
   CertificateFileName: 'itunes-adhoc.p12'
   ExportOptionsFileName: 'options.plist'
-  ExportMethod: 'ad-hoc'
+  ExportMethod: 'development'
   # xcode-version: '12.5.1'
-  xcode-version: '12.5'
+  xcodeVersion: '12.5'  # Options: 8, 9, default, specifyPath
+
+strategy:
+  matrix:
+    ios:
+      sdk: 'iphoneos'
+      scheme: 'Provenance'
+      destinationPlatformOption: iOS
+    tvos:
+      sdk: 'tvos'
+      scheme: 'ProvenanceTV'
+      destinationPlatformOption: tvOS
+  maxParallel: 3
 
 steps:
 
@@ -39,11 +52,10 @@ steps:
   inputs:
     scheme: '$(scheme)'
     xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
+    xcodeVersion: '$(xcodeVersion)'
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: true
-    destinationPlatformOption: iOS
-    destinationSimulators: iPhone 12
+    destinationPlatformOption: $(destinationPlatformOption)
   displayName: Building project
 
 # - task: Xcode@5
