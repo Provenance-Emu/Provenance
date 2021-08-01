@@ -348,12 +348,12 @@ extension GameLaunchingViewController where Self: UIViewController {
                     } catch {
                         ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
                         // Since we couldn't rename, mark this as a false
-                        missingBIOSES.append($0.expectedFilename)
+                        missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
                         return false
                     }
                 } else {
                     // No MD5 matches either
-                    missingBIOSES.append($0.expectedFilename)
+                    missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
                     return false
                 }
             } else {
@@ -524,7 +524,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
 
-            let missingFilesString = missingBIOSes.joined(separator: ", ")
+            let missingFilesString = missingBIOSes.joined(separator: "\n")
             let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
