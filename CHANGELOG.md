@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0] - 2020-08-01
+## [2.0.0] - 2020-08-02
 
 Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team, and additional contributors.
 
@@ -28,9 +28,9 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
     - Gliden64 & Rice
   - 4 players
   - Rumble support
-- **Atari Jaguar Core**: Virtual Jaguar _Beta_
-- **Sege Dreamcast Core**: Reicast _Beta_
-- **Sega Saturn Core**: Yabause _Beta_
+- **Sega Saturn Core**: Mednafen
+- **Atari Jaguar Core**: Virtual Jaguar custom _Alpha_ ** Note: requires additional steps for BIOS, very unstable **
+- **Sege Dreamcast Core**: Reicast custom _Alpha_ ** Note: Unplayable, sync issues. For dev testing only **
 - [Additional] **Nintendo GameBoy Core**: [TGBDual](https://github.com/libretro/tgbdual-libretro) _Beta_
 
 #### New Features
@@ -39,7 +39,7 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
 - iOS 11,12 Support
   <sup>Including Smart Invert Support so cover art and emulator view won't invert</sup><br>
 - iPhone X Support
-  <sup>Fullscreen Support, Home Indicator: Hides with controller, Dims while playing</sup><br>
+  <sup>Full-screen Support, Home Indicator: Hides with controller, Dims while playing</sup><br>
 - MFi+ (Instant Button Swap Modes) to access to missing buttons on MFi Controllers ([MFi Controls](https://bit.ly/2LDZNzI))
 - iCloud Syncing for Save States and Battery Saves _Beta_
 - New Dark Theme Default
@@ -60,22 +60,24 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
 - Add ROM to Home Screen (like web apps from Safari)
 - Native resolution support
   - _Optional_: Renders OpenGL at native retina sizes
-  - Some cores support internal upscaling (Mupen)
+  - Some cores support internal up-scaling (Mupen)
 - System details in settings
   - Lists supported cores, library info
-  - List required BIOSes if they're installed and easy copy MD5 to the clipboard by tapping for easier Google searches
+  - List required BIOS's if they're installed and easy copy MD5 to the clipboard by tapping for easier Google searches
 - Improved volume HUD
 - Enhanced build information
   - In settings, see info about the installed build (version and build #, built source, date and more)
 - In-app logs
   - In settings, view the logging output to help track down bugs. Export and e-mail.
+- GameBoy multi-player via: [TGB Dual](https://github.com/libretro/tgbdual-libretro)
 
 ### Changed
 
 #### Core Updates
 
-- SNES9x 1.56.2 ([Changelog](http://www.snes9x.com/phpbb3/viewtopic.php?f=8&t=24451#p56781))
-- Mednafen 1.21.3 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
+- SNES9x 1.60.0 ([Changelog](https://github.com/snes9xgit/snes9x/releases))
+- Mednafen 1.27.0 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
+- tgbdual-libretro 0.8.3 [GitHub](tgbdual-libretro)
 
 #### App Improvements
 
@@ -102,7 +104,7 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
   - Side Scrolling Collection Views:
     - Recent Saves with Screenshots
     - Recently Played
-    - Favourites
+    - Favorites
   - Library Sorting
   - Cover Badges (New/Unplayed, Favorite, Disc Count, Missing ROM)
   - Swipe to Delete
