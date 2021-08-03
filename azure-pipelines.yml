@@ -58,10 +58,11 @@ steps:
     xcWorkspacePath: '$(xcWorkspacePath)'
     xcodeVersion: '$(xcodeVersion)'
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-    packageApp: true
+    packageApp: false
     destinationPlatformOption: $(destinationPlatformOption)
     useXcpretty: false
     configuration: '$(configuration)'
+    exportMethod: '$(ExportMethod)'
   displayName: Building project $(scheme)
 
 # - task: Xcode@5
