@@ -27,7 +27,7 @@ strategy:
       scheme: 'Provenance'
       destinationPlatformOption: iOS
     tvos:
-      sdk: 'tvos'
+      sdk: 'appletvos'
       scheme: 'ProvenanceTV'
       destinationPlatformOption: tvOS
   maxParallel: 3
