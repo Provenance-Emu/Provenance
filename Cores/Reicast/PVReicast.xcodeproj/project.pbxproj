@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3954,7 +3954,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVReicast" */;
-			compatibilityVersion = "Xcode 10.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -4526,7 +4526,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVReicast";
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -4553,7 +4553,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVReicast";
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4612,7 +4612,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVReicast";
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4640,7 +4640,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVReicast";
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4862,7 +4862,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVReicast";
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -4889,7 +4889,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVReicast";
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;

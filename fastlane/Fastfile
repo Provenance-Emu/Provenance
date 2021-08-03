@@ -22,11 +22,6 @@
 PROJECT_NAME = "Provenance.xcworkspace"
 COMMIT_MSG = "fastlane build bump [ci skip]"
 
-# Carthage
-
-CARTHAGE_PATHS = ["./"]
-CARTHAGE_PLATFORMS = "iOS,tvOS"
-
 # Building
 SCHEMES =  ["Provenance-Release", "ProvenanceTV-Release"]
 

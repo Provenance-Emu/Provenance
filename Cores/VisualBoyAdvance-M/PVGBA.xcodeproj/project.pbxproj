@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -484,7 +484,7 @@
 				};
 			};
 			buildConfigurationList = 1A9FBC151ABD0DA7004E778B /* Build configuration list for PBXProject "PVGBA" */;
-			compatibilityVersion = "Xcode 10.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -801,7 +801,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -845,13 +845,13 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -893,7 +893,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -939,7 +939,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -983,13 +983,13 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1029,13 +1029,13 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

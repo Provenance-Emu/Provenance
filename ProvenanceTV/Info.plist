@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2775</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -67,8 +67,8 @@
 	<string>Provenance uses Bluetooth to support game controllers.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>com.provenance-emu.webserver</string>
-		<string>com.provenance-emu.game.play</string>
+		<string>org.provenance-emu.webserver</string>
+		<string>org.provenance-emu.game.play</string>
 	</array>
 	<key>Revision</key>
 	<string>f9c61252</string>

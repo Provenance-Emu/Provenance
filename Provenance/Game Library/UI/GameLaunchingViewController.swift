@@ -12,6 +12,8 @@ import RealmSwift
 import UIKit
 import ZipArchive
 
+fileprivate let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
+
 public func PVMaxRecentsCount() -> Int {
     #if os(tvOS)
         return 12
@@ -348,12 +350,12 @@ extension GameLaunchingViewController where Self: UIViewController {
                     } catch {
                         ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
                         // Since we couldn't rename, mark this as a false
-                        missingBIOSES.append($0.expectedFilename)
+                        missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
                         return false
                     }
                 } else {
                     // No MD5 matches either
-                    missingBIOSES.append($0.expectedFilename)
+                    missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
                     return false
                 }
             } else {
@@ -524,13 +526,13 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
 
-            let missingFilesString = missingBIOSes.joined(separator: ", ")
+            let missingFilesString = missingBIOSes.joined(separator: "\n")
             let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             #if os(iOS)
                 let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                    UIApplication.shared.open(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 })
                 displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
             #else

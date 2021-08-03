@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1544,7 +1544,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVPicoDrive" */;
-			compatibilityVersion = "Xcode 10.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1926,7 +1926,7 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1986,12 +1986,12 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2049,7 +2049,7 @@
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2107,7 +2107,7 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2171,12 +2171,12 @@
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2230,12 +2230,12 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

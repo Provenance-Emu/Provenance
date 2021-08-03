@@ -110,7 +110,7 @@ public final class DirectoryWatcher2 {
     }
 
     fileprivate var dispatch_sources = [URL: WatchedDir]()
-    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialExtractorQueue")
+    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     private func initialScan(_ url: URL) throws {
         let exts = PVEmulatorConfiguration.archiveExtensions

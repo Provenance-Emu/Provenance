@@ -251,9 +251,6 @@ private_lane :pre_build do
   else
     pre_build_user
   end
-
-  rome_download
-  carthage_bootstrap_ios
 end
 
 private_lane :pre_build_user do
@@ -299,12 +296,6 @@ lane :userbuild do
 
   UI.message 'Getting 3rd party dependencies.'
 
-  if which_app == 'tvOS'
-    carthage_bootstrap_tvOS
-  else
-    carthage_bootstrap_ios
-  end
-
   # Git git commit count
   commits = number_of_commits(all: true).to_s
   UI.message 'Setting build # to ${commits}.'
@@ -333,7 +324,7 @@ end
 
 # TODO: iCloud
 private_lane :set_icloud_container do |options|
-  identifiers = options.fetch(:identifiers, 'iCloud.com.provenance-emu.provenance')
+  identifiers = options.fetch(:identifiers, 'iCloud.org.provenance-emu.provenance')
   icloud_container_identifiers = identifiers.split(',')
 
   files = [
