@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2020-08-02
 
-Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team, and additional contributors.
+Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team, and additional contributors.
 
 **N64 Release!** with Mupen64Plus + GlideN64 — a non-jailbreak emulation _first._ A lot in this update: Swift codebase conversion, Atari Jaguar support, Saturn, Dreamcast…full _multi-disc support_ for all of you RPG fans out there, dark theme default, 60 FPS optimizations, core updates, new touch controls, iOS 12, iPhone X, WebDAV support and _much more…_
 
@@ -36,7 +36,7 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
 #### New Features
 
 - **[Multi-disc Support](https://github.com/jasarien/Provenance/wiki/Importing-ROMs#multi-disc-games)** (disc-swapping)
-- iOS 11,12 Support
+- iOS 11-15 Support
   <sup>Including Smart Invert Support so cover art and emulator view won't invert</sup><br>
 - iPhone X Support
   <sup>Full-screen Support, Home Indicator: Hides with controller, Dims while playing</sup><br>
@@ -51,7 +51,6 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
   - Links to Game Manuals
 - Share Button
   - Export ROM, Saves, Screenshot and custom artwork
-- Integrated iOS Spotlight Support (Indexing & Searching)
 - WebDAV Support (access from the Finder or other WebDAV clients)
 - Optional Touch/Overlay Controls Additions:
   - Start/Select Always On-screen (for MFi usage with iOS)
@@ -109,7 +108,6 @@ Special thanks and shout-outs to @JoeMatt, @braindx, @jasarien, @sevdestruct, @e
   - Cover Badges (New/Unplayed, Favorite, Disc Count, Missing ROM)
   - Swipe to Delete
 - 3D Touch
-- TopShelf (tvOS)
 
 #### New Controllers
 
