@@ -84,11 +84,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>Gamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
@@ -145,6 +145,7 @@
 		<string>bluetooth-central</string>
 		<string>external-accessory</string>
 		<string>fetch</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
