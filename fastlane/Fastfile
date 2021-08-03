@@ -1,0 +1,108 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+# lane_context[SharedValues::IPA_OUTPUT_PATH] lane_context[SharedValues::BUILD_NUMBER] https://docs.fastlane.tools/advanced/#lane-context
+# CredentialsManager : https://github.com/fastlane/fastlane/tree/master/credentials_manager
+# clipboard clipboard(value: lane_context[SharedValues::HOCKEY_DOWNLOAD_LINK] || "")
+# twitter https://github.com/rb-de0/fastlane-plugin-twitter
+
+
+#
+# Global Variables
+#
+
+PROJECT_NAME = "Provenance.xcworkspace"
+COMMIT_MSG = "fastlane build bump [ci skip]"
+
+# Building
+SCHEMES =  ["Provenance-Release", "ProvenanceTV-Release"]
+
+# Testing
+TEST_SCHEMES = []
+TEST_DEVICES = ["iPad Air"]
+
+REQUIRED_XCODE_VERSION = '12.0'.freeze
+
+default_platform(:ios)
+$dev_domain = ENV['DEV_DOMAIN'] || 'org.provenance-emu'
+
+## Fastlane imports
+# The URL of the repository to import the Fastfile from.
+FASTLANE_GIT_URL = 'git@github.com:Provenance/ios-scripts.git'
+# The branch to checkout on the repository
+FASTLANE_GIT_BRANCH = 'HEAD'
+# The directory of the Fastfile's in the repository
+FASTLANE_GIT_PATH = 'Fastlane'
+# The version to checkout on the repository. 
+# Multiple conditions can be used to select the latest version within constraints.
+# eg; [">= 1.1.0", "< 2.0.0"] 
+FASTLANE_GIT_VERSION = [">= 1.0.0", "< 2.0.0"]
+IMPORTS = ["Build", "Certs", "Publish", "CI", "Badge", "Testing", "Install", "Enviroment"]
+FASTLANE_IMPORT_LOCAL = true
+
+platform :ios do
+
+  IMPORTS.each do |import|
+    unless FASTLANE_IMPORT_LOCAL
+        import_from_git(
+            url: FASTLANE_GIT_URL,
+            branch: FASTLANE_GIT_BRANCH, 
+            path: "Fastlane/Fastfile+#{import}", 
+            version: FASTLANE_GIT_VERSION
+        )
+    else
+        import("Fastfile+#{import}")
+    end
+  end
+
+  before_all do
+    git_pull(only_tags: true)
+  end
+
+  # after_all do
+  #   push_git_tags
+  # end
+
+  private_lane :verify_xcode_version do
+    UI.message 'Verifying correct XCode version'
+    ensure_xcode_version(version: REQUIRED_XCODE_VERSION)
+  end
+
+  # error block is executed when a error occurs
+  # error do |lane, exception|
+  #   if is_ci?
+  #     slack(
+  #       # message with short human friendly message
+  #       message: exception.to_s,
+  #       success: false,
+  #       # Output containing extended log output
+  #       payload: { "Output" => exception.error_info.to_s }
+  #     )
+  #   end
+  # end
+end
+
+def load_keys
+  return if is_ci?
+
+  begin
+    import('keys')
+    $dev_domain = ENV['DEV_DOMAIN']
+  rescue StandardError => exception
+    if UI.interactive?
+      shouldSetup = UI.confirm 'Fastlane enviroment is not configured. Setup now?'
+      if shouldSetup
+        UI.message 'This feature not yet implimented. Manually edit fastlane/keys using keys.template as an example.'
+      end
+    end
+    raise exception
+  end
+end

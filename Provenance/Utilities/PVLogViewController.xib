@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+    <device id="ipad9_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PVLogViewController">
+            <connections>
+                <outlet property="actionButton" destination="15" id="33"/>
+                <outlet property="contentView" destination="ir3-aG-kbV" id="1s7-NQ-ZtQ"/>
+                <outlet property="doneButton" destination="20" id="34"/>
+                <outlet property="logListButton" destination="BF8-Bz-b6R" id="EPj-zY-9Qr"/>
+                <outlet property="searchDisplayController" destination="22" id="24"/>
+                <outlet property="segmentedControl" destination="17" id="31"/>
+                <outlet property="textView" destination="4" id="14"/>
+                <outlet property="toolbar" destination="7" id="12"/>
+                <outlet property="view" destination="1" id="3"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="1">
+            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7">
+                    <rect key="frame" x="0.0" y="20" width="768" height="44"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="REJ-bi-77z"/>
+                    </constraints>
+                    <items>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="16"/>
+                        <barButtonItem style="plain" id="18">
+                            <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="17">
+                                <rect key="frame" x="254" y="7" width="260" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="Live Log"/>
+                                    <segment title="System Log"/>
+                                    <segment title="File Logs"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlValueChanged:" destination="-1" eventType="valueChanged" id="32"/>
+                                </connections>
+                            </segmentedControl>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="19"/>
+                        <barButtonItem systemItem="action" id="15">
+                            <connections>
+                                <action selector="actionButtonPressed:" destination="-1" id="35"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem systemItem="done" id="20"/>
+                    </items>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="GJw-aZ-2H2"/>
+                    </connections>
+                </toolbar>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ir3-aG-kbV" userLabel="contentview">
+                    <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </view>
+                <textView clipsSubviews="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4">
+                    <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                    <dataDetectorType key="dataDetectorTypes" link="YES"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="MFP-eX-GJv"/>
+                    </connections>
+                </textView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <gestureRecognizers/>
+            <constraints>
+                <constraint firstItem="ir3-aG-kbV" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="1DP-R6-QxA"/>
+                <constraint firstItem="7" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="5L3-70-Z9S"/>
+                <constraint firstItem="4" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="Ap9-Cw-Jev"/>
+                <constraint firstAttribute="trailing" secondItem="7" secondAttribute="trailing" id="Hrm-e1-Ktc"/>
+                <constraint firstAttribute="bottom" secondItem="4" secondAttribute="bottom" id="PTV-H9-SpX"/>
+                <constraint firstAttribute="trailing" secondItem="ir3-aG-kbV" secondAttribute="trailing" id="bGz-Dh-Vsg"/>
+                <constraint firstItem="7" firstAttribute="top" secondItem="1" secondAttribute="topMargin" id="iKn-Qg-Qfs"/>
+                <constraint firstAttribute="bottom" secondItem="ir3-aG-kbV" secondAttribute="bottom" id="nJo-9l-cp9"/>
+                <constraint firstItem="4" firstAttribute="top" secondItem="7" secondAttribute="bottom" id="vUx-my-7qK"/>
+                <constraint firstAttribute="trailing" secondItem="4" secondAttribute="trailing" id="z8P-AM-u3S"/>
+                <constraint firstItem="ir3-aG-kbV" firstAttribute="top" secondItem="7" secondAttribute="bottom" id="zCc-qL-G0A"/>
+            </constraints>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
+        </view>
+        <searchDisplayController id="22">
+            <connections>
+                <outlet property="delegate" destination="-1" id="28"/>
+                <outlet property="searchContentsController" destination="-1" id="25"/>
+                <outlet property="searchResultsDataSource" destination="-1" id="26"/>
+                <outlet property="searchResultsDelegate" destination="-1" id="27"/>
+            </connections>
+        </searchDisplayController>
+        <barButtonItem title="Select File" id="BF8-Bz-b6R">
+            <connections>
+                <action selector="logListButtonClicked:" destination="-1" id="OLZ-mk-o1e"/>
+            </connections>
+        </barButtonItem>
+    </objects>
+</document>

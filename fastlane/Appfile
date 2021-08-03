@@ -1,0 +1,37 @@
+# import("keys")
+
+apple_id(ENV["APPLE_ID"]) # Your Apple email address
+
+# TODO If not blank
+itc_team_id(ENV["ITC_TEAM_ID"]) # iTunes Connect Team ID
+team_id(ENV["DEV_TEAM_ID"]) # Developer Portal Team ID
+
+# app_identifier "com.default.id"
+
+# for_lane :enterprise do
+#   app_identifier "com.forlane.enterprise"
+# end
+
+# for_platform :mac do
+#   app_identifier "com.forplatform.mac"
+
+#   for_lane :release do
+#     app_identifier "com.forplatform.mac.forlane.release"
+#   end
+# end
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
+# Use different bundle identifiers per lane
+
+# for_lane 'ios alpha' do
+#   app_identifier "org.wikimedia.wikipedia.tfalpha"
+# end
+#
+# for_lane 'ios beta' do
+#   app_identifier "org.wikimedia.wikipedia.tfbeta"
+# end
+#
+# for_lane 'ios store' do
+#   app_identifier "org.wikimedia.wikipedia"
+# end

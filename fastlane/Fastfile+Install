@@ -1,0 +1,30 @@
+# desc "Install last build to device"
+# lane :install do |options|
+#   if cached_build_available?
+#     UI.important 'Skipping build because a cached build is available!'
+#     next # skip doing the rest of this lane
+#   end
+# end
+
+private_lane :cached_build_available? do |options|
+  # ...
+  false
+end
+
+# Resign and copy to device
+private_lane :resign_and_copy do
+  # TODO: this
+end
+
+# Copy to device
+private_lane :copy_to_device do
+  ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
+  # Need to first install ios-deploy
+  # npm -g i ios-deploy
+  # can call ios-deply --detect to list devices
+  install_on_device(
+    skip_wifi: false, # Don't look for devices on wifi
+    # device_id: "a3be6c9ff7e5c3c6028597513243b0f933b876d4", # First device if no ID given
+    ipa: ipa
+  )
+end

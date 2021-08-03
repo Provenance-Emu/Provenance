@@ -12,20 +12,32 @@
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 
-// Web Server
-#import "GCDWebUploader.h"
 
-@interface PVWebServer : NSObject <GCDWebUploaderDelegate>
+@interface PVWebServer : NSObject
 
-+ (PVWebServer *)sharedInstance;
+NS_ASSUME_NONNULL_BEGIN;
 
-- (NSString *)getDocumentDirectory;
-- (NSString *)getIPAddress;
-- (NSString *)getURLString;
-- (NSURL *)getURL;
-- (NSURL *)bonjourServerURL;
-- (void)startServer;
-- (void)stopServer;
+@property (class, nonatomic, strong, readonly, nonnull) PVWebServer * sharedInstance NS_SWIFT_NAME(shared);
 
+@property (nonatomic, strong, readonly) NSString *documentsDirectory;
+@property (nonatomic, strong, readonly) NSString *IPAddress;
+@property (nonatomic, strong, readonly) NSString *URLString;
+@property (nonatomic, strong, readonly) NSString *WebDavURLString;
+@property (nonatomic, strong, readonly) NSURL *URL;
+@property (nonatomic, strong, readonly) NSURL *bonjourSeverURL;
+
+@property (nonatomic, assign, readonly) BOOL isWWWUploadServerRunning;
+@property (nonatomic, assign, readonly) BOOL isWebDavServerRunning;
+
+- (BOOL)startServers;
+- (void)stopServers;
+
+- (BOOL)startWWWUploadServer;
+- (void)stopWWWUploadServer;
+
+- (BOOL)startWebDavServer;
+- (void)stopWebDavServer;
+
+NS_ASSUME_NONNULL_END;
 
 @end

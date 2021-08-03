@@ -1,0 +1,140 @@
+desc "Clear your DerivedData"
+lane :derived_data do
+  clear_derived_data
+end
+
+desc "Reset build enviroment"
+desc "Use this lane if you're having build issues"
+desc "Use `git stash` first to save any changes you may want to keep."
+lane :reset_checkout do
+
+  UI.important "This lane is destructive and can delete unsaved changed."
+  if !UI.confirm("Are you sure?")
+    next
+  end
+
+  # clean xcode's build enviroment with xcodebuild
+  UI.message "Cleaning target Provenance."
+  xcclean(scheme: "Provenance")
+  UI.message "Cleaning target Provenance TV."
+  xcclean(scheme: "ProvenanceTV")
+
+  if UI.confirm("Clear XCode's derived data?")
+    clear_derived_data
+  end
+
+  UI.header("GIT Reset")
+  clean = UI.confirm("Run 'git clean' to avoid removing untracked files? \nRecomended unless you have new files to save. Alternatively, use `git stash`.")
+  disregard_gitignore = clean
+  if clean
+    disregard_gitignore = UI.confirm("Disregard .gitignore (Recomended)? If you want the equivalent of a fresh clone, and for all untracked and ignore files to also be removed.")
+  end
+
+  reset_git_repo(
+    force: true,
+    skip_clean: !clean,
+    disregard_gitignore: disregard_gitignore
+  )
+
+  UI.success("Project directory reset.")
+end
+
+desc 'Print Environment Settings'
+lane :check_env do
+  puts "APP_IDENTIFIER: #{ENV['APP_IDENTIFIER']}"
+  puts "APP_NAME: #{ENV['APP_NAME']}"
+  puts "APP_SKU: #{ENV['APP_SKU']}"
+  puts "LANG_CODE #{ENV['LANG_CODE']}"
+end
+
+desc "Updates the bundle id and app name if a beta build"
+lane :updatePlistForBranch do
+  is_alpha = git_branch != 'master'
+  if is_alpha
+    UI.message "Setting plist values for Alpha build"
+  else
+    UI.message "Setting plist values for Normal build"
+  end
+  backup_file(path: "Provenance/Provenance-Info.plist")
+  backup_file(path: "ProvenanceTV/Info.plist")
+  backup_file(path: "Spotlight/Info.plist")
+  backup_file(path: "TopShelf/Info.plist")
+
+  plist_set(normal: is_alpha)
+end
+
+desc "Resets the bundle id and app name after build"
+lane :plist_reset do
+  restore_file(path: "Provenance/Provenance-Info.plist")
+  restore_file(path: "ProvenanceTV/Info.plist")
+  restore_file(path: "Spotlight/Info.plist")
+  restore_file(path: "TopShelf/Info.plist")
+  # plist_set(normal: true)
+end
+
+private_lane :reset_enviroment do
+  plist_reset
+  # codesign_toggle(automatic: true)
+  # Make sure our directory is clean, except for changes Fastlane has made
+  clean_build_artifacts
+end
+
+private_lane :codesign_toggle do |options|
+  load_keys
+
+  automatic = options[:automatic]
+  team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+  disable_automatic_code_signing(path: "Provenance.xcodeproj",
+    targets: ["Provenance"],
+    code_sign_identity: "iPhone Distribution",
+    profile_name: "match AdHoc #{$dev_domain}.provenance",
+    bundle_identifier: "#{$dev_domain}.provenance",
+    use_automatic_signing: automatic,
+    team_id: team_id)
+
+  disable_automatic_code_signing(path: "Provenance.xcodeproj",
+    targets: ["Spotlight"],
+    code_sign_identity: "iPhone Distribution",
+    profile_name: "match AdHoc #{$dev_domain}.provenance.extension.spotlight",
+    bundle_identifier: "#{$dev_domain}.provenance.extension.spotlight",
+    use_automatic_signing: automatic,
+    team_id: team_id)
+end
+
+private_lane :plist_set do |options|
+  load_keys
+  normal = options.fetch(:normal, true)
+  suffix = normal ? "" : ".alpha"
+  display_suffix = normal ? "" : " α" # or Beta β
+  display_name = "$(TARGET_NAME)#{display_suffix}"
+
+  # -- Update bundle names and ids
+  # - iOS
+  update_info_plist(
+    plist_path: "Provenance/Provenance-Info.plist",
+    display_name: display_name,
+    app_identifier: "#{$dev_domain}.provenance#{suffix}"
+  )
+
+  # - Spotlight
+  update_info_plist(
+    plist_path: "Spotlight/Info.plist",
+    display_name: display_name,
+    app_identifier: "#{$dev_domain}.provenance#{suffix}.extension.spotlight"
+  )
+
+  # - tvOS
+  # Use the same bundle ID as iOS so it's 'universal install'
+  update_info_plist(
+    plist_path: "ProvenanceTV/Info.plist",
+    display_name: display_name,
+    app_identifier: "#{$dev_domain}.provenance#{suffix}"
+  )
+
+  # - Top Shelf
+  update_info_plist(
+    plist_path: "TopShelf/Info.plist",
+    display_name: display_name,
+    app_identifier: "#{$dev_domain}.provenance#{suffix}.topshelf-extension"
+  )
+end

@@ -1,0 +1,171 @@
+body
+{
+ background-color: #000000;
+ color: #e0ffe0;
+ margin-top: 0px;
+}
+
+a:link
+{
+ color: #90cfff;
+}
+
+a:visited
+{
+ color: #e0ffe0;
+}
+
+a:hover
+{
+ color: #FF00FF;
+}
+
+.ContentBox
+{
+ clear: both;
+ border: 1px solid #004000;
+ margin-bottom: 1em;
+}
+
+.ContentBoxBody
+{
+ border: 1px solid #004010;
+ border-top: none;
+ padding: 0.5em;
+ background-color: #000010;
+}
+
+.ContentBoxBody h3
+{
+ background-color: #001030;
+ padding: 0.2em;
+ font-size: 100%;
+ margin: 0px;
+}
+
+.ContentBoxSub
+{
+ border: 1px solid #004000;
+ margin-bottom: 1em;
+}
+
+.ContentBoxBodySub
+{
+ padding: 0.5em;
+}
+
+h2.ContentBoxHead
+{
+ margin: 0px;
+ font-size: 100%;
+ font-weight: bold; 
+ border: 1px solid black;
+ border-bottom: 1px solid #00453e;
+ background-color: #000000;
+ background-image: url('headerbg.png');
+ background-repeat: repeat-x;
+ color: #e0ffe0;
+ padding: 0.5em;
+ padding-left: 0.2em;
+}
+
+.CopyrightBox
+{
+ border: 1px solid #808080;
+ padding: 0.3em;
+ font-style: italic;
+ font-size: small;
+ background-color: #101010;
+}
+
+.NavBox
+{
+ font-size: 1.25em;
+ padding: 0.5em;
+ clear:both;
+ text-align: center;
+}
+
+.NavBox a
+{
+ text-decoration: none;
+ padding: 4px 12px 4px 12px;
+ border: 1px solid #002050;
+}
+
+.NavBox a:hover
+{
+ text-decoration: none; 
+ background-color: #002020;
+}
+
+acronym
+{
+ text-decoration: none;
+ border: 0px;
+}
+
+h1
+{
+ padding: 0px;
+ border: 0px;
+ margin: 0px;
+}
+
+img
+{
+ border: 0px;
+}
+
+/*
+.RowA
+{
+ background-color: #000000;
+}
+
+.RowB
+{
+ background-color: #002010;
+}
+
+.RowB .ColC, .RowB .ColD
+{
+ background-color: #001020;
+}
+*/
+
+.RowSpacer
+{
+ height: 1em;
+ background-color: #002010;
+/*
+ background-image: url('headerbg.png');
+ background-repeat: repeat-x;
+*/
+}
+
+tr.TableHeader
+{
+
+}
+
+th
+{
+ white-space: nowrap;
+ font-size: 1em;
+ background-image: url('headerbg.png');
+ background-repeat: repeat-x;
+
+ padding-left: 0.75em;
+ padding-right: 0.75em;
+ padding-top: 0.5em;
+ padding-bottom: 0.5em;
+}
+
+td
+{
+ padding-left: 0.75em;
+ padding-right: 0.5em;
+ padding-top: 0.5em;
+ padding-bottom: 0.5em;
+}

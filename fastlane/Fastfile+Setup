@@ -1,0 +1,94 @@
+ # TODO: Make keys file from this
+  # desc 'Setup fastlane enviroment'
+  # lane :setup_fastlane do
+  #   if UI.interactive?
+  #     apple_id = UI.input "Please enter your Apple Development ID (usually e-mail address): "
+  #     # password = UI.password "Please enter your iTunes Connect password (this is securely encrypted in your keychain. We will never access that information directly): "
+  #     $dev_domain = UI.input "Please enter your developer domain as {com,org,net}.{NAME} (ie; org.provenance-emu will be replaced with com.johnnyappleseed if you're Johnny Appleseed on iTunes connect.): "
+  #     if UI.confirm("Do you belong to multiple development teams (usually no)")
+  #       team_id = UI.input "Please enter your iTunes Dev portal team number:"
+  #       itc_team_id = UI.input "Please enter your iTunes Connect team number: (You can leave blank if you don't intend to use iTunes Connect)"
+  #     end
+  #   end
+  # end
+
+  desc 'User Setup'
+  desc 'Work in progress'
+  private_lane :user_setup do
+    UI.message "This lane will help you setup Provenance for signing and build."
+    #UI.success "Successfully finished processing (usually green)"
+    #UI.error "Wahaha, what's going on here! (usually red)"
+    #UI.important "Make sure to use Windows (usually yellow)"
+
+    #UI.header "Inputs" # a big box
+
+    apple_id = UI.input("What's your Apple ID login? (usually an e-mail address)")
+    apple_pass = UI.password("Your password please: ") # password inputs are hidden
+    $dev_domain = UI.input("What's your developer domain (usually com.yourname)?\nThis will be used to generate unique App Bundle ids to your developer account.\neg; Official releases from the Provenance team use 'com.provenance'. You cannot use 'com.provenance' for your personal account, iOS Developer portal will not allow craeting signing certificates if an app already exists with that ID.")
+
+    app_id = "#{$dev_domain}.provenance"
+    spotlight_id = "#{$dev_domain}.provenance.extension.spotlight"
+    topshelf_id = "#{$dev_domain}.provenance.topshelf-extension"
+
+    if UI.confirm("Do you want to generate new app entries in your developer account??")
+      produce(
+        username: apple_id,
+        app_identifier: app_id,
+        app_name: 'Provenance',
+        language: 'English',
+        # sku: '123',
+        # team_name: 'SunApps GmbH', # only necessary when in multiple teams
+
+        # Optional
+        # App services can be enabled during app creation
+        enable_services: {
+          # TODO: Setup app groups
+          #app_group: 'on',               # Valid values: 'on', 'off'
+          apple_pay: 'off',               # Valid values: 'on', 'off'
+          associated_domains: 'off',      # Valid values: 'on', 'off'
+          #data_protection: "complete",   # Valid values: "complete", "unlessopen", "untilfirstauth",
+          game_center: 'off',             # Valid values: 'on', 'off'
+          health_kit: 'off',              # Valid values: 'on', 'off'
+          home_kit: 'off',                # Valid values: 'on', 'off'
+          hotspot: 'off',                 # Valid values: 'on', 'off'
+          #icloud: "cloudkit",            # Valid values: "legacy", "cloudkit"
+          in_app_purchase: 'off',         # Valid values: 'on', 'off'
+          inter_app_audio: 'off',         # Valid values: 'on', 'off'
+          passbook: 'off',                # Valid values: 'on', 'off'
+          multipath: 'off',               # Valid values: 'on', 'off'
+          network_extensions: 'off',      # Valid values: 'on', 'off'
+          nfc_tag_reading: 'off',         # Valid values: 'on', 'off'
+          personal_vpn: 'off',            # Valid values: 'on', 'off'
+          push_notification: 'off',       # Valid values: 'on', 'off'
+          siri_kit: 'off',                # Valid values: 'on', 'off'
+          wallet: 'off',                  # Valid values: 'on', 'off'
+          wireless_accessory: 'off',      # Valid values: 'on', 'off'
+        }
+      )
+    end
+
+    UI.message 'We will now try to create or update signing certificates for your developer account'
+    ###### A "Dropdown" for the user
+    # project = UI.select("Select your project: ", ["Test Project", "Test Workspace"])
+
+    # UI.success("Okay #{name}, you selected '#{project}'")
+
+    ###### To run a command use
+    # FastlaneCore::CommandExecutor.execute(command: "ls",
+    #                                     print_all: true,
+    #                                         error: proc do |error_output|
+    #                                           # handle error here
+    #                                         end)
+
+    ###### or if you just want to receive a simple value use this only if the command doesn't take long
+    # diff = Helper.backticks("git diff")
+
+    ###### fastlane "crash" because of a user error everything that is caused by the user and is not unexpected
+    # UI.user_error!("You don't have a project in the current directory")
+
+    ###### an actual crash when something unexpected happened
+    # UI.crash!("Network timeout")
+
+    ###### a deprecation message
+    # UI.deprecated("The '--key' parameter is deprecated")
+  end

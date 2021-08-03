@@ -28,6 +28,8 @@
 #import "TPCircularBuffer.h"
 #import "OERingBuffer.h"
 #import "PVEmulatorCore.h"
+#import "DebugUtils.h"
+#import "PVLogging.h"
 
 @import AVFoundation;
 
@@ -66,6 +68,7 @@ static void StretchSamples(int16_t *outBuf, const int16_t *inBuf,
         }
     }
 }
+# include <mach/mach_time.h>
 
 OSStatus RenderCallback(void                       *in,
                         AudioUnitRenderActionFlags *ioActionFlags,
@@ -81,21 +84,17 @@ OSStatus RenderCallback(void                       *in,
                         UInt32                      inNumberFrames,
                         AudioBufferList            *ioData)
 {
+//	Float64 timeAtBeginning = convertHostTimeToSeconds(inTimestamp->mHostTime);
+
+
     OEGameAudioContext *context = (OEGameAudioContext*)in;
     int availableBytes = 0;
     void *head = TPCircularBufferTail(context->buffer, &availableBytes);
     int bytesRequested = inNumberFrames * context->bytesPerSample * context->channelCount;
     availableBytes = MIN(availableBytes, bytesRequested);
-    int leftover = bytesRequested - availableBytes;
     char *outBuffer = ioData->mBuffers[0].mData;
 
-    if (leftover > 0 && context->bytesPerSample==2) {
-        // time stretch
-        // FIXME this works a lot better with a larger buffer
-        int framesRequested = inNumberFrames;
-        int framesAvailable = availableBytes / (context->bytesPerSample * context->channelCount);
-        StretchSamples((int16_t*)outBuffer, head, framesRequested, framesAvailable, context->channelCount);
-    } else if (availableBytes) {
+    if (availableBytes) {
         memcpy(outBuffer, head, availableBytes);
     } else {
         memset(outBuffer, 0, bytesRequested);
@@ -110,6 +109,7 @@ OSStatus RenderCallback(void                       *in,
     OEGameAudioContext *_contexts;
     NSNumber           *_outputDeviceID; // nil if no output device has been set (use default)
 }
+@property (readwrite, nonatomic, assign) BOOL running;
 @end
 
 @implementation OEGameAudio
@@ -129,11 +129,18 @@ OSStatus RenderCallback(void                       *in,
         NSError *error;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
         if(error) {
-            NSLog(error);
+            ELOG(@"Audio Error: %@", error.description);
         } else {
-            //NSLog(@"Successfully set audio session to ambient");
+            ILOG(@"Successfully set audio session to ambient");
         }
-        
+
+		// You can adjust the latency of RemoteIO (and, in fact, any other audio framework) by setting the kAudioSessionProperty_PreferredHardwareIOBufferDuration property
+//		float aBufferLength = 0.005; // In seconds
+//		AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(aBufferLength), &aBufferLength);
+
+		_outputDeviceID = 0;
+		volume = 1;
+
         gameCore = core;
         [self createGraph];
     }
@@ -153,11 +160,13 @@ OSStatus RenderCallback(void                       *in,
 - (void)pauseAudio
 {
     [self stopAudio];
+	self.running = NO;
 }
 
 - (void)startAudio
 {
     [self createGraph];
+	self.running = YES;
 }
 
 - (void)stopAudio
@@ -166,6 +175,7 @@ OSStatus RenderCallback(void                       *in,
     AUGraphStop(mGraph);
     AUGraphClose(mGraph);
     AUGraphUninitialize(mGraph);
+	self.running = NO;
 }
 
 - (void)createGraph
@@ -178,11 +188,11 @@ OSStatus RenderCallback(void                       *in,
     
     //Create the graph
     err = NewAUGraph(&mGraph);
-    if(err) DLog(@"NewAUGraph failed");
+    if(err) ELOG(@"NewAUGraph failed");
     
     //Open the graph
     err = AUGraphOpen(mGraph);
-    if(err) DLog(@"couldn't open graph");
+    if(err) ELOG(@"couldn't open graph");
     
     AudioComponentDescription desc;
     
@@ -194,10 +204,10 @@ OSStatus RenderCallback(void                       *in,
 
     //Create the output node
     err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mOutputNode);
-    if(err) DLog(@"couldn't create node for output unit");
+    if(err) ELOG(@"couldn't create node for output unit");
     
     err = AUGraphNodeInfo(mGraph, mOutputNode, NULL, &mOutputUnit);
-    if(err) DLog(@"couldn't get output from node");
+    if(err) ELOG(@"couldn't get output from node");
     
     
     desc.componentType = kAudioUnitType_Mixer;
@@ -206,10 +216,10 @@ OSStatus RenderCallback(void                       *in,
 
     //Create the mixer node
     err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mMixerNode);
-    if(err) DLog(@"couldn't create node for file player");
+    if(err) ELOG(@"couldn't create node for file player");
     
     err = AUGraphNodeInfo(mGraph, mMixerNode, NULL, &mMixerUnit);
-    if(err) DLog(@"couldn't get player unit from node");
+    if(err) ELOG(@"couldn't get player unit from node");
 
     desc.componentType = kAudioUnitType_FormatConverter;
     desc.componentSubType = kAudioUnitSubType_AUConverter;
@@ -221,14 +231,15 @@ OSStatus RenderCallback(void                       *in,
     _contexts = malloc(sizeof(OEGameAudioContext) * bufferCount);
     for (int i = 0; i < bufferCount; ++i)
     {
-        _contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), [gameCore channelCountForBuffer:i], [gameCore audioBitDepth]/8};
+		TPCircularBufferClear(&([gameCore ringBufferAtIndex:i]->buffer));
+		_contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), [gameCore channelCountForBuffer:i], [gameCore audioBitDepth]/8};
         
         //Create the converter node
         err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mConverterNode);
-        if(err)  DLog(@"couldn't create node for converter");
+        if(err)  ELOG(@"couldn't create node for converter");
         
         err = AUGraphNodeInfo(mGraph, mConverterNode, NULL, &mConverterUnit);
-        if(err) DLog(@"couldn't get player unit from converter");
+        if(err) ELOG(@"couldn't get player unit from converter");
         
         
         AURenderCallbackStruct renderStruct;
@@ -237,9 +248,12 @@ OSStatus RenderCallback(void                       *in,
         
         err = AudioUnitSetProperty(mConverterUnit, kAudioUnitProperty_SetRenderCallback,
                                    kAudioUnitScope_Input, 0, &renderStruct, sizeof(AURenderCallbackStruct));
-        if(err) DLog(@"Couldn't set the render callback");
-        else DLog(@"Set the render callback");
-        
+        if(err) {
+            ELOG(@"Couldn't set the render callback");
+        }
+        else {
+            DLOG(@"Set the render callback");
+        }
         AudioStreamBasicDescription mDataFormat;
         NSUInteger channelCount = _contexts[i].channelCount;
         NSUInteger bytesPerSample = _contexts[i].bytesPerSample;
@@ -254,18 +268,24 @@ OSStatus RenderCallback(void                       *in,
         mDataFormat.mBitsPerChannel   = 8 * bytesPerSample;
         
         err = AudioUnitSetProperty(mConverterUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mDataFormat, sizeof(AudioStreamBasicDescription));
-        if(err) DLog(@"couldn't set player's input stream format");
-        else DLog(@"Set the play'ers input stream format");
-        
+        if(err) {
+            ELOG(@"couldn't set player's input stream format");
+        } {
+            DLOG(@"Set the play'ers input stream format");
+        }
+
         err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, i);
-        if(err) DLog(@"Couldn't connect the converter to the mixer");
-        else DLog(@"Conncted the converter to the mixer");
+        if(err) { ELOG(@"Couldn't connect the converter to the mixer"); }
+        else { ELOG(@"Connected the converter to the mixer"); }
     }
     // connect the player to the output unit (stream format will propagate)
          
     err = AUGraphConnectNodeInput(mGraph, mMixerNode, 0, mOutputNode, 0);
-    if(err) DLog(@"Could not connect the input of the output");
-    else DLog(@"Conncted input of the output");
+    if(err) {
+        ELOG(@"Could not connect the input of the output");
+    } {
+        DLOG(@"Connected input of the output");
+    }
     
     //AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, [[[GameDocumentController sharedDocumentController] preferenceController] volume] ,0);
     AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, 1.0 ,0);
@@ -273,15 +293,15 @@ OSStatus RenderCallback(void                       *in,
     AudioDeviceID outputDeviceID = [_outputDeviceID unsignedIntValue];
 //    if(outputDeviceID != 0)
     err = AudioUnitSetProperty(mOutputUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &outputDeviceID, sizeof(outputDeviceID));
-    if(err) DLog(@"couldn't set device properties");
+    if(err){ ELOG(@"couldn't set device properties"); }
 
     err = AUGraphInitialize(mGraph);
-    if(err) DLog(@"couldn't initialize graph");
-    else DLog(@"Initialized the graph");
+    if(err){ ELOG(@"couldn't initialize graph"); }
+    else { DLOG(@"Initialized the graph"); }
 
     err = AUGraphStart(mGraph);
-    if(err) DLog(@"couldn't start graph");
-    else DLog(@"Started the graph");
+    if(err){ ELOG(@"couldn't start graph"); }
+    else { DLOG(@"Started the graph"); }
 	
         //    CFShow(mGraph);
     [self setVolume:[self volume]];

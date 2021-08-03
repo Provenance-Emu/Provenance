@@ -41,6 +41,7 @@
 #import <dns_sd.h>
 
 #import "GCDWebServerPrivate.h"
+@import PVSupport;
 
 #if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 #define kDefaultPort 80
@@ -73,15 +74,9 @@ NSString* const GCDWebServerAuthenticationMethod_DigestAccess = @"DigestAccess";
 
 #if defined(__GCDWEBSERVER_LOGGING_FACILITY_BUILTIN__)
 #if DEBUG
-GCDWebServerLoggingLevel GCDWebServerLogLevel = kGCDWebServerLoggingLevel_Debug;
+GCDWebServerLoggingLevel GCDWebServerLogLevel = kGCDWebServerLoggingLevel_Warning;
 #else
-GCDWebServerLoggingLevel GCDWebServerLogLevel = kGCDWebServerLoggingLevel_Info;
-#endif
-#elif defined(__GCDWEBSERVER_LOGGING_FACILITY_COCOALUMBERJACK__)
-#if DEBUG
-DDLogLevel GCDWebServerLogLevel = DDLogLevelDebug;
-#else
-DDLogLevel GCDWebServerLogLevel = DDLogLevelInfo;
+GCDWebServerLoggingLevel GCDWebServerLogLevel = kGCDWebServerLoggingLevel_Warning;
 #endif
 #endif
 
@@ -132,18 +127,9 @@ static void _ExecuteMainThreadRunLoopSources() {
 
 #endif
 
-@interface GCDWebServerHandler () {
-@private
-  GCDWebServerMatchBlock _matchBlock;
-  GCDWebServerAsyncProcessBlock _asyncProcessBlock;
-}
-@end
-
 @implementation GCDWebServerHandler
 
-@synthesize matchBlock = _matchBlock, asyncProcessBlock = _asyncProcessBlock;
-
-- (id)initWithMatchBlock:(GCDWebServerMatchBlock)matchBlock asyncProcessBlock:(GCDWebServerAsyncProcessBlock)processBlock {
+- (instancetype)initWithMatchBlock:(GCDWebServerMatchBlock _Nonnull)matchBlock asyncProcessBlock:(GCDWebServerAsyncProcessBlock _Nonnull)processBlock {
   if ((self = [super init])) {
     _matchBlock = [matchBlock copy];
     _asyncProcessBlock = [processBlock copy];
@@ -153,9 +139,7 @@ static void _ExecuteMainThreadRunLoopSources() {
 
 @end
 
-@interface GCDWebServer () {
-@private
-  id<GCDWebServerDelegate> __unsafe_unretained _delegate;
+@implementation GCDWebServer {
   dispatch_queue_t _syncQueue;
   dispatch_group_t _sourceGroup;
   NSMutableArray* _handlers;
@@ -164,15 +148,10 @@ static void _ExecuteMainThreadRunLoopSources() {
   CFRunLoopTimerRef _disconnectTimer;  // Accessed on main thread only
 
   NSDictionary* _options;
-  NSString* _serverName;
-  NSString* _authenticationRealm;
   NSMutableDictionary* _authenticationBasicAccounts;
   NSMutableDictionary* _authenticationDigestAccounts;
   Class _connectionClass;
-  BOOL _mapHEADToGET;
   CFTimeInterval _disconnectDelay;
-  dispatch_queue_priority_t _dispatchQueuePriority;
-  NSUInteger _port;
   dispatch_source_t _source4;
   dispatch_source_t _source6;
   CFNetServiceRef _registrationService;
@@ -191,13 +170,6 @@ static void _ExecuteMainThreadRunLoopSources() {
   BOOL _recording;
 #endif
 }
-@end
-
-@implementation GCDWebServer
-
-@synthesize delegate = _delegate, handlers = _handlers, port = _port, serverName = _serverName, authenticationRealm = _authenticationRealm,
-            authenticationBasicAccounts = _authenticationBasicAccounts, authenticationDigestAccounts = _authenticationDigestAccounts,
-            shouldAutomaticallyMapHEADToGET = _mapHEADToGET, dispatchQueuePriority = _dispatchQueuePriority;
 
 + (void)initialize {
   GCDWebServerInitializeFunctions();
@@ -268,20 +240,20 @@ static void _ExecuteMainThreadRunLoopSources() {
 - (void)willStartConnection:(GCDWebServerConnection*)connection {
   dispatch_sync(_syncQueue, ^{
 
-    GWS_DCHECK(_activeConnections >= 0);
-    if (_activeConnections == 0) {
+	  GWS_DCHECK(self->_activeConnections >= 0);
+	  if (self->_activeConnections == 0) {
       dispatch_async(dispatch_get_main_queue(), ^{
-        if (_disconnectTimer) {
-          CFRunLoopTimerInvalidate(_disconnectTimer);
-          CFRelease(_disconnectTimer);
-          _disconnectTimer = NULL;
+		  if (self->_disconnectTimer) {
+			CFRunLoopTimerInvalidate(self->_disconnectTimer);
+			CFRelease(self->_disconnectTimer);
+			  self->_disconnectTimer = NULL;
         }
-        if (_connected == NO) {
+		  if (self->_connected == NO) {
           [self _didConnect];
         }
       });
     }
-    _activeConnections += 1;
+	  self->_activeConnections += 1;
 
   });
 }
@@ -320,25 +292,27 @@ static void _ExecuteMainThreadRunLoopSources() {
 }
 
 - (void)didEndConnection:(GCDWebServerConnection*)connection {
+	MAKEWEAK(self);
   dispatch_sync(_syncQueue, ^{
-    GWS_DCHECK(_activeConnections > 0);
-    _activeConnections -= 1;
-    if (_activeConnections == 0) {
+	  MAKESTRONG(self);
+    GWS_DCHECK(strongself->_activeConnections > 0);
+    strongself->_activeConnections -= 1;
+    if (strongself->_activeConnections == 0) {
       dispatch_async(dispatch_get_main_queue(), ^{
-        if ((_disconnectDelay > 0.0) && (_source4 != NULL)) {
-          if (_disconnectTimer) {
-            CFRunLoopTimerInvalidate(_disconnectTimer);
-            CFRelease(_disconnectTimer);
+        if ((strongself->_disconnectDelay > 0.0) && (strongself->_source4 != NULL)) {
+          if (strongself->_disconnectTimer) {
+            CFRunLoopTimerInvalidate(strongself->_disconnectTimer);
+            CFRelease(strongself->_disconnectTimer);
           }
-          _disconnectTimer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + _disconnectDelay, 0.0, 0, 0, ^(CFRunLoopTimerRef timer) {
+			strongself->_disconnectTimer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + self->_disconnectDelay, 0.0, 0, 0, ^(CFRunLoopTimerRef timer) {
             GWS_DCHECK([NSThread isMainThread]);
-            [self _didDisconnect];
-            CFRelease(_disconnectTimer);
-            _disconnectTimer = NULL;
+            [strongself _didDisconnect];
+            CFRelease(strongself->_disconnectTimer);
+            strongself->_disconnectTimer = NULL;
           });
-          CFRunLoopAddTimer(CFRunLoopGetMain(), _disconnectTimer, kCFRunLoopCommonModes);
+          CFRunLoopAddTimer(CFRunLoopGetMain(), strongself->_disconnectTimer, kCFRunLoopCommonModes);
         } else {
-          [self _didDisconnect];
+          [strongself _didDisconnect];
         }
       });
     }
@@ -497,8 +471,9 @@ static inline NSString* _EncodeBase64(NSString* string) {
 - (dispatch_source_t)_createDispatchSourceWithListeningSocket:(int)listeningSocket isIPv6:(BOOL)isIPv6 {
   dispatch_group_enter(_sourceGroup);
   dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, listeningSocket, 0, dispatch_get_global_queue(_dispatchQueuePriority, 0));
+	MAKEWEAK(self);
   dispatch_source_set_cancel_handler(source, ^{
-
+	  MAKESTRONG(self);
     @autoreleasepool {
       int result = close(listeningSocket);
       if (result != 0) {
@@ -507,11 +482,11 @@ static inline NSString* _EncodeBase64(NSString* string) {
         GWS_LOG_DEBUG(@"Did close %s listening socket %i", isIPv6 ? "IPv6" : "IPv4", listeningSocket);
       }
     }
-    dispatch_group_leave(_sourceGroup);
+    dispatch_group_leave(strongself->_sourceGroup);
 
   });
   dispatch_source_set_event_handler(source, ^{
-
+	  MAKESTRONG(self);
     @autoreleasepool {
       struct sockaddr_storage remoteSockAddr;
       socklen_t remoteAddrLen = sizeof(remoteSockAddr);
@@ -532,7 +507,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
         int noSigPipe = 1;
         setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, &noSigPipe, sizeof(noSigPipe));  // Make sure this socket cannot generate SIG_PIPE
 
-        GCDWebServerConnection* connection = [[_connectionClass alloc] initWithServer:self localAddress:localAddress remoteAddress:remoteAddress socket:socket];  // Connection will automatically retain itself while opened
+        GCDWebServerConnection* connection = [[strongself->_connectionClass alloc] initWithServer:self localAddress:localAddress remoteAddress:remoteAddress socket:socket];  // Connection will automatically retain itself while opened
         [connection self];  // Prevent compiler from complaining about unused variable / useless statement
       } else {
         GWS_LOG_ERROR(@"Failed accepting %s socket: %s (%i)", isIPv6 ? "IPv6" : "IPv4", strerror(errno), errno);
@@ -589,18 +564,18 @@ static inline NSString* _EncodeBase64(NSString* string) {
     _authenticationBasicAccounts = [[NSMutableDictionary alloc] init];
     NSDictionary* accounts = _GetOption(_options, GCDWebServerOption_AuthenticationAccounts, @{});
     [accounts enumerateKeysAndObjectsUsingBlock:^(NSString* username, NSString* password, BOOL* stop) {
-      [_authenticationBasicAccounts setObject:_EncodeBase64([NSString stringWithFormat:@"%@:%@", username, password]) forKey:username];
+		[self->_authenticationBasicAccounts setObject:_EncodeBase64([NSString stringWithFormat:@"%@:%@", username, password]) forKey:username];
     }];
   } else if ([authenticationMethod isEqualToString:GCDWebServerAuthenticationMethod_DigestAccess]) {
     _authenticationRealm = [_GetOption(_options, GCDWebServerOption_AuthenticationRealm, _serverName) copy];
     _authenticationDigestAccounts = [[NSMutableDictionary alloc] init];
     NSDictionary* accounts = _GetOption(_options, GCDWebServerOption_AuthenticationAccounts, @{});
     [accounts enumerateKeysAndObjectsUsingBlock:^(NSString* username, NSString* password, BOOL* stop) {
-      [_authenticationDigestAccounts setObject:GCDWebServerComputeMD5Digest(@"%@:%@:%@", username, _authenticationRealm, password) forKey:username];
+		[self->_authenticationDigestAccounts setObject:GCDWebServerComputeMD5Digest(@"%@:%@:%@", username, self->_authenticationRealm, password) forKey:username];
     }];
   }
   _connectionClass = _GetOption(_options, GCDWebServerOption_ConnectionClass, [GCDWebServerConnection class]);
-  _mapHEADToGET = [_GetOption(_options, GCDWebServerOption_AutomaticallyMapHEADToGET, @YES) boolValue];
+  _shouldAutomaticallyMapHEADToGET = [_GetOption(_options, GCDWebServerOption_AutomaticallyMapHEADToGET, @YES) boolValue];
   _disconnectDelay = [_GetOption(_options, GCDWebServerOption_ConnectedStateCoalescingInterval, @1.0) doubleValue];
   _dispatchQueuePriority = [_GetOption(_options, GCDWebServerOption_DispatchQueuePriority, @(DISPATCH_QUEUE_PRIORITY_DEFAULT)) longValue];
 
@@ -661,7 +636,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
   GWS_LOG_INFO(@"%@ started on port %i and reachable at %@", [self class], (int)_port, self.serverURL);
   if ([_delegate respondsToSelector:@selector(webServerDidStart:)]) {
     dispatch_async(dispatch_get_main_queue(), ^{
-      [_delegate webServerDidStart:self];
+		[self->_delegate webServerDidStart:self];
     });
   }
 
@@ -722,10 +697,10 @@ static inline NSString* _EncodeBase64(NSString* string) {
   _authenticationDigestAccounts = nil;
 
   dispatch_async(dispatch_get_main_queue(), ^{
-    if (_disconnectTimer) {
-      CFRunLoopTimerInvalidate(_disconnectTimer);
-      CFRelease(_disconnectTimer);
-      _disconnectTimer = NULL;
+	  if (self->_disconnectTimer) {
+		CFRunLoopTimerInvalidate(self->_disconnectTimer);
+		CFRelease(self->_disconnectTimer);
+		self->_disconnectTimer = NULL;
       [self _didDisconnect];
     }
   });
@@ -733,7 +708,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
   GWS_LOG_INFO(@"%@ stopped", [self class]);
   if ([_delegate respondsToSelector:@selector(webServerDidStop:)]) {
     dispatch_async(dispatch_get_main_queue(), ^{
-      [_delegate webServerDidStop:self];
+		[self->_delegate webServerDidStop:self];
     });
   }
 }
@@ -1115,8 +1090,6 @@ static inline NSString* _EncodeBase64(NSString* string) {
 + (void)setLogLevel:(int)level {
 #if defined(__GCDWEBSERVER_LOGGING_FACILITY_XLFACILITY__)
   [XLSharedFacility setMinLogLevel:level];
-#elif defined(__GCDWEBSERVER_LOGGING_FACILITY_COCOALUMBERJACK__)
-  GCDWebServerLogLevel = level;
 #elif defined(__GCDWEBSERVER_LOGGING_FACILITY_BUILTIN__)
   GCDWebServerLogLevel = level;
 #endif
@@ -1294,9 +1267,9 @@ static void _LogResult(NSString* format, ...) {
                         success = NO;
 #if !TARGET_OS_IPHONE
 #if DEBUG
-                        if (GCDWebServerIsTextContentType([expectedHeaders objectForKey:@"Content-Type"])) {
-                          NSString* expectedPath = [NSTemporaryDirectory() stringByAppendingPathComponent:[[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"txt"]];
-                          NSString* actualPath = [NSTemporaryDirectory() stringByAppendingPathComponent:[[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"txt"]];
+                        if (GCDWebServerIsTextContentType((NSString*)[expectedHeaders objectForKey:@"Content-Type"])) {
+                          NSString* expectedPath = [NSTemporaryDirectory() stringByAppendingPathComponent:(NSString*)[[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"txt"]];
+                          NSString* actualPath = [NSTemporaryDirectory() stringByAppendingPathComponent:(NSString*)[[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"txt"]];
                           if ([expectedBody writeToFile:expectedPath atomically:YES] && [actualBody writeToFile:actualPath atomically:YES]) {
                             NSTask* task = [[NSTask alloc] init];
                             [task setLaunchPath:@"/usr/bin/opendiff"];

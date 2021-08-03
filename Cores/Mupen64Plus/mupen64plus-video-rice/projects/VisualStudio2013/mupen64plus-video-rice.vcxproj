@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7D4AFF6A-B7D9-4C25-975A-038B8079098E}</ProjectGuid>
+    <RootNamespace>mupen64plusvideorice</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>user32.lib;gdi32.lib;opengl32.lib;glu32.lib;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDL.lib;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\lib\libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>user32.lib;gdi32.lib;opengl32.lib;glu32.lib;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDL.lib;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\lib\libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Blender.cpp" />
+    <ClCompile Include="..\..\src\liblinux\BMGImage.c" />
+    <ClCompile Include="..\..\src\liblinux\BMGUtils.c" />
+    <ClCompile Include="..\..\src\liblinux\bmp.c" />
+    <ClCompile Include="..\..\src\Combiner.cpp" />
+    <ClCompile Include="..\..\src\CombinerTable.cpp" />
+    <ClCompile Include="..\..\src\Config.cpp" />
+    <ClCompile Include="..\..\src\ConvertImage.cpp" />
+    <ClCompile Include="..\..\src\ConvertImage16.cpp" />
+    <ClCompile Include="..\..\src\Debugger.cpp" />
+    <ClCompile Include="..\..\src\DecodedMux.cpp" />
+    <ClCompile Include="..\..\src\DeviceBuilder.cpp" />
+    <ClCompile Include="..\..\src\FrameBuffer.cpp" />
+    <ClCompile Include="..\..\src\GeneralCombiner.cpp" />
+    <ClCompile Include="..\..\src\GraphicsContext.cpp" />
+    <ClCompile Include="..\..\src\OGLCombiner.cpp" />
+    <ClCompile Include="..\..\src\OGLDecodedMux.cpp" />
+    <ClCompile Include="..\..\src\OGLExtCombiner.cpp" />
+    <ClCompile Include="..\..\src\OGLExtensions.cpp" />
+    <ClCompile Include="..\..\src\OGLExtRender.cpp" />
+    <ClCompile Include="..\..\src\OGLFragmentShaders.cpp" />
+    <ClCompile Include="..\..\src\OGLGraphicsContext.cpp" />
+    <ClCompile Include="..\..\src\OGLRender.cpp" />
+    <ClCompile Include="..\..\src\OGLRenderExt.cpp" />
+    <ClCompile Include="..\..\src\OGLTexture.cpp" />
+    <ClCompile Include="..\..\src\osal_dynamiclib_win32.c" />
+    <ClCompile Include="..\..\src\osal_files_win32.c" />
+    <ClCompile Include="..\..\src\liblinux\pngrw.c" />
+    <ClCompile Include="..\..\src\Render.cpp" />
+    <ClCompile Include="..\..\src\RenderBase.cpp" />
+    <ClCompile Include="..\..\src\RenderExt.cpp" />
+    <ClCompile Include="..\..\src\RenderTexture.cpp" />
+    <ClCompile Include="..\..\src\RSP_Parser.cpp" />
+    <ClCompile Include="..\..\src\RSP_S2DEX.cpp" />
+    <ClCompile Include="..\..\src\Texture.cpp" />
+    <ClCompile Include="..\..\src\TextureFilters.cpp" />
+    <ClCompile Include="..\..\src\TextureFilters_2xsai.cpp" />
+    <ClCompile Include="..\..\src\TextureFilters_hq2x.cpp" />
+    <ClCompile Include="..\..\src\TextureFilters_hq4x.cpp" />
+    <ClCompile Include="..\..\src\TextureManager.cpp" />
+    <ClCompile Include="..\..\src\VectorMath.cpp" />
+    <ClCompile Include="..\..\src\Video.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Blender.h" />
+    <ClInclude Include="..\..\src\liblinux\BMGDLL.h" />
+    <ClInclude Include="..\..\src\liblinux\BMGImage.h" />
+    <ClInclude Include="..\..\src\liblinux\BMGLibPNG.h" />
+    <ClInclude Include="..\..\src\liblinux\BMGUtils.h" />
+    <ClInclude Include="..\..\src\COLOR.h" />
+    <ClInclude Include="..\..\src\Combiner.h" />
+    <ClInclude Include="..\..\src\CombinerDefs.h" />
+    <ClInclude Include="..\..\src\Config.h" />
+    <ClInclude Include="..\..\src\ConvertImage.h" />
+    <ClInclude Include="..\..\src\CritSect.h" />
+    <ClInclude Include="..\..\src\CSortedList.h" />
+    <ClInclude Include="..\..\src\Debugger.h" />
+    <ClInclude Include="..\..\src\DecodedMux.h" />
+    <ClInclude Include="..\..\src\DeviceBuilder.h" />
+    <ClInclude Include="..\..\src\ExtendedRender.h" />
+    <ClInclude Include="..\..\src\FrameBuffer.h" />
+    <ClInclude Include="..\..\src\GeneralCombiner.h" />
+    <ClInclude Include="..\..\src\GraphicsContext.h" />
+    <ClInclude Include="..\..\src\IColor.h" />
+    <ClInclude Include="..\..\src\liblinux\inffixed.h" />
+    <ClInclude Include="..\..\src\liblinux\jpegrw.h" />
+    <ClInclude Include="..\..\src\OGLCombiner.h" />
+    <ClInclude Include="..\..\src\OGLDebug.h" />
+    <ClInclude Include="..\..\src\OGLDecodedMux.h" />
+    <ClInclude Include="..\..\src\OGLExtCombiner.h" />
+    <ClInclude Include="..\..\src\OGLExtensions.h" />
+    <ClInclude Include="..\..\src\OGLExtRender.h" />
+    <ClInclude Include="..\..\src\OGLFragmentShaders.h" />
+    <ClInclude Include="..\..\src\OGLGraphicsContext.h" />
+    <ClInclude Include="..\..\src\OGLRender.h" />
+    <ClInclude Include="..\..\src\OGLTexture.h" />
+    <ClInclude Include="..\..\src\osal_dynamiclib.h" />
+    <ClInclude Include="..\..\src\osal_files.h" />
+    <ClInclude Include="..\..\src\osal_preproc.h" />
+    <ClInclude Include="..\..\src\liblinux\pngrw.h" />
+    <ClInclude Include="..\..\src\RDP_Texture.h" />
+    <ClInclude Include="..\..\src\Render.h" />
+    <ClInclude Include="..\..\src\RenderBase.h" />
+    <ClInclude Include="..\..\src\RenderTexture.h" />
+    <ClInclude Include="..\..\src\RSP_GBI0.h" />
+    <ClInclude Include="..\..\src\RSP_GBI1.h" />
+    <ClInclude Include="..\..\src\RSP_GBI2.h" />
+    <ClInclude Include="..\..\src\RSP_GBI2_ext.h" />
+    <ClInclude Include="..\..\src\RSP_GBI_Others.h" />
+    <ClInclude Include="..\..\src\RSP_GBI_Sprite2D.h" />
+    <ClInclude Include="..\..\src\RSP_Parser.h" />
+    <ClInclude Include="..\..\src\RSP_S2DEX.h" />
+    <ClInclude Include="..\..\src\Texture.h" />
+    <ClInclude Include="..\..\src\TextureFilters.h" />
+    <ClInclude Include="..\..\src\TextureFilters_hq2x.h" />
+    <ClInclude Include="..\..\src\TextureFilters_hq4x.h" />
+    <ClInclude Include="..\..\src\TextureFilters_lq2x.h" />
+    <ClInclude Include="..\..\src\TextureManager.h" />
+    <ClInclude Include="..\..\src\liblinux\tiffrw.h" />
+    <ClInclude Include="..\..\src\Timing.h" />
+    <ClInclude Include="..\..\src\typedefs.h" />
+    <ClInclude Include="..\..\src\ucode.h" />
+    <ClInclude Include="..\..\src\UcodeDefs.h" />
+    <ClInclude Include="..\..\src\VectorMath.h" />
+    <ClInclude Include="..\..\src\version.h" />
+    <ClInclude Include="..\..\src\VertexShaderConstantDef.h" />
+    <ClInclude Include="..\..\src\Video.h" />
+    <ClInclude Include="..\..\src\liblinux\zconf.h" />
+    <ClInclude Include="..\..\src\liblinux\zlib.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,36 @@
+private_lane :badge_alpha do
+  version_number = get_version_number(target: 'Provenance')
+  build_number = ENV['build_number'] || number_of_commits(all: true)
+
+  if is_ci?
+    build_number = ci_build_number || build_number
+  end
+
+  version = version_number.to_s
+
+  add_badge(
+    shield: "#{version}-#{build_number}-blue",
+    alpha: true,
+    dark: false,
+    shield_no_resize: true,
+    glob: '/Provenance*/**/*.appiconset/*.{png,PNG}'
+  )
+end
+
+private_lane :badge_beta do
+  version_number = get_version_number(target: 'Provenance')
+
+  build_number = ENV['build_number'] || number_of_commits(all: true)
+
+  if is_ci?
+    build_number = ci_build_number || build_number
+  end
+
+  add_badge(
+    shield: "#{version_number}-#{build_number}-blue",
+    alpha: false,
+    dark: false,
+    shield_no_resize: true,
+    glob: '/Provenance*/**/*.appiconset/*.{png,PNG}'
+  )
+end

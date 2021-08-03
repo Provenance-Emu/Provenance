@@ -1,0 +1,343 @@
+desc 'Exports a new Developer Build'
+lane :build_developer do |options|
+  scheme = options.fetch(:scheme, 'Provenance-Release')
+  load_keys
+
+  build_app(
+    workspace: 'Provenance.xcworkspace',
+    scheme: scheme,
+    export_method: 'development',
+    configuration: 'Release',
+    codesigning_identity: 'iPhone Developer',
+    clean: false,
+    silent: true,
+    output_directory: 'Builds',
+    #output_name: ipa_name,
+    include_bitcode: false,
+    include_symbols: true,
+    #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+    export_options: {
+      method: 'development',
+      compileBitcode: false,
+      uploadBitcode: false
+    }
+  )
+end
+
+desc 'Exports a new AppStore Build'
+lane :build_appstore do
+  load_keys
+
+  build_app(
+    workspace: 'Provenance.xcworkspace',
+    scheme: 'Provenance-Release',
+    export_method: 'app-store', # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
+    configuration: 'Release',
+    # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+    clean: false,
+    silent: true,
+    #output_directory: output_directory,
+    #output_name: ipa_name,
+    include_bitcode: false,
+    include_symbols: false,
+    #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+    export_options: {
+      method: 'app-store',
+      # manifest: {
+      #   appURL: "https://provenance-emu.com/builds/#{ipa_name}",
+        # displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
+        # fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
+      # },
+      provisioningProfiles: {
+        "#{$dev_domain}.provenance" => "match AppStore #{$dev_domain}.provenance",
+        "#{$dev_domain}.provenance.extension.spotlight" => "match AppStore #{$dev_domain}.provenance.extension.spotlight"
+      },
+      compileBitcode: false,
+      uploadBitcode: false,
+    }
+  )
+end
+
+desc 'Provenace Team: Push a new beta build to TestFlight'
+lane :build_beta do
+  build_appstore
+end
+
+desc 'Provenace Team: Push a new alpha build to Hockeyapp'
+lane :build_alpha do |options|
+  load_keys
+
+  platform = options.fetch(:platform, 'iOS')
+  type = options.fetch(:type, 'adhoc')
+
+  is_tvOS = platform == 'tvOS'
+  is_ios = platform == 'iOS'
+
+  ios_ids = [
+    "#{$dev_domain}.provenance",
+    "#{$dev_domain}.provenance.extension.spotlight"
+  ]
+
+  tvos_ids = [
+    "#{$dev_domain}.provenance",
+    "#{$dev_domain}.provenance.topshelf-extension"
+  ]
+
+  ios_platform = 'ios'
+  tvos_platform = 'tvos'
+
+  app_identifier = is_tvOS ? tvos_ids : ios_ids
+  platform = is_tvOS ? tvos_platform : ios_platform
+  # Codesign
+  # Types, appstore adhoc development enterprise
+
+  # update_devices // development, adhoc, appstore, enterprise
+  match(
+    app_identifier: app_identifier,
+    type: type,
+    platform: platform,
+    readonly: false
+  )
+
+  # update_project_provisioning(
+  #   xcodeproj: "Project.xcodeproj",
+  #   profile: "./watch_app_store.mobileprovision", # optional if you use sigh
+  #   target_filter: ".*WatchKit Extension.*", # matches name or type of a target
+  #   build_configuration: "Release",
+  #   code_signing_identity: "iPhone Development" # optionally specify the codesigning identity
+  # )
+
+    # Build iOS App
+  # build_number = ENV["build_number"]
+  build_number = number_of_commits(all: true)
+  # increment_build_number(build_number: number_of_commits)
+
+  # increment_build_number(
+  #   build_number: build_number, # specify specific build number (optional, omitting it increments by one)
+  # )
+
+  ipa_name = "Provenance-#{platform}-#{git_branch}-#{build_number}.ipa"
+
+
+  # if is_ci?
+  #   increment_build_number_in_plist(
+  #     build_number: ci_build_number,
+  #     target: 'Provenance'
+  #   )
+  # end
+
+  scheme = is_tvOS ? 'ProvenanceTV' : 'Provenance'
+  scheme += is_ci ? '-Travis' : '-Release'
+
+  if is_tvOS
+    increment_build_number_in_plist(
+    build_number: build_number.to_s,
+    target: 'ProvenanceTV'
+    )
+    increment_build_number_in_plist(
+      build_number: build_number.to_s,
+      target: 'TopShelf'
+    )
+  else
+    increment_build_number_in_plist(
+      build_number: build_number.to_s,
+      target: 'Provenance'
+    )
+    increment_build_number_in_plist(
+      build_number: build_number.to_s,
+      target: 'Spotlight'
+    )
+  end
+
+  badge_alpha
+  build_ios_adhoc(
+    scheme: scheme,
+    ipa_name: ipa_name,
+    platform: platform
+  )
+end
+
+ # Future Alpha builds
+ private_lane :build_ios_adhoc do |options|
+  # activeArchOnly = options.fetch(:activeArchOnly, false)
+  ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
+  platform = options.fetch(:platform, 'iOS')
+  build_time = Time.now.strftime('%F')
+  load_keys
+
+  # Method used to export the archive.
+  # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
+  export_method = options.fetch(:export_method, 'ad-hoc')
+  build_configuration = options.fetch(:build_configuration, 'Archive')
+  scheme = options.fetch(:scheme, 'Provenance-Release')
+  output_directory = "build/#{build_configuration}/#{build_time}"
+
+  UI.message "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
+
+   # 57x57
+  displayImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png'
+  # 512x512
+  fullSizeImageURL = 'https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png'
+  appURL = "https://provenance-emu.com/builds/#{ipa_name}"
+
+
+  provisioningProfiles_ios = {
+    "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance",
+    "#{$dev_domain}.provenance.extension.spotlight" => "match AdHoc #{$dev_domain}.provenance.extension.spotlight"
+  }
+
+  provisioningProfiles_tvos = {
+    "#{$dev_domain}.provenance" => "match AdHoc #{$dev_domain}.provenance tvos",
+    "#{$dev_domain}.provenance.provenance.topshelf-extension" => "match AdHoc #{$dev_domain}.provenance.topshelf-extension tvos"
+  }
+
+  is_ios = platform.to_s == 'iOS'.to_s
+
+  provisioningProfiles = is_ios ? provisioningProfiles_ios : provisioningProfiles_tvos
+
+  UI.message "Platform is #{platform}. is iOS? #{is_ios.to_s}. Profiles: #{provisioningProfiles.to_s}"
+
+  build_app(
+    workspace: 'Provenance.xcworkspace',
+    scheme: scheme,
+    export_method: export_method,
+    configuration: build_configuration,
+    # codesigning_identity: 'iPhone Distribution',
+    silent: true,
+    clean: false,
+    skip_profile_detection: false,
+    output_directory: output_directory,
+    output_name: ipa_name,
+    include_bitcode: false,
+    include_symbols: false,
+    # skip_build_archive: true,
+    #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+    #export_xcargs: "-allowProvisioningUpdates",
+    export_options: {
+      method: export_method,
+      iCloudContainerEnvironment: 'Production',
+      manifest: {
+        appURL: appURL,
+        displayImageURL: displayImageURL,
+        fullSizeImageURL: fullSizeImageURL
+      },
+      provisioningProfiles: provisioningProfiles,
+      compileBitcode: false,
+      uploadBitcode: false,
+    }
+  )
+end
+
+private_lane :post_build do
+  if is_ci?
+    # ci_upload
+  else
+    copy_to_device
+  end
+end
+
+private_lane :pre_build do
+  # Git git commit count
+  ENV['build_number'] = number_of_commits(all: true).to_s
+
+  # Clean the dir for git
+  # ensure_git_status_clean
+  # ensure_git_in_sync
+
+  git_submodule_update
+
+  if is_ci?
+    certificates_download
+  else
+    pre_build_user
+  end
+end
+
+private_lane :pre_build_user do
+  verify_xcode_version
+  UI.message 'Turning on automatic code signing'
+  codesign_toggle(automatic: false)
+  UI.message 'Syncing certificates'
+  cert
+  sigh
+  UI.message 'Setting developer certificates in project'
+  update_project_provisioning(
+    xcodeproj: 'Provenance.xcodeproj',
+    #profile: "./watch_app_store.mobileprovision", # optional if you use sigh
+    #target_filter: ".*WatchKit Extension.*", # matches name or type of a target
+    build_configuration: 'Release',
+    code_signing_identity: 'iPhone Development' # optionally specify the codesigning identity
+  )
+end
+
+desc 'User Builds'
+lane :userbuild do
+  UI.message 'Pulling git updates.'
+  git_pull
+
+  UI.message 'Pulling git sub-module updates.'
+  git_submodule_update(
+    init: true,
+    recursive: true
+  )
+
+  team_id = ENV['DEV_TEAM_ID']
+
+  UI.message 'Switching to automatic code signing.'
+
+  enable_automatic_code_signing(
+    use_automatic_signing: true,
+    targets: ['Provenance', 'ProvenanceTV', 'Spotlight', 'TopShelf'],
+    # TODO, only do if set since it's optional
+    team_id: team_id
+  )
+
+  which_app = UI.select('Select platform: ', ['iOS', 'tvOS'])
+
+  UI.message 'Getting 3rd party dependencies.'
+
+  # Git git commit count
+  commits = number_of_commits(all: true).to_s
+  UI.message 'Setting build # to ${commits}.'
+  ENV['build_number'] = commits
+  updatePlistForBranch
+
+  UI.message "Making developer build for platform #{which_app}."
+  if which_app == 'tvOS'
+    build_developer(scheme: 'ProvenanceTV-Release')
+  else
+    build_developer(scheme: 'Provenance-Release')
+  end
+
+  # Installs the ipa on the device. If no id is given, the first found iOS device will be used.
+  # Works via USB or Wi-Fi. This requires ios-deploy to be installed.
+  # Please have a look at ios-deploy.
+  # To quickly install it, use npm -g i ios-deploy
+  # https://docs.fastlane.tools/actions/install_on_device/
+  # if UI.confirm("Install to device?")
+  #   install_on_device
+  # end
+
+  UI.message 'Resetting enviroment.'
+  reset_enviroment
+end
+
+# TODO: iCloud
+private_lane :set_icloud_container do |options|
+  identifiers = options.fetch(:identifiers, 'iCloud.org.provenance-emu.provenance')
+  icloud_container_identifiers = identifiers.split(',')
+
+  files = [
+    'Provenance/Provenance',
+    'ProvenanceTV/Provenance',
+    'Spotlight/Spotlight',
+    'TopShelf/TopShelf'
+  ].map! { |x| x + '.entitlements'}
+
+  files.each do |file|
+    update_icloud_container_identifiers(
+      entitlements_file: file,
+      icloud_container_identifiers: icloud_container_identifiers
+    )
+  end
+end

@@ -33,21 +33,20 @@
 ///All known Device Types for iPhone 7 or iPhone 7 Plus
 + (BOOL)hasTapticMotor
 {
-    if ([[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,1"]  ||    //iPhone 7 (A1660/A1779/A1780)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,2"]  ||    //iPhone 7 Plus (A1661/A1785/A1786)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,3"]  ||    //iPhone 7 (A1778)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,4"]  ||    //iPhone 7 Plus (A1784)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,1"] ||    //iPhone 8 (A1863/A1906/A1907)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,4"] ||    //iPhone 8 (A1905)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,2"] ||    //iPhone 8 Plus (A1864/A1898/A1899)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,5"] ||    //iPhone 8 Plus (A1897)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,3"] ||    //iPhone X (A1865/A1902)
-        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,6"]) {    //iPhone X (A1901)
-        return YES;
-    }
-    else {
-        return NO;
-    }
+    static BOOL hasTapticMotor;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSInteger supportLevel = ((NSNumber *) [UIDevice.currentDevice valueForKey:@"_feedbackSupportLevel"]).integerValue;
+        NSInteger iPhoneVersionNumber = [[UIDevice.currentDevice.modelIdentifier componentsSeparatedByString:@","].firstObject stringByReplacingOccurrencesOfString:@"iPhone" withString:@""].integerValue;
+        if (iPhoneVersionNumber >= 9 || supportLevel == 2) { // 9 is iPhone 7
+            hasTapticMotor = YES;
+        }
+        else {
+            hasTapticMotor = NO;
+        }
+    });
+
+    return hasTapticMotor;
 }
 
 @end

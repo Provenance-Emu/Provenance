@@ -1,0 +1,30 @@
+[submodule "PVMupen64Plus/mupen64plus-video-gliden64"]
+	path = Cores/Mupen64Plus/Plugins/Video/gliden64
+	url = https://github.com/Provenance-Emu/GLideN64.git
+[submodule "PVMupen64Plus/Plugins/mupen64plus-core"]
+	path = Cores/Mupen64Plus/Plugins/Core
+	url = https://github.com/Provenance-Emu/mupen64plus-core.git
+[submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-hle"]
+	path = Cores/Mupen64Plus/Plugins/rsp/hle
+	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
+[submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4"]
+	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
+	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
+[submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
+	path = Cores/Mupen64Plus/Plugins/Video/rice
+	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
+[submodule "PVLibrary/LzmaSDKObjC"]
+	path = PVLibrary/LzmaSDKObjC
+	url = https://github.com/Provenance-Emu/LzmaSDKObjC.git
+[submodule "Cores/VirtualJaguar"]
+	path = Cores/VirtualJaguar
+	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
+[submodule "Cores/Reicast/reicast-emulator"]
+	path = Cores/Reicast/reicast-emulator
+	url = https://github.com/Provenance-Emu/reicast-emulator.git
+[submodule "Cores/PokeMini/PokeMini-libretro"]
+	path = Cores/PokeMini/PokeMini-libretro
+	url = https://github.com/libretro/PokeMini.git
+[submodule "Cores/TGBDual/tgbdual-emulator"]
+	path = Cores/TGBDual/tgbdual-emulator
+	url = https://github.com/libretro/tgbdual-libretro.git

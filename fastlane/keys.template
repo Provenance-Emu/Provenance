@@ -1,0 +1,31 @@
+# Copy this file to `keys` with values filled or run the setup fastlane script 'fastlane setup'
+ENV["APPLE_ID"] = ""
+ENV["DEV_DOMAIN"] = "org.provenance-emu" #Replace with your own in same format
+
+## Optional
+
+# Fill these out if you belong to multiple teams
+# ENV["ITC_TEAM_ID"] = ""
+# ENV["DEV_TEAM_ID"] = ""
+
+# Settings for copying builds to an Amazon S3 or compatible bucket
+# ENV["AWS_ACCESS_KEY_ID"] = ""
+# ENV["AWS_SECRET_ACCESS_KEY"] = ""
+
+# Hockey App Settings
+# ENV["HOCKEY_APP_TOKEN"] = ""
+# ENV["HOCKEY_BETA_APP_ID"] = ""
+
+# Match - More settings in Matchfile
+# ENV["MATCH_PASSWORD"] = ""
+# ENV["MATCH_SSH_KEY_BASE64"] = ""
+
+# SCP - Copy built files to a server with SCP
+# ENV["SCP_DIR"] = ""
+# ENV["SCP_KEY_ENCODED"] = "" # BASE64 encoded private key
+# ENV["SCP_SERVER"] = ""
+# ENV["SCP_USER"] = ""
+
+ENV["SIGH_USERNAME"] = ENV["APPLE_ID"]
+ENV["PILOT_APPLE_ID"] = ENV["APPLE_ID"]
+ENV["DELIVER_USERNAME"] = ENV["APPLE_ID"]
