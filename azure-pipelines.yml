@@ -57,7 +57,9 @@ steps:
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
     packageApp: true
     destinationPlatformOption: $(destinationPlatformOption)
-  displayName: Building project
+    useXcpretty: false
+    configuration: '$(configuration)'
+  displayName: Building project $(scheme)
 
 # - task: Xcode@5
 #   inputs:
