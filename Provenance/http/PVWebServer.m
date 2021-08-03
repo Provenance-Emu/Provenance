@@ -79,7 +79,7 @@
 - (NSUserActivity *)handoffActivity
 {
     if (!_handoffActivity) {
-        _handoffActivity = [[NSUserActivity alloc] initWithActivityType:@"com.provenance-emu.webserver"];
+        _handoffActivity = [[NSUserActivity alloc] initWithActivityType:@"org.provenance-emu.webserver"];
         _handoffActivity.title = @"Provenance file manager";
         NSURL *url = [NSURL URLWithString:self.URLString];
         _handoffActivity.webpageURL = url;
