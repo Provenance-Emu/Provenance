@@ -677,7 +677,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -717,7 +717,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -766,7 +766,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -806,7 +806,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -853,7 +853,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -893,7 +893,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

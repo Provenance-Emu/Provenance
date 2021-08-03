@@ -867,7 +867,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -907,7 +907,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -949,7 +949,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -988,7 +988,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1029,7 +1029,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1069,7 +1069,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

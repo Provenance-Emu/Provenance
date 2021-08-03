@@ -905,7 +905,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -946,7 +946,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -998,7 +998,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1040,7 +1040,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1088,7 +1088,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1129,7 +1129,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPokeMini";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPokeMini";
 				PRODUCT_NAME = PVPokeMini;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;

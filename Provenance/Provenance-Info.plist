@@ -67,7 +67,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>URLIcon-83.5@2x</string>
 			<key>CFBundleURLName</key>
-			<string>com.provenance-emu.provenance</string>
+			<string>org.provenance-emu.provenance</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>provenance</string>
@@ -134,8 +134,8 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>com.provenance-emu.webserver</string>
-		<string>com.provenance-emu.game.play</string>
+		<string>org.provenance-emu.webserver</string>
+		<string>org.provenance-emu.game.play</string>
 	</array>
 	<key>Revision</key>
 	<string>78dc628</string>

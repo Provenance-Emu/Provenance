@@ -26,7 +26,7 @@ public final class DirectoryWatcher: NSObject {
     private let extractionCompleteHandler: PVExtractionCompleteHandler?
 
     fileprivate var dispatch_source: DispatchSourceFileSystemObject?
-    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialExtractorQueue")
+    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     fileprivate var previousContents: [URL]?
     private var reader: LzmaSDKObjCReader?

@@ -1926,7 +1926,7 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1986,7 +1986,7 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -2049,7 +2049,7 @@
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2107,7 +2107,7 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2171,7 +2171,7 @@
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -2230,7 +2230,7 @@
 					"-falign-functions=2",
 					"-Wall",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

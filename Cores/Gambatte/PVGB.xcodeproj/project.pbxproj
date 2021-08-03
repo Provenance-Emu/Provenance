@@ -1004,7 +1004,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1045,7 +1045,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1089,7 +1089,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1133,7 +1133,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1174,7 +1174,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1217,7 +1217,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;

@@ -1083,7 +1083,7 @@
 					"-DM68K_OVERCLOCK_SHIFT=20",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1141,7 +1141,7 @@
 					"-DM68K_OVERCLOCK_SHIFT=20",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1193,7 +1193,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1251,7 +1251,7 @@
 					"-DM68K_OVERCLOCK_SHIFT=20",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1301,7 +1301,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1361,7 +1361,7 @@
 					"-DM68K_OVERCLOCK_SHIFT=20",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;

@@ -6253,7 +6253,7 @@
 					"-fomit-frame-pointer",
 					"-DUSE_GLES=1",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -6340,7 +6340,7 @@
 					"-DUSE_GLES=1",
 					"-flto",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -6428,7 +6428,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -6507,7 +6507,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -6564,7 +6564,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -6621,7 +6621,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -6683,7 +6683,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -6745,7 +6745,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -6848,7 +6848,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -6954,7 +6954,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -7354,7 +7354,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -7414,7 +7414,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -7494,7 +7494,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -7575,7 +7575,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -7653,7 +7653,7 @@
 					"-DPIC=1",
 					"-DUSE_GLES=1",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -7740,7 +7740,7 @@
 					"-fomit-frame-pointer",
 					"-DUSE_GLES=1",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -8142,7 +8142,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -8197,7 +8197,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -8281,7 +8281,7 @@
 					"-DUSE_GLES=1",
 					"-flto",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8368,7 +8368,7 @@
 					"-DUSE_GLES=1",
 					"-flto",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8457,7 +8457,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8536,7 +8536,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8598,7 +8598,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8655,7 +8655,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8722,7 +8722,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8784,7 +8784,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -8891,7 +8891,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -8995,7 +8995,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -9104,7 +9104,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -9209,7 +9209,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
