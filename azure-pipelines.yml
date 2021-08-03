@@ -19,18 +19,21 @@ variables:
   ExportMethod: 'development'
   # xcode-version: '12.5.1'
   xcodeVersion: '12'  # Options: 8, 9, 11, 12, default, specifyPath
+  sdk: 'iphoneos'
+  scheme: 'Provenance'
+  destinationPlatformOption: iOS
 
-strategy:
-  matrix:
-    ios:
-      sdk: 'iphoneos'
-      scheme: 'Provenance'
-      destinationPlatformOption: iOS
-    tvos:
-      sdk: 'appletvos'
-      scheme: 'ProvenanceTV'
-      destinationPlatformOption: tvOS
-  maxParallel: 3
+# strategy:
+#   matrix:
+#     ios:
+#       sdk: 'iphoneos'
+#       scheme: 'Provenance'
+#       destinationPlatformOption: iOS
+#     tvos:
+#       sdk: 'appletvos'
+#       scheme: 'ProvenanceTV'
+#       destinationPlatformOption: tvOS
+#   maxParallel: 3
 
 steps:
 
