@@ -18,7 +18,7 @@ variables:
   ExportOptionsFileName: 'options.plist'
   ExportMethod: 'development'
   # xcode-version: '12.5.1'
-  xcodeVersion: '12.4'  # Options: 8, 9, default, specifyPath
+  xcodeVersion: '12'  # Options: 8, 9, 11, 12, default, specifyPath
 
 strategy:
   matrix:
