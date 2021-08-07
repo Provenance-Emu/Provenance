@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
-               BuildableName = "PVAtari800.framework"
+               BuildableName = "PVDuckStation.framework"
                BlueprintName = "PVDuckStation-iOS"
                ReferencedContainer = "container:PVDuckStation.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
-            BuildableName = "PVAtari800.framework"
+            BuildableName = "PVDuckStation.framework"
             BlueprintName = "PVDuckStation-iOS"
             ReferencedContainer = "container:PVDuckStation.xcodeproj">
          </BuildableReference>
