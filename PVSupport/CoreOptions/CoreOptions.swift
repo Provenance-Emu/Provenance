@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol CoreOptional: class {
+public protocol CoreOptional: AnyObject {
     static var options: [CoreOption] { get }
 }
 

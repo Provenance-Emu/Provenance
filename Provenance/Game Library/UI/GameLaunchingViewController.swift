@@ -33,7 +33,7 @@ public func PVMaxRecentsCount() -> Int {
 
  */
 
-public protocol GameLaunchingViewController: class {
+public protocol GameLaunchingViewController: AnyObject {
     func canLoad(_ game: PVGame) throws
     func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
     func openSaveState(_ saveState: PVSaveState)
@@ -41,7 +41,7 @@ public protocol GameLaunchingViewController: class {
     func presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
-public protocol GameSharingViewController: class {
+public protocol GameSharingViewController: AnyObject {
     func share(for game: PVGame, sender: Any?)
 }
 

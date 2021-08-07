@@ -655,8 +655,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #if os(iOS)
         // Show web server (stays on)
         func showServer() {
-            let ipURL = URL(string: PVWebServer.shared.urlString)
-            let safariVC = SFSafariViewController(url: ipURL!, entersReaderIfAvailable: false)
+            let ipURL = URL(string: PVWebServer.shared.urlString)!
+            
+            let config = SFSafariViewController.Configuration()
+            config.barCollapsingEnabled = true
+            config.entersReaderIfAvailable = true
+
+            let safariVC = SFSafariViewController(url: ipURL, configuration: config)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
         }

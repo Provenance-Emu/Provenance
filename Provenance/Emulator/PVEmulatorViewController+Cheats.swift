@@ -133,9 +133,9 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats,
         completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
-            if (gameWithCheat.setCheat(code: cheat.code, type:cheat.type, enabled:cheat.enabled)) {
+            if gameWithCheat.setCheat(code: cheat.code, type:cheat.type, enabled:cheat.enabled) {
 
-                NSLog("Succeeded applying cheat: \(cheat.code) \(cheat.type) \(cheat.enabled)")
+                ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")
                 completion(.success)
             } else {
                 let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])

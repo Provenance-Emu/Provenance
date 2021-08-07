@@ -193,10 +193,6 @@
     return UIBarPositionTopAttached;
 }
 
-- (BOOL)automaticallyAdjustsScrollViewInsets {
-    return YES;
-}
-
 - (void)viewDidLoad {
 #if TARGET_OS_IOS
     _textView.editable = NO;

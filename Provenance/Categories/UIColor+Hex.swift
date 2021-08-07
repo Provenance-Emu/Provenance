@@ -10,10 +10,10 @@ import UIKit
 
 public extension UIColor {
     @objc convenience init(rgb: UInt32) {
-        let red = CGFloat((rgb >> 16) & 0xFF) / 255.0
-        let green = CGFloat((rgb >> 8) & 0xFF) / 255.0
-        let blue = CGFloat(rgb & 0xFF) / 255.0
-        let alpha = CGFloat(1.0)
+        let red: CGFloat = CGFloat((rgb >> 16) & 0xFF) / 255.0
+        let green: CGFloat = CGFloat((rgb >> 8) & 0xFF) / 255.0
+        let blue: CGFloat = CGFloat(rgb & 0xFF) / 255.0
+        let alpha: CGFloat = CGFloat(1.0)
         self.init(red: red, green: green, blue: blue, alpha: alpha)
     }
 
