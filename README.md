@@ -289,7 +289,7 @@ Provenance would not be possible without the great work of those who came before
         <a href="https://github.com/error404-na">
             <img src="https://avatars.githubusercontent.com/u/1178084?v=4" width="100;" alt="error404-na"/>
             <br />
-            <sub><b>error404-na</b></sub>
+            <sub><b>Error404-na</b></sub>
         </a>
     </td>
     <td align="center">
@@ -318,14 +318,14 @@ Provenance would not be possible without the great work of those who came before
         <a href="https://github.com/yoshisuga">
             <img src="https://avatars.githubusercontent.com/u/564774?v=4" width="100;" alt="yoshisuga"/>
             <br />
-            <sub><b>yoshisuga</b></sub>
+            <sub><b>Yoshisuga</b></sub>
         </a>
     </td>
     <td align="center">
         <a href="https://github.com/cplr">
             <img src="https://avatars.githubusercontent.com/u/10874576?v=4" width="100;" alt="cplr"/>
             <br />
-            <sub><b>cplr</b></sub>
+            <sub><b>Cplr</b></sub>
         </a>
     </td>
     <td align="center">
@@ -396,7 +396,7 @@ Provenance would not be possible without the great work of those who came before
         <a href="https://github.com/kckd-geocaching">
             <img src="https://avatars.githubusercontent.com/u/18198902?v=4" width="100;" alt="kckd-geocaching"/>
             <br />
-            <sub><b>kckd-geocaching</b></sub>
+            <sub><b>Kckd-geocaching</b></sub>
         </a>
     </td></tr>
 </table>
