@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - #1545 Update Mednafen to 1.27.1
 
-
 ### Fixed
 
 - #1555 VirtualBoy crash on open
@@ -19,13 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2020-08-02
 
-Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team, and additional contributors.
+Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team and all of the additional contributors.
 
 **N64 Release!** with Mupen64Plus + GlideN64 — a non-jailbreak emulation _first._ A lot in this update: Swift codebase conversion, Atari Jaguar support, Saturn, Dreamcast…full _multi-disc support_ for all of you RPG fans out there, dark theme default, 60 FPS optimizations, core updates, new touch controls, iOS 12, iPhone X, WebDAV support and _much more…_
 
 ⚠️ **Breaking** ⚠️
 
-2.0 does not support upgrading from 1.4 libraries. It MAY work with some versions of 1.5beta's but not all betas are the same. Your mileage may vary. For this reason we're updating the version to 2, to indicate the lack of upgrade path. 
+2.0 does not support upgrading from 1.4 libraries. It MAY work with some versions of 1.5beta's but not all betas are the same. Your mileage may vary. For this reason we're updating the version to 2.0, to indicate the lack of upgrade path. 
 
 ℹ️ *You can install 2.0 along side 1.x by using a different bundle id*
 ### Added
@@ -53,6 +52,7 @@ Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @
 - MFi+ (Instant Button Swap Modes) to access to missing buttons on MFi Controllers ([MFi Controls](https://bit.ly/2LDZNzI))
 - iCloud Syncing for Save States and Battery Saves _Beta_
 - New Dark Theme Default
+- tvOS Ui sync up w iOS.
 - Timed Auto Saves (default: every 10 minutes)
 - Game Info View & Game Info Preview View (on 3D Touch)
   - Extended editable ROM meta data ([Customizing ROMs](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
@@ -85,8 +85,10 @@ Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @
 #### Core Updates
 
 - SNES9x 1.60.0 ([Changelog](https://github.com/snes9xgit/snes9x/releases))
-- Mednafen 1.27.0 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
+- Mednafen 1.27.1 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
 - tgbdual-libretro 0.8.3 [GitHub](tgbdual-libretro)
+- Genesis Plus GX 1.7.5 ([History](https://github.com/ekeeke/Genesis-Plus-GX/blob/master/HISTORY.txt))
+- PicoDrive 1.9.3
 
 #### App Improvements
 
@@ -96,6 +98,7 @@ Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @
   - New iCade Support Additions
   - Steam Controller Bluetooh LE Mode support
   - Rumble support (N64, PokeMini)
+  - New Direct 8Bitdo M30 mapping support for all of the Sega and PC Engine/TG16 consoles.
 - Touch/Overlay Controls:
   - New minimal, and less obstructive controller theme default
     <sup>(preview 1.5 edition as a teaser for UI 2.0's [Overlay Overhaul](#718) project)</sup><br>
@@ -123,6 +126,7 @@ Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @
 
 - Steam Controller
 - 2018.Q4+ MFi Controllers (supporting R3/L3) (Controllers)
+- 8Bitdo M30
 
 #### Behind the Scenes:
 
