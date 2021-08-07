@@ -204,7 +204,7 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
     return NSAttributedString(attributedString: result)
 }
 
-protocol GameLibraryCollectionViewDelegate: class {
+protocol GameLibraryCollectionViewDelegate: AnyObject {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
 // MARK: Corner Badge Glyph

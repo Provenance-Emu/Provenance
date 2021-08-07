@@ -17,7 +17,7 @@ extension PVEmulatorViewController {
         core.setPauseEmulation(true)
         isShowingMenu = true
 
-        let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
+        let actionSheet: UIAlertController = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
 
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = menuButton
@@ -42,7 +42,7 @@ extension PVEmulatorViewController {
         let controllerManager = PVControllerManager.shared
         let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(game.system.identifier)
         var hideP1MenuActions = false
-        if let player1 = controllerManager.player1 {
+        if let player1: GCController = controllerManager.player1 {
             #if os(iOS)
                 if PVSettingsModel.shared.missingButtonsAlwaysOn {
                     hideP1MenuActions = true
