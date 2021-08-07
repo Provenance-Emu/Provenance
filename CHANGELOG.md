@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updated
+
+- #1545 Update Mednafen to 1.27.1
+
+
+### Fixed
+
+- #1555 VirtualBoy crash on open
+
 ## [2.0.0] - 2020-08-02
 
 Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team, and additional contributors.
