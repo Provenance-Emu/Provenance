@@ -651,6 +651,11 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
+    else if (self.systemType == MednaSystemVirtualBoy)
+    {
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
@@ -744,6 +749,7 @@ static void emulation_run(BOOL skipFrame) {
     else
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[1]);
     }
 
     Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
