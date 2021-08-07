@@ -321,7 +321,7 @@ static const struct
  { "T-8119G", 	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Space Jam (Japan)", 	gettext_noop("Fixes game crash.") },
  { "T-8125H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Space Jam (USA)", 	gettext_noop("Fixes game crash.") },
  { "T-8125H-50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Space Jam (Europe)", 	gettext_noop("Fixes game crash.") },
- { "T-1807G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Thunder Force Gold Pack 1 (Japan)", gettext_noop("Fixes explosion graphic glitches in \"Thunder Force III\".") },
+ { "T-1807G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Thunder Force Gold Pack 1 (Japan)", gettext_noop("In \"Thunder Force III\", fixes explosion graphic glitches throughout the game and ship sprite glitches in the ending sequence.") },
  { "T-15903G",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Titan Wars (Japan)",	gettext_noop("Fixes minor FMV glitches.") },
  { "T-15911H",	NULL, NULL, CPUCACHE_EMUMODE_FULL, "Solar Eclipse (USA)",	gettext_noop("Fixes minor FMV glitches.") },
  { "T-15911H50",NULL, NULL, CPUCACHE_EMUMODE_FULL, "Titan Wars (Europe)",	gettext_noop("Fixes minor FMV glitches.") },
@@ -428,6 +428,7 @@ static const struct
  { "T-31505G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Falcom Classics II (Japan)", gettext_noop("Fixes FMV tearing in \"Ys II\".") },
  { "T-8111G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Frank Thomas Big Hurt Baseball (Japan)", gettext_noop("Reduces graphical glitches.") },
  { "T-8138H", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Frank Thomas Big Hurt Baseball (USA)", gettext_noop("Reduces graphical glitches.") }, // Probably need more-accurate VDP1 draw timings to fix the glitches completely.
+ { "T-23001H", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Herc's Adventures (USA)", gettext_noop("Fixes some sprite flickering and tearing.") },
  { "T-9504G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,	"Tokimeki Memorial - Forever with You (Japan)", gettext_noop("Fixes glitchy frames on the Konami intro arm sprite.") },
  { "T-15006G",  HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "Kaitei Daisensou (Japan)", gettext_noop("Fixes FMV tearing.") },
  { "T-10001G", HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, "In The Hunt (Europe/USA)", gettext_noop("Fixes FMV tearing.") },

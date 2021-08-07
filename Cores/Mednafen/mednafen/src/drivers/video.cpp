@@ -66,7 +66,7 @@ class SDL_to_MDFN_Surface_Wrapper : public MDFN_Surface
 	8 - ss->format->Gloss,
 	8 - ss->format->Bloss,
 	8 - ss->format->Aloss);
-     
+
   pixels_is_external = true;
 
   pixels16 = NULL;

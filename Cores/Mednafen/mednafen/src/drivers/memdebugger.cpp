@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* memdebugger.cpp:
-**  Copyright (C) 2007-2018 Mednafen Team
+**  Copyright (C) 2007-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -27,52 +27,43 @@
 
 #include <trio/trio.h>
 
-bool MemDebugger::ICV_Init(const char *newcode)
+void MemDebugger::ICV_Init(const char* newcode)
 {
- if((size_t)ict != (size_t)-1)
+ iconv_t new_ict_game_to_utf8 = (iconv_t)-1, new_ict_utf8_to_game = (iconv_t)-1;
+
+ if((new_ict_game_to_utf8 = iconv_open("UTF-8", newcode)) == (iconv_t)-1 || (new_ict_utf8_to_game = iconv_open(newcode, "UTF-8")) == (iconv_t)-1)
  {
-  iconv_close(ict);
-  ict = (iconv_t)-1;
+  ErrnoHolder ene(errno);
+
+  if(new_ict_game_to_utf8 != (iconv_t)-1)
+   iconv_close(new_ict_game_to_utf8);
+
+  if(new_ict_utf8_to_game != (iconv_t)-1)
+   iconv_close(new_ict_utf8_to_game);
+
+  if(errno == EINVAL)
+   throw MDFN_Error(ene.Errno(), _("Character set \"%s\" not supported."), newcode);
+  else
+   throw MDFN_Error(ene.Errno(), _("iconv_open() error: %s"), ene.StrError());
  }
 
- if((size_t)ict_to_utf8 != (size_t)-1)
+ GameCode = std::string(newcode);
+ //
+ //
+ if(ict_game_to_utf8 != (iconv_t)-1)
  {
-  iconv_close(ict_to_utf8);
-  ict_to_utf8 = (iconv_t)-1;
+  iconv_close(ict_game_to_utf8);
+  ict_game_to_utf8 = (iconv_t)-1;
  }
 
- if((size_t)ict_utf8_to_game != (size_t)-1)
+ if(ict_utf8_to_game != (iconv_t)-1)
  {
   iconv_close(ict_utf8_to_game);
   ict_utf8_to_game = (iconv_t)-1;
  }
 
- ict = iconv_open(newcode, "UTF-8");
- if((size_t)ict == (size_t)-1)
- {
-  error_string = trio_aprintf("iconv_open() error: %m");
-  error_time = Time::MonoMS();
-  return(0);
- }
-
- ict_to_utf8 = iconv_open("UTF-8", newcode);
- if((size_t)ict_to_utf8 == (size_t)-1)
- {
-  error_string = trio_aprintf("iconv_open() error: %m");
-  error_time = Time::MonoMS();
-  return(0);
- }
-
- ict_utf8_to_game = iconv_open(newcode, "UTF-8");
- if((size_t)ict_utf8_to_game == (size_t)-1)
- {
-  error_string = trio_aprintf("iconv_open() error: %m");
-  error_time = Time::MonoMS();
-  return(0);
- }
-
- GameCode = std::string(newcode);
- return(1);
+ ict_game_to_utf8 = new_ict_game_to_utf8;
+ ict_utf8_to_game = new_ict_utf8_to_game;
 }
 
 class MemDebuggerPrompt : public HappyPrompt
@@ -221,10 +212,9 @@ void MemDebugger::PromptFinish(const std::string &pstring)
          }
 	 else if(which == SetCharset)
 	 {
-	  if(ICV_Init(pstring.c_str()))
-	  {
-	   MDFNI_SetSetting(std::string(CurGame->shortname) + "." + "debugger.memcharenc", pstring);
-	  }
+	  ICV_Init(pstring.c_str());
+
+	  MDFNI_SetSetting(std::string(CurGame->shortname) + "." + "debugger.memcharenc", pstring);
 	 }
          else if(which == DumpMem)
          {
@@ -305,7 +295,7 @@ void MemDebugger::PromptFinish(const std::string &pstring)
 	    if(read_len != to_read)
 	    {
 	     error_string = trio_aprintf(_("Warning: unexpected EOF(short by %08llx byte(s))"), (unsigned long long)(A2 - a + 1));
-	     error_time = Time::MonoMS();
+	     error_time = -1;
 	     break;
 	    }
 	   }
@@ -326,11 +316,15 @@ void MemDebugger::PromptFinish(const std::string &pstring)
           inbuf = (char*)pstring.c_str();
           outbuf = (char*)thebytes.data();
 
-	  if(iconv(ict, (ICONV_CONST char **)&inbuf, &ibl, &outbuf, &obl) == (size_t)-1)
+	  if(ict_utf8_to_game != (iconv_t)-1)
 	  {
-	   ErrnoHolder ene(errno);
+	   iconv(ict_utf8_to_game, NULL, NULL, NULL, NULL);
+	   if(iconv(ict_utf8_to_game, (ICONV_CONST char **)&inbuf, &ibl, &outbuf, &obl) == (size_t)-1)
+	   {
+	    ErrnoHolder ene(errno);
 
-	   throw MDFN_Error(0, _("iconv() error: %s"), ene.StrError());
+	    throw MDFN_Error(0, _("iconv() error: %s"), ene.StrError());
+	   }
 	  }
 
 	  thebytes.resize(obl_start - obl);
@@ -338,7 +332,7 @@ void MemDebugger::PromptFinish(const std::string &pstring)
 	  if(!DoBSSearch(thebytes))
 	  {
 	   error_string = trio_aprintf(_("String not found."));
-	   error_time = Time::MonoMS();
+	   error_time = -1;
 	   return;
 	  }
 	 }
@@ -351,7 +345,7 @@ void MemDebugger::PromptFinish(const std::string &pstring)
 	  if(!DoBSSearch(the_bytes))
           {
            error_string = trio_aprintf(_("Bytestring \"%s\" not found."), pstring.c_str());
-           error_time = Time::MonoMS();
+           error_time = -1;
            return;
           }
 	 }
@@ -364,7 +358,7 @@ void MemDebugger::PromptFinish(const std::string &pstring)
 	  if(!DoRSearch(the_bytes))
 	  {
            error_string = trio_aprintf(_("Bytestring \"%s\" not found."), pstring.c_str());
-           error_time = Time::MonoMS();
+           error_time = -1;
            return;
 	  }
 	 }
@@ -372,7 +366,7 @@ void MemDebugger::PromptFinish(const std::string &pstring)
  catch(std::exception& e)
  {
   error_string = trio_aprintf("%s", e.what());
-  error_time = Time::MonoMS();
+  error_time = -1;
  }
 }
 
@@ -523,10 +517,14 @@ INLINE void MemDebugger::DrawAtCursorInfo(MDFN_Surface* surface, const int32 bas
   inbuf = rawbuf;
   outbuf = textbuf;
 
-  iconv(ict_to_utf8, (ICONV_CONST char **)&inbuf, &ibl, &outbuf, &obl);
-  textbuf[obl_start - obl] = 0;
+  if(ict_game_to_utf8 != (iconv_t)-1)
+  {
+   iconv(ict_game_to_utf8, NULL, NULL, NULL, NULL);
+   iconv(ict_game_to_utf8, (ICONV_CONST char **)&inbuf, &ibl, &outbuf, &obl);
+   textbuf[obl_start - obl] = 0;
 
-  DrawText(surface, x + cpplen, y - 2, textbuf, surface->MakeColor(0xEF, 0xEF, 0xEF, 0xFF), MDFN_FONT_9x18_18x18);
+   DrawText(surface, x + cpplen, y - 2, textbuf, surface->MakeColor(0xEF, 0xEF, 0xEF, 0xFF), MDFN_FONT_9x18_18x18);
+  }
  }
 }
 
@@ -558,6 +556,7 @@ void MemDebugger::Draw(MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_
  if(!IsActive)
   return;
 
+ const uint32 curtime = Time::MonoMS();
  const MDFN_PixelFormat pf_cache = surface->format;
  int32 text_y = 0;
  const uint64 zemod = SizeCache[CurASpace];
@@ -631,7 +630,7 @@ void MemDebugger::Draw(MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_
    {
     if(InEditMode)
     {
-     if(Time::MonoMS() & 0x80)
+     if(curtime & 0x80)
      {
       int pix_offset = alen;
 
@@ -683,7 +682,10 @@ void MemDebugger::Draw(MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_
 
  if(error_string)
  {
-  if(Time::MonoMS() >= (error_time + 4000))
+  if(error_time == -1)
+   error_time = curtime;
+
+  if((int32)(curtime - error_time) >= 4000)
   {
    free(error_string);
    error_string = NULL;
@@ -745,15 +747,18 @@ int MemDebugger::Event(const SDL_Event *event)
 	 inbuf = event->text.text;
 	 outbuf = (char*)to_write;
 
-	 size_t result = iconv(ict_utf8_to_game, (ICONV_CONST char **)&inbuf, &ibl, &outbuf, &obl);
-	 if(result != (size_t)-1)
+	 if(ict_utf8_to_game != (iconv_t)-1)
 	 {
-          unsigned to_write_len = obl_start - obl;
+	  iconv(ict_utf8_to_game, NULL, NULL, NULL, NULL);
+	  if(iconv(ict_utf8_to_game, (ICONV_CONST char **)&inbuf, &ibl, &outbuf, &obl) != (size_t)-1)
+	  {
+           unsigned to_write_len = obl_start - obl;
 
-	  ASpace->PutAddressSpaceBytes(ASpace->name.c_str(), ASpacePos[CurASpace], to_write_len, 1, true, to_write);
+	   ASpace->PutAddressSpaceBytes(ASpace->name.c_str(), ASpacePos[CurASpace], to_write_len, 1, true, to_write);
 
-	  LowNib = 0;
-	  ChangePos(to_write_len);
+	   LowNib = 0;
+	   ChangePos(to_write_len);
+	  }
 	 }
 	}
 	break;
@@ -856,7 +861,7 @@ int MemDebugger::Event(const SDL_Event *event)
 	        if(SizeCache[CurASpace] > (1 << 24))
                 {
                  error_string = trio_aprintf(_("Address space is too large to search!"));
-                 error_time = Time::MonoMS();
+                 error_time = -1;
                 }
 		else
 		{
@@ -870,7 +875,7 @@ int MemDebugger::Event(const SDL_Event *event)
 		if(SizeCache[CurASpace] > (1 << 24))
                 {
                  error_string = trio_aprintf(_("Address space is too large to search!"));
-                 error_time = Time::MonoMS();
+                 error_time = -1;
                 }
                 else
                 {
@@ -890,7 +895,7 @@ int MemDebugger::Event(const SDL_Event *event)
                 if(ASpace->TotalBits > 24)
                 {
                  error_string = trio_aprintf(_("Address space is too large to search!"));
-                 error_time = Time::MonoMS();
+                 error_time = -1;
                 }
                 else
                 {
@@ -961,8 +966,8 @@ int MemDebugger::Event(const SDL_Event *event)
 
 // Called after a game is loaded.
 MemDebugger::MemDebugger() : AddressSpaces(NULL), ASpace(NULL), IsActive(false), CurASpace(0),
-			     LowNib(false), InEditMode(false), InTextArea(false), error_string(NULL), error_time(0),
-			     ict((iconv_t)-1), ict_to_utf8((iconv_t)-1), ict_utf8_to_game((iconv_t)-1), InPrompt(None), myprompt(NULL), PromptTAKC(SDLK_UNKNOWN)			     
+			     LowNib(false), InEditMode(false), InTextArea(false), error_string(NULL), error_time(-1),
+			     ict_game_to_utf8((iconv_t)-1), ict_utf8_to_game((iconv_t)-1), InPrompt(None), myprompt(NULL), PromptTAKC(SDLK_UNKNOWN)
 {
  if(CurGame->Debugger)
  {
@@ -989,22 +994,26 @@ MemDebugger::MemDebugger() : AddressSpaces(NULL), ASpace(NULL), IsActive(false),
    SizeCache[i] = tmpsize;
   }
 
-  ICV_Init( MDFN_GetSettingS(std::string(CurGame->shortname) + "." + "debugger.memcharenc").c_str() );
+  try
+  {
+   ICV_Init(MDFN_GetSettingS(std::string(CurGame->shortname) + "." + "debugger.memcharenc").c_str());
+  }
+  catch(std::exception& e)
+  {
+   try { ICV_Init(MDFNI_GetSettingDefault(std::string(CurGame->shortname) + "." + "debugger.memcharenc").c_str()); } catch(...) {}
+
+   error_string = trio_aprintf("%s", e.what());
+   error_time = -1;
+  }
  }
 }
 
 MemDebugger::~MemDebugger()
 {
- if(ict != (iconv_t)-1)
+ if(ict_game_to_utf8 != (iconv_t)-1)
  {
-  iconv_close(ict);
-  ict = (iconv_t)-1;
- }
-
- if(ict_to_utf8 != (iconv_t)-1)
- {
-  iconv_close(ict_to_utf8);
-  ict_to_utf8 = (iconv_t)-1;
+  iconv_close(ict_game_to_utf8);
+  ict_game_to_utf8 = (iconv_t)-1;
  }
 
  if(ict_utf8_to_game != (iconv_t)-1)
