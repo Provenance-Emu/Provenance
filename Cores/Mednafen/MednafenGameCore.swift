@@ -65,7 +65,7 @@ extension MednafenGameCore: GameWithCheat {
             try self.setCheat(code, setType: type, setEnabled: enabled)
             return true
         } catch let error {
-            NSLog("Error setCheat \(error)")
+            ELOG("Error setCheat \(error)")
             return false
         }
     }
