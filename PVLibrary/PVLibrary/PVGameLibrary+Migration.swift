@@ -27,7 +27,7 @@ extension PVGameLibrary {
         let libraryPath: String = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!
         let libraryURL = URL(fileURLWithPath: libraryPath)
         let toDelete = ["PVGame.sqlite", "PVGame.sqlite-shm", "PVGame.sqlite-wal"].map { libraryURL.appendingPathComponent($0) }
-        
+
         let deleteDatabase = Completable
             .concat(toDelete
                         .map { path in

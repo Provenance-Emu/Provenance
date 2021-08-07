@@ -12,7 +12,7 @@ import RealmSwift
 import UIKit
 import ZipArchive
 
-fileprivate let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
+private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
 public func PVMaxRecentsCount() -> Int {
     #if os(tvOS)
