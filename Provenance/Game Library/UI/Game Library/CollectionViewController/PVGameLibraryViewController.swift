@@ -1145,6 +1145,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
             let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            // swiftlint:disable:next empty_count
             if fetchResult.count > 0 {
                 let lastPhoto = fetchResult.lastObject
 
