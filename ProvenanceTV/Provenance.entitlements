@@ -10,7 +10,7 @@
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.provenance-emu</string>
+		<string>group.jsprovenance</string>
 	</array>
 </dict>
 </plist>
