@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - #1555 VirtualBoy crash on open
+- #1559 Mednafen build error on tvOS
 
 ## [2.0.0] - 2020-08-02
 
