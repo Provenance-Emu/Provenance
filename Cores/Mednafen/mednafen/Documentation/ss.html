@@ -9,7 +9,7 @@
  <body>
   <center><h1><img alt="Mednafen" src="mednafen.png" width="696" height="204"></h1></center>
   <center><h1>Sega Saturn Documentation</h1></center>
-  <center><i>Last updated March 31, 2021<br>Valid as of 1.27.0-UNSTABLE</i></center>
+  <center><i>Last updated June 12, 2021<br>Valid as of 1.27.1</i></center>
  <p></p>
  <b>Table of Contents:</b>
  <ul><li><a href="#Section_intro">Introduction</a><ul></ul></li><li><a href="#Section_firmware_bios">Firmware/BIOS</a><ul></ul></li><li><a href="#Section_default_keys">Default Input Mappings</a><ul><li><a href="#Section_default_keys_gamepad">Digital Gamepad on Virtual Port 1</a><ul></ul></li><li><a href="#Section_default_keys_mouse">Mouse on Virtual Ports 1-12</a><ul></ul></li><li><a href="#Section_default_keys_gun">Light Gun on Virtual Ports 1-12</a><ul></ul></li></ul></li><li><a href="#Section_internal_databases">Internal Databases</a><ul><li><a href="#Section_internal_databases_region">Region</a><ul></ul></li><li><a href="#Section_internal_databases_cart">Cart</a><ul></ul></li><li><a href="#Section_internal_databases_cachemode">Cache Mode</a><ul></ul></li><li><a href="#Section_internal_databases_horriblehacks">Horrible Hacks</a><ul></ul></li></ul></li><li><a href="#Settings+Reference">Settings Reference</a><ul></ul></li></ul><hr width="100%">
@@ -233,7 +233,7 @@ The filenames listed below are per default ss.bios_* settings.
 <tr><td>The Lost World - Jurassic Park (Europe/USA)</td><td>MK-81065</td><td>Full</td><td>Fixes most graphical glitches in rock faces.</td></tr>
 <tr><td>The Lost World - Jurassic Park (Japan)</td><td>GS-9162</td><td>Full</td><td>Fixes most graphical glitches in rock faces.</td></tr>
 <tr><td>Theme Park (Europe)</td><td>T-5001H</td><td>Data only, with high-level bypass</td><td>Fixes hang during FMV.</td></tr>
-<tr><td>Thunder Force Gold Pack 1 (Japan)</td><td>T-1807G</td><td>Full</td><td>Fixes explosion graphic glitches in &quot;Thunder Force III&quot;.</td></tr>
+<tr><td>Thunder Force Gold Pack 1 (Japan)</td><td>T-1807G</td><td>Full</td><td>In &quot;Thunder Force III&quot;, fixes explosion graphic glitches throughout the game and ship sprite glitches in the ending sequence.</td></tr>
 <tr><td>Thunder Force Gold Pack 2 (Japan)</td><td>T-1808G</td><td>Data only, with high-level bypass</td><td>Fixes hang when pausing the game under certain conditions in &quot;Thunder Force AC&quot;.</td></tr>
 <tr><td>Titan Wars (Europe)</td><td>T-15911H50</td><td>Full</td><td>Fixes minor FMV glitches.</td></tr>
 <tr><td>Titan Wars (Japan)</td><td>T-15903G</td><td>Full</td><td>Fixes minor FMV glitches.</td></tr>
@@ -275,6 +275,7 @@ The filenames listed below are per default ss.bios_* settings.
 <tr><td>Frank Thomas Big Hurt Baseball (Japan)</td><td>T-8111G</td><td>SH-2 reads/writes from/to VDP1 slow down command execution.</td><td>Reduces graphical glitches.</td></tr>
 <tr><td>Frank Thomas Big Hurt Baseball (USA)</td><td>T-8138H</td><td>SH-2 reads/writes from/to VDP1 slow down command execution.</td><td>Reduces graphical glitches.</td></tr>
 <tr><td>Grandia (Japan)</td><td>T-4507G</td><td>Patch VDP1 VRAM to break an infinite loop.</td><td>Fixes hang at end of first disc.</td></tr>
+<tr><td>Herc's Adventures (USA)</td><td>T-23001H</td><td>SH-2 reads/writes from/to VDP1 slow down command execution.</td><td>Fixes some sprite flickering and tearing.</td></tr>
 <tr><td>In The Hunt (Europe/USA)</td><td>T-10001G</td><td>SH-2 reads/writes from/to VDP1 slow down command execution.</td><td>Fixes FMV tearing.</td></tr>
 <tr><td>Kaitei Daisensou (Japan)</td><td>T-15006G</td><td>SH-2 reads/writes from/to VDP1 slow down command execution.</td><td>Fixes FMV tearing.</td></tr>
 <tr><td>Thunderhawk II (Japan)</td><td>T-6006G</td><td>Block SH-2 DMA on last line of frame. Execute VDP1 commands instantly.</td><td>Fixes hangs just before and during gameplay.</td></tr>

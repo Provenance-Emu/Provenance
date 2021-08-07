@@ -7,10 +7,33 @@ pool:
   vmImage: 'macOS-latest'
 
 variables:
+  xcWorkspacePath: "Provenance.xcworkspace"
+  ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
+    configuration: 'Release'
+  ${{ if not(contains('main,develop', variables['Build.SourceBranchName'])) }}:
+    configuration: 'Debug'
+  name: $(Build.SourceBranchName)
+  tag: $(Build.BuildNumber)
+  CertificateFileName: 'itunes-adhoc.p12'
+  ExportOptionsFileName: 'options.plist'
+  ExportMethod: 'development'
+  # xcode-version: '12.5.1'
+  xcodeVersion: '12'  # Options: 8, 9, 11, 12, default, specifyPath
+  sdk: 'iphoneos'
   scheme: 'Provenance'
-  sdk: 'iphonesimulator'
-  configuration: 'Debug'
-  carthage-platform: 'iOS'
+  destinationPlatformOption: iOS
+
+# strategy:
+#   matrix:
+#     ios:
+#       sdk: 'iphoneos'
+#       scheme: 'Provenance'
+#       destinationPlatformOption: iOS
+#     tvos:
+#       sdk: 'appletvos'
+#       scheme: 'ProvenanceTV'
+#       destinationPlatformOption: tvOS
+#   maxParallel: 3
 
 steps:
 
@@ -18,37 +41,37 @@ steps:
   clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
   submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
 
-- task: Cache@2
-  inputs:
-    key: 'carthage | "$(carthage-platform)" | Cartfile.resolved | Romefile'
-    path: Carthage/Build
-  displayName: Carthage cache
-
-# This seems to be needed to force carthage to use the same version of XCode as the build/run steps
-- script: sudo xcode-select -s "/Applications/Xcode_12.2.app"
-
-- script: |
-    ./carthage.sh bootstrap --platform $(carthage-platform) --configuration debug --cache-builds
-  displayName: Carthage bootstrap
+# - task: InstallAppleCertificate@2
+#   inputs:
+#     certSecureFile: $(CertificateFileName)
+#     certPwd: '$(P12password)'
+#     keychain: 'temp'
+# - task: InstallAppleProvisioningProfile@1
+#   inputs:
+#     provisioningProfileLocation: 'secureFiles'
+#     provProfileSecureFile: $(ProfileFileName)
+#     removeProfile: true
 
 - task: Xcode@5
   inputs:
     scheme: '$(scheme)'
-    xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
+    xcWorkspacePath: '$(xcWorkspacePath)'
+    xcodeVersion: '$(xcodeVersion)'
     exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-    packageApp: true
-    destinationPlatformOption: iOS
-    destinationSimulators: iPhone 8
-  displayName: Building project
+    packageApp: false
+    destinationPlatformOption: $(destinationPlatformOption)
+    useXcpretty: false
+    configuration: '$(configuration)'
+    exportMethod: '$(ExportMethod)'
+  displayName: Building project $(scheme)
 
-- task: Xcode@5
-  inputs:
-    actions: 'test'
-    scheme: '$(scheme)'
-    xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
-    packageApp: true
-    destinationPlatformOption: iOS
-    destinationSimulators: iPhone 8
-  displayName: Running tests
+# - task: Xcode@5
+#   inputs:
+#     actions: 'test'
+#     scheme: '$(scheme)'
+#     xcWorkspacePath: 'Provenance.xcworkspace'
+#     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
+#     packageApp: true
+#     destinationPlatformOption: iOS
+#     destinationSimulators: iPhone XS
+#   displayName: Running tests

@@ -12,7 +12,7 @@ import RxRealm
 import RxSwift
 import UIKit
 
-protocol PVCheatsViewControllerDelegate: class {
+protocol PVCheatsViewControllerDelegate: AnyObject {
     func cheatsViewControllerDone(_ cheatsViewController: PVCheatsViewController)
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
         code: String,
@@ -37,7 +37,7 @@ final class PVCheatsViewController: UITableViewController {
     var screenshot: UIImage?
 
     var coreID: String?
-        
+
     private var enabledCheats: Results<PVCheats>!
     private var disabledCheats: Results<PVCheats>!
     private var allCheats: Results<PVCheats>!
@@ -52,22 +52,21 @@ final class PVCheatsViewController: UITableViewController {
         } else {
             allCheats = cheats.sorted(byKeyPath: "date", ascending: false)
         }
-        
-        var isFirstLoad: Bool=true;
+
+        var isFirstLoad: Bool=true
 
         if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
             isFirstLoad=emulatorViewController.getIsFirstLoad()
         }
-        
-            
+
         for cheat in allCheats {
-            NSLog("Cheat Found \(cheat.code) \(cheat.type)")
+            NSLog("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
             // start disabled to prevent bad cheat code from crashing the game all the time
             if (isFirstLoad) {
                 let realm = try! Realm()
-                realm.beginWrite();
-                cheat.enabled = false;
-                try! realm.commitWrite();
+                realm.beginWrite()
+                cheat.enabled = false
+                try! realm.commitWrite()
             }
             delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
                 in
@@ -80,13 +79,13 @@ final class PVCheatsViewController: UITableViewController {
                 }
             }
         }
-        
+
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
         tableView.dataSource = self
         tableView.delegate = self
 
         tableView?.addGestureRecognizer(longPressRecognizer)
-        
+
         self.tableView.reloadData()
         self.tableView.layoutIfNeeded()
     }
@@ -94,13 +93,14 @@ final class PVCheatsViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
-            emulatorViewController.core.setPauseEmulation(false)
-            emulatorViewController.isShowingMenu = false
-            emulatorViewController.enableControllerInput(false)
-            emulatorViewController.setIsFirstLoad(isFirstLoad: false)
+        if navigationController?.viewControllers.count == 1,
+            let emulatorViewController = presentingViewController as? PVEmulatorViewController {
+                emulatorViewController.core.setPauseEmulation(false)
+                emulatorViewController.isShowingMenu = false
+                emulatorViewController.enableControllerInput(false)
+                emulatorViewController.setIsFirstLoad(isFirstLoad: false)
         }
-    
+
     }
 
     @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
@@ -130,7 +130,7 @@ final class PVCheatsViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
                 do {
                     try  PVCheats.delete(saveState)
-                    
+
                         self.tableView.reloadData()
                         self.tableView.layoutIfNeeded()
                 } catch {
@@ -138,17 +138,17 @@ final class PVCheatsViewController: UITableViewController {
                 }
             })
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            
+
             present(alert, animated: true)
         default:
             break
         }
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
             if segue.identifier == "cheatCodeInfo" {
-                NSLog("Add Cheat Code");
+                NSLog("Add Cheat Code")
                 let secondViewController = segue.destination as! PVCheatsInfoViewController
                 secondViewController.delegate = self
             }
@@ -171,53 +171,57 @@ final class PVCheatsViewController: UITableViewController {
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 self.presentError("Error creating CheatCode: \(error.localizedDescription) \(reason)")
             }
-            
+
         }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return allCheats.count
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cheatCodeCell", for: indexPath) as! PVCheatsTableViewCell
-        let cheat:PVCheats = allCheats[indexPath.row];
-        cell.codeText.text=cheat.code;
-        cell.typeText.text=cheat.type;
+        let cheat:PVCheats = allCheats[indexPath.row]
+        cell.codeText.text=cheat.code
+        cell.typeText.text=cheat.type
         #if os(iOS)
-        cell.enableSwitch.isOn=cheat.enabled;
+        cell.enableSwitch.isOn=cheat.enabled
         #endif
         #if os(tvOS)
         cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
         #endif
-        cell.delegate=delegate;
-        cell.cheat=cheat;
-        
+        cell.delegate=delegate
+        cell.cheat=cheat
+
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return CGFloat(80)
     }
-    
+
     #if os(tvOS)
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cheat:PVCheats = allCheats[indexPath.row];
-        
+        let cheat:PVCheats = allCheats[indexPath.row]
+
         let realm = try! Realm()
-        realm.beginWrite();
-        cheat.enabled = !(cheat.enabled);
-        try! realm.commitWrite();
+        realm.beginWrite()
+        cheat.enabled = !(cheat.enabled)
+        try! realm.commitWrite()
         delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
             in
             switch result {
             case .success:
                 break
             case let .error(error):
+                let realm = try! Realm()
+                realm.beginWrite()
+                cheat.enabled = !(cheat.enabled)
+                try! realm.commitWrite()
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
-            
+
         }
         self.tableView.reloadData()
         self.tableView.layoutIfNeeded()

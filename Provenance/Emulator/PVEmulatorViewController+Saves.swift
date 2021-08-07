@@ -15,6 +15,7 @@ public enum SaveStateError: Error {
     case coreSaveError(Error?)
     case coreLoadError(Error?)
     case saveStatesUnsupportedByCore
+    case ineligibleError
     case noCoreFound(String)
     case realmWriteError(Error)
     case realmDeletionError(Error)
@@ -24,6 +25,7 @@ public enum SaveStateError: Error {
         case let .coreSaveError(coreError): return "Core failed to save: \(coreError?.localizedDescription ?? "No reason given.")"
         case let .coreLoadError(coreError): return "Core failed to load: \(coreError?.localizedDescription ?? "No reason given.")"
         case .saveStatesUnsupportedByCore: return "This core does not support save states."
+        case .ineligibleError: return "Save states are currently ineligible."
         case let .noCoreFound(id): return "No core found to match id: \(id)"
         case let .realmWriteError(realmError): return "Unable to write save state to realm: \(realmError.localizedDescription)"
         case let .realmDeletionError(realmError): return "Unable to delete old auto-save from database: \(realmError.localizedDescription)"
@@ -73,16 +75,19 @@ extension PVEmulatorViewController {
 
         if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1) < minimumPlayTimeToMakeAutosave {
             ILOG("Haven't been playing game long enough to make an autosave")
+            completion(.error(.ineligibleError))
             return
         }
 
         guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
             ILOG("Last autosave is too new to make new one")
+            completion(.error(.ineligibleError))
             return
         }
 
         if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
             ILOG("Latest manual save state is too recent to make a new auto save")
+            completion(.error(.ineligibleError))
             return
         }
 
@@ -145,7 +150,7 @@ extension PVEmulatorViewController {
                 LibrarySerializer.storeMetadata(saveState, completion: { result in
                     switch result {
                     case let .success(url):
-                        ILOG("Serialzed save state metadata to (\(url.path))")
+                        ILOG("Serialized save state metadata to (\(url.path))")
                     case let .error(error):
                         ELOG("Failed to serialize save metadata. \(error)")
                     }

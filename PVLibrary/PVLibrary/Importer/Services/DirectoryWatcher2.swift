@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import PVSupport
+@_exported import PVSupport
 import RxCocoa
 import RxSwift
 
@@ -41,6 +41,33 @@ public enum DirectoryWatcherError: Error {
     case pathAlreadyWatched
 }
 
+#warning("move me")
+public extension BehaviorRelay where Element: RangeReplaceableCollection {
+
+    func add(element: Element.Element) {
+        var array = self.value
+        array.append(element)
+        self.accept(array)
+    }
+}
+
+public extension BehaviorRelay where Element: SetAlgebra {
+
+    func insert(_ element: Element.Element) -> (inserted: Bool, memberAfterInsert: Element.Element) {
+        var set = self.value
+        let inserted = set.insert(element)
+        self.accept(set)
+        return inserted
+    }
+
+    func remove(_ element: Element.Element) -> Element.Element? {
+        var set = self.value
+        let removed = set.remove(element)
+        self.accept(set)
+        return removed
+    }
+}
+
 public final class DirectoryWatcher2 {
     public static let shared = DirectoryWatcher2()
     private init() {
@@ -51,13 +78,13 @@ public final class DirectoryWatcher2 {
 
     private let disposeBag = DisposeBag()
 
-    private var watchedDirectories = Variable<Set<URL>>(Set<URL>())
+    private var watchedDirectories = BehaviorRelay<Set<URL>>(value: Set<URL>())
 
     public func watchDirectory(_ url: URL) throws {
         guard !watchedDirectories.value.contains(url) else { throw DirectoryWatcherError.pathAlreadyWatched }
         guard url.hasDirectoryPath else { throw DirectoryWatcherError.pathNotDirectory }
 
-        if watchedDirectories.value.insert(url).inserted {
+        if watchedDirectories.insert(url).inserted {
             serialQueue.async {
                 do {
                     try self.initialScan(url)
@@ -71,7 +98,7 @@ public final class DirectoryWatcher2 {
     }
 
     public func unwatchDirectory(_ url: URL) {
-        if let removed = watchedDirectories.value.remove(url) {
+        if let removed = watchedDirectories.remove(url) {
             _stopMonitoring(removed)
         }
     }
@@ -83,7 +110,7 @@ public final class DirectoryWatcher2 {
     }
 
     fileprivate var dispatch_sources = [URL: WatchedDir]()
-    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialExtractorQueue")
+    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     private func initialScan(_ url: URL) throws {
         let exts = PVEmulatorConfiguration.archiveExtensions

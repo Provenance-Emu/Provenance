@@ -608,10 +608,7 @@ static void emulation_run(BOOL skipFrame) {
     Mednafen::NativeVFS fs = Mednafen::NativeVFS();
 
     game = Mednafen::MDFNI_LoadGame([mednafenCoreModule UTF8String], &fs, [path UTF8String]);
-
-	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
-	// is this correct for EU, JP, US? Still testing.
-	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+    assert(game);
 
     if(!game) {
         if (error) {
@@ -630,6 +627,10 @@ static void emulation_run(BOOL skipFrame) {
         return NO;
     }
     
+    // Uncomment this to set the aspect ratio by the game's render size according to mednafen
+    // is this correct for EU, JP, US? Still testing.
+    mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+    
     // BGRA pixel format
     Mednafen::MDFN_PixelFormat pix_fmt(Mednafen::MDFN_COLORSPACE_RGB, 4, 0, 8, 16, 24);
     backBufferSurf = new Mednafen::MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
@@ -646,6 +647,11 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(4, "gamepad", (uint8_t *)inputBuffer[4]);
     }
     else if (self.systemType == MednaSystemPCFX)
+    {
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
+    else if (self.systemType == MednaSystemVirtualBoy)
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
@@ -743,6 +749,7 @@ static void emulation_run(BOOL skipFrame) {
     else
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[1]);
     }
 
     Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
@@ -2689,11 +2696,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 }
 
 
-- (void)setPSXCheatCodes
+- (BOOL)setPSXCheatCodes
 {
     @synchronized(self) {
         // Apply enabled cheats found in dictionary
         // int cheatIdx=0;
+
+        BOOL cheatListSuccessfull = YES;
 
         for (id key in cheatList)
         {
@@ -2731,19 +2740,25 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                             }
                         }
                         @catch (...) {
-                           NSLog(@"Game Code Error");
+                            cheatListSuccessfull = NO;
+                            [cheatList removeObjectForKey:singleCode];
+                            NSLog(@"Game Code Error");
                         }
                     }
                 }
             }
         }
+        return cheatListSuccessfull;
     }
 }
 
 
-- (void)setSNESCheatCodes
+- (BOOL)setSNESCheatCodes
 {
     @synchronized(self) {
+
+        BOOL cheatListSuccessfull = YES;
+
         for (id key in cheatList)
         {
             if ([[cheatList valueForKey:key] isEqual:@YES])
@@ -2773,18 +2788,24 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                             }
                         }
                         @catch (...) {
-                           NSLog(@"Game Code Error");
+                            cheatListSuccessfull = NO;
+                            [cheatList removeObjectForKey:singleCode];
+                            NSLog(@"Game Code Error");
                         }
                     }
                 }
             }
         }
+        return cheatListSuccessfull;
     }
 }
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
 {
     @synchronized(self) {
+
+        BOOL cheatListSuccessfull;
+
         if (!(self.getCheatSupport)) {
             return false;
         }
@@ -2798,16 +2819,16 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
         switch (self.systemType) {
             case MednaSystemPSX:
-                self.setPSXCheatCodes;
+                cheatListSuccessfull = self.setPSXCheatCodes;
                 break;
             case MednaSystemSNES:
-                self.setSNESCheatCodes;
+                cheatListSuccessfull = self.setSNESCheatCodes;
                 break;
         }
 
         Mednafen::MDFNMP_ApplyPeriodicCheats();
         // if no error til this point, return true
-        return YES;
+        return cheatListSuccessfull;
     }
 }
 //- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {

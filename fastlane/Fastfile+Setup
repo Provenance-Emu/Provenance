@@ -4,7 +4,7 @@
   #   if UI.interactive?
   #     apple_id = UI.input "Please enter your Apple Development ID (usually e-mail address): "
   #     # password = UI.password "Please enter your iTunes Connect password (this is securely encrypted in your keychain. We will never access that information directly): "
-  #     $dev_domain = UI.input "Please enter your developer domain as {com,org,net}.{NAME} (ie; com.provenance-emu will be replaced with com.johnnyappleseed if you're Johnny Appleseed on iTunes connect.): "
+  #     $dev_domain = UI.input "Please enter your developer domain as {com,org,net}.{NAME} (ie; org.provenance-emu will be replaced with com.johnnyappleseed if you're Johnny Appleseed on iTunes connect.): "
   #     if UI.confirm("Do you belong to multiple development teams (usually no)")
   #       team_id = UI.input "Please enter your iTunes Dev portal team number:"
   #       itc_team_id = UI.input "Please enter your iTunes Connect team number: (You can leave blank if you don't intend to use iTunes Connect)"

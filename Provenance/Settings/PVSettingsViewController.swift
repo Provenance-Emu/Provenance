@@ -50,7 +50,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             tableView.sectionHeaderHeight = 0
             tableView.sectionFooterHeight = 0
         #endif
-        
+
         conflictsController.conflicts
             .bind(onNext: {
                 self.numberOfConflicts = $0.count
@@ -181,7 +181,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ]
         )
         #endif
-        
+
         let avSection = Section(title: "Video Options", rows: avRows)
 
         // -- Section : Controler
@@ -197,7 +197,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration),
                 PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
             ]
-        
+
         )
         #endif
         controllerRows.append(contentsOf: [
@@ -208,14 +208,14 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ])
         #if os(tvOS)
         controllerRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."),  key: \PVSettingsModel.use8BitdoM30,
+            PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30,
             customization: { cell, _ in
             cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
             cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
             })
         ])
         #endif
-        
+
         let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
 
         // Game Library
@@ -223,7 +223,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         var libraryRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
                 text: "Launch Web Server",
-                detailText: .subtitle("Import/Export ROMs, saves, cover art..."),
+                detailText: .subtitle("Import/Export ROMs, saves, cover art…"),
                 icon: nil,
                 customization: nil,
                 action: { [weak self] _ in
@@ -243,7 +243,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                         let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
                         let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
                         let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
-                        //cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                        // cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                         cell.detailTextLabel?.attributedText = subTitleAttrString
                     } else {
                         cell.detailTextLabel?.text = nil
@@ -293,7 +293,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
-            
+
             PVSettingsSwitchRow(text: "iCloud Sync",
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
@@ -337,7 +337,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                                         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                                 }
-            ),
+            )
                 ]
         #endif
 

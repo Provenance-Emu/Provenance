@@ -67,7 +67,7 @@ public extension PVGame {
                 return .ggJAPAN
             default:
                 return .ggUSA
-            }            
+            }
         case .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor, .MasterSystem, .SG1000, .FDS:
             return .tall
         case .GBA, .GBC, .Lynx, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy:

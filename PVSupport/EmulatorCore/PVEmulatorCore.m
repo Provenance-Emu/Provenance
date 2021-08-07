@@ -29,7 +29,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 // calculate this on init
 static double timebase_ratio;
 
-NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.ErrorDomain";
+NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
 @property (nonatomic, strong, readwrite, nonnull) NSLock  *emulationLoopThreadLock;

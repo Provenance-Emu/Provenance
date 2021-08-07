@@ -15,7 +15,7 @@
 @import CocoaLumberjack;
 
 //#import <UIForLumberJack/UIForLumberJack.h>
-@import CocoaLumberjack.DDFileLogger;
+//@import CocoaLumberjack.DDFileLogger;
 
 /* Subclass to get rid of the prominent header we don't need */
 @interface UIForLumberjack ()
@@ -193,10 +193,6 @@
     return UIBarPositionTopAttached;
 }
 
-- (BOOL)automaticallyAdjustsScrollViewInsets {
-    return YES;
-}
-
 - (void)viewDidLoad {
 #if TARGET_OS_IOS
     _textView.editable = NO;
@@ -287,7 +283,7 @@
             [self hideLumberJackUI];
                 // Register for updates
             [[PVLogging sharedInstance] removeListner:self];
-            [self updateText:@"Loading..."];
+            [self updateText:@"Loading…"];
 
             __weak PVLogViewController *weakSelf = self;
             

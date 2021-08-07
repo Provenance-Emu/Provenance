@@ -12,6 +12,8 @@ import RealmSwift
 import UIKit
 import ZipArchive
 
+private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
+
 public func PVMaxRecentsCount() -> Int {
     #if os(tvOS)
         return 12
@@ -31,7 +33,7 @@ public func PVMaxRecentsCount() -> Int {
 
  */
 
-public protocol GameLaunchingViewController: class {
+public protocol GameLaunchingViewController: AnyObject {
     func canLoad(_ game: PVGame) throws
     func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
     func openSaveState(_ saveState: PVSaveState)
@@ -39,7 +41,7 @@ public protocol GameLaunchingViewController: class {
     func presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
-public protocol GameSharingViewController: class {
+public protocol GameSharingViewController: AnyObject {
     func share(for game: PVGame, sender: Any?)
 }
 
@@ -168,7 +170,7 @@ extension GameSharingViewController where Self: UIViewController {
             hud.isUserInteractionEnabled = false
             hud.mode = .indeterminate
             hud.labelText = "Creating ZIP"
-            hud.detailsLabelText = "Please be patient, this may take a while..."
+            hud.detailsLabelText = "Please be patient, this may take a while…"
 
             DispatchQueue.global(qos: .background).async {
                 let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
@@ -348,12 +350,12 @@ extension GameLaunchingViewController where Self: UIViewController {
                     } catch {
                         ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
                         // Since we couldn't rename, mark this as a false
-                        missingBIOSES.append($0.expectedFilename)
+                        missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
                         return false
                     }
                 } else {
                     // No MD5 matches either
-                    missingBIOSES.append($0.expectedFilename)
+                    missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
                     return false
                 }
             } else {
@@ -405,7 +407,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         for core in cores {
             let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
-                let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)...", preferredStyle: .actionSheet)
+                let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)…", preferredStyle: .actionSheet)
                 if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
                     alwaysUseAlert.popoverPresentationController?.sourceView = senderView
                     alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
@@ -524,13 +526,13 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
 
-            let missingFilesString = missingBIOSes.joined(separator: ", ")
+            let missingFilesString = missingBIOSes.joined(separator: "\n")
             let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             #if os(iOS)
                 let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                    UIApplication.shared.open(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 })
                 displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
             #else
@@ -627,7 +629,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                         textField.delegate = textEditBlocker // Weak ref
 
                         switchControl.translatesAutoresizingMaskIntoConstraints = false
-                        switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+                        switchControl.transform = CGAffineTransform(scaleX: 0.55, y: 0.55)
                     }
                 #endif
 
@@ -643,7 +645,6 @@ extension GameLaunchingViewController where Self: UIViewController {
                 }))
 
                 #if os(tvOS)
-                    // Restart Always…
                     alert.addAction(UIAlertAction(title: "Restart (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
                         PVSettingsModel.shared.askToAutoLoad = false
                         PVSettingsModel.shared.autoLoadSaves = false
@@ -651,8 +652,8 @@ extension GameLaunchingViewController where Self: UIViewController {
                     }))
                 #endif
 
-                // Continue…
-                alert.addAction(UIAlertAction(title: "Continue…", style: .default, handler: { (_: UIAlertAction) -> Void in
+                // Continue
+                alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_: UIAlertAction) -> Void in
                     #if os(iOS)
                         if switchControl.isOn {
                             PVSettingsModel.shared.askToAutoLoad = false
@@ -663,8 +664,8 @@ extension GameLaunchingViewController where Self: UIViewController {
                 }))
 
                 #if os(tvOS)
-                    // Continue Always…
-                    alert.addAction(UIAlertAction(title: "Continue… (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
+                    // Continue Always
+                    alert.addAction(UIAlertAction(title: "Continue (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
                         PVSettingsModel.shared.askToAutoLoad = false
                         PVSettingsModel.shared.autoLoadSaves = true
                         completion(latestSaveState)

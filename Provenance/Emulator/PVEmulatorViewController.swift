@@ -246,7 +246,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
             let drawTime =  self.glViewController.timeSinceLastDraw * 1000
             let fps = 1000 / drawTime
-            self.fpsLabel.text = String ( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
+            self.fpsLabel.text = String( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
         })
     }
 

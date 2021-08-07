@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>2775</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GitBranch</key>
 	<string></string>
 	<key>GitDate</key>

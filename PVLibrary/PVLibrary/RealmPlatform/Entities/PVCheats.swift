@@ -7,7 +7,6 @@ import Foundation
 import PVSupport
 import RealmSwift
 
-
 public protocol CheatFile {
     associatedtype LocalFileProviderType: LocalFileProvider
     var file: LocalFileProviderType! { get }

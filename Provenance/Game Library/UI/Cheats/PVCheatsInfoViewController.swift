@@ -9,8 +9,8 @@ import RealmSwift
 import UIKit
 
 final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
-    weak var delegate: PVCheatsViewController? = nil
-    
+    weak var delegate: PVCheatsViewController?
+
     var mustRefreshDataSource: Bool = false
 
     @IBOutlet public var typeText: UITextField!
@@ -122,12 +122,12 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
                 default:
                     typeText.text=fieldValue + key.characters
             }
-            
+
         }
     }
-    //MARK - UITextField Delegates
+    // MARK: - UITextField Delegates
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        //For mobile numer validation
+        // For mobile numer validation
         if textField == codeTextField {
             let allowedCharacters = CharacterSet(charactersIn:"-0123456789ABCDEFabcdef ")
             let characterSet = CharacterSet(charactersIn: string)
@@ -141,7 +141,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     #endif
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateLabels()
@@ -166,23 +166,22 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         typeText?.placeholder = "e.g. Money"
         guard let saveState = saveState else {
             #if os(iOS)
-            typeText.text="";
-            codeText.text="";
+            typeText.text=""
+            codeText.text=""
             #endif
             #if os(tvOS)
-            codeTextField.text="";
+            codeTextField.text=""
             #endif
             return
         }
 
         #if os(iOS)
-        typeText.text=saveState.type;
-        codeText.text=saveState.code;
+        typeText.text=saveState.type
+        codeText.text=saveState.code
         #endif
         #if os(tvOS)
-        codeTextField.text=saveState.code;
+        codeTextField.text=saveState.code
         #endif
-        
 
         title = "\(saveState.game.title) : Cheat Codes)"
 
@@ -191,17 +190,16 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     @IBAction func
         saveButtonTapped(_ sender: Any) {
         #if os(iOS)
-        if (codeText.text.count > 0) {
-            play()
-        }
+            if !codeText.text.isEmpty {
+                play()
+            }
         #endif
         #if os(tvOS)
-        let fieldValue=codeTextField.text ?? ""
-        if (fieldValue.count > 0) {
-            play()
-        }
+            let fieldValue=codeTextField.text ?? ""
+            if !fieldValue.isEmpty {
+                play()
+            }
         #endif
-        
     }
 
     @IBAction func
@@ -219,7 +217,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         #endif
         #if os(tvOS)
         let fieldValue = self.codeTextField.text ?? ""
-        if (fieldValue.count > 0) {
+        if !fieldValue.isEmpty {
             self.delegate?.saveCheatCode(
                 code: fieldValue,
                 type: typeText.text!,
@@ -227,13 +225,12 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         }
         // go back to the previous view controller
         _ = self.navigationController?.popViewController(animated: true)
-        
+
         #endif
-        
-    
+
     }
     func cancel() {
-        _ = navigationController?.popViewController(animated: true);
+        _ = navigationController?.popViewController(animated: true)
     }
 
     var token: NotificationToken?
@@ -255,4 +252,3 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         })
     }
 }
-

@@ -261,7 +261,7 @@ LIST_OF_VARIABLES
 
 - (void)reicastMain {
 	//    #if !TARGET_OS_SIMULATOR
-	install_prof_handler(1);
+	// install_prof_handler(1);
 	//   #endif
 
 	char *Args[3];

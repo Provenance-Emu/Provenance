@@ -17,7 +17,7 @@ class PVTVTabBarController: UITabBarController {
         #else
             let flags: UIKeyModifierFlags = .command
         #endif
-        
+
         let findCommand = UIKeyCommand(input: "f", modifierFlags: flags, action: #selector(PVTVTabBarController.searchAction), discoverabilityTitle: "Find…")
         sectionCommands.append(findCommand)
 
