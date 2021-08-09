@@ -7,6 +7,7 @@ pool:
   vmImage: 'macOS-latest'
 
 variables:
+  group: 'ios-pipeline'
   xcWorkspacePath: "Provenance.xcworkspace"
   ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
     configuration: 'Release'
@@ -14,7 +15,7 @@ variables:
     configuration: 'Debug'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
-  CertificateFileName: 'itunes-adhoc.p12'
+  CertificateFileName: 'developer_cert.p12'
   ExportOptionsFileName: 'options.plist'
   ExportMethod: 'development'
   # xcode-version: '12.5.1'
@@ -35,35 +36,92 @@ variables:
 #       destinationPlatformOption: tvOS
 #   maxParallel: 3
 
-steps:
+jobs:
+# Builds
+- job: iOS
+  steps:
+  - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+    clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+    submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
 
-- checkout: self # self represents the repo where the initial Pipelines YAML file was found
-  clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
-  submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: $(CertificateFileName)
+      certPwd: '$(P12password)'
+      keychain: 'temp'
+      deleteCert: true
 
-# - task: InstallAppleCertificate@2
-#   inputs:
-#     certSecureFile: $(CertificateFileName)
-#     certPwd: '$(P12password)'
-#     keychain: 'temp'
-# - task: InstallAppleProvisioningProfile@1
-#   inputs:
-#     provisioningProfileLocation: 'secureFiles'
-#     provProfileSecureFile: $(ProfileFileName)
-#     removeProfile: true
+  #- task: InstallAppleProvisioningProfile@1
+  #  inputs:
+  #    provisioningProfileLocation: 'secureFiles'
+  #    provProfileSecureFile: $(ProfileFileName)
+  #    removeProfile: true
 
-- task: Xcode@5
-  inputs:
-    scheme: '$(scheme)'
-    xcWorkspacePath: '$(xcWorkspacePath)'
-    xcodeVersion: '$(xcodeVersion)'
-    exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-    packageApp: false
-    destinationPlatformOption: $(destinationPlatformOption)
-    useXcpretty: false
-    configuration: '$(configuration)'
-    exportMethod: '$(ExportMethod)'
-  displayName: Building project $(scheme)
+  - task: Xcode@5
+    inputs:
+      scheme: '$(scheme)'
+      xcWorkspacePath: '$(xcWorkspacePath)'
+      xcodeVersion: '$(xcodeVersion)'
+      exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
+      packageApp: true
+      destinationPlatformOption: $(destinationPlatformOption)
+      useXcpretty: false
+      configuration: '$(configuration)'
+      exportMethod: '$(ExportMethod)'
+      # signingOption: 'manual'
+      # signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      # provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+    displayName: Building project $(scheme)
+
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*.ipa'
+      targetFolder: '$(build.artifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(build.artifactStagingDirectory)/output/$(sdk)/$(configuration)'
+      artifactName: 'drop'
+      publishLocation: 'Container'
+  # App Center distribute
+  # Distribute app builds to testers and users via Visual Studio App Center
+  # - task: AppCenterDistribute@1
+  #   inputs:
+  #     serverEndpoint: 
+  #     appSlug: 
+  #     appFile: 
+  #     #symbolsOption: 'Apple' # Optional. Options: apple
+  #     #symbolsPath: # Optional
+  #     #symbolsPdbFiles: '**/*.pdb' # Optional
+  #     #symbolsDsymFiles: # Optional
+  #     #symbolsMappingTxtFile: # Optional
+  #     #symbolsIncludeParentDirectory: # Optional
+  #     #releaseNotesOption: 'input' # Options: input, file
+  #     #releaseNotesInput: # Required when releaseNotesOption == Input
+  #     #releaseNotesFile: # Required when releaseNotesOption == File
+  #     #isMandatory: false # Optional
+  #     #distributionGroupId: # Optional
+- job: tvOS
+  steps:
+  - task: Xcode@5
+    inputs:
+      configuration: '$(configuration)'
+      destinationPlatform: 'tvOS'
+      destinationPlatformOption: 'custom'
+      destinationSimulators: 'Apple TV 4K,OS=14.3'
+      destinationTypeOption: 'simulators'
+      exportMethod: '$(ExportMethod)'
+      exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
+      packageApp: false
+      scheme: '$(scheme)'
+      sdk: '$(sdk)'
+      useXcpretty: false
+      xcodeVersion: '$(xcodeVersion)'
+      xcWorkspacePath: '$(xcWorkspacePath)'
+    displayName: Building project $(scheme) - tvOS
+    env:
+      sdk: 'appletvsimulator'  # appletvsimulator, appletvos
+      scheme: 'ProvenanceTV'
+      destinationPlatformOption: tvOS
 
 # - task: Xcode@5
 #   inputs:
