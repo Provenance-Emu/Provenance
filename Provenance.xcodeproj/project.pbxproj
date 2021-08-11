@@ -1854,7 +1854,6 @@
 				1AD9AA311ACC988F00EC87A0 /* Sources */,
 				1AD9AA321ACC988F00EC87A0 /* Frameworks */,
 				1AD9AA331ACC988F00EC87A0 /* Resources */,
-				6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -2111,27 +2110,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = ". \"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\" ProvenanceTV\n";
-		};
-		6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/Provenance Tests-inputPaths.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = Carthage;
-			outputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/Provenance Tests-outputPaths.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-			showEnvVarsInLog = 0;
 		};
 		B300F064212512310010299E /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
