@@ -106,9 +106,9 @@ jobs:
     inputs:
       configuration: '$(configuration)'
       destinationPlatform: 'tvOS'
-      destinationPlatformOption: 'custom'
-      destinationSimulators: 'Apple TV 4K,OS=14.3'
-      destinationTypeOption: 'simulators'
+      # destinationPlatformOption: 'custom'
+      # destinationSimulators: 'Apple TV 4K,OS=14.3'
+      # destinationTypeOption: 'simulators'
       exportMethod: '$(ExportMethod)'
       exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
