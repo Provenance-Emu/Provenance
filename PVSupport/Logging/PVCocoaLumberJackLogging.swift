@@ -19,7 +19,7 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
         fileLogger.logFileManager.maximumNumberOfLogFiles = 5
         return fileLogger
     }()
-    
+
     private var nsLogger: JMLumberjackNSLogger = {
         return JMLumberjackNSLogger()
     }()
@@ -32,14 +32,14 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
         super.init()
         // Only log to console if we're running non-appstore build
         // For speed. File logging only is the fastest (async flushing)
-        
+
 #if DEBUG
         // Always enable for debug builds
         DDLog.add(DDOSLogger.sharedInstance, with: .debug)
 #else
         DDLog.add(DDOSLogger.sharedInstance, with: .warning)
 #endif
-        
+
         DDLog.add(fileLogger, with: .warning)
         DDLog.add(nsLogger, with: .debug)
     }

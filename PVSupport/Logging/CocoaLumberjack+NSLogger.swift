@@ -147,7 +147,7 @@ extension String {
             data.append(num)
         }
 
-        guard data.count > 0 else { return nil }
+        guard !data.isEmpty else { return nil }
 
         return data
     }
