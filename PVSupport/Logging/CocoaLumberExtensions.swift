@@ -6,8 +6,8 @@
 //  Copyright © 2015 Joe Mattiello. All rights reserved.
 //
 
-import CocoaLumberjack
-import CocoaLumberjackSwift
+@_exported import CocoaLumberjack
+@_exported import CocoaLumberjackSwift
 import Foundation
 
 extension DDLogFlag {

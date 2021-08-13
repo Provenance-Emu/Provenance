@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger.git",
+        "state": {
+          "branch": "master",
+          "revision": "3408cce1ff97bef20f3dcf367a02019b5c51d198",
+          "version": null
+        }
+      },
+      {
         "package": "QuickTableViewController",
         "repositoryURL": "https://github.com/bcylin/QuickTableViewController.git",
         "state": {

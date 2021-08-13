@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
-		B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
 		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -19,8 +17,17 @@
 		B302F8A920B73D6500C5E502 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
 		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
-		B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
 		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
+		B3296E7F26C67DF60088AC32 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E7E26C67DF60088AC32 /* NSLogger */; };
+		B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
+		B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
+		B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */; };
+		B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */; };
+		B3296E8B26C67F810088AC32 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8A26C67F810088AC32 /* NSLogger */; };
+		B3296E9F26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
+		B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
+		B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
+		B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
 		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
 		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F326B398A900960A81 /* Reachability */; };
 		B336B8F626B3991500960A81 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F526B3991500960A81 /* CocoaLumberjack */; };
@@ -41,7 +48,6 @@
 		B3447E93218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
 		B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
-		B34AB5722106DC3000C45F09 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
 		B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
 		B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
 		B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
@@ -154,15 +160,17 @@
 		1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
 		1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PVAbstractAdditions.h"; sourceTree = "<group>"; };
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
-		B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVCocoaLumberJackLogging.h; sourceTree = "<group>"; };
 		B302F89920B73D5F00C5E502 /* PVLogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogEntry.m; sourceTree = "<group>"; };
 		B302F89A20B73D6200C5E502 /* PVLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogging.h; sourceTree = "<group>"; };
 		B302F89B20B73D6300C5E502 /* PVLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogEntry.h; sourceTree = "<group>"; };
 		B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVProvenanceLogging.h; sourceTree = "<group>"; };
 		B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVProvenanceLogging.m; sourceTree = "<group>"; };
 		B302F89E20B73D6400C5E502 /* PVLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogging.m; sourceTree = "<group>"; };
-		B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVCocoaLumberJackLogging.m; sourceTree = "<group>"; };
 		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+NSLogger.swift"; sourceTree = "<group>"; };
+		B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+swift-log.swift"; sourceTree = "<group>"; };
+		B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DDLogLevel+CustomStringConvertable.swift"; sourceTree = "<group>"; };
+		B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCocoaLumberJackLogging.swift; sourceTree = "<group>"; };
 		B3447E7F218B7E4B00557ACE /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CABitOperations.h; sourceTree = "<group>"; };
 		B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioTimeStamp.h; sourceTree = "<group>"; };
 		B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
@@ -229,8 +237,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B336B8F626B3991500960A81 /* CocoaLumberjack in Frameworks */,
+				B3296E8B26C67F810088AC32 /* NSLogger in Frameworks */,
 				B3B492CB26B3A96B000B426B /* Reachability in Frameworks */,
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
+				B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
 				B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */,
@@ -244,6 +254,8 @@
 				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
+				B3296E7F26C67DF60088AC32 /* NSLogger in Frameworks */,
+				B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,17 +352,27 @@
 		B302F89420B71C2300C5E502 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				B3296E8D26C680EA0088AC32 /* Protocols */,
 				B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */,
-				B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */,
-				B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */,
+				B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */,
 				B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */,
 				B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */,
 				B302F89B20B73D6300C5E502 /* PVLogEntry.h */,
 				B302F89920B73D5F00C5E502 /* PVLogEntry.m */,
 				B302F89A20B73D6200C5E502 /* PVLogging.h */,
 				B302F89E20B73D6400C5E502 /* PVLogging.m */,
+				B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */,
+				B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		B3296E8D26C680EA0088AC32 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		B3447E7E218B7E2C00557ACE /* CARingBuffer */ = {
@@ -495,7 +517,6 @@
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
 				B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */,
 				B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */,
-				B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,7 +541,6 @@
 				B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
 				B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */,
-				B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,6 +583,8 @@
 				B336B8F526B3991500960A81 /* CocoaLumberjack */,
 				B336B8F726B3991500960A81 /* CocoaLumberjackSwift */,
 				B3B492CA26B3A96B000B426B /* Reachability */,
+				B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */,
+				B3296E8A26C67F810088AC32 /* NSLogger */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
@@ -585,6 +607,8 @@
 			packageProductDependencies = (
 				B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */,
 				B336B8F326B398A900960A81 /* Reachability */,
+				B3296E7E26C67DF60088AC32 /* NSLogger */,
+				B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
@@ -629,6 +653,7 @@
 			packageReferences = (
 				B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
 				B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
+				B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -685,6 +710,7 @@
 				B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */,
 				B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */,
 				B3AB37DD21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
+				B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
 				B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
@@ -692,6 +718,7 @@
 				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
 				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
+				B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
 				B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
@@ -715,7 +742,7 @@
 				B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */,
 				B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */,
 				B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */,
-				B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */,
+				B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,6 +757,7 @@
 				B34AB5772106DC5300C45F09 /* OEGameAudio.m in Sources */,
 				B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */,
 				B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
+				B3296E9F26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
 				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
@@ -737,6 +765,7 @@
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
 				B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
+				B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
 				B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */,
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
@@ -752,7 +781,6 @@
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,
-				B34AB5722106DC3000C45F09 /* PVCocoaLumberJackLogging.m in Sources */,
 				B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */,
 				B34AB5802106DC6100C45F09 /* PVGameControllerUtilities.m in Sources */,
 				B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */,
@@ -760,6 +788,7 @@
 				B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */,
 				B3AB37E321881A82009D9244 /* PViCadeGamepad.swift in Sources */,
+				B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */,
 				B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1332,6 +1361,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fpillet/NSLogger.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
@@ -1351,6 +1388,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B3296E7E26C67DF60088AC32 /* NSLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */;
+			productName = NSLogger;
+		};
+		B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwiftLogBackend;
+		};
+		B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwiftLogBackend;
+		};
+		B3296E8A26C67F810088AC32 /* NSLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */;
+			productName = NSLogger;
+		};
 		B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
