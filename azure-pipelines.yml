@@ -44,12 +44,12 @@ jobs:
     clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
     submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
 
-  - task: InstallAppleCertificate@2
-    inputs:
-      certSecureFile: $(CertificateFileName)
-      certPwd: '$(P12password)'
-      keychain: 'temp'
-      deleteCert: true
+  # - task: InstallAppleCertificate@2
+  #   inputs:
+  #     certSecureFile: $(CertificateFileName)
+  #     certPwd: '$(P12password)'
+  #     keychain: 'temp'
+  #     deleteCert: true
 
   #- task: InstallAppleProvisioningProfile@1
   #  inputs:
@@ -110,16 +110,16 @@ jobs:
       destinationSimulators: 'Apple TV 4K,OS=14.3'
       destinationTypeOption: 'simulators'
       exportMethod: '$(ExportMethod)'
-      exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
+      exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
-      scheme: '$(scheme)'
-      sdk: '$(sdk)'
+      scheme: 'ProvenanceTV'
+      sdk: 'appletvos'
       useXcpretty: false
       xcodeVersion: '$(xcodeVersion)'
       xcWorkspacePath: '$(xcWorkspacePath)'
     displayName: Building project $(scheme) - tvOS
     env:
-      sdk: 'appletvsimulator'  # appletvsimulator, appletvos
+      sdk: 'appletvos'  # appletvsimulator, appletvos
       scheme: 'ProvenanceTV'
       destinationPlatformOption: tvOS
 
