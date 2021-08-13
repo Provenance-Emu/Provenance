@@ -3,7 +3,7 @@ name: Release-Notes-Preview
 
 on:
   pull_request:
-    branches: [master]
+    branches: [develop]
   issue_comment:
     types: [edited]
 
