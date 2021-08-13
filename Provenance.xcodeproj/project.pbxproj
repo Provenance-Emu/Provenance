@@ -830,7 +830,6 @@
 		B3AF701B21916E38000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AF705921916F2F000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF70652191733D000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
-		B3B10485218F212500210C39 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/tvOS/SQLite.framework; sourceTree = "<group>"; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1264,7 +1263,6 @@
 				B3AF701B21916E38000FA7F9 /* PVSupport.framework */,
 				B316B4DB219265B700693472 /* PVVirtualJaguar.framework */,
 				B324C30D219195C0009F4EDC /* Security.framework */,
-				B3B10485218F212500210C39 /* SQLite.framework */,
 				B324C30B219195BB009F4EDC /* SystemConfiguration.framework */,
 				B324C313219195E0009F4EDC /* TVServices.framework */,
 				B324C30221919596009F4EDC /* TVUIKit.framework */,
@@ -1856,7 +1854,6 @@
 				1AD9AA311ACC988F00EC87A0 /* Sources */,
 				1AD9AA321ACC988F00EC87A0 /* Frameworks */,
 				1AD9AA331ACC988F00EC87A0 /* Resources */,
-				6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -2113,27 +2110,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = ". \"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\" ProvenanceTV\n";
-		};
-		6OBYKZXD36MCSZYQLYVIY1AY /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/Provenance Tests-inputPaths.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = Carthage;
-			outputFileListPaths = (
-				"$(SRCROOT)/Carthage/xcfilelists/Provenance Tests-outputPaths.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-			showEnvVarsInLog = 0;
 		};
 		B300F064212512310010299E /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
