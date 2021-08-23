@@ -77,7 +77,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                     let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
 
                     let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
-                    let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
+                    let saveFile = PVFile(withURL: saveURL, relativeRoot: .documents)
                     var cheatsState: PVCheats!
 
                     try realm.write {

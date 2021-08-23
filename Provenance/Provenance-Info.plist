@@ -120,18 +120,6 @@
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
-	<key>NSUbiquitousContainers</key>
-	<dict>
-		<key>iCloud.org.provenance-emu.provenance</key>
-		<dict>
-			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
-			<true/>
-			<key>NSUbiquitousContainerName</key>
-			<string>Provenance</string>
-			<key>NSUbiquitousContainerSupportedFolderLevels</key>
-			<string>Any</string>
-		</dict>
-	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>org.provenance-emu.webserver</string>

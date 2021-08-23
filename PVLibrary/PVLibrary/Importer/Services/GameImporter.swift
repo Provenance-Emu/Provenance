@@ -13,14 +13,6 @@ import Foundation
 import RealmSwift
 import SQLite
 
-struct Constants {
-    struct iCloud {
-        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
-        // Dynamic version based off of bundle Identifier
-        //        static let documentsContainerIdentifier = "iCloud." + (Bundle.main.bundleIdentifier ?? "")
-    }
-}
-
 public func + <K, V>(lhs: [K: V], rhs: [K: V]) -> [K: V] {
     var combined = lhs
 
@@ -1270,7 +1262,7 @@ extension GameImporter {
             do {
                 let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
                 try RomDatabase.sharedInstance.writeTransaction {
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                     game.originalArtworkFile = file
                 }
             } catch { ELOG("\(error.localizedDescription)") }

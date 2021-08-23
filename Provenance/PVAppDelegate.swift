@@ -29,16 +29,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initLogging()
         setDefaultsFromSettingsBundle()
 
-        DispatchQueue.global(qos: .background).async {
-            let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
-            if useiCloud {
-                DispatchQueue.main.async {
-                    iCloudSync.initICloudDocuments()
-                    iCloudSync.importNewSaves()
-                }
-            }
-        }
-
         do {
             try RomDatabase.initDefaultDatabase()
         } catch {

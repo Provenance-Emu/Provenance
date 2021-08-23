@@ -109,8 +109,6 @@
 		B378228121D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
 		B378228521D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
 		B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
-		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
-		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -511,7 +509,6 @@
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
 		B378227F21D41E460077E86F /* PackageResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageResult.swift; sourceTree = "<group>"; };
 		B378228421D41E9B0077E86F /* LibrarySerializerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySerializerError.swift; sourceTree = "<group>"; };
-		B383F3BB219BB29600DB6926 /* iCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSync.swift; sourceTree = "<group>"; };
 		B3AF460B21071CA5002211EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B3AF460C21071CA5002211EE /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
 		B3AF460D21071CA5002211EE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1094,7 +1091,6 @@
 			children = (
 				B378227821D41DFA0077E86F /* Services */,
 				B378227721D41DEE0077E86F /* Models */,
-				B383F3BB219BB29600DB6926 /* iCloudSync.swift */,
 			);
 			path = Importer;
 			sourceTree = "<group>";
@@ -1984,7 +1980,6 @@
 				B3AF478921071E85002211EE /* Sha256.c in Sources */,
 				B3AF47BF21071F76002211EE /* Lzma2Encoder.cpp in Sources */,
 				B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */,
-				B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */,
 				B3AF47C321071F76002211EE /* LzmaRegister.cpp in Sources */,
 				B3AF47A021071EE9002211EE /* DummyOutStream.cpp in Sources */,
 				B3AF479321071EC1002211EE /* 7zExtract.cpp in Sources */,
@@ -2170,7 +2165,6 @@
 				B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */,
 				B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */,
 				B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */,
-				B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */,
 				B3C04B1F21077B3100E7AF79 /* LzmaRegister.cpp in Sources */,
 				B3C04B2021077B3100E7AF79 /* DummyOutStream.cpp in Sources */,
 				B3C04B2121077B3100E7AF79 /* 7zExtract.cpp in Sources */,

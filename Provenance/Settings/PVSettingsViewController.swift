@@ -294,10 +294,6 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
 
-            PVSettingsSwitchRow(text: "iCloud Sync",
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: \PVSettingsModel.debugOptions.iCloudSync),
-
             PVSettingsSwitchRow(text: "Multi-threaded GL",
                                 detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
                                 key: \PVSettingsModel.debugOptions.multiThreadedGL),
@@ -312,15 +308,6 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ]
         #else
          let betaRows: [TableRow] = [
-             PVSettingsSwitchRow(text: "iCloud Sync",
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: \PVSettingsModel.debugOptions.iCloudSync,
-                                    customization: { cell, _ in
-                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                            }
-            ),
-
              PVSettingsSwitchRow(text: "Multi-threaded GL",
                                 detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
                                 key: \PVSettingsModel.debugOptions.multiThreadedGL,

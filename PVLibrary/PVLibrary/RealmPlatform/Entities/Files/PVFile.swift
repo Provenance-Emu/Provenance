@@ -14,7 +14,6 @@ import UIKit
 public enum RelativeRoot: Int {
     case documents
     case caches
-    case iCloud
 
     #if os(tvOS)
         public static let platformDefault = RelativeRoot.caches
@@ -24,7 +23,6 @@ public enum RelativeRoot: Int {
 
     static let documentsDirectory: URL = PVEmulatorConfiguration.documentsPath
     static let cachesDirectory: URL = PVEmulatorConfiguration.cachesPath
-    static var iCloudDocumentsDirectory: URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
 
     var directoryURL: URL {
         switch self {
@@ -32,8 +30,6 @@ public enum RelativeRoot: Int {
             return RelativeRoot.documentsDirectory
         case .caches:
             return RelativeRoot.cachesDirectory
-        case .iCloud:
-            return RelativeRoot.iCloudDocumentsDirectory ?? Self.platformDefault.directoryURL
         }
     }
 
@@ -85,8 +81,7 @@ public extension PVFile {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
-                let iCloudBase = path.contains("Documents") ? PVEmulatorConfiguration.iCloudContainerDirectory : PVEmulatorConfiguration.iCloudDocumentsDirectory
-                let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                let url = RelativeRoot.documentsDirectory.appendingPathComponent(path)
                 return url
             }
             let resolvedURL = relativeRoot.appendingPath(partialPath)

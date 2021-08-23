@@ -227,7 +227,6 @@ extension MirroredSettings {
     public static let shared = PVSettingsModel()
 
     @objc public class DebugOptions: NSObject {
-        @objc public dynamic var iCloudSync = false
 //        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
         @objc public dynamic var multiThreadedGL = true

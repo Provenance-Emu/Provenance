@@ -106,7 +106,7 @@ extension PVEmulatorViewController {
         let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
 
         let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
-        let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
+        let saveFile = PVFile(withURL: saveURL, relativeRoot: .documents)
 
         var imageFile: PVImageFile?
         if let screenshot = screenshot {
@@ -122,7 +122,7 @@ extension PVEmulatorViewController {
                     presentError("Unable to write image to disk, error: \(error.localizedDescription)")
                 }
 
-                imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
+                imageFile = PVImageFile(withURL: imageURL, relativeRoot: .documents)
             }
         }
 

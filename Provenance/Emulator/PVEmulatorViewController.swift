@@ -572,7 +572,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                     do {
                         try pngData.write(to: imageURL)
                         try RomDatabase.sharedInstance.writeTransaction {
-                            let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
+                            let newFile = PVImageFile(withURL: imageURL, relativeRoot: .documents)
                             game.screenShots.append(newFile)
                         }
                     } catch {
