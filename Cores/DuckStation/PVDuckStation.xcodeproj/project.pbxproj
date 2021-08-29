@@ -100,6 +100,13 @@
 		B3203C2026DB191F00B016C6 /* cpu_recompiler_code_generator_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A94D26BE55D10096A354 /* cpu_recompiler_code_generator_aarch64.cpp */; };
 		B3203C2426DB1A7A00B016C6 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98F26BE55D20096A354 /* cpu_recompiler_code_generator_aarch32.cpp */; };
 		B3203C2526DB1AA600B016C6 /* cpu_recompiler_code_generator_x64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96726BE55D20096A354 /* cpu_recompiler_code_generator_x64.cpp */; };
+		B3203C2F26DB237E00B016C6 /* compiler-intrinsics-vixl.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5A026BE55CE0096A354 /* compiler-intrinsics-vixl.cc */; };
+		B3203C3126DB237E00B016C6 /* cpu-features.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A59E26BE55CE0096A354 /* cpu-features.cc */; };
+		B3203C3226DB237E00B016C6 /* utils-vixl.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A59F26BE55CE0096A354 /* utils-vixl.cc */; };
+		B3203C4726DB25E200B016C6 /* code-buffer-vixl.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5B626BE55CE0096A354 /* code-buffer-vixl.cc */; };
+		B3203C5426DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */; };
+		B3203C5526DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */; };
+		B3203C5A26DB278C00B016C6 /* xxh_x86dispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A88326BE55D10096A354 /* xxh_x86dispatch.c */; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
@@ -149,6 +156,11 @@
 
 /* Begin PBXFileReference section */
 		B3203C2226DB19CC00B016C6 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		B3203C4826DB269E00B016C6 /* OpenGLHostDisplay.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OpenGLHostDisplay.hpp; sourceTree = "<group>"; };
+		B3203C4926DB269E00B016C6 /* PlayStationGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayStationGameCore.h; path = "../../../../../../Downloads/DuckStation-Core-master/PlayStationGameCore.h"; sourceTree = "<group>"; };
+		B3203C4A26DB269E00B016C6 /* PlayStationGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlayStationGameCore.mm; path = "../../../../../../Downloads/DuckStation-Core-master/PlayStationGameCore.mm"; sourceTree = "<group>"; };
+		B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenGLHostDisplay.mm; path = "../../../../../../Downloads/DuckStation-Core-master/OpenGLHostDisplay.mm"; sourceTree = "<group>"; };
+		B3203C4C26DB269E00B016C6 /* PlayStationGameHacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayStationGameHacks.m; path = "../../../../../../Downloads/DuckStation-Core-master/PlayStationGameHacks.m"; sourceTree = "<group>"; };
 		B324C63F21920EB9009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7481D6AB19C002EE3ED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7821D6AB43A002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -2145,6 +2157,11 @@
 				B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */,
 				B3D8A52826BE48C90096A354 /* PVDuckStation.h */,
 				B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */,
+				B3203C4826DB269E00B016C6 /* OpenGLHostDisplay.hpp */,
+				B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */,
+				B3203C4926DB269E00B016C6 /* PlayStationGameCore.h */,
+				B3203C4A26DB269E00B016C6 /* PlayStationGameCore.mm */,
+				B3203C4C26DB269E00B016C6 /* PlayStationGameHacks.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5458,6 +5475,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3D8A53B26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
+				B3203C5426DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */,
 				B3D8A53526BE48CA0096A354 /* PVDuckStation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5467,6 +5485,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3D8A53A26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
+				B3203C5526DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */,
 				B3D8A53626BE48CA0096A354 /* PVDuckStation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5483,6 +5502,7 @@
 				B304F56526BE57B300A4F549 /* cd_image_bin.cpp in Sources */,
 				B304F55C26BE57B300A4F549 /* memory_arena.cpp in Sources */,
 				B3203C1B26DB16A800B016C6 /* cpu_recompiler_code_generator_generic.cpp in Sources */,
+				B3203C3126DB237E00B016C6 /* cpu-features.cc in Sources */,
 				B3203C1D26DB177C00B016C6 /* cpu_recompiler_register_cache.cpp in Sources */,
 				B304F54E26BE57B300A4F549 /* audio_stream.cpp in Sources */,
 				B304F55026BE57B300A4F549 /* shiftjis.cpp in Sources */,
@@ -5494,6 +5514,8 @@
 				B304F53726BE566700A4F549 /* playstation_mouse.cpp in Sources */,
 				B3203C1426DB15D600B016C6 /* glad.c in Sources */,
 				B304F51E26BE566700A4F549 /* digital_controller.cpp in Sources */,
+				B3203C4726DB25E200B016C6 /* code-buffer-vixl.cc in Sources */,
+				B3203C2F26DB237E00B016C6 /* compiler-intrinsics-vixl.cc in Sources */,
 				B304F51026BE566700A4F549 /* gte.cpp in Sources */,
 				B304F51126BE566700A4F549 /* memory_card_image.cpp in Sources */,
 				B304F52E26BE566700A4F549 /* pgxp.cpp in Sources */,
@@ -5527,6 +5549,7 @@
 				B304F50926BE566700A4F549 /* gdb_protocol.cpp in Sources */,
 				B304F55F26BE57B300A4F549 /* null_audio_stream.cpp in Sources */,
 				B304F51826BE566700A4F549 /* pad.cpp in Sources */,
+				B3203C5A26DB278C00B016C6 /* xxh_x86dispatch.c in Sources */,
 				B304F53E26BE566700A4F549 /* gpu_sw_backend.cpp in Sources */,
 				B304F50D26BE566700A4F549 /* gpu.cpp in Sources */,
 				B304F54726BE57B300A4F549 /* string.cpp in Sources */,
@@ -5548,6 +5571,7 @@
 				B304F52626BE566700A4F549 /* libcrypt_game_codes.cpp in Sources */,
 				B304F53D26BE566700A4F549 /* cpu_disasm.cpp in Sources */,
 				B304F50C26BE566700A4F549 /* gpu_sw.cpp in Sources */,
+				B3203C3226DB237E00B016C6 /* utils-vixl.cc in Sources */,
 				B304F51A26BE566700A4F549 /* gpu_hw.cpp in Sources */,
 				B3203C2426DB1A7A00B016C6 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */,
 				B304F55526BE57B300A4F549 /* cd_image_memory.cpp in Sources */,
@@ -5639,6 +5663,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
+					"\"$(SRCROOT)/duckstation/src\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -5687,6 +5715,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
+					"\"$(SRCROOT)/duckstation/src\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -5735,6 +5767,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
+					"\"$(SRCROOT)/duckstation/src\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -5745,8 +5781,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				COPY_PHASE_STRIP = NO;
@@ -5785,7 +5820,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -5826,8 +5861,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CURRENT_PROJECT_VERSION = 1;
@@ -5866,8 +5900,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				COPY_PHASE_STRIP = NO;
@@ -5906,7 +5939,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -5947,7 +5980,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -6013,7 +6046,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "-DWITH_RECOMPILER";
+				OTHER_CFLAGS = (
+					"-DWITH_RECOMPILER",
+					"-DVIXL_CODE_BUFFER_MALLOC",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6050,7 +6086,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "-DWITH_RECOMPILER";
+				OTHER_CFLAGS = (
+					"-DWITH_RECOMPILER",
+					"-DVIXL_CODE_BUFFER_MALLOC",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6088,7 +6127,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "-DWITH_RECOMPILER";
+				OTHER_CFLAGS = (
+					"-DWITH_RECOMPILER",
+					"-DVIXL_CODE_BUFFER_MALLOC",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
