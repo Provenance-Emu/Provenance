@@ -19,10 +19,8 @@
 		B304F51126BE566700A4F549 /* memory_card_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A99C26BE55D20096A354 /* memory_card_image.cpp */; };
 		B304F51226BE566700A4F549 /* cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A93B26BE55D10096A354 /* cheats.cpp */; };
 		B304F51326BE566700A4F549 /* cpu_code_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9A426BE55D20096A354 /* cpu_code_cache.cpp */; };
-		B304F51426BE566700A4F549 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98F26BE55D20096A354 /* cpu_recompiler_code_generator_aarch32.cpp */; };
 		B304F51526BE566700A4F549 /* gpu_backend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A94F26BE55D10096A354 /* gpu_backend.cpp */; };
 		B304F51626BE566700A4F549 /* analog_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95526BE55D10096A354 /* analog_controller.cpp */; };
-		B304F51726BE566700A4F549 /* cpu_recompiler_code_generator_generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95226BE55D10096A354 /* cpu_recompiler_code_generator_generic.cpp */; };
 		B304F51826BE566700A4F549 /* pad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98326BE55D20096A354 /* pad.cpp */; };
 		B304F51926BE566700A4F549 /* spu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95D26BE55D10096A354 /* spu.cpp */; };
 		B304F51A26BE566700A4F549 /* gpu_hw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97426BE55D20096A354 /* gpu_hw.cpp */; };
@@ -31,23 +29,18 @@
 		B304F51D26BE566700A4F549 /* multitap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95E26BE55D10096A354 /* multitap.cpp */; };
 		B304F51E26BE566700A4F549 /* digital_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96D26BE55D20096A354 /* digital_controller.cpp */; };
 		B304F51F26BE566700A4F549 /* analog_joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A93C26BE55D10096A354 /* analog_joystick.cpp */; };
-		B304F52026BE566700A4F549 /* cpu_recompiler_code_generator_x64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96726BE55D20096A354 /* cpu_recompiler_code_generator_x64.cpp */; };
 		B304F52126BE566700A4F549 /* timers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98B26BE55D20096A354 /* timers.cpp */; };
-		B304F52226BE566700A4F549 /* cpu_recompiler_register_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98126BE55D20096A354 /* cpu_recompiler_register_cache.cpp */; };
 		B304F52426BE566700A4F549 /* namco_guncon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97526BE55D20096A354 /* namco_guncon.cpp */; };
 		B304F52526BE566700A4F549 /* host_display.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98926BE55D20096A354 /* host_display.cpp */; };
 		B304F52626BE566700A4F549 /* libcrypt_game_codes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96E26BE55D20096A354 /* libcrypt_game_codes.cpp */; };
-		B304F52726BE566700A4F549 /* cpu_recompiler_code_generator_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A94D26BE55D10096A354 /* cpu_recompiler_code_generator_aarch64.cpp */; };
 		B304F52826BE566700A4F549 /* host_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96926BE55D20096A354 /* host_interface.cpp */; };
 		B304F52926BE566700A4F549 /* memory_card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98826BE55D20096A354 /* memory_card.cpp */; };
 		B304F52A26BE566700A4F549 /* negcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97D26BE55D20096A354 /* negcon.cpp */; };
 		B304F52B26BE566700A4F549 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A93326BE55D10096A354 /* bios.cpp */; };
-		B304F52C26BE566700A4F549 /* cpu_recompiler_code_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95126BE55D10096A354 /* cpu_recompiler_code_generator.cpp */; };
 		B304F52E26BE566700A4F549 /* pgxp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96026BE55D10096A354 /* pgxp.cpp */; };
 		B304F52F26BE566700A4F549 /* texture_replacements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98726BE55D20096A354 /* texture_replacements.cpp */; };
 		B304F53026BE566700A4F549 /* timing_event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9A526BE55D20096A354 /* timing_event.cpp */; };
 		B304F53126BE566700A4F549 /* bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A93226BE55D10096A354 /* bus.cpp */; };
-		B304F53226BE566700A4F549 /* gpu_hw_shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A99326BE55D20096A354 /* gpu_hw_shadergen.cpp */; };
 		B304F53326BE566700A4F549 /* cpu_core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97926BE55D20096A354 /* cpu_core.cpp */; };
 		B304F53426BE566700A4F549 /* cdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A94026BE55D10096A354 /* cdrom.cpp */; };
 		B304F53526BE566700A4F549 /* cpu_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9A026BE55D20096A354 /* cpu_types.cpp */; };
@@ -60,7 +53,6 @@
 		B304F53C26BE566700A4F549 /* cdrom_async_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A93A26BE55D10096A354 /* cdrom_async_reader.cpp */; };
 		B304F53D26BE566700A4F549 /* cpu_disasm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96526BE55D20096A354 /* cpu_disasm.cpp */; };
 		B304F53E26BE566700A4F549 /* gpu_sw_backend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A99B26BE55D20096A354 /* gpu_sw_backend.cpp */; };
-		B304F53F26BE566700A4F549 /* shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97F26BE55D20096A354 /* shadergen.cpp */; };
 		B304F54026BE57B300A4F549 /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA7826BE55D30096A354 /* error.cpp */; };
 		B304F54126BE57B300A4F549 /* timestamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAE626BE55D30096A354 /* timestamp.cpp */; };
 		B304F54226BE57B300A4F549 /* window_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAF826BE55D30096A354 /* window_info.cpp */; };
@@ -84,7 +76,6 @@
 		B304F55426BE57B300A4F549 /* jit_code_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA9726BE55D30096A354 /* jit_code_buffer.cpp */; };
 		B304F55526BE57B300A4F549 /* cd_image_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA5726BE55D30096A354 /* cd_image_memory.cpp */; };
 		B304F55626BE57B300A4F549 /* cd_image_ppf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA6726BE55D30096A354 /* cd_image_ppf.cpp */; };
-		B304F55726BE57B300A4F549 /* cd_image_chd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAE726BE55D30096A354 /* cd_image_chd.cpp */; };
 		B304F55826BE57B300A4F549 /* cd_image_device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA8526BE55D30096A354 /* cd_image_device.cpp */; };
 		B304F55926BE57B300A4F549 /* cd_subchannel_replacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA8E26BE55D30096A354 /* cd_subchannel_replacement.cpp */; };
 		B304F55A26BE57B300A4F549 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA6126BE55D30096A354 /* image.cpp */; };
@@ -95,13 +86,20 @@
 		B304F55F26BE57B300A4F549 /* null_audio_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA5926BE55D30096A354 /* null_audio_stream.cpp */; };
 		B304F56026BE57B300A4F549 /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAE926BE55D30096A354 /* event.cpp */; };
 		B304F56126BE57B300A4F549 /* cd_image_pbp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA8326BE55D30096A354 /* cd_image_pbp.cpp */; };
-		B304F56226BE57B300A4F549 /* drm_display.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA5B26BE55D30096A354 /* drm_display.cpp */; };
 		B304F56326BE57B300A4F549 /* state_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA9326BE55D30096A354 /* state_wrapper.cpp */; };
 		B304F56426BE57B300A4F549 /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA5826BE55D30096A354 /* string_util.cpp */; };
 		B304F56526BE57B300A4F549 /* cd_image_bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA8926BE55D30096A354 /* cd_image_bin.cpp */; };
 		B304F56626BE57B300A4F549 /* cd_xa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA9A26BE55D30096A354 /* cd_xa.cpp */; };
 		B304F56726BE57B300A4F549 /* cue_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA9226BE55D30096A354 /* cue_parser.cpp */; };
 		B304F56826BE57B300A4F549 /* wav_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA5C26BE55D30096A354 /* wav_writer.cpp */; };
+		B3203C1026DB126F00B016C6 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAFF26BE55D30096A354 /* thread_pool.cpp */; };
+		B3203C1426DB15D600B016C6 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A81226BE55D00096A354 /* glad.c */; };
+		B3203C1B26DB16A800B016C6 /* cpu_recompiler_code_generator_generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95226BE55D10096A354 /* cpu_recompiler_code_generator_generic.cpp */; };
+		B3203C1C26DB177C00B016C6 /* cpu_recompiler_code_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A95126BE55D10096A354 /* cpu_recompiler_code_generator.cpp */; };
+		B3203C1D26DB177C00B016C6 /* cpu_recompiler_register_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98126BE55D20096A354 /* cpu_recompiler_register_cache.cpp */; };
+		B3203C2026DB191F00B016C6 /* cpu_recompiler_code_generator_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A94D26BE55D10096A354 /* cpu_recompiler_code_generator_aarch64.cpp */; };
+		B3203C2426DB1A7A00B016C6 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A98F26BE55D20096A354 /* cpu_recompiler_code_generator_aarch32.cpp */; };
+		B3203C2526DB1AA600B016C6 /* cpu_recompiler_code_generator_x64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A96726BE55D20096A354 /* cpu_recompiler_code_generator_x64.cpp */; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
@@ -150,6 +148,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B3203C2226DB19CC00B016C6 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B324C63F21920EB9009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7481D6AB19C002EE3ED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7821D6AB43A002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -2097,6 +2096,7 @@
 		02695356143169EA003A07D4 = {
 			isa = PBXGroup;
 			children = (
+				B3203C2226DB19CC00B016C6 /* Config.xcconfig */,
 				B3D8A54A26BE55CD0096A354 /* duckstation */,
 				B3D8A52126BE48C90096A354 /* PVDuckStation */,
 				02695363143169EB003A07D4 /* Frameworks */,
@@ -2214,29 +2214,29 @@
 		B3D8A57026BE55CE0096A354 /* dep */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8A57126BE55CE0096A354 /* vixl */,
-				B3D8A5B726BE55CE0096A354 /* cubeb */,
-				B3D8A60026BE55CE0096A354 /* simpleini */,
 				B3D8A60A26BE55CE0096A354 /* CMakeLists.txt */,
-				B3D8A60B26BE55CE0096A354 /* msvc */,
-				B3D8A67F26BE55CF0096A354 /* libsamplerate */,
+				B3D8A5B726BE55CE0096A354 /* cubeb */,
+				B3D8A8C526BE55D10096A354 /* discord-rpc */,
+				B3D8A80526BE55D00096A354 /* glad */,
+				B3D8A77426BE55D00096A354 /* glslang */,
+				B3D8A81D26BE55D00096A354 /* googletest */,
 				B3D8A6A326BE55CF0096A354 /* imgui */,
 				B3D8A6BA26BE55CF0096A354 /* libchdr */,
 				B3D8A6CF26BE55CF0096A354 /* libFLAC */,
-				B3D8A71426BE55CF0096A354 /* minizip */,
-				B3D8A72726BE55CF0096A354 /* rcheevos */,
-				B3D8A75126BE55CF0096A354 /* zlib */,
-				B3D8A77426BE55D00096A354 /* glslang */,
-				B3D8A7F026BE55D00096A354 /* stb */,
-				B3D8A7FC26BE55D00096A354 /* xbyak */,
-				B3D8A80526BE55D00096A354 /* glad */,
-				B3D8A81426BE55D00096A354 /* tinyxml2 */,
-				B3D8A81D26BE55D00096A354 /* googletest */,
-				B3D8A84A26BE55D00096A354 /* rapidjson */,
-				B3D8A87726BE55D10096A354 /* xxhash */,
-				B3D8A88426BE55D10096A354 /* vulkan-loader */,
+				B3D8A67F26BE55CF0096A354 /* libsamplerate */,
 				B3D8A8A226BE55D10096A354 /* lzma */,
-				B3D8A8C526BE55D10096A354 /* discord-rpc */,
+				B3D8A71426BE55CF0096A354 /* minizip */,
+				B3D8A60B26BE55CE0096A354 /* msvc */,
+				B3D8A84A26BE55D00096A354 /* rapidjson */,
+				B3D8A72726BE55CF0096A354 /* rcheevos */,
+				B3D8A60026BE55CE0096A354 /* simpleini */,
+				B3D8A7F026BE55D00096A354 /* stb */,
+				B3D8A81426BE55D00096A354 /* tinyxml2 */,
+				B3D8A57126BE55CE0096A354 /* vixl */,
+				B3D8A88426BE55D10096A354 /* vulkan-loader */,
+				B3D8A7FC26BE55D00096A354 /* xbyak */,
+				B3D8A87726BE55D10096A354 /* xxhash */,
+				B3D8A75126BE55CF0096A354 /* zlib */,
 			);
 			path = dep;
 			sourceTree = "<group>";
@@ -4182,15 +4182,15 @@
 		B3D8A9A926BE55D20096A354 /* duckstation-uwp */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8A9AA26BE55D20096A354 /* PropertySheet.props */,
-				B3D8A9AB26BE55D20096A354 /* uwp_host_interface.h */,
-				B3D8A9AC26BE55D20096A354 /* Package.appxmanifest */,
 				B3D8A9AD26BE55D20096A354 /* .gitignore */,
+				B3D8A9AC26BE55D20096A354 /* Package.appxmanifest */,
 				B3D8A9AE26BE55D20096A354 /* packages.config */,
-				B3D8A9AF26BE55D20096A354 /* duckstation-uwp.vcxproj */,
 				B3D8A9B026BE55D20096A354 /* uwp_host_interface.cpp */,
 				B3D8A9B126BE55D20096A354 /* duckstation-uwp.vcxproj.filters */,
+				B3D8A9AB26BE55D20096A354 /* uwp_host_interface.h */,
 				B3D8A9B226BE55D20096A354 /* uwp_key_map.h */,
+				B3D8A9AA26BE55D20096A354 /* PropertySheet.props */,
+				B3D8A9AF26BE55D20096A354 /* duckstation-uwp.vcxproj */,
 				B3D8A9B326BE55D20096A354 /* Assets */,
 			);
 			path = "duckstation-uwp";
@@ -4260,94 +4260,94 @@
 		B3D8A9EA26BE55D20096A354 /* frontend-common */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8A9EB26BE55D20096A354 /* postprocessing_shader.h */,
-				B3D8A9EC26BE55D20096A354 /* game_database.cpp */,
-				B3D8A9ED26BE55D20096A354 /* inhibit_screensaver.h */,
-				B3D8A9EE26BE55D20096A354 /* postprocessing_shader.cpp */,
-				B3D8A9EF26BE55D20096A354 /* font_roboto_regular.inl */,
-				B3D8A9F026BE55D20096A354 /* xaudio2_audio_stream.h */,
-				B3D8A9F126BE55D20096A354 /* display_vs.hlsl.h */,
-				B3D8A9F226BE55D20096A354 /* ini_settings_interface.cpp */,
-				B3D8A9F326BE55D20096A354 /* frontend-common.props */,
-				B3D8A9F426BE55D20096A354 /* frontend-common.vcxproj */,
-				B3D8A9F526BE55D20096A354 /* ini_settings_interface.h */,
-				B3D8A9F626BE55D20096A354 /* imgui_impl_dx12.h */,
-				B3D8A9F726BE55D20096A354 /* xaudio2_audio_stream.cpp */,
-				B3D8A9F826BE55D20096A354 /* http_downloader_winhttp.cpp */,
-				B3D8A9F926BE55D20096A354 /* controller_interface.h */,
-				B3D8A9FA26BE55D20096A354 /* imgui_styles.cpp */,
-				B3D8A9FB26BE55D20096A354 /* opengl_host_display.h */,
-				B3D8A9FC26BE55D20096A354 /* postprocessing_shadergen.h */,
-				B3D8A9FD26BE55D20096A354 /* CMakeLists.txt */,
-				B3D8A9FE26BE55D20096A354 /* opengl_host_display.cpp */,
-				B3D8A9FF26BE55D20096A354 /* IconsFontAwesome5.h */,
-				B3D8AA0026BE55D20096A354 /* sdl_audio_stream.cpp */,
-				B3D8AA0126BE55D20096A354 /* d3d11_host_display.h */,
-				B3D8AA0226BE55D20096A354 /* input_overlay_ui.h */,
-				B3D8AA0326BE55D20096A354 /* postprocessing_chain.cpp */,
-				B3D8AA0426BE55D20096A354 /* fullscreen_ui_progress_callback.h */,
-				B3D8AA0526BE55D20096A354 /* http_downloader.h */,
-				B3D8AA0626BE55D20096A354 /* imgui_styles.h */,
-				B3D8AA0726BE55D20096A354 /* http_downloader_winhttp.h */,
-				B3D8AA0826BE55D20096A354 /* icon.h */,
-				B3D8AA0926BE55D20096A354 /* save_state_selector_ui.h */,
-				B3D8AA0A26BE55D20096A354 /* save_state_selector_ui.cpp */,
-				B3D8AA0B26BE55D20096A354 /* postprocessing_chain.h */,
-				B3D8AA0C26BE55D20096A354 /* imgui_impl_opengl3.h */,
-				B3D8AA0D26BE55D20096A354 /* inhibit_screensaver.cpp */,
-				B3D8AA0E26BE55D20096A354 /* imgui_impl_dx11.h */,
-				B3D8AA0F26BE55D20096A354 /* game_list.cpp */,
-				B3D8AA1026BE55D20096A354 /* cubeb_audio_stream.cpp */,
-				B3D8AA1126BE55D20096A354 /* http_downloader.cpp */,
-				B3D8AA1226BE55D20096A354 /* dinput_controller_interface.cpp */,
-				B3D8AA1326BE55D20096A354 /* d3d12_host_display.h */,
-				B3D8AA1426BE55D20096A354 /* game_settings.cpp */,
-				B3D8AA1526BE55D20096A354 /* game_database.h */,
-				B3D8AA1626BE55D20096A354 /* cubeb_audio_stream.h */,
-				B3D8AA1726BE55D20096A354 /* evdev_controller_interface.h */,
-				B3D8AA1826BE55D20096A354 /* common_host_interface.cpp */,
-				B3D8AA1926BE55D20096A354 /* http_downloader_curl.cpp */,
-				B3D8AA1A26BE55D20096A354 /* d3d11_host_display.cpp */,
-				B3D8AA1B26BE55D20096A354 /* sdl_controller_interface.h */,
-				B3D8AA1C26BE55D20096A354 /* xinput_controller_interface.cpp */,
-				B3D8AA1D26BE55D20096A354 /* xinput_controller_interface.h */,
-				B3D8AA1E26BE55D20096A354 /* cheevos.h */,
-				B3D8AA1F26BE55D20096A354 /* imgui_fullscreen.cpp */,
-				B3D8AA2026BE55D20096A354 /* sdl_controller_interface.cpp */,
-				B3D8AA2126BE55D20096A354 /* postprocessing_shadergen.cpp */,
-				B3D8AA2226BE55D20096A354 /* cheevos.cpp */,
-				B3D8AA2326BE55D20096A354 /* sdl_audio_stream.h */,
-				B3D8AA2426BE55D20096A354 /* imgui_fullscreen.h */,
-				B3D8AA2526BE55D20096A354 /* vulkan_host_display.h */,
-				B3D8AA2626BE55D20096A354 /* frontend-common.vcxproj.filters */,
-				B3D8AA2726BE55D20096A354 /* sdl_initializer.cpp */,
-				B3D8AA2826BE55D20096A354 /* display_ps.hlsl.h */,
-				B3D8AA2926BE55D20096A354 /* d3d12_host_display.cpp */,
-				B3D8AA2A26BE55D20096A354 /* fullscreen_ui.h */,
-				B3D8AA2B26BE55D20096A354 /* game_list.h */,
-				B3D8AA2C26BE55D20096A354 /* fullscreen_ui_progress_callback.cpp */,
-				B3D8AA2D26BE55D20096A354 /* imgui_impl_opengl3.cpp */,
-				B3D8AA2E26BE55D20096A354 /* sdl_initializer.h */,
-				B3D8AA2F26BE55D20096A354 /* controller_interface.cpp */,
-				B3D8AA3026BE55D20096A354 /* imgui_impl_vulkan.cpp */,
-				B3D8AA3126BE55D20096A354 /* icon.cpp */,
-				B3D8AA3226BE55D20096A354 /* imgui_impl_dx11.cpp */,
-				B3D8AA3326BE55D20096A354 /* display_ps.hlsl */,
-				B3D8AA3426BE55D20096A354 /* vulkan_host_display.cpp */,
-				B3D8AA3526BE55D20096A354 /* common_host_interface.h */,
-				B3D8AA3626BE55D20096A354 /* http_downloader_curl.h */,
-				B3D8AA3726BE55D20096A354 /* imgui_impl_dx12.cpp */,
-				B3D8AA3826BE55D20096A354 /* display_ps_alpha.hlsl.h */,
-				B3D8AA3926BE55D20096A354 /* input_overlay_ui.cpp */,
-				B3D8AA3A26BE55D20096A354 /* imgui_impl_vulkan.h */,
-				B3D8AA3B26BE55D20096A354 /* dinput_controller_interface.h */,
-				B3D8AA3C26BE55D20096A354 /* display_vs.hlsl */,
 				B3D8AA3D26BE55D20096A354 /* make_d3d_display_shader_bytecode.bat */,
-				B3D8AA3E26BE55D20096A354 /* game_settings.h */,
-				B3D8AA3F26BE55D20096A354 /* http_downloader_uwp.h */,
-				B3D8AA4026BE55D20096A354 /* fullscreen_ui.cpp */,
-				B3D8AA4126BE55D20096A354 /* http_downloader_uwp.cpp */,
+				B3D8AA2226BE55D20096A354 /* cheevos.cpp */,
+				B3D8AA1826BE55D20096A354 /* common_host_interface.cpp */,
+				B3D8AA2F26BE55D20096A354 /* controller_interface.cpp */,
+				B3D8AA1026BE55D20096A354 /* cubeb_audio_stream.cpp */,
+				B3D8AA1A26BE55D20096A354 /* d3d11_host_display.cpp */,
+				B3D8AA2926BE55D20096A354 /* d3d12_host_display.cpp */,
+				B3D8AA1226BE55D20096A354 /* dinput_controller_interface.cpp */,
 				B3D8AA4226BE55D20096A354 /* evdev_controller_interface.cpp */,
+				B3D8AA2C26BE55D20096A354 /* fullscreen_ui_progress_callback.cpp */,
+				B3D8AA4026BE55D20096A354 /* fullscreen_ui.cpp */,
+				B3D8A9EC26BE55D20096A354 /* game_database.cpp */,
+				B3D8AA0F26BE55D20096A354 /* game_list.cpp */,
+				B3D8AA1426BE55D20096A354 /* game_settings.cpp */,
+				B3D8AA1926BE55D20096A354 /* http_downloader_curl.cpp */,
+				B3D8AA4126BE55D20096A354 /* http_downloader_uwp.cpp */,
+				B3D8A9F826BE55D20096A354 /* http_downloader_winhttp.cpp */,
+				B3D8AA1126BE55D20096A354 /* http_downloader.cpp */,
+				B3D8AA3126BE55D20096A354 /* icon.cpp */,
+				B3D8AA1F26BE55D20096A354 /* imgui_fullscreen.cpp */,
+				B3D8AA3226BE55D20096A354 /* imgui_impl_dx11.cpp */,
+				B3D8AA3726BE55D20096A354 /* imgui_impl_dx12.cpp */,
+				B3D8AA2D26BE55D20096A354 /* imgui_impl_opengl3.cpp */,
+				B3D8AA3026BE55D20096A354 /* imgui_impl_vulkan.cpp */,
+				B3D8A9FA26BE55D20096A354 /* imgui_styles.cpp */,
+				B3D8AA0D26BE55D20096A354 /* inhibit_screensaver.cpp */,
+				B3D8A9F226BE55D20096A354 /* ini_settings_interface.cpp */,
+				B3D8AA3926BE55D20096A354 /* input_overlay_ui.cpp */,
+				B3D8A9FE26BE55D20096A354 /* opengl_host_display.cpp */,
+				B3D8AA0326BE55D20096A354 /* postprocessing_chain.cpp */,
+				B3D8A9EE26BE55D20096A354 /* postprocessing_shader.cpp */,
+				B3D8AA2126BE55D20096A354 /* postprocessing_shadergen.cpp */,
+				B3D8AA0A26BE55D20096A354 /* save_state_selector_ui.cpp */,
+				B3D8AA0026BE55D20096A354 /* sdl_audio_stream.cpp */,
+				B3D8AA2026BE55D20096A354 /* sdl_controller_interface.cpp */,
+				B3D8AA2726BE55D20096A354 /* sdl_initializer.cpp */,
+				B3D8AA3426BE55D20096A354 /* vulkan_host_display.cpp */,
+				B3D8A9F726BE55D20096A354 /* xaudio2_audio_stream.cpp */,
+				B3D8AA1C26BE55D20096A354 /* xinput_controller_interface.cpp */,
+				B3D8AA2626BE55D20096A354 /* frontend-common.vcxproj.filters */,
+				B3D8AA1E26BE55D20096A354 /* cheevos.h */,
+				B3D8AA3526BE55D20096A354 /* common_host_interface.h */,
+				B3D8A9F926BE55D20096A354 /* controller_interface.h */,
+				B3D8AA1626BE55D20096A354 /* cubeb_audio_stream.h */,
+				B3D8AA0126BE55D20096A354 /* d3d11_host_display.h */,
+				B3D8AA1326BE55D20096A354 /* d3d12_host_display.h */,
+				B3D8AA3B26BE55D20096A354 /* dinput_controller_interface.h */,
+				B3D8AA3826BE55D20096A354 /* display_ps_alpha.hlsl.h */,
+				B3D8AA2826BE55D20096A354 /* display_ps.hlsl.h */,
+				B3D8A9F126BE55D20096A354 /* display_vs.hlsl.h */,
+				B3D8AA1726BE55D20096A354 /* evdev_controller_interface.h */,
+				B3D8AA0426BE55D20096A354 /* fullscreen_ui_progress_callback.h */,
+				B3D8AA2A26BE55D20096A354 /* fullscreen_ui.h */,
+				B3D8AA1526BE55D20096A354 /* game_database.h */,
+				B3D8AA2B26BE55D20096A354 /* game_list.h */,
+				B3D8AA3E26BE55D20096A354 /* game_settings.h */,
+				B3D8AA3626BE55D20096A354 /* http_downloader_curl.h */,
+				B3D8AA3F26BE55D20096A354 /* http_downloader_uwp.h */,
+				B3D8AA0726BE55D20096A354 /* http_downloader_winhttp.h */,
+				B3D8AA0526BE55D20096A354 /* http_downloader.h */,
+				B3D8AA0826BE55D20096A354 /* icon.h */,
+				B3D8A9FF26BE55D20096A354 /* IconsFontAwesome5.h */,
+				B3D8AA2426BE55D20096A354 /* imgui_fullscreen.h */,
+				B3D8AA0E26BE55D20096A354 /* imgui_impl_dx11.h */,
+				B3D8A9F626BE55D20096A354 /* imgui_impl_dx12.h */,
+				B3D8AA0C26BE55D20096A354 /* imgui_impl_opengl3.h */,
+				B3D8AA3A26BE55D20096A354 /* imgui_impl_vulkan.h */,
+				B3D8AA0626BE55D20096A354 /* imgui_styles.h */,
+				B3D8A9ED26BE55D20096A354 /* inhibit_screensaver.h */,
+				B3D8A9F526BE55D20096A354 /* ini_settings_interface.h */,
+				B3D8AA0226BE55D20096A354 /* input_overlay_ui.h */,
+				B3D8A9FB26BE55D20096A354 /* opengl_host_display.h */,
+				B3D8AA0B26BE55D20096A354 /* postprocessing_chain.h */,
+				B3D8A9EB26BE55D20096A354 /* postprocessing_shader.h */,
+				B3D8A9FC26BE55D20096A354 /* postprocessing_shadergen.h */,
+				B3D8AA0926BE55D20096A354 /* save_state_selector_ui.h */,
+				B3D8AA2326BE55D20096A354 /* sdl_audio_stream.h */,
+				B3D8AA1B26BE55D20096A354 /* sdl_controller_interface.h */,
+				B3D8AA2E26BE55D20096A354 /* sdl_initializer.h */,
+				B3D8AA2526BE55D20096A354 /* vulkan_host_display.h */,
+				B3D8A9F026BE55D20096A354 /* xaudio2_audio_stream.h */,
+				B3D8AA1D26BE55D20096A354 /* xinput_controller_interface.h */,
+				B3D8AA3326BE55D20096A354 /* display_ps.hlsl */,
+				B3D8AA3C26BE55D20096A354 /* display_vs.hlsl */,
+				B3D8A9EF26BE55D20096A354 /* font_roboto_regular.inl */,
+				B3D8A9F326BE55D20096A354 /* frontend-common.props */,
+				B3D8A9FD26BE55D20096A354 /* CMakeLists.txt */,
+				B3D8A9F426BE55D20096A354 /* frontend-common.vcxproj */,
 			);
 			path = "frontend-common";
 			sourceTree = "<group>";
@@ -4355,13 +4355,13 @@
 		B3D8AA4326BE55D20096A354 /* common-tests */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8AA4426BE55D20096A354 /* CMakeLists.txt */,
-				B3D8AA4526BE55D20096A354 /* event_tests.cpp */,
-				B3D8AA4626BE55D20096A354 /* common-tests.vcxproj */,
-				B3D8AA4726BE55D20096A354 /* common-tests.vcxproj.filters */,
-				B3D8AA4826BE55D20096A354 /* rectangle_tests.cpp */,
 				B3D8AA4926BE55D30096A354 /* bitutils_tests.cpp */,
+				B3D8AA4526BE55D20096A354 /* event_tests.cpp */,
 				B3D8AA4A26BE55D30096A354 /* file_system_tests.cpp */,
+				B3D8AA4826BE55D20096A354 /* rectangle_tests.cpp */,
+				B3D8AA4726BE55D20096A354 /* common-tests.vcxproj.filters */,
+				B3D8AA4426BE55D20096A354 /* CMakeLists.txt */,
+				B3D8AA4626BE55D20096A354 /* common-tests.vcxproj */,
 			);
 			path = "common-tests";
 			sourceTree = "<group>";
@@ -4369,13 +4369,13 @@
 		B3D8AA4B26BE55D30096A354 /* updater */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8AA4C26BE55D30096A354 /* updater.vcxproj */,
 				B3D8AA4D26BE55D30096A354 /* updater.cpp */,
-				B3D8AA4E26BE55D30096A354 /* CMakeLists.txt */,
-				B3D8AA4F26BE55D30096A354 /* updater.manifest */,
-				B3D8AA5026BE55D30096A354 /* updater.h */,
 				B3D8AA5126BE55D30096A354 /* win32_main.cpp */,
 				B3D8AA5226BE55D30096A354 /* updater.vcxproj.filters */,
+				B3D8AA5026BE55D30096A354 /* updater.h */,
+				B3D8AA4F26BE55D30096A354 /* updater.manifest */,
+				B3D8AA4E26BE55D30096A354 /* CMakeLists.txt */,
+				B3D8AA4C26BE55D30096A354 /* updater.vcxproj */,
 			);
 			path = updater;
 			sourceTree = "<group>";
@@ -4508,25 +4508,25 @@
 			isa = PBXGroup;
 			children = (
 				B3D8AAA126BE55D30096A354 /* builders.cpp */,
-				B3D8AAA226BE55D30096A354 /* staging_buffer.h */,
-				B3D8AAA326BE55D30096A354 /* util.cpp */,
-				B3D8AAA426BE55D30096A354 /* staging_texture.h */,
-				B3D8AAA526BE55D30096A354 /* shader_cache.h */,
 				B3D8AAA626BE55D30096A354 /* context.cpp */,
 				B3D8AAA726BE55D30096A354 /* shader_cache.cpp */,
-				B3D8AAA826BE55D30096A354 /* staging_texture.cpp */,
-				B3D8AAA926BE55D30096A354 /* context.h */,
-				B3D8AAAA26BE55D30096A354 /* texture.cpp */,
-				B3D8AAAB26BE55D30096A354 /* staging_buffer.cpp */,
-				B3D8AAAC26BE55D30096A354 /* swap_chain.cpp */,
 				B3D8AAAD26BE55D30096A354 /* shader_compiler.cpp */,
+				B3D8AAAB26BE55D30096A354 /* staging_buffer.cpp */,
+				B3D8AAA826BE55D30096A354 /* staging_texture.cpp */,
+				B3D8AAB426BE55D30096A354 /* stream_buffer.cpp */,
+				B3D8AAAC26BE55D30096A354 /* swap_chain.cpp */,
+				B3D8AAAA26BE55D30096A354 /* texture.cpp */,
+				B3D8AAA326BE55D30096A354 /* util.cpp */,
+				B3D8AAB326BE55D30096A354 /* builders.h */,
+				B3D8AAA926BE55D30096A354 /* context.h */,
+				B3D8AAA526BE55D30096A354 /* shader_cache.h */,
 				B3D8AAAE26BE55D30096A354 /* shader_compiler.h */,
+				B3D8AAA226BE55D30096A354 /* staging_buffer.h */,
+				B3D8AAA426BE55D30096A354 /* staging_texture.h */,
 				B3D8AAAF26BE55D30096A354 /* stream_buffer.h */,
 				B3D8AAB026BE55D30096A354 /* swap_chain.h */,
-				B3D8AAB126BE55D30096A354 /* util.h */,
 				B3D8AAB226BE55D30096A354 /* texture.h */,
-				B3D8AAB326BE55D30096A354 /* builders.h */,
-				B3D8AAB426BE55D30096A354 /* stream_buffer.cpp */,
+				B3D8AAB126BE55D30096A354 /* util.h */,
 			);
 			path = vulkan;
 			sourceTree = "<group>";
@@ -4603,128 +4603,128 @@
 		B3D8AB0626BE55D30096A354 /* duckstation-qt */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8AB0726BE55D30096A354 /* settingsdialog.ui */,
-				B3D8AB0826BE55D30096A354 /* emulationsettingswidget.h */,
-				B3D8AB0926BE55D30096A354 /* inputbindingdialog.h */,
-				B3D8AB0A26BE55D30096A354 /* consolesettingswidget.h */,
-				B3D8AB0B26BE55D30096A354 /* qtprogresscallback.h */,
-				B3D8AB0C26BE55D30096A354 /* autoupdaterdialog.h */,
+				B3D8ACBD26BE55D60096A354 /* duckstation-qt.aps */,
+				B3D8ACCC26BE55D60096A354 /* update_translations.bat */,
+				B3D8AB2826BE55D30096A354 /* qt.conf */,
+				B3D8AB2626BE55D30096A354 /* aboutdialog.cpp */,
+				B3D8ACB826BE55D60096A354 /* achievementlogindialog.cpp */,
+				B3D8ACCA26BE55D60096A354 /* achievementsettingswidget.cpp */,
+				B3D8AB1426BE55D30096A354 /* advancedsettingswidget.cpp */,
+				B3D8ACB926BE55D60096A354 /* audiosettingswidget.cpp */,
+				B3D8ACC626BE55D60096A354 /* autoupdaterdialog.cpp */,
+				B3D8AB1526BE55D30096A354 /* biossettingswidget.cpp */,
+				B3D8AB2726BE55D30096A354 /* cheatcodeeditordialog.cpp */,
+				B3D8AB2A26BE55D30096A354 /* cheatmanagerdialog.cpp */,
+				B3D8AB2526BE55D30096A354 /* collapsiblewidget.cpp */,
+				B3D8ACBF26BE55D60096A354 /* consolesettingswidget.cpp */,
+				B3D8ACE226BE55D60096A354 /* controllersettingswidget.cpp */,
+				B3D8ACD726BE55D60096A354 /* debuggermodels.cpp */,
+				B3D8AB2926BE55D30096A354 /* debuggerwindow.cpp */,
+				B3D8ACA726BE55D50096A354 /* displaysettingswidget.cpp */,
+				B3D8AB1326BE55D30096A354 /* emulationsettingswidget.cpp */,
+				B3D8ACB326BE55D50096A354 /* enhancementsettingswidget.cpp */,
+				B3D8ACE826BE55D60096A354 /* gamelistmodel.cpp */,
+				B3D8ACD826BE55D60096A354 /* gamelistsearchdirectoriesmodel.cpp */,
+				B3D8ACB226BE55D50096A354 /* gamelistsettingswidget.cpp */,
 				B3D8AB0D26BE55D30096A354 /* gamelistwidget.cpp */,
+				B3D8AD0126BE55D60096A354 /* gamepropertiesdialog.cpp */,
+				B3D8ACE126BE55D60096A354 /* gdbconnection.cpp */,
+				B3D8ACC426BE55D60096A354 /* gdbserver.cpp */,
+				B3D8ACCE26BE55D60096A354 /* generalsettingswidget.cpp */,
+				B3D8ACDF26BE55D60096A354 /* hotkeysettingswidget.cpp */,
+				B3D8AD0226BE55D60096A354 /* inputbindingdialog.cpp */,
+				B3D8AB2126BE55D30096A354 /* inputbindingmonitor.cpp */,
+				B3D8ACD426BE55D60096A354 /* inputbindingwidgets.cpp */,
+				B3D8ACEC26BE55D60096A354 /* main.cpp */,
+				B3D8ACBA26BE55D60096A354 /* mainwindow.cpp */,
+				B3D8ACEA26BE55D60096A354 /* memorycardeditordialog.cpp */,
+				B3D8AB1D26BE55D30096A354 /* memorycardsettingswidget.cpp */,
+				B3D8ACC726BE55D60096A354 /* memoryviewwidget.cpp */,
+				B3D8ACCF26BE55D60096A354 /* postprocessingchainconfigwidget.cpp */,
+				B3D8ACCB26BE55D60096A354 /* postprocessingsettingswidget.cpp */,
 				B3D8AB0E26BE55D30096A354 /* postprocessingshaderconfigwidget.cpp */,
+				B3D8ACB526BE55D50096A354 /* qtdisplaywidget.cpp */,
+				B3D8AD0326BE55D60096A354 /* qthostinterface.cpp */,
+				B3D8ACD226BE55D60096A354 /* qtprogresscallback.cpp */,
+				B3D8ACCD26BE55D60096A354 /* qtutils.cpp */,
+				B3D8ACA826BE55D50096A354 /* settingsdialog.cpp */,
+				B3D8ACC126BE55D60096A354 /* duckstation-qt.vcxproj.filters */,
+				B3D8ACBB26BE55D60096A354 /* aboutdialog.h */,
 				B3D8AB0F26BE55D30096A354 /* achievementlogindialog.h */,
+				B3D8ACDE26BE55D60096A354 /* achievementsettingswidget.h */,
+				B3D8ACAC26BE55D50096A354 /* advancedsettingswidget.h */,
+				B3D8ACC926BE55D60096A354 /* audiosettingswidget.h */,
+				B3D8AB0C26BE55D30096A354 /* autoupdaterdialog.h */,
+				B3D8ACB726BE55D60096A354 /* biossettingswidget.h */,
+				B3D8AB1926BE55D30096A354 /* cheatcodeeditordialog.h */,
+				B3D8AB1C26BE55D30096A354 /* cheatmanagerdialog.h */,
+				B3D8ACDB26BE55D60096A354 /* collapsiblewidget.h */,
+				B3D8AB0A26BE55D30096A354 /* consolesettingswidget.h */,
+				B3D8AD0726BE55D60096A354 /* controllersettingswidget.h */,
+				B3D8ACB626BE55D60096A354 /* debuggermodels.h */,
+				B3D8ACE426BE55D60096A354 /* debuggerwindow.h */,
+				B3D8ACDA26BE55D60096A354 /* displaysettingswidget.h */,
+				B3D8AB0826BE55D30096A354 /* emulationsettingswidget.h */,
+				B3D8ACC826BE55D60096A354 /* enhancementsettingswidget.h */,
+				B3D8ACBE26BE55D60096A354 /* gamelistmodel.h */,
+				B3D8AB2226BE55D30096A354 /* gamelistsearchdirectoriesmodel.h */,
+				B3D8AD0426BE55D60096A354 /* gamelistsettingswidget.h */,
 				B3D8AB1026BE55D30096A354 /* gamelistwidget.h */,
 				B3D8AB1126BE55D30096A354 /* gamepropertiesdialog.h */,
-				B3D8AB1226BE55D30096A354 /* debuggerwindow.ui */,
-				B3D8AB1326BE55D30096A354 /* emulationsettingswidget.cpp */,
-				B3D8AB1426BE55D30096A354 /* advancedsettingswidget.cpp */,
-				B3D8AB1526BE55D30096A354 /* biossettingswidget.cpp */,
-				B3D8AB1626BE55D30096A354 /* CMakeLists.txt */,
-				B3D8AB1726BE55D30096A354 /* audiosettingswidget.ui */,
-				B3D8AB1826BE55D30096A354 /* hotkeysettingswidget.h */,
-				B3D8AB1926BE55D30096A354 /* cheatcodeeditordialog.h */,
-				B3D8AB1A26BE55D30096A354 /* autoupdaterdialog.ui */,
-				B3D8AB1B26BE55D30096A354 /* cheatmanagerdialog.ui */,
-				B3D8AB1C26BE55D30096A354 /* cheatmanagerdialog.h */,
-				B3D8AB1D26BE55D30096A354 /* memorycardsettingswidget.cpp */,
-				B3D8AB1E26BE55D30096A354 /* consolesettingswidget.ui */,
-				B3D8AB1F26BE55D30096A354 /* mainwindow.h */,
-				B3D8AB2026BE55D30096A354 /* qtdisplaywidget.h */,
-				B3D8AB2126BE55D30096A354 /* inputbindingmonitor.cpp */,
-				B3D8AB2226BE55D30096A354 /* gamelistsearchdirectoriesmodel.h */,
-				B3D8AB2326BE55D30096A354 /* postprocessingshaderconfigwidget.h */,
-				B3D8AB2426BE55D30096A354 /* generalsettingswidget.h */,
-				B3D8AB2526BE55D30096A354 /* collapsiblewidget.cpp */,
-				B3D8AB2626BE55D30096A354 /* aboutdialog.cpp */,
-				B3D8AB2726BE55D30096A354 /* cheatcodeeditordialog.cpp */,
-				B3D8AB2826BE55D30096A354 /* qt.conf */,
-				B3D8AB2926BE55D30096A354 /* debuggerwindow.cpp */,
-				B3D8AB2A26BE55D30096A354 /* cheatmanagerdialog.cpp */,
-				B3D8AB2B26BE55D30096A354 /* qtutils.h */,
-				B3D8AB2C26BE55D30096A354 /* resources */,
-				B3D8ACA626BE55D50096A354 /* DuckStation.icns */,
-				B3D8ACA726BE55D50096A354 /* displaysettingswidget.cpp */,
-				B3D8ACA826BE55D50096A354 /* settingsdialog.cpp */,
-				B3D8ACA926BE55D50096A354 /* achievementlogindialog.ui */,
-				B3D8ACAA26BE55D50096A354 /* gamepropertiesdialog.ui */,
-				B3D8ACAB26BE55D50096A354 /* advancedsettingswidget.ui */,
-				B3D8ACAC26BE55D50096A354 /* advancedsettingswidget.h */,
-				B3D8ACAD26BE55D50096A354 /* enhancementsettingswidget.ui */,
-				B3D8ACAE26BE55D50096A354 /* inputbindingmonitor.h */,
-				B3D8ACAF26BE55D50096A354 /* aboutdialog.ui */,
-				B3D8ACB026BE55D50096A354 /* qt.conf.win */,
-				B3D8ACB126BE55D50096A354 /* mainwindow.ui */,
-				B3D8ACB226BE55D50096A354 /* gamelistsettingswidget.cpp */,
-				B3D8ACB326BE55D50096A354 /* enhancementsettingswidget.cpp */,
-				B3D8ACB426BE55D50096A354 /* duckstation-qt.vcxproj */,
-				B3D8ACB526BE55D50096A354 /* qtdisplaywidget.cpp */,
-				B3D8ACB626BE55D60096A354 /* debuggermodels.h */,
-				B3D8ACB726BE55D60096A354 /* biossettingswidget.h */,
-				B3D8ACB826BE55D60096A354 /* achievementlogindialog.cpp */,
-				B3D8ACB926BE55D60096A354 /* audiosettingswidget.cpp */,
-				B3D8ACBA26BE55D60096A354 /* mainwindow.cpp */,
-				B3D8ACBB26BE55D60096A354 /* aboutdialog.h */,
-				B3D8ACBC26BE55D60096A354 /* inputbindingwidgets.h */,
-				B3D8ACBD26BE55D60096A354 /* duckstation-qt.aps */,
-				B3D8ACBE26BE55D60096A354 /* gamelistmodel.h */,
-				B3D8ACBF26BE55D60096A354 /* consolesettingswidget.cpp */,
-				B3D8ACC026BE55D60096A354 /* settingwidgetbinder.h */,
-				B3D8ACC126BE55D60096A354 /* duckstation-qt.vcxproj.filters */,
-				B3D8ACC226BE55D60096A354 /* biossettingswidget.ui */,
 				B3D8ACC326BE55D60096A354 /* gdbconnection.h */,
-				B3D8ACC426BE55D60096A354 /* gdbserver.cpp */,
-				B3D8ACC526BE55D60096A354 /* cheatcodeeditordialog.ui */,
-				B3D8ACC626BE55D60096A354 /* autoupdaterdialog.cpp */,
-				B3D8ACC726BE55D60096A354 /* memoryviewwidget.cpp */,
-				B3D8ACC826BE55D60096A354 /* enhancementsettingswidget.h */,
-				B3D8ACC926BE55D60096A354 /* audiosettingswidget.h */,
-				B3D8ACCA26BE55D60096A354 /* achievementsettingswidget.cpp */,
-				B3D8ACCB26BE55D60096A354 /* postprocessingsettingswidget.cpp */,
-				B3D8ACCC26BE55D60096A354 /* update_translations.bat */,
-				B3D8ACCD26BE55D60096A354 /* qtutils.cpp */,
-				B3D8ACCE26BE55D60096A354 /* generalsettingswidget.cpp */,
-				B3D8ACCF26BE55D60096A354 /* postprocessingchainconfigwidget.cpp */,
-				B3D8ACD026BE55D60096A354 /* resource.h */,
-				B3D8ACD126BE55D60096A354 /* qt5.natvis */,
-				B3D8ACD226BE55D60096A354 /* qtprogresscallback.cpp */,
-				B3D8ACD326BE55D60096A354 /* displaysettingswidget.ui */,
-				B3D8ACD426BE55D60096A354 /* inputbindingwidgets.cpp */,
-				B3D8ACD526BE55D60096A354 /* generalsettingswidget.ui */,
-				B3D8ACD626BE55D60096A354 /* postprocessingsettingswidget.ui */,
-				B3D8ACD726BE55D60096A354 /* debuggermodels.cpp */,
-				B3D8ACD826BE55D60096A354 /* gamelistsearchdirectoriesmodel.cpp */,
-				B3D8ACD926BE55D60096A354 /* inputbindingdialog.ui */,
-				B3D8ACDA26BE55D60096A354 /* displaysettingswidget.h */,
-				B3D8ACDB26BE55D60096A354 /* collapsiblewidget.h */,
-				B3D8ACDC26BE55D60096A354 /* duckstation-qt.ico */,
-				B3D8ACDD26BE55D60096A354 /* qthostinterface.h */,
-				B3D8ACDE26BE55D60096A354 /* achievementsettingswidget.h */,
-				B3D8ACDF26BE55D60096A354 /* hotkeysettingswidget.cpp */,
-				B3D8ACE026BE55D60096A354 /* memorycardeditordialog.ui */,
-				B3D8ACE126BE55D60096A354 /* gdbconnection.cpp */,
-				B3D8ACE226BE55D60096A354 /* controllersettingswidget.cpp */,
-				B3D8ACE326BE55D60096A354 /* memoryviewwidget.h */,
-				B3D8ACE426BE55D60096A354 /* debuggerwindow.h */,
-				B3D8ACE526BE55D60096A354 /* gamelistsettingswidget.ui */,
 				B3D8ACE626BE55D60096A354 /* gdbserver.h */,
-				B3D8ACE726BE55D60096A354 /* emulationsettingswidget.ui */,
-				B3D8ACE826BE55D60096A354 /* gamelistmodel.cpp */,
-				B3D8ACE926BE55D60096A354 /* duckstation-qt.rc */,
-				B3D8ACEA26BE55D60096A354 /* memorycardeditordialog.cpp */,
-				B3D8ACEB26BE55D60096A354 /* Info.plist.in */,
-				B3D8ACEC26BE55D60096A354 /* main.cpp */,
-				B3D8ACED26BE55D60096A354 /* translations */,
+				B3D8AB2426BE55D30096A354 /* generalsettingswidget.h */,
+				B3D8AB1826BE55D30096A354 /* hotkeysettingswidget.h */,
+				B3D8AB0926BE55D30096A354 /* inputbindingdialog.h */,
+				B3D8ACAE26BE55D50096A354 /* inputbindingmonitor.h */,
+				B3D8ACBC26BE55D60096A354 /* inputbindingwidgets.h */,
+				B3D8AB1F26BE55D30096A354 /* mainwindow.h */,
 				B3D8AD0026BE55D60096A354 /* memorycardeditordialog.h */,
-				B3D8AD0126BE55D60096A354 /* gamepropertiesdialog.cpp */,
-				B3D8AD0226BE55D60096A354 /* inputbindingdialog.cpp */,
-				B3D8AD0326BE55D60096A354 /* qthostinterface.cpp */,
-				B3D8AD0426BE55D60096A354 /* gamelistsettingswidget.h */,
 				B3D8AD0526BE55D60096A354 /* memorycardsettingswidget.h */,
-				B3D8AD0626BE55D60096A354 /* settingsdialog.h */,
-				B3D8AD0726BE55D60096A354 /* controllersettingswidget.h */,
-				B3D8AD0826BE55D60096A354 /* achievementsettingswidget.ui */,
-				B3D8AD0926BE55D60096A354 /* postprocessingchainconfigwidget.ui */,
+				B3D8ACE326BE55D60096A354 /* memoryviewwidget.h */,
 				B3D8AD0A26BE55D60096A354 /* postprocessingchainconfigwidget.h */,
 				B3D8AD0B26BE55D60096A354 /* postprocessingsettingswidget.h */,
+				B3D8AB2326BE55D30096A354 /* postprocessingshaderconfigwidget.h */,
+				B3D8AB2026BE55D30096A354 /* qtdisplaywidget.h */,
+				B3D8ACDD26BE55D60096A354 /* qthostinterface.h */,
+				B3D8AB0B26BE55D30096A354 /* qtprogresscallback.h */,
+				B3D8AB2B26BE55D30096A354 /* qtutils.h */,
+				B3D8ACD026BE55D60096A354 /* resource.h */,
+				B3D8AD0626BE55D60096A354 /* settingsdialog.h */,
+				B3D8ACC026BE55D60096A354 /* settingwidgetbinder.h */,
+				B3D8ACA626BE55D50096A354 /* DuckStation.icns */,
+				B3D8ACDC26BE55D60096A354 /* duckstation-qt.ico */,
+				B3D8ACEB26BE55D60096A354 /* Info.plist.in */,
+				B3D8ACD126BE55D60096A354 /* qt5.natvis */,
+				B3D8ACE926BE55D60096A354 /* duckstation-qt.rc */,
+				B3D8AB1626BE55D30096A354 /* CMakeLists.txt */,
+				B3D8ACAF26BE55D50096A354 /* aboutdialog.ui */,
+				B3D8ACA926BE55D50096A354 /* achievementlogindialog.ui */,
+				B3D8AD0826BE55D60096A354 /* achievementsettingswidget.ui */,
+				B3D8ACAB26BE55D50096A354 /* advancedsettingswidget.ui */,
+				B3D8AB1726BE55D30096A354 /* audiosettingswidget.ui */,
+				B3D8AB1A26BE55D30096A354 /* autoupdaterdialog.ui */,
+				B3D8ACC226BE55D60096A354 /* biossettingswidget.ui */,
+				B3D8ACC526BE55D60096A354 /* cheatcodeeditordialog.ui */,
+				B3D8AB1B26BE55D30096A354 /* cheatmanagerdialog.ui */,
+				B3D8AB1E26BE55D30096A354 /* consolesettingswidget.ui */,
+				B3D8AB1226BE55D30096A354 /* debuggerwindow.ui */,
+				B3D8ACD326BE55D60096A354 /* displaysettingswidget.ui */,
+				B3D8ACE726BE55D60096A354 /* emulationsettingswidget.ui */,
+				B3D8ACAD26BE55D50096A354 /* enhancementsettingswidget.ui */,
+				B3D8ACE526BE55D60096A354 /* gamelistsettingswidget.ui */,
+				B3D8ACAA26BE55D50096A354 /* gamepropertiesdialog.ui */,
+				B3D8ACD526BE55D60096A354 /* generalsettingswidget.ui */,
+				B3D8ACD926BE55D60096A354 /* inputbindingdialog.ui */,
+				B3D8ACB126BE55D50096A354 /* mainwindow.ui */,
+				B3D8ACE026BE55D60096A354 /* memorycardeditordialog.ui */,
+				B3D8AD0926BE55D60096A354 /* postprocessingchainconfigwidget.ui */,
+				B3D8ACD626BE55D60096A354 /* postprocessingsettingswidget.ui */,
+				B3D8AB0726BE55D30096A354 /* settingsdialog.ui */,
+				B3D8ACB426BE55D50096A354 /* duckstation-qt.vcxproj */,
+				B3D8ACB026BE55D50096A354 /* qt.conf.win */,
+				B3D8AB2C26BE55D30096A354 /* resources */,
+				B3D8ACED26BE55D60096A354 /* translations */,
 			);
 			path = "duckstation-qt";
 			sourceTree = "<group>";
@@ -5162,15 +5162,15 @@
 		B3D8AD0C26BE55D60096A354 /* duckstation-regtest */ = {
 			isa = PBXGroup;
 			children = (
+				B3D8AD1426BE55D60096A354 /* regtest_host_display.cpp */,
 				B3D8AD0D26BE55D60096A354 /* regtest_host_interface.cpp */,
-				B3D8AD0E26BE55D60096A354 /* CMakeLists.txt */,
-				B3D8AD0F26BE55D60096A354 /* regtest_settings_interface.h */,
-				B3D8AD1026BE55D60096A354 /* duckstation-regtest.vcxproj */,
-				B3D8AD1126BE55D60096A354 /* regtest_host_interface.h */,
+				B3D8AD1526BE55D60096A354 /* regtest_settings_interface.cpp */,
 				B3D8AD1226BE55D60096A354 /* duckstation-regtest.vcxproj.filters */,
 				B3D8AD1326BE55D60096A354 /* regtest_host_display.h */,
-				B3D8AD1426BE55D60096A354 /* regtest_host_display.cpp */,
-				B3D8AD1526BE55D60096A354 /* regtest_settings_interface.cpp */,
+				B3D8AD1126BE55D60096A354 /* regtest_host_interface.h */,
+				B3D8AD0F26BE55D60096A354 /* regtest_settings_interface.h */,
+				B3D8AD0E26BE55D60096A354 /* CMakeLists.txt */,
+				B3D8AD1026BE55D60096A354 /* duckstation-regtest.vcxproj */,
 			);
 			path = "duckstation-regtest";
 			sourceTree = "<group>";
@@ -5178,26 +5178,26 @@
 		B3D8AD1626BE55D60096A354 /* duckstation-nogui */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8AD1726BE55D60096A354 /* duckstation-nogui.ico */,
-				B3D8AD1826BE55D60096A354 /* sdl_key_names.h */,
-				B3D8AD1926BE55D60096A354 /* CMakeLists.txt */,
+				B3D8AD1E26BE55D60096A354 /* duckstation-nogui.aps */,
+				B3D8AD2A26BE55D60096A354 /* imgui_impl_sdl.cpp */,
+				B3D8AD2826BE55D60096A354 /* main.cpp */,
+				B3D8AD2026BE55D60096A354 /* nogui_host_interface.cpp */,
 				B3D8AD1A26BE55D60096A354 /* sdl_host_interface.cpp */,
+				B3D8AD2926BE55D60096A354 /* vty_host_interface.cpp */,
+				B3D8AD2226BE55D60096A354 /* win32_host_interface.cpp */,
+				B3D8AD1F26BE55D60096A354 /* duckstation-nogui.vcxproj.filters */,
+				B3D8AD2526BE55D60096A354 /* evdev_key_names.h */,
 				B3D8AD1B26BE55D60096A354 /* imgui_impl_sdl.h */,
 				B3D8AD1C26BE55D60096A354 /* nogui_host_interface.h */,
-				B3D8AD1D26BE55D60096A354 /* sdl_host_interface.h */,
-				B3D8AD1E26BE55D60096A354 /* duckstation-nogui.aps */,
-				B3D8AD1F26BE55D60096A354 /* duckstation-nogui.vcxproj.filters */,
-				B3D8AD2026BE55D60096A354 /* nogui_host_interface.cpp */,
-				B3D8AD2126BE55D60096A354 /* duckstation-nogui.rc */,
-				B3D8AD2226BE55D60096A354 /* win32_host_interface.cpp */,
-				B3D8AD2326BE55D60096A354 /* win32_host_interface.h */,
 				B3D8AD2426BE55D60096A354 /* resource.h */,
-				B3D8AD2526BE55D60096A354 /* evdev_key_names.h */,
-				B3D8AD2626BE55D60096A354 /* duckstation-nogui.manifest */,
+				B3D8AD1D26BE55D60096A354 /* sdl_host_interface.h */,
+				B3D8AD1826BE55D60096A354 /* sdl_key_names.h */,
 				B3D8AD2726BE55D60096A354 /* vty_host_interface.h */,
-				B3D8AD2826BE55D60096A354 /* main.cpp */,
-				B3D8AD2926BE55D60096A354 /* vty_host_interface.cpp */,
-				B3D8AD2A26BE55D60096A354 /* imgui_impl_sdl.cpp */,
+				B3D8AD2326BE55D60096A354 /* win32_host_interface.h */,
+				B3D8AD1726BE55D60096A354 /* duckstation-nogui.ico */,
+				B3D8AD2626BE55D60096A354 /* duckstation-nogui.manifest */,
+				B3D8AD2126BE55D60096A354 /* duckstation-nogui.rc */,
+				B3D8AD1926BE55D60096A354 /* CMakeLists.txt */,
 				B3D8AD2B26BE55D60096A354 /* duckstation-nogui.vcxproj */,
 			);
 			path = "duckstation-nogui";
@@ -5478,11 +5478,12 @@
 				B304F53126BE566700A4F549 /* bus.cpp in Sources */,
 				B304F56026BE57B300A4F549 /* event.cpp in Sources */,
 				B304F52B26BE566700A4F549 /* bios.cpp in Sources */,
-				B304F52726BE566700A4F549 /* cpu_recompiler_code_generator_aarch64.cpp in Sources */,
 				B304F53926BE566700A4F549 /* settings.cpp in Sources */,
 				B304F55D26BE57B300A4F549 /* md5_digest.cpp in Sources */,
 				B304F56526BE57B300A4F549 /* cd_image_bin.cpp in Sources */,
 				B304F55C26BE57B300A4F549 /* memory_arena.cpp in Sources */,
+				B3203C1B26DB16A800B016C6 /* cpu_recompiler_code_generator_generic.cpp in Sources */,
+				B3203C1D26DB177C00B016C6 /* cpu_recompiler_register_cache.cpp in Sources */,
 				B304F54E26BE57B300A4F549 /* audio_stream.cpp in Sources */,
 				B304F55026BE57B300A4F549 /* shiftjis.cpp in Sources */,
 				B304F54A26BE57B300A4F549 /* file_system.cpp in Sources */,
@@ -5491,13 +5492,13 @@
 				B304F54826BE57B300A4F549 /* cd_image_mds.cpp in Sources */,
 				B304F52526BE566700A4F549 /* host_display.cpp in Sources */,
 				B304F53726BE566700A4F549 /* playstation_mouse.cpp in Sources */,
+				B3203C1426DB15D600B016C6 /* glad.c in Sources */,
 				B304F51E26BE566700A4F549 /* digital_controller.cpp in Sources */,
 				B304F51026BE566700A4F549 /* gte.cpp in Sources */,
 				B304F51126BE566700A4F549 /* memory_card_image.cpp in Sources */,
 				B304F52E26BE566700A4F549 /* pgxp.cpp in Sources */,
 				B304F54126BE57B300A4F549 /* timestamp.cpp in Sources */,
 				B304F55A26BE57B300A4F549 /* image.cpp in Sources */,
-				B304F52C26BE566700A4F549 /* cpu_recompiler_code_generator.cpp in Sources */,
 				B304F51226BE566700A4F549 /* cheats.cpp in Sources */,
 				B304F51D26BE566700A4F549 /* multitap.cpp in Sources */,
 				B304F52F26BE566700A4F549 /* texture_replacements.cpp in Sources */,
@@ -5505,10 +5506,11 @@
 				B304F51F26BE566700A4F549 /* analog_joystick.cpp in Sources */,
 				B304F51526BE566700A4F549 /* gpu_backend.cpp in Sources */,
 				B304F56126BE57B300A4F549 /* cd_image_pbp.cpp in Sources */,
-				B304F52026BE566700A4F549 /* cpu_recompiler_code_generator_x64.cpp in Sources */,
 				B304F50726BE566700A4F549 /* dma.cpp in Sources */,
+				B3203C1C26DB177C00B016C6 /* cpu_recompiler_code_generator.cpp in Sources */,
 				B304F54426BE57B300A4F549 /* minizip_helpers.cpp in Sources */,
 				B304F50E26BE566700A4F549 /* mdec.cpp in Sources */,
+				B3203C2026DB191F00B016C6 /* cpu_recompiler_code_generator_aarch64.cpp in Sources */,
 				B304F52126BE566700A4F549 /* timers.cpp in Sources */,
 				B304F51C26BE566700A4F549 /* sio.cpp in Sources */,
 				B304F52826BE566700A4F549 /* host_interface.cpp in Sources */,
@@ -5516,9 +5518,7 @@
 				B304F51926BE566700A4F549 /* spu.cpp in Sources */,
 				B304F54526BE57B300A4F549 /* cd_image.cpp in Sources */,
 				B304F54926BE57B300A4F549 /* page_fault_handler.cpp in Sources */,
-				B304F53F26BE566700A4F549 /* shadergen.cpp in Sources */,
 				B304F56626BE57B300A4F549 /* cd_xa.cpp in Sources */,
-				B304F53226BE566700A4F549 /* gpu_hw_shadergen.cpp in Sources */,
 				B304F56326BE57B300A4F549 /* state_wrapper.cpp in Sources */,
 				B304F54626BE57B300A4F549 /* progress_callback.cpp in Sources */,
 				B304F56726BE57B300A4F549 /* cue_parser.cpp in Sources */,
@@ -5538,7 +5538,6 @@
 				B304F54326BE57B300A4F549 /* log.cpp in Sources */,
 				B304F53B26BE566700A4F549 /* system.cpp in Sources */,
 				B304F54B26BE57B300A4F549 /* timer.cpp in Sources */,
-				B304F51426BE566700A4F549 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */,
 				B304F54F26BE57B300A4F549 /* iso_reader.cpp in Sources */,
 				B304F55926BE57B300A4F549 /* cd_subchannel_replacement.cpp in Sources */,
 				B304F56826BE57B300A4F549 /* wav_writer.cpp in Sources */,
@@ -5550,7 +5549,9 @@
 				B304F53D26BE566700A4F549 /* cpu_disasm.cpp in Sources */,
 				B304F50C26BE566700A4F549 /* gpu_sw.cpp in Sources */,
 				B304F51A26BE566700A4F549 /* gpu_hw.cpp in Sources */,
+				B3203C2426DB1A7A00B016C6 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */,
 				B304F55526BE57B300A4F549 /* cd_image_memory.cpp in Sources */,
+				B3203C1026DB126F00B016C6 /* thread_pool.cpp in Sources */,
 				B304F51B26BE566700A4F549 /* psf_loader.cpp in Sources */,
 				B304F55E26BE57B300A4F549 /* cd_image_hasher.cpp in Sources */,
 				B304F54226BE57B300A4F549 /* window_info.cpp in Sources */,
@@ -5560,15 +5561,12 @@
 				B304F53826BE566700A4F549 /* gpu_commands.cpp in Sources */,
 				B304F55426BE57B300A4F549 /* jit_code_buffer.cpp in Sources */,
 				B304F50A26BE566700A4F549 /* controller.cpp in Sources */,
-				B304F55726BE57B300A4F549 /* cd_image_chd.cpp in Sources */,
-				B304F52226BE566700A4F549 /* cpu_recompiler_register_cache.cpp in Sources */,
-				B304F51726BE566700A4F549 /* cpu_recompiler_code_generator_generic.cpp in Sources */,
 				B304F55B26BE57B300A4F549 /* crash_handler.cpp in Sources */,
 				B304F53026BE566700A4F549 /* timing_event.cpp in Sources */,
 				B304F54C26BE57B300A4F549 /* cd_image_cue.cpp in Sources */,
 				B304F55126BE57B300A4F549 /* assert.cpp in Sources */,
 				B304F52926BE566700A4F549 /* memory_card.cpp in Sources */,
-				B304F56226BE57B300A4F549 /* drm_display.cpp in Sources */,
+				B3203C2526DB1AA600B016C6 /* cpu_recompiler_code_generator_x64.cpp in Sources */,
 				B304F54026BE57B300A4F549 /* error.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5988,6 +5986,7 @@
 		};
 		B3D8A54726BE55780096A354 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -6005,10 +6004,16 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/duckstation/src\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/duckstation/src\"",
+					"\"$(SRCROOT)/duckstation/dep\"",
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
+					"\"$(SRCROOT)/duckstation/dep/vixl/include\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DWITH_RECOMPILER";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6018,6 +6023,7 @@
 		};
 		B3D8A54826BE55780096A354 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -6035,10 +6041,16 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/duckstation/src\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/duckstation/src\"",
+					"\"$(SRCROOT)/duckstation/dep\"",
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
+					"\"$(SRCROOT)/duckstation/dep/vixl/include\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DWITH_RECOMPILER";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6049,6 +6061,7 @@
 		};
 		B3D8A54926BE55780096A354 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -6066,10 +6079,16 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/duckstation/src\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/duckstation/src\"",
+					"\"$(SRCROOT)/duckstation/dep\"",
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
+					"\"$(SRCROOT)/duckstation/dep/vixl/include\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DWITH_RECOMPILER";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

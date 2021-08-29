@@ -1,0 +1,19 @@
+//
+//  Config.xcconfig
+//  PVDuckStation
+//
+//  Created by Joseph Mattiello on 8/28/21.
+//
+//
+
+// Arm 32bit
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch64.cpp
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7s] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch64.cpp
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv6] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch64.cpp
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=arm64] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch32.cpp
+
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = $(inherited) cpu_recompiler_code_generator_aarch32.cpp cpu_recompiler_code_generator_aarch64.cpp
+
+// tv OS
+//OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2 -D_USE_CZ80
+//OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -D_USE_CZ80
