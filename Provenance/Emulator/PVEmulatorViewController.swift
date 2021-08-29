@@ -662,17 +662,6 @@ extension PVEmulatorViewController {
 // MARK: - Controllers
 
 extension PVEmulatorViewController {
-    // #if os(tvOS)
-    // Ensure that override of menu gesture is caught and handled properly for tvOS
-    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        if let press = presses.first, press.type == .menu, !isShowingMenu {
-            //         [self controllerPauseButtonPressed];
-        } else {
-            super.pressesBegan(presses, with: event)
-        }
-    }
-
-    // #endif
     func controllerPauseButtonPressed() {
         DispatchQueue.main.async(execute: { () -> Void in
             if !self.isShowingMenu {
