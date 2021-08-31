@@ -22,18 +22,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Cocoa/Cocoa.h>
-#import <OpenEmuBase/OEGameCore.h>
+#import <UIKit/UIKit.h>
+#import <PVSupport/PVSupport.h>
 #include <os/log.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 extern os_log_t OE_CORE_LOG;
-
-OE_EXPORTED_CLASS
-@interface PlayStationGameCore : OEGameCore
-
-@end
 
 #ifdef __cplusplus
 extern "C" {

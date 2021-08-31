@@ -23,7 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
-#import "PlayStationGameCore.h"
+#import "PVDuckStation.h"
 
 #define TickCount DuckTickCount
 #include "OpenGLHostDisplay.hpp"
@@ -36,6 +36,8 @@
 
 #include <dlfcn.h>
 #include <os/log.h>
+
+#define OE_CORE_LOG OS_LOG_DEFAULT
 
 namespace OpenEmu {
 class ContextGL final : public GL::Context
@@ -93,7 +95,7 @@ using namespace OpenEmu;
 
 #pragma mark -
 
-OpenGLHostDisplay::OpenGLHostDisplay(PlayStationGameCore *core) :
+OpenGLHostDisplay::OpenGLHostDisplay(PVDuckStationCore *core) :
 _current(core)
 {
 	
@@ -316,7 +318,7 @@ void OpenGLHostDisplay::SetVSync(bool enabled)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	m_gl_context->SetSwapInterval(enabled ? 1 : 0);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, current_fbo);
-	_current.renderDelegate.enableVSync = enabled;
+//	_current.renderDelegate.enableVSync = enabled;
 }
 
 const char* OpenGLHostDisplay::GetGLSLVersionString() const

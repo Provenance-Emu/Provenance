@@ -22,9 +22,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import "PlayStationGameCore.h"
-#import "OEPSXSystemResponderClient.h"
-#import <OpenEmuBase/OpenEmuBase.h>
+#import "PVDuckStation.h"
+#import <PVSupport/PVSupport.h>
+//#import "PVPSXSystemResponderClient.h"
+//#import <OpenEmuBase/OpenEmuBase.h>
 #define TickCount DuckTickCount
 #include "core/types.h"
 #include "core/system.h"
@@ -53,13 +54,18 @@
 #include <memory>
 #include <os/log.h>
 
-static void updateAnalogAxis(OEPSXButton button, int player, CGFloat amount);
-static void updateAnalogControllerButton(OEPSXButton button, int player, bool down);
-static void updateDigitalControllerButton(OEPSXButton button, int player, bool down);
-// We're keeping this: I think it'll be useful when OpenEmu supports Metal.
-static WindowInfo WindowInfoFromGameCore(PlayStationGameCore *core);
+#define OEGameCoreErrorDomain @"org.provenance.core"
+#define OEGameCoreCouldNotLoadStateError 420
+#define OEGameCoreCouldNotLoadROMError 69
+#define OEGameCoreCouldNotSaveStateError 42069
 
-static __weak PlayStationGameCore *_current;
+static void updateAnalogAxis(PVPSXButton button, int player, CGFloat amount);
+static void updateAnalogControllerButton(PVPSXButton button, int player, bool down);
+static void updateDigitalControllerButton(PVPSXButton button, int player, bool down);
+// We're keeping this: I think it'll be useful when OpenEmu supports Metal.
+static WindowInfo WindowInfoFromGameCore(PVDuckStationCore *core);
+
+static __weak PVDuckStationCore *_current;
 os_log_t OE_CORE_LOG;
 
 struct OpenEmuChangeSettings {
@@ -145,7 +151,7 @@ private:
 	GameSettings::Database m_game_settings;
 };
 
-@interface PlayStationGameCore () <OEPSXSystemResponderClient>
+@interface PVDuckStationCore () <PVPSXSystemResponderClient>
 
 @end
 
@@ -185,12 +191,12 @@ static NSString * const DuckStationAntialiasKey = @"duckstation/GPU/Antialias";
 static NSString * const DuckStation24ChromaSmoothingKey = @"duckstation/GPU/24BitChroma";
 static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock";
 
-@implementation PlayStationGameCore {
+@implementation PVDuckStationCore {
 	OpenEmuHostInterface *duckInterface;
     NSString *bootPath;
 	NSString *saveStatePath;
     bool isInitialized;
-	NSInteger _maxDiscs;
+	NSUInteger _maxDiscs;
 @package
 	NSMutableDictionary <NSString *, id> *_displayModes;
 }
@@ -227,7 +233,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 		g_settings.cpu_execution_mode = CPUExecutionMode::Recompiler;
 		duckInterface = new OpenEmuHostInterface();
 		_displayModes = [[NSMutableDictionary alloc] init];
-		NSURL *gameSettingsURL = [[NSBundle bundleForClass:[PlayStationGameCore class]] URLForResource:@"gamesettings" withExtension:@"ini"];
+		NSURL *gameSettingsURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:@"gamesettings" withExtension:@"ini"];
 		if (gameSettingsURL) {
 			bool success = duckInterface->LoadCompatibilitySettings(gameSettingsURL);
 			if (!success) {
@@ -236,7 +242,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 		} else {
 			os_log_fault(OE_CORE_LOG, "Game settings for particular discs wasn't found.");
 		}
-		gameSettingsURL = [[NSBundle bundleForClass:[PlayStationGameCore class]] URLForResource:@"OEOverrides" withExtension:@"ini"];
+		gameSettingsURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:@"OEOverrides" withExtension:@"ini"];
 		if (gameSettingsURL) {
 			bool success = duckInterface->LoadCompatibilitySettings(gameSettingsURL);
 			if (!success) {
@@ -251,7 +257,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-	Log::SetFileOutputParams(true, [self.supportDirectoryPath stringByAppendingPathComponent:@"emu.log"].fileSystemRepresentation);
+	Log::SetFileOutputParams(true, [self.BIOSPath stringByAppendingPathComponent:@"emu.log"].fileSystemRepresentation);
 	if ([[path pathExtension] compare:@"ccd" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 		//DuckStation doens't handle CCD files at all. Replace with the likely-present .IMG instead
 		path = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:@"img"];
@@ -390,12 +396,12 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	[super stopEmulation];
 }
 
-- (OEIntSize)aspectSize
+- (CGSize)aspectSize
 {
-	return (OEIntSize){ 4, 3 };
+	return (CGSize){ 4, 3 };
 }
 
-- (BOOL)tryToResizeVideoTo:(OEIntSize)size
+- (BOOL)tryToResizeVideoTo:(CGSize)size
 {
 	if (!System::IsShutdown() && isInitialized) {
 		duckInterface->ResizeRenderWindow(size.width, size.height);
@@ -405,13 +411,13 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	return YES;
 }
 
-- (OEGameCoreRendering)gameCoreRendering
-{
-	//TODO: return OEGameCoreRenderingMetal1Video;
-	return OEGameCoreRenderingOpenGL3Video;
-}
+//- (OEGameCoreRendering)gameCoreRendering
+//{
+//	//TODO: return OEGameCoreRenderingMetal1Video;
+//	return OEGameCoreRenderingOpenGL3Video;
+//}
 
-- (oneway void)mouseMovedAtPoint:(OEIntPoint)point
+- (oneway void)mouseMovedAtPoint:(CGPoint)point
 {
 	switch (g_settings.controller_types[0]) {
 		case ControllerType::NamcoGunCon:
@@ -442,7 +448,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	}
 }
 
-- (oneway void)leftMouseDownAtPoint:(OEIntPoint)point
+- (oneway void)leftMouseDownAtPoint:(CGPoint)point
 {
 	switch (g_settings.controller_types[0]) {
 		case ControllerType::NamcoGunCon:
@@ -517,7 +523,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	}
 }
 
-- (oneway void)rightMouseDownAtPoint:(OEIntPoint)point
+- (oneway void)rightMouseDownAtPoint:(CGPoint)point
 {
 	switch (g_settings.controller_types[0]) {
 		case ControllerType::NamcoGunCon:
@@ -592,13 +598,13 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	}
 }
 
-- (oneway void)didMovePSXJoystickDirection:(OEPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
+- (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
     player -= 1;
     switch (button) {
-        case OEPSXLeftAnalogLeft:
-        case OEPSXLeftAnalogUp:
-        case OEPSXRightAnalogLeft:
-        case OEPSXRightAnalogUp:
+        case PVPSXButtonLeftAnalogLeft:
+        case PVPSXButtonLeftAnalogUp:
+        case PVPSXButtonRightAnalogLeft:
+        case PVPSXButtonRightAnalogUp:
             value *= -1;
             break;
         default:
@@ -614,7 +620,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	}
 }
 
-- (oneway void)didPushPSXButton:(OEPSXButton)button forPlayer:(NSUInteger)player {
+- (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player {
     player -= 1;
     
 	switch (g_settings.controller_types[player]) {
@@ -633,14 +639,14 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 			}
 			NamcoGunCon *controller = static_cast<NamcoGunCon*>(System::GetController(0));
 			switch (button) {
-				case OEPSXButtonCircle:
-				case OEPSXButtonSquare:
+				case PVPSXButtonCircle:
+				case PVPSXButtonSquare:
 					controller->SetButtonState(NamcoGunCon::Button::A, true);
 					break;
 					
-				case OEPSXButtonCross:
-				case OEPSXButtonTriangle:
-				case OEPSXButtonStart:
+				case PVPSXButtonCross:
+				case PVPSXButtonTriangle:
+				case PVPSXButtonStart:
 					controller->SetButtonState(NamcoGunCon::Button::B, true);
 					break;
 
@@ -656,7 +662,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 }
 
 
-- (oneway void)didReleasePSXButton:(OEPSXButton)button forPlayer:(NSUInteger)player {
+- (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player {
     player -= 1;
     
 	switch (g_settings.controller_types[player]) {
@@ -675,14 +681,14 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 			}
 			NamcoGunCon *controller = static_cast<NamcoGunCon*>(System::GetController(0));
 			switch (button) {
-				case OEPSXButtonCircle:
-				case OEPSXButtonSquare:
+				case PVPSXButtonCircle:
+				case PVPSXButtonSquare:
 					controller->SetButtonState(NamcoGunCon::Button::A, false);
 					break;
 					
-				case OEPSXButtonCross:
-				case OEPSXButtonTriangle:
-				case OEPSXButtonStart:
+				case PVPSXButtonCross:
+				case PVPSXButtonTriangle:
+				case PVPSXButtonStart:
 					controller->SetButtonState(NamcoGunCon::Button::B, false);
 					break;
 
@@ -712,9 +718,9 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	return AudioStream::DefaultOutputSampleRate;
 }
 
-- (OEIntSize)bufferSize
+- (CGSize)bufferSize
 {
-	return (OEIntSize){ 640, 480 };
+	return (CGSize){ 640, 480 };
 }
 
 - (void)executeFrame
@@ -795,67 +801,67 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	}
 	duckInterface->ChangeSettings(settings);
 }
-
-- (NSArray <NSDictionary <NSString *, id> *> *)displayModes
-{
-#define OptionWithValue(n, k, v) \
-@{ \
-	OEGameCoreDisplayModeNameKey : n, \
-	OEGameCoreDisplayModePrefKeyNameKey : k, \
-	OEGameCoreDisplayModeStateKey : @([_displayModes[k] isEqual:@(v)]), \
-	OEGameCoreDisplayModePrefValueNameKey : @(v) }
-#define OptionToggleable(n, k) \
-	OEDisplayMode_OptionToggleableWithState(n, k, _displayModes[k])
-
-	return @[
-		OEDisplayMode_Submenu(@"Texture Filtering",
-							  @[OptionWithValue(@"Nearest Neighbor", DuckStationTextureFilterKey, int(GPUTextureFilter::Nearest)),
-								OptionWithValue(@"Bilinear", DuckStationTextureFilterKey, int(GPUTextureFilter::Bilinear)),
-								OptionWithValue(@"Bilinear (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::BilinearBinAlpha)),
-								OptionWithValue(@"JINC2", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2)),
-								OptionWithValue(@"JINC2 (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2BinAlpha)),
-								OptionWithValue(@"xBR", DuckStationTextureFilterKey, int(GPUTextureFilter::xBR)),
-								OptionWithValue(@"xBR (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::xBRBinAlpha))]),
-		OptionToggleable(@"PGXP", DuckStationPGXPActiveKey),
-		OptionToggleable(@"Deinterlace", DuckStationDeinterlacedKey),
-//		OptionToggleable(@"Chroma 24 Interlace", DuckStation24ChromaSmoothingKey),
-		OEDisplayMode_Submenu(@"MSAA", @[OptionWithValue(@"Off", DuckStationAntialiasKey, 1), OptionWithValue(@"2x", DuckStationAntialiasKey, 2), OptionWithValue(@"4x", DuckStationAntialiasKey, 4), OptionWithValue(@"8x", DuckStationAntialiasKey, 8), OptionWithValue(@"16x", DuckStationAntialiasKey, 16)]),
-		OEDisplayMode_Submenu(@"CPU speed",
-							  @[OptionWithValue(@"100% (default)", DuckStationCPUOverclockKey, 100),
-								OptionWithValue(@"200%", DuckStationCPUOverclockKey, 200),
-								OptionWithValue(@"300%", DuckStationCPUOverclockKey, 300),
-								OptionWithValue(@"400%", DuckStationCPUOverclockKey, 400),
-								OptionWithValue(@"500%", DuckStationCPUOverclockKey, 500),
-								OptionWithValue(@"600%", DuckStationCPUOverclockKey, 600)]),
-	];
-	
-#undef OptionWithValue
-#undef OptionToggleable
-}
-
-- (void)changeDisplayWithMode:(NSString *)displayMode
-{
-	NSString *key;
-	id currentVal;
-	OpenEmuChangeSettings settings;
-	OEDisplayModeListGetPrefKeyValueFromModeName(self.displayModes, displayMode, &key, &currentVal);
-	_displayModes[key] = currentVal;
-
-	if ([key isEqualToString:DuckStationTextureFilterKey]) {
-		settings.textureFilter = GPUTextureFilter([currentVal intValue]);
-	} else if ([key isEqualToString:DuckStationPGXPActiveKey]) {
-		settings.pxgp = ![currentVal boolValue];
-	} else if ([key isEqualToString:DuckStationDeinterlacedKey]) {
-		settings.deinterlaced = ![currentVal boolValue];
-	} else if ([key isEqualToString:DuckStationAntialiasKey]) {
-		settings.multisamples = [currentVal unsignedIntValue];
-	} else if ([key isEqualToString:DuckStationCPUOverclockKey]) {
-		settings.speedPercent = [currentVal unsignedIntValue];
-	} else if ([key isEqualToString:DuckStation24ChromaSmoothingKey]) {
-		settings.chroma24Interlace = [currentVal boolValue];
-	}
-	duckInterface->ChangeSettings(settings);
-}
+//
+//- (NSArray <NSDictionary <NSString *, id> *> *)displayModes
+//{
+//#define OptionWithValue(n, k, v) \
+//@{ \
+//	OEGameCoreDisplayModeNameKey : n, \
+//	OEGameCoreDisplayModePrefKeyNameKey : k, \
+//	OEGameCoreDisplayModeStateKey : @([_displayModes[k] isEqual:@(v)]), \
+//	OEGameCoreDisplayModePrefValueNameKey : @(v) }
+//#define OptionToggleable(n, k) \
+//	OEDisplayMode_OptionToggleableWithState(n, k, _displayModes[k])
+//
+//	return @[
+//		OEDisplayMode_Submenu(@"Texture Filtering",
+//							  @[OptionWithValue(@"Nearest Neighbor", DuckStationTextureFilterKey, int(GPUTextureFilter::Nearest)),
+//								OptionWithValue(@"Bilinear", DuckStationTextureFilterKey, int(GPUTextureFilter::Bilinear)),
+//								OptionWithValue(@"Bilinear (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::BilinearBinAlpha)),
+//								OptionWithValue(@"JINC2", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2)),
+//								OptionWithValue(@"JINC2 (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2BinAlpha)),
+//								OptionWithValue(@"xBR", DuckStationTextureFilterKey, int(GPUTextureFilter::xBR)),
+//								OptionWithValue(@"xBR (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::xBRBinAlpha))]),
+//		OptionToggleable(@"PGXP", DuckStationPGXPActiveKey),
+//		OptionToggleable(@"Deinterlace", DuckStationDeinterlacedKey),
+////		OptionToggleable(@"Chroma 24 Interlace", DuckStation24ChromaSmoothingKey),
+//		OEDisplayMode_Submenu(@"MSAA", @[OptionWithValue(@"Off", DuckStationAntialiasKey, 1), OptionWithValue(@"2x", DuckStationAntialiasKey, 2), OptionWithValue(@"4x", DuckStationAntialiasKey, 4), OptionWithValue(@"8x", DuckStationAntialiasKey, 8), OptionWithValue(@"16x", DuckStationAntialiasKey, 16)]),
+//		OEDisplayMode_Submenu(@"CPU speed",
+//							  @[OptionWithValue(@"100% (default)", DuckStationCPUOverclockKey, 100),
+//								OptionWithValue(@"200%", DuckStationCPUOverclockKey, 200),
+//								OptionWithValue(@"300%", DuckStationCPUOverclockKey, 300),
+//								OptionWithValue(@"400%", DuckStationCPUOverclockKey, 400),
+//								OptionWithValue(@"500%", DuckStationCPUOverclockKey, 500),
+//								OptionWithValue(@"600%", DuckStationCPUOverclockKey, 600)]),
+//	];
+//
+//#undef OptionWithValue
+//#undef OptionToggleable
+//}
+//
+//- (void)changeDisplayWithMode:(NSString *)displayMode
+//{
+//	NSString *key;
+//	id currentVal;
+//	OpenEmuChangeSettings settings;
+//	OEDisplayModeListGetPrefKeyValueFromModeName(self.displayModes, displayMode, &key, &currentVal);
+//	_displayModes[key] = currentVal;
+//
+//	if ([key isEqualToString:DuckStationTextureFilterKey]) {
+//		settings.textureFilter = GPUTextureFilter([currentVal intValue]);
+//	} else if ([key isEqualToString:DuckStationPGXPActiveKey]) {
+//		settings.pxgp = ![currentVal boolValue];
+//	} else if ([key isEqualToString:DuckStationDeinterlacedKey]) {
+//		settings.deinterlaced = ![currentVal boolValue];
+//	} else if ([key isEqualToString:DuckStationAntialiasKey]) {
+//		settings.multisamples = [currentVal unsignedIntValue];
+//	} else if ([key isEqualToString:DuckStationCPUOverclockKey]) {
+//		settings.speedPercent = [currentVal unsignedIntValue];
+//	} else if ([key isEqualToString:DuckStation24ChromaSmoothingKey]) {
+//		settings.chroma24Interlace = [currentVal boolValue];
+//	}
+//	duckInterface->ChangeSettings(settings);
+//}
 
 @end
 
@@ -887,9 +893,9 @@ OpenEmuHostInterface::OpenEmuHostInterface()=default;
 OpenEmuHostInterface::~OpenEmuHostInterface()=default;
 
 bool OpenEmuHostInterface::Initialize() {
-	m_program_directory = [NSBundle bundleForClass:[PlayStationGameCore class]].resourceURL.fileSystemRepresentation;
+	m_program_directory = [NSBundle bundleForClass:[PVDuckStationCore class]].resourceURL.fileSystemRepresentation;
 	GET_CURRENT_OR_RETURN(false);
-	m_user_directory = [current supportDirectoryPath].fileSystemRepresentation;
+	m_user_directory = [current BIOSPath].fileSystemRepresentation;
 	if (!HostInterface::Initialize())
 	  return false;
 
@@ -951,7 +957,7 @@ void OpenEmuHostInterface::GetGameInfo(const char* path, CDImage* image, std::st
 std::string OpenEmuHostInterface::GetSharedMemoryCardPath(u32 slot) const
 {
 	GET_CURRENT_OR_RETURN([NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Shared Memory Card-%d.mcd", slot]].fileSystemRepresentation);
-	NSString *path = current.batterySavesDirectoryPath;
+	NSString *path = current.batterySavesPath;
 	if (![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL]) {
 		[[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
@@ -961,7 +967,7 @@ std::string OpenEmuHostInterface::GetSharedMemoryCardPath(u32 slot) const
 std::string OpenEmuHostInterface::GetGameMemoryCardPath(const char* game_code, u32 slot) const
 {
 	GET_CURRENT_OR_RETURN([NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%s-%d.mcd", game_code, slot]].fileSystemRepresentation);
-	NSString *path = current.batterySavesDirectoryPath;
+	NSString *path = current.batterySavesPath;
 	if (![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL]) {
 		[[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
@@ -971,7 +977,7 @@ std::string OpenEmuHostInterface::GetGameMemoryCardPath(const char* game_code, u
 std::string OpenEmuHostInterface::GetShaderCacheBasePath() const
 {
 	GET_CURRENT_OR_RETURN([NSHomeDirectory() stringByAppendingPathComponent:@"ShaderCache.nobackup"].fileSystemRepresentation);
-	NSString *path = [current.supportDirectoryPath stringByAppendingPathComponent:@"ShaderCache.nobackup"];
+	NSString *path = [current.BIOSPath stringByAppendingPathComponent:@"ShaderCache.nobackup"];
 	if (![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL]) {
 		[[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
@@ -989,7 +995,7 @@ std::string OpenEmuHostInterface::GetStringSettingValue(const char* section, con
 std::string OpenEmuHostInterface::GetBIOSDirectory()
 {
 	GET_CURRENT_OR_RETURN(NSHomeDirectory().fileSystemRepresentation);
-	return current.biosDirectoryPath.fileSystemRepresentation;
+	return current.BIOSPath.fileSystemRepresentation;
 }
 
 bool OpenEmuHostInterface::AcquireHostDisplay()
@@ -1063,28 +1069,28 @@ void OpenEmuHostInterface::OnRunningGameChanged(const std::string& path, CDImage
 		const std::string &type = System::GetRunningCode();
 		NSString *nsType = [@(type.c_str()) uppercaseString];
 		
-		OEPSXHacks hacks = OEGetPSXHacksNeededForGame(nsType);
-		if (hacks == OEPSXHacksNone) {
-			break;
-		}
-		
-		// PlayStation GunCon supported games
-		switch (hacks & OEPSXHacksCustomControllers) {
-			case OEPSXHacksGunCon:
-				g_settings.controller_types[0] = ControllerType::NamcoGunCon;
-				break;
-				
-			case OEPSXHacksMouse:
-				g_settings.controller_types[0] = ControllerType::PlayStationMouse;
-				break;
-				
-			case OEPSXHacksJustifier:
-				//TODO: implement?
-				break;
-				
-			default:
-				break;
-		}
+//		PVPSXHacks hacks = OEGetPSXHacksNeededForGame(nsType);
+//		if (hacks == PVPSXHacksNone) {
+//			break;
+//		}
+//
+//		// PlayStation GunCon supported games
+//		switch (hacks & PVPSXHacksCustomControllers) {
+//			case PVPSXHacksGunCon:
+//				g_settings.controller_types[0] = ControllerType::NamcoGunCon;
+//				break;
+//
+//			case PVPSXHacksMouse:
+//				g_settings.controller_types[0] = ControllerType::PlayStationMouse;
+//				break;
+//
+//			case PVPSXHacksJustifier:
+//				//TODO: implement?
+//				break;
+//
+//			default:
+//				break;
+//		}
 	} while (0);
 	FixIncompatibleSettings(false);
 	CheckForSettingsChanges(old_settings);
@@ -1160,30 +1166,30 @@ void OpenEmuAudioStream::FramesAvailable()
 	const u32 num_frames = GetSamplesAvailable();
 	ReadFrames(m_output_buffer.data(), num_frames, false);
 	GET_CURRENT_OR_RETURN();
-	id<OEAudioBuffer> rb = [current audioBufferAtIndex:0];
+	OERingBuffer* rb = [current ringBufferAtIndex:0];
 	[rb write:m_output_buffer.data() maxLength:num_frames * m_channels * sizeof(SampleType)];
 }
 
 #pragma mark - Controller mapping
 
-static void updateDigitalControllerButton(OEPSXButton button, int player, bool down) {
+static void updateDigitalControllerButton(PVPSXButton button, int player, bool down) {
     DigitalController* controller = static_cast<DigitalController*>(System::GetController((u32)player));
     
-	static constexpr std::array<std::pair<DigitalController::Button, OEPSXButton>, 14> mapping = {
-		{{DigitalController::Button::Left, OEPSXButtonLeft},
-			{DigitalController::Button::Right, OEPSXButtonRight},
-			{DigitalController::Button::Up, OEPSXButtonUp},
-			{DigitalController::Button::Down, OEPSXButtonDown},
-			{DigitalController::Button::Circle, OEPSXButtonCircle},
-			{DigitalController::Button::Cross, OEPSXButtonCross},
-			{DigitalController::Button::Triangle, OEPSXButtonTriangle},
-			{DigitalController::Button::Square, OEPSXButtonSquare},
-			{DigitalController::Button::Start, OEPSXButtonStart},
-			{DigitalController::Button::Select, OEPSXButtonSelect},
-			{DigitalController::Button::L1, OEPSXButtonL1},
-			{DigitalController::Button::L2, OEPSXButtonL2},
-			{DigitalController::Button::R1, OEPSXButtonR1},
-			{DigitalController::Button::R2, OEPSXButtonR2}}};
+	static constexpr std::array<std::pair<DigitalController::Button, PVPSXButton>, 14> mapping = {
+		{{DigitalController::Button::Left, PVPSXButtonLeft},
+			{DigitalController::Button::Right, PVPSXButtonRight},
+			{DigitalController::Button::Up, PVPSXButtonUp},
+			{DigitalController::Button::Down, PVPSXButtonDown},
+			{DigitalController::Button::Circle, PVPSXButtonCircle},
+			{DigitalController::Button::Cross, PVPSXButtonCross},
+			{DigitalController::Button::Triangle, PVPSXButtonTriangle},
+			{DigitalController::Button::Square, PVPSXButtonSquare},
+			{DigitalController::Button::Start, PVPSXButtonStart},
+			{DigitalController::Button::Select, PVPSXButtonSelect},
+			{DigitalController::Button::L1, PVPSXButtonL1},
+			{DigitalController::Button::L2, PVPSXButtonL2},
+			{DigitalController::Button::R1, PVPSXButtonR1},
+			{DigitalController::Button::R2, PVPSXButtonR2}}};
     
 	for (const auto& [dsButton, oeButton] : mapping) {
 		if (oeButton == button) {
@@ -1193,27 +1199,27 @@ static void updateDigitalControllerButton(OEPSXButton button, int player, bool d
 	}
 }
 
-static void updateAnalogControllerButton(OEPSXButton button, int player, bool down) {
+static void updateAnalogControllerButton(PVPSXButton button, int player, bool down) {
     AnalogController* controller = static_cast<AnalogController*>(System::GetController((u32)player));
     
-	static constexpr std::array<std::pair<AnalogController::Button, OEPSXButton>, 17> button_mapping = {
-		{{AnalogController::Button::Left, OEPSXButtonLeft},
-			{AnalogController::Button::Right, OEPSXButtonRight},
-			{AnalogController::Button::Up, OEPSXButtonUp},
-			{AnalogController::Button::Down, OEPSXButtonDown},
-			{AnalogController::Button::Circle, OEPSXButtonCircle},
-			{AnalogController::Button::Cross, OEPSXButtonCross},
-			{AnalogController::Button::Triangle, OEPSXButtonTriangle},
-			{AnalogController::Button::Square, OEPSXButtonSquare},
-			{AnalogController::Button::Start, OEPSXButtonStart},
-			{AnalogController::Button::Select, OEPSXButtonSelect},
-			{AnalogController::Button::L1, OEPSXButtonL1},
-			{AnalogController::Button::L2, OEPSXButtonL2},
-			{AnalogController::Button::L3, OEPSXButtonL3},
-			{AnalogController::Button::R1, OEPSXButtonR1},
-			{AnalogController::Button::R2, OEPSXButtonR2},
-			{AnalogController::Button::R3, OEPSXButtonR3},
-			{AnalogController::Button::Analog, OEPSXButtonAnalogMode}}};
+	static constexpr std::array<std::pair<AnalogController::Button, PVPSXButton>, 17> button_mapping = {
+		{{AnalogController::Button::Left, PVPSXButtonLeft},
+			{AnalogController::Button::Right, PVPSXButtonRight},
+			{AnalogController::Button::Up, PVPSXButtonUp},
+			{AnalogController::Button::Down, PVPSXButtonDown},
+			{AnalogController::Button::Circle, PVPSXButtonCircle},
+			{AnalogController::Button::Cross, PVPSXButtonCross},
+			{AnalogController::Button::Triangle, PVPSXButtonTriangle},
+			{AnalogController::Button::Square, PVPSXButtonSquare},
+			{AnalogController::Button::Start, PVPSXButtonStart},
+			{AnalogController::Button::Select, PVPSXButtonSelect},
+			{AnalogController::Button::L1, PVPSXButtonL1},
+			{AnalogController::Button::L2, PVPSXButtonL2},
+			{AnalogController::Button::L3, PVPSXButtonL3},
+			{AnalogController::Button::R1, PVPSXButtonR1},
+			{AnalogController::Button::R2, PVPSXButtonR2},
+			{AnalogController::Button::R3, PVPSXButtonR3},
+			{AnalogController::Button::Analog, PVPSXButtonAnalogMode}}};
     
 	for (const auto& [dsButton, oeButton] : button_mapping) {
 		if (oeButton == button) {
@@ -1223,14 +1229,14 @@ static void updateAnalogControllerButton(OEPSXButton button, int player, bool do
 	}
 }
 
-static void updateAnalogAxis(OEPSXButton button, int player, CGFloat amount) {
+static void updateAnalogAxis(PVPSXButton button, int player, CGFloat amount) {
     AnalogController* controller = static_cast<AnalogController*>(System::GetController((u32)player));
     
-	static constexpr std::array<std::pair<AnalogController::Axis, std::pair<OEPSXButton, OEPSXButton>>, 4> axis_mapping = {
-		{{AnalogController::Axis::LeftX, {OEPSXLeftAnalogLeft, OEPSXLeftAnalogRight}},
-			{AnalogController::Axis::LeftY, {OEPSXLeftAnalogUp, OEPSXLeftAnalogDown}},
-			{AnalogController::Axis::RightX, {OEPSXRightAnalogLeft, OEPSXRightAnalogRight}},
-			{AnalogController::Axis::RightY, {OEPSXRightAnalogUp, OEPSXRightAnalogDown}}}};
+	static constexpr std::array<std::pair<AnalogController::Axis, std::pair<PVPSXButton, PVPSXButton>>, 4> axis_mapping = {
+		{{AnalogController::Axis::LeftX, {PVPSXButtonLeftAnalogLeft, PVPSXButtonLeftAnalogRight}},
+			{AnalogController::Axis::LeftY, {PVPSXButtonLeftAnalogUp, PVPSXButtonLeftAnalogDown}},
+			{AnalogController::Axis::RightX, {PVPSXButtonRightAnalogLeft, PVPSXButtonRightAnalogRight}},
+			{AnalogController::Axis::RightY, {PVPSXButtonRightAnalogUp, PVPSXButtonRightAnalogDown}}}};
 	for (const auto& [dsAxis, oeAxes] : axis_mapping) {
         if (oeAxes.first == button || oeAxes.second == button) {
             controller->SetAxisState(dsAxis, static_cast<u8>(std::clamp(((static_cast<float>(amount) + 1.0f) / 2.0f) * 255.0f, 0.0f, 255.0f)));
@@ -1238,7 +1244,7 @@ static void updateAnalogAxis(OEPSXButton button, int player, CGFloat amount) {
 	}
 }
 
-static WindowInfo WindowInfoFromGameCore(PlayStationGameCore *core)
+static WindowInfo WindowInfoFromGameCore(PVDuckStationCore *core)
 {
 	WindowInfo wi = WindowInfo();
 	//wi.type = WindowInfo::Type::MacOS;

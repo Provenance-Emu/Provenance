@@ -104,14 +104,16 @@
 		B3203C3126DB237E00B016C6 /* cpu-features.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A59E26BE55CE0096A354 /* cpu-features.cc */; };
 		B3203C3226DB237E00B016C6 /* utils-vixl.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A59F26BE55CE0096A354 /* utils-vixl.cc */; };
 		B3203C4726DB25E200B016C6 /* code-buffer-vixl.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5B626BE55CE0096A354 /* code-buffer-vixl.cc */; };
-		B3203C5426DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */; };
-		B3203C5526DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */; };
 		B3203C5A26DB278C00B016C6 /* xxh_x86dispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A88326BE55D10096A354 /* xxh_x86dispatch.c */; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B38526A82108264D00434945 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A72108264D00434945 /* PVSupport.framework */; };
+		B3D527C926DDCCC300991E84 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
+		B3D527CA26DDCCC300991E84 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
+		B3D527CB26DDCCC300991E84 /* PlayStationGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */; };
+		B3D527CC26DDCCC300991E84 /* PlayStationGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */; };
 		B3D73D211E9EAF1C0023925B /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B3D73D231E9EAF1C0023925B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B3D73D241E9EAF1C0023925B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
@@ -156,17 +158,17 @@
 
 /* Begin PBXFileReference section */
 		B3203C2226DB19CC00B016C6 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		B3203C4826DB269E00B016C6 /* OpenGLHostDisplay.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OpenGLHostDisplay.hpp; sourceTree = "<group>"; };
-		B3203C4926DB269E00B016C6 /* PlayStationGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayStationGameCore.h; path = "../../../../../../Downloads/DuckStation-Core-master/PlayStationGameCore.h"; sourceTree = "<group>"; };
-		B3203C4A26DB269E00B016C6 /* PlayStationGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlayStationGameCore.mm; path = "../../../../../../Downloads/DuckStation-Core-master/PlayStationGameCore.mm"; sourceTree = "<group>"; };
-		B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenGLHostDisplay.mm; path = "../../../../../../Downloads/DuckStation-Core-master/OpenGLHostDisplay.mm"; sourceTree = "<group>"; };
-		B3203C4C26DB269E00B016C6 /* PlayStationGameHacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayStationGameHacks.m; path = "../../../../../../Downloads/DuckStation-Core-master/PlayStationGameHacks.m"; sourceTree = "<group>"; };
 		B324C63F21920EB9009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7481D6AB19C002EE3ED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7821D6AB43A002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B36DE7841D6AB44D002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B36DE7991D6AD049002EE3ED /* libedit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libedit.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libedit.tbd; sourceTree = DEVELOPER_DIR; };
 		B38526A72108264D00434945 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D527C226DDCCC300991E84 /* PlayStationGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayStationGameCore.h; sourceTree = "<group>"; };
+		B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLHostDisplay.mm; sourceTree = "<group>"; };
+		B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlayStationGameCore.mm; sourceTree = "<group>"; };
+		B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OpenGLHostDisplay.hpp; sourceTree = "<group>"; };
+		B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayStationGameHacks.m; sourceTree = "<group>"; };
 		B3D73D331E9EAF1C0023925B /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D8A52326BE48C90096A354 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3D8A52426BE48C90096A354 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -2154,14 +2156,14 @@
 		B3D8A52726BE48C90096A354 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */,
 				B3D8A52826BE48C90096A354 /* PVDuckStation.h */,
 				B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */,
-				B3203C4826DB269E00B016C6 /* OpenGLHostDisplay.hpp */,
-				B3203C4B26DB269E00B016C6 /* OpenGLHostDisplay.mm */,
-				B3203C4926DB269E00B016C6 /* PlayStationGameCore.h */,
-				B3203C4A26DB269E00B016C6 /* PlayStationGameCore.mm */,
-				B3203C4C26DB269E00B016C6 /* PlayStationGameHacks.m */,
+				B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */,
+				B3D527C226DDCCC300991E84 /* PlayStationGameCore.h */,
+				B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */,
+				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
+				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
+				B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5474,8 +5476,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D527C926DDCCC300991E84 /* OpenGLHostDisplay.mm in Sources */,
+				B3D527CB26DDCCC300991E84 /* PlayStationGameCore.mm in Sources */,
 				B3D8A53B26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
-				B3203C5426DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */,
 				B3D8A53526BE48CA0096A354 /* PVDuckStation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5484,8 +5487,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D527CA26DDCCC300991E84 /* OpenGLHostDisplay.mm in Sources */,
+				B3D527CC26DDCCC300991E84 /* PlayStationGameCore.mm in Sources */,
 				B3D8A53A26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
-				B3203C5526DB269F00B016C6 /* OpenGLHostDisplay.mm in Sources */,
 				B3D8A53626BE48CA0096A354 /* PVDuckStation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
