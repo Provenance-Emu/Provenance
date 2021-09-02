@@ -105,8 +105,6 @@
 		B3C2905E26DDD1AD003CB9D4 /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
 		B3C2906126DDD28C003CB9D4 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
 		B3C2906226DDD28D003CB9D4 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
-		B3C2906326DDD2AE003CB9D4 /* PlayStationGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */; };
-		B3C2906426DDD2AE003CB9D4 /* PlayStationGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */; };
 		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C2907326DDD85D003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907226DDD85D003CB9D4 /* OpenGLES.framework */; };
 		B3C290B326DDDB36003CB9D4 /* shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97F26BE55D20096A354 /* shadergen.cpp */; };
@@ -6502,7 +6500,6 @@
 			files = (
 				B3D0143626DF190300860FF9 /* context_agl_ios.mm in Sources */,
 				B3C2906226DDD28D003CB9D4 /* OpenGLHostDisplay.mm in Sources */,
-				B3C2906326DDD2AE003CB9D4 /* PlayStationGameCore.mm in Sources */,
 				B3D8A53B26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
 				B3D8A53526BE48CA0096A354 /* PVDuckStation.mm in Sources */,
 			);
@@ -6790,7 +6787,6 @@
 			files = (
 				B3D0143726DF190400860FF9 /* context_agl_ios.mm in Sources */,
 				B3C2906126DDD28C003CB9D4 /* OpenGLHostDisplay.mm in Sources */,
-				B3C2906426DDD2AE003CB9D4 /* PlayStationGameCore.mm in Sources */,
 				B3D8A53A26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
 				B3D8A53626BE48CA0096A354 /* PVDuckStation.mm in Sources */,
 			);
