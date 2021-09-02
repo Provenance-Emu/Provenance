@@ -118,7 +118,11 @@ public final class GameImporter {
     }()
 
     public var conflictedFiles: [URL]? {
-        return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+        guard let files = try? FileManager.default.contentsOfDirectory(at: conflictPath,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+        else { return nil }
+        return files
     }
 
     fileprivate var notificationToken: NotificationToken?
