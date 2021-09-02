@@ -126,7 +126,8 @@ public final class GameImporter {
     }()
 
     public var conflictedFiles: [URL]? {
-        guard let files = try? FileManager.default.contentsOfDirectory(at: conflictPath,
+        guard FileManager.default.fileExists(atPath: conflictPath.absoluteString),
+              let files = try? FileManager.default.contentsOfDirectory(at: conflictPath,
                                                                        includingPropertiesForKeys: nil,
                                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
         else { return nil }
