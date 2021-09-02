@@ -303,17 +303,17 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 #pragma mark - Video
 
-//- (const void *)videoBuffer
-//{
-////    if ( frontBufferSurf == NULL )
-////    {
-////        return NULL;
-////    }
-////    else
-////    {
-////        return frontBufferSurf->pixels;
-////    }
-//}
+- (const void *)videoBuffer {
+    return NULL;
+//    if ( frontBufferSurf == NULL )
+//    {
+//        return NULL;
+//    }
+//    else
+//    {
+//        return frontBufferSurf->pixels;
+//    }
+}
 
 //- (CGSize)bufferSize {
 ////    if ( game == NULL )
@@ -339,19 +339,28 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 //    return CGSizeMake(640, 480);
 //}
 
-- (GLenum)pixelFormat
-{
+- (GLenum)pixelFormat {
     return GL_RGBA;
 }
 
-- (GLenum)pixelType
-{
+- (GLenum)pixelType {
     return GL_UNSIGNED_BYTE;
 }
 
-- (GLenum)internalPixelFormat
-{
+- (GLenum)internalPixelFormat {
     return GL_RGBA;
+}
+
+- (BOOL)rendersToOpenGL {
+    return YES;
+}
+
+- (BOOL)isDoubleBuffered {
+    return YES;
+}
+
+- (void)swapBuffers {
+    [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
 //- (BOOL)isDoubleBuffered {
