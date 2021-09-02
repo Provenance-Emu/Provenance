@@ -327,10 +327,10 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 //    return self.screenRect.size;
 //}
 
-//- (CGRect)screenRect {
-//    return CGRectMake(24, 0, 336, 240);
-////    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
-//}
+- (CGRect)screenRect {
+    return CGRectMake(0, 0, 640, 480);
+//    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
+}
 
 //- (CGSize)aspectSize
 //{
@@ -944,7 +944,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     return (CGSize){ 640, 480 };
 }
 
-- (void)executeFrame {
+- (void)executeFrameSkippingFrame:(BOOL)skip {
     if (!isInitialized){
         auto params = std::make_shared<SystemBootParameters>(bootPath.fileSystemRepresentation);
         duckInterface->Initialize();
@@ -957,8 +957,15 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     
     System::RunFrame();
     
-    duckInterface->Render();
+    if (!skip) {
+        duckInterface->Render();
+    }
 }
+
+- (void)executeFrame {
+    [self executeFrameSkippingFrame:NO];
+}
+
 
 - (NSDictionary<NSString *,id> *)displayModeInfo {
     return [_displayModes copy];
@@ -1018,67 +1025,243 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     }
     duckInterface->ChangeSettings(settings);
 }
-//
-//- (NSArray <NSDictionary <NSString *, id> *> *)displayModes
-//{
-//#define OptionWithValue(n, k, v) \
-//@{ \
-//    OEGameCoreDisplayModeNameKey : n, \
-//    OEGameCoreDisplayModePrefKeyNameKey : k, \
-//    OEGameCoreDisplayModeStateKey : @([_displayModes[k] isEqual:@(v)]), \
-//    OEGameCoreDisplayModePrefValueNameKey : @(v) }
-//#define OptionToggleable(n, k) \
-//    OEDisplayMode_OptionToggleableWithState(n, k, _displayModes[k])
-//
-//    return @[
-//        OEDisplayMode_Submenu(@"Texture Filtering",
-//                              @[OptionWithValue(@"Nearest Neighbor", DuckStationTextureFilterKey, int(GPUTextureFilter::Nearest)),
-//                                OptionWithValue(@"Bilinear", DuckStationTextureFilterKey, int(GPUTextureFilter::Bilinear)),
-//                                OptionWithValue(@"Bilinear (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::BilinearBinAlpha)),
-//                                OptionWithValue(@"JINC2", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2)),
-//                                OptionWithValue(@"JINC2 (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2BinAlpha)),
-//                                OptionWithValue(@"xBR", DuckStationTextureFilterKey, int(GPUTextureFilter::xBR)),
-//                                OptionWithValue(@"xBR (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::xBRBinAlpha))]),
-//        OptionToggleable(@"PGXP", DuckStationPGXPActiveKey),
-//        OptionToggleable(@"Deinterlace", DuckStationDeinterlacedKey),
-////        OptionToggleable(@"Chroma 24 Interlace", DuckStation24ChromaSmoothingKey),
-//        OEDisplayMode_Submenu(@"MSAA", @[OptionWithValue(@"Off", DuckStationAntialiasKey, 1), OptionWithValue(@"2x", DuckStationAntialiasKey, 2), OptionWithValue(@"4x", DuckStationAntialiasKey, 4), OptionWithValue(@"8x", DuckStationAntialiasKey, 8), OptionWithValue(@"16x", DuckStationAntialiasKey, 16)]),
-//        OEDisplayMode_Submenu(@"CPU speed",
-//                              @[OptionWithValue(@"100% (default)", DuckStationCPUOverclockKey, 100),
-//                                OptionWithValue(@"200%", DuckStationCPUOverclockKey, 200),
-//                                OptionWithValue(@"300%", DuckStationCPUOverclockKey, 300),
-//                                OptionWithValue(@"400%", DuckStationCPUOverclockKey, 400),
-//                                OptionWithValue(@"500%", DuckStationCPUOverclockKey, 500),
-//                                OptionWithValue(@"600%", DuckStationCPUOverclockKey, 600)]),
-//    ];
-//
-//#undef OptionWithValue
-//#undef OptionToggleable
-//}
-//
-//- (void)changeDisplayWithMode:(NSString *)displayMode
-//{
-//    NSString *key;
-//    id currentVal;
-//    OpenEmuChangeSettings settings;
-//    OEDisplayModeListGetPrefKeyValueFromModeName(self.displayModes, displayMode, &key, &currentVal);
-//    _displayModes[key] = currentVal;
-//
-//    if ([key isEqualToString:DuckStationTextureFilterKey]) {
-//        settings.textureFilter = GPUTextureFilter([currentVal intValue]);
-//    } else if ([key isEqualToString:DuckStationPGXPActiveKey]) {
-//        settings.pxgp = ![currentVal boolValue];
-//    } else if ([key isEqualToString:DuckStationDeinterlacedKey]) {
-//        settings.deinterlaced = ![currentVal boolValue];
-//    } else if ([key isEqualToString:DuckStationAntialiasKey]) {
-//        settings.multisamples = [currentVal unsignedIntValue];
-//    } else if ([key isEqualToString:DuckStationCPUOverclockKey]) {
-//        settings.speedPercent = [currentVal unsignedIntValue];
-//    } else if ([key isEqualToString:DuckStation24ChromaSmoothingKey]) {
-//        settings.chroma24Interlace = [currentVal boolValue];
-//    }
-//    duckInterface->ChangeSettings(settings);
-//}
+
+/* Groups (submenus) */
+
+/** The NSString which will be shown in the Display Mode as the parent menu item
+ *  for the submenu. */
+#define OEGameCoreDisplayModeGroupNameKey @"OEGameCoreDisplayModeGroupNameKey"
+/** An NSArray of NSDictionaries containing the entries in the group.
+ *  @warning Only one level of indentation is supported to disallow over-complicated
+ *    menus. */
+#define OEGameCoreDisplayModeGroupItemsKey @"OEGameCoreDisplayModeGroupItemsKey"
+
+/* Binary (toggleable) and Mutually-Exclusive Display Modes */
+
+/** The NSString which will be shown in the Display Mode menu for this entry. This
+ *  string must be unique to each display mode. */
+#define OEGameCoreDisplayModeNameKey @"OEGameCoreDisplayModeNameKey"
+/** Toggleable modes only. @(YES) if this mode is standalone and can be toggled.
+ *  If @(NO) or unspecified, this item is part of a group of mutually-exclusive modes. */
+#define OEGameCoreDisplayModeAllowsToggleKey @"OEGameCoreDisplayModeAllowsToggleKey"
+/** Mutually-exclusive modes only. An NSString uniquely identifying this display mode
+ *  within its group. Optional. if not specified, the value associated with
+ *  OEGameCoreDisplayModeNameKey will be used instead. */
+#define OEGameCoreDisplayModePrefValueNameKey @"OEGameCoreDisplayModePrefValueNameKey"
+/** Toggleable modes: An NSString uniquely identifying this display mode.
+ *  Mutually-exclusive modes: An NSString uniquely identifying the group of mutually
+ *  exclusive modes this mode is part of.
+ *  Every group of mutually-exclusive modes is defined implicitly as a set of modes with
+ *  the same OEGameCoreDisplayModePrefValueNameKey. */
+#define OEGameCoreDisplayModePrefKeyNameKey @"OEGameCoreDisplayModePrefKeyNameKey"
+/** @(YES) if this mode is currently selected. */
+#define OEGameCoreDisplayModeStateKey @"OEGameCoreDisplayModeStateKey"
+/** @(YES) if this mode is inaccessible through the nextDisplayMode: and lastDisplayMode:
+ *  actions */
+#define OEGameCoreDisplayModeManualOnlyKey @"OEGameCoreDisplayModeMenuOnlyKey"
+/** @(YES) if this mode is not saved in the preferences. */
+#define OEGameCoreDisplayModeDisallowPrefSaveKey @"OEGameCoreDisplayModeDisallowPrefSaveKey"
+
+/* Labels & Separators */
+
+/** Separator only. Present if this item is a separator. Value does not matter. */
+#define OEGameCoreDisplayModeSeparatorItemKey @"OEGameCoreDisplayModeSeparatorItemKey"
+/** Label only. The NSString which will be shown in the Display Mode menu for this label. */
+#define OEGameCoreDisplayModeLabelKey @"OEGameCoreDisplayModeLabelKey"
+
+/* Other Keys */
+
+/** An NSNumber specifying the level of indentation of this item. */
+#define OEGameCoreDisplayModeIndentationLevelKey @"OEGameCoreDisplayModeIndentationLevelKey"
+
+
+/*
+ * Utility macros
+ */
+ 
+#define OEDisplayMode_OptionWithStateValue(_NAME_, _PREFKEY_, _STATE_, _VAL_) @{ \
+    OEGameCoreDisplayModeNameKey : _NAME_, \
+    OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, \
+    OEGameCoreDisplayModeStateKey : _STATE_, \
+    OEGameCoreDisplayModePrefValueNameKey : _VAL_ }
+    
+#define OEDisplayMode_OptionWithValue(_NAME_, _PREFKEY_, _VAL_) \
+    OEDisplayMode_OptionWithStateValue(_NAME_, _PREFKEY_, @NO, _VAL_)
+    
+#define OEDisplayMode_OptionDefaultWithValue(_NAME_, _PREFKEY_, _VAL_) \
+    OEDisplayMode_OptionWithStateValue(_NAME_, _PREFKEY_, @YES, _VAL_)
+ 
+#define OEDisplayMode_OptionWithState(_NAME_, _PREFKEY_, _STATE_) @{ \
+    OEGameCoreDisplayModeNameKey : _NAME_, \
+    OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, \
+    OEGameCoreDisplayModeStateKey : _STATE_ }
+
+#define OEDisplayMode_Option(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionWithState(_NAME_, _PREFKEY_, @NO)
+
+#define OEDisplayMode_OptionDefault(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionWithState(_NAME_, _PREFKEY_, @YES)
+
+#define OEDisplayMode_OptionIndentedWithState(_NAME_, _PREFKEY_, _STATE_) @{ \
+    OEGameCoreDisplayModeNameKey : _NAME_, \
+    OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, \
+    OEGameCoreDisplayModeStateKey : _STATE_, \
+    OEGameCoreDisplayModeIndentationLevelKey : @(1) }
+    
+#define OEDisplayMode_OptionIndented(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionIndentedWithState(_NAME_, _PREFKEY_, @NO)
+    
+#define OEDisplayMode_OptionDefaultIndented(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionIndentedWithState(_NAME_, _PREFKEY_, @YES)
+    
+#define OEDisplayMode_OptionToggleableWithState(_NAME_, _PREFKEY_, _STATE_) @{ \
+    OEGameCoreDisplayModeNameKey : _NAME_, \
+    OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, \
+    OEGameCoreDisplayModeStateKey : _STATE_, \
+    OEGameCoreDisplayModeAllowsToggleKey : @YES }
+    
+#define OEDisplayMode_OptionToggleable(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionToggleableWithState(_NAME_, _PREFKEY_, @NO)
+    
+#define OEDisplayMode_OptionToggleableDefault(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionToggleableWithState(_NAME_, _PREFKEY_, @YES)
+    
+#define OEDisplayMode_OptionToggleableNoSaveWithState(_NAME_, _PREFKEY_, _STATE_) @{ \
+    OEGameCoreDisplayModeNameKey : _NAME_, \
+    OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, \
+    OEGameCoreDisplayModeStateKey : _STATE_, \
+    OEGameCoreDisplayModeAllowsToggleKey : @YES, \
+    OEGameCoreDisplayModeDisallowPrefSaveKey : @YES }
+    
+#define OEDisplayMode_OptionToggleableNoSave(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionToggleableNoSaveWithState(_NAME_, _PREFKEY_, @NO)
+    
+#define OEDisplayMode_OptionToggleableNoSaveDefault(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionToggleableNoSaveWithState(_NAME_, _PREFKEY_, @YES)
+    
+#define OEDisplayMode_OptionManualWithState(_NAME_, _PREFKEY_, _STATE_) @{ \
+    OEGameCoreDisplayModeNameKey : _NAME_, \
+    OEGameCoreDisplayModePrefKeyNameKey : _PREFKEY_, \
+    OEGameCoreDisplayModeStateKey : _STATE_, \
+    OEGameCoreDisplayModeManualOnlyKey : @YES }
+    
+#define OEDisplayMode_OptionManual(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionManualWithState(_NAME_, _PREFKEY_, @NO)
+
+#define OEDisplayMode_OptionManualDefault(_NAME_, _PREFKEY_) \
+    OEDisplayMode_OptionManualWithState(_NAME_, _PREFKEY_, @YES)
+    
+#define OEDisplayMode_Label(_NAME_) @{ \
+    OEGameCoreDisplayModeLabelKey : _NAME_ }
+
+#define OEDisplayMode_SeparatorItem() @{ \
+    OEGameCoreDisplayModeSeparatorItemKey : @"" }
+
+#define OEDisplayMode_Submenu(_NAME_, ...) @{ \
+    OEGameCoreDisplayModeGroupNameKey: _NAME_, \
+    OEGameCoreDisplayModeGroupItemsKey: __VA_ARGS__ }
+
+
+NS_INLINE BOOL OEDisplayModeListGetPrefKeyValueFromModeName(
+    NSArray<NSDictionary<NSString *,id> *> *list, NSString *name,
+    NSString * __autoreleasing *outKey, id __autoreleasing *outValue)
+{
+    for (NSDictionary<NSString *,id> *option in list) {
+        if (option[OEGameCoreDisplayModeGroupNameKey]) {
+            NSArray *content = option[OEGameCoreDisplayModeGroupItemsKey];
+            BOOL res = OEDisplayModeListGetPrefKeyValueFromModeName(content, name, outKey, outValue);
+            if (res) return res;
+        } else {
+            NSString *optname = option[OEGameCoreDisplayModeNameKey];
+            if (!optname) continue;
+            if ([optname isEqual:name]) {
+                if (outKey) *outKey = option[OEGameCoreDisplayModePrefKeyNameKey];
+                if (outValue) {
+                    BOOL toggleable = [option[OEGameCoreDisplayModeAllowsToggleKey] boolValue];
+                    if (toggleable) {
+                        *outValue = option[OEGameCoreDisplayModeStateKey];
+                    } else {
+                        id val = option[OEGameCoreDisplayModePrefValueNameKey];
+                        *outValue = val ?: optname;
+                    }
+                }
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+NS_INLINE NSString *OEDisplayModeListGetPrefKeyFromModeName(
+    NSArray<NSDictionary<NSString *,id> *> *list, NSString *name)
+{
+    NSString *tmp;
+    BOOL res = OEDisplayModeListGetPrefKeyValueFromModeName(list, name, &tmp, NULL);
+    return res ? tmp : nil;
+}
+
+- (NSArray <NSDictionary <NSString *, id> *> *)displayModes
+{
+#define OptionWithValue(n, k, v) \
+@{ \
+    OEGameCoreDisplayModeNameKey : n, \
+    OEGameCoreDisplayModePrefKeyNameKey : k, \
+    OEGameCoreDisplayModeStateKey : @([_displayModes[k] isEqual:@(v)]), \
+    OEGameCoreDisplayModePrefValueNameKey : @(v) }
+#define OptionToggleable(n, k) \
+    OEDisplayMode_OptionToggleableWithState(n, k, _displayModes[k])
+
+    return @[
+        OEDisplayMode_Submenu(@"Texture Filtering",
+                              @[OptionWithValue(@"Nearest Neighbor", DuckStationTextureFilterKey, int(GPUTextureFilter::Nearest)),
+                                OptionWithValue(@"Bilinear", DuckStationTextureFilterKey, int(GPUTextureFilter::Bilinear)),
+                                OptionWithValue(@"Bilinear (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::BilinearBinAlpha)),
+                                OptionWithValue(@"JINC2", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2)),
+                                OptionWithValue(@"JINC2 (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::JINC2BinAlpha)),
+                                OptionWithValue(@"xBR", DuckStationTextureFilterKey, int(GPUTextureFilter::xBR)),
+                                OptionWithValue(@"xBR (No Edge Blending)", DuckStationTextureFilterKey, int(GPUTextureFilter::xBRBinAlpha))]),
+        OptionToggleable(@"PGXP", DuckStationPGXPActiveKey),
+        OptionToggleable(@"Deinterlace", DuckStationDeinterlacedKey),
+//        OptionToggleable(@"Chroma 24 Interlace", DuckStation24ChromaSmoothingKey),
+        OEDisplayMode_Submenu(@"MSAA", @[OptionWithValue(@"Off", DuckStationAntialiasKey, 1), OptionWithValue(@"2x", DuckStationAntialiasKey, 2), OptionWithValue(@"4x", DuckStationAntialiasKey, 4), OptionWithValue(@"8x", DuckStationAntialiasKey, 8), OptionWithValue(@"16x", DuckStationAntialiasKey, 16)]),
+        OEDisplayMode_Submenu(@"CPU speed",
+                              @[OptionWithValue(@"100% (default)", DuckStationCPUOverclockKey, 100),
+                                OptionWithValue(@"200%", DuckStationCPUOverclockKey, 200),
+                                OptionWithValue(@"300%", DuckStationCPUOverclockKey, 300),
+                                OptionWithValue(@"400%", DuckStationCPUOverclockKey, 400),
+                                OptionWithValue(@"500%", DuckStationCPUOverclockKey, 500),
+                                OptionWithValue(@"600%", DuckStationCPUOverclockKey, 600)]),
+    ];
+
+#undef OptionWithValue
+#undef OptionToggleable
+}
+
+- (void)changeDisplayWithMode:(NSString *)displayMode {
+    NSString *key;
+    id currentVal;
+    OpenEmuChangeSettings settings;
+    OEDisplayModeListGetPrefKeyValueFromModeName(self.displayModes, displayMode, &key, &currentVal);
+    if (key == nil) {
+             return;
+     }
+    _displayModes[key] = currentVal;
+
+    if ([key isEqualToString:DuckStationTextureFilterKey]) {
+        settings.textureFilter = GPUTextureFilter([currentVal intValue]);
+    } else if ([key isEqualToString:DuckStationPGXPActiveKey]) {
+        settings.pxgp = ![currentVal boolValue];
+    } else if ([key isEqualToString:DuckStationDeinterlacedKey]) {
+        settings.deinterlaced = ![currentVal boolValue];
+    } else if ([key isEqualToString:DuckStationAntialiasKey]) {
+        settings.multisamples = [currentVal unsignedIntValue];
+    } else if ([key isEqualToString:DuckStationCPUOverclockKey]) {
+        settings.speedPercent = [currentVal unsignedIntValue];
+    } else if ([key isEqualToString:DuckStation24ChromaSmoothingKey]) {
+        settings.chroma24Interlace = [currentVal boolValue];
+    }
+    duckInterface->ChangeSettings(settings);
+}
 
 
 @end
