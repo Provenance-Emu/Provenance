@@ -62,7 +62,7 @@ private:
 	//! returns true if dimensions have changed
 	bool UpdateDimensions();
 	
-	void* m_opengl_module_handle = nullptr;
+//	void* m_opengl_module_handle = nullptr;
 };
 
 #pragma mark -
@@ -688,10 +688,10 @@ bool OpenGLHostDisplay::RenderScreenshot(u32 width, u32 height, std::vector<u32>
 
 ContextGL::ContextGL(const WindowInfo& wi) : Context(wi)
 {
-	m_opengl_module_handle = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_NOW);
-	if (!m_opengl_module_handle) {
-		os_log_fault(OE_CORE_LOG, "Could not open OpenGL.framework, function lookups will probably fail");
-	}
+//	m_opengl_module_handle = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_NOW);
+//	if (!m_opengl_module_handle) {
+//		os_log_fault(OE_CORE_LOG, "Could not open OpenGL.framework, function lookups will probably fail");
+//	}
 }
 
 ContextGL::~ContextGL() = default;
@@ -705,12 +705,17 @@ std::unique_ptr<GL::Context> ContextGL::Create(const WindowInfo& wi, const Versi
 
 void* ContextGL::GetProcAddress(const char* name)
 {
-	void* addr = m_opengl_module_handle ? dlsym(m_opengl_module_handle, name) : nullptr;
-	if (addr) {
-		return addr;
-	}
-	
-	return dlsym(RTLD_NEXT, name);
+//	void* addr = m_opengl_module_handle ? dlsym(m_opengl_module_handle, name) : nullptr;
+//	if (addr) {
+//		return addr;
+//	}
+//
+//	return dlsym(RTLD_NEXT, name);
+    void* addr = dlsym(RTLD_DEFAULT, name);
+    if (addr)
+      return addr;
+
+    return dlsym(RTLD_NEXT, name);
 }
 
 bool ContextGL::ChangeSurface(const WindowInfo& new_wi)
