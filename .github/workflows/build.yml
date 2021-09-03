@@ -1,0 +1,36 @@
+name: Build app
+on:
+  pull_request:
+    branches:
+      - develop
+jobs:
+  ios:
+    name: iOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - name: Build app
+        uses: sersoft-gmbh/xcodebuild-action@v1.7
+        with:
+          workspace: Provenance.xcworkspace
+          scheme: Provenance
+          destination: "platform=iOS Simulator,name=iPhone 12"
+          action: build
+  tvos:
+    name: tvOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - name: Build app
+        uses: sersoft-gmbh/xcodebuild-action@v1.7
+        with:
+          workspace: Provenance.xcworkspace
+          scheme: ProvenanceTV
+          destination: "platform=tvOS Simulator,name=Apple TV 4K"
+          action: build
