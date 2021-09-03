@@ -888,7 +888,7 @@ extension GCController {
     }
 
     private var buttonMenu: GCControllerButtonInput? {
-        if #available(tvOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             if let microGamepad = microGamepad {
                 return microGamepad.buttonMenu
             } else if let extendedGamepad = extendedGamepad {
