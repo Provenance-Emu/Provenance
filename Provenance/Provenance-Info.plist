@@ -363,11 +363,13 @@
 			<string>com.provenance.savestate</string>
 		</dict>
 	</array>
-    <key>NSBonjourServices</key>
-    <array>
-        <string>_altserver._tcp</string>
-    </array>
-    <key>NSLocalNetworkUsageDescription</key>
-    <string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_altserver._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<key>ALTDeviceID</key>
+	<string></string>
 </dict>
 </plist>
