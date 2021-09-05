@@ -76,7 +76,7 @@ internal class JMLumberjackNSLogger: DDAbstractLogger {
         let lineNumber: Int = Int(message.line)
         let functionName: String? = message.function
         let contextTag: String? = tags[message.context]
-        let domain: String? = contextTag ?? message.tag as? String ?? filename
+        let domain: String? = contextTag ?? message.representedObject as? String ?? filename
 //        let level: Int = message.level.nsloggerLevel.rawValue
         let level: Int = message.flag.nsloggerLevel.rawValue
 

@@ -138,15 +138,6 @@ static CBUUID *SteamControllerReportCharacteristicUUID;
     handlerQueue = newHandlerQueue;
 }
 
-- (GCExtendedGamepad *)extendedGamepad {
-    return extendedGamepad;
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (GCGamepad *)gamepad {
-    return (GCGamepad *)extendedGamepad;
-}
 #pragma clang diagnostic pop
 
 - (GCMicroGamepad *)microGamepad {

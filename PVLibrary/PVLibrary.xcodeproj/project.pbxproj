@@ -21,6 +21,8 @@
 		B3067F652106B8690091437F /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D242106B4D600DDEBD6 /* Time Utilities.swift */; };
 		B3067F662106B8690091437F /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
+		B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
+		B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
 		B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -449,6 +451,7 @@
 		11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+RangeReplaceableCollection.swift"; sourceTree = "<group>"; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B3274E5E2106BA1200857F52 /* PVAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
@@ -1107,6 +1110,7 @@
 				B3274E622106BAA200857F52 /* NSString+Hashing.m */,
 				B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */,
 				B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */,
+				B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */,
 			);
 			path = NSExtensions;
 			sourceTree = "<group>";
@@ -1962,6 +1966,7 @@
 				B3AF47AF21071F43002211EE /* ProgressUtils.cpp in Sources */,
 				B3AF47B021071F43002211EE /* PropId.cpp in Sources */,
 				B3AF47D721071FCD002211EE /* PropVariant.cpp in Sources */,
+				B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
 				B3274E7B2106BCEE00857F52 /* PVEmulatorConfiguration.swift in Sources */,
 				B3AF47A321071EE9002211EE /* OutStreamWithCRC.cpp in Sources */,
 				B3AF477F21071E85002211EE /* LzFindMt.c in Sources */,
@@ -2147,6 +2152,7 @@
 				B3C04B0F21077B3100E7AF79 /* ProgressUtils.cpp in Sources */,
 				B3C04B1021077B3100E7AF79 /* PropId.cpp in Sources */,
 				B3C04B1121077B3100E7AF79 /* PropVariant.cpp in Sources */,
+				B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
 				B3C04B1221077B3100E7AF79 /* PVEmulatorConfiguration.swift in Sources */,
 				B3C04B1321077B3100E7AF79 /* OutStreamWithCRC.cpp in Sources */,
 				B3C04B1421077B3100E7AF79 /* LzFindMt.c in Sources */,

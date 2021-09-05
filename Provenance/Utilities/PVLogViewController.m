@@ -10,7 +10,6 @@
 @import QuartzCore;
 @import ZipArchive;
 #import "Provenance-Swift.h"
-#import <asl.h>
 @import PVSupport;
 @import CocoaLumberjack;
 
@@ -180,7 +179,6 @@
 @interface PVLogViewController ()
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *logListButton;
 - (IBAction)logListButtonClicked:(id)sender;
-- (NSString*)systemLogAsString;
 @end
 
 @implementation PVLogViewController
@@ -254,15 +252,9 @@
 
 
 - (IBAction)segmentedControlValueChanged:(id)sender {
-
-    if(_systemLogOperation){
-        [_systemLogOperation cancel];
-        _systemLogOperation = nil;
-    }
-
 #if TARGET_OS_IOS
     NSMutableArray *items = [self.toolbar.items mutableCopy];
-    if (self.segmentedControl.selectedSegmentIndex == 2 && ![items containsObject:self.logListButton]) {
+    if (self.segmentedControl.selectedSegmentIndex == 1 && ![items containsObject:self.logListButton]) {
         self.logListButton.enabled = YES;
         [items insertObject:self.logListButton atIndex:0];
         [self.toolbar setItems:items];
@@ -279,36 +271,7 @@
 
             break;
         }
-        case 1: {
-            [self hideLumberJackUI];
-                // Register for updates
-            [[PVLogging sharedInstance] removeListner:self];
-            [self updateText:@"Loading…"];
-
-            __weak PVLogViewController *weakSelf = self;
-            
-                // TODO :: This should be in a backgroudn thread
-                // because it take a while to build the string
-            _systemLogOperation =
-            [NSBlockOperation blockOperationWithBlock:^{
-                NSString *log;
-                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
-                   log = [weakSelf systemLogAsString];
-                } else {
-                    log = @"not supported on this ios version";
-                }
-
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf updateText:log];
-                });
-            }];
-
-            [_systemLogOperation start];
-
-
-            break;
-        }
-        case 2:{
+        case 1:{
             [self hideLumberJackUI];
 
                 // Fill in text
@@ -487,33 +450,6 @@
     free(tempFileNameCString);
     
     return tempFileName;
-}
-
--(NSString*)systemLogAsString{
-    aslmsg q, m;
-    int i;
-    const char *key, *val;
-
-    q = asl_new(ASL_TYPE_QUERY);
-
-        // Search exampls
-        //    asl_set_query(q, ASL_KEY_SENDER, "Logger", ASL_QUERY_OP_EQUAL);
-
-    aslresponse r = asl_search(NULL, q);
-
-    NSMutableString *logString = [NSMutableString new];
-
-    while (NULL != (m = asl_next(r)))
-    {
-        for (i = 0; (NULL != (key = asl_key(m, i))); i++)
-        {
-            val = asl_get(m, key);
-            [logString appendFormat:@"%s:%s\n",(char*)key,val];
-        }
-    }
-    asl_release(r);
-
-    return logString;
 }
 
 - (NSString*)logTextForIndex:(NSInteger)index {

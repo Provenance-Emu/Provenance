@@ -81,7 +81,7 @@ public final class PVGame: Object, PVLibraryEntry {
     public dynamic var referenceURL: String?
     public dynamic var releaseID: String?
     public dynamic var regionName: String?
-    public var regionID = RealmOptional<Int>()
+    public var regionID = RealmProperty<Int?>()
     public dynamic var systemShortName: String?
     public dynamic var language: String?
 

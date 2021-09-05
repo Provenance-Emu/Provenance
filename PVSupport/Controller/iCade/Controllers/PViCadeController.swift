@@ -99,14 +99,6 @@ public class PViCadeController: GCController {
         }
     }
 
-    public override var gamepad: GCGamepad? {
-        return nil
-    }
-
-    public override var extendedGamepad: GCExtendedGamepad? {
-        return iCadeGamepad
-    }
-
     public override var vendorName: String? {
         return "iCade"
     }

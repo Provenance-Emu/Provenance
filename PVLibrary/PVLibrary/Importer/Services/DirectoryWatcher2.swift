@@ -8,8 +8,8 @@
 
 import Foundation
 @_exported import PVSupport
-import RxCocoa
-import RxSwift
+@_exported import RxCocoa
+@_exported import RxSwift
 
 public struct ExtractionProgress {
     let path: URL
@@ -39,33 +39,6 @@ public typealias PVExtractionCompleteSubjext = PublishSubject<[URL]?>
 public enum DirectoryWatcherError: Error {
     case pathNotDirectory
     case pathAlreadyWatched
-}
-
-#warning("move me")
-public extension BehaviorRelay where Element: RangeReplaceableCollection {
-
-    func add(element: Element.Element) {
-        var array = self.value
-        array.append(element)
-        self.accept(array)
-    }
-}
-
-public extension BehaviorRelay where Element: SetAlgebra {
-
-    func insert(_ element: Element.Element) -> (inserted: Bool, memberAfterInsert: Element.Element) {
-        var set = self.value
-        let inserted = set.insert(element)
-        self.accept(set)
-        return inserted
-    }
-
-    func remove(_ element: Element.Element) -> Element.Element? {
-        var set = self.value
-        let removed = set.remove(element)
-        self.accept(set)
-        return removed
-    }
 }
 
 public final class DirectoryWatcher2 {
