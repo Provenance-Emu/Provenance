@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3447EC0218BEDD200557ACE"
-               BuildableName = "PVReicast.framework"
+               BuildableName = "PVPlay.framework"
                BlueprintName = "PVPlay-tvOS"
                ReferencedContainer = "container:PVPlayCore.xcodeproj">
             </BuildableReference>

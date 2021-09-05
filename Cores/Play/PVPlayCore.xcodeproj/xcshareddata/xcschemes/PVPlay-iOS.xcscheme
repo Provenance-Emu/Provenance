@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVReicast.framework"
+               BuildableName = "PVPlay.framework"
                BlueprintName = "PVPlay-iOS"
                ReferencedContainer = "container:PVPlayCore.xcodeproj">
             </BuildableReference>
@@ -79,7 +79,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVReicast.framework"
+            BuildableName = "PVPlay.framework"
             BlueprintName = "PVPlay-iOS"
             ReferencedContainer = "container:PVPlayCore.xcodeproj">
          </BuildableReference>

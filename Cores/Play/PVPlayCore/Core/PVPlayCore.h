@@ -3,7 +3,7 @@
 //  PVPlay
 //
 //  Created by Joseph Mattiello on 4/6/18.
-//  Copyright © 2018 Provenance. All rights reserved.
+//  Copyright © 2021 Provenance. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,11 +11,10 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
-
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface PVPlayCore : PVEmulatorCore <PVDreamcastSystemResponderClient>
+@interface PVPlayCore : PVEmulatorCore <PVPS2SystemResponderClient>
 {
 	uint8_t padData[4][PVDreamcastButtonCount];
 	int8_t xAxis[4];

@@ -3,7 +3,7 @@
 //  PVPlay
 //
 //  Created by Joseph Mattiello on 11/1/18.
-//  Copyright © 2018 Provenance. All rights reserved.
+//  Copyright © 2021 Provenance. All rights reserved.
 //
 
 #import <PVPlay/PVPlay.h>
@@ -139,7 +139,7 @@ s8 joyx[4], joyy[4];
     }
 }
 
--(void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player {
+-(void)didPushPS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
     if (button == PVDreamcastButtonL) {
         lt[player] |= 0xff * true;
     } else if (button == PVDreamcastButtonR) {
@@ -150,7 +150,7 @@ s8 joyx[4], joyy[4];
     }
 }
 
--(void)didReleaseDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player {
+-(void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
     if (button == PVDreamcastButtonL) {
         lt[player] |= 0xff * false;
     } else if (button == PVDreamcastButtonR) {
@@ -161,7 +161,7 @@ s8 joyx[4], joyy[4];
     }
 }
 
-- (void)didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+- (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
     /*
      float xvalue = gamepad.leftThumbstick.xAxis.value;
      s8 x=(s8)(xvalue*127);
@@ -174,15 +174,15 @@ s8 joyx[4], joyy[4];
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:value forPlayer:player];
+    [self didMoveDreamcastJoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushDreamcastButton:(PVDreamcastButton)button forPlayer:player];
+    [self didPushDreamcastButton:(PVPS2Button)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseDreamcastButton:(PVDreamcastButton)button forPlayer:player];
+    [self didReleaseDreamcastButton:(PVPS2Button)button forPlayer:player];
 }
 
 @end

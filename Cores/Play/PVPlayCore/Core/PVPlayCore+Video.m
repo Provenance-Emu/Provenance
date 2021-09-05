@@ -3,7 +3,7 @@
 //  PVPlay
 //
 //  Created by Joseph Mattiello on 11/1/18.
-//  Copyright © 2018 Provenance. All rights reserved.
+//  Copyright © 2021 Provenance. All rights reserved.
 //
 
 #import "PVPlayCore+Video.h"
