@@ -42,32 +42,32 @@ typedef struct
 
 ExtAudioFileRef recordingFile;
 
-static void StretchSamples(int16_t *outBuf, const int16_t *inBuf,
-                           int outFrames, int inFrames, int channels)
-{
-    int frame;
-    float ratio = outFrames / (float)inFrames;
-    
-    for (frame = 0; frame < outFrames; frame++) {
-        float iFrame = frame / ratio, iFrameF = floorf(iFrame);
-        float lerp = iFrame - iFrameF;
-        int iFrameI = iFrameF;
-        int ch;
-        
-        for (ch = 0; ch < channels; ch++) {
-            int a, b, c;
-            
-            a = inBuf[(iFrameI+0)*channels+ch];
-            b = inBuf[(iFrameI+1)*channels+ch];
-            
-            c = a + lerp*(b-a);
-            c = MAX(c, SHRT_MIN);
-            c = MIN(c, SHRT_MAX);
-            
-            outBuf[frame*channels+ch] = c;
-        }
-    }
-}
+//static void StretchSamples(int16_t *outBuf, const int16_t *inBuf,
+//                           int outFrames, int inFrames, int channels)
+//{
+//    int frame;
+//    float ratio = outFrames / (float)inFrames;
+//    
+//    for (frame = 0; frame < outFrames; frame++) {
+//        float iFrame = frame / ratio, iFrameF = floorf(iFrame);
+//        float lerp = iFrame - iFrameF;
+//        int iFrameI = iFrameF;
+//        int ch;
+//        
+//        for (ch = 0; ch < channels; ch++) {
+//            int a, b, c;
+//            
+//            a = inBuf[(iFrameI+0)*channels+ch];
+//            b = inBuf[(iFrameI+1)*channels+ch];
+//            
+//            c = a + lerp*(b-a);
+//            c = MAX(c, SHRT_MIN);
+//            c = MIN(c, SHRT_MAX);
+//            
+//            outBuf[frame*channels+ch] = c;
+//        }
+//    }
+//}
 # include <mach/mach_time.h>
 
 OSStatus RenderCallback(void                       *in,

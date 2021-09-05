@@ -105,7 +105,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 		if (!_isRunning) {
 #if !TARGET_OS_TV
             [self startHaptic];
-			[self setPreferredSampleRate:[self audioSampleRate]];
+            NSError *error;
+			BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
+            if(!success || error != nil) {
+                ELOG(@"%@", error.localizedDescription);
+            }
 #endif
 			self.isRunning  = YES;
 			shouldStop = NO;
@@ -354,35 +358,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 #if !TARGET_OS_TV
 - (Float64) getSampleRate {
-	Float64 sampleRate;
-	UInt32 srSize = sizeof (sampleRate);
-	OSStatus error =
-	AudioSessionGetProperty(
-							kAudioSessionProperty_CurrentHardwareSampleRate,
-							&srSize,
-							&sampleRate);
-	if (error == noErr) {
-		NSLog (@"CurrentHardwareSampleRate = %f", sampleRate);
-		return sampleRate;
-	} else {
-		return 48.0;
-	}
+    return [[AVAudioSession sharedInstance] sampleRate];
 }
 
-- (BOOL) setPreferredSampleRate:(double)preferredSampleRate {
+- (BOOL) setPreferredSampleRate:(double)preferredSampleRate error:(NSError **)error {
 	double preferredSampleRate2 = preferredSampleRate ?: 48000;
-
-	AVAudioSession* session = [AVAudioSession sharedInstance];
-	BOOL success;
-	NSError* error = nil;
-	success  = [session setPreferredSampleRate:preferredSampleRate2 error:&error];
-	if (success) {
-		NSLog (@"session.sampleRate = %f", session.sampleRate);
-	} else {
-		NSLog (@"error setting sample rate %@", error);
-	}
-
-	return success;
+    return [[AVAudioSession sharedInstance] setPreferredSampleRate:preferredSampleRate2 error:error];
 }
 #endif
 
@@ -481,9 +462,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	return 1;
 }
 
-- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index {
+- (void)getAudioBuffer:(void *)buffer frameCount:(uint32_t)frameCount bufferIndex:(uint32_t)index {
 	[[self ringBufferAtIndex:index] read:buffer
-                               maxLength:frameCount * [self channelCountForBuffer:index] * sizeof(UInt16)];
+                               maxLength:frameCount * [self channelCountForBuffer:index] * self.audioBitDepth];
 }
 
 - (NSUInteger)audioBitDepth {
@@ -560,16 +541,20 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 // Over load to support async
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
     NSError *error;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL success = [self saveStateToFileAtPath:fileName error:&error];
-
+#pragma clang diagnostic pop
     block(success, error);
 }
 
 // Over load to support async
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
     NSError *error;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
-
+#pragma clang diagnostic pop
     block(success, error);
 }
 
