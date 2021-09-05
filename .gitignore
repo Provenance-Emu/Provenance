@@ -34,3 +34,4 @@ report.xml
 .build
 .swiftpm
 /bin
+.env

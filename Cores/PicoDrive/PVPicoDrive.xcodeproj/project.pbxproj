@@ -1529,7 +1529,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B37937AB1D6BCF8100EBAE81 = {

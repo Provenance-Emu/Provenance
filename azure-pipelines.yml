@@ -4,14 +4,14 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
 pool:
-  vmImage: 'macOS-latest'
+  vmImage: 'macOS-11'
 
 variables:
   group: 'ios-pipeline'
   xcWorkspacePath: "Provenance.xcworkspace"
   ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
     configuration: 'Release'
-  ${{ if not(contains('main,develop', variables['Build.SourceBranchName'])) }}:
+  ${{ if not(contains('main,develop,release', variables['Build.SourceBranchName'])) }}:
     configuration: 'Debug'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
@@ -19,7 +19,7 @@ variables:
   ExportOptionsFileName: 'options.plist'
   ExportMethod: 'development'
   # xcode-version: '12.5.1'
-  xcodeVersion: '12'  # Options: 8, 9, 11, 12, default, specifyPath
+  xcodeVersion: specifyPath  # Options: 8, 9, 11, 12, default, specifyPath
   sdk: 'iphoneos'
   scheme: 'Provenance'
   destinationPlatformOption: iOS
@@ -61,13 +61,15 @@ jobs:
     inputs:
       scheme: '$(scheme)'
       xcWorkspacePath: '$(xcWorkspacePath)'
-      xcodeVersion: '$(xcodeVersion)'
+      xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+      xcodeVersion: specifyPath
       exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
       packageApp: true
       destinationPlatformOption: $(destinationPlatformOption)
       useXcpretty: false
       configuration: '$(configuration)'
       exportMethod: '$(ExportMethod)'
+      destinationSimulators: 'iPhone 11 Pro'
       # signingOption: 'manual'
       # signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
       # provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
@@ -102,34 +104,25 @@ jobs:
   #     #distributionGroupId: # Optional
 - job: tvOS
   steps:
+  - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+    clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+    submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
   - task: Xcode@5
     inputs:
       configuration: '$(configuration)'
       destinationPlatform: 'tvOS'
-      # destinationPlatformOption: 'custom'
-      # destinationSimulators: 'Apple TV 4K,OS=14.3'
-      # destinationTypeOption: 'simulators'
-      exportMethod: '$(ExportMethod)'
-      exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
+      destinationSimulators: 'Apple TV 4K'
+      xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+      xcodeVersion: specifyPath
+      #exportMethod: '$(ExportMethod)'
+      #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
       scheme: 'ProvenanceTV'
       sdk: 'appletvos'
       useXcpretty: false
-      xcodeVersion: '$(xcodeVersion)'
       xcWorkspacePath: '$(xcWorkspacePath)'
     displayName: Building project $(scheme) - tvOS
     env:
       sdk: 'appletvos'  # appletvsimulator, appletvos
       scheme: 'ProvenanceTV'
       destinationPlatformOption: tvOS
-
-# - task: Xcode@5
-#   inputs:
-#     actions: 'test'
-#     scheme: '$(scheme)'
-#     xcWorkspacePath: 'Provenance.xcworkspace'
-#     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
-#     packageApp: true
-#     destinationPlatformOption: iOS
-#     destinationSimulators: iPhone XS
-#   displayName: Running tests

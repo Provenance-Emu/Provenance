@@ -30,7 +30,7 @@ private_lane :certificates_download_private do |options|
   )
 end
 
-desc 'Update device UDID list in iTunes connect from fastlane/devices.text'
+desc 'Update device UDID list in iTunes connect from fastlane/devices.txt'
 lane :update_devices do
   load_keys
 
