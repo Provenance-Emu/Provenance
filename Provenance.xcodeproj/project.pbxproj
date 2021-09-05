@@ -454,6 +454,8 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B3F31D2326B4A4CD003A5E09 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3F31D2226B4A4CD003A5E09 /* AltKit */; };
+		B3F31D2526B4A57C003A5E09 /* AltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F31D2426B4A57C003A5E09 /* AltKitService.swift */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD92169B94E00CDD40A /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DD82169B94E00CDD40A /* Settings.storyboard */; };
@@ -917,6 +919,7 @@
 		B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogViewController.m; sourceTree = "<group>"; };
 		B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PVLogViewController.xib; sourceTree = "<group>"; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
+		B3F31D2426B4A57C003A5E09 /* AltKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltKitService.swift; sourceTree = "<group>"; };
 		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B3F43DD82169B94E00CDD40A /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		B3F43DDD2169D42500CDD40A /* SaveStates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SaveStates.storyboard; sourceTree = "<group>"; };
@@ -971,6 +974,7 @@
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
+				B3F31D2326B4A4CD003A5E09 /* AltKit in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
@@ -1516,6 +1520,7 @@
 			isa = PBXGroup;
 			children = (
 				B3532C3B21A9AC93006CDA0F /* Services.swift */,
+				B3F31D2426B4A57C003A5E09 /* AltKitService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1824,6 +1829,7 @@
 			name = Provenance;
 			packageProductDependencies = (
 				B336B91826B3A21800960A81 /* QuickTableViewController */,
+				B3F31D2226B4A4CD003A5E09 /* AltKit */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -2003,6 +2009,7 @@
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
 				B336B91726B3A21800960A81 /* XCRemoteSwiftPackageReference "QuickTableViewController" */,
+				B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -2251,6 +2258,7 @@
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */,
+				B3F31D2526B4A57C003A5E09 /* AltKitService.swift in Sources */,
 				B3DFEDE92686D654005C6CF2 /* UI+SectionedViewType.swift in Sources */,
 				B354E7C6219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
 				B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
@@ -3618,6 +3626,14 @@
 				minimumVersion = 1.3.0;
 			};
 		};
+		B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Provenance-Emu/AltKit.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3630,6 +3646,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B91726B3A21800960A81 /* XCRemoteSwiftPackageReference "QuickTableViewController" */;
 			productName = QuickTableViewController;
+		};
+		B3F31D2226B4A4CD003A5E09 /* AltKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */;
+			productName = AltKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

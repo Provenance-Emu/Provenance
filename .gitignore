@@ -35,3 +35,4 @@ report.xml
 .swiftpm
 /bin
 .env
+/packages-cache
