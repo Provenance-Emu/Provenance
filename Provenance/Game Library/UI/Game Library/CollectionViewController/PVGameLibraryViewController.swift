@@ -196,7 +196,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
 
         // Handle migrating library
-        handleLibraryMigration()
+        DispatchQueue.main.async {
+            self.handleLibraryMigration()
+        }
 
         let searchText: Observable<String?>
         #if os(iOS)
