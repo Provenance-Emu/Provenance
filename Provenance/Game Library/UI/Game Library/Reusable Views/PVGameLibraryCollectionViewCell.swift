@@ -462,9 +462,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     private func setup(with game: PVGame) {
         let artworkURL: String = game.customArtworkURL
         let originalArtworkURL: String = game.originalArtworkURL
-        if PVSettingsModel.shared.showGameTitles {
-            titleLabel.text = game.title
-        }
+        titleLabel.text = game.title
 
         // TODO: May be renabled later
         let placeholderImageText: String = game.title
