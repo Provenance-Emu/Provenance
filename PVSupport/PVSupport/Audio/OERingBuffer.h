@@ -33,15 +33,15 @@
     TPCircularBuffer buffer;
 }
 
-- (id)initWithLength:(NSUInteger)length;
+- (id)initWithLength:(uint32_t)length;
 
-@property           NSUInteger length;
-@property(readonly) NSUInteger availableBytes;
-@property(readonly) NSUInteger usedBytes;
-@property(readonly) NSUInteger bytesWritten;
-@property(readonly) NSUInteger bytesRead;
+@property           uint32_t length;
+@property(readonly) uint32_t availableBytes;
+@property(readonly) uint32_t usedBytes;
+@property(readonly) uint32_t bytesWritten;
+@property(readonly) uint32_t bytesRead;
 
-- (NSUInteger)read:(void *)buffer maxLength:(NSUInteger)len;
-- (NSUInteger)write:(const void *)buffer maxLength:(NSUInteger)length;
+- (uint32_t)read:(void *)buffer maxLength:(uint32_t)len;
+- (uint32_t)write:(const void *)buffer maxLength:(uint32_t)length;
 
 @end

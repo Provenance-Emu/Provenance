@@ -1,7 +1,7 @@
 import UIKit
 
 @objc
-public protocol HitAreaEnlarger: class {
+public protocol HitAreaEnlarger: AnyObject {
     var hitAreaInset: UIEdgeInsets { get set }
 }
 

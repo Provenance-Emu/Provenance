@@ -56,7 +56,6 @@ src/hw_cpu/z80-fuse/z80_cb.c
 src/hw_cpu/z80-fuse/z80_ddfdcb.c
 src/hw_cpu/z80-fuse/z80_ddfd.c
 src/memory.cpp
-src/Time.cpp
 src/NativeVFS.cpp
 src/md/memvdp.cpp
 src/md/debug.cpp
@@ -128,6 +127,7 @@ src/drivers/cheat.cpp
 src/drivers/fps.cpp
 src/drivers/sound.cpp
 src/drivers/args.cpp
+src/drivers/TextEntry.cpp
 src/drivers/hq4x.cpp
 src/net/Net_POSIX.cpp
 src/net/Net.cpp
@@ -202,6 +202,7 @@ src/video/text.cpp
 src/video/tblur.cpp
 src/video/surface.cpp
 src/video/Deinterlacer_Simple.cpp
+src/video/convert.cpp
 src/video/Deinterlacer.cpp
 src/netplay.cpp
 src/settings.cpp
@@ -404,6 +405,8 @@ src/snes_faust/msu1.cpp
 src/snes_faust/dis65816.cpp
 src/snes_faust/apu.cpp
 src/cdplay/cdplay.cpp
+src/time/Time_POSIX.cpp
+src/time/Time_Win32.cpp
 src/pcfx/timer.cpp
 src/pcfx/debug.cpp
 src/pcfx/rainbow.cpp
@@ -585,6 +588,7 @@ src/hw_sound/gb_apu/Gb_Apu.cpp
 src/hw_sound/gb_apu/Gb_Oscs.cpp
 src/PSFLoader.cpp
 src/general.cpp
+src/testsexp.cpp
 src/git.cpp
 src/lynx/rom.cpp
 src/lynx/ram.cpp
@@ -620,10 +624,11 @@ src/cdrom/crc32.cpp
 src/cdrom/CDAccess.cpp
 src/cdrom/galois.cpp
 src/cdrom/CDAccess_CCD.cpp
+src/cdrom/CDAFReader_PCM.cpp
 src/cdrom/CDInterface_MT.cpp
+src/cdrom/CDAFReader_FLAC.cpp
 src/cdrom/CDInterface_ST.cpp
 src/cdrom/lec.cpp
-src/cdrom/CDAFReader_SF.cpp
 src/cdrom/l-ec.cpp
 src/cdrom/CDAFReader.cpp
 src/cdrom/CDUtility.cpp
@@ -709,13 +714,17 @@ src/sound/SwiftResampler_x86.inc
 src/apple2/gameio.inc
 src/apple2/video.inc
 src/apple2/kbio.inc
+src/apple2/debug.inc
 src/apple2/sound.inc
 src/apple2/disk2.inc
 src/sms/hvc.inc
 src/ss/scu_actab.inc
 src/ss/scu_dsp_gentab.inc
 src/ss/scsp.inc
+src/ss/sh7095s_ctable.inc
+src/ss/sh7095s_cnorm.inc
 src/ss/sh7095.inc
+src/ss/sh7095s_cnorm_dm.inc
 src/ss/scu_dsp_mvitab.inc
 src/ss/scu.inc
 src/ss/sh7095_idecodetab.inc
@@ -725,6 +734,9 @@ src/ss/scu_btab.inc
 src/ss/scu_dsp_dmatab.inc
 src/ss/scu_aciv1tab.inc
 src/ss/sh7095_opdefs.inc
+src/ss/sh7095s_rsu.inc
+src/ss/sh7095s_ctable_dm.inc
+src/ss/sh7095_ops.inc
 src/ss/scu_dsp_misctab.inc
 src/ss/scu_dsp_jmptab.inc
 src/nes/ines-correct.inc
@@ -829,6 +841,7 @@ src/drivers/Joystick.h
 src/drivers/Joystick_XInput.h
 src/drivers/icon.h
 src/drivers/scale3x.h
+src/drivers/TextEntry.h
 src/drivers/debugger.h
 src/drivers/shader.h
 src/drivers/fps.h
@@ -956,6 +969,7 @@ src/video/font6x13.h
 src/video/resize.h
 src/video/primitives.h
 src/video/png.h
+src/video/convert.h
 src/video/font5x7.h
 src/video/Deinterlacer.h
 src/video/font18x18ko.h
@@ -1092,6 +1106,7 @@ src/resampler/resample_sse.h
 src/resampler/stack_alloc.h
 src/VirtualFS.h
 src/settings-driver.h
+src/jump.h
 src/tremor/window.h
 src/tremor/registry.h
 src/tremor/block.h
@@ -1171,6 +1186,7 @@ src/hw_sound/gb_apu/Gb_Apu.h
 src/hw_sound/gb_apu/blargg_config.h
 src/MemoryStream.h
 src/state_rewind.h
+src/testsexp.h
 src/movie.h
 src/mempatcher-driver.h
 src/lynx/machine.h
@@ -1213,9 +1229,10 @@ src/FileStream.h
 src/cdrom/CDAccess.h
 src/cdrom/CDAFReader_MPC.h
 src/cdrom/galois-inlines.h
-src/cdrom/CDAFReader_SF.h
+src/cdrom/CDAFReader_PCM.h
 src/cdrom/scsicd.h
 src/cdrom/CDAFReader_Vorbis.h
+src/cdrom/CDAFReader_FLAC.h
 src/cdrom/lec.h
 src/cdrom/SimpleFIFO.h
 src/cdrom/CDInterface.h

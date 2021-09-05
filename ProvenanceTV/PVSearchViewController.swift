@@ -50,6 +50,8 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView?.delegate = nil
+        collectionView?.dataSource = nil
         collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         collectionView?.backgroundColor = .black
         collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
@@ -92,7 +94,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
             })
             .flatMapLatest({ game in
                 self.gameLibrary.toggleFavorite(for: game)
-                    .catchError { _ in
+                    .catch { _ in
                         ELOG("Failed to toggle Favourite for game \(game.title)")
                         return .never()
                 }

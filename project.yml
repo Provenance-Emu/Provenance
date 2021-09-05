@@ -146,10 +146,10 @@ targets:
     configs:
       Debug:
         CODE_SIGN_IDENTITY: "iPhone Developer"
-        PROVISIONING_PROFILE_SPECIFIER: "match Development com.provenance-emu.provenance"
+        PROVISIONING_PROFILE_SPECIFIER: "match Development org.provenance-emu.provenance"
       Release:
         CODE_SIGN_IDENTITY: "iPhone Distribution"
-        PROVISIONING_PROFILE_SPECIFIER: "match AdHoc com.provenance-emu.provenance"
+        PROVISIONING_PROFILE_SPECIFIER: "match AdHoc org.provenance-emu.provenance"
         SWIFT_OPTIMIZATION_LEVEL: "-Owholemodule"
 
     # scheme

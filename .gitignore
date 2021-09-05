@@ -31,7 +31,8 @@ report.xml
 /fastlane/test_output
 /.folio
 .DS_Store
-xcshareddata
 .build
 .swiftpm
 /bin
+.env
+/packages-cache

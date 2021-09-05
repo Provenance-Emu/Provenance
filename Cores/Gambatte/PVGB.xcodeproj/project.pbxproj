@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -664,7 +664,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3C9D4391DEA6AFB0068D057 = {
@@ -678,11 +678,12 @@
 				};
 			};
 			buildConfigurationList = 1AABDFD71ABE366000FF6AEF /* Build configuration list for PBXProject "PVGB" */;
-			compatibilityVersion = "Xcode 10.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 1AABDFD31ABE366000FF6AEF;
 			productRefGroup = 1AABDFDD1ABE366000FF6AEF /* Products */;
@@ -835,6 +836,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -892,6 +894,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -944,6 +947,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1004,7 +1008,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1045,13 +1049,13 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1089,7 +1093,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1133,7 +1137,7 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1174,14 +1178,14 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1217,13 +1221,13 @@
 					"@loader_path/Frameworks",
 				);
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGB";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

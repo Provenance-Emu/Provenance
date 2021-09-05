@@ -83,12 +83,12 @@ public extension PVGame {
         }
 
     var spotlightUniqueIdentifier: String {
-            return "com.provenance-emu.game.\(md5Hash)"
+            return "org.provenance-emu.game.\(md5Hash)"
         }
     #endif
 
     var spotlightActivity: NSUserActivity {
-        let activity = NSUserActivity(activityType: "com.provenance-emu.game.play")
+        let activity = NSUserActivity(activityType: "org.provenance-emu.game.play")
         activity.title = title
         activity.userInfo = ["md5": md5Hash]
 

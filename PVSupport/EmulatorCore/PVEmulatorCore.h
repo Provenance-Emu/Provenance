@@ -135,8 +135,8 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)swapBuffers;
 
 - (void)getAudioBuffer:(void * _Nonnull)buffer
-            frameCount:(NSUInteger)frameCount
-           bufferIndex:(NSUInteger)index;
+            frameCount:(uint32_t)frameCount
+           bufferIndex:(uint32_t)index;
 
 - (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
 - (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;

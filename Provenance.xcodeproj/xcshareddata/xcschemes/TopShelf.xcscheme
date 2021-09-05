@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1230"
+   LastUpgradeVersion = "1300"
    version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-tvOS"
-               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+               BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
+               BuildableName = "PVLibrary.framework"
+               BlueprintName = "PVLibrary-tvOS"
+               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -32,6 +32,20 @@
                BuildableName = "TopShelf.appex"
                BlueprintName = "TopShelf"
                ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport-tvOS"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

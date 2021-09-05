@@ -79,7 +79,7 @@
 - (NSUserActivity *)handoffActivity
 {
     if (!_handoffActivity) {
-        _handoffActivity = [[NSUserActivity alloc] initWithActivityType:@"com.provenance-emu.webserver"];
+        _handoffActivity = [[NSUserActivity alloc] initWithActivityType:@"org.provenance-emu.webserver"];
         _handoffActivity.title = @"Provenance file manager";
         NSURL *url = [NSURL URLWithString:self.URLString];
         _handoffActivity.webpageURL = url;
@@ -150,7 +150,7 @@
 
 -(BOOL)startWebDavServer {
     if (_webDavServer.isRunning) {
-        NSLog(@"WebDav Server is already running");
+        NSLog(@"WebDAV Server is already running");
         return YES;
     }
     
@@ -171,7 +171,7 @@
     BOOL success = [self.webDavServer startWithOptions:webDavSeverOptions
                                             error:&error];
     if (!success) {
-        NSLog(@"Failed to start WebDav Server with error: %@", error.localizedDescription);
+        NSLog(@"Failed to start WebDAV Server with error: %@", error.localizedDescription);
     }
 
     return success;

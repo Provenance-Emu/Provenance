@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* memdebugger.h:
-**  Copyright (C) 2007-2016 Mednafen Team
+**  Copyright (C) 2007-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ class MemDebugger
 
  private:
 
- bool ICV_Init(const char *newcode);
+ void ICV_Init(const char *newcode);
  void ChangePos(int64 delta);
 
  std::vector<uint8> TextToBS(const std::string& text);
@@ -69,7 +69,7 @@ class MemDebugger
 
  std::string BSS_String, RS_String, TS_String;
  char *error_string;
- uint32 error_time;
+ int64 error_time;
 
  typedef enum
  {
@@ -84,8 +84,7 @@ class MemDebugger
   SetCharset,
  } PromptType;
 
- iconv_t ict;
- iconv_t ict_to_utf8;
+ iconv_t ict_game_to_utf8;
  iconv_t ict_utf8_to_game;
 
  std::string GameCode;

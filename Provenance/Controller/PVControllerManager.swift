@@ -353,8 +353,8 @@ final class PVControllerManager: NSObject {
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
         for i in 1 ... 4 {
             let previouslyAssignedController: GCController? = self.controller(forPlayer: i)
-            let newGamepadNotRemote = controller.gamepad != nil || controller.extendedGamepad != nil
-            let previousGamepadNotRemote = previouslyAssignedController?.gamepad != nil || previouslyAssignedController?.extendedGamepad != nil
+            let newGamepadNotRemote = controller.extendedGamepad != nil
+            let previousGamepadNotRemote = previouslyAssignedController?.extendedGamepad != nil
 
             // Skip making duplicate
             if let previouslyAssignedController = previouslyAssignedController, previouslyAssignedController == controller {

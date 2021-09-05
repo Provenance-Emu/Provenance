@@ -108,8 +108,8 @@ struct PVGameLibraryUpdatesController {
                 return nil
             })
             .compactMap { database.realm.object(ofType: PVGame.self, forPrimaryKey: $0) }
-            .map { game in CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet) }
-            .observeOn(SerialDispatchQueueScheduler(qos: .background))
+            .map { game in CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier, domainIdentifier: "org.provenance-emu.game", attributeSet: game.spotlightContentSet) }
+            .observe(on: SerialDispatchQueueScheduler(qos: .background))
             .subscribe(onNext: { item in
                 spotlightIndex.indexSearchableItems([item]) { error in
                     if let error = error {

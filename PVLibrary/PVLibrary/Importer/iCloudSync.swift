@@ -238,8 +238,6 @@ enum iCloudError: Error {
 }
 
 public final class iCloudSync {
-    static let UbiquityIdentityTokenKey = "com.provenance-emu.provenenace.UbiquityIdentityToken"
-
     static var disposeBag: DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default

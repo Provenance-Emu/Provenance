@@ -4376,8 +4376,8 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 #
 # Avoid trailing and leading zeroes in the decimal version components to avoid confusing not-so-learned people.
 #
-MEDNAFEN_VERSION='1.27.0-UNSTABLE'
-MEDNAFEN_VERSION_NUMERIC=0x00102700
+MEDNAFEN_VERSION='1.27.1'
+MEDNAFEN_VERSION_NUMERIC=0x00102701
 #                        0xJJJnnnRR
 
 # Make sure we can run config.sub.
@@ -8965,6 +8965,9 @@ _ACEOF
 
   fi
 
+if test "x$am_cv_func_iconv" != "xyes"; then
+	as_fn_error $? "*** iconv not found!" "$LINENO" 5
+fi
 
 mkdir_p="$MKDIR_P"
 case $mkdir_p in

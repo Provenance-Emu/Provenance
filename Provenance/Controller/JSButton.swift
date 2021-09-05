@@ -10,7 +10,7 @@
 import PVSupport
 import UIKit
 
-protocol JSButtonDelegate: class {
+protocol JSButtonDelegate: AnyObject {
     func buttonPressed(_ button: JSButton)
     func buttonReleased(_ button: JSButton)
 }

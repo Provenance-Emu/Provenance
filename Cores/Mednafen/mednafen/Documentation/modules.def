@@ -1,4 +1,4 @@
-1.27.0-UNSTABLE
+1.27.1
 apple2
 Apple II/II+
 250
@@ -839,7 +839,7 @@ Thunder Force Gold Pack 1 (Japan)
 T-1807G
 0
 Full
-Fixes explosion graphic glitches in \"Thunder Force III\".
+In \"Thunder Force III\", fixes explosion graphic glitches throughout the game and ship sprite glitches in the ending sequence.
 Titan Wars (Japan)
 T-15903G
 0
@@ -918,7 +918,7 @@ Fixes FMV ending too soon.
 horriblehacks
 Horrible Hacks
 This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.
-30
+31
 Fighters Megamix (Japan)
 GS-9126
 0
@@ -989,6 +989,11 @@ T-8138H
 0
 SH-2 reads/writes from/to VDP1 slow down command execution. 
 Reduces graphical glitches.
+Herc's Adventures (USA)
+T-23001H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes some sprite flickering and tearing.
 Tokimeki Memorial - Forever with You (Japan)
 T-9504G
 0

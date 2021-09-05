@@ -1,3 +1,29 @@
+-- 1.27.1: --
+
+June 4, 2021:
+	SS: Added "Herc's Adventures" to the internal database of games to enable SH-2 read/write VDP1 draw slowdown with, to fix a few graphical glitches.
+
+May 28, 2021:
+	Error out in the configure script when iconv is not found, rather than later during compilation.
+
+May 26, 2021:
+	SNES: Applied untested fix for an issue with libco on PPC64 ELFv2 systems.
+
+May 18, 2021:
+	SS: Corrected a few inaccuracies in the handling of SCSP EG phase transitions, per tests on a SS.
+
+May 12, 2021:
+	Renamed intl/VERSION to intl/VERSION.txt to prevent a conflict with a system C++ header file on case-insensitive filesystems(problem introduced in 1.27.0-UNSTABLE).
+
+April 29, 2021:
+	Demo: Use #pragma(pack) instead of __attribute__((packed)), to work around a bug/design flaw in older versions of gcc that caused the demo module's save
+	state test to fail when compiled for a Windows target(where ms_struct is the default structure layout).
+
+April 28, 2021:
+	Increased verbosity of bad Q subchannel data error messages in the CloneCD CD image loader.
+
+	Fixed crashing with non-glibc iconv implementations when the user specifies an unsupported character encoding in the debugger's memory editor.
+
 -- 1.27.0-UNSTABLE: --
 
 March 29, 2021:

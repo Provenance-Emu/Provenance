@@ -22,7 +22,8 @@ extension PVRecentGame {
         let item = TVContentItem(contentIdentifier: identifier)
 
         item.title = game.title
-        item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
+        let imageURl = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
+        item.setImageURL(imageURl, forTraits: [.screenScale1x, .screenScale2x, .userInterfaceStyleDark, .userInterfaceStyleLight])
         item.imageShape = game.system.imageType
         item.displayURL = displayURL
         item.lastAccessedDate = lastPlayedDate

@@ -28,24 +28,25 @@ extension PVGameLibrary {
         let libraryURL = URL(fileURLWithPath: libraryPath)
         let toDelete = ["PVGame.sqlite", "PVGame.sqlite-shm", "PVGame.sqlite-wal"].map { libraryURL.appendingPathComponent($0) }
 
-        let deleteDatabase = Completable.concat(toDelete
-            .map({ path in
-                fileManager.rx
-                    .removeItem(at: path)
-                    .catchError({ error in
-                        ILOG("Unable to delete \(path) because \(error.localizedDescription)")
-                        return .empty()
-                    })
-            }))
+        let deleteDatabase = Completable
+            .concat(toDelete
+                        .map { path in
+                            fileManager.rx
+                                .removeItem(at: path)
+                                .catch { error in
+                                    ILOG("Unable to delete \(path) because \(error.localizedDescription)")
+                                    return .empty()
+                                }
+                        })
 
         let createDirectory = fileManager.rx
             .createDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, withIntermediateDirectories: true, attributes: nil)
-            .catchError { .error(MigrationError.unableToCreateRomsDirectory(error: $0)) }
+            .catch { .error(MigrationError.unableToCreateRomsDirectory(error: $0)) }
 
         // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
         let moveFiles: Completable = fileManager.rx
             .contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-            .catchError { Single<[URL]>.error(MigrationError.unableToGetContentsOfDocuments(error: $0)) }
+            .catch { Single<[URL]>.error(MigrationError.unableToGetContentsOfDocuments(error: $0)) }
             .map({ contents -> [URL] in
                 let ignoredExtensions = ["jpg", "png", "gif", "jpeg"]
                 return contents.filter { (url) -> Bool in
@@ -61,7 +62,7 @@ extension PVGameLibrary {
                     .map { ($0, PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent($0.lastPathComponent))}
                     .map { path, toPath in
                         fileManager.rx.moveItem(at: path, to: toPath)
-                            .catchError({ error in
+                            .catch({ error in
                                 ELOG("Unable to move \(path.path) to \(toPath.path) because \(error.localizedDescription)")
                                 return .empty()
                             })
@@ -71,7 +72,7 @@ extension PVGameLibrary {
 
         let getRomPaths: Observable<MigrationEvent> = fileManager.rx
             .contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
-            .catchError { Single<[URL]>.error(MigrationError.unableToGetRomPaths(error: $0)) }
+            .catch { Single<[URL]>.error(MigrationError.unableToGetRomPaths(error: $0)) }
             .flatMapMaybe({ paths in
                 if paths.isEmpty {
                     return .empty()

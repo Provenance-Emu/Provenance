@@ -150,7 +150,7 @@ extension PVEmulatorViewController {
                 LibrarySerializer.storeMetadata(saveState, completion: { result in
                     switch result {
                     case let .success(url):
-                        ILOG("Serialzed save state metadata to (\(url.path))")
+                        ILOG("Serialized save state metadata to (\(url.path))")
                     case let .error(error):
                         ELOG("Failed to serialize save metadata. \(error)")
                     }

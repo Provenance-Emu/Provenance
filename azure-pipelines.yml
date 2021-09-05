@@ -4,55 +4,125 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
 pool:
-  vmImage: 'macOS-latest'
+  vmImage: 'macOS-11'
 
 variables:
-  scheme: 'Provenance'
-  sdk: 'iphonesimulator' # 'iphoneos'
-  configuration: 'Debug' # 'Release'
+  group: 'ios-pipeline'
+  xcWorkspacePath: "Provenance.xcworkspace"
+  ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
+    configuration: 'Release'
+  ${{ if not(contains('main,develop,release', variables['Build.SourceBranchName'])) }}:
+    configuration: 'Debug'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
-  CertificateFileName: 'itunes-adhoc.p12'
+  CertificateFileName: 'developer_cert.p12'
   ExportOptionsFileName: 'options.plist'
-  ExportMethod: 'ad-hoc'
+  ExportMethod: 'development'
   # xcode-version: '12.5.1'
-  xcode-version: '12.5'
+  xcodeVersion: specifyPath  # Options: 8, 9, 11, 12, default, specifyPath
+  sdk: 'iphoneos'
+  scheme: 'Provenance'
+  destinationPlatformOption: iOS
 
-steps:
+# strategy:
+#   matrix:
+#     ios:
+#       sdk: 'iphoneos'
+#       scheme: 'Provenance'
+#       destinationPlatformOption: iOS
+#     tvos:
+#       sdk: 'appletvos'
+#       scheme: 'ProvenanceTV'
+#       destinationPlatformOption: tvOS
+#   maxParallel: 3
 
-- checkout: self # self represents the repo where the initial Pipelines YAML file was found
-  clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
-  submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
+jobs:
+# Builds
+- job: iOS
+  steps:
+  - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+    clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+    submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defaults to not checking out submodules
 
-# - task: InstallAppleCertificate@2
-#   inputs:
-#     certSecureFile: $(CertificateFileName)
-#     certPwd: '$(P12password)'
-#     keychain: 'temp'
-# - task: InstallAppleProvisioningProfile@1
-#   inputs:
-#     provisioningProfileLocation: 'secureFiles'
-#     provProfileSecureFile: $(ProfileFileName)
-#     removeProfile: true
+  # - task: InstallAppleCertificate@2
+  #   inputs:
+  #     certSecureFile: $(CertificateFileName)
+  #     certPwd: '$(P12password)'
+  #     keychain: 'temp'
+  #     deleteCert: true
 
-- task: Xcode@5
-  inputs:
-    scheme: '$(scheme)'
-    xcWorkspacePath: 'Provenance.xcworkspace'
-    xcodeVersion: '12' # Options: 8, 9, default, specifyPath
-    exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-    packageApp: true
-    destinationPlatformOption: iOS
-    destinationSimulators: iPhone 12
-  displayName: Building project
+  #- task: InstallAppleProvisioningProfile@1
+  #  inputs:
+  #    provisioningProfileLocation: 'secureFiles'
+  #    provProfileSecureFile: $(ProfileFileName)
+  #    removeProfile: true
 
-# - task: Xcode@5
-#   inputs:
-#     actions: 'test'
-#     scheme: '$(scheme)'
-#     xcWorkspacePath: 'Provenance.xcworkspace'
-#     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
-#     packageApp: true
-#     destinationPlatformOption: iOS
-#     destinationSimulators: iPhone XS
-#   displayName: Running tests
+  - task: Xcode@5
+    inputs:
+      scheme: '$(scheme)'
+      xcWorkspacePath: '$(xcWorkspacePath)'
+      xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+      xcodeVersion: specifyPath
+      exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
+      packageApp: true
+      destinationPlatformOption: $(destinationPlatformOption)
+      useXcpretty: false
+      configuration: '$(configuration)'
+      exportMethod: '$(ExportMethod)'
+      destinationSimulators: 'iPhone 11 Pro'
+      # signingOption: 'manual'
+      # signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      # provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+    displayName: Building project $(scheme)
+
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*.ipa'
+      targetFolder: '$(build.artifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(build.artifactStagingDirectory)/output/$(sdk)/$(configuration)'
+      artifactName: 'drop'
+      publishLocation: 'Container'
+  # App Center distribute
+  # Distribute app builds to testers and users via Visual Studio App Center
+  # - task: AppCenterDistribute@1
+  #   inputs:
+  #     serverEndpoint: 
+  #     appSlug: 
+  #     appFile: 
+  #     #symbolsOption: 'Apple' # Optional. Options: apple
+  #     #symbolsPath: # Optional
+  #     #symbolsPdbFiles: '**/*.pdb' # Optional
+  #     #symbolsDsymFiles: # Optional
+  #     #symbolsMappingTxtFile: # Optional
+  #     #symbolsIncludeParentDirectory: # Optional
+  #     #releaseNotesOption: 'input' # Options: input, file
+  #     #releaseNotesInput: # Required when releaseNotesOption == Input
+  #     #releaseNotesFile: # Required when releaseNotesOption == File
+  #     #isMandatory: false # Optional
+  #     #distributionGroupId: # Optional
+- job: tvOS
+  steps:
+  - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+    clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+    submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
+  - task: Xcode@5
+    inputs:
+      configuration: '$(configuration)'
+      destinationPlatform: 'tvOS'
+      destinationSimulators: 'Apple TV 4K'
+      xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+      xcodeVersion: specifyPath
+      #exportMethod: '$(ExportMethod)'
+      #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
+      packageApp: false
+      scheme: 'ProvenanceTV'
+      sdk: 'appletvos'
+      useXcpretty: false
+      xcWorkspacePath: '$(xcWorkspacePath)'
+    displayName: Building project $(scheme) - tvOS
+    env:
+      sdk: 'appletvos'  # appletvsimulator, appletvos
+      scheme: 'ProvenanceTV'
+      destinationPlatformOption: tvOS
