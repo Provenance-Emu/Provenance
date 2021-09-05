@@ -108,10 +108,11 @@ jobs:
     inputs:
       configuration: '$(configuration)'
       destinationPlatform: 'tvOS'
+      destinationSimulators: 'Apple TV 4K'
       xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
       xcodeVersion: specifyPath
-      exportMethod: '$(ExportMethod)'
-      exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
+      #exportMethod: '$(ExportMethod)'
+      #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
       scheme: 'ProvenanceTV'
       sdk: 'appletvos'
@@ -122,14 +123,3 @@ jobs:
       sdk: 'appletvos'  # appletvsimulator, appletvos
       scheme: 'ProvenanceTV'
       destinationPlatformOption: tvOS
-
-# - task: Xcode@5
-#   inputs:
-#     actions: 'test'
-#     scheme: '$(scheme)'
-#     xcWorkspacePath: 'Provenance.xcworkspace'
-#     xcodeVersion: '12' # Options: 8, 9, default, specifyPath
-#     packageApp: true
-#     destinationPlatformOption: iOS
-#     destinationSimulators: iPhone XS
-#   displayName: Running tests
