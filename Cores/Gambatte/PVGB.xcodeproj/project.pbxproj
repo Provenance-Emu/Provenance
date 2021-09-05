@@ -664,7 +664,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3C9D4391DEA6AFB0068D057 = {
@@ -683,6 +683,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 1AABDFD31ABE366000FF6AEF;
 			productRefGroup = 1AABDFDD1ABE366000FF6AEF /* Products */;
