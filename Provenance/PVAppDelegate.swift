@@ -125,6 +125,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         database.refresh()
 
         SteamControllerManager.listenForConnections()
+        
+        if #available(iOS 11, tvOS 11, *) {
+            PVAltKitService.shared.start()
+        }
 
         return true
     }
