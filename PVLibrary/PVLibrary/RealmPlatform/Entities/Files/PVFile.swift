@@ -77,7 +77,7 @@ public extension PVFile {
 
     private(set) var url: URL {
         get {
-            if partialPath.contains("iCloud") {
+            if partialPath.contains("iCloud") || partialPath.contains("private") {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
