@@ -11,15 +11,10 @@ import Foundation
 public extension UIView {
     @IBInspectable var ignoresInvertColors: Bool {
         get {
-            if #available(iOS 11.0, *) {
-                return accessibilityIgnoresInvertColors
-            }
-            return false
+            return accessibilityIgnoresInvertColors
         }
         set {
-            if #available(iOS 11.0, *) {
-                accessibilityIgnoresInvertColors = newValue
-            }
+            accessibilityIgnoresInvertColors = newValue
         }
     }
 }

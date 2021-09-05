@@ -357,12 +357,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
-        #endif
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
 
-        #if os(iOS)
             // Ignore Smart Invert
             view.ignoresInvertColors = true
         #endif
@@ -680,9 +676,7 @@ extension PVEmulatorViewController {
             // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
             controller?.setupPauseHandler(onPause: controllerPauseButtonPressed)
             #if os(iOS)
-                if #available(iOS 11.0, *) {
-                    setNeedsUpdateOfHomeIndicatorAutoHidden()
-                }
+                setNeedsUpdateOfHomeIndicatorAutoHidden()
             #endif
         }
     }
@@ -690,9 +684,7 @@ extension PVEmulatorViewController {
     @objc func controllerDidDisconnect(_: Notification?) {
         menuButton?.isHidden = false
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
         #endif
     }
 
