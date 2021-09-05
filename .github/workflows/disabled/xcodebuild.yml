@@ -1,0 +1,28 @@
+# https://github.com/mxcl/xcodebuild
+
+name: XCode Build
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform:
+          - tvOS
+          - iOS
+        xcode:
+          - ^12
+    runs-on: macos-latest
+    steps:
+      - use: mxcl/xcodebuild@v1
+        with:
+          xcode: ${{ matrix.xcode }}
+          platform: ${{ matrix.platform }}
+          action: build # default = `test`
+          code-coverage: false # default = `false`
+          warnings-as-errors: false # default = `false`
+          configuration: debug # no default, ie. `xcodebuild` decides itself

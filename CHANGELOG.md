@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 
-- #1545 Update Mednafen to 1.27.1
+- #1545 Update Mednafen to 1.27.1 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
 
 ### Fixed
 
@@ -85,7 +85,7 @@ Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @
 #### Core Updates
 
 - SNES9x 1.60.0 ([Changelog](https://github.com/snes9xgit/snes9x/releases))
-- Mednafen 1.27.1 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
+- Mednafen 1.27.0 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
 - tgbdual-libretro 0.8.3 [GitHub](tgbdual-libretro)
 - Genesis Plus GX 1.7.5 ([History](https://github.com/ekeeke/Genesis-Plus-GX/blob/master/HISTORY.txt))
 - PicoDrive 1.9.3
