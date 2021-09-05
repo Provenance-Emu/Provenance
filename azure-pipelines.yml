@@ -104,6 +104,9 @@ jobs:
   #     #distributionGroupId: # Optional
 - job: tvOS
   steps:
+  - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+    clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+    submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
   - task: Xcode@5
     inputs:
       configuration: '$(configuration)'
