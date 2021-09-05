@@ -886,7 +886,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        if let game = game {
+        if let game = game, !game.isInvalidated {
             let ratio = game.boxartAspectRatio.rawValue
             var imageHeight = size.height
             if PVSettingsModel.shared.showGameTitles {
