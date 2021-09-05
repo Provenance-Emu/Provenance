@@ -434,19 +434,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                collectionView.translatesAutoresizingMaskIntoConstraints = false
-                let guide = view.safeAreaLayoutGuide
-                NSLayoutConstraint.activate([
-                    collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
-                    collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-                    collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-                    collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-                ])
-                layout.sectionInsetReference = .fromSafeArea
-            } else {
-                layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-            }
+            collectionView.translatesAutoresizingMaskIntoConstraints = false
+            let guide = view.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([
+                collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+                collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+            layout.sectionInsetReference = .fromSafeArea
         #endif
         // Force touch
         #if os(iOS)
@@ -717,19 +713,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
                 //        documentMenu.delegate = self
                 //        present(documentMenu, animated: true, completion: nil)
-                if #available(iOS 11.0, *) {
-                    // iOS 8 need iCloud entitlements, check
-                } else {
-                    if FileManager.default.ubiquityIdentityToken == nil {
-                        self.presentMessage("Your version reqires iCloud entitlements to use this feature. Please rebuild with iCloud entitlements enabled.", title: "iCloud Error")
-                        return
-                    }
-                }
 
                 let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
-                if #available(iOS 11.0, *) {
-                    documentPicker.allowsMultipleSelection = true
-                }
+                documentPicker.allowsMultipleSelection = true
                 documentPicker.delegate = self
                 self.present(documentPicker, animated: true, completion: nil)
             }))
