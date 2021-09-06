@@ -91,6 +91,10 @@ public final class PVGame: Object, PVLibraryEntry {
         self.system = system
         systemIdentifier = system.identifier
     }
+    
+    public var validatedGame: PVGame? {
+        return self.isInvalidated ? nil : self
+    }
 
     /*
      Primary key must be set at import time and can't be changed after.
