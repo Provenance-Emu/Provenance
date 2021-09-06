@@ -204,7 +204,7 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
     return NSAttributedString(attributedString: result)
 }
 
-protocol GameLibraryCollectionViewDelegate: class {
+protocol GameLibraryCollectionViewDelegate: AnyObject {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
 // MARK: Corner Badge Glyph
@@ -447,7 +447,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     #endif
     var game: PVGame? {
         didSet {
-            if let game = game {
+            if let game = game?.validatedGame {
                 self.setup(with: game)
             } else {
                 self.discCountContainerView?.isHidden = true
@@ -886,7 +886,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        if let game = game {
+        if let game = game?.validatedGame {
             let ratio = game.boxartAspectRatio.rawValue
             var imageHeight = size.height
             if PVSettingsModel.shared.showGameTitles {

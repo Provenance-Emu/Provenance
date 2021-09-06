@@ -35,5 +35,7 @@
 	</dict>
 	<key>Revision</key>
 	<string></string>
+	<key>ALTDeviceID</key>
+	<string></string>
 </dict>
 </plist>

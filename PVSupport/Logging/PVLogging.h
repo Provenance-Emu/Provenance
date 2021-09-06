@@ -228,19 +228,20 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return List of file paths, with newest as the first
  */
-- (NSArray*)logFilePaths;
-
-/**
- *  Array of info for the log files such as zie and modification date
- *
- *  @return Sorted list of info dicts, newest first
- */
-- (NSArray*)logFileInfos;
+- (NSArray<NSString*>* __nullable)logFilePaths;
 
 /**
  *  Writes any async logs
  */
 - (void)flushLogs;
+
+@optional
+/**
+ *  Array of info for the log files such as zie and modification date
+ *
+ *  @return Sorted list of info dicts, newest first
+ */
+- (NSArray* __nullable)logFileInfos;
 @end
 
 @interface PVLogging : NSObject

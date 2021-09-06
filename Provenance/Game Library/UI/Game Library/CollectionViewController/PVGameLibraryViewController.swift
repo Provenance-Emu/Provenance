@@ -191,7 +191,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
 
         // Handle migrating library
-        handleLibraryMigration()
+        DispatchQueue.main.async {
+            self.handleLibraryMigration()
+        }
 
         let searchText: Observable<String?>
         #if os(iOS)
@@ -639,8 +641,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #if os(iOS)
         // Show web server (stays on)
         func showServer() {
-            let ipURL = URL(string: PVWebServer.shared.urlString)
-            let safariVC = SFSafariViewController(url: ipURL!, entersReaderIfAvailable: false)
+            let ipURL = URL(string: PVWebServer.shared.urlString)!
+
+            let config = SFSafariViewController.Configuration()
+            config.barCollapsingEnabled = true
+            config.entersReaderIfAvailable = true
+
+            let safariVC = SFSafariViewController(url: ipURL, configuration: config)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
         }
@@ -1124,6 +1131,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
             let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            // swiftlint:disable:next empty_count
             if fetchResult.count > 0 {
                 let lastPhoto = fetchResult.lastObject
 

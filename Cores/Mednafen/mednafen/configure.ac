@@ -6,8 +6,8 @@ AC_CONFIG_MACRO_DIR([m4])
 #
 # Avoid trailing and leading zeroes in the decimal version components to avoid confusing not-so-learned people.
 #
-MEDNAFEN_VERSION='1.27.0-UNSTABLE'
-MEDNAFEN_VERSION_NUMERIC=0x00102700
+MEDNAFEN_VERSION='1.27.1'
+MEDNAFEN_VERSION_NUMERIC=0x00102701
 #                        0xJJJnnnRR
 
 AC_CANONICAL_HOST
@@ -79,6 +79,9 @@ AC_CHECK_HEADERS(fenv.h)
 AC_DEFINE(MINILZO_HAVE_CONFIG_H, [1], [Define if config.h is present])
 
 AM_ICONV
+if test "x$am_cv_func_iconv" != "xyes"; then
+	AC_MSG_ERROR([*** iconv not found!])
+fi
 AM_GNU_GETTEXT
 
 AC_SUBST(LIBICONV)

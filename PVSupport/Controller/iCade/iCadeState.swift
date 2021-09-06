@@ -92,7 +92,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
     }()
 }
 
-public protocol iCadeEventDelegate: class {
+public protocol iCadeEventDelegate: AnyObject {
     func stateChanged(state: iCadeControllerState)
     func buttonDown(button: iCadeControllerState)
     func buttonUp(button: iCadeControllerState)

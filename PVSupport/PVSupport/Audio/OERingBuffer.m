@@ -30,13 +30,11 @@
 @synthesize bytesWritten;
 @synthesize bytesRead;
 
-- (id)init
-{
+- (instancetype)init {
     return [self initWithLength:1];
 }
 
-- (id)initWithLength:(NSUInteger)length
-{
+- (id)initWithLength:(uint32_t)length {
     if((self = [super init]))
     {
         TPCircularBufferInit(&buffer, length);
@@ -44,31 +42,26 @@
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     TPCircularBufferCleanup(&buffer);
 }
 
-- (NSUInteger)length
-{
+- (uint32_t)length {
     return buffer.length;
 }
 
-- (void)setLength:(NSUInteger)length
-{
+- (void)setLength:(uint32_t)length {
     TPCircularBufferCleanup(&buffer);
     TPCircularBufferInit(&buffer, length);
 }
 
-- (NSUInteger)write:(const void *)inBuffer maxLength:(NSUInteger)length
-{
+- (uint32_t)write:(const void *)inBuffer maxLength:(uint32_t)length {
     bytesWritten += length;
     return TPCircularBufferProduceBytes(&buffer, inBuffer, length);
 }
 
-- (NSUInteger)read:(void *)outBuffer maxLength:(NSUInteger)len
-{
-    int availableBytes = 0;
+- (uint32_t)read:(void *)outBuffer maxLength:(uint32_t)len {
+    uint32_t availableBytes = 0;
     void *head = TPCircularBufferTail(&buffer, &availableBytes);
     availableBytes = MIN(availableBytes, len);
     memcpy(outBuffer, head, availableBytes);
@@ -77,14 +70,13 @@
     return availableBytes;
 }
 
-- (NSUInteger)availableBytes
-{
-    int availableBytes = 0;
+- (uint32_t)availableBytes {
+    uint32_t availableBytes = 0;
     TPCircularBufferHead(&buffer, &availableBytes);
     return availableBytes;
 }
 
-- (NSUInteger)usedBytes
+- (uint32_t)usedBytes
 {
     return buffer.length - buffer.fillCount;
 }

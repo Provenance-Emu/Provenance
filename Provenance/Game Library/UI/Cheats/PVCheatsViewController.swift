@@ -46,36 +46,39 @@ final class PVCheatsViewController: UITableViewController {
         super.viewDidLoad()
         title = "Cheat Codes"
 
-        if let coreID = coreID {
-            let filter: String = "core.identifier == \"" + coreID + "\""
-            allCheats = cheats.filter(filter).sorted(byKeyPath: "date", ascending: false)
-        } else {
-            allCheats = cheats.sorted(byKeyPath: "date", ascending: false)
-        }
-
         var isFirstLoad: Bool=true
 
         if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
             isFirstLoad=emulatorViewController.getIsFirstLoad()
         }
 
-        for cheat in allCheats {
-            NSLog("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
-            // start disabled to prevent bad cheat code from crashing the game all the time
-            if (isFirstLoad) {
-                let realm = try! Realm()
-                realm.beginWrite()
-                cheat.enabled = false
-                try! realm.commitWrite()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if let coreID = self.coreID {
+                let filter: String = "core.identifier == \"" + coreID + "\""
+                self.allCheats = self.cheats.filter(filter).sorted(byKeyPath: "date", ascending: false)
+            } else {
+                self.allCheats = self.cheats.sorted(byKeyPath: "date", ascending: false)
             }
-            delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
-                in
-                switch result {
-                case .success:
-                    break
-                case let .error(error):
-                    let reason = (error as NSError).localizedFailureReason ?? ""
-                    NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
+
+            for cheat in self.allCheats {
+                DLOG("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
+                // start disabled to prevent bad cheat code from crashing the game all the time
+                if (isFirstLoad) {
+                    let realm = try! Realm()
+                    realm.beginWrite()
+                    cheat.enabled = false
+                    try! realm.commitWrite()
+                }
+                self.delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
+                    in
+                    switch result {
+                    case .success:
+                        break
+                    case let .error(error):
+                        let reason = (error as NSError).localizedFailureReason ?? ""
+                        ELOG("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
+                    }
                 }
             }
         }
@@ -146,9 +149,8 @@ final class PVCheatsViewController: UITableViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
             if segue.identifier == "cheatCodeInfo" {
-                NSLog("Add Cheat Code")
+                DLOG("Add Cheat Code")
                 let secondViewController = segue.destination as! PVCheatsInfoViewController
                 secondViewController.delegate = self
             }
@@ -159,7 +161,7 @@ final class PVCheatsViewController: UITableViewController {
     }
 
     func saveCheatCode(code: String, type: String, enabled: Bool) {
-        NSLog("SaveCheatCode \(code) \(type)")
+        ILOG("SaveCheatCode \(code) \(type)")
         delegate?.cheatsViewControllerCreateNewState(self, code: code, type: type, enabled: enabled) { result in
             switch result {
             case .success:
@@ -215,11 +217,11 @@ final class PVCheatsViewController: UITableViewController {
                 break
             case let .error(error):
                 let realm = try! Realm()
-                realm.beginWrite();
-                cheat.enabled = !(cheat.enabled);
-                try! realm.commitWrite();
+                realm.beginWrite()
+                cheat.enabled = !(cheat.enabled)
+                try! realm.commitWrite()
                 let reason = (error as NSError).localizedFailureReason ?? ""
-                NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
+                ELOG("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
 
         }

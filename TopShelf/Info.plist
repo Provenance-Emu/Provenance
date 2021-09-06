@@ -44,6 +44,8 @@
 	</dict>
 	<key>Revision</key>
 	<string></string>
+	<key>ALTDeviceID</key>
+	<string></string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
