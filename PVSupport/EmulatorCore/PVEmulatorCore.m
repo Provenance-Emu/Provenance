@@ -462,9 +462,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	return 1;
 }
 
-- (void)getAudioBuffer:(void *)buffer frameCount:(uint32_t)frameCount bufferIndex:(uint32_t)index {
+- (void)getAudioBuffer:(void *)buffer frameCount:(uint32_t)frameCount bufferIndex:(NSUInteger)index {
+    uint32_t maxLength = (uint32_t)(frameCount * [self channelCountForBuffer:index] * self.audioBitDepth);
 	[[self ringBufferAtIndex:index] read:buffer
-                               maxLength:frameCount * [self channelCountForBuffer:index] * self.audioBitDepth];
+                               maxLength:maxLength];
 }
 
 - (NSUInteger)audioBitDepth {
@@ -503,7 +504,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index {
 	if (ringBuffers[index] == nil) {
-        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
+        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:(uint32_t)[self audioBufferSizeForBuffer:index] * 16];
 	}
 	
     return ringBuffers[index];

@@ -24,7 +24,7 @@ extension PVGameLibrary {
     // This method is probably outdated
     public func migrate(fileManager: FileManager = .default) -> Observable<MigrationEvent> {
 
-        let libraryPath: String = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!
+        let libraryPath: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let libraryURL = URL(fileURLWithPath: libraryPath)
         let toDelete = ["PVGame.sqlite", "PVGame.sqlite-shm", "PVGame.sqlite-wal"].map { libraryURL.appendingPathComponent($0) }
 

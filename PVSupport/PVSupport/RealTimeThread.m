@@ -35,7 +35,6 @@ void move_pthread_to_realtime_scheduling_class(pthread_t pthread)
     }
 }
 
-void MakeCurrentThreadRealTime()
-{
+void MakeCurrentThreadRealTime(void) {
     move_pthread_to_realtime_scheduling_class(pthread_self());
 }

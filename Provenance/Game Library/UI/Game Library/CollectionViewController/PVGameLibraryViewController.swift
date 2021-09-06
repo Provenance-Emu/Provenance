@@ -46,10 +46,6 @@ public extension Notification.Name {
 }
 
 #if os(iOS)
-    let USE_IOS_11_SEARCHBAR = true
-#endif
-
-#if os(iOS)
     final class PVDocumentPickerViewController: UIDocumentPickerViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -83,7 +79,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         @IBOutlet var libraryInfoLabel: UILabel!
     #endif
 
-    @IBOutlet var searchField: UITextField?
     var isInitialAppearance = false
 
     func updateConflictsButton(_ hasConflicts: Bool) {
@@ -196,33 +191,25 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
 
         // Handle migrating library
-        handleLibraryMigration()
+        DispatchQueue.main.async {
+            self.handleLibraryMigration()
+        }
 
         let searchText: Observable<String?>
         #if os(iOS)
-            if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
-                // Hide the pre-iOS 11 search bar
-                searchField?.removeFromSuperview()
-                navigationItem.titleView = nil
+            // Navigation bar large titles
+            navigationController?.navigationBar.prefersLargeTitles = false
+            navigationItem.title = nil
 
-                // Navigation bar large titles
-                navigationController?.navigationBar.prefersLargeTitles = false
-                navigationItem.title = nil
+            // Create a search controller
+            let searchController = UISearchController(searchResultsController: nil)
+            searchController.searchBar.placeholder = "Search"
+            searchController.obscuresBackgroundDuringPresentation = false
+            searchController.hidesNavigationBarDuringPresentation = true
+            navigationItem.hidesSearchBarWhenScrolling = true
+            navigationItem.searchController = searchController
 
-                // Create a search controller
-                let searchController = UISearchController(searchResultsController: nil)
-                searchController.searchBar.placeholder = "Search"
-                searchController.obscuresBackgroundDuringPresentation = false
-                searchController.hidesNavigationBarDuringPresentation = true
-                navigationItem.hidesSearchBarWhenScrolling = true
-                navigationItem.searchController = searchController
-
-                searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
-            } else {
-                searchText = searchField!.rx.text.asObservable()
-            }
-
-            // TODO: For below iOS 11, can make searchController.searchbar. the navigationItem.titleView and get a similiar effect
+            searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
         #else
             searchText = .never()
         #endif
@@ -424,7 +411,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             collectionView.backgroundColor = .black
         #else
             collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-            searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
 
             let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.didReceivePinchGesture(gesture:)))
             pinchGesture.cancelsTouchesInView = true
@@ -1548,7 +1534,7 @@ extension PVGameLibraryViewController {
     }
 
     @objc func selectSearch(_: UIKeyCommand) {
-        searchField?.becomeFirstResponder()
+        navigationItem.searchController?.isActive = true
     }
 
     @objc func selectSection(_ sender: UIKeyCommand) {
