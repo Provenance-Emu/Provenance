@@ -182,7 +182,7 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
     // MARK: Actions
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
-        if let game = game {
+        if let game = game?.validatedGame {
             load(game, sender: sender, core: nil)
         }
     }
@@ -479,7 +479,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     }
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
-        if let game = game {
+        if let game = game?.validatedGame {
             load(game, sender: sender, core: nil)
         }
     }

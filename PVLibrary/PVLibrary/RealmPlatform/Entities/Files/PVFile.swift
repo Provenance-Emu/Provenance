@@ -81,7 +81,7 @@ public extension PVFile {
 
     private(set) var url: URL {
         get {
-            if partialPath.contains("iCloud") {
+            if partialPath.contains("iCloud") || partialPath.contains("private") {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
@@ -155,6 +155,10 @@ public extension PVFile {
 
     var size: UInt64 {
         let fileSize: UInt64
+        guard FileManager.default.fileExists(atPath: url.absoluteString) else {
+            ELOG("No file at path: \(url.absoluteString)")
+            return 0
+        }
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()
