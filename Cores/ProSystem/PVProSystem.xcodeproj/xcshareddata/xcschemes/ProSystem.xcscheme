@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
-               BuildableName = "ProSystem.framework"
-               BlueprintName = "ProSystem-iOS"
-               ReferencedContainer = "container:PVProSystem.xcodeproj">
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport-iOS"
+               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,10 +28,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
-               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+               BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
+               BuildableName = "ProSystem.framework"
+               BlueprintName = "ProSystem-iOS"
+               ReferencedContainer = "container:PVProSystem.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

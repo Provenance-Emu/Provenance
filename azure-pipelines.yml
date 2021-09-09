@@ -66,7 +66,7 @@ jobs:
         exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
         packageApp: false
         destinationPlatformOption: $(destinationPlatformOption)
-        useXcpretty: false
+        useXcpretty: true
         configuration: '$(configuration)'
         exportMethod: '$(ExportMethod)'
         destinationSimulators: 'iPhone 11 Pro'
@@ -110,7 +110,7 @@ jobs:
     submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
   - task: Xcode@5
     inputs:
-      configuration: '$(configuration)'
+      configuration: Debug
       destinationPlatform: 'tvOS'
       destinationSimulators: 'Apple TV 4K'
       xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
@@ -119,11 +119,12 @@ jobs:
       #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
       scheme: 'ProvenanceTV'
-      sdk: 'appletvos'
-      useXcpretty: false
+      sdk: 'appletvsimulator'
+      useXcpretty: true
       xcWorkspacePath: '$(xcWorkspacePath)'
+      clean: false
     displayName: Building project $(scheme) - tvOS
     env:
-      sdk: 'appletvos'  # appletvsimulator, appletvos
+      sdk: 'appletvsimulator'  # appletvsimulator, appletvos
       scheme: 'ProvenanceTV'
       destinationPlatformOption: tvOS

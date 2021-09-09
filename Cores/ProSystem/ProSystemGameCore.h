@@ -26,8 +26,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 __attribute__((visibility("default")))
-@interface PVProSystemGameCore : PVEmulatorCore
+@interface PVProSystemGameCore : PVEmulatorCore<PV7800SystemResponderClient>
 @end

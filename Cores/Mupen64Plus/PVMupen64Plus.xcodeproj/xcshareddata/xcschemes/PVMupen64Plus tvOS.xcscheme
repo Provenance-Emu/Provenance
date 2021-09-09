@@ -3,79 +3,9 @@
    LastUpgradeVersion = "1300"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
+      parallelizeBuildables = "NO"
       buildImplicitDependencies = "NO">
       <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B8A11DED130B00602746"
-               BuildableName = "PVMupen64Plus.framework"
-               BlueprintName = "PVMupen64Plus-tvOS"
-               ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DFB603AF2038B582001E70F1"
-               BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-               BlueprintName = "PVMupen64PlusVideoGlideN64-tvOS"
-               ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B9421DED13A200602746"
-               BuildableName = "PVMupen64PlusRspHLE.framework"
-               BlueprintName = "PVMupen64PlusRspHLE-tvOS"
-               ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B9551DED144100602746"
-               BuildableName = "PVRSPCXD4.framework"
-               BlueprintName = "PVRSPCXD4-tvOS"
-               ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B90A1DED137100602746"
-               BuildableName = "PVMupen64PlusVideoRice.framework"
-               BlueprintName = "PVMupen64PlusVideoRice-tvOS"
-               ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -98,10 +28,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
-               BuildableName = "PVLibrary.framework"
-               BlueprintName = "PVLibrary-tvOS"
-               ReferencedContainer = "container:../../PVLibrary/PVLibrary.xcodeproj">
+               BlueprintIdentifier = "B3B3B8A11DED130B00602746"
+               BuildableName = "PVMupen64Plus.framework"
+               BlueprintName = "PVMupen64Plus-tvOS"
+               ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

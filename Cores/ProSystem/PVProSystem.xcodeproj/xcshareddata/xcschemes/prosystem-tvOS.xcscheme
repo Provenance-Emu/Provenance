@@ -4,7 +4,7 @@
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-tvOS"
-               ReferencedContainer = "container:PVSupport.xcodeproj">
+               BlueprintIdentifier = "B3CA5B2B26E9E40500687B27"
+               BuildableName = "libprosystem-tvOS.a"
+               BlueprintName = "prosystem-tvOS"
+               ReferencedContainer = "container:PVProSystem.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
-            BuildableName = "PVSupport.framework"
-            BlueprintName = "PVSupport-tvOS"
-            ReferencedContainer = "container:PVSupport.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -59,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
-            BuildableName = "PVSupport.framework"
-            BlueprintName = "PVSupport-tvOS"
-            ReferencedContainer = "container:PVSupport.xcodeproj">
+            BlueprintIdentifier = "B3CA5B2B26E9E40500687B27"
+            BuildableName = "libprosystem-tvOS.a"
+            BlueprintName = "prosystem-tvOS"
+            ReferencedContainer = "container:PVProSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
