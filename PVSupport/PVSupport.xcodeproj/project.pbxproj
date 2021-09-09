@@ -18,12 +18,10 @@
 		B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
 		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
 		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
-		B3296E7F26C67DF60088AC32 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E7E26C67DF60088AC32 /* NSLogger */; };
 		B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
 		B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
 		B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */; };
 		B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */; };
-		B3296E8B26C67F810088AC32 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8A26C67F810088AC32 /* NSLogger */; };
 		B3296E9F26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
 		B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
 		B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
@@ -235,7 +233,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3296E8B26C67F810088AC32 /* NSLogger in Frameworks */,
 				B3B492CB26B3A96B000B426B /* Reachability in Frameworks */,
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
@@ -252,7 +249,6 @@
 				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
-				B3296E7F26C67DF60088AC32 /* NSLogger in Frameworks */,
 				B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
@@ -581,7 +577,6 @@
 				B336B8F726B3991500960A81 /* CocoaLumberjackSwift */,
 				B3B492CA26B3A96B000B426B /* Reachability */,
 				B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */,
-				B3296E8A26C67F810088AC32 /* NSLogger */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
@@ -604,7 +599,6 @@
 			packageProductDependencies = (
 				B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */,
 				B336B8F326B398A900960A81 /* Reachability */,
-				B3296E7E26C67DF60088AC32 /* NSLogger */,
 				B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */,
 			);
 			productName = "PVSupportTV Framework";
@@ -629,7 +623,6 @@
 					};
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = V78REPMQFZ;
 						LastSwiftMigration = 0920;
 					};
 					B3C96EBE1D62C5E7003F1E93 = {
@@ -650,7 +643,6 @@
 			packageReferences = (
 				B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
 				B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
-				B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -1005,10 +997,12 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1027,6 +1021,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1142,9 +1137,11 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1163,6 +1160,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -1180,10 +1178,12 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1202,6 +1202,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1333,14 +1334,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/fpillet/NSLogger.git";
-			requirement = {
-				kind = revision;
-				revision = 3408cce1ff97bef20f3dcf367a02019b5c51d198;
-			};
-		};
 		B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
@@ -1360,11 +1353,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B3296E7E26C67DF60088AC32 /* NSLogger */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */;
-			productName = NSLogger;
-		};
 		B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
@@ -1374,11 +1362,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwiftLogBackend;
-		};
-		B3296E8A26C67F810088AC32 /* NSLogger */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3296E7D26C67DF60088AC32 /* XCRemoteSwiftPackageReference "NSLogger" */;
-			productName = NSLogger;
 		};
 		B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */ = {
 			isa = XCSwiftPackageProductDependency;
