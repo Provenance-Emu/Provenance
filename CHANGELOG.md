@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.1] - 2020-09-09
 
+Bug fixes mostly.
+Special thanks to contributors on this release;
+👉 @mrjschulte
+👉 @dnicolson
+👉 @cheif
+
 ### Updated
 
 - #1545 Update Mednafen to 1.27.1 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
