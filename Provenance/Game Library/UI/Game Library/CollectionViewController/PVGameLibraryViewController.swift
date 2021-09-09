@@ -1520,7 +1520,9 @@ extension PVGameLibraryViewController {
     }
 
     @objc func selectSearch(_: UIKeyCommand) {
-        navigationItem.searchController?.isActive = true
+		#if os(iOS)
+		navigationItem.searchController?.isActive = true
+		#endif
     }
 
     @objc func selectSection(_ sender: UIKeyCommand) {
