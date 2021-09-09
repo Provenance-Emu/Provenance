@@ -48,20 +48,6 @@
                ReferencedContainer = "container:../../PVLibrary/PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3447EE8218BEE3F00557ACE"
-               BuildableName = "libreicast-tvOS.a"
-               BlueprintName = "reicast-tvOS"
-               ReferencedContainer = "container:PVReicast.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

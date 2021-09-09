@@ -134,6 +134,7 @@
 		B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
+		B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FFF02C26E9E65800A33143 /* AVFoundation.framework */; };
 		CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
 		CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
 /* End PBXBuildFile section */
@@ -219,6 +220,7 @@
 		B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorCore.m; sourceTree = "<group>"; };
 		B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameControllerUtilities.h; sourceTree = "<group>"; };
 		B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameControllerUtilities.m; sourceTree = "<group>"; };
+		B3FFF02C26E9E65800A33143 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		CF87D332258AB6B300838AF8 /* GameWithCheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWithCheat.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -254,6 +256,7 @@
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
 				B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
+				B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */,
 				B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -300,6 +303,7 @@
 		1ACEA64617F7467D0031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FFF02C26E9E65800A33143 /* AVFoundation.framework */,
 				B3AF6FE0219161C4000FA7F9 /* tvOS */,
 				B3AF6FDB21916177000FA7F9 /* iOS */,
 			);
