@@ -110,7 +110,7 @@ jobs:
     submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
   - task: Xcode@5
     inputs:
-      configuration: '$(configuration)'
+      configuration: Debug
       destinationPlatform: 'tvOS'
       destinationSimulators: 'Apple TV 4K'
       xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
