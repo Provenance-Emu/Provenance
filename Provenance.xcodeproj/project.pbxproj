@@ -147,7 +147,6 @@
 		B316B4E421926D7400693472 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; };
 		B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31A464F26B4C5060084A1D6 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
-		B31A465026B4C5060084A1D6 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
 		B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
 		B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FF2191958D009F4EDC /* CoreGraphics.framework */; };
@@ -392,6 +391,8 @@
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3DDF57326E9BE8100CE47F0 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
+		B3DDF57526E9BE8D00CE47F0 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DDF57426E9BE8D00CE47F0 /* AltKit */; };
 		B3DFEDD32686D653005C6CF2 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFEDB22686D653005C6CF2 /* Array+Extensions.swift */; };
 		B3DFEDD42686D653005C6CF2 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFEDB22686D653005C6CF2 /* Array+Extensions.swift */; };
 		B3DFEDD52686D653005C6CF2 /* AnimationConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFEDB32686D653005C6CF2 /* AnimationConfiguration.swift */; };
@@ -1034,6 +1035,7 @@
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
+				B3DDF57526E9BE8D00CE47F0 /* AltKit in Frameworks */,
 				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
 				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
@@ -1856,6 +1858,7 @@
 			name = ProvenanceTV;
 			packageProductDependencies = (
 				B336B91A26B3A26400960A81 /* QuickTableViewController */,
+				B3DDF57426E9BE8D00CE47F0 /* AltKit */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -2483,7 +2486,7 @@
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
-				B31A465026B4C5060084A1D6 /* PVAltKitService.m in Sources */,
+				B3DDF57326E9BE8100CE47F0 /* PVAltKitService.m in Sources */,
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
@@ -2859,7 +2862,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Debug;
 		};
@@ -2911,7 +2914,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Release;
 		};
@@ -3172,7 +3175,7 @@
 				SDKROOT = appletvos;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Archive;
 		};
@@ -3271,7 +3274,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Archive;
 		};
@@ -3491,7 +3494,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Debug;
 		};
@@ -3532,7 +3535,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Release;
 		};
@@ -3650,6 +3653,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B91726B3A21800960A81 /* XCRemoteSwiftPackageReference "QuickTableViewController" */;
 			productName = QuickTableViewController;
+		};
+		B3DDF57426E9BE8D00CE47F0 /* AltKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */;
+			productName = AltKit;
 		};
 		B3F31D2226B4A4CD003A5E09 /* AltKit */ = {
 			isa = XCSwiftPackageProductDependency;
