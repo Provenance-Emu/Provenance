@@ -122,6 +122,7 @@ jobs:
       sdk: 'appletvos'
       useXcpretty: false
       xcWorkspacePath: '$(xcWorkspacePath)'
+      clean: true
     displayName: Building project $(scheme) - tvOS
     env:
       sdk: 'appletvos'  # appletvsimulator, appletvos
