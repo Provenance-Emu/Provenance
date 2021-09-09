@@ -2300,6 +2300,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2339,6 +2340,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2528,6 +2530,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2566,6 +2569,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2604,6 +2608,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2643,6 +2648,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";

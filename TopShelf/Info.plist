@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ALTDeviceID</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -43,8 +45,6 @@
 		<string>$(PRODUCT_MODULE_NAME).ServiceProvider</string>
 	</dict>
 	<key>Revision</key>
-	<string></string>
-	<key>ALTDeviceID</key>
 	<string></string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
