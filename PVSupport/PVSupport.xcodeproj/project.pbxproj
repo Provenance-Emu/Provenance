@@ -30,7 +30,6 @@
 		B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
 		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
 		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F326B398A900960A81 /* Reachability */; };
-		B336B8F626B3991500960A81 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F526B3991500960A81 /* CocoaLumberjack */; };
 		B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F726B3991500960A81 /* CocoaLumberjackSwift */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
@@ -236,7 +235,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B336B8F626B3991500960A81 /* CocoaLumberjack in Frameworks */,
 				B3296E8B26C67F810088AC32 /* NSLogger in Frameworks */,
 				B3B492CB26B3A96B000B426B /* Reachability in Frameworks */,
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
@@ -580,7 +578,6 @@
 			);
 			name = "PVSupport-tvOS";
 			packageProductDependencies = (
-				B336B8F526B3991500960A81 /* CocoaLumberjack */,
 				B336B8F726B3991500960A81 /* CocoaLumberjackSwift */,
 				B3B492CA26B3A96B000B426B /* Reachability */,
 				B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */,
@@ -970,14 +967,11 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -997,12 +991,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Archive;
 		};
@@ -1013,7 +1005,6 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1025,7 +1016,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVSupport/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1033,6 +1024,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
@@ -1040,7 +1032,6 @@
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Archive;
 		};
@@ -1151,7 +1142,6 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -1162,7 +1152,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVSupport/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1170,6 +1160,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
@@ -1179,7 +1170,6 @@
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -1190,7 +1180,6 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1202,7 +1191,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVSupport/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1210,6 +1199,7 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
@@ -1217,7 +1207,6 @@
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -1228,18 +1217,14 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -1255,14 +1240,12 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -1273,14 +1256,11 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1300,12 +1280,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -1359,8 +1337,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/fpillet/NSLogger.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 3408cce1ff97bef20f3dcf367a02019b5c51d198;
 			};
 		};
 		B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
@@ -1411,11 +1389,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
-		};
-		B336B8F526B3991500960A81 /* CocoaLumberjack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjack;
 		};
 		B336B8F726B3991500960A81 /* CocoaLumberjackSwift */ = {
 			isa = XCSwiftPackageProductDependency;
