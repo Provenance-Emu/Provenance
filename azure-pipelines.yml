@@ -66,7 +66,7 @@ jobs:
         exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
         packageApp: false
         destinationPlatformOption: $(destinationPlatformOption)
-        useXcpretty: false
+        useXcpretty: true
         configuration: '$(configuration)'
         exportMethod: '$(ExportMethod)'
         destinationSimulators: 'iPhone 11 Pro'
@@ -120,7 +120,7 @@ jobs:
       packageApp: false
       scheme: 'ProvenanceTV'
       sdk: 'appletvsimulator'
-      useXcpretty: false
+      useXcpretty: true
       xcWorkspacePath: '$(xcWorkspacePath)'
       clean: true
     displayName: Building project $(scheme) - tvOS
