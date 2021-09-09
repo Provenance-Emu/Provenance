@@ -103,27 +103,27 @@ jobs:
   #     #releaseNotesFile: # Required when releaseNotesOption == File
   #     #isMandatory: false # Optional
   #     #distributionGroupId: # Optional
-# - job: tvOS
-#   steps:
-#   - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-#     clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
-#     submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
-#   - task: Xcode@5
-    # inputs:
-    #   configuration: '$(configuration)'
-    #   destinationPlatform: 'tvOS'
-    #   destinationSimulators: 'Apple TV 4K'
-    #   xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
-    #   xcodeVersion: specifyPath
-    #   #exportMethod: '$(ExportMethod)'
-    #   #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
-    #   packageApp: false
-    #   scheme: 'ProvenanceTV'
-    #   sdk: 'appletvos'
-    #   useXcpretty: false
-    #   xcWorkspacePath: '$(xcWorkspacePath)'
-    # displayName: Building project $(scheme) - tvOS
-    # env:
-      # sdk: 'appletvos'  # appletvsimulator, appletvos
-      # scheme: 'ProvenanceTV'
-      # destinationPlatformOption: tvOS
+- job: tvOS
+  steps:
+  - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+    clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
+    submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules; defau
+  - task: Xcode@5
+    inputs:
+      configuration: '$(configuration)'
+      destinationPlatform: 'tvOS'
+      destinationSimulators: 'Apple TV 4K'
+      xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+      xcodeVersion: specifyPath
+      #exportMethod: '$(ExportMethod)'
+      #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
+      packageApp: false
+      scheme: 'ProvenanceTV'
+      sdk: 'appletvos'
+      useXcpretty: false
+      xcWorkspacePath: '$(xcWorkspacePath)'
+    displayName: Building project $(scheme) - tvOS
+    env:
+      sdk: 'appletvos'  # appletvsimulator, appletvos
+      scheme: 'ProvenanceTV'
+      destinationPlatformOption: tvOS
