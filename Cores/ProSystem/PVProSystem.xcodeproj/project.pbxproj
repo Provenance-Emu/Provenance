@@ -15,7 +15,7 @@
 		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7AE1D6B759C002EE3ED /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
 		B36DE7C31D6B7621002EE3ED /* ProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* ProSystemGameCore.mm */; };
-		B3CA5B0326E9E38200687B27 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B0226E9E38200687B27 /* PVSupport.framework */; };
+		B372637126E9FC7700E95488 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B372637026E9FC7700E95488 /* PVSupport.framework */; };
 		B3CA5B1426E9E3E100687B27 /* Unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599417A6189D0005D7EA /* Unzip.c */; };
 		B3CA5B1526E9E3E100687B27 /* Cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598517A6189D0005D7EA /* Cartridge.cpp */; };
 		B3CA5B1626E9E3E100687B27 /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598917A6189D0005D7EA /* Database.cpp */; };
@@ -172,6 +172,7 @@
 		B36DE7A01D6B7558002EE3ED /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7A21D6B7558002EE3ED /* ProSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProSystem.h; sourceTree = "<group>"; };
 		B36DE7A41D6B7558002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B372637026E9FC7700E95488 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CA5B0226E9E38200687B27 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CA5B0A26E9E3D700687B27 /* libprosystem-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libprosystem-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CA5B2C26E9E40500687B27 /* libprosystem-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libprosystem-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -208,7 +209,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3CA5B0326E9E38200687B27 /* PVSupport.framework in Frameworks */,
+				B372637126E9FC7700E95488 /* PVSupport.framework in Frameworks */,
 				B324C64721921561009F4EDC /* libz.tbd in Frameworks */,
 				B3CA5B4D26E9E42B00687B27 /* libprosystem-tvOS.a in Frameworks */,
 			);
@@ -359,6 +360,7 @@
 		B324C64121921519009F4EDC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B372637026E9FC7700E95488 /* PVSupport.framework */,
 				B3CA5B0226E9E38200687B27 /* PVSupport.framework */,
 				B324C64621921561009F4EDC /* libz.tbd */,
 				B324C64821921577009F4EDC /* libz.tbd */,
