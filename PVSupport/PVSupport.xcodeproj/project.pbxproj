@@ -66,6 +66,8 @@
 		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
+		B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
+		B372638526EA015800E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -579,6 +581,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				B372637526EA013100E95488 /* PBXTargetDependency */,
+				B372637726EA013100E95488 /* PBXTargetDependency */,
+				B372637926EA013100E95488 /* PBXTargetDependency */,
+				B372637B26EA013100E95488 /* PBXTargetDependency */,
 			);
 			name = "PVSupport-tvOS";
 			packageProductDependencies = (
@@ -603,6 +609,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				B372637D26EA013A00E95488 /* PBXTargetDependency */,
+				B372637F26EA013A00E95488 /* PBXTargetDependency */,
+				B372638126EA013A00E95488 /* PBXTargetDependency */,
+				B372638326EA013A00E95488 /* PBXTargetDependency */,
 			);
 			name = "PVSupport-iOS";
 			packageProductDependencies = (
@@ -716,6 +726,7 @@
 				B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
+				B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */,
 				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
 				B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */,
@@ -763,6 +774,7 @@
 				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
+				B372638526EA015800E95488 /* CocoaLumberjack+swift-log.swift in Sources */,
 				B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
 				B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */,
@@ -799,6 +811,38 @@
 			isa = PBXTargetDependency;
 			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
 			targetProxy = B3532B3821A7B736006CDA0F /* PBXContainerItemProxy */;
+		};
+		B372637526EA013100E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372637426EA013100E95488 /* CocoaLumberjack */;
+		};
+		B372637726EA013100E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372637626EA013100E95488 /* CocoaLumberjackSwift */;
+		};
+		B372637926EA013100E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372637826EA013100E95488 /* CocoaLumberjackSwiftLogBackend */;
+		};
+		B372637B26EA013100E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372637A26EA013100E95488 /* Reachability */;
+		};
+		B372637D26EA013A00E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372637C26EA013A00E95488 /* CocoaLumberjack */;
+		};
+		B372637F26EA013A00E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372637E26EA013A00E95488 /* CocoaLumberjackSwift */;
+		};
+		B372638126EA013A00E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372638026EA013A00E95488 /* CocoaLumberjackSwiftLogBackend */;
+		};
+		B372638326EA013A00E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = B372638226EA013A00E95488 /* Reachability */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1393,6 +1437,46 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
+		};
+		B372637426EA013100E95488 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		B372637626EA013100E95488 /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+		B372637826EA013100E95488 /* CocoaLumberjackSwiftLogBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwiftLogBackend;
+		};
+		B372637A26EA013100E95488 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
+		};
+		B372637C26EA013A00E95488 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		B372637E26EA013A00E95488 /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+		B372638026EA013A00E95488 /* CocoaLumberjackSwiftLogBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwiftLogBackend;
+		};
+		B372638226EA013A00E95488 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
 		};
 		B3B492CA26B3A96B000B426B /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;

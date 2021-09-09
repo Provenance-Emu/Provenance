@@ -238,6 +238,8 @@
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
+		B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A026EA04E700E95488 /* ProSystem.framework */; };
+		B37263A226EA04E700E95488 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A026EA04E700E95488 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
 		B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
@@ -571,6 +573,7 @@
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
+				B37263A226EA04E700E95488 /* ProSystem.framework in Embed Frameworks */,
 				B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
@@ -786,6 +789,7 @@
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
+		B37263A026EA04E700E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B378224921D329EC0077E86F /* SettingsRowSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSwitch.swift; sourceTree = "<group>"; };
 		B378224D21D32A360077E86F /* SegueNavigationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueNavigationRow.swift; sourceTree = "<group>"; };
 		B378225021D32A6B0077E86F /* SettingsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableView.swift; sourceTree = "<group>"; };
@@ -1022,6 +1026,7 @@
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
+				B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
@@ -1164,6 +1169,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B37263A026EA04E700E95488 /* ProSystem.framework */,
 				C13CC82823CABE2800463EDD /* Photos.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
