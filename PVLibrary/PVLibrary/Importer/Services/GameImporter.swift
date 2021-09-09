@@ -278,7 +278,7 @@ public final class GameImporter {
         return false
     }
 
-    public func startImport(forPaths paths: [URL]) {
+    public func startImport(forPaths paths: [URL] = [PVEmulatorConfiguration.Paths.romsImportPath]) {
         // Pre-sort
         let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         let scanOperation = BlockOperation {
