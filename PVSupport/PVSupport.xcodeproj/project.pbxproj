@@ -109,6 +109,8 @@
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3CA5B5126E9E4D500687B27 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */; };
+		B3CA5B5326E9E4DC00687B27 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */; };
 		B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
 		B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
 		B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
@@ -235,6 +237,7 @@
 			files = (
 				B3B492CB26B3A96B000B426B /* Reachability in Frameworks */,
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
+				B3CA5B5126E9E4D500687B27 /* CocoaLumberjack in Frameworks */,
 				B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
@@ -246,6 +249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CA5B5326E9E4DC00687B27 /* CocoaLumberjack in Frameworks */,
 				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
@@ -577,6 +581,7 @@
 				B336B8F726B3991500960A81 /* CocoaLumberjackSwift */,
 				B3B492CA26B3A96B000B426B /* Reachability */,
 				B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */,
+				B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
@@ -600,6 +605,7 @@
 				B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */,
 				B336B8F326B398A900960A81 /* Reachability */,
 				B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */,
+				B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
@@ -1388,6 +1394,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
+		};
+		B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjack;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
