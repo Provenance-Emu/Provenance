@@ -119,12 +119,12 @@ jobs:
       #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
       scheme: 'ProvenanceTV'
-      sdk: 'appletvos'
+      sdk: 'appletvsimulator'
       useXcpretty: false
       xcWorkspacePath: '$(xcWorkspacePath)'
       clean: true
     displayName: Building project $(scheme) - tvOS
     env:
-      sdk: 'appletvos'  # appletvsimulator, appletvos
+      sdk: 'appletvsimulator'  # appletvsimulator, appletvos
       scheme: 'ProvenanceTV'
       destinationPlatformOption: tvOS
