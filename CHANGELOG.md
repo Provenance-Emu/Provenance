@@ -5,16 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.1] - 2020-09-09
+
+Bug fixes mostly.
+Special thanks to contributors on this release;
+👉 @mrjschulte
+👉 @dnicolson
+👉 @cheif
 
 ### Updated
 
 - #1545 Update Mednafen to 1.27.1 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
+- #1587 Clarify Refresh Game Library Ui Dialog text
+- TGBDual updated to latest upstream 1e0c4f931d8c5e859e6d3255d67247d7a2987434
 
 ### Fixed
 
 - #1555 VirtualBoy crash on open
 - #1559 Mednafen build error on tvOS
+- #1583 NSLogger build issues on tvOS
+- #1584 TvOS Release does NOT build due to 'searchController' is unavailable in tvOS
+- #1585 Module 'AltKit' not found
+- #1550 Provenance for Apple TV adds "private" part to "partialPath" in PVFile
+- #1551 #1575 Fix missing roms on rescan
+- #1556 Fix VirtualBoy Crash
+- #1568 On screen buttons do not work with mednafen core
 
 ## [2.0.0] - 2020-08-02
 

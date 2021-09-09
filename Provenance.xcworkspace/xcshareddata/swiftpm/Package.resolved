@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "NSLogger",
-        "repositoryURL": "https://github.com/fpillet/NSLogger.git",
-        "state": {
-          "branch": "master",
-          "revision": "3408cce1ff97bef20f3dcf367a02019b5c51d198",
-          "version": null
-        }
-      },
-      {
         "package": "QuickTableViewController",
         "repositoryURL": "https://github.com/bcylin/QuickTableViewController.git",
         "state": {
@@ -38,7 +29,7 @@
         }
       },
       {
-        "package": "Reachability",
+        "package": "Reachability.swift",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
         "state": {
           "branch": null,
@@ -47,7 +38,7 @@
         }
       },
       {
-        "package": "Realm",
+        "package": "realm-cocoa",
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": null,
@@ -56,7 +47,7 @@
         }
       },
       {
-        "package": "RealmDatabase",
+        "package": "realm-core",
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,

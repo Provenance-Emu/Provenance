@@ -20,10 +20,11 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
         return fileLogger
     }()
 
+    #if canImport(NSLogger)
     private var nsLogger: JMLumberjackNSLogger = {
         return JMLumberjackNSLogger()
     }()
-
+    #endif
     func enableExtraLogging() {
     }
 
@@ -41,7 +42,9 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
 #endif
 
         DDLog.add(fileLogger, with: .warning)
+#if canImport(NSLogger)
         DDLog.add(nsLogger, with: .debug)
+#endif
     }
 
     public func logFilePaths() -> [String]? {

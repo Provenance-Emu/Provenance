@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ALTDeviceID</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -114,8 +116,14 @@
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Provenance uses Bluetooth to support game controllers.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_altserver._tcp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -363,13 +371,5 @@
 			<string>com.provenance.savestate</string>
 		</dict>
 	</array>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_altserver._tcp</string>
-	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find and communicate with AltServer.</string>
-	<key>ALTDeviceID</key>
-	<string></string>
 </dict>
 </plist>

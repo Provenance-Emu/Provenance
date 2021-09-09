@@ -3,9 +3,51 @@
    LastUpgradeVersion = "1300"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
+      parallelizeBuildables = "NO"
       buildImplicitDependencies = "NO">
       <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport-tvOS"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
+               BuildableName = "PVLibrary.framework"
+               BlueprintName = "PVLibrary-tvOS"
+               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B372638A26EA035900E95488"
+               BuildableName = "ProSystem_tvOS.framework"
+               BlueprintName = "ProSystem-tvOS"
+               ReferencedContainer = "container:Cores/ProSystem/PVProSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -46,34 +88,6 @@
                BuildableName = "PVFCEU.framework"
                BlueprintName = "PVFCEU-tvOS"
                ReferencedContainer = "container:Cores/FCEU/PVFCEU.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3FA5D6E1D6BAD4100060D71"
-               BuildableName = "ProSystem.framework"
-               BlueprintName = "ProSystem-tvOS"
-               ReferencedContainer = "container:Cores/ProSystem/PVProSystem.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DFB603AF2038B582001E70F1"
-               BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-               BlueprintName = "PVMupen64PlusVideoGlideN64-tvOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -154,20 +168,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B9421DED13A200602746"
-               BuildableName = "PVMupen64PlusRspHLE.framework"
-               BlueprintName = "PVMupen64PlusRspHLE-tvOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B3B8A11DED130B00602746"
                BuildableName = "PVMupen64Plus.framework"
                BlueprintName = "PVMupen64Plus-tvOS"
@@ -196,38 +196,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B9551DED144100602746"
-               BuildableName = "PVRSPCXD4.framework"
-               BlueprintName = "PVRSPCXD4-tvOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
                BuildableName = "PVStella.framework"
                BlueprintName = "PVStella-tvOS"
                ReferencedContainer = "container:Cores/Stella/PVStella.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-tvOS"
-               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -270,34 +242,6 @@
                BuildableName = "PVPokeMini.framework"
                BlueprintName = "PVPokeMini-tvOS"
                ReferencedContainer = "container:Cores/PokeMini/PVPokeMini.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C04A8B21077B3100E7AF79"
-               BuildableName = "PVLibrary.framework"
-               BlueprintName = "PVLibrary-tvOS"
-               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B90A1DED137100602746"
-               BuildableName = "PVMupen64PlusVideoRice.framework"
-               BlueprintName = "PVMupen64PlusVideoRice-tvOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

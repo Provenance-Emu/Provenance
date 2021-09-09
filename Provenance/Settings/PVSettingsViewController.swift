@@ -468,7 +468,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func refreshGameLibraryAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to reload the artwork and title information for your entire library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork or update the information.\n\n You will need to completely relaunch the App to start the library rebuild process.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
             NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
         }))
