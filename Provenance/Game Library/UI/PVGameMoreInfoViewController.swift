@@ -182,7 +182,7 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
     // MARK: Actions
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
-        if let game = game {
+        if let game = game?.validatedGame {
             load(game, sender: sender, core: nil)
         }
     }
@@ -190,17 +190,12 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
     @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
         #if os(iOS)
             if let urlString = game?.referenceURL, let url = URL(string: urlString) {
-                if #available(iOS 11.0, *) {
-                    let config = SFSafariViewController.Configuration()
-                    config.barCollapsingEnabled = true
-                    config.entersReaderIfAvailable = true
+                let config = SFSafariViewController.Configuration()
+                config.barCollapsingEnabled = true
+                config.entersReaderIfAvailable = true
 
-                    let webVC = SFSafariViewController(url: url, configuration: config)
-                    present(webVC, animated: true, completion: nil)
-                } else {
-                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-                    present(webVC, animated: true, completion: nil)
-                }
+                let webVC = SFSafariViewController(url: url, configuration: config)
+                present(webVC, animated: true, completion: nil)
             }
         #endif
     }
@@ -458,17 +453,12 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 
         @IBAction func moreInfoButtonClicked(_: UIBarButtonItem) {
             if let urlString = game?.referenceURL, let url = URL(string: urlString) {
-                if #available(iOS 11.0, *) {
-                    let config = SFSafariViewController.Configuration()
-                    config.barCollapsingEnabled = true
-                    config.entersReaderIfAvailable = true
+                let config = SFSafariViewController.Configuration()
+                config.barCollapsingEnabled = true
+                config.entersReaderIfAvailable = true
 
-                    let webVC = SFSafariViewController(url: url, configuration: config)
-                    present(webVC, animated: true, completion: nil)
-                } else {
-                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-                    present(webVC, animated: true, completion: nil)
-                }
+                let webVC = SFSafariViewController(url: url, configuration: config)
+                present(webVC, animated: true, completion: nil)
             }
         }
     #endif
@@ -489,7 +479,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
     }
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
-        if let game = game {
+        if let game = game?.validatedGame {
             load(game, sender: sender, core: nil)
         }
     }

@@ -102,6 +102,7 @@ NSMutableDictionary *cheatList;
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
 int SNESMap[PVSNESButtonCount];
+int NESMap[PVNESButtonCount];
 int PCEMap[PVPCEButtonCount];
 int PCFXMap[PVPCFXButtonCount];
 
@@ -111,7 +112,7 @@ int PCFXMap[PVPCFXButtonCount];
 const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 };
 
 // ↑, ↓, ←, →, A, B, Start, Select
-const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
+//const int NESMap[PVNESButtonCount] = { 4, 5, 6, 7, 0, 1, 3, 2};
 
 // Select, [Triangle], [X], Start, R1, R2, left stick u, left stick left,
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
@@ -339,6 +340,18 @@ static void mednafen_init(MednafenGameCore* current)
         
         SNESMap[PVSNESButtonSelect]       = 2;
         SNESMap[PVSNESButtonStart]        = 3;
+        
+        // NES Map
+        NESMap[PVNESButtonUp]           = 4;
+        NESMap[PVNESButtonDown]         = 5;
+        NESMap[PVNESButtonLeft]         = 6;
+        NESMap[PVNESButtonRight]        = 7;
+        
+        NESMap[PVNESButtonA]            = 0;
+        NESMap[PVNESButtonB]            = 1;
+        
+        NESMap[PVNESButtonSelect]       = 2;
+        NESMap[PVNESButtonStart]        = 3;
 
 		// PCE Map
         PCEMap[PVPCEButtonUp]       = 4;
@@ -651,6 +664,11 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
+    else if (self.systemType == MednaSystemVirtualBoy || self.systemType == MednaSystemSNES || self.systemType == MednaSystemNES)
+    {
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
@@ -744,6 +762,7 @@ static void emulation_run(BOOL skipFrame) {
     else
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[0]);
     }
 
     Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API

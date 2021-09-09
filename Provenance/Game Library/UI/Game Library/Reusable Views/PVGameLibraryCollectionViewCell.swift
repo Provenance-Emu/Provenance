@@ -204,7 +204,7 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
     return NSAttributedString(attributedString: result)
 }
 
-protocol GameLibraryCollectionViewDelegate: class {
+protocol GameLibraryCollectionViewDelegate: AnyObject {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
 // MARK: Corner Badge Glyph
@@ -447,7 +447,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     #endif
     var game: PVGame? {
         didSet {
-            if let game = game {
+            if let game = game?.validatedGame {
                 self.setup(with: game)
             } else {
                 self.discCountContainerView?.isHidden = true
@@ -464,7 +464,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         let originalArtworkURL: String = game.originalArtworkURL
         if PVSettingsModel.shared.showGameTitles {
             titleLabel.text = game.title
-        }
+        } else { titleLabel.text = nil }
 
         // TODO: May be renabled later
         let placeholderImageText: String = game.title
@@ -749,26 +749,26 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #endif
 
         #if os(tvOS)
-            if #available(tvOS 11, *) {
-                topRightCornerBadgeView?.removeFromSuperview()
-                discCountContainerView?.removeFromSuperview()
-                imageView.overlayContentView.addSubview(topRightCornerBadgeView!)
-                imageView.overlayContentView.addSubview(discCountContainerView!)
+        if let topRightCornerBadgeView = topRightCornerBadgeView {
+            topRightCornerBadgeView.removeFromSuperview()
+            topRightCornerBadgeView.constraints.forEach { topRightCornerBadgeView.removeConstraint($0) }
+            imageView.overlayContentView.addSubview(topRightCornerBadgeView)
+            topRightCornerBadgeView.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
+            topRightCornerBadgeView.topAnchor.constraint(equalTo: imageView.overlayContentView.topAnchor).isActive = true
+            topRightCornerBadgeView.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+            topRightCornerBadgeView.heightAnchor.constraint(equalTo: topRightCornerBadgeView.widthAnchor).isActive = true
+        }
+        if let discCountContainerView = discCountContainerView {
+            discCountContainerView.removeFromSuperview()
+            discCountContainerView.constraints.forEach { discCountContainerView.removeConstraint($0) }
+            imageView.overlayContentView.addSubview(discCountContainerView)
 
-                discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
-                discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.overlayContentView.bottomAnchor).isActive = true
-                discCountContainerView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
-
-                topRightCornerBadgeView?.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
-                topRightCornerBadgeView?.topAnchor.constraint(equalTo: imageView.overlayContentView.topAnchor).isActive = true
-                topRightCornerBadgeView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
-            }
+            discCountContainerView.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
+            discCountContainerView.bottomAnchor.constraint(equalTo: imageView.overlayContentView.bottomAnchor).isActive = true
+            discCountContainerView.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+            discCountContainerView.heightAnchor.constraint(equalTo: discCountContainerView.widthAnchor).isActive = true
+        }
         #endif
-        //		contentView.layer.borderWidth = 1.0
-        //		contentView.layer.borderColor = UIColor.white.cgColor
-//
-        //		imageView.layer.borderWidth = 1.0
-        //		imageView.layer.borderColor = UIColor.green.cgColor
     }
 
     func image(withText text: String) -> UIImage? {
@@ -886,7 +886,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        if let game = game {
+        if let game = game?.validatedGame {
             let ratio = game.boxartAspectRatio.rawValue
             var imageHeight = size.height
             if PVSettingsModel.shared.showGameTitles {

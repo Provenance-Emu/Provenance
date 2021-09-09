@@ -1,9 +1,9 @@
-#: src/ss/db.cpp:255 src/ss/db.cpp:261 src/ss/db.cpp:278
+#: src/ss/db.cpp:267 src/ss/db.cpp:287
 msgid ""
 msgstr ""
 "Project-Id-Version: mednafen\n"
 "Report-Msgid-Bugs-To: http://forum.fobby.net/\n"
-"POT-Creation-Date: 2020-02-25 15:41-0800\n"
+"POT-Creation-Date: 2021-05-26 17:04-0700\n"
 "PO-Revision-Date: 2008-06-20 05:19+0800\n"
 "Last-Translator: Anton Shestakov <engored@ya.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -17,41 +17,14 @@ msgstr ""
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: src/Time.cpp:53 src/Time.cpp:70 src/Time.cpp:78 src/Time.cpp:99
-#: src/Time.cpp:109 src/Time.cpp:117 src/Time.cpp:140 src/Time.cpp:150
-#: src/Time.cpp:158 src/Time.cpp:211 src/mthreading/MThreading_Win32.cpp:160
-#: src/mthreading/MThreading_Win32.cpp:259
-#: src/mthreading/MThreading_Win32.cpp:380
-#: src/mthreading/MThreading_POSIX.cpp:154
-#: src/mthreading/MThreading_POSIX.cpp:185
-#: src/mthreading/MThreading_POSIX.cpp:234
-#: src/mthreading/MThreading_POSIX.cpp:261
-#: src/mthreading/MThreading_POSIX.cpp:291
-#: src/mthreading/MThreading_POSIX.cpp:300
-#: src/mthreading/MThreading_POSIX.cpp:309
-#: src/mthreading/MThreading_POSIX.cpp:320
-#: src/mthreading/MThreading_POSIX.cpp:327
-#: src/mthreading/MThreading_POSIX.cpp:348
-#: src/mthreading/MThreading_POSIX.cpp:389
-#: src/mthreading/MThreading_POSIX.cpp:399
-#: src/mthreading/MThreading_POSIX.cpp:409
-#: src/mthreading/MThreading_POSIX.cpp:432
-#: src/mthreading/MThreading_POSIX.cpp:533
-#: src/mthreading/MThreading_POSIX.cpp:545
-#: src/mthreading/MThreading_POSIX.cpp:644
-#: src/mthreading/MThreading_POSIX.cpp:651
-#, c-format
-msgid "%s failed: %s"
-msgstr ""
-
 #: src/NativeVFS.cpp:72 src/NativeVFS.cpp:79 src/NativeVFS.cpp:95
 #, c-format
 msgid "Error creating directory \"%s\": %s"
 msgstr ""
 
 #: src/NativeVFS.cpp:72 src/NativeVFS.cpp:110 src/NativeVFS.cpp:141
-#: src/NativeVFS.cpp:180 src/NativeVFS.cpp:224 src/FileStream.cpp:145
-#: src/compress/GZFileStream.cpp:77
+#: src/NativeVFS.cpp:180 src/NativeVFS.cpp:224 src/FileStream.cpp:122
+#: src/compress/GZFileStream.cpp:80
 msgid "Null character in path."
 msgstr ""
 
@@ -181,21 +154,21 @@ msgstr ""
 msgid "EA 4-Way Play"
 msgstr ""
 
-#: src/md/system.cpp:425 src/gba/GBA.cpp:724 src/gb/gb.cpp:2113
-#: src/lynx/system.cpp:224
+#: src/md/system.cpp:425 src/gba/GBA.cpp:738 src/gb/gb.cpp:2157
+#: src/lynx/system.cpp:231
 #, c-format
 msgid "ROM:       %dKiB\n"
 msgstr "ROM:       %d КиБ\n"
 
-#: src/md/system.cpp:426 src/sms/cart.cpp:148 src/gba/GBA.cpp:725
-#: src/gb/gb.cpp:2114 src/pce/huc.cpp:322
+#: src/md/system.cpp:426 src/sms/cart.cpp:148 src/gba/GBA.cpp:739
+#: src/gb/gb.cpp:2158 src/pce/huc.cpp:322
 #, fuzzy, c-format
 msgid "ROM CRC32: 0x%08x\n"
 msgstr "ROM CRC32: 0x%08lx\n"
 
-#: src/md/system.cpp:427 src/ngp/neopop.cpp:200 src/sms/cart.cpp:149
-#: src/gba/GBA.cpp:726 src/wswan/main.cpp:318 src/gb/gb.cpp:2115
-#: src/vb/vb.cpp:635 src/lynx/system.cpp:225 src/pce_fast/huc.cpp:188
+#: src/md/system.cpp:427 src/ngp/neopop.cpp:198 src/sms/cart.cpp:149
+#: src/gba/GBA.cpp:740 src/wswan/main.cpp:318 src/gb/gb.cpp:2159
+#: src/vb/vb.cpp:635 src/lynx/system.cpp:232 src/pce_fast/huc.cpp:188
 #: src/pce/huc.cpp:323
 #, c-format
 msgid "ROM MD5:   0x%s\n"
@@ -359,7 +332,7 @@ msgstr ""
 msgid "Region reported to the game."
 msgstr ""
 
-#: src/md/system.cpp:755 src/pce_fast/pce.cpp:697 src/pce/pce.cpp:1106
+#: src/md/system.cpp:755 src/pce_fast/pce.cpp:649 src/pce/pce.cpp:1104
 msgid "Path to the CD BIOS"
 msgstr "Путь к CD BIOS"
 
@@ -367,8 +340,8 @@ msgstr "Путь к CD BIOS"
 msgid "SegaCD/MegaCD emulation is currently nonfunctional."
 msgstr ""
 
-#: src/md/system.cpp:757 src/nes/nes.cpp:488 src/snes/interface.cpp:1325
-#: src/pce_fast/pce.cpp:686
+#: src/md/system.cpp:757 src/nes/nes.cpp:462 src/snes/interface.cpp:1321
+#: src/pce_fast/pce.cpp:638
 msgid "Correct the aspect ratio."
 msgstr ""
 
@@ -387,8 +360,8 @@ msgstr ""
 msgid "Enable multitap(s)."
 msgstr ""
 
-#: src/md/system.cpp:764 src/ss/ss.cpp:2139 src/snes/interface.cpp:1323
-#: src/psx/psx.cpp:2243 src/pce/pce.cpp:1091
+#: src/md/system.cpp:764 src/ss/ss.cpp:2140 src/snes/interface.cpp:1319
+#: src/psx/psx.cpp:2242 src/pce/pce.cpp:1089
 msgid "Emulated mouse sensitivity."
 msgstr ""
 
@@ -404,106 +377,128 @@ msgstr ""
 msgid "Multi Game Doctor format ROM Image"
 msgstr ""
 
-#: src/mthreading/MThreading_Win32.cpp:431
-#: src/mthreading/MThreading_Win32.cpp:436
-#: src/mthreading/MThreading_POSIX.cpp:268
-#: src/mthreading/MThreading_POSIX.cpp:278
+#: src/mthreading/MThreading_Win32.cpp:161
+#: src/mthreading/MThreading_Win32.cpp:260
+#: src/mthreading/MThreading_Win32.cpp:381
+#: src/mthreading/MThreading_POSIX.cpp:158
+#: src/mthreading/MThreading_POSIX.cpp:189
+#: src/mthreading/MThreading_POSIX.cpp:238
+#: src/mthreading/MThreading_POSIX.cpp:265
+#: src/mthreading/MThreading_POSIX.cpp:295
+#: src/mthreading/MThreading_POSIX.cpp:304
+#: src/mthreading/MThreading_POSIX.cpp:313
+#: src/mthreading/MThreading_POSIX.cpp:324
+#: src/mthreading/MThreading_POSIX.cpp:331
+#: src/mthreading/MThreading_POSIX.cpp:352
+#: src/mthreading/MThreading_POSIX.cpp:393
+#: src/mthreading/MThreading_POSIX.cpp:403
+#: src/mthreading/MThreading_POSIX.cpp:413
+#: src/mthreading/MThreading_POSIX.cpp:436
+#: src/mthreading/MThreading_POSIX.cpp:537
+#: src/mthreading/MThreading_POSIX.cpp:549
+#: src/mthreading/MThreading_POSIX.cpp:712
+#: src/mthreading/MThreading_POSIX.cpp:719 src/time/Time_POSIX.cpp:41
+#: src/time/Time_POSIX.cpp:56 src/time/Time_POSIX.cpp:75
+#: src/time/Time_POSIX.cpp:83 src/time/Time_POSIX.cpp:104
+#: src/time/Time_POSIX.cpp:112 src/time/Time_POSIX.cpp:146
+#, c-format
+msgid "%s failed: %s"
+msgstr ""
+
+#: src/mthreading/MThreading_Win32.cpp:432
+#: src/mthreading/MThreading_Win32.cpp:437
+#: src/mthreading/MThreading_POSIX.cpp:272
+#: src/mthreading/MThreading_POSIX.cpp:282
 #, c-format
 msgid "Setting affinity to 0x%016llx failed: %s"
 msgstr ""
 
-#: src/mthreading/MThreading_POSIX.cpp:191
+#: src/mthreading/MThreading_POSIX.cpp:195
 msgid "Thread being joined exited improperly."
 msgstr ""
 
-#: src/mthreading/MThreading_POSIX.cpp:254
+#: src/mthreading/MThreading_POSIX.cpp:258
 msgid "Affinity mask specifies CPU beyond capacity of the CPU set."
 msgstr ""
 
-#: src/mthreading/MThreading_POSIX.cpp:278
+#: src/mthreading/MThreading_POSIX.cpp:282
 msgid "pthread_setaffinity_np() not available."
 msgstr ""
 
-#: src/FileStream.cpp:100
+#: src/FileStream.cpp:76
+msgid "FileStream MODE_READ incompatible with file locking."
+msgstr ""
+
+#: src/FileStream.cpp:81
 msgid "Unknown FileStream mode."
 msgstr ""
 
-#: src/FileStream.cpp:145 src/FileStream.cpp:154 src/FileStream.cpp:166
-#: src/FileStream.cpp:176 src/compress/GZFileStream.cpp:77
-#: src/compress/GZFileStream.cpp:85 src/compress/GZFileStream.cpp:97
-#: src/compress/GZFileStream.cpp:110
+#: src/FileStream.cpp:122 src/FileStream.cpp:130 src/FileStream.cpp:142
+#: src/compress/GZFileStream.cpp:80 src/compress/GZFileStream.cpp:88
+#: src/compress/GZFileStream.cpp:100 src/compress/GZFileStream.cpp:113
 #, c-format
 msgid "Error opening file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:154 src/compress/GZFileStream.cpp:85
+#: src/FileStream.cpp:130 src/compress/GZFileStream.cpp:88
 msgid "Invalid UTF-8 in path."
 msgstr ""
 
-#: src/FileStream.cpp:213
+#: src/FileStream.cpp:180
 #, c-format
 msgid ""
 "FileStream::close() not explicitly called for file \"%s\" opened for "
 "writing!\n"
 msgstr ""
 
-#: src/FileStream.cpp:324 src/FileStream.cpp:327
-#: src/compress/GZFileStream.cpp:158 src/compress/GZFileStream.cpp:164
-#: src/compress/GZFileStream.cpp:189 src/compress/GZFileStream.h:70
-#: src/FileStream.h:95
+#: src/FileStream.cpp:308 src/FileStream.cpp:468
+#: src/compress/GZFileStream.cpp:161 src/compress/GZFileStream.cpp:167
+#: src/compress/GZFileStream.cpp:192 src/compress/GZFileStream.h:70
 #, c-format
 msgid "Error reading from opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:327 src/MemoryStream.cpp:224 src/MemoryStream.cpp:232
-#: src/nes/unif.cpp:473 src/ExtMemStream.cpp:81 src/ExtMemStream.cpp:89
-#: src/compress/GZFileStream.cpp:164 src/compress/ZIPReader.cpp:85
-#: src/compress/ZLInflateFilter.cpp:174
-msgid "Unexpected EOF"
-msgstr ""
-
-#: src/FileStream.cpp:344 src/compress/GZFileStream.cpp:222
+#: src/FileStream.cpp:341 src/FileStream.cpp:365 src/FileStream.cpp:377
+#: src/FileStream.cpp:404 src/compress/GZFileStream.cpp:225
 #, c-format
 msgid "Error writing to opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:357 src/FileStream.cpp:369 src/FileStream.cpp:377
-#: src/FileStream.cpp:386 src/FileStream.cpp:394 src/FileStream.cpp:401
+#: src/FileStream.cpp:468 src/MemoryStream.cpp:224 src/MemoryStream.cpp:232
+#: src/nes/unif.cpp:473 src/ExtMemStream.cpp:81 src/ExtMemStream.cpp:89
+#: src/compress/GZFileStream.cpp:167 src/compress/ZIPReader.cpp:85
+#: src/compress/ZLInflateFilter.cpp:174
+msgid "Unexpected EOF"
+msgstr ""
+
+#: src/FileStream.cpp:498 src/FileStream.cpp:512 src/FileStream.cpp:519
+#: src/FileStream.cpp:529 src/FileStream.cpp:539 src/FileStream.cpp:546
 #, c-format
 msgid "Error truncating opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:412 src/compress/GZFileStream.cpp:242
+#: src/FileStream.cpp:566 src/FileStream.cpp:600
+#: src/compress/GZFileStream.cpp:245
 #, c-format
 msgid "Error seeking in opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:423 src/compress/GZFileStream.cpp:206
-#, c-format
-msgid "Error flushing to opened file \"%s\": %s"
-msgstr ""
-
-#: src/FileStream.cpp:435 src/compress/GZFileStream.cpp:280
-#, c-format
-msgid "Error getting position in opened file \"%s\": %s"
-msgstr ""
-
-#: src/FileStream.cpp:450 src/FileStream.cpp:457 src/FileStream.cpp:468
+#: src/FileStream.cpp:637 src/FileStream.cpp:648
 #, c-format
 msgid "Error getting the size of opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:490 src/FileStream.cpp:497
+#: src/FileStream.cpp:680 src/FileStream.cpp:688
 #, c-format
 msgid "Error locking opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:514 src/FileStream.cpp:521
+#: src/FileStream.cpp:705 src/FileStream.cpp:712
 #, c-format
 msgid "Error unlocking opened file \"%s\": %s"
 msgstr ""
 
-#: src/FileStream.cpp:566
+#: src/FileStream.cpp:761
 #, c-format
 msgid "Error closing opened file \"%s\": %s"
 msgstr ""
@@ -563,6 +558,12 @@ msgstr ""
 #: src/drivers/Joystick.cpp:231
 #, c-format
 msgid "ID: 0x%016llx%016llx - %s\n"
+msgstr ""
+
+#: src/drivers/Joystick.cpp:304
+#, c-format
+msgid ""
+"Dual-polarity analog button detected: joystick 0x%016llx%016llx abs_%u%s\n"
 msgstr ""
 
 #: src/drivers/help.cpp:31
@@ -663,46 +664,50 @@ msgstr "-выбор фильма-"
 msgid "-select state-"
 msgstr "-выбор состояния-"
 
-#: src/drivers/opengl.cpp:613
+#: src/drivers/opengl.cpp:587
+msgid "UNKNOWN"
+msgstr ""
+
+#: src/drivers/opengl.cpp:652
 #, c-format
 msgid "Error getting proc address for: %s\n"
 msgstr "Ошибка при получении адреса процедуры: %s\n"
 
-#: src/drivers/opengl.cpp:671
+#: src/drivers/opengl.cpp:710
 #, c-format
 msgid "OpenGL Implementation: %s %s %s\n"
 msgstr "Реализация OpenGL: %s %s %s\n"
 
-#: src/drivers/opengl.cpp:675
+#: src/drivers/opengl.cpp:714
 msgid "Checking extensions:\n"
 msgstr "Проверка расширений:\n"
 
-#: src/drivers/opengl.cpp:683
+#: src/drivers/opengl.cpp:722
 msgid "GL_ARB_texture_non_power_of_two found.\n"
 msgstr "Обнаружено GL_ARB_texture_non_power_of_two.\n"
 
-#: src/drivers/opengl.cpp:689
+#: src/drivers/opengl.cpp:728
 msgid "GL_ARB_sync found.\n"
 msgstr ""
 
-#: src/drivers/opengl.cpp:746
+#: src/drivers/opengl.cpp:785
 msgid "Using non-power-of-2 sized textures.\n"
 msgstr "Используются текстуры с размерами «non-power-of-2».\n"
 
-#: src/drivers/opengl.cpp:748
+#: src/drivers/opengl.cpp:787
 msgid "Using power-of-2 sized textures.\n"
 msgstr "Используются текстуры с размерами «power-of-2».\n"
 
-#: src/drivers/opengl.cpp:839
+#: src/drivers/opengl.cpp:878
 msgid "Checking maximum texture size...\n"
 msgstr "Проверка максимального размера текстур...\n"
 
-#: src/drivers/opengl.cpp:857
+#: src/drivers/opengl.cpp:896
 #, c-format
 msgid "Apparently it is at least: %d x %d\n"
 msgstr "Как минимум: %d x %d\n"
 
-#: src/drivers/opengl.cpp:861
+#: src/drivers/opengl.cpp:900
 msgid ""
 "Warning:  Maximum texture size is reported as being less than 256, but we "
 "can't handle that.\n"
@@ -710,12 +715,19 @@ msgstr ""
 "Предупреждение:  Максимальный размер текстуры — менее 256, mednafen не "
 "рассчитан на работу с ними.\n"
 
-#: src/drivers/opengl.cpp:885
-msgid "Using GL_RGBA, GL_UNSIGNED_BYTE for texture source data.\n"
+#: src/drivers/opengl.cpp:958
+#, c-format
+msgid "Using %s - %s, %s for texture source data.\n"
 msgstr ""
 
-#: src/drivers/opengl.cpp:895
-msgid "Using GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for texture source data.\n"
+#: src/drivers/opengl.cpp:961
+#, c-format
+msgid "Using %s - %s, %s for OSD texture source data.\n"
+msgstr ""
+
+#: src/drivers/opengl.cpp:962
+#, c-format
+msgid "Using %s - %s, %s for emulated video texture source data.\n"
 msgstr ""
 
 #: src/drivers/shader.cpp:34
@@ -723,19 +735,19 @@ msgstr ""
 msgid "OpenGL Error 0x%04x during \"%s\"."
 msgstr ""
 
-#: src/drivers/main.cpp:83
+#: src/drivers/main.cpp:85
 msgid "Selects the default sound driver."
 msgstr ""
 
-#: src/drivers/main.cpp:85
+#: src/drivers/main.cpp:87
 msgid "The default for Linux(if available)."
 msgstr ""
 
-#: src/drivers/main.cpp:86
+#: src/drivers/main.cpp:88
 msgid "The default for OpenBSD."
 msgstr ""
 
-#: src/drivers/main.cpp:87
+#: src/drivers/main.cpp:89
 msgid ""
 "The default for non-Linux UN*X/POSIX/BSD(other than OpenBSD) systems, or "
 "anywhere ALSA is unavailable. If the ALSA driver gives you problems, you can "
@@ -753,24 +765,24 @@ msgid ""
 "flaw/limitation/choice in the OSS API and OSS implementation."
 msgstr ""
 
-#: src/drivers/main.cpp:89
+#: src/drivers/main.cpp:91
 msgid ""
 "The default when it's available(running on Microsoft Windows Vista and "
 "newer)."
 msgstr ""
 
-#: src/drivers/main.cpp:91
+#: src/drivers/main.cpp:93
 msgid "The default for Microsoft Windows XP and older."
 msgstr ""
 
-#: src/drivers/main.cpp:93
+#: src/drivers/main.cpp:95
 msgid ""
 "Experimental exclusive-mode WASAPI driver, usable on Windows Vista and "
 "newer.  Use it for lower-latency sound.  May not work properly on all sound "
 "cards."
 msgstr ""
 
-#: src/drivers/main.cpp:95
+#: src/drivers/main.cpp:97
 msgid ""
 "This driver is not recommended, but it serves as a backup driver if the "
 "others aren't available. Its performance is generally sub-par, requiring "
@@ -778,7 +790,7 @@ msgid ""
 "OS provides a sound callback API itself, such as with Mac OS X and BeOS."
 msgstr ""
 
-#: src/drivers/main.cpp:97
+#: src/drivers/main.cpp:99
 msgid ""
 "The latency reported during startup is for the local sound buffer only and "
 "does not include server-side latency.  Please note that video card "
@@ -786,71 +798,79 @@ msgid ""
 "with jackd's ability to effectively run with realtime response."
 msgstr ""
 
-#: src/drivers/main.cpp:106
+#: src/drivers/main.cpp:108
 msgid "5x7"
 msgstr ""
 
-#: src/drivers/main.cpp:107
+#: src/drivers/main.cpp:109
 msgid "6x9"
 msgstr ""
 
-#: src/drivers/main.cpp:108
+#: src/drivers/main.cpp:110
 msgid "6x12"
 msgstr ""
 
-#: src/drivers/main.cpp:110
+#: src/drivers/main.cpp:112
 msgid "6x13.  CJK support."
 msgstr ""
 
-#: src/drivers/main.cpp:111
+#: src/drivers/main.cpp:113
 msgid "9x18;  CJK support."
 msgstr ""
 
-#: src/drivers/main.cpp:113
+#: src/drivers/main.cpp:115
 msgid "6x13."
 msgstr ""
 
-#: src/drivers/main.cpp:114
+#: src/drivers/main.cpp:116
 msgid "9x18."
 msgstr ""
 
-#: src/drivers/main.cpp:130
+#: src/drivers/main.cpp:132
 msgid "Upper left."
 msgstr ""
 
-#: src/drivers/main.cpp:131
+#: src/drivers/main.cpp:133
 msgid "Upper right."
 msgstr ""
 
-#: src/drivers/main.cpp:139
+#: src/drivers/main.cpp:134
+msgid "Upper center."
+msgstr ""
+
+#: src/drivers/main.cpp:135
+msgid "Center."
+msgstr ""
+
+#: src/drivers/main.cpp:143
 msgid ""
 "Update physical joystick(s) internal state in Mednafen even when Mednafen "
 "lacks OS focus."
 msgstr ""
 
-#: src/drivers/main.cpp:140
+#: src/drivers/main.cpp:144
 msgid "Analog axis binary press detection threshold."
 msgstr ""
 
-#: src/drivers/main.cpp:140
+#: src/drivers/main.cpp:144
 msgid ""
 "Threshold for detecting a digital-like \"button\" press on analog axis, in "
 "percent."
 msgstr ""
 
-#: src/drivers/main.cpp:141
+#: src/drivers/main.cpp:145
 msgid "Auto-fire frequency."
 msgstr "Частота автоматического огня."
 
-#: src/drivers/main.cpp:141
+#: src/drivers/main.cpp:145
 msgid "Auto-fire frequency = GameSystemFrameRateHz / (value + 1)"
 msgstr ""
 
-#: src/drivers/main.cpp:142
+#: src/drivers/main.cpp:146
 msgid "Dangerous key action delay."
 msgstr ""
 
-#: src/drivers/main.cpp:142
+#: src/drivers/main.cpp:146
 msgid ""
 "The length of time, in milliseconds, that a button/key corresponding to a "
 "\"dangerous\" command like power, reset, exit, etc. must be pressed before "
@@ -859,43 +879,43 @@ msgstr ""
 "Время в мс, в течение которого должна быть нажата кнопка, отвечающая за "
 "небезопасную команду (сброс, выход и т.д.), чтобы команда была выполнена."
 
-#: src/drivers/main.cpp:144
+#: src/drivers/main.cpp:148
 msgid "Server hostname."
 msgstr ""
 
-#: src/drivers/main.cpp:145
+#: src/drivers/main.cpp:149
 msgid "Server port."
 msgstr ""
 
-#: src/drivers/main.cpp:146
+#: src/drivers/main.cpp:150
 msgid "Font for netplay chat console."
 msgstr ""
 
-#: src/drivers/main.cpp:147
+#: src/drivers/main.cpp:151
 msgid "Netplay chat console text scale factor."
 msgstr ""
 
-#: src/drivers/main.cpp:147 src/drivers/main.cpp:184
+#: src/drivers/main.cpp:151 src/drivers/main.cpp:188
 msgid "A value of 0 enables auto-scaling."
 msgstr ""
 
-#: src/drivers/main.cpp:148
+#: src/drivers/main.cpp:152
 msgid "Height of chat console, in lines."
 msgstr ""
 
-#: src/drivers/main.cpp:150
+#: src/drivers/main.cpp:154
 msgid "Enable frameskip during emulation rendering."
 msgstr ""
 
-#: src/drivers/main.cpp:151
+#: src/drivers/main.cpp:155
 msgid "Disable for rendering code performance testing."
 msgstr ""
 
-#: src/drivers/main.cpp:153
+#: src/drivers/main.cpp:157
 msgid "Enable time synchronization(waiting) for frame blitting."
 msgstr ""
 
-#: src/drivers/main.cpp:154
+#: src/drivers/main.cpp:158
 msgid ""
 "Disable to reduce latency, at the cost of potentially increased video "
 "\"juddering\", with the maximum reduction in latency being about 1 video "
@@ -904,35 +924,35 @@ msgid ""
 "expensive to emulate, combined with running on a relatively fast CPU."
 msgstr ""
 
-#: src/drivers/main.cpp:157
+#: src/drivers/main.cpp:161
 msgid "Fast-forwarding speed multiplier."
 msgstr "Множитель скорости в режиме быстрой перемотки вперёд."
 
-#: src/drivers/main.cpp:158
+#: src/drivers/main.cpp:162
 msgid "Treat the fast-forward button as a toggle."
 msgstr "Расценивать клавишу быстрой перемотки вперёд как переключатель."
 
-#: src/drivers/main.cpp:159
+#: src/drivers/main.cpp:163
 msgid "Silence sound output when fast-forwarding."
 msgstr "Приглушать звук при быстрой перемотке вперёд."
 
-#: src/drivers/main.cpp:161
+#: src/drivers/main.cpp:165
 msgid "SLOW-forwarding speed multiplier."
 msgstr ""
 
-#: src/drivers/main.cpp:162
+#: src/drivers/main.cpp:166
 msgid "Treat the SLOW-forward button as a toggle."
 msgstr ""
 
-#: src/drivers/main.cpp:164
+#: src/drivers/main.cpp:168
 msgid "Disable speed throttling when sound is disabled."
 msgstr "Отключать контроль скорости когда звук отключён."
 
-#: src/drivers/main.cpp:165
+#: src/drivers/main.cpp:169
 msgid "Automatically load/save state on game load/close."
 msgstr ""
 
-#: src/drivers/main.cpp:165
+#: src/drivers/main.cpp:169
 msgid ""
 "Automatically save and load save states when a game is closed or loaded, "
 "respectively."
@@ -940,46 +960,46 @@ msgstr ""
 "Автоматически сохранять и загружать состояния при закрытии и запуске игры "
 "соответственно."
 
-#: src/drivers/main.cpp:166
+#: src/drivers/main.cpp:170
 msgid "Select sound driver."
 msgstr "Выбрать аудио-драйвер."
 
-#: src/drivers/main.cpp:166
+#: src/drivers/main.cpp:170
 msgid ""
 "The following choices are possible, sorted by preference, high to low, when "
 "\"default\" driver is used, but dependent on being compiled in."
 msgstr ""
 
-#: src/drivers/main.cpp:167
+#: src/drivers/main.cpp:171
 msgid "Select sound output device."
 msgstr "Выбрать устройство вывода звука."
 
-#: src/drivers/main.cpp:167
+#: src/drivers/main.cpp:171
 msgid ""
 "When using ALSA sound output under Linux, the \"sound.device\" setting "
 "\"default\" is Mednafen's default, IE \"hw:0\", not ALSA's \"default\". If "
 "you want to use ALSA's \"default\", use \"sexyal-literal-default\"."
 msgstr ""
 
-#: src/drivers/main.cpp:168
+#: src/drivers/main.cpp:172
 msgid "Sound volume level, in percent."
 msgstr "Громкость звука в процентах."
 
-#: src/drivers/main.cpp:168
+#: src/drivers/main.cpp:172
 msgid ""
 "Setting this volume control higher than the default of \"100\" may severely "
 "distort the sound."
 msgstr ""
 
-#: src/drivers/main.cpp:169
+#: src/drivers/main.cpp:173
 msgid "Enable sound output."
 msgstr ""
 
-#: src/drivers/main.cpp:170
+#: src/drivers/main.cpp:174
 msgid "Desired period size in microseconds(μs)."
 msgstr ""
 
-#: src/drivers/main.cpp:170
+#: src/drivers/main.cpp:174
 msgid ""
 "Currently only affects OSS, ALSA, WASAPI(exclusive mode), and SDL output.  A "
 "value of 0 defers to the default in the driver code in SexyAL.\n"
@@ -988,214 +1008,219 @@ msgid ""
 "buffer_time\"."
 msgstr ""
 
-#: src/drivers/main.cpp:171
+#: src/drivers/main.cpp:175
 msgid "Desired buffer size in milliseconds(ms)."
 msgstr ""
 
-#: src/drivers/main.cpp:171
+#: src/drivers/main.cpp:175
 msgid "The default value of 0 enables automatic buffer size selection."
 msgstr ""
 
-#: src/drivers/main.cpp:172
+#: src/drivers/main.cpp:176
 msgid "Specifies the sound playback rate, in sound frames per second(\"Hz\")."
 msgstr ""
 
-#: src/drivers/main.cpp:175
+#: src/drivers/main.cpp:179
 msgid "Automatically go into the debugger's step mode after a game is loaded."
 msgstr "Автоматически войти в пошаговый режим отладчика после загрузки игры."
 
-#: src/drivers/main.cpp:178
+#: src/drivers/main.cpp:182
 msgid ""
 "Length of time, in milliseconds, to display internal status and error "
 "messages"
 msgstr ""
 
-#: src/drivers/main.cpp:178
+#: src/drivers/main.cpp:182
 msgid ""
 "Time lengths less than 100ms are recommended against unless you understand "
 "you may miss important non-fatal error messages, and that the input "
 "configuration process may become unusable."
 msgstr ""
 
-#: src/drivers/main.cpp:179
+#: src/drivers/main.cpp:183
 msgid ""
 "Length of time, in milliseconds, to display the save state or the movie "
 "selector after selecting a state or movie."
 msgstr ""
 
-#: src/drivers/main.cpp:180
+#: src/drivers/main.cpp:184
 msgid "Enable alpha blending for OSD elements."
 msgstr ""
 
-#: src/drivers/main.cpp:182
+#: src/drivers/main.cpp:186
 msgid "Automatically enable FPS display on startup."
 msgstr ""
 
-#: src/drivers/main.cpp:183
+#: src/drivers/main.cpp:187
 msgid "FPS display position."
 msgstr ""
 
-#: src/drivers/main.cpp:184
+#: src/drivers/main.cpp:188
 msgid "FPS display scale factor."
 msgstr ""
 
-#: src/drivers/main.cpp:185
+#: src/drivers/main.cpp:189
 msgid "FPS display font."
 msgstr ""
 
-#: src/drivers/main.cpp:186
+#: src/drivers/main.cpp:190
 msgid "FPS display text color."
 msgstr ""
 
-#: src/drivers/main.cpp:186 src/drivers/main.cpp:187
+#: src/drivers/main.cpp:190 src/drivers/main.cpp:191
 msgid "0xAARRGGBB"
 msgstr ""
 
-#: src/drivers/main.cpp:187
+#: src/drivers/main.cpp:191
 msgid "FPS display background color."
 msgstr ""
 
-#: src/drivers/main.cpp:189
+#: src/drivers/main.cpp:193
 msgid "DO NOT USE UNLESS YOU'RE A SPACE GOAT"
 msgstr ""
 
-#: src/drivers/main.cpp:189
+#: src/drivers/main.cpp:193
 msgid ""
 "Use this setting with caution, as save state rewinding can have widely "
 "variable memory and CPU usage requirements among different games and "
 "different emulated systems."
 msgstr ""
 
-#: src/drivers/main.cpp:191
+#: src/drivers/main.cpp:195
 msgid "Main emulation thread CPU affinity mask."
 msgstr ""
 
-#: src/drivers/main.cpp:191 src/drivers/main.cpp:192 src/ss/ss.cpp:2183
-#: src/snes_faust/snes.cpp:1286 src/snes_faust/snes.cpp:1287
-#: src/snes_faust/snes.cpp:1288 src/mednafen.cpp:136
+#: src/drivers/main.cpp:195 src/drivers/main.cpp:196 src/ss/ss.cpp:2184
+#: src/snes_faust/snes.cpp:1292 src/snes_faust/snes.cpp:1293
+#: src/snes_faust/snes.cpp:1294 src/mednafen.cpp:136
 msgid "Set to 0 to disable changing affinity."
 msgstr ""
 
-#: src/drivers/main.cpp:192
+#: src/drivers/main.cpp:196
 msgid "Video blitting thread CPU affinity mask."
 msgstr ""
 
-#: src/drivers/main.cpp:231
+#: src/drivers/main.cpp:237
 msgid "Disassembly font size."
 msgstr ""
 
-#: src/drivers/main.cpp:231
+#: src/drivers/main.cpp:237
 msgid ""
 "Note: Setting the font size to larger than the default may cause text "
 "overlap in the debugger."
 msgstr ""
 
-#: src/drivers/main.cpp:234
+#: src/drivers/main.cpp:240
 msgid "Character encoding for the debugger's memory editor."
 msgstr ""
 
-#: src/drivers/main.cpp:432 src/drivers/main.cpp:434
+#: src/drivers/main.cpp:449 src/drivers/main.cpp:451
 msgid "Mednafen("
 msgstr ""
 
-#: src/drivers/main.cpp:503
+#: src/drivers/main.cpp:533
+#, c-format
+msgid "Error creating data directories: %s\n"
+msgstr ""
+
+#: src/drivers/main.cpp:554
 msgid "How DARE you interrupt me!\n"
 msgstr "Ну-ка не смей меня прерывать!\n"
 
-#: src/drivers/main.cpp:507
+#: src/drivers/main.cpp:558
 msgid "MUST TERMINATE ALL HUMANS\n"
 msgstr "УБИТЬ ВСЕХ ЧЕЛОВЕКОВ!\n"
 
-#: src/drivers/main.cpp:511
+#: src/drivers/main.cpp:562
 msgid "Reach out and hang-up on someone.\n"
 msgstr "Может лучше сходишь прогуляешься?\n"
 
-#: src/drivers/main.cpp:515
+#: src/drivers/main.cpp:566
 msgid ""
 "Iyeeeeeeeee!!!  A segmentation fault has occurred.  Have a fluffy day.\n"
 msgstr "Ошибка сегментации.  Наслаждайтесь жизнью.\n"
 
-#: src/drivers/main.cpp:519
+#: src/drivers/main.cpp:570
 msgid "The pipe has broken!  Better watch out for floods...\n"
 msgstr "Канал повреждён!  Как бы не затопило...\n"
 
-#: src/drivers/main.cpp:524
+#: src/drivers/main.cpp:575
 msgid "I told you to be nice to the driver.\n"
 msgstr "Я же предупреждал — не лезь к водителю.\n"
 
-#: src/drivers/main.cpp:528
+#: src/drivers/main.cpp:579
 msgid "Those darn floating points.  Ne'er know when they'll bite!\n"
 msgstr ""
 "Ах эти чёртовы плавающие запятые. Никогда не угадаешь, куда они заплывут!\n"
 
-#: src/drivers/main.cpp:532
+#: src/drivers/main.cpp:583
 msgid "Don't throw your clock at the meowing cats!\n"
 msgstr "Не стоит кидать свои часы в кошек!\n"
 
-#: src/drivers/main.cpp:536
+#: src/drivers/main.cpp:587
 msgid "Abort, Retry, Ignore, Fail?\n"
 msgstr "Abort, Retry, Ignore, Fail?\n"
 
-#: src/drivers/main.cpp:540 src/drivers/main.cpp:544
+#: src/drivers/main.cpp:591 src/drivers/main.cpp:595
 msgid "Killing your processes is not nice.\n"
 msgstr "Убийство процессов преследуется по закону.\n"
 
-#: src/drivers/main.cpp:554
+#: src/drivers/main.cpp:605
 msgid ""
 "\n"
 "Signal has been caught and dealt with: "
 msgstr ""
 
-#: src/drivers/main.cpp:902
+#: src/drivers/main.cpp:869
 msgid "Show help!"
 msgstr "Показать справку"
 
-#: src/drivers/main.cpp:903
+#: src/drivers/main.cpp:870
 msgid ""
 "Enable remote mode with the specified stdout key(EXPERIMENTAL AND "
 "INCOMPLETE)."
 msgstr ""
 
-#: src/drivers/main.cpp:908
+#: src/drivers/main.cpp:875
 msgid "Start with specified disk/CD(numbered from 0) inserted."
 msgstr ""
 
-#: src/drivers/main.cpp:910
+#: src/drivers/main.cpp:877
 msgid "Force usage of specified emulation module."
 msgstr ""
 
-#: src/drivers/main.cpp:912
+#: src/drivers/main.cpp:879
 msgid "Record sound output to the specified filename in the MS WAV format."
 msgstr "Записать звук в указанный файл в формате MS WAV"
 
-#: src/drivers/main.cpp:913
+#: src/drivers/main.cpp:880
 msgid ""
 "Record video and audio output to the specified filename in the QuickTime "
 "format."
 msgstr ""
 
-#: src/drivers/main.cpp:915
+#: src/drivers/main.cpp:882
 msgid "Dump settings definition data to specified file."
 msgstr ""
 
-#: src/drivers/main.cpp:916
+#: src/drivers/main.cpp:883
 msgid "Dump modules definition data to specified file."
 msgstr ""
 
-#: src/drivers/main.cpp:920
+#: src/drivers/main.cpp:887
 msgid "Connect to the remote server and start network play."
 msgstr "Соединиться с удалённым сервером и начать сетевую игру."
 
-#: src/drivers/main.cpp:957
+#: src/drivers/main.cpp:926
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]\n"
 msgstr "Использование: %s [КЛЮЧ]... [ФАЙЛ]\n"
 
-#: src/drivers/main.cpp:960
+#: src/drivers/main.cpp:929
 msgid "No command-line arguments specified."
 msgstr ""
 
-#: src/drivers/main.cpp:963
+#: src/drivers/main.cpp:932
 #, c-format
 msgid ""
 "\tPlease refer to the documentation for option parameters and usage.\n"
@@ -1204,7 +1229,7 @@ msgstr ""
 "\tСверьтесь с документацией по настройке и использованию эмулятора.\n"
 "\n"
 
-#: src/drivers/main.cpp:982
+#: src/drivers/main.cpp:951
 #, c-format
 msgid ""
 "Each setting(listed in the documentation) can also be passed as an argument "
@@ -1213,7 +1238,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/drivers/main.cpp:983
+#: src/drivers/main.cpp:952
 #, c-format
 msgid ""
 "For example:\n"
@@ -1222,7 +1247,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/drivers/main.cpp:984
+#: src/drivers/main.cpp:953
 #, c-format
 msgid ""
 "Settings specified in this manner are automatically saved to the "
@@ -1230,113 +1255,126 @@ msgid ""
 "do not need to be passed to future invocations of the Mednafen executable.\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1029
+#: src/drivers/main.cpp:998
 msgid "No game filename specified!"
 msgstr "Имя файла не задано!"
 
-#: src/drivers/main.cpp:1168 src/drivers/input.cpp:1725
+#: src/drivers/main.cpp:1141 src/drivers/input.cpp:1791
 msgid "State rewinding functionality enabled."
 msgstr "Возможность перемотки назад включена."
 
-#: src/drivers/main.cpp:1740
+#: src/drivers/main.cpp:1730
 #, c-format
 msgid "Compiled with gcc %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1744 src/drivers/main.cpp:1790
+#: src/drivers/main.cpp:1734
 #, c-format
 msgid "Running with %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1753
+#: src/drivers/main.cpp:1743
 #, c-format
 msgid "Compiled with GNU libstdc++ %lu\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1758 src/drivers/video.cpp:1176
+#: src/drivers/main.cpp:1748 src/drivers/video.cpp:1197
 msgid "Yes"
 msgstr "Да"
 
-#: src/drivers/main.cpp:1760 src/drivers/video.cpp:1176
+#: src/drivers/main.cpp:1750 src/drivers/video.cpp:1197
 msgid "No"
 msgstr "Нет"
 
-#: src/drivers/main.cpp:1762
+#: src/drivers/main.cpp:1752
 #, c-format
 msgid "Using SJLJ Exceptions: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1774
+#: src/drivers/main.cpp:1764
 #, c-format
 msgid "Compiled against SDL %u.%u.%u(%s), running with SDL %u.%u.%u(%s)\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1778
+#: src/drivers/main.cpp:1768
 msgid ""
 "Running with a version of SDL older than the version compiled and linked "
 "against!"
 msgstr ""
 
-#: src/drivers/main.cpp:1798
+#: src/drivers/main.cpp:1780
+#, c-format
+msgid "Running with libFLAC %s\n"
+msgstr ""
+
+#: src/drivers/main.cpp:1788
 #, c-format
 msgid "Compiled against zlib %s, running with zlib %s(flags=0x%08lx)\n"
 msgstr ""
 
-#: src/drivers/main.cpp:1805
+#: src/drivers/main.cpp:1795
 #, c-format
 msgid "Compiled against libiconv %u.%u, running with libiconv %u.%u\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2023 src/drivers/main.cpp:2026
+#: src/drivers/main.cpp:1928 src/drivers/main.cpp:1931
 #, c-format
 msgid "Error converting value of setting \"%s\" to UTF-8."
 msgstr ""
 
-#: src/drivers/main.cpp:2188
+#: src/drivers/main.cpp:2104
+msgid ""
+"This special build of Mednafen is intended for use on Windows 98, Windows "
+"98SE, and Windows Me.  It will perform suboptimally on NT-based versions of "
+"Windows.  Download a regular Windows build from https://mednafen.github.io/"
+"releases/"
+msgstr ""
+
+#: src/drivers/main.cpp:2117
 #, c-format
 msgid "Starting Mednafen %s\n"
 msgstr "Запускается Mednafen %s\n"
 
-#: src/drivers/main.cpp:2191
+#: src/drivers/main.cpp:2120
 msgid "Build information:\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2201
+#: src/drivers/main.cpp:2130
 #, c-format
 msgid "Base directory: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2211
+#: src/drivers/main.cpp:2140
 #, c-format
 msgid "CoInitializeEx() failed: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2219
+#: src/drivers/main.cpp:2148
 #, c-format
 msgid "Could not initialize SDL: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2228
+#: src/drivers/main.cpp:2157
 #, c-format
 msgid "Could not create mutex: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2253
+#: src/drivers/main.cpp:2183
 #, c-format
-msgid "Error creating directories: %s\n"
+msgid "Error creating base directory: %s\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2259
+#: src/drivers/main.cpp:2189
 msgid "Opening lockfile...\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2274
+#: src/drivers/main.cpp:2204
 msgid ""
 "Error, but proceeding anyway per environment variable \"MEDNAFEN_ALLOWMULTI"
 "\".\n"
 msgstr ""
 
-#: src/drivers/main.cpp:2278
+#: src/drivers/main.cpp:2208
 msgid ""
 "Multiple instances of Mednafen using the same base directory should not run "
 "simultaneously, otherwise settings file changes may be lost, along with "
@@ -1345,29 +1383,29 @@ msgid ""
 "to bypass this check."
 msgstr ""
 
-#: src/drivers/main.cpp:2284 src/drivers/main.cpp:2291 src/mednafen.cpp:777
-#: src/mednafen.cpp:786 src/cdrom/CDAccess_Image.cpp:367
+#: src/drivers/main.cpp:2214 src/drivers/main.cpp:2221 src/mednafen.cpp:792
+#: src/mednafen.cpp:801 src/cdrom/CDAccess_Image.cpp:372
 #, c-format
 msgid "Error: %s\n"
 msgstr ""
 
-#: src/drivers/video.cpp:135
+#: src/drivers/video.cpp:134
 msgid "Default"
 msgstr ""
 
-#: src/drivers/video.cpp:135
+#: src/drivers/video.cpp:134
 msgid ""
 "Selects the default video driver.  Currently, this is OpenGL for all "
 "platforms, but may change in the future if better platform-specific drivers "
 "are added."
 msgstr ""
 
-#: src/drivers/video.cpp:137
+#: src/drivers/video.cpp:136
 msgid ""
 "All video-related Mednafen features are available with this video driver."
 msgstr ""
 
-#: src/drivers/video.cpp:138
+#: src/drivers/video.cpp:137
 msgid ""
 "Slower with lower-quality scaling than OpenGL, but if you don't have "
 "hardware-accelerated OpenGL rendering, it will probably be faster than "
@@ -1375,31 +1413,80 @@ msgid ""
 "shaders do not work with this output method, of course."
 msgstr ""
 
-#: src/drivers/video.cpp:151
-msgid "Video output driver."
+#: src/drivers/video.cpp:150 src/snes_faust/snes.cpp:1250 src/gb/gb.cpp:2776
+msgid "Auto"
+msgstr ""
+
+#: src/drivers/video.cpp:150
+msgid ""
+"Currently the same as \"truecolor\", but may automatically select deeper "
+"color formats in the future."
+msgstr ""
+
+#: src/drivers/video.cpp:152
+msgid "Truecolor, 16M colors"
+msgstr ""
+
+#: src/drivers/video.cpp:152
+msgid "RGB, 8 bits per color component."
 msgstr ""
 
 #: src/drivers/video.cpp:153
+msgid "Hicolor, 32K/64K colors"
+msgstr ""
+
+#: src/drivers/video.cpp:153
+msgid "RGB565 or RGB555, with priority given to RGB565."
+msgstr ""
+
+#: src/drivers/video.cpp:155
+msgid "RGB565, 64K colors"
+msgstr ""
+
+#: src/drivers/video.cpp:156
+msgid "RGB555, 32K colors"
+msgstr ""
+
+#: src/drivers/video.cpp:163
+msgid "Video output driver."
+msgstr ""
+
+#: src/drivers/video.cpp:165
 msgid "Enable fullscreen mode."
 msgstr "Включить полноэкранный режим"
 
-#: src/drivers/video.cpp:154
+#: src/drivers/video.cpp:166
 msgid "Display to use with fullscreen mode."
 msgstr ""
 
-#: src/drivers/video.cpp:154
+#: src/drivers/video.cpp:166
 msgid ""
 "Specify -1 to use the display on which the center of the window lies in "
 "windowed mode."
 msgstr ""
 
-#: src/drivers/video.cpp:159
+#: src/drivers/video.cpp:171
+msgid "Preferred source data pixel format for emulated video."
+msgstr ""
+
+#: src/drivers/video.cpp:171
+msgid ""
+"Using hicolor(RGB555/RGB565) formats may boost performance, but at the cost "
+"of color fidelity.  Noticeability of color degradation depends on the "
+"emulated system and features, such as custom palettes or NTSC blitter, being "
+"used.  When hicolor format support is not available for the emulation module "
+"or special scaler being used, Mednafen will automatically fall back to using "
+"a truecolor format.  Examine Mednafen's startup output to see the actual "
+"OpenGL texture formats being used."
+msgstr ""
+
+#: src/drivers/video.cpp:173
 msgid "Attempt to synchronize OpenGL page flips to vertical retrace period."
 msgstr ""
 "Пытаться синхронизировать смену видео-страниц OpenGL с частотой вертикальной "
 "развёртки."
 
-#: src/drivers/video.cpp:160
+#: src/drivers/video.cpp:174
 msgid ""
 "Note: Additionally, if the environment variable \"__GL_SYNC_TO_VBLANK\" does "
 "not exist, then it will be created and set to the value specified for this "
@@ -1407,212 +1494,212 @@ msgid ""
 "synchronization when running under Linux with NVidia's drivers."
 msgstr ""
 
-#: src/drivers/video.cpp:163
+#: src/drivers/video.cpp:177
 msgid "Attempt to disable desktop composition."
 msgstr ""
 
-#: src/drivers/video.cpp:163
+#: src/drivers/video.cpp:177
 msgid ""
 "Currently, this setting only has an effect on Windows Vista and Windows "
 "7(and probably the equivalent server versions as well)."
 msgstr ""
 
-#: src/drivers/video.cpp:168 src/drivers/video.cpp:186 src/ss/ss.cpp:1368
-#: src/ss/ss.cpp:1369 src/ss/ss.cpp:1370 src/ss/ss.cpp:1385
-#: src/nes/nes.cpp:455 src/snes_faust/snes.cpp:1260 src/vb/vb.cpp:909
-#: src/pce_fast/huc.cpp:308 src/psx/psx.cpp:1644 src/pce/pce.cpp:673
+#: src/drivers/video.cpp:182 src/drivers/video.cpp:200 src/ss/ss.cpp:1353
+#: src/ss/ss.cpp:1354 src/ss/ss.cpp:1355 src/ss/ss.cpp:1370 src/nes/nes.cpp:429
+#: src/snes_faust/snes.cpp:1266 src/vb/vb.cpp:910 src/pce_fast/huc.cpp:308
+#: src/psx/psx.cpp:1642 src/pce/pce.cpp:671
 msgid "Disabled"
 msgstr "Выключено"
 
-#: src/drivers/video.cpp:173 src/ss/ss.cpp:1180 src/ss/ss.cpp:2109
-#: src/ss/db.cpp:471
+#: src/drivers/video.cpp:187 src/ss/ss.cpp:1165 src/ss/ss.cpp:2110
+#: src/ss/db.cpp:579
 msgid "Full"
 msgstr ""
 
-#: src/drivers/video.cpp:173
+#: src/drivers/video.cpp:187
 msgid "Full-screen stretch, disregarding aspect ratio."
 msgstr ""
 
-#: src/drivers/video.cpp:176
+#: src/drivers/video.cpp:190
 msgid "Aspect Preserve"
 msgstr ""
 
-#: src/drivers/video.cpp:176
+#: src/drivers/video.cpp:190
 msgid ""
 "Full-screen stretch as far as the aspect ratio(in this sense, the equivalent "
 "xscalefs == yscalefs) can be maintained."
 msgstr ""
 
-#: src/drivers/video.cpp:178
+#: src/drivers/video.cpp:192
 msgid "Aspect Preserve + Integer Scale"
 msgstr ""
 
-#: src/drivers/video.cpp:178
+#: src/drivers/video.cpp:192
 msgid ""
 "Full-screen stretch, same as \"aspect\" except that the equivalent xscalefs "
 "and yscalefs are rounded down to the nearest integer."
 msgstr ""
 
-#: src/drivers/video.cpp:179
+#: src/drivers/video.cpp:193
 msgid "Aspect Preserve + Integer Multiple-of-2 Scale"
 msgstr ""
 
-#: src/drivers/video.cpp:179
+#: src/drivers/video.cpp:193
 msgid ""
 "Full-screen stretch, same as \"aspect_int\", but rounds down to the nearest "
 "multiple of 2."
 msgstr ""
 
-#: src/drivers/video.cpp:188
+#: src/drivers/video.cpp:202
 msgid "Bilinear"
 msgstr ""
 
-#: src/drivers/video.cpp:191
+#: src/drivers/video.cpp:205
 msgid "Linear (X)"
 msgstr ""
 
-#: src/drivers/video.cpp:191
+#: src/drivers/video.cpp:205
 msgid "Interpolation only on the X axis."
 msgstr ""
 
-#: src/drivers/video.cpp:192
+#: src/drivers/video.cpp:206
 msgid "Linear (Y)"
 msgstr ""
 
-#: src/drivers/video.cpp:192
+#: src/drivers/video.cpp:206
 msgid "Interpolation only on the Y axis."
 msgstr ""
 
-#: src/drivers/video.cpp:227
+#: src/drivers/video.cpp:241
 msgid "None/Disabled"
 msgstr ""
 
-#: src/drivers/video.cpp:228
+#: src/drivers/video.cpp:242
 msgid "Auto Interpolation"
 msgstr ""
 
-#: src/drivers/video.cpp:228
+#: src/drivers/video.cpp:242
 msgid ""
 "Will automatically interpolate on each axis if the corresponding effective "
 "scaling factor is not an integer."
 msgstr ""
 
-#: src/drivers/video.cpp:229
+#: src/drivers/video.cpp:243
 msgid "Sharper Auto Interpolation"
 msgstr ""
 
-#: src/drivers/video.cpp:229
+#: src/drivers/video.cpp:243
 msgid ""
 "Same as \"autoip\", but when interpolation is done, it is done in a manner "
 "that will reduce blurriness if possible."
 msgstr ""
 
-#: src/drivers/video.cpp:231
+#: src/drivers/video.cpp:245
 msgid "GPU-intensive."
 msgstr ""
 
-#: src/drivers/video.cpp:232
+#: src/drivers/video.cpp:246
 msgid "Sharper bilinear interpolation."
 msgstr ""
 
-#: src/drivers/video.cpp:233
+#: src/drivers/video.cpp:247
 msgid "Linear interpolation on X axis only."
 msgstr ""
 
-#: src/drivers/video.cpp:234
+#: src/drivers/video.cpp:248
 msgid "Linear interpolation on Y axis only."
 msgstr ""
 
-#: src/drivers/video.cpp:235
+#: src/drivers/video.cpp:249
 msgid "Sharper version of \"ipxnoty\"."
 msgstr ""
 
-#: src/drivers/video.cpp:236
+#: src/drivers/video.cpp:250
 msgid "Sharper version of \"ipynotx\"."
 msgstr ""
 
-#: src/drivers/video.cpp:238
+#: src/drivers/video.cpp:252
 msgid "Simple approximation of a color TV CRT look."
 msgstr ""
 
-#: src/drivers/video.cpp:238
+#: src/drivers/video.cpp:252
 msgid ""
 "Intended for fullscreen modes with a vertical resolution of around 1000 to "
 "1500 pixels.  Doesn't simulate halation and electron beam energy "
 "distribution nuances."
 msgstr ""
 
-#: src/drivers/video.cpp:245
+#: src/drivers/video.cpp:259
 msgid "Goatron"
 msgstr ""
 
-#: src/drivers/video.cpp:245
+#: src/drivers/video.cpp:259
 msgid "Brightest."
 msgstr ""
 
-#: src/drivers/video.cpp:250
+#: src/drivers/video.cpp:264
 msgid "Borg"
 msgstr ""
 
-#: src/drivers/video.cpp:250
+#: src/drivers/video.cpp:264
 msgid "Darkest."
 msgstr ""
 
-#: src/drivers/video.cpp:251
+#: src/drivers/video.cpp:265
 msgid "Slenderman"
 msgstr ""
 
-#: src/drivers/video.cpp:251
+#: src/drivers/video.cpp:265
 msgid "Spookiest?"
 msgstr ""
 
-#: src/drivers/video.cpp:258
+#: src/drivers/video.cpp:272
 msgid "Full-screen horizontal resolution."
 msgstr "Полноэкранное разрешение по горизонтали."
 
-#: src/drivers/video.cpp:259
+#: src/drivers/video.cpp:273
 msgid "Full-screen vertical resolution."
 msgstr "Полноэкранное разрешение по вертикали."
 
-#: src/drivers/video.cpp:260
+#: src/drivers/video.cpp:274
 msgid ""
 "A value of \"0\" will cause the current desktop horizontal resolution to be "
 "used."
 msgstr ""
 
-#: src/drivers/video.cpp:261
+#: src/drivers/video.cpp:275
 msgid ""
 "A value of \"0\" will cause the current desktop vertical resolution to be "
 "used."
 msgstr ""
 
-#: src/drivers/video.cpp:263
+#: src/drivers/video.cpp:277
 msgid "Scaling factor for the X axis in windowed mode."
 msgstr ""
 
-#: src/drivers/video.cpp:264
+#: src/drivers/video.cpp:278
 msgid "Scaling factor for the Y axis in windowed mode."
 msgstr ""
 
-#: src/drivers/video.cpp:266
+#: src/drivers/video.cpp:280
 msgid "Scaling factor for the X axis in fullscreen mode."
 msgstr ""
 
-#: src/drivers/video.cpp:267
+#: src/drivers/video.cpp:281
 msgid "Scaling factor for the Y axis in fullscreen mode."
 msgstr ""
 
-#: src/drivers/video.cpp:268
+#: src/drivers/video.cpp:282
 msgid ""
 "For this setting to have any effect, the \"<system>.stretch\" setting must "
 "be set to \"0\"."
 msgstr ""
 
-#: src/drivers/video.cpp:270
+#: src/drivers/video.cpp:284
 msgid "Enable scanlines with specified opacity."
 msgstr ""
 
-#: src/drivers/video.cpp:271
+#: src/drivers/video.cpp:285
 msgid ""
 "Opacity is specified in %; IE a value of \"100\" will give entirely black "
 "scanlines.\n"
@@ -1623,19 +1710,19 @@ msgid ""
 "field's lines."
 msgstr ""
 
-#: src/drivers/video.cpp:273
+#: src/drivers/video.cpp:287
 msgid "Stretch to fill screen."
 msgstr "Растянуть на весь экран"
 
-#: src/drivers/video.cpp:274
+#: src/drivers/video.cpp:288
 msgid "Enable (bi)linear interpolation."
 msgstr ""
 
-#: src/drivers/video.cpp:276
+#: src/drivers/video.cpp:290
 msgid "Enable specified special video scaler."
 msgstr "Использовать указанный метод масштабирования видео."
 
-#: src/drivers/video.cpp:277
+#: src/drivers/video.cpp:291
 msgid ""
 "The destination rectangle is NOT altered by this setting, so if you have "
 "xscale and yscale set to \"2\", and try to use a 3x scaling filter like "
@@ -1645,11 +1732,11 @@ msgid ""
 "fullscreen stretching at this resolution looks quite nice)."
 msgstr ""
 
-#: src/drivers/video.cpp:279
+#: src/drivers/video.cpp:293
 msgid "Enable specified OpenGL shader."
 msgstr ""
 
-#: src/drivers/video.cpp:280
+#: src/drivers/video.cpp:294
 msgid ""
 "Obviously, this will only work with the OpenGL \"video.driver\" setting, and "
 "only on cards and OpenGL implementations that support shaders, otherwise you "
@@ -1658,192 +1745,193 @@ msgid ""
 "ignored."
 msgstr ""
 
-#: src/drivers/video.cpp:361
+#: src/drivers/video.cpp:375
 msgid "Constant RGB horizontal divergence."
 msgstr ""
 
-#: src/drivers/video.cpp:364
+#: src/drivers/video.cpp:378
 msgid "Constant RGB vertical divergence."
 msgstr ""
 
-#: src/drivers/video.cpp:367
+#: src/drivers/video.cpp:381
 msgid "Mask pattern."
 msgstr ""
 
-#: src/drivers/video.cpp:370
+#: src/drivers/video.cpp:384
 msgid "Transparency of otherwise-opaque mask areas."
 msgstr ""
 
-#: src/drivers/video.cpp:373
+#: src/drivers/video.cpp:387
 msgid "Force interlaced video to be treated as progressive."
 msgstr ""
 
-#: src/drivers/video.cpp:373
+#: src/drivers/video.cpp:387
 msgid ""
 "When disabled, the default, the \"video.deinterlacer\" setting is "
-"effectively ignored with respect to what appears on the screen.  When "
-"enabled, it may be prudent to disable the scanlines effect controlled by the "
-"*.goat.slen setting, or else the scanline effect may look objectionable."
+"effectively ignored with respect to what appears on the screen, unless it's "
+"set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to "
+"disable the scanlines effect controlled by the *.goat.slen setting, or else "
+"the scanline effect may look objectionable."
 msgstr ""
 
-#: src/drivers/video.cpp:376
+#: src/drivers/video.cpp:390
 msgid "Enable scanlines effect."
 msgstr ""
 
-#: src/drivers/video.cpp:607
+#: src/drivers/video.cpp:623
 msgid ""
 "WARNING: Resolution is too low for stretch mode selected.  Falling back to "
 "\"aspect\" mode.\n"
 msgstr ""
 
-#: src/drivers/video.cpp:621
+#: src/drivers/video.cpp:637
 msgid ""
 "WARNING: Resolution is too low for stretch mode selected.  Falling back to "
 "\"aspect_int\" mode.\n"
 msgstr ""
 
-#: src/drivers/video.cpp:751
+#: src/drivers/video.cpp:766
 msgid "Initializing video...\n"
 msgstr "Инициализация видео...\n"
 
-#: src/drivers/video.cpp:869
+#: src/drivers/video.cpp:884
 #, c-format
 msgid "Window size(%dx%d) is too large!"
 msgstr ""
 
-#: src/drivers/video.cpp:906
+#: src/drivers/video.cpp:921
 msgid "Reverting to soft SDL driver because window is not OpenGL-capable."
 msgstr ""
 
-#: src/drivers/video.cpp:920
+#: src/drivers/video.cpp:935
 #, c-format
 msgid ""
 "Reverting to soft SDL driver because of error creating OpenGL context: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:969
+#: src/drivers/video.cpp:984
 #, c-format
 msgid ""
 "Reverting to windowed mode because SDL_GetWindowDisplayIndex() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:988
+#: src/drivers/video.cpp:1003
 #, c-format
 msgid "Reverting to windowed mode because SDL_GetNumVideoDisplays() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1010 src/drivers/video.cpp:1074
+#: src/drivers/video.cpp:1025 src/drivers/video.cpp:1089
 #, c-format
 msgid ""
 "Reverting to windowed mode because SDL_GetCurrentDisplayMode() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1016
+#: src/drivers/video.cpp:1031
 #, c-format
 msgid "Reverting to windowed mode because SDL_DisplayBounds() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1062
+#: src/drivers/video.cpp:1077
 #, c-format
 msgid "Reverting to windowed mode because SDL_GetDisplayBounds() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1086
+#: src/drivers/video.cpp:1101
 #, c-format
 msgid "Reverting to windowed mode because no modes big enough for %dx%d."
 msgstr ""
 
-#: src/drivers/video.cpp:1092
+#: src/drivers/video.cpp:1107
 #, c-format
 msgid ""
 "Reverting to windowed mode because SDL_SetWindowDisplayMode() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1104
+#: src/drivers/video.cpp:1119
 #, c-format
 msgid "Reverting to windowed mode because SDL_SetWindowFullscreen() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1120
+#: src/drivers/video.cpp:1135
 #, c-format
 msgid ""
 "Reverting to windowed mode because screen destination rectangle(%dx%d) is "
 "too large!"
 msgstr ""
 
-#: src/drivers/video.cpp:1126
+#: src/drivers/video.cpp:1141
 #, c-format
 msgid "Driver: %s\n"
 msgstr ""
 
-#: src/drivers/video.cpp:1126
+#: src/drivers/video.cpp:1141
 msgid "OpenGL"
 msgstr ""
 
-#: src/drivers/video.cpp:1126
+#: src/drivers/video.cpp:1141
 msgid "Software SDL"
 msgstr ""
 
-#: src/drivers/video.cpp:1140
+#: src/drivers/video.cpp:1159
 #, c-format
 msgid "Display Mode: %u x %u x %u bpp @ %dHz  (Window: %u x %u)\n"
 msgstr ""
 
-#: src/drivers/video.cpp:1142
+#: src/drivers/video.cpp:1161
 #, c-format
 msgid "Display Mode: %u x %u x %u bpp  (Window: %u x %u)\n"
 msgstr ""
 
-#: src/drivers/video.cpp:1147 src/drivers/video.cpp:1586
+#: src/drivers/video.cpp:1166 src/drivers/video.cpp:1651
 #, c-format
 msgid "SDL_GetWindowSurface() failed: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1150
+#: src/drivers/video.cpp:1169
 #, c-format
 msgid "Window surface bit depth(%ubpp) is not supported by Mednafen."
 msgstr ""
 
-#: src/drivers/video.cpp:1173
+#: src/drivers/video.cpp:1194
 #, c-format
 msgid "Shader: %s%s\n"
 msgstr ""
 
-#: src/drivers/video.cpp:1176
+#: src/drivers/video.cpp:1197
 #, c-format
 msgid "Fullscreen: %s\n"
 msgstr "Полный экран: %s\n"
 
-#: src/drivers/video.cpp:1177
+#: src/drivers/video.cpp:1198
 #, c-format
 msgid "Special Scaler: %s\n"
 msgstr "Метод масштабирования: %s\n"
 
-#: src/drivers/video.cpp:1177 src/ss/ss.cpp:1207 src/ss/ss.cpp:2037
-#: src/ss/ss.cpp:2065 src/ss/ss.cpp:2117 src/snes_faust/snes.cpp:1232
-#: src/gb/gb.cpp:1953
+#: src/drivers/video.cpp:1198 src/apple2/apple2.cpp:1920 src/ss/ss.cpp:1192
+#: src/ss/ss.cpp:2034 src/ss/ss.cpp:2062 src/ss/ss.cpp:2118
+#: src/snes_faust/snes.cpp:1238 src/gb/gb.cpp:1998
 msgid "None"
 msgstr "Нет"
 
-#: src/drivers/video.cpp:1180
+#: src/drivers/video.cpp:1201
 msgid "Scanlines: Off\n"
 msgstr "Черезстрочность: Выкл.\n"
 
-#: src/drivers/video.cpp:1182
+#: src/drivers/video.cpp:1203
 #, c-format
 msgid "Scanlines: %d%% opacity%s\n"
 msgstr ""
 
-#: src/drivers/video.cpp:1182
+#: src/drivers/video.cpp:1203
 msgid " (with interlace field obscure)"
 msgstr ""
 
-#: src/drivers/video.cpp:1184
+#: src/drivers/video.cpp:1205
 #, c-format
 msgid "Destination Rectangle: X=%d, Y=%d, W=%d, H=%d\n"
 msgstr "Целевой прямоугольник: X=%d, Y=%d, Ш=%d, В=%d\n"
 
-#: src/drivers/video.cpp:1188
+#: src/drivers/video.cpp:1209
 msgid ""
 "Warning:  Destination rectangle exceeds screen dimensions.  This is ok if "
 "you really do want the clipping...\n"
@@ -1851,194 +1939,222 @@ msgstr ""
 "Предупреждение:  Целевой прямоугольник выходит за пределы экрана.  Это "
 "нормально, если вы рассчитывали обрезать видео.\n"
 
-#: src/drivers/video.cpp:1200
+#: src/drivers/video.cpp:1228
 #, c-format
 msgid ""
 "Reverting to soft SDL driver because of error initializing OpenGL blitter: %s"
 msgstr ""
 
-#: src/drivers/video.cpp:1299
+#: src/drivers/video.cpp:1316
 #, c-format
 msgid "SDL_CreateWindow() failed: %s\n"
 msgstr ""
 
-#: src/drivers/input.cpp:905
+#: src/drivers/input.cpp:946
 #, c-format
 msgid "%s%s%s"
 msgstr ""
 
-#: src/drivers/input.cpp:905
+#: src/drivers/input.cpp:946
 msgid "Rapid "
 msgstr ""
 
-#: src/drivers/input.cpp:905
+#: src/drivers/input.cpp:946
 msgid " Select"
 msgstr ""
 
-#: src/drivers/input.cpp:1019
+#: src/drivers/input.cpp:1060
 msgid "Cannot change input device during netplay."
 msgstr "Невозможно изменить устройство ввода в ходе сетевой игры."
 
-#: src/drivers/input.cpp:1023
+#: src/drivers/input.cpp:1064
 msgid "Cannot change input device while state rewinding is active."
 msgstr "Невозможно изменить устройство ввода в ходе перемотки назад."
 
-#: src/drivers/input.cpp:1026 src/drivers/input.cpp:1668
+#: src/drivers/input.cpp:1067 src/drivers/input.cpp:1731
 #, c-format
 msgid "Port %u does not exist."
 msgstr ""
 
-#: src/drivers/input.cpp:1028
+#: src/drivers/input.cpp:1069
 #, c-format
 msgid "Port %u device not selectable."
 msgstr ""
 
-#: src/drivers/input.cpp:1047
+#: src/drivers/input.cpp:1071
+#, c-format
+msgid "Port %u device change blocked by active button mapping process."
+msgstr ""
+
+#: src/drivers/input.cpp:1090
 #, c-format
 msgid "%s selected on port %d"
 msgstr "%s выбрано на порте %d"
 
-#: src/drivers/input.cpp:1436
+#: src/drivers/input.cpp:1451
+#, c-format
+msgid "Layer %u not available to toggle."
+msgstr ""
+
+#: src/drivers/input.cpp:1461
 #, c-format
 msgid "%s enabled."
 msgstr "%s включено."
 
-#: src/drivers/input.cpp:1438
+#: src/drivers/input.cpp:1463
 #, c-format
 msgid "%s disabled."
 msgstr "%s выключено."
 
-#: src/drivers/input.cpp:1513
-msgid "Configuration interrupted."
-msgstr "Настройка прервана."
+#: src/drivers/input.cpp:1466
+msgid "No toggleable layers available."
+msgstr ""
 
-#: src/drivers/input.cpp:1532 src/drivers/input.cpp:2266
+#: src/drivers/input.cpp:1562
+msgid "Physical joysticks reinitialized."
+msgstr ""
+
+#: src/drivers/input.cpp:1579
+msgid "Configuration aborted."
+msgstr ""
+
+#: src/drivers/input.cpp:1595 src/drivers/input.cpp:2356
 msgid "Configuration finished."
 msgstr "Настройка завершена."
 
-#: src/drivers/input.cpp:1545
+#: src/drivers/input.cpp:1608
 #, c-format
 msgid "Press command key to remap now%s..."
 msgstr ""
 
-#: src/drivers/input.cpp:1545
+#: src/drivers/input.cpp:1608
 msgid "(AND Mode)"
 msgstr ""
 
-#: src/drivers/input.cpp:1567
+#: src/drivers/input.cpp:1630
 #, c-format
 msgid "Input grabbing: %s"
 msgstr ""
 
-#: src/drivers/input.cpp:1567 src/ss/input/keyboard.cpp:283
+#: src/drivers/input.cpp:1630 src/ss/input/keyboard.cpp:283
 msgid "On"
 msgstr ""
 
-#: src/drivers/input.cpp:1567 src/ss/input/keyboard.cpp:282
+#: src/drivers/input.cpp:1630 src/ss/input/keyboard.cpp:282
 msgid "Off"
 msgstr ""
 
-#: src/drivers/input.cpp:1615
+#: src/drivers/input.cpp:1678
 msgid "Application of cheats enabled."
 msgstr "Применение кодов включено."
 
-#: src/drivers/input.cpp:1617
+#: src/drivers/input.cpp:1680
 msgid "Application of cheats disabled."
 msgstr "Применение кодов выключено."
 
-#: src/drivers/input.cpp:1671
+#: src/drivers/input.cpp:1734
 #, c-format
 msgid "No buttons to configure on port %u device \"%s\"!"
 msgstr ""
 
-#: src/drivers/input.cpp:1725
+#: src/drivers/input.cpp:1791
 msgid "State rewinding functionality disabled."
 msgstr "Возможность перемотки назад отключена."
 
-#: src/drivers/input.cpp:1884
+#: src/drivers/input.cpp:1950
 msgid "Barcode Entered"
 msgstr "Штрих-код введён"
 
-#: src/drivers/input.cpp:1886
+#: src/drivers/input.cpp:1952
 msgid "Enter Barcode"
 msgstr "Введите штрих-код"
 
-#: src/drivers/input.cpp:1892
+#: src/drivers/input.cpp:1958
 #, c-format
 msgid "Barcode: %s"
 msgstr "Штрих-код: %s"
 
-#: src/drivers/input.cpp:2065
+#: src/drivers/input.cpp:2131
 #, c-format
 msgid "%s %u: %s: %s selected."
 msgstr ""
 
-#: src/drivers/input.cpp:2111
+#: src/drivers/input.cpp:2177
 #, c-format
 msgid "%s %u: %s: %s"
 msgstr ""
 
-#: src/drivers/input.cpp:2320
+#: src/drivers/input.cpp:2410
 #, c-format
 msgid "Analog axis scale coefficient for %s on %s."
 msgstr ""
 
-#: src/drivers/input.cpp:2412
+#: src/drivers/input.cpp:2502
 #, c-format
 msgid "Default position for switch \"%s\"."
 msgstr ""
 
-#: src/drivers/input.cpp:2413
+#: src/drivers/input.cpp:2503
 msgid ""
 "Sets the position for the switch to the value specified upon startup and "
 "virtual input device change."
 msgstr ""
 
-#: src/drivers/input.cpp:2475
+#: src/drivers/input.cpp:2565
 msgid ""
 "Emulated keyboard key state is not updated unless input grabbing(by default, "
 "mapped to CTRL+SHIFT+Menu) is toggled on; refer to the main documentation "
 "for details."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:183
+#: src/drivers/memdebugger.cpp:45
+#, c-format
+msgid "Character set \"%s\" not supported."
+msgstr ""
+
+#: src/drivers/memdebugger.cpp:47
+#, c-format
+msgid "iconv_open() error: %s"
+msgstr ""
+
+#: src/drivers/memdebugger.cpp:174
 #, c-format
 msgid "Invalid character '%c' in bytestring."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:190
+#: src/drivers/memdebugger.cpp:181
 msgid "Invalid number of characters in bytestring."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:244
+#: src/drivers/memdebugger.cpp:234
 msgid "Invalid memory dump specification."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:283
+#: src/drivers/memdebugger.cpp:273
 msgid "Invalid memory load specification."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:307
+#: src/drivers/memdebugger.cpp:297
 #, c-format
 msgid "Warning: unexpected EOF(short by %08llx byte(s))"
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:333
+#: src/drivers/memdebugger.cpp:326
 #, c-format
 msgid "iconv() error: %s"
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:340
+#: src/drivers/memdebugger.cpp:334
 msgid "String not found."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:353 src/drivers/memdebugger.cpp:366
+#: src/drivers/memdebugger.cpp:347 src/drivers/memdebugger.cpp:360
 #, c-format
 msgid "Bytestring \"%s\" not found."
 msgstr ""
 
-#: src/drivers/memdebugger.cpp:858 src/drivers/memdebugger.cpp:872
-#: src/drivers/memdebugger.cpp:892
+#: src/drivers/memdebugger.cpp:863 src/drivers/memdebugger.cpp:877
+#: src/drivers/memdebugger.cpp:897
 msgid "Address space is too large to search!"
 msgstr ""
 
@@ -2498,7 +2614,7 @@ msgid "State rewinding error: %s"
 msgstr ""
 
 #: src/cheat_formats/snes.cpp:35 src/cheat_formats/gb.cpp:55
-#: src/nes/nes.cpp:585
+#: src/nes/nes.cpp:559
 msgid "Game Genie code is of an incorrect length."
 msgstr ""
 
@@ -2508,17 +2624,17 @@ msgid "Game Genie code is malformed."
 msgstr ""
 
 #: src/cheat_formats/snes.cpp:58 src/cheat_formats/gb.cpp:92
-#: src/nes/nes.cpp:571
+#: src/nes/nes.cpp:545
 msgid "Invalid character in Game Genie code."
 msgstr ""
 
 #: src/cheat_formats/snes.cpp:60 src/cheat_formats/gb.cpp:94
-#: src/nes/nes.cpp:573
+#: src/nes/nes.cpp:547
 #, c-format
 msgid "Invalid character in Game Genie code: %c"
 msgstr ""
 
-#: src/cheat_formats/snes.cpp:89 src/nes/nes.cpp:652
+#: src/cheat_formats/snes.cpp:89 src/nes/nes.cpp:626
 msgid "Pro Action Replay code is of an incorrect length."
 msgstr ""
 
@@ -2569,214 +2685,246 @@ msgstr ""
 msgid "Sharks with lamprey eels for eyes."
 msgstr ""
 
-#: src/apple2/apple2.cpp:774 src/apple2/apple2.cpp:805
-#: src/apple2/apple2.cpp:1104 src/apple2/apple2.cpp:1211
-#: src/apple2/apple2.cpp:1256 src/apple2/apple2.cpp:1302
-#: src/apple2/apple2.cpp:1305 src/apple2/apple2.cpp:1307
-#: src/apple2/apple2.cpp:1319 src/apple2/apple2.cpp:1337
+#: src/apple2/apple2.cpp:945 src/apple2/apple2.cpp:976
+#: src/apple2/apple2.cpp:1285 src/apple2/apple2.cpp:1392
+#: src/apple2/apple2.cpp:1437 src/apple2/apple2.cpp:1483
+#: src/apple2/apple2.cpp:1486 src/apple2/apple2.cpp:1488
+#: src/apple2/apple2.cpp:1500 src/apple2/apple2.cpp:1518
 #, c-format
 msgid "Invalid value for \"%s\" setting in MAI file."
 msgstr ""
 
-#: src/apple2/apple2.cpp:785 src/apple2/apple2.cpp:801
-#: src/apple2/apple2.cpp:1065 src/apple2/apple2.cpp:1091
-#: src/apple2/apple2.cpp:1326
+#: src/apple2/apple2.cpp:956 src/apple2/apple2.cpp:972
+#: src/apple2/apple2.cpp:1246 src/apple2/apple2.cpp:1272
+#: src/apple2/apple2.cpp:1507
 #, c-format
 msgid "Too few arguments for \"%s\" setting in MAI file."
 msgstr ""
 
-#: src/apple2/apple2.cpp:787 src/apple2/apple2.cpp:803
-#: src/apple2/apple2.cpp:1093 src/apple2/apple2.cpp:1199
-#: src/apple2/apple2.cpp:1233 src/apple2/apple2.cpp:1285
-#: src/apple2/apple2.cpp:1328
+#: src/apple2/apple2.cpp:958 src/apple2/apple2.cpp:974
+#: src/apple2/apple2.cpp:1274 src/apple2/apple2.cpp:1380
+#: src/apple2/apple2.cpp:1414 src/apple2/apple2.cpp:1466
+#: src/apple2/apple2.cpp:1509
 #, c-format
 msgid "Too many arguments for \"%s\" setting in MAI file."
 msgstr ""
 
-#: src/apple2/apple2.cpp:856
+#: src/apple2/apple2.cpp:1037
 msgid "Missing signature line in MAI file."
 msgstr ""
 
-#: src/apple2/apple2.cpp:861
+#: src/apple2/apple2.cpp:1042
 msgid "Wrong signature line in MAI file for Apple II/II+."
 msgstr ""
 
-#: src/apple2/apple2.cpp:938
+#: src/apple2/apple2.cpp:1119
 msgid "5.25\" Floppy Disk/Side (Drive 1)"
 msgstr ""
 
-#: src/apple2/apple2.cpp:939
+#: src/apple2/apple2.cpp:1120
 msgid "5.25\" Floppy Disk/Side (Drive 2)"
 msgstr ""
 
-#: src/apple2/apple2.cpp:940
+#: src/apple2/apple2.cpp:1121
 msgid "5.25\" Floppy Disk/Side (Drive 1 or 2)"
 msgstr ""
 
-#: src/apple2/apple2.cpp:982
+#: src/apple2/apple2.cpp:1163
 #, c-format
 msgid "Disk \"%s\" not defined."
 msgstr ""
 
-#: src/apple2/apple2.cpp:984
+#: src/apple2/apple2.cpp:1165
 #, c-format
 msgid "Disk \"%s\" definition is incomplete."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1034
+#: src/apple2/apple2.cpp:1215
 msgid ""
 "Spacetime wizard chuckles at the attempt to have the same disk inserted by "
 "default into both drives at the same time."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1041 src/nes/fds.cpp:656
+#: src/apple2/apple2.cpp:1222 src/nes/fds.cpp:656
 msgid "Disk Ejected"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1042 src/nes/fds.cpp:657
+#: src/apple2/apple2.cpp:1223 src/nes/fds.cpp:657
 msgid "Disk Inserted"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1139
+#: src/apple2/apple2.cpp:1320
 #, c-format
 msgid "Firmware data for \"%s\" in file \"%s\" is corrupt or otherwise wrong."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1164
+#: src/apple2/apple2.cpp:1345
 msgid "Specified RAM size is not a multiple of 4."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1166
+#: src/apple2/apple2.cpp:1347
 msgid "Specified RAM size is too small."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1168
+#: src/apple2/apple2.cpp:1349
 msgid "Specified RAM size between 48KiB and 64KiB is unsupported."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1170
+#: src/apple2/apple2.cpp:1351
 msgid "Specified RAM size is too large."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1197 src/apple2/apple2.cpp:1231
-#: src/apple2/apple2.cpp:1279
+#: src/apple2/apple2.cpp:1378 src/apple2/apple2.cpp:1412
+#: src/apple2/apple2.cpp:1460
 #, c-format
 msgid "Insufficient number of arguments for \"%s\" setting in MAI file."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1340
+#: src/apple2/apple2.cpp:1521
 #, c-format
 msgid "Specified game I/O device resistance \"%u\" is too large."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1668
+#: src/apple2/apple2.cpp:1887
 msgid "Sanyo LA7620-like."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1670
+#: src/apple2/apple2.cpp:1889
 msgid "Sony CXA2025AS-like, USA setting"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1671
+#: src/apple2/apple2.cpp:1890
 msgid "Sony CXA2060BS-like, USA setting."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1672
+#: src/apple2/apple2.cpp:1891
 msgid "Sony CXA2095S-like, USA setting."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1674
+#: src/apple2/apple2.cpp:1893
 msgid "Sony CXA2025AS-like, Japan setting."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1675
+#: src/apple2/apple2.cpp:1894
 msgid "Sony CXA2060BS-like, Japan setting."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1676
+#: src/apple2/apple2.cpp:1895
 msgid "Sony CXA2095S-like, Japan setting."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1683 src/apple2/apple2.cpp:1687
+#: src/apple2/apple2.cpp:1902 src/apple2/apple2.cpp:1906
 msgid "Internal video dimensions of 584x192."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1684
+#: src/apple2/apple2.cpp:1903
 msgid ""
 "Internal video dimensions of 292x192; suitable for use with scalers like "
 "hq2x."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1685
+#: src/apple2/apple2.cpp:1904
 msgid ""
 "Internal video dimensions of 292x192; suitable for use with scalers like "
 "hq2x.  Reduced brightness of colored pixels horizontally sandwiched between "
 "white pixels in HGR mode."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1688
+#: src/apple2/apple2.cpp:1907
 msgid ""
 "Internal video dimensions of 584x192.    Reduced brightness of colored "
 "pixels horizontally sandwiched between white pixels in HGR mode."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1699
+#: src/apple2/apple2.cpp:1922 src/ss/ss.cpp:2064
+msgid "All"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1924 src/ss/ss.cpp:2066
+msgid "Warnings"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1926
+msgid "Reads from unhandled CPU addresses"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1927
+msgid "Writes to unhandled CPU addresses"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1928
+msgid "Reads from uninitialized RAM"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1930
+msgid "Disk II"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1931 src/ss/ss.cpp:2100
+msgid "BIOS"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1932
+msgid "DOS"
+msgstr ""
+
+#: src/apple2/apple2.cpp:1940
 msgid "Color video hue/tint."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1700
+#: src/apple2/apple2.cpp:1941
 msgid "Color video saturation."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1701
+#: src/apple2/apple2.cpp:1942
 msgid "Video contrast."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1702
+#: src/apple2/apple2.cpp:1943
 msgid "Video brightness."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1703
+#: src/apple2/apple2.cpp:1944
 msgid "Force monochrome graphics color."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1703
+#: src/apple2/apple2.cpp:1944
 msgid "Force monochrome graphics if non-zero, with the specified color."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1704
+#: src/apple2/apple2.cpp:1945
 msgid "Enable hack to treat mixed-mode text as monochrome."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1705
+#: src/apple2/apple2.cpp:1946
 msgid "Monochrome video luma filter."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1705 src/apple2/apple2.cpp:1706
+#: src/apple2/apple2.cpp:1946 src/apple2/apple2.cpp:1947
 msgid ""
 "Filters numbered closer to 0 have a stronger lowpass effect.  Negative-"
 "numbered filters have ringing."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1706
+#: src/apple2/apple2.cpp:1947
 msgid "Color video luma filter."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1707
+#: src/apple2/apple2.cpp:1948
 msgid "Enable color video smoothing."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1707
+#: src/apple2/apple2.cpp:1948
 msgid ""
 "Reduces vertical stripes without making video blurrier, at the cost of some "
 "pixel irregularities.  May make small text illegible in graphics mode."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1709
+#: src/apple2/apple2.cpp:1950
 msgid "Color decoder matrix."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1709
+#: src/apple2/apple2.cpp:1950
 msgid ""
 "The matrixes that correspond to the nominal demodulation angles and gains "
 "for various ICs are intended to get colors within the ballpark of what "
@@ -2784,41 +2932,41 @@ msgid ""
 "colors these ICs would reproduce when fed an Apple II video signal."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1711
+#: src/apple2/apple2.cpp:1952
 msgid "Custom color decoder matrix; red, I."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1711 src/apple2/apple2.cpp:1712
-#: src/apple2/apple2.cpp:1714 src/apple2/apple2.cpp:1715
-#: src/apple2/apple2.cpp:1717 src/apple2/apple2.cpp:1718
+#: src/apple2/apple2.cpp:1952 src/apple2/apple2.cpp:1953
+#: src/apple2/apple2.cpp:1955 src/apple2/apple2.cpp:1956
+#: src/apple2/apple2.cpp:1958 src/apple2/apple2.cpp:1959
 msgid "Only used if \"apple2.video.matrix\" is set to \"custom\"."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1712
+#: src/apple2/apple2.cpp:1953
 msgid "Custom color decoder matrix; red, Q."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1714
+#: src/apple2/apple2.cpp:1955
 msgid "Custom color decoder matrix; green, I."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1715
+#: src/apple2/apple2.cpp:1956
 msgid "Custom color decoder matrix; green, Q."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1717
+#: src/apple2/apple2.cpp:1958
 msgid "Custom color decoder matrix; blue, I."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1718
+#: src/apple2/apple2.cpp:1959
 msgid "Custom color decoder matrix; blue, Q."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1720
+#: src/apple2/apple2.cpp:1961
 msgid "Video rendering mode."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1720
+#: src/apple2/apple2.cpp:1961
 msgid ""
 "When an RGB mode is enabled, settings \"apple2.video.force_mono\", \"apple2."
 "video.mixed_text_mono\", \"apple2.video.mono_lumafilter\", \"apple2.video."
@@ -2826,27 +2974,31 @@ msgid ""
 "ignored."
 msgstr ""
 
-#: src/apple2/apple2.cpp:1727
+#: src/apple2/apple2.cpp:1964 src/ss/ss.cpp:2187
+msgid "Debug printf mask."
+msgstr ""
+
+#: src/apple2/apple2.cpp:1972
 msgid "Apple II/II+ Configuration"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1729
+#: src/apple2/apple2.cpp:1974
 msgid "Apple II WOZ Disk Image"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1731
+#: src/apple2/apple2.cpp:1976
 msgid "Apple II ProDOS-order floppy disk image"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1732 src/apple2/apple2.cpp:1733
+#: src/apple2/apple2.cpp:1977 src/apple2/apple2.cpp:1978
 msgid "Apple II DOS-order floppy disk image"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1735
+#: src/apple2/apple2.cpp:1980
 msgid "Apple II 13-sectors/track floppy disk image"
 msgstr ""
 
-#: src/apple2/apple2.cpp:1754
+#: src/apple2/apple2.cpp:1999
 msgid ""
 "RGB mode 16-color(or 32-color for TFR) palette.  The presence of a custom "
 "palette will automatically enable RGB video mode if an RGB mode is not "
@@ -2855,29 +3007,39 @@ msgid ""
 "enabled."
 msgstr ""
 
-#: src/demo/demo.cpp:693
+#: src/win32-common.cpp:43
+#, c-format
+msgid "GetProcAddress(..., \"%s\") failed: %s"
+msgstr ""
+
+#: src/win32-common.cpp:57
+#, c-format
+msgid "GetModuleHandle(\"%s\") failed: %s"
+msgstr ""
+
+#: src/demo/demo.cpp:697
 msgid "Monster."
 msgstr ""
 
-#: src/demo/demo.cpp:694
+#: src/demo/demo.cpp:698
 msgid "Lie."
 msgstr ""
 
-#: src/demo/demo.cpp:695
+#: src/demo/demo.cpp:699
 msgid "Shoe."
 msgstr ""
 
-#: src/demo/demo.cpp:696
+#: src/demo/demo.cpp:700
 msgid "Steve."
 msgstr ""
 
-#: src/demo/demo.cpp:703 src/nes/nes.cpp:473 src/snes_faust/snes.cpp:1293
-#: src/pcfx/pcfx.cpp:1074 src/pce/pce.cpp:1116
+#: src/demo/demo.cpp:707 src/nes/nes.cpp:447 src/snes_faust/snes.cpp:1299
+#: src/pcfx/pcfx.cpp:1072 src/pce/pce.cpp:1114
 msgid "Sound quality."
 msgstr ""
 
-#: src/demo/demo.cpp:703 src/snes_faust/snes.cpp:1292
-#: src/snes_faust/snes.cpp:1293 src/pce/pce.cpp:1116
+#: src/demo/demo.cpp:707 src/snes_faust/snes.cpp:1298
+#: src/snes_faust/snes.cpp:1299 src/pce/pce.cpp:1114
 msgid ""
 "Higher values correspond to better SNR and better preservation of higher "
 "frequencies(\"brightness\"), at the cost of increased computational "
@@ -2888,59 +3050,59 @@ msgid ""
 "due to increased (time-domain) ringing."
 msgstr ""
 
-#: src/demo/demo.cpp:704 src/snes_faust/snes.cpp:1294 src/pce/pce.cpp:1117
+#: src/demo/demo.cpp:708 src/snes_faust/snes.cpp:1300 src/pce/pce.cpp:1115
 msgid "Sound output rate tolerance."
 msgstr ""
 
-#: src/demo/demo.cpp:704 src/snes_faust/snes.cpp:1294 src/pcfx/pcfx.cpp:1075
-#: src/pce/pce.cpp:1117
+#: src/demo/demo.cpp:708 src/snes_faust/snes.cpp:1300 src/pcfx/pcfx.cpp:1073
+#: src/pce/pce.cpp:1115
 msgid ""
 "Lower values correspond to better matching of the output rate of the "
 "resampler to the actual desired output rate, at the expense of increased RAM "
 "usage and poorer CPU cache utilization."
 msgstr ""
 
-#: src/demo/demo.cpp:706
+#: src/demo/demo.cpp:710
 msgid "Multi-enum test."
 msgstr ""
 
-#: src/demo/demo.cpp:713
+#: src/demo/demo.cpp:717
 msgid "Waffles 0"
 msgstr ""
 
-#: src/demo/demo.cpp:713
+#: src/demo/demo.cpp:717
 msgid "With extra churned ungulate squeezings and concentrated tree blood."
 msgstr ""
 
-#: src/demo/demo.cpp:714
+#: src/demo/demo.cpp:718
 msgid "Oranges 1"
 msgstr ""
 
-#: src/demo/demo.cpp:714
+#: src/demo/demo.cpp:718
 msgid "Blood oranges, of course."
 msgstr ""
 
-#: src/demo/demo.cpp:715
+#: src/demo/demo.cpp:719
 msgid "Monkeys 2"
 msgstr ""
 
-#: src/demo/demo.cpp:715
+#: src/demo/demo.cpp:719
 msgid "Quiet, well-behaved monkeys that don't try to eat your face."
 msgstr ""
 
-#: src/demo/demo.cpp:716
+#: src/demo/demo.cpp:720
 msgid "Zebra-Z 3"
 msgstr ""
 
-#: src/demo/demo.cpp:716
+#: src/demo/demo.cpp:720
 msgid "Zebras wearing sunglasses."
 msgstr ""
 
-#: src/demo/demo.cpp:717
+#: src/demo/demo.cpp:721
 msgid "Snorkle 4"
 msgstr ""
 
-#: src/demo/demo.cpp:717
+#: src/demo/demo.cpp:721
 msgid "? ? ?"
 msgstr ""
 
@@ -2988,33 +3150,33 @@ msgstr ""
 msgid "[FLASH] Block list overflow!"
 msgstr ""
 
-#: src/ngp/neopop.cpp:187
+#: src/ngp/neopop.cpp:185
 msgid "NGP/NGPC ROM image is too large."
 msgstr ""
 
-#: src/ngp/neopop.cpp:199 src/sms/cart.cpp:147 src/wswan/main.cpp:313
+#: src/ngp/neopop.cpp:197 src/sms/cart.cpp:147 src/wswan/main.cpp:313
 #: src/vb/vb.cpp:634
 #, c-format
 msgid "ROM:       %uKiB\n"
 msgstr ""
 
-#: src/ngp/neopop.cpp:301 src/wswan/main.cpp:531
+#: src/ngp/neopop.cpp:299 src/wswan/main.cpp:531
 msgid "Japanese"
 msgstr ""
 
-#: src/ngp/neopop.cpp:304 src/ss/ss.cpp:2020 src/wswan/main.cpp:534
+#: src/ngp/neopop.cpp:302 src/ss/ss.cpp:2017 src/wswan/main.cpp:534
 msgid "English"
 msgstr ""
 
-#: src/ngp/neopop.cpp:312 src/wswan/main.cpp:542
+#: src/ngp/neopop.cpp:310 src/wswan/main.cpp:542
 msgid "Language games should display text in."
 msgstr ""
 
-#: src/ngp/neopop.cpp:377
+#: src/ngp/neopop.cpp:375
 msgid "Neo Geo Pocket ROM Image"
 msgstr ""
 
-#: src/ngp/neopop.cpp:378
+#: src/ngp/neopop.cpp:376
 msgid "Neo Geo Pocket Color ROM Image"
 msgstr ""
 
@@ -3036,77 +3198,73 @@ msgstr "Территория: %s\n"
 msgid "Export"
 msgstr "Экспорт"
 
-#: src/sms/system.cpp:378
+#: src/sms/system.cpp:385
 msgid "Domestic(Japanese)"
 msgstr ""
 
-#: src/sms/system.cpp:379
+#: src/sms/system.cpp:386
 msgid "Export(World)"
 msgstr ""
 
-#: src/sms/system.cpp:385
+#: src/sms/system.cpp:392
 msgid "System territory/region."
 msgstr ""
 
-#: src/sms/system.cpp:386
+#: src/sms/system.cpp:393
 msgid "Enable FM sound emulation when playing domestic/Japan-region games."
 msgstr ""
 "Включить эмуляцию FM-звука при воспроизведении игр из Японии (регион или "
 "внутренний рынок)."
 
-#: src/sms/system.cpp:388 src/ss/ss.cpp:2171 src/nes/nes.cpp:483
-#: src/snes_faust/snes.cpp:1306 src/psx/psx.cpp:2285
+#: src/sms/system.cpp:395 src/ss/ss.cpp:2172 src/nes/nes.cpp:457
+#: src/snes_faust/snes.cpp:1312 src/psx/psx.cpp:2284
 msgid "First displayed scanline in NTSC mode."
 msgstr ""
 
-#: src/sms/system.cpp:389 src/ss/ss.cpp:2172 src/nes/nes.cpp:484
-#: src/snes_faust/snes.cpp:1307 src/psx/psx.cpp:2286
+#: src/sms/system.cpp:396 src/ss/ss.cpp:2173 src/nes/nes.cpp:458
+#: src/snes_faust/snes.cpp:1313 src/psx/psx.cpp:2285
 msgid "Last displayed scanline in NTSC mode."
 msgstr ""
 
-#: src/sms/system.cpp:391 src/ss/ss.cpp:2180 src/nes/nes.cpp:485
-#: src/snes_faust/snes.cpp:1309 src/psx/psx.cpp:2288
+#: src/sms/system.cpp:398 src/ss/ss.cpp:2181 src/nes/nes.cpp:459
+#: src/snes_faust/snes.cpp:1315 src/psx/psx.cpp:2287
 msgid "First displayed scanline in PAL mode."
 msgstr ""
 
-#: src/sms/system.cpp:392 src/ss/ss.cpp:2181 src/nes/nes.cpp:486
-#: src/snes_faust/snes.cpp:1310 src/psx/psx.cpp:2289
+#: src/sms/system.cpp:399 src/ss/ss.cpp:2182 src/nes/nes.cpp:460
+#: src/snes_faust/snes.cpp:1316 src/psx/psx.cpp:2288
 msgid "Last displayed scanline in PAL mode."
 msgstr ""
 
-#: src/sms/system.cpp:405
+#: src/sms/system.cpp:412
 msgid "Sega Master System ROM Image"
 msgstr ""
 
-#: src/sms/system.cpp:411
+#: src/sms/system.cpp:418
 msgid "Game Gear ROM Image"
 msgstr ""
 
-#: src/sms/system.cpp:417
+#: src/sms/system.cpp:424
 msgid "SMS 6-bit BGR"
 msgstr ""
 
-#: src/sms/system.cpp:424
+#: src/sms/system.cpp:431
 msgid "GG 12-bit BGR"
 msgstr ""
 
-#: src/video/video.cpp:53
+#: src/video/video.cpp:54
 #, c-format
 msgid "Screen snapshot %u saved."
 msgstr ""
 
-#: src/video/video.cpp:57
+#: src/video/video.cpp:58
 #, c-format
 msgid "Error saving screen snapshot: %s"
 msgstr ""
 
-#: src/video/tblur.cpp:49
+#: src/video/tblur.cpp:214
 #, c-format
-msgid "Video temporal frame blur enabled with accumulation: %f.\n"
-msgstr ""
-
-#: src/video/tblur.cpp:54
-msgid "Video temporal frame blur enabled.\n"
+msgid "Format 0x%016llx unsupported by temporal blur feature."
 msgstr ""
 
 #: src/netplay.cpp:152 src/netplay.cpp:172
@@ -3460,41 +3618,41 @@ msgstr ""
 msgid "Loading override settings from \"%s\"...\n"
 msgstr ""
 
-#: src/settings.cpp:427
+#: src/settings.cpp:430
 #, c-format
 msgid "Loaded %zu valid settings and ignored %zu unknown settings.\n"
 msgstr ""
 
-#: src/settings.cpp:429
+#: src/settings.cpp:432
 #, c-format
 msgid "Loaded %zu valid settings and %zu unknown settings.\n"
 msgstr ""
 
-#: src/settings.cpp:435 src/mednafen.cpp:1095 src/mednafen.cpp:1103
+#: src/settings.cpp:438 src/mednafen.cpp:1118 src/mednafen.cpp:1126
 #, c-format
 msgid "Failed: %s\n"
 msgstr ""
 
-#: src/settings.cpp:440 src/settings.cpp:445
+#: src/settings.cpp:443 src/settings.cpp:448
 #, c-format
 msgid "Failed to load settings from \"%s\": %s"
 msgstr ""
 
-#: src/settings.cpp:464
+#: src/settings.cpp:467
 msgid ";Edit this file at your own risk!\n"
 msgstr ";Изменение этого файла производите на свой страх и риск!\n"
 
-#: src/settings.cpp:465
+#: src/settings.cpp:468
 msgid ""
 ";DO NOT EDIT THIS FILE WHILE AN INSTANCE OF MEDNAFEN THAT USES IT IS "
 "RUNNING.\n"
 msgstr ""
 
-#: src/settings.cpp:466
+#: src/settings.cpp:469
 msgid ";File format: <key><single space><value><LF or CR+LF>\n"
 msgstr ""
 
-#: src/settings.cpp:871
+#: src/settings.cpp:874
 #, c-format
 msgid "Unknown setting \"%s\""
 msgstr "Неизвестный параметр «%s»"
@@ -3535,19 +3693,19 @@ msgstr ""
 msgid "ROM image is too large; maximum size allowed is %llu bytes.%s"
 msgstr ""
 
-#: src/ss/ssf.cpp:145
+#: src/ss/ssf.cpp:144
 msgid "SSF Rip"
 msgstr ""
 
-#: src/ss/ssf.cpp:146
+#: src/ss/ssf.cpp:145
 msgid "MiniSSF Rip"
 msgstr ""
 
-#: src/ss/ssf.cpp:154 src/ss/ss.cpp:2133
+#: src/ss/ssf.cpp:153 src/ss/ss.cpp:2134
 msgid "SCSP output resampler quality."
 msgstr ""
 
-#: src/ss/ssf.cpp:155 src/ss/ss.cpp:2134 src/psx/psx.cpp:2281
+#: src/ss/ssf.cpp:154 src/ss/ss.cpp:2135 src/psx/psx.cpp:2280
 msgid ""
 "0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The "
 "resampler that this setting refers to is used for converting from 44.1KHz to "
@@ -3617,246 +3775,257 @@ msgstr ""
 msgid "•• (On)"
 msgstr ""
 
-#: src/ss/ss.cpp:1178 src/ss/ss.cpp:2107 src/ss/db.cpp:470
+#: src/ss/ss.cpp:1163 src/ss/ss.cpp:2108 src/ss/db.cpp:578
 msgid "Data only, with high-level bypass"
 msgstr ""
 
-#: src/ss/ss.cpp:1179 src/ss/ss.cpp:2108
+#: src/ss/ss.cpp:1164 src/ss/ss.cpp:2109
 msgid "Data only"
 msgstr ""
 
-#: src/ss/ss.cpp:1182 src/ss/ss.cpp:1218 src/nes/fds.cpp:569
-#: src/gb/gb.cpp:1948 src/gb/gb.cpp:1978 src/apple2/disk2.inc:971
-#: src/apple2/disk2.inc:976
+#: src/ss/ss.cpp:1167 src/ss/ss.cpp:1203 src/nes/fds.cpp:569 src/gb/gb.cpp:1993
+#: src/gb/gb.cpp:2023 src/apple2/disk2.inc:982 src/apple2/disk2.inc:987
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: src/ss/ss.cpp:1192
+#: src/ss/ss.cpp:1177
 #, c-format
 msgid "CPU Cache Emulation Mode: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1196
+#: src/ss/ss.cpp:1181
 #, c-format
-msgid "Horrible hacks: 0x%08x\n"
+msgid "Horrible hacks: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1199
+#: src/ss/ss.cpp:1184
 #, c-format
 msgid "Region: 0x%01x\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1208
+#: src/ss/ss.cpp:1193
 msgid "Backup Memory"
 msgstr ""
 
-#: src/ss/ss.cpp:1209 src/ss/ss.cpp:2039
+#: src/ss/ss.cpp:1194 src/ss/ss.cpp:2036
 msgid "1MiB Extended RAM"
 msgstr ""
 
-#: src/ss/ss.cpp:1210 src/ss/ss.cpp:2040
+#: src/ss/ss.cpp:1195 src/ss/ss.cpp:2037
 msgid "4MiB Extended RAM"
 msgstr ""
 
-#: src/ss/ss.cpp:1211
+#: src/ss/ss.cpp:1196
 msgid "King of Fighters '95 ROM"
 msgstr ""
 
-#: src/ss/ss.cpp:1212
+#: src/ss/ss.cpp:1197
 msgid "Ultraman ROM"
 msgstr ""
 
-#: src/ss/ss.cpp:1213
+#: src/ss/ss.cpp:1198
 msgid "Action Replay 4M Plus"
 msgstr ""
 
-#: src/ss/ss.cpp:1214
+#: src/ss/ss.cpp:1199
 msgid "16MiB CS1 RAM"
 msgstr ""
 
-#: src/ss/ss.cpp:1215
+#: src/ss/ss.cpp:1200
 msgid "Netlink Modem"
 msgstr ""
 
-#: src/ss/ss.cpp:1216
+#: src/ss/ss.cpp:1201
 msgid "Mednafen Debug"
 msgstr ""
 
-#: src/ss/ss.cpp:1229
+#: src/ss/ss.cpp:1214
 #, c-format
 msgid "Cart: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1300 src/psx/psx.cpp:1721
+#: src/ss/ss.cpp:1285 src/psx/psx.cpp:1719
 #, c-format
 msgid "BIOS file \"%s\" is of an incorrect size."
 msgstr ""
 
-#: src/ss/ss.cpp:1330
+#: src/ss/ss.cpp:1315
 #, c-format
 msgid ""
 "The BIOS ROM data loaded from \"%s\" does not match what is expected by its "
 "filename(possibly due to erroneous file renaming by the user)."
 msgstr ""
 
-#: src/ss/ss.cpp:1336
+#: src/ss/ss.cpp:1321
 #, c-format
 msgid ""
 "The BIOS loaded from \"%s\" is the wrong BIOS for the region being "
 "emulated(possibly due to changing setting \"%s\" to point to the wrong file)."
 msgstr ""
 
-#: src/ss/ss.cpp:1367
+#: src/ss/ss.cpp:1352
 #, c-format
 msgid "Displayed scanlines: [%u,%u]\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1368
+#: src/ss/ss.cpp:1353
 #, c-format
 msgid "Correct Aspect Ratio: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1368 src/ss/ss.cpp:1369 src/ss/ss.cpp:1370 src/ss/ss.cpp:1385
-#: src/snes_faust/snes.cpp:1261 src/pce_fast/huc.cpp:308 src/psx/psx.cpp:1644
-#: src/pce/pce.cpp:673
+#: src/ss/ss.cpp:1353 src/ss/ss.cpp:1354 src/ss/ss.cpp:1355 src/ss/ss.cpp:1370
+#: src/snes_faust/snes.cpp:1267 src/pce_fast/huc.cpp:308 src/psx/psx.cpp:1642
+#: src/pce/pce.cpp:671
 msgid "Enabled"
 msgstr "Включено"
 
-#: src/ss/ss.cpp:1369
+#: src/ss/ss.cpp:1354
 #, c-format
 msgid "Show H Overscan: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1370
+#: src/ss/ss.cpp:1355
 #, c-format
 msgid "H Blend: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1385
+#: src/ss/ss.cpp:1370
 #, c-format
 msgid "Multitap on Saturn Port %u: %s\n"
 msgstr ""
 
-#: src/ss/ss.cpp:1582
+#: src/ss/ss.cpp:1567
 #, c-format
 msgid "Disc %zu of %zu: Error reading sector at lba=%d in DiscSanityChecks()."
 msgstr ""
 
-#: src/ss/ss.cpp:1601
+#: src/ss/ss.cpp:1586
 #, c-format
 msgid ""
 "Disc %zu of %zu: Time mismatch at lba=%d(%02x:%02x:%02x); Q subchannel: %02x:"
 "%02x:%02x"
 msgstr ""
 
-#: src/ss/ss.cpp:1612
+#: src/ss/ss.cpp:1597
 #, c-format
 msgid ""
 "Disc %zu of %zu: No valid Q subchannel ADR_CURPOS data present at lba %d-%d?!"
 msgstr ""
 
-#: src/ss/ss.cpp:1654 src/psx/psx.cpp:1601
+#: src/ss/ss.cpp:1643 src/psx/psx.cpp:1599
 msgid "WARNING: CD (image) sanity checks disabled."
 msgstr ""
 
-#: src/ss/ss.cpp:1895 src/psx/psx.cpp:2153
+#: src/ss/ss.cpp:1878
+msgid "Slave step mode is incompatible with save states."
+msgstr ""
+
+#: src/ss/ss.cpp:1892 src/psx/psx.cpp:2152
 msgid "BIOS hash mismatch(save state created under a different BIOS)!"
 msgstr ""
 
-#: src/ss/ss.cpp:1906
+#: src/ss/ss.cpp:1903
 msgid "Cart type mismatch(save state created with a different cart)!"
 msgstr ""
 
-#: src/ss/ss.cpp:1997
+#: src/ss/ss.cpp:1984
+msgid "Slave step mode is incompatible with hard resets."
+msgstr ""
+
+#: src/ss/ss.cpp:1994
 msgid "Sega Saturn Debug Cart ROM"
 msgstr ""
 
-#: src/ss/ss.cpp:2004 src/ss/db.cpp:398 src/psx/psx.cpp:164
+#: src/ss/ss.cpp:2001 src/ss/db.cpp:506 src/psx/psx.cpp:162
 msgid "Japan"
 msgstr ""
 
-#: src/ss/ss.cpp:2005 src/ss/db.cpp:400 src/psx/psx.cpp:165
+#: src/ss/ss.cpp:2002 src/ss/db.cpp:508 src/psx/psx.cpp:163
 msgid "North America"
 msgstr ""
 
-#: src/ss/ss.cpp:2006 src/ss/db.cpp:404 src/psx/psx.cpp:166
+#: src/ss/ss.cpp:2003 src/ss/db.cpp:512 src/psx/psx.cpp:164
 msgid "Europe"
 msgstr ""
 
-#: src/ss/ss.cpp:2007 src/ss/db.cpp:402
+#: src/ss/ss.cpp:2004 src/ss/db.cpp:510
 msgid "South Korea"
 msgstr ""
 
-#: src/ss/ss.cpp:2009
+#: src/ss/ss.cpp:2006
 msgid "Taiwan"
 msgstr ""
 
-#: src/ss/ss.cpp:2010
+#: src/ss/ss.cpp:2007
 msgid "China"
 msgstr ""
 
-#: src/ss/ss.cpp:2012 src/ss/db.cpp:401
+#: src/ss/ss.cpp:2009 src/ss/db.cpp:509
 msgid "Brazil"
 msgstr ""
 
-#: src/ss/ss.cpp:2013
+#: src/ss/ss.cpp:2010
 msgid "Latin America"
 msgstr ""
 
-#: src/ss/ss.cpp:2021
+#: src/ss/ss.cpp:2018
 msgid "Deutsch"
 msgstr ""
 
-#: src/ss/ss.cpp:2022
+#: src/ss/ss.cpp:2019
 msgid "Français"
 msgstr ""
 
-#: src/ss/ss.cpp:2023
+#: src/ss/ss.cpp:2020
 msgid "Español"
 msgstr ""
 
-#: src/ss/ss.cpp:2024
+#: src/ss/ss.cpp:2021
 msgid "Italiano"
 msgstr ""
 
-#: src/ss/ss.cpp:2025
+#: src/ss/ss.cpp:2022
 msgid "日本語"
 msgstr ""
 
-#: src/ss/ss.cpp:2038
+#: src/ss/ss.cpp:2035
 msgid "Backup Memory(512KiB)"
 msgstr ""
 
-#: src/ss/ss.cpp:2041
+#: src/ss/ss.cpp:2038
 msgid "16MiB RAM mapped in A-bus CS1"
 msgstr ""
 
-#: src/ss/ss.cpp:2047
+#: src/ss/ss.cpp:2044
 msgid "Automatic"
 msgstr ""
 
-#: src/ss/ss.cpp:2067
-msgid "All"
-msgstr ""
-
-#: src/ss/ss.cpp:2069
-msgid "Warnings"
-msgstr ""
-
-#: src/ss/ss.cpp:2071
+#: src/ss/ss.cpp:2068
 msgid "M68K"
 msgstr ""
 
-#: src/ss/ss.cpp:2073
+#: src/ss/ss.cpp:2070
 msgid "SH-2"
 msgstr ""
 
-#: src/ss/ss.cpp:2074
+#: src/ss/ss.cpp:2071
 msgid "SH-2 (peripherals) register writes"
 msgstr ""
 
-#: src/ss/ss.cpp:2075
+#: src/ss/ss.cpp:2072
 msgid "SH-2 cache"
+msgstr ""
+
+#: src/ss/ss.cpp:2073
+msgid "SH-2 cache, with assoc purge/addr/data array logging"
+msgstr ""
+
+#: src/ss/ss.cpp:2074
+msgid "SH-2 exceptions and interrupts"
+msgstr ""
+
+#: src/ss/ss.cpp:2075
+msgid "SH-2 DMA/CPU RW races"
 msgstr ""
 
 #: src/ss/ss.cpp:2077
@@ -3907,194 +4076,194 @@ msgstr ""
 msgid "VDP1 FB writes"
 msgstr ""
 
-#: src/ss/ss.cpp:2093
-msgid "VDP2"
+#: src/ss/ss.cpp:2092
+msgid "VDP1 draw/VRAM write races"
 msgstr ""
 
 #: src/ss/ss.cpp:2094
+msgid "VDP2"
+msgstr ""
+
+#: src/ss/ss.cpp:2095
 msgid "VDP2 register writes"
 msgstr ""
 
-#: src/ss/ss.cpp:2096
+#: src/ss/ss.cpp:2097
 msgid "SCSP"
 msgstr ""
 
-#: src/ss/ss.cpp:2097
+#: src/ss/ss.cpp:2098
 msgid "SCSP register writes"
 msgstr ""
 
-#: src/ss/ss.cpp:2099
-msgid "BIOS"
-msgstr ""
-
-#: src/ss/ss.cpp:2119
+#: src/ss/ss.cpp:2120
 msgid "nosh2dmaline106"
 msgstr ""
 
-#: src/ss/ss.cpp:2120
+#: src/ss/ss.cpp:2121
 msgid "nosh2dmapenalty"
 msgstr ""
 
-#: src/ss/ss.cpp:2121
+#: src/ss/ss.cpp:2122
 msgid "vdp1vram5000fix"
 msgstr ""
 
-#: src/ss/ss.cpp:2122
+#: src/ss/ss.cpp:2123
 msgid "vdp1rwdrawslowdown"
 msgstr ""
 
-#: src/ss/ss.cpp:2123
+#: src/ss/ss.cpp:2124
 msgid "vdp1instant"
 msgstr ""
 
-#: src/ss/ss.cpp:2130
+#: src/ss/ss.cpp:2131
 msgid "Path to the Japan ROM BIOS"
 msgstr ""
 
-#: src/ss/ss.cpp:2131
+#: src/ss/ss.cpp:2132
 msgid "Path to the North America and Europe ROM BIOS"
 msgstr ""
 
-#: src/ss/ss.cpp:2136 src/psx/psx.cpp:2270
+#: src/ss/ss.cpp:2137 src/psx/psx.cpp:2269
 msgid "Attempt to auto-detect region of game."
 msgstr ""
 
-#: src/ss/ss.cpp:2137 src/psx/psx.cpp:2271
+#: src/ss/ss.cpp:2138 src/psx/psx.cpp:2270
 msgid "Default region to use."
 msgstr ""
 
-#: src/ss/ss.cpp:2137 src/psx/psx.cpp:2271
+#: src/ss/ss.cpp:2138 src/psx/psx.cpp:2270
 msgid "Used if region autodetection fails or is disabled."
 msgstr ""
 
-#: src/ss/ss.cpp:2140
+#: src/ss/ss.cpp:2141
 msgid "Enable multitap on Saturn port 1."
 msgstr ""
 
-#: src/ss/ss.cpp:2141
+#: src/ss/ss.cpp:2142
 msgid "Enable multitap on Saturn port 2."
 msgstr ""
 
-#: src/ss/ss.cpp:2143 src/psx/psx.cpp:2261
+#: src/ss/ss.cpp:2144 src/psx/psx.cpp:2260
 msgid "Crosshairs color for lightgun on virtual port 1."
 msgstr ""
 
-#: src/ss/ss.cpp:2143 src/ss/ss.cpp:2144 src/ss/ss.cpp:2145 src/ss/ss.cpp:2146
-#: src/ss/ss.cpp:2147 src/ss/ss.cpp:2148 src/ss/ss.cpp:2149 src/ss/ss.cpp:2150
-#: src/ss/ss.cpp:2151 src/ss/ss.cpp:2152 src/ss/ss.cpp:2153 src/ss/ss.cpp:2154
-#: src/psx/psx.cpp:2261 src/psx/psx.cpp:2262 src/psx/psx.cpp:2263
-#: src/psx/psx.cpp:2264 src/psx/psx.cpp:2265 src/psx/psx.cpp:2266
-#: src/psx/psx.cpp:2267 src/psx/psx.cpp:2268
+#: src/ss/ss.cpp:2144 src/ss/ss.cpp:2145 src/ss/ss.cpp:2146 src/ss/ss.cpp:2147
+#: src/ss/ss.cpp:2148 src/ss/ss.cpp:2149 src/ss/ss.cpp:2150 src/ss/ss.cpp:2151
+#: src/ss/ss.cpp:2152 src/ss/ss.cpp:2153 src/ss/ss.cpp:2154 src/ss/ss.cpp:2155
+#: src/psx/psx.cpp:2260 src/psx/psx.cpp:2261 src/psx/psx.cpp:2262
+#: src/psx/psx.cpp:2263 src/psx/psx.cpp:2264 src/psx/psx.cpp:2265
+#: src/psx/psx.cpp:2266 src/psx/psx.cpp:2267
 msgid "A value of 0x1000000 disables crosshair drawing."
 msgstr ""
 
-#: src/ss/ss.cpp:2144 src/psx/psx.cpp:2262
+#: src/ss/ss.cpp:2145 src/psx/psx.cpp:2261
 msgid "Crosshairs color for lightgun on virtual port 2."
 msgstr ""
 
-#: src/ss/ss.cpp:2145 src/psx/psx.cpp:2263
+#: src/ss/ss.cpp:2146 src/psx/psx.cpp:2262
 msgid "Crosshairs color for lightgun on virtual port 3."
 msgstr ""
 
-#: src/ss/ss.cpp:2146 src/psx/psx.cpp:2264
+#: src/ss/ss.cpp:2147 src/psx/psx.cpp:2263
 msgid "Crosshairs color for lightgun on virtual port 4."
 msgstr ""
 
-#: src/ss/ss.cpp:2147 src/psx/psx.cpp:2265
+#: src/ss/ss.cpp:2148 src/psx/psx.cpp:2264
 msgid "Crosshairs color for lightgun on virtual port 5."
 msgstr ""
 
-#: src/ss/ss.cpp:2148 src/psx/psx.cpp:2266
+#: src/ss/ss.cpp:2149 src/psx/psx.cpp:2265
 msgid "Crosshairs color for lightgun on virtual port 6."
 msgstr ""
 
-#: src/ss/ss.cpp:2149 src/psx/psx.cpp:2267
+#: src/ss/ss.cpp:2150 src/psx/psx.cpp:2266
 msgid "Crosshairs color for lightgun on virtual port 7."
 msgstr ""
 
-#: src/ss/ss.cpp:2150 src/psx/psx.cpp:2268
+#: src/ss/ss.cpp:2151 src/psx/psx.cpp:2267
 msgid "Crosshairs color for lightgun on virtual port 8."
 msgstr ""
 
-#: src/ss/ss.cpp:2151
+#: src/ss/ss.cpp:2152
 msgid "Crosshairs color for lightgun on virtual port 9."
 msgstr ""
 
-#: src/ss/ss.cpp:2152
+#: src/ss/ss.cpp:2153
 msgid "Crosshairs color for lightgun on virtual port 10."
 msgstr ""
 
-#: src/ss/ss.cpp:2153
+#: src/ss/ss.cpp:2154
 msgid "Crosshairs color for lightgun on virtual port 11."
 msgstr ""
 
-#: src/ss/ss.cpp:2154
+#: src/ss/ss.cpp:2155
 msgid "Crosshairs color for lightgun on virtual port 12."
 msgstr ""
 
-#: src/ss/ss.cpp:2156
+#: src/ss/ss.cpp:2157
 msgid "Automatically set RTC on game load."
 msgstr ""
 
-#: src/ss/ss.cpp:2156
+#: src/ss/ss.cpp:2157
 msgid ""
 "Automatically set the SMPC's emulated Real-Time Clock to the host system's "
 "current time and date upon game load."
 msgstr ""
 
-#: src/ss/ss.cpp:2157
+#: src/ss/ss.cpp:2158
 msgid "BIOS language."
 msgstr ""
 
-#: src/ss/ss.cpp:2157
+#: src/ss/ss.cpp:2158
 msgid ""
 "Also affects language used in some games(e.g. the European release of "
 "\"Panzer Dragoon\")."
 msgstr ""
 
-#: src/ss/ss.cpp:2159
+#: src/ss/ss.cpp:2160
 msgid "Expansion cart."
 msgstr ""
 
-#: src/ss/ss.cpp:2160
+#: src/ss/ss.cpp:2161
 msgid "Default expansion cart when autodetection fails."
 msgstr ""
 
-#: src/ss/ss.cpp:2160
+#: src/ss/ss.cpp:2161
 msgid ""
 "Expansion cart to emulate when \"ss.cart\" is set to \"auto\", but the game "
 "wasn't found in the internal database for carts."
 msgstr ""
 
-#: src/ss/ss.cpp:2162
+#: src/ss/ss.cpp:2163
 msgid "Path to KoF 95 ROM image."
 msgstr ""
 
-#: src/ss/ss.cpp:2163
+#: src/ss/ss.cpp:2164
 msgid "Path to Ultraman ROM image."
 msgstr ""
 
-#: src/ss/ss.cpp:2164
+#: src/ss/ss.cpp:2165
 msgid "Path to Action Replay 4M Plus firmware image."
 msgstr ""
 
-#: src/ss/ss.cpp:2167 src/psx/psx.cpp:2277
+#: src/ss/ss.cpp:2168 src/psx/psx.cpp:2276
 msgid "Enable BIOS ROM image sanity checks."
 msgstr ""
 
-#: src/ss/ss.cpp:2169 src/psx/psx.cpp:2278
+#: src/ss/ss.cpp:2170 src/psx/psx.cpp:2277
 msgid "Enable CD (image) sanity checks."
 msgstr ""
 
-#: src/ss/ss.cpp:2174 src/psx/psx.cpp:2291 src/pce/pce.cpp:1089
+#: src/ss/ss.cpp:2175 src/psx/psx.cpp:2290 src/pce/pce.cpp:1087
 msgid "Show horizontal overscan area."
 msgstr ""
 
-#: src/ss/ss.cpp:2176 src/snes/interface.cpp:1327
+#: src/ss/ss.cpp:2177 src/snes/interface.cpp:1323
 msgid "Enable horizontal blend(blur) filter."
 msgstr ""
 
-#: src/ss/ss.cpp:2176
+#: src/ss/ss.cpp:2177
 msgid ""
 "Intended for use in combination with the \"goat\" OpenGL shader, or with "
 "bilinear interpolation or linear interpolation on the X axis enabled.  Has a "
@@ -4102,11 +4271,11 @@ msgid ""
 "modes(640/704)."
 msgstr ""
 
-#: src/ss/ss.cpp:2178 src/snes_faust/snes.cpp:1304 src/psx/psx.cpp:2283
+#: src/ss/ss.cpp:2179 src/snes_faust/snes.cpp:1310 src/psx/psx.cpp:2282
 msgid "Correct aspect ratio."
 msgstr ""
 
-#: src/ss/ss.cpp:2178 src/psx/psx.cpp:2283
+#: src/ss/ss.cpp:2179 src/psx/psx.cpp:2282
 msgid ""
 "Disabling aspect ratio correction with this setting should be considered a "
 "hack.\n"
@@ -4122,233 +4291,301 @@ msgid ""
 "less CPU time."
 msgstr ""
 
-#: src/ss/ss.cpp:2183
+#: src/ss/ss.cpp:2184
 msgid "VDP2 rendering thread CPU affinity mask."
 msgstr ""
 
-#: src/ss/ss.cpp:2186
-msgid "Debug printf mask."
-msgstr ""
-
-#: src/ss/ss.cpp:2189
+#: src/ss/ss.cpp:2190
 msgid "CD image to use with bootable cart ROM image loading."
 msgstr ""
 
-#: src/ss/ss.cpp:2190
+#: src/ss/ss.cpp:2191
 msgid "Cache emulation mode to use with bootable cart ROM image loading."
 msgstr ""
 
-#: src/ss/ss.cpp:2191
+#: src/ss/ss.cpp:2192
 msgid "Horrible hacks to use with bootable cart ROM image loading."
 msgstr ""
 
-#: src/ss/db.cpp:76 src/ss/db.cpp:77 src/ss/db.cpp:78 src/ss/db.cpp:79
-#: src/ss/db.cpp:80 src/ss/db.cpp:81 src/ss/db.cpp:85 src/ss/db.cpp:86
-#: src/ss/db.cpp:87 src/ss/db.cpp:88 src/ss/db.cpp:89 src/ss/db.cpp:90
-#: src/ss/db.cpp:91
+#: src/ss/db.cpp:73 src/ss/db.cpp:74 src/ss/db.cpp:75 src/ss/db.cpp:76
+#: src/ss/db.cpp:77 src/ss/db.cpp:78 src/ss/db.cpp:82 src/ss/db.cpp:83
+#: src/ss/db.cpp:84 src/ss/db.cpp:85 src/ss/db.cpp:86 src/ss/db.cpp:87
+#: src/ss/db.cpp:88
 msgid "Reserved for future modem support."
 msgstr ""
 
-#: src/ss/db.cpp:95 src/ss/db.cpp:96 src/ss/db.cpp:97 src/ss/db.cpp:104
-#: src/ss/db.cpp:106 src/ss/db.cpp:109 src/ss/db.cpp:112 src/ss/db.cpp:113
-#: src/ss/db.cpp:114 src/ss/db.cpp:115 src/ss/db.cpp:119 src/ss/db.cpp:120
-#: src/ss/db.cpp:121 src/ss/db.cpp:126 src/ss/db.cpp:127 src/ss/db.cpp:129
-#: src/ss/db.cpp:130 src/ss/db.cpp:131
+#: src/ss/db.cpp:92 src/ss/db.cpp:93 src/ss/db.cpp:94 src/ss/db.cpp:101
+#: src/ss/db.cpp:103 src/ss/db.cpp:106 src/ss/db.cpp:109 src/ss/db.cpp:110
+#: src/ss/db.cpp:111 src/ss/db.cpp:112 src/ss/db.cpp:116 src/ss/db.cpp:117
+#: src/ss/db.cpp:118 src/ss/db.cpp:123 src/ss/db.cpp:124 src/ss/db.cpp:126
+#: src/ss/db.cpp:127 src/ss/db.cpp:128
 msgid "Game requirement."
 msgstr ""
 
-#: src/ss/db.cpp:116
+#: src/ss/db.cpp:113
 msgid "Required by \"Groove on Fight\" demo."
 msgstr ""
 
-#: src/ss/db.cpp:125
+#: src/ss/db.cpp:122
 msgid "Game requirement(\"Shadow over Mystara\")."
 msgstr ""
 
-#: src/ss/db.cpp:135 src/ss/db.cpp:136
+#: src/ss/db.cpp:132 src/ss/db.cpp:133
 msgid ""
 "Game requirement(though it's probable the original dev cart was only around "
 "6 to 8MiB)."
 msgstr ""
 
-#: src/ss/db.cpp:140 src/ss/db.cpp:172 src/ss/db.cpp:173 src/ss/db.cpp:174
+#: src/ss/db.cpp:137 src/ss/db.cpp:169 src/ss/db.cpp:170 src/ss/db.cpp:171
 msgid "Allows saving."
 msgstr ""
 
-#: src/ss/db.cpp:141 src/ss/db.cpp:142
+#: src/ss/db.cpp:138 src/ss/db.cpp:139
 msgid "Game will crash when running with a RAM expansion cart."
 msgstr ""
 
-#: src/ss/db.cpp:144
+#: src/ss/db.cpp:141
 msgid "Allows saving replay data."
 msgstr ""
 
-#: src/ss/db.cpp:240 src/ss/db.cpp:241 src/ss/db.cpp:248 src/ss/db.cpp:280
-#: src/ss/db.cpp:281 src/ss/db.cpp:282 src/ss/db.cpp:284 src/ss/db.cpp:289
-#: src/ss/db.cpp:291
+#: src/ss/db.cpp:242 src/ss/db.cpp:243 src/ss/db.cpp:251 src/ss/db.cpp:294
+#: src/ss/db.cpp:295 src/ss/db.cpp:296 src/ss/db.cpp:298 src/ss/db.cpp:304
+#: src/ss/db.cpp:313 src/ss/db.cpp:315 src/ss/db.cpp:328 src/ss/db.cpp:329
+#: src/ss/db.cpp:344 src/ss/db.cpp:345 src/ss/db.cpp:346 src/ss/db.cpp:347
+#: src/ss/db.cpp:348 src/ss/db.cpp:349 src/ss/db.cpp:350 src/ss/db.cpp:351
+#: src/ss/db.cpp:352 src/ss/db.cpp:353 src/ss/db.cpp:354 src/ss/db.cpp:355
+#: src/ss/db.cpp:356 src/ss/db.cpp:357
 msgid "Fixes game hang."
 msgstr ""
 
-#: src/ss/db.cpp:242
+#: src/ss/db.cpp:244
 msgid "Fixes game hang that occurred when some FMVs were played."
 msgstr ""
 
-#: src/ss/db.cpp:243
+#: src/ss/db.cpp:245 src/ss/db.cpp:330 src/ss/db.cpp:331 src/ss/db.cpp:332
+#: src/ss/db.cpp:333 src/ss/db.cpp:334 src/ss/db.cpp:335 src/ss/db.cpp:336
+#: src/ss/db.cpp:434 src/ss/db.cpp:435 src/ss/db.cpp:436 src/ss/db.cpp:437
+#: src/ss/db.cpp:438 src/ss/db.cpp:439 src/ss/db.cpp:440 src/ss/db.cpp:443
 msgid "Fixes graphical glitches."
 msgstr ""
 
-#: src/ss/db.cpp:244
+#: src/ss/db.cpp:246
+msgid "Fixes blank Game Over screen."
+msgstr ""
+
+#: src/ss/db.cpp:247
 msgid "Fixes math and game logic errors during battles."
 msgstr ""
 
-#: src/ss/db.cpp:245
+#: src/ss/db.cpp:248
 msgid "Fixes stuck music and voice acting."
 msgstr ""
 
-#: src/ss/db.cpp:246 src/ss/db.cpp:247
+#: src/ss/db.cpp:249 src/ss/db.cpp:250
 msgid "Fixes computer-controlled opponent turning into a ghost statue."
 msgstr ""
 
-#: src/ss/db.cpp:249 src/ss/db.cpp:250
+#: src/ss/db.cpp:252 src/ss/db.cpp:253
 msgid "Fixes flickering title screen."
 msgstr ""
 
-#: src/ss/db.cpp:251
+#: src/ss/db.cpp:254
 msgid "Fixes game crash on lightgun calibration screen."
 msgstr ""
 
-#: src/ss/db.cpp:252
+#: src/ss/db.cpp:255
 msgid "Fixes game crash when going to the world map."
 msgstr ""
 
-#: src/ss/db.cpp:253
+#: src/ss/db.cpp:256 src/ss/db.cpp:257
+msgid "Fixes missing background layer on disc 2."
+msgstr ""
+
+#: src/ss/db.cpp:258
+msgid "Fixes glitches when character graphics change."
+msgstr ""
+
+#: src/ss/db.cpp:259
 msgid "Fixes missing graphics on the title screen, main menu, and elsewhere."
 msgstr ""
 
-#: src/ss/db.cpp:254
+#: src/ss/db.cpp:260
 msgid "Fixes FMV playback hangs and playback failures."
 msgstr ""
 
-#: src/ss/db.cpp:256
-msgid "Fixes various graphical glitches."
-msgstr ""
-
-#: src/ss/db.cpp:257 src/ss/db.cpp:258
-msgid "Fixes hang at corrupted \"Burst\" logo."
-msgstr ""
-
-#: src/ss/db.cpp:260
-msgid "Fixes weird color/palette issues during game startup."
+#: src/ss/db.cpp:261
+msgid ""
+"Fixes graphical glitch on the character select screen in the \"Zero Divide\" "
+"demo."
 msgstr ""
 
 #: src/ss/db.cpp:262
+msgid "Fixes various graphical glitches."
+msgstr ""
+
+#: src/ss/db.cpp:263 src/ss/db.cpp:264
+msgid "Fixes hang at corrupted \"Burst\" logo."
+msgstr ""
+
+#: src/ss/db.cpp:266
+msgid "Fixes weird color/palette issues during game startup."
+msgstr ""
+
+#: src/ss/db.cpp:268
 msgid "Fixes color/brightness and other graphical issues."
 msgstr ""
 
-#: src/ss/db.cpp:263
+#: src/ss/db.cpp:269
 msgid "Fixes hang during FMV."
 msgstr ""
 
-#: src/ss/db.cpp:264
-msgid "Fixes explosion graphic glitches in \"Thunder Force III\"."
-msgstr ""
-
-#: src/ss/db.cpp:265
+#: src/ss/db.cpp:270
 msgid ""
 "Fixes hang when pausing the game under certain conditions in \"Thunder Force "
 "AC\"."
 msgstr ""
 
-#: src/ss/db.cpp:266
-msgid "Fixes malfunction of computer-controlled player."
+#: src/ss/db.cpp:271 src/ss/db.cpp:273
+msgid "Fixes FMV glitches."
 msgstr ""
 
-#: src/ss/db.cpp:267
+#: src/ss/db.cpp:272
+msgid "Fixes FMV glitches and/or malfunction of computer-controlled player."
+msgstr ""
+
+#: src/ss/db.cpp:274
 msgid "Fixes graphical glitches on the character select screen."
 msgstr ""
 
-#: src/ss/db.cpp:268
+#: src/ss/db.cpp:275
 msgid "Fixes invisible menu items and hang."
 msgstr ""
 
-#: src/ss/db.cpp:269 src/ss/db.cpp:270 src/ss/db.cpp:271
+#: src/ss/db.cpp:276 src/ss/db.cpp:277 src/ss/db.cpp:278
 msgid "Fixes hang when trying to exit gameplay back to the main menu."
 msgstr ""
 
-#: src/ss/db.cpp:272 src/ss/db.cpp:273
+#: src/ss/db.cpp:279 src/ss/db.cpp:280
 msgid "Fixes severe gameplay logic glitches."
 msgstr ""
 
-#: src/ss/db.cpp:279
-msgid "Fixes battle text truncation."
+#: src/ss/db.cpp:281
+msgid "Fixes graphical glitch on the character select screen."
 msgstr ""
 
-#: src/ss/db.cpp:285 src/ss/db.cpp:286 src/ss/db.cpp:287 src/ss/db.cpp:292
-#: src/ss/db.cpp:293 src/ss/db.cpp:294
+#: src/ss/db.cpp:285 src/ss/db.cpp:286 src/ss/db.cpp:291 src/ss/db.cpp:292
+#: src/ss/db.cpp:293 src/ss/db.cpp:299 src/ss/db.cpp:300 src/ss/db.cpp:301
+#: src/ss/db.cpp:308 src/ss/db.cpp:309 src/ss/db.cpp:310 src/ss/db.cpp:311
+#: src/ss/db.cpp:312 src/ss/db.cpp:318 src/ss/db.cpp:319 src/ss/db.cpp:320
+#: src/ss/db.cpp:325 src/ss/db.cpp:326 src/ss/db.cpp:327
 msgid "Fixes minor FMV glitches."
 msgstr ""
 
 #: src/ss/db.cpp:288
-msgid "Fixes FMV flickering with alternative BIOS."
+msgid "Fixes battle text truncation."
 msgstr ""
 
 #: src/ss/db.cpp:290
-msgid "Fixes screen flickering on disc 2."
+msgid "Fixes glitchy rotation-zoom effect."
 msgstr ""
 
-#: src/ss/db.cpp:295 src/ss/db.cpp:296 src/ss/db.cpp:297
-msgid "Fixes game crash."
+#: src/ss/db.cpp:302
+msgid "Fixes graphical glitches on the save and load screens."
 msgstr ""
 
-#: src/ss/db.cpp:298 src/ss/db.cpp:299
-msgid "Fixes quasi-random hangs during startup."
-msgstr ""
-
-#: src/ss/db.cpp:341 src/ss/db.cpp:342
-msgid "Fixes hang after watching or aborting FMV playback."
-msgstr ""
-
-#: src/ss/db.cpp:343
+#: src/ss/db.cpp:303
 msgid "Fixes hang when trying to start \"Zippy Race\"."
 msgstr ""
 
-#: src/ss/db.cpp:345
+#: src/ss/db.cpp:305 src/ss/db.cpp:306
+msgid "Fixes most graphical glitches in rock faces."
+msgstr ""
+
+#: src/ss/db.cpp:307
+msgid "Fixes FMV flickering."
+msgstr ""
+
+#: src/ss/db.cpp:314
+msgid "Fixes screen flickering on disc 2."
+msgstr ""
+
+#: src/ss/db.cpp:316 src/ss/db.cpp:317
+msgid "Fixes dialogue text truncation."
+msgstr ""
+
+#: src/ss/db.cpp:321 src/ss/db.cpp:322 src/ss/db.cpp:323
+msgid "Fixes game crash."
+msgstr ""
+
+#: src/ss/db.cpp:324
+msgid "Fixes explosion graphic glitches in \"Thunder Force III\"."
+msgstr ""
+
+#: src/ss/db.cpp:337 src/ss/db.cpp:338
+msgid "Fixes quasi-random hangs during startup."
+msgstr ""
+
+#: src/ss/db.cpp:339
+msgid "Fixes FMV ending too soon."
+msgstr ""
+
+#: src/ss/db.cpp:415 src/ss/db.cpp:416
+msgid "Fixes hang after watching or aborting FMV playback."
+msgstr ""
+
+#: src/ss/db.cpp:418
 msgid "Fixes hang at end of first disc."
 msgstr ""
 
-#: src/ss/db.cpp:347 src/ss/db.cpp:348
+#: src/ss/db.cpp:420 src/ss/db.cpp:421
 msgid "Partially fixes battle text truncation."
 msgstr ""
 
-#: src/ss/db.cpp:349
+#: src/ss/db.cpp:422
 msgid "Fixes texture glitches."
 msgstr ""
 
-#: src/ss/db.cpp:350 src/ss/db.cpp:351
+#: src/ss/db.cpp:423 src/ss/db.cpp:424
 msgid "Fixes flickering credits text."
 msgstr ""
 
-#: src/ss/db.cpp:352 src/ss/db.cpp:353 src/ss/db.cpp:354
+#: src/ss/db.cpp:425 src/ss/db.cpp:426 src/ss/db.cpp:427
 msgid "Fixes flickering rescue text."
 msgstr ""
 
-#: src/ss/db.cpp:355 src/ss/db.cpp:356
+#: src/ss/db.cpp:428
+msgid "Fixes FMV tearing in \"Ys II\"."
+msgstr ""
+
+#: src/ss/db.cpp:429 src/ss/db.cpp:430
 msgid "Reduces graphical glitches."
 msgstr ""
 
-#: src/ss/db.cpp:357 src/ss/db.cpp:358
+#: src/ss/db.cpp:431
+msgid "Fixes glitchy frames on the Konami intro arm sprite."
+msgstr ""
+
+#: src/ss/db.cpp:432 src/ss/db.cpp:433
+msgid "Fixes FMV tearing."
+msgstr ""
+
+#: src/ss/db.cpp:441 src/ss/db.cpp:442
 msgid "Fixes major graphical issues during gameplay."
 msgstr ""
 
-#: src/ss/db.cpp:361 src/ss/db.cpp:362
+#: src/ss/db.cpp:444
+msgid "Reduces FMV tearing."
+msgstr ""
+
+#: src/ss/db.cpp:447 src/ss/db.cpp:448
 msgid "Fixes hangs just before and during gameplay."
 msgstr ""
 
-#: src/ss/db.cpp:387
+#: src/ss/db.cpp:495
 msgid "Region"
 msgstr ""
 
-#: src/ss/db.cpp:388
+#: src/ss/db.cpp:496
 msgid ""
 "This database is used in conjunction with a game's internal header and the "
 "\"ss.region_default\" setting to automatically select the region of Saturn "
@@ -4356,19 +4593,19 @@ msgid ""
 "default."
 msgstr ""
 
-#: src/ss/db.cpp:399
+#: src/ss/db.cpp:507
 msgid "Asia NTSC"
 msgstr ""
 
-#: src/ss/db.cpp:403
+#: src/ss/db.cpp:511
 msgid "Asia PAL"
 msgstr ""
 
-#: src/ss/db.cpp:423
+#: src/ss/db.cpp:531
 msgid "Cart"
 msgstr ""
 
-#: src/ss/db.cpp:424
+#: src/ss/db.cpp:532
 msgid ""
 "This database is used to automatically select the type of cart to emulate "
 "when the \"ss.cart\" setting is set to \"auto\", the default.  If a game is "
@@ -4377,11 +4614,11 @@ msgid ""
 "backup memory cart)."
 msgstr ""
 
-#: src/ss/db.cpp:460
+#: src/ss/db.cpp:568
 msgid "Cache Mode"
 msgstr ""
 
-#: src/ss/db.cpp:461
+#: src/ss/db.cpp:569
 msgid ""
 "This database is used to automatically select cache emulation mode, to fix "
 "various logic and timing issues in games.  The default cache mode is data-"
@@ -4392,25 +4629,23 @@ msgid ""
 "on a real Saturn due to the effects of instruction fetches on the cache, but "
 "become a problem when only data caching is emulated.\n"
 "\n"
-"Full cache emulation is not enabled globally due to the large increase in "
-"host CPU usage, along with the potential of causing games that fully utilize "
-"both SH-2 CPUs to run significantly slower than they should due to "
-"inadequate emulation of bus sharing/contention."
+"Full cache emulation is not enabled globally primarily due to the large "
+"increase in host CPU usage."
 msgstr ""
 
-#: src/ss/db.cpp:488
+#: src/ss/db.cpp:620
 msgid "Horrible Hacks"
 msgstr ""
 
-#: src/ss/db.cpp:489
+#: src/ss/db.cpp:621
 msgid ""
 "This database is used to automatically enable various horrible hacks to fix "
 "issues in certain games.\n"
 "\n"
-"Note that slowing down VDP1 command execution due to SH-2 CPU reads/writes "
-"isn't a horrible hack per-se, but it's activated on a per-game basis to "
-"avoid the likelihood of breaking some games due to overall Saturn emulation "
-"timing inaccuracies."
+"Note that slowing down VDP1 command execution due to SH-2 reads/writes isn't "
+"a horrible hack per-se, but it's activated on a per-game basis to avoid the "
+"likelihood of breaking some games due to overall Saturn emulation timing "
+"inaccuracies."
 msgstr ""
 
 #: src/state.cpp:80
@@ -4423,74 +4658,74 @@ msgstr ""
 msgid "State variable name \"%s\" is too long."
 msgstr ""
 
-#: src/state.cpp:351
+#: src/state.cpp:379
 msgid "Section name mismatch in state loading fast path."
 msgstr ""
 
-#: src/state.cpp:354
+#: src/state.cpp:382
 msgid "Section canary is a zombie AAAAAAAAAAGH!"
 msgstr ""
 
-#: src/state.cpp:383
+#: src/state.cpp:411
 #, c-format
 msgid "Section missing: %.32s"
 msgstr ""
 
-#: src/state.cpp:445 src/state.cpp:566 src/movie.cpp:89 src/movie.cpp:165
+#: src/state.cpp:473 src/state.cpp:592 src/movie.cpp:89 src/movie.cpp:165
 #, c-format
 msgid "Module \"%s\" doesn't support save states."
 msgstr ""
 
-#: src/state.cpp:588
+#: src/state.cpp:614
 msgid "Missing/Wrong save state header ID."
 msgstr ""
 
-#: src/state.cpp:598
+#: src/state.cpp:624
 msgid "Invalid/Unsupported version in save state header."
-msgstr ""
-
-#: src/state.cpp:762
-#, c-format
-msgid "Module %s is not compatible with manual state saving during netplay."
 msgstr ""
 
 #: src/state.cpp:788
 #, c-format
+msgid "Module %s is not compatible with manual state saving during netplay."
+msgstr ""
+
+#: src/state.cpp:814
+#, c-format
 msgid "State %d saved."
 msgstr "Состояние %d сохранено."
 
-#: src/state.cpp:794
+#: src/state.cpp:820
 #, c-format
 msgid "State %d save error: %s"
 msgstr ""
 
-#: src/state.cpp:829
+#: src/state.cpp:855
 msgid "Save state header length field is bad."
 msgstr ""
 
-#: src/state.cpp:852
+#: src/state.cpp:878
 #, c-format
 msgid "State %d loaded."
 msgstr "Состояние %d загружено."
 
-#: src/state.cpp:860
+#: src/state.cpp:886
 #, c-format
 msgid "State %d load error: %s"
 msgstr ""
 
-#: src/gba/eeprom.cpp:102
+#: src/gba/eeprom.cpp:100
 #, c-format
 msgid "EEPROM file \"%s\" is an invalid size."
 msgstr ""
 
-#: src/gba/GBA.cpp:473
+#: src/gba/GBA.cpp:487
 #, c-format
 msgid ""
 "Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct "
 "size is %llu or %llu bytes."
 msgstr ""
 
-#: src/gba/GBA.cpp:1267
+#: src/gba/GBA.cpp:1284
 #, c-format
 msgid ""
 "Unsupported BIOS function %02x called from %08x. A BIOS file is needed in "
@@ -4499,36 +4734,36 @@ msgstr ""
 "Функция BIOS %02x, вызванная из %08x, не поддерживается. Для корректной "
 "работы необходим файл BIOS."
 
-#: src/gba/GBA.cpp:2452 src/gba/GBA.cpp:2453 src/gba/GBA.cpp:2454
-#: src/gba/GBA.cpp:3317 src/gba/GBA.cpp:3318 src/gba/GBA.cpp:3319
+#: src/gba/GBA.cpp:2476 src/gba/GBA.cpp:2477 src/gba/GBA.cpp:2478
+#: src/gba/GBA.cpp:3324 src/gba/GBA.cpp:3325 src/gba/GBA.cpp:3326
 msgid "GameBoy Advance ROM Image"
 msgstr ""
 
-#: src/gba/GBA.cpp:2455 src/pce_fast/huc.cpp:289 src/pce/pce.cpp:643
+#: src/gba/GBA.cpp:2479 src/pce_fast/huc.cpp:289 src/pce/pce.cpp:641
 msgid "BIOS Image"
 msgstr ""
 
-#: src/gba/GBA.cpp:2457
+#: src/gba/GBA.cpp:2481
 msgid "GBA BIOS"
 msgstr ""
 
-#: src/gba/GBA.cpp:2460
+#: src/gba/GBA.cpp:2484
 msgid "Invalid BIOS file size"
 msgstr "Некорректный размер файла BIOS"
 
-#: src/gba/GBA.cpp:3271
+#: src/gba/GBA.cpp:3278
 msgid "Path to optional GBA BIOS ROM image."
 msgstr "Путь к необязательному файлу GBA BIOS ROM."
 
-#: src/gba/GBA.cpp:3315
+#: src/gba/GBA.cpp:3322
 msgid "GSF Rip"
 msgstr ""
 
-#: src/gba/GBA.cpp:3316
+#: src/gba/GBA.cpp:3323
 msgid "MiniGSF Rip"
 msgstr ""
 
-#: src/gba/GBA.cpp:3325
+#: src/gba/GBA.cpp:3332
 msgid "GBA 15-bit BGR"
 msgstr ""
 
@@ -4773,53 +5008,53 @@ msgstr "С тренером.\n"
 msgid "iNES mapper %d is not supported!"
 msgstr "Маппер iNES %d не поддерживается!"
 
-#: src/nes/nes.cpp:268 src/lynx/system.cpp:79 src/psx/psx.cpp:1978
+#: src/nes/nes.cpp:266 src/lynx/system.cpp:92 src/psx/psx.cpp:1976
 #, c-format
 msgid "File format is unknown to module \"%s\"."
 msgstr ""
 
-#: src/nes/nes.cpp:458
+#: src/nes/nes.cpp:432
 msgid "Composite Video"
 msgstr ""
 
-#: src/nes/nes.cpp:459
+#: src/nes/nes.cpp:433
 msgid "S-Video"
 msgstr ""
 
-#: src/nes/nes.cpp:460
+#: src/nes/nes.cpp:434
 msgid "RGB"
 msgstr ""
 
-#: src/nes/nes.cpp:461
+#: src/nes/nes.cpp:435
 msgid "Monochrome"
 msgstr ""
 
-#: src/nes/nes.cpp:468
+#: src/nes/nes.cpp:442
 msgid "Disable four-score emulation."
 msgstr ""
 
-#: src/nes/nes.cpp:470
+#: src/nes/nes.cpp:444
 msgid "Remove 8-sprites-per-scanline hardware limit."
 msgstr ""
 
-#: src/nes/nes.cpp:471
+#: src/nes/nes.cpp:445
 msgid ""
 "WARNING: Enabling this option will cause graphical glitches in some games, "
 "including \"Solstice\"."
 msgstr ""
 
-#: src/nes/nes.cpp:473
+#: src/nes/nes.cpp:447
 msgid ""
 "Higher values correspond to better SNR and better preservation of higher "
 "frequencies(\"brightness\"), at the cost of increased computational "
 "complexity and a negligible(<0.5ms) increase in latency."
 msgstr ""
 
-#: src/nes/nes.cpp:474 src/pcfx/pcfx.cpp:1075
+#: src/nes/nes.cpp:448 src/pcfx/pcfx.cpp:1073
 msgid "Output rate tolerance."
 msgstr ""
 
-#: src/nes/nes.cpp:474
+#: src/nes/nes.cpp:448
 msgid ""
 "Lower values correspond to better matching of the output rate of the "
 "resampler to the actual desired output rate, at the expense of increased RAM "
@@ -4827,7 +5062,7 @@ msgid ""
 "SOUND WILL LIKELY BE OFF-KEY AND THE WRONG TEMPO, AMONG OTHER PROBLEMS."
 msgstr ""
 
-#: src/nes/nes.cpp:475
+#: src/nes/nes.cpp:449
 msgid ""
 "Enable less-accurate, but better sounding, Namco 106(mapper 19) sound "
 "emulation."
@@ -4835,146 +5070,146 @@ msgstr ""
 "Использовать менее аккуратную, но более приятную на слух эмуляцию звука для "
 "Namco 106."
 
-#: src/nes/nes.cpp:476
+#: src/nes/nes.cpp:450
 msgid ""
 "Scan filename for (U),(J),(E),etc. strings to en/dis-able PAL emulation."
 msgstr ""
 "Сканировать имя файла на наличие меток (U), (J), (E) и т.д. для определения "
 "режима эмуляции (PAL/NTSC)."
 
-#: src/nes/nes.cpp:477
+#: src/nes/nes.cpp:451
 msgid ""
 "Warning: This option may break NES network play when enabled IF the players "
 "are using ROM images with different filenames."
 msgstr ""
 
-#: src/nes/nes.cpp:479
+#: src/nes/nes.cpp:453
 msgid "Enable PAL(50Hz) NES emulation."
 msgstr "Использовать эмуляцию NES в режиме PAL (50 Гц)."
 
-#: src/nes/nes.cpp:480
+#: src/nes/nes.cpp:454
 msgid "Enable Game Genie emulation."
 msgstr "Включить эмуляцию Game Genie."
 
-#: src/nes/nes.cpp:481
+#: src/nes/nes.cpp:455
 msgid "Path to Game Genie ROM image."
 msgstr "Путь к файлу Game Genie ROM."
 
-#: src/nes/nes.cpp:482
+#: src/nes/nes.cpp:456
 msgid "Clip left+right 8 pixel columns."
 msgstr "Обрезать левый и правый столбец из 8 пикселов."
 
-#: src/nes/nes.cpp:489
+#: src/nes/nes.cpp:463
 msgid "Enable NTSC color generation and blitter."
 msgstr "Использовать генерацию цветов NTSC и блиттер."
 
-#: src/nes/nes.cpp:490
+#: src/nes/nes.cpp:464
 msgid ""
 "NOTE: If your refresh rate isn't very close to 60.1Hz(+-0.1), you will need "
 "to set the nes.ntsc.mergefields setting to \"1\" to avoid excessive "
 "flickering."
 msgstr ""
 
-#: src/nes/nes.cpp:493
+#: src/nes/nes.cpp:467
 msgid "Video quality/type preset."
 msgstr ""
 
-#: src/nes/nes.cpp:494
+#: src/nes/nes.cpp:468
 msgid "Merge fields to partially work around !=60.1Hz refresh rates."
 msgstr ""
 "Совмещать поля, чтобы частично обойти проблемы с частотами обновления !=60.1 "
 "Гц."
 
-#: src/nes/nes.cpp:495
+#: src/nes/nes.cpp:469
 msgid "NTSC composite blitter saturation."
 msgstr "Насыщенность композитного блиттера NTSC."
 
-#: src/nes/nes.cpp:496
+#: src/nes/nes.cpp:470
 msgid "NTSC composite blitter hue."
 msgstr "Тон композитного блиттера NTSC."
 
-#: src/nes/nes.cpp:497
+#: src/nes/nes.cpp:471
 msgid "NTSC composite blitter sharpness."
 msgstr "Резкость композитного блиттера NTSC."
 
-#: src/nes/nes.cpp:498
+#: src/nes/nes.cpp:472
 msgid "NTSC composite blitter brightness."
 msgstr "Яркость композитного блиттера NTSC."
 
-#: src/nes/nes.cpp:499
+#: src/nes/nes.cpp:473
 msgid "NTSC composite blitter contrast."
 msgstr "Контраст композитного блиттера NTSC."
 
-#: src/nes/nes.cpp:501
+#: src/nes/nes.cpp:475
 msgid "Enable NTSC custom decoder matrix."
 msgstr "Использовать особую матрицу декодирования NTSC."
 
-#: src/nes/nes.cpp:504
+#: src/nes/nes.cpp:478
 msgid "NTSC custom decoder matrix element 0(red, value * V)."
 msgstr "Особая матрица декодирования NTSC: элемент 0 (красный, значение * V)"
 
-#: src/nes/nes.cpp:505
+#: src/nes/nes.cpp:479
 msgid "NTSC custom decoder matrix element 1(red, value * U)."
 msgstr "Особая матрица декодирования NTSC: элемент 1 (красный, значение * U)"
 
-#: src/nes/nes.cpp:506
+#: src/nes/nes.cpp:480
 msgid "NTSC custom decoder matrix element 2(green, value * V)."
 msgstr "Особая матрица декодирования NTSC: элемент 2 (зелёный, значение * V)"
 
-#: src/nes/nes.cpp:507
+#: src/nes/nes.cpp:481
 msgid "NTSC custom decoder matrix element 3(green, value * U)."
 msgstr "Особая матрица декодирования NTSC: элемент 3 (зелёный, значение * U)"
 
-#: src/nes/nes.cpp:508
+#: src/nes/nes.cpp:482
 msgid "NTSC custom decoder matrix element 4(blue, value * V)."
 msgstr "Особая матрица декодирования NTSC: элемент 4 (синий, значение * V)"
 
-#: src/nes/nes.cpp:509
+#: src/nes/nes.cpp:483
 msgid "NTSC custom decoder matrix element 5(blue, value * U."
 msgstr "Особая матрица декодирования NTSC: элемент 5 (синий, значение * U)"
 
-#: src/nes/nes.cpp:655
+#: src/nes/nes.cpp:629
 msgid "Malformed Pro Action Replay code."
 msgstr ""
 
-#: src/nes/nes.cpp:680
+#: src/nes/nes.cpp:654
 msgid "Pro Action Rocky code is of an incorrect length."
 msgstr ""
 
-#: src/nes/nes.cpp:699
+#: src/nes/nes.cpp:673
 msgid "Invalid character in Pro Action Rocky code."
 msgstr ""
 
-#: src/nes/nes.cpp:701
+#: src/nes/nes.cpp:675
 #, c-format
 msgid "Invalid character in Pro Action Rocky code: %c"
 msgstr ""
 
-#: src/nes/nes.cpp:737
+#: src/nes/nes.cpp:711
 msgid "Genies will eat your cheeses."
 msgstr ""
 
-#: src/nes/nes.cpp:738
+#: src/nes/nes.cpp:712
 msgid "Prooooooooooooooooocom."
 msgstr ""
 
-#: src/nes/nes.cpp:739
+#: src/nes/nes.cpp:713
 msgid "No pie."
 msgstr ""
 
-#: src/nes/nsf.cpp:186
+#: src/nes/nsf.cpp:188
 msgid "NSF is too large."
 msgstr ""
 
-#: src/nes/nsf.cpp:246
+#: src/nes/nsf.cpp:248
 msgid "Load address is invalid!"
 msgstr "Некорректный адрес загрузки!"
 
-#: src/nes/nsf.cpp:249
+#: src/nes/nsf.cpp:251
 msgid "Total number of songs is less than 1!"
 msgstr "Общее число композиций меньше, чем 1!"
 
-#: src/nes/nsf.cpp:277
+#: src/nes/nsf.cpp:279
 msgid ""
 "NSF Loaded.  File information:\n"
 "\n"
@@ -4982,36 +5217,36 @@ msgstr ""
 "NSF загружен.  Сведения о файле:\n"
 "\n"
 
-#: src/nes/nsf.cpp:280
+#: src/nes/nsf.cpp:282
 #, c-format
 msgid "Game/Album Name:\t%s\n"
 msgstr "Название игры/альбома:\t%s\n"
 
-#: src/nes/nsf.cpp:282
+#: src/nes/nsf.cpp:284
 #, c-format
 msgid "Music Artist:\t%s\n"
 msgstr "Исполнитель музыки:\t%s\n"
 
-#: src/nes/nsf.cpp:284
+#: src/nes/nsf.cpp:286
 #, c-format
 msgid "Copyright:\t\t%s\n"
 msgstr "Авторское право:\t\t%s\n"
 
-#: src/nes/nsf.cpp:286
+#: src/nes/nsf.cpp:288
 #, c-format
 msgid "Ripper:\t\t%s\n"
 msgstr "Ripper:\t\t%s\n"
 
-#: src/nes/nsf.cpp:295
+#: src/nes/nsf.cpp:297
 #, c-format
 msgid "Expansion hardware:  %s\n"
 msgstr "Устройства расширения:  %s\n"
 
-#: src/nes/nsf.cpp:302
+#: src/nes/nsf.cpp:304
 msgid "Bank-switched\n"
 msgstr "С переключением банков памяти\n"
 
-#: src/nes/nsf.cpp:303
+#: src/nes/nsf.cpp:305
 #, c-format
 msgid ""
 "Load address:  $%04x\n"
@@ -5022,7 +5257,7 @@ msgstr ""
 "Адрес инициализации:  $%04x\n"
 "Адрес воспроизведения:  $%04x\n"
 
-#: src/nes/nsf.cpp:305
+#: src/nes/nsf.cpp:307
 #, c-format
 msgid ""
 "Starting song:  %d / %d\n"
@@ -5141,489 +5376,485 @@ msgstr "Board type not supported."
 msgid "Not a valid UNIF file."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1233
+#: src/snes_faust/snes.cpp:1239
 msgid "Force 512."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1233
+#: src/snes_faust/snes.cpp:1239
 msgid "Double width of line if it's 256."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1234
+#: src/snes_faust/snes.cpp:1240
 msgid "Pseudo-hires halve-blend."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1234
+#: src/snes_faust/snes.cpp:1240
 msgid "Blend line down to 256 pixels if it's pseudo-hires."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1235
+#: src/snes_faust/snes.cpp:1241
 msgid "Pseudo-hires halve-blend and force 512 if necessary."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1235
+#: src/snes_faust/snes.cpp:1241
 msgid ""
 "Blend line down to 256 pixels if it's pseudo-hires.  After, double width of "
 "line if any other lines use hires mode."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1236
+#: src/snes_faust/snes.cpp:1242
 msgid "Pseudo-hires halve-blend and force 512."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1236
+#: src/snes_faust/snes.cpp:1242
 msgid ""
 "Blend line down to 256 pixels if it's pseudo-hires.  After, double width of "
 "line if it's 256."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1237
+#: src/snes_faust/snes.cpp:1243
 msgid "Force 512 and blend."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1237
+#: src/snes_faust/snes.cpp:1243
 msgid "Double width of line if it's 256.  After, blend line."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1244 src/gb/gb.cpp:2755
-msgid "Auto"
-msgstr ""
-
-#: src/snes_faust/snes.cpp:1246
+#: src/snes_faust/snes.cpp:1252
 msgid "NTSC(North America/Japan)"
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1247
+#: src/snes_faust/snes.cpp:1253
 msgid "PAL(Europe)"
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1249
+#: src/snes_faust/snes.cpp:1255
 msgid "NTSC, but PPU bit as if \"auto\"."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1250
+#: src/snes_faust/snes.cpp:1256
 msgid "PAL, but PPU bit as if \"auto\"."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1252
+#: src/snes_faust/snes.cpp:1258
 msgid "NTSC, but PPU bit as if PAL."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1253
+#: src/snes_faust/snes.cpp:1259
 msgid "PAL, but PPU bit as if NTSC."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1263
+#: src/snes_faust/snes.cpp:1269
 msgid "Enabled, force NTSC PAR."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1264
+#: src/snes_faust/snes.cpp:1270
 msgid "Enabled, force PAL PAR."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1276
+#: src/snes_faust/snes.cpp:1282
 msgid "Single-threaded"
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1276
+#: src/snes_faust/snes.cpp:1282
 msgid "PPU rendering is performed in the main emulation thread."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1277
+#: src/snes_faust/snes.cpp:1283
 msgid "Multi-threaded"
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1277
+#: src/snes_faust/snes.cpp:1283
 msgid "PPU rendering is performed in a dedicated thread."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1284
+#: src/snes_faust/snes.cpp:1290
 msgid "PPU renderer."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1284
+#: src/snes_faust/snes.cpp:1290
 msgid ""
 "If you have only one CPU with one physical CPU core, select the single-"
 "threaded renderer for better performance."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1286
+#: src/snes_faust/snes.cpp:1292
 msgid "PPU rendering thread CPU affinity mask."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1287
+#: src/snes_faust/snes.cpp:1293
 msgid "MSU1 audio read thread CPU affinity mask."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1288
+#: src/snes_faust/snes.cpp:1294
 msgid "MSU1 data read thread CPU affinity mask."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1290
+#: src/snes_faust/snes.cpp:1296
 msgid "Begin frame in emulated VBlank."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1290
+#: src/snes_faust/snes.cpp:1296
 msgid ""
 "Disabling will make the multithreaded PPU renderer more effective, but will "
 "also increase latency."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1292
+#: src/snes_faust/snes.cpp:1298
 msgid "MSU1 sound quality."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1296
+#: src/snes_faust/snes.cpp:1302
 msgid "Enable 1-frame speculative execution for video output."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1296
+#: src/snes_faust/snes.cpp:1302
 msgid ""
 "Hack to reduce input->output video latency by 1 frame.  Enabling will "
 "increase CPU usage, and may cause video glitches(such as \"jerkiness\") in "
 "some oddball games, but most commercially-released games should be fine."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1297
+#: src/snes_faust/snes.cpp:1303
 msgid "Enable speculative execution for sound output too."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1297
+#: src/snes_faust/snes.cpp:1303
 msgid ""
 "Only has an effect when speculative-execution for video output is enabled.  "
 "Will cause minor sound glitches in some games."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1299 src/snes/interface.cpp:1320
+#: src/snes_faust/snes.cpp:1305 src/snes/interface.cpp:1316
 msgid "Enable multitap on SNES port 1."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1300 src/snes/interface.cpp:1321
+#: src/snes_faust/snes.cpp:1306 src/snes/interface.cpp:1317
 msgid "Enable multitap on SNES port 2."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1302
+#: src/snes_faust/snes.cpp:1308
 msgid "Region of SNES to emulate."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1312
+#: src/snes_faust/snes.cpp:1318
 msgid "Horizontal blending/doubling filter."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1314
+#: src/snes_faust/snes.cpp:1320
 msgid "CX4 clock rate, specified in percentage of normal."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1314
+#: src/snes_faust/snes.cpp:1320
 msgid ""
 "Overclocking the CX4 will cause or worsen attract mode desynchronization."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1315
+#: src/snes_faust/snes.cpp:1321
 msgid "Super FX clock rate, specified in percentage of normal."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1315
+#: src/snes_faust/snes.cpp:1321
 msgid ""
 "Overclocking the Super FX will cause or worsen attract mode "
 "desynchronization."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1316
+#: src/snes_faust/snes.cpp:1322
 msgid "Enable SuperFX instruction cache emulation."
 msgstr ""
 
-#: src/snes_faust/snes.cpp:1316
+#: src/snes_faust/snes.cpp:1322
 msgid "Enabling will likely increase CPU usage."
 msgstr ""
 
-#: src/snes_faust/cart.cpp:142 src/snes/interface.cpp:693
+#: src/snes_faust/cart.cpp:142 src/snes/interface.cpp:689
 msgid "SNES ROM image is too large."
 msgstr ""
 
-#: src/snes_faust/cart.cpp:476 src/pcfx/pcfx.cpp:737 src/wswan/memory.cpp:683
-#: src/wswan/memory.cpp:707 src/pce_fast/huc.cpp:133 src/pce/huc.cpp:197
+#: src/snes_faust/cart.cpp:571 src/pcfx/pcfx.cpp:735 src/wswan/memory.cpp:681
+#: src/wswan/memory.cpp:705 src/pce_fast/huc.cpp:133 src/pce/huc.cpp:197
 #, c-format
 msgid ""
 "Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct "
 "size is %llu bytes."
 msgstr ""
 
-#: src/snes_faust/msu1.cpp:423
+#: src/snes_faust/msu1.cpp:426
 msgid "MSU1 Enabled:\n"
 msgstr ""
 
-#: src/snes_faust/msu1.cpp:496
+#: src/snes_faust/msu1.cpp:498
 #, c-format
 msgid "Data File Size: 0x%08llx\n"
 msgstr ""
 
-#: src/snes_faust/msu1.cpp:558
+#: src/snes_faust/msu1.cpp:563
 #, c-format
 msgid "Doing brute-force search for audio tracks due to error: %s\n"
 msgstr ""
 
-#: src/snes_faust/msu1.cpp:594
+#: src/snes_faust/msu1.cpp:599
 #, c-format
 msgid "Audio Track 0x%04x:\n"
 msgstr ""
 
-#: src/snes_faust/msu1.cpp:598
+#: src/snes_faust/msu1.cpp:603
 #, c-format
 msgid "Byte Size: 0x%08llx\n"
 msgstr ""
 
-#: src/snes_faust/msu1.cpp:599
+#: src/snes_faust/msu1.cpp:604
 #, c-format
 msgid "Loop Pos:  0x%08llx (frame 0x%08x)\n"
 msgstr ""
 
-#: src/cdplay/cdplay.cpp:107
+#: src/cdplay/cdplay.cpp:105
 msgid "Audio track doesn't exist."
 msgstr ""
 
-#: src/cdplay/cdplay.cpp:508
+#: src/cdplay/cdplay.cpp:514
 msgid "Enable simple waveform visualization."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:313 src/pcfx/pcfx.cpp:967
+#: src/pcfx/pcfx.cpp:311 src/pcfx/pcfx.cpp:965
 #, c-format
 msgid "Error saving save-game memory: %s"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:588 src/vb/vb.cpp:639
+#: src/pcfx/pcfx.cpp:586 src/vb/vb.cpp:639
 #, c-format
 msgid "V810 Emulation Mode: %s\n"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:588 src/vb/vb.cpp:639
+#: src/pcfx/pcfx.cpp:586 src/vb/vb.cpp:639
 msgid "Accurate"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:588 src/vb/vb.cpp:639
+#: src/pcfx/pcfx.cpp:586 src/vb/vb.cpp:639
 msgid "Fast"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:594
+#: src/pcfx/pcfx.cpp:592
 msgid "RAM"
 msgstr "RAM"
 
-#: src/pcfx/pcfx.cpp:595
+#: src/pcfx/pcfx.cpp:593
 msgid "BIOS ROM"
 msgstr "BIOS ROM"
 
-#: src/pcfx/pcfx.cpp:606
+#: src/pcfx/pcfx.cpp:604
 msgid "BIOS ROM file is incorrect size.\n"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:620
+#: src/pcfx/pcfx.cpp:618
 msgid "FX-SCSI ROM"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:703
+#: src/pcfx/pcfx.cpp:701
 msgid ""
 "Warning: BRAM is disabled per pcfx.disable_bram setting.  This is simulating "
 "a malfunction.\n"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:876
+#: src/pcfx/pcfx.cpp:874
 #, c-format
 msgid "CD Layout MD5:   0x%s\n"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:918
+#: src/pcfx/pcfx.cpp:916
 #, fuzzy, c-format
 msgid "Emulated CD-ROM drive speed: %ux\n"
 msgstr "Скорость эмулируемого привода CD-ROM: %dx\n"
 
-#: src/pcfx/pcfx.cpp:1030 src/vb/vb.cpp:891
+#: src/pcfx/pcfx.cpp:1028 src/vb/vb.cpp:892
 msgid "Fast Mode"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1030 src/vb/vb.cpp:891
+#: src/pcfx/pcfx.cpp:1028 src/vb/vb.cpp:892
 msgid ""
 "Fast mode trades timing accuracy, cache emulation, and executing from "
 "hardware registers and RAM not intended for code use for performance."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1031 src/vb/vb.cpp:892
+#: src/pcfx/pcfx.cpp:1029 src/vb/vb.cpp:893
 msgid "Accurate Mode"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1031 src/vb/vb.cpp:892
+#: src/pcfx/pcfx.cpp:1029 src/vb/vb.cpp:893
 msgid ""
 "Increased timing accuracy, though not perfect, along with cache emulation, "
 "at the cost of decreased performance.  Additionally, even the pipeline isn't "
 "correctly and fully emulated in this mode."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1032
+#: src/pcfx/pcfx.cpp:1030
 msgid "Auto Mode"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1032
+#: src/pcfx/pcfx.cpp:1030
 msgid ""
 "Selects \"fast\" or \"accurate\" automatically based on an internal "
 "database.  If the CD image is not recognized, defaults to \"fast\"."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1039
+#: src/pcfx/pcfx.cpp:1037
 msgid "This value will cause heavy pixel distortion."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1040
+#: src/pcfx/pcfx.cpp:1038
 msgid "This value will cause moderate pixel distortion."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1041
+#: src/pcfx/pcfx.cpp:1039
 msgid ""
 "This value will cause no pixel distortion as long as interpolation is "
 "enabled on the video output device and the resolution is sufficiently high, "
 "but it will use a lot of CPU time."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1047
+#: src/pcfx/pcfx.cpp:1045
 msgid "Enable multitap on PC-FX port 1."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1047
+#: src/pcfx/pcfx.cpp:1045
 msgid ""
 "EXPERIMENTAL emulation of the unreleased multitap.  Enables ports 3 4 5."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1048
+#: src/pcfx/pcfx.cpp:1046
 msgid "Enable multitap on PC-FX port 2."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1048
+#: src/pcfx/pcfx.cpp:1046
 msgid ""
 "EXPERIMENTAL emulation of the unreleased multitap.  Enables ports 6 7 8."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1051 src/pce_fast/pce.cpp:689
+#: src/pcfx/pcfx.cpp:1049 src/pce_fast/pce.cpp:641
 msgid "Mouse sensitivity."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1052
+#: src/pcfx/pcfx.cpp:1050
 msgid ""
 "When RUN+SEL are pressed simultaneously, disable both buttons temporarily."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1054 src/vb/vb.cpp:924
+#: src/pcfx/pcfx.cpp:1052 src/vb/vb.cpp:925
 msgid "CPU emulation mode."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1055
+#: src/pcfx/pcfx.cpp:1053
 msgid "Path to the ROM BIOS"
 msgstr "Путь к файлу ROM BIOS"
 
-#: src/pcfx/pcfx.cpp:1056
+#: src/pcfx/pcfx.cpp:1054
 msgid "Path to the FX-SCSI ROM"
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1056
+#: src/pcfx/pcfx.cpp:1054
 msgid "Intended for developers only."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1057
+#: src/pcfx/pcfx.cpp:1055
 msgid "Disable internal and external BRAM."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1057
+#: src/pcfx/pcfx.cpp:1055
 msgid ""
 "It is intended for viewing games' error screens that may be different from "
 "simple BRAM full and uninitialized BRAM error screens, though it can cause "
 "the game to crash outright."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1058
+#: src/pcfx/pcfx.cpp:1056
 msgid "Emulated CD-ROM speed."
 msgstr "Скорость эмулируемого CD-ROM."
 
-#: src/pcfx/pcfx.cpp:1058
+#: src/pcfx/pcfx.cpp:1056
 msgid ""
 "Setting the value higher than 2, the default, will decrease loading times in "
 "most games by some degree."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1060 src/pce_fast/pce.cpp:695 src/pce/pce.cpp:1103
+#: src/pcfx/pcfx.cpp:1058 src/pce_fast/pce.cpp:647 src/pce/pce.cpp:1101
 msgid "Remove 16-sprites-per-scanline hardware limit."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1061
+#: src/pcfx/pcfx.cpp:1059
 msgid "Emulated width for 7.16MHz dot-clock mode."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1061
+#: src/pcfx/pcfx.cpp:1059
 msgid ""
 "Lower values are faster, but will cause some degree of pixel distortion."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1063 src/pce_fast/pce.cpp:687 src/pce/pce.cpp:1086
+#: src/pcfx/pcfx.cpp:1061 src/pce_fast/pce.cpp:639 src/pce/pce.cpp:1084
 msgid "First rendered scanline."
 msgstr "Первая выводимая строка видео."
 
-#: src/pcfx/pcfx.cpp:1064 src/pce_fast/pce.cpp:688 src/pce/pce.cpp:1087
+#: src/pcfx/pcfx.cpp:1062 src/pce_fast/pce.cpp:640 src/pce/pce.cpp:1085
 msgid "Last rendered scanline."
 msgstr "Последняя выводимая строка видео."
 
-#: src/pcfx/pcfx.cpp:1066
+#: src/pcfx/pcfx.cpp:1064
 msgid ""
 "Enable bilinear interpolation on the chroma channel of RAINBOW YUV output."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1066
+#: src/pcfx/pcfx.cpp:1064
 msgid ""
 "This is an enhancement-related setting.  Enabling it may cause graphical "
 "glitches with some games."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1068
+#: src/pcfx/pcfx.cpp:1066
 msgid "Hack to suppress clicks caused by forced channel resets."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1072
+#: src/pcfx/pcfx.cpp:1070
 msgid ""
 "Hack that emulates the codec a buggy ADPCM encoder used for some games' "
 "ADPCM."
 msgstr ""
 
-#: src/pcfx/pcfx.cpp:1074
+#: src/pcfx/pcfx.cpp:1072
 msgid ""
 "Higher values correspond to better SNR and better preservation of higher "
 "frequencies(\"brightness\"), at the cost of increased computational "
 "complexity and a negligible increase in latency."
 msgstr ""
 
-#: src/snes/interface.cpp:103
+#: src/snes/interface.cpp:101
 msgid "SNES 15-bit BGR"
 msgstr ""
 
-#: src/snes/interface.cpp:1058
+#: src/snes/interface.cpp:1054
 msgid "bSNES core unserializer error."
 msgstr ""
 
-#: src/snes/interface.cpp:1267
+#: src/snes/interface.cpp:1263
 msgid "Monkey!"
 msgstr ""
 
-#: src/snes/interface.cpp:1325
+#: src/snes/interface.cpp:1321
 msgid ""
 "Note that regardless of this setting's value, \"512\" and \"256\" width "
 "modes will be scaled to the same dimensions for display."
 msgstr ""
 
-#: src/snes/interface.cpp:1327
+#: src/snes/interface.cpp:1323
 msgid ""
 "Intended for use in combination with the \"goat\" OpenGL shader, or with "
 "bilinear interpolation or linear interpolation on the X axis enabled."
 msgstr ""
 
-#: src/snes/interface.cpp:1329
+#: src/snes/interface.cpp:1325
 msgid "APU output resampler quality."
 msgstr ""
 
-#: src/snes/interface.cpp:1329
+#: src/snes/interface.cpp:1325
 msgid ""
 "0 is lowest quality and latency and CPU usage, 10 is highest quality and "
 "latency and CPU usage.\n"
@@ -5709,15 +5940,15 @@ msgstr ""
 msgid "Comms external program path."
 msgstr ""
 
-#: src/wswan/main.cpp:645
+#: src/wswan/main.cpp:646
 msgid "WonderSwan ROM Image"
 msgstr ""
 
-#: src/wswan/main.cpp:646
+#: src/wswan/main.cpp:647
 msgid "WonderSwan Color ROM Image"
 msgstr ""
 
-#: src/wswan/main.cpp:647
+#: src/wswan/main.cpp:648
 msgid "WonderSwan Music Rip"
 msgstr ""
 
@@ -5779,84 +6010,84 @@ msgstr "Воспроизведение фильма начато."
 msgid "Not a valid SPC file!"
 msgstr ""
 
-#: src/gb/gb.cpp:2116
+#: src/gb/gb.cpp:2160
 #, c-format
 msgid "Type:      0x%02x(%s)\n"
 msgstr ""
 
-#: src/gb/gb.cpp:2117
+#: src/gb/gb.cpp:2161
 #, c-format
 msgid "RAM Size:  0x%02x(%s)\n"
 msgstr ""
 
-#: src/gb/gb.cpp:2118
+#: src/gb/gb.cpp:2162
 #, c-format
 msgid "Version:   0x%02x\n"
 msgstr ""
 
-#: src/gb/gb.cpp:2152
+#: src/gb/gb.cpp:2196
 msgid "Unsupported ROM size specified in GB header."
 msgstr ""
 
-#: src/gb/gb.cpp:2165
+#: src/gb/gb.cpp:2209
 msgid "Unsupported RAM size specified in GB header."
 msgstr ""
 
-#: src/gb/gb.cpp:2235
+#: src/gb/gb.cpp:2279
 msgid "Unsupported mapper type specified in GB header."
 msgstr ""
 
-#: src/gb/gb.cpp:2755
+#: src/gb/gb.cpp:2776
 msgid "Automatic detection based on headers."
 msgstr ""
 
-#: src/gb/gb.cpp:2756
+#: src/gb/gb.cpp:2777
 msgid "DMG"
 msgstr ""
 
-#: src/gb/gb.cpp:2756
+#: src/gb/gb.cpp:2777
 msgid "Original GameBoy Monochrome."
 msgstr ""
 
-#: src/gb/gb.cpp:2757
+#: src/gb/gb.cpp:2778
 msgid "CGB"
 msgstr ""
 
-#: src/gb/gb.cpp:2757
+#: src/gb/gb.cpp:2778
 msgid ""
 "GameBoy Color.\n"
 "\n"
 "This option is not fully implemented in regards to handling of DMG games."
 msgstr ""
 
-#: src/gb/gb.cpp:2758
+#: src/gb/gb.cpp:2779
 msgid "AGB"
 msgstr ""
 
-#: src/gb/gb.cpp:2758
+#: src/gb/gb.cpp:2779
 msgid ""
 "GameBoy Advance.\n"
 "\n"
 "This option is not fully implemented in regards to handling of DMG games."
 msgstr ""
 
-#: src/gb/gb.cpp:2764
+#: src/gb/gb.cpp:2785
 msgid "Emulated GB type."
 msgstr ""
 
-#: src/gb/gb.cpp:2833
+#: src/gb/gb.cpp:2854
 msgid "GameBoy ROM Image"
 msgstr ""
 
-#: src/gb/gb.cpp:2834 src/gb/gb.cpp:2835
+#: src/gb/gb.cpp:2855 src/gb/gb.cpp:2856
 msgid "GameBoy Color ROM Image"
 msgstr ""
 
-#: src/gb/gb.cpp:2841
+#: src/gb/gb.cpp:2862
 msgid "GameBoy(mono)"
 msgstr ""
 
-#: src/gb/gb.cpp:2842
+#: src/gb/gb.cpp:2863
 msgid "GameBoy Color 15-bit BGR"
 msgstr ""
 
@@ -5892,93 +6123,93 @@ msgstr ""
 msgid "Version:   %u\n"
 msgstr ""
 
-#: src/vb/vb.cpp:898
+#: src/vb/vb.cpp:899
 msgid "Anaglyph"
 msgstr ""
 
-#: src/vb/vb.cpp:898
+#: src/vb/vb.cpp:899
 msgid "Used in conjunction with classic dual-lens-color glasses."
 msgstr ""
 
-#: src/vb/vb.cpp:899
+#: src/vb/vb.cpp:900
 msgid "CyberScope"
 msgstr ""
 
-#: src/vb/vb.cpp:899
+#: src/vb/vb.cpp:900
 msgid "Intended for use with the CyberScope 3D device."
 msgstr ""
 
-#: src/vb/vb.cpp:900
+#: src/vb/vb.cpp:901
 msgid "Side-by-Side"
 msgstr ""
 
-#: src/vb/vb.cpp:900
+#: src/vb/vb.cpp:901
 msgid ""
 "The left-eye image is displayed on the left, and the right-eye image is "
 "displayed on the right."
 msgstr ""
 
-#: src/vb/vb.cpp:902
+#: src/vb/vb.cpp:903
 msgid "Vertical Line Interlaced"
 msgstr ""
 
-#: src/vb/vb.cpp:902
+#: src/vb/vb.cpp:903
 msgid "Vertical lines alternate between left view and right view."
 msgstr ""
 
-#: src/vb/vb.cpp:903
+#: src/vb/vb.cpp:904
 msgid "Horizontal Line Interlaced"
 msgstr ""
 
-#: src/vb/vb.cpp:903
+#: src/vb/vb.cpp:904
 msgid "Horizontal lines alternate between left view and right view."
 msgstr ""
 
-#: src/vb/vb.cpp:909
+#: src/vb/vb.cpp:910
 msgid "Forces usage of custom anaglyph colors."
 msgstr ""
 
-#: src/vb/vb.cpp:912
+#: src/vb/vb.cpp:913
 msgid "Red/Blue"
 msgstr ""
 
-#: src/vb/vb.cpp:912
+#: src/vb/vb.cpp:913
 msgid "Classic red/blue anaglyph."
 msgstr ""
 
-#: src/vb/vb.cpp:913
+#: src/vb/vb.cpp:914
 msgid "Red/Cyan"
 msgstr ""
 
-#: src/vb/vb.cpp:913
+#: src/vb/vb.cpp:914
 msgid "Improved quality red/cyan anaglyph."
 msgstr ""
 
-#: src/vb/vb.cpp:914
+#: src/vb/vb.cpp:915
 msgid "Red/Electric Cyan"
 msgstr ""
 
-#: src/vb/vb.cpp:914
+#: src/vb/vb.cpp:915
 msgid "Alternate version of red/cyan"
 msgstr ""
 
-#: src/vb/vb.cpp:915
+#: src/vb/vb.cpp:916
 msgid "Red/Green"
 msgstr ""
 
-#: src/vb/vb.cpp:916
+#: src/vb/vb.cpp:917
 msgid "Green/Magenta"
 msgstr ""
 
-#: src/vb/vb.cpp:917
+#: src/vb/vb.cpp:918
 msgid "Yellow/Blue"
 msgstr ""
 
-#: src/vb/vb.cpp:925
+#: src/vb/vb.cpp:926
 msgid "Input latency reduction hack."
 msgstr ""
 
-#: src/vb/vb.cpp:925
+#: src/vb/vb.cpp:926
 msgid ""
 "Reduces latency in some games by 20ms by returning the current pad state, "
 "rather than latched state, on serial port data reads.  This hack may cause "
@@ -5986,22 +6217,22 @@ msgid ""
 "commercial official games."
 msgstr ""
 
-#: src/vb/vb.cpp:927
+#: src/vb/vb.cpp:928
 msgid "Display latency reduction hack."
 msgstr ""
 
-#: src/vb/vb.cpp:927
+#: src/vb/vb.cpp:928
 msgid ""
 "Reduces latency in games by displaying the framebuffer 20ms earlier.  This "
 "hack has some potential of causing graphical glitches, so it is disabled by "
 "default."
 msgstr ""
 
-#: src/vb/vb.cpp:928
+#: src/vb/vb.cpp:929
 msgid "Allow draw skipping."
 msgstr ""
 
-#: src/vb/vb.cpp:928
+#: src/vb/vb.cpp:929
 msgid ""
 "If vb.instant_display_hack is set to \"1\", and this setting is set to "
 "\"1\", then frame-skipping the drawing to the emulated framebuffer will be "
@@ -6009,69 +6240,69 @@ msgid ""
 "unlikely) GAME CRASHES, ESPECIALLY WITH DIRECT FRAMEBUFFER DRAWING GAMES."
 msgstr ""
 
-#: src/vb/vb.cpp:931
+#: src/vb/vb.cpp:932
 msgid "3D mode."
 msgstr ""
 
-#: src/vb/vb.cpp:932
+#: src/vb/vb.cpp:933
 msgid "Line Interlaced prescale."
 msgstr ""
 
-#: src/vb/vb.cpp:934
+#: src/vb/vb.cpp:935
 msgid "Disable parallax for BG and OBJ rendering."
 msgstr ""
 
-#: src/vb/vb.cpp:935
+#: src/vb/vb.cpp:936
 msgid "Default maximum-brightness color to use in non-anaglyph 3D modes."
 msgstr ""
 
-#: src/vb/vb.cpp:937
+#: src/vb/vb.cpp:938
 msgid "Anaglyph preset colors."
 msgstr ""
 
-#: src/vb/vb.cpp:938
+#: src/vb/vb.cpp:939
 msgid "Anaglyph maximum-brightness color for left view."
 msgstr ""
 
-#: src/vb/vb.cpp:939
+#: src/vb/vb.cpp:940
 msgid "Anaglyph maximum-brightness color for right view."
 msgstr ""
 
-#: src/vb/vb.cpp:941
+#: src/vb/vb.cpp:942
 msgid "Number of pixels to separate L/R views by."
 msgstr ""
 
-#: src/vb/vb.cpp:941
+#: src/vb/vb.cpp:942
 msgid ""
 "This setting refers to pixels before vb.xscale(fs) scaling is taken into "
 "consideration.  For example, a value of \"100\" here will result in a "
 "separation of 300 screen pixels if vb.xscale(fs) is set to \"3\"."
 msgstr ""
 
-#: src/vb/vb.cpp:943
+#: src/vb/vb.cpp:944
 msgid "Reverse left/right 3D views."
 msgstr ""
 
-#: src/vb/vb.cpp:945
+#: src/vb/vb.cpp:946
 msgid "LED on duration to linear RGB conversion coefficient."
 msgstr ""
 
-#: src/vb/vb.cpp:945
+#: src/vb/vb.cpp:946
 msgid ""
 "Setting this higher than the default will cause excessive white crush in at "
 "least one game.  A value of 1.0 is close to ideal, other than causing the "
 "image to be rather dark."
 msgstr ""
 
-#: src/vb/vb.cpp:985
+#: src/vb/vb.cpp:986
 msgid "Normal"
 msgstr ""
 
-#: src/vb/vb.cpp:986
+#: src/vb/vb.cpp:987
 msgid "Low"
 msgstr ""
 
-#: src/vb/vb.cpp:1012 src/vb/vb.cpp:1013
+#: src/vb/vb.cpp:1013 src/vb/vb.cpp:1014
 msgid "Nintendo Virtual Boy"
 msgstr ""
 
@@ -6141,29 +6372,29 @@ msgstr ""
 msgid "Lynx file format invalid (Bank1)"
 msgstr ""
 
-#: src/lynx/system.cpp:218
+#: src/lynx/system.cpp:225
 #, c-format
 msgid "RAM:       %u bytes\n"
 msgstr ""
 
-#: src/lynx/system.cpp:219
+#: src/lynx/system.cpp:226
 #, c-format
 msgid "RAM MD5:   0x%s\n"
 msgstr ""
 
-#: src/lynx/system.cpp:394
+#: src/lynx/system.cpp:400
 msgid "Virtually rotate the D-pad when the screen is rotated."
 msgstr ""
 
-#: src/lynx/system.cpp:395
+#: src/lynx/system.cpp:401
 msgid "Enable sound output lowpass filter."
 msgstr "Использовать фильтр низких частот."
 
-#: src/lynx/system.cpp:431
+#: src/lynx/system.cpp:437
 msgid "Atari Lynx ROM Image"
 msgstr ""
 
-#: src/lynx/system.cpp:437
+#: src/lynx/system.cpp:443
 msgid "Atari Lynx 12-bit BRG"
 msgstr ""
 
@@ -6236,16 +6467,16 @@ msgstr ""
 msgid "ROM CRC32: 0x%04x\n"
 msgstr "ROM CRC32: 0x%04x\n"
 
-#: src/pce_fast/huc.cpp:287 src/pce_fast/huc.cpp:288 src/pce_fast/pce.cpp:713
-#: src/pce/pce.cpp:641 src/pce/pce.cpp:642 src/pce/pce.cpp:1167
+#: src/pce_fast/huc.cpp:287 src/pce_fast/huc.cpp:288 src/pce_fast/pce.cpp:665
+#: src/pce/pce.cpp:639 src/pce/pce.cpp:640 src/pce/pce.cpp:1165
 msgid "PC Engine ROM Image"
 msgstr ""
 
-#: src/pce_fast/huc.cpp:294 src/pce/pce.cpp:652
+#: src/pce_fast/huc.cpp:294 src/pce/pce.cpp:650
 msgid "CD BIOS"
 msgstr ""
 
-#: src/pce_fast/huc.cpp:308 src/pce/pce.cpp:673
+#: src/pce_fast/huc.cpp:308 src/pce/pce.cpp:671
 #, c-format
 msgid "Arcade Card Emulation:  %s\n"
 msgstr "Эмуляция Arcade Card:  %s\n"
@@ -6268,43 +6499,43 @@ msgid ""
 "behave in a quite loopy manner)."
 msgstr ""
 
-#: src/pce_fast/pcecd_drive.cpp:443 src/cdrom/scsicd.cpp:552
-#: src/psx/cdc.cpp:1049
+#: src/pce_fast/pcecd_drive.cpp:443 src/cdrom/scsicd.cpp:567
+#: src/psx/cdc.cpp:1035
 #, c-format
 msgid "Uncorrectable error(s) in sector %d."
 msgstr ""
 
-#: src/pce_fast/pce.cpp:173 src/pce/pce.cpp:324
+#: src/pce_fast/pce.cpp:171 src/pce/pce.cpp:322
 #, c-format
 msgid "CD-DA Volume: %d%%\n"
 msgstr "Громкость CD-DA: %d%%\n"
 
-#: src/pce_fast/pce.cpp:176 src/pce/pce.cpp:325
+#: src/pce_fast/pce.cpp:174 src/pce/pce.cpp:323
 #, c-format
 msgid "ADPCM Volume: %d%%\n"
 msgstr ""
 
-#: src/pce_fast/pce.cpp:273 src/pce/pce.cpp:395
+#: src/pce_fast/pce.cpp:271 src/pce/pce.cpp:393
 #, c-format
 msgid "SuperGrafx: %s\n"
 msgstr ""
 
-#: src/pce_fast/pce.cpp:298
+#: src/pce_fast/pce.cpp:296
 #, c-format
 msgid "CPU overclock: %dx\n"
 msgstr "Разгон ЦП: %dx\n"
 
-#: src/pce_fast/pce.cpp:301
+#: src/pce_fast/pce.cpp:299
 #, fuzzy, c-format
 msgid "CD-ROM speed:  %ux\n"
 msgstr "Скорость CD-ROM:  %dx\n"
 
-#: src/pce_fast/pce.cpp:364 src/pce/pce.cpp:326
+#: src/pce_fast/pce.cpp:362 src/pce/pce.cpp:324
 #, c-format
 msgid "CD PSG Volume: %d%%\n"
 msgstr "Громкость CD PSG: %d%%\n"
 
-#: src/pce_fast/pce.cpp:690 src/pce/pce.cpp:1092
+#: src/pce_fast/pce.cpp:642 src/pce/pce.cpp:1090
 msgid ""
 "If set, when RUN+SEL are pressed simultaneously, disable both buttons "
 "temporarily."
@@ -6312,66 +6543,76 @@ msgstr ""
 "Если установлено, RUN+SEL, нажатые одновременно, временно отключают обе эти "
 "кнопки."
 
-#: src/pce_fast/pce.cpp:691 src/pce/pce.cpp:1097
+#: src/pce_fast/pce.cpp:643 src/pce/pce.cpp:1095
 msgid "Force SuperGrafx emulation."
 msgstr "Принудительно эмулировать SuperGrafx."
 
-#: src/pce_fast/pce.cpp:692 src/pce/pce.cpp:1100
+#: src/pce_fast/pce.cpp:644 src/pce/pce.cpp:1098
 msgid "Enable Arcade Card emulation."
 msgstr "Включить эмуляцию Arcade Card."
 
-#: src/pce_fast/pce.cpp:693
+#: src/pce_fast/pce.cpp:645
 msgid "CPU overclock multiplier."
 msgstr "Множитель скорости ЦП."
 
-#: src/pce_fast/pce.cpp:694
+#: src/pce_fast/pce.cpp:646
 msgid "CD-ROM data transfer speed multiplier."
 msgstr "Множитель скорости передачи данных с CD-ROM."
 
-#: src/pce_fast/pce.cpp:699
+#: src/pce_fast/pce.cpp:651
 msgid "Enable dynamic ADPCM lowpass filter."
 msgstr ""
 
-#: src/pce_fast/pce.cpp:700 src/pce/pce.cpp:1111
+#: src/pce_fast/pce.cpp:652 src/pce/pce.cpp:1109
 msgid "PSG volume when playing a CD game."
 msgstr "Громкость PSG при воспроизведении игры с CD."
 
-#: src/pce_fast/pce.cpp:701 src/pce/pce.cpp:1112
+#: src/pce_fast/pce.cpp:653 src/pce/pce.cpp:1110
 msgid "CD-DA volume."
 msgstr "Громкость CD-DA."
 
-#: src/pce_fast/pce.cpp:702 src/pce/pce.cpp:1113
+#: src/pce_fast/pce.cpp:654 src/pce/pce.cpp:1111
 msgid "ADPCM volume."
 msgstr "Громкость ADPCM."
 
-#: src/pce_fast/pce.cpp:714 src/pce/pce.cpp:1168
+#: src/pce_fast/pce.cpp:666 src/pce/pce.cpp:1166
 msgid "PC Engine Music Rip"
 msgstr ""
 
-#: src/pce_fast/pce.cpp:715 src/pce/pce.cpp:1169
+#: src/pce_fast/pce.cpp:667 src/pce/pce.cpp:1167
 msgid "SuperGrafx ROM Image"
 msgstr ""
 
-#: src/pce_fast/pce.cpp:722 src/pce/pce.cpp:1194
+#: src/pce_fast/pce.cpp:674 src/pce/pce.cpp:1192
 msgid ""
 "PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 "
 "greyscale colors will be calculated automatically."
 msgstr ""
 
-#: src/compress/GZFileStream.cpp:110
+#: src/compress/GZFileStream.cpp:113
 msgid "zlib error"
 msgstr ""
 
-#: src/compress/GZFileStream.cpp:121
+#: src/compress/GZFileStream.cpp:124
 #, c-format
 msgid ""
 "GZFileStream::close() not explicitly called for file \"%s\" opened for "
 "writing!\n"
 msgstr ""
 
-#: src/compress/GZFileStream.cpp:143
+#: src/compress/GZFileStream.cpp:146
 #, c-format
 msgid "Error closing opened file \"%s\"."
+msgstr ""
+
+#: src/compress/GZFileStream.cpp:209
+#, c-format
+msgid "Error flushing to opened file \"%s\": %s"
+msgstr ""
+
+#: src/compress/GZFileStream.cpp:283
+#, c-format
+msgid "Error getting position in opened file \"%s\": %s"
 msgstr ""
 
 #: src/compress/ZIPReader.cpp:64
@@ -6870,166 +7111,173 @@ msgstr ""
 msgid "Sound: Disabled\n"
 msgstr ""
 
-#: src/mednafen.cpp:617
+#: src/mednafen.cpp:632
 #, c-format
 msgid "M3U at \"%s\" references self."
 msgstr ""
 
-#: src/mednafen.cpp:620
+#: src/mednafen.cpp:635
 msgid "M3U load recursion too deep!"
 msgstr ""
 
-#: src/mednafen.cpp:639
+#: src/mednafen.cpp:654
 #, c-format
 msgid "CD %u TOC:\n"
 msgstr ""
 
-#: src/mednafen.cpp:652
+#: src/mednafen.cpp:667
 msgid " (CD-DA or Mode 1)"
 msgstr ""
 
-#: src/mednafen.cpp:656
+#: src/mednafen.cpp:671
 msgid " (CD-i)"
 msgstr ""
 
-#: src/mednafen.cpp:660
+#: src/mednafen.cpp:675
 msgid " (CD-XA)"
-msgstr ""
-
-#: src/mednafen.cpp:664
-#, c-format
-msgid "Disc Type: 0x%02x%s\n"
-msgstr ""
-
-#: src/mednafen.cpp:665
-#, c-format
-msgid "First Track: %2d\n"
-msgstr ""
-
-#: src/mednafen.cpp:666
-#, c-format
-msgid "Last Track:  %2d\n"
 msgstr ""
 
 #: src/mednafen.cpp:679
 #, c-format
+msgid "Disc Type: 0x%02x%s\n"
+msgstr ""
+
+#: src/mednafen.cpp:680
+#, c-format
+msgid "First Track: %2d\n"
+msgstr ""
+
+#: src/mednafen.cpp:681
+#, c-format
+msgid "Last Track:  %2d\n"
+msgstr ""
+
+#: src/mednafen.cpp:694
+#, c-format
 msgid "Track %2d, MSF: %02d:%02d:%02d, LBA: %6d  %s%s\n"
 msgstr ""
 
-#: src/mednafen.cpp:684
+#: src/mednafen.cpp:699
 msgid " (Hidden)"
 msgstr ""
 
-#: src/mednafen.cpp:687
+#: src/mednafen.cpp:702
 #, c-format
 msgid "Leadout: %6d  %s\n"
 msgstr ""
 
-#: src/mednafen.cpp:690
+#: src/mednafen.cpp:705
 msgid "WARNING:  DATA/AUDIO TYPE MISMATCH BETWEEN LAST TRACK AND LEADOUT AREA."
 msgstr ""
 
-#: src/mednafen.cpp:739
+#: src/mednafen.cpp:754
 #, c-format
 msgid "Loading custom palette from \"%s\"...\n"
 msgstr ""
 
-#: src/mednafen.cpp:768
+#: src/mednafen.cpp:783
 msgid ", "
 msgstr ""
 
-#: src/mednafen.cpp:773
+#: src/mednafen.cpp:788
 #, c-format
 msgid ""
 "Custom palette file's size(%llu bytes) is incorrect.  Valid sizes are: %s"
 msgstr ""
 
-#: src/mednafen.cpp:894
+#: src/mednafen.cpp:877
 #, c-format
-msgid "Error opening CD: %s"
+msgid "Video temporal frame blur enabled with accumulation: %.3f\n"
 msgstr ""
 
-#: src/mednafen.cpp:958
-#, c-format
-msgid "Disc %zu of %zu"
+#: src/mednafen.cpp:879
+msgid "Video temporal frame blur enabled.\n"
 msgstr ""
 
-#: src/mednafen.cpp:981 src/mednafen.cpp:1146
-#, c-format
-msgid "Skipping module \"%s\" per \"%s\" setting.\n"
+#: src/mednafen.cpp:912
+msgid "Specified system only supports CDs."
 msgstr ""
 
-#: src/mednafen.cpp:999 src/mednafen.cpp:1259
-#, c-format
-msgid "Unrecognized system \"%s\"!"
-msgstr "Система «%s» не распознана!"
-
-#: src/mednafen.cpp:1001
-msgid "Could not find a system that supports this CD."
+#: src/mednafen.cpp:914
+msgid "Specified system does not support normal file loading."
 msgstr ""
 
-#: src/mednafen.cpp:1006
+#: src/mednafen.cpp:920
 #, c-format
 msgid "Specified system \"%s\" doesn't support CDs!"
 msgstr "Указанная система «%s» не поддерживает CD!"
 
-#: src/mednafen.cpp:1008 src/mednafen.cpp:1264
+#: src/mednafen.cpp:933
+#, c-format
+msgid "Skipping module \"%s\" per \"%s\" setting.\n"
+msgstr ""
+
+#: src/mednafen.cpp:959
+#, c-format
+msgid "Unrecognized system \"%s\"!"
+msgstr "Система «%s» не распознана!"
+
+#: src/mednafen.cpp:963
+msgid "Unrecognized file format."
+msgstr ""
+
+#: src/mednafen.cpp:965
+msgid "Could not find a system that supports this CD."
+msgstr ""
+
+#: src/mednafen.cpp:1005
+#, c-format
+msgid "Error opening CD: %s"
+msgstr ""
+
+#: src/mednafen.cpp:1058
+#, c-format
+msgid "Disc %zu of %zu"
+msgstr ""
+
+#: src/mednafen.cpp:1069 src/mednafen.cpp:1222
 #, c-format
 msgid "Using module: %s(%s)\n"
 msgstr ""
 
-#: src/mednafen.cpp:1084
+#: src/mednafen.cpp:1107
 #, c-format
 msgid "Applying IPS file \"%s\"...\n"
 msgstr "Применение файла IPS «%s»...\n"
 
-#: src/mednafen.cpp:1131
-msgid ""
-"Specified system only supports CD(physical, or image files, such as *.cue "
-"and *.toc) loading."
-msgstr ""
-
-#: src/mednafen.cpp:1133
-msgid "Specified system does not support normal file loading."
-msgstr ""
-
-#: src/mednafen.cpp:1173
+#: src/mednafen.cpp:1139
 #, c-format
 msgid "Loading %s...\n"
 msgstr ""
 
-#: src/mednafen.cpp:1216
+#: src/mednafen.cpp:1182
 msgid "game"
 msgstr ""
 
-#: src/mednafen.cpp:1261
-msgid "Unrecognized file format."
-msgstr ""
-
-#: src/mednafen.cpp:1447
+#: src/mednafen.cpp:1385
 #, c-format
 msgid "Emulation modules: %s\n"
 msgstr ""
 
-#: src/mednafen.cpp:1869
+#: src/mednafen.cpp:1774
 msgid "Can't rewind during netplay."
 msgstr ""
 
-#: src/mednafen.cpp:2261
+#: src/mednafen.cpp:2166
 #, c-format
 msgid ""
 "Denied attempt to put drive into non-existent state(drive_idx=0x%08x, "
 "state_idx=0x%08x, media_idx=0x%08x, orientation_idx=0x%08x)."
 msgstr ""
 
-#: src/mednafen.cpp:2271
+#: src/mednafen.cpp:2176
 #, c-format
 msgid ""
 "Denied attempt to put non-existent medium into drive(drive_idx=0x%08x, "
 "state_idx=0x%08x, media_idx=0x%08x, orientation_idx=0x%08x)."
 msgstr ""
 
-#: src/mednafen.cpp:2277
+#: src/mednafen.cpp:2182
 #, c-format
 msgid ""
 "Denied attempt to put medium with non-existent orientation into "
@@ -7037,14 +7285,14 @@ msgid ""
 "orientation_idx=0x%08x)."
 msgstr ""
 
-#: src/mednafen.cpp:2297
+#: src/mednafen.cpp:2202
 #, c-format
 msgid ""
 "Denied attempt to put incompatible medium into drive(drive_idx=0x%08x, "
 "state_idx=0x%08x, media_idx=0x%08x, orientation_idx=0x%08x)."
 msgstr ""
 
-#: src/mednafen.cpp:2314
+#: src/mednafen.cpp:2219
 #, c-format
 msgid ""
 "Denied attempt to put in-use medium into another drive(drive_idx=0x%08x, "
@@ -7052,7 +7300,7 @@ msgid ""
 "check_drive_idx=0x%08x)."
 msgstr ""
 
-#: src/mednafen.cpp:2351
+#: src/mednafen.cpp:2256
 #, c-format
 msgid ""
 "Rejected attempt to insert medium into non-existent drive(drive_idx=0x%08x, "
@@ -7100,23 +7348,201 @@ msgstr ""
 msgid "CCD SUB file size mismatch."
 msgstr ""
 
-#: src/cdrom/CDAccess_CCD.cpp:334
+#: src/cdrom/CDAccess_CCD.cpp:338
 #, c-format
 msgid ""
 "Garbage subchannel Q data detected(bad BCD/out of range): TNO=%02x IDX=%02x "
 "RMSF=%02x:%02x:%02x AMSF=%02x:%02x:%02x"
 msgstr ""
 
-#: src/cdrom/CDAccess_CCD.cpp:342
-msgid "Garbage subchannel Q data detected(excessively large jump in AMSF)"
+#: src/cdrom/CDAccess_CCD.cpp:351
+#, c-format
+msgid ""
+"Garbage subchannel Q data detected(excessively large jump in AMSF: %02u:%02u:"
+"%02u -> %02x:%02x:%02x)"
 msgstr ""
 
-#: src/cdrom/CDAccess_CCD.cpp:345
-msgid "Garbage subchannel Q data detected(AMSF value is out of tolerance)"
+#: src/cdrom/CDAccess_CCD.cpp:360
+#, c-format
+msgid ""
+"Garbage subchannel Q data detected(AMSF value is out of tolerance: %02x:%02x:"
+"%02x at nominal %02u:%02u:%02u)"
 msgstr ""
 
-#: src/cdrom/CDAccess_CCD.cpp:350
+#: src/cdrom/CDAccess_CCD.cpp:366
 msgid "Garbage subchannel Q data detected(bad track number)"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:388 src/cdrom/CDAFReader_PCM.cpp:394
+#: src/cdrom/CDAFReader_PCM.cpp:399 src/cdrom/CDAFReader_PCM.cpp:405
+#, c-format
+msgid "Unsupported format: %u-bit %s"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:388
+msgid "unknown"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:394
+msgid "linear PCM"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:399
+msgid "IEEE floating-point PCM"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:410
+msgid "Mismatch between bytes per sample and bits per sample."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:414
+#, c-format
+msgid "Unsupported bytes per sample: %u"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:417
+#, c-format
+msgid "Unsupported channel count: %u"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:420
+#, c-format
+msgid "Unsupported block alignment: %u"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:423
+#, c-format
+msgid "Unsupported block offset: %u"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:426
+msgid "Data chunk size is not a multiple of block alignment."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:470
+msgid "AU header sound data offset is beyond the end of the file."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:477
+#, c-format
+msgid "AU header specifies %llu bytes more sound data than actually available."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:544 src/cdrom/CDAFReader_PCM.cpp:720
+msgid "Unexpected EOF while reading chunk header."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:553 src/cdrom/CDAFReader_PCM.cpp:746
+#, c-format
+msgid "Chunk 0x%08x is too large by %llu bytes."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:561
+#, c-format
+msgid "Common chunk is too small by %u bytes."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:564
+msgid "Common chunk encountered more than once."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:583
+#, c-format
+msgid "Unsupported compression type 0x%08x"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:602 src/cdrom/CDAFReader_PCM.cpp:608
+#: src/cdrom/CDAFReader_PCM.cpp:615 src/cdrom/CDAFReader_PCM.cpp:622
+msgid "Mismatch between bits per sample and compression type."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:630
+#, c-format
+msgid "Sound data chunk is too small by %u bytes."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:633
+msgid "Sound data chunk encountered more than once."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:656
+msgid "Common chunk is missing."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:659
+msgid "Sound data chunk is missing."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:667
+msgid "Common chunk frame count is inconsistent with sound data chunk."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:705
+#, c-format
+msgid ""
+"File size derived from RIFF header(%llu bytes) does not match actual file "
+"size(%llu bytes)."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:711
+msgid "Size is larger than supported."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:731
+#, c-format
+msgid ""
+"Chunk 0x%016llx%016llx header-specified size is smaller than the size of the "
+"header."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:744
+#, c-format
+msgid "Chunk 0x%016llx%016llx is too large by %llu bytes."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:753 src/cdrom/CDAFReader_PCM.cpp:777
+#, c-format
+msgid "Format chunk is too small by %u bytes."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:756
+msgid "Format chunk encountered more than once."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:793
+#, c-format
+msgid "Valid bits per sample(%u) is larger than bits per sample(%u)."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:796
+#, c-format
+msgid "Unsupported channel mask: 0x%08x"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:807
+#, c-format
+msgid "Unsupported format: %u-bit %08x-%04x-%04x-%04x-%08x%04x"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:818
+#, c-format
+msgid "Unsupported format: %u-bit 0x%04x"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:823
+msgid "Data chunk encountered before format chunk"
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:826
+msgid "Data chunk encountered more than once."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:844
+msgid "Both format and data chunks are missing."
+msgstr ""
+
+#: src/cdrom/CDAFReader_PCM.cpp:846
+msgid "Data chunk is missing."
 msgstr ""
 
 #: src/cdrom/CDInterface_MT.cpp:145 src/cdrom/CDInterface_ST.cpp:42
@@ -7129,133 +7555,154 @@ msgstr ""
 msgid "Sector %u read error: %s"
 msgstr ""
 
+#: src/cdrom/CDAFReader_FLAC.cpp:253
+msgid "Error creating FLAC stream decoder."
+msgstr ""
+
+#: src/cdrom/CDAFReader_FLAC.cpp:266
+#, c-format
+msgid "Error initializing FLAC stream decoder: %s"
+msgstr ""
+
+#: src/cdrom/CDAFReader_FLAC.cpp:270
+msgid "Error reading/processing FLAC metadata."
+msgstr ""
+
+#: src/cdrom/CDAFReader_FLAC.cpp:275
+msgid "FLAC total sample count is zero."
+msgstr ""
+
 #: src/cdrom/CDAccess_Image.cpp:180
 msgid "Track offset into file exceeds the amount of data available!"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:276
+#: src/cdrom/CDAccess_Image.cpp:230 src/cdrom/CDAccess_Image.cpp:670
+msgid "Unsupported audio track file format."
+msgstr ""
+
+#: src/cdrom/CDAccess_Image.cpp:234 src/cdrom/CDAccess_Image.cpp:674
+#, c-format
+msgid "Error handling audio track file \"%s\": %s"
+msgstr ""
+
+#: src/cdrom/CDAccess_Image.cpp:281
 #, c-format
 msgid ""
 "Length specified in TOC file for track %d is too large by %ld sectors!\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:319
+#: src/cdrom/CDAccess_Image.cpp:324
 #, c-format
 msgid "Loading SBI file \"%s\"...\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:333
+#: src/cdrom/CDAccess_Image.cpp:338
 msgid "Not recognized a valid SBI file."
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:338
+#: src/cdrom/CDAccess_Image.cpp:343
 #, c-format
 msgid "Bad BCD MSF offset in SBI file: %02x:%02x:%02x"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:341
+#: src/cdrom/CDAccess_Image.cpp:346
 #, c-format
 msgid "Unrecognized boogly oogly in SBI file: %02x"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:360
+#: src/cdrom/CDAccess_Image.cpp:365
 #, c-format
 msgid "Loaded Q subchannel replacements for %zu sectors.\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:379
+#: src/cdrom/CDAccess_Image.cpp:384
 #, c-format
 msgid "M:S:F time \"%s\" is malformed."
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:382
+#: src/cdrom/CDAccess_Image.cpp:387
 #, c-format
 msgid "M:S:F time \"%s\" contains component(s) out of range."
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:405
+#: src/cdrom/CDAccess_Image.cpp:410
 msgid "TOC file detected.\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:471
+#: src/cdrom/CDAccess_Image.cpp:476
 #, c-format
 msgid "Invalid track number: %d"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:492
+#: src/cdrom/CDAccess_Image.cpp:497
 #, c-format
 msgid "Invalid track format: %s"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:501
+#: src/cdrom/CDAccess_Image.cpp:506
 msgid "\"RW\" format subchannel data not supported, only \"RW_RAW\" is!"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:517 src/cdrom/CDAccess_Image.cpp:557
+#: src/cdrom/CDAccess_Image.cpp:522 src/cdrom/CDAccess_Image.cpp:562
 #, c-format
 msgid "Unsupported directive: %s"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:563 src/cdrom/CDAccess_Image.cpp:576
+#: src/cdrom/CDAccess_Image.cpp:568 src/cdrom/CDAccess_Image.cpp:581
 #, c-format
 msgid "Command %s is outside of a TRACK definition!\n"
 msgstr "Команда %s вне определения TRACK!\n"
 
-#: src/cdrom/CDAccess_Image.cpp:607
+#: src/cdrom/CDAccess_Image.cpp:612
 #, c-format
 msgid "Unsupported argument to \"NO\" directive: %s"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:665
-#, c-format
-msgid "Unsupported audio track file format: %s\n"
-msgstr "Формат файлов аудио-дорожек не поддерживается: %s\n"
-
-#: src/cdrom/CDAccess_Image.cpp:670
+#: src/cdrom/CDAccess_Image.cpp:679
 #, c-format
 msgid "Unsupported track format: %s\n"
 msgstr "Неподдерживаемый формат дорожек: %s\n"
 
-#: src/cdrom/CDAccess_Image.cpp:693
+#: src/cdrom/CDAccess_Image.cpp:702
 #, c-format
 msgid "Invalid track number: %d\n"
 msgstr "Неверный номер дорожки: %d\n"
 
-#: src/cdrom/CDAccess_Image.cpp:713
+#: src/cdrom/CDAccess_Image.cpp:722
 #, c-format
 msgid "Invalid track format: %s\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:728
+#: src/cdrom/CDAccess_Image.cpp:737
 #, c-format
 msgid "Malformed \"INDEX\" directive: %s\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:781
+#: src/cdrom/CDAccess_Image.cpp:790
 #, c-format
 msgid "Unknown CUE sheet \"FLAGS\" directive flag \"%s\".\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:788
+#: src/cdrom/CDAccess_Image.cpp:797
 #, c-format
 msgid "Unsupported CUE sheet directive: \"%s\".\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:792
+#: src/cdrom/CDAccess_Image.cpp:801
 #, c-format
 msgid "Unknown CUE sheet directive \"%s\".\n"
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:802
+#: src/cdrom/CDAccess_Image.cpp:811
 msgid "No tracks found!\n"
 msgstr "Дорожки не найдены!\n"
 
-#: src/cdrom/CDAccess_Image.cpp:816
+#: src/cdrom/CDAccess_Image.cpp:825
 #, c-format
 msgid "Missing track %u."
 msgstr ""
 
-#: src/cdrom/CDAccess_Image.cpp:1193
+#: src/cdrom/CDAccess_Image.cpp:1202
 #, c-format
 msgid "Could not find track for sector %u!"
 msgstr ""
@@ -7296,99 +7743,99 @@ msgstr ""
 msgid "On(locked)"
 msgstr ""
 
-#: src/psx/gpu.cpp:1274
+#: src/psx/gpu.cpp:1276
 msgid "VIDEO STANDARD MISMATCH"
 msgstr ""
 
-#: src/psx/psx.cpp:1167
+#: src/psx/psx.cpp:1165
 #, c-format
 msgid "Memcard %d save error: %s"
 msgstr ""
 
-#: src/psx/psx.cpp:1498
+#: src/psx/psx.cpp:1496
 msgid "Emulated Disc SCEx IDs:\n"
 msgstr ""
 
-#: src/psx/psx.cpp:1504
+#: src/psx/psx.cpp:1502
 #, c-format
 msgid "Disc %zu: %s\n"
 msgstr ""
 
-#: src/psx/psx.cpp:1504
+#: src/psx/psx.cpp:1502
 msgid "(Not recognized as a PS1 disc)"
 msgstr ""
 
-#: src/psx/psx.cpp:1556
+#: src/psx/psx.cpp:1554
 #, c-format
 msgid ""
 "Disc %zu of %zu: Q-subchannel versus sector header absolute time mismatch at "
 "lba=%d; Q subchannel: %02x:%02x:%02x, Sector header: %02x:%02x:%02x"
 msgstr ""
 
-#: src/psx/psx.cpp:1565
+#: src/psx/psx.cpp:1563
 #, c-format
 msgid ""
 "Disc %zu of %zu: Sector header absolute time broken at lba=%d(%02x:%02x:"
 "%02x); Sector header: %02x:%02x:%02x"
 msgstr ""
 
-#: src/psx/psx.cpp:1580
+#: src/psx/psx.cpp:1578
 #, c-format
 msgid ""
 "Disc %zu of %zu: No valid Q subchannel ADR_CURPOS data present at lba 0-15?!"
 msgstr ""
 
-#: src/psx/psx.cpp:1612
+#: src/psx/psx.cpp:1610
 #, c-format
 msgid "Region: %s\n"
 msgstr ""
 
-#: src/psx/psx.cpp:1644
+#: src/psx/psx.cpp:1642
 #, c-format
 msgid "Multitap on PSX Port %u: %s\n"
 msgstr ""
 
-#: src/psx/psx.cpp:1735
+#: src/psx/psx.cpp:1733
 #, c-format
 msgid "BIOS file \"%s\" is a known bad dump."
 msgstr ""
 
-#: src/psx/psx.cpp:1738
+#: src/psx/psx.cpp:1736
 #, c-format
 msgid ""
 "BIOS file \"%s\" is not the proper BIOS for the region of PS1 being emulated."
 msgstr ""
 
-#: src/psx/psx.cpp:1746
+#: src/psx/psx.cpp:1744
 msgid "Warning: Unrecognized BIOS.\n"
 msgstr ""
 
-#: src/psx/psx.cpp:1749
+#: src/psx/psx.cpp:1747
 msgid "WARNING: BIOS ROM sanity checks disabled.\n"
 msgstr ""
 
-#: src/psx/psx.cpp:1836
+#: src/psx/psx.cpp:1834
 #, c-format
 msgid "0x%08llx bytes of extra data after EXE text section."
 msgstr ""
 
-#: src/psx/psx.cpp:2234
+#: src/psx/psx.cpp:2233
 msgid "PSF1 Rip"
 msgstr ""
 
-#: src/psx/psx.cpp:2235
+#: src/psx/psx.cpp:2234
 msgid "MiniPSF1 Rip"
 msgstr ""
 
-#: src/psx/psx.cpp:2236 src/psx/psx.cpp:2237
+#: src/psx/psx.cpp:2235 src/psx/psx.cpp:2236
 msgid "PS-X Executable"
 msgstr ""
 
-#: src/psx/psx.cpp:2245
+#: src/psx/psx.cpp:2244
 msgid "Enable analog mode combo-button alternate toggle."
 msgstr ""
 
-#: src/psx/psx.cpp:2245
+#: src/psx/psx.cpp:2244
 msgid ""
 "When enabled, instead of the configured Analog mode toggle button for the "
 "emulated DualShock, use a combination of buttons held down for one emulated "
@@ -7397,11 +7844,11 @@ msgid ""
 "Start, and all four shoulder buttons."
 msgstr ""
 
-#: src/psx/psx.cpp:2246
+#: src/psx/psx.cpp:2245
 msgid "Compare value for analog mode combo-button alternate toggle."
 msgstr ""
 
-#: src/psx/psx.cpp:2246
+#: src/psx/psx.cpp:2245
 msgid ""
 "0x0001=SELECT\n"
 "0x0002=L3\n"
@@ -7421,11 +7868,11 @@ msgid ""
 "0x8000=□"
 msgstr ""
 
-#: src/psx/psx.cpp:2248
+#: src/psx/psx.cpp:2247
 msgid "Enable multitap on PSX port 1."
 msgstr ""
 
-#: src/psx/psx.cpp:2248 src/psx/psx.cpp:2249
+#: src/psx/psx.cpp:2247 src/psx/psx.cpp:2248
 msgid ""
 "Makes 3 more virtual ports available.\n"
 "\n"
@@ -7433,91 +7880,91 @@ msgid ""
 "deleterious effects."
 msgstr ""
 
-#: src/psx/psx.cpp:2249
+#: src/psx/psx.cpp:2248
 msgid "Enable multitap on PSX port 2."
 msgstr ""
 
-#: src/psx/psx.cpp:2251
+#: src/psx/psx.cpp:2250
 msgid "Emulate memory card on virtual port 1."
 msgstr ""
 
-#: src/psx/psx.cpp:2252
+#: src/psx/psx.cpp:2251
 msgid "Emulate memory card on virtual port 2."
 msgstr ""
 
-#: src/psx/psx.cpp:2253
+#: src/psx/psx.cpp:2252
 msgid "Emulate memory card on virtual port 3."
 msgstr ""
 
-#: src/psx/psx.cpp:2254
+#: src/psx/psx.cpp:2253
 msgid "Emulate memory card on virtual port 4."
 msgstr ""
 
-#: src/psx/psx.cpp:2255
+#: src/psx/psx.cpp:2254
 msgid "Emulate memory card on virtual port 5."
 msgstr ""
 
-#: src/psx/psx.cpp:2256
+#: src/psx/psx.cpp:2255
 msgid "Emulate memory card on virtual port 6."
 msgstr ""
 
-#: src/psx/psx.cpp:2257
+#: src/psx/psx.cpp:2256
 msgid "Emulate memory card on virtual port 7."
 msgstr ""
 
-#: src/psx/psx.cpp:2258
+#: src/psx/psx.cpp:2257
 msgid "Emulate memory card on virtual port 8."
 msgstr ""
 
-#: src/psx/psx.cpp:2273
+#: src/psx/psx.cpp:2272
 msgid "Path to the Japan SCPH-5500/v3.0J ROM BIOS"
 msgstr ""
 
-#: src/psx/psx.cpp:2273
+#: src/psx/psx.cpp:2272
 msgid ""
 "SHA-256 9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb"
 msgstr ""
 
-#: src/psx/psx.cpp:2274
+#: src/psx/psx.cpp:2273
 msgid "Path to the North America SCPH-5501/v3.0A ROM BIOS"
 msgstr ""
 
-#: src/psx/psx.cpp:2274
+#: src/psx/psx.cpp:2273
 msgid ""
 "SHA-256 11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
 msgstr ""
 
-#: src/psx/psx.cpp:2275
+#: src/psx/psx.cpp:2274
 msgid "Path to the Europe SCPH-5502/v3.0E ROM BIOS"
 msgstr ""
 
-#: src/psx/psx.cpp:2275
+#: src/psx/psx.cpp:2274
 msgid ""
 "SHA-256 1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09"
 msgstr ""
 
-#: src/psx/psx.cpp:2277
+#: src/psx/psx.cpp:2276
 msgid ""
 "Enables blacklisting of known bad BIOS dumps and known BIOS versions that "
 "don't match the region of the hardware being emulated."
 msgstr ""
 
-#: src/psx/psx.cpp:2278
+#: src/psx/psx.cpp:2277
 msgid ""
 "Sanity checks are only performed on discs detected(via heuristics) to be PS1 "
 "discs.  The checks primarily consist of ensuring that Q subchannel data is "
 "as expected for a typical commercially-released PS1 disc."
 msgstr ""
 
-#: src/psx/psx.cpp:2280
+#: src/psx/psx.cpp:2279
 msgid "SPU output resampler quality."
 msgstr ""
 
-#: src/psx/psx.cpp:2294
+#: src/psx/psx.cpp:2293
 msgid "Debug printf verbosity level."
 msgstr ""
 
-#: src/psx/psx.cpp:2297
+#: src/psx/psx.cpp:2296
 msgid "CD image to use with .PSX/.EXE loading."
 msgstr ""
 
@@ -7581,11 +8028,11 @@ msgstr ""
 msgid "CS%d: Unused\n"
 msgstr ""
 
-#: src/pce/pce.cpp:46
+#: src/pce/pce.cpp:44
 msgid "HuC6280 as found in the original PC Engine."
 msgstr ""
 
-#: src/pce/pce.cpp:47
+#: src/pce/pce.cpp:45
 msgid ""
 "HuC6280A as found in the SuperGrafx and CoreGrafx I.  Provides proper "
 "channel amplitude centering.  Many games will have less clicking with the "
@@ -7593,65 +8040,65 @@ msgid ""
 "original HuC6280's sound characteristics in mind."
 msgstr ""
 
-#: src/pce/pce.cpp:48
+#: src/pce/pce.cpp:46
 msgid "Match emulation mode."
 msgstr ""
 
-#: src/pce/pce.cpp:48
+#: src/pce/pce.cpp:46
 msgid ""
 "Selects \"huc6280\" for non-SuperGrafx mode, and \"huc6280a\" for "
 "SuperGrafx(full) mode."
 msgstr ""
 
-#: src/pce/pce.cpp:475
+#: src/pce/pce.cpp:473
 #, c-format
 msgid "PSG Revision: %s\n"
 msgstr ""
 
-#: src/pce/pce.cpp:657
+#: src/pce/pce.cpp:655
 msgid ""
 "Warning: BRAM is disabled per pcfx.disable_bram_cd setting.  This is "
 "simulating a malfunction.\n"
 msgstr ""
 
-#: src/pce/pce.cpp:672
+#: src/pce/pce.cpp:670
 #, c-format
 msgid "CD Layout:   0x%s\n"
 msgstr ""
 
-#: src/pce/pce.cpp:1084
+#: src/pce/pce.cpp:1082
 msgid "Enable multitap(TurboTap) emulation."
 msgstr ""
 
-#: src/pce/pce.cpp:1094
+#: src/pce/pce.cpp:1092
 msgid "Disable BRAM(saved game memory) for CD games."
 msgstr ""
 
-#: src/pce/pce.cpp:1094
+#: src/pce/pce.cpp:1092
 msgid ""
 "It is intended for viewing CD games' error screens that may be different "
 "from simple BRAM full and uninitialized BRAM error screens, though it can "
 "cause the game to crash outright."
 msgstr ""
 
-#: src/pce/pce.cpp:1095
+#: src/pce/pce.cpp:1093
 msgid "Disable BRAM(saved game memory) for HuCard games."
 msgstr ""
 
-#: src/pce/pce.cpp:1095
+#: src/pce/pce.cpp:1093
 msgid ""
 "It is intended for changing the behavior(passwords vs save games) of some "
 "HuCard games."
 msgstr ""
 
-#: src/pce/pce.cpp:1098
+#: src/pce/pce.cpp:1096
 msgid ""
 "Enabling this option is not necessary to run unrecognized PCE ROM images in "
 "SuperGrafx mode, and enabling it is discouraged; ROM images with a file "
 "extension of \".sgx\" will automatically enable SuperGrafx emulation."
 msgstr ""
 
-#: src/pce/pce.cpp:1101
+#: src/pce/pce.cpp:1099
 msgid ""
 "Leaving this option enabled is recommended, unless you want to see special "
 "warning screens on ACD games, or you prefer the non-enhanced modes of ACD-"
@@ -7661,40 +8108,40 @@ msgid ""
 "time."
 msgstr ""
 
-#: src/pce/pce.cpp:1104
+#: src/pce/pce.cpp:1102
 msgid ""
 "WARNING: Enabling this option may cause undesirable graphics glitching on "
 "some games(such as \"Bloody Wolf\")."
 msgstr ""
 
-#: src/pce/pce.cpp:1107
+#: src/pce/pce.cpp:1105
 msgid "Path to the GE CD BIOS"
 msgstr ""
 
-#: src/pce/pce.cpp:1107
+#: src/pce/pce.cpp:1105
 msgid "Games Express CD Card BIOS (Unlicensed)"
 msgstr ""
 
-#: src/pce/pce.cpp:1109
+#: src/pce/pce.cpp:1107
 msgid "Select PSG revision."
 msgstr ""
 
-#: src/pce/pce.cpp:1109
+#: src/pce/pce.cpp:1107
 msgid ""
 "WARNING: HES playback will always use the \"huc6280a\" revision if this "
 "setting is set to \"match\", since HES playback is always done with "
 "SuperGrafx emulation enabled."
 msgstr ""
 
-#: src/pce/pce.cpp:1111 src/pce/pce.cpp:1112 src/pce/pce.cpp:1113
+#: src/pce/pce.cpp:1109 src/pce/pce.cpp:1110 src/pce/pce.cpp:1111
 msgid "Setting this volume control too high may cause sample clipping."
 msgstr ""
 
-#: src/pce/pce.cpp:1114
+#: src/pce/pce.cpp:1112
 msgid "Output the full 12-bit ADPCM predictor."
 msgstr ""
 
-#: src/pce/pce.cpp:1114
+#: src/pce/pce.cpp:1112
 msgid ""
 "Enabling this option causes the MSM5205 ADPCM predictor to be outputted with "
 "full precision of 12-bits, rather than only outputting 10-bits of "
@@ -7702,298 +8149,304 @@ msgid ""
 "noise during ADPCM playback."
 msgstr ""
 
-#: src/pce/pce.cpp:1119
+#: src/pce/pce.cpp:1117
 msgid ""
 "Size of emulated VRAM per VDC in 16-bit words.  DO NOT CHANGE THIS UNLESS "
 "YOU KNOW WTF YOU ARE DOING."
 msgstr ""
 
-#: src/apple2/gameio.inc:264
+#: src/apple2/gameio.inc:269
 msgid "1 of 4"
 msgstr ""
 
-#: src/apple2/gameio.inc:265
+#: src/apple2/gameio.inc:270
 msgid "2 of 4"
 msgstr ""
 
-#: src/apple2/gameio.inc:266
+#: src/apple2/gameio.inc:271
 msgid "3 of 4"
 msgstr ""
 
-#: src/apple2/gameio.inc:267
+#: src/apple2/gameio.inc:272
 msgid "4 of 4"
 msgstr ""
 
-#: src/apple2/gameio.inc:311
+#: src/apple2/gameio.inc:316
 msgid "Paddle"
 msgstr ""
 
-#: src/apple2/gameio.inc:312
+#: src/apple2/gameio.inc:317
 msgid ""
 "1-axis, 1-button rotary dial paddle.  Only usable on virtual port 2 if it's "
 "also selected on virtual port 1."
 msgstr ""
 
-#: src/apple2/gameio.inc:319
+#: src/apple2/gameio.inc:324
 msgid "Joystick"
 msgstr ""
 
-#: src/apple2/gameio.inc:320
+#: src/apple2/gameio.inc:325
 msgid "2-axis, 2-button joystick, with 4-state resistance switch."
 msgstr ""
 
-#: src/apple2/gameio.inc:327
+#: src/apple2/gameio.inc:332
 msgid "Gamepad"
 msgstr ""
 
-#: src/apple2/gameio.inc:328
+#: src/apple2/gameio.inc:333
 msgid ""
 "Gamepad with D-pad and 2 buttons.  Seen by emulated software as a 2-axis, 2-"
 "button analog joystick(albeit with only axis extremes), but provides more "
 "configuration options for the user."
 msgstr ""
 
-#: src/apple2/gameio.inc:335
+#: src/apple2/gameio.inc:340
 msgid "Atari Joystick"
 msgstr ""
 
-#: src/apple2/gameio.inc:336
+#: src/apple2/gameio.inc:341
 msgid ""
 "Atari joyport digital joystick.  Only usable on virtual port 2 if it's also "
 "selected on virtual port 1.  Limited compatibility with software."
 msgstr ""
 
-#: src/apple2/gameio.inc:345
+#: src/apple2/gameio.inc:350
 msgid "None(all game I/O devices disabled)"
 msgstr ""
 
-#: src/apple2/gameio.inc:346
+#: src/apple2/gameio.inc:351
 msgid "Will disable all game I/O devices if selected."
 msgstr ""
 
-#: src/apple2/kbio.inc:520
+#: src/apple2/kbio.inc:528
 msgid "Apple II/II+ 2-piece keyboard"
 msgstr ""
 
-#: src/apple2/kbio.inc:521
+#: src/apple2/kbio.inc:529
 msgid ""
 "Standard Apple II/II+ 2-piece keyboard, with AY-5-3600 encoder.  The "
 "frustration caused by trying to use a decades-old metal sheet keyboard "
 "variant is not emulated."
 msgstr ""
 
-#: src/apple2/kbio.inc:530
+#: src/apple2/kbio.inc:538
 msgid "Apple II 1-piece keyboard"
 msgstr ""
 
-#: src/apple2/kbio.inc:531
+#: src/apple2/kbio.inc:539
 msgid "Early Apple II 1-piece keyboard, with MM5740-AAE encoder."
 msgstr ""
 
-#: src/apple2/kbio.inc:542
+#: src/apple2/kbio.inc:550
 msgid "Apple IIe keyboard"
 msgstr ""
 
-#: src/apple2/kbio.inc:543
+#: src/apple2/kbio.inc:551
 msgid "Standard Apple IIe keyboard."
 msgstr ""
 
-#: src/apple2/kbio.inc:553
+#: src/apple2/kbio.inc:561
 msgid "Generic PC-Style Keyboard"
 msgstr ""
 
-#: src/apple2/kbio.inc:554
+#: src/apple2/kbio.inc:562
 msgid "Generic keyboard with layout similar to the IBM Enhanced Keyboard."
 msgstr ""
 
-#: src/apple2/disk2.inc:878
+#: src/apple2/disk2.inc:889
 msgid "Parsing WOZ-format disk image...\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:881
+#: src/apple2/disk2.inc:892
 msgid "Bad or missing WOZ file header."
 msgstr ""
 
-#: src/apple2/disk2.inc:910 src/apple2/disk2.inc:986 src/apple2/disk2.inc:1004
+#: src/apple2/disk2.inc:921 src/apple2/disk2.inc:997 src/apple2/disk2.inc:1015
 #, c-format
 msgid "Required chunk \"%s\" is at the wrong offset."
 msgstr ""
 
-#: src/apple2/disk2.inc:913 src/apple2/disk2.inc:989 src/apple2/disk2.inc:1052
+#: src/apple2/disk2.inc:924 src/apple2/disk2.inc:1000 src/apple2/disk2.inc:1063
 #, c-format
 msgid "Required chunk \"%s\" is of the wrong size."
 msgstr ""
 
-#: src/apple2/disk2.inc:939
+#: src/apple2/disk2.inc:950
 msgid "3.5\" floppy disk images not currently supported."
 msgstr ""
 
-#: src/apple2/disk2.inc:942
+#: src/apple2/disk2.inc:953
 #, c-format
 msgid "Unknown disk type: 0x%02x"
 msgstr ""
 
-#: src/apple2/disk2.inc:946
+#: src/apple2/disk2.inc:957
 msgid " INFO:\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:947
+#: src/apple2/disk2.inc:958
 #, c-format
 msgid "  Version: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:948
+#: src/apple2/disk2.inc:959
 #, c-format
 msgid "  Disk type: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:949
+#: src/apple2/disk2.inc:960
 #, c-format
 msgid "  Write protected: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:950
+#: src/apple2/disk2.inc:961
 #, c-format
 msgid "  Synchronized: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:951
+#: src/apple2/disk2.inc:962
 #, c-format
 msgid "  Cleaned: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:952
+#: src/apple2/disk2.inc:963
 #, c-format
 msgid "  Creator: %s\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:973
+#: src/apple2/disk2.inc:984
 #, c-format
 msgid "  Optimal bit timing: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:974
+#: src/apple2/disk2.inc:985
 #, c-format
 msgid "  Compatible hardware: %s\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:976
+#: src/apple2/disk2.inc:987
 #, c-format
 msgid "  Required RAM: %s\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:978
+#: src/apple2/disk2.inc:989
 #, c-format
 msgid "  Required RAM: %u KiB\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1024
+#: src/apple2/disk2.inc:1035
 #, c-format
 msgid ""
 "Bit count of TRKS chunk TRK entry %u is larger than the block count * 512 * "
 "8!"
 msgstr ""
 
-#: src/apple2/disk2.inc:1027 src/apple2/disk2.inc:1079
+#: src/apple2/disk2.inc:1038 src/apple2/disk2.inc:1090
 #, c-format
 msgid ""
 "Bit count(%u) of TRKS chunk TRK entry %u is out of the acceptable range of "
 "%u through %u!"
 msgstr ""
 
-#: src/apple2/disk2.inc:1034 src/apple2/disk2.inc:1081
+#: src/apple2/disk2.inc:1045 src/apple2/disk2.inc:1092
 #, c-format
 msgid "  Source track %u:\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1036
+#: src/apple2/disk2.inc:1047
 #, c-format
 msgid "    Starting block: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1037
+#: src/apple2/disk2.inc:1048
 #, c-format
 msgid "    Block count: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1038 src/apple2/disk2.inc:1084
+#: src/apple2/disk2.inc:1049 src/apple2/disk2.inc:1095
 #, c-format
 msgid "    Bit count: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1068
+#: src/apple2/disk2.inc:1079
 #, c-format
 msgid "Bytes used of TRKS chunk TRK entry %u is larger than 6646!"
 msgstr ""
 
-#: src/apple2/disk2.inc:1071
+#: src/apple2/disk2.inc:1082
 #, c-format
 msgid ""
 "Bit count of TRKS chunk TRK entry %u is larger than the number of bytes used "
 "* 8!"
 msgstr ""
 
-#: src/apple2/disk2.inc:1083
+#: src/apple2/disk2.inc:1094
 #, c-format
 msgid "    Bytes used: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1085
+#: src/apple2/disk2.inc:1096
 #, c-format
 msgid "    Splice point: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1086
+#: src/apple2/disk2.inc:1097
 #, c-format
 msgid "    Splice nibble: 0x%02x\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1087
+#: src/apple2/disk2.inc:1098
 #, c-format
 msgid "    Splice bit count: %u\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1088
+#: src/apple2/disk2.inc:1099
 #, c-format
 msgid "    Reserved: 0x%04x\n"
 msgstr ""
 
-#: src/apple2/disk2.inc:1121 src/apple2/disk2.inc:1124
-#: src/apple2/disk2.inc:1127
+#: src/apple2/disk2.inc:1132 src/apple2/disk2.inc:1135
+#: src/apple2/disk2.inc:1138
 #, c-format
 msgid "Required chunk \"%s\" is missing."
 msgstr ""
 
-#: src/apple2/disk2.inc:1210
+#: src/apple2/disk2.inc:1221
 msgid "A2R disk image has missing or bad header."
 msgstr ""
 
-#: src/apple2/disk2.inc:1289
+#: src/apple2/disk2.inc:1300
 msgid "EDD disk image size is not a multiple of 16384 bytes."
 msgstr ""
 
-#: src/apple2/disk2.inc:1294
+#: src/apple2/disk2.inc:1305
 msgid "EDD disk image is empty."
 msgstr ""
 
-#: src/apple2/disk2.inc:1304
+#: src/apple2/disk2.inc:1315
 msgid "EDD disk image has too many tracks."
 msgstr ""
 
-#: src/apple2/disk2.inc:1353
+#: src/apple2/disk2.inc:1364
 msgid "Bad or missing Mednafen AFD file header."
 msgstr ""
 
-#: src/apple2/disk2.inc:1371
+#: src/apple2/disk2.inc:1382
 #, c-format
 msgid ""
 "The length of Mednafen AFD track %u, %u, is out of the supported range of %u "
 "through %u."
 msgstr ""
 
-#: src/apple2/disk2.inc:1500
+#: src/apple2/disk2.inc:1513
 msgid "Apple II floppy disk image is in an unidentified or unsupported format."
 msgstr ""
+
+#~ msgid "Configuration interrupted."
+#~ msgstr "Настройка прервана."
+
+#~ msgid "Unsupported audio track file format: %s\n"
+#~ msgstr "Формат файлов аудио-дорожек не поддерживается: %s\n"
 
 #~ msgid ""
 #~ "No command-line arguments specified.\n"

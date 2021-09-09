@@ -15,7 +15,7 @@ import RxRealm
 import RxSwift
 import UIKit
 
-protocol PVSaveStatesViewControllerDelegate: class {
+protocol PVSaveStatesViewControllerDelegate: AnyObject {
     func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController, completion: @escaping SaveCompletion)
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState, completion: @escaping SaveCompletion)

@@ -28,14 +28,7 @@
 @end
 
 @interface PVLogViewController : UIViewController <PVLoggingEventProtocol, UITableViewDelegate, UITableViewDataSource>
-{
-    @private
-        // An operation to allow a canelable
-        // operation of generating the 
-        // slow system log for display
-        // without blocking UI
-    NSBlockOperation *_systemLogOperation;
-}
+
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 #if TARGET_OS_IOS
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;

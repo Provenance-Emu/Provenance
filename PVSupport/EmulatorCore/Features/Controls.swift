@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public protocol ResponderClient: class {}
+@objc public protocol ResponderClient: AnyObject {}
 
 @objc public protocol ButtonResponder {
     func didPush(_ button: Int, forPlayer player: Int)

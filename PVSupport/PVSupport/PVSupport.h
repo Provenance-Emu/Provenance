@@ -26,7 +26,6 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 #import <PVSupport/PVLogging.h>
 #import <PVSupport/PVLogEntry.h>
 #import <PVSupport/PVProvenanceLogging.h>
-#import <PVSupport/PVCocoaLumberJackLogging.h>
 
 # pragma mark - Audio
 #import <PVSupport/TPCircularBuffer.h>

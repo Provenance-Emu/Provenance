@@ -11,7 +11,7 @@ import PVSupport
 import Reachability
 import UIKit
 
-protocol WebServerActivatorController: class {
+protocol WebServerActivatorController: AnyObject {
     func showServerActiveAlert()
 }
 
@@ -49,7 +49,10 @@ protocol WebServerActivatorController: class {
 
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
-            let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
+            let url = URL(string: ipURL)!
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = false
+            let safariVC = SFSafariViewController(url: url, configuration: config)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
         }

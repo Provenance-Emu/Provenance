@@ -3,6 +3,7 @@
 //
 #import "PVLogViewController.h"
 #import "SteamController.h"
+#import "PVAltKitService.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports

@@ -14,10 +14,7 @@
 		B316B4ED219275A900693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		B316B4EE219275A900693472 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B324C4C72191A09C009F4EDC /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
-		B324C62921920BAB009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
-		B324C62A21920BAD009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
-		B324C62C21920BC3009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B324C62D21920BCD009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
 		B324C62E21920BD8009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
 		B324C62F21920BDA009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
@@ -62,6 +59,19 @@
 		B35B31CF206CA72A00AEAF88 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = DFB6032F2038AE7B001E70F1 /* xxhash.c */; };
 		B369B0DF21A3D7F90064EDCA /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
 		B369B0E021A3D7FB0064EDCA /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
+		B37263B326EA161100E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
+		B37263B426EA163600E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
+		B37263B526EA164900E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
+		B37263B726EA168500E95488 /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
+		B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */; };
+		B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
+		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; };
+		B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */; };
+		B37263CF26EA1F1C00E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9531DED13A200602746 /* PVMupen64PlusRspHLE.framework */; };
+		B37263D326EA1F1C00E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603B82038B582001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
+		B37263D726EA1F1C00E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9401DED137100602746 /* PVMupen64PlusVideoRice.framework */; };
+		B37263DB26EA1F1C00E95488 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9731DED144100602746 /* PVRSPCXD4.framework */; };
+		B37263E226EA280E00E95488 /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
 		B37EFF231C72E6CD00857158 /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
 		B37EFF861C72F47000857158 /* MupenGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D208F811182B00300BEAA42 /* MupenGameCore.m */; };
 		B3800FFE2085232500FA03B8 /* TextureFilters_2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031D2038AE7B001E70F1 /* TextureFilters_2xsai.cpp */; };
@@ -382,7 +392,6 @@
 		B3AF704921916E87000FA7F9 /* TxCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603102038AE7B001E70F1 /* TxCache.cpp */; };
 		B3AF704A21916E87000FA7F9 /* TxTexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F62038AE7B001E70F1 /* TxTexCache.cpp */; };
 		B3AF704B21916E87000FA7F9 /* TxFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6030A2038AE7B001E70F1 /* TxFilter.cpp */; };
-		B3AF705421916EB5000FA7F9 /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
 		B3AF705821916ED0000FA7F9 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705721916ED0000FA7F9 /* PVSupport.framework */; };
 		B3AF705D21916F88000FA7F9 /* libglidenhq-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705221916E87000FA7F9 /* libglidenhq-tvOS.a */; };
 		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -390,7 +399,6 @@
 		B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B9001DED130B00602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B9021DED130B00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3B3B9381DED137100602746 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E9D1182551500BEAA42 /* libz.dylib */; };
 		B3B3B94E1DED13A200602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B96A1DED144100602746 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C3F40921A9CBAA00EFB09C /* F3DFLX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */; };
@@ -1009,48 +1017,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B34AB5F32106DFEA00C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B37EFEEF1C72E63300857158;
-			remoteInfo = PVMupen64PlusVideoRice;
-		};
-		B34AB5F52106DFEA00C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3B3B85F1DECEA9100602746;
-			remoteInfo = PVMupen64PlusRspHLE;
-		};
-		B34AB5F72106DFEA00C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B331158B1C7309C200E9AD14;
-			remoteInfo = PVRSPCXD4;
-		};
-		B34AB5F92106DFEA00C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DFB6017F2038AD13001E70F1;
-			remoteInfo = PVMupen64PlusVideoGlideN64;
-		};
-		B34AB5FB2106DFEA00C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3303E4B1DED23C600896D96;
-			remoteInfo = png;
-		};
-		B34AB5FD2106DFEA00C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
-			remoteInfo = glidenhq;
-		};
 		B34AB5FF2106DFFE00C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -1058,47 +1024,82 @@
 			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
 			remoteInfo = glidenhq;
 		};
-		B34AB6012106E03500C45F09 /* PBXContainerItemProxy */ = {
+		B37263B826EA168500E95488 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3B3B90A1DED137100602746;
-			remoteInfo = "PVMupen64PlusVideoRice tvOS";
+			remoteGlobalIDString = B3AF702121916E60000FA7F9;
+			remoteInfo = "png-tvOS";
 		};
-		B34AB6032106E03500C45F09 /* PBXContainerItemProxy */ = {
+		B37263C026EA1EF000E95488 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B3B85F1DECEA9100602746;
+			remoteInfo = "PVMupen64PlusRspHLE-iOS";
+		};
+		B37263C426EA1EF000E95488 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DFB6017F2038AD13001E70F1;
+			remoteInfo = "PVMupen64PlusVideoGlideN64-iOS";
+		};
+		B37263C826EA1EF000E95488 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B37EFEEF1C72E63300857158;
+			remoteInfo = "PVMupen64PlusVideoRice-iOS";
+		};
+		B37263CC26EA1EF000E95488 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B331158B1C7309C200E9AD14;
+			remoteInfo = "PVRSPCXD4-iOS";
+		};
+		B37263D126EA1F1C00E95488 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3B3B9421DED13A200602746;
-			remoteInfo = "PVMupen64PlusRspHLE tvOS";
+			remoteInfo = "PVMupen64PlusRspHLE-tvOS";
 		};
-		B34AB6052106E03500C45F09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3B3B9551DED144100602746;
-			remoteInfo = "PVRSPCXD4 tvOS";
-		};
-		B34AB6072106E03500C45F09 /* PBXContainerItemProxy */ = {
+		B37263D526EA1F1C00E95488 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = DFB603AF2038B582001E70F1;
-			remoteInfo = "PVMupen64PlusVideoGlideN64 tvOS";
+			remoteInfo = "PVMupen64PlusVideoGlideN64-tvOS";
 		};
-		B34AB6092106E03500C45F09 /* PBXContainerItemProxy */ = {
+		B37263D926EA1F1C00E95488 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3303E4B1DED23C600896D96;
-			remoteInfo = png;
+			remoteGlobalIDString = B3B3B90A1DED137100602746;
+			remoteInfo = "PVMupen64PlusVideoRice-tvOS";
 		};
-		B34AB60B2106E03500C45F09 /* PBXContainerItemProxy */ = {
+		B37263DD26EA1F1C00E95488 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
-			remoteInfo = glidenhq;
+			remoteGlobalIDString = B3B3B9551DED144100602746;
+			remoteInfo = "PVRSPCXD4-tvOS";
+		};
+		B37263E026EA280600E95488 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3AF702121916E60000FA7F9;
+			remoteInfo = "png-tvOS";
+		};
+		B37263E326EA280E00E95488 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3AF702121916E60000FA7F9;
+			remoteInfo = "png-tvOS";
 		};
 		B3AF701921916E0F000FA7F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1106,13 +1107,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3303E4B1DED23C600896D96;
 			remoteInfo = png;
-		};
-		B3AF705521916EBF000FA7F9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3AF702121916E60000FA7F9;
-			remoteInfo = "png-tvOS";
 		};
 		B3AF706021916FC7000FA7F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1478,6 +1472,8 @@
 		B34CB0ED2274BA8C009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
 		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
+		B37263A326EA0D6700E95488 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B37263B626EA164E00E95488 /* libdl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libdl.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libdl.tbd; sourceTree = DEVELOPER_DIR; };
 		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusVideoRice.h; sourceTree = "<group>"; };
 		B37EFEF41C72E63300857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2194,10 +2190,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
+				B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */,
+				B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2235,8 +2235,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B37263CF26EA1F1C00E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				B37263D326EA1F1C00E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3AF705821916ED0000FA7F9 /* PVSupport.framework in Frameworks */,
-				B324C62C21920BC3009F4EDC /* libz.tbd in Frameworks */,
+				B37263DB26EA1F1C00E95488 /* PVRSPCXD4.framework in Frameworks */,
+				B37263B526EA164900E95488 /* libz.tbd in Frameworks */,
+				B37263D726EA1F1C00E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B324C63021920BDA009F4EDC /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2245,9 +2249,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3AF705421916EB5000FA7F9 /* libpng-tvOS.a in Frameworks */,
-				B324C62A21920BAD009F4EDC /* libz.tbd in Frameworks */,
-				B3B3B9381DED137100602746 /* libz.dylib in Frameworks */,
+				B37263B726EA168500E95488 /* libpng-tvOS.a in Frameworks */,
+				B37263B426EA163600E95488 /* libz.tbd in Frameworks */,
 				B324C62E21920BD8009F4EDC /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2281,7 +2284,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3AF705D21916F88000FA7F9 /* libglidenhq-tvOS.a in Frameworks */,
-				B324C62921920BAB009F4EDC /* libz.tbd in Frameworks */,
+				B37263E226EA280E00E95488 /* libpng-tvOS.a in Frameworks */,
+				B37263B326EA161100E95488 /* libz.tbd in Frameworks */,
 				B324C62D21920BCD009F4EDC /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3447,6 +3451,8 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B37263B626EA164E00E95488 /* libdl.tbd */,
+				B37263A326EA0D6700E95488 /* libz.tbd */,
 				B3AE1DD320731F2700AD06D4 /* libdl.tbd */,
 				B3303E811DED272E00896D96 /* libz.tbd */,
 				B3EA447B206E10C700E608F6 /* OpenGLES.framework */,
@@ -4921,12 +4927,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				B34AB5FC2106DFEA00C45F09 /* PBXTargetDependency */,
-				B34AB5FE2106DFEA00C45F09 /* PBXTargetDependency */,
-				B34AB5F42106DFEA00C45F09 /* PBXTargetDependency */,
-				B34AB5F62106DFEA00C45F09 /* PBXTargetDependency */,
-				B34AB5F82106DFEA00C45F09 /* PBXTargetDependency */,
-				B34AB5FA2106DFEA00C45F09 /* PBXTargetDependency */,
+				B37263C126EA1EF000E95488 /* PBXTargetDependency */,
+				B37263C526EA1EF000E95488 /* PBXTargetDependency */,
+				B37263C926EA1EF000E95488 /* PBXTargetDependency */,
+				B37263CD26EA1EF000E95488 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64Plus-iOS";
 			productName = PVMupen64PlusDynamic;
@@ -5014,12 +5018,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				B34AB60C2106E03500C45F09 /* PBXTargetDependency */,
-				B34AB60A2106E03500C45F09 /* PBXTargetDependency */,
-				B34AB6022106E03500C45F09 /* PBXTargetDependency */,
-				B34AB6042106E03500C45F09 /* PBXTargetDependency */,
-				B34AB6062106E03500C45F09 /* PBXTargetDependency */,
-				B34AB6082106E03500C45F09 /* PBXTargetDependency */,
+				B37263D226EA1F1C00E95488 /* PBXTargetDependency */,
+				B37263D626EA1F1C00E95488 /* PBXTargetDependency */,
+				B37263DA26EA1F1C00E95488 /* PBXTargetDependency */,
+				B37263DE26EA1F1C00E95488 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64Plus-tvOS";
 			productName = PVMupen64PlusDynamic;
@@ -5038,7 +5040,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3AF705621916EBF000FA7F9 /* PBXTargetDependency */,
+				B37263B926EA168500E95488 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64PlusVideoRice-tvOS";
 			productName = "mupen64plus-video-rice-dynamic";
@@ -5112,7 +5114,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				B37263E126EA280600E95488 /* PBXTargetDependency */,
 				B3AF706121916FC7000FA7F9 /* PBXTargetDependency */,
+				B37263E426EA280E00E95488 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64PlusVideoGlideN64-tvOS";
 			productName = PVMupen64PlusVideoGlideN64;
@@ -5127,7 +5131,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B3303E4B1DED23C600896D96 = {
@@ -5165,6 +5169,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Mupen64Plus */;
 			projectDirPath = "";
@@ -5181,8 +5186,8 @@
 				DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64-iOS */,
 				DFB603AF2038B582001E70F1 /* PVMupen64PlusVideoGlideN64-tvOS */,
 				B3303E4B1DED23C600896D96 /* png-iOS */,
-				B3800FF4208522DC00FA03B8 /* glidenhq-iOS */,
 				B3AF702121916E60000FA7F9 /* png-tvOS */,
+				B3800FF4208522DC00FA03B8 /* glidenhq-iOS */,
 				B3AF703A21916E87000FA7F9 /* glidenhq-tvOS */,
 			);
 		};
@@ -5917,80 +5922,70 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B34AB5F42106DFEA00C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice-iOS */;
-			targetProxy = B34AB5F32106DFEA00C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5F62106DFEA00C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE-iOS */;
-			targetProxy = B34AB5F52106DFEA00C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5F82106DFEA00C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B331158B1C7309C200E9AD14 /* PVRSPCXD4-iOS */;
-			targetProxy = B34AB5F72106DFEA00C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5FA2106DFEA00C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64-iOS */;
-			targetProxy = B34AB5F92106DFEA00C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5FC2106DFEA00C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3303E4B1DED23C600896D96 /* png-iOS */;
-			targetProxy = B34AB5FB2106DFEA00C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB5FE2106DFEA00C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3800FF4208522DC00FA03B8 /* glidenhq-iOS */;
-			targetProxy = B34AB5FD2106DFEA00C45F09 /* PBXContainerItemProxy */;
-		};
 		B34AB6002106DFFE00C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3800FF4208522DC00FA03B8 /* glidenhq-iOS */;
 			targetProxy = B34AB5FF2106DFFE00C45F09 /* PBXContainerItemProxy */;
 		};
-		B34AB6022106E03500C45F09 /* PBXTargetDependency */ = {
+		B37263B926EA168500E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3B3B90A1DED137100602746 /* PVMupen64PlusVideoRice-tvOS */;
-			targetProxy = B34AB6012106E03500C45F09 /* PBXContainerItemProxy */;
+			target = B3AF702121916E60000FA7F9 /* png-tvOS */;
+			targetProxy = B37263B826EA168500E95488 /* PBXContainerItemProxy */;
 		};
-		B34AB6042106E03500C45F09 /* PBXTargetDependency */ = {
+		B37263C126EA1EF000E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE-iOS */;
+			targetProxy = B37263C026EA1EF000E95488 /* PBXContainerItemProxy */;
+		};
+		B37263C526EA1EF000E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64-iOS */;
+			targetProxy = B37263C426EA1EF000E95488 /* PBXContainerItemProxy */;
+		};
+		B37263C926EA1EF000E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice-iOS */;
+			targetProxy = B37263C826EA1EF000E95488 /* PBXContainerItemProxy */;
+		};
+		B37263CD26EA1EF000E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B331158B1C7309C200E9AD14 /* PVRSPCXD4-iOS */;
+			targetProxy = B37263CC26EA1EF000E95488 /* PBXContainerItemProxy */;
+		};
+		B37263D226EA1F1C00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3B3B9421DED13A200602746 /* PVMupen64PlusRspHLE-tvOS */;
-			targetProxy = B34AB6032106E03500C45F09 /* PBXContainerItemProxy */;
+			targetProxy = B37263D126EA1F1C00E95488 /* PBXContainerItemProxy */;
 		};
-		B34AB6062106E03500C45F09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3B3B9551DED144100602746 /* PVRSPCXD4-tvOS */;
-			targetProxy = B34AB6052106E03500C45F09 /* PBXContainerItemProxy */;
-		};
-		B34AB6082106E03500C45F09 /* PBXTargetDependency */ = {
+		B37263D626EA1F1C00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DFB603AF2038B582001E70F1 /* PVMupen64PlusVideoGlideN64-tvOS */;
-			targetProxy = B34AB6072106E03500C45F09 /* PBXContainerItemProxy */;
+			targetProxy = B37263D526EA1F1C00E95488 /* PBXContainerItemProxy */;
 		};
-		B34AB60A2106E03500C45F09 /* PBXTargetDependency */ = {
+		B37263DA26EA1F1C00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3303E4B1DED23C600896D96 /* png-iOS */;
-			targetProxy = B34AB6092106E03500C45F09 /* PBXContainerItemProxy */;
+			target = B3B3B90A1DED137100602746 /* PVMupen64PlusVideoRice-tvOS */;
+			targetProxy = B37263D926EA1F1C00E95488 /* PBXContainerItemProxy */;
 		};
-		B34AB60C2106E03500C45F09 /* PBXTargetDependency */ = {
+		B37263DE26EA1F1C00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3800FF4208522DC00FA03B8 /* glidenhq-iOS */;
-			targetProxy = B34AB60B2106E03500C45F09 /* PBXContainerItemProxy */;
+			target = B3B3B9551DED144100602746 /* PVRSPCXD4-tvOS */;
+			targetProxy = B37263DD26EA1F1C00E95488 /* PBXContainerItemProxy */;
+		};
+		B37263E126EA280600E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3AF702121916E60000FA7F9 /* png-tvOS */;
+			targetProxy = B37263E026EA280600E95488 /* PBXContainerItemProxy */;
+		};
+		B37263E426EA280E00E95488 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3AF702121916E60000FA7F9 /* png-tvOS */;
+			targetProxy = B37263E326EA280E00E95488 /* PBXContainerItemProxy */;
 		};
 		B3AF701A21916E0F000FA7F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3303E4B1DED23C600896D96 /* png-iOS */;
 			targetProxy = B3AF701921916E0F000FA7F9 /* PBXContainerItemProxy */;
-		};
-		B3AF705621916EBF000FA7F9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3AF702121916E60000FA7F9 /* png-tvOS */;
-			targetProxy = B3AF705521916EBF000FA7F9 /* PBXContainerItemProxy */;
 		};
 		B3AF706121916FC7000FA7F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6027,6 +6022,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -6065,7 +6061,7 @@
 				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
@@ -6086,6 +6082,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -6122,7 +6119,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
@@ -6143,6 +6140,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -6178,7 +6176,7 @@
 				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Archive;

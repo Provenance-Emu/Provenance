@@ -51,7 +51,7 @@ extension QuickTableViewController: SliderCellDelegate {
 
     /// The `SliderCellDelegate` protocol allows the adopting delegate to respond to the UI interaction. Not available on tvOS.
     @available(tvOS, unavailable, message: "SliderCellDelegate is not available on tvOS.")
-    public protocol SliderCellDelegate: class {
+    public protocol SliderCellDelegate: AnyObject {
         /// Tells the delegate that the slider value has changed.
         func sliderCell(_ cell: SliderCell, didChangeValue newValue: Float)
     }

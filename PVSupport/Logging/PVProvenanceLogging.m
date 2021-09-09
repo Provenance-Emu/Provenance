@@ -37,7 +37,7 @@
         //add attachments
     NSString *docsDirectory = [self directoryForLogs];
     NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:docsDirectory error:nil];
-    NSArray *onlyLogs = [dirContents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self BEGINSWITH 'hnlog'"]];
+    NSArray *onlyLogs = [dirContents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self BEGINSWITH 'pvlog'"]];
     return onlyLogs;
 }
 
@@ -97,7 +97,7 @@
     NSDateFormatter *format = [[NSDateFormatter alloc] init];
     [format setDateFormat:@"yyyy'-'MM'-'dd"];
     NSString *dateString = [format stringFromDate:[NSDate date]];
-    return [[NSString alloc] initWithFormat:@"hnlog_%@.txt",dateString];
+    return [[NSString alloc] initWithFormat:@"pvlog_%@.txt",dateString];
 }
 
 -(BOOL) shouldDeleteFileWithName:(NSString *)name {
@@ -108,7 +108,7 @@
     for(int i=0;i<7;i++){
         NSDate *day = [[NSDate date] dateByAddingTimeInterval:-60*60*24*i];
         NSString *dateString = [format stringFromDate:day];
-        NSString *logname = [[NSString alloc] initWithFormat:@"hnlog_%@.txt",dateString];
+        NSString *logname = [[NSString alloc] initWithFormat:@"pvlog_%@.txt",dateString];
         if([logname isEqualToString:name]){
             return NO;
         }

@@ -46,10 +46,6 @@ public extension Notification.Name {
 }
 
 #if os(iOS)
-    let USE_IOS_11_SEARCHBAR = true
-#endif
-
-#if os(iOS)
     final class PVDocumentPickerViewController: UIDocumentPickerViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -83,7 +79,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         @IBOutlet var libraryInfoLabel: UILabel!
     #endif
 
-    @IBOutlet var searchField: UITextField?
     var isInitialAppearance = false
 
     func updateConflictsButton(_ hasConflicts: Bool) {
@@ -196,33 +191,25 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #endif
 
         // Handle migrating library
-        handleLibraryMigration()
+        DispatchQueue.main.async {
+            self.handleLibraryMigration()
+        }
 
         let searchText: Observable<String?>
         #if os(iOS)
-            if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
-                // Hide the pre-iOS 11 search bar
-                searchField?.removeFromSuperview()
-                navigationItem.titleView = nil
+            // Navigation bar large titles
+            navigationController?.navigationBar.prefersLargeTitles = false
+            navigationItem.title = nil
 
-                // Navigation bar large titles
-                navigationController?.navigationBar.prefersLargeTitles = false
-                navigationItem.title = nil
+            // Create a search controller
+            let searchController = UISearchController(searchResultsController: nil)
+            searchController.searchBar.placeholder = "Search"
+            searchController.obscuresBackgroundDuringPresentation = false
+            searchController.hidesNavigationBarDuringPresentation = true
+            navigationItem.hidesSearchBarWhenScrolling = true
+            navigationItem.searchController = searchController
 
-                // Create a search controller
-                let searchController = UISearchController(searchResultsController: nil)
-                searchController.searchBar.placeholder = "Search"
-                searchController.obscuresBackgroundDuringPresentation = false
-                searchController.hidesNavigationBarDuringPresentation = true
-                navigationItem.hidesSearchBarWhenScrolling = true
-                navigationItem.searchController = searchController
-
-                searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
-            } else {
-                searchText = searchField!.rx.text.asObservable()
-            }
-
-            // TODO: For below iOS 11, can make searchController.searchbar. the navigationItem.titleView and get a similiar effect
+            searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
         #else
             searchText = .never()
         #endif
@@ -424,7 +411,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             collectionView.backgroundColor = .black
         #else
             collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-            searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
 
             let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.didReceivePinchGesture(gesture:)))
             pinchGesture.cancelsTouchesInView = true
@@ -448,19 +434,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                collectionView.translatesAutoresizingMaskIntoConstraints = false
-                let guide = view.safeAreaLayoutGuide
-                NSLayoutConstraint.activate([
-                    collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
-                    collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-                    collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-                    collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-                ])
-                layout.sectionInsetReference = .fromSafeArea
-            } else {
-                layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-            }
+            collectionView.translatesAutoresizingMaskIntoConstraints = false
+            let guide = view.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([
+                collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+                collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+            layout.sectionInsetReference = .fromSafeArea
         #endif
         // Force touch
         #if os(iOS)
@@ -655,8 +637,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #if os(iOS)
         // Show web server (stays on)
         func showServer() {
-            let ipURL = URL(string: PVWebServer.shared.urlString)
-            let safariVC = SFSafariViewController(url: ipURL!, entersReaderIfAvailable: false)
+            let ipURL = URL(string: PVWebServer.shared.urlString)!
+
+            let config = SFSafariViewController.Configuration()
+            config.barCollapsingEnabled = true
+            config.entersReaderIfAvailable = true
+
+            let safariVC = SFSafariViewController(url: ipURL, configuration: config)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
         }
@@ -726,19 +713,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
                 //        documentMenu.delegate = self
                 //        present(documentMenu, animated: true, completion: nil)
-                if #available(iOS 11.0, *) {
-                    // iOS 8 need iCloud entitlements, check
-                } else {
-                    if FileManager.default.ubiquityIdentityToken == nil {
-                        self.presentMessage("Your version reqires iCloud entitlements to use this feature. Please rebuild with iCloud entitlements enabled.", title: "iCloud Error")
-                        return
-                    }
-                }
 
                 let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
-                if #available(iOS 11.0, *) {
-                    documentPicker.allowsMultipleSelection = true
-                }
+                documentPicker.allowsMultipleSelection = true
                 documentPicker.delegate = self
                 self.present(documentPicker, animated: true, completion: nil)
             }))
@@ -1140,6 +1117,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
             let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            // swiftlint:disable:next empty_count
             if fetchResult.count > 0 {
                 let lastPhoto = fetchResult.lastObject
 
@@ -1542,7 +1520,9 @@ extension PVGameLibraryViewController {
     }
 
     @objc func selectSearch(_: UIKeyCommand) {
-        searchField?.becomeFirstResponder()
+		#if os(iOS)
+		navigationItem.searchController?.isActive = true
+		#endif
     }
 
     @objc func selectSection(_ sender: UIKeyCommand) {

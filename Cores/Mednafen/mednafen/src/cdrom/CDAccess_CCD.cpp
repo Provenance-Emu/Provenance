@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* CDAccess_CCD.cpp:
-**  Copyright (C) 2013-2018 Mednafen Team
+**  Copyright (C) 2013-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -310,7 +310,11 @@ void CDAccess_CCD::CheckSubQSanity(void)
 
   memcpy(buf.full, &sub_data[s * 96], 96);
 
-  if(subq_check_checksum(buf.qbuf))
+  if(!subq_check_checksum(buf.qbuf))
+  {
+   //printf("BAD: %zu %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", s, buf.qbuf[0], buf.qbuf[1], buf.qbuf[2], buf.qbuf[3], buf.qbuf[4], buf.qbuf[5], buf.qbuf[6], buf.qbuf[7], buf.qbuf[8], buf.qbuf[9], buf.qbuf[10], buf.qbuf[11]);
+  }
+  else
   {
    uint8 adr = buf.qbuf[0] & 0xF;
 
@@ -339,10 +343,22 @@ void CDAccess_CCD::CheckSubQSanity(void)
      uint8 track = BCD_to_U8(track_bcd);
 
      if(prev_lba != INT_MAX && abs(lba - prev_lba) > 100)
-      throw MDFN_Error(0, _("Garbage subchannel Q data detected(excessively large jump in AMSF)"));
+     {
+      uint8 prev_am, prev_as, prev_af;
+
+      LBA_to_AMSF(prev_lba, &prev_am, &prev_as, &prev_af);
+
+      throw MDFN_Error(0, _("Garbage subchannel Q data detected(excessively large jump in AMSF: %02u:%02u:%02u -> %02x:%02x:%02x)"), prev_am, prev_as, prev_af, am_bcd, as_bcd, af_bcd);
+     }
 
      if(abs((int)(lba - s)) > 100)
-      throw MDFN_Error(0, _("Garbage subchannel Q data detected(AMSF value is out of tolerance)"));
+     {
+      uint8 nom_am, nom_as, nom_af;
+
+      LBA_to_AMSF(s, &nom_am, &nom_as, &nom_af);
+
+      throw MDFN_Error(0, _("Garbage subchannel Q data detected(AMSF value is out of tolerance: %02x:%02x:%02x at nominal %02u:%02u:%02u)"), am_bcd, as_bcd, af_bcd, nom_am, nom_as, nom_af);
+     }
 
      prev_lba = lba;
 

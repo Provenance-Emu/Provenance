@@ -340,23 +340,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
         gameAudio.start()
-
         #if os(tvOS)
-            // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
-            if menuGestureRecognizer == nil {
-                menuGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PVEmulatorViewController.controllerPauseButtonPressed(_:)))
-                menuGestureRecognizer?.allowedPressTypes = [.menu]
-            }
-            if let aRecognizer = menuGestureRecognizer {
-                view.addGestureRecognizer(aRecognizer)
-            }
-        #else
-            GCController.controllers().filter({ $0.vendorName != "Remote" }).forEach { [unowned self] in
-                $0.controllerPausedHandler = { controller in
-                    self.controllerPauseButtonPressed(controller)
-                }
-            }
+        // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
+        // (we'd rather pause the game), so we just install a tap-recognizer here (that doesn't do anything), and add our own logic in `setupPauseHandler`
+        if menuGestureRecognizer == nil {
+            menuGestureRecognizer = UITapGestureRecognizer()
+            menuGestureRecognizer?.allowedPressTypes = [.menu]
+            view.addGestureRecognizer(menuGestureRecognizer!)
+        }
         #endif
+        GCController.controllers().forEach { $0.setupPauseHandler(onPause: self.controllerPauseButtonPressed) }
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -364,12 +357,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
-        #endif
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
 
-        #if os(iOS)
             // Ignore Smart Invert
             view.ignoresInvertColors = true
         #endif
@@ -669,18 +658,7 @@ extension PVEmulatorViewController {
 // MARK: - Controllers
 
 extension PVEmulatorViewController {
-    // #if os(tvOS)
-    // Ensure that override of menu gesture is caught and handled properly for tvOS
-    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        if let press = presses.first, press.type == .menu, !isShowingMenu {
-            //         [self controllerPauseButtonPressed];
-        } else {
-            super.pressesBegan(presses, with: event)
-        }
-    }
-
-    // #endif
-    @objc func controllerPauseButtonPressed(_: Any?) {
+    func controllerPauseButtonPressed() {
         DispatchQueue.main.async(execute: { () -> Void in
             if !self.isShowingMenu {
                 self.showMenu(self)
@@ -696,16 +674,9 @@ extension PVEmulatorViewController {
         if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true
             // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-            // Except for the Apple Remote, where it's handled in the menuGestureRecognizer
-//             if controller?.vendorName != "Remote" {
-//                 controller?.controllerPausedHandler = { [unowned self] controller in
-//                     self.controllerPauseButtonPressed(controller)
-//                 }
-//             }
+            controller?.setupPauseHandler(onPause: controllerPauseButtonPressed)
             #if os(iOS)
-                if #available(iOS 11.0, *) {
-                    setNeedsUpdateOfHomeIndicatorAutoHidden()
-                }
+                setNeedsUpdateOfHomeIndicatorAutoHidden()
             #endif
         }
     }
@@ -713,9 +684,7 @@ extension PVEmulatorViewController {
     @objc func controllerDidDisconnect(_: Notification?) {
         menuButton?.isHidden = false
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
         #endif
     }
 
@@ -892,5 +861,32 @@ extension NSNumber {
 
     private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
+    }
+}
+
+extension GCController {
+    func setupPauseHandler(onPause: @escaping () -> Void) {
+        // Using buttonMenu is the recommended way for iOS/tvOS13 and later
+        if let buttonMenu = buttonMenu {
+            buttonMenu.pressedChangedHandler = { _, _, isPressed in
+                if isPressed {
+                    onPause()
+                }
+            }
+        } else {
+            // Fallback to the old method
+            controllerPausedHandler = { _ in onPause() }
+        }
+    }
+
+    private var buttonMenu: GCControllerButtonInput? {
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if let microGamepad = microGamepad {
+                return microGamepad.buttonMenu
+            } else if let extendedGamepad = extendedGamepad {
+                return extendedGamepad.buttonMenu
+            }
+        }
+        return nil
     }
 }
