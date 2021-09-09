@@ -18,6 +18,7 @@ Special thanks to contributors on this release;
 - #1545 Update Mednafen to 1.27.1 ([Changelog](https://mednafen.github.io/documentation/ChangeLog.txt))
 - #1587 Clarify Refresh Game Library Ui Dialog text
 - TGBDual updated to latest upstream 1e0c4f931d8c5e859e6d3255d67247d7a2987434
+
 ### Fixed
 
 - #1555 VirtualBoy crash on open
@@ -28,6 +29,7 @@ Special thanks to contributors on this release;
 - #1550 Provenance for Apple TV adds "private" part to "partialPath" in PVFile
 - #1551 #1575 Fix missing roms on rescan
 - #1556 Fix VirtualBoy Crash
+- #1568 On screen buttons do not work with mednafen core
 
 ## [2.0.0] - 2020-08-02
 
