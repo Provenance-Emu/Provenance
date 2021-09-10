@@ -58,7 +58,7 @@ cothread_t co_create(unsigned int size, void (*coentry)(void)) {
     stack.ss_flags = 0;
     stack.ss_size = size;
     thread->stack = stack.ss_sp = malloc(size);
-    if(stack.ss_sp && _sigaltstack(&stack, &old_stack)) {
+    if(stack.ss_sp && !_sigaltstack(&stack, &old_stack)) {
       handler.sa_handler = springboard;
       handler.sa_flags = SA_ONSTACK;
       sigemptyset(&handler.sa_mask);

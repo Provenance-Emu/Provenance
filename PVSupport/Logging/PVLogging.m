@@ -14,7 +14,6 @@
 //#import "NSData+Base64.h"
 
     // The logging systems available
-#import "PVCocoaLumberJackLogging.h"
 #import "PVLogging.h"
 @import CocoaLumberjack;
 

@@ -161,8 +161,8 @@ CARingBufferError	CARingBuffer::Store(const AudioBufferList *abl, UInt32 framesT
 	}
 
 	if (framesToWrite > mCapacityFrames) {
+        printf("no frames to write\n");
 		return kCARingBufferError_TooMuch;		// too big!
-		printf("no frames to write\n");
 	}
 
 	SampleTime endWrite = startWrite + framesToWrite;

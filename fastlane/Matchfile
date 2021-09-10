@@ -1,7 +1,7 @@
-git_url("git@bitbucket.org:jmattiello/provenancecerts.git")
-git_branch("Provenance2")
+git_url("https://github.com/Provenance-Emu/fastlane.git")
+# git_branch("Provenance")
 
-type("adhoc") # The default type, can be: appstore, adhoc, enterprise or development
+type("development") # The default type, can be: appstore, adhoc, enterprise or development
 
 # match :development do
 #     app_identifier "..."   # app id
@@ -21,10 +21,10 @@ type("adhoc") # The default type, can be: appstore, adhoc, enterprise or develop
 
 dev_domain = ENV["DEV_DOMAIN"] || "org.provenance-emu"
 
-app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf-extension", "#{dev_domain}.provenance.extension.spotlight"])
-username("mail@joemattiello.com") # Your Apple Developer Portal username
-team_name("Joe Mattiello")
-team_id("9DSA2J9CHZ")
+app_identifier(["#{dev_domain}.provenance", "#{dev_domain}.provenance.topshelf", "#{dev_domain}.provenance.spotlight"])
+username("apple@joemattiello.com") # Your Apple Developer Portal username
+team_name("Joseph Mattiello")
+team_id("S32Z3HMYVQ")
 shallow_clone true         # because I don't need the whole git history of the certs
 force_for_new_devices true # if someone adds a device I want to make sure they can test the app
 

@@ -126,7 +126,12 @@ public final class GameImporter {
     }()
 
     public var conflictedFiles: [URL]? {
-        return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+        guard FileManager.default.fileExists(atPath: conflictPath.absoluteString),
+              let files = try? FileManager.default.contentsOfDirectory(at: conflictPath,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+        else { return nil }
+        return files
     }
 
     fileprivate var notificationToken: NotificationToken?
@@ -273,7 +278,7 @@ public final class GameImporter {
         return false
     }
 
-    public func startImport(forPaths paths: [URL]) {
+    public func startImport(forPaths paths: [URL] = [PVEmulatorConfiguration.Paths.romsImportPath]) {
         // Pre-sort
         let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         let scanOperation = BlockOperation {

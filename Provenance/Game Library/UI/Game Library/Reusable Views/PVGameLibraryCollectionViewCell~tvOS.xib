@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder.AppleTV.XIB" version="3.0" toolsVersion="19158" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
         <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19141"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -64,10 +64,9 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="pdf-KX-U3g" customClass="CornerBadgeView" customModule="Provenance" customModuleProvider="target">
-                                <rect key="frame" x="200" y="0.0" width="56" height="56"/>
+                                <rect key="frame" x="192" y="0.0" width="64" height="64"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="56" id="W0o-sy-oMz"/>
                                     <constraint firstAttribute="width" secondItem="pdf-KX-U3g" secondAttribute="height" multiplier="1:1" id="u1L-Gc-ctf"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
@@ -89,6 +88,7 @@
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="top" secondItem="grq-R5-nkq" secondAttribute="top" id="0ce-sA-8bL"/>
                             <constraint firstItem="mmT-El-XIM" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="28c-P8-1G0"/>
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="5j5-Lp-XBT"/>
+                            <constraint firstItem="pdf-KX-U3g" firstAttribute="width" secondItem="RKb-WS-gGA" secondAttribute="width" multiplier="0.25" id="Bbq-Np-Q67"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="leading" secondItem="RKb-WS-gGA" secondAttribute="leading" id="Dz1-Ij-6IK"/>
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="leading" secondItem="grq-R5-nkq" secondAttribute="leading" id="FzP-a1-17L"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="L9d-CC-ALt"/>
@@ -151,6 +151,11 @@
             <point key="canvasLocation" x="-363" y="-94"/>
         </collectionViewCell>
     </objects>
+    <designables>
+        <designable name="98d-iv-EkE">
+            <size key="intrinsicContentSize" width="594" height="24"/>
+        </designable>
+    </designables>
     <resources>
         <image name="caution-icon" width="42" height="36"/>
     </resources>
