@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		B383225D26ED9C530029D12F /* Check Git Submodules */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */;
+			buildPhases = (
+				B383226226ED9C590029D12F /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Check Git Submodules";
+			productName = "Check Git Submodules";
+		};
 		B3B29D3F2156177100903290 /* Create Version files */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = B3B29D402156177100903290 /* Build configuration list for PBXAggregateTarget "Create Version files" */;
@@ -516,6 +527,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3E21D6A203211BE009939D3;
 			remoteInfo = Spotlight;
+		};
+		B383226326ED9F080029D12F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B383225D26ED9C530029D12F;
+			remoteInfo = "Check Git Submodules";
+		};
+		B383226526ED9F0C0029D12F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B383225D26ED9C530029D12F;
+			remoteInfo = "Check Git Submodules";
 		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1844,6 +1869,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B383226426ED9F080029D12F /* PBXTargetDependency */,
 				B3B29D462156183D00903290 /* PBXTargetDependency */,
 				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
 			);
@@ -1869,6 +1895,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B383226626ED9F0C0029D12F /* PBXTargetDependency */,
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
@@ -1992,6 +2019,9 @@
 						LastSwiftMigration = 1000;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
+					B383225D26ED9C530029D12F = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					B3B29D3F2156177100903290 = {
 						CreatedOnToolsVersion = 10.0;
 					};
@@ -2044,6 +2074,7 @@
 				B3E21D6A203211BE009939D3 /* Spotlight */,
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
+				B383225D26ED9C530029D12F /* Check Git Submodules */,
 			);
 		};
 /* End PBXProject section */
@@ -2163,6 +2194,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+		};
+		B383226226ED9C590029D12F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "FILE=\"${SRCROOT}/Cores/TGBDual/tgbdual-emulator/gb_core/rom.cpp\"\nif [ -e \"${FILE}\" ]\nthen\n    echo \"\"\nelse\n    echo \"error: Submodules not cloned. Run 'git submodule update --init --recursive'\"\nfi\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2606,6 +2654,16 @@
 			isa = PBXTargetDependency;
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */;
+		};
+		B383226426ED9F080029D12F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
+			targetProxy = B383226326ED9F080029D12F /* PBXContainerItemProxy */;
+		};
+		B383226626ED9F0C0029D12F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
+			targetProxy = B383226526ED9F0C0029D12F /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3355,6 +3413,30 @@
 			};
 			name = Archive;
 		};
+		B383225F26ED9C530029D12F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B383226026ED9C530029D12F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B383226126ED9C530029D12F /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B3B29D412156177100903290 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3594,6 +3676,16 @@
 				1AD9AA3E1ACC988F00EC87A0 /* Debug */,
 				1AD9AA3F1ACC988F00EC87A0 /* Release */,
 				B3721CEE21912B7400433E4C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B383225F26ED9C530029D12F /* Debug */,
+				B383226026ED9C530029D12F /* Release */,
+				B383226126ED9C530029D12F /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
