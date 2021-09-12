@@ -90,7 +90,7 @@
 		B3C9D49C1DEA6DE80068D057 /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04E1ABE373800FF6AEF /* initstate.cpp */; };
 		B3C9D49D1DEA6DE80068D057 /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0121ABE373800FF6AEF /* makesinckernel.cpp */; };
 		B3C9D49E1DEA6DE80068D057 /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0871ABE373800FF6AEF /* ppu.cpp */; };
-		B3C9D49F1DEA6DFC0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */; };
+		B3C9D49F1DEA6DFC0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */; platformFilter = ios; };
 		B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; };
 		B3C9D4A41DEA6E270068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4A31DEA6E270068D057 /* OpenGLES.framework */; };
