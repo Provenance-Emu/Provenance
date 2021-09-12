@@ -292,7 +292,8 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 // everything else should fall back to the vibration motor.
                 if UIDevice.hasTapticMotor {
                     feedbackGenerator?.selectionChanged()
-                } else {
+                } else if UIDevice.current.systemName == "iOS" {
+                    #if !targetEnvironment(macCatalyst)
                     AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
                     let vibrationLength: Int = 30
                     let pattern: [Any] = [false, 0, true, vibrationLength]
@@ -300,6 +301,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     dictionary["VibePattern"] = pattern
                     dictionary["Intensity"] = 1
                     AudioServicesPlaySystemSoundWithVibration(Int32(kSystemSoundID_Vibrate), nil, dictionary)
+                    #endif
                 }
             }
         #endif

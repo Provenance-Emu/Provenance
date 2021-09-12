@@ -158,7 +158,7 @@
 		B3CB857E1E9BF153009155A6 /* freebios.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A46191B95660100565444 /* freebios.c */; };
 		B3CB85851E9BF153009155A6 /* PVPokeMiniEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081A45981B95604700565444 /* PVPokeMiniEmulatorCore.m */; };
 		B3CB85A31E9BF153009155A6 /* freebios.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A46191B95660100565444 /* freebios.c */; };
-		B3CB85AB1E9BF16B009155A6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85AA1E9BF16B009155A6 /* OpenGLES.framework */; };
+		B3CB85AB1E9BF16B009155A6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85AA1E9BF16B009155A6 /* OpenGLES.framework */; platformFilter = ios; };
 		B3CB85B31E9BF189009155A6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85B21E9BF189009155A6 /* OpenGLES.framework */; };
 		B3CB85B51E9BF18D009155A6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85B41E9BF18D009155A6 /* UIKit.framework */; };
 		B3CB85B61E9BF19B009155A6 /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 081A45971B95604700565444 /* PVPokeMiniEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
