@@ -639,17 +639,22 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #if os(iOS)
         // Show web server (stays on)
         func showServer() {
-            let ipURL = URL(string: PVWebServer.shared.urlString)!
-
-            let config = SFSafariViewController.Configuration()
-            config.barCollapsingEnabled = true
-            config.entersReaderIfAvailable = true
-
-            let safariVC = SFSafariViewController(url: ipURL, configuration: config)
-            safariVC.delegate = self
-            present(safariVC, animated: true) { () -> Void in }
+			let ipURL: String = PVWebServer.shared.urlString
+			let url = URL(string: ipURL)!
+			#if targetEnvironment(macCatalyst)
+			UIApplication.shared.open(url, options: [:]) { completed in
+				ILOG("Completed: \(completed ? "Yes":"No")")
+			}
+			#else
+			let config = SFSafariViewController.Configuration()
+			config.entersReaderIfAvailable = false
+			let safariVC = SFSafariViewController(url: url, configuration: config)
+			safariVC.delegate = self
+			present(safariVC, animated: true) { () -> Void in }
+			#endif // targetEnvironment(macCatalyst)
         }
 
+		#if !targetEnvironment(macCatalyst)
         func safariViewController(_: SFSafariViewController, didCompleteInitialLoad _: Bool) {
             // Load finished
         }
@@ -660,8 +665,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             navigationController?.popViewController(animated: true)
             PVWebServer.shared.stopServers()
         }
-
-    #endif
+		#endif // !targetEnvironment(macCatalyst)
+    #endif // os(iOS)
 
     @IBAction func conflictsButtonTapped(_: Any) {
         displayConflictVC()

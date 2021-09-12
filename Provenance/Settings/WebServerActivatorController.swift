@@ -50,11 +50,17 @@ protocol WebServerActivatorController: AnyObject {
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
             let url = URL(string: ipURL)!
+			#if targetEnvironment(macCatalyst)
+			UIApplication.shared.open(url, options: [:]) { completed in
+				ILOG("Completed: \(completed ? "Yes":"No")")
+			}
+			#else
             let config = SFSafariViewController.Configuration()
             config.entersReaderIfAvailable = false
             let safariVC = SFSafariViewController(url: url, configuration: config)
             safariVC.delegate = self
             present(safariVC, animated: true) { () -> Void in }
+			#endif
         }
     }
 #endif
