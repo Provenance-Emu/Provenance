@@ -349,7 +349,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.addGestureRecognizer(menuGestureRecognizer!)
         }
         #endif
-        GCController.controllers().forEach { $0.setupPauseHandler(onPause: self.controllerPauseButtonPressed) }
+        GCController.controllers().forEach {
+			$0.setupPauseHandler(onPause: { [weak self] in
+				guard let self = self else { return }
+				self.controllerPauseButtonPressed()
+			})
+		}
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -623,6 +628,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     typealias QuitCompletion = () -> Void
 
     func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) {
+		enableControllerInput(false)
+
         if canSave, PVSettingsModel.shared.autoSave, core.supportsSaveStates {
             autoSaveState { result in
                 switch result {
@@ -635,14 +642,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
         core.stopEmulation()
-        // Leave emulation loop first
+
+		// Leave emulation loop first
         fpsTimer?.invalidate()
         fpsTimer = nil
         gameAudio.stop()
 
-        dismiss(animated: true, completion: completion)
-        enableControllerInput(false)
+		self.willMove(toParent: nil)
+		dismiss(animated: true, completion: completion)
+		self.view?.removeFromSuperview()
+		self.removeFromParent()
+
         updatePlayedDuration()
+		staticSelf = nil
     }
 }
 
@@ -868,14 +880,15 @@ extension GCController {
     func setupPauseHandler(onPause: @escaping () -> Void) {
         // Using buttonMenu is the recommended way for iOS/tvOS13 and later
         if let buttonMenu = buttonMenu {
-            buttonMenu.pressedChangedHandler = { _, _, isPressed in
+            buttonMenu.pressedChangedHandler = {[weak self] _, _, isPressed in
                 if isPressed {
                     onPause()
                 }
             }
         } else {
             // Fallback to the old method
-            controllerPausedHandler = { _ in onPause() }
+            controllerPausedHandler = { _ in onPause()
+			}
         }
     }
 
