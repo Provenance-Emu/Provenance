@@ -210,6 +210,10 @@ final class PVCheatsViewController: UITableViewController {
 
     #if os(tvOS)
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		guard let allCheats = allCheats else {
+			ELOG("NIl allcheats")
+			return
+		}
         let cheat:PVCheats = allCheats[indexPath.row]
 
         let realm = try! Realm()
