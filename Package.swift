@@ -26,7 +26,7 @@ let package = Package(
 			targets: ["PVLibrary"]),
 		.library(
 			name: "PVLibrary-ObjC",
-			targets: ["PVLibrary-ObjC"]),
+			targets: ["PVLibrary-ObjC"])
 		// .library(
 		// 	name: "PVSupport",
 		// 	targets: ["PVSupport"]),
@@ -58,6 +58,6 @@ let package = Package(
 			path: "PVLibrary",
 			exclude: ["Info.plist", "*.swift"],
 			cSettings: cSettings,
-			cxxSettings: cxxSettings),
+			cxxSettings: cxxSettings)
 	]
 )
