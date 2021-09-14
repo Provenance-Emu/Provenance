@@ -2817,7 +2817,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 {
     @synchronized(self) {
 
-        BOOL cheatListSuccessfull;
+        BOOL cheatListSuccessfull = NO;
 
         if (!(self.getCheatSupport)) {
             return false;
@@ -2837,6 +2837,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case MednaSystemSNES:
                 cheatListSuccessfull = self.setSNESCheatCodes;
                 break;
+			default:
+				cheatListSuccessfull = NO;
+				break;
         }
 
         Mednafen::MDFNMP_ApplyPeriodicCheats();

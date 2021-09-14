@@ -232,6 +232,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     if(!Memory.Init() || !S9xInitAPU() || !S9xGraphicsInit())
     {
         ELOG(@"Couldn't init Graphics");
+		if(error != NULL) {
 		NSDictionary *userInfo = @{
 								   NSLocalizedDescriptionKey: @"Failed to load game.",
 								   NSLocalizedFailureReasonErrorKey: @"Snes9x failed init graphics.",
@@ -242,7 +243,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 												code:PVEmulatorCoreErrorCodeCouldNotStart
 											userInfo:userInfo];
 		*error = newError;
-
+		}
         return NO;
     }
 
@@ -254,6 +255,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     if(!S9xInitSound(100))
     {
 		ELOG(@"Couldn't init Graphics");
+		if(error != NULL) {
 		NSDictionary *userInfo = @{
 								   NSLocalizedDescriptionKey: @"Failed to load game.",
 								   NSLocalizedFailureReasonErrorKey: @"Snes9x failed init graphics.",
@@ -264,7 +266,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 												code:PVEmulatorCoreErrorCodeCouldNotStart
 											userInfo:userInfo];
 		*error = newError;
-
+		}
 		return NO;
     }
 
@@ -733,6 +735,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         return YES;
     }
 
+	if(error != NULL) {
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: @"Failed to load game.",
                                NSLocalizedFailureReasonErrorKey: @"Snes9x failed to load ROM.",
@@ -744,7 +747,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
                                         userInfo:userInfo];
     
     *error = newError;
-    
+	}
     return NO;
 }
 

@@ -925,6 +925,7 @@ static void ConfigureRICE() {
 	if (romData == nil || romData.length == 0) {
 		ELOG(@"Error loading ROM at path: %@\n File does not exist.", path);
 
+		if(error != NULL) {
 		NSDictionary *userInfo = @{
 								   NSLocalizedDescriptionKey: @"Failed to load game.",
 								   NSLocalizedFailureReasonErrorKey: @"Mupen64Plus find the game file.",
@@ -936,7 +937,7 @@ static void ConfigureRICE() {
 											userInfo:userInfo];
 
 		*error = newError;
-
+		}
 		return NO;
 	}
 
@@ -944,6 +945,7 @@ static void ConfigureRICE() {
     if ( openStatus != M64ERR_SUCCESS) {
         ELOG(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
    
+		if(error != NULL) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
                                    NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load game.",
@@ -955,7 +957,7 @@ static void ConfigureRICE() {
                                             userInfo:userInfo];
         
         *error = newError;
-        
+		}
         return NO;
     }
 
@@ -1031,6 +1033,7 @@ static void ConfigureRICE() {
     }
 
     if (!success) {
+		if(error != NULL) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
                                    NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load GFX Plugin.",
@@ -1042,6 +1045,7 @@ static void ConfigureRICE() {
                                             userInfo:userInfo];
         
         *error = newError;
+		}
         return NO;
     }
     
@@ -1076,6 +1080,7 @@ static void ConfigureRICE() {
     }
 
     if (!success) {
+		if(error != NULL) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
                                    NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load RSP Plugin.",
@@ -1087,7 +1092,7 @@ static void ConfigureRICE() {
                                             userInfo:userInfo];
         
         *error = newError;
-        
+		}
         return NO;
     }
 
