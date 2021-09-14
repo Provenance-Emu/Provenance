@@ -29,7 +29,7 @@
         }
       },
       {
-        "package": "Reachability",
+        "package": "Reachability.swift",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
         "state": {
           "branch": null,
@@ -38,7 +38,7 @@
         }
       },
       {
-        "package": "Realm",
+        "package": "realm-cocoa",
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": null,
@@ -47,7 +47,7 @@
         }
       },
       {
-        "package": "RealmDatabase",
+        "package": "realm-core",
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,
@@ -79,6 +79,15 @@
         "state": {
           "branch": "master",
           "revision": "385f4350168c8154c14f82114784452f2e50001a",
+          "version": null
+        }
+      },
+      {
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "93d47845d5c37de1e5e0f3a981b6fc00997ed424",
           "version": null
         }
       },
