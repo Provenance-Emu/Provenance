@@ -155,7 +155,7 @@ public extension PVFile {
 
     var size: UInt64 {
         let fileSize: UInt64
-        guard FileManager.default.fileExists(atPath: url.absoluteString) else {
+        guard FileManager.default.fileExists(atPath: url.path) else {
             ELOG("No file at path: \(url.absoluteString)")
             return 0
         }
