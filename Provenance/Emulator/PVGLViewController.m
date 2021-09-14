@@ -37,7 +37,11 @@ struct RenderSettings {
     BOOL smoothingEnabled;
 } RenderSettings;
 
+#if TARGET_OS_MACCATALYST
+@interface PVGLViewController () <PVRenderDelegate, MTKViewDelegate>
+#else
 @interface PVGLViewController () <PVRenderDelegate>
+#endif
 {
     GLuint alternateThreadFramebufferBack;
     GLuint alternateThreadFramebufferFront;
@@ -63,12 +67,17 @@ struct RenderSettings {
 	GLuint texture;
     
     struct RenderSettings renderSettings;
+
+#if TARGET_OS_MACCATALYST
+//    CADisplayLink displayLink;
+#endif
 }
 
 #if TARGET_OS_MACCATALYST
 @property (nonatomic, strong) CIContext *glContext;
 @property (nonatomic, strong) CIContext *alternateThreadGLContext;
 @property (nonatomic, strong) CIContext *alternateThreadBufferCopyGLContext;
+@property (nonatomic, strong) MTKView *mtlview;
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
 #else
@@ -192,9 +201,26 @@ struct RenderSettings {
     view.context = self.glContext;
 #else
     self.device = MTLCreateSystemDefaultDevice();
+
+    MTKView *view = [[MTKView alloc] initWithFrame:self.view.bounds device:self.device];
+    self.mtlview = view;
+    [self.view addSubview:self.mtlview];
+    view.device = self.device;
+    view.clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 0.0);
+    view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
+    view.sampleCount = 4;
+    view.delegate = self;
     self.commandQueue = [_device newCommandQueue];
 
-    MTKView *view = [[MTKView alloc] initWithFrame:self.view.frame device:_device];
+
+        // Set paused and only trigger redraw when needs display is set.
+    view.paused = NO;
+    view.enableSetNeedsDisplay = NO;
+
+     // Setup display link.
+//     CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+//     CVDisplayLinkSetOutputCallback(displayLink, &MyDisplayLinkCallback, (__bridge void*)self);
+//     CVDisplayLinkStart(displayLink);
 #endif
     view.opaque = YES;
     view.layer.opaque = YES;
@@ -240,10 +266,10 @@ struct RenderSettings {
         }
     }
 
-#if TARGET_OS_MACCATALYST
-#else
     [self setupVBOs];
     [self setupTexture];
+#if TARGET_OS_MACCATALYST
+#else
     defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
     [self setupBlitShader];
     [self setupCRTShader];
@@ -292,7 +318,7 @@ struct RenderSettings {
     [super viewDidLayoutSubviews];
 
     UIEdgeInsets parentSafeAreaInsets = UIEdgeInsetsZero;
-    if (@available(iOS 11.0, tvOS 11.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, macOS 11.0, macCatalyst 11.0, *)) {
         parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
     }
     
@@ -355,6 +381,63 @@ struct RenderSettings {
     }
 
     [self updatePreferredFPS];
+}
+
+- (void)setupTexture
+{
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
+    if (renderSettings.smoothingEnabled)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+    else
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+- (void)setupVBOs
+{
+    glGenBuffers(1, &vertexVBO);
+    [self updateVBOWithScreenRect:self.emulatorCore.screenRect andVideoBufferSize:self.emulatorCore.bufferSize];
+
+    GLushort indices[6] = { 0, 1, 2, 0, 2, 3 };
+    glGenBuffers(1, &indexVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+- (void)updateVBOWithScreenRect:(CGRect)screenRect andVideoBufferSize:(CGSize)videoBufferSize
+{
+    GLfloat texLeft = screenRect.origin.x / videoBufferSize.width;
+    GLfloat texTop = screenRect.origin.y / videoBufferSize.height;
+    GLfloat texRight = ( screenRect.origin.x + screenRect.size.width ) / videoBufferSize.width;
+    GLfloat texBottom = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+    if ([self.emulatorCore rendersToOpenGL])
+    {
+        // Rendered textures are flipped upside down
+        texTop = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+        texBottom = screenRect.origin.y / videoBufferSize.height;
+    }
+
+    struct PVVertex quadVertices[4] =
+    {
+        { -1.0f, -1.0f, 1.0f, texLeft, texBottom},
+        {1.0f, -1.0f, 1.0f, texRight, texBottom},
+        {1.0f, 1.0f, 1.0f, texRight, texTop},
+        {-1.0f, 1.0f, 1.0f, texLeft, texTop}
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 #if !TARGET_OS_MACCATALYST
@@ -460,63 +543,6 @@ struct RenderSettings {
     crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
     crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
     crtUniform_FinalRes = glGetUniformLocation(crtShaderProgram, "FinalRes");
-}
-
-- (void)setupTexture
-{
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-	if (renderSettings.smoothingEnabled)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	}
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
-
-- (void)setupVBOs
-{
-    glGenBuffers(1, &vertexVBO);
-    [self updateVBOWithScreenRect:self.emulatorCore.screenRect andVideoBufferSize:self.emulatorCore.bufferSize];
-    
-    GLushort indices[6] = { 0, 1, 2, 0, 2, 3 };
-    glGenBuffers(1, &indexVBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-- (void)updateVBOWithScreenRect:(CGRect)screenRect andVideoBufferSize:(CGSize)videoBufferSize
-{
-    GLfloat texLeft = screenRect.origin.x / videoBufferSize.width;
-    GLfloat texTop = screenRect.origin.y / videoBufferSize.height;
-    GLfloat texRight = ( screenRect.origin.x + screenRect.size.width ) / videoBufferSize.width;
-    GLfloat texBottom = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
-    if ([self.emulatorCore rendersToOpenGL])
-    {
-        // Rendered textures are flipped upside down
-        texTop = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
-        texBottom = screenRect.origin.y / videoBufferSize.height;
-    }
-    
-    struct PVVertex quadVertices[4] =
-    {
-        { -1.0f, -1.0f, 1.0f, texLeft, texBottom},
-        {1.0f, -1.0f, 1.0f, texRight, texBottom},
-        {1.0f, 1.0f, 1.0f, texRight, texTop},
-        {-1.0f, 1.0f, 1.0f, texLeft, texTop}
-    };
-    
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -663,6 +689,214 @@ struct RenderSettings {
 }
 #else
 // Mac OS Stuff
+// MARK: - MTKViewDelegate
+
+/*!
+ @method mtkView:drawableSizeWillChange:
+ @abstract Called whenever the drawableSize of the view will change
+ @discussion Delegate can recompute view and projection matricies or regenerate any buffers to be compatible with the new view size or resolution
+ @param view MTKView which called this method
+ @param size New drawable size in pixels
+ */
+- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size {
+
+}
+
+/*!
+ @method drawInMTKView:
+ @abstract Called on the delegate when it is asked to render into the view
+ @discussion Called on the delegate when it is asked to render into the view
+ */
+- (void)drawInMTKView:(nonnull MTKView *)view {
+        //guard let safeCurrentDrawable = self.currentDrawable,
+        //      let safeCommandBuffer = self.commandQueue.makeCommandBuffer()
+        //else {
+        //    return
+        //}
+        //
+        //let image: CIImage
+        //let baseImage: CIImage = CIImage(bitmapData: NSData(bytes: &self.buffer, length: 640 * 480 * PVMTLView.elementLength) as Data, bytesPerRow: 640 * PVMTLView.elementLength, size: PVMTLView.imageSize, format: CIFormat.ARGB8, colorSpace: self.rgbColorSpace)
+        //
+        //if self.nearestNeighborRendering {
+        //    image = baseImage.samplingNearest().transformed(by: self.tNesScreen)
+        //} else {
+        //    image = baseImage.transformed(by: self.tNesScreen)
+        //}
+        //
+        //let renderDestination = CIRenderDestination(width: Int(self.drawableSize.width), height: Int(self.drawableSize.height), pixelFormat: self.colorPixelFormat, commandBuffer: safeCommandBuffer) {
+        //    () -> MTLTexture in return safeCurrentDrawable.texture
+        //}
+        //
+        //do {
+        //    _ = try self.context.startTask(toRender: image, to: renderDestination)
+        //} catch {
+        //    os_log("%@", error.localizedDescription)
+        //}
+        //
+        //safeCommandBuffer.present(safeCurrentDrawable)
+        //safeCommandBuffer.commit()
+        //
+        //self.lastDrawableSize = self.drawableSizeview
+        id<CAMetalDrawable> safeCurrentDrawable = view.currentDrawable;
+        id<MTLCommandBuffer> safeCommandBuffer = [self.commandQueue commandBuffer];
+
+
+    __block CGRect screenRect;
+    __block const void* videoBuffer;
+    __block GLenum videoBufferPixelFormat;
+    __block GLenum videoBufferPixelType;
+    __block CGSize videoBufferSize;
+
+    void (^fetchVideoBuffer)(void) = ^()
+    {
+        screenRect = [self.emulatorCore screenRect];
+        videoBufferPixelFormat = [self.emulatorCore pixelFormat];
+        videoBufferPixelType = [self.emulatorCore pixelType];
+        videoBufferSize = [self.emulatorCore bufferSize];
+        videoBuffer = [self.emulatorCore videoBuffer];
+    };
+
+    MAKEWEAK(self);
+
+    void (^renderBlock)(void) = ^()
+    {
+        MAKESTRONG(self);
+//#if DEBUG
+//        glClearColor(1.0, 1.0, 1.0, 1.0);
+//        glClear(GL_COLOR_BUFFER_BIT);
+//#endif
+        GLuint frontBufferTex;
+        if ([self.emulatorCore rendersToOpenGL])
+        {
+            frontBufferTex = strongself->alternateThreadColorTextureFront;
+            [self.emulatorCore.frontBufferLock lock];
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, strongself->texture);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
+            frontBufferTex = strongself->texture;
+        }
+
+        if (frontBufferTex)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, frontBufferTex);
+        }
+
+        if (strongself->renderSettings.crtFilterEnabled)
+        {
+            glUseProgram(strongself->crtShaderProgram);
+            glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
+            glUniform1i(strongself->crtUniform_EmulatedImage, 0);
+            glUniform2f(strongself->crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
+            float finalResWidth = view.drawableSize.width;
+            float finalResHeight = view.drawableSize.height;
+            glUniform2f(strongself->crtUniform_FinalRes, finalResWidth, finalResHeight);
+        }
+        else
+        {
+            glUseProgram(strongself->blitShaderProgram);
+            glUniform1i(strongself->blitUniform_EmulatedImage, 0);
+        }
+
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+
+//        [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
+
+        glBindBuffer(GL_ARRAY_BUFFER, strongself->vertexVBO);
+
+//        glEnableVertexAttribArray(GLKVertexAttribPosition);
+//        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(0));
+//
+//        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+//        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(12));
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, strongself->indexVBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+//        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
+//        glDisableVertexAttribArray(GLKVertexAttribPosition);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        if ([strongself->_emulatorCore rendersToOpenGL])
+        {
+            glFlush();
+            [strongself->_emulatorCore.frontBufferLock unlock];
+        }
+    };
+
+    if ([self.emulatorCore rendersToOpenGL])
+    {
+        if ((!self.emulatorCore.isSpeedModified && ![self.emulatorCore isEmulationPaused]) || self.emulatorCore.isFrontBufferReady)
+        {
+            [self.emulatorCore.frontBufferCondition lock];
+            while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+            BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
+            [self.emulatorCore.frontBufferCondition unlock];
+            if (isFrontBufferReady)
+            {
+                fetchVideoBuffer();
+                renderBlock();
+                [_emulatorCore.frontBufferCondition lock];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferCondition signal];
+                [_emulatorCore.frontBufferCondition unlock];
+            }
+        }
+    }
+    else
+    {
+        if (self.emulatorCore.isSpeedModified)
+        {
+            fetchVideoBuffer();
+            renderBlock();
+        }
+        else
+        {
+            if (self.emulatorCore.isDoubleBuffered)
+            {
+                [self.emulatorCore.frontBufferCondition lock];
+                while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferLock lock];
+                fetchVideoBuffer();
+                renderBlock();
+                [_emulatorCore.frontBufferLock unlock];
+                [_emulatorCore.frontBufferCondition unlock];
+            }
+            else
+            {
+                @synchronized(self.emulatorCore)
+                {
+                    fetchVideoBuffer();
+                    renderBlock();
+                }
+            }
+        }
+    }
+
+
+        [safeCommandBuffer presentDrawable:safeCurrentDrawable];
+        [safeCommandBuffer commit];
+}
+
+//@objc private func appResignedActive() {
+//self.queue.suspend()
+//self.hasSuspended = true
+//}
+//
+//@objc private func appBecameActive() {
+//if self.hasSuspended {
+//    self.queue.resume()
+//    self.hasSuspended = false
+//}
+//}
 #endif
 
 #pragma mark - PVRenderDelegate protocol methods
