@@ -275,6 +275,9 @@ void MDFN_Surface::SetFormat(const MDFN_PixelFormat &nf, bool convert)
  }
 
  format = nf;
+	if(new_pixels != nullptr) {
+		free(new_pixels);
+	}
 }
 
 void MDFN_Surface::Fill(uint8 r, uint8 g, uint8 b, uint8 a)
