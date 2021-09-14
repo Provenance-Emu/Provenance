@@ -2185,7 +2185,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "FILE=\"${SRCROOT}/Cores/TGBDual/tgbdual-emulator/gb_core/rom.cpp\"\nif [ -e \"${FILE}\" ]\nthen\n    echo \"\"\nelse\n    echo \"error: Submodules not cloned. Run 'git submodule update --init --recursive'\"\nfi\n";
+			shellScript = "FILE=\"${SRCROOT}/Cores/TGBDual/tgbdual-emulator/gb_core/rom.cpp\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"Submodules OK!\"\nelse\n    #echo \"error: Submodules not cloned. Run 'git submodule update --init --recursive'\"\n    echo \"warning: Cloning Submodules\"\n    git submodule update --init --recursive\nfi\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
