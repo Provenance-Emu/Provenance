@@ -27,6 +27,7 @@
 
 #import "PVSNESEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
+#import <PVSupport/PVLogging.h>
 #import <PVSupport/PVGameControllerUtilities.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
@@ -867,6 +868,7 @@ static void FinalizeSamplesAudioCallback(void *)
 
         BOOL cheatListSuccessfull = YES;
         NSArray *multipleCodes = [[NSArray alloc] init];
+		NSMutableArray *failedCheats = [NSMutableArray new];
 
         // Apply enabled cheats found in dictionary
         for (id key in cheatList)
@@ -885,13 +887,16 @@ static void FinalizeSamplesAudioCallback(void *)
                             S9xEnableCheatGroup(Cheat.g.size () - 1);
                         } else {
                             cheatListSuccessfull = NO;
-                            [cheatList removeObjectForKey:code];
-                            NSLog(@"Code %@ failed", singleCode);
+							[failedCheats addObject:singleCode];
+
+//                            [cheatList removeObjectForKey:code];
+                            ELOG(@"Code %@ failed", singleCode);
                         }
                     }
                 }
             }
         }
+		[cheatList removeObjectsForKeys:failedCheats];
 
         S9xCheatsEnable();
         

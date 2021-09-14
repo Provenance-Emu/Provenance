@@ -38,9 +38,9 @@ final class PVCheatsViewController: UITableViewController {
 
     var coreID: String?
 
-    private var enabledCheats: Results<PVCheats>!
-    private var disabledCheats: Results<PVCheats>!
-    private var allCheats: Results<PVCheats>!
+//    private var enabledCheats: Results<PVCheats>
+//    private var disabledCheats: Results<PVCheats>
+    private var allCheats: Results<PVCheats>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +61,7 @@ final class PVCheatsViewController: UITableViewController {
                 self.allCheats = self.cheats.sorted(byKeyPath: "date", ascending: false)
             }
 
-            for cheat in self.allCheats {
+            for cheat in self.allCheats! {
                 DLOG("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
                 // start disabled to prevent bad cheat code from crashing the game all the time
                 if (isFirstLoad) {
@@ -81,6 +81,7 @@ final class PVCheatsViewController: UITableViewController {
                     }
                 }
             }
+			self.tableView.reloadData()
         }
 
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
@@ -122,7 +123,7 @@ final class PVCheatsViewController: UITableViewController {
                 return
             }
 
-            let state: PVCheats? = allCheats[indexPath.item]
+            let state: PVCheats? = allCheats?[indexPath.item]
 
             guard let saveState = state else {
                 ELOG("No cheat code at indexPath: \(indexPath)")
@@ -178,25 +179,30 @@ final class PVCheatsViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allCheats.count
+        return allCheats?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cheatCodeCell", for: indexPath) as! PVCheatsTableViewCell
-        let cheat:PVCheats = allCheats[indexPath.row]
-        cell.codeText.text=cheat.code
-        cell.typeText.text=cheat.type
-        #if os(iOS)
-        cell.enableSwitch.isOn=cheat.enabled
-        #endif
-        #if os(tvOS)
-        cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
-        #endif
-        cell.delegate=delegate
-        cell.cheat=cheat
-
-        return cell
-    }
+		let cell = tableView.dequeueReusableCell(withIdentifier: "cheatCodeCell", for: indexPath) as! PVCheatsTableViewCell
+		cell.delegate=delegate
+		
+		guard let cheat:PVCheats = allCheats?[indexPath.row] else {
+			ELOG("Nil allCheaets")
+			return cell
+		}
+		cell.codeText.text=cheat.code
+		cell.typeText.text=cheat.type
+#if os(iOS)
+		cell.enableSwitch.isOn=cheat.enabled
+#endif
+#if os(tvOS)
+		cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
+#endif
+		cell.cheat=cheat
+		
+		
+		return cell
+	}
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return CGFloat(80)

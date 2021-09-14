@@ -2708,7 +2708,8 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return false;
 }
 
-
+#warning "Clean this crap up"
+// TODO: Cleanup this redundant code used multiple places, search for "id key in cheatList"
 - (BOOL)setPSXCheatCodes
 {
     @synchronized(self) {
@@ -2716,6 +2717,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         // int cheatIdx=0;
 
         BOOL cheatListSuccessfull = YES;
+		NSMutableArray *failedCheats = [NSMutableArray new];
 
         for (id key in cheatList)
         {
@@ -2752,15 +2754,18 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                                  */
                             }
                         }
-                        @catch (...) {
-                            cheatListSuccessfull = NO;
-                            [cheatList removeObjectForKey:singleCode];
-                            NSLog(@"Game Code Error");
-                        }
+						@catch (NSException *exception) {
+							cheatListSuccessfull = NO;
+							[failedCheats addObject:singleCode];
+//                            [cheatList removeObjectForKey:singleCode];
+							ELOG(@"Game Code Error %@", exception.reason);
+						}
                     }
                 }
             }
         }
+		[cheatList removeObjectsForKeys:failedCheats];
+
         return cheatListSuccessfull;
     }
 }
@@ -2771,7 +2776,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     @synchronized(self) {
 
         BOOL cheatListSuccessfull = YES;
-
+		NSMutableArray *failedCheats = [NSMutableArray new];
         for (id key in cheatList)
         {
             if ([[cheatList valueForKey:key] isEqual:@YES])
@@ -2779,11 +2784,11 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
                 multipleCodes = [key componentsSeparatedByString:@"+"];
                 
-                NSLog(@"Multiple Codes %@", multipleCodes);
+                ILOG(@"Multiple Codes %@", multipleCodes);
 
                 for (NSString *singleCode in multipleCodes) {
                     if (singleCode!= nil && singleCode.length > 0) {
-                        NSLog(@"Applying Code %@",singleCode);
+                        ILOG(@"Applying Code %@",singleCode);
                         const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
                         Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
                         @try {
@@ -2800,15 +2805,17 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                                 Mednafen::MDFNI_AddCheat(patch);
                             }
                         }
-                        @catch (...) {
+                        @catch (NSException *exception) {
                             cheatListSuccessfull = NO;
-                            [cheatList removeObjectForKey:singleCode];
-                            NSLog(@"Game Code Error");
+							[failedCheats addObject:singleCode];
+//                            [cheatList removeObjectForKey:singleCode];
+                            ELOG(@"Game Code Error %@", exception.reason);
                         }
                     }
                 }
             }
         }
+		[cheatList removeObjectsForKeys:failedCheats];
         return cheatListSuccessfull;
     }
 }
